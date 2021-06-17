@@ -49,6 +49,8 @@ Release notes
 
 - | Report time settings are now scenario specific.
 
+- | Bug fix: Filter widget wasn't shown in custom reports.
+
 .. rubric:: Integration
 
 - | Bug fix: the REST API didn't include the field owner of the resource model.

@@ -683,7 +683,7 @@ var grid = {
     var row2 = "";
 
     var val0s = ""; //selected columns
-    var val0a = ""; //available columns
+    var val0a = {}; //available columns
     var val1s = ""; //selected crosses
     var val1a = ""; //available crosses
 
@@ -692,11 +692,10 @@ var grid = {
         graph = true;
       else if (colModel[i].name != "rn" && colModel[i].name != "cb" && colModel[i].counter != null && colModel[i].label != '' && !('alwayshidden' in colModel[i])) {
         if (colModel[i].frozen) maxfrozen = parseInt(i, 10) + 1 - skipped;
-        if (!colModel[i].hidden) {
+        if (!colModel[i].hidden)
           val0s += '<li id="' + (i) + '"  class="list-group-item" style="cursor: move;">' + colModel[i].label + '</li>';
-        } else {
-          val0a += '<li id="' + (i) + '"  class="list-group-item" style="cursor: move;">' + colModel[i].label + '</li>';
-        }
+        else
+          val0a[colModel[i].label] = i;
       }
       else
         skipped++;
@@ -706,8 +705,7 @@ var grid = {
       var my_cross = (typeof cross_arg !== 'undefined') ? cross_arg : cross;
       var my_cross_idx = (typeof cross_idx_arg !== 'undefined') ? cross_idx_arg : cross_idx;
       // Add list of crosses
-      var row1 = '' +
-        '<div class="row">' +
+      var row1 = '<div class="row">' +
         '<div class="col-xs-6">' +
         '<div class="panel panel-default">' +
         '<div class="panel-heading">' +
@@ -732,10 +730,13 @@ var grid = {
       for (var j in my_cross_idx) {
         val1s += '<li class="list-group-item" id="' + (100 + parseInt(my_cross_idx[j], 10)) + '" style="cursor: move;">' + my_cross[my_cross_idx[j]]['name'] + '</li>';
       }
+      var fieldlist = {};
       for (var j in my_cross) {
         if (my_cross_idx.indexOf(parseInt(j, 10)) > -1 || my_cross[j]['name'] == "") continue;
-        val1a += '<li class="list-group-item" id="' + (100 + parseInt(j, 10)) + '" style="cursor: move;">' + my_cross[j]['name'] + '</li>';
+        fieldlist[my_cross[j]['name']] = parseInt(j, 10);
       }
+      for (var j of Object.keys(fieldlist).sort())
+        val1a += '<li class="list-group-item" id="' + (100 + fieldlist[j]) + '" style="cursor: move;">' + j + '</li>';
     }
     else {
       // Add selection of number of frozen columns
@@ -746,7 +747,10 @@ var grid = {
     }
 
     row0 = row0.replace('placeholder0', val0s);
-    row0 = row0.replace('placeholder1', val0a);
+    var availableoptions = "";
+    for (var o of Object.keys(val0a).sort())
+      availableoptions += '<li id="' + val0a[o] + '" class="list-group-item" style="cursor: move">' + o + '</li>';
+    row0 = row0.replace('placeholder1', availableoptions);
     if (pivot) {
       row1 = row1.replace('placeholder0', val1s);
       row1 = row1.replace('placeholder1', val1a);

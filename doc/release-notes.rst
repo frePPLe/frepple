@@ -49,6 +49,10 @@ Release notes
 
 - | Report time settings are now scenario specific.
 
+.. rubric:: Integration
+
+- | Bug fix: the REST API didn't include the field owner of the resource model.
+
 6.14.0 (2021/05/28)
 ===================
 

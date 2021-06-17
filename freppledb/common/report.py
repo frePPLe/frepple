@@ -340,6 +340,8 @@ class GridField:
     hidden = False  # NEVER display this field
     initially_hidden = False  # Hide the field by default, but allow the user to add it
     searchoptions = '{"searchhidden": true}'
+    background_header = None  # Used when exporting to excel
+    background_cell = None  # Used when exporting to excel
 
 
 class GridFieldDateTime(GridField):
@@ -954,6 +956,19 @@ class GridReport(View):
         readlonlyheaderstyle.fill = PatternFill(fill_type="solid", fgColor="d0ebfb")
         wb.add_named_style(readlonlyheaderstyle)
 
+        # Create custom named styles
+        backgrounds = set()
+        for r in request.rows:
+            if r.background_header:
+                backgrounds.add(r.background_header)
+            if r.background_cell:
+                backgrounds.add(r.background_cell)
+        for bg in backgrounds:
+            print(bg)
+            style = NamedStyle(name=bg)
+            style.fill = PatternFill(fill_type="solid", fgColor=bg)
+            wb.add_named_style(style)
+
         # Choose fields to export and write the title row
         if not hasattr(request, "prefs"):
             request.prefs = request.user.getPreference(
@@ -980,7 +995,7 @@ class GridReport(View):
         for f in fields:
             cell = WriteOnlyCell(ws, value=force_str(f.title).title())
             if f.editable or f.key:
-                cell.style = "headerstyle"
+                cell.style = f.background_header or "headerstyle"
                 fname = getattr(f, "field_name", f.name)
                 if not f.key and f.formatter == "detail" and fname.endswith("__name"):
                     cell.comment = CellComment(
@@ -999,7 +1014,7 @@ class GridReport(View):
                         "Author",
                     )
             else:
-                cell.style = "readlonlyheaderstyle"
+                cell.style = f.background_header or "readlonlyheaderstyle"
                 if not comment:
                     comment = CellComment(
                         force_str(_("Read only")), "Author", height=20, width=80
@@ -1023,18 +1038,29 @@ class GridReport(View):
 
                 # Loop over all records
                 for row in cls.data_query(request, *args, fields=fields, **kwargs):
+                    r = []
                     if hasattr(row, "__getitem__"):
-                        r = [
-                            _getCellValue(row[f.field_name], field=f, request=request)
-                            for f in fields
-                        ]
-                    else:
-                        r = [
-                            _getCellValue(
-                                getattr(row, f.field_name), field=f, request=request
+                        for f in fields:
+                            cell = WriteOnlyCell(
+                                ws,
+                                value=_getCellValue(
+                                    row[f.field_name], field=f, request=request
+                                ),
                             )
-                            for f in fields
-                        ]
+                            if f.background_cell:
+                                cell.style = f.background_cell
+                            r.append(cell)
+                    else:
+                        for f in fields:
+                            cell = WriteOnlyCell(
+                                ws,
+                                value=_getCellValue(
+                                    getattr(row, f.field_name), field=f, request=request
+                                ),
+                            )
+                            if f.background_cell:
+                                cell.style = f.background_cell
+                            r.append(cell)
                     if len(scenario_list) > 1:
                         r.insert(0, scenario)
                     ws.append(r)

@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-06 16:45+0200\n"
-"PO-Revision-Date: 2021-05-06 16:50+0200\n"
+"PO-Revision-Date: 2021-06-17 08:17+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: it\n"
@@ -154,10 +154,10 @@ msgstr "identificativo"
 #: output/views/operation.py:920 output/views/operation.py:926
 #: output/views/operation.py:931 output/views/operation.py:937
 #: output/views/operation.py:945 output/views/operation.py:952
-#: output/views/operation.py:958 output/views/pegging.py:54 output/widget.py:75
-#: output/widget.py:154 output/widget.py:1219 output/widget.py:1275
-#: output/widget.py:1333 output/widget.py:1451 quoting/views.py:64
-#: wizard/templates/wizard/quickstart_forecast.html:56
+#: output/views/operation.py:958 output/views/pegging.py:54
+#: output/widget.py:75 output/widget.py:154 output/widget.py:1219
+#: output/widget.py:1275 output/widget.py:1333 output/widget.py:1451
+#: quoting/views.py:64 wizard/templates/wizard/quickstart_forecast.html:56
 #: wizard/templates/wizard/quickstart_production.html:391
 msgid "item"
 msgstr "articolo"
@@ -423,7 +423,8 @@ msgstr "riferimento"
 #: inventoryplanning/templates/inventoryplanning/drp.html:162
 #: inventoryplanning/templates/inventoryplanning/drp.html:2044
 #: output/views/buffer.py:135 output/views/operation.py:83
-#: output/views/pegging.py:50 output/views/resource.py:69 output/widget.py:1504
+#: output/views/pegging.py:50 output/views/resource.py:69
+#: output/widget.py:1504
 msgid "type"
 msgstr "tipo"
 
@@ -453,98 +454,99 @@ msgstr "data di fine"
 
 #: archive/models.py:128 forecast/views.py:112 input/models.py:395
 #: input/models.py:431 input/models.py:907 input/models.py:1030
-#: input/models.py:1627 input/views/capacity.py:390 input/views/capacity.py:393
-#: input/views/capacity.py:473 input/views/capacity.py:487
-#: input/views/capacity.py:493 input/views/capacity.py:499
-#: input/views/capacity.py:505 input/views/capacity.py:510
-#: input/views/capacity.py:515 input/views/capacity.py:520
-#: input/views/capacity.py:525 input/views/capacity.py:530
-#: input/views/capacity.py:535 input/views/capacity.py:540
-#: input/views/capacity.py:545 input/views/capacity.py:550
-#: input/views/capacity.py:555 input/views/capacity.py:560
-#: input/views/capacity.py:565 input/views/capacity.py:570
-#: input/views/capacity.py:575 input/views/inventory.py:1346
-#: input/views/inventory.py:1354 input/views/inventory.py:1360
-#: input/views/inventory.py:1366 input/views/inventory.py:1372
-#: input/views/inventory.py:1377 input/views/inventory.py:1382
-#: input/views/inventory.py:1387 input/views/inventory.py:1392
-#: input/views/inventory.py:1397 input/views/inventory.py:1402
-#: input/views/inventory.py:1407 input/views/inventory.py:1412
-#: input/views/inventory.py:1417 input/views/inventory.py:1422
-#: input/views/inventory.py:1427 input/views/inventory.py:1432
-#: input/views/inventory.py:1437 input/views/inventory.py:1442
-#: input/views/manufacturing.py:99 input/views/manufacturing.py:141
-#: input/views/manufacturing.py:147 input/views/manufacturing.py:153
-#: input/views/manufacturing.py:159 input/views/manufacturing.py:166
-#: input/views/manufacturing.py:172 input/views/manufacturing.py:178
-#: input/views/manufacturing.py:184 input/views/manufacturing.py:190
-#: input/views/manufacturing.py:196 input/views/manufacturing.py:202
-#: input/views/manufacturing.py:208 input/views/manufacturing.py:214
-#: input/views/manufacturing.py:220 input/views/manufacturing.py:226
-#: input/views/manufacturing.py:232 input/views/manufacturing.py:239
-#: input/views/manufacturing.py:245 input/views/manufacturing.py:360
-#: input/views/manufacturing.py:398 input/views/manufacturing.py:404
-#: input/views/manufacturing.py:410 input/views/manufacturing.py:416
-#: input/views/manufacturing.py:423 input/views/manufacturing.py:429
-#: input/views/manufacturing.py:435 input/views/manufacturing.py:441
-#: input/views/manufacturing.py:447 input/views/manufacturing.py:453
-#: input/views/manufacturing.py:459 input/views/manufacturing.py:465
-#: input/views/manufacturing.py:471 input/views/manufacturing.py:477
-#: input/views/manufacturing.py:483 input/views/manufacturing.py:489
-#: input/views/manufacturing.py:496 input/views/manufacturing.py:502
-#: input/views/manufacturing.py:783 input/views/manufacturing.py:807
-#: input/views/manufacturing.py:813 input/views/manufacturing.py:819
-#: input/views/manufacturing.py:825 input/views/manufacturing.py:832
-#: input/views/manufacturing.py:838 input/views/manufacturing.py:844
-#: input/views/manufacturing.py:850 input/views/manufacturing.py:856
-#: input/views/manufacturing.py:862 input/views/manufacturing.py:868
-#: input/views/manufacturing.py:874 input/views/manufacturing.py:880
-#: input/views/manufacturing.py:886 input/views/manufacturing.py:892
-#: input/views/manufacturing.py:898 input/views/manufacturing.py:905
-#: input/views/manufacturing.py:911 input/views/manufacturing.py:1063
-#: input/views/manufacturing.py:1066 input/views/manufacturing.py:1370
-#: input/views/manufacturing.py:1515 input/views/manufacturing.py:1520
-#: input/views/manufacturing.py:1525 input/views/manufacturing.py:1530
-#: input/views/manufacturing.py:1536 input/views/manufacturing.py:1541
-#: input/views/manufacturing.py:1546 input/views/manufacturing.py:1551
-#: input/views/manufacturing.py:1556 input/views/manufacturing.py:1561
-#: input/views/manufacturing.py:1566 input/views/manufacturing.py:1571
-#: input/views/manufacturing.py:1576 input/views/manufacturing.py:1581
-#: input/views/manufacturing.py:1586 input/views/manufacturing.py:1591
-#: input/views/manufacturing.py:1597 input/views/manufacturing.py:1602
-#: input/views/utils.py:437 output/views/constraint.py:31
-#: output/views/operation.py:49 output/views/pegging.py:42
-#: output/widget.py:1396
+#: input/models.py:1627 input/views/capacity.py:390
+#: input/views/capacity.py:393 input/views/capacity.py:473
+#: input/views/capacity.py:487 input/views/capacity.py:493
+#: input/views/capacity.py:499 input/views/capacity.py:505
+#: input/views/capacity.py:510 input/views/capacity.py:515
+#: input/views/capacity.py:520 input/views/capacity.py:525
+#: input/views/capacity.py:530 input/views/capacity.py:535
+#: input/views/capacity.py:540 input/views/capacity.py:545
+#: input/views/capacity.py:550 input/views/capacity.py:555
+#: input/views/capacity.py:560 input/views/capacity.py:565
+#: input/views/capacity.py:570 input/views/capacity.py:575
+#: input/views/inventory.py:1346 input/views/inventory.py:1354
+#: input/views/inventory.py:1360 input/views/inventory.py:1366
+#: input/views/inventory.py:1372 input/views/inventory.py:1377
+#: input/views/inventory.py:1382 input/views/inventory.py:1387
+#: input/views/inventory.py:1392 input/views/inventory.py:1397
+#: input/views/inventory.py:1402 input/views/inventory.py:1407
+#: input/views/inventory.py:1412 input/views/inventory.py:1417
+#: input/views/inventory.py:1422 input/views/inventory.py:1427
+#: input/views/inventory.py:1432 input/views/inventory.py:1437
+#: input/views/inventory.py:1442 input/views/manufacturing.py:99
+#: input/views/manufacturing.py:141 input/views/manufacturing.py:147
+#: input/views/manufacturing.py:153 input/views/manufacturing.py:159
+#: input/views/manufacturing.py:166 input/views/manufacturing.py:172
+#: input/views/manufacturing.py:178 input/views/manufacturing.py:184
+#: input/views/manufacturing.py:190 input/views/manufacturing.py:196
+#: input/views/manufacturing.py:202 input/views/manufacturing.py:208
+#: input/views/manufacturing.py:214 input/views/manufacturing.py:220
+#: input/views/manufacturing.py:226 input/views/manufacturing.py:232
+#: input/views/manufacturing.py:239 input/views/manufacturing.py:245
+#: input/views/manufacturing.py:360 input/views/manufacturing.py:398
+#: input/views/manufacturing.py:404 input/views/manufacturing.py:410
+#: input/views/manufacturing.py:416 input/views/manufacturing.py:423
+#: input/views/manufacturing.py:429 input/views/manufacturing.py:435
+#: input/views/manufacturing.py:441 input/views/manufacturing.py:447
+#: input/views/manufacturing.py:453 input/views/manufacturing.py:459
+#: input/views/manufacturing.py:465 input/views/manufacturing.py:471
+#: input/views/manufacturing.py:477 input/views/manufacturing.py:483
+#: input/views/manufacturing.py:489 input/views/manufacturing.py:496
+#: input/views/manufacturing.py:502 input/views/manufacturing.py:783
+#: input/views/manufacturing.py:807 input/views/manufacturing.py:813
+#: input/views/manufacturing.py:819 input/views/manufacturing.py:825
+#: input/views/manufacturing.py:832 input/views/manufacturing.py:838
+#: input/views/manufacturing.py:844 input/views/manufacturing.py:850
+#: input/views/manufacturing.py:856 input/views/manufacturing.py:862
+#: input/views/manufacturing.py:868 input/views/manufacturing.py:874
+#: input/views/manufacturing.py:880 input/views/manufacturing.py:886
+#: input/views/manufacturing.py:892 input/views/manufacturing.py:898
+#: input/views/manufacturing.py:905 input/views/manufacturing.py:911
+#: input/views/manufacturing.py:1063 input/views/manufacturing.py:1066
+#: input/views/manufacturing.py:1370 input/views/manufacturing.py:1515
+#: input/views/manufacturing.py:1520 input/views/manufacturing.py:1525
+#: input/views/manufacturing.py:1530 input/views/manufacturing.py:1536
+#: input/views/manufacturing.py:1541 input/views/manufacturing.py:1546
+#: input/views/manufacturing.py:1551 input/views/manufacturing.py:1556
+#: input/views/manufacturing.py:1561 input/views/manufacturing.py:1566
+#: input/views/manufacturing.py:1571 input/views/manufacturing.py:1576
+#: input/views/manufacturing.py:1581 input/views/manufacturing.py:1586
+#: input/views/manufacturing.py:1591 input/views/manufacturing.py:1597
+#: input/views/manufacturing.py:1602 input/views/utils.py:437
+#: output/views/constraint.py:31 output/views/operation.py:49
+#: output/views/pegging.py:42 output/widget.py:1396
 msgid "operation"
 msgstr "operazione"
 
 #: archive/models.py:129 common/models.py:58 forecast/views.py:403
 #: forecast/views.py:456 forecast/views.py:496 input/models.py:282
-#: input/models.py:1635 input/views/capacity.py:137 input/views/capacity.py:214
-#: input/views/capacity.py:441 input/views/capacity.py:710
-#: input/views/capacity.py:756 input/views/capacity.py:896
-#: input/views/inventory.py:216 input/views/inventory.py:263
-#: input/views/inventory.py:411 input/views/inventory.py:458
-#: input/views/inventory.py:507 input/views/inventory.py:945
-#: input/views/inventory.py:992 input/views/inventory.py:1041
-#: input/views/inventory.py:1317 input/views/inventory.py:1600
-#: input/views/inventory.py:1647 input/views/manufacturing.py:533
-#: input/views/manufacturing.py:740 input/views/manufacturing.py:1489
-#: input/views/manufacturing.py:1671 input/views/manufacturing.py:1718
-#: input/views/purchasing.py:80 input/views/purchasing.py:222
-#: input/views/purchasing.py:269 input/views/purchasing.py:978
-#: input/views/purchasing.py:1025 input/views/purchasing.py:1065
-#: input/views/sales.py:89 input/views/sales.py:133 input/views/sales.py:179
-#: input/views/sales.py:340 input/views/sales.py:384 input/views/sales.py:451
-#: input/views/sales.py:491 input/views/sales.py:672 input/views/sales.py:719
-#: input/views/sales.py:759 inventoryplanning/views.py:349
-#: inventoryplanning/views.py:402 output/models.py:18 output/models.py:42
-#: output/views/buffer.py:171 output/views/buffer.py:218
-#: output/views/constraint.py:105 output/views/demand.py:54
-#: output/views/demand.py:277 output/views/operation.py:217
-#: output/views/operation.py:537 output/views/operation.py:623
-#: output/views/operation.py:945 output/views/problem.py:74
-#: output/views/resource.py:181 quoting/views.py:96
+#: input/models.py:1635 input/views/capacity.py:137
+#: input/views/capacity.py:214 input/views/capacity.py:441
+#: input/views/capacity.py:710 input/views/capacity.py:756
+#: input/views/capacity.py:896 input/views/inventory.py:216
+#: input/views/inventory.py:263 input/views/inventory.py:411
+#: input/views/inventory.py:458 input/views/inventory.py:507
+#: input/views/inventory.py:945 input/views/inventory.py:992
+#: input/views/inventory.py:1041 input/views/inventory.py:1317
+#: input/views/inventory.py:1600 input/views/inventory.py:1647
+#: input/views/manufacturing.py:533 input/views/manufacturing.py:740
+#: input/views/manufacturing.py:1489 input/views/manufacturing.py:1671
+#: input/views/manufacturing.py:1718 input/views/purchasing.py:80
+#: input/views/purchasing.py:222 input/views/purchasing.py:269
+#: input/views/purchasing.py:978 input/views/purchasing.py:1025
+#: input/views/purchasing.py:1065 input/views/sales.py:89
+#: input/views/sales.py:133 input/views/sales.py:179 input/views/sales.py:340
+#: input/views/sales.py:384 input/views/sales.py:451 input/views/sales.py:491
+#: input/views/sales.py:672 input/views/sales.py:719 input/views/sales.py:759
+#: inventoryplanning/views.py:349 inventoryplanning/views.py:402
+#: output/models.py:18 output/models.py:42 output/views/buffer.py:171
+#: output/views/buffer.py:218 output/views/constraint.py:105
+#: output/views/demand.py:54 output/views/demand.py:277
+#: output/views/operation.py:217 output/views/operation.py:537
+#: output/views/operation.py:623 output/views/operation.py:945
+#: output/views/problem.py:74 output/views/resource.py:181
+#: quoting/views.py:96
 msgid "owner"
 msgstr "dipendenza"
 
@@ -629,9 +631,10 @@ msgstr "Date importanti"
 #: input/admin.py:403 input/admin.py:467 input/admin.py:501 input/admin.py:521
 #: input/admin.py:541 input/admin.py:572 input/admin.py:623 input/admin.py:681
 #: input/admin.py:722 input/admin.py:774 input/admin.py:824 input/admin.py:874
-#: input/admin.py:918 input/admin.py:966 input/admin.py:999 input/admin.py:1032
-#: inventoryplanning/admin.py:62 inventoryplanning/admin.py:83
-#: inventoryplanning/admin.py:117 reportmanager/admin.py:39
+#: input/admin.py:918 input/admin.py:966 input/admin.py:999
+#: input/admin.py:1032 inventoryplanning/admin.py:62
+#: inventoryplanning/admin.py:83 inventoryplanning/admin.py:117
+#: reportmanager/admin.py:39
 #: reportmanager/templates/reportmanager/reportmanager.html:154
 msgid "edit"
 msgstr "modifica"
@@ -776,41 +779,41 @@ msgstr "Genitore gerarchico"
 #: common/models.py:255 common/views.py:398 common/views.py:563
 #: common/views.py:594 execute/views.py:1115 forecast/views.py:130
 #: forecast/views.py:166 forecast/views.py:416 forecast/views.py:465
-#: forecast/views.py:505 input/views/capacity.py:65 input/views/capacity.py:171
-#: input/views/capacity.py:223 input/views/capacity.py:251
-#: input/views/capacity.py:293 input/views/capacity.py:570
-#: input/views/capacity.py:717 input/views/capacity.py:766
-#: input/views/capacity.py:906 input/views/inventory.py:169
-#: input/views/inventory.py:223 input/views/inventory.py:272
-#: input/views/inventory.py:364 input/views/inventory.py:418
-#: input/views/inventory.py:467 input/views/inventory.py:516
-#: input/views/inventory.py:909 input/views/inventory.py:952
-#: input/views/inventory.py:1001 input/views/inventory.py:1050
-#: input/views/inventory.py:1437 input/views/inventory.py:1607
-#: input/views/inventory.py:1656 input/views/manufacturing.py:136
-#: input/views/manufacturing.py:239 input/views/manufacturing.py:389
-#: input/views/manufacturing.py:496 input/views/manufacturing.py:558
-#: input/views/manufacturing.py:612 input/views/manufacturing.py:666
-#: input/views/manufacturing.py:756 input/views/manufacturing.py:802
-#: input/views/manufacturing.py:905 input/views/manufacturing.py:1016
-#: input/views/manufacturing.py:1511 input/views/manufacturing.py:1597
-#: input/views/manufacturing.py:1678 input/views/manufacturing.py:1727
-#: input/views/purchasing.py:86 input/views/purchasing.py:175
-#: input/views/purchasing.py:229 input/views/purchasing.py:278
-#: input/views/purchasing.py:318 input/views/purchasing.py:880
-#: input/views/purchasing.py:985 input/views/purchasing.py:1034
-#: input/views/purchasing.py:1074 input/views/sales.py:94
-#: input/views/sales.py:138 input/views/sales.py:190 input/views/sales.py:355
-#: input/views/sales.py:411 input/views/sales.py:460 input/views/sales.py:500
-#: input/views/sales.py:679 input/views/sales.py:728 input/views/sales.py:768
-#: inventoryplanning/views.py:124 inventoryplanning/views.py:162
-#: inventoryplanning/views.py:326 inventoryplanning/views.py:362
-#: inventoryplanning/views.py:411 output/views/buffer.py:178
-#: output/views/buffer.py:227 output/views/demand.py:63
-#: output/views/demand.py:284 output/views/operation.py:139
-#: output/views/operation.py:224 output/views/operation.py:544
-#: output/views/operation.py:630 output/views/operation.py:952
-#: reportmanager/views.py:131
+#: forecast/views.py:505 input/views/capacity.py:65
+#: input/views/capacity.py:171 input/views/capacity.py:223
+#: input/views/capacity.py:251 input/views/capacity.py:293
+#: input/views/capacity.py:570 input/views/capacity.py:717
+#: input/views/capacity.py:766 input/views/capacity.py:906
+#: input/views/inventory.py:169 input/views/inventory.py:223
+#: input/views/inventory.py:272 input/views/inventory.py:364
+#: input/views/inventory.py:418 input/views/inventory.py:467
+#: input/views/inventory.py:516 input/views/inventory.py:909
+#: input/views/inventory.py:952 input/views/inventory.py:1001
+#: input/views/inventory.py:1050 input/views/inventory.py:1437
+#: input/views/inventory.py:1607 input/views/inventory.py:1656
+#: input/views/manufacturing.py:136 input/views/manufacturing.py:239
+#: input/views/manufacturing.py:389 input/views/manufacturing.py:496
+#: input/views/manufacturing.py:558 input/views/manufacturing.py:612
+#: input/views/manufacturing.py:666 input/views/manufacturing.py:756
+#: input/views/manufacturing.py:802 input/views/manufacturing.py:905
+#: input/views/manufacturing.py:1016 input/views/manufacturing.py:1511
+#: input/views/manufacturing.py:1597 input/views/manufacturing.py:1678
+#: input/views/manufacturing.py:1727 input/views/purchasing.py:86
+#: input/views/purchasing.py:175 input/views/purchasing.py:229
+#: input/views/purchasing.py:278 input/views/purchasing.py:318
+#: input/views/purchasing.py:880 input/views/purchasing.py:985
+#: input/views/purchasing.py:1034 input/views/purchasing.py:1074
+#: input/views/sales.py:94 input/views/sales.py:138 input/views/sales.py:190
+#: input/views/sales.py:355 input/views/sales.py:411 input/views/sales.py:460
+#: input/views/sales.py:500 input/views/sales.py:679 input/views/sales.py:728
+#: input/views/sales.py:768 inventoryplanning/views.py:124
+#: inventoryplanning/views.py:162 inventoryplanning/views.py:326
+#: inventoryplanning/views.py:362 inventoryplanning/views.py:411
+#: output/views/buffer.py:178 output/views/buffer.py:227
+#: output/views/demand.py:63 output/views/demand.py:284
+#: output/views/operation.py:139 output/views/operation.py:224
+#: output/views/operation.py:544 output/views/operation.py:630
+#: output/views/operation.py:952 reportmanager/views.py:131
 msgid "source"
 msgstr "sorgente"
 
@@ -898,8 +901,8 @@ msgstr "valore"
 #: output/views/operation.py:564 output/views/operation.py:605
 #: output/views/operation.py:908 output/views/operation.py:972
 #: output/views/operation.py:1013 output/views/problem.py:76
-#: output/views/resource.py:48 output/views/resource.py:137 quoting/views.py:83
-#: reportmanager/models.py:24
+#: output/views/resource.py:48 output/views/resource.py:137
+#: quoting/views.py:83 reportmanager/models.py:24
 #: reportmanager/templates/reportmanager/reportmanager.html:186
 #: reportmanager/templates/reportmanager/reportmanager.html:190
 #: reportmanager/views.py:121
@@ -1069,7 +1072,8 @@ msgid "bucket date"
 msgstr "data di pianificazione"
 
 #: common/models.py:1448
-#: common/templates/admin/common/bucket/change_form.html:13 common/views.py:569
+#: common/templates/admin/common/bucket/change_form.html:13
+#: common/views.py:569
 msgid "bucket dates"
 msgstr "date di pianificazione"
 
@@ -1799,7 +1803,8 @@ msgstr "Aggiornamento preferenze fallito"
 msgid "My preferences"
 msgstr "Mie preferenze"
 
-#: common/views.py:336 output/views/constraint.py:90 output/views/problem.py:66
+#: common/views.py:336 output/views/constraint.py:90
+#: output/views/problem.py:66
 msgid "id"
 msgstr "id"
 
@@ -2314,10 +2319,11 @@ msgstr "Niente da esportare"
 msgid "Generate a constrained plan"
 msgstr "Generare un piano con vincoli"
 
-#: forecast/admin.py:40 input/admin.py:86 input/admin.py:117 input/admin.py:168
-#: input/admin.py:199 input/admin.py:236 input/admin.py:280 input/admin.py:321
-#: input/admin.py:376 input/admin.py:447 input/admin.py:561 input/admin.py:598
-#: input/admin.py:661 input/admin.py:702 input/admin.py:946
+#: forecast/admin.py:40 input/admin.py:86 input/admin.py:117
+#: input/admin.py:168 input/admin.py:199 input/admin.py:236 input/admin.py:280
+#: input/admin.py:321 input/admin.py:376 input/admin.py:447 input/admin.py:561
+#: input/admin.py:598 input/admin.py:661 input/admin.py:702
+#: input/admin.py:946
 msgid "advanced"
 msgstr "avanzato"
 
@@ -2815,9 +2821,9 @@ msgid "purchase orders"
 msgstr "ordini di acquisto"
 
 #: input/admin.py:252 input/admin.py:412 input/admin.py:472 input/admin.py:632
-#: input/views/utils.py:551 input/views/utils.py:1737 input/views/utils.py:1743
-#: input/views/utils.py:1749 input/views/utils.py:1755
-#: input/views/utils.py:1761
+#: input/views/utils.py:551 input/views/utils.py:1737
+#: input/views/utils.py:1743 input/views/utils.py:1749
+#: input/views/utils.py:1755 input/views/utils.py:1761
 msgid "where used"
 msgstr "dove utilizzato"
 
@@ -2829,7 +2835,7 @@ msgstr "scorte"
 #: input/admin.py:261 input/models.py:2127 input/models.py:2128
 #: input/views/inventory.py:1251
 msgid "inventory detail"
-msgstr "rapporto dettagliato sulle scorte"
+msgstr "dettaglio inventario"
 
 #: input/admin.py:421 input/admin.py:481 input/admin.py:641
 #: output/views/constraint.py:87
@@ -2894,13 +2900,13 @@ msgstr "clienti"
 msgid "Cost of the item"
 msgstr "Costo del articolo"
 
-#: input/models.py:212 input/views/capacity.py:702 input/views/inventory.py:210
-#: input/views/inventory.py:405 input/views/inventory.py:841
-#: input/views/inventory.py:1594 input/views/manufacturing.py:552
-#: input/views/manufacturing.py:1665 input/views/purchasing.py:216
-#: input/views/purchasing.py:972 input/views/sales.py:185
-#: input/views/sales.py:405 input/views/sales.py:666 output/models.py:23
-#: output/models.py:47 output/views/buffer.py:165
+#: input/models.py:212 input/views/capacity.py:702
+#: input/views/inventory.py:210 input/views/inventory.py:405
+#: input/views/inventory.py:841 input/views/inventory.py:1594
+#: input/views/manufacturing.py:552 input/views/manufacturing.py:1665
+#: input/views/purchasing.py:216 input/views/purchasing.py:972
+#: input/views/sales.py:185 input/views/sales.py:405 input/views/sales.py:666
+#: output/models.py:23 output/models.py:47 output/views/buffer.py:165
 #: output/views/constraint.py:110 output/views/demand.py:62
 #: output/views/operation.py:209 output/views/operation.py:529
 #: output/views/operation.py:937 output/views/problem.py:79
@@ -2938,14 +2944,14 @@ msgstr "Priorità tra tutte le alternative"
 
 #: input/models.py:299 input/models.py:451 input/models.py:865
 #: input/models.py:952 input/models.py:1074 input/models.py:1244
-#: input/models.py:1383 input/views/capacity.py:287 input/views/capacity.py:550
-#: input/views/inventory.py:348 input/views/inventory.py:1417
-#: input/views/manufacturing.py:125 input/views/manufacturing.py:214
-#: input/views/manufacturing.py:379 input/views/manufacturing.py:471
-#: input/views/manufacturing.py:747 input/views/manufacturing.py:797
-#: input/views/manufacturing.py:880 input/views/manufacturing.py:991
-#: input/views/manufacturing.py:1576 input/views/purchasing.py:159
-#: input/views/purchasing.py:927
+#: input/models.py:1383 input/views/capacity.py:287
+#: input/views/capacity.py:550 input/views/inventory.py:348
+#: input/views/inventory.py:1417 input/views/manufacturing.py:125
+#: input/views/manufacturing.py:214 input/views/manufacturing.py:379
+#: input/views/manufacturing.py:471 input/views/manufacturing.py:747
+#: input/views/manufacturing.py:797 input/views/manufacturing.py:880
+#: input/views/manufacturing.py:991 input/views/manufacturing.py:1576
+#: input/views/purchasing.py:159 input/views/purchasing.py:927
 #: inventoryplanning/templates/inventoryplanning/drp.html:2050
 #: output/views/operation.py:122
 msgid "effective start"
@@ -2959,14 +2965,14 @@ msgstr "Validità della data d'inizio"
 
 #: input/models.py:302 input/models.py:454 input/models.py:868
 #: input/models.py:955 input/models.py:1077 input/models.py:1247
-#: input/models.py:1386 input/views/capacity.py:290 input/views/capacity.py:555
-#: input/views/inventory.py:351 input/views/inventory.py:1422
-#: input/views/manufacturing.py:128 input/views/manufacturing.py:220
-#: input/views/manufacturing.py:382 input/views/manufacturing.py:477
-#: input/views/manufacturing.py:750 input/views/manufacturing.py:800
-#: input/views/manufacturing.py:886 input/views/manufacturing.py:997
-#: input/views/manufacturing.py:1581 input/views/purchasing.py:162
-#: input/views/purchasing.py:920
+#: input/models.py:1386 input/views/capacity.py:290
+#: input/views/capacity.py:555 input/views/inventory.py:351
+#: input/views/inventory.py:1422 input/views/manufacturing.py:128
+#: input/views/manufacturing.py:220 input/views/manufacturing.py:382
+#: input/views/manufacturing.py:477 input/views/manufacturing.py:750
+#: input/views/manufacturing.py:800 input/views/manufacturing.py:886
+#: input/views/manufacturing.py:997 input/views/manufacturing.py:1581
+#: input/views/purchasing.py:162 input/views/purchasing.py:920
 #: inventoryplanning/templates/inventoryplanning/drp.html:2051
 #: output/views/operation.py:128
 msgid "effective end"
@@ -3151,7 +3157,8 @@ msgstr "Finestra di rappruppamento per le proposte di riapprovvigionamento"
 msgid "buffer"
 msgstr "buffer"
 
-#: input/models.py:593 input/templates/admin/input/location/change_form.html:19
+#: input/models.py:593
+#: input/templates/admin/input/location/change_form.html:19
 #: input/views/inventory.py:108
 msgid "buffers"
 msgstr "buffers"
@@ -3232,31 +3239,34 @@ msgstr "efficienza % calendar"
 
 #: input/models.py:748 input/models.py:794 input/models.py:848
 #: input/models.py:1039 input/models.py:1251 input/models.py:1390
-#: input/models.py:1994 input/views/capacity.py:100 input/views/capacity.py:273
-#: input/views/capacity.py:387 input/views/capacity.py:396
-#: input/views/capacity.py:399 input/views/capacity.py:433
-#: input/views/capacity.py:779 input/views/capacity.py:785
-#: input/views/capacity.py:791 input/views/capacity.py:797
-#: input/views/capacity.py:803 input/views/capacity.py:809
-#: input/views/capacity.py:815 input/views/capacity.py:824
-#: input/views/capacity.py:830 input/views/capacity.py:836
-#: input/views/capacity.py:845 input/views/capacity.py:851
-#: input/views/capacity.py:862 input/views/capacity.py:870
-#: input/views/capacity.py:878 input/views/capacity.py:886
-#: input/views/capacity.py:896 input/views/capacity.py:906
-#: input/views/inventory.py:355 input/views/manufacturing.py:106
-#: input/views/manufacturing.py:254 input/views/manufacturing.py:260
-#: input/views/manufacturing.py:266 input/views/manufacturing.py:272
-#: input/views/manufacturing.py:278 input/views/manufacturing.py:284
-#: input/views/manufacturing.py:293 input/views/manufacturing.py:299
-#: input/views/manufacturing.py:305 input/views/manufacturing.py:314
-#: input/views/manufacturing.py:320 input/views/purchasing.py:166
-#: output/models.py:61 output/views/pegging.py:70 output/views/resource.py:39
-#: output/widget.py:1395 wizard/templates/wizard/quickstart_production.html:205
+#: input/models.py:1994 input/views/capacity.py:100
+#: input/views/capacity.py:273 input/views/capacity.py:387
+#: input/views/capacity.py:396 input/views/capacity.py:399
+#: input/views/capacity.py:433 input/views/capacity.py:779
+#: input/views/capacity.py:785 input/views/capacity.py:791
+#: input/views/capacity.py:797 input/views/capacity.py:803
+#: input/views/capacity.py:809 input/views/capacity.py:815
+#: input/views/capacity.py:824 input/views/capacity.py:830
+#: input/views/capacity.py:836 input/views/capacity.py:845
+#: input/views/capacity.py:851 input/views/capacity.py:862
+#: input/views/capacity.py:870 input/views/capacity.py:878
+#: input/views/capacity.py:886 input/views/capacity.py:896
+#: input/views/capacity.py:906 input/views/inventory.py:355
+#: input/views/manufacturing.py:106 input/views/manufacturing.py:254
+#: input/views/manufacturing.py:260 input/views/manufacturing.py:266
+#: input/views/manufacturing.py:272 input/views/manufacturing.py:278
+#: input/views/manufacturing.py:284 input/views/manufacturing.py:293
+#: input/views/manufacturing.py:299 input/views/manufacturing.py:305
+#: input/views/manufacturing.py:314 input/views/manufacturing.py:320
+#: input/views/purchasing.py:166 output/models.py:61
+#: output/views/pegging.py:70 output/views/resource.py:39
+#: output/widget.py:1395
+#: wizard/templates/wizard/quickstart_production.html:205
 msgid "resource"
 msgstr "risorsa"
 
-#: input/models.py:749 input/templates/admin/input/location/change_form.html:43
+#: input/models.py:749
+#: input/templates/admin/input/location/change_form.html:43
 #: input/views/capacity.py:110 input/views/manufacturing.py:1469
 msgid "resources"
 msgstr "risorse"
@@ -3311,7 +3321,8 @@ msgstr "Priorità di questa abilità in un gruppo di alternative"
 msgid "resource skill"
 msgstr "abilità di risorsa"
 
-#: input/models.py:891 input/templates/admin/input/resource/change_form.html:19
+#: input/models.py:891
+#: input/templates/admin/input/resource/change_form.html:19
 #: input/templates/admin/input/skill/change_form.html:13
 #: input/views/capacity.py:257
 msgid "resource skills"

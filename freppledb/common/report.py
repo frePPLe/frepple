@@ -964,7 +964,6 @@ class GridReport(View):
             if r.background_cell:
                 backgrounds.add(r.background_cell)
         for bg in backgrounds:
-            print(bg)
             style = NamedStyle(name=bg)
             style.fill = PatternFill(fill_type="solid", fgColor=bg)
             wb.add_named_style(style)
@@ -3345,6 +3344,23 @@ class GridPivot(GridReport):
         else:
             mycrosses = [f for f in request.crosses if f[1].get("visible", True)]
 
+        # Create custom named styles
+        backgrounds = set()
+        for r in myrows:
+            if r.background_header:
+                backgrounds.add(r.background_header)
+            if r.background_cell:
+                backgrounds.add(r.background_cell)
+        for r in mycrosses:
+            if r[1].get("background_header", None):
+                backgrounds.add(r[1].get("background_header", None))
+            if r[1].get("background_cell", None):
+                backgrounds.add(r[1].get("background_cell", None))
+        for bg in backgrounds:
+            style = NamedStyle(name=bg)
+            style.fill = PatternFill(fill_type="solid", fgColor=bg)
+            wb.add_named_style(style)
+
         # Write a header row
         fields = []
         comment = None
@@ -3352,7 +3368,7 @@ class GridPivot(GridReport):
             if f.name:
                 cell = WriteOnlyCell(ws, value=force_str(f.title).title())
                 if f.editable or f.key:
-                    cell.style = "headerstyle"
+                    cell.style = f.background_header or "headerstyle"
                     fname = getattr(f, "field_name", f.name)
                     if (
                         not f.key
@@ -3375,7 +3391,7 @@ class GridPivot(GridReport):
                             "Author",
                         )
                 else:
-                    cell.style = "readlonlyheaderstyle"
+                    cell.style = f.background_header or "readlonlyheaderstyle"
                     if not comment:
                         comment = CellComment(
                             force_str(_("Read only")), "Author", height=20, width=80
@@ -3385,7 +3401,7 @@ class GridPivot(GridReport):
         if listformat:
             cell = WriteOnlyCell(ws, value=capfirst(force_str(_("bucket"))))
             if f.editable or f.key:
-                cell.style = "headerstyle"
+                cell.style = f.background_header or "headerstyle"
                 fname = getattr(f, "field_name", f.name)
                 if not f.key and f.formatter == "detail" and fname.endswith("__name"):
                     cell.comment = CellComment(
@@ -3404,7 +3420,7 @@ class GridPivot(GridReport):
                         "Author",
                     )
             else:
-                cell.style = "readlonlyheaderstyle"
+                cell.style = f.background_header or "readlonlyheaderstyle"
                 if not comment:
                     comment = CellComment(
                         force_str(_("Read only")), "Author", height=20, width=80
@@ -3429,9 +3445,11 @@ class GridPivot(GridReport):
                     ),
                 )
                 if f[1].get("editable", False):
-                    cell.style = "headerstyle"
+                    cell.style = f[1].get("background_header", None) or "headerstyle"
                 else:
-                    cell.style = "readlonlyheaderstyle"
+                    cell.style = (
+                        f[1].get("background_header", None) or "readlonlyheaderstyle"
+                    )
                     if not comment:
                         comment = CellComment(
                             force_str(_("Read only")), "Author", height=20, width=80
@@ -3467,26 +3485,47 @@ class GridPivot(GridReport):
                 if listformat:
                     for row in query:
                         # Append a row
+                        fields = []
                         if hasattr(row, "__getitem__"):
-                            fields = [
-                                _getCellValue(row[f.name], field=f, request=request)
-                                for f in myrows
-                                if f.name
-                            ]
-                            fields.extend([_getCellValue(row["bucket"])])
-                            fields.extend([_getCellValue(row[f[0]]) for f in mycrosses])
+                            for f in myrows:
+                                if f.name:
+                                    cell = WriteOnlyCell(
+                                        ws,
+                                        value=_getCellValue(
+                                            row[f.name], field=f, request=request
+                                        ),
+                                    )
+                                    if f.background_cell:
+                                        cell.style = f.background_cell
+                                    fields.append(cell)
+                            fields.append(_getCellValue(row["bucket"]))
+                            for f in mycrosses:
+                                cell = WriteOnlyCell(ws, value=_getCellValue(row[f[0]]))
+                                if f[1].get("background_cell"):
+                                    cell.style = f[1].get("background_cell")
+                                fields.append(cell)
                         else:
-                            fields = [
-                                _getCellValue(
-                                    getattr(row, f.name), field=f, request=request
+                            for f in myrows:
+                                if f.name:
+                                    cell = WriteOnlyCell(
+                                        ws,
+                                        value=_getCellValue(
+                                            getattr(row, f.name),
+                                            field=f,
+                                            request=request,
+                                        ),
+                                    )
+                                    if f.background_cell:
+                                        cell.style = f.background_cell
+                                    fields.append(cell)
+                            fields.append(_getCellValue(getattr(row, "bucket")))
+                            for f in mycrosses:
+                                cell = WriteOnlyCell(
+                                    ws, value=_getCellValue(getattr(row, f[0]))
                                 )
-                                for f in myrows
-                                if f.name
-                            ]
-                            fields.extend([_getCellValue(getattr(row, "bucket"))])
-                            fields.extend(
-                                [_getCellValue(getattr(row, f[0])) for f in mycrosses]
-                            )
+                                if f[1].get("background_cell"):
+                                    cell.style = f[1].get("background_cell")
+                                fields.append(cell)
                         if len(scenario_list) > 1:
                             fields.insert(0, scenario)
                         ws.append(fields)
@@ -3505,36 +3544,44 @@ class GridPivot(GridReport):
                             for cross in mycrosses:
                                 if not cross[1].get("visible", True):
                                     continue
-                                fields = [
-                                    _getCellValue(
-                                        row_of_buckets[0][s.name],
-                                        field=s,
-                                        request=request,
-                                    )
-                                    for s in myrows
-                                    if s.name
-                                ]
-                                fields.extend(
-                                    [
-                                        _getCellValue(
-                                            (
-                                                capfirst(
-                                                    cross[1]["title"](request)
-                                                    if callable(cross[1]["title"])
-                                                    else cross[1]["title"]
-                                                )
-                                            )
-                                            if "title" in cross[1]
-                                            else capfirst(cross[0])
+                                fields = []
+                                for s in myrows:
+                                    if s.name:
+                                        cell = WriteOnlyCell(
+                                            ws,
+                                            value=_getCellValue(
+                                                row_of_buckets[0][s.name],
+                                                field=s,
+                                                request=request,
+                                            ),
                                         )
-                                    ]
+                                        if s.background_cell:
+                                            cell.style = s.background_cell
+                                        fields.append(cell)
+                                cell = WriteOnlyCell(
+                                    ws,
+                                    value=_getCellValue(
+                                        (
+                                            capfirst(
+                                                cross[1]["title"](request)
+                                                if callable(cross[1]["title"])
+                                                else cross[1]["title"]
+                                            )
+                                        )
+                                        if "title" in cross[1]
+                                        else capfirst(cross[0])
+                                    ),
                                 )
-                                fields.extend(
-                                    [
-                                        _getCellValue(bucket[cross[0]])
-                                        for bucket in row_of_buckets
-                                    ]
-                                )
+                                if cross[1].get("background_header"):
+                                    cell.style = cross[1].get("background_header")
+                                fields.append(cell)
+                                for bucket in row_of_buckets:
+                                    cell = WriteOnlyCell(
+                                        ws, value=_getCellValue(bucket[cross[0]])
+                                    )
+                                    if cross[1].get("background_cell"):
+                                        cell.style = cross[1].get("background_cell")
+                                    fields.append(cell)
                                 if len(scenario_list) > 1:
                                     fields.insert(0, scenario)
                                 ws.append(fields)
@@ -3545,34 +3592,44 @@ class GridPivot(GridReport):
                         for cross in mycrosses:
                             if not cross[1].get("visible", True):
                                 continue
-                            fields = [
-                                _getCellValue(
-                                    row_of_buckets[0][s.name], field=s, request=request
-                                )
-                                for s in myrows
-                                if s.name
-                            ]
-                            fields.extend(
-                                [
-                                    _getCellValue(
-                                        (
-                                            capfirst(
-                                                cross[1]["title"](request)
-                                                if callable(cross[1]["title"])
-                                                else cross[1]["title"]
-                                            )
-                                        )
-                                        if "title" in cross[1]
-                                        else capfirst(cross[0])
+                            fields = []
+                            for s in myrows:
+                                if s.name:
+                                    cell = WriteOnlyCell(
+                                        ws,
+                                        value=_getCellValue(
+                                            row_of_buckets[0][s.name],
+                                            field=s,
+                                            request=request,
+                                        ),
                                     )
-                                ]
+                                    if s.background_cell:
+                                        cell.style = s.background_cell
+                                    fields.append(cell)
+                            cell = WriteOnlyCell(
+                                ws,
+                                value=_getCellValue(
+                                    (
+                                        capfirst(
+                                            cross[1]["title"](request)
+                                            if callable(cross[1]["title"])
+                                            else cross[1]["title"]
+                                        )
+                                    )
+                                    if "title" in cross[1]
+                                    else capfirst(cross[0])
+                                ),
                             )
-                            fields.extend(
-                                [
-                                    _getCellValue(bucket[cross[0]])
-                                    for bucket in row_of_buckets
-                                ]
-                            )
+                            if cross[1].get("background_header"):
+                                cell.style = cross[1].get("background_header")
+                            fields.append(cell)
+                            for bucket in row_of_buckets:
+                                cell = WriteOnlyCell(
+                                    ws, value=_getCellValue(bucket[cross[0]])
+                                )
+                                if cross[1].get("background_cell"):
+                                    cell.style = cross[1].get("background_cell")
+                                fields.append(cell)
                             if len(scenario_list) > 1:
                                 fields.insert(0, scenario)
                             ws.append(fields)

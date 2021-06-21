@@ -47,7 +47,7 @@ class Command(BaseCommand):
             "--start", default="2017-1-1", help="Start date in YYYY-MM-DD format"
         )
         parser.add_argument(
-            "--end", default="2025-1-1", help="End date in YYYY-MM-DD format"
+            "--end", default="2030-1-1", help="End date in YYYY-MM-DD format"
         )
         parser.add_argument(
             "--weekstart",

@@ -220,4 +220,5 @@ class Tags {
   static const Keyword variable;
   static const Keyword verbose;
   static const Keyword weight;
+  static const Keyword wip_produce_full_quantity;
 };

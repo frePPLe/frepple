@@ -8025,6 +8025,8 @@ class Plan : public Plannable, public Object {
 
   bool completed_allow_future = false;
 
+  bool wip_produce_full_quantity = false;
+
   /* Pointer to the singleton plan object. */
   static Plan* thePlan;
 
@@ -8078,6 +8080,10 @@ class Plan : public Plannable, public Object {
   bool getCompletedAllowFuture() const { return completed_allow_future; }
 
   void setCompletedAllowFuture(bool b) { completed_allow_future = b; }
+
+  bool getWipProduceFullQuantity() const { return wip_produce_full_quantity; }
+
+  void setWipProduceFullQuantity(bool b) { wip_produce_full_quantity = b; }
 
   void setLogFile(const string& s) { Environment::setLogFile(s); }
 
@@ -8151,6 +8157,9 @@ class Plan : public Plannable, public Object {
     m->addBoolField<Plan>(
         Tags::completed_allow_future, &Plan::getCompletedAllowFuture,
         &Plan::setCompletedAllowFuture, BOOL_FALSE, DONT_SERIALIZE);
+    m->addBoolField<Plan>(
+        Tags::wip_produce_full_quantity, &Plan::getWipProduceFullQuantity,
+        &Plan::setWipProduceFullQuantity, BOOL_FALSE, DONT_SERIALIZE);
     Plannable::registerFields<Plan>(m);
     m->addIteratorField<Plan, Location::iterator, Location>(
         Tags::locations, Tags::location, &Plan::getLocations,

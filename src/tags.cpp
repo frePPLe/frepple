@@ -221,6 +221,7 @@ const Keyword Tags::value("value");
 const Keyword Tags::variable("variable");
 const Keyword Tags::verbose("verbose");
 const Keyword Tags::weight("weight");
+const Keyword Tags::wip_produce_full_quantity("wip_produce_full_quantity");
 
 }  // namespace utils
 }  // namespace frepple

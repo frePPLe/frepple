@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <current>2021-01-01T00:00:00</current>
+
   <operations>
-    <operation name="production 1"  xsi:type="operation_fixed_time"
-        duration="P4D">
+    <operation name="production 1" xsi:type="operation_fixed_time" duration="P4D">
       <location name="factory" />
       <flows>
         <flow xsi:type="flow_end">
@@ -98,8 +98,7 @@
   </operationplans>
 
   <operations>
-    <operation name="production 2"  xsi:type="operation_time_per"
-        duration="P1D" duration_per="PT1H">
+    <operation name="production 2" xsi:type="operation_time_per" duration="P1D" duration_per="PT1H">
       <location name="factory" />
       <flows>
         <flow xsi:type="flow_end">
@@ -193,7 +192,203 @@
     </operationplan>
   </operationplans>
 
-<?python
+  <?python 
+# Changing the way completed quantities are handled.
+# It's not common to change this setting on the fly. Don't try this at home.
+frepple.settings.wip_produce_full_quantity = True
+?>
+
+  <operations>
+    <operation name="production 3" xsi:type="operation_fixed_time" duration="P4D">
+      <location name="factory" />
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="item 3" />
+          <quantity>2</quantity>
+          <quantity_fixed>1</quantity_fixed>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="component 3A" />
+          <quantity>-2</quantity>
+          <quantity_fixed>-1</quantity_fixed>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="component 3B" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="resource 3" />
+          <quantity>1</quantity>
+        </load>
+      </loads>
+    </operation>
+  </operations>
+  <buffers>
+    <buffer name="component 3A @ factory" xsi:type="buffer_infinite">
+      <item name="component 3A" />
+      <location name="factory" />
+    </buffer>
+    <buffer name="component 3B @ factory" xsi:type="buffer_infinite">
+      <item name="component 3B" />
+      <location name="factory" />
+    </buffer>
+  </buffers>
+  <operationplans>
+    <operationplan id="WIP 3A">
+      <operation name="production 3"/>
+      <start>2021-01-01T00:00:00</start>
+      <quantity>100</quantity>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan id="WIP 3B">
+      <operation name="production 3"/>
+      <start>2021-02-01T00:00:00</start>
+      <quantity>100</quantity>
+      <quantity_completed>60</quantity_completed>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan id="WIP 3C">
+      <operation name="production 3"/>
+      <start>2021-03-01T00:00:00</start>
+      <quantity>100</quantity>
+      <quantity_completed>60</quantity_completed>
+      <status>approved</status>
+    </operationplan>
+    <operationplan id="WIP 3D">
+      <operation name="production 3"/>
+      <end>2021-04-01T00:00:00</end>
+      <quantity>100</quantity>
+      <quantity_completed>60</quantity_completed>
+      <status>approved</status>
+    </operationplan>
+    <operationplan id="WIP 3E">
+      <operation name="production 3"/>
+      <end>2021-05-01T00:00:00</end>
+      <quantity>100</quantity>
+      <quantity_completed>60</quantity_completed>
+    </operationplan>
+    <operationplan id="WIP 3F">
+      <operation name="production 3"/>
+      <end>2021-06-01T00:00:00</end>
+      <quantity>100</quantity>
+      <quantity_completed>200</quantity_completed>
+      <status>approved</status>
+    </operationplan>
+    <operationplan id="WIP 3G">
+      <operation name="production 3"/>
+      <start>2020-12-01T00:00:00</start>
+      <quantity>100</quantity>
+      <quantity_completed>50</quantity_completed>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan id="WIP 3H">
+      <operation name="production 3"/>
+      <start>2020-12-01T00:00:00</start>
+      <end>2020-12-10T00:00:00</end>
+      <quantity>100</quantity>
+      <quantity_completed>50</quantity_completed>
+      <status>approved</status>
+    </operationplan>
+  </operationplans>
+
+  <operations>
+    <operation name="production 4" xsi:type="operation_time_per" duration="P1D" duration_per="PT1H">
+      <location name="factory" />
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="item 4" />
+          <quantity>2</quantity>
+          <quantity_fixed>1</quantity_fixed>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="component 4A" />
+          <quantity>-2</quantity>
+          <quantity_fixed>-1</quantity_fixed>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="component 4B" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="resource 4" />
+          <quantity>1</quantity>
+        </load>
+      </loads>
+    </operation>
+  </operations>
+  <buffers>
+    <buffer name="component 4A @ factory" xsi:type="buffer_infinite">
+      <item name="component 4A" />
+      <location name="factory" />
+    </buffer>
+    <buffer name="component 4B @ factory" xsi:type="buffer_infinite">
+      <item name="component 4B" />
+      <location name="factory" />
+    </buffer>
+  </buffers>
+  <operationplans>
+    <operationplan id="WIP 4A">
+      <operation name="production 4"/>
+      <start>2021-01-01T00:00:00</start>
+      <quantity>100</quantity>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan id="WIP 4B">
+      <operation name="production 4"/>
+      <start>2021-02-01T00:00:00</start>
+      <quantity>100</quantity>
+      <quantity_completed>60</quantity_completed>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan id="WIP 4C">
+      <operation name="production 4"/>
+      <start>2021-03-01T00:00:00</start>
+      <quantity>100</quantity>
+      <quantity_completed>60</quantity_completed>
+      <status>approved</status>
+    </operationplan>
+    <operationplan id="WIP 4D">
+      <operation name="production 4"/>
+      <end>2021-04-01T00:00:00</end>
+      <quantity>100</quantity>
+      <quantity_completed>60</quantity_completed>
+      <status>approved</status>
+    </operationplan>
+    <operationplan id="WIP 4E">
+      <operation name="production 4"/>
+      <end>2021-05-01T00:00:00</end>
+      <quantity>100</quantity>
+      <quantity_completed>60</quantity_completed>
+    </operationplan>
+    <operationplan id="WIP 4F">
+      <operation name="production 4"/>
+      <end>2021-06-01T00:00:00</end>
+      <quantity>100</quantity>
+      <quantity_completed>200</quantity_completed>
+      <status>approved</status>
+    </operationplan>
+    <operationplan id="WIP 4G">
+      <operation name="production 4"/>
+      <start>2020-12-01T00:00:00</start>
+      <quantity>100</quantity>
+      <quantity_completed>50</quantity_completed>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan id="WIP 4H">
+      <operation name="production 4"/>
+      <end>2020-12-10T00:00:00</end>
+      <start>2020-12-01T00:00:00</start>
+      <quantity>100</quantity>
+      <quantity_completed>50</quantity_completed>
+      <status>approved</status>
+    </operationplan>
+  </operationplans>
+
+  <?python
 frepple.saveplan("output.1.xml")
 frepple.saveXMLfile("output.2.xml")
 ?>

@@ -30,6 +30,15 @@ Release notes
     day will show slightly different results. For the majority of users, this is confusing and
     not needed. With the new "today" keyword the plan will be stable during the day. 
   
+- | A new parameter "WIP.produce_full_quantity" provides finer control on the behavior of
+    the completed_quantity field of manufacturing orders.
+  | When set to "false" (the default) a partially completed manufacturing order 
+    is producing only the remaining quantity of material. We assume that the on hand
+    inventory has already been incremented to reflect the produced material.
+  | When set to "true" a partially completed manufacturing ordre will still produce
+    the full quantity of the material. We assume that the produced material will only
+    be booked as inventory when the manufacturing order is fully finished.
+
 .. rubric:: User interface
 
 - | Ability to change the number of records on a page.

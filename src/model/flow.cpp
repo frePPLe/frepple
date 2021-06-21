@@ -249,7 +249,8 @@ pair<Date, double> FlowStart::getFlowplanDateQuantity(
   else {
     auto q = getQuantityFixed() +
              fl->getOperationPlan()->getQuantity() * getQuantity();
-    if (fl->getOperationPlan()->getQuantityCompleted() && isConsumer())
+    if (fl->getOperationPlan()->getQuantityCompleted() &&
+        (isConsumer() || !Plan::instance().getWipProduceFullQuantity()))
       return make_pair(dt, q * fl->getOperationPlan()->getQuantityRemaining() /
                                fl->getOperationPlan()->getQuantity());
     else
@@ -283,7 +284,8 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const {
   else {
     auto q = getQuantityFixed() +
              fl->getOperationPlan()->getQuantity() * getQuantity();
-    if (fl->getOperationPlan()->getQuantityCompleted() && isConsumer())
+    if (fl->getOperationPlan()->getQuantityCompleted() &&
+        (isConsumer() || !Plan::instance().getWipProduceFullQuantity()))
       return make_pair(dt, q * fl->getOperationPlan()->getQuantityRemaining() /
                                fl->getOperationPlan()->getQuantity());
     else
@@ -315,7 +317,8 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
     else {
       auto q = getQuantityFixed() +
                fl->getOperationPlan()->getQuantity() * getQuantity();
-      if (fl->getOperationPlan()->getQuantityCompleted() && isConsumer())
+      if (fl->getOperationPlan()->getQuantityCompleted() &&
+          (isConsumer() || !Plan::instance().getWipProduceFullQuantity()))
         return make_pair(dt,
                          q * fl->getOperationPlan()->getQuantityRemaining() /
                              fl->getOperationPlan()->getQuantity());
@@ -332,7 +335,8 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
   else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
     total_quantity = 0.0;
   else if (fl->getOperationPlan()->getQuantity() &&
-           fl->getOperationPlan()->getQuantityCompleted() && isConsumer())
+           fl->getOperationPlan()->getQuantityCompleted() &&
+           (isConsumer() || !Plan::instance().getWipProduceFullQuantity()))
     total_quantity *= fl->getOperationPlan()->getQuantityRemaining() /
                       fl->getOperationPlan()->getQuantity();
   double batches = ceil((getQuantity() > 0 ? total_quantity : -total_quantity) /

@@ -86,6 +86,16 @@ WIP.consume_material        | Determines whether confirmed manufacturing orders 
 WIP.consume_capacity        | Determines whether confirmed manufacturing orders, purchase orders 
                               and distribution orders consume capacity or not.
                             | Default is true.
+WIP.produce_full_quantity   | Controls how material is produced from partially completed
+                              manufacturing orders.
+                            | When set to "false" (the default) a partially completed manufacturing
+                              order is producing only the remaining quantity of material. We assume
+                              that the on hand inventory has already been incremented to reflect 
+                              the produced material.
+                            | When set to "true" a partially completed manufacturing ordre will 
+                              still produce the full quantity of the material. We assume that the
+                              produced material will only be booked as inventory when the 
+                              manufacturing order is fully finished.
 =========================== =======================================================================
 
 **Demand forecasting parameters** 

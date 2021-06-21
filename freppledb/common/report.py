@@ -1919,7 +1919,18 @@ class GridReport(View):
                             orig_repr = force_str(obj)
                             if isinstance(cls.model._meta.pk, CharField):
                                 # The primary key is a string
-                                obj.pk = "Copy of %s" % key
+                                copy_index = 1
+                                basekey = key.partition(" - copy #")[0]
+                                while True:
+                                    obj.pk = "%s - copy #%s" % (basekey, copy_index)
+                                    if (
+                                        cls.model.objects.using(request.database)
+                                        .filter(pk=obj.pk)
+                                        .exists()
+                                    ):
+                                        copy_index += 1
+                                    else:
+                                        break
                             elif isinstance(cls.model._meta.pk, AutoField):
                                 # The primary key is an auto-generated number
                                 obj.pk = None

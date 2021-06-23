@@ -490,6 +490,34 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0<br>';
         break;
+        case 'producedPOconfirmed':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['producedPOconfirmed']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['producedPOconfirmed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
+              "/?flowdate__gte=" + options['colModel']['startdate'] +
+              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+              "&amp;quantity__gte=0&amp;noautofilter&amp;operationplan__type=PO&amp;operationplan__status__in=confirmed,approved,completed" +
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
+        case 'producedPOproposed':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['producedPOproposed']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['producedPOproposed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
+              "/?flowdate__gte=" + options['colModel']['startdate'] +
+              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+              "&amp;quantity__gte=0&amp;noautofilter&amp;operationplan__type=PO&amp;operationplan__status=proposed" +
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
       case 'work_in_progress_mo':
         if (options.colModel.history)
           result += '<br>';
@@ -511,6 +539,32 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?noautofilter" +
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
+        case 'on_order_po_confirmed':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['on_order_po_confirmed']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['on_order_po_confirmed']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
+              "/" + options['colModel']['enddate'] +
+              "/?noautofilter&amp;status__in=confirmed,approved,completed" +
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
+        case 'on_order_po_proposed':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['on_order_po_proposed']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['on_order_po_proposed']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
+              "/" + options['colModel']['enddate'] +
+              "/?noautofilter&amp;status=proposed" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else

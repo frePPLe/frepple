@@ -271,6 +271,14 @@ class OverviewReport(GridPivot):
         ("producedMO", {"title": _("produced by MO"), "initially_hidden": True}),
         ("producedDO", {"title": _("produced by DO"), "initially_hidden": True}),
         ("producedPO", {"title": _("produced by PO"), "initially_hidden": True}),
+        (
+            "producedPOconfirmed",
+            {"title": _("produced by confirmed PO"), "initially_hidden": True},
+        ),
+        (
+            "producedPOproposed",
+            {"title": _("produced by proposed PO"), "initially_hidden": True},
+        ),
         ("endoh", {"title": _("end inventory")}),
         (
             "total_in_progress",
@@ -281,6 +289,14 @@ class OverviewReport(GridPivot):
             {"title": _("work in progress MO"), "initially_hidden": True},
         ),
         ("on_order_po", {"title": _("on order PO"), "initially_hidden": True}),
+        (
+            "on_order_po_confirmed",
+            {"title": _("on order confirmed PO"), "initially_hidden": True},
+        ),
+        (
+            "on_order_po_proposed",
+            {"title": _("on order proposed PO"), "initially_hidden": True},
+        ),
         ("in_transit_do", {"title": _("in transit DO"), "initially_hidden": True}),
     )
 
@@ -452,6 +468,8 @@ class OverviewReport(GridPivot):
              select jsonb_build_object(
                'work_in_progress_mo', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
                'on_order_po', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
+               'on_order_po_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
+               'on_order_po_proposed', sum(case when operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
                'in_transit_do', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
                'total_in_progress', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'consumed', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
@@ -461,7 +479,9 @@ class OverviewReport(GridPivot):
                'produced', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end)
+               'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedPOconfirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedPOproposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end)
                )
              from operationplanmaterial opm
              inner join operationplan
@@ -543,7 +563,7 @@ class OverviewReport(GridPivot):
                         request.report_startdate,
                         request.report_startdate,  # safetystock
                     )
-                    + (request.report_startdate,) * 9
+                    + (request.report_startdate,) * 11
                     + baseparams  # ongoing
                     + (  # opplanmat
                         request.current_date,
@@ -646,6 +666,12 @@ class OverviewReport(GridPivot):
                         "producedPO": None
                         if history
                         else row[numfields - 1]["producedPO"] or 0,
+                        "producedPOconfirmed": None
+                        if history
+                        else row[numfields - 1]["producedPOconfirmed"] or 0,
+                        "producedPOproposed": None
+                        if history
+                        else row[numfields - 1]["producedPOproposed"] or 0,
                         "total_in_progress": None
                         if history
                         else row[numfields - 1]["total_in_progress"] or 0,
@@ -655,6 +681,12 @@ class OverviewReport(GridPivot):
                         "on_order_po": None
                         if history
                         else row[numfields - 1]["on_order_po"] or 0,
+                        "on_order_po_confirmed": None
+                        if history
+                        else row[numfields - 1]["on_order_po_confirmed"] or 0,
+                        "on_order_po_proposed": None
+                        if history
+                        else row[numfields - 1]["on_order_po_proposed"] or 0,
                         "in_transit_do": None
                         if history
                         else row[numfields - 1]["in_transit_do"] or 0,

@@ -770,7 +770,7 @@ class Comment(models.Model):
         ordering = ("id",)
         verbose_name = _("comment")
         verbose_name_plural = _("comments")
-        default_permissions = []
+        default_permissions = ("add",)
 
     def __str__(self):
         return "%s: %s..." % (self.object_pk, self.comment[:50])

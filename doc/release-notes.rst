@@ -55,6 +55,10 @@ Release notes
   | This feature was introduced in the previous release. User feedback showed that it's
     not uncommon to have data columns outside of the table. These were silently being ignored with 6.14. 
   | Columns next to the data table will now still be read, similar to the behavior before 6.14.
+  
+- | Addition of 4 fields to the inventory report: Produced by confirmed PO, Produced by proposed PO,
+    On order confirmed PO, On order proposed PO. These 4 fields allow the planner to understand in a
+    glance if the purchased quantities are coming from a confirmed or a proposed PO.
 
 - | Report time settings are now scenario specific.
 

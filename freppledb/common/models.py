@@ -201,7 +201,7 @@ class HierarchyModel(models.Model):
             rootname = "All %ss" % cls._meta.db_table
             obj, created = cls.objects.using(database).get_or_create(name=rootname)
             if created:
-                obj.description = "Automatically created root object"
+                obj.source = "Automatically created root object"
                 obj.save()
             else:
                 # This is to force hierarchy rebuild that may not occur as all lft values are populated.

@@ -43,18 +43,18 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     $scope.admin_escape = admin_escape;
     $scope.url_prefix = url_prefix;
     $scope.mode = mode;
-    
+
     $scope.opptype = {
-        'MO': gettextCatalog.getString('Manufacturing Order'),
-        'PO': gettextCatalog.getString('Purchase Order'),
-        'DO': gettextCatalog.getString('Distribution Order'),
-        'STCK': gettextCatalog.getString('Stock'),
-        'DLVR': gettextCatalog.getString('Delivery'),
+      'MO': gettextCatalog.getString('Manufacturing Order'),
+      'PO': gettextCatalog.getString('Purchase Order'),
+      'DO': gettextCatalog.getString('Distribution Order'),
+      'STCK': gettextCatalog.getString('Stock'),
+      'DLVR': gettextCatalog.getString('Delivery'),
     };
-    
+
     getColStyle();
-    
-    function getColStyle() {    
+
+    function getColStyle() {
       // Column styles
       switch ($scope.kanbancolumns.length) {
         case 1:
@@ -72,7 +72,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
         case 4:
           $scope.colstyle = 'col-md-3';
           $scope.colsum = 12;
-          break;        
+          break;
         case 5:
           $scope.colstyle = 'col-md-3';
           $scope.colsum = 15;
@@ -80,11 +80,11 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
         case 6:
           $scope.colstyle = 'col-md-2';
           $scope.colsum = 12;
-          break;        
+          break;
         case 7:
           $scope.colstyle = 'col-md-2';
           $scope.colsum = 14;
-          break;        
+          break;
         case 8:
           $scope.colstyle = 'col-md-2';
           $scope.colsum = 16;
@@ -94,7 +94,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
           $scope.colsum = $scope.kanbancolumns.length;
       }
       $scope.$parent.colsum = $scope.colsum;
-    }   
+    }
 
     function getHeight(gutter) {
       if (preferences && preferences['height'])
@@ -103,7 +103,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
         return 220;
     }
     $scope.getHeight = getHeight;
-    
+
     function hideColumn(col) {
       var idx = $scope.$parent.kanbancolumns.indexOf(col);
       $scope.$parent.kanbancolumns.splice(idx, 1);
@@ -112,7 +112,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     };
     $scope.hideColumn = hideColumn;
     $scope.grid = grid;
-    
+
     // Handler for selecting a card
     function selectCard(opplan) {
       if ($scope.curselected) {
@@ -126,9 +126,19 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     };
     $scope.selectCard = selectCard;
 
-    $scope.$on('selectedEdited', function(event, field, oldvalue, newvalue) {
-      if ($scope.curselected === null) return;      
-      $scope.changeCard($scope.curselected, field, oldvalue);
+    $scope.$on('selectedEdited', function (event, field, oldvalue, newvalue) {
+      if ($scope.curselected === null) return;
+      if (field == "loadplans") {
+        // Special logic to convert from detail-opplan to card change
+        var res = [];
+        angular.forEach(newvalue, function (theloadplan) {
+          res.push([theloadplan.resource.name, theloadplan.quantity]);
+        });
+        $scope.changeCard($scope.curselected, "resource", $scope.curselected.resource, res);
+        $scope.curselected["resource"] = res;
+      }
+      else
+        $scope.changeCard($scope.curselected, field, oldvalue, newvalue);
       if (field === "status") {
         var idx = $scope.kanbanoperationplans[oldvalue].rows.indexOf($scope.curselected);
         if (idx != -1) {
@@ -138,9 +148,14 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
           $scope.kanbanoperationplans[newvalue].records++;
         }
       }
-      $scope.curselected[field] = newvalue;                  
+      if (field != "loadplans") {
+        if ($scope.curselected.hasOwnProperty("operationplan__" + field))
+          $scope.curselected["operationplan__" + field] = newvalue;
+        else
+          $scope.curselected[field] = newvalue;
+      }
     });
-                
+
     function changeCard(opplan, field, oldvalue, newvalue) {
       if (!opplan.hasOwnProperty(field + "Original"))
         opplan[field + "Original"] = oldvalue;
@@ -160,7 +175,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     function HandlerDragOver(event) {
       event.preventDefault();
     }
-        
+
     function HandlerDrop(event) {
       var endvalue = $(event.target).closest(".column").attr("data-column");
       if (endvalue) {
@@ -170,14 +185,14 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
           // Dragging a card
           var endindex = $(event.target).closest(".card");
           if (endindex) endindex = endindex.attr("data-index");
-          $scope.$apply(function() {
+          $scope.$apply(function () {
             var o = $scope.kanbanoperationplans[startvalue].rows[startindex];
             $scope.kanbanoperationplans[startvalue].rows.splice(startindex, 1);
             if (endindex) {
               // Insert in the middle
               $scope.kanbanoperationplans[endvalue].rows.splice(
-                  endindex > startindex && endvalue == startvalue ? endindex -1 : endindex, 0, o
-                  );
+                endindex > startindex && endvalue == startvalue ? endindex - 1 : endindex, 0, o
+              );
             }
             else
               // Insert at the top
@@ -191,19 +206,19 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
               .prop("disabled", false);
             $(window).off('beforeunload', upload.warnUnsavedChanges);
             $(window).on('beforeunload', upload.warnUnsavedChanges);
-      
+
             // Detect card changes (including reverting to the original situation)
             if (o.hasOwnProperty("operationplan__status")) {
               if (!o.hasOwnProperty("operationplan__statusOriginal")) {
-                 if (o.operationplan__status != endvalue) {
-                   o.operationplan__statusOriginal = o.operationplan__status;
-                   o.operationplan__status = endvalue;
-                   o.status = endvalue;
-                   o.dirty = true;
-                 }
+                if (o.operationplan__status != endvalue) {
+                  o.operationplan__statusOriginal = o.operationplan__status;
+                  o.operationplan__status = endvalue;
+                  o.status = endvalue;
+                  o.dirty = true;
+                }
               }
               else {
-                if (o.operationplan__statusOriginal == endvalue){
+                if (o.operationplan__statusOriginal == endvalue) {
                   o.dirty = false;
                   delete o.operationplan__statusOriginal;
                 } else {
@@ -215,14 +230,14 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
             }
             else {
               if (!o.hasOwnProperty("statusOriginal")) {
-                 if (o.status != endvalue) {
-                   o.statusOriginal = o.status;
-                   o.status = endvalue;
-                   o.dirty = true;
-                 }
+                if (o.status != endvalue) {
+                  o.statusOriginal = o.status;
+                  o.status = endvalue;
+                  o.dirty = true;
+                }
               }
               else {
-                if (o.statusOriginal == endvalue){
+                if (o.statusOriginal == endvalue) {
                   o.dirty = false;
                   delete o.statusOriginal;
                 } else {
@@ -236,7 +251,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
         }
         else {
           // Dragging a column
-          $scope.$apply(function() {
+          $scope.$apply(function () {
             var startindex = $scope.kanbancolumns.indexOf(startvalue);
             var endindex = $scope.kanbancolumns.indexOf(endvalue);
             var tmp = $scope.kanbancolumns[startindex];
@@ -248,33 +263,33 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
       }
       event.preventDefault();
     }
-        
+
     function HandlerDragStart(event) {
       event.originalEvent.dataTransfer.setData(
-          "startindex",
-          $(event.target).attr("data-index")
-          );
+        "startindex",
+        $(event.target).attr("data-index")
+      );
       event.originalEvent.dataTransfer.setData(
-          "startcolumn",
-          $(event.target).closest(".column").attr("data-column")
-          );
+        "startcolumn",
+        $(event.target).closest(".column").attr("data-column")
+      );
       event.stopPropagation();
     };
-    
-    function enableDragDrop() {      
-      $elem.on('dragover', '.column, .card', HandlerDragOver );
+
+    function enableDragDrop() {
+      $elem.on('dragover', '.column, .card', HandlerDragOver);
       $elem.on('drop', '.column', HandlerDrop);
       $elem.on('dragstart', '.column .panel .panel-heading, .card', HandlerDragStart);
     }
     $scope.enableDragDrop = enableDragDrop;
-    
-    function disableDragDrop() {      
-      $elem.off('dragover', '.column, .card', HandlerDragOver );
+
+    function disableDragDrop() {
+      $elem.off('dragover', '.column, .card', HandlerDragOver);
       $elem.off('drop', '.column', HandlerDrop);
       $elem.off('dragstart', '.column .panel .panel-heading, .card', HandlerDragStart);
     }
     $scope.disableDragDrop = disableDragDrop;
-        
+
     $scope.$on('changeMode', function (event, mode) {
       $scope.mode = mode;
       if ($scope.editable && mode == "kanban")
@@ -282,7 +297,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
       else
         disableDragDrop();
     });
-    
+
     if ($scope.editable && mode == "kanban")
       enableDragDrop();
   }

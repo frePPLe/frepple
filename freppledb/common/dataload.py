@@ -297,7 +297,10 @@ def _parseData(model, data, rowmapper, user, database, ping):
 
     # Detect excel autofilter data tables
     if isinstance(data, Worksheet) and data.auto_filter.ref:
-        bounds = CellRange(data.auto_filter.ref).bounds
+        try:
+            bounds = CellRange(data.auto_filter.ref).bounds
+        except Exception:
+            bounds = None
     else:
         bounds = None
 

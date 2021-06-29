@@ -104,7 +104,13 @@
         <small data-ng-if="operationplan.colmodel.startdate">({{ operationplan.colmodel.startdate.type|translate }})</small>
         <small data-ng-if="operationplan.colmodel.operationplan__startdate">({{ operationplan.colmodel.operationplan__startdate.type|translate }})</small>
       </td>
-      <td>{{(operationplan.start || operationplan.operationplan__startdate)|formatdate}}</td>
+      <td>
+        {{(operationplan.start || operationplan.operationplan__startdate)|formatdate}}
+        <!--
+        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("start")' class="form-control" type="datetime-local" ng-model="operationplan.start" ng-model-options="{debounce: 300}">
+        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__startdate")' class="form-control" type="datetime-local" ng-model="operationplan.operationplan__startdate" ng-model-options="{debounce: 300}">
+        -->
+      </td>
     </tr>
     <tr data-ng-if="operationplan.setupend">
       <td><b style="text-transform: capitalize">{{'setup end date'|translate}}</b></td>
@@ -119,21 +125,35 @@
         <small data-ng-if="operationplan.colmodel.enddate">({{ operationplan.colmodel.enddate.type|translate }})</small>
         <small data-ng-if="operationplan.colmodel.operationplan__enddate">({{ operationplan.colmodel.operationplan__enddate.type|translate }})</small>
       </td>
-      <td>{{(operationplan.end || operationplan.operationplan__enddate)|formatdate}}</td>
+      <td>
+        {{(operationplan.end || operationplan.operationplan__enddate)|formatdate}}
+        <!--
+        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("end")' class="form-control" type="datetime-local" ng-model="operationplan.end" ng-model-options="{debounce: 300}">
+        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__enddate")' class="form-control" type="datetime-local" ng-model="operationplan.operationplan__enddate" ng-model-options="{debounce: 300}">
+        -->
+      </td>
     </tr>
     <tr>
       <td><b style="text-transform: capitalize">{{'quantity'|translate}}</b>&nbsp;
         <small data-ng-if="operationplan.id === -1 && !operationplan.colmodel.operationplan__quantity">({{ operationplan.colmodel.quantity.type|translate }})</small>
         <small data-ng-if="operationplan.id === -1 && operationplan.colmodel.operationplan__quantity">({{ operationplan.colmodel.operationplan__quantity.type|translate }})</small>
       </td>
-      <td>{{(operationplan.operationplan__quantity || operationplan.quantity || 0)|number}}</td>
+      <td>
+        <span data-ng-if="operationplan.id === -1">{{(operationplan.operationplan__quantity || operationplan.quantity || 0)|number}}</span>
+        <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__quantity")' class="form-control" type="number" ng-model="operationplan.quantity" ng-model-options="{debounce: 300}">
+        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__quantity")' class="form-control" type="number" ng-model="operationplan.operationplan__quantity" ng-model-options="{debounce: 300}">
+      </td>
     </tr>
     <tr data-ng-if="operationplan.type === 'MO' || (operationplan.id === -1 && (operationplan.colmodel.quantity_completed || operationplan.colmodel.operationplan__quantity_completed))">
       <td><b style="text-transform: capitalize">{{'quantity completed'|translate}}</b>&nbsp;
         <small data-ng-if="operationplan.id === -1 && !operationplan.colmodel.operationplan__quantity_completed">({{ operationplan.colmodel.quantity_completed.type|translate }})</small>
         <small data-ng-if="operationplan.id === -1 && operationplan.colmodel.operationplan__quantity_completed">({{ operationplan.colmodel.operationplan__quantity_completed.type|translate }})</small>
       </td>
-      <td>{{(operationplan.operationplan__quantity_completed || operationplan.quantity_completed || 0)|number}}</td>
+      <td>
+        <span data-ng-if="operationplan.id === -1">{{(operationplan.operationplan__quantity_completed || operationplan.quantity_completed || 0)|number}}</span>
+        <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__quantity_completed")' class="form-control" type="number" ng-model="operationplan.quantity_completed" ng-model-options="{debounce: 300}">
+        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__quantity_completed")' class="form-control" type="number" ng-model="operationplan.operationplan__quantity_completed" ng-model-options="{debounce: 300}">
+      </td>
     </tr>    
     <tr data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize">{{'criticality'|translate}}</b>&nbsp;

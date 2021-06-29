@@ -295,8 +295,20 @@ angular.module('calendar', [])
 
         scope.$on('selectedEdited', function (event, field, oldvalue, newvalue) {
           if (scope.curselected === null) return;
-          scope.changeCard(scope.curselected, field, oldvalue);
-          scope.curselected[field] = newvalue;
+          if (scope.mode && !scope.mode.startsWith("calendar")) return;
+          if (field == "loadplans") {
+            // Special logic to convert from detail-opplan to card change
+            var res = [];
+            angular.forEach(newvalue, function (theloadplan) {
+              res.push([theloadplan.resource.name, theloadplan.quantity]);
+            });
+            scope.changeCard(scope.curselected, "resource", scope.curselected.resource, res);
+            scope.curselected["resource"] = res;
+          }
+          else {
+            scope.changeCard(scope.curselected, field, oldvalue);
+            scope.curselected[field] = newvalue;
+          }
         });
 
         scope.$on('changeDate', function (event, direction) {
@@ -333,20 +345,21 @@ angular.module('calendar', [])
         };
 
         function HandlerDrop(event) {
-          // Check the start and end date
           var dragstart = new Date(event.originalEvent.dataTransfer.getData("dragstart"));
           var dragend = new Date($(event.target).closest(".datecell").attr("data-date"));
           var dragreference = event.originalEvent.dataTransfer.getData("dragreference");
-          if (dragstart.getTime() === dragend.getTime()) {
-            event.preventDefault();
-            return;
-          }
-
-          // Only dragging inside the same row is allowed (for now...)
           var row_dragstart = event.originalEvent.dataTransfer.getData("dragrow");
           var row_dragend = $(event.target).closest("[data-row]").attr("data-row");
-          if (row_dragstart != row_dragend) {
+
+          // Validate the move
+          if (scope.grouping === "resource" && row_dragstart == row_dragend && dragstart.getTime() === dragend.getTime()) {
+            // No change of row or date, when grouping by resource
             event.preventDefault();
+            return;
+          } else if (scope.grouping !== "resource" && dragstart.getTime() === dragend.getTime()) {
+            // No change of date
+            event.preventDefault();
+            row_dragend = row_dragstart; // Changing rows is only allowed when grouping by resource
             return;
           }
 
@@ -354,6 +367,7 @@ angular.module('calendar', [])
             for (var dragcard of scope.$parent.calendarevents) {
               if ((dragcard["id"] || dragcard["reference"]) == dragreference) {
                 // Identified the card that is being dropped
+                var changed = false;
                 if (scope.isStart(dragcard, dragstart)) {
                   // Dragging the start date card
                   if (dragcard.hasOwnProperty("operationplan__startdate")) {
@@ -362,14 +376,14 @@ angular.module('calendar', [])
                     dragcard.startdate = dragend;
                     if (dragcard.operationplan__enddate < dragend)
                       dragcard.operationplan__enddate = dragend;
-                    if (dropcallback) dropcallback(dragcard, true);
+                    changed = true;
                   }
                   else if (dragcard.hasOwnProperty("startdate")) {
                     scope.changeCard(dragcard, "startdate", dragcard.startdate, dragend);
                     dragcard.startdate = dragend;
                     if (dragcard.enddate < dragend)
                       dragcard.enddate = dragend;
-                    if (dropcallback) dropcallback(dragcard, true);
+                    changed = true;
                   }
                 }
                 else if (scope.isEnd(dragcard, dragstart)) {
@@ -380,14 +394,14 @@ angular.module('calendar', [])
                     dragcard.enddate = dragend;
                     if (dragcard.operationplan__startdate > dragend)
                       dragcard.operationplan__startdate = dragend;
-                    if (dropcallback) dropcallback(dragcard, true);
+                    changed = true;
                   }
                   else if (dragcard.hasOwnProperty("enddate")) {
                     scope.changeCard(dragcard, "enddate", dragcard.enddate, dragend);
                     dragcard.enddate = dragend;
                     if (dragcard.startdate > dragend)
                       dragcard.startdate = dragend;
-                    if (dropcallback) dropcallback(dragcard, true);
+                    changed = true;
                   }
                 }
                 else {
@@ -401,7 +415,7 @@ angular.module('calendar', [])
                     dragcard.startdate = newstart;
                     if (dragcard.operationplan__enddate < newstart)
                       dragcard.operationplan__enddate = dragend;
-                    if (dropcallback) dropcallback(dragcard, true);
+                    changed = true;
                   }
                   else if (dragcard.hasOwnProperty("startdate")) {
                     var newstart = new Date(dragcard["startdate"]);
@@ -410,9 +424,15 @@ angular.module('calendar', [])
                     dragcard.startdate = newstart;
                     if (dragcard.enddate < newstart)
                       dragcard.enddate = newstart;
-                    if (dropcallback) dropcallback(dragcard, true);
+                    changed = true;
                   }
                 }
+                if (row_dragstart != row_dragend && dragcard.resource == row_dragstart) {
+                  scope.changeCard(dragcard, "resource", dragcard.row_dragstart, row_dragend);
+                  dragcard.resource = row_dragend;
+                  changed = true;
+                }
+                if (changed && dropcallback) dropcallback(dragcard, true);
                 break;
               }
             }

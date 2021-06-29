@@ -2789,7 +2789,7 @@ function about_show() {
 // Display import dialog for CSV-files
 //----------------------------------------------------------------------------
 
-function import_show(title, paragraph, multiple, fxhr, initialDropped) {
+function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlabel) {
   var xhr = { abort: function () { } };
 
   $('#timebuckets').modal('hide');
@@ -2854,6 +2854,9 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped) {
   }
   if (title !== '') {
     $("#modal_title").text(title);
+  }
+  if (typeof buttonlabel !== 'undefined') {
+    $("#importbutton").val(buttonlabel);
   }
   if (paragraph === null) {
     $("#extra_text").remove();

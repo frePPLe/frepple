@@ -80,6 +80,8 @@ class OperatorDelete : public Solver {
    */
   void pushBuffers(OperationPlan*, bool consuming, bool producing);
 
+  void clearBuffers() { buffersToScan.clear(); }
+
   bool getConstrained() const { return constrained; }
 
   void setConstrained(bool b) { constrained = b; }

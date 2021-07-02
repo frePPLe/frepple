@@ -32,7 +32,13 @@ batchwindow           duration          | Allows to group proposed purchase orde
                                           together into a single one.
                                         | The default is 7 days, i.e. the algorithm will not propose
                                           to buy the same item twice during the same week.
-extra_safety_leadtime duration          | Adds a safety lead time on top of standard lead time.                                    
+extra_safety_leadtime duration          | Adds a safety lead time on top of standard lead time.
+                                        | The default is 0.
+                                        | The extra safety lead time is a soft constraint: we try
+                                          to receive the material this amount of time before the
+                                          actual requirement date. But in case of shortages we can
+                                          relax this and receive material closer to the requirement
+                                          date.
 effective_start       dateTime          Date when the record becomes valid.
 effective_end         dateTime          Date when the record becomes valid.
 resource              resource          | Optionally, it refers to a resource that represents the

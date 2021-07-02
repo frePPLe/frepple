@@ -12,6 +12,10 @@ Release notes
     or distribution orders together.
   | This makes is easier to model a purchasing or shipping frequency: "I buy this item
     once a month" / "I ship at least the requirements for the next month". 
+    
+- | The `itemsupplier <model-reference/item-suppliers.html>`_  table gets an extra 
+    field "extra safety leadtime". It specifies a time that needs to be added on top
+    of standard item supplier lead time for safety reasons.
 
 - | The plan.autoFenceOperations parameter instructs the solver to wait for existing
     supply rather than generating a new replenishment. In this release the logic has been

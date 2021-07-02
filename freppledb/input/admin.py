@@ -291,6 +291,7 @@ class ItemSupplier_admin(MultiDBModelAdmin):
                     "sizemultiple",
                     "sizemaximum",
                     "batchwindow",
+                    "extra_safety_leadtime",
                     "priority",
                     "fence",
                     "effective_start",

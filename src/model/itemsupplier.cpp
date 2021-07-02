@@ -218,6 +218,7 @@ OperationItemSupplier::OperationItemSupplier(ItemSupplier* i, Buffer* b)
   setSizeMinimum(i->getSizeMinimum());
   setSizeMaximum(i->getSizeMaximum());
   setBatchWindow(i->getBatchWindow());
+  setPostTime(i->getExtraSafetyLeadTime());
   setSource(i->getSource());
   setCost(i->getCost());
   setFence(i->getFence());

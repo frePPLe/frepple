@@ -394,6 +394,7 @@
       <xsd:element name="size_minimum" type="positiveDouble" />
       <xsd:element name="size_maximum" type="positiveDouble" />
       <xsd:element name="batchwindow" type="xsd:duration" />
+      <xsd:element name="extra_safety_leadtime" type="xsd:duration" />
       <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="priority" type="xsd:integer" />
       <xsd:element name="effective_start" type="xsd:dateTime" />

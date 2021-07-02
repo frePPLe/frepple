@@ -906,7 +906,7 @@ class loadItemSuppliers(LoadTask):
                     SELECT
                     supplier_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
                     cost, priority, effective_start, effective_end, source, leadtime,
-                    resource_id, resource_qty, fence, batchwindow
+                    resource_id, resource_qty, fence, batchwindow, extra_safety_leadtime
                     FROM itemsupplier %s
                     ORDER BY supplier_id, item_id, location_id, priority desc
                     """
@@ -933,6 +933,7 @@ class loadItemSuppliers(LoadTask):
                             batchwindow=i[15].total_seconds()
                             if i[15] is not None
                             else 7 * 86400,
+                            extra_safety_leadtime=i[16].total_seconds() if i[16] else 0,
                         )
                         if i[2]:
                             curitemsupplier.location = frepple.location(name=i[2])

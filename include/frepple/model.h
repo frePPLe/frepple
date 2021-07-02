@@ -4368,6 +4368,10 @@ class ItemSupplier : public Object,
     batchwindow = d;
   }
 
+  Duration getExtraSafetyLeadTime() const { return extra_safety_leadtime; }
+
+  void setExtraSafetyLeadTime(Duration d) { extra_safety_leadtime = d; }
+
   /* Return the applicable location. */
   Location* getLocation() const { return loc; }
 
@@ -4435,6 +4439,9 @@ class ItemSupplier : public Object,
                            &Cls::setSizeMultiple, 1.0);
     m->addDurationField<Cls>(Tags::batchwindow, &Cls::getBatchWindow,
                              &Cls::setBatchWindow);
+    m->addDurationField<Cls>(Tags::extra_safety_leadtime,
+                             &Cls::getExtraSafetyLeadTime,
+                             &Cls::setExtraSafetyLeadTime);
     m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum,
                            &Cls::setSizeMaximum, DBL_MAX);
     m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
@@ -4477,6 +4484,8 @@ class ItemSupplier : public Object,
   double cost = 0.0;
 
   Duration batchwindow;
+
+  Duration extra_safety_leadtime;
 
   /* Pointer to the head of the auto-generated purchase operation list.*/
   OperationItemSupplier* firstOperation = nullptr;

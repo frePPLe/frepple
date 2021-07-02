@@ -91,6 +91,7 @@ class Tags {
   static const Keyword endtime;
   static const Keyword entity;
   static const Keyword erase;
+  static const Keyword extra_safety_leadtime;
   static const Keyword factor;
   static const Keyword feasible;
   static const Keyword fence;

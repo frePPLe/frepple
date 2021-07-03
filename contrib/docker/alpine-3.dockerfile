@@ -35,7 +35,7 @@ RUN src=`basename --suffix=.tar.gz frepple-*` && \
   rm *.tar.gz && \
   cd $src && \
   sed -i '/lxml/d' requirements.txt && \
-  python3 -m pip upgrade pip && \
+  python3 -m pip install --upgrade pip && \
   python3 -m pip install -r requirements.txt && \
   mkdir build && \
   cd build && \

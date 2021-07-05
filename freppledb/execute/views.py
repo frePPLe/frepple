@@ -714,6 +714,9 @@ class FileManager:
                     if not extensions or not clean_filename.lower().endswith(
                         extensions
                     ):
+                        logger.error(
+                            "Failed file upload: incorrect file name '%s'" % filename
+                        )
                         response.write(
                             "%s: %s\n"
                             % (
@@ -785,6 +788,8 @@ class FileManager:
         for clean_filename in filelist:
             try:
                 os.remove(os.path.join(folder, clean_filename))
+            except FileNotFoundError:
+                logger.error("Failed file deletion: file does not exist")
             except Exception as e:
                 logger.error("Failed file deletion: %s" % e)
                 errorcount += 1

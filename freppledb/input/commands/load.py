@@ -1072,7 +1072,7 @@ class loadBuffers(LoadTask):
                     """
                 select
                   case
-                  when batch is not null
+                  when batch is distinct from ''
                     and exists (select 1 from item where item.name = buffer.item_id and item.type = 'make to order')
                     then item_id || ' - ' || batch || ' @ '||location_id
                   else
@@ -1092,7 +1092,7 @@ class loadBuffers(LoadTask):
                 from buffer
                 %s
                 group by case
-                  when batch is not null
+                  when batch is distinct from ''
                     and exists (select 1 from item where item.name = buffer.item_id and item.type = 'make to order')
                     then item_id || ' - ' || batch || ' @ '||location_id
                   else
@@ -1109,7 +1109,7 @@ class loadBuffers(LoadTask):
                             description=i[1],
                             location=frepple.location(name=i[2]),
                             item=frepple.item(name=i[3]),
-                            batch=i[12],
+                            batch=i[12] if i[12] else None,
                             onhand=max(i[4] or 0, 0),
                             category=i[9],
                             subcategory=i[10],
@@ -1121,7 +1121,7 @@ class loadBuffers(LoadTask):
                             description=i[1],
                             location=frepple.location(name=i[2]),
                             item=frepple.item(name=i[3]),
-                            batch=i[12],
+                            batch=i[12] if i[12] else None,
                             onhand=max(i[4] or 0, 0),
                             category=i[9],
                             subcategory=i[10],

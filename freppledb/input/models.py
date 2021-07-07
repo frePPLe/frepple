@@ -87,7 +87,9 @@ class CalendarBucket(AuditModel):
         related_name="buckets",
         on_delete=models.CASCADE,
     )
-    startdate = models.DateTimeField(_("start date"), null=True, blank=True)
+    startdate = models.DateTimeField(
+        _("start date"), null=True, blank=True, default=datetime(1971, 1, 1)
+    )
     enddate = models.DateTimeField(
         _("end date"), null=True, blank=True, default=datetime(2030, 12, 31)
     )
@@ -113,15 +115,27 @@ class CalendarBucket(AuditModel):
         def get_by_natural_key(self, calendar, startdate, enddate, priority):
             return self.get(
                 calendar=calendar,
-                startdate=startdate,
-                enddate=enddate,
+                startdate=startdate or datetime(1971, 1, 1),
+                enddate=enddate or datetime(2030, 12, 31),
                 priority=priority,
             )
 
     def natural_key(self):
-        return (self.calendar, self.startdate, self.enddate, self.priority)
+        return (
+            self.calendar,
+            self.startdate or datetime(1971, 1, 1),
+            self.enddate or datetime(2030, 12, 31),
+            self.priority,
+        )
 
     objects = Manager()
+
+    def validate_unique(self, exclude=None):
+        if self.startdate is None:
+            self.startdate = datetime(1971, 1, 1)
+        if self.enddate is None:
+            self.enddate = datetime(2030, 12, 31)
+        super().validate_unique(exclude=exclude)
 
     def __str__(self):
         return "%s" % self.id
@@ -451,10 +465,18 @@ class SubOperation(AuditModel):
         on_delete=models.CASCADE,
     )
     effective_start = models.DateTimeField(
-        _("effective start"), null=True, blank=True, help_text=_("Validity start date")
+        _("effective start"),
+        null=True,
+        blank=True,
+        help_text=_("Validity start date"),
+        default=datetime(1971, 1, 1),
     )
     effective_end = models.DateTimeField(
-        _("effective end"), null=True, blank=True, help_text=_("Validity end date")
+        _("effective end"),
+        null=True,
+        blank=True,
+        help_text=_("Validity end date"),
+        default=datetime(2030, 12, 31),
     )
 
     class Manager(MultiDBManager):
@@ -462,11 +484,20 @@ class SubOperation(AuditModel):
             return self.get(
                 operation=operation,
                 suboperation=suboperation,
-                effective_start=effective_start,
+                effective_start=effective_start or datetime(1971, 1, 1),
             )
 
     def natural_key(self):
-        return (self.operation, self.suboperation, self.effective_start)
+        return (
+            self.operation,
+            self.suboperation,
+            self.effective_start or datetime(1971, 1, 1),
+        )
+
+    def validate_unique(self, exclude=None):
+        if self.effective_start is None:
+            self.effective_start = datetime(1971, 1, 1)
+        super().validate_unique(exclude=exclude)
 
     objects = Manager()
 
@@ -544,7 +575,9 @@ class Buffer(AuditModel):
         null=False,
         on_delete=models.CASCADE,
     )
-    batch = models.CharField(_("batch"), max_length=300, null=True, blank=True)
+    batch = models.CharField(
+        _("batch"), max_length=300, null=True, blank=True, default=""
+    )
     onhand = models.DecimalField(
         _("onhand"),
         null=True,
@@ -580,12 +613,17 @@ class Buffer(AuditModel):
 
     class Manager(MultiDBManager):
         def get_by_natural_key(self, item, location, batch):
-            return self.get(item=item, location=location, batch=batch)
+            return self.get(item=item, location=location, batch=batch or "")
 
     def natural_key(self):
-        return (self.item, self.location, self.batch)
+        return (self.item, self.location, self.batch or "")
 
     objects = Manager()
+
+    def validate_unique(self, exclude=None):
+        if self.batch is None:
+            self.batch = ""
+        super().validate_unique(exclude=exclude)
 
     def __str__(self):
         return "%s @ %s" % (self.item.name, self.location.name)
@@ -952,10 +990,18 @@ class OperationMaterial(AuditModel):
         ),
     )
     effective_start = models.DateTimeField(
-        _("effective start"), null=True, blank=True, help_text=_("Validity start date")
+        _("effective start"),
+        null=True,
+        blank=True,
+        help_text=_("Validity start date"),
+        default=datetime(1971, 1, 1),
     )
     effective_end = models.DateTimeField(
-        _("effective end"), null=True, blank=True, help_text=_("Validity end date")
+        _("effective end"),
+        null=True,
+        blank=True,
+        help_text=_("Validity end date"),
+        default=datetime(2030, 12, 31),
     )
     name = models.CharField(
         _("name"),
@@ -997,16 +1043,23 @@ class OperationMaterial(AuditModel):
     class Manager(MultiDBManager):
         def get_by_natural_key(self, operation, item, effective_start):
             return self.get(
-                operation=operation, item=item, effective_start=effective_start
+                operation=operation,
+                item=item,
+                effective_start=effective_start or datetime(1971, 1, 1),
             )
 
     def natural_key(self):
-        return (self.operation, self.item, self.effective_start)
+        return (self.operation, self.item, self.effective_start or datetime(1971, 1, 1))
+
+    def validate_unique(self, exclude=None):
+        if self.effective_start is None:
+            self.effective_start = datetime(1971, 1, 1)
+        super().validate_unique(exclude=exclude)
 
     objects = Manager()
 
     def __str__(self):
-        if self.effective_start:
+        if self.effective_start and self.effective_start != datetime(1971, 1, 1):
             return "%s - %s - %s" % (
                 self.operation.name if self.operation else None,
                 self.item.name if self.item else None,
@@ -1074,10 +1127,18 @@ class OperationResource(AuditModel):
         ),
     )
     effective_start = models.DateTimeField(
-        _("effective start"), null=True, blank=True, help_text=_("Validity start date")
+        _("effective start"),
+        null=True,
+        blank=True,
+        help_text=_("Validity start date"),
+        default=datetime(1971, 1, 1),
     )
     effective_end = models.DateTimeField(
-        _("effective end"), null=True, blank=True, help_text=_("Validity end date")
+        _("effective end"),
+        null=True,
+        blank=True,
+        help_text=_("Validity end date"),
+        default=datetime(2030, 12, 31),
     )
     name = models.CharField(
         _("name"),
@@ -1112,16 +1173,27 @@ class OperationResource(AuditModel):
     class Manager(MultiDBManager):
         def get_by_natural_key(self, operation, resource, effective_start):
             return self.get(
-                operation=operation, resource=resource, effective_start=effective_start
+                operation=operation,
+                resource=resource,
+                effective_start=effective_start or datetime(1971, 1, 1),
             )
 
     def natural_key(self):
-        return (self.operation, self.resource, self.effective_start)
+        return (
+            self.operation,
+            self.resource,
+            self.effective_start or datetime(1971, 1, 1),
+        )
+
+    def validate_unique(self, exclude=None):
+        if self.effective_start is None:
+            self.effective_start = datetime(1971, 1, 1)
+        super().validate_unique(exclude=exclude)
 
     objects = Manager()
 
     def __str__(self):
-        if self.effective_start:
+        if self.effective_start and self.effective_start != datetime(1971, 1, 1):
             return "%s - %s - %s" % (
                 self.operation.name if self.operation else None,
                 self.resource.name if self.resource else None,
@@ -1259,10 +1331,18 @@ class ItemSupplier(AuditModel):
         help_text=_("Priority among all alternates"),
     )
     effective_start = models.DateTimeField(
-        _("effective start"), null=True, blank=True, help_text=_("Validity start date")
+        _("effective start"),
+        null=True,
+        blank=True,
+        help_text=_("Validity start date"),
+        default=datetime(1971, 1, 1),
     )
     effective_end = models.DateTimeField(
-        _("effective end"), null=True, blank=True, help_text=_("Validity end date")
+        _("effective end"),
+        null=True,
+        blank=True,
+        help_text=_("Validity end date"),
+        default=datetime(2030, 12, 31),
     )
     resource = models.ForeignKey(
         Resource,
@@ -1296,11 +1376,21 @@ class ItemSupplier(AuditModel):
                 item=item,
                 location=location,
                 supplier=supplier,
-                effective_start=effective_start,
+                effective_start=effective_start or datetime(1971, 1, 1),
             )
 
     def natural_key(self):
-        return (self.item, self.location, self.supplier, self.effective_start)
+        return (
+            self.item,
+            self.location,
+            self.supplier,
+            self.effective_start or datetime(1971, 1, 1),
+        )
+
+    def validate_unique(self, exclude=None):
+        if self.effective_start is None:
+            self.effective_start = datetime(1971, 1, 1)
+        super().validate_unique(exclude=exclude)
 
     objects = Manager()
 
@@ -1401,10 +1491,18 @@ class ItemDistribution(AuditModel):
         help_text=_("Priority among all alternates"),
     )
     effective_start = models.DateTimeField(
-        _("effective start"), null=True, blank=True, help_text=_("Validity start date")
+        _("effective start"),
+        null=True,
+        blank=True,
+        help_text=_("Validity start date"),
+        default=datetime(1971, 1, 1),
     )
     effective_end = models.DateTimeField(
-        _("effective end"), null=True, blank=True, help_text=_("Validity end date")
+        _("effective end"),
+        null=True,
+        blank=True,
+        help_text=_("Validity end date"),
+        default=datetime(2030, 12, 31),
     )
     resource = models.ForeignKey(
         Resource,
@@ -1438,11 +1536,21 @@ class ItemDistribution(AuditModel):
                 item=item,
                 location=location,
                 origin=origin,
-                effective_start=effective_start,
+                effective_start=effective_start or datetime(1971, 1, 1),
             )
 
     def natural_key(self):
-        return (self.item, self.location, self.origin, self.effective_start)
+        return (
+            self.item,
+            self.location,
+            self.origin,
+            self.effective_start or datetime(1971, 1, 1),
+        )
+
+    def validate_unique(self, exclude=None):
+        if self.effective_start is None:
+            self.effective_start = datetime(1971, 1, 1)
+        super().validate_unique(exclude=exclude)
 
     objects = Manager()
 

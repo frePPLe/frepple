@@ -516,7 +516,7 @@ class OverviewReport(GridPivot):
              on ax_buffer.snapshot_date_id = d.snapshot_date
              and ax_buffer.item =  opplanmat.item_id
              and ax_buffer.location =  opplanmat.location_id
-             and (ax_buffer.batch = opplanmat.opplan_batch or ax_buffer.batch is null)
+             and (ax_buffer.batch = opplanmat.opplan_batch or ax_buffer.batch is null or ax_buffer.batch = '')
           group by
            opplanmat.buffer,
            item.name,

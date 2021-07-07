@@ -26,6 +26,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Install dependencies
+      run: sudo apt-get install libxerces-c-dev openssl libssl-dev libpq5 libpq-dev
+
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
       with:

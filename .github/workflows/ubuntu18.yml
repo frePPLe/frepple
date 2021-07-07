@@ -14,7 +14,11 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Chcking out source code
+      uses: actions/checkout@v2
+
+    - name: Set up Nodes
+      uses: actions/setup-node@v2
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -26,22 +30,34 @@ jobs:
       with:
         path: "${{github.workspace}}/requirements.txt"
         
-    - name: Install dependencies
+    - name: Install ubuntu packages
       run: sudo apt-get install libxerces-c-dev openssl libssl-dev libpq5 libpq-dev
 
+    - name: Install npm packages
+      run: npm install
+
+#    - name: Commit changes
+#      uses: elstudio/actions-js-build/commit@v4
+#      with:
+#        commitMessage: Grunt to compile and minify css and javascript files
+#      - name: Commit changes
+#        uses: EndBug/add-and-commit@v7
+#        with:
+#          author_name: Your Name
+#          author_email: mail@example.com
+#          message: 'Your commit message'
+#          add: '*.js'        
+        
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target package
 
     - name: Test
-      working-directory: ${{github.workspace}}/build/test
+      working-directory: ${{github.workspace}}/test
       run: ./runtest.py --regression
-      
-    - name: Package
-      run: cmake --build ${{github.workspace}}/build --target package --config ${{env.BUILD_TYPE}}
-      
+           
 #    - uses: actions/upload-artifact@v2
 #      with:
 #        name: ubuntu18-frepple.deb

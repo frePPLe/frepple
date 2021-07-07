@@ -26,6 +26,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Install Python packages
+      uses: py-actions/py-dependency-install@v2
+      with:
+        path: "${{github.workspace}}/requirements.txt"
+
     - name: Install dependencies
       run: sudo apt-get install libxerces-c-dev openssl libssl-dev libpq5 libpq-dev
 

@@ -1,0 +1,48 @@
+name: Build Ubuntu18
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.6'
+        
+    - name: Install Python packages
+      uses: py-actions/py-dependency-install@v2
+      with:
+        path: "${{github.workspace}}/requirements.txt"
+        
+    - name: Install dependencies
+      run: sudo apt-get install libxerces-c-dev openssl libssl-dev libpq5 libpq-dev
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build/test
+      run: ./runtest.py --regression
+      
+    - name: Package
+      run: cmake --build ${{github.workspace}}/build --target package --config ${{env.BUILD_TYPE}}
+      
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: ubuntu18-frepple.deb
+#        path: ubuntu18-frepple-6.16.0.deb

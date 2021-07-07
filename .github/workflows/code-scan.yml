@@ -26,6 +26,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.6'
+          
     - name: Install Python packages
       uses: py-actions/py-dependency-install@v2
       with:

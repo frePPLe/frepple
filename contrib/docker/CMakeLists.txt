@@ -9,8 +9,10 @@ foreach(dist ubuntu-18.04 ubuntu-20.04 opensuse-15.1 centos-8 debian-10 alpine-3
   add_custom_target(
     "docker-${dist}"
     #COMMAND "${CMAKE_COMMAND}" --build . --target package_source
+	#COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
+	#  ${docker} build --target package --output type=local,dest=. ${dist}
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-      ${docker} build --target package --output type=local,dest=. ${dist}
+      ${docker} build ${dist} --squash -t "frepple-${dist}:${PROJECT_VERSION}"
     )
 endforeach()
 

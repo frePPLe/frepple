@@ -265,19 +265,51 @@ class OverviewReport(GridPivot):
         ("safetystock", {"title": _("safety stock")}),
         ("consumed", {"title": _("total consumed")}),
         ("consumedMO", {"title": _("consumed by MO"), "initially_hidden": True}),
+        (
+            "consumedMO_confirmed",
+            {"title": _("consumed by MO confirmed"), "initially_hidden": True},
+        ),
+        (
+            "consumedMO_proposed",
+            {"title": _("consumed by MO proposed"), "initially_hidden": True},
+        ),
         ("consumedDO", {"title": _("consumed by DO"), "initially_hidden": True}),
+        (
+            "consumedDO_confirmed",
+            {"title": _("consumed by DO confirmed"), "initially_hidden": True},
+        ),
+        (
+            "consumedDO_proposed",
+            {"title": _("consumed by DO proposed"), "initially_hidden": True},
+        ),
         ("consumedSO", {"title": _("consumed by SO"), "initially_hidden": True}),
         ("produced", {"title": _("total produced")}),
         ("producedMO", {"title": _("produced by MO"), "initially_hidden": True}),
-        ("producedDO", {"title": _("produced by DO"), "initially_hidden": True}),
-        ("producedPO", {"title": _("produced by PO"), "initially_hidden": True}),
         (
-            "producedPOconfirmed",
-            {"title": _("produced by confirmed PO"), "initially_hidden": True},
+            "producedMO_confirmed",
+            {"title": _("produced by MO confirmed"), "initially_hidden": True},
         ),
         (
-            "producedPOproposed",
-            {"title": _("produced by proposed PO"), "initially_hidden": True},
+            "producedMO_proposed",
+            {"title": _("produced by MO proposed"), "initially_hidden": True},
+        ),
+        ("producedDO", {"title": _("produced by DO"), "initially_hidden": True}),
+        (
+            "producedDO_confirmed",
+            {"title": _("produced by DO confirmed"), "initially_hidden": True},
+        ),
+        (
+            "producedDO_proposed",
+            {"title": _("produced by DO proposed"), "initially_hidden": True},
+        ),
+        ("producedPO", {"title": _("produced by PO"), "initially_hidden": True}),
+        (
+            "producedPO_confirmed",
+            {"title": _("produced by PO confirmed"), "initially_hidden": True},
+        ),
+        (
+            "producedPO_proposed",
+            {"title": _("produced by PO proposed"), "initially_hidden": True},
         ),
         ("endoh", {"title": _("end inventory")}),
         (
@@ -285,19 +317,43 @@ class OverviewReport(GridPivot):
             {"title": _("total in progress"), "initially_hidden": True},
         ),
         (
+            "total_in_progress_confirmed",
+            {"title": _("total in progress confirmed"), "initially_hidden": True},
+        ),
+        (
+            "total_in_progress_proposed",
+            {"title": _("total in progress proposed"), "initially_hidden": True},
+        ),
+        (
             "work_in_progress_mo",
             {"title": _("work in progress MO"), "initially_hidden": True},
+        ),
+        (
+            "work_in_progress_mo_confirmed",
+            {"title": _("work in progress MO confirmed"), "initially_hidden": True},
+        ),
+        (
+            "work_in_progress_mo_proposed",
+            {"title": _("work in progress MO proposed"), "initially_hidden": True},
         ),
         ("on_order_po", {"title": _("on order PO"), "initially_hidden": True}),
         (
             "on_order_po_confirmed",
-            {"title": _("on order confirmed PO"), "initially_hidden": True},
+            {"title": _("on order PO confirmed"), "initially_hidden": True},
         ),
         (
             "on_order_po_proposed",
-            {"title": _("on order proposed PO"), "initially_hidden": True},
+            {"title": _("on order PO proposed"), "initially_hidden": True},
         ),
         ("in_transit_do", {"title": _("in transit DO"), "initially_hidden": True}),
+        (
+            "in_transit_do_confirmed",
+            {"title": _("in transit DO confirmed"), "initially_hidden": True},
+        ),
+        (
+            "in_transit_do_proposed",
+            {"title": _("in transit DO proposed"), "initially_hidden": True},
+        ),
     )
 
     @classmethod
@@ -467,21 +523,39 @@ class OverviewReport(GridPivot):
             else (
              select jsonb_build_object(
                'work_in_progress_mo', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
+               'work_in_progress_mo_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
+               'work_in_progress_mo_proposed', sum(case when operationplan.status = 'proposed' and operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
                'on_order_po', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
                'on_order_po_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
-               'on_order_po_proposed', sum(case when operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
+               'on_order_po_proposed', sum(case when operationplan.status = 'proposed' and operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
                'in_transit_do', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
+               'in_transit_do_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
+               'in_transit_do_proposed', sum(case when operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
                'total_in_progress', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'total_in_progress_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'total_in_progress_proposed', sum(case when operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'consumed', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumed_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumed_proposed', sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedMO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedMO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedDO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedDO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedSO', sum(case when operationplan.type = 'DLVR' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'produced', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'produced_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'produced_proposed', sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedMO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedMO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedDO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedDO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedPOconfirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedPOproposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end)
+               'producedPO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedPO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end)
                )
              from operationplanmaterial opm
              inner join operationplan
@@ -563,7 +637,7 @@ class OverviewReport(GridPivot):
                         request.report_startdate,
                         request.report_startdate,  # safetystock
                     )
-                    + (request.report_startdate,) * 11
+                    + (request.report_startdate,) * 23
                     + baseparams  # ongoing
                     + (  # opplanmat
                         request.current_date,
@@ -645,39 +719,87 @@ class OverviewReport(GridPivot):
                         "consumed": None
                         if history
                         else row[numfields - 1]["consumed"] or 0,
+                        "consumed_confirmed": None
+                        if history
+                        else row[numfields - 1]["consumed_confirmed"] or 0,
+                        "consumed_proposed": None
+                        if history
+                        else row[numfields - 1]["consumed_proposed"] or 0,
                         "consumedMO": None
                         if history
                         else row[numfields - 1]["consumedMO"] or 0,
+                        "consumedMO_confirmed": None
+                        if history
+                        else row[numfields - 1]["consumedMO_confirmed"] or 0,
+                        "consumedMO_proposed": None
+                        if history
+                        else row[numfields - 1]["consumedMO_proposed"] or 0,
                         "consumedDO": None
                         if history
                         else row[numfields - 1]["consumedDO"] or 0,
+                        "consumedDO_confirmed": None
+                        if history
+                        else row[numfields - 1]["consumedDO_confirmed"] or 0,
+                        "consumedDO_proposed": None
+                        if history
+                        else row[numfields - 1]["consumedDO_proposed"] or 0,
                         "consumedSO": None
                         if history
                         else row[numfields - 1]["consumedSO"] or 0,
                         "produced": None
                         if history
                         else row[numfields - 1]["produced"] or 0,
+                        "produced_confirmed": None
+                        if history
+                        else row[numfields - 1]["produced_confirmed"] or 0,
+                        "produced_proposed": None
+                        if history
+                        else row[numfields - 1]["produced_proposed"] or 0,
                         "producedMO": None
                         if history
                         else row[numfields - 1]["producedMO"] or 0,
+                        "producedMO_confirmed": None
+                        if history
+                        else row[numfields - 1]["producedMO_confirmed"] or 0,
+                        "producedMO_proposed": None
+                        if history
+                        else row[numfields - 1]["producedMO_proposed"] or 0,
                         "producedDO": None
                         if history
                         else row[numfields - 1]["producedDO"] or 0,
+                        "producedDO_confirmed": None
+                        if history
+                        else row[numfields - 1]["producedDO_confirmed"] or 0,
+                        "producedDO_proposed": None
+                        if history
+                        else row[numfields - 1]["producedDO_proposed"] or 0,
                         "producedPO": None
                         if history
                         else row[numfields - 1]["producedPO"] or 0,
-                        "producedPOconfirmed": None
+                        "producedPO_confirmed": None
                         if history
-                        else row[numfields - 1]["producedPOconfirmed"] or 0,
-                        "producedPOproposed": None
+                        else row[numfields - 1]["producedPO_confirmed"] or 0,
+                        "producedPO_proposed": None
                         if history
-                        else row[numfields - 1]["producedPOproposed"] or 0,
+                        else row[numfields - 1]["producedPO_proposed"] or 0,
                         "total_in_progress": None
                         if history
                         else row[numfields - 1]["total_in_progress"] or 0,
+                        "total_in_progress_confirmed": None
+                        if history
+                        else row[numfields - 1]["total_in_progress_confirmed"] or 0,
+                        "total_in_progress_proposed": None
+                        if history
+                        else row[numfields - 1]["total_in_progress_proposed"] or 0,
                         "work_in_progress_mo": None
                         if history
                         else row[numfields - 1]["work_in_progress_mo"] or 0,
+                        "work_in_progress_mo_confirmed": None
+                        if history
+                        else row[numfields - 1]["work_in_progress_mo_confirmed"] or 0,
+                        "work_in_progress_mo_proposed": None
+                        if history
+                        else row[numfields - 1]["work_in_progress_mo_proposed"] or 0,
                         "on_order_po": None
                         if history
                         else row[numfields - 1]["on_order_po"] or 0,
@@ -690,6 +812,12 @@ class OverviewReport(GridPivot):
                         "in_transit_do": None
                         if history
                         else row[numfields - 1]["in_transit_do"] or 0,
+                        "in_transit_do_confirmed": None
+                        if history
+                        else row[numfields - 1]["in_transit_do_confirmed"] or 0,
+                        "in_transit_do_proposed": None
+                        if history
+                        else row[numfields - 1]["in_transit_do_proposed"] or 0,
                         "endoh": None
                         if history
                         else (

@@ -39,6 +39,13 @@ class Command(BaseCommand):
             help="Tells frePPLe to NOT prompt the user for input of any kind.",
         )
         parser.add_argument(
+            "--skip-if-exists",
+            action="store_true",
+            dest="skip_if_exists",
+            default=False,
+            help="Don't do anything if the database already exists.",
+        )
+        parser.add_argument(
             "--user",
             action="store",
             dest="user",
@@ -99,6 +106,10 @@ class Command(BaseCommand):
                     database_exists = cursor.fetchone()[0]
 
                     if database_exists:
+                        if options["skip_if_exists"]:
+                            print("Database %s already exists" % database_name.upper())
+                            continue
+
                         # Confirm the destruction of the database
                         if options["interactive"]:
                             confirm = input(
@@ -120,10 +131,10 @@ class Command(BaseCommand):
                         try:
                             cursor.execute(
                                 """
-                SELECT pg_terminate_backend(pg_stat_activity.pid)
-                FROM pg_stat_activity
-                WHERE pg_stat_activity.datname = '%s'
-                """
+                                SELECT pg_terminate_backend(pg_stat_activity.pid)
+                                FROM pg_stat_activity
+                                WHERE pg_stat_activity.datname = '%s'
+                                """
                                 % database_name
                             )
                         except psycopg2.ProgrammingError as e:

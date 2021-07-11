@@ -48,19 +48,23 @@ COPY --from=builder frepple-*/build/*.deb .
 
 FROM ubuntu:18.04
 
-RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
+RUN apt-get -y -q update && \
+  DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends curl ca-certificates gnupg && \
+  curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+  echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+  apt-get -y -q update && \
+  DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
   libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 \
-  python3-psycopg2 python3-pip postgresql-client \
-  libpq5 openssl python3-lxml libapache2-mod-xsendfile ssl-cert python3-setuptools python3-wheel build-essential python3-dev
+  python3-psycopg2 python3-pip postgresql-client-13 \
+  libpq5 openssl python3-lxml libapache2-mod-xsendfile \
+  ssl-cert python3-setuptools python3-wheel build-essential python3-dev
 
-#COPY --from=builder /requirements.txt /
-COPY requirements.txt ./
-COPY *.deb /
+COPY --from=builder frepple-*/build/*.deb .
 
 RUN dpkg -i *.deb && \
   apt-get -f -y -q install && \
   python3 -m pip install --upgrade pip && \
-  pip3 install -r requirements.txt && \
+  pip3 install -r /usr/share/frepple/requirements.txt && \
   a2enmod expires && \
   a2enmod wsgi && \
   a2enmod ssl && \
@@ -68,21 +72,14 @@ RUN dpkg -i *.deb && \
   a2ensite z_frepple && \
   a2enmod proxy && \
   a2enmod proxy_wstunnel && \
-  service apache2 restart && \
-  rm requirements.txt *.deb && \
   apt-get -y purge --autoremove build-essential python3-dev && \
   apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
+  rm -rf *.deb /var/lib/apt/lists/* /etc/apt/sources.list.d/pgdg.list
 
 EXPOSE 80
 EXPOSE 443
 
-# Update djangosettings
-# TODO update random secret key
-RUN sed -i 's/"HOST": ""/"HOST": "frepple-postgres"/g' /etc/frepple/djangosettings.py
-
 VOLUME ["/var/log/frepple", "/etc/frepple", "/var/log/apache2", "/etc/apache2"]
 
-CMD frepplectl migrate && \
-  rm -f /usr/local/apache2/logs/httpd.pid && \
-  apachectl -DFOREGROUND
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]

@@ -4,15 +4,47 @@ find_program(gpg NAMES gpg)
 
 if (docker)
 
-foreach(dist ubuntu-18.04 ubuntu-20.04 opensuse-15.1 centos-8 debian-10 alpine-3)
+# Main build & runtime image 
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ubuntu-18.04.dockerfile" ubuntu-18.04/dockerfile COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh" ubuntu-18.04/entrypoint.sh COPYONLY)
+add_custom_target(
+  "docker-ubuntu-18.04"
+  # COMMAND "${CMAKE_COMMAND}" --build . --target package_source
+  COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
+    ${docker} build --target package --output type=local,dest=. ubuntu-18.04
+  COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
+    ${docker} build ubuntu-18.04 --squash 
+      --tag "frepple-ubuntu-18.04:${PROJECT_VERSION}"
+      --tag "ghcr.io/frepple/frepple:${PROJECT_VERSION}"
+      --tag "frepple-ubuntu-18.04:latest"
+  )
+add_custom_target(
+  "docker-up"
+  COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
+    ${docker} compose 
+      --project-directory "${CMAKE_CURRENT_SOURCE_DIR}" 
+      --project-name frepple 
+      up    
+      --detach
+)
+add_custom_target(
+  "docker-down"
+  COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
+    ${docker} compose
+      --project-directory "${CMAKE_CURRENT_SOURCE_DIR}" 
+      --project-name frepple
+      down
+)
+
+# Build-only images
+foreach(dist ubuntu-20.04 opensuse-15.1 centos-8 debian-10)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${dist}.dockerfile ${dist}/dockerfile COPYONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh ${dist}/entrypoint.sh COPYONLY)
   add_custom_target(
     "docker-${dist}"
-    #COMMAND "${CMAKE_COMMAND}" --build . --target package_source
-	#COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-	#  ${docker} build --target package --output type=local,dest=. ${dist}
+    # COMMAND "${CMAKE_COMMAND}" --build . --target package_source
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-      ${docker} build ${dist} --squash -t "frepple-${dist}:${PROJECT_VERSION}"
+      ${docker} build --target package --output type=local,dest=. ${dist}
     )
 endforeach()
 

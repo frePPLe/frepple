@@ -1,11 +1,8 @@
 
-version: "3"
-
 services:
 
-  frepple-webserver:
-    build: '.'
-    image: frepple-ubuntu-18.04:6.4.0
+  frepple:
+    image: "frepple-ubuntu-18.04:latest"
     container_name: frepple-webserver
     ports:
       - 9000:80
@@ -19,9 +16,14 @@ services:
       - log-frepple:/var/log/frepple
       - config-frepple:/etc/frepple
       - config-apache:/etc/apache2
+    environment:
+      POSTGRES_HOST: frepple-postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: frepple
+      POSTGRES_PASSWORD: frepple
 
   frepple-postgres:
-    image: "postgres:11"
+    image: "postgres:13"
     container_name: frepple-postgres
     networks:
       - backend

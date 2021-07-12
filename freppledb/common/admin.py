@@ -20,7 +20,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
-from .models import User, Parameter, Comment, Follower, Bucket, BucketDetail
+from .models import Attribute, User, Parameter, Comment, Follower, Bucket, BucketDetail
 from .adminforms import MultiDBUserCreationForm, MultiDBModelAdmin
 from freppledb.admin import data_site
 
@@ -171,5 +171,25 @@ class Bucket_admin(MultiDBModelAdmin):
             "name": "messages",
             "label": _("messages"),
             "view": "admin:common_bucket_comment",
+        },
+    ]
+
+
+@admin.register(Attribute, site=data_site)
+class Attribute_admin(MultiDBModelAdmin):
+    model = Attribute
+    save_on_top = True
+    exclude = ("source",)
+    tabs = [
+        {
+            "name": "edit",
+            "label": _("edit"),
+            "view": "admin:common_attribute_change",
+            "permission": "common.change_attribute",
+        },
+        {
+            "name": "messages",
+            "label": _("messages"),
+            "view": "admin:common_attribute_comment",
         },
     ]

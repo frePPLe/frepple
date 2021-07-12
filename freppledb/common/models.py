@@ -20,6 +20,8 @@ import inspect
 import json
 import logging
 from multiprocessing import Process
+import os
+from pathlib import Path
 from psycopg2.extras import execute_batch
 import sys
 import time
@@ -29,7 +31,7 @@ from django.contrib.admin.utils import quote
 from django.contrib.auth.models import AbstractUser, Group
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core import mail
 from django.core.validators import FileExtensionValidator
 from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
@@ -1450,3 +1452,74 @@ class BucketDetail(AuditModel):
         db_table = "common_bucketdetail"
         unique_together = (("bucket", "startdate"),)
         ordering = ["bucket", "startdate"]
+
+
+class Attribute(AuditModel):
+    types = (
+        ("string", _("string")),
+        ("boolean", _("boolean")),
+        ("number", _("number")),
+        ("integer", _("integer")),
+        ("date", _("date")),
+        ("datetime", _("datetime")),
+        ("duration", _("duration")),
+        ("time", _("time")),
+        ("jsonb", _("JSON")),
+    )
+
+    # Database fields
+    id = models.AutoField(_("identifier"), primary_key=True)
+    model = models.ForeignKey(
+        ContentType,
+        verbose_name=_("model"),
+        related_name="attributes_for_%(class)s",
+        on_delete=models.CASCADE,
+    )
+    name = models.CharField(_("name"), max_length=300, db_index=True)
+    label = models.CharField(_("label"), max_length=300, db_index=True)
+    type = models.CharField(
+        _("type"), max_length=20, null=True, blank=True, choices=types
+    )
+    editable = models.BooleanField(_("editable"), blank=True, default=True)
+    initially_hidden = models.BooleanField(
+        _("initially hidden"), blank=True, default=False
+    )
+
+    class Manager(MultiDBManager):
+        def get_by_natural_key(self, model, name):
+            return self.get(model=model, name=name)
+
+    def natural_key(self):
+        return (self.model_id, self.name)
+
+    objects = Manager()
+
+    def __str__(self):
+        return "%s %s" % (self.model.name or "", self.name)
+
+    def clean(self):
+        if self.name and not self.name.isalnum():
+            raise ValidationError(_("Name can only be alphanumeric"))
+
+    def save(self, *args, **kwargs):
+        # Call the real save() method
+        super().save(*args, **kwargs)
+
+        # Trigger reloading of the django app.
+        # The model when then see the new attribute field.
+        Path(os.path.join(settings.FREPPLE_CONFIGDIR, "wsgi.py")).touch()
+
+    def delete(self, *args, **kwargs):
+        # Call the real save() method
+        super().delete(*args, **kwargs)
+
+        # Trigger reloading of the django app.
+        # The model when then see the new attribute field.
+        Path(os.path.join(settings.FREPPLE_CONFIGDIR, "wsgi.py")).touch()
+
+    class Meta:
+        verbose_name = _("attribute")
+        verbose_name_plural = _("attributes")
+        db_table = "common_attribute"
+        unique_together = (("model", "name"),)
+        ordering = ["model", "name"]

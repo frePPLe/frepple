@@ -18,7 +18,14 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 import freppledb.common.views
-from freppledb.common.models import User, Bucket, BucketDetail, Parameter, Comment
+from freppledb.common.models import (
+    Attribute,
+    User,
+    Bucket,
+    BucketDetail,
+    Parameter,
+    Comment,
+)
 from freppledb.menu import menu
 from freppledb import __version__
 
@@ -58,6 +65,15 @@ menu.addItem(
     report=freppledb.common.views.CommentList,
     index=1400,
     model=Comment,
+    admin=True,
+)
+menu.addItem(
+    "admin",
+    "attribute admin",
+    url="/data/common/attribute/",
+    report=freppledb.common.views.AttributeList,
+    index=1300,
+    model=Attribute,
     admin=True,
 )
 

@@ -20,6 +20,7 @@ import os.path
 from mimetypes import guess_type
 
 from django.core.paginator import Paginator
+from django.db.utils import DEFAULT_DB_ALIAS
 from django.http import JsonResponse, HttpResponseNotAllowed
 from django.shortcuts import render
 from django.contrib import messages
@@ -54,6 +55,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
 
 from .models import (
+    Attribute,
     User,
     Parameter,
     Comment,
@@ -597,6 +599,59 @@ class BucketDetailList(GridReport):
         GridFieldDateTime("startdate", title=_("start date")),
         GridFieldDateTime("enddate", title=_("end date")),
         GridFieldText("name", title=_("name")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
+        GridFieldLastModified("lastmodified"),
+    )
+
+
+class AttributeList(GridReport):
+    title = _("attributes")
+    basequeryset = Attribute.objects.all()
+    model = Attribute
+    frozenColumns = 1
+    help_url = "model-reference/attributes.html"
+    message_when_empty = Template(
+        """
+        <h3>Extend frePPLe with your own attribute fields</h3>
+        <br>        
+        Every business uses specific attributes on items, sales orders, suppliers...<br>
+        You can edit, filter, sort, import and export your attribute fields like all other fields.<br>
+        <br><br>
+        <a href="{{request.prefix}}/data/common/attribute/add/" class="btn btn-primary">Add attribute</a>
+        <br>
+        """
+    )
+
+    rows = (
+        GridFieldInteger(
+            "id",
+            title=_("identifier"),
+            key=True,
+            formatter="detail",
+            extra='"role":"common/attribute"',
+            initially_hidden=True,
+        ),
+        GridFieldChoice(
+            "model",
+            title=_("model"),
+            choices=Attribute.types,
+        ),
+        GridFieldText(
+            "name",
+            title=_("name"),
+        ),
+        GridFieldText(
+            "label",
+            title=_("label"),
+        ),
+        GridFieldBool(
+            "editable",
+            title=_("editable"),
+        ),
+        GridFieldBool(
+            "initially_hidden",
+            title=_("initially hidden"),
+        ),
         GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )

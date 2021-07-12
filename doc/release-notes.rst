@@ -1,6 +1,17 @@
 Release notes
 -------------
 
+6.16.0 (upcoming release)
+=========================
+
+.. rubric:: User interface
+
+- | An new table `attribute <model-reference/attributes.html>`_ allows users to 
+    define custom attributes themselves from the user interface.
+  | In previous releases this required some programming in the backend.
+  | Since adding custom attributes is so common on items, sales orders, etc... 
+    we're giving this power to the user now.
+  
 6.15.0 (2021/07/02)
 ===================
 

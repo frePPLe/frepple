@@ -23,10 +23,13 @@ from django.core import checks
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.autoreload import autoreload_started
 
+import freppledb
+
 
 def watchDjangoSettings(sender, **kwargs):
     sender.watch_file(os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py"))
     sender.watch_file(os.path.join(settings.FREPPLE_CONFIGDIR, "localsettings.py"))
+    sender.watch_file(os.path.join(settings.FREPPLE_CONFIGDIR, "wsgi.py"))
 
 
 @checks.register()

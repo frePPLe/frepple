@@ -23,13 +23,16 @@ and defining attribute fields.
 This app is very closely inspired on http://mezzanine.jupo.org/
 and its handling of injected extra fields.
 """
+import copy
 from importlib import import_module
 
 from django.conf import settings
 from django.db import models
 
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
+from django.db import connections
 from django.db.models.signals import class_prepared
+from django.db.utils import DEFAULT_DB_ALIAS
 
 from freppledb.common.fields import JSONBField
 

@@ -78,6 +78,11 @@ urlpatterns = [
         name="common_parameter_changelist",
     ),
     url(
+        r"^data/common/attribute/$",
+        freppledb.common.views.AttributeList.as_view(),
+        name="common_attribute_changelist",
+    ),
+    url(
         r"^data/common/comment/$",
         freppledb.common.views.CommentList.as_view(),
         name="common_comment_changelist",
@@ -102,6 +107,9 @@ urlpatterns = [
     url(
         r"^api/common/parameter/$", freppledb.common.serializers.ParameterAPI.as_view()
     ),
+    url(
+        r"^api/common/attribute/$", freppledb.common.serializers.AttributeAPI.as_view()
+    ),
     url(r"^api/common/comment/$", freppledb.common.serializers.CommentAPI.as_view()),
     url(
         r"^api/common/bucket/(?P<pk>(.+))/$",
@@ -114,6 +122,10 @@ urlpatterns = [
     url(
         r"^api/common/parameter/(?P<pk>(.+))/$",
         freppledb.common.serializers.ParameterdetailAPI.as_view(),
+    ),
+    url(
+        r"^api/common/attribute/(?P<pk>(.+))/$",
+        freppledb.common.serializers.AttributedetailAPI.as_view(),
     ),
     url(
         r"^api/common/comment/(?P<pk>(.+))/$",

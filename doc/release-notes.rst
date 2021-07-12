@@ -11,6 +11,14 @@ Release notes
   | In previous releases this required some programming in the backend.
   | Since adding custom attributes is so common on items, sales orders, etc... 
     we're giving this power to the user now.
+
+.. rubric:: System administration
+
+- | The `migrate command <command-reference.html#migrate>`_ now migrates all 
+    scenarios that are in use.
+  | In previous releases the system administrator had to migrate each scenario 
+    seperately. This was inconvenient and often forgotten.
+  | You can still migrate a single database only by using the --database argument.
   
 6.15.0 (2021/07/02)
 ===================

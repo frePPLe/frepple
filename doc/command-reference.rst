@@ -600,16 +600,17 @@ This command is available on the command line only:
 Create or migrate the database schema
 -------------------------------------
 
-Update the database structure to the latest release
+Update the database structure to the latest release.
 
 This command is available on the command line only:
 
 ::
 
-    # Migrate the main database
+    # Migrate all scenarios that are currently in use
     frepplectl migrate
 
-    # Migrate a scenario database
+    # Migrate a specific scenario database
+    frepplectl migrate --database=default
     frepplectl migrate --database=scenario1
     
 .. _restore: 
@@ -617,7 +618,10 @@ This command is available on the command line only:
 Restore a database backup
 -------------------------
 
-This command is available on the command line only:
+This command is available on the command line only.
+
+However, the scenario management command provides a comparable functionality
+whereby a user can restore a backup in a specific scenario database. 
 
 ::
 

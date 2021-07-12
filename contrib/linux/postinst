@@ -18,6 +18,10 @@ chgrp frepple /etc/frepple /etc/frepple/*
 chmod 770 /etc/frepple
 chmod 750 /etc/frepple/*
 
+# Wsgi file must bre writeable to the group to allow reloading the app
+chgrp frepple /usr/lib/python3/dist-packages/freppledb/wsgi.py
+chmod 770 /usr/lib/python3/dist-packages/freppledb/wsgi.py
+
 # Create log directory and set its permissions
 if [ ! -d /var/log/frepple ]
 then

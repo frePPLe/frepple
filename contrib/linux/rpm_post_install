@@ -8,4 +8,8 @@ sed -i "s/RANDOMSTRING/`date`/" $RPM_BUILD_ROOT%{_sysconfdir}/frepple/djangosett
 chgrp frepple /usr/bin/frepple /usr/bin/frepplectl
 chmod o= /usr/bin/frepple /usr/bin/frepplectl
 
+# Wsgi file must bre writeable to the group to allow reloading the app
+chgrp frepple /usr/lib/python3.6/site-packages/freppledb/wsgi.py
+chmod g+w /usr/lib/python3.6/site-packages/freppledb/wsgi.py
+
 /sbin/ldconfig

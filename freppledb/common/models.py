@@ -49,6 +49,7 @@ from django.utils.text import capfirst
 
 from .fields import JSONBField
 from freppledb import runFunction
+from freppledb.boot import addAttributesFromDatabase
 
 logger = logging.getLogger(__name__)
 
@@ -1498,24 +1499,42 @@ class Attribute(AuditModel):
         return "%s %s" % (self.model.name or "", self.name)
 
     def clean(self):
-        if self.name and not self.name.isalnum():
+        if self.name and (not self.name.isalnum() or self.name[0].isdigit()):
             raise ValidationError(_("Name can only be alphanumeric"))
+
+    @staticmethod
+    def forceReload():
+        wsgi = os.path.join(settings.FREPPLE_CONFIGDIR, "wsgi.py")
+        if os.access(wsgi, os.W_OK):
+            Path(wsgi).touch()
+        else:
+            import freppledb.wsgi
+
+            wsgi = freppledb.wsgi.__file__
+            if os.access(wsgi, os.W_OK):
+                Path(wsgi).touch()
 
     def save(self, *args, **kwargs):
         # Call the real save() method
         super().save(*args, **kwargs)
 
+        # Add or update the database schema
+        addAttributesFromDatabase()
+
         # Trigger reloading of the django app.
         # The model when then see the new attribute field.
-        Path(os.path.join(settings.FREPPLE_CONFIGDIR, "wsgi.py")).touch()
+        self.forceReload()
 
     def delete(self, *args, **kwargs):
         # Call the real save() method
         super().delete(*args, **kwargs)
 
+        # Add or update the database schema
+        addAttributesFromDatabase()
+
         # Trigger reloading of the django app.
         # The model when then see the new attribute field.
-        Path(os.path.join(settings.FREPPLE_CONFIGDIR, "wsgi.py")).touch()
+        self.forceReload()
 
     class Meta:
         verbose_name = _("attribute")

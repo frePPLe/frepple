@@ -8,6 +8,9 @@ The attribute fields are automatically defined in the database. They behave
 exactly like any other field: editing, exporting, importing, sorting, filtering...
 are all possible.
 
+Note: All scenarios must have the same attribute definitions. Only the attributes defined
+in the production scenario are used.
+
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================

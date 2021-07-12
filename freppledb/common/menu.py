@@ -42,6 +42,15 @@ menu.addItem(
 )
 menu.addItem(
     "admin",
+    "attribute admin",
+    url="/data/common/attribute/",
+    report=freppledb.common.views.AttributeList,
+    index=1150,
+    model=Attribute,
+    admin=True,
+)
+menu.addItem(
+    "admin",
     "bucket admin",
     url="/data/common/bucket/",
     report=freppledb.common.views.BucketList,
@@ -65,15 +74,6 @@ menu.addItem(
     report=freppledb.common.views.CommentList,
     index=1400,
     model=Comment,
-    admin=True,
-)
-menu.addItem(
-    "admin",
-    "attribute admin",
-    url="/data/common/attribute/",
-    report=freppledb.common.views.AttributeList,
-    index=1300,
-    model=Attribute,
     admin=True,
 )
 

@@ -255,6 +255,31 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
     return result
 
 
+def addAttributesFromDatabase():
+    # Read attributes defined in the default database
+    with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
+        try:
+            cursor.execute(
+                """
+                select 
+                  model, name, type, editable, initially_hidden
+                from common_attribute
+                inner join django_content_type 
+                  on model_id = django_content_type.id
+                """
+            )
+            attributes = {}
+            for x in cursor.fetchall():
+                table = x[0]
+                if table in attributes:
+                    attributes[table].append((x[1], x[2], x[3], x[4]))
+                else:
+                    attributes[table] = [
+                        (x[1], x[2], x[3], x[4]),
+                    ]
+        except Exception:
+            # Database may not have the attribute table yet.
+            return
 _first = True
 if _first:
     _first = False
@@ -273,6 +298,9 @@ if _first:
                 "No module named '%s.attributes'" % app,
             ):
                 raise e
+
+    # Scan attribute definitions from the installed apps
+    addAttributesFromDatabase()
 
     if _register:
         class_prepared.connect(

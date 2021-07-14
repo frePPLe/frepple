@@ -1153,6 +1153,15 @@ class InventoryDetail(OperationPlanMixin):
     calendarmode = "duration"
 
     @classmethod
+    def initialize(reportclass, request):
+        if reportclass._attributes_added != 2:
+            reportclass._attributes_added = 2
+            # Adding custom item attributes
+            for f in getAttributeFields(Item, related_name_prefix="item"):
+                f.editable = False
+                reportclass.rows += (f,)
+
+    @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         if len(args) and args[0]:
             if request.path_info.startswith(

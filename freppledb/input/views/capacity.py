@@ -26,6 +26,7 @@ from django.utils.text import format_lazy
 
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import (
+    Item,
     Resource,
     Operation,
     Location,
@@ -447,6 +448,12 @@ class ResourceDetail(OperationPlanMixin):
                 reportclass.rows += (f,)
             # Adding custom resource attributes
             for f in getAttributeFields(Resource, related_name_prefix="resource"):
+                f.editable = False
+                reportclass.rows += (f,)
+            # Adding custom item attributes
+            for f in getAttributeFields(
+                Item, related_name_prefix="operationplan__operation__item"
+            ):
                 f.editable = False
                 reportclass.rows += (f,)
 

@@ -216,7 +216,6 @@ add_subdirectory(src)
 add_subdirectory(doc)
 add_subdirectory(contrib/docker)
 add_subdirectory(contrib/linux)
-add_subdirectory(contrib/installer)
 
 # Test suite
 enable_testing()

@@ -347,8 +347,8 @@ Technology
 | **Extendable platform                   | You can code addons to extend the application with custom reports, data    |  - Doc :doc:`developer-guide/creating-an-extension-app`                       |
 | with apps**                             | fields, and custom planning logic.                                         |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Supported on Linux                    |                                                                            | - Doc :doc:`installation-guide/windows-installer`                             |
-| and Windows**                           |                                                                            | - Doc :doc:`installation-guide/linux-binaries`                                |
+| **Designed for Linux and the cloud**    | Deploy on-premise on Ubuntu or as a Docker container.                      | - Doc :doc:`installation-guide/docker-container`                             |
+|                                         | Or use the Cloud Edition hosted by us.                                     | - Doc :doc:`installation-guide/linux-binaries`                                |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 
 |

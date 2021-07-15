@@ -15,10 +15,10 @@ Supported distributions
 Binary installation packages are available for:
 
 * Ubuntu 18 LTS
-* Red Hat Enterprise Linux 8 (Enterprise Edition only)
-* CentOS 8 (Enterprise Edition only)
-* Suse 15 (Enterprise Edition only)
-* OpenSuse 15 (Enterprise Edition only)
+* Red Hat Enterprise Linux 8 (Enterprise Edition only, deprecated in favor of containers)
+* CentOS 8 (Enterprise Edition only, deprecated in favor of containers)
+* Suse 15 (Enterprise Edition only, deprecated in favor of containers)
+* OpenSuse 15 (Enterprise Edition only, deprecated in favor of containers)
 
 Installing on other Linux distributions is also possible. You will need to 
 build from the source code with a standard CMake build sequence.

@@ -4,6 +4,17 @@ Release notes
 6.16.0 (upcoming release)
 =========================
 
+.. rubric:: Supported platforms
+
+- | The Windows installer for the Community Edition has been removed. FrePPLe is an
+    enterprise and cloud application. A windows desktop version isn't a viable option
+    for us to distribute the application.
+  | The Enterprise Edition is still available as a Windows installer.
+
+- | The docker container are now fully production ready.
+  | They have been experimental for a while already, an we have now brought forward the 
+    code, tests and documentation.
+  
 .. rubric:: User interface
 
 - | An new table `attribute <model-reference/attributes.html>`_ allows users to 

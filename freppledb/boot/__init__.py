@@ -24,6 +24,7 @@ This app is very closely inspired on http://mezzanine.jupo.org/
 and its handling of injected extra fields.
 """
 import copy
+import os
 from importlib import import_module
 
 from django.conf import settings
@@ -257,6 +258,12 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
 
 def addAttributesFromDatabase():
     # Read attributes defined in the default database
+    from django.conf import settings
+
+    if "FREPPLE_TEST" in os.environ:
+        for db in settings.DATABASES:
+            settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
+
     with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
         try:
             cursor.execute(

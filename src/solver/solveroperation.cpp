@@ -2015,7 +2015,7 @@ void SolverCreate::createsBatches(Operation* oper, void* v) {
         }
         if (!ok) continue;
 
-        if (loglevel > -1)
+        if (loglevel > 1)
           logger << indentlevel << "  Grouping " << tmp << " with " << &*opplan
                  << endl;
         added += tmp->getQuantity();

@@ -468,7 +468,7 @@ def getCurrentDate(database=DEFAULT_DB_ALIAS):
         n = datetime.now()
         return (
             datetime(n.year, n.month, n.day)
-            if val.lower() == "today"
+            if val and val.lower() == "today"
             else n.replace(microsecond=0)
         )
 

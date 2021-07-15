@@ -358,10 +358,23 @@ class OverviewReport(GridPivot):
             "in_transit_do_proposed",
             {"title": _("in transit DO proposed"), "initially_hidden": True},
         ),
+        ("open_orders", {"title": _("open sales orders"), "initially_hidden": True}),
     )
 
     @classmethod
     def initialize(reportclass, request):
+
+        cursor = connections[request.database].cursor()
+        last_currentdate = datetime.now
+        cursor.execute(
+            "select value from common_parameter where name = 'last_currentdate'"
+        )
+        try:
+            last_currentdate = cursor.fetchone()[0]
+        except:
+            pass
+
+        request.last_currentdate = last_currentdate
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
             reportclass.attr_sql = ""
@@ -559,13 +572,15 @@ class OverviewReport(GridPivot):
                'producedDO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedPO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedPO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end)
+               'producedPO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'open_orders', sum(case when operationplan.type = 'DLVR' and ((operationplan.due >= greatest(d.startdate,%%s) or (%%s >= d.startdate and %%s < d.enddate)) and operationplan.due < d.enddate) then -opm.quantity else 0 end)
                )
              from operationplanmaterial opm
              inner join operationplan
              on operationplan.reference = opm.operationplan_id
                and ((startdate < d.enddate and enddate >= d.enddate)
-               or (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate))
+               or (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate)
+               or (operationplan.type = 'DLVR' and due < d.enddate and due >= case when %%s >= d.startdate and %%s < d.enddate then '1970-01-01'::timestamp else d.startdate end))
              where opm.item_id = item.name
                and opm.location_id = location.name
                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
@@ -642,6 +657,9 @@ class OverviewReport(GridPivot):
                         request.report_startdate,  # safetystock
                     )
                     + (request.report_startdate,) * 23
+                    + (request.last_currentdate,) * 2
+                    + (request.report_startdate,) * 1
+                    + (request.last_currentdate,) * 2
                     + baseparams  # ongoing
                     + (  # opplanmat
                         request.current_date,
@@ -822,6 +840,9 @@ class OverviewReport(GridPivot):
                         "in_transit_do_proposed": None
                         if history
                         else row[numfields - 1]["in_transit_do_proposed"] or 0,
+                        "open_orders": None
+                        if history
+                        else row[numfields - 1]["open_orders"] or 0,
                         "endoh": None
                         if history
                         else (

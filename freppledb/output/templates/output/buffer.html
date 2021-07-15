@@ -346,6 +346,7 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata)
 {
   var result = '';
+  var last_currentdate = "{{request.last_currentdate}}";
   
   // dict that gives from an id the name of the cross
   // TODO optimization: build this dictionary once, rather than for each cell
@@ -796,6 +797,21 @@ function crosses (cellvalue, options, rowdata)
               "/?noautofilter&amp;operationplan__status=proposed" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
+        case 'open_orders':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['open_orders']] != 0.0)
+        result += grid.formatNumber(cellvalue[id_by_field['open_orders']]) + "<a href='{{request.prefix}}/data/input/demand/" +           
+            "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
+            "&amp;location=" + admin_escape(rowdata['location']) + 
+            "&amp;due__gte=" + 
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) + 
+            "&amp;due__lt=" +  options['colModel']['enddate'] + 
+            (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;

@@ -26,6 +26,7 @@ and its handling of injected extra fields.
 import copy
 import os
 from importlib import import_module
+from itertools import chain
 
 from django.conf import settings
 from django.db import models
@@ -44,8 +45,8 @@ _register_kwargs = {}
 
 def add_extra_model_fields(sender, **kwargs):
     model_path = "%s.%s" % (sender.__module__, sender.__name__)
-    for field_name, label, fieldtype, editable, initially_hidden in _register.get(
-        model_path, []
+    for field_name, label, fieldtype, editable, initially_hidden in chain(
+        _register.get(model_path, []), _register.get(sender._meta.db_table, [])
     ):
 
         register_args = (
@@ -143,7 +144,10 @@ def getAttributes(model):
     Return all attributes for a given model in the format:
       fieldname, label, fieldtype, editable (default=True), initially_hidden (default=False)
     """
-    for attr in _register.get("%s.%s" % (model.__module__, model.__name__), []):
+    for attr in chain(
+        _register.get("%s.%s" % (model.__module__, model.__name__), []),
+        _register.get(model._meta.db_table, []),
+    ):
         yield attr
     for base in model.__bases__:
         if hasattr(base, "_meta"):
@@ -260,6 +264,18 @@ def addAttributesFromDatabase():
     # Read attributes defined in the default database
     from django.conf import settings
 
+    database_type_mapping = {
+        "string": ("character varying", "(300)"),
+        "boolean": ("boolean", ""),
+        "number": ("numeric", "(15,6)"),
+        "integer": ("integer", ""),
+        "date": ("date", ""),
+        "datetime": ("timestamp with time zone", ""),
+        "duration": ("interval", ""),
+        "time": ("time without time zone", ""),
+        "jsonb": ("jsonb", ""),
+    }
+
     if "FREPPLE_TEST" in os.environ:
         for db in settings.DATABASES:
             settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
@@ -269,7 +285,7 @@ def addAttributesFromDatabase():
             cursor.execute(
                 """
                 select 
-                  model, name, type, editable, initially_hidden
+                  model, name, label, type, editable, initially_hidden
                 from common_attribute
                 inner join django_content_type 
                   on model_id = django_content_type.id
@@ -279,14 +295,127 @@ def addAttributesFromDatabase():
             for x in cursor.fetchall():
                 table = x[0]
                 if table in attributes:
-                    attributes[table].append((x[1], x[2], x[3], x[4]))
+                    attributes[table].append((x[1], x[2], x[3], x[4], x[5]))
                 else:
                     attributes[table] = [
-                        (x[1], x[2], x[3], x[4]),
+                        (x[1], x[2], x[3], x[4], x[5]),
                     ]
         except Exception:
             # Database may not have the attribute table yet.
             return
+
+        # Loop over all scenarios
+        cursor.execute(
+            """
+            select name 
+            from common_scenario 
+            where status='In use' or name = %s
+            """,
+            (DEFAULT_DB_ALIAS,),
+        )
+        scenariolist = [i[0] for i in cursor.fetchall()]
+        if not scenariolist:
+            scenariolist = [
+                DEFAULT_DB_ALIAS,
+            ]
+        for scenario in scenariolist:
+            with connections[scenario].cursor() as cursor2:
+                attr_list = copy.deepcopy(attributes)
+
+                # Pick up all existing attribute fields
+                cursor2.execute(
+                    """
+                    select c.table_name, c.column_name, 
+                      c.data_type
+                    from pg_catalog.pg_statio_all_tables as st
+                    inner join pg_catalog.pg_description pgd 
+                      on pgd.objoid=st.relid
+                    inner join information_schema.columns c 
+                      on pgd.objsubid=c.ordinal_position
+                      and  c.table_schema=st.schemaname and c.table_name=st.relname
+                    where st.schemaname = 'public'
+                      and pgd.description = 'Custom attribute'
+                    """
+                )
+                attr_existing = {}
+                for m, c, t in cursor2.fetchall():
+                    if m not in attr_existing:
+                        attr_existing[m] = {}
+                    attr_existing[m][c] = t
+
+                # Delete attribute fields that have changed type or no longer exist
+                for model, cols in attr_existing.items():
+                    for col, fldtype in cols.items():
+                        to_delete = True
+                        for fld in attr_list.get(model, []):
+                            if (
+                                fld[0] == col
+                                and database_type_mapping.get(fld[2], ("",))[0]
+                                == fldtype
+                            ):
+                                to_delete = False
+                        if to_delete:
+                            cursor2.execute(
+                                """
+                                alter table "%s" drop column "%s";
+                                """
+                                % (
+                                    model,
+                                    col,
+                                )
+                            )
+
+                # Pick up all database fields
+                cursor2.execute(
+                    """
+                    select table_name, column_name
+                    from information_schema.columns cols
+                    where table_schema = 'public'
+                    and table_name in (
+                      select table_name
+                      from information_schema.tables
+                      where table_schema = 'public' and table_type = 'BASE TABLE'
+                      )
+                    """
+                )
+                model_fields = {}
+                for m, c in cursor2.fetchall():
+                    if m in model_fields:
+                        model_fields[m].append(c)
+                    else:
+                        model_fields[m] = [c]
+
+                for model, cols in attr_list.items():
+                    for col in cols:
+                        if col[0] not in model_fields.get(model, []) or col[
+                            0
+                        ] in attr_existing.get(model, {}):
+                            if model not in _register:
+                                _register[model] = []
+                            _register[model].append(col)
+                        if col[0] not in model_fields.get(model, []):
+                            cursor2.execute(
+                                """
+                                alter table "%s"
+                                add column "%s" %s%s;
+
+                                comment on column "%s"."%s" is 'Custom attribute';
+
+                                create index on "%s" ("%s")
+                                """
+                                % (
+                                    model,
+                                    col[0],
+                                    database_type_mapping[col[2]][0],
+                                    database_type_mapping[col[2]][1],
+                                    model,
+                                    col[0],
+                                    model,
+                                    col[0],
+                                )
+                            )
+
+
 _first = True
 if _first:
     _first = False

@@ -612,7 +612,7 @@ class AttributeList(GridReport):
     help_url = "model-reference/attributes.html"
     message_when_empty = Template(
         """
-        <h3>Extend frePPLe with your own attribute fields</h3>
+        <h3>Extend frePPLe with your own attributes</h3>
         <br>        
         Every business uses specific attributes on items, sales orders, suppliers...<br>
         You can edit, filter, sort, import and export your attribute fields like all other fields.<br>
@@ -634,7 +634,8 @@ class AttributeList(GridReport):
         GridFieldChoice(
             "model",
             title=_("model"),
-            choices=Attribute.types,
+            field_name="model__model",
+            choices=[(i.pk, i.model) for i in ContentType.objects.all()],
         ),
         GridFieldText(
             "name",
@@ -644,6 +645,7 @@ class AttributeList(GridReport):
             "label",
             title=_("label"),
         ),
+        GridFieldChoice("type", title=_("type"), choices=Attribute.types),
         GridFieldBool(
             "editable",
             title=_("editable"),

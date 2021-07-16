@@ -815,6 +815,84 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0<br>';
         break;
+        case 'net_forecast':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['net_forecast']] != 0.0)
+          result += grid.formatNumber(cellvalue[id_by_field['net_forecast']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
+            "&amp;location=" + admin_escape(rowdata['location']) + 
+            "&amp;orders=false" +
+            "&amp;demand__due__gte=" + 
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) + 
+            "&amp;demand__due__lt=" +  options['colModel']['enddate'] + 
+            (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
+        case 'total_demand':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['total_demand']] != 0.0)
+          result += grid.formatNumber(cellvalue[id_by_field['total_demand']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
+            "&amp;location=" + admin_escape(rowdata['location']) + 
+            "&amp;demand__due__gte=" + 
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) + 
+            "&amp;demand__due__lt=" +  options['colModel']['enddate'] + 
+            (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
+        case 'order_backlog':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['order_backlog']] != 0.0)
+          result += grid.formatNumber(cellvalue[id_by_field['order_backlog']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
+            "&amp;location=" + admin_escape(rowdata['location']) + 
+            "&amp;orders=True" +
+            "&amp;demand__due__lt=" +
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['startdate']) + 
+            "&amp;enddate__gte=" +  options['colModel']['startdate'] + 
+            (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
+        case 'forecast_backlog':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['forecast_backlog']] != 0.0)
+          result += grid.formatNumber(cellvalue[id_by_field['forecast_backlog']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
+            "&amp;location=" + admin_escape(rowdata['location']) + 
+            "&amp;orders=False" +
+            "&amp;demand__due__lt=" +
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['startdate']) + 
+            "&amp;enddate__gte=" +  options['colModel']['startdate'] + 
+            (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
+        case 'total_backlog':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['total_backlog']] != 0.0)
+          result += grid.formatNumber(cellvalue[id_by_field['total_backlog']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
+            "&amp;location=" + admin_escape(rowdata['location']) +           
+            "&amp;demand__due__lt=" +
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['startdate']) + 
+            "&amp;enddate__gte=" +  options['colModel']['startdate'] + 
+            (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
       case 'startoh':
       case 'safetystock':
         if (cellvalue[cross_idx[i]] !== null)

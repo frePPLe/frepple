@@ -255,11 +255,13 @@ class DemandList(GridReport):
         q = Demand.objects.all()
 
         if "item" in request.GET:
+            Item.rebuildHierarchy(request.database)
             item = Item.objects.using(request.database).get(
                 name__exact=unquote(request.GET["item"])
             )
             q = q.filter(item__lft__gte=item.lft, item__lft__lt=item.rght)
         if "location" in request.GET:
+            Location.rebuildHierarchy(request.database)
             location = Location.objects.using(request.database).get(
                 name__exact=unquote(request.GET["location"])
             )
@@ -267,6 +269,7 @@ class DemandList(GridReport):
                 location__lft__gte=location.lft, location__lft__lt=location.rght
             )
         if "customer" in request.GET:
+            Customer.rebuildHierarchy(request.database)
             customer = Customer.objects.using(request.database).get(
                 name__exact=unquote(request.GET["customer"])
             )
@@ -823,6 +826,10 @@ class DeliveryOrderList(GridReport):
         if "parentreference" in request.GET:
             parentreference = request.GET["parentreference"]
             q = q.filter(reference=parentreference)
+
+        if "orders" in request.GET:
+            orders = request.GET["orders"]
+            q = q.filter(demand__isnull=(orders.lower() in ["false", "0"]))
 
         if args and args[0]:
             path = request.path.split("/")[4]

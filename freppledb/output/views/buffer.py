@@ -359,6 +359,14 @@ class OverviewReport(GridPivot):
             {"title": _("in transit DO proposed"), "initially_hidden": True},
         ),
         ("open_orders", {"title": _("open sales orders"), "initially_hidden": True}),
+        ("net_forecast", {"title": _("net forecast"), "initially_hidden": True}),
+        ("total_demand", {"title": _("total demand"), "initially_hidden": True}),
+        ("order_backlog", {"title": _("order backlog"), "initially_hidden": True}),
+        (
+            "forecast_backlog",
+            {"title": _("forecast backlog"), "initially_hidden": True},
+        ),
+        ("total_backlog", {"title": _("total backlog"), "initially_hidden": True}),
     )
 
     @classmethod
@@ -562,7 +570,10 @@ class OverviewReport(GridPivot):
                'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedPO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedPO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'open_orders', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is not null and ((operationplan.due >= greatest(d.startdate,%%s) or (%%s >= d.startdate and %%s < d.enddate)) and operationplan.due < d.enddate) then -opm.quantity else 0 end)
+               'open_orders', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is not null and ((operationplan.due >= greatest(d.startdate,%%s) or (%%s >= d.startdate and %%s < d.enddate)) and operationplan.due < d.enddate) then -opm.quantity else 0 end),
+               'net_forecast', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is null and ((operationplan.due >= greatest(d.startdate,%%s) or (%%s >= d.startdate and %%s < d.enddate)) and operationplan.due < d.enddate) then -opm.quantity else 0 end),
+               'order_backlog', case when %%s >= d.startdate and %%s < d.enddate then sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is not null and operationplan.due < %%s then -opm.quantity else 0 end) else -1 end,
+               'forecast_backlog', case when %%s >= d.startdate and %%s < d.enddate then sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is null and operationplan.due < %%s then -opm.quantity else 0 end) else -1 end
                )
              from operationplanmaterial opm
              inner join operationplan
@@ -647,6 +658,10 @@ class OverviewReport(GridPivot):
                     )
                     + (request.report_startdate,) * 23
                     + (request.current_date,) * 2
+                    + (request.report_startdate,) * 1  # net forecast
+                    + (request.current_date,) * 2  # net forecast
+                    + (request.current_date,) * 3  # order_backlog
+                    + (request.current_date,) * 3  # forecast_backlog
                     + (request.report_startdate,) * 1
                     + (request.current_date,) * 2
                     + baseparams  # ongoing
@@ -663,9 +678,27 @@ class OverviewReport(GridPivot):
                 locationattributefields = getAttributeFields(
                     Location, related_name_prefix="location"
                 )
+                order_backlog = None
+                forecast_backlog = None
                 for row in cursor_chunked:
                     numfields = len(row)
                     history = row[numfields - 3]
+                    if (
+                        datetime.strptime(request.current_date, "%Y-%m-%d %H:%M:%S")
+                        >= row[numfields - 5]
+                        and datetime.strptime(request.current_date, "%Y-%m-%d %H:%M:%S")
+                        < row[numfields - 4]
+                    ):
+                        order_backlog = (
+                            (row[numfields - 1]["order_backlog"] or 0)
+                            if order_backlog is None
+                            else order_backlog
+                        )
+                        forecast_backlog = (
+                            (row[numfields - 1]["forecast_backlog"] or 0)
+                            if forecast_backlog is None
+                            else forecast_backlog
+                        )
                     res = {
                         "buffer": row[0],
                         "item": row[1],
@@ -832,6 +865,18 @@ class OverviewReport(GridPivot):
                         "open_orders": None
                         if history
                         else row[numfields - 1]["open_orders"] or 0,
+                        "net_forecast": None
+                        if history
+                        else row[numfields - 1]["net_forecast"] or 0,
+                        "total_demand": None
+                        if history
+                        else (row[numfields - 1]["net_forecast"] or 0)
+                        + (row[numfields - 1]["open_orders"] or 0),
+                        "order_backlog": order_backlog,
+                        "forecast_backlog": forecast_backlog,
+                        "total_backlog": order_backlog + forecast_backlog
+                        if order_backlog is not None and forecast_backlog is not None
+                        else None,
                         "endoh": None
                         if history
                         else (
@@ -844,6 +889,44 @@ class OverviewReport(GridPivot):
                             - float(row[numfields - 1]["consumed"] or 0)
                         ),
                     }
+
+                    if order_backlog is not None:
+                        order_backlog += (
+                            (row[numfields - 1]["open_orders"] or 0)
+                            - (
+                                order_backlog
+                                if datetime.strptime(
+                                    request.current_date, "%Y-%m-%d %H:%M:%S"
+                                )
+                                >= row[numfields - 5]
+                                and datetime.strptime(
+                                    request.current_date, "%Y-%m-%d %H:%M:%S"
+                                )
+                                < row[numfields - 4]
+                                else 0
+                            )
+                            - (row[numfields - 1]["consumedSO"] or 0)
+                        )
+                    if forecast_backlog is not None:
+                        forecast_backlog += (
+                            (row[numfields - 1]["net_forecast"] or 0)
+                            - (
+                                forecast_backlog
+                                if datetime.strptime(
+                                    request.current_date, "%Y-%m-%d %H:%M:%S"
+                                )
+                                >= row[numfields - 5]
+                                and datetime.strptime(
+                                    request.current_date, "%Y-%m-%d %H:%M:%S"
+                                )
+                                < row[numfields - 4]
+                                else 0
+                            )
+                            - (
+                                (row[numfields - 1]["consumed"] or 0)
+                                - (row[numfields - 1]["consumedSO"] or 0)
+                            )
+                        )
 
                     # Add attribute fields
                     idx = 22

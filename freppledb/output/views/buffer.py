@@ -365,7 +365,7 @@ class OverviewReport(GridPivot):
     def initialize(reportclass, request):
 
         cursor = connections[request.database].cursor()
-        last_currentdate = datetime.now
+        last_currentdate = datetime.now()
         cursor.execute(
             "select value from common_parameter where name = 'last_currentdate'"
         )
@@ -573,7 +573,7 @@ class OverviewReport(GridPivot):
                'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedPO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedPO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'open_orders', sum(case when operationplan.type = 'DLVR' and ((operationplan.due >= greatest(d.startdate,%%s) or (%%s >= d.startdate and %%s < d.enddate)) and operationplan.due < d.enddate) then -opm.quantity else 0 end)
+               'open_orders', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is not null and ((operationplan.due >= greatest(d.startdate,%%s) or (%%s >= d.startdate and %%s < d.enddate)) and operationplan.due < d.enddate) then -opm.quantity else 0 end)
                )
              from operationplanmaterial opm
              inner join operationplan

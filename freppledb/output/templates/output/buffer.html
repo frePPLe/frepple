@@ -346,7 +346,7 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata)
 {
   var result = '';
-  var last_currentdate = "{{request.last_currentdate}}";
+  var last_currentdate = "{{request.current_date}}";
   
   // dict that gives from an id the name of the cross
   // TODO optimization: build this dictionary once, rather than for each cell

@@ -364,17 +364,6 @@ class OverviewReport(GridPivot):
     @classmethod
     def initialize(reportclass, request):
 
-        cursor = connections[request.database].cursor()
-        last_currentdate = datetime.now()
-        cursor.execute(
-            "select value from common_parameter where name = 'last_currentdate'"
-        )
-        try:
-            last_currentdate = cursor.fetchone()[0]
-        except:
-            pass
-
-        request.last_currentdate = last_currentdate
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
             reportclass.attr_sql = ""
@@ -657,9 +646,9 @@ class OverviewReport(GridPivot):
                         request.report_startdate,  # safetystock
                     )
                     + (request.report_startdate,) * 23
-                    + (request.last_currentdate,) * 2
+                    + (request.current_date,) * 2
                     + (request.report_startdate,) * 1
-                    + (request.last_currentdate,) * 2
+                    + (request.current_date,) * 2
                     + baseparams  # ongoing
                     + (  # opplanmat
                         request.current_date,

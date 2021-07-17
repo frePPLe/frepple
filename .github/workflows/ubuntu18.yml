@@ -2,9 +2,9 @@ name: Build Ubuntu18
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 env:
   BUILD_TYPE: Release
@@ -12,52 +12,71 @@ env:
 jobs:
   build:
     runs-on: ubuntu-18.04
+    services:
+      postgres:
+        image: postgres:10
+        env:
+          POSTGRES_USER: frepple
+          POSTGRES_PASSWORD: frepple
+          POSTGRES_DB: postgres
+        ports:
+          - 5432/tcp
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-    - name: Chcking out source code
-      uses: actions/checkout@v2
+      - name: Chcking out source code
+        uses: actions/checkout@v2
 
-    - name: Set up Nodes
-      uses: actions/setup-node@v2
+      - name: Set up Nodes
+        uses: actions/setup-node@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.6'
-        
-    - name: Install Python packages
-      uses: py-actions/py-dependency-install@v2
-      with:
-        path: "${{github.workspace}}/requirements.txt"
-        
-    - name: Install ubuntu packages
-      run: sudo apt-get install libxerces-c-dev openssl libssl-dev libpq5 libpq-dev
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.6"
 
-    - name: Install npm packages
-      run: npm install
+      - name: Install packages
+        run: |
+          sudo apt-get install libxerces-c-dev openssl libssl-dev libpq5 libpq-dev postgresql-client
+          npm install
 
-#    - name: Commit changes
-#      uses: elstudio/actions-js-build/commit@v4
-#      with:
-#        commitMessage: Grunt to compile and minify css and javascript files
-#      - name: Commit changes
-#        uses: EndBug/add-and-commit@v7
-#        with:
-#          author_name: Your Name
-#          author_email: mail@example.com
-#          message: 'Your commit message'
-#          add: '*.js'        
-        
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      - name: Install Python packages
+        uses: py-actions/py-dependency-install@v2
+        with:
+          path: "${{github.workspace}}/requirements/requirements.dev.txt"
 
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target package
+      #    - name: Commit changes
+      #      uses: elstudio/actions-js-build/commit@v4
+      #      with:
+      #        commitMessage: Grunt to compile and minify css and javascript files
+      #      - name: Commit changes
+      #        uses: EndBug/add-and-commit@v7
+      #        with:
+      #          author_name: Your Name
+      #          author_email: mail@example.com
+      #          message: 'Your commit message'
+      #          add: '*.js'
 
-    - name: Test
-      working-directory: ${{github.workspace}}/test
-      run: ./runtest.py --regression
-           
+      - name: Build
+        run: |
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target package
+
+      - name: Test
+        working-directory: ${{github.workspace}}
+        run: |
+          sed -i "s/\"HOST\":.\"\"/\"HOST\":\"localhost\"/g" djangosettings.py
+          sed -i "s/\"PORT\":.\"\"/\"PORT\":\"${{ job.services.postgres.ports[5432] }}\"/g" djangosettings.py
+          ./test/runtest.py --regression
+          ./frepplectl.py test freppledb --verbosity=2
+
+      - name: Publish
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: "${{github.workspace}}/build/contrib/docker*.deb"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #    - uses: actions/upload-artifact@v2
 #      with:
 #        name: ubuntu18-frepple.deb

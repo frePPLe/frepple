@@ -43,7 +43,7 @@ jobs:
       - name: Install Python packages
         uses: py-actions/py-dependency-install@v2
         with:
-          path: "${{github.workspace}}/requirements/requirements.dev.txt"
+          path: "${{github.workspace}}/requirements.dev.txt"
 
       #    - name: Commit changes
       #      uses: elstudio/actions-js-build/commit@v4

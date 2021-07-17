@@ -1,3 +1,4 @@
+psycopg2 == 2.8.6
 cheroot == 8.4.5
 portend == 2.5
 djangorestframework == 3.11.2
@@ -19,22 +20,3 @@ psutil == 5.7.3
 setuptools-rust == 0.12.1
 pysftp == 0.2.9
 https://github.com/frePPLe/django/tarball/frepple_6.0
-
-# Postgres database connection
-# On linux: install psycopg2 using your distribution's package manager
-# On windows: uncomment the next lines
-# psycopg2
-# psycopg2-binary
-
-# Additional packages for development environments
-# black >= 19.3b0
-# Sphinx
-# selenium
-# selenium_firefox
-# msedge-selenium-tools
-
-# Additional packages for windows development environments
-# pywin32
-# adodbapi
-# cx_Freeze == 6.5.3
-# cx_Logging == 2.2

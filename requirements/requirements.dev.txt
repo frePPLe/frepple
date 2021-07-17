@@ -1,8 +1,0 @@
--r requirements.txt
-
-# Additional packages for development environments
-black >= 19.3b0
-Sphinx
-selenium
-selenium_firefox
-msedge-selenium-tools

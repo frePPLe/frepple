@@ -1,0 +1,15 @@
+# Runtime packages
+-r requirements.txt
+
+# Extra packages for development environments
+black >= 19.3b0
+Sphinx
+selenium
+selenium_firefox
+msedge-selenium-tools
+
+# Extra packages for windows development environments
+# pywin32
+# adodbapi
+# cx_Freeze == 6.5.3
+# cx_Logging == 2.2

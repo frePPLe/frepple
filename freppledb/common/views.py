@@ -604,6 +604,15 @@ class BucketDetailList(GridReport):
     )
 
 
+def _getContentTypeChoices():
+    try:
+        return [
+            (i.pk, i.model) for i in ContentType.objects.all().using(DEFAULT_DB_ALIAS)
+        ]
+    except Exception:
+        return []
+
+
 class AttributeList(GridReport):
     title = _("attributes")
     basequeryset = Attribute.objects.all()
@@ -635,7 +644,7 @@ class AttributeList(GridReport):
             "model",
             title=_("model"),
             field_name="model__model",
-            choices=[(i.pk, i.model) for i in ContentType.objects.all()],
+            choices=_getContentTypeChoices(),
         ),
         GridFieldText(
             "name",

@@ -166,9 +166,8 @@ def runTestSuite():
         subdirs = os.listdir(testdir)
         subdirs.sort()
         for i in subdirs:
-            if i == ".svn" or os.path.isfile(i):
-                continue
-            tests.append(i)
+            if os.path.isdir(os.path.join(testdir, i)):
+                tests.append(i)
     else:
         # A list of tests has been specified, and we now validate it
         for i in tests:
@@ -226,7 +225,7 @@ class freppleTest(unittest.TestCase):
         os.chdir(os.path.join(testdir, self.subdirectory))
 
     def __str__(self):
-        """ Use the directory name as the test name."""
+        """Use the directory name as the test name."""
         return self.subdirectory
 
     def runProcess(self, cmd):
@@ -311,10 +310,10 @@ class freppleTest(unittest.TestCase):
 
 def diff(f1, f2):
     """
-  Compares 2 text files and returns True if they are different.
-  The default one in the package isn't doing the job for us: we want to
-  ignore differences in the file ending.
-  """
+    Compares 2 text files and returns True if they are different.
+    The default one in the package isn't doing the job for us: we want to
+    ignore differences in the file ending.
+    """
     fp1 = open(f1, "rt", encoding="utf-8")
     fp2 = open(f2, "rt", encoding="utf-8")
     while True:

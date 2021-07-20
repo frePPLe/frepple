@@ -384,9 +384,11 @@ def addAttributesFromDatabase():
 
                     for model, cols in attr_list.items():
                         for col in cols:
-                            if col[0] not in model_fields.get(model, []) or col[
-                                0
-                            ] in attr_existing.get(model, {}):
+                            if (
+                                col[0] not in model_fields.get(model, [])
+                                or col[0] in attr_existing.get(model, {})
+                                and scenario == DEFAULT_DB_ALIAS
+                            ):
                                 if model not in _register:
                                     _register[model] = []
                                 _register[model].append(col)

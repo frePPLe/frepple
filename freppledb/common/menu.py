@@ -15,6 +15,7 @@
 #
 
 from django.conf import settings
+from django.db.utils import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
 
 import freppledb.common.views
@@ -28,6 +29,10 @@ from freppledb.common.models import (
 )
 from freppledb.menu import menu
 from freppledb import __version__
+
+
+def isDefaultDatabase(request):
+    return getattr(request, "database", DEFAULT_DB_ALIAS) == DEFAULT_DB_ALIAS
 
 
 # Settings menu
@@ -48,6 +53,9 @@ menu.addItem(
     index=1150,
     model=Attribute,
     admin=True,
+    dependencies=[
+        isDefaultDatabase,
+    ],
 )
 menu.addItem(
     "admin",

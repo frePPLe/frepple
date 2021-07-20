@@ -346,6 +346,10 @@ class OverviewReport(GridPivot):
             {"title": _("on order PO confirmed"), "initially_hidden": True},
         ),
         (
+            "proposed_ordering",
+            {"title": _("proposed ordering"), "initially_hidden": True},
+        ),
+        (
             "on_order_po_proposed",
             {"title": _("on order PO proposed"), "initially_hidden": True},
         ),
@@ -542,6 +546,7 @@ class OverviewReport(GridPivot):
                'on_order_po', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
                'on_order_po_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
                'on_order_po_proposed', sum(case when operationplan.status = 'proposed' and operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
+               'proposed_ordering', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (operationplan.startdate >= greatest(d.startdate,%%s) and operationplan.startdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'in_transit_do', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
                'in_transit_do_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
                'in_transit_do_proposed', sum(case when operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
@@ -656,7 +661,7 @@ class OverviewReport(GridPivot):
                         request.report_startdate,
                         request.report_startdate,  # safetystock
                     )
-                    + (request.report_startdate,) * 23
+                    + (request.report_startdate,) * 24
                     + (request.current_date,) * 2
                     + (request.report_startdate,) * 1  # net forecast
                     + (request.current_date,) * 2  # net forecast
@@ -678,13 +683,18 @@ class OverviewReport(GridPivot):
                 locationattributefields = getAttributeFields(
                     Location, related_name_prefix="location"
                 )
-                order_backlog = None
-                forecast_backlog = None
+
+                prev_buffer = None
                 for row in cursor_chunked:
+                    if prev_buffer != row[0]:
+                        order_backlog = None
+                        forecast_backlog = None
+                        prev_buffer = row[0]
                     numfields = len(row)
                     history = row[numfields - 3]
                     if (
-                        datetime.strptime(request.current_date, "%Y-%m-%d %H:%M:%S")
+                        not history
+                        and datetime.strptime(request.current_date, "%Y-%m-%d %H:%M:%S")
                         >= row[numfields - 5]
                         and datetime.strptime(request.current_date, "%Y-%m-%d %H:%M:%S")
                         < row[numfields - 4]
@@ -853,6 +863,9 @@ class OverviewReport(GridPivot):
                         "on_order_po_proposed": None
                         if history
                         else row[numfields - 1]["on_order_po_proposed"] or 0,
+                        "proposed_ordering": None
+                        if history
+                        else row[numfields - 1]["proposed_ordering"] or 0,
                         "in_transit_do": None
                         if history
                         else row[numfields - 1]["in_transit_do"] or 0,
@@ -872,11 +885,28 @@ class OverviewReport(GridPivot):
                         if history
                         else (row[numfields - 1]["net_forecast"] or 0)
                         + (row[numfields - 1]["open_orders"] or 0),
-                        "order_backlog": order_backlog,
-                        "forecast_backlog": forecast_backlog,
-                        "total_backlog": order_backlog + forecast_backlog
-                        if order_backlog is not None and forecast_backlog is not None
-                        else None,
+                        "order_backlog": 0
+                        if order_backlog and order_backlog < 0
+                        else order_backlog,
+                        "forecast_backlog": 0
+                        if forecast_backlog and forecast_backlog < 0
+                        else forecast_backlog,
+                        "total_backlog": (
+                            (
+                                0
+                                if order_backlog and order_backlog < 0
+                                else order_backlog
+                            )
+                            or 0
+                        )
+                        + (
+                            (
+                                0
+                                if forecast_backlog and forecast_backlog < 0
+                                else forecast_backlog
+                            )
+                            or 0
+                        ),
                         "endoh": None
                         if history
                         else (

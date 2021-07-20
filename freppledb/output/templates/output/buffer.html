@@ -735,6 +735,21 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0<br>';
         break;
+        case 'proposed_ordering':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['proposed_ordering']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['proposed_ordering']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/?noautofilter" +
+              "&amp;item=" + admin_escape(rowdata['item']) + 
+              "&amp;location=" + admin_escape(rowdata['location']) +
+              "&amp;startdate__lt=" + options['colModel']['enddate'] +
+              "&amp;startdate__gte=" + options['colModel']['startdate'] +
+              "&amp;status=proposed" + 
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
         case 'on_order_po_confirmed':
         if (options.colModel.history)
           result += '<br>';

@@ -21,21 +21,26 @@
 FROM ubuntu:18.04 as builder
 
 RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
-  cmake g++ git python3 python3-pip python3-dev libxerces-c3.2 libxerces-c-dev \
-  openssl libssl-dev libpq5 libpq-dev python3-lxml
+  cmake g++ git python3 python3-pip python3-dev python3-psycopg2 \
+  libxerces-c3.2 libxerces-c-dev python3-lxml \
+  openssl libssl-dev libpq5 libpq-dev 
 
-# An alternative to the copy is to clone from git:
-# RUN git clone https://github.com/frepple/frepple.git frepple
+COPY requirements.dev.txt /
+COPY requirements.txt /
+
+RUN python3 -m pip install --upgrade pip && \
+  python3 -m pip install -r requirements.dev.txt
+
+# An alternative to the copy would be to clone or download from github
 COPY frepple-*.tar.gz ./
 
 RUN src=`basename --suffix=.tar.gz frepple-*` && \
   tar -xzf *.tar.gz && \
-  rm *.tar.gz && \
-  cd $src && \
-  python3 -m pip install --upgrade pip && \
-  python3 -m pip install -r requirements.dev.txt && \
-  cmake -B build . && \
-  cmake --build build --target package
+  rm *.tar.gz *.txt && \
+  mkdir "$src/build" && \
+  cd "$src/build" && \
+  cmake .. && \
+  cmake --build . --target package
 
 FROM scratch as package
 COPY --from=builder frepple-*/build/*.deb .
@@ -53,15 +58,19 @@ RUN apt-get -y -q update && \
   apt-get -y -q update && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
   libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 python3-pip postgresql-client-13 \
-  python3-setuptools python3-wheel build-essential python3-dev \
+  python3-setuptools python3-wheel build-essential python3-dev python3-psycopg2 \
   libpq5 openssl python3-lxml libapache2-mod-xsendfile ssl-cert 
+
+COPY requirements.txt /
+
+RUN python3 -m pip install --upgrade pip && \
+  python3 -m pip install -r requirements.txt && \
+  rm requirements.txt
 
 COPY --from=builder frepple-*/build/*.deb .
 
 RUN dpkg -i *.deb && \
   apt-get -f -y -q install && \
-  python3 -m pip install --upgrade pip && \
-  pip3 install -r /usr/share/frepple/requirements.txt && \
   a2enmod expires && \
   a2enmod wsgi && \
   a2enmod ssl && \

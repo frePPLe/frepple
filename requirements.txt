@@ -1,4 +1,3 @@
-psycopg2 == 2.8.6
 cheroot == 8.4.5
 portend == 2.5
 djangorestframework == 3.11.2

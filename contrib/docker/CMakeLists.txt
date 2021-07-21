@@ -7,9 +7,12 @@ if (docker)
 # Main build & runtime image 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ubuntu-18.04.dockerfile" ubuntu-18.04/dockerfile COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh" ubuntu-18.04/entrypoint.sh COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/requirements.dev.txt ubuntu-18.04/requirements.dev.txt COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/requirements.txt ubuntu-18.04/requirements.txt COPYONLY)
 add_custom_target(
   "docker-ubuntu-18.04"
-  # COMMAND "${CMAKE_COMMAND}" --build . --target package_source
+  COMMAND ${CMAKE_COMMAND} --build . --target package_source
+  COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/ubuntu-18.04/"
   COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
     ${docker} build --target package --output type=local,dest=. ubuntu-18.04
   COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
@@ -18,6 +21,10 @@ add_custom_target(
       --tag "ghcr.io/frepple/frepple:${PROJECT_VERSION}"
       --tag "frepple-ubuntu-18.04:latest"
   )
+add_custom_target(
+  "docker"
+  DEPENDS docker-ubuntu-18.04
+)
 add_custom_target(
   "docker-up"
   COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1

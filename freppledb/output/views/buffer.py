@@ -16,6 +16,7 @@
 #
 from datetime import timedelta, datetime
 
+from django.conf import settings
 from django.db import connections, transaction
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
@@ -362,6 +363,7 @@ class OverviewReport(GridPivot):
             "in_transit_do_proposed",
             {"title": _("in transit DO proposed"), "initially_hidden": True},
         ),
+        ("consumedFcst", {"title": _("consumed by Fcst"), "initially_hidden": True}),
         ("open_orders", {"title": _("open sales orders"), "initially_hidden": True}),
         ("net_forecast", {"title": _("net forecast"), "initially_hidden": True}),
         ("total_demand", {"title": _("total demand"), "initially_hidden": True}),
@@ -406,6 +408,7 @@ class OverviewReport(GridPivot):
                     "post_title": _("inventory"),
                     "active_tab": "inventory",
                     "model": Item,
+                    "withforecast": "freppledb.forecast" in settings.INSTALLED_APPS,
                 }
                 if request.basequeryset.using(request.database).count() <= 1:
                     r["args"] = args
@@ -430,9 +433,10 @@ class OverviewReport(GridPivot):
                     "active_tab": "plan",
                     "mode": "table",
                     "model": Buffer,
+                    "withforecast": "freppledb.forecast" in settings.INSTALLED_APPS,
                 }
         else:
-            return {}
+            return {"withforecast": "freppledb.forecast" in settings.INSTALLED_APPS}
 
     @classmethod
     def query(reportclass, request, basequery, sortsql="1 asc"):
@@ -560,6 +564,7 @@ class OverviewReport(GridPivot):
                'consumedMO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedMO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedFcst', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is null and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedDO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedDO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedSO', sum(case when operationplan.type = 'DLVR' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
@@ -661,7 +666,7 @@ class OverviewReport(GridPivot):
                         request.report_startdate,
                         request.report_startdate,  # safetystock
                     )
-                    + (request.report_startdate,) * 24
+					+ (request.report_startdate,) * 25
                     + (request.current_date,) * 2
                     + (request.report_startdate,) * 1  # net forecast
                     + (request.current_date,) * 2  # net forecast
@@ -800,6 +805,9 @@ class OverviewReport(GridPivot):
                         "consumedSO": None
                         if history
                         else row[numfields - 1]["consumedSO"] or 0,
+                        "consumedFcst": None
+                        if history
+                        else row[numfields - 1]["consumedFcst"] or 0,
                         "produced": None
                         if history
                         else row[numfields - 1]["produced"] or 0,

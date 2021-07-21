@@ -287,8 +287,6 @@ def addAttributesFromDatabase():
                 select 
                   model, name, label, type, editable, initially_hidden
                 from common_attribute
-                inner join django_content_type 
-                  on model_id = django_content_type.id
                 """
             )
             attributes = {}

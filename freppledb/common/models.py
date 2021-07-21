@@ -1468,18 +1468,38 @@ class Attribute(AuditModel):
         ("jsonb", _("JSON")),
     )
 
+    def _getContentTypeChoices():
+        try:
+            return [
+                (i.model, i.model)
+                for i in ContentType.objects.all()
+                .using(DEFAULT_DB_ALIAS)
+                .exclude(
+                    app_label__in=[
+                        "auth",
+                        "contenttypes",
+                        "admin",
+                        "reportmanager",
+                        "archive",
+                        "out",
+                    ]
+                )
+            ]
+        except Exception as e:
+            print(e)
+            return []
+
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True)
-    model = models.ForeignKey(
-        ContentType,
+    model = models.CharField(
         verbose_name=_("model"),
-        related_name="attributes_for_%(class)s",
-        on_delete=models.CASCADE,
+        choices=_getContentTypeChoices(),
+        max_length=300,
     )
     name = models.CharField(_("name"), max_length=300, db_index=True)
     label = models.CharField(_("label"), max_length=300, db_index=True)
     type = models.CharField(
-        _("type"), max_length=20, null=True, blank=True, choices=types
+        _("type"), max_length=20, null=False, blank=False, choices=types
     )
     editable = models.BooleanField(_("editable"), blank=True, default=True)
     initially_hidden = models.BooleanField(
@@ -1491,12 +1511,12 @@ class Attribute(AuditModel):
             return self.get(model=model, name=name)
 
     def natural_key(self):
-        return (self.model_id, self.name)
+        return (self.model, self.name)
 
     objects = Manager()
 
     def __str__(self):
-        return "%s %s" % (self.model.name or "", self.name)
+        return "%s %s" % (self.model, self.name)
 
     def clean(self):
         if self.name and (not self.name.isalnum() or self.name[0].isdigit()):

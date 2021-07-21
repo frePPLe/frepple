@@ -15,9 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf import settings
 from django.db import migrations, models
-import django.db.models.deletion
 import django.utils.timezone
 
 
@@ -72,7 +70,7 @@ class Migration(migrations.Migration):
                 (
                     "type",
                     models.CharField(
-                        blank=True,
+                        blank=False,
                         choices=[
                             ("string", "string"),
                             ("boolean", "boolean"),
@@ -85,7 +83,7 @@ class Migration(migrations.Migration):
                             ("jsonb", "JSON"),
                         ],
                         max_length=20,
-                        null=True,
+                        null=False,
                         verbose_name="type",
                     ),
                 ),
@@ -103,12 +101,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "model",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="attributes_for_attributes",
-                        to="contenttypes.ContentType",
-                        verbose_name="model",
-                    ),
+                    models.CharField(choices=[], max_length=300, verbose_name="model"),
                 ),
             ],
             options={

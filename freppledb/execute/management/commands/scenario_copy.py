@@ -199,6 +199,7 @@ class Command(BaseCommand):
                 "common_notification",
                 "common_follower",
                 "common_user_groups",
+                "common_attribute",
                 "common_user_user_permissions",
                 "common_preferences",
                 "reportmanager_report",

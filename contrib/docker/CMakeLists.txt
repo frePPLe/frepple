@@ -7,8 +7,8 @@ if (docker)
 # Main build & runtime image 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ubuntu-18.04.dockerfile" ubuntu-18.04/dockerfile COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh" ubuntu-18.04/entrypoint.sh COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/requirements.dev.txt ubuntu-18.04/requirements.dev.txt COPYONLY)
-configure_file(${CMAKE_SOURCE_DIR}/requirements.txt ubuntu-18.04/requirements.txt COPYONLY)
+configure_file("${CMAKE_SOURCE_DIR}/requirements.dev.txt" ubuntu-18.04/requirements.dev.txt COPYONLY)
+configure_file("${CMAKE_SOURCE_DIR}/requirements.txt" ubuntu-18.04/requirements.txt COPYONLY)
 add_custom_target(
   "docker-ubuntu-18.04"
   COMMAND ${CMAKE_COMMAND} --build . --target package_source

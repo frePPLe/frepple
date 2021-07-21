@@ -1213,6 +1213,20 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
 // No need to take post- and pre-operation times into account
 // @todo This method should only be allowed to create 1 operationplan
 void SolverCreate::solve(const OperationAlternate* oper, void* v) {
+  {
+    auto altIter = oper->getSubOperations().begin();
+    if (altIter != oper->getSubOperations().end()) {
+      auto curAlt = *altIter;
+      if (++altIter == oper->getSubOperations().end() &&
+          curAlt->getPriority() && !curAlt->getEffective()) {
+        // This is the only suboperation. This is a dummy alternate operation
+        // which we can shortcut to save some CPU cycles.
+        curAlt->getOperation()->solve(*this, v);
+        return;
+      }
+    }
+  }
+
   SolverData* data = static_cast<SolverData*>(v);
   Date origQDate = data->state->q_date;
   double origQqty = data->state->q_qty;

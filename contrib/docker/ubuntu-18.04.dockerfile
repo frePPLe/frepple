@@ -73,8 +73,6 @@ RUN dpkg -i *.deb && \
   apt-get -f -y -q install && \
   a2enmod expires && \
   a2enmod wsgi && \
-  a2enmod ssl && \
-  a2ensite default-ssl && \
   a2ensite z_frepple && \
   a2enmod proxy && \
   a2enmod proxy_wstunnel && \
@@ -83,7 +81,13 @@ RUN dpkg -i *.deb && \
   rm -rf *.deb /var/lib/apt/lists/* /etc/apt/sources.list.d/pgdg.list
 
 EXPOSE 80
-EXPOSE 443
+
+# Use the following lines to enable HTTPS. 
+# Inherit from this base image, add the following lines in your dockerfile
+# and copy your certificate files into the image.
+# RUN a2enmod ssl && \
+#   a2ensite default-ssl && \
+# EXPOSE 443
 
 VOLUME ["/var/log/frepple", "/etc/frepple", "/var/log/apache2", "/etc/apache2"]
 

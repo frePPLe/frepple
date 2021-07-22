@@ -17,6 +17,7 @@
 
 from django.conf import settings
 from django.contrib.admin.utils import unquote
+from django.db.models import F, Q
 from django.db.models.expressions import RawSQL
 from django.template import Template
 from django.utils.translation import gettext_lazy as _
@@ -629,6 +630,7 @@ class DeliveryOrderList(GridReport):
         GridFieldDateTime(
             "due", field_name="demand__due", title=_("due date"), editable=False
         ),
+        GridFieldDateTime("duedate", title=_("due date"), editable=False, hidden=True),
         GridFieldChoice(
             "status",
             title=_("status"),
@@ -830,6 +832,8 @@ class DeliveryOrderList(GridReport):
         if "orders" in request.GET:
             orders = request.GET["orders"]
             q = q.filter(demand__isnull=(orders.lower() in ["false", "0"]))
+
+        q = q.annotate(duedate=F("demand__due"))
 
         if args and args[0]:
             path = request.path.split("/")[4]

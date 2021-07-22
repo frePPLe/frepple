@@ -1230,6 +1230,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   SolverData* data = static_cast<SolverData*>(v);
   Date origQDate = data->state->q_date;
   double origQqty = data->state->q_qty;
+  double origQtyMin = data->state->q_qty_min;
   Buffer* buf = data->state->curBuffer;
   Demand* d = data->state->curDemand;
 
@@ -1308,6 +1309,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 
       // Find the flow into the requesting buffer. It may or may not exist,
       // since the flow could already exist on the top operationplan
+      data->state->q_qty_min = origQtyMin;
       Flow* sub_flow = nullptr;
       if (buf) {
         // Flow quantity on the suboperation
@@ -1405,6 +1407,18 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       else
         data->state->q_qty =
             (a_qty - sub_flow->getQuantityFixed()) / sub_flow->getQuantity();
+
+      // Adjust minimum quantity
+      if (sub_flow) {
+        if (!sub_flow->getQuantity() ||
+            data->state->q_qty_min <
+                sub_flow->getQuantityFixed() + ROUNDING_ERROR)
+          data->state->q_qty_min = 0.001;
+        else
+          data->state->q_qty_min =
+              (data->state->q_qty_min - sub_flow->getQuantityFixed()) /
+              sub_flow->getQuantity();
+      }
 
       // Subtract offset between operationplan end and flowplan date
       if (sub_flow && sub_flow->getOffset()) {
@@ -1728,6 +1742,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   // Set up the reply
   data->state->a_qty = origQqty - a_qty;  // a_qty is the unplanned quantity
   data->state->a_date = a_date;
+  data->state->q_qty_min = origQtyMin;
   if (data->state->a_qty == 0 && data->state->a_date <= origQDate) {
     if (getLogLevel() > 1)
       logger << indentlevel << "Applying lazy delay " << getLazyDelay()

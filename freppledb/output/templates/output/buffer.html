@@ -301,21 +301,22 @@ function drawGraphs(jsondata)
 
     // Display legend
     var legend = svg.append("g");
-    var codes = [
-      ['{{_('start inventory')|capfirst}}', "#8BBA00"],
-      [],
-      ['{{_('safety stock')|capfirst}}', "#FF0000"],
-      ['{{_('consumed')|capfirst}}', "#F6BD0F"],
-      [],
-      [],
-      [],
-      ['{{_('produced')|capfirst}}', "#2B95EC"],
-      [],
-      [],
-      [],
-      ['{{_('end inventory')|capfirst}}', "#7B5E08"]
-      ];
     var cnt = 0;
+
+    var color_dict = {}
+    color_dict["startoh"] = "#8BBA00";
+    color_dict["safetystock"] = "#FF0000";
+    color_dict["consumed"] = "#F6BD0F";
+    color_dict["produced"] = "#2B95EC";
+    color_dict["endoh"] = "#7B5E08";
+
+    var text_dict = {}
+    text_dict["startoh"] = '{{_('start inventory')|capfirst}}';
+    text_dict["safetystock"] = '{{_('safety stock')|capfirst}}';
+    text_dict["consumed"] = '{{_('consumed')|capfirst}}';
+    text_dict["produced"] = '{{_('produced')|capfirst}}';
+    text_dict["endoh"] = '{{_('end inventory')|capfirst}}';
+
     for (var i in cross_idx)
     {
       if (field_by_id[cross_idx[i]] == 'startoh' 
@@ -327,14 +328,14 @@ function drawGraphs(jsondata)
           .attr("x", width + 82)
           .attr("width", 18)
           .attr("height", 18)
-          .style("fill", codes[cross_idx[i]][1])
+          .style("fill", color_dict[field_by_id[cross_idx[i]]])
           .attr("transform", "translate(0," + (cnt*20+10) + ")");
         legend.append("text")
           .attr("x", width + 76)
           .attr("y", 9)
           .attr("dy", ".35em")
           .style("text-anchor", "end")
-          .text(codes[cross_idx[i]][0])
+          .text(text_dict[field_by_id[cross_idx[i]]])
           .attr("transform", "translate(0," + (cnt*20+10) + ")");
         ++cnt;
         }

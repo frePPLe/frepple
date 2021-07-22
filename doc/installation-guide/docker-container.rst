@@ -7,6 +7,7 @@ Docker container
 * `Deployment with docker compose`_
 * `Deployment with Kubernetes`_
 * `Deployment with custom extension apps`_
+* `Running frepplectl commands on a container`_
 
 ******************
 Basic installation
@@ -84,3 +85,16 @@ Deployment with custom extension apps
 *************************************
 
 Todo
+
+******************************************
+Running frepplectl commands on a container
+******************************************
+
+It is possible to execute a frepplectl command (or any linux command) 
+on a running container.
+
+.. code-block:: none
+
+   docker exec -it <container name> frepplectl importfromfolder
+
+   docker exec -it <container name> /bin/bash

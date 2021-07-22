@@ -83,8 +83,8 @@ For developers
   updating. The files *contrib/installer/parameters.ini* and *contrib/installer/frepple.nsi* need straightforward
   editing.
 
-  To activate it you must also add the new language to *djangosettings.py* (or *bin\\djangosettings.py* in
-  the binary Windows installation). Add the new language code and description to the variable LANGUAGES:
+  To activate it you must also add the new language to *djangosettings.py*. Add the new language code and 
+  description to the variable LANGUAGES:
 
   ::
 

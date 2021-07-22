@@ -226,9 +226,7 @@ The section below describes the installation and configuration of these.
 
 * **Configuring the connector - frePPLe side**
 
-  * | **Edit the frePPLe configuration file djangosettings.py**
-    | The file is found under /etc/frepple (Linux) or <install folder>\\bin\\custom
-      (Windows).
+  * | **Edit the frePPLe configuration file /etc/frepple/djangosettings.py**
     
     * | Assure that the "freppledb.odoo" is included in the setting
         INSTALLED_APPS which defines the enabled extensions. By default

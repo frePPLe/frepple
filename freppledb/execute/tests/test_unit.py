@@ -335,7 +335,6 @@ class remote_commands(TransactionTestCase):
             self.client = self.client_class()
 
             # Generate a plan in the scenario
-            sleep(10)
             response = self.client.post(
                 "/%s/execute/api/runplan/" % db2,
                 {"constraint": 1, "plantype": 1},
@@ -348,13 +347,12 @@ class remote_commands(TransactionTestCase):
 
             # Wait 10 seconds for the plan the finish
             cnt = 0
-            while cnt <= 20:
+            while cnt <= 10:
                 response = self.client.get(
                     "/%s/execute/api/status/?id=%s" % (db2, taskid3), **headers
                 )
                 self.assertEqual(response.status_code, 200)
                 taskinfo = json.loads(response.content.decode())
-                print(" taskinfo", taskinfo)
                 if taskinfo[str(taskid3)]["status"] == "Done":
                     break
                 sleep(1)

@@ -28,7 +28,7 @@ from django.template.loader import render_to_string
 
 from freppledb.execute.models import Task, ScheduledTask
 from freppledb.common.middleware import _thread_locals
-from freppledb.common.models import User, Scenario
+from freppledb.common.models import User, Scenario, Parameter
 from freppledb import __version__
 
 
@@ -310,6 +310,12 @@ class Command(BaseCommand):
             if options["description"]:
                 destinationscenario.description = options["description"]
             destinationscenario.save(using=DEFAULT_DB_ALIAS)
+
+            # Delete parameter that marks a running worker
+            if destination != DEFAULT_DB_ALIAS:
+                Parameter.objects.using(destination).filter(
+                    name="Worker alive"
+                ).delete()
 
             # Give access to the destination scenario to:
             #  a) the user doing the copy

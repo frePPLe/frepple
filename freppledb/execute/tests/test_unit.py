@@ -335,6 +335,7 @@ class remote_commands(TransactionTestCase):
             self.client = self.client_class()
 
             # Generate a plan in the scenario
+            sleep(10)
             response = self.client.post(
                 "/%s/execute/api/runplan/" % db2,
                 {"constraint": 1, "plantype": 1},

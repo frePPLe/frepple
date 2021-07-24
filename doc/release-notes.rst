@@ -4,6 +4,19 @@ Release notes
 6.16.0 (upcoming release)
 =========================
 
+.. rubric:: Community Edition
+
+- | The `old frepple-user group <https://groups.google.com/g/frepple-users>`_ has 
+    been closed. 
+  | `Github Dicussions <https://github.com/frePPLe/frepple/discussions>`_ are the
+    new forum for any questions and discussion.
+
+- | The Continuous Integration (CI) software building process is now fully transparent
+    run on `Github Actions <https://github.com/frePPLe/frepple/actions>`_.
+
+- | With the above changes, the source code, software builds, tests, and user forum
+    are now all living next to each other on github.
+
 .. rubric:: Supported platforms
 
 - | The Windows installer for the Community Edition has been removed. FrePPLe is an
@@ -11,9 +24,11 @@ Release notes
     for us to distribute the application.
   | The Enterprise Edition is still available as a Windows installer.
 
-- | The docker container are now fully production ready.
+- | The docker container is now fully production ready.
   | They have been experimental for a while already, an we have now brought forward the 
     code, tests and documentation.
+  | The images can be pulled from the 
+    `Github Container Registry <https://github.com/frePPLe/frepple/pkgs/container/frepple>`_.
   
 .. rubric:: User interface
 

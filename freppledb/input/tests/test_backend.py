@@ -20,6 +20,7 @@ import os
 import random
 from rest_framework.test import APIClient, APITestCase, APIRequestFactory
 import tempfile
+from time import sleep
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
@@ -810,6 +811,7 @@ class NotificationTest(TransactionTestCase):
         super().tearDown()
 
     def test_follow_item(self):
+        sleep(3)
         user = User.objects.create_user(
             username="test user",
             email="tester@yourcompany.com",
@@ -861,6 +863,7 @@ class NotificationTest(TransactionTestCase):
 
         # Check what notifications we got
         Notification.wait()
+        sleep(3)
         # for x in Notification.objects.all():
         #    print(x)
         self.assertEqual(Notification.objects.count(), 4)

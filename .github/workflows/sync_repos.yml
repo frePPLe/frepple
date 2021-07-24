@@ -1,0 +1,22 @@
+#
+# This action keeps the master branch between the frePPLe private
+# github repository and the public github repository.
+#
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checking out source code
+        uses: actions/checkout@v2
+      - name: Pushing to the public repository
+        if: ${{ github.repository != 'frePPLe/frepple' }}
+        run: |
+          git fetch --prune --unshallow
+          git remote add github-public https://github.com/frePPLe/frepple.git
+          git push --set-upstream github-public master

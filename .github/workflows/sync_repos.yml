@@ -18,5 +18,5 @@ jobs:
         if: ${{ github.repository != 'frePPLe/frepple' }}
         run: |
           git fetch --prune --unshallow
-          git remote add github-public https://github.com/frePPLe/frepple.git
+          git remote add github-public https://jdetaeye:${{ secrets.COMMUNITY_GITHUB_TOKEN }}@github.com/frePPLe/frepple.git
           git push --set-upstream github-public master

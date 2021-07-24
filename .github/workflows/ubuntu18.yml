@@ -72,8 +72,8 @@ jobs:
 
             Release notes are available on https://frepple.org/docs/current/release-notes.html
           files: |
-            "${{github.workspace}}/build/contrib/docker*.deb"
-            "${{github.workspace}}/build/frepple-doc-*.tgz"
+            ${{github.workspace}}/build/contrib/docker*.deb
+            ${{github.workspace}}/build/frepple-doc-*.tgz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -86,7 +86,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push docker image
-        if: startsWith(github.ref, 'refs/tags/')     
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target docker        
           docker push ghcr.io/frepple/frepple:${{ steps.get_version.outputs.tag }}

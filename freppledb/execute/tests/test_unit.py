@@ -378,3 +378,4 @@ class remote_commands(TransactionTestCase):
             sleep(1)
             cnt += 1
         self.assertLess(cnt, 20, "Running task taking too long")
+        sleep(4)   # Wait for the worker to die

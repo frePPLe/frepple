@@ -932,9 +932,13 @@ class ComputePeriodOfCover(PlanTask):
                  ),
                  -- No inventory and no backlog: use the date of next consumer
                  (
-                 select greatest('0 days'::interval, date_trunc('day', least(flowdate - %s, '999 days'::interval)))
+                 select greatest('0 days'::interval, least( 
+                     date_trunc('day', justify_interval(flowdate - %s - coalesce(operationplan.delay, '0 day'::interval))),
+                     '999 days'::interval
+                     ))
                   from operationplanmaterial
-                  where quantity < 0
+                  inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
+                  where operationplanmaterial.quantity < 0
                     and operationplanmaterial.item_id = item.name
                   order by flowdate asc, id asc
                   limit 1

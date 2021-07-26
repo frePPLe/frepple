@@ -56,7 +56,7 @@ class Command(BaseCommand):
 
     statements = [
         {
-            "filename": "purchaseorder.csv",
+            "filename": "purchaseorder.csv.gz",
             "folder": "export",
             "sql": """COPY
           (select source, lastmodified, reference, status , reference, quantity,
@@ -68,7 +68,7 @@ class Command(BaseCommand):
           TO STDOUT WITH CSV HEADER""",
         },
         {
-            "filename": "distributionorder.csv",
+            "filename": "distributionorder.gz",
             "folder": "export",
             "sql": """COPY
           (select source, lastmodified, reference, status, reference, quantity,
@@ -80,7 +80,7 @@ class Command(BaseCommand):
           TO STDOUT WITH CSV HEADER""",
         },
         {
-            "filename": "manufacturingorder.csv",
+            "filename": "manufacturingorder.csv.gz",
             "folder": "export",
             "sql": """COPY
           (select source, lastmodified, reference, status ,reference ,quantity,
@@ -92,7 +92,7 @@ class Command(BaseCommand):
           TO STDOUT WITH CSV HEADER""",
         },
         {
-            "filename": "problems.csv",
+            "filename": "problems.csv.gz",
             "folder": "export",
             "sql": """COPY (
           select
@@ -103,7 +103,7 @@ class Command(BaseCommand):
           ) TO STDOUT WITH CSV HEADER""",
         },
         {
-            "filename": "operationplanmaterial.csv",
+            "filename": "operationplanmaterial.csv.gz",
             "folder": "export",
             "sql": """COPY (
           select
@@ -114,7 +114,7 @@ class Command(BaseCommand):
           ) TO STDOUT WITH CSV HEADER""",
         },
         {
-            "filename": "operationplanresource.csv",
+            "filename": "operationplanresource.csv.gz",
             "folder": "export",
             "sql": """COPY (
           select
@@ -125,7 +125,7 @@ class Command(BaseCommand):
           ) TO STDOUT WITH CSV HEADER""",
         },
         {
-            "filename": "capacityreport.csv",
+            "filename": "capacityreport.csv.gz",
             "folder": "export",
             "report": resource.OverviewReport,
             "data": {
@@ -137,7 +137,7 @@ class Command(BaseCommand):
             },
         },
         {
-            "filename": "inventoryreport.csv",
+            "filename": "inventoryreport.csv.gz",
             "folder": "export",
             "report": buffer.OverviewReport,
             "data": {
@@ -356,15 +356,24 @@ class Command(BaseCommand):
                                 reportclass.getBuckets(request)
 
                             # Write the report file
-                            datafile = open(os.path.join(exportFolder, filename), "wb")
-                            if filename.endswith(".xlsx"):
+                            if filename.lower().endswith(".gz"):
+                                datafile = gzip.open(
+                                    os.path.join(exportFolder, filename), "wb"
+                                )
+                            else:
+                                datafile = open(
+                                    os.path.join(exportFolder, filename), "wb"
+                                )
+                            if filename.lower().endswith(".xlsx"):
                                 reportclass._generate_spreadsheet_data(
                                     request,
                                     [request.database],
                                     datafile,
                                     **cfg.get("data", {})
                                 )
-                            elif filename.endswith(".csv"):
+                            elif filename.lower().endswith(
+                                ".csv"
+                            ) or filename.lower().endswith(".csv.gz"):
                                 for r in reportclass._generate_csv_data(
                                     request, [request.database], **cfg.get("data", {})
                                 ):

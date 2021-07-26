@@ -3,6 +3,8 @@
 # github repository and the public github repository.
 #
 
+name: Synchronize repositories
+
 on:
   push:
     branches:

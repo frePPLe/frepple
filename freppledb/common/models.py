@@ -1485,8 +1485,7 @@ class Attribute(AuditModel):
                     ]
                 )
             ]
-        except Exception as e:
-            print(e)
+        except Exception:
             return []
 
     # Database fields

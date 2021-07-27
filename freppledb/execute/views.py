@@ -16,6 +16,7 @@
 #
 
 from datetime import datetime
+import gzip
 from importlib import import_module
 from io import BytesIO
 import json
@@ -817,6 +818,13 @@ class FileManager:
             # Download a single file
             try:
                 clean_filename = filename.split("/")[0]
+                if not os.path.isfile(os.path.join(folder, clean_filename)):
+                    if os.path.isfile(os.path.join(folder, "%s.gz" % clean_filename)):
+                        # File exists in compressed format
+                        clean_filename = "%s.gz" % clean_filename
+                    else:
+                        logger.error("Failed file download: %s" % e)
+                        return HttpResponseNotFound(force_text(_("Error")))
                 return sendStaticFile(
                     request,
                     folder,
@@ -839,10 +847,18 @@ class FileManager:
                         if filename.endswith(extensions) and os.access(
                             fullfilename, os.R_OK
                         ):
-                            zf.write(
-                                filename=fullfilename,
-                                arcname=os.path.basename(filename),
-                            )
+                            if filename.endswith(".gz"):
+                                # Put the uncompressed file in the zip file
+                                with gzip.open(fullfilename, "rb") as datafile:
+                                    zf.writestr(
+                                        os.path.basename(filename[:-3]),
+                                        datafile.read(),
+                                    )
+                            else:
+                                zf.write(
+                                    filename=fullfilename,
+                                    arcname=os.path.basename(filename),
+                                )
             response = HttpResponse(b.getvalue(), content_type="application/zip")
             response["Content-Disposition"] = 'attachment; filename="frepple.zip"'
             return response

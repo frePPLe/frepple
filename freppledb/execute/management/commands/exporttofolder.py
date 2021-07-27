@@ -517,7 +517,7 @@ class Command(BaseCommand):
                     if file.endswith((".xlsx", ".xlsx.gz", ".csv", ".csv.gz", ".log")):
                         filesexported.append(
                             [
-                                file,
+                                file[:-3] if file.endswith(".csv.gz") else file,
                                 strftime(
                                     "%Y-%m-%d %H:%M:%S",
                                     localtime(

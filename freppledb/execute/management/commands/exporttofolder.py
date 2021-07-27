@@ -20,7 +20,7 @@ import errno
 import gzip
 import logging
 
-from _datetime import datetime
+from datetime import datetime
 from time import localtime, strftime
 from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
@@ -68,7 +68,7 @@ class Command(BaseCommand):
           TO STDOUT WITH CSV HEADER""",
         },
         {
-            "filename": "distributionorder.gz",
+            "filename": "distributionorder.csv.gz",
             "folder": "export",
             "sql": """COPY
           (select source, lastmodified, reference, status, reference, quantity,

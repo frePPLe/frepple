@@ -86,12 +86,12 @@ class execute_with_commands(TransactionTestCase):
             os.makedirs(outfolder)
         else:
             for file in os.listdir(outfolder):
-                if file.endswith(".csv"):
+                if file.endswith(".csv.gz"):
                     os.remove(os.path.join(outfolder, file))
         management.call_command("exporttofolder", verbosity="0")
         count = 0
         for file in os.listdir(outfolder):
-            if file.endswith(".csv"):
+            if file.endswith(".csv.gz"):
                 f = os.stat(os.path.join(outfolder, file))
                 if f.st_size > 10:
                     count += 1
@@ -378,4 +378,4 @@ class remote_commands(TransactionTestCase):
             sleep(1)
             cnt += 1
         self.assertLess(cnt, 20, "Running task taking too long")
-        sleep(4)   # Wait for the worker to die
+        sleep(4)  # Wait for the worker to die

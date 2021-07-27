@@ -1,3 +1,3 @@
-/etc/apache2/sites-available/frepple.conf
+/etc/apache2/sites-available/z_frepple.conf
 /etc/frepple/djangosettings.py
 /etc/frepple/license.xml

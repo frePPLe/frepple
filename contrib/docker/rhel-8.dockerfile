@@ -29,8 +29,8 @@ RUN subscription-manager register --username $RHEL_USER --password $RHEL_PASSWOR
   yum -y update && \
   yum -y install epel-release && \
   yum -y install xerces-c python36 rpm-build rpm-sign git wget \
-    python3-psycopg2 python3-pip postgresql-devel openssl openssl-devel \
-    libtool make python3-devel xerces-c-devel automake autoconf gcc-c++ && \
+  python3-psycopg2 python3-pip postgresql-devel openssl openssl-devel \
+  libtool make python3-devel xerces-c-devel automake autoconf gcc-c++ && \
   yum clean all 
 RUN subscription-manager unregister
 
@@ -75,7 +75,7 @@ COPY --from=builder /frepple/contrib/centos/frepple_*.rpm .
 RUN subscription-manager register --username $RHEL_USER --password $RHEL_PASSWORD --auto-attach && \
   yum -y update && \
   yum -y install xerces-c python36 httpd python3-mod_wsgi \
-     python3-psycopg2 python3-pip openssl postgresql-client && \
+  python3-psycopg2 python3-pip openssl postgresql-client && \
   yum clean all && \
   subscription-manager unregister
 
@@ -88,7 +88,7 @@ RUN yum -y --no-install-recommends install \
   a2enmod wsgi && \
   a2enmod ssl && \
   a2ensite default-ssl && \
-  a2ensite frepple && \
+  a2ensite z_frepple && \
   service apache2 restart && \
   rm requirements.txt *.rpm && \
   yum -y remove python3-wheel python3-setuptools python3-pip

@@ -258,7 +258,7 @@ Here are the steps to get a fully working environment.
      sudo a2enmod wsgi
      sudo a2enmod ssl
      sudo a2ensite default-ssl
-     sudo a2ensite frepple
+     sudo a2ensite z_frepple
      sudo service apache2 restart
 
 #. **Verify the installation**
@@ -329,7 +329,7 @@ inspiration for your own deployments.
   sudo a2enmod ssl
   sudo a2enmod xsendfile
   sudo a2ensite default-ssl
-  sudo a2ensite frepple
+  sudo a2ensite z_frepple
   sudo service apache2 restart
 
   # Create frepple database schema

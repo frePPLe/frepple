@@ -80,7 +80,7 @@ on the URL http://localhost:9000/
      -e POSTGRES_PASSWORD=frepple \
      --name frepple_local \
      --publish 9000:80 \ 
-     --detach
+     --detach \
      frepple-ubuntu-latest 
 
 ******************************

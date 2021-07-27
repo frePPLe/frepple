@@ -69,9 +69,9 @@ class execute_with_commands(TransactionTestCase):
 
         # Move export files to the import folder
         for file in [
-            "purchaseorder.csv",
-            "distributionorder.csv",
-            "manufacturingorder.csv",
+            "purchaseorder.csv.gz",
+            "distributionorder.csv.gz",
+            "manufacturingorder.csv.gz",
         ]:
             os.rename(
                 os.path.join(self.datafolder, "export", file),

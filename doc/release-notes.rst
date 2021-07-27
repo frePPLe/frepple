@@ -29,6 +29,11 @@ Release notes
     code, tests and documentation.
   | The images can be pulled from the 
     `Github Container Registry <https://github.com/frePPLe/frepple/pkgs/container/frepple>`_.
+
+.. rubric:: Production planning
+
+- | Bug fix: A solver issue with unconstrained resource has been corrected. See 
+    https://github.com/frePPLe/frepple/issues/381
   
 .. rubric:: User interface
 

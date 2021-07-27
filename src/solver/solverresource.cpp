@@ -406,7 +406,7 @@ void SolverCreate::solveUnconstrained(const Resource* res, void* v) {
   // max_early fence is reached
 
   // Reply whatever is requested, regardless of date and quantity.
-  data->state->a_qty = data->state->q_qty;
+  data->state->a_qty = -data->state->q_qty;
   data->state->a_date = data->state->q_date;
   {
     auto tmp = data->state->a_qty * res->getCost() *
@@ -422,7 +422,7 @@ void SolverCreate::solveUnconstrained(const Resource* res, void* v) {
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0)
     logger << indentlevel-- << "Unconstrained resource '" << res
-           << "' answers: " << (-data->state->a_qty) << endl;
+           << "' answers: " << data->state->a_qty << endl;
 }
 
 void SolverCreate::solve(const ResourceBuckets* res, void* v) {

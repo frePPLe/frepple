@@ -6,7 +6,6 @@ services:
     container_name: frepple-webserver
     ports:
       - 9000:80
-      - 9001:443
     depends_on:
       - frepple-postgres
     networks:

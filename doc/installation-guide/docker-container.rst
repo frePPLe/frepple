@@ -29,16 +29,16 @@ The image can be extended and customized using the following:
 
 * The following **environment variables** configure the access to the PostgreSQL database:
 
-    * | POSTGRESQL_HOST:
+    * | POSTGRES_HOST:
       | Required. Points to IP address or name of the host running the database.
 
-    * | POSTGRESQL_PORT:
+    * | POSTGRES_PORT:
       | TCP port of the database. Defaults to "5432".
 
-    * | POSTGRESQL_USER:
+    * | POSTGRES_USER:
       | Database role or user. Defaults to "frepple".
 
-    * | POSTGRESQL_PASSWORD:
+    * | POSTGRES_PASSWORD:
       | Password for the database role or user. Defaults to "frepple".
 
 * The following **volumes** let you deploy custom code and license files into the container:
@@ -66,13 +66,78 @@ The image can be extended and customized using the following:
 Deployment with external PostgreSQL database
 ********************************************
 
-Todo
+The example below creates a container that is using the postgres database installed on
+the docker host server.
+The container is called frepple_local, and you can access it with your browser 
+on the URL http://localhost:9000/
+
+.. code-block:: none
+
+   docker run \
+     -e POSTGRES_HOST=host.docker.internal \
+     -e POSTGRES_PORT=5432 \
+     -e POSTGRES_USER=frepple \
+     -e POSTGRES_PASSWORD=frepple \
+     --name frepple_local \
+     --publish 9000:80 \ 
+     --detach
+     frepple-ubuntu-latest 
 
 ******************************
 Deployment with docker compose
 ******************************
 
-Todo
+Here is a sample docker-compose file that defines 2 containers: 1) a postgres container to run the database
+and 2) a frepple web application server.
+
+You access the application with your browser on the URL http://localhost:9000/
+
+The frepple log and configuration files are put in volumes (which allows to reuse
+them between different releases of the frepple image).
+
+.. code-block:: none
+
+  services:
+
+    frepple:
+      image: "frepple-ubuntu-18.04:latest"
+      container_name: frepple-webserver
+      ports:
+        - 9000:80
+      depends_on:
+        - frepple-postgres
+      networks:
+        - backend
+      volumes:
+        - log-apache:/var/log/apache2
+        - log-frepple:/var/log/frepple
+        - config-frepple:/etc/frepple
+        - config-apache:/etc/apache2
+      environment:
+        POSTGRES_HOST: frepple-postgres
+        POSTGRES_PORT: 5432
+        POSTGRES_USER: frepple
+        POSTGRES_PASSWORD: frepple
+
+    frepple-postgres:
+      image: "postgres:13"
+      container_name: frepple-postgres
+      networks:
+        - backend
+      environment:
+        POSTGRES_PASSWORD: frepple
+        POSTGRES_DB: frepple
+        POSTGRES_USER: frepple
+
+  volumes:
+    log-apache:
+    log-frepple:
+    config-frepple:
+    config-apache:
+    data-postgres:
+
+  networks:
+    backend:
 
 **************************
 Deployment with Kubernetes
@@ -91,7 +156,7 @@ Running frepplectl commands on a container
 ******************************************
 
 It is possible to execute a frepplectl command (or any linux command) 
-on a running container.
+on a running container. 
 
 .. code-block:: none
 

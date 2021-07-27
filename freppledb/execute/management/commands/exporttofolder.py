@@ -239,6 +239,13 @@ class Command(BaseCommand):
             task.processid = os.getpid()
             task.save(using=self.database)
 
+            # Try to create the upload if doesn't exist yet
+            if not os.path.isdir(settings.DATABASES[self.database]["FILEUPLOADFOLDER"]):
+                try:
+                    os.makedirs(settings.DATABASES[self.database]["FILEUPLOADFOLDER"])
+                except Exception:
+                    pass
+
             # Execute
             if os.path.isdir(settings.DATABASES[self.database]["FILEUPLOADFOLDER"]):
                 if not os.path.isdir(

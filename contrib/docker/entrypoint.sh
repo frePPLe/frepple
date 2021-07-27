@@ -15,6 +15,8 @@ if [ -n "$POSTGRES_PASSWORD" ]; then
   sed -i "s/\"PASSWORD\": \"frepple\"/\"PASSWORD\": \"${POSTGRES_PASSWORD}\"/g" /etc/frepple/djangosettings.py
 fi
 
+# TODO check the connection to the database before continuing. Misconfigurations will be the most common error.
+
 # Create and migrate the databases
 frepplectl createdatabase --skip-if-exists
 frepplectl migrate --noinput

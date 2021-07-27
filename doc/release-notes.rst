@@ -27,8 +27,9 @@ Release notes
 - | The docker container is now fully production ready.
   | They have been experimental for a while already, an we have now brought forward the 
     code, tests and documentation.
-  | The images can be pulled from the 
+  | The images for the Community Edition can be pulled from the 
     `Github Container Registry <https://github.com/frePPLe/frepple/pkgs/container/frepple>`_.
+  | The images for the Enterprise Edition can be downloaded from our portal.
 
 .. rubric:: Production planning
 

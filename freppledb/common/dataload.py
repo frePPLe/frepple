@@ -409,7 +409,11 @@ def _parseData(model, data, rowmapper, user, database, ping):
                 )
             # Abort when there are errors
             if errors:
-                raise NameError("Can't proceed")
+                if isinstance(data, Worksheet) and len(data.parent.sheetnames) > 1:
+                    # Skip this sheet an continue with the next one
+                    return
+                else:
+                    raise NameError("Can't proceed")
 
             # Create a form class that will be used to validate the data
             fields = [i.name for i in headers if i]

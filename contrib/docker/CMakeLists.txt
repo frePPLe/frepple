@@ -18,8 +18,8 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
     ${docker} build ubuntu-18.04 
       --tag "frepple-ubuntu-18.04:${PROJECT_VERSION}"
+      --tag "frepple:${PROJECT_VERSION}"
       --tag "ghcr.io/frepple/frepple:${PROJECT_VERSION}"
-      --tag "frepple-ubuntu-18.04:latest"
   )
 add_custom_target(
   "docker"

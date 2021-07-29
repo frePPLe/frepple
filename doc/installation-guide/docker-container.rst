@@ -81,7 +81,7 @@ on the URL http://localhost:9000/
      --name frepple_local \
      --publish 9000:80 \ 
      --detach \
-     frepple-ubuntu-latest 
+     frepple:latest 
 
 ******************************
 Deployment with docker compose
@@ -100,7 +100,7 @@ them between different releases of the frepple image).
   services:
 
     frepple:
-      image: "frepple-ubuntu-18.04:latest"
+      image: "frepple:latest"
       container_name: frepple-webserver
       ports:
         - 9000:80

@@ -40,7 +40,7 @@ RUN src=`basename --suffix=.tar.gz frepple-*` && \
   mkdir "$src/build" && \
   cd "$src/build" && \
   cmake .. && \
-  cmake --build . --target package
+  cmake --build . --target package -- -j 2
 
 FROM scratch as package
 COPY --from=builder frepple-*/build/*.deb .

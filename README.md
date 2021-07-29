@@ -1,3 +1,4 @@
+![Continous integration](https://github.com/frePPLe/frepple/actions/workflows/ubuntu18.yml/badge.svg)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/frePPLe/frepple.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/frePPLe/frepple/context:python) 
 [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/frePPLe/frepple.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/frePPLe/frepple/context:cpp) 
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/frePPLe/frepple.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/frePPLe/frepple/context:javascript)

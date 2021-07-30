@@ -205,7 +205,7 @@ class Supplier_admin(MultiDBModelAdmin):
         (
             _("advanced"),
             {
-                "fields": ["category", "subcategory"]
+                "fields": ["category", "subcategory", "available"]
                 + [a[0] for a in getAttributes(Supplier) if a[3]],
                 "classes": ("collapse",),
             },

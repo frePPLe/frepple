@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 from datetime import timedelta, datetime
+import json
 
 from django.conf import settings
 from django.db import connections, transaction
@@ -375,6 +376,7 @@ class OverviewReport(GridPivot):
         ),
         ("total_backlog", {"title": _("total backlog"), "initially_hidden": True}),
         ("color", {"title": _("inventory status"), "initially_hidden": True}),
+        ("reasons", {"title": _("reasons"), "hidden": True}),
     )
 
     @classmethod
@@ -447,7 +449,23 @@ class OverviewReport(GridPivot):
         )
 
         # Execute the actual query
+        reasons_forecast = """
+                union all
+                select item.name as item_id, operationplan.location_id, operationplan.due, operationplan.enddate, out_constraint.name, out_constraint.owner
+                from out_constraint
+                inner join item on item.name = out_constraint.item
+                inner join operationplan on operationplan.item_id = item.name and operationplan.forecast = out_constraint.forecast
+                and operationplan.due < operationplan.enddate
+        """
         query = """
+            with reasons as (
+                select item.name as item_id, operationplan.location_id, operationplan.due, operationplan.enddate, out_constraint.name, out_constraint.owner
+                from out_constraint
+                inner join item on item.name = out_constraint.item
+                inner join operationplan on operationplan.item_id = item.name and operationplan.demand_id = out_constraint.demand
+                and operationplan.due < operationplan.enddate
+                %s          
+            )
            select
            opplanmat.buffer,
            item.name item_id,
@@ -473,6 +491,9 @@ class OverviewReport(GridPivot):
            opplanmat.opplan_batch,
            (item.name, location.name) in (select plan->>'item', plan->>'location' from operationplan) is_ip_buffer,
            %s
+           (select json_agg(json_build_array(reasons.name, reasons.owner)) 
+           from (select * from reasons where item_id = item.name and location_id = location.name order by name limit 20) reasons
+           where (reasons.due , reasons.enddate) overlaps (d.startdate, d.enddate)) reasons,
            case
              when d.history then jsonb_build_object(
                'onhand', min(ax_buffer.onhand)
@@ -653,6 +674,7 @@ class OverviewReport(GridPivot):
            d.history
            order by %s, d.startdate
         """ % (
+            reasons_forecast if "freppledb.forecast" in settings.INSTALLED_APPS else "",
             reportclass.attr_sql,
             basesql,
             sortsql,
@@ -940,6 +962,7 @@ class OverviewReport(GridPivot):
                             + float(row[numfields - 1]["produced"] or 0)
                             - float(row[numfields - 1]["consumed"] or 0)
                         ),
+                        "reasons": None if history else json.dumps(row[numfields - 8]),
                     }
 
                     if order_backlog is not None:

@@ -101,7 +101,8 @@ function drawGraphs(jsondata)
 	        'work_in_progress_mo': tmp[id_by_field['work_in_progress_mo']],
 	        'on_order_po': tmp[id_by_field['on_order_po']],
 	        'in_transit_do': tmp[id_by_field['in_transit_do']],
-            'total_backlog': tmp[id_by_field['total_backlog']]
+          'total_backlog': tmp[id_by_field['total_backlog']],
+          'reasons': tmp[id_by_field['reasons']]
 	        });
       for (var i in cross_idx)
       {
@@ -110,7 +111,8 @@ function drawGraphs(jsondata)
             || t == 'safetystock' 
             || t == 'consumed' 
             || t == 'produced' 
-            || t == 'endoh') {
+            || t == 'endoh'
+            || t == 'total_backlog') {
           if (tmp[cross_idx[i]] < min_y) min_y = tmp[cross_idx[i]];
           if (tmp[cross_idx[i]] > max_y) max_y = tmp[cross_idx[i]];
           }
@@ -224,8 +226,18 @@ function drawGraphs(jsondata)
             if (d['total_backlog'])
               tiptext += '</td></tr><tr><td>{{_('total backlog')|capfirst}}</td><td style="text-align:right">'
                 + grid.formatNumber(d['total_backlog']);
+            
+            tiptext += '</td></tr></table>';
+            
+            if (d['reasons']) {
+              tiptext += '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+                + '{{_('constraints')|capfirst}}</div><table style="white-space:nowrap">';
+              for (var r of d['reasons'])
+                tiptext += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>';
+              tiptext += '</table>';
+            }
           }          
-          tiptext += '</td></tr></table>';
+          
 	        graph.showTooltip(tiptext);
 	        })
 	      .on("mouseleave", graph.hideTooltip)

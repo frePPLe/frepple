@@ -100,7 +100,8 @@ function drawGraphs(jsondata)
 	        'total_in_progress': tmp[id_by_field['total_in_progress']],
 	        'work_in_progress_mo': tmp[id_by_field['work_in_progress_mo']],
 	        'on_order_po': tmp[id_by_field['on_order_po']],
-	        'in_transit_do': tmp[id_by_field['in_transit_do']]
+	        'in_transit_do': tmp[id_by_field['in_transit_do']],
+            'total_backlog': tmp[id_by_field['total_backlog']]
 	        });
       for (var i in cross_idx)
       {
@@ -220,6 +221,9 @@ function drawGraphs(jsondata)
   	        if (d['in_transit_do'])
   	          tiptext += '</td></tr><tr><td>{{_('in transit DO')|capfirst}}</td><td style="text-align:right">'
   	            + grid.formatNumber(d['in_transit_do']);
+            if (d['total_backlog'])
+              tiptext += '</td></tr><tr><td>{{_('total backlog')|capfirst}}</td><td style="text-align:right">'
+                + grid.formatNumber(d['total_backlog']);
           }          
           tiptext += '</td></tr></table>';
 	        graph.showTooltip(tiptext);
@@ -257,6 +261,16 @@ function drawGraphs(jsondata)
       svg.append("svg:path")
         .attr('class', 'graphline')
         .attr("stroke","#FF0000")
+        .attr("d", line(data));
+    }
+    if (fields.has('total_backlog'))
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['total_backlog']); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#000000")
         .attr("d", line(data));
     }
 
@@ -303,19 +317,14 @@ function drawGraphs(jsondata)
     var legend = svg.append("g");
     var cnt = 0;
 
-    var color_dict = {}
-    color_dict["startoh"] = "#8BBA00";
-    color_dict["safetystock"] = "#FF0000";
-    color_dict["consumed"] = "#F6BD0F";
-    color_dict["produced"] = "#2B95EC";
-    color_dict["endoh"] = "#7B5E08";
+    var code_dict = {}
+    code_dict["startoh"] = ['{{_('start inventory')|capfirst}}',"#8BBA00"];
+    code_dict["safetystock"] = ['{{_('safety stock')|capfirst}}',"#FF0000"];
+    code_dict["consumed"] = ['{{_('consumed')|capfirst}}',"#F6BD0F"];
+    code_dict["produced"] = ['{{_('produced')|capfirst}}',"#2B95EC"];
+    code_dict["endoh"] = ['{{_('end inventory')|capfirst}}',"#7B5E08"];
+    code_dict["total_backlog"] = ['{{_('total backlog')|capfirst}}',"#000000"];
 
-    var text_dict = {}
-    text_dict["startoh"] = '{{_('start inventory')|capfirst}}';
-    text_dict["safetystock"] = '{{_('safety stock')|capfirst}}';
-    text_dict["consumed"] = '{{_('consumed')|capfirst}}';
-    text_dict["produced"] = '{{_('produced')|capfirst}}';
-    text_dict["endoh"] = '{{_('end inventory')|capfirst}}';
 
     for (var i in cross_idx)
     {
@@ -323,19 +332,20 @@ function drawGraphs(jsondata)
             || field_by_id[cross_idx[i]] == 'safetystock' 
             || field_by_id[cross_idx[i]] == 'consumed' 
             || field_by_id[cross_idx[i]] == 'produced' 
-            || field_by_id[cross_idx[i]] == 'endoh') {
-        legend.append("rect")
+            || field_by_id[cross_idx[i]] == 'endoh'
+            || field_by_id[cross_idx[i]] == 'total_backlog') {
+              legend.append("rect")
           .attr("x", width + 82)
           .attr("width", 18)
           .attr("height", 18)
-          .style("fill", color_dict[field_by_id[cross_idx[i]]])
+          .style("fill", (code_dict[field_by_id[cross_idx[i]]])[1])
           .attr("transform", "translate(0," + (cnt*20+10) + ")");
         legend.append("text")
           .attr("x", width + 76)
           .attr("y", 9)
           .attr("dy", ".35em")
           .style("text-anchor", "end")
-          .text(text_dict[field_by_id[cross_idx[i]]])
+          .text((code_dict[field_by_id[cross_idx[i]]])[0])
           .attr("transform", "translate(0," + (cnt*20+10) + ")");
         ++cnt;
         }
@@ -908,6 +918,17 @@ function crosses (cellvalue, options, rowdata)
             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
+        break;
+        case 'color':
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['color']] != 0) {
+          result += grid.formatNumber(rowdata['is_ip_buffer'] == "True" ? cellvalue[id_by_field['color']] : Math.abs(cellvalue[id_by_field['color']])) + 
+          (rowdata['is_ip_buffer'] == "True" ? " %" : (" days " + (cellvalue[id_by_field['color']] < 0 ? "early" : "late"))) 
+          + "<br>";
+        }
+        else
+          result += '0' + (rowdata['is_ip_buffer'] == "True" ? " %" : "") + '<br>';
         break;
       case 'startoh':
       case 'safetystock':

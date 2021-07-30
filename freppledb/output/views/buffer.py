@@ -255,6 +255,7 @@ class OverviewReport(GridPivot):
             editable=False,
             initially_hidden=True,
         ),
+        GridFieldNumber("is_ip_buffer", title=_("is_ip_buffer"), hidden=True),
     )
 
     crosses = (
@@ -373,6 +374,7 @@ class OverviewReport(GridPivot):
             {"title": _("forecast backlog"), "initially_hidden": True},
         ),
         ("total_backlog", {"title": _("total backlog"), "initially_hidden": True}),
+        ("color", {"title": _("inventory status"), "initially_hidden": True}),
     )
 
     @classmethod
@@ -469,6 +471,7 @@ class OverviewReport(GridPivot):
            location.source,
            location.lastmodified,
            opplanmat.opplan_batch,
+           (item.name, location.name) in (select plan->>'item', plan->>'location' from operationplan) is_ip_buffer,
            %s
            case
              when d.history then jsonb_build_object(
@@ -583,7 +586,8 @@ class OverviewReport(GridPivot):
                'open_orders', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is not null and ((operationplan.due >= greatest(d.startdate,%%s) or (%%s >= d.startdate and %%s < d.enddate)) and operationplan.due < d.enddate) then -opm.quantity else 0 end),
                'net_forecast', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is null and ((operationplan.due >= greatest(d.startdate,%%s) or (%%s >= d.startdate and %%s < d.enddate)) and operationplan.due < d.enddate) then -opm.quantity else 0 end),
                'order_backlog', case when %%s >= d.startdate and %%s < d.enddate then sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is not null and operationplan.due < %%s then -opm.quantity else 0 end) else -1 end,
-               'forecast_backlog', case when %%s >= d.startdate and %%s < d.enddate then sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is null and operationplan.due < %%s then -opm.quantity else 0 end) else -1 end
+               'forecast_backlog', case when %%s >= d.startdate and %%s < d.enddate then sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is null and operationplan.due < %%s then -opm.quantity else 0 end) else -1 end,
+               'max_delay', max(extract(epoch from case when opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate then operationplan.delay else interval '0 second' end) / 86400)
                )
              from operationplanmaterial opm
              inner join operationplan
@@ -666,7 +670,7 @@ class OverviewReport(GridPivot):
                         request.report_startdate,
                         request.report_startdate,  # safetystock
                     )
-                    + (request.report_startdate,) * 25
+                    + (request.report_startdate,) * 26
                     + (request.current_date,) * 2
                     + (request.report_startdate,) * 1  # net forecast
                     + (request.current_date,) * 2  # net forecast
@@ -737,6 +741,16 @@ class OverviewReport(GridPivot):
                         "location__source": row[19],
                         "location__lastmodified": row[20],
                         "batch": row[21],
+                        "is_ip_buffer": row[22],
+                        "color": round(
+                            (row[numfields - 7]["onhand"] if row[numfields - 7] else 0)
+                            * 100
+                            / float(row[numfields - 2])
+                        )
+                        if row[22] and float(row[numfields - 2]) > 0
+                        else round(row[numfields - 1]["max_delay"])
+                        if not row[22] and row[numfields - 1]["max_delay"]
+                        else 0,
                         "startoh": row[numfields - 7]["onhand"]
                         if row[numfields - 7]
                         else 0,
@@ -967,7 +981,7 @@ class OverviewReport(GridPivot):
                         )
 
                     # Add attribute fields
-                    idx = 22
+                    idx = 23
                     for f in itemattributefields:
                         res[f.field_name] = row[idx]
                         idx += 1

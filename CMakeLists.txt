@@ -5,6 +5,7 @@ cmake_minimum_required (VERSION 3.0)
 project(frepple VERSION 6.16.0)
 
 set(PROJECT_EDITION "Community Edition")
+set(PROJECT_BRANCH "community")
 
 if (POLICY CMP0111)
   cmake_policy(SET CMP0111 OLD)

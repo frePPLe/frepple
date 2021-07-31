@@ -1,0 +1,39 @@
+
+services:
+
+  frepple-@PROJECT_BRANCH@:
+    image: "frepple-@PROJECT_BRANCH@-ubuntu-18.04:latest"
+    container_name: frepple-@PROJECT_BRANCH@-webserver
+    ports:
+      - 9000:80
+    depends_on:
+      - frepple-@PROJECT_BRANCH@-postgres
+    networks:
+      - backend
+    volumes:
+      - log-apache-@PROJECT_BRANCH@:/var/log/apache2
+      - log-frepple-@PROJECT_BRANCH@:/var/log/frepple
+      - config-frepple-@PROJECT_BRANCH@:/etc/frepple
+    environment:
+      POSTGRES_HOST: frepple-@PROJECT_BRANCH@-postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: frepple
+      POSTGRES_PASSWORD: frepple
+
+  frepple-@PROJECT_BRANCH@-postgres:
+    image: "postgres:13"
+    container_name: frepple--@PROJECT_BRANCH@-postgres
+    networks:
+      - backend
+    environment:
+      POSTGRES_PASSWORD: frepple
+      POSTGRES_DB: frepple
+      POSTGRES_USER: frepple
+
+volumes:
+  log-apache-@PROJECT_BRANCH@:
+  log-frepple-@PROJECT_BRANCH@:
+  config-frepple-@PROJECT_BRANCH@:
+
+networks:
+  backend:

@@ -16,21 +16,25 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
     ${docker} build --target package --output type=local,dest=. ubuntu-18.04
   COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-    ${docker} build ubuntu-18.04 
-      --tag "frepple-ubuntu-18.04:${PROJECT_VERSION}"
-      --tag "frepple:${PROJECT_VERSION}"
-      --tag "ghcr.io/frepple/frepple:${PROJECT_VERSION}"
+    ${docker} build ubuntu-18.04 --squash
+      --tag "frepple-${PROJECT_BRANCH}-ubuntu-18.04:${PROJECT_VERSION}"
+      --tag "frepple-${PROJECT_BRANCH}:${PROJECT_VERSION}"
+      --tag "ghcr.io/frepple/frepple-${PROJECT_BRANCH}:${PROJECT_VERSION}"
   )
 add_custom_target(
   "docker"
   DEPENDS docker-ubuntu-18.04
 )
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/docker-compose.yml.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/docker-compose.yml"
+  )
 add_custom_target(
   "docker-up"
   COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
     ${docker} compose 
-      --project-directory "${CMAKE_CURRENT_SOURCE_DIR}" 
-      --project-name frepple 
+      --project-name frepple-${PROJECT_BRANCH}
       up    
       --detach
 )
@@ -38,8 +42,7 @@ add_custom_target(
   "docker-down"
   COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
     ${docker} compose
-      --project-directory "${CMAKE_CURRENT_SOURCE_DIR}" 
-      --project-name frepple
+      --project-name frepple-${PROJECT_BRANCH}
       down
 )
 

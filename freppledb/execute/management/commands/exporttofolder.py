@@ -397,11 +397,11 @@ class Command(BaseCommand):
                             # Exporting using SQL
                             if filename.lower().endswith(".gz"):
                                 datafile = gzip.open(
-                                    os.path.join(exportFolder, filename), "w"
+                                    os.path.join(exportFolder, filename), "wb"
                                 )
                             else:
                                 datafile = open(
-                                    os.path.join(exportFolder, filename), "w"
+                                    os.path.join(exportFolder, filename), "wb"
                                 )
                             cursor.copy_expert(sql, datafile)
                         else:

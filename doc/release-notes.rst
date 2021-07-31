@@ -28,7 +28,7 @@ Release notes
   | They have been experimental for a while already, an we have now brought forward the 
     code, tests and documentation.
   | The images for the Community Edition can be pulled from the 
-    `Github Container Registry <https://github.com/frePPLe/frepple/pkgs/container/frepple>`_.
+    `Github Container Registry <https://github.com/orgs/frePPLe/packages/container/package/frepple-community>`_.
   | The images for the Enterprise Edition can be downloaded from our portal.
 
 .. rubric:: Production planning

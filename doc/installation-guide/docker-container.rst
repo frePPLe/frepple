@@ -13,11 +13,16 @@ Docker container
 Basic installation
 ******************
 
-The container can easily be pulled from the github packages repository:
+Use one of the following command to bring the frePPLe image to your local 
+docker repository:
 
 .. code-block:: none
 
-   docker pull ghcr.io/frepple/frepple:latest
+   # Community Edition
+   docker pull ghcr.io/frepple/frepple-community:latest
+
+   # Enterprise Edition: download image from portal and load into your registry
+   docker load --input frepple*.tar
 
 | The container includes the frePPLe planning software, plus a web server. 
 | It does NOT include the required PostgreSQL database, which needs to provided 
@@ -25,7 +30,7 @@ The container can easily be pulled from the github packages repository:
 
 The image can be extended and customized using the following:
 
-* The container exposes **ports** 80 and 443 for HTTP and HTTPS access.
+* The container exposes **port** 80 for HTTP access.
 
 * The following **environment variables** configure the access to the PostgreSQL database:
 
@@ -41,9 +46,9 @@ The image can be extended and customized using the following:
     * | POSTGRES_PASSWORD:
       | Password for the database role or user. Defaults to "frepple".
 
-* The following **volumes** let you deploy custom code and license files into the container:
+* The following **volumes** let you access all logs, configuration and license files:
 
-    * | /etc/frepple: 
+    * | /etc/frepple:
       | Contains the main configuration file djangosettings.py and the
         license file license.xml (for the Enterprise Edition).
 
@@ -52,9 +57,6 @@ The image can be extended and customized using the following:
     
     * | /var/log/apache2:
       | Log files of the web server.
-
-    * | /etc/apache2:
-      | Configuration files of the web server.
 
 * The **entry point** of the container can be customized by placing files in the folder
   /etc/frepple/entrypoint.d
@@ -66,9 +68,9 @@ The image can be extended and customized using the following:
 Deployment with external PostgreSQL database
 ********************************************
 
-The example below creates a container that is using the postgres database installed on
-the docker host server.
-The container is called frepple_local, and you can access it with your browser 
+The example below creates a container that is using the PostgreSQL database installed on
+the Docker host server.
+The container is called frepple-community-local, and you can access it with your browser 
 on the URL http://localhost:9000/
 
 .. code-block:: none
@@ -78,50 +80,53 @@ on the URL http://localhost:9000/
      -e POSTGRES_PORT=5432 \
      -e POSTGRES_USER=frepple \
      -e POSTGRES_PASSWORD=frepple \
-     --name frepple_local \
-     --publish 9000:80 \ 
+     --name frepple-community-local \
+     --publish 9000:80 \
      --detach \
-     frepple:latest 
+     frepple-community:latest 
 
 ******************************
 Deployment with docker compose
 ******************************
 
-Here is a sample docker-compose file that defines 2 containers: 1) a postgres container to run the database
-and 2) a frepple web application server.
+Here is a sample docker-compose file that defines 2 containers: 1) a postgres container 
+to run the database and 2) a frepple web application server.
 
 You access the application with your browser on the URL http://localhost:9000/
 
 The frepple log and configuration files are put in volumes (which allows to reuse
 them between different releases of the frepple image).
 
+Note that the postgres database container comes with default settings. For production
+use you should update the configuration with the pgtune recommendations from 
+https://pgtune.leopard.in.ua/
+
 .. code-block:: none
 
   services:
 
     frepple:
-      image: "frepple:latest"
-      container_name: frepple-webserver
+      image: "frepple-community:latest"
+      container_name: frepple-community-webserver
       ports:
         - 9000:80
       depends_on:
-        - frepple-postgres
+        - frepple-community-postgres
       networks:
         - backend
       volumes:
-        - log-apache:/var/log/apache2
-        - log-frepple:/var/log/frepple
-        - config-frepple:/etc/frepple
-        - config-apache:/etc/apache2
+        - log-apache-community:/var/log/apache2
+        - log-frepple-community:/var/log/frepple
+        - config--community:/etc/frepple
       environment:
-        POSTGRES_HOST: frepple-postgres
+        POSTGRES_HOST: frepple-community-postgres
         POSTGRES_PORT: 5432
         POSTGRES_USER: frepple
         POSTGRES_PASSWORD: frepple
 
-    frepple-postgres:
+    frepple-community-postgres:
       image: "postgres:13"
-      container_name: frepple-postgres
+      container_name: frepple-community-postgres
       networks:
         - backend
       environment:
@@ -130,11 +135,9 @@ them between different releases of the frepple image).
         POSTGRES_USER: frepple
 
   volumes:
-    log-apache:
-    log-frepple:
-    config-frepple:
-    config-apache:
-    data-postgres:
+    log-apache-community:
+    log-frepple-community:
+    config-frepple-community:
 
   networks:
     backend:
@@ -149,7 +152,25 @@ Todo
 Deployment with custom extension apps
 *************************************
 
-Todo
+Extending the container with your customizations is simple by inheriting from the frePPLe
+image. Here is a an example dockerfile that adds a new frePPLe app (coded as a Python package):
+
+.. code-block:: none
+
+   FROM frepple-enterprise:latest
+
+   COPY my-requirements.txt /
+   COPY my-python-package /
+
+   # Add the license key for the Enterprise Edition to the container 
+   COPY license.xml /etc/frepple
+
+   # Install python dependencies and package
+   RUN python3 -m pip install -r my-requirements.txt && \
+     python3 my-python-package/setup.py install
+
+   # Update the djangosettings.py configuration file with extra settings
+   echo "MYAPPSETTING=True" >> /etc/frepple/djangosettings.py
 
 ******************************************
 Running frepplectl commands on a container

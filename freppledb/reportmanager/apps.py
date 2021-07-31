@@ -24,7 +24,7 @@ from django.core import checks
 def check_python_packages(app_configs, **kwargs):
     errors = []
     for db, dbparams in settings.DATABASES.items():
-        if "SQL_QROLE" not in dbparams:
+        if "SQL_ROLE" not in dbparams:
             errors.append(db)
     return (
         [

@@ -1,4 +1,4 @@
-name: Build Ubuntu18
+name: Build Community
 
 on:
   push:

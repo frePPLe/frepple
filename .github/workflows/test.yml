@@ -1,0 +1,10 @@
+name: testing repo dispatch
+
+on: repository_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Testing
+        run: echo "Hello, world!"

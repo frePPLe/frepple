@@ -262,7 +262,8 @@ loadComplete: function(data) {
 {% endblock %}
 
 {% block actions %}
-<div class="btn-group" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'favorites'|capfirst|force_escape %}">
+<div class="btn-group" data-toggle="tooltip" data-placement="top" data-html="true"
+     data-original-title="{% trans 'Bookmark your favorite report configurations'|capfirst|force_escape %}">
   <button class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <span class="fa fa-star"></span>
   </button>

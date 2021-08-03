@@ -98,6 +98,7 @@ class CommonConfig(AppConfig):
             "rest_framework",
             "django_admin_bootstrapped",
             "django.contrib.admin",
+            "freppledb.reportmanager",
         ]
         for app in required_apps:
             if app not in settings.INSTALLED_APPS:

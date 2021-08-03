@@ -33,6 +33,11 @@ Release notes
 
 .. rubric:: Production planning
 
+- | The logic for choosing a default resource from a resource pool is enhanced.
+  | In previous releases, we automatically choose the most efficient resource. In case
+    we find multiple resources in the pool with the same efficiency, we now use
+    the resource skill priority as a tie breaker.
+    
 - | Bug fix: A solver issue with unconstrained resource has been corrected. See 
     https://github.com/frePPLe/frepple/issues/381
   

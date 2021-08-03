@@ -396,15 +396,24 @@ Resource* Load::findPreferredResource(Date d) const {
   // TODO We ignore date effectivity.
   Resource* best_res = nullptr;
   double best_eff = 0.0;
+  double best_priority = DBL_MAX;
   for (Resource::memberRecursiveIterator mmbr(getResource()); !mmbr.empty();
        ++mmbr) {
-    if (!mmbr->isGroup() && (!getSkill() || mmbr->hasSkill(getSkill()))) {
+    ResourceSkill* tmpRsrcSkill = nullptr;
+    if (!mmbr->isGroup() &&
+        (!getSkill() || mmbr->hasSkill(getSkill(), d, d, &tmpRsrcSkill))) {
       auto my_eff = mmbr->getEfficiencyCalendar()
                         ? mmbr->getEfficiencyCalendar()->getValue(d)
                         : mmbr->getEfficiency();
       if (my_eff > best_eff) {
         best_res = &*mmbr;
         best_eff = my_eff;
+        best_priority = tmpRsrcSkill ? tmpRsrcSkill->getPriority() : DBL_MAX;
+      } else if (fabs(my_eff > best_eff) < ROUNDING_ERROR && tmpRsrcSkill &&
+                 tmpRsrcSkill->getPriority() < best_priority) {
+        best_res = &*mmbr;
+        best_eff = my_eff;
+        best_priority = tmpRsrcSkill->getPriority();
       }
     }
   }

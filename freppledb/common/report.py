@@ -2823,10 +2823,16 @@ class GridPivot(GridReport):
                     if key == "title":
                         m["name"] = capfirst(force_str(value(request)))
                     else:
-                        m[key] = force_str(value(request), strings_only=True)
+                        tmp = value(request)
+                        if isinstance(tmp, list):
+                            m[key] = [force_str(v, strings_only=True) for v in tmp]
+                        else:
+                            m[key] = force_str(tmp, strings_only=True)
                 else:
                     if key == "title":
                         m["name"] = capfirst(force_str(value))
+                    elif isinstance(value, list):
+                        m[key] = [force_str(v, strings_only=True) for v in value]
                     else:
                         m[key] = force_str(value, strings_only=True)
             if "editable" not in m:

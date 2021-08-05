@@ -638,14 +638,37 @@ var grid = {
   },
 
   // Renders the cross list in a pivot grid
+  _cached_cross: null,
   pivotcolumns: function (cellvalue, options, rowdata) {
+    // Compute once for all rows in the report, and then cache the result
+    if (grid._cached_cross) return grid._cached_cross;
     var result = '';
     for (var i of cross_idx) {
+      var icon = "fa-plus-square-o";
+      for (var p of cross_idx) {
+        if (i != p && cross[p]["expand"]) {
+          if (cross[p]["expand"].includes(cross[i]["key"]))
+            result += "&nbsp;&nbsp;&nbsp;";
+          else {
+            for (var q in cross) {
+              if (cross[p]["expand"].includes(cross[q]["key"])
+                && cross[q]["expand"]
+                && cross[q]["expand"].includes(cross[i]["key"]))
+                result += "&nbsp;&nbsp;&nbsp;";
+            }
+          }
+        }
+        if (cross[i]["expand"] && cross[i]["expand"].includes(cross[p]["key"]))
+          icon = "fa-minus-square-o";
+      }
       if (cross[i]['editable'])
         result += '<span class="editablepivotcol">' + cross[i]['name'] + '</span>';
+      else if (cross[i]["expand"])
+        result += cross[i]['name'] + '&nbsp;<i style="cursor: pointer" class="fa ' + icon + '" onclick="grid.expandCross(this, ' + i + ')"></i><br>';
       else
         result += cross[i]['name'] + '<br>';
     }
+    grid._cached_cross = result;
     return result;
   },
 
@@ -1013,6 +1036,7 @@ var grid = {
       var url = url_prefix + '/settings/';
     else
       var url = '/settings/';
+    grid._cached_cross = null;
     $.ajax({
       url: url,
       type: 'POST',
@@ -1838,6 +1862,54 @@ var grid = {
       // This is the first argument for the URL
       url += "?mode=" + m;
     window.location.href = url;
+  },
+
+  findCrossByName: function (name) {
+    for (var i in cross)
+      if (cross[i]["key"] == name) {
+        return parseInt(i);
+      }
+    return -1;
+  },
+
+  expandCross: function (el, index) {
+    var newlist = [];
+    if ($(el).hasClass("fa-plus-square-o")) {
+      // Expand a level
+      var expanded = [index];
+      for (var child of cross[index]["expand"]) {
+        var i = grid.findCrossByName(child);
+        if (i > 0) expanded.push(i);
+      }
+      for (var i of cross_idx) {
+        if (i == index)
+          newlist = newlist.concat(expanded);
+        else if (!expanded.includes(i))
+          newlist.push(i);
+      };
+    }
+    else {
+      // Collapse a level
+      for (var i of cross_idx) {
+        if (!cross[index]["expand"] || cross[index]["expand"].includes(cross[i]["key"])) continue;
+        var not_a_child = true;
+        for (var child of cross[index]["expand"]) {
+          var j = grid.findCrossByName(child);
+          if (cross[j]["expand"] && cross[j]["expand"].includes(cross[i]["key"]))
+            not_a_child = false;
+        }
+        if (not_a_child) newlist.push(i);
+      }
+    }
+    $(el).toggleClass("fa-plus-square-o").toggleClass("fa-minus-square-o");
+    cross_idx = newlist;
+
+    // Refresh the data
+    var thegrid = $("#grid");
+    thegrid.jqGrid('setFrozenColumns');
+    thegrid.trigger('reloadGrid');
+    thegrid.setGridWidth($('#content-main').width());
+    grid.saveColumnConfiguration();
   }
 }
 

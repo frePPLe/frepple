@@ -266,19 +266,56 @@ class OverviewReport(GridPivot):
             {"title": _("start inventory days of cover"), "initially_hidden": True},
         ),
         ("safetystock", {"title": _("safety stock")}),
-        ("consumed", {"title": _("total consumed")}),
-        ("consumed_confirmed", {"title": _("total consumed confirmed")}),
-        ("consumed_proposed", {"title": _("total consumed proposed")}),
-        ("consumedMO", {"title": _("consumed by MO"), "initially_hidden": True}),
+        (
+            "consumed",
+            {
+                "title": _("total consumed"),
+                "expand": ["consumed_confirmed", "consumed_proposed"],
+            },
+        ),
+        (
+            "consumed_confirmed",
+            {
+                "title": _("total consumed confirmed"),
+                "expand": ["consumedMO_confirmed", "consumedDO_confirmed"],
+                "initially_hidden": True,
+            },
+        ),
+        (
+            "consumed_proposed",
+            {
+                "title": _("total consumed proposed"),
+                "expand": ["consumedMO_proposed", "consumedDO_proposed", "consumedSO"],
+                "initially_hidden": True,
+            },
+        ),
+        (
+            "consumedMO",
+            {
+                "title": _("consumed by MO"),
+                "expand": ["consumedMO_proposed", "consumedMO_confirmed"],
+                "initially_hidden": True,
+            },
+        ),
         (
             "consumedMO_confirmed",
-            {"title": _("consumed by MO confirmed"), "initially_hidden": True},
+            {
+                "title": _("consumed by MO confirmed"),
+                "initially_hidden": True,
+            },
         ),
         (
             "consumedMO_proposed",
             {"title": _("consumed by MO proposed"), "initially_hidden": True},
         ),
-        ("consumedDO", {"title": _("consumed by DO"), "initially_hidden": True}),
+        (
+            "consumedDO",
+            {
+                "title": _("consumed by DO"),
+                "expand": ["consumedDO_confirmed", "consumedDO_proposed"],
+                "initially_hidden": True,
+            },
+        ),
         (
             "consumedDO_confirmed",
             {"title": _("consumed by DO confirmed"), "initially_hidden": True},
@@ -288,10 +325,48 @@ class OverviewReport(GridPivot):
             {"title": _("consumed by DO proposed"), "initially_hidden": True},
         ),
         ("consumedSO", {"title": _("consumed by SO"), "initially_hidden": True}),
-        ("produced", {"title": _("total produced")}),
-        ("produced_confirmed", {"title": _("total produced confirmed")}),
-        ("produced_proposed", {"title": _("total produced proposed")}),
-        ("producedMO", {"title": _("produced by MO"), "initially_hidden": True}),
+        (
+            "produced",
+            {
+                "title": _("total produced"),
+                "expand": ["produced_confirmed", "produced_proposed"],
+            },
+        ),
+        (
+            "produced_confirmed",
+            {
+                "title": _("total produced confirmed"),
+                "expand": [
+                    "producedMO_confirmed",
+                    "producedPO_confirmed",
+                    "producedDO_confirmed",
+                ],
+                "initially_hidden": True,
+            },
+        ),
+        (
+            "produced_proposed",
+            {
+                "title": _("total produced proposed"),
+                "expand": [
+                    "producedMO_proposed",
+                    "producedPO_proposed",
+                    "producedDO_proposed",
+                ],
+                "initially_hidden": True,
+            },
+        ),
+        (
+            "producedMO",
+            {
+                "title": _("produced by MO"),
+                "initially_hidden": True,
+                "expand": [
+                    "producedMO_confirmed",
+                    "producedMO_proposed",
+                ],
+            },
+        ),
         (
             "producedMO_confirmed",
             {"title": _("produced by MO confirmed"), "initially_hidden": True},
@@ -300,7 +375,17 @@ class OverviewReport(GridPivot):
             "producedMO_proposed",
             {"title": _("produced by MO proposed"), "initially_hidden": True},
         ),
-        ("producedDO", {"title": _("produced by DO"), "initially_hidden": True}),
+        (
+            "producedDO",
+            {
+                "title": _("produced by DO"),
+                "expand": [
+                    "producedDO_confirmed",
+                    "producedDO_proposed",
+                ],
+                "initially_hidden": True,
+            },
+        ),
         (
             "producedDO_confirmed",
             {"title": _("produced by DO confirmed"), "initially_hidden": True},
@@ -309,7 +394,17 @@ class OverviewReport(GridPivot):
             "producedDO_proposed",
             {"title": _("produced by DO proposed"), "initially_hidden": True},
         ),
-        ("producedPO", {"title": _("produced by PO"), "initially_hidden": True}),
+        (
+            "producedPO",
+            {
+                "title": _("produced by PO"),
+                "expand": [
+                    "producedPO_confirmed",
+                    "producedPO_proposed",
+                ],
+                "initially_hidden": True,
+            },
+        ),
         (
             "producedPO_confirmed",
             {"title": _("produced by PO confirmed"), "initially_hidden": True},
@@ -321,19 +416,49 @@ class OverviewReport(GridPivot):
         ("endoh", {"title": _("end inventory")}),
         (
             "total_in_progress",
-            {"title": _("total in progress"), "initially_hidden": True},
+            {
+                "title": _("total in progress"),
+                "expand": [
+                    "total_in_progress_confirmed",
+                    "total_in_progress_proposed",
+                ],
+                "initially_hidden": True,
+            },
         ),
         (
             "total_in_progress_confirmed",
-            {"title": _("total in progress confirmed"), "initially_hidden": True},
+            {
+                "title": _("total in progress confirmed"),
+                "expand": [
+                    "work_in_progress_mo_confirmed",
+                    "in_transit_do_confirmed",
+                    "on_order_po_confirmed",
+                ],
+                "initially_hidden": True,
+            },
         ),
         (
             "total_in_progress_proposed",
-            {"title": _("total in progress proposed"), "initially_hidden": True},
+            {
+                "title": _("total in progress proposed"),
+                "expand": [
+                    "work_in_progress_mo_proposed",
+                    "in_transit_do_proposed",
+                    "on_order_po_proposed",
+                ],
+                "initially_hidden": True,
+            },
         ),
         (
             "work_in_progress_mo",
-            {"title": _("work in progress MO"), "initially_hidden": True},
+            {
+                "title": _("work in progress MO"),
+                "expand": [
+                    "total_in_progress_mo_confirmed",
+                    "total_in_progress_mo_proposed",
+                ],
+                "initially_hidden": True,
+            },
         ),
         (
             "work_in_progress_mo_confirmed",
@@ -343,7 +468,17 @@ class OverviewReport(GridPivot):
             "work_in_progress_mo_proposed",
             {"title": _("work in progress MO proposed"), "initially_hidden": True},
         ),
-        ("on_order_po", {"title": _("on order PO"), "initially_hidden": True}),
+        (
+            "on_order_po",
+            {
+                "title": _("on order PO"),
+                "expand": [
+                    "on_order_po_confirmed",
+                    "on_order_po_proposed",
+                ],
+                "initially_hidden": True,
+            },
+        ),
         (
             "on_order_po_confirmed",
             {"title": _("on order PO confirmed"), "initially_hidden": True},
@@ -376,7 +511,7 @@ class OverviewReport(GridPivot):
         ),
         ("total_backlog", {"title": _("total backlog"), "initially_hidden": True}),
         ("color", {"title": _("inventory status"), "initially_hidden": True}),
-        ("reasons", {"title": _("reasons"), "hidden": True}),
+        ("reasons", {"title": _("reasons"), "initially_hidden": True, "hidden": True}),
     )
 
     @classmethod

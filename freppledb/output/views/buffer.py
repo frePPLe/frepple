@@ -491,7 +491,17 @@ class OverviewReport(GridPivot):
             "on_order_po_proposed",
             {"title": _("on order PO proposed"), "initially_hidden": True},
         ),
-        ("in_transit_do", {"title": _("in transit DO"), "initially_hidden": True}),
+        (
+            "in_transit_do",
+            {
+                "title": _("in transit DO"),
+                "expand": [
+                    "in_transit_do_confirmed",
+                    "in_transit_do_proposed",
+                ],
+                "initially_hidden": True,
+            },
+        ),
         (
             "in_transit_do_confirmed",
             {"title": _("in transit DO confirmed"), "initially_hidden": True},
@@ -503,13 +513,33 @@ class OverviewReport(GridPivot):
         ("consumedFcst", {"title": _("consumed by Fcst"), "initially_hidden": True}),
         ("open_orders", {"title": _("open sales orders"), "initially_hidden": True}),
         ("net_forecast", {"title": _("net forecast"), "initially_hidden": True}),
-        ("total_demand", {"title": _("total demand"), "initially_hidden": True}),
+        (
+            "total_demand",
+            {
+                "title": _("total demand"),
+                "expand": [
+                    "open_orders",
+                    "net_forecast",
+                ],
+                "initially_hidden": True,
+            },
+        ),
         ("order_backlog", {"title": _("order backlog"), "initially_hidden": True}),
         (
             "forecast_backlog",
             {"title": _("forecast backlog"), "initially_hidden": True},
         ),
-        ("total_backlog", {"title": _("total backlog"), "initially_hidden": True}),
+        (
+            "total_backlog",
+            {
+                "title": _("total backlog"),
+                "expand": [
+                    "forecast_backlog",
+                    "order_backlog",
+                ],
+                "initially_hidden": True,
+            },
+        ),
         ("color", {"title": _("inventory status"), "initially_hidden": True}),
         ("reasons", {"title": _("reasons"), "initially_hidden": True, "hidden": True}),
     )

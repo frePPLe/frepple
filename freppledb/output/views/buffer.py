@@ -267,6 +267,13 @@ class OverviewReport(GridPivot):
         ),
         ("safetystock", {"title": _("safety stock")}),
         (
+            "produced",
+            {
+                "title": _("total produced"),
+                "expand": ["produced_confirmed", "produced_proposed"],
+            },
+        ),
+        (
             "consumed",
             {
                 "title": _("total consumed"),
@@ -325,13 +332,6 @@ class OverviewReport(GridPivot):
             {"title": _("consumed by DO proposed"), "initially_hidden": True},
         ),
         ("consumedSO", {"title": _("consumed by SO"), "initially_hidden": True}),
-        (
-            "produced",
-            {
-                "title": _("total produced"),
-                "expand": ["produced_confirmed", "produced_proposed"],
-            },
-        ),
         (
             "produced_confirmed",
             {

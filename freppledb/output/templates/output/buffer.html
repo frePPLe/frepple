@@ -949,9 +949,11 @@ function crosses (cellvalue, options, rowdata)
         result += '<br>';
         break;
       default:
-        if (!options.colModel.history)
-          result += grid.formatNumber(cellvalue[cross_idx[i]]);
-        result += '<br>';
+        if(!cross[cross_idx[i]].hidden) {
+          if (!options.colModel.history)
+            result += grid.formatNumber(cellvalue[cross_idx[i]]);
+          result += '<br>';
+        }
     }
   return result;
 };

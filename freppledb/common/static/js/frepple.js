@@ -644,6 +644,7 @@ var grid = {
     if (grid._cached_cross) return grid._cached_cross;
     var result = '';
     for (var i of cross_idx) {
+      if (cross[i].hidden) continue;
       var icon = "fa-plus-square-o";
       for (var p of cross_idx) {
         if (i != p && cross[p]["expand"]) {

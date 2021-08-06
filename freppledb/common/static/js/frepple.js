@@ -976,6 +976,7 @@ var grid = {
     var maxfrozen = 0;
     var pivot = false;
     var skipped = 0;
+    var label_width;
     var page = $('#grid').jqGrid('getGridParam', 'page');
     if (typeof pgButton === 'string') {
       // JQgrid paging gives only the current page
@@ -998,7 +999,11 @@ var grid = {
         colArray.push([colModel[i].name, colModel[i].hidden, colModel[i].width]);
         if (colModel[i].frozen) maxfrozen = parseInt(i) + 1 - skipped;
       }
-      else if (colModel[i].name == 'columns' || colModel[i].name == 'graph')
+      else if (colModel[i].name == 'columns') {
+        pivot = true;
+        label_width = colModel[i].width;
+      }
+      else if (colModel[i].name == 'graph')
         pivot = true;
       else
         skipped++;
@@ -1024,6 +1029,8 @@ var grid = {
       result[reportkey]['crosses'] = [];
       for (var i in cross_idx)
         result[reportkey]['crosses'].push(cross[cross_idx[i]].key);
+      if (label_width)
+        result[reportkey]['label_width'] = label_width;
     }
     else
       result[reportkey]['frozen'] = maxfrozen;

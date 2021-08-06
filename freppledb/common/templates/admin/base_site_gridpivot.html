@@ -56,7 +56,7 @@ $(function() {
 	  jsonReader : {repeatitems:false},
    	colModel:[
       {{colmodel|safe}},{% if mode == "table" %}
-      {"name":"columns","label":" ","sortable":false,"width":150,"align":"left","formatter":grid.pivotcolumns,"search":false,"frozen":true,"title":false },
+      {"name":"columns","label":" ","sortable":false,"width":{% if preferences.label_width %}{{preferences.label_width}}{% else %}150{% endif %},"align":"left","formatter":grid.pivotcolumns,"search":false,"frozen":true,"title":false },
       {% for f in request.report_bucketlist %}{% if not forloop.first %},
       {% endif %}{name:'{{f.name|safe}}'{% if f.history %},label:'<i style="font-weight:normal">{{f.name|safe}}</i>',history:true{% else %},history:false{% endif %},startdate:'{{f.startdate|date:"Y-m-d H:i:s"}}',enddate:'{{f.enddate|date:"Y-m-d H:i:s"}}',sortable:false,width:90,align:'center',formatter:crosses,search:false,title:false }{% endfor %}
       {% else %}

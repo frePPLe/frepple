@@ -39,7 +39,7 @@ class Command(StdCommand):
         missing_apps = [
             i
             for i in [
-                "freppledb.wizardddd",
+                "freppledb.wizard",
                 "freppledb.metrics",
             ]
             if i not in settings.INSTALLED_APPS

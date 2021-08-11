@@ -663,7 +663,8 @@ class OverviewReport(GridPivot):
              when d.history then jsonb_build_object(
                'onhand', min(ax_buffer.onhand)
                )
-           else (
+           else coalesce(
+             (
              select jsonb_build_object(
                'onhand', onhand,
                'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
@@ -677,6 +678,23 @@ class OverviewReport(GridPivot):
                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
                and flowdate < greatest(d.startdate,%%s)
              order by flowdate desc, id desc limit 1
+             ),
+             (
+             select jsonb_build_object(
+               'onhand', 0.0,
+               'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
+               'periodofcover', 1
+               )
+             from operationplanmaterial
+             inner join operationplan
+               on operationplanmaterial.operationplan_id = operationplan.reference
+             where operationplanmaterial.item_id = item.name
+               and operationplanmaterial.location_id = location.name
+               and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
+               and flowdate > greatest(d.startdate,%%s)
+               and operationplanmaterial.quantity < 0
+             order by flowdate asc, id asc limit 1
+             )
              )
            end as startoh,
            d.bucket,
@@ -857,7 +875,7 @@ class OverviewReport(GridPivot):
                         request.report_startdate,
                         request.report_startdate,  # safetystock
                     )
-                    + (request.report_startdate,) * 26
+                    + (request.report_startdate,) * 27
                     + (request.current_date,) * 2
                     + (request.report_startdate,) * 1  # net forecast
                     + (request.current_date,) * 2  # net forecast
@@ -881,6 +899,10 @@ class OverviewReport(GridPivot):
                 )
 
                 prev_buffer = None
+                curdate = datetime.strptime(
+                    request.current_date,
+                    "%Y-%m-%d %H:%M:%S",
+                )
                 for row in cursor_chunked:
                     if prev_buffer != row[0]:
                         order_backlog = None
@@ -934,7 +956,9 @@ class OverviewReport(GridPivot):
                             * 100
                             / float(row[numfields - 2])
                         )
-                        if row[22] and float(row[numfields - 2]) > 0
+                        if row[22]
+                        and row[numfields - 2]
+                        and float(row[numfields - 2]) > 0
                         else round(row[numfields - 1]["max_delay"])
                         if not row[22] and row[numfields - 1]["max_delay"]
                         else 0,
@@ -951,10 +975,10 @@ class OverviewReport(GridPivot):
                                 if row[numfields - 7]
                                 else 0
                             )
-                            <= 0
+                            < 0
                             else (
                                 999
-                                if row[numfields - 7]["periodofcover"] == 86313600
+                                if row[numfields - 7]["periodofcover"] >= 86313600
                                 else (
                                     datetime.strptime(
                                         row[numfields - 7]["flowdate"],
@@ -963,7 +987,7 @@ class OverviewReport(GridPivot):
                                     + timedelta(
                                         seconds=row[numfields - 7]["periodofcover"]
                                     )
-                                    - row[numfields - 5]
+                                    - max(row[numfields - 5], curdate)
                                 ).days
                                 if row[numfields - 7]["periodofcover"]
                                 else 999

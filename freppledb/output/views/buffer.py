@@ -691,7 +691,7 @@ class OverviewReport(GridPivot):
              where operationplanmaterial.item_id = item.name
                and operationplanmaterial.location_id = location.name
                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
-               and flowdate > greatest(d.startdate,%%s)
+               and flowdate >= greatest(d.startdate,%%s)
                and operationplanmaterial.quantity < 0
              order by flowdate asc, id asc limit 1
              )
@@ -987,7 +987,11 @@ class OverviewReport(GridPivot):
                                     + timedelta(
                                         seconds=row[numfields - 7]["periodofcover"]
                                     )
-                                    - max(row[numfields - 5], curdate)
+                                    - max(
+                                        row[numfields - 5],
+                                        request.report_startdate,
+                                        curdate,
+                                    )
                                 ).days
                                 if row[numfields - 7]["periodofcover"]
                                 else 999

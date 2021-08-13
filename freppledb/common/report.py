@@ -1061,7 +1061,7 @@ class GridReport(View):
                                 cell.style = f.background_cell
                             r.append(cell)
                     if len(scenario_list) > 1:
-                        r.insert(0, scenario)
+                        r.insert(0, scenario_list[scenario])
                     ws.append(r)
         finally:
             request.database = original_database
@@ -1176,7 +1176,7 @@ class GridReport(View):
                             for f in fields
                         ]
                     if len(scenario_list) > 1:
-                        r.insert(0, scenario)
+                        r.insert(0, scenario_list[scenario])
                     writer.writerow(r)
                     # Return string
                     yield sf.getvalue()
@@ -1788,8 +1788,9 @@ class GridReport(View):
             scenario_list = scenarios.split(",") if scenarios else [request.database]
             # Make sure scenarios are in the scenario_permissions list
             if scenarios:
-                accepted_scenarios = [t[0] for t in scenario_permissions]
-                scenario_list = [x for x in scenario_list if x in accepted_scenarios]
+                scenario_list = {
+                    t[0]: t[1] for t in scenario_permissions if t[0] in scenario_list
+                }
 
             # Return an excel spreadsheet
             output = BytesIO()
@@ -3190,7 +3191,7 @@ class GridPivot(GridReport):
                             )
                         # Return string
                         if len(scenario_list) > 1:
-                            fields.insert(0, scenario)
+                            fields.insert(0, scenario_list[scenario])
                         writer.writerow(fields)
                         yield sf.getvalue()
                 else:
@@ -3254,7 +3255,7 @@ class GridPivot(GridReport):
                                 )
                                 # Return string
                                 if len(scenario_list) > 1:
-                                    fields.insert(0, scenario)
+                                    fields.insert(0, scenario_list[scenario])
                                 writer.writerow(fields)
                                 yield sf.getvalue()
                             currentkey = row[request.rows[0].name]
@@ -3308,7 +3309,7 @@ class GridPivot(GridReport):
                             )
                             # Return string
                             if len(scenario_list) > 1:
-                                fields.insert(0, scenario)
+                                fields.insert(0, scenario_list[scenario])
                             writer.writerow(fields)
                             yield sf.getvalue()
         finally:
@@ -3544,7 +3545,7 @@ class GridPivot(GridReport):
                                     cell.style = f[1].get("background_cell")
                                 fields.append(cell)
                         if len(scenario_list) > 1:
-                            fields.insert(0, scenario)
+                            fields.insert(0, scenario_list[scenario])
                         ws.append(fields)
                 else:
                     currentkey = None
@@ -3600,7 +3601,7 @@ class GridPivot(GridReport):
                                         cell.style = cross[1].get("background_cell")
                                     fields.append(cell)
                                 if len(scenario_list) > 1:
-                                    fields.insert(0, scenario)
+                                    fields.insert(0, scenario_list[scenario])
                                 ws.append(fields)
                             currentkey = row[request.rows[0].name]
                             row_of_buckets = [row]
@@ -3648,7 +3649,7 @@ class GridPivot(GridReport):
                                     cell.style = cross[1].get("background_cell")
                                 fields.append(cell)
                             if len(scenario_list) > 1:
-                                fields.insert(0, scenario)
+                                fields.insert(0, scenario_list[scenario])
                             ws.append(fields)
         finally:
             request.database = original_database

@@ -1,3 +1,4 @@
+version: "3"
 
 services:
 
@@ -19,10 +20,29 @@ services:
       POSTGRES_PORT: 5432
       POSTGRES_USER: frepple
       POSTGRES_PASSWORD: frepple
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4096M
+        reservations:
+          cpus: '0.25'
+          memory: 4096M 
 
   frepple-@PROJECT_BRANCH@-postgres:
     image: "postgres:13"
     container_name: frepple-@PROJECT_BRANCH@-postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4096M
+        reservations:
+          cpus: '0.25'
+          memory: 4096M    
+    # Tuning postgres configuration according to https://pgtune.leopard.in.ua/
+    # Adapt to match your allocated resources.
+    # command: postgres -c ...   TODO
     networks:
       - backend
     environment:

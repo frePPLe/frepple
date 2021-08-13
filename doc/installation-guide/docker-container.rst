@@ -117,7 +117,7 @@ https://pgtune.leopard.in.ua/
       volumes:
         - log-apache-community:/var/log/apache2
         - log-frepple-community:/var/log/frepple
-        - config--community:/etc/frepple
+        - config-community:/etc/frepple
       environment:
         POSTGRES_HOST: frepple-community-postgres
         POSTGRES_PORT: 5432

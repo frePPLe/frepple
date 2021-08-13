@@ -22,7 +22,7 @@ services:
 
   frepple-@PROJECT_BRANCH@-postgres:
     image: "postgres:13"
-    container_name: frepple--@PROJECT_BRANCH@-postgres
+    container_name: frepple-@PROJECT_BRANCH@-postgres
     networks:
       - backend
     environment:

@@ -2889,7 +2889,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     '<p id="extra_text">' + gettext('Load an Excel file or a CSV-formatted text file.') + '<br>' +
     gettext('The first row should contain the field names.') + '<br><br>' +
     '<input type="checkbox" autocomplete="off" name="erase" value="yes" id="eraseBeforeImport"/><label for="eraseBeforeImport">&nbsp;&nbsp;' +
-    gettext('First delete all existing records AND ALL RELATED TABLES') + '</label><br><br>' +
+    gettext('First delete all existing records AND ALL RELATED TABLES') + '</label><br>' +
     '</p>';
   if (isDragnDropUploadCapable()) {
     modalcontent += '' +

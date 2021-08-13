@@ -271,7 +271,7 @@ function displayGrid(load) {
       });
     $("#content-main").on('drop', function(e) {
       if (e.originalEvent.dataTransfer.files.length > 0) {
-        import_show('', null, true, null, e.originalEvent.dataTransfer.files);
+        import_show('', undefined, true, undefined, e.originalEvent.dataTransfer.files);
   	    e.preventDefault();
       }});
   }

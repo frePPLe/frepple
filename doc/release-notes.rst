@@ -56,7 +56,13 @@ Release notes
   | In previous releases the system administrator had to migrate each scenario 
     seperately. This was inconvenient and often forgotten.
   | You can still migrate a single database only by using the --database argument.
-  
+
+.. rubric:: Integration
+
+- | The `HTTP API <integration-guide/remote-commands.html>`_ already allowed
+    launching tasks, canceling task and checking the task status. Now you can
+    also retrieve the log file of tasks.
+
 6.15.0 (2021/07/02)
 ===================
 

@@ -289,8 +289,26 @@ def APITask(request, action):
                             "status": t.status,
                             "message": t.message,
                             "user": t.user.username if t.user else None,
-                            "logfile": t.logfile,
                         }
+        elif action == "log":
+            taskid = request.GET.get("id")
+            if not taskid:
+                return HttpResponseNotFound("Task or log file not found")
+            try:
+                task = Task.objects.all().using(request.database).get(id=taskid)
+                if task and task.logfile:
+                    return sendStaticFile(
+                        request,
+                        settings.FREPPLE_LOGDIR,
+                        task.logfile,
+                        headers={
+                            "Content-Type": "application/octet-stream",
+                            "Content-Disposition": 'inline; filename="frepple_%s_%s.log"'
+                            % (request.database, taskid),
+                        },
+                    )
+            except Exception as e:
+                return HttpResponseNotFound("Task or log file not found")
         else:
             task = wrapTask(request, action)
             if task:

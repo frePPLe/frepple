@@ -43,12 +43,17 @@ language using the following URLs. The examples are using the excellent
   
    curl -u <user>:<password> http(s)://<server>:<port>/execute/api/status/?id=X
 
-
 * Cancel a waiting or running task:
 
   ::
   
    curl -u <user>:<password> http(s)://<server>:<port>/execute/api/cancel/?id=X
+
+* Get the log of a single task:
+
+  ::
+  
+   curl -u <user>:<password> http(s)://<server>:<port>/execute/api/log/?id=X
 
 All these APIs return a JSON object and they are asynchronous, i.e. they
 don't wait for the actual command to finish. In case you need to wait

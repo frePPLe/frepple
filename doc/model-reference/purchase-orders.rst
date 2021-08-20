@@ -58,4 +58,6 @@ criticality      number            | The criticality is a read-only field, calcu
                                    | Note that the criticality is independent of whether the customer demand will be shipped on time or not.
 delay            duration          | The delay is a read-only field, calculated by the planning engine.
                                    | It compares the end data of the purchase order with the latest possible end date to ship all demands it feeds on time.
+period of cover  duration          | This is a computed field that shows how long the material of a purchase order is expected to stay in your inventory.
+                                   | The period of cover represents how long it will last until the last material of the purchase order will be consumed.
 ================ ================= =================================================================================================================================                            

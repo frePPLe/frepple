@@ -766,6 +766,17 @@ class PurchaseOrderList(OperationPlanMixin):
                 ),
                 output_field=DateTimeField(),
             ),
+            poc=Cast(
+                RawSQL(
+                    """
+                    select '1 day'::interval * floor(max(periodofcover)/86400)
+                    from operationplanmaterial
+                    where operationplan_id = operationplan.reference
+                    """,
+                    [],
+                ),
+                output_field=DurationField(),
+            ),
         )
 
     rows = (
@@ -874,6 +885,12 @@ class PurchaseOrderList(OperationPlanMixin):
             title=_("delay"),
             editable=False,
             initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
+        ),
+        GridFieldDuration(
+            "poc",
+            title=_("period of cover"),
+            editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),
         GridFieldJSON(

@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-6.16.0 (upcoming release)
-=========================
+6.16.0 (2021/08/21)
+===================
 
 .. rubric:: Community Edition
 
@@ -48,6 +48,10 @@ Release notes
   | In previous releases this required some programming in the backend.
   | Since adding custom attributes is so common on items, sales orders, etc... 
     we're giving this power to the user now.
+
+- The `inventory report <user-interface/plan-analysis/inventory-report.html>`_ got a new
+  set of extra fields. We also made it easy to expand and collapse summary rows to 
+  display more detailed rows.
 
 .. rubric:: System administration
 

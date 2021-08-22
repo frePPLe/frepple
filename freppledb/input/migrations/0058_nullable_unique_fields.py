@@ -103,15 +103,15 @@ class Migration(migrations.Migration):
         ),
         migrations.RunSQL(
             """
-            delete from suboperation a
+            delete from operationmaterial a
             using (
-                select max(id) as id, operation_id, suboperation_id, effective_start
-                from suboperation 
-                group by operation_id, suboperation_id, effective_start
+                select max(id) as id, operation_id, item_id, effective_start
+                from operationmaterial 
+                group by operation_id, item_id, effective_start
                 having count(*) > 1
                 ) b
             where a.operation_id is not distinct from b.operation_id
-            and a.suboperation_id is not distinct from b.suboperation_id
+            and a.item_id is not distinct from b.item_id
             and a.effective_start is not distinct from b.effective_start
             and a.id is distinct from b.id
             """
@@ -144,10 +144,42 @@ class Migration(migrations.Migration):
             "ALTER TABLE operationresource ALTER COLUMN effective_start SET DEFAULT '1971-01-01'::timestamp",
         ),
         migrations.RunSQL(
+            """
+            delete from itemsupplier a
+            using (
+                select max(id) as id, item_id, supplier_id, location_id, effective_start
+                from itemsupplier 
+                group by item_id, supplier_id, location_id, effective_start
+                having count(*) > 1
+                ) b
+            where a.item_id is not distinct from b.item_id
+            and a.supplier_id is not distinct from b.supplier_id
+            and a.location_id is not distinct from b.location_id
+            and a.effective_start is not distinct from b.effective_start
+            and a.id is distinct from b.id
+            """
+        ),
+        migrations.RunSQL(
             "update itemsupplier set effective_start = '1971-01-01'::timestamp where effective_start is null",
         ),
         migrations.RunSQL(
             "ALTER TABLE itemsupplier ALTER COLUMN effective_start SET DEFAULT '1971-01-01'::timestamp",
+        ),
+        migrations.RunSQL(
+            """
+            delete from itemdistribution a
+            using (
+                select max(id) as id, item_id, origin_id, location_id, effective_start
+                from itemdistribution 
+                group by item_id, origin_id, location_id, effective_start
+                having count(*) > 1
+                ) b
+            where a.item_id is not distinct from b.item_id
+            and a.origin_id is not distinct from b.origin_id
+            and a.location_id is not distinct from b.location_id
+            and a.effective_start is not distinct from b.effective_start
+            and a.id is distinct from b.id
+            """
         ),
         migrations.RunSQL(
             "update itemdistribution set effective_start = '1971-01-01'::timestamp where effective_start is null",

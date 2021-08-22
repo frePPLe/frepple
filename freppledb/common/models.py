@@ -1518,7 +1518,7 @@ class Attribute(AuditModel):
         return "%s %s" % (self.model, self.name)
 
     def clean(self):
-        if self.name and (not self.name.isalnum() or self.name[0].isdigit()):
+        if self.name and (not self.name.replace('_', '').isalnum() or self.name[0].isdigit()):
             raise ValidationError(_("Name can only be alphanumeric"))
 
     @staticmethod

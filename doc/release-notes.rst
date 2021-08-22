@@ -25,7 +25,7 @@ Release notes
   | The Enterprise Edition is still available as a Windows installer.
 
 - | The docker container is now fully production ready.
-  | They have been experimental for a while already, an we have now brought forward the 
+  | They have been experimental for a while already, and we have now brought forward the 
     code, tests and documentation.
   | The images for the Community Edition can be pulled from the 
     `Github Container Registry <https://github.com/orgs/frePPLe/packages/container/package/frepple-community>`_.
@@ -58,7 +58,7 @@ Release notes
 - | The `migrate command <command-reference.html#migrate>`_ now migrates all 
     scenarios that are in use.
   | In previous releases the system administrator had to migrate each scenario 
-    seperately. This was inconvenient and often forgotten.
+    separately. This was inconvenient and often forgotten.
   | You can still migrate a single database only by using the --database argument.
 
 .. rubric:: Integration

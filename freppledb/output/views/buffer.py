@@ -694,6 +694,22 @@ class OverviewReport(GridPivot):
                and flowdate >= greatest(d.startdate,%%s)
                and operationplanmaterial.quantity < 0
              order by flowdate asc, id asc limit 1
+             ),
+             (
+             select jsonb_build_object(
+               'onhand', 0.0,
+               'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
+               'periodofcover', 1
+               )
+             from operationplanmaterial
+             inner join operationplan
+               on operationplanmaterial.operationplan_id = operationplan.reference
+             where operationplanmaterial.item_id = item.name
+               and operationplanmaterial.location_id = location.name
+               and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
+               and flowdate >= greatest(d.startdate,%%s)
+               and operationplanmaterial.quantity >= 0
+             order by flowdate asc, id asc limit 1
              )
              )
            end as startoh,
@@ -873,6 +889,7 @@ class OverviewReport(GridPivot):
                         request.report_startdate,
                         request.report_startdate,
                         request.report_startdate,
+                        request.report_startdate,
                         request.report_startdate,  # safetystock
                     )
                     + (request.report_startdate,) * 27
@@ -951,17 +968,25 @@ class OverviewReport(GridPivot):
                         "location__lastmodified": row[20],
                         "batch": row[21],
                         "is_ip_buffer": row[22],
-                        "color": round(
-                            (row[numfields - 7]["onhand"] if row[numfields - 7] else 0)
-                            * 100
-                            / float(row[numfields - 2])
-                        )
-                        if row[22]
-                        and row[numfields - 2]
-                        and float(row[numfields - 2]) > 0
-                        else round(row[numfields - 1]["max_delay"])
-                        if not row[22] and row[numfields - 1]["max_delay"]
-                        else 0,
+                        "color": None
+                        if history
+                        else (
+                            round(
+                                (
+                                    row[numfields - 7]["onhand"]
+                                    if row[numfields - 7]
+                                    else 0
+                                )
+                                * 100
+                                / float(row[numfields - 2])
+                            )
+                            if row[22]
+                            and row[numfields - 2]
+                            and float(row[numfields - 2]) > 0
+                            else round(row[numfields - 1]["max_delay"])
+                            if not row[22] and row[numfields - 1]["max_delay"]
+                            else 0
+                        ),
                         "startoh": row[numfields - 7]["onhand"]
                         if row[numfields - 7]
                         else 0,

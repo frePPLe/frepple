@@ -14,8 +14,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from freppledb.input.models import Location
-from django.db import migrations, models
+from django.db import migrations
 
 
 class Migration(migrations.Migration):

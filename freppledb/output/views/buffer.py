@@ -306,10 +306,7 @@ class OverviewReport(GridPivot):
         ),
         (
             "consumedMO_confirmed",
-            {
-                "title": _("consumed by MO confirmed"),
-                "initially_hidden": True,
-            },
+            {"title": _("consumed by MO confirmed"), "initially_hidden": True},
         ),
         (
             "consumedMO_proposed",
@@ -361,10 +358,7 @@ class OverviewReport(GridPivot):
             {
                 "title": _("produced by MO"),
                 "initially_hidden": True,
-                "expand": [
-                    "producedMO_confirmed",
-                    "producedMO_proposed",
-                ],
+                "expand": ["producedMO_confirmed", "producedMO_proposed"],
             },
         ),
         (
@@ -379,10 +373,7 @@ class OverviewReport(GridPivot):
             "producedDO",
             {
                 "title": _("produced by DO"),
-                "expand": [
-                    "producedDO_confirmed",
-                    "producedDO_proposed",
-                ],
+                "expand": ["producedDO_confirmed", "producedDO_proposed"],
                 "initially_hidden": True,
             },
         ),
@@ -398,10 +389,7 @@ class OverviewReport(GridPivot):
             "producedPO",
             {
                 "title": _("produced by PO"),
-                "expand": [
-                    "producedPO_confirmed",
-                    "producedPO_proposed",
-                ],
+                "expand": ["producedPO_confirmed", "producedPO_proposed"],
                 "initially_hidden": True,
             },
         ),
@@ -418,10 +406,7 @@ class OverviewReport(GridPivot):
             "total_in_progress",
             {
                 "title": _("total in progress"),
-                "expand": [
-                    "total_in_progress_confirmed",
-                    "total_in_progress_proposed",
-                ],
+                "expand": ["total_in_progress_confirmed", "total_in_progress_proposed"],
                 "initially_hidden": True,
             },
         ),
@@ -472,10 +457,7 @@ class OverviewReport(GridPivot):
             "on_order_po",
             {
                 "title": _("on order PO"),
-                "expand": [
-                    "on_order_po_confirmed",
-                    "on_order_po_proposed",
-                ],
+                "expand": ["on_order_po_confirmed", "on_order_po_proposed"],
                 "initially_hidden": True,
             },
         ),
@@ -495,10 +477,7 @@ class OverviewReport(GridPivot):
             "in_transit_do",
             {
                 "title": _("in transit DO"),
-                "expand": [
-                    "in_transit_do_confirmed",
-                    "in_transit_do_proposed",
-                ],
+                "expand": ["in_transit_do_confirmed", "in_transit_do_proposed"],
                 "initially_hidden": True,
             },
         ),
@@ -517,10 +496,7 @@ class OverviewReport(GridPivot):
             "total_demand",
             {
                 "title": _("total demand"),
-                "expand": [
-                    "open_orders",
-                    "net_forecast",
-                ],
+                "expand": ["open_orders", "net_forecast"],
                 "initially_hidden": True,
             },
         ),
@@ -533,10 +509,7 @@ class OverviewReport(GridPivot):
             "total_backlog",
             {
                 "title": _("total backlog"),
-                "expand": [
-                    "forecast_backlog",
-                    "order_backlog",
-                ],
+                "expand": ["forecast_backlog", "order_backlog"],
                 "initially_hidden": True,
             },
         ),
@@ -654,7 +627,11 @@ class OverviewReport(GridPivot):
            location.source,
            location.lastmodified,
            opplanmat.opplan_batch,
-           (item.name, location.name) in (select plan->>'item', plan->>'location' from operationplan) is_ip_buffer,
+           (item.name, location.name) in 
+           (select plan->>'item', plan->>'location' 
+           from operationplan 
+           where item_id = item.name
+           and coalesce(location_id, destination_id) = location.name) is_ip_buffer,
            %s
            (select json_agg(json_build_array(reasons.name, reasons.owner)) 
            from (select * from reasons where item_id = item.name and location_id = location.name order by name limit 20) reasons
@@ -916,10 +893,7 @@ class OverviewReport(GridPivot):
                 )
 
                 prev_buffer = None
-                curdate = datetime.strptime(
-                    request.current_date,
-                    "%Y-%m-%d %H:%M:%S",
-                )
+                curdate = datetime.strptime(request.current_date, "%Y-%m-%d %H:%M:%S")
                 for row in cursor_chunked:
                     if prev_buffer != row[0]:
                         order_backlog = None

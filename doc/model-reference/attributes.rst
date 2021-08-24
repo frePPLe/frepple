@@ -9,7 +9,14 @@ exactly like any other field: editing, exporting, importing, sorting, filtering.
 are all possible.
 
 Note: All scenarios must have the same attribute definitions. Only the attributes defined
-in the production scenario are used.
+in the production scenario are used. And only the production scenario has the attribute
+definition screen in its menus.
+
+.. Important::
+
+   After any change to the attribute definitions, the database structure needs to be altered
+   and the web application is also automatically restarted. This can take some time, so be
+   patient.
 
 ================ ================= ===========================================================
 Field            Type              Description

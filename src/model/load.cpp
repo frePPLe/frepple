@@ -409,7 +409,7 @@ Resource* Load::findPreferredResource(Date d) const {
         best_res = &*mmbr;
         best_eff = my_eff;
         best_priority = tmpRsrcSkill ? tmpRsrcSkill->getPriority() : DBL_MAX;
-      } else if (fabs(my_eff > best_eff) < ROUNDING_ERROR && tmpRsrcSkill &&
+      } else if (fabs(my_eff - best_eff) < ROUNDING_ERROR && tmpRsrcSkill &&
                  tmpRsrcSkill->getPriority() < best_priority) {
         best_res = &*mmbr;
         best_eff = my_eff;

@@ -91,8 +91,8 @@ unplanneddemandvalue    Number            Total value of unplanned open sales or
 **Extra fields added by "demand hits" app**
 
 This addon app provides some metrics on the historical demand of the item. This is useful in
-identifying fast-moving and slow-moving items and define an ABC classification for segmenting
-the inventory policies correctly.
+identifying fast-moving and slow-moving items that can be used for differentiating the inventory 
+policies correctly.
 
 ======================= ================= ===========================================================
 Field                   Type              Description
@@ -144,3 +144,22 @@ successor               Item              | Refers to another item that is repla
                                             successor and predecessor items.
 ======================= ================= ===========================================================
 
+
+**Extra fields added by "abc_classification" app**
+
+This app categorizes the items into a number of classes. The classification is based on a
+`Pareto  analysis <https://en.wikipedia.org/wiki/Pareto_analysis>`_ to identify the items that
+contributed most to the sales revenue over the last year.
+
+With the default classification, the A class makes up 20% of the sales revenue. The B class makes
+up the sales revenue between 20% and 80%. The rest of the items are put in the C class. Items
+without any demand in the last year won't be classified.
+
+The number of classes, the thresholds and the history to use are configurable with the parameters 
+"abc.classes" and "abc.history".
+
+======================= ================= ===========================================================
+Field                   Type              Description
+======================= ================= ===========================================================
+abc_class               String            | Class of this item.
+======================= ================= ===========================================================

@@ -113,7 +113,7 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
                     else:
                         data = data.replace(microsecond=0) + timedelta(seconds=1)
                 elif data:
-                    data = data.strip()
+                    data = str(data).strip()
                 else:
                     data = None
             elif isinstance(field, TimeField) and isinstance(data, datetime):

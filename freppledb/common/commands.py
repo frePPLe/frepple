@@ -57,7 +57,7 @@ def clean_value(value):
     if value is None:
         return "\\N"
     elif "\n" in value or "\\" in value:
-        return value.replace("\n", "\\n").replace("\\", "\\\\")
+        return value.replace("\\", "\\\\").replace("\n", "\\n")
     else:
         return value
 

@@ -16,6 +16,7 @@
 #
 
 from datetime import timedelta, datetime
+from dateutil.parser import parse
 from decimal import Decimal
 from logging import INFO, ERROR, WARNING, DEBUG
 from openpyxl.worksheet.cell_range import CellRange
@@ -114,6 +115,10 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
                         data = data.replace(microsecond=0) + timedelta(seconds=1)
                 elif data:
                     data = str(data).strip()
+                    try:
+                        data = parse(data, yearfirst=False, dayfirst=False)
+                    except:
+                        pass
                 else:
                     data = None
             elif isinstance(field, TimeField) and isinstance(data, datetime):
@@ -218,6 +223,15 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
                 if isinstance(idx[1], BooleanField) and val == "0":
                     # Argh... bool('0') returns True.
                     return False
+                elif isinstance(idx[1], (DateField, DateTimeField)):
+                    try:
+                        return (
+                            parse(val, yearfirst=False, dayfirst=False)
+                            if val != ""
+                            else None
+                        )
+                    except:
+                        return val if val != "" else None
                 elif isinstance(idx[1], DecimalField):
                     # Automatically round to 8 digits rather than giving an error message
                     return round(float(val), 8) if val != "" else None

@@ -20,7 +20,6 @@ import os.path
 from mimetypes import guess_type
 
 from django.core.paginator import Paginator
-from django.db.utils import DEFAULT_DB_ALIAS
 from django.http import JsonResponse, HttpResponseNotAllowed
 from django.shortcuts import render
 from django.contrib import messages

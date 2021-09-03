@@ -774,7 +774,7 @@ class Date {
    */
   static const Date infiniteFuture;
 
-  string toString(const char* fmt);
+  string toString(const char* fmt) const;
 
 #ifndef HAVE_STRPTIME
  private:
@@ -968,7 +968,7 @@ inline size_t Date::toCharBuffer(char* str) const {
   return DateDetail(*this).toCharBuffer(str);
 }
 
-inline string Date::toString(const char* fmt) {
+inline string Date::toString(const char* fmt) const {
   DateDetail tmp(this);
   return tmp.toString(fmt);
 }

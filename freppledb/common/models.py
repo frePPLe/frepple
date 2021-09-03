@@ -1518,8 +1518,15 @@ class Attribute(AuditModel):
         return "%s %s" % (self.model, self.name)
 
     def clean(self):
-        if self.name and (not self.name.replace('_', '').isalnum() or self.name[0].isdigit()):
+        if self.name and (
+            not self.name.replace("_", "").isalnum() or self.name[0].isdigit()
+        ):
             raise ValidationError(_("Name can only be alphanumeric"))
+
+    def clean_fields(self, exclude=None):
+        if self.name:
+            self.name = self.name.lower()
+        super().clean_fields(exclude=exclude)
 
     @staticmethod
     def forceReload():

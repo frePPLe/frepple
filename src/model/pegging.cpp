@@ -68,11 +68,10 @@ PeggingIterator::PeggingIterator(const PeggingIterator& c)
       second_pass(c.second_pass) {
   initType(metadata);
   for (auto i = c.states.begin(); i != c.states.end(); ++i)
-    states.push_back(
-        state(i->opplan, i->quantity, i->offset, i->level, i->gap));
+    states.emplace_back(i->opplan, i->quantity, i->offset, i->level, i->gap);
   for (auto i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
-    states_sorted.push_back(
-        state(i->opplan, i->quantity, i->offset, i->level, i->gap));
+    states_sorted.emplace_back(i->opplan, i->quantity, i->offset, i->level,
+                               i->gap);
 }
 
 PeggingIterator& PeggingIterator::operator=(const PeggingIterator& c) {
@@ -80,12 +79,11 @@ PeggingIterator& PeggingIterator::operator=(const PeggingIterator& c) {
   firstIteration = c.firstIteration;
   first = c.first;
   second_pass = c.second_pass;
-  for (auto i = c.states.begin(); i != c.states.end(); ++i)
-    states.push_back(
-        state(i->opplan, i->quantity, i->offset, i->level, i->gap));
+  for (auto& i : c.states)
+    states.emplace_back(i.opplan, i.quantity, i.offset, i.level, i.gap);
   for (auto i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
-    states_sorted.push_back(
-        state(i->opplan, i->quantity, i->offset, i->level, i->gap));
+    states_sorted.emplace_back(i->opplan, i->quantity, i->offset, i->level,
+                               i->gap);
   return *this;
 }
 
@@ -118,8 +116,8 @@ PeggingIterator::PeggingIterator(const Demand* d)
       }
     if (!found)
       // New element in sorted stack
-      states_sorted.push_back(state(curtop.opplan, curtop.quantity,
-                                    curtop.offset, curtop.level, curtop.gap));
+      states_sorted.emplace_back(curtop.opplan, curtop.quantity, curtop.offset,
+                                 curtop.level, curtop.gap);
 
     if (downstream)
       ++*this;
@@ -174,7 +172,7 @@ PeggingIterator& PeggingIterator::operator--() {
   first = true;
 
   // Find other operationplans to add to the stack
-  state t = states.back();  // Copy the top element
+  state& t = states.back();  // Copy the top element
   followPegging(t.opplan, t.quantity, t.offset, t.level);
 
   // Pop invalid top entry from the stack.
@@ -201,7 +199,7 @@ PeggingIterator& PeggingIterator::operator++() {
   first = true;
 
   // Find other operationplans to add to the stack
-  state t = states.back();  // Copy the top element
+  state& t = states.back();  // Copy the top element
   followPegging(t.opplan, t.quantity, t.offset, t.level);
 
   // Pop invalid top entry from the stack.
@@ -268,7 +266,7 @@ void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
     first = false;
   } else
     // We need to create a new element on the stack
-    states.push_back(state(op, qty, o, lvl, gap));
+    states.emplace_back(op, qty, o, lvl, gap);
 }
 
 PeggingDemandIterator::PeggingDemandIterator(const PeggingDemandIterator& c) {

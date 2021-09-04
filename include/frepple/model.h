@@ -9132,23 +9132,15 @@ class PeggingIterator : public Object {
     state(const OperationPlan* op, double q, double o, short l, Duration g)
         : opplan(op), quantity(q), offset(o), level(l), gap(g){};
 
-    // Copy constructor
-    state(const state& o)
-        : opplan(o.opplan),
-          quantity(o.quantity),
-          offset(o.offset),
-          level(o.level),
-          gap(o.gap){};
+    state(state&& other)
+        : opplan(other.opplan),
+          quantity(other.quantity),
+          offset(other.offset),
+          level(other.level),
+          gap(other.gap){};
 
-    // Copy assignment operator
-    state& operator=(const state& o) {
-      opplan = o.opplan;
-      quantity = o.quantity;
-      offset = o.offset;
-      level = o.level;
-      gap = o.gap;
-      return *this;
-    }
+    state(const state& o) = delete;
+    state& operator=(const state& o) = delete;
 
     // Comparison operator
     bool operator<(const state& other) const {

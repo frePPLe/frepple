@@ -7774,18 +7774,21 @@ class LoadPlan::AlternateIterator {
  public:
   AlternateIterator(const LoadPlan*);
 
+  AlternateIterator(const AlternateIterator&& other)
+      : ldplan(other.ldplan), resources(move(other.resources)) {
+    resIter = resources.begin();
+  }
+
   /* Copy constructor. */
   AlternateIterator(const AlternateIterator& other) : ldplan(other.ldplan) {
-    for (auto i = other.resources.begin(); i != other.resources.end(); ++i)
-      resources.push_back(*i);
+    for (auto& i : other.resources) resources.push_back(i);
     resIter = resources.begin();
   }
 
   /* Copy assignment operator. */
   AlternateIterator& operator=(const AlternateIterator& other) {
     resources.clear();
-    for (auto i = other.resources.begin(); i != other.resources.end(); ++i)
-      resources.push_back(*i);
+    for (auto& i : other.resources) resources.push_back(i);
     resIter = resources.begin();
     return *this;
   }

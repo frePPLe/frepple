@@ -589,21 +589,13 @@ class OverviewReport(GridPivot):
         # Execute the actual query
         reasons_forecast = """
                 union all
-                select item.name as item_id, operationplan.location_id, operationplan.due, operationplan.enddate, out_constraint.name, out_constraint.owner
+                select operationplan.item_id, operationplan.location_id, operationplan.due, operationplan.enddate, out_constraint.name, out_constraint.owner
                 from out_constraint
-                inner join item on item.name = out_constraint.item
-                inner join operationplan on operationplan.item_id = item.name and operationplan.forecast = out_constraint.forecast
+                inner join operationplan on operationplan.forecast = out_constraint.forecast
+                and operationplan.item_id = item.name and operationplan.location_id = location.name
                 and operationplan.due < operationplan.enddate
         """
         query = """
-            with reasons as (
-                select item.name as item_id, operationplan.location_id, operationplan.due, operationplan.enddate, out_constraint.name, out_constraint.owner
-                from out_constraint
-                inner join item on item.name = out_constraint.item
-                inner join operationplan on operationplan.item_id = item.name and operationplan.demand_id = out_constraint.demand
-                and operationplan.due < operationplan.enddate
-                %s          
-            )
            select
            opplanmat.buffer,
            item.name item_id,
@@ -634,7 +626,16 @@ class OverviewReport(GridPivot):
            and coalesce(location_id, destination_id) = location.name) is_ip_buffer,
            %s
            (select json_agg(json_build_array(reasons.name, reasons.owner)) 
-           from (select * from reasons where item_id = item.name and location_id = location.name order by name limit 20) reasons
+           from (
+               select operationplan.item_id, operationplan.location_id, operationplan.due, operationplan.enddate, out_constraint.name, out_constraint.owner
+                from out_constraint
+                inner join operationplan on operationplan.item_id = item.name
+                and operationplan.location_id = location.name
+                and operationplan.demand_id = out_constraint.demand
+                and operationplan.due < operationplan.enddate
+                %s
+                order by name limit 20
+           ) reasons
            where (reasons.due , reasons.enddate) overlaps (d.startdate, d.enddate)) reasons,
            case
              when d.history then jsonb_build_object(
@@ -850,8 +851,8 @@ class OverviewReport(GridPivot):
            d.history
            order by %s, d.startdate
         """ % (
-            reasons_forecast if "freppledb.forecast" in settings.INSTALLED_APPS else "",
             reportclass.attr_sql,
+            reasons_forecast if "freppledb.forecast" in settings.INSTALLED_APPS else "",
             basesql,
             sortsql,
         )

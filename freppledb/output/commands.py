@@ -278,7 +278,7 @@ class ExportProblems(PlanTask):
             yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                 clean_value(i.entity),
                 clean_value(i.name),
-                clean_value(owner.name),
+                clean_value(owner.name)[:300],
                 clean_value(i.description),
                 str(i.start),
                 str(i.end),

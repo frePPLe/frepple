@@ -1668,7 +1668,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   if (!originalPlanningMode && fabs(origQqty - a_qty) < ROUNDING_ERROR &&
       firstAlternate) {
     // Message
-    if (loglevel)
+    if (loglevel > 1)
       logger << indentlevel << "Alternate operation '" << oper->getName()
              << "' plans unconstrained on alternate '"
              << firstAlternate->getOperation() << "' " << search << endl;

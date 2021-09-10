@@ -337,9 +337,11 @@ class ExportConstraints(PlanTask):
                     clean_value(d.item.name),
                     clean_value(i.entity),
                     clean_value(i.name),
-                    isinstance(i.owner, frepple.operationplan)
-                    and clean_value(i.owner.operation.name)
-                    or clean_value(i.owner.name),
+                    (
+                        isinstance(i.owner, frepple.operationplan)
+                        and clean_value(i.owner.operation.name)
+                        or clean_value(i.owner.name)
+                    )[:300],
                     clean_value(i.description),
                     str(i.start),
                     str(i.end),

@@ -979,7 +979,7 @@ class SolverCreate : public Solver {
     bool buffer_solve_shortages_only = true;
 
     /* A list of recent buffers to detect loops in the supply path. */
-    RecentlyUsed<const Buffer*, 10> recent_buffers;
+    RecentlyUsed<const Buffer*, 300> recent_buffers;
 
     /* Collect all buffers replenished from a single supplier. */
     struct order_buffers {

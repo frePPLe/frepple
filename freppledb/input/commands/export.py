@@ -1333,6 +1333,7 @@ class exportDemands(PlanTask):
                     continue
                 r = [
                     i.name,
+                    i.batch if i.batch else None,
                     i.due,
                     round(i.quantity, 8),
                     i.priority,
@@ -1370,12 +1371,13 @@ class exportDemands(PlanTask):
                 cursor,
                 """
                 insert into demand
-                (name,due,quantity,priority,item_id,location_id,operation_id,customer_id,
+                (name,batch,due,quantity,priority,item_id,location_id,operation_id,customer_id,
                  minshipment,maxlateness,category,subcategory,source,description,lastmodified,
                  status,owner_id%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,null%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,null%s)
                 on conflict (name)
                 do update set
+                  batch=excluded.batch,
                   due=excluded.due,
                   quantity=excluded.quantity,
                   priority=excluded.priority,

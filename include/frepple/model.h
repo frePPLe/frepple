@@ -7051,7 +7051,7 @@ class Demand : public HasHierarchy<Demand>,
    */
   int getPriority() const { return prio; }
 
-  /* Updates the due date of the demand.
+  /* Updates the priority of the forecast.
    * Lower numbers indicate a higher priority level.
    */
   virtual void setPriority(int i) {

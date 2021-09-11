@@ -5394,6 +5394,31 @@ class HasHierarchy : public HasName<T> {
    */
   unsigned short getHierarchyLevel() const;
 
+  /* Bubble sort to get all members in order. */
+  void sortMembers() const {
+    bool swapped;
+    do {
+      swapped = false;
+      T* prev = nullptr;
+      for (auto iter = first_child; iter && iter->next_brother;
+           iter = iter->next_brother) {
+        if (*(iter->next_brother) < *iter) {
+          swapped = true;
+          auto tmp = iter->next_brother->next_brother;
+          if (prev)
+            prev->next_brother = iter->next_brother;
+          else
+            const_cast<HasHierarchy<T>*>(this)->first_child =
+                iter->next_brother;
+          iter->next_brother->next_brother = iter;
+          iter->next_brother = tmp;
+          if (!tmp) const_cast<HasHierarchy<T>*>(this)->last_child = iter;
+        }
+        prev = iter;
+      }
+    } while (swapped);
+  }
+
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
     m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",

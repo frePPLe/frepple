@@ -48,6 +48,9 @@ def add_extra_model_fields(sender, **kwargs):
     for field_name, label, fieldtype, editable, initially_hidden in chain(
         _register.get(model_path, []), _register.get(sender._meta.db_table, [])
     ):
+        if sender._meta.parents:
+            # Proxy classes can't have attributes
+            continue
 
         register_args = (
             _register_kwargs[(model_path, field_name)]

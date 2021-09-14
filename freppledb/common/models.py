@@ -1484,8 +1484,16 @@ class Attribute(AuditModel):
                         "out",
                     ]
                 )
+                if i.model
+                not in (
+                    "purchaseorder",
+                    "deliveryorder",
+                    "manufacturingorder",
+                    "distributionorder",
+                )
             ]
-        except Exception:
+        except Exception as e:
+            print(e)
             return []
 
     # Database fields

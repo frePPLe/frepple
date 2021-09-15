@@ -41,7 +41,7 @@ rm -f /usr/local/apache2/logs/httpd.pid
 
 # Allow custom configuration steps to be added
 if [[ -d "/etc/frepple/entrypoint.d" ]]; then
-  /bin/run-parts --verbose "/et/frepple/entrypoint.d"
+  /bin/run-parts --verbose "/etc/frepple/entrypoint.d"
 fi
 
 # Start apache web server

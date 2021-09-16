@@ -1,6 +1,22 @@
 Release notes
 -------------
 
+6.17.0 (Upcoming release)
+=========================
+
+.. rubric:: User interface
+
+- | Extra robustness when defining custom `attributes <model-reference/attributes.html>`_ 
+    The feature was introduced in the previous release, and we added some checks to
+    handle corner cases (such as attribute names starting with handles, adding attributes
+    to proxy models, allowing underscores in attribute names, ...)
+
+- The performance of the inventory report is fixed after it degraded in the previous release.
+
+.. rubric:: Odoo integration
+
+- Addition of batching window in supplier info table
+
 6.16.0 (2021/08/21)
 ===================
 

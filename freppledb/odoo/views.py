@@ -106,7 +106,7 @@ def Upload(request):
                     data_ok = True
                     obj.append(po)
                     data_odoo.append(
-                        '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>'
+                        '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s/>'
                         % (
                             po.reference,
                             quoteattr(po.item.name),
@@ -118,6 +118,7 @@ def Upload(request):
                             quoteattr(po.location.subcategory or ""),
                             quoteattr(po.item.subcategory or ""),
                             int(po.criticality),
+                            quoteattr(po.batch),
                         )
                     )
                 elif rec["type"] == "DO":
@@ -134,7 +135,7 @@ def Upload(request):
                     data_ok = True
                     obj.append(do)
                     data_odoo.append(
-                        '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d"/>'
+                        '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d" batch=%s/>'
                         % (
                             do.status,
                             do.reference,
@@ -148,6 +149,7 @@ def Upload(request):
                             quoteattr(do.destination.subcategory or ""),
                             quoteattr(do.item.subcategory or ""),
                             int(do.criticality),
+                            quoteattr(do.batch),
                         )
                     )
                 else:
@@ -163,7 +165,7 @@ def Upload(request):
                     data_ok = True
                     obj.append(op)
                     data_odoo.append(
-                        '<operationplan ordertype="MO" id="%s" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>'
+                        '<operationplan ordertype="MO" id="%s" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s/>'
                         % (
                             op.reference,
                             quoteattr(op.operation.item.name),
@@ -175,6 +177,7 @@ def Upload(request):
                             quoteattr(op.operation.location.subcategory or ""),
                             quoteattr(op.operation.item.subcategory or ""),
                             int(op.criticality),
+                            quoteattr(op.batch),
                         )
                     )
             except Exception:

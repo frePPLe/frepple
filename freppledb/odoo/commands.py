@@ -329,7 +329,7 @@ class OdooWritePlan(PlanTask):
                     ):
                         continue
                     cls.exported.append(i)
-                    yield '<operationplan reference="%s" ordertype="PO" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
+                    yield '<operationplan reference="%s" ordertype="PO" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s/>' % (
                         i.reference,
                         quoteattr(i.item.name),
                         quoteattr(i.location.name),
@@ -340,6 +340,7 @@ class OdooWritePlan(PlanTask):
                         quoteattr(i.location.subcategory),
                         quoteattr(i.item.subcategory),
                         int(i.criticality),
+                        quoteattr(i.batch),
                     )
                 elif i.ordertype == "DO":
                     if (
@@ -353,7 +354,7 @@ class OdooWritePlan(PlanTask):
                     ):
                         continue
                     cls.exported.append(i)
-                    yield '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d"/>' % (
+                    yield '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d" batch=%s/>' % (
                         i.status,
                         i.reference,
                         quoteattr(i.operation.destination.item.name),
@@ -366,6 +367,7 @@ class OdooWritePlan(PlanTask):
                         quoteattr(i.operation.destination.location.subcategory),
                         quoteattr(i.operation.destination.item.subcategory),
                         int(i.criticality),
+                        quoteattr(i.batch),
                     )
                 elif i.ordertype == "MO":
                     if (
@@ -392,7 +394,7 @@ class OdooWritePlan(PlanTask):
                         demand_str += "%s:%s, " % (d.demand, d.quantity)
                     if demand_str:
                         demand_str = demand_str[:-2]
-                    yield '<operationplan reference="%s" ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" resource=%s demand=%s/>' % (
+                    yield '<operationplan reference="%s" ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" resource=%s demand=%s batch=%s/>' % (
                         i.reference,
                         quoteattr(i.operation.item.name),
                         quoteattr(i.operation.location.name),
@@ -405,6 +407,7 @@ class OdooWritePlan(PlanTask):
                         int(i.criticality),
                         quoteattr(",".join(res)),
                         quoteattr(demand_str),
+                        quoteattr(i.batch),
                     )
             yield "</operationplans>"
             yield "</plan>"

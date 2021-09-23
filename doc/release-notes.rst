@@ -10,6 +10,8 @@ Release notes
 - | The detail panels in the purchase order, distribution order and manufacturing
     order screens have been restyled and their layout optimized.
 
+- | Fix bug where the time displayed could have an offset of one hour in DST timezones.
+
 .. rubric:: Odoo integration
 
 - | V14: Handling of multi-timezone situations when importing and exporting manufacturing orders,

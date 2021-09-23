@@ -39,7 +39,7 @@ import math
 import operator
 import json
 import re
-from time import timezone, daylight
+from time import timezone, localtime
 from io import StringIO, BytesIO
 import urllib
 from openpyxl import load_workbook, Workbook
@@ -809,6 +809,8 @@ class GridReport(View):
             offset = int(request.COOKIES.get("tzoffset", 0))
         except Exception:
             offset = 0
+
+        daylight = max(0, localtime().tm_isdst)
         return timedelta(seconds=timezone - offset - daylight * 3600)
 
     @classmethod

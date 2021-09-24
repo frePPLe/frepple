@@ -313,9 +313,12 @@ class Command(BaseCommand):
 
             # Delete parameter that marks a running worker
             if destination != DEFAULT_DB_ALIAS:
-                Parameter.objects.using(destination).filter(
-                    name="Worker alive"
-                ).delete()
+                try:
+                    Parameter.objects.using(destination).filter(
+                        name="Worker alive"
+                    ).delete()
+                except BaseException:
+                    pass
 
             # Give access to the destination scenario to:
             #  a) the user doing the copy

@@ -117,9 +117,16 @@ class Command(BaseCommand):
 
         timestamp = now.strftime("%Y%m%d%H%M%S")
         if database == DEFAULT_DB_ALIAS:
-            logfile = "frepple-%s.log" % timestamp
+            logfile = "frepple-%s%s.log" % (
+                "" if "cluster" not in options else "cluster%s-" % options["cluster"],
+                timestamp,
+            )
         else:
-            logfile = "frepple_%s-%s.log" % (database, timestamp)
+            logfile = "frepple_%s-%s%s.log" % (
+                database,
+                "" if "cluster" not in options else "cluster%s-" % options["cluster"],
+                timestamp,
+            )
 
         task = None
         try:
@@ -193,6 +200,8 @@ class Command(BaseCommand):
                 )
             if options["background"]:
                 task.arguments += " --background"
+            if "cluster" in options:
+                task.arguments += " --cluster=%s" % options["cluster"]
 
             # Log task
             # Different from the other tasks the frepple engine will write the processid

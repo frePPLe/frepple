@@ -59,10 +59,15 @@ class Command(BaseCommand):
                 database=database,
                 user=options["user"],
                 task=task,
+                background=True,
             )
         else:
             management.call_command(
-                "runplan", env="odoo_write", database=database, task=task
+                "runplan",
+                env="odoo_write",
+                database=database,
+                task=task,
+                background=True,
             )
 
     # accordion template

@@ -71,6 +71,7 @@ class OverviewReport(GridPivot):
         GridFieldCurrency("cost", title=_("cost"), initially_hidden=True),
         GridFieldNumber("volume", title=_("volume"), initially_hidden=True),
         GridFieldNumber("weight", title=_("weight"), initially_hidden=True),
+        GridFieldText("uom", title=_("unit of measure"), initially_hidden=True),
         GridFieldInteger(
             "periodofcover", title=_("period of cover"), initially_hidden=True
         ),
@@ -160,7 +161,7 @@ class OverviewReport(GridPivot):
         query = """
           select
           parent.name, parent.description, parent.category, parent.subcategory,
-          parent.owner_id, parent.cost, parent.volume, parent.weight, parent.periodofcover, parent.source, parent.lastmodified,
+          parent.owner_id, parent.cost, parent.volume, parent.weight, parent.uom, parent.periodofcover, parent.source, parent.lastmodified,
           %s
           d.bucket,
           d.startdate,
@@ -205,7 +206,7 @@ class OverviewReport(GridPivot):
                        ) d
           group by
             parent.name, parent.description, parent.category, parent.subcategory,
-            parent.owner_id, parent.cost, parent.volume, parent.weight, parent.periodofcover,
+            parent.owner_id, parent.cost, parent.volume, parent.weight, parent.uom, parent.periodofcover,
             parent.source, parent.lastmodified, parent.lft, parent.rght,
             %s
             d.bucket, d.startdate, d.enddate
@@ -247,9 +248,10 @@ class OverviewReport(GridPivot):
                         "cost": row[5],
                         "volume": row[6],
                         "weight": row[7],
-                        "periodofcover": row[8],
-                        "source": row[9],
-                        "lastmodified": row[10],
+                        "uom": row[8],
+                        "periodofcover": row[9],
+                        "source": row[10],
+                        "lastmodified": row[11],
                         "bucket": row[numfields - 6],
                         "startdate": row[numfields - 5].date(),
                         "enddate": row[numfields - 4].date(),
@@ -258,7 +260,7 @@ class OverviewReport(GridPivot):
                         "reasons": json.dumps(row[numfields - 1]),
                         "backlog": backlog,
                     }
-                    idx = 11
+                    idx = 12
                     for f in itemattributefields:
                         res[f.field_name] = row[idx]
                         idx += 1

@@ -788,6 +788,12 @@ class ResourceDetail(OperationPlanMixin):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldText(
+            "operationplan__item__uom",
+            title=format_lazy("{} - {}", _("item"), _("unit of measure")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldInteger(
             "operationplan__item__periodofcover",
             title=format_lazy("{} - {}", _("item"), _("period of cover")),

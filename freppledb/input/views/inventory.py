@@ -216,6 +216,12 @@ class BufferList(GridReport):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldText(
+            "item__uom",
+            title=format_lazy("{} - {}", _("item"), _("unit of measure")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldInteger(
             "item__periodofcover",
             title=format_lazy("{} - {}", _("item"), _("period of cover")),
@@ -418,6 +424,12 @@ class ItemDistributionList(GridReport):
         GridFieldNumber(
             "item__weight",
             title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "item__uom",
+            title=format_lazy("{} - {}", _("item"), _("unit of measure")),
             initially_hidden=True,
             editable=False,
         ),
@@ -845,6 +857,12 @@ class DistributionOrderList(OperationPlanMixin):
             initially_hidden=True,
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
+        ),
+        GridFieldText(
+            "item__uom",
+            title=format_lazy("{} - {}", _("item"), _("unit of measure")),
+            initially_hidden=True,
+            editable=False,
         ),
         GridFieldInteger(
             "item__periodofcover",
@@ -1571,6 +1589,12 @@ class InventoryDetail(OperationPlanMixin):
         GridFieldNumber(
             "item__weight",
             title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "item__uom",
+            title=format_lazy("{} - {}", _("item"), _("unit of measure")),
             initially_hidden=True,
             editable=False,
         ),

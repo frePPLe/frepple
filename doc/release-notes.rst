@@ -6,6 +6,10 @@ Release notes
 
 .. rubric:: User interface
 
+- | Extra field uom / unit of measure on the `item table <model-reference/item.html>`_.
+    Typical values are "piece", "kg", "l", "m"...
+  | All quantities in the plan for an item are expressed in this unit of measure.
+
 - | Extra robustness when defining custom `attributes <model-reference/attributes.html>`_ 
     The feature was introduced in the previous release, and we added some checks to
     handle corner cases (such as attribute names starting with handles, adding attributes
@@ -15,7 +19,7 @@ Release notes
 
 .. rubric:: Odoo integration
 
-- Addition of batching window in supplier info table
+- Addition of batching window in supplier info table.
 
 6.16.0 (2021/08/21)
 ===================

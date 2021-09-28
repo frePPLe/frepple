@@ -175,6 +175,12 @@ class OverviewReport(GridPivot):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldText(
+            "item__uom",
+            title=format_lazy("{} - {}", _("item"), _("unit of measure")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldInteger(
             "item__periodofcover",
             title=format_lazy("{} - {}", _("item"), _("period of cover")),
@@ -607,6 +613,7 @@ class OverviewReport(GridPivot):
            item.cost,
            item.volume,
            item.weight,
+           item.uom,
            item.periodofcover,
            item.owner_id,
            item.source,
@@ -833,6 +840,7 @@ class OverviewReport(GridPivot):
            item.cost,
            item.volume,
            item.weight,
+           item.uom,
            item.periodofcover,
            item.owner_id,
            item.source,
@@ -930,19 +938,20 @@ class OverviewReport(GridPivot):
                         "item__cost": row[7],
                         "item__volume": row[8],
                         "item__weight": row[9],
-                        "item__periodofcover": row[10],
-                        "item__owner": row[11],
-                        "item__source": row[12],
-                        "item__lastmodified": row[13],
-                        "location__description": row[14],
-                        "location__category": row[15],
-                        "location__subcategory": row[16],
-                        "location__available": row[17],
-                        "location__owner": row[18],
-                        "location__source": row[19],
-                        "location__lastmodified": row[20],
-                        "batch": row[21],
-                        "is_ip_buffer": row[22],
+                        "item__uom": row[10],
+                        "item__periodofcover": row[11],
+                        "item__owner": row[12],
+                        "item__source": row[13],
+                        "item__lastmodified": row[14],
+                        "location__description": row[15],
+                        "location__category": row[16],
+                        "location__subcategory": row[17],
+                        "location__available": row[18],
+                        "location__owner": row[19],
+                        "location__source": row[20],
+                        "location__lastmodified": row[21],
+                        "batch": row[22],
+                        "is_ip_buffer": row[23],
                         "color": None
                         if history
                         else (
@@ -955,11 +964,11 @@ class OverviewReport(GridPivot):
                                 * 100
                                 / float(row[numfields - 2])
                             )
-                            if row[22]
+                            if row[23]
                             and row[numfields - 2]
                             and float(row[numfields - 2]) > 0
                             else round(row[numfields - 1]["max_delay"])
-                            if not row[22] and row[numfields - 1]["max_delay"]
+                            if not row[23] and row[numfields - 1]["max_delay"]
                             else 0
                         ),
                         "startoh": row[numfields - 7]["onhand"]

@@ -238,7 +238,7 @@ class Item_admin(MultiDBModelAdmin):
     raw_id_fields = ("owner",)
     search_fields = ("name", "description")
     fieldsets = (
-        (None, {"fields": ("name", "description", "cost", "owner")}),
+        (None, {"fields": ("name", "description", "cost", "owner", "uom")}),
         (
             _("advanced"),
             {

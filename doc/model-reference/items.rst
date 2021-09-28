@@ -52,6 +52,9 @@ volume          double            | Volume of the item.
                                   | The default value is 0.
 weight          double            | Weight of the item.                                  
                                   | The default value is 0.
+unit of measure string            | Unit of measure for this item in the plan. All quantities in the 
+                                    plan for that item are expressed in this unit of measure.
+                                  | Typical values are "piece", "kg", "l", "m".                    
 period of cover integer           | Calculated value corresponding to the on hand days of cover.                                                          
 global_purchase boolean           | When this item flag is set, it will a) prevent any new
                                     purchase orders for the item to be generated until the total

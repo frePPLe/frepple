@@ -217,6 +217,12 @@ class OverviewReport(GridPivot):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldText(
+            "item__uom",
+            title=format_lazy("{} - {}", _("item"), _("unit of measure")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldInteger(
             "item__periodofcover",
             title=format_lazy("{} - {}", _("item"), _("period of cover")),
@@ -324,7 +330,7 @@ class OverviewReport(GridPivot):
         operation.effective_end, operation.cost, operation.search, operation.source, operation.lastmodified,
         location.description, location.category, location.subcategory, location.available_id,
         location.lastmodified, item.description, item.category, item.subcategory, item.cost,
-        item.volume, item.weight, item.periodofcover, item.owner_id, item.source, item.lastmodified,
+        item.volume, item.weight, item.uom, item.periodofcover, item.owner_id, item.source, item.lastmodified,
         %s
         res.bucket, res.startdate, res.enddate,
         res.proposed_start, res.total_start, res.proposed_end, res.total_end, res.proposed_production, res.total_production
@@ -454,10 +460,11 @@ class OverviewReport(GridPivot):
                         "item__cost": row[29],
                         "item__volume": row[30],
                         "item__weight": row[31],
-                        "item__periodofcover": row[32],
-                        "item__owner": row[33],
-                        "item__source": row[34],
-                        "item__lastmodified": row[35],
+                        "item__uom": row[32],
+                        "item__periodofcover": row[33],
+                        "item__owner": row[34],
+                        "item__source": row[35],
+                        "item__lastmodified": row[36],
                         "bucket": row[numfields - 9],
                         "startdate": row[numfields - 8].date(),
                         "enddate": row[numfields - 7].date(),
@@ -468,7 +475,7 @@ class OverviewReport(GridPivot):
                         "production_proposed": row[numfields - 2],
                         "production_total": row[numfields - 1],
                     }
-                    idx = 36
+                    idx = 37
                     for f in operationattributefields:
                         result["operation__%s" % f.field_name] = row[idx]
                         idx += 1
@@ -544,6 +551,12 @@ class PurchaseReport(GridPivot):
         GridFieldNumber(
             "item__weight",
             title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "item__uom",
+            title=format_lazy("{} - {}", _("item"), _("unit of measure")),
             initially_hidden=True,
             editable=False,
         ),
@@ -801,6 +814,7 @@ class PurchaseReport(GridPivot):
         item.cost as item__cost,
         item.volume as item__volume,
         item.weight as item__weight,
+        item.uom as item__uom,
         item.periodofcover as item__periodofcover,
         item.owner_id as item__owner,
         item.source as item__source,
@@ -993,6 +1007,12 @@ class DistributionReport(GridPivot):
         GridFieldNumber(
             "item__weight",
             title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "item__uom",
+            title=format_lazy("{} - {}", _("item"), _("unit of measure")),
             initially_hidden=True,
             editable=False,
         ),
@@ -1240,6 +1260,7 @@ class DistributionReport(GridPivot):
         item.cost as item__cost,
         item.volume as item__volume,
         item.weight as item__weight,
+        item.uom as item__uom,
         item.periodofcover as item__periodofcover,
         item.owner_id as item__owner,
         item.source as item__source,

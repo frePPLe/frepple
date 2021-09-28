@@ -117,7 +117,7 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
                     data = str(data).strip()
                     try:
                         data = parse(data, yearfirst=False, dayfirst=False)
-                    except:
+                    except Exception:
                         pass
                 else:
                     data = None
@@ -230,7 +230,7 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
                             if val != ""
                             else None
                         )
-                    except:
+                    except Exception:
                         return val if val != "" else None
                 elif isinstance(idx[1], DecimalField):
                     # Automatically round to 8 digits rather than giving an error message

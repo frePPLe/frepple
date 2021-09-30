@@ -2026,6 +2026,11 @@ class GridReport(View):
                         ok = False
                         resp.write(escape(e))
                         resp.write("<br>")
+
+        # Update the hierachy
+        if issubclass(cls.model, HierarchyModel):
+            cls.model.rebuildHierarchy(database=request.database)
+
         if ok:
             resp.write("OK")
         resp.status_code = ok and 200 or 500
@@ -2253,6 +2258,10 @@ class GridReport(View):
                             )
                 yield "</tbody></table></div>"
 
+            # Update the hierachy
+            if issubclass(cls.model, HierarchyModel):
+                cls.model.rebuildHierarchy(database=request.database)
+
             # Records are committed. Launch notification generator now.
             NotificationFactory.launchWorker(
                 database=request.database,
@@ -2380,6 +2389,10 @@ class GridReport(View):
                                     error[4],
                                 )
                 yield "</tbody></table></div>"
+
+            # Update the hierachy
+            if issubclass(cls.model, HierarchyModel):
+                cls.model.rebuildHierarchy(database=request.database)
 
             # Records are committed. Launch notification generator now.
             NotificationFactory.launchWorker(

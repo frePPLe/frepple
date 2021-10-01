@@ -1074,7 +1074,7 @@ class loadBuffers(LoadTask):
                   case
                   when batch is distinct from ''
                     and exists (select 1 from item where item.name = buffer.item_id and item.type = 'make to order')
-                    then item_id || ' - ' || batch || ' @ '||location_id
+                    then item_id || ' @ ' || batch || ' @ '||location_id
                   else
                     item_id ||' @ '||location_id
                   end as name,
@@ -1094,7 +1094,7 @@ class loadBuffers(LoadTask):
                 group by case
                   when batch is distinct from ''
                     and exists (select 1 from item where item.name = buffer.item_id and item.type = 'make to order')
-                    then item_id || ' - ' || batch || ' @ '||location_id
+                    then item_id || ' @ ' || batch || ' @ '||location_id
                   else
                     item_id ||' @ '||location_id
                   end

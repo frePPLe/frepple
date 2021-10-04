@@ -3696,14 +3696,23 @@ def _buildMaskedNames(model, exportConfig):
 
 def _parseSeconds(data):
     """
-    Formats a number of seconds into format HH:MM:SS.XXXX
+    Formats a number of seconds into format [D d] HH:MM:SS.XXXX
     """
     total_seconds = data.total_seconds()
     hours = math.floor(total_seconds / 3600)
+    if hours >= 24:
+        days = math.floor(hours / 24)
+        total_seconds -= days * 86400
+        hours = hours - days * 24
+        if not total_seconds:
+            return "%s d " % days
+    else:
+        days = 0
     minutes = math.floor((total_seconds - hours * 3600) / 60)
     seconds = math.floor(total_seconds - hours * 3600 - minutes * 60)
     remainder = total_seconds - 3600 * hours - 60 * minutes - seconds
-    return "%02d:%02d:%02d%s" % (
+    return "%s%02d:%02d:%02d%s" % (
+        "%s d " % days if days else "",
         hours,
         minutes,
         seconds,

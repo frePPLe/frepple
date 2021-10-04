@@ -3705,7 +3705,7 @@ def _parseSeconds(data):
         total_seconds -= days * 86400
         hours = hours - days * 24
         if not total_seconds:
-            return "%s d " % days
+            return "%s d" % days
     else:
         days = 0
     minutes = math.floor((total_seconds - hours * 3600) / 60)

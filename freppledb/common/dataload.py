@@ -104,8 +104,27 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
             elif isinstance(field, DurationField):
                 if isinstance(data, float):
                     data = "%.6f" % data
+                elif data is not None:
+                    data = str(data)
+                    day_split = data.split("d", 1)
+                    days = 0
+                    if len(day_split) > 1:
+                        try:
+                            days = int(day_split[0])
+                        except Exception as e:
+                            print("A", e)
+                            pass
+                        if days:
+                            if day_split[1].strip():
+                                return "%s %s" % (days, day_split[1])
+                            else:
+                                return "%s 00:00:00" % days
+                        else:
+                            return day_split[1]
+                    else:
+                        return data
                 else:
-                    data = str(data) if data is not None else None
+                    return None
             elif isinstance(field, (DateField, DateTimeField)):
                 if isinstance(data, datetime):
                     # Rounding to second

@@ -20,7 +20,7 @@ from django.conf import settings
 from django.contrib.admin.utils import unquote, quote
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models.functions import Cast
-from django.db.models import F, Q, FloatField
+from django.db.models import F, Q, FloatField, DurationField
 from django.db.models.expressions import RawSQL
 from django.shortcuts import redirect
 from django.template import Template
@@ -775,6 +775,96 @@ class DistributionOrderList(OperationPlanMixin):
                 """,
                 [],
             ),
+            itemdistribution_leadtime=Cast(
+                RawSQL(
+                    """
+                    select leadtime
+                    from itemdistribution
+                    where itemdistribution.item_id = operationplan.item_id
+                      and itemdistribution.location_id = operationplan.destination_id
+                      and itemdistribution.origin_id = operationplan.origin_id
+                    order by operationplan.enddate < itemdistribution.effective_end desc nulls first,
+                       operationplan.enddate >= itemdistribution.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=DurationField(),
+            ),
+            itemdistribution_sizeminimum=Cast(
+                RawSQL(
+                    """
+                    select sizeminimum
+                    from itemdistribution
+                    where itemdistribution.item_id = operationplan.item_id
+                      and itemdistribution.location_id = operationplan.destination_id
+                      and itemdistribution.origin_id = operationplan.origin_id
+                    order by operationplan.enddate < itemdistribution.effective_end desc nulls first,
+                       operationplan.enddate >= itemdistribution.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=FloatField(),
+            ),
+            itemdistribution_sizemultiple=Cast(
+                RawSQL(
+                    """
+                    select sizemultiple
+                    from itemdistribution
+                    where itemdistribution.item_id = operationplan.item_id
+                      and itemdistribution.location_id = operationplan.destination_id
+                      and itemdistribution.origin_id = operationplan.origin_id
+                    order by operationplan.enddate < itemdistribution.effective_end desc nulls first,
+                       operationplan.enddate >= itemdistribution.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=FloatField(),
+            ),
+            itemdistribution_sizemaximum=Cast(
+                RawSQL(
+                    """
+                    select sizemaximum
+                    from itemdistribution
+                    where itemdistribution.item_id = operationplan.item_id
+                      and itemdistribution.location_id = operationplan.destination_id
+                      and itemdistribution.origin_id = operationplan.origin_id
+                    order by operationplan.enddate < itemdistribution.effective_end desc nulls first,
+                       operationplan.enddate >= itemdistribution.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=FloatField(),
+            ),
+            itemdistribution_batchwindow=Cast(
+                RawSQL(
+                    """
+                    select batchwindow
+                    from itemdistribution
+                    where itemdistribution.item_id = operationplan.item_id
+                      and itemdistribution.location_id = operationplan.destination_id
+                      and itemdistribution.origin_id = operationplan.origin_id
+                    order by operationplan.enddate < itemdistribution.effective_end desc nulls first,
+                       operationplan.enddate >= itemdistribution.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=DurationField(),
+            ),
         )
 
     rows = (
@@ -1077,6 +1167,42 @@ class DistributionOrderList(OperationPlanMixin):
             initially_hidden=True,
             formatter="listdetail",
             extra='"role":"input/item"',
+        ),
+        # Annoted fields referencing the itemdistribution
+        GridFieldDuration(
+            "itemdistribution_leadtime",
+            title=format_lazy("{} - {}", _("item distribution"), _("lead time")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
+        ),
+        GridFieldNumber(
+            "itemdistribution_sizeminimum",
+            title=format_lazy("{} - {}", _("item distribution"), _("size minimum")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+        ),
+        GridFieldNumber(
+            "itemdistribution_sizemultiple",
+            title=format_lazy("{} - {}", _("item distribution"), _("size multiple")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+        ),
+        GridFieldNumber(
+            "itemdistribution_sizemaximum",
+            title=format_lazy("{} - {}", _("item distribution"), _("size maximum")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+        ),
+        GridFieldDuration(
+            "itemdistribution_batchwindow",
+            title=format_lazy("{} - {}", _("item distribution"), _("batching window")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
     )
 

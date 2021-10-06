@@ -27,6 +27,11 @@ In this example we demonstrate some typical examples:
 * The item E shows an **attribute-based** supply path. The finished item
   can be sold in different colors (or size, or any other attribute) and the
   supply paths per color need to be kept seperate.
+
+* | There is yet more functionality that is not shown in this example!
+  | Make to order items can also have generic supply that can be allocated
+    to any batch. The planning algorithm will automatically assign such 
+    free and unallocated availability.
   
 `Check this feature on a live example <https://demo.frepple.com/make-to-order/data/input/manufacturingorder/>`_
 

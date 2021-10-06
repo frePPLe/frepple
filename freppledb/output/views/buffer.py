@@ -804,7 +804,53 @@ class OverviewReport(GridPivot):
                and opm.location_id = location.name
                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
              )
-           end as ongoing
+           end as ongoing,
+           floor(extract(epoch from coalesce(
+                  -- backlogged demand exceeds the inventory: 0 days of inventory
+                  (
+                  select '0 days'::interval
+                  from operationplanmaterial
+                  inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
+                  where operationplanmaterial.item_id = item.name and operationplanmaterial.location_id = location.name and
+                  operationplanmaterial.flowdate >= greatest(d.startdate,%%s) and
+                    (
+                      (operationplanmaterial.quantity < 0 and operationplan.type = 'DLVR' and operationplan.due < greatest(d.startdate,%%s))
+                      or ( operationplanmaterial.quantity > 0 and operationplan.status = 'closed' and operationplan.type = 'STCK')
+                      or ( operationplanmaterial.quantity > 0 and operationplan.status in ('approved','confirmed','completed') and flowdate <= greatest(d.startdate,%%s) + interval '1 second')
+                    )
+                  having sum(operationplanmaterial.quantity) <0
+                  limit 1
+                  ),
+                  -- Normal case
+                  (
+                  select case
+                    when periodofcover = 999 * 24 * 3600
+                      then '999 days'::interval
+                    when onhand > 0.00001
+                      then date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - greatest(d.startdate,%%s), '999 days'::interval))
+                    else null
+                    end
+                  from operationplanmaterial
+                  where flowdate < greatest(d.startdate,%%s)
+                    and operationplanmaterial.item_id = item.name and operationplanmaterial.location_id = location.name
+                  order by flowdate desc, id desc
+                  limit 1
+                 ),
+                 -- No inventory and no backlog: use the date of next consumer
+                 (
+                 select greatest('0 days'::interval, least( 
+                     date_trunc('day', justify_interval(flowdate - greatest(d.startdate,%%s) - coalesce(operationplan.delay, '0 day'::interval))),
+                     '999 days'::interval
+                     ))
+                  from operationplanmaterial
+                  inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
+                  where operationplanmaterial.quantity < 0
+                    and operationplanmaterial.item_id = item.name and operationplanmaterial.location_id = location.name
+                  order by flowdate asc, id asc
+                  limit 1
+                 ),
+                 '999 days'::interval
+                 ))/86400) periodofcover
            from
            (%s) opplanmat
            inner join item on item.name = opplanmat.item_id
@@ -885,8 +931,9 @@ class OverviewReport(GridPivot):
                     + (request.current_date,) * 3  # order_backlog
                     + (request.current_date,) * 3  # forecast_backlog
                     + (request.report_startdate,) * 1
-                    + (request.current_date,) * 2
-                    + baseparams  # ongoing
+                    + (request.current_date,) * 2  # ongoing
+                    + (request.current_date,) * 6  # period of cover
+                    + baseparams
                     + (  # opplanmat
                         request.current_date,
                         request.report_bucket,
@@ -909,21 +956,21 @@ class OverviewReport(GridPivot):
                         forecast_backlog = None
                         prev_buffer = row[0]
                     numfields = len(row)
-                    history = row[numfields - 3]
+                    history = row[numfields - 4]
                     if (
                         not history
                         and datetime.strptime(request.current_date, "%Y-%m-%d %H:%M:%S")
-                        >= row[numfields - 5]
+                        >= row[numfields - 6]
                         and datetime.strptime(request.current_date, "%Y-%m-%d %H:%M:%S")
-                        < row[numfields - 4]
+                        < row[numfields - 5]
                     ):
                         order_backlog = (
-                            (row[numfields - 1]["order_backlog"] or 0)
+                            (row[numfields - 2]["order_backlog"] or 0)
                             if order_backlog is None
                             else order_backlog
                         )
                         forecast_backlog = (
-                            (row[numfields - 1]["forecast_backlog"] or 0)
+                            (row[numfields - 2]["forecast_backlog"] or 0)
                             if forecast_backlog is None
                             else forecast_backlog
                         )
@@ -957,180 +1004,149 @@ class OverviewReport(GridPivot):
                         else (
                             round(
                                 (
-                                    row[numfields - 7]["onhand"]
-                                    if row[numfields - 7]
+                                    row[numfields - 8]["onhand"]
+                                    if row[numfields - 8]
                                     else 0
                                 )
                                 * 100
-                                / float(row[numfields - 2])
+                                / float(row[numfields - 3])
                             )
                             if row[23]
-                            and row[numfields - 2]
-                            and float(row[numfields - 2]) > 0
-                            else round(row[numfields - 1]["max_delay"])
-                            if not row[23] and row[numfields - 1]["max_delay"]
+                            and row[numfields - 3]
+                            and float(row[numfields - 3]) > 0
+                            else round(row[numfields - 2]["max_delay"])
+                            if not row[23] and row[numfields - 2]["max_delay"]
                             else 0
                         ),
-                        "startoh": row[numfields - 7]["onhand"]
-                        if row[numfields - 7]
+                        "startoh": row[numfields - 8]["onhand"]
+                        if row[numfields - 8]
                         else 0,
-                        "startohdoc": None
-                        if history
-                        else max(
-                            0,
-                            0
-                            if (
-                                row[numfields - 7]["onhand"]
-                                if row[numfields - 7]
-                                else 0
-                            )
-                            < 0
-                            else (
-                                999
-                                if row[numfields - 7]["periodofcover"] >= 86313600
-                                else (
-                                    datetime.strptime(
-                                        row[numfields - 7]["flowdate"],
-                                        "%Y-%m-%d %H:%M:%S",
-                                    )
-                                    + timedelta(
-                                        seconds=row[numfields - 7]["periodofcover"]
-                                    )
-                                    - max(
-                                        row[numfields - 5],
-                                        request.report_startdate,
-                                        curdate,
-                                    )
-                                ).days
-                                if row[numfields - 7]["periodofcover"]
-                                else 999
-                            ),
-                        ),
-                        "bucket": row[numfields - 6],
-                        "startdate": row[numfields - 5],
-                        "enddate": row[numfields - 4],
+                        "startohdoc": None if history else row[numfields - 1],
+                        "bucket": row[numfields - 7],
+                        "startdate": row[numfields - 6],
+                        "enddate": row[numfields - 5],
                         "history": history,
-                        "safetystock": row[numfields - 2]
+                        "safetystock": row[numfields - 3]
                         if history
-                        else row[numfields - 2] or 0,
+                        else row[numfields - 3] or 0,
                         "consumed": None
                         if history
-                        else row[numfields - 1]["consumed"] or 0,
+                        else row[numfields - 2]["consumed"] or 0,
                         "consumed_confirmed": None
                         if history
-                        else row[numfields - 1]["consumed_confirmed"] or 0,
+                        else row[numfields - 2]["consumed_confirmed"] or 0,
                         "consumed_proposed": None
                         if history
-                        else row[numfields - 1]["consumed_proposed"] or 0,
+                        else row[numfields - 2]["consumed_proposed"] or 0,
                         "consumedMO": None
                         if history
-                        else row[numfields - 1]["consumedMO"] or 0,
+                        else row[numfields - 2]["consumedMO"] or 0,
                         "consumedMO_confirmed": None
                         if history
-                        else row[numfields - 1]["consumedMO_confirmed"] or 0,
+                        else row[numfields - 2]["consumedMO_confirmed"] or 0,
                         "consumedMO_proposed": None
                         if history
-                        else row[numfields - 1]["consumedMO_proposed"] or 0,
+                        else row[numfields - 2]["consumedMO_proposed"] or 0,
                         "consumedDO": None
                         if history
-                        else row[numfields - 1]["consumedDO"] or 0,
+                        else row[numfields - 2]["consumedDO"] or 0,
                         "consumedDO_confirmed": None
                         if history
-                        else row[numfields - 1]["consumedDO_confirmed"] or 0,
+                        else row[numfields - 2]["consumedDO_confirmed"] or 0,
                         "consumedDO_proposed": None
                         if history
-                        else row[numfields - 1]["consumedDO_proposed"] or 0,
+                        else row[numfields - 2]["consumedDO_proposed"] or 0,
                         "consumedSO": None
                         if history
-                        else row[numfields - 1]["consumedSO"] or 0,
+                        else row[numfields - 2]["consumedSO"] or 0,
                         "consumedFcst": None
                         if history
-                        else row[numfields - 1]["consumedFcst"] or 0,
+                        else row[numfields - 2]["consumedFcst"] or 0,
                         "produced": None
                         if history
-                        else row[numfields - 1]["produced"] or 0,
+                        else row[numfields - 2]["produced"] or 0,
                         "produced_confirmed": None
                         if history
-                        else row[numfields - 1]["produced_confirmed"] or 0,
+                        else row[numfields - 2]["produced_confirmed"] or 0,
                         "produced_proposed": None
                         if history
-                        else row[numfields - 1]["produced_proposed"] or 0,
+                        else row[numfields - 2]["produced_proposed"] or 0,
                         "producedMO": None
                         if history
-                        else row[numfields - 1]["producedMO"] or 0,
+                        else row[numfields - 2]["producedMO"] or 0,
                         "producedMO_confirmed": None
                         if history
-                        else row[numfields - 1]["producedMO_confirmed"] or 0,
+                        else row[numfields - 2]["producedMO_confirmed"] or 0,
                         "producedMO_proposed": None
                         if history
-                        else row[numfields - 1]["producedMO_proposed"] or 0,
+                        else row[numfields - 2]["producedMO_proposed"] or 0,
                         "producedDO": None
                         if history
-                        else row[numfields - 1]["producedDO"] or 0,
+                        else row[numfields - 2]["producedDO"] or 0,
                         "producedDO_confirmed": None
                         if history
-                        else row[numfields - 1]["producedDO_confirmed"] or 0,
+                        else row[numfields - 2]["producedDO_confirmed"] or 0,
                         "producedDO_proposed": None
                         if history
-                        else row[numfields - 1]["producedDO_proposed"] or 0,
+                        else row[numfields - 2]["producedDO_proposed"] or 0,
                         "producedPO": None
                         if history
-                        else row[numfields - 1]["producedPO"] or 0,
+                        else row[numfields - 2]["producedPO"] or 0,
                         "producedPO_confirmed": None
                         if history
-                        else row[numfields - 1]["producedPO_confirmed"] or 0,
+                        else row[numfields - 2]["producedPO_confirmed"] or 0,
                         "producedPO_proposed": None
                         if history
-                        else row[numfields - 1]["producedPO_proposed"] or 0,
+                        else row[numfields - 2]["producedPO_proposed"] or 0,
                         "total_in_progress": None
                         if history
-                        else row[numfields - 1]["total_in_progress"] or 0,
+                        else row[numfields - 2]["total_in_progress"] or 0,
                         "total_in_progress_confirmed": None
                         if history
-                        else row[numfields - 1]["total_in_progress_confirmed"] or 0,
+                        else row[numfields - 2]["total_in_progress_confirmed"] or 0,
                         "total_in_progress_proposed": None
                         if history
-                        else row[numfields - 1]["total_in_progress_proposed"] or 0,
+                        else row[numfields - 2]["total_in_progress_proposed"] or 0,
                         "work_in_progress_mo": None
                         if history
-                        else row[numfields - 1]["work_in_progress_mo"] or 0,
+                        else row[numfields - 2]["work_in_progress_mo"] or 0,
                         "work_in_progress_mo_confirmed": None
                         if history
-                        else row[numfields - 1]["work_in_progress_mo_confirmed"] or 0,
+                        else row[numfields - 2]["work_in_progress_mo_confirmed"] or 0,
                         "work_in_progress_mo_proposed": None
                         if history
-                        else row[numfields - 1]["work_in_progress_mo_proposed"] or 0,
+                        else row[numfields - 2]["work_in_progress_mo_proposed"] or 0,
                         "on_order_po": None
                         if history
-                        else row[numfields - 1]["on_order_po"] or 0,
+                        else row[numfields - 2]["on_order_po"] or 0,
                         "on_order_po_confirmed": None
                         if history
-                        else row[numfields - 1]["on_order_po_confirmed"] or 0,
+                        else row[numfields - 2]["on_order_po_confirmed"] or 0,
                         "on_order_po_proposed": None
                         if history
-                        else row[numfields - 1]["on_order_po_proposed"] or 0,
+                        else row[numfields - 2]["on_order_po_proposed"] or 0,
                         "proposed_ordering": None
                         if history
-                        else row[numfields - 1]["proposed_ordering"] or 0,
+                        else row[numfields - 2]["proposed_ordering"] or 0,
                         "in_transit_do": None
                         if history
-                        else row[numfields - 1]["in_transit_do"] or 0,
+                        else row[numfields - 2]["in_transit_do"] or 0,
                         "in_transit_do_confirmed": None
                         if history
-                        else row[numfields - 1]["in_transit_do_confirmed"] or 0,
+                        else row[numfields - 2]["in_transit_do_confirmed"] or 0,
                         "in_transit_do_proposed": None
                         if history
-                        else row[numfields - 1]["in_transit_do_proposed"] or 0,
+                        else row[numfields - 2]["in_transit_do_proposed"] or 0,
                         "open_orders": None
                         if history
-                        else row[numfields - 1]["open_orders"] or 0,
+                        else row[numfields - 2]["open_orders"] or 0,
                         "net_forecast": None
                         if history
-                        else row[numfields - 1]["net_forecast"] or 0,
+                        else row[numfields - 2]["net_forecast"] or 0,
                         "total_demand": None
                         if history
-                        else (row[numfields - 1]["net_forecast"] or 0)
-                        + (row[numfields - 1]["open_orders"] or 0),
+                        else (row[numfields - 2]["net_forecast"] or 0)
+                        + (row[numfields - 2]["open_orders"] or 0),
                         "order_backlog": 0
                         if order_backlog and order_backlog < 0
                         else order_backlog,
@@ -1157,51 +1173,51 @@ class OverviewReport(GridPivot):
                         if history
                         else (
                             float(
-                                row[numfields - 7]["onhand"]
-                                if row[numfields - 7]
+                                row[numfields - 8]["onhand"]
+                                if row[numfields - 8]
                                 else 0
                             )
-                            + float(row[numfields - 1]["produced"] or 0)
-                            - float(row[numfields - 1]["consumed"] or 0)
+                            + float(row[numfields - 2]["produced"] or 0)
+                            - float(row[numfields - 2]["consumed"] or 0)
                         ),
                         "reasons": None if history else json.dumps(row[numfields - 8]),
                     }
 
                     if order_backlog is not None:
                         order_backlog += (
-                            (row[numfields - 1]["open_orders"] or 0)
+                            (row[numfields - 2]["open_orders"] or 0)
                             - (
                                 order_backlog
                                 if datetime.strptime(
                                     request.current_date, "%Y-%m-%d %H:%M:%S"
                                 )
-                                >= row[numfields - 5]
+                                >= row[numfields - 6]
                                 and datetime.strptime(
                                     request.current_date, "%Y-%m-%d %H:%M:%S"
                                 )
-                                < row[numfields - 4]
+                                < row[numfields - 5]
                                 else 0
                             )
-                            - (row[numfields - 1]["consumedSO"] or 0)
+                            - (row[numfields - 2]["consumedSO"] or 0)
                         )
                     if forecast_backlog is not None:
                         forecast_backlog += (
-                            (row[numfields - 1]["net_forecast"] or 0)
+                            (row[numfields - 2]["net_forecast"] or 0)
                             - (
                                 forecast_backlog
                                 if datetime.strptime(
                                     request.current_date, "%Y-%m-%d %H:%M:%S"
                                 )
-                                >= row[numfields - 5]
+                                >= row[numfields - 6]
                                 and datetime.strptime(
                                     request.current_date, "%Y-%m-%d %H:%M:%S"
                                 )
-                                < row[numfields - 4]
+                                < row[numfields - 5]
                                 else 0
                             )
                             - (
-                                (row[numfields - 1]["consumed"] or 0)
-                                - (row[numfields - 1]["consumedSO"] or 0)
+                                (row[numfields - 2]["consumed"] or 0)
+                                - (row[numfields - 2]["consumedSO"] or 0)
                             )
                         )
 

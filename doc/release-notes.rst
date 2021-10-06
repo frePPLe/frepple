@@ -30,6 +30,8 @@ Release notes
 
 - The performance of the inventory report is fixed after it degraded in the previous release.
 
+- Correction of the days of cover calculation that could be wrong in the first buckets of the plan.
+
 .. rubric:: Odoo integration
 
 - Addition of batching window in supplier info table.

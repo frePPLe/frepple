@@ -220,12 +220,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
       throw DataException(
           "Calendar bucket start time must be between 0 and 86400 seconds");
     starttime = t;
-    if (starttime > endtime) {
-      // Swap the start and end time
-      Duration tmp = starttime;
-      starttime = endtime;
-      endtime = tmp;
-    }
+    if (starttime > endtime) swap(starttime, endtime);
   }
 
   /* Return the time of the day when the entry becomes invalid.
@@ -239,12 +234,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
       throw DataException(
           "Calendar bucket end time must be between 0 and 86400 seconds");
     endtime = t;
-    if (starttime > endtime) {
-      // Swap the start and end time
-      Duration tmp = starttime;
-      starttime = endtime;
-      endtime = tmp;
-    }
+    if (starttime > endtime) swap(starttime, endtime);
   }
 
   /* Convert the value of the bucket to a boolean value. */
@@ -5518,10 +5508,8 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   static int initialize();
   virtual const MetaClass& getType() const { return *metadata; }
 
-  /* Constructor. */
   explicit FlowPlan(OperationPlan*, const Flow*);
 
-  /* Constructor. */
   explicit FlowPlan(OperationPlan*, const Flow*, Date, double);
 
   bool isFollowingBatch() const { return (flags & FOLLOWING_BATCH) != 0; }
@@ -5572,6 +5560,12 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
    * The new flow must belong to the same operation.
    */
   void setFlow(Flow*);
+
+  /* Update the buffer of an already existing flowplan.
+   * The new buffer can only have a different batch, but item and location
+   * must match.
+   */
+  void setBuffer(Buffer*);
 
   /* Returns the operationplan owning this flowplan. */
   virtual OperationPlan* getOperationPlan() const { return oper; }
@@ -5661,6 +5655,8 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   pair<double, double> setQuantity(double quantity, bool rounddown = false,
                                    bool update = true, bool execute = true,
                                    short mode = 2);
+
+  void setQuantityRaw(double);
 
   /* This function needs to be called whenever the flowplan date or
    * quantity are changed.

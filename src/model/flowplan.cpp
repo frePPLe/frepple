@@ -164,6 +164,44 @@ void FlowPlan::updateBatch() {
   buf->setChanged();
 }
 
+void FlowPlan::setBuffer(Buffer* newbuf) {
+  if (newbuf == buf) return;
+
+  if (!newbuf) throw DataException("Can't switch to nullptr buffer");
+  if (!buf) throw DataException("Can't switch from nullptr buffer");
+  if (newbuf->getItem() != buf->getItem() ||
+      newbuf->getLocation() != buf->getLocation())
+    throw DataException(
+        "Flowplans can only switch to buffers with the same item and location");
+
+  if (fl && fl->hasType<FlowTransferBatch>()) {
+    // Switch all flowplans of the same transfer batch
+    auto oldbuf = buf;
+    for (auto flpln = getOperationPlan()->beginFlowPlans();
+         flpln != getOperationPlan()->endFlowPlans(); ++flpln) {
+      if (flpln->buf != oldbuf) continue;
+
+      // Remove from the old buffer
+      flpln->buf->flowplans.erase(&*flpln);
+
+      // Insert in the new buffer
+      flpln->buf = newbuf;
+      flpln->buf->flowplans.insert(&*flpln, flpln->getQuantity(),
+                                   flpln->getDate());
+    }
+    oldbuf->setChanged();
+  } else {
+    // Remove from the old buffer
+    buf->flowplans.erase(this);
+    buf->setChanged();
+
+    // Insert in the new buffer
+    buf = newbuf;
+    buf->flowplans.insert(this, getQuantity(), getDate());
+  }
+  buf->setChanged();
+}
+
 void FlowPlan::setFlow(Flow* newfl) {
   // No change
   if (newfl == fl) return;
@@ -240,6 +278,10 @@ void FlowPlan::setItem(Item* newItem) {
 
   // We are not expecting to use this method in this way...
   throw LogicException("Not implemented");
+}
+
+void FlowPlan::setQuantityRaw(double q) {
+  if (buf) buf->flowplans.update(this, q, getDate());
 }
 
 pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,

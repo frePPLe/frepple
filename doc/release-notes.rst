@@ -4,6 +4,19 @@ Release notes
 6.17.0 (Upcoming release)
 =========================
 
+.. rubric:: Production planning
+
+- | Enhanced make-to-order planning logic.
+  | In previous releases all confirmed and approved
+    supply of make-to-order items needed to be marked with the correct batch field in order to
+    be usable for a specific demand.
+  | With this release we also recognise freely available stock (ie with a blank batch field)
+    that can be used for any demand. The algorithm will first exhaust existing supply with the
+    matching batch field, then use any existing generic supply and finally plan for new
+    supply matching the batch field.
+  | This represents business cases where the make-to-order is eg freed up after sales order
+    cancellations.
+
 .. rubric:: User interface
 
 - | Extra field uom / unit of measure on the `item table <model-reference/item.html>`_.

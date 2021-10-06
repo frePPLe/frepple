@@ -660,6 +660,7 @@
       </xsd:element>
       <xsd:element name="location" type="location" />
       <xsd:element name="item" type="item" />
+      <xsd:element name="batch" type="xsd:normalizedString" />
       <xsd:element name="onhand" type="xsd:double" />
       <xsd:element name="minimum" type="xsd:double" />
       <xsd:element name="maximum" type="xsd:double" />
@@ -672,6 +673,7 @@
       <xsd:element name="tool" type="xsd:boolean" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
+    <xsd:attribute name="batch" type="xsd:normalizedString" />
     <xsd:attribute name="onhand" type="xsd:double" />
     <xsd:attribute name="minimum" type="xsd:double" />
     <xsd:attribute name="maximum" type="xsd:double" />

@@ -146,6 +146,17 @@ class TimeLine {
       return m ? m->newMin : 0.0;
     }
 
+    double getAvailable() const {
+      double best = getOnhandAfterDate();
+      for (auto f = this; f; f = f->next) {
+        if (f->isLastOnDate() && f->oh < best) {
+          best = f->oh;
+          if (best < ROUNDING_ERROR) return 0;
+        }
+      }
+      return best;
+    }
+
     /* This functions return the maximum boundary valid at the time of
      * this event. */
     double getMax() const { return getMax(true); }

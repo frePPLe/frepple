@@ -156,7 +156,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       bool supply_exists_already = false;
       if (theDelta < -ROUNDING_ERROR && autofence) {
         // Solution zero: wait for confirmed supply that is already existing
-        if (b->getOnHand(Date::infiniteFuture) > -ROUNDING_ERROR) {
+        auto free_stock = b->getOnHand(Date::infiniteFuture);
+        if (free_stock > -ROUNDING_ERROR || b->getItem()->hasType<ItemMTO>()) {
           for (Buffer::flowplanlist::const_iterator scanner = cur;
                scanner != b->getFlowPlans().end() &&
                scanner->getDate() <
@@ -167,20 +168,25 @@ void SolverCreate::solve(const Buffer* b, void* v) {
               continue;
             auto tmp = scanner->getOperationPlan();
             if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
-              if (firstmsg1 && data->logConstraints && data->planningDemand)
-                data->planningDemand->getConstraints().push(
-                    ProblemAwaitSupply::metadata, b, theDate,
-                    scanner->getDate(), theDelta);
-              if (getLogLevel() > 1 && firstmsg1) {
-                logger << indentlevel
-                       << "Refuse to create extra supply because confirmed or "
-                          "approved supply is already available at "
-                       << scanner->getDate() << endl;
-                firstmsg1 = false;
+              if (free_stock > -ROUNDING_ERROR) {
+                // Existing supply covers the complete requirement
+                if (firstmsg1 && data->logConstraints && data->planningDemand)
+                  data->planningDemand->getConstraints().push(
+                      ProblemAwaitSupply::metadata, b, theDate,
+                      scanner->getDate(), theDelta);
+                if (getLogLevel() > 1 && firstmsg1) {
+                  logger
+                      << indentlevel
+                      << "Refuse to create extra supply because confirmed or "
+                         "approved supply is already available at "
+                      << scanner->getDate() << endl;
+                  firstmsg1 = false;
+                }
+                supply_exists_already = true;
+                if (shortage < -prev->getOnhand())
+                  shortage = -prev->getOnhand();
+                tried_requested_date = true;  // Disables an extra supply check
               }
-              supply_exists_already = true;
-              if (shortage < -prev->getOnhand()) shortage = -prev->getOnhand();
-              tried_requested_date = true;  // Disables an extra supply check
               if (scanner->getDate() > requested_date &&
                   scanner->getDate() < extraConfirmedDate)
                 extraConfirmedDate = scanner->getDate();
@@ -188,13 +194,58 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             }
           }
         }
+
+        // Solution zero-bis: Await confirmed supply of an MTO material
+        // on the generic buffer.
+        if (b->getItem()->hasType<ItemMTO>() && b->getBatch()) {
+          auto generic_buffer =
+              Buffer::findOrCreate(b->getItem(), b->getLocation());
+          auto free_generic =
+              generic_buffer->getOnHand(Date::infiniteFuture, true);
+          if (free_generic > -theDelta) {
+            for (auto scanner = generic_buffer->getFlowPlans().begin();
+                 scanner != generic_buffer->getFlowPlans().end() &&
+                 scanner->getDate() <
+                     max(theDate, Plan::instance().getCurrent()) + autofence;
+                 ++scanner) {
+              if (scanner->getQuantity() <= 0 ||
+                  scanner->getDate() <= requested_date)
+                continue;
+              auto tmp = scanner->getOperationPlan();
+              if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
+                if (firstmsg1 && data->logConstraints && data->planningDemand)
+                  data->planningDemand->getConstraints().push(
+                      ProblemAwaitSupply::metadata, generic_buffer, theDate,
+                      scanner->getDate(), theDelta);
+                if (scanner->getDate() > requested_date &&
+                    scanner->getDate() < extraConfirmedDate)
+                  extraConfirmedDate = scanner->getDate();
+                if (getLogLevel() > 1 && firstmsg1) {
+                  logger
+                      << indentlevel
+                      << "Refuse to create extra supply because confirmed or "
+                         "approved generic-MTO supply is already available at "
+                      << extraConfirmedDate << endl;
+                  firstmsg1 = false;
+                }
+                supply_exists_already = true;
+                if (shortage < -prev->getOnhand())
+                  shortage = -prev->getOnhand();
+                tried_requested_date = true;  // Disables an extra supply check
+                break;
+              }
+            }
+          }
+        }
       }
 
-      // Solution zero-bis: use stock and confirmed supply on alternate
+      // Solution zero-tris: use stock and confirmed supply on alternate
       // materials
-      // We only skip stop the replenishment search is a single alternate can
+      // We only skip stop the replenishment search if a single alternate can
       // provide all material we need. We don't add up leftovers from multiple
       // materials.
+      // TODO allow consuming a MO partially from different alternates. Cfr
+      // generic MTO buffer consumption.
       auto theflow = data->state->q_flowplan
                          ? data->state->q_flowplan->getFlow()
                          : nullptr;
@@ -557,7 +608,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
   const TimeLine<FlowPlan>::Event* prev = nullptr;
   double shortage(0.0);
   double current_minimum(0.0);
-  Buffer::flowplanlist::const_iterator cur = b->getFlowPlans().begin();
+  auto cur = b->getFlowPlans().begin();
   Calendar* alignment_cal = Plan::instance().getCalendar();
   while (true) {
     // Iterator has now changed to a new date or we have arrived at the end.

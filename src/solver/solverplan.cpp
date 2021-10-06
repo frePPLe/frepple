@@ -243,6 +243,78 @@ void SolverCreate::SolverData::commit() {
       solver->setPropagate(false);
       buffer_solve_shortages_only = false;
       for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl) {
+        // Step 1: Allocate from generic-MTO buffers to MTO-batch buffers
+        for (auto b = Buffer::begin(); b != Buffer::end(); ++b) {
+          if (b->getLevel() != lvl ||
+              (cluster != -1 && cluster != b->getCluster()) || !b->getItem() ||
+              !b->getItem()->hasType<ItemMTO>() || !b->getBatch().empty())
+            // Not your turn yet...
+            continue;
+
+          // Loop while we still have available material
+          bool changed = true;
+          while (changed &&
+                 b->getOnHand(Date::infiniteFuture) > ROUNDING_ERROR) {
+            changed = false;
+            // Find the first available material
+            OperationPlan::flowplanlist::Event* producer = nullptr;
+            double available = 0.0;
+            for (auto& flpln : b->getFlowPlans()) {
+              if (flpln.getQuantity() <= 0) continue;
+              available = flpln.getAvailable();
+              if (available > ROUNDING_ERROR) {
+                producer = &flpln;
+                break;
+              }
+            }
+            if (!producer) break;
+
+            // Loop through all batch-MTO buffers and see which one has the
+            // earliest requirement for that material
+            FlowPlan* consumer = nullptr;
+            auto bufiter = b->getItem()->getBufferIterator();
+            while (auto batchbuf = bufiter.next()) {
+              if (batchbuf->getBatch().empty()) continue;
+              for (auto& flpln : batchbuf->getFlowPlans()) {
+                if (flpln.getQuantity() >= 0 ||
+                    flpln.getDate() < producer->getDate())
+                  continue;
+                if (flpln.getOnhandAfterDate() < -ROUNDING_ERROR &&
+                    (!consumer || consumer->getDate() > flpln.getDate())) {
+                  consumer = static_cast<FlowPlan*>(&flpln);
+                  break;
+                }
+              }
+            }
+            if (!consumer) break;
+
+            // Flip the consumer from the batch-MTO to the generic-MTO buffer
+            changed = true;
+            if (available > -consumer->getQuantity()) {
+              if (getLogLevel() > 1)
+                logger << solver->indentlevel << "  Buffer '" << b->getName()
+                       << "' allocates from generic MTO buffer '"
+                       << consumer->getBuffer()->getName()
+                       << "' : " << -consumer->getQuantity() << " on "
+                       << consumer->getDate() << endl;
+              consumer->setBuffer(&*b);
+            } else {
+              if (getLogLevel() > 1)
+                logger << solver->indentlevel << "  Buffer '" << b->getName()
+                       << "' allocates from generic MTO buffer '"
+                       << consumer->getBuffer()->getName()
+                       << "' : " << available << " on " << consumer->getDate()
+                       << endl;
+              auto extraflpln = new FlowPlan(consumer->getOperationPlan(),
+                                             consumer->getFlow(),
+                                             consumer->getDate(), -available);
+              extraflpln->setBuffer(&*b);
+              consumer->setQuantityRaw(consumer->getQuantity() + available);
+            }
+          }
+        }
+
+        // Step 2: propagate through this level of buffers
         for (auto b = Buffer::begin(); b != Buffer::end(); ++b) {
           if (b->getLevel() != lvl ||
               (cluster != -1 && cluster != b->getCluster()))

@@ -255,7 +255,10 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
     if (getPropagate() && a_qty) {
       for (auto g = opplan->beginFlowPlans(); g != opplan->endFlowPlans();
            ++g) {
-        if (g->getFlow()->isConsumer() && !g->isFollowingBatch()) {
+        if (g->getFlow()->isConsumer() && !g->isFollowingBatch() &&
+            ((g->getBuffer()->getItem() &&
+              !g->getBuffer()->getItem()->hasType<ItemMTO>()) ||
+             !g->getBuffer()->getBatch().empty())) {
           // Switch back to the main alternate if this flowplan was already //
           // @todo is this really required? If yes, in this place? planned on an
           // alternate

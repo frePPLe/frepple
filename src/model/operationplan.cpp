@@ -497,8 +497,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       // We'll create one now if an origin is defined
       Buffer* originbuffer = nullptr;
       if (orival) {
-        Item::bufferIterator bufiter =
-            static_cast<Item*>(itemval)->getBufferIterator();
+        auto bufiter = static_cast<Item*>(itemval)->getBufferIterator();
         while (Buffer* tmpbuf = bufiter.next()) {
           if (tmpbuf->getLocation() == static_cast<Location*>(orival) &&
               !tmpbuf->getBatch()) {
@@ -977,8 +976,9 @@ void OperationPlan::createFlowLoads() {
   // Initialized already, or nothing to initialize
   if (firstflowplan || firstloadplan || !oper) return;
 
-  if (oper->getMTO() && !getBatch())
-    // Automagically generate a reference number
+  if (oper->getMTO() && !getBatch() && getProposed() &&
+      !oper->hasType<OperationInventory>())
+    // Automagically generate a batch for proposed operationplans
     setBatch(getReference());
 
   // Create loadplans

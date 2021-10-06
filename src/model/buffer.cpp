@@ -301,11 +301,7 @@ double Buffer::getOnHand(Date d, bool after) const {
 
 double Buffer::getOnHand(Date d1, Date d2, bool min) const {
   // Swap parameters if required
-  if (d2 < d1) {
-    Date x(d1);
-    d2 = d1;
-    d2 = x;
-  }
+  if (d2 < d1) swap(d1, d2);
 
   // Loop through all flowplans
   double tmp(0.0), record(0.0);
@@ -314,13 +310,11 @@ double Buffer::getOnHand(Date d1, Date d2, bool min) const {
     if (oo == flowplans.end() || oo->getDate() > d) {
       // Date has now changed or we have arrived at the end
 
-      // New max?
-      if (prev_Date < d1)
+      if (prev_Date <= d1)
         // Not in active Date range: we simply follow the onhand profile
         record = tmp;
       else {
-        // In the active range
-        // New extreme?
+        // In the active range: check if new record
         if (min) {
           if (tmp < record) record = tmp;
         } else {
@@ -330,8 +324,6 @@ double Buffer::getOnHand(Date d1, Date d2, bool min) const {
 
       // Are we done now?
       if (prev_Date > d2 || oo == flowplans.end()) return record;
-
-      // Set the variable with the new Date
       d = oo->getDate();
     }
     tmp = oo->getOnhand();

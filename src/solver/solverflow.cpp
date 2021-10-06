@@ -194,9 +194,88 @@ void SolverCreate::solve(const Flow* fl,
     data->state->q_qty_min =
         -fl->getQuantityFixed() - data->state->q_qty_min * fl->getQuantity();
     data->state->q_date = data->state->q_flowplan->getDate();
+    double extra_supply = 0.0;
+    auto orig_q_date = data->state->q_date;
+
     if (data->state->q_qty != 0.0) {
+      if (fl->getBuffer()->getItem()->hasType<ItemMTO>()) {
+        auto free_specific = data->state->q_flowplan->getBuffer()->getOnHand(
+            data->state->q_date, Date::infiniteFuture, true);
+        if (free_specific < -ROUNDING_ERROR) {
+          auto free_generic = fl->getBuffer()->getOnHand(
+              data->state->q_date, Date::infiniteFuture, true);
+          if (free_generic > ROUNDING_ERROR) {
+            // Special case with all following conditions:
+            // - MTO item
+            // - MTO buffer doesn't have sufficient existing supply
+            // - generic buffer has available existing supply
+            if (free_generic > data->state->q_qty) {
+              // Generic supply is sufficient
+              if (getLogLevel() > 1)
+                logger << indentlevel-- << "  Buffer '"
+                       << data->state->q_flowplan->getBuffer()->getName()
+                       << "' answers from generic MTO buffer '"
+                       << fl->getBuffer()->getName()
+                       << "' : " << data->state->q_qty << endl;
+              data->state->q_flowplan->setBuffer(fl->getBuffer());
+              data->state->a_date = data->state->q_date;
+              data->state->a_qty = data->state->q_qty;
+              data->state->q_qty_min = orig_q_qty_min;
+              return;
+            } else {
+              // Partially use the generic supply
+              if (getLogLevel() > 1)
+                logger << indentlevel << "  Buffer '"
+                       << data->state->q_flowplan->getBuffer()->getName()
+                       << "' answers from generic MTO buffer '"
+                       << fl->getBuffer()->getName() << "' : " << free_generic
+                       << endl;
+              auto extraflpln = new FlowPlan(
+                  data->state->q_flowplan->getOperationPlan(), fl,
+                  data->state->q_flowplan->getDate(), -free_generic);
+              extraflpln->setBuffer(fl->getBuffer());
+              data->state->q_flowplan->setQuantityRaw(
+                  data->state->q_flowplan->getQuantity() + free_generic);
+              extra_supply = free_generic;
+              data->state->q_qty -= free_generic;
+              data->state->q_qty_min -= free_generic;
+            }
+          }
+        }
+      }
+
+      // Call the buffer solver
       auto thebuf = data->state->q_flowplan->getBuffer();
       thebuf->solve(*this, data);
+
+      // MTO buffer using supply on generic buffer
+      if (fl->getBuffer()->getItem()->hasType<ItemMTO>()) {
+        if (extra_supply)
+          // Merge extra supply quantity from the generic buffer
+          data->state->a_qty += extra_supply;
+        else if (!data->state->a_qty) {
+          // Merge extra supply quantity from the generic buffer
+          Date await_extra;
+          for (auto extra = fl->getBuffer()->getFlowPlans().begin();
+               extra != fl->getBuffer()->getFlowPlans().end(); ++extra) {
+            if (!extra->isLastOnDate() || extra->getDate() <= orig_q_date)
+              continue;
+            if (extra->getDate() > orig_q_date + getAutoFence()) break;
+            if (extra->getOnhand() > ROUNDING_ERROR)
+              await_extra = extra->getDate();
+          }
+          if (await_extra && await_extra < data->state->a_date) {
+            data->state->a_date = await_extra;
+            if (getLogLevel() > 1)
+              logger << indentlevel << "  Buffer '"
+                     << data->state->q_flowplan->getBuffer()->getName()
+                     << "' answers from generic MTO buffer '"
+                     << fl->getBuffer()->getName() << "' : 0 " << await_extra
+                     << endl;
+          }
+        }
+      }
+
       if (data->state->a_date > fl->getEffective().getEnd()) {
         // The reply date must be less than the effectivity end date: after
         // that date the flow in question won't consume any material any more.

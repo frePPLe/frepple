@@ -39,6 +39,7 @@ from freppledb.common.models import (
     Comment,
     Follower,
     Notification,
+    NotificationFactory,
 )
 from freppledb.common.tests import checkResponse
 from freppledb.input.models import (
@@ -863,9 +864,7 @@ class NotificationTest(TransactionTestCase):
 
         # Check what notifications we got
         Notification.wait()
-        sleep(3)
-        # for x in Notification.objects.all():
-        #    print(x)
+        NotificationFactory.start()
         self.assertEqual(Notification.objects.count(), 4)
 
     def test_performance(self):

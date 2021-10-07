@@ -949,7 +949,6 @@ class OverviewReport(GridPivot):
                 )
 
                 prev_buffer = None
-                curdate = datetime.strptime(request.current_date, "%Y-%m-%d %H:%M:%S")
                 for row in cursor_chunked:
                     if prev_buffer != row[0]:
                         order_backlog = None

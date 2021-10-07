@@ -111,8 +111,7 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
                     if len(day_split) > 1:
                         try:
                             days = int(day_split[0])
-                        except Exception as e:
-                            print("A", e)
+                        except Exception:
                             pass
                         if days:
                             if day_split[1].strip():

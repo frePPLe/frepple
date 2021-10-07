@@ -266,6 +266,56 @@
     TODO
   -->
 
+  <!-- Case: Size based alternate selection. -->
+  <operations>
+    <operation name="2. make item qty 5-10" xsi:type="operation_time_per">
+      <item name="2. item"/>
+      <location name="warehouse" />
+      <priority>1</priority>
+      <size_minimum>5</size_minimum>
+      <size_maximum>10</size_maximum>
+      <duration>PT1H</duration>
+      <duration_per>PT60M</duration_per>
+    </operation>
+    <operation name="2. make item qty 10-20" xsi:type="operation_time_per">
+      <item name="2. item"/>
+      <location name="warehouse" />
+      <priority>2</priority>
+      <size_minimum>10</size_minimum>
+      <size_maximum>20</size_maximum>
+      <duration>PT1H</duration>
+      <duration_per>PT50M</duration_per>
+    </operation>
+    <operation name="2. make item qty 20+" xsi:type="operation_time_per">
+      <item name="2. item"/>
+      <location name="warehouse" />
+      <size_minimum>20</size_minimum>
+      <priority>3</priority>
+      <duration>PT1H</duration>
+      <duration_per>PT40M</duration_per>
+    </operation>
+  </operations>
+  <demands>
+	  <demand name="2. item SO1">
+	    <quantity>3</quantity>
+	    <due>2009-01-20T00:00:00</due>
+	    <item name="2. item"/>
+      <location name="warehouse" />
+	  </demand>
+	  <demand name="2. item SO2">
+	    <quantity>15</quantity>
+	    <due>2009-02-20T00:00:00</due>
+	    <item name="2. item"/>
+      <location name="warehouse" />
+	  </demand>
+	  <demand name="2. item SO3">
+	    <quantity>30</quantity>
+	    <due>2009-03-20T00:00:00</due>
+	    <item name="2. item"/>
+      <location name="warehouse" />
+	  </demand>
+  </demands>
+
 <?python
 print("CREATING CONSTRAINED PLAN")
 sol = frepple.solver_mrp(constraints=15, loglevel=2)
@@ -275,6 +325,9 @@ print("CREATING UNCONSTRAINED PLAN")
 sol.plantype = 2
 sol.solve()
 frepple.saveplan("output.2.xml")
+print("CREATING SIMPLE UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
 ?>
 
 </plan>

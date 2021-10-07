@@ -135,6 +135,11 @@ size_minimum           positive double   A minimum quantity for manufacturing or
                                          
                                          A request for a lower, non-zero quantity will be rounded up.
 
+                                         This field also influences the alternate choices when multiple
+                                         operations are available to produce an item. The planning
+                                         algorithm will try to plan on those alternates where the
+                                         requirement is between the size_minimum and size_maximum. 
+
                                          The default value is 1.
                                          
 size_minimum_calendar  calendar          A calendar to define the minimum size of manufacturing orders
@@ -147,28 +152,42 @@ size_minimum_calendar  calendar          A calendar to define the minimum size o
                                          
 size_multiple          positive double   A multiple quantity for manufacturing orders.
 size_maximum           positive double   | The maximum quantity for manufacturing orders.
+
                                          | Note that this value limits the size of individual
                                            manufacturing orders. The solver can create multiple manufacturing
                                            orders of this maximum size, so this value does NOT constrain the
                                            total planned quantity on the operation. The field is
                                            useful to break big manufacturing orders in smaller ones.
+
+                                         | This field also influences the alternate choices when multiple
+                                           operations are available to produce an item. The planning
+                                           algorithm will try to plan on those alternates where the
+                                           requirement is between the size_minimum and size_maximum. 
+
 cost                   double            | The cost of executing this operation, per unit of the
                                            operation_plan.
+
                                          | Depending on what the operation models, this
                                            represents transportation costs, manufacturing costs,
                                            procurement costs, delivery costs, etc...
+
                                          | The raw material cost and the resource usage cost are added
                                            to this cost and should not be included in this value.
+
                                          | The default value is 0.
 posttime               duration          | A post-operation time, used as a buffer for uncertain
                                            capacity or operation duration.
+
                                          | The solver will try to respect this time as a soft
                                            constraint. Ie when required to meet demand on time the
                                            post-operation time can be violated.
+
                                          | Resources are not loaded during the post-operation time.
+
                                          | This field is used to model time-based safety stock
                                            targets, aka days of inventory. It is then set for the
                                            producing operation of a certain buffer.
+
                                          | If you want to model a safety stock quantity, you can use
                                            the minimum or minimum_calendar fields on the buffer.
 ====================== ================= ===========================================================

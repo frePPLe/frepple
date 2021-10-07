@@ -17,6 +17,15 @@ Release notes
   | This represents business cases where the make-to-order is eg freed up after sales order
     cancellations.
 
+- | Size-based selection of alternates
+  | The `operation size-minimum and size-maximum fields <model-reference/operation.html>`_ 
+    are now also used for selection of alternates.
+  | An example use case: A small production order will be manufactured on a different machine
+    than a large production order.
+  | Another example use case: When working on a small manufacturing order, the operators 
+    will work less efficient than on a larger production order. The time per produced item
+    will thus decrease as the required quantity increases.
+  
 .. rubric:: User interface
 
 - | Extra field uom / unit of measure on the `item table <model-reference/item.html>`_.

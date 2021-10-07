@@ -1264,8 +1264,10 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
                                : nullptr;
 
   // Try all alternates:
-  // - First, all alternates that are fully effective in the order of priority.
-  // - Next, the alternates beyond their effective end date.
+  // - First, all alternates that are a) fully effective and b) fit within the
+  //    size-min and size-max quantity range in the order of priority.
+  // - Next, the alternates beyond their effective end date and outside of
+  //   quantity range.
   //   We loop through these since they can help in meeting a demand on time,
   //   but using them will also create extra inventory or delays.
   double a_qty = data->state->q_qty;
@@ -1288,11 +1290,30 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       bool nextalternate = true;
 
       // Filter out alternates that are not suitable
-      if ((*altIter)->getPriority() == 0 ||
-          (effectiveOnly &&
-           !(*altIter)->getEffective().within(data->state->q_date)) ||
-          (!effectiveOnly &&
-           (*altIter)->getEffective().within(data->state->q_date))) {
+      bool bad = false;
+      if ((*altIter)->getPriority() == 0)
+        bad = true;
+      else if (!effectiveOnly &&
+               (*altIter)->getEffective().within(data->state->q_date) &&
+               data->state->q_qty >=
+                   (*altIter)->getOperation()->getSizeMinimum() &&
+               data->state->q_qty <=
+                   (*altIter)->getOperation()->getSizeMaximum())
+        bad = true;
+      else if (effectiveOnly) {
+        if (!(*altIter)->getEffective().within(data->state->q_date))
+          bad = true;
+        else if (!(*altIter)
+                      ->getOperation()
+                      ->hasType<OperationItemDistribution,
+                                OperationItemSupplier>() &&
+                 (data->state->q_qty <
+                      (*altIter)->getOperation()->getSizeMinimum() ||
+                  data->state->q_qty >
+                      (*altIter)->getOperation()->getSizeMaximum()))
+          bad = true;
+      }
+      if (bad) {
         ++altIter;
         if (altIter == oper->getSubOperations().end() && effectiveOnly) {
           // Prepare for a second iteration over all alternates
@@ -1303,11 +1324,9 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       }
 
       // Establish the ask date
-      if (effectiveOnly)
-        ask_date = origQDate;
-      else if (origQDate > (*altIter)->getEffectiveEnd())
+      if (!effectiveOnly && origQDate > (*altIter)->getEffectiveEnd())
         ask_date = (*altIter)->getEffectiveEnd();
-      else if (origQDate < (*altIter)->getEffectiveStart())
+      else
         ask_date = origQDate;
 
       // Find the flow into the requesting buffer. It may or may not exist,

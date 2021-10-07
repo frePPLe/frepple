@@ -190,6 +190,8 @@ Routing and bill of materials
 |                                         |                                                                            |                                                                               |
 |                                         | FrePPLe can plan these and automatically make a smart selection between    |                                                                               |
 |                                         | the alternatives. The selection can be priority-based or cost-based.       |                                                                               |
+|                                         |                                                                            |                                                                               |
+|                                         | Alternates can be date-effective and quantity restrictions.                |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Alternate materials**                 | You can plan different versions of a bill of materials and include         | - Example :doc:`examples/buffer/alternate-materials`                          |
 |                                         | alternate materials in a same bill of material.                            | - Doc :doc:`model-reference/operation-materials`                              |

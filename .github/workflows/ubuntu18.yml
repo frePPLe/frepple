@@ -45,6 +45,7 @@ jobs:
       - name: Test
         working-directory: ${{github.workspace}}
         run: |
+          cp djangosettings.py djangosettings.original.py
           sed -i "s/\"HOST\":.\"\"/\"HOST\":\"localhost\"/g" djangosettings.py
           sed -i "s/\"PORT\":.\"\"/\"PORT\":\"${{ job.services.postgres.ports[5432] }}\"/g" djangosettings.py
           ./test/runtest.py --regression
@@ -70,6 +71,7 @@ jobs:
       - name: Build and push docker image
         if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple'
         run: |
+          mv djangosettings.original.py djangosettings.py
           # First activate experimental features on docker to get "--squash" option
           sudo rm -rf /etc/docker/daemon.json
           echo '{"cgroup-parent": "/actions_job", "experimental": true}' | sudo tee -a /etc/docker/daemon.json

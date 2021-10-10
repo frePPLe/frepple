@@ -4,6 +4,13 @@ Release notes
 6.18.0 (Upcoming release)
 =========================
 
+6.17.1 (2021/10/10)
+===================
+
+.. rubric: Docker image
+
+- | Fixed bug with database connection.
+
 6.17.0 (2021/10/10)
 ===================
 

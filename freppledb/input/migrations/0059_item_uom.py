@@ -28,7 +28,7 @@ def rename_existing_columns(apps, schema_editor):
             """
         )
         if cursor.fetchone()[0]:
-            cursor.execute("alter table item rename column volume to original_uom")
+            cursor.execute("alter table item rename column uom to original_uom")
 
 
 def copy_existing_data(apps, schema_editor):

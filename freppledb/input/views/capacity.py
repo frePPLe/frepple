@@ -134,6 +134,7 @@ class SetupRuleList(GridReport):
         GridFieldText(
             "resource",
             title=_("resource"),
+            field_name="resource__name",
             formatter="detail",
             extra='"role":"input/resource"',
             initially_hidden=True,

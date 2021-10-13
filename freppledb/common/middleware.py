@@ -144,7 +144,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     def process_response(self, request, response):
         # Set a clickjacking protection x-frame-option header in the
         # response UNLESS one the following conditions applies:
-        #  - a x-frame-options header is already populated
+        #  - a x-trame-options header is already populated
         #  - the view was marked xframe_options_exempt
         #  - a web token was used to authenticate the request
         # See https://docs.djangoproject.com/en/1.10/ref/clickjacking/#module-django.middleware.clickjacking
@@ -201,46 +201,72 @@ class MultiDBMiddleware:
         if not hasattr(request, "user"):
             request.user = auth.get_user(request)
         if not hasattr(request.user, "scenarios"):
-            MultiDBBackend.getScenarios(request.user)
-        if request.user.is_anonymous:
-            return self.get_response(request)
-        default_scenario = None
-        for i in request.user.scenarios:
-            if i.name == DEFAULT_DB_ALIAS:
-                default_scenario = i
-            try:
-                if settings.DATABASES[i.name]["regexp"].match(request.path):
-                    request.prefix = "/%s" % i.name
-                    request.path_info = request.path_info[len(request.prefix) :]
-                    request.path = request.path[len(request.prefix) :]
-                    request.database = i.name
-                    request.scenario = i
-                    if hasattr(request.user, "_state"):
-                        request.user._state.db = i.name
-                    request.user.is_superuser = i.is_superuser
-                    request.user.horizonlength = i.horizonlength
-                    request.user.horizontype = i.horizontype
-                    request.user.horizonbefore = i.horizonbefore
-                    request.user.horizonbuckets = i.horizonbuckets
-                    request.user.horizonstart = i.horizonstart
-                    request.user.horizonend = i.horizonend
-                    request.user.horizonunit = i.horizonunit
-                    response = self.get_response(request)
-                    if not response.streaming:
-                        # Note: Streaming response get the request field cleared in the
-                        # request_finished signal handler
-                        setattr(_thread_locals, "request", None)
-                    return response
-            except Exception:
-                pass
-        request.prefix = ""
-        request.database = DEFAULT_DB_ALIAS
-        if hasattr(request.user, "_state"):
-            request.user._state.db = DEFAULT_DB_ALIAS
-        if default_scenario:
-            request.scenario = default_scenario
+            # A scenario list is not available on the request
+            for i in settings.DATABASES:
+                try:
+                    if settings.DATABASES[i]["regexp"].match(request.path):
+                        scenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=i)
+                        if scenario.status != "In use":
+                            return HttpResponseNotFound("Scenario not in use")
+                        request.prefix = "/%s" % i
+                        request.path_info = request.path_info[len(request.prefix) :]
+                        request.path = request.path[len(request.prefix) :]
+                        request.database = i
+                        if hasattr(request.user, "_state"):
+                            request.user._state.db = i.name
+                        response = self.get_response(request)
+                        if not response.streaming:
+                            # Note: Streaming response get the request field cleared in the
+                            # request_finished signal handler
+                            setattr(_thread_locals, "request", None)
+                        return response
+                except Exception:
+                    pass
+            request.prefix = ""
+            request.database = DEFAULT_DB_ALIAS
+            if hasattr(request.user, "_state"):
+                request.user._state.db = DEFAULT_DB_ALIAS
         else:
-            request.scenario = Scenario(name=DEFAULT_DB_ALIAS)
+            # A list of scenarios is already available
+            if request.user.is_anonymous:
+                return self.get_response(request)
+            default_scenario = None
+            for i in request.user.scenarios:
+                if i.name == DEFAULT_DB_ALIAS:
+                    default_scenario = i
+                try:
+                    if settings.DATABASES[i.name]["regexp"].match(request.path):
+                        request.prefix = "/%s" % i.name
+                        request.path_info = request.path_info[len(request.prefix) :]
+                        request.path = request.path[len(request.prefix) :]
+                        request.database = i.name
+                        request.scenario = i
+                        if hasattr(request.user, "_state"):
+                            request.user._state.db = i.name
+                        request.user.is_superuser = i.is_superuser
+                        request.user.horizonlength = i.horizonlength
+                        request.user.horizontype = i.horizontype
+                        request.user.horizonbefore = i.horizonbefore
+                        request.user.horizonbuckets = i.horizonbuckets
+                        request.user.horizonstart = i.horizonstart
+                        request.user.horizonend = i.horizonend
+                        request.user.horizonunit = i.horizonunit
+                        response = self.get_response(request)
+                        if not response.streaming:
+                            # Note: Streaming response get the request field cleared in the
+                            # request_finished signal handler
+                            setattr(_thread_locals, "request", None)
+                        return response
+                except Exception:
+                    pass
+            request.prefix = ""
+            request.database = DEFAULT_DB_ALIAS
+            if hasattr(request.user, "_state"):
+                request.user._state.db = DEFAULT_DB_ALIAS
+            if default_scenario:
+                request.scenario = default_scenario
+            else:
+                request.scenario = Scenario(name=DEFAULT_DB_ALIAS)
         response = self.get_response(request)
         if not response.streaming:
             # Note: Streaming response get the request field cleared in the

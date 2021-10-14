@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.db import migrations, models, connections
+from django.db import migrations, connections
 
 
 def dropIndexLike(apps, schema_editor):

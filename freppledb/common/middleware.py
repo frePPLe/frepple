@@ -144,7 +144,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     def process_response(self, request, response):
         # Set a clickjacking protection x-frame-option header in the
         # response UNLESS one the following conditions applies:
-        #  - a x-trame-options header is already populated
+        #  - a x-frame-options header is already populated
         #  - the view was marked xframe_options_exempt
         #  - a web token was used to authenticate the request
         # See https://docs.djangoproject.com/en/1.10/ref/clickjacking/#module-django.middleware.clickjacking

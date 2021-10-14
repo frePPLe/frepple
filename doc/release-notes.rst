@@ -4,6 +4,11 @@ Release notes
 6.18.0 (Upcoming release)
 =========================
 
+.. rubric:: Database
+
+- | Database size is reduced and performance is improved by removing some
+    rarely used indexes.
+
 6.17.1 (2021/10/10)
 ===================
 

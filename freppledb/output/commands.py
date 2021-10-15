@@ -1094,6 +1094,8 @@ class ExportResourcePlans(PlanTask):
         def getData():
             # Loop over all reporting buckets of all resources
             for i in resources or frepple.resources():
+                if cluster != -1 and cluster != i.cluster:
+                    continue
                 for j in i.plan(buckets):
                     yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),

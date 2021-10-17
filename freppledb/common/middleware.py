@@ -144,19 +144,23 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     def process_response(self, request, response):
         # Set a clickjacking protection x-frame-option header in the
         # response UNLESS one the following conditions applies:
-        #  - a x-frame-options header is already populated
+        #  - a X-Frame-Options or Content-Security-Policy header is already populated
         #  - the view was marked xframe_options_exempt
         #  - a web token was used to authenticate the request
         # See https://docs.djangoproject.com/en/1.10/ref/clickjacking/#module-django.middleware.clickjacking
         # See https://en.wikipedia.org/wiki/Clickjacking
         if (
             not response.get("X-Frame-Options", None)
+            and not response.get("Content-Security-Policy", None)
             and not getattr(response, "xframe_options_exempt", False)
             and not request.session.get("xframe_options_exempt", False)
         ):
-            response["X-Frame-Options"] = getattr(
-                settings, "X_FRAME_OPTIONS", "SAMEORIGIN"
-            ).upper()
+            val = getattr(settings, "X_FRAME_OPTIONS", None)
+            if val:
+                response["X-Frame-Options"] = val
+            val = getattr(settings, "CONTENT_SECURITY_POLICY", None)
+            if val:
+                response["Content-Security-Policy"] = val
         if request.is_secure:
             response["strict-transport-security"] = "max-age=864000"
         return response

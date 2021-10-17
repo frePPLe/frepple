@@ -238,7 +238,7 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     # Uncomment the next line to automatically log on as the admin user,
     # which can be useful for development or for demo models.
-    # 'freppledb.common.middleware.AutoLoginAsAdminUser',
+    # "freppledb.common.middleware.AutoLoginAsAdminUser",
     "freppledb.common.middleware.MultiDBMiddleware",
     # Optional: The following middleware allows authentication with HTTP headers
     "freppledb.common.middleware.HTTPAuthenticationMiddleware",
@@ -488,6 +488,19 @@ EMAIL_HOST_PASSWORD = "frePPLeIsTheBest"
 EMAIL_HOST = None
 EMAIL_PORT = 25
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+# Clickjacking security http headers
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+# Default: allow content from same domain
+CONTENT_SECURITY_POLICY = "frame-ancestors 'self'"
+X_FRAME_OPTIONS = "SAMEORIGIN"
+# Alternative: prohibit embedding in any frame
+#   CONTENT_SECURITY_POLICY = "frame-ancestors 'none'"
+#   X_FRAME_OPTIONS = "DENY"
+# Alternative: allow embedding in a specific domain
+#   CONTENT_SECURITY_POLICY = "frame-ancestors 'self' mydomain.com;"
+#   X_FRAME_OPTIONS = None
 
 # Configuration of the ftp/sftp/ftps server where to upload reports
 # Note that for SFTP protocol, the host needs to be defined

@@ -9,6 +9,17 @@ Release notes
 - | Database size is reduced and performance is improved by removing some
     rarely used indexes.
 
+.. rubric:: Security
+
+- | The security HTTP header now includes the newer
+    `Content-Security-Policy <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy>`_
+    header in addition to the older
+    `X-Frame-Options <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options>`_
+    header. Both headers can be configured with a setting in your djangosettings.py
+    file.
+  | Unless you're embedding frePPLe web pages as an iframe in your application
+    this change doesn't impact you.
+
 6.17.1 (2021/10/10)
 ===================
 

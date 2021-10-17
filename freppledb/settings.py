@@ -154,6 +154,19 @@ USE_I18N = True  # Use translated strings
 # Otherwise, we use naive datetimes in local time.
 USE_TZ = False  # TODO Test with this parameter set to True
 
+# Clickjacking security http headers
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+# Default: allow content from same domain
+CONTENT_SECURITY_POLICY = "frame-ancestors 'self'"
+X_FRAME_OPTIONS = "SAMEORIGIN"
+# Alternative: prohibit embedding in any frame
+#   CONTENT_SECURITY_POLICY = "frame-ancestors 'none'"
+#   X_FRAME_OPTIONS = "DENY"
+# Alternative: allow embedding in a specific domain
+#   CONTENT_SECURITY_POLICY = "frame-ancestors 'self' mydomain.com;"
+#   X_FRAME_OPTIONS = None
+
 # Sessions
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_NAME = "sessionid"  # Cookie name. This can be whatever you want.
@@ -162,8 +175,8 @@ SESSION_COOKIE_DOMAIN = None  # A string, or None for standard domain cookie.
 SESSION_SAVE_EVERY_REQUEST = True  # Whether to save the session data on every request.
 # Needs to be True to have the breadcrumbs working correctly!
 SESSION_EXPIRE_AT_BROWSER_CLOSE = (
-    True
-)  # Whether sessions expire when a user closes his browser.
+    True  # Whether sessions expire when a user closes his browser.
+)
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.fallback.SessionStorage"
 

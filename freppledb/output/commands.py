@@ -19,7 +19,7 @@ from datetime import timedelta, datetime, date
 import json
 import logging
 import os
-from psycopg2.extensions import adapt
+from time import time
 from psycopg2.extras import execute_batch
 
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
@@ -90,10 +90,7 @@ class TruncatePlan(PlanTask):
             for i in frepple.items():
                 if i.cluster == cluster:
                     cursor.execute(
-                        (
-                            "insert into cluster_keys (name) values (%s);\n"
-                            % adapt(i.name).getquoted().decode("UTF8")
-                        )
+                        "insert into cluster_keys (name) values (%s)", (i.name,)
                     )
 
             cursor.execute("create index on cluster_keys (name)")
@@ -167,10 +164,7 @@ class TruncatePlan(PlanTask):
             for i in frepple.resources():
                 if i.cluster == cluster:
                     cursor.execute(
-                        (
-                            "insert into cluster_keys (name) values (%s)"
-                            % adapt(i.name).getquoted().decode("UTF8")
-                        )
+                        "insert into cluster_keys (name) values (%s)", (i.name,)
                     )
             cursor.execute(
                 """
@@ -196,10 +190,7 @@ class TruncatePlan(PlanTask):
             for i in frepple.operations():
                 if i.cluster == cluster:
                     cursor.execute(
-                        (
-                            "insert into cluster_keys (name) values (%s)"
-                            % adapt(i.name).getquoted().decode("UTF8")
-                        )
+                        "insert into cluster_keys (name) values (%s)", (i.name,)
                     )
             cursor.execute(
                 """

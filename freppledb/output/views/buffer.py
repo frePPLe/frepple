@@ -812,9 +812,8 @@ class OverviewReport(GridPivot):
                   from operationplanmaterial
                   inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
                   where operationplanmaterial.item_id = item.name and operationplanmaterial.location_id = location.name and
-                  operationplanmaterial.flowdate >= greatest(d.startdate,%%s) and
                     (
-                      (operationplanmaterial.quantity < 0 and operationplan.type = 'DLVR' and operationplan.due < greatest(d.startdate,%%s))
+                      (operationplanmaterial.flowdate >= greatest(d.startdate,%%s) and operationplanmaterial.quantity < 0 and operationplan.type = 'DLVR' and operationplan.due < greatest(d.startdate,%%s))
                       or ( operationplanmaterial.quantity > 0 and operationplan.status = 'closed' and operationplan.type = 'STCK')
                       or ( operationplanmaterial.quantity > 0 and operationplan.status in ('approved','confirmed','completed') and flowdate <= greatest(d.startdate,%%s) + interval '1 second')
                     )

@@ -2765,8 +2765,11 @@ $(function () {
           return '<span><p style="margin-top: 5px; margin-bottom: 1px;">'
             + $.jgrid.htmlEncode(data.label)
             + '</p><li  role="separator" class="divider"></li></span>';
-        var href = url_prefix + data.url + admin_escape(data.value);
-        if (!data.removeTrailingSlash) href += "/?noautofilter";
+        var href = url_prefix + data.url;
+        if (!data.removeTrailingSlash)
+          href += admin_escape(data.value) + "/?noautofilter";
+        else
+          href += encodeURIComponent(data.value);
         return '<li><a href="' + href + '" >'
           + $.jgrid.htmlEncode(data.display)
           + '</a><div class="tt-external"><a target="_blank" href="' + href + '">'

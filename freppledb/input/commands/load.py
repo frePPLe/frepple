@@ -173,10 +173,14 @@ class loadParameter(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cursor.execute(
                     """
-                SELECT name, value
-                FROM common_parameter
-                where name in ('currentdate', 'plan.calendar', 'COMPLETED.allow_future', 'WIP.produce_full_quantity')
-                """
+                    SELECT name, value
+                    FROM common_parameter
+                    where name in (
+                       'currentdate', 'plan.calendar', 
+                       'COMPLETED.allow_future', 'WIP.produce_full_quantity',
+                       'plan.individualPoolResources'
+                       )
+                    """
                 )
                 default_current_date = True
                 for rec in cursor:
@@ -200,6 +204,10 @@ class loadParameter(LoadTask):
                         )
                     elif rec[0] == "WIP.produce_full_quantity":
                         frepple.settings.wip_produce_full_quantity = (
+                            str(rec[1]).lower() == "true"
+                        )
+                    elif rec[0] == "plan.individualPoolResources":
+                        frepple.settings.individualPoolResources = (
                             str(rec[1]).lower() == "true"
                         )
                 if default_current_date:

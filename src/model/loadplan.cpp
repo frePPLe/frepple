@@ -53,7 +53,7 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r) {
   oper = o;
 
   // Update the resource field
-  res = r->findPreferredResource(o->getSetupEnd());
+  res = r->findPreferredResource(o->getSetupEnd(), o);
 
   // Add to the operationplan
   nextLoadPlan = nullptr;
@@ -67,12 +67,21 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r) {
     o->firstloadplan = this;
 
   // Insert in the resource timeline
-  getResource()->loadplans.insert(this, ld->getLoadplanQuantity(this),
-                                  ld->getLoadplanDate(this));
+  res->loadplans.insert(this, ld->getLoadplanQuantity(this),
+                        ld->getLoadplanDate(this));
 
   // For continuous resources, create a loadplan to mark
   // the end of the operationplan.
   if (!getResource()->hasType<ResourceBuckets>()) new LoadPlan(o, r, this);
+
+  // For pooled resource, create individual loadplans when activated
+  if (ld->getResource()->isGroup() && ld->getQuantity() > 1.0 &&
+      Plan::instance().getIndividualPoolResources()) {
+    for (auto tmp = ld->getQuantity(); tmp > 1.0; tmp -= 1.0) {
+      auto n = new LoadPlan(o, r, nullptr);
+      if (!n->getResource()->hasType<ResourceBuckets>()) new LoadPlan(o, r, n);
+    }
+  }
 
   // Mark the operation and resource as being changed. This will trigger
   // the recomputation of their problems
@@ -83,10 +92,10 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r) {
 LoadPlan::LoadPlan(OperationPlan* o, const Load* r, LoadPlan* lp) {
   ld = const_cast<Load*>(r);
   oper = o;
-  flags |= TYPE_END;
+  if (lp) flags |= TYPE_END;
 
   // Update the resource field
-  res = lp->getResource();
+  res = lp ? lp->getResource() : r->findPreferredResource(o->getSetupEnd(), o);
 
   // Add to the operationplan
   nextLoadPlan = nullptr;
@@ -227,7 +236,9 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
 LoadPlan* LoadPlan::getOtherLoadPlan() const {
   if (getResource()->hasType<ResourceBuckets>()) return nullptr;
   for (auto i = oper->firstloadplan; i; i = i->nextLoadPlan)
-    if (i->ld == ld && i != this && i->getEventType() == 1) return i;
+    if (i->getResource() == getResource() && i != this &&
+        i->getEventType() == 1)
+      return i;
   throw LogicException("No matching loadplan found");
 }
 
@@ -478,7 +489,12 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const {
       q *= lp->getOperationPlan()->getQuantityRemaining() /
            lp->getOperationPlan()->getQuantity();
     return q;
-  } else
+  } else if (lp->getLoad()->getResource()->isGroup() &&
+             lp->getLoad()->getQuantity() > 1.0 &&
+             Plan::instance().getIndividualPoolResources())
+    // Continuous pooled resource with individual assignments
+    return lp->isStart() ? 1.0 : -1.0;
+  else
     // Continuous resource
     return lp->isStart() ? getQuantity() : -getQuantity();
 }

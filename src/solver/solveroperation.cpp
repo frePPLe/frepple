@@ -525,15 +525,12 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
            ldplan != opplan->endLoadPlans(); ++ldplan) {
         if (ldplan->getQuantity() < 0.0 && ldplan->getLoad() &&
             ldplan->getLoad()->getResource()->isGroup()) {
-          auto most_efficient =
-              ldplan->getLoad()->findPreferredResource(opplan->getStart());
+          auto most_efficient = ldplan->getLoad()->findPreferredResource(
+              opplan->getStart(), opplan);
           if (!ldplan->getLoad()->getSetup().empty())
             setuploadplan = &*ldplan;
-          else if (ldplan->getResource() != most_efficient) {
-            logger << "switching to the most efficient resource "
-                   << most_efficient << endl;
+          else if (ldplan->getResource() != most_efficient)
             ldplan->setResource(most_efficient, false, false);
-          }
         }
       }
     }

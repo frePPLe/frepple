@@ -88,15 +88,27 @@ void SolverCreate::chooseResource(
       continue;
     }
 
+    // Avoid double allocations to the same resource
+    if (lplan->getLoad()->getResource()->isGroup() &&
+        Plan::instance().getIndividualPoolResources()) {
+      bool exists = false;
+      for (auto g = lplan->getOperationPlan()->getLoadPlans();
+           g != lplan->getOperationPlan()->endLoadPlans(); ++g) {
+        if (g->getResource() == res) {
+          exists = true;
+          break;
+        }
+      }
+      if (exists) continue;
+    }
+
     // Check if the resource has the right skill
     ResourceSkill* rscSkill = nullptr;
-    if (l->getSkill()) {
-      if (!res->hasSkill(l->getSkill(), originalOpplan.start,
-                         originalOpplan.end, &rscSkill))
-        continue;
-      // TODO if there is a date effective skill, we need to consider it in the
-      // reply
-    }
+    if (l->getSkill() && !res->hasSkill(l->getSkill(), originalOpplan.start,
+                                        originalOpplan.end, &rscSkill))
+      continue;
+    // TODO if there is a date effective skill, we need to consider it in the
+    // reply
     qualified_resource_exists = true;
 
     // Switch to this resource

@@ -4,6 +4,16 @@ Release notes
 6.18.0 (Upcoming release)
 =========================
 
+.. rubric:: Production planning
+
+- | Easier modeling of resource pools.
+  | An operation-resource record with quantity 2 of an aggregate resource 
+    was interpreted as "we need to find a resource with size 2".
+  | If you set the parameter "plan.individualPoolResources" to true, the same
+    operation-resource record will now be interpreted as "we need to find
+    2 individual resources of size 1".
+  | A typical usage for the new feature is for modeling a group of operators.
+
 .. rubric:: Database
 
 - | Database size is reduced and performance is improved by removing some

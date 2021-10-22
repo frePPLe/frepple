@@ -6687,7 +6687,7 @@ class Load : public Object,
   /* Find the preferred resource in a resource pool to assign a load to.
    * This method is only useful when the loadplan is not created yet.
    */
-  Resource* findPreferredResource(Date d) const;
+  Resource* findPreferredResource(Date, OperationPlan*) const;
 
   /* This method holds the logic the compute the date of a loadplan. */
   virtual Date getLoadplanDate(const LoadPlan*) const;
@@ -8035,6 +8035,13 @@ class Plan : public Plannable, public Object {
 
   bool wip_produce_full_quantity = false;
 
+  /* Defines the behavior of operator pools. A load with quantity 2 for
+   * an aggregate resource pool can mean either:
+   * - find a resource with size 2 in the pool. Default behavior.
+   * - find 2 resources of size 1 in the pool.
+   */
+  bool individual_pool_resources = false;
+
   /* Pointer to the singleton plan object. */
   static Plan* thePlan;
 
@@ -8092,6 +8099,10 @@ class Plan : public Plannable, public Object {
   bool getWipProduceFullQuantity() const { return wip_produce_full_quantity; }
 
   void setWipProduceFullQuantity(bool b) { wip_produce_full_quantity = b; }
+
+  bool getIndividualPoolResources() const { return individual_pool_resources; }
+
+  void setIndividualPoolResources(bool b) { individual_pool_resources = b; }
 
   void setLogFile(const string& s) { Environment::setLogFile(s); }
 
@@ -8168,6 +8179,9 @@ class Plan : public Plannable, public Object {
     m->addBoolField<Plan>(
         Tags::wip_produce_full_quantity, &Plan::getWipProduceFullQuantity,
         &Plan::setWipProduceFullQuantity, BOOL_FALSE, DONT_SERIALIZE);
+    m->addBoolField<Cls>(
+        Tags::individualPoolResources, &Cls::getIndividualPoolResources,
+        &Cls::setIndividualPoolResources, BOOL_FALSE, DONT_SERIALIZE);
     Plannable::registerFields<Plan>(m);
     m->addIteratorField<Plan, Location::iterator, Location>(
         Tags::locations, Tags::location, &Plan::getLocations,

@@ -389,10 +389,11 @@ Date LoadBucketizedPercentage::getOperationPlanDate(const LoadPlan* lp,
   }
 }
 
-Resource* Load::findPreferredResource(Date d) const {
+Resource* Load::findPreferredResource(Date d, OperationPlan* opplan) const {
   if (!getResource()->isGroup()) return getResource();
 
   // Choose the most efficient resource from the group, regardless of its cost.
+  // Also avoid assigning the same resource twice.
   // TODO We ignore date effectivity.
   Resource* best_res = nullptr;
   double best_eff = 0.0;
@@ -402,6 +403,20 @@ Resource* Load::findPreferredResource(Date d) const {
     ResourceSkill* tmpRsrcSkill = nullptr;
     if (!mmbr->isGroup() &&
         (!getSkill() || mmbr->hasSkill(getSkill(), d, d, &tmpRsrcSkill))) {
+      if (getQuantity() > 1.0 &&
+          Plan::instance().getIndividualPoolResources()) {
+        // Need to avoid assigning the same resource twice
+        bool exists = false;
+        for (auto g = opplan->getLoadPlans(); g != opplan->endLoadPlans();
+             ++g) {
+          if (g->getResource() == &*mmbr) {
+            exists = true;
+            break;
+          }
+        }
+        if (exists) continue;
+      }
+
       auto my_eff = mmbr->getEfficiencyCalendar()
                         ? mmbr->getEfficiencyCalendar()->getValue(d)
                         : mmbr->getEfficiency();

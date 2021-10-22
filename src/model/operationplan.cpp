@@ -983,17 +983,17 @@ void OperationPlan::createFlowLoads() {
 
   // Create loadplans
   if (getConsumeCapacity())
-    for (auto g = oper->getLoads().begin(); g != oper->getLoads().end(); ++g)
-      if (!g->getAlternate()) new LoadPlan(this, &*g);
+    for (auto& g : oper->getLoads()) {
+      if (!g.getAlternate()) new LoadPlan(this, &g);
+    }
 
   // Create flowplans for flows
-  for (auto h = oper->getFlows().begin(); h != oper->getFlows().end(); ++h) {
+  for (auto& h : oper->getFlows()) {
     // Only the primary flow is instantiated.
-    if (h->getAlternate()) continue;
     // Also for transfer batches, we only need to create the first flowplan.
     // The getFlowplanDateQuantity method will be called during the creation,
     // and create additional flowplans as required.
-    new FlowPlan(this, &*h);
+    if (!h.getAlternate()) new FlowPlan(this, &h);
   }
 }
 

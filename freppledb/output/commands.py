@@ -419,7 +419,7 @@ class ExportOperationPlans(PlanTask):
         return json.dumps(pln).replace("\\", "\\\\")
 
     @classmethod
-    def getData(cls, timestamp, cluster=-1):
+    def getData(cls, timestamp, cluster=-1, accepted_status=[]):
         import frepple
 
         for i in frepple.operations():
@@ -431,8 +431,10 @@ class ExportOperationPlans(PlanTask):
             proposedFoundDate = None
 
             for j in i.operationplans:
-                delay = j.delay
                 status = j.status
+                if status not in accepted_status:
+                    continue
+                delay = j.delay
                 color = 100 - delay / 86400
 
                 if isinstance(i, frepple.operation_inventory):
@@ -693,7 +695,13 @@ class ExportOperationPlans(PlanTask):
             """
         )
         cursor.copy_from(
-            CopyFromGenerator(cls.getData(cls.parent.timestamp, cluster=cluster)),
+            CopyFromGenerator(
+                cls.getData(
+                    cls.parent.timestamp,
+                    cluster=cluster,
+                    accepted_status=["confirmed", "approved", "completed"],
+                )
+            ),
             table="tmp_operationplan",
             size=1024,
             sep="\v",
@@ -746,6 +754,46 @@ class ExportOperationPlans(PlanTask):
               where operationplan.reference = tmp_operationplan.reference
               );
             """
+        )
+
+        # directly injecting proposed records in operationplan table
+        cursor.copy_from(
+            CopyFromGenerator(
+                cls.getData(
+                    cls.parent.timestamp,
+                    cluster=cluster,
+                    accepted_status=["proposed"],
+                )
+            ),
+            table="operationplan",
+            size=1024,
+            sep="\v",
+            columns=(
+                "name",
+                "type",
+                "status",
+                "quantity",
+                "startdate",
+                "enddate",
+                "criticality",
+                "delay",
+                "plan",
+                "source",
+                "lastmodified",
+                "operation_id",
+                "owner_id",
+                "item_id",
+                "destination_id",
+                "origin_id",
+                "location_id",
+                "supplier_id",
+                "demand_id",
+                "due",
+                "color",
+                "reference",
+                "batch",
+                "quantity_completed",
+            ),
         )
 
         # update demand table specific fields

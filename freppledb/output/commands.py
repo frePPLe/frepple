@@ -762,7 +762,7 @@ class ExportOperationPlans(PlanTask):
                 cls.getData(
                     cls.parent.timestamp,
                     cluster=cluster,
-                    accepted_status=["proposed"],
+                    accepted_status=["proposed", "closed"],
                 )
             ),
             table="operationplan",

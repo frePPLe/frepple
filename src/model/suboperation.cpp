@@ -97,12 +97,7 @@ void SubOperation::setOperation(Operation* o) {
 
 void SubOperation::setPriority(int pr) {
   if (prio == pr) return;
-
-  if (pr < 0)
-    throw DataException("Suboperation priority must be greater or equal to 0");
-
   prio = pr;
-
   if (owner) {
     // Maintain the list in order of priority
     owner->getSubOperations().remove(this);

@@ -50,7 +50,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         token = getWebserviceAuthorization(
             database=options["database"],
-            secret="perepe", #None,
+            secret=None,
             user=options["user"],
             exp=options["expiry"] * 86400,
         )

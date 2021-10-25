@@ -38,6 +38,7 @@ This section provides an overview of the available actions:
   * :ref:`createsuperuser`
   * :ref:`changepassword`
   * :ref:`flush`
+  * :ref:`generatetoken`
   
 * Developer commands
 
@@ -681,6 +682,20 @@ This command is available on the command line only:
 ::
 
     frepplectl flush
+
+
+.. _generatetoken: 
+
+Generate an API token
+---------------------
+
+This command generates a JWT authentication token that can be used for API calls.
+
+This command is available on the command line only:
+
+::
+
+    frepplectl generatetoken user_name --expiry=365
 
 
 Developer commands

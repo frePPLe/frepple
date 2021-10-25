@@ -14,6 +14,12 @@ Release notes
     2 individual resources of size 1".
   | A typical usage for the new feature is for modeling a group of operators.
 
+.. rubric:: System administration
+
+- | A new command `generatetoken <command-reference.html#generatetoken>` is added
+    to generate JWT authentication tokens. Such tokens are a more secure way to
+    authenticate automated API calls to the application.
+  
 .. rubric:: Database
 
 - | Database size is reduced and performance is improved by removing some

@@ -222,6 +222,9 @@ The section below describes the installation and configuration of these.
       The parameters db and company determine which odoo database to connect to.
     | After providing the login details, an XML document will be displayed with
       the data that frePPLe will read from Odoo.
+    | Note that sometimes, for large odoo dataset, the above link can return an error because of a timeout
+      issue. If that is happening, you need to update parameters *limit_time_cpu* and *limit_time_real*
+      in the odoo configuration file and increase their value.
     
 
 * **Configuring the connector - frePPLe side**

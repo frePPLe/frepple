@@ -356,6 +356,15 @@ DEFAULT_DASHBOARD = [
     },
 ]
 
+# Memory cache
+CACHE_GRID_COUNT = None
+CACHE_PIVOT_COUNT = None
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
+
 GLOBAL_PREFERENCES = {}
 
 # Maximum allowed memory size for the planning engine. Only used on Linux!

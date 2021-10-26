@@ -309,6 +309,15 @@ INSTALLED_APPS = (
 #    ]
 ATTRIBUTES = []
 
+# Memory cache
+CACHE_GRID_COUNT = None
+CACHE_PIVOT_COUNT = None
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": True,

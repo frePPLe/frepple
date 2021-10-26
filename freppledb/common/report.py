@@ -33,6 +33,7 @@ import csv
 from datetime import date, datetime, timedelta, time
 from decimal import Decimal
 import functools
+from hashlib import sha1
 import logging
 import math
 import operator
@@ -48,6 +49,7 @@ from openpyxl.styles import NamedStyle, PatternFill
 from dateutil.parser import parse
 from openpyxl.comments import Comment as CellComment
 
+from django.core.cache import cache
 from django.db.models import Model, Lookup
 from django.db.models.expressions import RawSQL
 from django.db.utils import DEFAULT_DB_ALIAS, load_backend
@@ -1481,12 +1483,21 @@ class GridReport(View):
                 request.query = cls.filter_items(request, cls.basequeryset).using(
                     request.database
                 )
-        with connections[request.database].cursor() as cursor:
-            tmp = request.query.query.get_compiler(request.database).as_sql(
+        
+        tmp = request.query.query.get_compiler(request.database).as_sql(
                 with_col_aliases=False
             )
+        if settings.CACHE_GRID_COUNT:
+            cache_key= sha1(str((tmp[0], tmp[1], request.database)).encode("utf8")).hexdigest()
+            cache_val = cache.get(cache_key, None)
+            if cache_val is not None:
+                return cache_val
+        with connections[request.database].cursor() as cursor:
             cursor.execute("select count(*) from (" + tmp[0] + ") t_subquery", tmp[1])
-            return cursor.fetchone()[0]
+            cache_val = cursor.fetchone()[0]
+            if settings.CACHE_GRID_COUNT:
+                cache.set(cache_key, cache_val, timeout=settings.CACHE_GRID_COUNT)
+            return cache_val
 
     @classmethod
     def _generate_json_data(cls, request, *args, **kwargs):
@@ -2924,9 +2935,25 @@ class GridPivot(GridReport):
                 request.basequery = cls.basequeryset
             if args and args[0] and not cls.new_arg_logic:
                 request.basequery = request.basequery.filter(pk__exact=args[0])
-        return (
-            cls.filter_items(request, request.basequery).using(request.database).count()
-        )
+
+        if settings.CACHE_PIVOT_COUNT:
+            # Caching of the record count
+            tmp = cls.filter_items(request, request.basequery).query.get_compiler(request.database).as_sql(
+                with_col_aliases=False
+            )
+            cache_key= sha1(str((request.database, tmp[0], tmp[1])).encode("utf8")).hexdigest()
+            cache_val = cache.get(cache_key, None)
+            if cache_val is None:
+                with connections[request.database].cursor() as cursor:
+                    cursor.execute("select count(*) from (" + tmp[0] + ") t_subquery", tmp[1])
+                    cache_val = cursor.fetchone()[0]
+                    cache.set(cache_key, cache_val, settings.CACHE_PIVOT_COUNT)
+            return cache_val
+        else:
+            # Don't cache the record count queries
+            return (
+                cls.filter_items(request, request.basequery).using(request.database).count()
+            )
 
     @classmethod
     def data_query(cls, request, *args, page=None, fields=None, **kwargs):

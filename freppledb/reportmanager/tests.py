@@ -16,7 +16,9 @@
 
 import json
 from urllib.parse import quote
+from unittest import skipUnless
 
+from django.conf import settings
 from django.test import TransactionTestCase
 
 from freppledb.common.models import User
@@ -24,6 +26,7 @@ from freppledb.common.tests import checkResponse
 from .models import SQLReport, SQLColumn
 
 
+@skipUnless("freppledb.reportmanager" in settings.INSTALLED_APPS, "App not activated")
 class ReportManagerTest(TransactionTestCase):
 
     fixtures = ["demo"]

@@ -849,7 +849,7 @@ class FileManager:
                     clean_filename,
                     headers={
                         "Content-Type": "application/octet-stream",
-                        "Content-Disposition": 'inline; filename="%s"' % filename,
+                        "Content-Disposition": 'inline; filename="%s"' % clean_filename,
                     },
                 )
             except Exception as e:

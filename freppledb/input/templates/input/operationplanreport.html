@@ -94,7 +94,7 @@
     }
     return false;
   }
-  
+
   function setHeights() {
       $('#grid').setGridWidth($('#content-main').width());
       $("#grid").setGridHeight($('#content-main').height()-52);
@@ -103,7 +103,7 @@
       $("#scrollweekview").css("height", $('#content-main').height() - 60);
       $("#scrollmonthview").css("height", $('#content-main').height() - 45);
   }
-  
+
   function getDirtyData() {
   	if (preferences && preferences.mode && (preferences.mode == "kanban" || preferences.mode.startsWith("calendar"))) {
       initialfilter = thefilter;
@@ -118,7 +118,7 @@
       return dirty;
     }
   }
-  
+
   var language = "{{LANGUAGE_CODE}}";
   var version = '{% version_short %}';
   var lastid = '';
@@ -157,13 +157,13 @@
     });
     $("#calendarmonth").on('click', function() {
       angular.element('#controller').scope().setMode("calendarmonth");
-    });  
+    });
     $("#calendarweek").on('click', function() {
       angular.element('#controller').scope().setMode("calendarweek");
     });
     $("#calendarday").on('click', function() {
       angular.element('#controller').scope().setMode("calendarday");
-    });  
+    });
   });
   // frepple.js will call this function to alert angular that the grid has changed
   function checkrows(grid, selection) {
@@ -196,6 +196,20 @@
       $(window).on('beforeunload', upload.warnUnsavedChanges);
     }
   }
+
+extra_customize_html = '<div class="row"><div class="col-xs-12">'
+  + gettext("Position of details") + '&nbsp;&nbsp;&nbsp;&nbsp;'
+  + '&nbsp;&nbsp;<label><input type="radio" name="detailposition" value="left"'
+      + ((preferences && preferences.details == "left") ? ' checked="true"' : '')
+      + '>&nbsp;' + gettext("left") + '&nbsp;</label>'
+  + '&nbsp;&nbsp;<label><input type="radio" name="detailposition" value="bottom"'
+      + ((preferences && preferences.details != "right" && preferences.details != "left") ? ' checked="true"' : '')
+      + '>&nbsp;' + gettext("bottom") + '&nbsp;</label>'
+  + '&nbsp;&nbsp;<label><input type="radio" name="detailposition" value="right"'
+      + ((preferences && preferences.details == "right") ? ' checked="true"' : '')
+      + '>&nbsp;' + gettext("right") + '&nbsp;</label>'
+  + '</div></div>';
+
 </script>
 {% endblock %}
 
@@ -320,7 +334,7 @@ onSelectRow: function(rowid, status, e) {
   }
 },
 multiboxonly: false,
-loadComplete: function(data) {      
+loadComplete: function(data) {
       $('#curerror').html("");
       $(".invStatus").each( function(value) {
         $(this).parent().css('background',$(this).css('background-color'));

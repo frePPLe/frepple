@@ -766,7 +766,7 @@ var grid = {
       // Add selection of number of frozen columns
       row2 = '<div class="row"><div class="col-xs-12">' +
         gettext("Frozen columns") +
-        '&nbsp;&nbsp;<input type="number" id="frozen" style="text-align: center;" min="0" max="4" step="1" value="' + maxfrozen + '">' +
+        '&nbsp;&nbsp;<input type="number" id="frozen" style="text-align: center; max-width: 50px" size="4" min="0" max="4" step="1" value="' + maxfrozen + '">' +
         '</div></div>';
     }
 
@@ -793,6 +793,7 @@ var grid = {
       row0 +
       row1 +
       row2 +
+      (typeof extra_customize_html !== 'undefined' ? extra_customize_html : '') +  // Not very clean to use a global variable here
       '</div>' +
       '<div class="modal-footer">' +
       '<input type="submit" id="okCustbutton" role="button" class="btn btn-primary pull-right" value="' + gettext("OK") + '">' +
@@ -1758,7 +1759,7 @@ var grid = {
         oper = rule.op;
     }
 
-    // Final result  	
+    // Final result
     var newexpression = $('<span class="label label-default">' + col.label + '&nbsp;' + oper + '&nbsp;</span>');
     var newelement = $('<input size="10">');
     rule["filtercount"] = grid.countFilters++;  // Mark position in the expression
@@ -1998,7 +1999,7 @@ var favorite = {
     }
     if (!graph) thegrid.jqGrid('destroyFrozenColumns');
 
-    // Restore visibility and column width	
+    // Restore visibility and column width
     for (var r of favorites[fav]["rows"]) {
       if (r[1])
         thegrid.jqGrid("hideCol", r[0]);
@@ -3715,7 +3716,7 @@ function showModalImage(event, title) {
   event.preventDefault();
 }
 
-/* Jquery extension to make an element draggable. 
+/* Jquery extension to make an element draggable.
  * Copied from http://cssdeck.com/labs/wsse5ous
  */
 $.fn.drags = function (opt) {

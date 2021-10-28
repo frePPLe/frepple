@@ -261,7 +261,9 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const {
   int date_weekday = -1;
   Duration date_time;
   for (auto b = firstBucket; b; b = b->nextBucket) {
-    if (b->getStart() > d)
+    if (b->getStart() == b->getEnd())
+      continue;
+    else if (b->getStart() > d)
       // Buckets are sorted by the start date. Other entries definitely
       // won't be effective.
       break;
@@ -537,6 +539,7 @@ void Calendar::buildEventList(Date includedate) {
     struct tm* datedetail;
     curDate = Date::infiniteFuture;
     for (auto b = firstBucket; b; b = b->nextBucket) {
+      if (b->getStart() == b->getEnd()) continue;
       // FIRST CASE: Bucket that is continuously effective
       if (b->isContinuouslyEffective()) {
         // Evaluate the start date of the bucket

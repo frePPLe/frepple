@@ -36,6 +36,9 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
+      <p data-ng-if="opplan.item__description || opplan.operationplan__item__description">
+        {{opplan.item__description || opplan.operationplan__item__description}}&nbsp;
+      </p>
       <p>{{opplan.location}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
           href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.location) }}/">
@@ -71,9 +74,6 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.operationplan__enddate"
           data-ng-model="opplan.operationplan__enddate" data-ng-change="changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)">
       </p>
-      <p data-ng-if="(opplan.inventory_status) !== ''">
-        {{ "inventory status"|translate }}&nbsp;{{opplan.inventory_status}}
-      </p>
     </div>
     <div data-ng-if="(opplan.type || opplan.operationplan__type || type) === 'DO'">
       <p>
@@ -94,13 +94,16 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
            <button data-ng-if="opplan.hasOwnProperty('operationplan__status')" type="button" data-ng-class="['btn', 'btn-xs', 'btn-default', {'active': opplan.operationplan__status == 'confirmed'}]" data-toggle="tooltip" data-html="true" title="{{ 'confirmed'|translate }}" data-ng-click="changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'confirmed'); opplan.operationplan__status = 'confirmed'"><i class="fa fa-lock"></i></button>
            <button data-ng-if="opplan.hasOwnProperty('operationplan__status')" type="button" data-ng-class="['btn', 'btn-xs', 'btn-default', {'active': opplan.operationplan__status == 'completed'}]" data-toggle="tooltip" data-html="true" title="{{ 'completed'|translate }}" data-ng-click="changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'completed'); opplan.operationplan__status = 'completed'"><i class="fa fa-check"></i></button>
            <button data-ng-if="opplan.hasOwnProperty('operationplan__status')" type="button" data-ng-class="['btn', 'btn-xs', 'btn-default', {'active': opplan.operationplan__status == 'closed'}]" data-toggle="tooltip" data-html="true" title="{{ 'closed'|translate }}" data-ng-click="changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'closed'); opplan.operationplan__status = 'closed'"><i class="fa fa-times"></i></button>
-        </span>   
+        </span>
       </p>
       <p>{{ opplan.item__name || opplan.item }}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
           href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name || opplan.item) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
+      </p>
+      <p data-ng-if="opplan.item__description || opplan.operationplan__item__description">
+        {{opplan.item__description || opplan.operationplan__item__description}}&nbsp;
       </p>
       <p>{{opplan.operationplan__origin || opplan.origin}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
@@ -137,9 +140,6 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.operationplan__enddate"
           data-ng-model="opplan.operationplan__enddate" data-ng-change="changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)">
       </p>
-      <p data-ng-if="(opplan.inventory_status) !== ''">
-        {{ "inventory status"|translate }}&nbsp;{{opplan.inventory_status}}
-      </p>
     </div>
     <div data-ng-if="opplan.type === 'MO'">
       <p>
@@ -169,11 +169,17 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
+      <p data-ng-if="opplan.item__description || opplan.operationplan__item__description">
+        {{opplan.item__description || opplan.operationplan__item__description}}&nbsp;
+      </p>
       <p>{{ opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation }}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
           href="{{url_prefix}}/detail/input/operation/{{ admin_escape(opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
+      </p>
+      <p data-ng-if="opplan.operation__description || opplan.operationplan__operation__description">
+        {{opplan.operation__description || opplan.operationplan__operation__description}}&nbsp;
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal')}">
         <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</span>
@@ -205,9 +211,6 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="datetime-local" data-ng-focus="oldValue=opplan.operationplan__enddate"
           data-ng-model="opplan.operationplan__enddate" data-ng-change="changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)">
       </p>
-      <p data-ng-if="opplan.inventory_status !== ''">
-        {{ "inventory status"|translate }}&nbsp;{{opplan.inventory_status}}
-      </p>
     </div>
     <div data-no-drag data-ng-if="opplan.type === 'STCK'">
       <p>
@@ -217,6 +220,9 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           href="{{url_prefix}}/detail/input/buffer/{{ admin_escape(opplan.item__name + ' @ ' + opplan.location ) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
+      </p>
+      <p data-ng-if="opplan.item__description || opplan.operationplan__item__description">
+        {{opplan.item__description || opplan.operationplan__item__description}}&nbsp;
       </p>
       <p>{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</p>
     </div>
@@ -231,6 +237,9 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
+      </p>
+      <p data-ng-if="opplan.item__description || opplan.operationplan__item__description">
+        {{opplan.item__description || opplan.operationplan__item__description}}&nbsp;
       </p>
       <p>{{opplan.location}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"

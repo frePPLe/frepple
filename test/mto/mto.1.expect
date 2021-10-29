@@ -86,13 +86,13 @@ OPERATION	5 - make subassembly	2020-04-03T00:00:00	2020-04-10T00:00:00	10	confir
 OPERATION	Purchase 1 - component A @ factory from 1 - Supplier	2020-02-09T00:00:00	2020-02-16T00:00:00	1
 OPERATION	Purchase 1 - component B @ factory from 1 - Supplier	2020-02-09T00:00:00	2020-02-16T00:00:00	1
 OPERATION	Purchase 2 - component A @ factory from 2 - Supplier	2019-12-25T00:00:00	2020-01-01T00:00:00	100	mto2	confirmed
-OPERATION	Purchase 2 - component A @ factory from 2 - Supplier	2020-02-09T00:00:00	2020-02-16T00:00:00	1	mto1
+OPERATION	Purchase 2 - component A @ mto1 @ factory from 2 - Supplier	2020-02-09T00:00:00	2020-02-16T00:00:00	1	mto1
 OPERATION	Purchase 2 - component B @ factory from 2 - Supplier	2020-02-09T00:00:00	2020-02-16T00:00:00	1
+OPERATION	Purchase 3 - component A @ 6 @ factory from 3 - Supplier	2020-02-09T00:00:00	2020-02-16T00:00:00	1	6
 OPERATION	Purchase 3 - component A @ factory from 3 - Supplier	2019-12-25T00:00:00	2020-01-01T00:00:00	100	mto2	confirmed
-OPERATION	Purchase 3 - component A @ factory from 3 - Supplier	2020-02-09T00:00:00	2020-02-16T00:00:00	1	6
 OPERATION	Purchase 3 - component B @ factory from 3 - Supplier	2020-02-09T00:00:00	2020-02-16T00:00:00	1
 OPERATION	Purchase 4 - component A @ factory from 4 - Supplier	2019-12-25T00:00:00	2020-01-01T00:00:00	100	mto2	confirmed
-OPERATION	Purchase 4 - component A @ factory from 4 - Supplier	2020-02-09T00:00:00	2020-02-16T00:00:00	1	mto1
+OPERATION	Purchase 4 - component A @ mto1 @ factory from 4 - Supplier	2020-02-09T00:00:00	2020-02-16T00:00:00	1	mto1
 OPERATION	Purchase 4 - component B @ factory from 4 - Supplier	2020-02-09T00:00:00	2020-02-16T00:00:00	1
 OPERATION	Purchase 5 - component A @ factory from 5 - Supplier	2019-12-25T00:00:00	2020-01-01T00:00:00	100	mto2	confirmed
 PROBLEM	material excess	Buffer '2 - component A @ mto2 @ factory' has material excess of 100	2020-01-01T00:00:00 / 2030-12-31T00:00:00

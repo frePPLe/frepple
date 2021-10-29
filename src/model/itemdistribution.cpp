@@ -165,9 +165,9 @@ int OperationItemDistribution::initialize() {
   return x.typeReady();
 }
 
-Operation* OperationItemDistribution::findOrCreate(ItemDistribution* itemdist,
+Operation* OperationItemDistribution::findOrCreate(ItemDistribution* i,
                                                    Buffer* src, Buffer* dest) {
-  if (!itemdist || !src || !dest)
+  if (!i || !src || !dest)
     throw LogicException(
         "An OperationItemDistribution always needs to point to "
         "a ItemDistribution, a source buffer and a destination buffer");
@@ -183,13 +183,14 @@ Operation* OperationItemDistribution::findOrCreate(ItemDistribution* itemdist,
     o << " @ " << dest->getBatch();
   o << " from " << src->getLocation()->getName() << " to "
     << dest->getLocation()->getName();
+  if (i->getEffectiveStart()) o << " valid from " << i->getEffectiveStart();
   auto oper = Operation::find(o.str());
   if (oper) {
     if (!oper->hasType<OperationItemDistribution>())
       throw DataException("Name clash on operation " + o.str());
     return oper;
   } else
-    return new OperationItemDistribution(itemdist, src, dest);
+    return new OperationItemDistribution(i, src, dest);
 }
 
 OperationItemDistribution::OperationItemDistribution(ItemDistribution* i,
@@ -217,6 +218,7 @@ OperationItemDistribution::OperationItemDistribution(ItemDistribution* i,
   if (src && src->getLocation()) o << " from " << src->getLocation()->getName();
   if (dest && dest->getLocation())
     o << " to " << dest->getLocation()->getName();
+  if (i->getEffectiveStart()) o << " valid from " << i->getEffectiveStart();
   setName(o.str());
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());

@@ -189,8 +189,9 @@ OperationItemSupplier* OperationItemSupplier::findOrCreate(ItemSupplier* i,
         "An OperationItemSupplier always needs to point to "
         "a itemsupplier and a buffer");
   stringstream o;
-  o << "Purchase " << b->getItem() << " @ " << b->getLocation() << " from "
+  o << "Purchase " << b->getName() << " @ " << b->getLocation() << " from "
     << i->getSupplier()->getName();
+  if (i->getEffectiveStart()) o << " valid from " << i->getEffectiveStart();
   Operation* oper = Operation::find(o.str());
   if (oper) {
     // Reuse existing operation
@@ -212,6 +213,7 @@ OperationItemSupplier::OperationItemSupplier(ItemSupplier* i, Buffer* b)
         "a itemsupplier and a buffer");
   stringstream o;
   o << "Purchase " << b->getName() << " from " << i->getSupplier()->getName();
+  if (i->getEffectiveStart()) o << " valid from " << i->getEffectiveStart();
   setName(o.str());
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());

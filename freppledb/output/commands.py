@@ -144,14 +144,14 @@ class TruncatePlan(PlanTask):
                 delete from operationplanmaterial
                 using opplans
                 where status is distinct from 'closed'
-                  and status is distinct from 'confirmed' 
+                  and status is distinct from 'confirmed'
                   and opplans.reference = operationplan_id
                 ),
                 opplanres as (
                 delete from operationplanresource
                 using opplans
                 where status is distinct from 'closed'
-                  and status is distinct from 'confirmed' 
+                  and status is distinct from 'confirmed'
                   and opplans.reference = operationplan_id
                 )
                 delete from operationplan
@@ -973,7 +973,7 @@ class ComputePeriodOfCover(PlanTask):
                  ),
                  -- No inventory and no backlog: use the date of next consumer
                  (
-                 select greatest('0 days'::interval, least( 
+                 select greatest('0 days'::interval, least(
                      date_trunc('day', justify_interval(flowdate - %s - coalesce(operationplan.delay, '0 day'::interval))),
                      '999 days'::interval
                      ))

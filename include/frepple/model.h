@@ -3193,7 +3193,7 @@ inline ostream& operator<<(ostream& os, const OperationPlan* o) {
     if (o->getProposed())
       os << ")";
     else
-      os << ", " << o->getStatus() << ")";
+      os << ", " << o->getStatus() << ", " << o->getReference() << ")";
   } else
     os << "nullptr";
   return os;

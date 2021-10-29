@@ -4128,6 +4128,40 @@ class Item : public HasHierarchy<Item>, public HasDescription {
       throw DataException("Item cost must be positive");
   }
 
+  /* Return the weight of the item.
+   * The default value is 0.0.
+   */
+  double getWeight() const { return weight; }
+
+  /* Update the weight of the item. */
+  void setWeight(const double w) {
+    if (w >= 0)
+      weight = w;
+    else
+      throw DataException("Item weight must be positive");
+  }
+
+  /* Return the volume of the item.
+   * The default value is 0.0.
+   */
+  double getVolume() const { return volume; }
+
+  /* Update the volume of the item. */
+  void setVolume(const double v) {
+    if (v >= 0)
+      volume = v;
+    else
+      throw DataException("Item volume must be positive");
+  }
+
+  /* Returns the uom. */
+  string getUOM() const { return uom; }
+
+  /* Sets the uom field. */
+  void setUOM(const string& u) {
+    uom = u;
+  }
+
   /* Returns a constant reference to the list of items this supplier can
    * deliver. */
   const supplierlist& getSuppliers() const { return suppliers; }
@@ -4190,6 +4224,9 @@ class Item : public HasHierarchy<Item>, public HasDescription {
     HasHierarchy<Cls>::template registerFields<Cls>(m);
     HasDescription::registerFields<Cls>(m);
     m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost, 0);
+    m->addDoubleField<Cls>(Tags::volume, &Cls::getVolume, &Cls::setVolume, 0);
+    m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight, &Cls::setWeight, 0);
+    m->addStringField<Cls>(Tags::uom, &Cls::getUOM, &Cls::setUOM);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
     m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(
@@ -4218,6 +4255,15 @@ class Item : public HasHierarchy<Item>, public HasDescription {
 
   /* Cost of the item. */
   double cost = 0.0;
+
+  /* Volume of the item. */
+  double volume = 0.0;
+
+  /* Weight of the item. */
+  double weight = 0.0;
+
+  /* uom of the item. */
+  string uom;
 
   /* This is a list of suppliers this item has. */
   supplierlist suppliers;

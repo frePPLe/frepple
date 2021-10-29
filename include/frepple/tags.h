@@ -212,6 +212,7 @@ class Tags {
   static const Keyword transferbatch;
   static const Keyword type;
   static const Keyword unavailable;
+  static const Keyword uom;
   static const Keyword userexit_buffer;
   static const Keyword userexit_demand;
   static const Keyword userexit_flow;
@@ -221,6 +222,7 @@ class Tags {
   static const Keyword value;
   static const Keyword variable;
   static const Keyword verbose;
+  static const Keyword volume;
   static const Keyword weight;
   static const Keyword wip_produce_full_quantity;
 };

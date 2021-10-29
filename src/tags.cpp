@@ -213,6 +213,7 @@ const Keyword Tags::transferbatch("transferbatch");
 // This is required to support subclassing in the XML schema.
 const Keyword Tags::type("type", "xsi");
 const Keyword Tags::unavailable("unavailable");
+const Keyword Tags::uom("uom");
 const Keyword Tags::userexit_buffer("userexit_buffer");
 const Keyword Tags::userexit_demand("userexit_demand");
 const Keyword Tags::userexit_flow("userexit_flow");
@@ -222,6 +223,7 @@ const Keyword Tags::userexit_resource("userexit_resource");
 const Keyword Tags::value("value");
 const Keyword Tags::variable("variable");
 const Keyword Tags::verbose("verbose");
+const Keyword Tags::volume("volume");
 const Keyword Tags::weight("weight");
 const Keyword Tags::wip_produce_full_quantity("wip_produce_full_quantity");
 

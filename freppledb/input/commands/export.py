@@ -715,6 +715,9 @@ class exportItems(PlanTask):
                     if isinstance(i, frepple.item_mto)
                     else "make to stock",
                     i.source,
+                    i.uom,
+                    i.volume,
+                    i.weight,
                     cls.timestamp,
                 ]
                 for a in attrs:
@@ -730,8 +733,8 @@ class exportItems(PlanTask):
             execute_batch(
                 cursor,
                 """insert into item
-                (name,description,cost,category,subcategory,type,source,lastmodified,owner_id%s)
-                values (%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,null%s)
+                (name,description,cost,category,subcategory,type,source,uom,volume,weight,lastmodified,owner_id%s)
+                values (%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,null%s)
                 on conflict (name)
                 do update set
                   description=excluded.description,
@@ -740,6 +743,9 @@ class exportItems(PlanTask):
                   subcategory=excluded.subcategory,
                   type=excluded.type,
                   source=excluded.source,
+                  uom=excluded.uom,
+                  volume=excluded.volume,
+                  weight=excluded.weight,
                   lastmodified=excluded.lastmodified,
                   owner_id=excluded.owner_id
                   %s

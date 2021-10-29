@@ -353,6 +353,9 @@
         </xsd:complexType>
       </xsd:element>
       <xsd:element name="cost" type="positiveDouble" />
+      <xsd:element name="weight" type="positiveDouble" />
+      <xsd:element name="volume" type="positiveDouble" />
+      <xsd:element name="uom" type="xsd:normalizedString" />
       <xsd:element name="itemsuppliers" type="itemsupplierlist" />
       <xsd:element name="itemdistributions" type="itemdistributionlist" />
     </xsd:choice>

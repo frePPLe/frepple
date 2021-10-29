@@ -13,7 +13,7 @@ Docker container
 Basic installation
 ******************
 
-Use one of the following command to bring the frePPLe image to your local 
+Use one of the following command to bring the frePPLe image to your local
 docker repository:
 
 .. code-block:: none
@@ -24,8 +24,8 @@ docker repository:
    # Enterprise Edition: download image from portal and load into your registry
    docker load --input frepple*.tar
 
-| The container includes the frePPLe planning software, plus a web server. 
-| It does NOT include the required PostgreSQL database, which needs to provided 
+| The container includes the frePPLe planning software, plus a web server.
+| It does NOT include the required PostgreSQL database, which needs to provided
   as a separate service: see below.
 
 The image can be extended and customized using the following:
@@ -52,9 +52,9 @@ The image can be extended and customized using the following:
       | Contains the main configuration file djangosettings.py and the
         license file license.xml (for the Enterprise Edition).
 
-    * | /var/log/frepple: 
+    * | /var/log/frepple:
       | Contains log files of the application.
-    
+
     * | /var/log/apache2:
       | Log files of the web server.
 
@@ -70,7 +70,7 @@ Deployment with external PostgreSQL database
 
 The example below creates a container that is using the PostgreSQL database installed on
 the Docker host server.
-The container is called frepple-community-local, and you can access it with your browser 
+The container is called frepple-community-local, and you can access it with your browser
 on the URL http://localhost:9000/
 
 .. code-block:: none
@@ -83,13 +83,13 @@ on the URL http://localhost:9000/
      --name frepple-community-local \
      --publish 9000:80 \
      --detach \
-     frepple-community:latest 
+     frepple-community:latest
 
 ******************************
 Deployment with docker compose
 ******************************
 
-Here is a sample docker-compose file that defines 2 containers: 1) a postgres container 
+Here is a sample docker-compose file that defines 2 containers: 1) a postgres container
 to run the database and 2) a frepple web application server.
 
 You access the application with your browser on the URL http://localhost:9000/
@@ -98,7 +98,7 @@ The frepple log and configuration files are put in volumes (which allows to reus
 them between different releases of the frepple image).
 
 Note that the postgres database container comes with default settings. For production
-use you should update the configuration with the pgtune recommendations from 
+use you should update the configuration with the pgtune recommendations from
 https://pgtune.leopard.in.ua/
 
 .. code-block:: none
@@ -117,7 +117,7 @@ https://pgtune.leopard.in.ua/
       volumes:
         - log-apache-community:/var/log/apache2
         - log-frepple-community:/var/log/frepple
-        - config-community:/etc/frepple
+        - config-frepple-community:/etc/frepple
       environment:
         POSTGRES_HOST: frepple-community-postgres
         POSTGRES_PORT: 5432
@@ -162,7 +162,7 @@ image. Here is a an example dockerfile that adds a new frePPLe app (coded as a P
    COPY my-requirements.txt /
    COPY my-python-package /
 
-   # Add the license key for the Enterprise Edition to the container 
+   # Add the license key for the Enterprise Edition to the container
    COPY license.xml /etc/frepple
 
    # Install python dependencies and package
@@ -176,8 +176,8 @@ image. Here is a an example dockerfile that adds a new frePPLe app (coded as a P
 Running frepplectl commands on a container
 ******************************************
 
-It is possible to execute a frepplectl command (or any linux command) 
-on a running container. 
+It is possible to execute a frepplectl command (or any linux command)
+on a running container.
 
 .. code-block:: none
 

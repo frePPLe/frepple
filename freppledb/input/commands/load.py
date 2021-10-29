@@ -1080,7 +1080,8 @@ class loadBuffers(LoadTask):
                     """
                 select
                   case
-                  when batch is distinct from ''
+                  when batch is not null
+                    and batch is distinct from ''
                     and exists (select 1 from item where item.name = buffer.item_id and item.type = 'make to order')
                     then item_id || ' @ ' || batch || ' @ '||location_id
                   else
@@ -1100,7 +1101,8 @@ class loadBuffers(LoadTask):
                 from buffer
                 %s
                 group by case
-                  when batch is distinct from ''
+                  when batch is not null
+                    and batch is distinct from ''
                     and exists (select 1 from item where item.name = buffer.item_id and item.type = 'make to order')
                     then item_id || ' @ ' || batch || ' @ '||location_id
                   else

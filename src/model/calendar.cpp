@@ -105,27 +105,27 @@ Calendar::~Calendar() {
   }
 
   // Remove all references from locations
-  for (auto l = Location::begin(); l != Location::end(); ++l) {
-    if (l->getAvailable() == this) l->setAvailable(nullptr);
+  for (auto& l : Location::all()) {
+    if (l.getAvailable() == this) l.setAvailable(nullptr);
   }
 
   // Remove reference from buffers
-  for (auto b = Buffer::begin(); b != Buffer::end(); ++b) {
-    if (b->getMaximumCalendar() == this) b->setMaximumCalendar(nullptr);
-    if (b->getMinimumCalendar() == this) b->setMinimumCalendar(nullptr);
+  for (auto& b : Buffer::all()) {
+    if (b.getMaximumCalendar() == this) b.setMaximumCalendar(nullptr);
+    if (b.getMinimumCalendar() == this) b.setMinimumCalendar(nullptr);
   }
 
   // Remove references from resources
-  for (auto r = Resource::begin(); r != Resource::end(); ++r) {
-    if (r->getMaximumCalendar() == this) r->setMaximumCalendar(nullptr);
-    if (r->getEfficiencyCalendar() == this) r->setEfficiencyCalendar(nullptr);
-    if (r->getAvailable() == this) r->setAvailable(nullptr);
+  for (auto& r : Resource::all()) {
+    if (r.getMaximumCalendar() == this) r.setMaximumCalendar(nullptr);
+    if (r.getEfficiencyCalendar() == this) r.setEfficiencyCalendar(nullptr);
+    if (r.getAvailable() == this) r.setAvailable(nullptr);
   }
 
   // Remove references from operations
-  for (auto o = Operation::begin(); o != Operation::end(); ++o) {
-    if (o->getAvailable() == this) o->setAvailable(nullptr);
-    if (o->getSizeMinimumCalendar() == this) o->setSizeMinimumCalendar(nullptr);
+  for (auto& o : Operation::all()) {
+    if (o.getAvailable() == this) o.setAvailable(nullptr);
+    if (o.getSizeMinimumCalendar() == this) o.setSizeMinimumCalendar(nullptr);
   }
 
   // Remove reference on plan

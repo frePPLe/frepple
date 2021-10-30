@@ -20,6 +20,7 @@
 
 #define FREPPLE_CORE
 #include <climits>
+
 #include "frepple/model.h"
 
 // Uncomment the following line to create debugging statements during the
@@ -43,8 +44,7 @@ void HasLevel::computeLevels() {
   // waiting for the lock. In that case the while loop will be skipped.
   while (recomputeLevels) {
     // Force creation of all delivery operations
-    for (auto gdem = Demand::begin(); gdem != Demand::end(); ++gdem)
-      gdem->getDeliveryOperation();
+    for (auto& gdem : Demand::all()) gdem.getDeliveryOperation();
 
     // Reset current levels on buffers, resources and operations.
     // Creating the producing operations of the buffers can cause new buffers
@@ -52,17 +52,15 @@ void HasLevel::computeLevels() {
     // This isn't the most efficient loop, but it remains cheap and fast...
     auto numbufs = Buffer::size();
     while (true) {
-      for (auto gop = Operation::begin(); gop != Operation::end(); ++gop) {
-        gop->cluster = 0;
-        gop->lvl = -1;
-        for (auto fl = gop->getFlows().begin(); fl != gop->getFlows().end();
-             ++fl)
-          fl->getBuffer();
+      for (auto& gop : Operation::all()) {
+        gop.cluster = 0;
+        gop.lvl = -1;
+        for (auto& fl : gop.getFlows()) fl.getBuffer();
       }
-      for (auto gbuf = Buffer::begin(); gbuf != Buffer::end(); ++gbuf) {
-        gbuf->cluster = 0;
-        gbuf->lvl = -1;
-        gbuf->getProducingOperation();
+      for (auto& gbuf : Buffer::all()) {
+        gbuf.cluster = 0;
+        gbuf.lvl = -1;
+        gbuf.getProducingOperation();
       }
       auto numbufs_after = Buffer::size();
       if (numbufs == numbufs_after)
@@ -70,9 +68,9 @@ void HasLevel::computeLevels() {
       else
         numbufs = numbufs_after;
     }
-    for (auto gres = Resource::begin(); gres != Resource::end(); ++gres) {
-      gres->cluster = 0;
-      gres->lvl = -1;
+    for (auto& gres : Resource::all()) {
+      gres.cluster = 0;
+      gres.lvl = -1;
     }
 
     // When during the computation below the recomputeLevels flag is switched
@@ -91,16 +89,16 @@ void HasLevel::computeLevels() {
     numberOfLevels = 0;
     numberOfClusters = 0;
     map<Operation*, short> visited;
-    for (auto g = Operation::begin(); g != Operation::end(); ++g) {
+    for (auto& g : Operation::all()) {
       // Select a new cluster number
-      if (g->cluster)
-        cur_cluster = g->cluster;
+      if (g.cluster)
+        cur_cluster = g.cluster;
       else {
         // Detect hanging operations
-        if (g->getFlows().empty() && g->getLoads().empty() &&
-            g->getSuperOperations().empty() && g->getSubOperations().empty()) {
+        if (g.getFlows().empty() && g.getLoads().empty() &&
+            g.getSuperOperations().empty() && g.getSubOperations().empty()) {
           // Cluster 0 keeps all dangling operations
-          g->lvl = 0;
+          g.lvl = 0;
           continue;
         }
         cur_cluster = ++numberOfClusters;
@@ -119,17 +117,17 @@ void HasLevel::computeLevels() {
       //   - Have a producing flow on the operation itself
       //     or on any of its sub operations
       search_level = false;
-      if (g->getSuperOperations().empty()) {
+      if (g.getSuperOperations().empty()) {
         search_level = true;
         // Does the operation itself have producing flows?
-        for (auto fl = g->getFlows().begin();
-             fl != g->getFlows().end() && search_level; ++fl)
+        for (auto fl = g.getFlows().begin();
+             fl != g.getFlows().end() && search_level; ++fl)
           if (fl->isProducer() && fl->getBuffer()->hasConsumingFlows())
             search_level = false;
         if (search_level) {
           // Do suboperations have a producing flow?
-          for (auto i = g->getSubOperations().rbegin();
-               i != g->getSubOperations().rend() && search_level; ++i)
+          for (auto i = g.getSubOperations().rbegin();
+               i != g.getSubOperations().rend() && search_level; ++i)
             for (auto fl = (*i)->getOperation()->getFlows().begin();
                  fl != (*i)->getOperation()->getFlows().end() && search_level;
                  ++fl)
@@ -139,16 +137,16 @@ void HasLevel::computeLevels() {
       }
 
       // If both the level and the cluster are de-activated, then we can move on
-      if (!search_level && g->cluster) continue;
+      if (!search_level && g.cluster) continue;
 
       // Start recursing
       // Note that as soon as push an operation on the stack we set its
       // cluster and/or level. This is avoid that operations are needlessly
       // pushed a second time on the stack.
-      opstack.push(make_pair(&*g, search_level ? 0 : -1));
+      opstack.push(make_pair(&g, search_level ? 0 : -1));
       visited.clear();
-      g->cluster = cur_cluster;
-      if (search_level) g->lvl = 0;
+      g.cluster = cur_cluster;
+      if (search_level) g.lvl = 0;
       while (!opstack.empty()) {
         // Take the top of the stack
         cur_oper = opstack.top().first;
@@ -305,10 +303,10 @@ void HasLevel::computeLevels() {
     // Copy the level from generic buffers to the specific mto-buffers
     // TODO this logic will no longer apply when the mto-buffers can
     // have their own producing operation.
-    for (auto gbuf = Buffer::begin(); gbuf != Buffer::end(); ++gbuf) {
-      if (!gbuf->getBatch() || !gbuf->getItem()) continue;
+    for (auto& gbuf : Buffer::all()) {
+      if (!gbuf.getBatch() || !gbuf.getItem()) continue;
       Buffer* generic = nullptr;
-      Item::bufferIterator buf_iter(gbuf->getItem());
+      Item::bufferIterator buf_iter(gbuf.getItem());
       while (Buffer* tmpbuf = buf_iter.next()) {
         if (!tmpbuf->getBatch()) {
           generic = tmpbuf;
@@ -316,7 +314,7 @@ void HasLevel::computeLevels() {
         }
       }
       if (generic) {
-        Item::bufferIterator buf_iter(gbuf->getItem());
+        Item::bufferIterator buf_iter(gbuf.getItem());
         while (Buffer* tmpbuf = buf_iter.next()) {
           if (tmpbuf->getBatch()) tmpbuf->copyLevelAndCluster(generic);
         }

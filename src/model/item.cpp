@@ -55,8 +55,8 @@ Item::~Item() {
 
   // Remove references from the demands
   // TODO rewrite using item-based demand iterator
-  for (auto l = Demand::begin(); l != Demand::end(); ++l)
-    if (l->getItem() == this) l->setItem(nullptr);
+  for (auto& l : Demand::all())
+    if (l.getItem() == this) l.setItem(nullptr);
 
   // Remove all item operations referencing this item
   while (firstOperation) delete firstOperation;

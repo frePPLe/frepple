@@ -271,14 +271,12 @@ Resource::~Resource() {
   if (setup) delete setup;
 
   // Clean up references on the itemsupplier and itemdistribution models
-  for (Item::iterator itm_iter = Item::begin(); itm_iter != Item::end();
-       ++itm_iter) {
-    Item::supplierlist::const_iterator itmsup_iter =
-        itm_iter->getSupplierIterator();
+  for (auto& i : Item::all()) {
+    Item::supplierlist::const_iterator itmsup_iter = i.getSupplierIterator();
     while (ItemSupplier* itmsup = itmsup_iter.next())
       if (itmsup->getResource() == this) itmsup->setResource(nullptr);
     Item::distributionlist::const_iterator itmdist_iter =
-        itm_iter->getDistributionIterator();
+        i.getDistributionIterator();
     while (ItemDistribution* itmdist = itmdist_iter.next())
       if (itmdist->getResource() == this) itmdist->setResource(nullptr);
   }

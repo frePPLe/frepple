@@ -2006,8 +2006,7 @@ void OperationPlan::setQuantityCompleted(double q) {
 }
 
 void OperationPlan::clear() {
-  for (auto gop = Operation::begin(); gop != Operation::end(); ++gop)
-    gop->deleteOperationPlans();
+  for (auto& o : Operation::all()) o.deleteOperationPlans();
 }
 
 PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args) {

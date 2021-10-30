@@ -49,8 +49,8 @@ int CustomerDefault::initialize() {
 
 Customer::~Customer() {
   // Remove all references from demands to this customer
-  for (auto i = Demand::begin(); i != Demand::end(); ++i)
-    if (i->getCustomer() == this) i->setCustomer(nullptr);
+  for (auto& i : Demand::all())
+    if (i.getCustomer() == this) i.setCustomer(nullptr);
 }
 
 }  // namespace frepple

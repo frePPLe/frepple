@@ -244,22 +244,22 @@ void SolverCreate::SolverData::commit() {
       buffer_solve_shortages_only = false;
       for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl) {
         // Step 1: Allocate from generic-MTO buffers to MTO-batch buffers
-        for (auto b = Buffer::begin(); b != Buffer::end(); ++b) {
-          if (b->getLevel() != lvl ||
-              (cluster != -1 && cluster != b->getCluster()) || !b->getItem() ||
-              !b->getItem()->hasType<ItemMTO>() || !b->getBatch().empty())
+        for (auto& b : Buffer::all()) {
+          if (b.getLevel() != lvl ||
+              (cluster != -1 && cluster != b.getCluster()) || !b.getItem() ||
+              !b.getItem()->hasType<ItemMTO>() || !b.getBatch().empty())
             // Not your turn yet...
             continue;
 
           // Loop while we still have available material
           bool changed = true;
           while (changed &&
-                 b->getOnHand(Date::infiniteFuture) > ROUNDING_ERROR) {
+                 b.getOnHand(Date::infiniteFuture) > ROUNDING_ERROR) {
             changed = false;
             // Find the first available material
             OperationPlan::flowplanlist::Event* producer = nullptr;
             double available = 0.0;
-            for (auto& flpln : b->getFlowPlans()) {
+            for (auto& flpln : b.getFlowPlans()) {
               if (flpln.getQuantity() <= 0) continue;
               available = flpln.getAvailable();
               if (available > ROUNDING_ERROR) {
@@ -272,7 +272,7 @@ void SolverCreate::SolverData::commit() {
             // Loop through all batch-MTO buffers and see which one has the
             // earliest requirement for that material
             FlowPlan* consumer = nullptr;
-            auto bufiter = b->getItem()->getBufferIterator();
+            auto bufiter = b.getItem()->getBufferIterator();
             while (auto batchbuf = bufiter.next()) {
               if (batchbuf->getBatch().empty()) continue;
               for (auto& flpln : batchbuf->getFlowPlans()) {
@@ -292,15 +292,15 @@ void SolverCreate::SolverData::commit() {
             changed = true;
             if (available > -consumer->getQuantity()) {
               if (getLogLevel() > 1)
-                logger << solver->indentlevel << "  Buffer '" << b->getName()
+                logger << solver->indentlevel << "  Buffer '" << b
                        << "' allocates from generic MTO buffer '"
                        << consumer->getBuffer()->getName()
                        << "' : " << -consumer->getQuantity() << " on "
                        << consumer->getDate() << endl;
-              consumer->setBuffer(&*b);
+              consumer->setBuffer(&b);
             } else {
               if (getLogLevel() > 1)
-                logger << solver->indentlevel << "  Buffer '" << b->getName()
+                logger << solver->indentlevel << "  Buffer '" << b
                        << "' allocates from generic MTO buffer '"
                        << consumer->getBuffer()->getName()
                        << "' : " << available << " on " << consumer->getDate()
@@ -308,16 +308,16 @@ void SolverCreate::SolverData::commit() {
               auto extraflpln = new FlowPlan(consumer->getOperationPlan(),
                                              consumer->getFlow(),
                                              consumer->getDate(), -available);
-              extraflpln->setBuffer(&*b);
+              extraflpln->setBuffer(&b);
               consumer->setQuantityRaw(consumer->getQuantity() + available);
             }
           }
         }
 
         // Step 2: propagate through this level of buffers
-        for (auto b = Buffer::begin(); b != Buffer::end(); ++b) {
-          if (b->getLevel() != lvl ||
-              (cluster != -1 && cluster != b->getCluster()))
+        for (auto& b : Buffer::all()) {
+          if (b.getLevel() != lvl ||
+              (cluster != -1 && cluster != b.getCluster()))
             // Not your turn yet...
             continue;
 
@@ -332,10 +332,10 @@ void SolverCreate::SolverData::commit() {
           state->curOwnerOpplan = nullptr;
           state->a_qty = 0;
           try {
-            b->solve(*solver, this);
+            b.solve(*solver, this);
             getCommandManager()->commit();
           } catch (const exception& e) {
-            logger << "Error propagating through buffer '" << b->getName()
+            logger << "Error propagating through buffer '" << b
                    << "': " << e.what() << endl;
             getCommandManager()->rollback();
           }
@@ -448,9 +448,9 @@ void SolverCreate::SolverData::commit() {
     }
 
     // Operation batching postprocessing
-    for (auto o = Operation::begin(); o != Operation::end(); ++o) {
-      if (cluster == -1 || o->getCluster() == cluster)
-        solver->createsBatches(&*o, this);
+    for (auto& o : Operation::all()) {
+      if (cluster == -1 || o.getCluster() == cluster)
+        solver->createsBatches(&o, this);
     }
 
     // Clean the list of demands of this cluster
@@ -475,8 +475,8 @@ void SolverCreate::SolverData::commit() {
     }
 
     // Clean up the operationplans of this cluster
-    for (auto f = Operation::begin(); f != Operation::end(); ++f)
-      if (f->getCluster() == cluster) f->deleteOperationPlans();
+    for (auto& f : Operation::all())
+      if (f.getCluster() == cluster) f.deleteOperationPlans();
 
     // Clean the list of demands of this cluster
     demands->clear();
@@ -495,15 +495,16 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
     logger << "Start safety stock replenishment pass for cluster " << cluster
            << endl;
   vector<list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
-  for (auto buf = Buffer::begin(); buf != Buffer::end(); ++buf)
-    if ((buf->getCluster() == cluster || cluster == -1) &&
-        !buf->hasType<BufferInfinite>() && buf->getProducingOperation() &&
-        (buf->getMinimum() || buf->getMinimumCalendar() ||
-         buf->getFlowPlans().begin() != buf->getFlowPlans().end()))
-      bufs[(buf->getLevel() >= 0) ? buf->getLevel() : 0].push_back(&*buf);
+  for (auto& buf : Buffer::all())
+    if ((buf.getCluster() == cluster || cluster == -1) &&
+        !buf.hasType<BufferInfinite>() && buf.getProducingOperation() &&
+        (buf.getMinimum() || buf.getMinimumCalendar() ||
+         buf.getFlowPlans().begin() != buf.getFlowPlans().end()))
+      bufs[(buf.getLevel() >= 0) ? buf.getLevel() : 0].push_back(&buf);
   State* mystate = state;
-  for (auto b_list = bufs.begin(); b_list != bufs.end(); ++b_list)
-    for (auto b = b_list->begin(); b != b_list->end(); ++b) try {
+  for (auto& b_list : bufs)
+    for (auto& b : b_list) {
+      try {
         state->curBuffer = nullptr;
         // A quantity of -1 is a flag for the buffer solver to solve safety
         // stock.
@@ -515,12 +516,12 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
         state->curDemand = nullptr;
         state->curOwnerOpplan = nullptr;
         buffer_solve_shortages_only = false;
-        state->curBatch = (*b)->getBatch();
+        state->curBatch = (*b).getBatch();
         // Call the buffer safety stock solver
         iteration_count = 0;
-        (*b)->solve(*solver, this);
+        b->solve(*solver, this);
         // Check for excess
-        (*b)->solve(cleanup, this);
+        b->solve(cleanup, this);
         getCommandManager()->commit();
       } catch (const bad_exception&) {
         logger << "Error: bad exception solving safety stock for " << *b
@@ -538,7 +539,7 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
         while (state > mystate) pop();
         getCommandManager()->rollback();
       }
-
+    }
   if (getLogLevel() > 0)
     logger << "Finished safety stock replenishment pass" << endl;
   safety_stock_planning = false;
@@ -567,23 +568,23 @@ void SolverCreate::solve(void* v) {
   demands_per_cluster.resize(cl);
   if (!getConstraints()) {
     // Dumb unconstrained plan is running in a single thread
-    for (auto i = Demand::begin(); i != Demand::end(); ++i)
-      if (i->getQuantity() > 0 && (i->getStatus() == Demand::status::OPEN ||
-                                   i->getStatus() == Demand::status::QUOTE))
-        demands_per_cluster[0].push_back(&*i);
+    for (auto& i : Demand::all())
+      if (i.getQuantity() > 0 && (i.getStatus() == Demand::status::OPEN ||
+                                  i.getStatus() == Demand::status::QUOTE))
+        demands_per_cluster[0].push_back(&i);
   } else if (cluster == -1 && !userexit_nextdemand) {
     // Many clusters to solve
-    for (auto i = Demand::begin(); i != Demand::end(); ++i)
-      if (i->getQuantity() > 0 && (i->getStatus() == Demand::status::OPEN ||
-                                   i->getStatus() == Demand::status::QUOTE))
-        demands_per_cluster[i->getCluster()].push_back(&*i);
+    for (auto& i : Demand::all())
+      if (i.getQuantity() > 0 && (i.getStatus() == Demand::status::OPEN ||
+                                  i.getStatus() == Demand::status::QUOTE))
+        demands_per_cluster[i.getCluster()].push_back(&i);
   } else if (!userexit_nextdemand) {
     // Only a single cluster to plan
-    for (auto i = Demand::begin(); i != Demand::end(); ++i)
-      if (i->getCluster() == cluster && i->getQuantity() > 0 &&
-          (i->getStatus() == Demand::status::OPEN ||
-           i->getStatus() == Demand::status::QUOTE))
-        demands_per_cluster[0].push_back(&*i);
+    for (auto& i : Demand::all())
+      if (i.getCluster() == cluster && i.getQuantity() > 0 &&
+          (i.getStatus() == Demand::status::OPEN ||
+           i.getStatus() == Demand::status::QUOTE))
+        demands_per_cluster[0].push_back(&i);
   }
 
   // Delete of operationplans
@@ -767,10 +768,10 @@ void SolverPropagateStatus::solve(void* v) {
   bool log = getLogLevel() > 0;
   while (true) {
     bool operationsfound = false;
-    for (auto oper = Operation::begin(); oper != Operation::end(); ++oper) {
-      if (oper->getLevel() != lvl) continue;
+    for (auto& oper : Operation::all()) {
+      if (oper.getLevel() != lvl) continue;
       operationsfound = true;
-      for (auto opplan = oper->getOperationPlans();
+      for (auto opplan = oper.getOperationPlans();
            opplan != OperationPlan::end(); ++opplan) {
         if (opplan->getSubOperationPlans() == OperationPlan::end() &&
             (opplan->getClosed() || opplan->getCompleted()))

@@ -80,8 +80,8 @@ SetupMatrix::~SetupMatrix() {
   while (firstRule) delete firstRule;
 
   // Remove all references to this setup matrix from resources
-  for (auto m = Resource::begin(); m != Resource::end(); ++m)
-    if (m->getSetupMatrix() == this) m->setSetupMatrix(nullptr);
+  for (auto& m : Resource::all())
+    if (m.getSetupMatrix() == this) m.setSetupMatrix(nullptr);
 }
 
 Object* SetupMatrixRule::reader(const MetaClass* cat, const DataValueDict& atts,
@@ -254,9 +254,9 @@ void SetupMatrixRule::updateExpression() {
     string msg("Invalid setup matrix rule \"" + tmp + "\" on setup matrix \"" +
                getSetupMatrix()->getName() + "\"");
     Resource* rsrc = nullptr;
-    for (auto r = Resource::begin(); r != Resource::end(); ++r)
-      if (r->getSetupMatrix() == getSetupMatrix()) {
-        rsrc = &*r;
+    for (auto& r : Resource::all())
+      if (r.getSetupMatrix() == getSetupMatrix()) {
+        rsrc = &r;
         break;
       }
     if (rsrc)

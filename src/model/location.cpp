@@ -79,12 +79,12 @@ Location::~Location() {
   }
 
   // Remove all references from demands to this location
-  for (auto dmd = Demand::begin(); dmd != Demand::end(); ++dmd)
-    if (dmd->getLocation() == this) dmd->setLocation(nullptr);
+  for (auto& dmd : Demand::all())
+    if (dmd.getLocation() == this) dmd.setLocation(nullptr);
 
   // Remove all item suppliers referencing this location
-  for (auto sup = Supplier::begin(); sup != Supplier::end(); ++sup) {
-    for (auto it = sup->getItems().begin(); it != sup->getItems().end();) {
+  for (auto& sup : Supplier::all()) {
+    for (auto it = sup.getItems().begin(); it != sup.getItems().end();) {
       if (it->getLocation() == this) {
         const ItemSupplier* itemsup = &*it;
         ++it;  // Advance iterator before the delete
@@ -95,9 +95,9 @@ Location::~Location() {
   }
 
   // Remove all item distributions referencing this location
-  for (auto it = Item::begin(); it != Item::end(); ++it) {
-    for (auto dist = it->getDistributions().begin();
-         dist != it->getDistributions().end();) {
+  for (auto& it : Item::all()) {
+    for (auto dist = it.getDistributions().begin();
+         dist != it.getDistributions().end();) {
       if (dist->getOrigin() == this) {
         const ItemDistribution* itemdist = &*dist;
         ++dist;  // Advance iterator before the delete

@@ -52,9 +52,9 @@ Skill::~Skill() {
   // of the Association list class.
 
   // Clean up the references on the load models
-  for (auto o = Operation::begin(); o != Operation::end(); ++o)
-    for (auto l = o->getLoads().begin(); l != o->getLoads().end(); ++l)
-      if (l->getSkill() == this) const_cast<Load&>(*l).setSkill(nullptr);
+  for (auto& o : Operation::all())
+    for (auto& l : o.getLoads())
+      if (l.getSkill() == this) const_cast<Load&>(l).setSkill(nullptr);
 }
 
 }  // namespace frepple

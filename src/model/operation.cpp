@@ -134,12 +134,12 @@ Operation::~Operation() {
   }
 
   // Remove the reference to this operation from all demands
-  for (auto l = Demand::begin(); l != Demand::end(); ++l)
-    if (l->getOperation() == this) l->setOperation(nullptr);
+  for (auto& l : Demand::all())
+    if (l.getOperation() == this) l.setOperation(nullptr);
 
   // Remove the reference to this operation from all buffers
-  for (auto m = Buffer::begin(); m != Buffer::end(); ++m)
-    if (m->getProducingOperation() == this) m->setProducingOperation(nullptr);
+  for (auto& m : Buffer::all())
+    if (m.getProducingOperation() == this) m.setProducingOperation(nullptr);
 
   // Remove the operation from its super-operations and sub-operations
   // Note that we are not using a for-loop since our function is actually

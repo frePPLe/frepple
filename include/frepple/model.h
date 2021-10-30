@@ -4154,13 +4154,15 @@ class Item : public HasHierarchy<Item>, public HasDescription {
       throw DataException("Item volume must be positive");
   }
 
-  /* Returns the uom. */
-  string getUOM() const { return uom; }
+  /* Returns the unit of measure. */
+  PooledString getUOM() const { return uom; }
+
+  const string& getUOMString() const { return uom; }
 
   /* Sets the uom field. */
-  void setUOM(const string& u) {
-    uom = u;
-  }
+  void setUOM(const PooledString& u) { uom = u; }
+
+  void setUOM(const string& u) { uom = u; }
 
   /* Returns a constant reference to the list of items this supplier can
    * deliver. */
@@ -4226,7 +4228,7 @@ class Item : public HasHierarchy<Item>, public HasDescription {
     m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost, 0);
     m->addDoubleField<Cls>(Tags::volume, &Cls::getVolume, &Cls::setVolume, 0);
     m->addDoubleField<Cls>(Tags::weight, &Cls::getWeight, &Cls::setWeight, 0);
-    m->addStringField<Cls>(Tags::uom, &Cls::getUOM, &Cls::setUOM);
+    m->addStringRefField<Cls>(Tags::uom, &Cls::getUOMString, &Cls::setUOM);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
     m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(
@@ -4263,7 +4265,7 @@ class Item : public HasHierarchy<Item>, public HasDescription {
   double weight = 0.0;
 
   /* uom of the item. */
-  string uom;
+  PooledString uom;
 
   /* This is a list of suppliers this item has. */
   supplierlist suppliers;

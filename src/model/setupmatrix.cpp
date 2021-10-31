@@ -194,7 +194,7 @@ void SetupMatrixRule::updateSort() {
         (prevRule && prevRule->priority == priority)) {
       ostringstream o;
       o << "Duplicate rules with priority " << priority << " in setup matrix '"
-        << matrix->getName() << "'";
+        << matrix << "'";
       throw DataException(o.str());
     } else if (nextRule && nextRule->priority < priority) {
       // Move a position later in the list

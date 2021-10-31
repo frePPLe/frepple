@@ -41,11 +41,11 @@ void SolverCreate::solve(const Resource* res, void* v) {
   // Message
   if (getLogLevel() > 1) {
     if (!data->constrainedPlanning || !isConstrained())
-      logger << ++indentlevel << "Resource '" << res->getName()
+      logger << ++indentlevel << "Resource '" << res
              << "' is asked in unconstrained mode: " << (-data->state->q_qty)
              << "  " << data->state->q_operationplan->getDates() << endl;
     else
-      logger << ++indentlevel << "Resource '" << res->getName()
+      logger << ++indentlevel << "Resource '" << res
              << "' is asked: " << (-data->state->q_qty) << "  "
              << data->state->q_operationplan->getDates() << endl;
   }

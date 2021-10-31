@@ -146,7 +146,7 @@ void SolverCreate::chooseResource(
       double deltaPenalty = data->state->a_penalty - beforePenalty;
       // Message
       if (loglevel > 1)
-        logger << indentlevel << "Operation '" << l->getOperation()->getName()
+        logger << indentlevel << "Operation '" << l->getOperation()
                << "' evaluates alternate '" << res << "': cost " << deltaCost
                << ", penalty " << deltaPenalty << endl;
       data->state->a_cost = beforeCost;
@@ -179,7 +179,7 @@ void SolverCreate::chooseResource(
         bestAlternateQuantity = lplan->getOperationPlan()->getQuantity();
       }
     } else if (loglevel > 1)
-      logger << indentlevel << "Operation '" << l->getOperation()->getName()
+      logger << indentlevel << "Operation '" << l->getOperation()
              << "' evaluates alternate '" << lplan->getResource()
              << "': not available before " << data->state->a_date << endl;
 
@@ -202,7 +202,7 @@ void SolverCreate::chooseResource(
   if (bestAlternateSelection) {
     // Message
     if (loglevel > 1)
-      logger << indentlevel << "  Operation '" << l->getOperation()->getName()
+      logger << indentlevel << "  Operation '" << l->getOperation()
              << "' chooses alternate '" << bestAlternateSelection << "' "
              << l->getSearch() << endl;
 
@@ -369,7 +369,7 @@ void SolverCreate::solve(const Load* l, void* v) {
         double deltaPenalty = data->state->a_penalty - beforePenalty;
         // Message
         if (loglevel > 1 && search != SearchMode::PRIORITY)
-          logger << indentlevel << "Operation '" << l->getOperation()->getName()
+          logger << indentlevel << "Operation '" << l->getOperation()
                  << "' evaluates alternate '" << curload->getResource()
                  << "': cost " << deltaCost << ", penalty " << deltaPenalty
                  << endl;
@@ -377,9 +377,9 @@ void SolverCreate::solve(const Load* l, void* v) {
           // Zero cost and zero penalty on this alternate. It won't get any
           // better than this, so we accept this alternate.
           if (loglevel > 1)
-            logger << indentlevel << "Operation '"
-                   << l->getOperation()->getName() << "' chooses alternate '"
-                   << curload->getResource() << "' " << search << endl;
+            logger << indentlevel << "Operation '" << l->getOperation()
+                   << "' chooses alternate '" << curload->getResource() << "' "
+                   << search << endl;
           // Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;
           data->logConstraints = originalLogConstraints;
@@ -413,7 +413,7 @@ void SolverCreate::solve(const Load* l, void* v) {
         }
       }
     } else if (loglevel > 1 && search != SearchMode::PRIORITY)
-      logger << indentlevel << "Operation '" << l->getOperation()->getName()
+      logger << indentlevel << "Operation '" << l->getOperation()
              << "' evaluates alternate '" << curload->getResource()
              << "': not available before " << data->state->a_date << endl;
 
@@ -426,8 +426,8 @@ void SolverCreate::solve(const Load* l, void* v) {
     if (++i != thealternates.end() && loglevel > 1 &&
         search == SearchMode::PRIORITY)
       logger << indentlevel << "  Alternate load switches from '"
-             << curload->getResource()->getName() << "' to '"
-             << (*i)->getResource()->getName() << "'" << endl;
+             << curload->getResource() << "' to '" << (*i)->getResource() << "'"
+             << endl;
   }
 
   // 5) Unconstrained plan: plan on the first alternate
@@ -443,7 +443,7 @@ void SolverCreate::solve(const Load* l, void* v) {
       (search != SearchMode::PRIORITY && bestAlternateSelection)) {
     // Message
     if (loglevel > 1)
-      logger << indentlevel << "  Operation '" << l->getOperation()->getName()
+      logger << indentlevel << "  Operation '" << l->getOperation()
              << "' chooses alternate '" << bestAlternateSelection->getResource()
              << "' " << search << endl;
 

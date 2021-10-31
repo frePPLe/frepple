@@ -49,8 +49,8 @@ void SolverCreate::solve(const Demand* l, void* v) {
 
     // Message
     if (loglevel > 0) {
-      logger << "Planning demand '" << l->getName() << "': " << l->getPriority()
-             << ", " << l->getDue() << ", " << l->getQuantity();
+      logger << "Planning demand '" << l << "': " << l->getPriority() << ", "
+             << l->getDue() << ", " << l->getQuantity();
       if (!data->constrainedPlanning || !isConstrained())
         logger << " in unconstrained mode";
       logger << endl;
@@ -430,8 +430,8 @@ void SolverCreate::solve(const Demand* l, void* v) {
           break;
 
         if (getLogLevel() > 1)
-          logger << indentlevel << "Changing demand location for "
-                 << l->getName() << " from " << l->getLocation() << " to "
+          logger << indentlevel << "Changing demand location for " << l
+                 << " from " << l->getLocation() << " to "
                  << sortedLocation.front().first << endl;
 
         // Prepare for planning on the next location

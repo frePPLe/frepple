@@ -54,7 +54,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
 
   // Message
   if (getLogLevel() > 1)
-    logger << ++indentlevel << "Buffer '" << b->getName()
+    logger << ++indentlevel << "Buffer '" << b
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date << endl;
 
@@ -81,7 +81,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     }
     if (getLogLevel() > 1) {
       logger << indentlevel << "Warning: " << o.str() << endl;
-      logger << indentlevel-- << "Buffer '" << b->getName()
+      logger << indentlevel-- << "Buffer '" << b
              << "' answers: " << data->state->a_qty;
       if (!data->state->a_qty) logger << "  " << data->state->a_date;
       logger << endl;
@@ -585,7 +585,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
 
   // Message
   if (getLogLevel() > 1) {
-    logger << indentlevel-- << "Buffer '" << b->getName()
+    logger << indentlevel-- << "Buffer '" << b
            << "' answers: " << data->state->a_qty;
     if (!data->state->a_qty) logger << "  " << data->state->a_date;
     logger << endl;
@@ -599,7 +599,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
   // Message
   if (getLogLevel() > 1) {
     indentlevel.level = 0;
-    logger << ++indentlevel << "Buffer '" << b->getName() << "' solves for "
+    logger << ++indentlevel << "Buffer '" << b << "' solves for "
            << (shortagesonly ? "shortages" : "safety stock") << endl;
   }
 
@@ -777,7 +777,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
 
   // Message
   if (getLogLevel() > 1)
-    logger << indentlevel-- << "Buffer '" << b->getName() << "' solved for "
+    logger << indentlevel-- << "Buffer '" << b << "' solved for "
            << (shortagesonly ? "shortages" : "safety stock") << endl;
 }
 

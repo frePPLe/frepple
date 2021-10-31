@@ -612,7 +612,7 @@ void SolverCreate::solve(const Operation* oper, void* v) {
 
   // Message
   if (getLogLevel() > 1)
-    logger << ++indentlevel << "Operation '" << oper->getName()
+    logger << ++indentlevel << "Operation '" << oper
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date << endl;
 
@@ -647,7 +647,7 @@ void SolverCreate::solve(const Operation* oper, void* v) {
         else
           ask_early = Duration(0L);
         if (getLogLevel() > 1)
-          logger << indentlevel << "Operation '" << oper->getName()
+          logger << indentlevel << "Operation '" << oper
                  << "' repeats ask with smaller post-operation delay: "
                  << asked_qty << "  " << (asked_date - ask_early) << endl;
       }
@@ -656,7 +656,7 @@ void SolverCreate::solve(const Operation* oper, void* v) {
 
   // Message
   if (getLogLevel() > 1) {
-    logger << indentlevel-- << "Operation '" << oper->getName()
+    logger << indentlevel-- << "Operation '" << oper
            << "' answers: " << data->state->a_qty;
     if (!data->state->a_qty) logger << "  " << data->state->a_date;
     logger << endl;
@@ -711,7 +711,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
       }
       if (getLogLevel() > 1) {
         logger << indentlevel << problemtext << endl;
-        logger << indentlevel << "Operation '" << oper->getName()
+        logger << indentlevel << "Operation '" << oper
                << "' answers: " << data->state->a_qty;
         if (!data->state->a_qty) logger << "  " << data->state->a_date;
         logger << endl;
@@ -967,10 +967,10 @@ void SolverCreate::solve(const OperationItemSupplier* o, void* v) {
       data->state->a_qty = 0;
       data->state->a_date = Date::infiniteFuture;
       if (getLogLevel() > 1) {
-        logger << ++indentlevel << "Operation '" << o->getName()
+        logger << ++indentlevel << "Operation '" << o
                << "' is asked: " << data->state->q_qty << "  "
                << data->state->q_date << endl;
-        logger << indentlevel-- << "Purchasing operation '" << o->getName()
+        logger << indentlevel-- << "Purchasing operation '" << o
                << "' replies 0. Requested qty/date: " << data->state->q_qty
                << "/" << data->state->q_date
                << " Total OH/SS : " << total_onhand << "/" << total_ss << endl;
@@ -992,7 +992,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
 
   // Message
   if (getLogLevel() > 1)
-    logger << ++indentlevel << "Routing operation '" << oper->getName()
+    logger << ++indentlevel << "Routing operation '" << oper
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date << endl;
 
@@ -1203,7 +1203,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
 
   // Message
   if (getLogLevel() > 1) {
-    logger << indentlevel-- << "Routing operation '" << oper->getName()
+    logger << indentlevel-- << "Routing operation '" << oper
            << "' answers: " << data->state->a_qty;
     if (!data->state->a_qty) logger << "  " << data->state->a_date;
     logger << endl;
@@ -1243,7 +1243,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 
   // Message
   if (loglevel > 1)
-    logger << ++indentlevel << "Alternate operation '" << oper->getName()
+    logger << ++indentlevel << "Alternate operation '" << oper
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date << endl;
 
@@ -1465,7 +1465,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
               origQDate, (*altIter)->getEffectiveStart(), data->state->q_qty);
       } else if (search == SearchMode::PRIORITY) {
         if (loglevel > 1)
-          logger << indentlevel << "Alternate operation '" << oper->getName()
+          logger << indentlevel << "Alternate operation '" << oper
                  << "' tries alternate '" << (*altIter)->getOperation() << "' "
                  << endl;
         auto tmp_askQ = data->state->q_qty;
@@ -1538,7 +1538,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       // Message
       if (loglevel && search != SearchMode::PRIORITY) {
         data->incostevaluation = false;
-        logger << indentlevel << "Alternate operation '" << oper->getName()
+        logger << indentlevel << "Alternate operation '" << oper
                << "' evaluates alternate '" << (*altIter)->getOperation()
                << "': quantity " << data->state->a_qty << ", cost " << deltaCost
                << ", penalty " << deltaPenalty << endl;
@@ -1608,7 +1608,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         search != SearchMode::PRIORITY) {
       // Message
       if (loglevel > 1)
-        logger << indentlevel << "Alternate operation '" << oper->getName()
+        logger << indentlevel << "Alternate operation '" << oper
                << "' chooses alternate '" << bestAlternateSelection << "' "
                << search << endl;
 
@@ -1688,7 +1688,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       firstAlternate) {
     // Message
     if (loglevel > 1)
-      logger << indentlevel << "Alternate operation '" << oper->getName()
+      logger << indentlevel << "Alternate operation '" << oper
              << "' plans unconstrained on alternate '"
              << firstAlternate->getOperation() << "' " << search << endl;
 
@@ -1795,7 +1795,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 
   // Message
   if (loglevel > 1) {
-    logger << indentlevel-- << "Alternate operation '" << oper->getName()
+    logger << indentlevel-- << "Alternate operation '" << oper
            << "' answers: " << data->state->a_qty;
     if (!data->state->a_qty) logger << "  " << data->state->a_date;
     logger << endl;
@@ -1816,7 +1816,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
 
   // Message
   if (loglevel > 1)
-    logger << indentlevel << "Split operation '" << oper->getName()
+    logger << indentlevel << "Split operation '" << oper
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date << endl;
 
@@ -1881,7 +1881,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
 
       // Message
       if (loglevel > 1)
-        logger << indentlevel << "Split operation '" << oper->getName()
+        logger << indentlevel << "Split operation '" << oper
                << "' asks alternate '" << (*iter)->getOperation() << "' "
                << endl;
 
@@ -1995,7 +1995,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
 
   // Message
   if (loglevel > 1) {
-    logger << indentlevel-- << "Split operation '" << oper->getName()
+    logger << indentlevel-- << "Split operation '" << oper
            << "' answers: " << data->state->a_qty;
     if (!data->state->a_qty) logger << "  " << data->state->a_date;
     logger << endl;

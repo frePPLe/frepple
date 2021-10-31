@@ -84,13 +84,12 @@ void SolverCreate::solve(const Flow* fl,
           // Return value is false, alternate rejected
           if (getLogLevel() > 1)
             logger << indentlevel << "User exit disallows consumption from '"
-                   << (*i)->getBuffer()->getName() << "'" << endl;
+                   << (*i)->getBuffer() << "'" << endl;
           // Move to the next alternate
           if (++i != thealternates.end() && getLogLevel() > 1)
             logger << indentlevel << "Operation switches from '"
-                   << curflow->getBuffer()->getName()
-                   << "' to alternate material '"
-                   << (*i)->getBuffer()->getName() << "'" << endl;
+                   << curflow->getBuffer() << "' to alternate material '"
+                   << (*i)->getBuffer() << "'" << endl;
           continue;
         }
       }
@@ -146,8 +145,8 @@ void SolverCreate::solve(const Flow* fl,
         min_next_date = data->state->a_date;
       if (++i != thealternates.end() && getLogLevel() > 1)
         logger << indentlevel << "Operation switches from '"
-               << curflow->getBuffer()->getName() << "' to alternate material '"
-               << (*i)->getBuffer()->getName() << "'" << endl;
+               << curflow->getBuffer() << "' to alternate material '"
+               << (*i)->getBuffer() << "'" << endl;
     }
 
     // 5) No reply found, all alternates are infeasible
@@ -160,7 +159,7 @@ void SolverCreate::solve(const Flow* fl,
       if (getLogLevel() > 1)
         logger << indentlevel
                << "Alternate flow plans unconstrained on alternate '"
-               << firstAlternate->getBuffer()->getName() << "'" << endl;
+               << firstAlternate->getBuffer() << "'" << endl;
       // Plan unconstrained
       data->constrainedPlanning = false;
       data->state->q_flowplan = flplan;  // because q_flowplan can change
@@ -213,10 +212,10 @@ void SolverCreate::solve(const Flow* fl,
               // Generic supply is sufficient
               if (getLogLevel() > 1)
                 logger << indentlevel-- << "  Buffer '"
-                       << data->state->q_flowplan->getBuffer()->getName()
+                       << data->state->q_flowplan->getBuffer()
                        << "' answers from generic MTO buffer '"
-                       << fl->getBuffer()->getName()
-                       << "' : " << data->state->q_qty << endl;
+                       << fl->getBuffer() << "' : " << data->state->q_qty
+                       << endl;
               data->state->q_flowplan->setBuffer(fl->getBuffer());
               data->state->a_date = data->state->q_date;
               data->state->a_qty = data->state->q_qty;
@@ -226,10 +225,9 @@ void SolverCreate::solve(const Flow* fl,
               // Partially use the generic supply
               if (getLogLevel() > 1)
                 logger << indentlevel << "  Buffer '"
-                       << data->state->q_flowplan->getBuffer()->getName()
+                       << data->state->q_flowplan->getBuffer()
                        << "' answers from generic MTO buffer '"
-                       << fl->getBuffer()->getName() << "' : " << free_generic
-                       << endl;
+                       << fl->getBuffer() << "' : " << free_generic << endl;
               auto extraflpln = new FlowPlan(
                   data->state->q_flowplan->getOperationPlan(), fl,
                   data->state->q_flowplan->getDate(), -free_generic);
@@ -268,10 +266,9 @@ void SolverCreate::solve(const Flow* fl,
             data->state->a_date = await_extra;
             if (getLogLevel() > 1)
               logger << indentlevel << "  Buffer '"
-                     << data->state->q_flowplan->getBuffer()->getName()
-                     << "' answers from generic MTO buffer '"
-                     << fl->getBuffer()->getName() << "' : 0 " << await_extra
-                     << endl;
+                     << data->state->q_flowplan->getBuffer()
+                     << "' answers from generic MTO buffer '" << fl->getBuffer()
+                     << "' : 0 " << await_extra << endl;
           }
         }
       }

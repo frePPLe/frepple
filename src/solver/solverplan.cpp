@@ -294,7 +294,7 @@ void SolverCreate::SolverData::commit() {
               if (getLogLevel() > 1)
                 logger << solver->indentlevel << "  Buffer '" << b
                        << "' allocates from generic MTO buffer '"
-                       << consumer->getBuffer()->getName()
+                       << consumer->getBuffer()
                        << "' : " << -consumer->getQuantity() << " on "
                        << consumer->getDate() << endl;
               consumer->setBuffer(&b);
@@ -302,9 +302,8 @@ void SolverCreate::SolverData::commit() {
               if (getLogLevel() > 1)
                 logger << solver->indentlevel << "  Buffer '" << b
                        << "' allocates from generic MTO buffer '"
-                       << consumer->getBuffer()->getName()
-                       << "' : " << available << " on " << consumer->getDate()
-                       << endl;
+                       << consumer->getBuffer() << "' : " << available << " on "
+                       << consumer->getDate() << endl;
               auto extraflpln = new FlowPlan(consumer->getOperationPlan(),
                                              consumer->getFlow(),
                                              consumer->getDate(), -available);
@@ -592,9 +591,8 @@ void SolverCreate::solve(void* v) {
   // loop through the operations only once
   if (getErasePreviousFirst()) {
     if (getLogLevel() > 0) logger << "Deleting previous plan" << endl;
-    for (auto e = Operation::begin(); e != Operation::end(); ++e)
-      if (cluster == -1 || e->getCluster() == cluster)
-        e->deleteOperationPlans();
+    for (auto& e : Operation::all())
+      if (cluster == -1 || e.getCluster() == cluster) e.deleteOperationPlans();
   }
 
   // Solve in parallel threads.

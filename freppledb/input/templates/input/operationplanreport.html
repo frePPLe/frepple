@@ -67,7 +67,7 @@
   var calendarmode = preferences && preferences.calendarmode || "{{reportclass.calendarmode}}";
   var grouping = preferences && preferences.grouping || null;
   var groupingdir = preferences && preferences.groupingdir || "asc";
-  var detailposition = preferences && preferences.details || "right";
+  var detailposition = preferences && preferences.details || "bottom";
 
   function extraPreference() {
     return {
@@ -387,38 +387,7 @@ loadComplete: function(data) {
 {% endblock %}
 
 {% block table %}
-{% if preferences.details == "bottom" %}
-<div data-ng-controller="operationplandetailCtrl" id="controller">
-
-<div class="row" style="text-align: center">
-<div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
-  <div data-ng-hide="mode == 'kanban' || mode.startsWith('calendar')">
-    <table id="grid" class="table table-striped" style="background-color: white"></table>
-    <div id="gridpager"></div>
-  </div>
-  <div id="calendar" data-ng-hide="!mode.startsWith('calendar')" class="col-md-12">
-    <calendar
-      data-range-changed="calendarRangeChanged(startdate, enddate)"
-      data-event-selected="displayInfo(event)"
-      data-event-source="calendarevents"
-      data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
-      data-mode="mode"></calendar>
-  </div>
-  <div id="kanban" data-ng-hide="mode != 'kanban'"
-    show-kanban-drv data-ng-class="{'row': colsum <= 12, 'longline': colsum > 12}"
-    data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
-    data-kanbanoperationplans="kanbanoperationplans"
-    data-operationplan="operationplan"
-    data-kanbancolumns="kanbancolumns">
-  </div>
-</div>
-<span id="resize-handle" class="fa fa-bars handle" style="display: inline-block"></span>
-</div>
-
-<div data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
-
-</div>
-{% else %}
+{% if preferences.details == "left" or preferences.details == "right" %}
 <div data-ng-controller="operationplandetailCtrl" id="controller">
 <div class="row">
 
@@ -456,5 +425,36 @@ loadComplete: function(data) {
 </div>
 
 </div></div>
+{% else %}
+<div data-ng-controller="operationplandetailCtrl" id="controller">
+
+<div class="row" style="text-align: center">
+<div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
+  <div data-ng-hide="mode == 'kanban' || mode.startsWith('calendar')">
+    <table id="grid" class="table table-striped" style="background-color: white"></table>
+    <div id="gridpager"></div>
+  </div>
+  <div id="calendar" data-ng-hide="!mode.startsWith('calendar')" class="col-md-12">
+    <calendar
+      data-range-changed="calendarRangeChanged(startdate, enddate)"
+      data-event-selected="displayInfo(event)"
+      data-event-source="calendarevents"
+      data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
+      data-mode="mode"></calendar>
+  </div>
+  <div id="kanban" data-ng-hide="mode != 'kanban'"
+    show-kanban-drv data-ng-class="{'row': colsum <= 12, 'longline': colsum > 12}"
+    data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
+    data-kanbanoperationplans="kanbanoperationplans"
+    data-operationplan="operationplan"
+    data-kanbancolumns="kanbancolumns">
+  </div>
+</div>
+<span id="resize-handle" class="fa fa-bars handle" style="display: inline-block"></span>
+</div>
+
+<div data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
+
+</div>
 {% endif %}
 {% endblock %}

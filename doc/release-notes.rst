@@ -7,19 +7,26 @@ Release notes
 .. rubric:: Production planning
 
 - | Easier modeling of resource pools.
-  | An operation-resource record with quantity 2 of an aggregate resource 
+  | An operation-resource record with quantity 2 of an aggregate resource
     was interpreted as "we need to find a resource with size 2".
   | If you set the parameter "plan.individualPoolResources" to true, the same
     operation-resource record will now be interpreted as "we need to find
     2 individual resources of size 1".
   | A typical usage for the new feature is for modeling a group of operators.
 
+.. rubric:: User interface
+
+- | The purchase order, distribution order and manufacturing order screens can
+    now display the detail panels on the right or the left of the screen.
+  | This improves the usability of the screen compared to positioning them at
+    the bottom.
+
 .. rubric:: System administration
 
 - | A new command `generatetoken <command-reference.html#generatetoken>` is added
     to generate JWT authentication tokens. Such tokens are a more secure way to
     authenticate automated API calls to the application.
-  
+
 .. rubric:: Database
 
 - | Database size is reduced and performance is improved by removing some
@@ -60,21 +67,21 @@ Release notes
     cancellations.
 
 - | Size-based selection of alternates
-  | The `operation size-minimum and size-maximum fields <model-reference/operation.html>`_ 
+  | The `operation size-minimum and size-maximum fields <model-reference/operation.html>`_
     are now also used for selection of alternates.
   | An example use case: A small production order will be manufactured on a different machine
     than a large production order.
-  | Another example use case: When working on a small manufacturing order, the operators 
+  | Another example use case: When working on a small manufacturing order, the operators
     will work less efficient than on a larger production order. The time per produced item
     will thus decrease as the required quantity increases.
-  
+
 .. rubric:: User interface
 
 - | Extra field uom / unit of measure on the `item table <model-reference/item.html>`_.
     Typical values are "piece", "kg", "l", "m"...
   | All quantities in the plan for an item are expressed in this unit of measure.
 
-- | Extra robustness when defining custom `attributes <model-reference/attributes.html>`_ 
+- | Extra robustness when defining custom `attributes <model-reference/attributes.html>`_
     The feature was introduced in the previous release, and we added some checks to
     handle corner cases (such as attribute names starting with handles, adding attributes
     to proxy models, allowing underscores in attribute names, ...)
@@ -92,8 +99,8 @@ Release notes
 
 .. rubric:: Community Edition
 
-- | The `old frepple-user group <https://groups.google.com/g/frepple-users>`_ has 
-    been closed. 
+- | The `old frepple-user group <https://groups.google.com/g/frepple-users>`_ has
+    been closed.
   | `Github Dicussions <https://github.com/frePPLe/frepple/discussions>`_ are the
     new forum for any questions and discussion.
 
@@ -111,9 +118,9 @@ Release notes
   | The Enterprise Edition is still available as a Windows installer.
 
 - | The docker container is now fully production ready.
-  | They have been experimental for a while already, and we have now brought forward the 
+  | They have been experimental for a while already, and we have now brought forward the
     code, tests and documentation.
-  | The images for the Community Edition can be pulled from the 
+  | The images for the Community Edition can be pulled from the
     `Github Container Registry <https://github.com/orgs/frePPLe/packages/container/package/frepple-community>`_.
   | The images for the Enterprise Edition can be downloaded from our portal.
 
@@ -123,27 +130,27 @@ Release notes
   | In previous releases, we automatically choose the most efficient resource. In case
     we find multiple resources in the pool with the same efficiency, we now use
     the resource skill priority as a tie breaker.
-    
-- | Bug fix: A solver issue with unconstrained resource has been corrected. See 
+
+- | Bug fix: A solver issue with unconstrained resource has been corrected. See
     https://github.com/frePPLe/frepple/issues/381
-  
+
 .. rubric:: User interface
 
-- | An new table `attribute <model-reference/attributes.html>`_ allows users to 
+- | An new table `attribute <model-reference/attributes.html>`_ allows users to
     define custom attributes themselves from the user interface.
   | In previous releases this required some programming in the backend.
-  | Since adding custom attributes is so common on items, sales orders, etc... 
+  | Since adding custom attributes is so common on items, sales orders, etc...
     we're giving this power to the user now.
 
 - The `inventory report <user-interface/plan-analysis/inventory-report.html>`_ got a new
-  set of extra fields. We also made it easy to expand and collapse summary rows to 
+  set of extra fields. We also made it easy to expand and collapse summary rows to
   display more detailed rows.
 
 .. rubric:: System administration
 
-- | The `migrate command <command-reference.html#migrate>`_ now migrates all 
+- | The `migrate command <command-reference.html#migrate>`_ now migrates all
     scenarios that are in use.
-  | In previous releases the system administrator had to migrate each scenario 
+  | In previous releases the system administrator had to migrate each scenario
     separately. This was inconvenient and often forgotten.
   | You can still migrate a single database only by using the --database argument.
 
@@ -158,14 +165,14 @@ Release notes
 
 .. rubric:: Production planning
 
-- | The `itemsupplier <model-reference/item-suppliers.html>`_  and 
-    `itemdistribution <model-reference/item-distributions.html>`_ tables get an extra 
-    field "batchwindow". It specifies a time window for grouping proposed purchase 
+- | The `itemsupplier <model-reference/item-suppliers.html>`_  and
+    `itemdistribution <model-reference/item-distributions.html>`_ tables get an extra
+    field "batchwindow". It specifies a time window for grouping proposed purchase
     or distribution orders together.
   | This makes is easier to model a purchasing or shipping frequency: "I buy this item
-    once a month" / "I ship at least the requirements for the next month". 
-    
-- | The `itemsupplier <model-reference/item-suppliers.html>`_  table gets an extra 
+    once a month" / "I ship at least the requirements for the next month".
+
+- | The `itemsupplier <model-reference/item-suppliers.html>`_  table gets an extra
     field "extra safety leadtime". It specifies a time that needs to be added on top
     of standard item supplier lead time for safety reasons.
 
@@ -177,18 +184,18 @@ Release notes
 
 - | Bug fix: A bug in the planning algorithm created more lateness than needed when
     an manufacturing operation produces more than 1 piece per unit (i.e. you have an
-    operationmaterial record with a quantity > 1) 
+    operationmaterial record with a quantity > 1)
 
 - | The "currentdate" parameter now also accepts the keyword "today". It sets the current
     date for planning to today at 00:00 / midnight.
   | In previous releases you could already use the keyword "now" to use the system time
     as current date. A drawback of using "now" is that different planning runs on the same
     day will show slightly different results. For the majority of users, this is confusing and
-    not needed. With the new "today" keyword the plan will be stable during the day. 
-  
+    not needed. With the new "today" keyword the plan will be stable during the day.
+
 - | A new parameter "WIP.produce_full_quantity" provides finer control on the behavior of
     the completed_quantity field of manufacturing orders.
-  | When set to "false" (the default) a partially completed manufacturing order 
+  | When set to "false" (the default) a partially completed manufacturing order
     is producing only the remaining quantity of material. We assume that the on hand
     inventory has already been incremented to reflect the produced material.
   | When set to "true" a partially completed manufacturing ordre will still produce
@@ -200,7 +207,7 @@ Release notes
 - | Ability to change the number of records on a page.
   | A simple dropdown next to the paging buttons allows to easily see more records
     on the screen.
-    
+
 - | Ability to create a scenario from a backup file.
   | The planner can now select a backup file when creating a scenario. Previously scenarios
     could only be created from other scenarios.
@@ -209,9 +216,9 @@ Release notes
 
 - | Improved data table detection when importing Excel files.
   | This feature was introduced in the previous release. User feedback showed that it's
-    not uncommon to have data columns outside of the table. These were silently being ignored with 6.14. 
+    not uncommon to have data columns outside of the table. These were silently being ignored with 6.14.
   | Columns next to the data table will now still be read, similar to the behavior before 6.14.
-  
+
 - | Addition of 4 fields to the inventory report: Produced by confirmed PO, Produced by proposed PO,
     On order confirmed PO, On order proposed PO. These 4 fields allow the planner to understand in a
     glance if the purchased quantities are coming from a confirmed or a proposed PO.
@@ -233,11 +240,11 @@ Release notes
 
 - | Confirmed manufacturing orders, distribution orders and purchase no longer consume
     or produce material in the past. We now position these right after the current date.
-  | This improves the visibility in the plan between what-has-already-happened and 
+  | This improves the visibility in the plan between what-has-already-happened and
     what-is-about-to-happen.
 
 - | With a new field "quantity_completed" on manufacturing orders, frepple now can
-    correctly model partially completed manufacturing orders. The planned end date, 
+    correctly model partially completed manufacturing orders. The planned end date,
     material consumption and capacity consumption are now computed on the remaining
     quantity to produce.
   | In earlier releases we relied on appropriately preprocessed input data to account
@@ -250,10 +257,10 @@ Release notes
   | You get a row with cards for every resource, supplier, item, item category...
     The calendar view then looks pretty much like a spreadsheet grid with
     cards in each cell.
-    
+
 - | Manufacturing orders, purchase orders and distribution orders can now be edited
-    from the resource detail and inventory detail screens. 
-    
+    from the resource detail and inventory detail screens.
+
 - | Addition of the period of cover as an item attribute, allowing to display, sort and
     filter that value in most of the views and reports.
 
@@ -268,7 +275,7 @@ Release notes
 
 .. rubric:: Integration
 
-- | Addition of the `upload exported reports <command-reference.html#uploadreport>`_ 
+- | Addition of the `upload exported reports <command-reference.html#uploadreport>`_
     task in the execute screen, allowing users to export selected reports to a remote
     server (using a ftp, sftp or ftps connection).
 
@@ -279,17 +286,17 @@ Release notes
 
 .. rubric:: Birth of a new product
 
-- | FrePPLe's user interface has quite some nice capabilities that are generic and reusable 
+- | FrePPLe's user interface has quite some nice capabilities that are generic and reusable
     in other domains.
   | We have copied these out into a separate project https://github.com/frePPLe/frepple-data-admin.
   | We believe that a larger community to build on the data-admin product will also be
     beneficial for our planning product.
-	
+
 .. rubric:: Production planning
 
 - | Bug fix: Using the plan.autoFenceOperations parameter can lead to sub-optimal plans
     resulting in demands being planned at a later date.
-  
+
 .. rubric:: User interface
 
 - | The kanban and calendar views on the purchase orders, manufacturing orders and
@@ -306,7 +313,7 @@ Release notes
 
 .. rubric:: Odoo integration
 
-- | The `data import and export from Odoo <integration-guide/odoo-connector.html>`_ 
+- | The `data import and export from Odoo <integration-guide/odoo-connector.html>`_
     are no longer integrated in the plan generation task. They are now tasks that can
     be launched independently.
 
@@ -318,14 +325,14 @@ Release notes
 - | Item model now has extra fields "volume" and "weight".
   | The purchase order, distribution order and manufacturing order screens now can display
     the total cost, total volume and total weight of the selected records.
- 
+
 .. rubric:: User interface
 
 - | Inventory report now displays also archived inventory information.
   | We archive the inventory and safety stock values every day/week/month (configurable
     with the parameter archive.frequency).
   | Planners can review how the onhand and safety stock have evolved over time.
-  
+
 - | In the PO/MO/DO screens, the selection of a line happens now by clicking anywhere
     on that line. Previously, the user had to click on the checkbox at the start of the line.
 
@@ -336,8 +343,8 @@ Release notes
 
 .. rubric:: Integration
 
-- | REST API didn't support the operator "in" for all fields. 
-   
+- | REST API didn't support the operator "in" for all fields.
+
 
 6.11.0 (2021/01/24)
 ===================
@@ -346,7 +353,7 @@ Release notes
 
 - | Bug fix: when importing approved manufacturing orders assigned to a resource from a
     resource group an incorrect calendar was assigned.
-    
+
 - | Bug fix: Corrected corner cases where size constraints on an operation are contradicting
     each other. Rather than keeping the order unplanned we now automatically resolve the conflict
     by relaxing the constraint.
@@ -354,7 +361,7 @@ Release notes
 .. rubric:: User interface
 
 - | Improvements to the messaging and follower features.
-  | When you follow an object you can choose to follow also activity on related objects. 
+  | When you follow an object you can choose to follow also activity on related objects.
     Eg When you follow an item, you can choose to also follow the purchase orders, manufacturing orders
     distribution orders for the item. Eg when you follow a resource, you can choose to follow also the
     manufacturing orders planned on that resource.
@@ -367,15 +374,15 @@ Release notes
     Instead you'll just need to review the pre-translated strings and correct them where needed.
 
 - | The create_buckets command now correctly supports ISO 8601 week numbers.
- 
+
 .. rubric:: Development
 
 - | FrePPLe is now using the cmake build system rather than the archaic autotools.
-  | End users won't see any change (i.e. the same source code is still compiled into the same 
-    executables), but the source code meta data is now much cleaner and better. 
+  | End users won't see any change (i.e. the same source code is still compiled into the same
+    executables), but the source code meta data is now much cleaner and better.
 
 - | On Windows we no longer support deployments using the apache web server or the cygwin compiler.
-  | The Windows installer with the embedded web server and PostgreSQL database remains fully supported. 
+  | The Windows installer with the embedded web server and PostgreSQL database remains fully supported.
     It provides an easy start for small deployments and/or trials. Bigger and more scalable deployments
     are only possible with a linux server.
 
@@ -385,14 +392,14 @@ Release notes
 .. rubric:: User interface
 
 - | Restructured the edit forms for all entities. The main fields are now clearly
-    separated from advanced fields and related objects. 
+    separated from advanced fields and related objects.
 
-- | The `comment and audit trail functionality <user-interface/getting-around/messages.html>`_ 
+- | The `comment and audit trail functionality <user-interface/getting-around/messages.html>`_
     has been completely revamped.
   | You can now upload attachments.
   | You can also follow objects. When there are changes to it, you will get a notification
     in your `inbox <user-interface/getting-around/inbox.html>`_.
-  | This feature will be further improved in the next releases. 
+  | This feature will be further improved in the next releases.
 
 - | Users can now `upload an avatar image <user-interface/getting-around/user-preferences.html>`_.
 
@@ -421,7 +428,7 @@ Release notes
 .. rubric:: User interface
 
 - A new get-started wizard is added to generate forecast for a single item.
-  Fill in a simple form with the item, location, customer and recent sales 
+  Fill in a simple form with the item, location, customer and recent sales
   history, and we'll populate the data tables and generate the statistical forecast.
 
 - A new get-started wizard is added to generate a production plan for a single
@@ -440,13 +447,13 @@ Release notes
 
 .. rubric:: User interface
 
-- | `Filtering data <user-interface/getting-around/filtering-data.html>`_ has been made more easier. 
+- | `Filtering data <user-interface/getting-around/filtering-data.html>`_ has been made more easier.
     The search expression editor is still available, but a simple search for a value in a text
     field can now be performed with less clicks.
 
 - | Addition of the `data source URL <user-interface/getting-around/exporting-data.html>`_ in the export dialog
     for easier export of frePPLe data into Excel. External applications can now directly pull frePPLe
-    data online from a URL, which bypasses the export-import steps you do manually now. 
+    data online from a URL, which bypasses the export-import steps you do manually now.
 
 - | Updated `demand gantt report <user-interface/plan-analysis/demand-gantt-report.html>`_
     to make zooming in&out easier and to show also item information.
@@ -454,12 +461,12 @@ Release notes
 .. rubric:: Integration
 
 - | Authentication to all URLs of the application is now possible with
-    `a JSON web token <https://jwt.io/introduction/>`_ or 
+    `a JSON web token <https://jwt.io/introduction/>`_ or
     `basic authentication with user&password <https://en.wikipedia.org/wiki/Basic_access_authentication>`_.
     This feature makes it easy for other applications to pull data or embed frePPLe.
   | This feature can be disabled by commenting out the HTTPAuthentication middleware
     in your djangosettings.py file.
-  
+
 - `Remote API <integration-guide/remote-commands>`_ to cancel running tasks.
 
 6.7.0 (2020/08/29)
@@ -472,19 +479,19 @@ Release notes
 
 .. rubric:: User interface
 
-- | New demand history, purchase order history and inventory history widgets on the 
+- | New demand history, purchase order history and inventory history widgets on the
     `cockpit <user-interface/cockpit.html>`_ screen.
   | FrePPLe will now record historical plan data. In following releases you can expect
     historical plan information to start appearing in additional screens.
-     
+
 - | The `search box <user-interface/getting-around/navigation.html>`_ now allows
     you to open the search results in a new browser tab. Using different browser tabs is very
     handy when you don't like to lose the previous screen.
   | You can already achieve this on all links by using the right-click menu of your
     browser. We made that a bit easier now in the search box.
-    
+
 - | Addition of a tooltip with column name when hovering on column headers.
-    
+
 - | `Custom reports <user-interface/report-manager.html>`_ now support filtering,
     sorting, customization and favorites. Just as all other screens.
 
@@ -497,7 +504,7 @@ Release notes
 - The odoo addon is moved to its own github repository: https://github.com/frePPLe/odoo
   We hope this makes it easier for odoo implementation partners to install the addon and
   contribute enhancements.
-  
+
 .. rubric:: Windows installer
 
 - | The windows installer now has an option to send us anonymous usage information.
@@ -510,7 +517,7 @@ Release notes
 
 .. rubric:: Production planning
 
-- | Implemented user interface and REST API to switch to manufacturing orders to 
+- | Implemented user interface and REST API to switch to manufacturing orders to
     alternate materials.
 
 .. rubric:: User interface
@@ -523,18 +530,18 @@ Release notes
     you can drill down into the "demand report" of an item to review the backlog situation
     and the constraints causing the lateness.
 
-- | Scenario management: Logged user won't see anymore in the scenario management screen 
+- | Scenario management: Logged user won't see anymore in the scenario management screen
     in use scenarios where he/she is not active.
-    
-- | Export dialog: Addition of scenarios in the dialog so that user can export current view and 
+
+- | Export dialog: Addition of scenarios in the dialog so that user can export current view and
     scenarios (for which user has permission) in the same spreadsheet/csv file.
-    
-- | Manufacturing order, purchase order and distribution order detail: Addition of upstream and downstream 
+
+- | Manufacturing order, purchase order and distribution order detail: Addition of upstream and downstream
     widgets. When selecting a row, 2 new widgets are displayed to track the source and destination of the material.
     It shows how it has been produced/replenished (upstream widget) and where it will be
-    consumed/delivered (downstream widget).    
-    
-- | There is a change in how rows are selected in grids where multiple selection is allowed. 
+    consumed/delivered (downstream widget).
+
+- | There is a change in how rows are selected in grids where multiple selection is allowed.
     Clicking on a the checkbox of a row will extend existing selection to that new row. Clicking anywhere else in the
     row will reset existing selection and only that new row will be selected.
 
@@ -561,11 +568,11 @@ Release notes
 
 - | Network status: Completed operations are taken into account to calculate the on hand column
     of the network status widget.
-    
-- | Search box: The search box in the menu looks also for a match in the description field. If
-    a description exists, it is now displayed next to the name of the object. 
 
-- | Simplified the process of 
+- | Search box: The search box in the menu looks also for a match in the description field. If
+    a description exists, it is now displayed next to the name of the object.
+
+- | Simplified the process of
     `translating the user interface <developer-guide/translating-the-user-interface.html>`_.
 
 .. rubric:: Integration
@@ -575,7 +582,7 @@ Release notes
 
 .. rubric:: Odoo connector
 
-- Various fixes contributed by Robinhli, Jiří Kuneš and Kay Häusler. Many thanks to our 
+- Various fixes contributed by Robinhli, Jiří Kuneš and Kay Häusler. Many thanks to our
   user community!
 
 6.4.0 (2020/04/04)
@@ -583,9 +590,9 @@ Release notes
 
 .. rubric:: Production planning
 
-- | Simpler and more efficient modeling capabilities for 
+- | Simpler and more efficient modeling capabilities for
     `make-to-order and configure-to-order supply chains <examples/buffer/make-to-order.html>`_.
-    The (complete or partial) supply path can now automatically be made specific to a 
+    The (complete or partial) supply path can now automatically be made specific to a
     sales order or an item attribute.
   | In earlier releases this was already possible, but required a more complex data interface.
 
@@ -594,14 +601,14 @@ Release notes
     needed during the setup change.
   | Only unconstrained resources can be assigned for the changeover. The solver can't handle
     constraints on the changeover resource.
-    
+
 .. rubric:: User interface
 
 - | Scenario Management: It is possible now to promote a scenario to production. All data of the scenario
     will be copied to production database.
-    
-- | Email exported reports: Reports that have been exported using *Export plan result to folder* command can be 
-    emailed to one or more recipients with a new command in the 
+
+- | Email exported reports: Reports that have been exported using *Export plan result to folder* command can be
+    emailed to one or more recipients with a new command in the
     `execute <command-reference.html#emailreport>`_ screen.
 
 6.3.0 (2020/02/28)
@@ -609,44 +616,44 @@ Release notes
 
 .. rubric:: Production planning
 
-- | Solver enhancement to improve planning with alternate materials. 
+- | Solver enhancement to improve planning with alternate materials.
   | In earlier releases available inventory and committed supply were considered individually
     for each alternate material.
-  | From this release onwards, the algorithm checks available stock and supply across all 
-    alternate materials before generating new replenishments.  
+  | From this release onwards, the algorithm checks available stock and supply across all
+    alternate materials before generating new replenishments.
 
 .. rubric:: User interface
 
 - You can now `save frequently used report settings as a favorite <user-interface/getting-around/favorites.html>`_.
-  This can be huge time saver in your daily review of the plan. 
+  This can be huge time saver in your daily review of the plan.
 
 - A new `report manager <user-interface/report-manager.html>`_
   app allows power users to define custom reports using SQL. This greatly enhances
-  the flexibility to tailor the plan output into reports that match your 
+  the flexibility to tailor the plan output into reports that match your
   business process and needs.
-  
+
 .. rubric:: Integration
 
-- Data files in SQL format can now be processed with the command 
+- Data files in SQL format can now be processed with the command
   `import data files from folder <command-reference.html#importfromfolder>`_.
   For security reasons this functionality is only active when the setting SQL_ROLE is
   set. It should be configured by an administrator to a database role that is correctly
   tuned to a minimal set of privileges.
 
-- Data files in the PostgreSQL COPY format can now be processed with the command 
+- Data files in the PostgreSQL COPY format can now be processed with the command
   `import data files from folder <command-reference.html#importfromfolder>`_.
   Data files in this format are uploaded MUCH faster.
-  
+
 - Postgresql foreign key constraint on operationplanmaterial and operationplanresource
-  for the operationplan_id field is made cascade delete. As a conseqeunce, there is no need 
-  anymore to delete the operationplanmaterial (Inventory Detail) and operationplanresource 
+  for the operationplan_id field is made cascade delete. As a conseqeunce, there is no need
+  anymore to delete the operationplanmaterial (Inventory Detail) and operationplanresource
   (Resource Detail) records before being able to delete an operationplan record (MO/PO/DO).
-  
+
 .. rubric:: Documentation
 
 - Browsing the documentation is now more intuitive. A feature list allows you to find
   your way by functional topic.
-  
+
 - A new section with videos on common use cases is added.
 
 - The `tutorial for developing custom apps <developer-guide/user-interface/creating-an-extension-app>`_
@@ -656,11 +663,11 @@ Release notes
 
 - Adding support for odoo v13.
 
-- v12 and v13: Export of multiple POs for the same supplier will create a single PO in odoo 
+- v12 and v13: Export of multiple POs for the same supplier will create a single PO in odoo
   with multiple lines. If the exported POs also contain multiple lines for the same product,
   then a single PO Line is created in odoo with the sum of the quantities and the minimum
   planned date of all exported records for that product.
-  
+
 6.2.0 (2020/01/17)
 ==================
 
@@ -672,16 +679,16 @@ Release notes
 
 - | The last-modified fields and the task execution dates are now shown in the
     local timezone of your browser.
-  | For on-premise installations this doesn't change anything. However, our cloud 
-    customers across the world will be happy to better recognize the timestamps.  
-    
-- | Ability to filter on json fields such as the "Demands" field of manufacturing/distribution/purchase 
+  | For on-premise installations this doesn't change anything. However, our cloud
+    customers across the world will be happy to better recognize the timestamps.
+
+- | Ability to filter on json fields such as the "Demands" field of manufacturing/distribution/purchase
     orders table.
-    
+
 - When exporting Excel files, read-only fields are now visually identifiable in the
   header row. A color and comment distinguish read-only fields from fields that can be
-  updated when uploading the data file.  
-   
+  updated when uploading the data file.
+
 .. rubric:: Integration
 
 - Export of duration fields will not be in seconds anymore but will use same format used
@@ -700,7 +707,7 @@ Release notes
   | See https://www.djangoproject.com/weblog/2019/dec/18/security-releases/ for full details.
   | By default frePPLe doesn't configure an SMTP mail server. The password reset functionality
     isn't active then, and you are NOT impacted by this issue.
-  
+
 
 6.1.0 (2019/11/29)
 ==================
@@ -709,7 +716,7 @@ Release notes
 
 - Bug fixes in the solver algorithm when using alternate materials.
 
-- Bug fixes in the solver algorithm when using post-operation times at many 
+- Bug fixes in the solver algorithm when using post-operation times at many
   places in the supply path.
 
 - The `demand Gantt report <user-interface/plan-analysis/demand-gantt-report.html>`_
@@ -717,18 +724,18 @@ Release notes
 
 .. rubric:: User interface
 
-- | Filter arguments are now trimmed to provide a more intuitive filtering. The invisible 
+- | Filter arguments are now trimmed to provide a more intuitive filtering. The invisible
     leading or trailing whitespace lead to confusion and mistakes.
   | On the other hand, if you were filtering on purpose with such whitespace: this is
-    no longer possible.  
+    no longer possible.
 
 - Support for user-defined attributes on purchase orders, manufacturing orders and
   distribution orders.
-  
-- Bug fix: The  user permissions "can copy a scenario" and "can release a scenario" 
-  were not working properly. 
-  
-- Enhancement of the supply path to draw cases where producing operation materials 
+
+- Bug fix: The  user permissions "can copy a scenario" and "can release a scenario"
+  were not working properly.
+
+- Enhancement of the supply path to draw cases where producing operation materials
   record is missing (produced item declared at operation level) or produced item is only
   declared at routing level.
 
@@ -743,7 +750,7 @@ Release notes
 .. rubric:: Development
 
 - A new screen allows to `execute SQL commands on the database <user-interface/executesql.html>`_.
-  This new app is only intended to facilitate development and testing, and shouldn't be activated in 
+  This new app is only intended to facilitate development and testing, and shouldn't be activated in
   production environments.
 
 6.0.0 (2019/16/09)
@@ -751,27 +758,27 @@ Release notes
 
 .. rubric:: Production planning
 
-- | The name column in the 
+- | The name column in the
     `buffer table <model-reference/buffer.html>`_ is removed. The item and location
     fields are what uniquely defines a buffer.
-  | This data model simplification makes data interfaces simpler and more robust. 
+  | This data model simplification makes data interfaces simpler and more robust.
 
-- | Data model simplification: The `suboperation table <model-reference/suboperations.html>`_ 
+- | Data model simplification: The `suboperation table <model-reference/suboperations.html>`_
     is now deprecated. All data it contained can now be stored in the operation table.
   | This data model simplification makes development of data interfaces easier.
 
 - The default minimum shipment for a demand is changed from "round_down(quantity / 10)"
   to "round_up(quantity / 10)". This provides a better default for planning very slow moving
-  forecasts. 
-  
+  forecasts.
+
 - The resource type 'infinite' is now deprecated. It is replaced by a new field 'constrained' on
-  resource. This approach allows easier activation and deactivation of certain resources as 
+  resource. This approach allows easier activation and deactivation of certain resources as
   constraints during planning.
-  
+
 - When generating a constrained plan, the material constraint has been removed. It didn't really
   have any impact on the plan algorithm. The constraints actually used by the planning engine are
-  capacity, lead time and the operation time fence.  
-  
+  capacity, lead time and the operation time fence.
+
 - Improvements to the solver algorithm for bucketized resources and time-per operations.
   The improvements provide a more realistic plan when manufacturing orders span across
   multiple capacity buckets.
@@ -782,10 +789,10 @@ Release notes
 
 .. rubric:: User interface
 
-- | Bug fix: When uploading a Purchase/Distribution/Manufacturing orders file with the 
-    "First delete all existing records AND ALL RELATED TABLES" selected, all purchase, 
+- | Bug fix: When uploading a Purchase/Distribution/Manufacturing orders file with the
+    "First delete all existing records AND ALL RELATED TABLES" selected, all purchase,
     manufacturing and distribution records were deleted.
-    
+
 - Addition of the duration, net duration and setups fields in the manufacturing order screen.
 
 - Addition of Hebrew translations, contributed by https://www.minet.co.il/  Many thanks!
@@ -793,9 +800,9 @@ Release notes
 - Give a warning when users try to upload spreadsheets in the (very) old .XLS Excel format
   instead of the new .XLSX spreadsheet format.
 
-- Performance improvement for the "supply path" and "where used" reports for complex and 
+- Performance improvement for the "supply path" and "where used" reports for complex and
   deep bill of materials.
-    
+
 .. rubric:: Integration
 
 - | The REST API for manufacturing orders now returns the resources and materials it uses.
@@ -833,8 +840,8 @@ Release notes
     redesigned. It now provides a more complete, more structured and deeper guidance for getting
     started with frePPLe.
   | Currently this new wizard is not available in the Community Edition.
-  
-- A new guided tour is available. Previous guided tour was a journey around the different pages 
+
+- A new guided tour is available. Previous guided tour was a journey around the different pages
   and features of frePPLe. New guided tour is composed of use case questions, illustrated in
   a short video.
 
@@ -846,7 +853,7 @@ Release notes
 
 - Bug fix. When using the Empty Database feature on either manufacturing or distribution or delivery or purchase orders
   then all orders (manufacturing + distribution + delivery + purchase) were deleted.
-  
+
 - Bug fix on backlog calculation of the `demand report <user-interface/plan-analysis/demand-report.html>`_
 
 5.2.0 (2019/05/27)
@@ -855,12 +862,12 @@ Release notes
 .. rubric:: Production planning
 
 - | Modeling simplication: In the `operation material table <modeling-wizard/manufacturing-bom/operation-materials.html>`_
-    you had to always insert both the produced material and consumed materials. 
+    you had to always insert both the produced material and consumed materials.
   | In a lot of models an operation always produces 1 unit of the item. In this type
-    of model you can now choose to leave out the records for the produced material. 
+    of model you can now choose to leave out the records for the produced material.
     We'll automatically add them with makes your modeling and data interfaces easier,
     faster and less error-prone.
-  | If an operation produces a quantity different from 1 the producing operation material 
+  | If an operation produces a quantity different from 1 the producing operation material
     record remains necessary.
 
 - Performance improvements in the solver algorithm.
@@ -869,9 +876,9 @@ Release notes
   In earlier releases we used the minimum efficiency of all resources that operation loads,
   which is the correct behavior for resources of type default but not for bucketized resources.
 
-- Bug fix to avoid creating excess inventory in models with large operation minimum 
+- Bug fix to avoid creating excess inventory in models with large operation minimum
   sizes.
-  
+
 .. rubric:: User interface
 
 - Various small styling improvements and usability enhancements.
@@ -885,17 +892,17 @@ Release notes
 
 .. rubric:: Production planning
 
-- Performance improvements for the bucketized resource solver. 
+- Performance improvements for the bucketized resource solver.
 
 - Bug fix and improvements in the way that completed and closed manufacturing order status
   is propagated to upstream materials.
 
 .. rubric:: User interface
 
-- | A new filter type is introduced for date fields. You can now easily filter records 
+- | A new filter type is introduced for date fields. You can now easily filter records
     with a date within a specified time window from today.
   | In earlier versions you had to explicitly change the date argument for the filter every
-    day. Which was quite boring, error-prone and not very user friendly. 
+    day. Which was quite boring, error-prone and not very user friendly.
 
 - The number format in grid no longer has a fixed number of decimals, but flexibly adapts to
   the size and number of decimals in the number to be shown.
@@ -909,7 +916,7 @@ Release notes
     to log in for every browser session.
 
 - When logging in, the user names and email address are now evaluated case-insensitively.
-     
+
 
 5.0.0 (2019/03/16)
 ==================
@@ -918,25 +925,25 @@ Release notes
 
 - | The identifier of `purchase orders <model-reference/purchase-orders.html>`_,
     `distribution orders <model-reference/purchase-orders.html>`_ and
-    `manufacturing orders <model-reference/purchase-orders.html>`_, has been removed. 
+    `manufacturing orders <model-reference/purchase-orders.html>`_, has been removed.
   | The reference field is now the primary key, and a required input field.
   | The required reference fields is an API-breaking change.
-  
-- | A new status "completed" is added on purchase orders, distribution orders and 
+
+- | A new status "completed" is added on purchase orders, distribution orders and
     manufacturing orders. It models a status where the order has already completed, but the
     ERP hasn't reflected this yet in its inventory status.
   | When changing the status of a manufacturing order to completed, there is also logic to assure
-    that sufficient upstream material is available. If required the status of feeding purchase orders, 
+    that sufficient upstream material is available. If required the status of feeding purchase orders,
     distribution orders and manufacturing orders is changed to completed.
 
-- | The `resource detail <model-reference/operationplan-resources.html>`_ and 
-    `inventory detail  <model-reference/operationplan-materials.html>`_ tables 
-    are now editable. 
-  | This allows to import detailed information on allocated resources and consumed materials from 
+- | The `resource detail <model-reference/operationplan-resources.html>`_ and
+    `inventory detail  <model-reference/operationplan-materials.html>`_ tables
+    are now editable.
+  | This allows to import detailed information on allocated resources and consumed materials from
     the ERP system, and model the current work-in-progress in full detail.
-  | In earlier releases these tables only contained output generated by the planning algorithm. 
-    From this release onwards they also contain input information for manufacturing orders 
-    in the status approved and confirmed. 
+  | In earlier releases these tables only contained output generated by the planning algorithm.
+    From this release onwards they also contain input information for manufacturing orders
+    in the status approved and confirmed.
 
 - | The default of the parameter `plan.autoFenceOperations <model-reference/parameters.html>`_
     is changed from 0 to 999.
@@ -946,7 +953,7 @@ Release notes
 
 - | The search mode to choose among different alternate replenishments can now be controlled by the user.
   | In previous releases this could only be controlled on operations of type 'alternate', and automatically
-    generated alternates always used priority as the selection mode. 
+    generated alternates always used priority as the selection mode.
   | From this release onwards the field 'operation.search mode' can be used to specify the selection
     mode from among 'priority', 'minimum cost', 'minimum penalty' and 'minimum cost + penalty'.
 
@@ -957,9 +964,9 @@ Release notes
   - number of unplanned demands
   - quantity of unplanned demands
   - value of unplanned demands
-  
+
 - The resource table gets a read-only field to store the number of overloads on the resource.
-  
+
 - The weight field for problems of type 'late' is now indicating the quantity being planned late.
   In earlier releases it represented the delivery delay.
 
@@ -977,16 +984,16 @@ Release notes
 
 .. rubric:: Production planning
 
-- The default allowed delivery delay of sales orders and forecasts is changed from indefinite 
+- The default allowed delivery delay of sales orders and forecasts is changed from indefinite
   to 5 years. This improves the performance of the algorithms in case there are unplannable
   orders.
 
-- A new resource type `time buckets <model-reference/resources.html#>`_ is introduced 
+- A new resource type `time buckets <model-reference/resources.html#>`_ is introduced
   that represents capacity as the number of hours of availability per time bucket.
-  
+
 - The capacity consumption from a bucketized resource now also has a constant component
   and considers the resource efficiency.
-  
+
 - Addition of the field size maximum to the item supplier and item distribution tables.
 
 - | More detailed modeling of work in progress.
@@ -999,38 +1006,38 @@ Release notes
   | By leaving the destination location, the distribution order doesn't produce any stock.
     This represents a material transfer outside of our supply chain.
 
-- Ability to use powerful regular expressions in the definition of 
+- Ability to use powerful regular expressions in the definition of
   `setup matrices rules <model-reference/setup-matrices.html#>`_ .
 
 - Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
 
-- Bug fix: incorrect operation duration when different resources in an aggregate pool resource 
+- Bug fix: incorrect operation duration when different resources in an aggregate pool resource
   have different working hours.
 
-- Bug fix: corrected corner cases where the solver got into an infinite loop.  
+- Bug fix: corrected corner cases where the solver got into an infinite loop.
 
 .. rubric:: User interface
 
 - Ability to cancel any running task on the execution screen. Until now only the plan generation
   could be canceled while it was running.
- 
+
 - Improved performance and reduced memory footprint when downloading and exporting big reports.
- 
+
 - Added field duration to the
   `execution screen <user-interface/execute.html>`_
 
 - Added tabs to see the manufacturing orders for a specific item, location or operation.
 
 - Update of the "in progress" fields of the inventory report. Are considered in progress for a given bucket
-  all orders starting before the end date of that bucket and ending after the end date of that bucket. 
+  all orders starting before the end date of that bucket and ending after the end date of that bucket.
 
 - Improved display of very small durations. All digits up to 1 microsecond are now visible.
 
 .. rubric:: API
 
 - The `database backup command <command-reference.html#backup>`_ and
-  `database restore command <command-reference.html#restore>`_ now use the 
-  faster and smaller compressed binary backup format of PostgreSQL. 
+  `database restore command <command-reference.html#restore>`_ now use the
+  faster and smaller compressed binary backup format of PostgreSQL.
 
 4.4.2 (2018/10/20)
 ==================
@@ -1046,33 +1053,33 @@ Release notes
 
 - Bug fix for a specific corner case where material requirements for work in progress
   aren't propagated at all.
-  
+
 - New parameter plan.resourceiterationmax allows user control over the number of searches
   for a free capacity slot on a resource. Contributed by Mateusz Knapik.
- 
+
 .. rubric:: User interface
 
 - Added field net duration to the
   `resource detail report <user-interface/plan-analysis/resource-detail-report.html>`_
-  
+
 - Added fields total in progress, work in progress MO, on order PO, in transit DO to the
   `inventory report <user-interface/plan-analysis/inventory-report.html>`_
-  
+
 - Bug fix: Deleting an object from the edit form in a scenario was incorrectly
   deleting the object in the production instead.
-  
+
 - | The `import data files from folder <command-reference.html#importfromfolder>`_
     and `import a spreadsheet <command-reference.html#importworkbook>`_ functionalities
-    now ignores spaces, dashes and underscores in the recognition of the content type from the 
+    now ignores spaces, dashes and underscores in the recognition of the content type from the
     file or worksheet name.
   | So far, only a worksheet called 'sales order' was recognized as containing sales order data.
     Now "sales-order", "sales_order" and "salesorder" will also be recognized.
-    
+
 .. rubric:: Third party components
 
-- | The Ubuntu binaries will be compiled on Ubuntu 18 LTS from now onwards. 
+- | The Ubuntu binaries will be compiled on Ubuntu 18 LTS from now onwards.
   | Compiling for Ubuntu 16 LTS remains fully supported, but we recommend to upgrade Ubuntu.
-  
+
 4.4.1 (2018/09/10)
 ==================
 
@@ -1080,7 +1087,7 @@ Release notes
 
 - Bug fix in the calculation of the lateness/earliness of a manufacturing
   order, purchase order or distribution order. The calculation was incorrectly
-  based on the start date rather the end date of the operation in question. 
+  based on the start date rather the end date of the operation in question.
 
 - A new field "feasible" is now added to the
   `inventory detail report <user-interface/plan-analysis/inventory-detail-report.html>`_,
@@ -1091,9 +1098,9 @@ Release notes
   `manufacturing order screen <model-reference/manufacturing-orders.html>`_.
   The read-only boolean field indicates whether the order is violating any material, lead time or capacity
   constraints. This is useful in interpreting the results of an unconstrained plan.
-  
+
 - | The criterion for `before current problems <user-interface/plan-analysis/problem-report.html>`_
-    is updated for confirmed orders. The change should result in less problems that are 
+    is updated for confirmed orders. The change should result in less problems that are
     also more meaningful to the users.
   | For orders in the status approved or proposed a before-current problem is created when
     the start date is in the past.
@@ -1106,21 +1113,21 @@ Release notes
 
 .. rubric:: User interface
 
-- Ability to make the data anonymous and obfuscated when 
-  `exporting an Excel workbook <command-reference.html#exportworkbook>`_. 
+- Ability to make the data anonymous and obfuscated when
+  `exporting an Excel workbook <command-reference.html#exportworkbook>`_.
   The names of all entities are obfuscated in the resulting spreadsheet. You will still
-  need to carefully review the output to clean out any remaining sensitive data.  
+  need to carefully review the output to clean out any remaining sensitive data.
 
 - Ability to customize the names for the time buckets used in the reports.
   The `time bucket generation command <command-reference.html#createbuckets>`_
   now has extra attributes for setting the name of the daily, weekly, monthly, quarterly
   and yearly buckets.
- 
+
 .. rubric:: Third party components
 
-- | Support for Ubuntu 18 LTS. 
+- | Support for Ubuntu 18 LTS.
   | Ubuntu 16 LTS remains fully supported.
-  
+
 - | Windows installer now uses Python 3.6.
   | Python 3.5 remains fully supported.
 
@@ -1130,21 +1137,21 @@ Release notes
 The Windows installer of this version isn't working correctly due to some packaging mistakes.
 
 .. rubric:: Production planning
-  
+
 - Resources can now have an `efficiency percentage <model-reference/resources.html>`_. This allows
   the resource to perform an operation faster or slower than the standard operation time.
 
-- The `resource report <user-interface/plan-analysis/resource-report.html>`_ now displays the 
+- The `resource report <user-interface/plan-analysis/resource-report.html>`_ now displays the
   available capacity as a line, replacing the green bar in previous releases to show the free capacity.
 
-- | Performance optimization of the solver algorithm. The solver now passes down the minimum shipment 
+- | Performance optimization of the solver algorithm. The solver now passes down the minimum shipment
     information from the demand to all upstream entities, which allows the algorithm to perform a more
     efficient search.
   | In complex models, the resulting plan may be slightly different - for the better.
 
 - Resource build-ahead penalty calculation now also working for 0-cost resources.
 
-- New rows to the `purchase order summary <user-interface/plan-analysis/purchase-order-summary.html>`_ 
+- New rows to the `purchase order summary <user-interface/plan-analysis/purchase-order-summary.html>`_
   and `distribution order summary <user-interface/plan-analysis/distribution-order-summary.html>`_
   reports to show the quantity on order or in transit.
 
@@ -1156,12 +1163,12 @@ The Windows installer of this version isn't working correctly due to some packag
     effective from the horizon start in 1971. Now this safety stock is effective from the current
     date of the plan onwards.
   | This change will give a different result for safety stock replenishments in an unconstrained plan.
-    In a lead time constrained plan the results will be identical.  
+    In a lead time constrained plan the results will be identical.
 
 - Remove buffers of type procurement from the planning engine code. This buffer type was already long
-  deprecated and hasn't been accessible to users for quite some time now. 
-  
-- Simpler and more generic modeling of fixed material consumption and production by operations. 
+  deprecated and hasn't been accessible to users for quite some time now.
+
+- Simpler and more generic modeling of fixed material consumption and production by operations.
   The types 'fixed_end' and 'fixed_start' on `operation material <model-reference/operation-materials.html>`_
   records are replaced with a field 'fixed_quantity'.
 
@@ -1170,19 +1177,19 @@ The Windows installer of this version isn't working correctly due to some packag
 
 - | When expanding a confirmed manufacturing order on a routing operation, the automatic creation of the
     child manufacturing orders for each routing step now also considers the post-operation time.
-  | Note that such child manufacturing orders are only generated if they aren't provided in the input 
-    data yet.   
+  | Note that such child manufacturing orders are only generated if they aren't provided in the input
+    data yet.
 
 .. rubric:: User interface
 
-- Bug fix when copying a what-if scenario into another what-if scenario. 
+- Bug fix when copying a what-if scenario into another what-if scenario.
 
 - Bug fix when uploading data files using the Microsoft Edge browser.
 
 .. rubric:: Deprecation
 
-- | Operations of types alternate, routing and split should not load any resources, 
-    or consume or produce materials. The suboperations should model all material and capacity 
+- | Operations of types alternate, routing and split should not load any resources,
+    or consume or produce materials. The suboperations should model all material and capacity
     usage instead.
   | Note that in the majority of models, the explicit modeling of alternate operations is no
     longer needed. The planning engine detects situations where an item-location can be replenished
@@ -1193,25 +1200,25 @@ The Windows installer of this version isn't working correctly due to some packag
 
 .. rubric:: Production planning
 
-- Added new reports `purchase order summary <user-interface/plan-analysis/purchase-order-summary.html>`_ 
+- Added new reports `purchase order summary <user-interface/plan-analysis/purchase-order-summary.html>`_
   and `distribution order summary <user-interface/plan-analysis/distribution-order-summary.html>`_
   to summarize the purchase orders or distribution orders per time bucket.
 
-- For consistency with the previous change, the operation report is renamed 
+- For consistency with the previous change, the operation report is renamed
   to `manufacturing order summary <user-interface/plan-analysis/manufacturing-order-summary.html>`_.
 
 .. rubric:: Integration
 
-- Extended the `exporttofolder <command-reference.html#exporttofolder>`_ 
+- Extended the `exporttofolder <command-reference.html#exporttofolder>`_
   command to export additional plan results into CSV or Excel files.
 
 - The data type of all numeric fields is changed from 15 digits with 6 decimals
   to 20 digits with 8 decimals. This allows a larger range of numbers to be
   accurately represented in the database.
-  
-- The `remote web commands API <integration-guide/remote-commands.html>`_ now 
+
+- The `remote web commands API <integration-guide/remote-commands.html>`_ now
   supports user authentication with `JSON Web Tokens <https://jwt.io/>`_ to launch tasks,
-  download data and upload data. 
+  download data and upload data.
 
 4.3.3 (2018/05/03)
 ==================
@@ -1227,8 +1234,8 @@ The Windows installer of this version isn't working correctly due to some packag
 .. rubric:: User interface
 
 - Bug fix for spreadsheet import: more robust handling of empty rows and rows with
-  empty fields at the end 
-  
+  empty fields at the end
+
 .. rubric:: Odoo connector
 
 - Correction to maintain a single root hierarchy.
@@ -1244,8 +1251,8 @@ The Windows installer of this version isn't working correctly due to some packag
     the total duration of the operationplan.
   | A new field operationmaterial.transferbatch is introduced.
 - A new field 'end items' is added to the manufacturing order, purchase order and
-  distribution orders screens. It is similar to the 'demands' which shows the 
-  demands 
+  distribution orders screens. It is similar to the 'demands' which shows the
+  demands
 
 .. rubric:: API
 
@@ -1253,7 +1260,7 @@ The Windows installer of this version isn't working correctly due to some packag
 
 .. rubric:: Third party components
 
-- Upgrade to PostgreSQL 10. 
+- Upgrade to PostgreSQL 10.
   PostgreSQL 9.5 and 9.6 remain fully supported.
 
 4.3.1 (2018/02/17)

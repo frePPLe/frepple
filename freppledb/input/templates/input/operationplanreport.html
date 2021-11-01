@@ -67,6 +67,7 @@
   var calendarmode = preferences && preferences.calendarmode || "{{reportclass.calendarmode}}";
   var grouping = preferences && preferences.grouping || null;
   var groupingdir = preferences && preferences.groupingdir || "asc";
+  var detailposition = preferences && preferences.details || "right";
 
   function extraPreference() {
     return {
@@ -76,7 +77,9 @@
       "calendarmode": calendarmode,
       "columns": angular.element('#controller').scope().kanbancolumns,
       "grouping": grouping,
-      "groupingdir": groupingdir
+      "groupingdir": groupingdir,
+      "details": detailposition,
+      "detailwidth": Math.floor($("#detailspanel").width() || 0)
     };
   }
 
@@ -96,12 +99,24 @@
   }
 
   function setHeights() {
-      $('#grid').setGridWidth($('#content-main').width());
-      $("#grid").setGridHeight($('#content-main').height()-52);
-      $(".column-body").css("height", $('#content-main').height() - 25);
-      $("#scrolldayview").css("height", $('#content-main').height() - 25);
-      $("#scrollweekview").css("height", $('#content-main').height() - 60);
-      $("#scrollmonthview").css("height", $('#content-main').height() - 45);
+    var h = $('#content-main').height();
+    $('#grid').setGridWidth($('#content-main').width());
+    $("#grid").setGridHeight(h - 52);
+    $(".column-body").css("height", h - 25);
+    $("#scrolldayview").css("height", h - 25);
+    $("#scrollweekview").css("height", h - 60);
+    $("#scrollmonthview").css("height", h - 45);
+  }
+
+  function setWidths() {
+    var w = $('#content-main').width();
+    $('#grid').setGridWidth(w);
+    $("#grid").setGridHeight($('#content-main') - 52);
+    $(".column-body").css("width", w - 25);
+    $("#scrolldayview").css("width", w - 25);
+    $("#scrollweekview").css("width", w - 60);
+    $("#scrollmonthview").css("width", w - 45);
+    $("#detailspanel").css("width",  $("#workarea").width() - w - 20);
   }
 
   function getDirtyData() {
@@ -131,15 +146,26 @@
 
   $(function() {
     $("#workarea").css('overflow-x','visible');
-    $("#content-main").resizable({
-      handleSelector: "#resize-handle",
-      resizeWidth: false,
-      resizeHeight: true,
-      onDrag: setHeights,
-      onDragEnd: function (e, $el, opt) {
-        grid.saveColumnConfiguration();
-      }
-    });
+    if (detailposition == "bottom")
+      $("#content-main").resizable({
+        handleSelector: "#resize-handle",
+        resizeWidth: false,
+        resizeHeight: true,
+        onDrag: setHeights,
+        onDragEnd: function (e, $el, opt) {
+          grid.saveColumnConfiguration();
+        }
+      });
+    else
+      $("#content-main").resizable({
+        handleSelector: "#resize-handle",
+        resizeWidth: true,
+        resizeHeight: false,
+        onDrag: setWidths,
+        onDragEnd: function (e, $el, opt) {
+          grid.saveColumnConfiguration();
+        }
+      });
     $("#save").on('click', function() {
       $(window).off('beforeunload', upload.warnUnsavedChanges);
       });
@@ -199,16 +225,33 @@
 
 extra_customize_html = '<div class="row"><div class="col-xs-12">'
   + gettext("Position of details") + '&nbsp;&nbsp;&nbsp;&nbsp;'
-  + '&nbsp;&nbsp;<label><input type="radio" name="detailposition" value="left"'
-      + ((preferences && preferences.details == "left") ? ' checked="true"' : '')
+  + '&nbsp;&nbsp;<label><input type="radio" id="detailpositionleft" name="detailposition" value="left"'
+      + ((detailposition == "left") ? ' checked="true"' : '')
       + '>&nbsp;' + gettext("left") + '&nbsp;</label>'
-  + '&nbsp;&nbsp;<label><input type="radio" name="detailposition" value="bottom"'
-      + ((preferences && preferences.details != "right" && preferences.details != "left") ? ' checked="true"' : '')
+  + '&nbsp;&nbsp;<label><input type="radio" id="detailpositionbottom" name="detailposition" value="bottom"'
+      + ((detailposition != "left" && detailposition != "right") ? ' checked="true"' : '')
       + '>&nbsp;' + gettext("bottom") + '&nbsp;</label>'
-  + '&nbsp;&nbsp;<label><input type="radio" name="detailposition" value="right"'
-      + ((preferences && preferences.details == "right") ? ' checked="true"' : '')
+  + '&nbsp;&nbsp;<label><input type="radio" id="detailpositionright" name="detailposition" value="right"'
+      + ((detailposition == "right") ? ' checked="true"' : '')
       + '>&nbsp;' + gettext("right") + '&nbsp;</label>'
   + '</div></div>';
+
+function extraCustomize() {
+  if ($("#detailpositionleft").is(":checked") && detailposition != "left") {
+    detailposition = "left";
+    return true;
+  }
+  else if ($("#detailpositionbottom").is(":checked") && detailposition != "bottom") {
+    detailposition = "bottom";
+    return true;
+  }
+  else if ($("#detailpositionright").is(":checked") && detailposition != "right") {
+    detailposition = "right";
+    return true;
+  }
+  else
+    return false;
+}
 
 </script>
 {% endblock %}
@@ -344,6 +387,7 @@ loadComplete: function(data) {
 {% endblock %}
 
 {% block table %}
+{% if preferences.details == "bottom" %}
 <div data-ng-controller="operationplandetailCtrl" id="controller">
 
 <div class="row" style="text-align: center">
@@ -374,4 +418,43 @@ loadComplete: function(data) {
 <div data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
 
 </div>
+{% else %}
+<div data-ng-controller="operationplandetailCtrl" id="controller">
+<div class="row">
+
+<div id="content-main" class="col-md-12" style="float:{% if preferences.details == 'left' %}right{% else %}left{% endif%}; width:calc(100vw - {% if preferences.detailwidth %}{{ preferences.detailwidth }}px{% else %}25%{% endif %} - 20px)">
+<div style="min-height: 150px; margin-top: 0.7em">
+  <div data-ng-hide="mode == 'kanban' || mode.startsWith('calendar')">
+    <table id="grid" class="table table-striped" style="background-color: white"></table>
+    <div id="gridpager"></div>
+  </div>
+  <div id="calendar" data-ng-hide="!mode.startsWith('calendar')" class="col-md-12">
+    <calendar
+      data-range-changed="calendarRangeChanged(startdate, enddate)"
+      data-event-selected="displayInfo(event)"
+      data-event-source="calendarevents"
+      data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
+      data-mode="mode"></calendar>
+  </div>
+  <div id="kanban" data-ng-hide="mode != 'kanban'"
+    show-kanban-drv data-ng-class="{'row': colsum <= 12, 'longline': colsum > 12}"
+    data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
+    data-kanbanoperationplans="kanbanoperationplans"
+    data-operationplan="operationplan"
+    data-kanbancolumns="kanbancolumns">
+  </div>
+</div>
+</div>
+
+<div style="float:{% if preferences.details == 'left' %}right{% else %}left{% endif%}">
+<span id="resize-handle" class="fa fa-bars fa-rotate-90 vhandle" ></span>
+</div>
+
+<div id="detailspanel" class="col-md-12"
+  style="margin-top: 0.7em; float:{% if preferences.details == 'left' %}left{% else %}right{% endif%}; width:{% if preferences.detailwidth %}{{ preferences.detailwidth }}px{% else %}25%{% endif %}">
+<div  data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
+</div>
+
+</div></div>
+{% endif %}
 {% endblock %}

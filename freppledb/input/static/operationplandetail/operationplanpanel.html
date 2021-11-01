@@ -115,7 +115,7 @@
     <tr data-ng-if="operationplan.setupend">
       <td><b style="text-transform: capitalize">{{'setup end date'|translate}}</b></td>
       <td>{{(operationplan.setupend || operationplan.operationplan__setupend)|formatdate}}</td>
-    </tr>    
+    </tr>
     <tr data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize" ng-if="operationplan.type == 'MO'">{{'end date'|translate}}</b>
         <b style="text-transform: capitalize" ng-if="operationplan.type == 'PO'">{{'receipt date'|translate}}</b>
@@ -154,20 +154,6 @@
         <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__quantity_completed")' class="form-control" type="number" ng-model="operationplan.quantity_completed" ng-model-options="{debounce: 300}">
         <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__quantity_completed")' class="form-control" type="number" ng-model="operationplan.operationplan__quantity_completed" ng-model-options="{debounce: 300}">
       </td>
-    </tr>    
-    <tr data-ng-if="operationplan.type !== 'STCK'">
-      <td><b style="text-transform: capitalize">{{'criticality'|translate}}</b>&nbsp;
-        <small data-ng-if="operationplan.colmodel.criticality">({{ operationplan.colmodel.criticality.type|translate }})</small>
-        <small data-ng-if="operationplan.colmodel.operationplan__criticality">({{ operationplan.colmodel.operationplan__criticality.type|translate }})</small>
-      </td>
-      <td id="criticalityrow">{{(operationplan.criticality || operationplan.operationplan__criticality) | number:0}}</td>
-    </tr>
-    <tr data-ng-if="operationplan.type !== 'STCK'">
-      <td><b style="text-transform: capitalize">{{'delay'|translate}}</b>&nbsp;
-        <small data-ng-if="operationplan.colmodel.delay">({{ operationplan.colmodel.delay.type|translate }})</small>
-        <small data-ng-if="operationplan.colmodel.operationplan__delay">({{ operationplan.colmodel.operationplan.colmodel.operationplan__delay.type|translate }})</small>
-      </td>
-      <td id="delayrow">{{((operationplan.delay || operationplan.operationplan__delay)/ 86400)|number:0}}</td>
     </tr>
     <tr data-ng-repeat="(key, value) in operationplan.colmodel"
       data-ng-if="['delay', 'criticality', 'quantity', 'startdate', 'enddate', 'color', 'quantity_completed', 'operationplan__delay', 'operationplan__criticality', 'operationplan__quantity', 'operationplan__startdate', 'operationplan__enddate', 'operationplan__color', 'operationplan__quantity_completed'].indexOf(key) == -1">

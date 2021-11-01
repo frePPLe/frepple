@@ -591,6 +591,9 @@ class GridReport(View):
     # (unless a filter is already applied explicitly in the URL of course)
     autofilter = True
 
+    # Hack to allow variable height depending on the detail position
+    variableheight = True
+
     # Specify a minimum level for the time buckets available in the report.
     # Higher values (ie more granular) buckets can then not be selected.
     maxBucketLevel = None
@@ -1483,12 +1486,14 @@ class GridReport(View):
                 request.query = cls.filter_items(request, cls.basequeryset).using(
                     request.database
                 )
-        
+
         tmp = request.query.query.get_compiler(request.database).as_sql(
-                with_col_aliases=False
-            )
+            with_col_aliases=False
+        )
         if settings.CACHE_GRID_COUNT:
-            cache_key= sha1(str((tmp[0], tmp[1], request.database)).encode("utf8")).hexdigest()
+            cache_key = sha1(
+                str((tmp[0], tmp[1], request.database)).encode("utf8")
+            ).hexdigest()
             cache_val = cache.get(cache_key, None)
             if cache_val is not None:
                 return cache_val
@@ -2938,21 +2943,29 @@ class GridPivot(GridReport):
 
         if settings.CACHE_PIVOT_COUNT:
             # Caching of the record count
-            tmp = cls.filter_items(request, request.basequery).query.get_compiler(request.database).as_sql(
-                with_col_aliases=False
+            tmp = (
+                cls.filter_items(request, request.basequery)
+                .query.get_compiler(request.database)
+                .as_sql(with_col_aliases=False)
             )
-            cache_key= sha1(str((request.database, tmp[0], tmp[1])).encode("utf8")).hexdigest()
+            cache_key = sha1(
+                str((request.database, tmp[0], tmp[1])).encode("utf8")
+            ).hexdigest()
             cache_val = cache.get(cache_key, None)
             if cache_val is None:
                 with connections[request.database].cursor() as cursor:
-                    cursor.execute("select count(*) from (" + tmp[0] + ") t_subquery", tmp[1])
+                    cursor.execute(
+                        "select count(*) from (" + tmp[0] + ") t_subquery", tmp[1]
+                    )
                     cache_val = cursor.fetchone()[0]
                     cache.set(cache_key, cache_val, settings.CACHE_PIVOT_COUNT)
             return cache_val
         else:
             # Don't cache the record count queries
             return (
-                cls.filter_items(request, request.basequery).using(request.database).count()
+                cls.filter_items(request, request.basequery)
+                .using(request.database)
+                .count()
             )
 
     @classmethod

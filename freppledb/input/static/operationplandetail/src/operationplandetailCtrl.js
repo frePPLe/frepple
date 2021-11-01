@@ -26,6 +26,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   $scope.operationplan = new OperationPlan();
   $scope.aggregatedopplan = null;
   $scope.mode = preferences ? preferences.mode : "table";
+  $scope.detailposition = detailposition;
   $scope.operationplans = [];
   $scope.kanbanoperationplans = {};
   $scope.colsum = 12;

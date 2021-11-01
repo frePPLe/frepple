@@ -921,8 +921,12 @@ var grid = {
         if (!graph)
           $("#grid").jqGrid('setFrozenColumns');
         $("#grid").trigger('reloadGrid');
-        grid.saveColumnConfiguration();
+        var reload = typeof extraCustomize !== 'undefined' ? extraCustomize() : false;
+        grid.saveColumnConfiguration(function () {
+          if (reload) window.location.href = window.location.href;
+        });
         $('#popup').modal("hide");
+
       });
   },
 

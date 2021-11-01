@@ -1,5 +1,5 @@
 /*!
- * FrePPLe theme (https://frepple.com) 
+ * FrePPLe theme (https://frepple.com)
  *
  * Bootstrap v3.4.1 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -188,8 +188,12 @@ button:active, button:focus, input:active, input:focus {
 .handle {
   color:  @nav-tabs-border-color;
   cursor: ns-resize;
-  transform : scale(3,0.8);
   bottom: 0px;
+}
+
+.vhandle {
+  color:  @nav-tabs-border-color;
+  cursor: ew-resize;
 }
 
 div.selectdb {
@@ -253,21 +257,21 @@ div.tt-dataset.tt-dataset-search {
       text-align: left;
     }
   }
-  
+
   li.tt-suggestion.tt-selectable a {
     display: block;
     white-space: nowrap;
     overflow:hidden;
   }
-  
+
   li.tt-suggestion.tt-selectable div {
     position: relative;
     top: -1em;
     margin-top: -4px;
     margin-right: 5px;
     float:right;
-  } 
-  
+  }
+
   li.tt-suggestion.tt-selectable:hover {
     background-color: @dropdown-link-hover-bg;
     a:link:hover {
@@ -769,7 +773,7 @@ h1 small {
   display: inline-block;
   line-height: 3;
 }
-  
+
 #filterform {
 
   padding-left: 10px;
@@ -777,14 +781,14 @@ h1 small {
   .border-right-radius(@border-radius-small);
   .border-bottom-radius(@border-radius-small);
   .border-left-radius(@border-radius-small);
-  
+
   .label {
     padding-top: 10px;
     padding-bottom: 10px;
     font-size: 100%;
     font-weight: 400;
   }
-  
+
   .list-group {
     width: auto;
     position: absolute;
@@ -792,7 +796,7 @@ h1 small {
     z-index: 4999;
     white-space: nowrap;
   }
-  
+
   .list-group-item {
     border: none;
     line-height: 2em;
@@ -814,15 +818,15 @@ h1 small {
     padding-left: 6px;
     padding-right: 6px;
   }
-  
+
   .label input {
     color: #777777;
   }
-  
+
   .fa-times {
     cursor: pointer;
   }
-  
+
   button.fa-search {
     color: #777777;
   }
@@ -836,30 +840,30 @@ h1 small {
     overflow-x: auto;
     display:table-row;
   }
-  
+
   .longcol {
-    display: table-cell; 
+    display: table-cell;
     float: none;
   }
-   
+
   white-space: nowrap;
   user-select: none;
-    
+
   .badge {
     color: @badge-color;
     background-color: @brand-primary;
   }
-  
+
   .panel-body {
     overflow-y: auto;
   }
-  
+
   .column {
     cursor: pointer;
     padding-left: 5px;
     padding-right: 5px;
   }
-  
+
 }
 
 // Calendar
@@ -930,7 +934,7 @@ h1 small {
     padding: 5px;
     line-height: 15px;
     border-radius: 4px;
-    margin-bottom: 8px;   
+    margin-bottom: 8px;
 }
 
 .calendar-event-inner p {
@@ -939,7 +943,7 @@ h1 small {
 
 .calendar-cell {
     padding: 0 !important;
-    height: 37px;    
+    height: 37px;
 }
 
 .weekview-allday-label, .dayview-allday-label {
@@ -1041,29 +1045,29 @@ h1 small {
   .card-day {
     overflow-y: hidden;
   }
-    
+
   .card p {
       margin: 0 0 2px !important;
   }
-  
+
   .card .form-control {
     padding: 1px 6px;
     line-height: normal;
     height: auto;
   }
-  
+
   .card table {
     background-color: transparent;
   }
-  
+
   .card table td.dirty {
     background: @brand-danger;
   }
-  
+
   .card.active {
     background-color: @table-bg-hover;
   }
-  
+
   .card-label {
     text-transform: capitalize;
     text-align: right;
@@ -1075,15 +1079,15 @@ h1 small {
 
 #wizard{
 	background-color: #fafafc !important;
-	
+
 	.wrapper{
 		margin: 20px 0;
 	}
-	
+
 	.heading{
 		margin-top: 10px;
 	}
-	
+
 	#quickstart-wrapper {
 	  overflow: hidden;
 	  text-align: center;
@@ -1098,7 +1102,7 @@ h1 small {
 		font-weight: bold;
 		background-color: #0066cc;
 	}
-	
+
 	#quickstart{
 	  overflow: hidden;
 	  text-align: center;
@@ -1110,36 +1114,36 @@ h1 small {
 		font-weight: bold;
 		background-color: #0066cc;
 	}
-	
+
 	#quickstart:hover{
 		background-color: #cc6600;
 	}
-	
+
 	#quickstart-wrapper:hover, #quickstart-wrapper.hovered{
 		background-color: #cc6600;
 	}
-	
+
 	#quickstart-wrapper + div>.quickstart-option-reveal{
 		display: block;
 		background-color: #0066cc;
 	}
-	
+
 	#quickstart-wrapper + div>.quickstart-option-reveal:hover{
 		display: block;
 		background-color: #cc6600;
 	}
-	
+
 	#quickstart-group{
 		margin-top: 0px;
 	}
-	
+
 	#quickstart-wrapper + #quickstart-group>.quickstart-option-reveal {
 	  opacity: 0;
 	}
-	
-	
+
+
 	/** section for uploading data in welcome page */
-	
+
 	#upload-wrapper {
 	  overflow: hidden;
 	  text-align: center;
@@ -1154,7 +1158,7 @@ h1 small {
 		font-weight: bold;
 		background-color: #0066cc;
 	}
-	
+
 	#upload {
 	  overflow: hidden;
 	  text-align: center;
@@ -1166,37 +1170,37 @@ h1 small {
 		font-weight: bold;
 		background-color: #0066cc;
 	}
-	
+
 	#upload:hover{
 		background-color: #cc6600;
 	}
-	
+
 	#upload-wrapper:hover, #upload-wrapper.hovered{
 		background-color: #cc6600;
 	}
-	
+
 	#upload-wrapper + div>.upload-option-reveal{
 		display: block;
 		font-size: 16px;
 		font-weight: bold;
 		background-color: #0066cc;
 	}
-	
+
 	#upload-wrapper + div>.upload-option-reveal:hover{
 		background-color: #cc6600;
-		
+
 	}
-	
+
 	#upload-group{
 		margin-top: 0px;
 	}
-	
+
 	#upload-wrapper + #upload-group>.upload-option-reveal {
 		opacity: 0;
 	}
-	
+
 	/** wizard title styling */
-	
+
 	.wizard-heading {
 		font-size: 30px;
 		color: #353740;
@@ -1222,7 +1226,7 @@ h1 small {
   @b2: ceil(blue(@color2));
   @r3: ceil(red(@color3));
   @g3: ceil(green(@color3));
-  @b3: ceil(blue(@color3));  
+  @b3: ceil(blue(@color3));
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' width='500' height='10' viewBox='0 0 500 100'><path fill='rgb(@{r1},@{g1},@{b1})' stroke-width='2' stroke='rgb(@{r3},@{g3},@{b3})' d='m0,0 h225 l25,50 l-25,50 h-225 z'/><path fill='rgb(@{r2},@{g2},@{b2})' stroke-width='2' stroke='rgb(@{r3},@{g3},@{b3})' d='m225,0 h275 v100 h-275 l25,-50 z'/></svg>");
   background-size: 100% 100%;
   background-color: transparent;
@@ -1274,7 +1278,7 @@ h1 small {
   opacity: 0.8;
 }
 
-// Avatar 
+// Avatar
 
 img.avatar-sm {
   border-radius: 50%;

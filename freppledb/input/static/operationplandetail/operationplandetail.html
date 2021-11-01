@@ -1,9 +1,9 @@
 
   <div class="row">
-    <div class="col-md-6">
+    <div data-ng-class="{'col-md-6': detailposition=='bottom', 'col-md-12': detailposition!='bottom'}">
       <div class="panel panel-default" id="attributes-operationplan" data="operationplan" showoperationplan-drv style="margin-bottom: 18px;"></div>
     </div>
-    <div class="col-md-6">
+    <div data-ng-class="{'col-md-6': detailposition=='bottom', 'col-md-12': detailposition!='bottom'}">
       <div class="panel panel-default" id="attributes-operationproblems" data-ng-if="operationplan.id !== -1 && operationplan.problems != undefined" data="operationplan" showproblemspanel-drv></div>
       <div class="panel panel-default" id="attributes-operationresources" data-ng-if="operationplan.id !== -1 && operationplan.loadplans != undefined" data="operationplan" showresourcespanel-drv></div>
       <div class="panel panel-default" id="attributes-operationflowplans" data-ng-if="operationplan.id !== -1 && operationplan.flowplans != undefined" data="operationplan" showbufferspanel-drv></div>
@@ -11,22 +11,22 @@
     </div>
   </div>
   <!-- row end  -->
-  <div class="row">
+  <div class="row" data-ng-if="detailposition=='bottom'">
     <div class="col-xs-12">
       <div class="panel panel-default" id="attributes-networkstatus" data-ng-if="operationplan.network !== undefined" data="operationplan" shownetworkstatus-drv style="margin-bottom: 18px;"></div>
     </div>
   </div>
   <!-- row end  -->
-  <div class="row">
+  <div class="row" data-ng-if="detailposition=='bottom'">
     <div class="col-xs-12">
       <div class="panel panel-default" id="attributes-downstreamoperationplans" data-ng-if="operationplan.downstreamoperationplans !== undefined" data="operationplan" showdownstreamoperationplans-drv style="margin-bottom: 18px;"></div>
     </div>
   </div>
-  <div class="row">
+  <div class="row" data-ng-if="detailposition=='bottom'">
     <div class="col-xs-12">
       <div class="panel panel-default" id="attributes-upstreamoperationplans" data-ng-if="operationplan.upstreamoperationplans !== undefined" data="operationplan" showupstreamoperationplans-drv style="margin-bottom: 18px;"></div>
     </div>
-  </div>    
+  </div>
   <!-- row end  -->
   <div class="row">
     <div class="col-xs-12">
@@ -69,5 +69,3 @@
       }, 50);
     });
   </script>
-
-

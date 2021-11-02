@@ -54,7 +54,7 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Grunt to compile and minify css and javascript files
-          file_pattern: "*.js"
+          file_pattern: "*.min.*"
 
       - name: Get the version
         id: get_version
@@ -75,7 +75,7 @@ jobs:
           # First activate experimental features on docker to get "--squash" option
           sudo rm -rf /etc/docker/daemon.json
           echo '{"cgroup-parent": "/actions_job", "experimental": true}' | sudo tee -a /etc/docker/daemon.json
-          sudo systemctl restart docker      
+          sudo systemctl restart docker
           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target docker
           docker push ghcr.io/frepple/frepple-community:${{ steps.get_version.outputs.tag }}
 

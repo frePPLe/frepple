@@ -7662,14 +7662,11 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
       oper = o;
   }
 
-  /* Each operationplan has 2 loadplans per load: one at the start,
-   * when the capacity consumption starts, and one at the end, when the
-   * capacity consumption ends.
-   * This method returns the "companion" loadplan. It is not very
-   * scalable: the performance is linear with the number of loadplans
-   * on the resource.
+  /* Each operationplan on a default resource has 2 loadplans per load:
+   *  - one at the start, when the capacity consumption starts
+   *  - one at the end, when the capacity consumption ends
    */
-  LoadPlan* getOtherLoadPlan() const;
+  LoadPlan* getOtherLoadPlan() const { return otherLoadPlan; }
 
   /* Auxilary method for bucketized resources.
    * Returns the date and onhand at the end of this bucket.
@@ -7789,6 +7786,9 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
 
   /* Points to the next loadplan owned by the same operationplan. */
   LoadPlan* nextLoadPlan;
+
+  /* Points to the other half of a loadplan pair. */
+  LoadPlan* otherLoadPlan = nullptr;
 
   /* flag bits. */
   static const unsigned short STATUS_CONFIRMED = 1;

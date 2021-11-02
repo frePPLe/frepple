@@ -396,6 +396,7 @@ Resource* Load::findPreferredResource(Date d, OperationPlan* opplan) const {
   // Also avoid assigning the same resource twice.
   // TODO We ignore date effectivity.
   Resource* best_res = nullptr;
+  Resource* backup_res = getResource();
   double best_eff = 0.0;
   double best_priority = DBL_MAX;
   for (Resource::memberRecursiveIterator mmbr(getResource()); !mmbr.empty();
@@ -414,7 +415,10 @@ Resource* Load::findPreferredResource(Date d, OperationPlan* opplan) const {
             break;
           }
         }
-        if (exists) continue;
+        if (exists) {
+          backup_res = &*mmbr;
+          continue;
+        }
       }
 
       auto my_eff = mmbr->getEfficiencyCalendar()
@@ -432,7 +436,7 @@ Resource* Load::findPreferredResource(Date d, OperationPlan* opplan) const {
       }
     }
   }
-  return best_res ? best_res : getResource();
+  return best_res ? best_res : backup_res;
 }
 
 }  // namespace frepple

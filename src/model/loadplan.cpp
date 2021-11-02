@@ -89,10 +89,14 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r) {
   r->getOperation()->setChanged();
 }
 
-LoadPlan::LoadPlan(OperationPlan* o, const Load* r, LoadPlan* lp) {
+LoadPlan::LoadPlan(OperationPlan* o, const Load* r, LoadPlan* lp)
+    : otherLoadPlan(lp) {
   ld = const_cast<Load*>(r);
   oper = o;
-  if (lp) flags |= TYPE_END;
+  if (lp) {
+    flags |= TYPE_END;
+    lp->otherLoadPlan = this;
+  }
 
   // Update the resource field
   res = lp ? lp->getResource() : r->findPreferredResource(o->getSetupEnd(), o);
@@ -231,15 +235,6 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
 
   // Change the resource
   newres->setChanged();
-}
-
-LoadPlan* LoadPlan::getOtherLoadPlan() const {
-  if (getResource()->hasType<ResourceBuckets>()) return nullptr;
-  for (auto i = oper->firstloadplan; i; i = i->nextLoadPlan)
-    if (i->getResource() == getResource() && i != this &&
-        i->getEventType() == 1)
-      return i;
-  throw LogicException("No matching loadplan found");
 }
 
 string LoadPlan::getStatus() const {

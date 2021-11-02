@@ -88,20 +88,6 @@ void SolverCreate::chooseResource(
       continue;
     }
 
-    // Avoid double allocations to the same resource
-    if (lplan->getLoad()->getResource()->isGroup() &&
-        Plan::instance().getIndividualPoolResources()) {
-      bool exists = false;
-      for (auto g = lplan->getOperationPlan()->getLoadPlans();
-           g != lplan->getOperationPlan()->endLoadPlans(); ++g) {
-        if (g->getResource() == res) {
-          exists = true;
-          break;
-        }
-      }
-      if (exists) continue;
-    }
-
     // Check if the resource has the right skill
     ResourceSkill* rscSkill = nullptr;
     if (l->getSkill() && !res->hasSkill(l->getSkill(), originalOpplan.start,
@@ -110,6 +96,22 @@ void SolverCreate::chooseResource(
     // TODO if there is a date effective skill, we need to consider it in the
     // reply
     qualified_resource_exists = true;
+
+    // Avoid double allocations to the same resource
+    if (lplan->getLoad()->getResource()->isGroup() &&
+        Plan::instance().getIndividualPoolResources()) {
+      bool exists = false;
+      for (auto g = lplan->getOperationPlan()->getLoadPlans();
+           g != lplan->getOperationPlan()->endLoadPlans() && &*g != lplan &&
+           g->getQuantity() < 0.0;
+           ++g) {
+        if (g->getResource() == res) {
+          exists = true;
+          break;
+        }
+      }
+      if (exists) continue;
+    }
 
     // Switch to this resource
     data->state->q_loadplan = lplan;  // because q_loadplan can change!
@@ -230,7 +232,8 @@ void SolverCreate::chooseResource(
 
   if (!originalPlanningMode) {
     // No alternate gave a good result in an unconstrained plan
-    if (lplan->getResource() != firstAlternate) {
+    if (lplan->getResource() != firstAlternate ||
+        !lplan->getOperationPlan()->getQuantity()) {
       lplan->getOperationPlan()->clearSetupEvent();
       lplan->getOperationPlan()->setStartEndAndQuantity(
           firstAlternateState.start, firstAlternateState.end,
@@ -248,7 +251,7 @@ void SolverCreate::chooseResource(
       logger << indentlevel << "Alternate load overloads alternate "
              << firstAlternate << endl;
   } else {
-    // No alternate gave a good result in an constrained plan
+    // No alternate gave a good result in a constrained plan
     data->state->a_date = min_next_date;
     data->state->a_qty = 0;
 

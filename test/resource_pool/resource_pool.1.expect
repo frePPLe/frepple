@@ -1,4 +1,4 @@
-BUFFER	1. item 1 @ factory	2021-01-02T00:00:00	10	10
+sBUFFER	1. item 1 @ factory	2021-01-02T00:00:00	10	10
 BUFFER	1. item 1 @ factory	2021-01-02T00:00:00	-10	0
 BUFFER	1. item 1 @ factory	2021-02-01T00:00:00	10	10
 BUFFER	1. item 1 @ factory	2021-02-01T00:00:00	-10	0
@@ -8,11 +8,41 @@ BUFFER	1. item 2 @ factory	2021-01-20T00:00:00	10	10
 BUFFER	1. item 2 @ factory	2021-01-31T00:00:00	10	20
 BUFFER	1. item 2 @ factory	2021-02-01T00:00:00	-10	10
 BUFFER	1. item 2 @ factory	2021-02-02T00:00:00	-10	0
+BUFFER	2. item 1 @ factory	2021-01-02T00:00:00	10	10
+BUFFER	2. item 1 @ factory	2021-01-02T00:00:00	-10	0
+BUFFER	2. item 1 @ factory	2021-02-01T00:00:00	10	10
+BUFFER	2. item 1 @ factory	2021-02-01T00:00:00	-10	0
+BUFFER	2. item 2 @ factory	2021-01-13T00:00:00	10	10
+BUFFER	2. item 2 @ factory	2021-01-13T00:00:00	-10	0
+BUFFER	2. item 2 @ factory	2021-01-20T00:00:00	6	6
+BUFFER	2. item 2 @ factory	2021-01-31T00:00:00	10	16
+BUFFER	2. item 2 @ factory	2021-02-01T00:00:00	-10	6
+BUFFER	2. item 2 @ factory	2021-02-02T00:00:00	-6	0
+BUFFER	2. item 2 @ factory	2021-02-03T00:00:00	1	1
+BUFFER	2. item 2 @ factory	2021-02-03T00:00:00	-1	0
+BUFFER	2. item 2 @ factory	2021-02-05T00:00:00	1	1
+BUFFER	2. item 2 @ factory	2021-02-05T00:00:00	-1	0
+BUFFER	2. item 2 @ factory	2021-02-07T00:00:00	1	1
+BUFFER	2. item 2 @ factory	2021-02-07T00:00:00	-1	0
+BUFFER	2. item 2 @ factory	2021-02-09T00:00:00	1	1
+BUFFER	2. item 2 @ factory	2021-02-09T00:00:00	-1	0
+BUFFER	3. item 1 @ factory	2021-01-02T00:00:00	10	10
+BUFFER	3. item 1 @ factory	2021-01-02T00:00:00	-10	0
 DEMAND	1. order 1	2021-01-02T00:00:00	10
 DEMAND	1. order 2	2021-01-12T00:00:00	10
 DEMAND	1. order 3	2021-02-01T00:00:00	10
 DEMAND	1. order 4	2021-02-01T00:00:00	10
 DEMAND	1. order 5	2021-02-02T00:00:00	10
+DEMAND	2. order 1	2021-01-02T00:00:00	10
+DEMAND	2. order 2	2021-01-13T00:00:00	10
+DEMAND	2. order 3	2021-02-01T00:00:00	10
+DEMAND	2. order 4	2021-02-01T00:00:00	10
+DEMAND	2. order 5	2021-02-09T00:00:00	1
+DEMAND	2. order 5	2021-02-07T00:00:00	1
+DEMAND	2. order 5	2021-02-05T00:00:00	1
+DEMAND	2. order 5	2021-02-03T00:00:00	1
+DEMAND	2. order 5	2021-02-02T00:00:00	6
+DEMAND	3. order 1	2021-01-02T00:00:00	10
 RESOURCE	1. operator B	2021-01-01T00:00:00	1	1
 RESOURCE	1. operator B	2021-01-12T00:00:00	-1	0
 RESOURCE	1. operator C	2021-01-01T00:00:00	1	1
@@ -37,13 +67,80 @@ RESOURCE	1. operator F	2021-01-20T00:00:00	-1	1
 RESOURCE	1. operator F	2021-01-31T00:00:00	1	2
 RESOURCE	1. operator F	2021-01-31T00:00:00	-1	1
 RESOURCE	1. operator F	2021-02-01T00:00:00	-1	0
+RESOURCE	2. operator A	2021-01-01T00:00:00	1	1
+RESOURCE	2. operator A	2021-01-02T00:00:00	-1	0
+RESOURCE	2. operator A	2021-01-31T00:00:00	1	1
+RESOURCE	2. operator A	2021-02-01T00:00:00	-1	0
+RESOURCE	2. operator B	2021-01-01T00:00:00	1	1
+RESOURCE	2. operator B	2021-01-02T00:00:00	1	2
+RESOURCE	2. operator B	2021-01-02T00:00:00	-1	1
+RESOURCE	2. operator B	2021-01-13T00:00:00	1	2
+RESOURCE	2. operator B	2021-01-13T00:00:00	-1	1
+RESOURCE	2. operator B	2021-01-20T00:00:00	1	2
+RESOURCE	2. operator B	2021-01-20T00:00:00	-1	1
+RESOURCE	2. operator B	2021-01-31T00:00:00	1	2
+RESOURCE	2. operator B	2021-01-31T00:00:00	-1	1
+RESOURCE	2. operator B	2021-02-01T00:00:00	1	2
+RESOURCE	2. operator B	2021-02-01T00:00:00	-1	1
+RESOURCE	2. operator B	2021-02-03T00:00:00	1	2
+RESOURCE	2. operator B	2021-02-03T00:00:00	-1	1
+RESOURCE	2. operator B	2021-02-05T00:00:00	1	2
+RESOURCE	2. operator B	2021-02-05T00:00:00	-1	1
+RESOURCE	2. operator B	2021-02-07T00:00:00	1	2
+RESOURCE	2. operator B	2021-02-07T00:00:00	-1	1
+RESOURCE	2. operator B	2021-02-09T00:00:00	-1	0
+RESOURCE	2. operator C	2021-01-01T00:00:00	1	1
+RESOURCE	2. operator C	2021-01-02T00:00:00	1	2
+RESOURCE	2. operator C	2021-01-02T00:00:00	-1	1
+RESOURCE	2. operator C	2021-01-13T00:00:00	1	2
+RESOURCE	2. operator C	2021-01-13T00:00:00	-1	1
+RESOURCE	2. operator C	2021-01-20T00:00:00	1	2
+RESOURCE	2. operator C	2021-01-20T00:00:00	-1	1
+RESOURCE	2. operator C	2021-01-31T00:00:00	1	2
+RESOURCE	2. operator C	2021-01-31T00:00:00	-1	1
+RESOURCE	2. operator C	2021-02-01T00:00:00	1	2
+RESOURCE	2. operator C	2021-02-01T00:00:00	-1	1
+RESOURCE	2. operator C	2021-02-03T00:00:00	1	2
+RESOURCE	2. operator C	2021-02-03T00:00:00	-1	1
+RESOURCE	2. operator C	2021-02-05T00:00:00	1	2
+RESOURCE	2. operator C	2021-02-05T00:00:00	-1	1
+RESOURCE	2. operator C	2021-02-07T00:00:00	1	2
+RESOURCE	2. operator C	2021-02-07T00:00:00	-1	1
+RESOURCE	2. operator C	2021-02-09T00:00:00	-1	0
+RESOURCE	3. operator A	2021-01-01T00:00:00	1	1
+RESOURCE	3. operator A	2021-01-02T00:00:00	-1	0
 OPERATION	1. make item 1	2021-01-01T00:00:00	2021-01-02T00:00:00	10
 OPERATION	1. make item 1	2021-01-31T00:00:00	2021-02-01T00:00:00	10
 OPERATION	1. make item 2	2021-01-01T00:00:00	2021-01-12T00:00:00	10
 OPERATION	1. make item 2	2021-01-09T00:00:00	2021-01-20T00:00:00	10
 OPERATION	1. make item 2	2021-01-20T00:00:00	2021-01-31T00:00:00	10
+OPERATION	2. make item 1	2021-01-01T00:00:00	2021-01-02T00:00:00	10
+OPERATION	2. make item 1	2021-01-31T00:00:00	2021-02-01T00:00:00	10
+OPERATION	2. make item 2	2021-01-02T00:00:00	2021-01-13T00:00:00	10
+OPERATION	2. make item 2	2021-01-13T00:00:00	2021-01-20T00:00:00	6
+OPERATION	2. make item 2	2021-01-20T00:00:00	2021-01-31T00:00:00	10
+OPERATION	2. make item 2	2021-02-01T00:00:00	2021-02-03T00:00:00	1
+OPERATION	2. make item 2	2021-02-03T00:00:00	2021-02-05T00:00:00	1
+OPERATION	2. make item 2	2021-02-05T00:00:00	2021-02-07T00:00:00	1
+OPERATION	2. make item 2	2021-02-07T00:00:00	2021-02-09T00:00:00	1
+OPERATION	3. make item 1	2021-01-01T00:00:00	2021-01-02T00:00:00	10
 PROBLEM	material excess	Buffer '1. item 2 @ factory' has material excess of 20	2021-01-20T00:00:00 / 2021-02-02T00:00:00
+PROBLEM	material excess	Buffer '2. item 2 @ factory' has material excess of 16	2021-01-20T00:00:00 / 2021-02-02T00:00:00
 PROBLEM	late	10 units of demand '1. order 1' planned up to 1.0 days after its due date	2021-01-01T00:00:00 / 2021-01-02T00:00:00
 PROBLEM	late	10 units of demand '1. order 2' planned up to 11.0 days after its due date	2021-01-01T00:00:00 / 2021-01-12T00:00:00
+PROBLEM	late	10 units of demand '2. order 1' planned up to 1.0 days after its due date	2021-01-01T00:00:00 / 2021-01-02T00:00:00
+PROBLEM	late	10 units of demand '2. order 2' planned up to 12.0 days after its due date	2021-01-01T00:00:00 / 2021-01-13T00:00:00
+PROBLEM	late	4 units of demand '2. order 5' planned up to 7.0 days after its due date	2021-02-02T00:00:00 / 2021-02-09T00:00:00
+PROBLEM	late	10 units of demand '3. order 1' planned up to 1.0 days after its due date	2021-01-01T00:00:00 / 2021-01-02T00:00:00
+PROBLEM	unplanned	Demand '3. order 2' is not planned	2021-01-01T00:00:00 / 2021-01-01T00:00:00
+PROBLEM	unplanned	Demand '3. order 3' is not planned	2021-02-01T00:00:00 / 2021-02-01T00:00:00
 DEMAND CONSTRAINT	1. order 1	Operation '1. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00	
 DEMAND CONSTRAINT	1. order 2	Operation '1. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00	
+DEMAND CONSTRAINT	2. order 1	Operation '2. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00	
+DEMAND CONSTRAINT	2. order 2	Operation '2. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00	
+DEMAND CONSTRAINT	2. order 2	Resource '2. operator pool' has capacity shortage of 1	2021-01-10T00:00:00 / 2021-01-12T00:00:00	
+DEMAND CONSTRAINT	2. order 5	Resource '2. operator pool' has capacity shortage of 1	2021-01-26T00:00:00 / 2021-01-31T00:00:00	
+DEMAND CONSTRAINT	3. order 1	Operation '3. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00	
+DEMAND CONSTRAINT	3. order 2	Operation '3. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00	
+DEMAND CONSTRAINT	3. order 2	Resource '3. operator pool' has capacity shortage of 1	2021-01-01T00:00:00 / 2021-01-12T00:00:00	
+DEMAND CONSTRAINT	3. order 3	Error: No subresource of '3. operator pool' has the skill '3. nobody can do this' required for operation '3. make item 3'	2021-02-01T00:00:00 / 2021-02-01T00:00:00	

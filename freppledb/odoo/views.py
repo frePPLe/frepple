@@ -118,7 +118,7 @@ def Upload(request):
                             quoteattr(po.location.subcategory or ""),
                             quoteattr(po.item.subcategory or ""),
                             int(po.criticality),
-                            quoteattr(po.batch),
+                            quoteattr(po.batch or ""),
                         )
                     )
                 elif rec["type"] == "DO":
@@ -149,7 +149,7 @@ def Upload(request):
                             quoteattr(do.destination.subcategory or ""),
                             quoteattr(do.item.subcategory or ""),
                             int(do.criticality),
-                            quoteattr(do.batch),
+                            quoteattr(do.batch or ""),
                         )
                     )
                 else:
@@ -177,7 +177,7 @@ def Upload(request):
                             quoteattr(op.operation.location.subcategory or ""),
                             quoteattr(op.operation.item.subcategory or ""),
                             int(op.criticality),
-                            quoteattr(op.batch),
+                            quoteattr(op.batch or ""),
                         )
                     )
             except Exception:

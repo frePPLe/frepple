@@ -340,7 +340,7 @@ class OdooWritePlan(PlanTask):
                         quoteattr(i.location.subcategory),
                         quoteattr(i.item.subcategory),
                         int(i.criticality),
-                        quoteattr(i.batch),
+                        quoteattr(i.batch or ""),
                     )
                 elif i.ordertype == "DO":
                     if (
@@ -367,7 +367,7 @@ class OdooWritePlan(PlanTask):
                         quoteattr(i.operation.destination.location.subcategory),
                         quoteattr(i.operation.destination.item.subcategory),
                         int(i.criticality),
-                        quoteattr(i.batch),
+                        quoteattr(i.batch or ""),
                     )
                 elif i.ordertype == "MO":
                     if (
@@ -407,7 +407,7 @@ class OdooWritePlan(PlanTask):
                         int(i.criticality),
                         quoteattr(",".join(res)),
                         quoteattr(demand_str),
-                        quoteattr(i.batch),
+                        quoteattr(i.batch or ""),
                     )
             yield "</operationplans>"
             yield "</plan>"

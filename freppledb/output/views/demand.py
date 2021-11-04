@@ -155,7 +155,7 @@ class OverviewReport(GridPivot):
                 )
                 for row in cursor_chunked:
                     if row[0]:
-                        startbacklogdict[row[0]] = float(row[1])
+                        startbacklogdict[row[0]] = max(float(row[1]), 0)
 
         # Execute the query
         query = """
@@ -258,7 +258,7 @@ class OverviewReport(GridPivot):
                         "demand": row[numfields - 3],
                         "supply": row[numfields - 2],
                         "reasons": json.dumps(row[numfields - 1]),
-                        "backlog": backlog,
+                        "backlog": max(backlog or 0, 0),
                     }
                     idx = 12
                     for f in itemattributefields:

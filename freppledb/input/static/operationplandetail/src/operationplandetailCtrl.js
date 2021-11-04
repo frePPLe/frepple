@@ -547,7 +547,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
           if (card.hasOwnProperty(field + "Original")) {
             dirtyfields = true;
             if (card[field] instanceof Date)
-              dirtycard[field] = new moment(card[field]).format('YYYY-MM-DD hh:mm:ss');
+              dirtycard[field] = new moment(card[field]).format('YYYY-MM-DD HH:mm:ss');
             else
               dirtycard[field] = card[field];
           }
@@ -567,7 +567,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
             if (card.hasOwnProperty(field + "Original")) {
               dirtyfields = true;
               if (card[field] instanceof Date)
-                dirtycard[field] = new moment(card[field]).format('YYYY-MM-DD hh:mm:ss');
+                dirtycard[field] = new moment(card[field]).format('YYYY-MM-DD HH:mm:ss');
               else
                 dirtycard[field] = card[field];
             }

@@ -43,6 +43,12 @@ Release notes
   | Unless you're embedding frePPLe web pages as an iframe in your application
     this change doesn't impact you.
 
+.. rubric:: Odoo integration
+
+- V14: Added support for subcontracting bill of materials.
+
+- V14: Added mapping of the unit of measure, volume and weight of a product.
+
 6.17.1 (2021/10/10)
 ===================
 

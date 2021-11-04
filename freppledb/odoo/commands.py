@@ -394,21 +394,36 @@ class OdooWritePlan(PlanTask):
                         demand_str += "%s:%s, " % (d.demand, d.quantity)
                     if demand_str:
                         demand_str = demand_str[:-2]
-                    yield '<operationplan reference="%s" ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" resource=%s demand=%s batch=%s/>' % (
-                        i.reference,
-                        quoteattr(i.operation.item.name),
-                        quoteattr(i.operation.location.name),
-                        quoteattr(i.operation.name),
-                        i.start,
-                        i.end,
-                        i.quantity,
-                        quoteattr(i.operation.location.subcategory),
-                        quoteattr(i.operation.item.subcategory),
-                        int(i.criticality),
-                        quoteattr(",".join(res)),
-                        quoteattr(demand_str),
-                        quoteattr(i.batch or ""),
-                    )
+                    if i.operation.category == "subcontractor":
+                        yield '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s/>' % (
+                            i.reference,
+                            quoteattr(i.item.name),
+                            quoteattr(i.location.name),
+                            quoteattr(i.operation.subcategory or ""),
+                            i.startdate,
+                            i.enddate,
+                            i.quantity,
+                            quoteattr(i.location.subcategory or ""),
+                            quoteattr(i.item.subcategory or ""),
+                            int(i.criticality),
+                            quoteattr(i.batch or ""),
+                        )
+                    else:
+                        yield '<operationplan reference="%s" ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" resource=%s demand=%s batch=%s/>' % (
+                            i.reference,
+                            quoteattr(i.operation.item.name),
+                            quoteattr(i.operation.location.name),
+                            quoteattr(i.operation.name),
+                            i.start,
+                            i.end,
+                            i.quantity,
+                            quoteattr(i.operation.location.subcategory),
+                            quoteattr(i.operation.item.subcategory),
+                            int(i.criticality),
+                            quoteattr(",".join(res)),
+                            quoteattr(demand_str),
+                            quoteattr(i.batch or ""),
+                        )
             yield "</operationplans>"
             yield "</plan>"
             yield "--%s--\r" % boundary

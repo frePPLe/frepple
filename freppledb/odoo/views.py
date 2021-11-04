@@ -164,23 +164,42 @@ def Upload(request):
                         continue
                     data_ok = True
                     obj.append(op)
-                    data_odoo.append(
-                        '<operationplan ordertype="MO" id="%s" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s/>'
-                        % (
-                            op.reference,
-                            quoteattr(op.operation.item.name),
-                            quoteattr(op.operation.location.name),
-                            quoteattr(op.operation.name),
-                            op.startdate,
-                            op.enddate,
-                            op.quantity,
-                            quoteattr(op.operation.location.subcategory or ""),
-                            quoteattr(op.operation.item.subcategory or ""),
-                            int(op.criticality),
-                            quoteattr(op.batch or ""),
+                    if op.operation.category == "subcontractor":
+                        data_odoo.append(
+                            '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s/>'
+                            % (
+                                op.reference,
+                                quoteattr(op.item.name),
+                                quoteattr(op.location.name),
+                                quoteattr(op.operation.subcategory or ""),
+                                op.startdate,
+                                op.enddate,
+                                op.quantity,
+                                quoteattr(op.location.subcategory or ""),
+                                quoteattr(op.item.subcategory or ""),
+                                int(op.criticality),
+                                quoteattr(op.batch or ""),
+                            )
                         )
-                    )
-            except Exception:
+                    else:
+                        data_odoo.append(
+                            '<operationplan ordertype="MO" id="%s" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s/>'
+                            % (
+                                op.reference,
+                                quoteattr(op.operation.item.name),
+                                quoteattr(op.operation.location.name),
+                                quoteattr(op.operation.name),
+                                op.startdate,
+                                op.enddate,
+                                op.quantity,
+                                quoteattr(op.operation.location.subcategory or ""),
+                                quoteattr(op.operation.item.subcategory or ""),
+                                int(op.criticality),
+                                quoteattr(op.batch or ""),
+                            )
+                        )
+            except Exception as e:
+                logger.error("Exception during odoo export: %s" % e)
                 pass
         if not data_ok:
             return HttpResponseServerError(_("No proposed data records selected"))

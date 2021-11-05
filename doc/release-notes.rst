@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-6.18.0 (Upcoming release)
-=========================
+6.18.0 (2021/11/5)
+==================
 
 .. rubric:: Production planning
 

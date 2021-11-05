@@ -197,7 +197,7 @@ function displayGrid(load) {
         },
     },
     height: {% if reportclass.height %}
-          {% if not reportclass.variableheight or preferences.details != "bottom" %}
+          {% if not reportclass.variableheight or preferences.details == "bottom" %}
             {% if preferences.height %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}
           {% else %}
             Math.max(150, $(window).height() - $("#grid").offset().top - 63)

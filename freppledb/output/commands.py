@@ -934,8 +934,28 @@ class ComputePeriodOfCover(PlanTask):
         import frepple
 
         currentdate = frepple.settings.current
-
         cursor = connections[database].cursor()
+
+        if cluster != -1:
+            items = []
+            for i in frepple.items():
+                if i.cluster == cluster:
+                    items.append((i.name,))
+
+            if len(items) == 0:
+                return
+
+            cursor.execute(
+                """
+                create temp table cluster_item_tmp as select name from item where false;
+            """
+            )
+            cursor.executemany(
+                "insert into cluster_item_tmp values (%s);",
+                items,
+            )
+            cursor.execute("create unique index on cluster_item_tmp (name);")
+
         cursor.execute(
             """
             -- Query assumes there is only 1 location
@@ -949,9 +969,9 @@ class ComputePeriodOfCover(PlanTask):
                   inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
                   where operationplanmaterial.item_id = item.name and
                     (
-                      (operationplanmaterial.quantity < 0 and operationplan.type = 'DLVR' and operationplan.due < %s)
+                      (operationplanmaterial.quantity < 0 and operationplan.type = 'DLVR' and operationplan.due < %%s)
                       or ( operationplanmaterial.quantity > 0 and operationplan.status = 'closed' and operationplan.type = 'STCK')
-                      or ( operationplanmaterial.quantity > 0 and operationplan.status in ('approved','confirmed','completed') and flowdate <= %s + interval '1 second')
+                      or ( operationplanmaterial.quantity > 0 and operationplan.status in ('approved','confirmed','completed') and flowdate <= %%s + interval '1 second')
                     )
                   having sum(operationplanmaterial.quantity) <0
                   limit 1
@@ -962,11 +982,11 @@ class ComputePeriodOfCover(PlanTask):
                     when periodofcover = 999 * 24 * 3600
                       then '999 days'::interval
                     when onhand > 0.00001
-                      then date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - %s, '999 days'::interval))
+                      then date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - %%s, '999 days'::interval))
                     else null
                     end
                   from operationplanmaterial
-                  where flowdate < %s
+                  where flowdate < %%s
                     and operationplanmaterial.item_id = item.name
                   order by flowdate desc, id desc
                   limit 1
@@ -974,7 +994,7 @@ class ComputePeriodOfCover(PlanTask):
                  -- No inventory and no backlog: use the date of next consumer
                  (
                  select greatest('0 days'::interval, least(
-                     date_trunc('day', justify_interval(flowdate - %s - coalesce(operationplan.delay, '0 day'::interval))),
+                     date_trunc('day', justify_interval(flowdate - %%s - coalesce(operationplan.delay, '0 day'::interval))),
                      '999 days'::interval
                      ))
                   from operationplanmaterial
@@ -986,9 +1006,18 @@ class ComputePeriodOfCover(PlanTask):
                  ),
                  '999 days'::interval
                  ))/86400)
-        """,
+            %s
+        """
+            % (
+                "from cluster_item_tmp where item.name in (select name from cluster_item_tmp)"
+                if cluster != -1
+                else "",
+            ),
             ((currentdate,) * 5),
         )
+
+        if cluster != -1:
+            cursor.execute("drop table cluster_item_tmp;")
 
 
 @PlanTaskRegistry.register

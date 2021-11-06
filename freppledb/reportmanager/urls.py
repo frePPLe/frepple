@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from .views import ReportManager, ReportList, getSchema
 
@@ -23,9 +23,9 @@ from .views import ReportManager, ReportList, getSchema
 autodiscover = True
 
 urlpatterns = [
-    url(r"^reportmanager/schema/$", getSchema, name="reportmanager_schema"),
-    url(r"^reportmanager/(.+)/$", ReportManager.as_view(), name="reportmanager_id"),
-    url(r"^reportmanager/$", ReportManager.as_view()),
-    url(r"^data/reportmanager/sqlreport/add/$", ReportManager.as_view()),
-    url(r"^data/reportmanager/sqlreport/$", ReportList.as_view()),
+    re_path(r"^reportmanager/schema/$", getSchema, name="reportmanager_schema"),
+    re_path(r"^reportmanager/(.+)/$", ReportManager.as_view(), name="reportmanager_id"),
+    re_path(r"^reportmanager/$", ReportManager.as_view()),
+    re_path(r"^data/reportmanager/sqlreport/add/$", ReportManager.as_view()),
+    re_path(r"^data/reportmanager/sqlreport/$", ReportList.as_view()),
 ]

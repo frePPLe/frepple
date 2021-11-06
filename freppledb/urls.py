@@ -17,7 +17,7 @@
 
 from importlib import import_module
 
-from django.conf.urls import include, url
+from django.urls import include, re_path
 from django.conf import settings
 from django.views.generic.base import RedirectView
 from django.views.i18n import JavaScriptCatalog
@@ -26,10 +26,10 @@ from freppledb.admin import data_site
 
 urlpatterns = [
     # Redirect admin index page /data/ to /
-    url(r"^data/$", RedirectView.as_view(url="/")),
+    re_path(r"^data/$", RedirectView.as_view(url="/")),
     # Handle browser icon and robots.txt
-    url(r"favicon\.ico$", RedirectView.as_view(url="/static/favicon.ico")),
-    url(r"robots\.txt$", RedirectView.as_view(url="/static/robots.txt")),
+    re_path(r"favicon\.ico$", RedirectView.as_view(url="/static/favicon.ico")),
+    re_path(r"robots\.txt$", RedirectView.as_view(url="/static/robots.txt")),
 ]
 
 # Custom handlers for error pages.
@@ -52,14 +52,14 @@ for app in settings.INSTALLED_APPS:
 # It needs to be added as the last item since the applications can
 # hide/override some admin urls.
 urlpatterns += [
-    url(
+    re_path(
         r"^data/jsi18n/$",
         JavaScriptCatalog.as_view(),
     ),
-    url(
+    re_path(
         r"^admin/jsi18n/$",
         JavaScriptCatalog.as_view(),
     ),
-    url(r"^data/", data_site.urls),
-    url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    re_path(r"^data/", data_site.urls),
+    re_path(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
 ]

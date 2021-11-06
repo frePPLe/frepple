@@ -48,7 +48,7 @@ from django.http import (
     HttpResponse,
     HttpResponseServerError,
 )
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.views import static
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
@@ -120,7 +120,8 @@ def handler500(request):
     Custom handler for "HTTP 500 - server error"
     """
     try:
-        response = render_to_response(
+        response = render(
+            request,
             "500.html",
             content_type="text/html",
             context={
@@ -612,7 +613,7 @@ class AttributeList(GridReport):
     message_when_empty = Template(
         """
         <h3>Extend frePPLe with your own attributes</h3>
-        <br>        
+        <br>
         Every business uses specific attributes on items, sales orders, suppliers...<br>
         You can edit, filter, sort, import and export your attribute fields like all other fields.<br>
         <br><br>

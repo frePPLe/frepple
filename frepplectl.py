@@ -32,7 +32,8 @@ if __name__ == "__main__":
             "Scripts" if os.name == "nt" else "bin",
             "activate_this.py",
         )
-        exec(open(activate_script).read(), {"__file__": activate_script})
+        with open(activate_script) as f:
+            exec(f.read(), {"__file__": activate_script})
 
     # Initialize django
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")

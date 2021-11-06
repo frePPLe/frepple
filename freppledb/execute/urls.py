@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import url
+from django.urls import re_path
 
 import freppledb.execute.views
 
@@ -23,49 +23,53 @@ import freppledb.execute.views
 autodiscover = True
 
 urlpatterns = [
-    url(r"^execute/$", freppledb.execute.views.TaskReport.as_view(), name="execute"),
-    url(
+    re_path(
+        r"^execute/$", freppledb.execute.views.TaskReport.as_view(), name="execute"
+    ),
+    re_path(
         r"^execute/logfrepple/(.+)/$",
         freppledb.execute.views.logfile,
         name="execute_view_log",
     ),
-    url(
+    re_path(
         r"^execute/launch/(.+)/$",
         freppledb.execute.views.LaunchTask,
         name="execute_launch",
     ),
-    url(
+    re_path(
         r"^execute/cancel/(.+)/$",
         freppledb.execute.views.CancelTask,
         name="execute_cancel",
     ),
-    url(
+    re_path(
         r"^execute/logdownload/(.+)/$",
         freppledb.execute.views.DownloadLogFile,
         name="execute_download_log",
     ),
-    url(r"^execute/api/(.+)/$", freppledb.execute.views.APITask, name="execute_api"),
-    url(
+    re_path(
+        r"^execute/api/(.+)/$", freppledb.execute.views.APITask, name="execute_api"
+    ),
+    re_path(
         r"^execute/uploadtofolder/(.+)/$",
         freppledb.execute.views.FileManager.uploadFiletoFolder,
         name="copy_file_to_folder",
     ),
-    url(
+    re_path(
         r"^execute/downloadfromfolder/(.+)/(.+)/$",
         freppledb.execute.views.FileManager.downloadFilefromFolder,
         name="download_file_from_folder",
     ),
-    url(
+    re_path(
         r"^execute/downloadfromfolder/(.+)/$",
         freppledb.execute.views.FileManager.downloadFilefromFolder,
         name="download_all_files_from_folder",
     ),
-    url(
+    re_path(
         r"^execute/deletefromfolder/(.+)/(.+)/$",
         freppledb.execute.views.FileManager.deleteFilefromFolder,
         name="delete_file_from_folder",
     ),
-    url(
+    re_path(
         r"^execute/scheduletasks/$",
         freppledb.execute.views.scheduletasks,
         name="scheduletasks",

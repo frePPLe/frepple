@@ -14,11 +14,11 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from django.conf.urls import url
+from django.urls import re_path
 
 from .views import ExecuteSQL
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-urlpatterns = [url(r"^executesql/$", ExecuteSQL.as_view(), name="executesql")]
+urlpatterns = [re_path(r"^executesql/$", ExecuteSQL.as_view(), name="executesql")]

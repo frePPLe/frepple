@@ -16,6 +16,7 @@
 #
 
 import os
+from pathlib import Path
 
 from django.apps import AppConfig
 from django.conf import settings
@@ -27,9 +28,8 @@ import freppledb
 
 
 def watchDjangoSettings(sender, **kwargs):
-    sender.watch_file(os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py"))
-    sender.watch_file(os.path.join(settings.FREPPLE_CONFIGDIR, "localsettings.py"))
-    sender.watch_file(os.path.join(settings.FREPPLE_CONFIGDIR, "wsgi.py"))
+    for f in ["djangosettings.py", "localsettings.py", "wsgi.py"]:
+        sender.extra_files.add(Path(os.path.join(settings.FREPPLE_CONFIGDIR, f)))
 
 
 @checks.register()

@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from freppledb.odoo.views import Upload
 
@@ -24,5 +24,5 @@ autodiscover = True
 
 urlpatterns = [
     # Model list reports, which override standard admin screens
-    url(r"^erp/upload/$", Upload, name="erp_upload")
+    re_path(r"^erp/upload/$", Upload, name="erp_upload")
 ]

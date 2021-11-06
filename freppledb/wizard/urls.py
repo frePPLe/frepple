@@ -14,7 +14,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import url
 from django.urls import path
 
 from .views import (
@@ -31,10 +30,10 @@ from .views import (
 autodiscover = True
 
 urlpatterns = [
-    url(r"^$", Home),
-    url(r"^wizard/quickstart/production/$", QuickStartProduction.as_view()),
-    url(r"^wizard/supplypath/", CheckSupplyPath),
+    path(r"", Home),
+    path(r"wizard/quickstart/production/", QuickStartProduction.as_view()),
+    path(r"wizard/supplypath/", CheckSupplyPath),
     path(r"wizard/load/<str:mode>/", WizardLoad),
-    url(r"^wizard/sendsurveymail/$", SendSurveyMail.action),
+    path(r"wizard/sendsurveymail/", SendSurveyMail.action),
     path(r"wizard/features/", FeatureDashboard.as_view()),
 ]

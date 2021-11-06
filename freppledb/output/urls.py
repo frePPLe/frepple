@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf.urls import url
+from django.urls import re_path
 
 import freppledb.output.views.buffer
 import freppledb.output.views.demand
@@ -30,100 +30,100 @@ import freppledb.output.views.kpi
 autodiscover = True
 
 urlpatterns = [
-    url(
+    re_path(
         r"^buffer/item/(.+)/$",
         freppledb.output.views.buffer.OverviewReport.as_view(),
         name="output_buffer_plandetail_by_item",
     ),
-    url(
+    re_path(
         r"^buffer/(.+)/$",
         freppledb.output.views.buffer.OverviewReport.as_view(),
         name="output_buffer_plandetail",
     ),
-    url(
+    re_path(
         r"^buffer/$",
         freppledb.output.views.buffer.OverviewReport.as_view(),
         name="output_buffer_plan",
     ),
-    url(
+    re_path(
         r"^demand/operationplans/$",
         freppledb.output.views.demand.OperationPlans,
         name="output_demand_operationplans",
     ),
-    url(
+    re_path(
         r"^demand/(.+)/$",
         freppledb.output.views.demand.OverviewReport.as_view(),
         name="output_demand_plandetail",
     ),
-    url(
+    re_path(
         r"^demand/$",
         freppledb.output.views.demand.OverviewReport.as_view(),
         name="output_demand_plan",
     ),
-    url(
+    re_path(
         r"^resource/(.+)/$",
         freppledb.output.views.resource.OverviewReport.as_view(),
         name="output_resource_plandetail",
     ),
-    url(
+    re_path(
         r"^resource/$",
         freppledb.output.views.resource.OverviewReport.as_view(),
         name="output_resource_plan",
     ),
-    url(
+    re_path(
         r"^operation/(.+)/$",
         freppledb.output.views.operation.OverviewReport.as_view(),
         name="output_operation_plandetail",
     ),
-    url(
+    re_path(
         r"^operation/$",
         freppledb.output.views.operation.OverviewReport.as_view(),
         name="output_operation_plan",
     ),
-    url(
+    re_path(
         r"^purchase/$",
         freppledb.output.views.operation.PurchaseReport.as_view(),
         name="output_purchase",
     ),
-    url(
+    re_path(
         r"^distribution/$",
         freppledb.output.views.operation.DistributionReport.as_view(),
         name="output_distribution",
     ),
-    url(
+    re_path(
         r"^demandpegging/(.+)/$",
         freppledb.output.views.pegging.ReportByDemand.as_view(),
         name="output_demand_pegging",
     ),
-    url(
+    re_path(
         r"^problem/$",
         freppledb.output.views.problem.Report.as_view(),
         name="output_problem",
     ),
-    url(
+    re_path(
         r"^constraint/$",
         freppledb.output.views.constraint.BaseReport.as_view(),
         name="output_constraint",
     ),
-    url(
+    re_path(
         r"^constraintoperation/(.+)/$",
         freppledb.output.views.constraint.ReportByOperation.as_view(),
         name="output_constraint_operation",
     ),
-    url(
+    re_path(
         r"^constraintdemand/(.+)/$",
         freppledb.output.views.constraint.ReportByDemand.as_view(),
         name="output_constraint_demand",
     ),
-    url(
+    re_path(
         r"^constraintbuffer/(.+)/$",
         freppledb.output.views.constraint.ReportByBuffer.as_view(),
         name="output_constraint_buffer",
     ),
-    url(
+    re_path(
         r"^constraintresource/(.+)/$",
         freppledb.output.views.constraint.ReportByResource.as_view(),
         name="output_constraint_resource",
     ),
-    url(r"^kpi/$", freppledb.output.views.kpi.Report.as_view(), name="output_kpi"),
+    re_path(r"^kpi/$", freppledb.output.views.kpi.Report.as_view(), name="output_kpi"),
 ]

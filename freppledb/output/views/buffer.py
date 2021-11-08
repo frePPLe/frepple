@@ -595,7 +595,7 @@ class OverviewReport(GridPivot):
         # Execute the actual query
         reasons_forecast = """
                 union all
-                select distinct operationplan.enddate, out_constraint.name, out_constraint.owner
+                select distinct out_constraint.name, out_constraint.owner
                 from out_constraint
                 inner join operationplan on operationplan.forecast = out_constraint.forecast
                 and operationplan.item_id = item.name and operationplan.location_id = location.name

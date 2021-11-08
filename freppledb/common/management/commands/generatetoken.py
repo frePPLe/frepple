@@ -17,7 +17,7 @@
 
 from ...auth import getWebserviceAuthorization
 
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb import __version__

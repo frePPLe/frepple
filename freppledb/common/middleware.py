@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from datetime import timedelta
 import base64
 import jwt
 import re
@@ -23,9 +24,10 @@ import threading
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
-from django.utils import translation
+from django.utils import translation, timezone
 from django.db import DEFAULT_DB_ALIAS
 from django.db.models import Q
 from django.http import HttpResponseNotFound
@@ -204,6 +206,16 @@ class MultiDBMiddleware:
 
         if not hasattr(request, "user"):
             request.user = auth.get_user(request)
+
+        # Keep last_login date up to date
+        if not request.user.is_anonymous:
+            last_login = getattr(request.user, "last_login", None)
+            now = timezone.now()
+            if not last_login or now - last_login > timedelta(hours=1):
+                user_logged_in.send(
+                    sender=request.user.__class__, request=request, user=request.user
+                )
+
         if not hasattr(request.user, "scenarios"):
             # A scenario list is not available on the request
             for i in settings.DATABASES:

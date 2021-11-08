@@ -595,11 +595,12 @@ class OverviewReport(GridPivot):
         # Execute the actual query
         reasons_forecast = """
                 union all
-                select operationplan.item_id, operationplan.location_id, operationplan.due, operationplan.enddate, out_constraint.name, out_constraint.owner
+                select distinct operationplan.enddate, out_constraint.name, out_constraint.owner
                 from out_constraint
                 inner join operationplan on operationplan.forecast = out_constraint.forecast
                 and operationplan.item_id = item.name and operationplan.location_id = location.name
                 and operationplan.due < operationplan.enddate
+                and  (operationplan.due , operationplan.enddate) overlaps (d.startdate, d.enddate)
         """
         query = """
            select
@@ -632,18 +633,18 @@ class OverviewReport(GridPivot):
            where item_id = item.name
            and coalesce(location_id, destination_id) = location.name) is_ip_buffer,
            %s
-           (select json_agg(json_build_array(reasons.name, reasons.owner)) 
+           (select json_agg(json_build_array(t.name, t.owner)) 
            from (
-               select operationplan.item_id, operationplan.location_id, operationplan.due, operationplan.enddate, out_constraint.name, out_constraint.owner
+               select distinct out_constraint.name, out_constraint.owner
                 from out_constraint
                 inner join operationplan on operationplan.item_id = item.name
                 and operationplan.location_id = location.name
                 and operationplan.demand_id = out_constraint.demand
                 and operationplan.due < operationplan.enddate
+                and  (operationplan.due , operationplan.enddate) overlaps (d.startdate, d.enddate)
                 %s
                 order by name limit 20
-           ) reasons
-           where (reasons.due , reasons.enddate) overlaps (d.startdate, d.enddate)) reasons,
+           )t ) reasons,
            case
              when d.history then jsonb_build_object(
                'onhand', min(ax_buffer.onhand)
@@ -1178,7 +1179,7 @@ class OverviewReport(GridPivot):
                             + float(row[numfields - 2]["produced"] or 0)
                             - float(row[numfields - 2]["consumed"] or 0)
                         ),
-                        "reasons": None if history else json.dumps(row[numfields - 8]),
+                        "reasons": None if history else json.dumps(row[numfields - 9]),
                     }
 
                     if order_backlog is not None:

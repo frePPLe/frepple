@@ -4,6 +4,13 @@ Release notes
 6.19.0 (Upcoming release)
 =========================
 
+.. rubric:: Odoo integration
+
+- | V14: Handling of multi-timezone situations when importing and exporting manufacturing orders,
+    purchase orders and distribution orders.
+  | When the frepple and odoo servers reside in different timezone things get mixed up in
+    previous releases.
+
 6.18.0 (2021/11/5)
 ==================
 

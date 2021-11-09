@@ -2365,6 +2365,9 @@ class PurchaseOrder(OperationPlan):
 
 
 class ManufacturingOrder(OperationPlan):
+
+    extra_dependencies = [OperationResource]
+
     class ManufacturingOrderManager(OperationPlan.Manager):
         def get_queryset(self):
             return super().get_queryset().filter(type="MO")

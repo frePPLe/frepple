@@ -1,7 +1,7 @@
 
   <div class="row">
     <div data-ng-class="{'col-md-6': detailposition=='bottom', 'col-md-12': detailposition!='bottom'}">
-      <div class="panel panel-default" id="attributes-operationplan" data="operationplan" showoperationplan-drv style="margin-bottom: 18px;"></div>
+      <div class="panel panel-default" id="attributes-operationplan" showoperationplan-drv style="margin-bottom: 18px;"></div>
     </div>
     <div data-ng-class="{'col-md-6': detailposition=='bottom', 'col-md-12': detailposition!='bottom'}">
       <div class="panel panel-default" id="attributes-operationproblems" data-ng-if="operationplan.id !== -1 && operationplan.problems != undefined" data="operationplan" showproblemspanel-drv></div>

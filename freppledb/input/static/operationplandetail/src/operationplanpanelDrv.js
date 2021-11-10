@@ -26,7 +26,7 @@ function showoperationplanDrv($window, gettextCatalog) {
 
   var directive = {
     restrict: 'EA',
-    scope: { operationplan: '=data' },
+    scope: true,
     templateUrl: '/static/operationplandetail/operationplanpanel.html',
     link: linkfunc
   };
@@ -56,7 +56,7 @@ function showoperationplanDrv($window, gettextCatalog) {
       if (scope.operationplan === undefined)
         return;
       else if (scope.operationplan.id == -1 || scope.operationplan.type === 'STCK') {
-        // Multiple operationplans selected 
+        // Multiple operationplans selected
         angular.element(elem).find('input').attr('disabled', 'disabled');
         angular.element(elem).find('#statusrow .btn').removeClass('active').attr('disabled', 'disabled');
       }

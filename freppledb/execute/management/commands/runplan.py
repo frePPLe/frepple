@@ -96,6 +96,13 @@ class Command(BaseCommand):
             default=False,
             help="Run the planning engine in the background (default = False)",
         )
+        parser.add_argument(
+            "--daemon",
+            dest="daemon",
+            action="store_true",
+            default=False,
+            help="Run the planning engine as a daemon process for which we don't need to wait (default = False)",
+        )
 
     def handle(self, **options):
         # Pick up the options
@@ -118,13 +125,17 @@ class Command(BaseCommand):
         timestamp = now.strftime("%Y%m%d%H%M%S")
         if database == DEFAULT_DB_ALIAS:
             logfile = "frepple-%s%s.log" % (
-                "" if "cluster" not in options else "cluster%s-" % options["cluster"],
+                ""
+                if "partition" not in options
+                else "partition%s-" % options["partition"],
                 timestamp,
             )
         else:
             logfile = "frepple_%s-%s%s.log" % (
                 database,
-                "" if "cluster" not in options else "cluster%s-" % options["cluster"],
+                ""
+                if "partition" not in options
+                else "partition%s-" % options["partition"],
                 timestamp,
             )
 
@@ -200,6 +211,8 @@ class Command(BaseCommand):
                 )
             if options["background"]:
                 task.arguments += " --background"
+            if options["daemon"]:
+                task.arguments += " --daemon"
             if "cluster" in options:
                 task.arguments += " --cluster=%s" % options["cluster"]
 
@@ -267,7 +280,7 @@ class Command(BaseCommand):
                         libdir, "library.zip"
                     )
 
-            if options["background"]:
+            if options["background"] or options["daemon"]:
                 # Execute as background process on Windows
                 if os.name == "nt":
                     startupinfo = subprocess.STARTUPINFO()
@@ -312,7 +325,9 @@ class Command(BaseCommand):
                 task.processid = None
                 task.status = "Done"
                 task.finished = datetime.now()
-                task.save(using=database)
+                task.save(
+                    update_fields=["processid", "status", "finished"], using=database
+                )
 
         except Exception as e:
             if task:

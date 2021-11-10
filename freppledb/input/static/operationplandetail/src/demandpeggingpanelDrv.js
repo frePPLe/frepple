@@ -26,44 +26,51 @@ function showoperationpeggingpanelDrv($window, gettextCatalog) {
 
   var directive = {
     restrict: 'EA',
-    scope: {operationplan: '=data'},
+    scope: { operationplan: '=data' },
     link: linkfunc
   };
   return directive;
 
   function linkfunc(scope, elem, attrs, transclude) {
-    var template =  '<div class="panel-heading"><h4 class="panel-title" style="text-transform: capitalize">' +
-                      gettextCatalog.getString("demand") +
-                    '</h4></div>' +
-                    '<div class="panel-body table-responsive" style="max-height:15em; overflow:auto; padding:0">' +
-                    '<table class="table table-condensed table-hover"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("name")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("item")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("due")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
-                    '</td>' +
-                    '<tbody></tbody>' +
-                    '</table>' +
-                    '</div>';
+    var template = '<div class="panel-heading"><h4 class="panel-title" style="text-transform: capitalize">' +
+      gettextCatalog.getString("demand") +
+      '</h4></div>' +
+      '<div class="panel-body table-responsive" style="max-height:15em; overflow:auto; padding:0">' +
+      '<table class="table table-condensed table-hover"><thead><tr><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("name") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("item") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("due") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("quantity") + '</b>' +
+      '</td>' +
+      '<tbody></tbody>' +
+      '</table>' +
+      '</div>';
 
-    scope.$watchGroup(['operationplan.id','operationplan.pegging_demand.length'], function (newValue,oldValue) {
+    scope.$watchGroup(['operationplan.id', 'operationplan.pegging_demand.length'], function (newValue, oldValue) {
       angular.element(document).find('#attributes-operationdemandpegging').empty().append(template);
-      var rows='<tr><td colspan="2">'+gettextCatalog.getString('no demands')+'</td></tr>';
+      var rows = '<tr><td colspan="2">' + gettextCatalog.getString('no demands') + '</td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('pegging_demand')) {
-          rows='';
-          angular.forEach(scope.operationplan.pegging_demand, function(thedemand) {
+          rows = '';
+          angular.forEach(scope.operationplan.pegging_demand, function (thedemand) {
             rows += '<tr><td>' + $.jgrid.htmlEncode(thedemand.demand.name)
-              + "<a href=\"" + url_prefix 
+              + "<a href=\"" + url_prefix
               + (thedemand.demand.forecast ? "/detail/forecast/forecast/" : "/detail/input/demand/")
-              + admin_escape(thedemand.demand.name) 
+              + admin_escape(thedemand.demand.name)
               + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
-              + '</td><td>' + $.jgrid.htmlEncode(thedemand.demand.item.name)
-              + "<a href=\"" + url_prefix + "/detail/input/item/" + admin_escape(thedemand.demand.item.name) 
+              + '</td><td>';
+            if (thedemand.demand.item.description)
+              rows += '<span onmouseenter="$(this).tooltip(\'show\')" title="'
+                + $.jgrid.htmlEncode(thedemand.demand.item.description) + '">'
+                + $.jgrid.htmlEncode(thedemand.demand.item.name)
+                + "</span>";
+            else
+              rows += $.jgrid.htmlEncode(thedemand.demand.item.name);
+            rows += "<a href=\"" + url_prefix + "/detail/input/item/" + admin_escape(thedemand.demand.item.name)
               + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
               + '</td><td>' + thedemand.demand.due
               + '</td><td>' + grid.formatNumber(thedemand.quantity) + '</td></tr>';

@@ -1579,21 +1579,28 @@ class OperationPlanDetail(View):
                 for x in OperationPlan.objects.all()
                 .using(request.database)
                 .filter(reference__in=ids)
-                .select_related("operation")
+                .select_related("operation", "item", "supplier")
             ]
             opplanmats = [
                 x
                 for x in OperationPlanMaterial.objects.all()
                 .using(request.database)
                 .filter(operationplan__reference__in=ids)
-                .values()
+                .values(
+                    "operationplan_id",
+                    "item_id",
+                    "onhand",
+                    "flowdate",
+                    "quantity",
+                    "item__description",
+                )
             ]
             opplanrscs = [
                 x
                 for x in OperationPlanResource.objects.all()
                 .using(request.database)
                 .filter(operationplan__reference__in=ids)
-                .values()
+                .values("operationplan_id", "quantity", "resource_id", "startdate")
             ]
         except Exception as e:
             logger.error("Error retrieving operationplan data: %s" % e)
@@ -1643,7 +1650,13 @@ class OperationPlanDetail(View):
                     "location": opplan.location_id,
                     "origin": opplan.origin_id,
                     "supplier": opplan.supplier_id,
+                    "supplier__description": opplan.supplier.description
+                    if opplan.supplier
+                    else None,
                     "item": opplan.item_id,
+                    "item__description": opplan.item.description
+                    if opplan.item
+                    else None,
                     "color": float(opplan.color) if opplan.color else "",
                     "owner": opplan.owner.reference if opplan.owner else None,
                 }
@@ -1654,14 +1667,17 @@ class OperationPlanDetail(View):
                             obj = (
                                 Demand.objects.all()
                                 .using(request.database)
-                                .only("name", "item", "due")
+                                .only("name", "item", "item__description", "due")
                                 .get(name=d)
                             )
                             res["pegging_demand"].append(
                                 {
                                     "demand": {
                                         "name": obj.name,
-                                        "item": {"name": obj.item.name},
+                                        "item": {
+                                            "name": obj.item.name,
+                                            "description": obj.item.description,
+                                        },
                                         "due": obj.due.strftime("%Y-%m-%dT%H:%M:%S"),
                                     },
                                     "quantity": q,
@@ -1711,7 +1727,7 @@ class OperationPlanDetail(View):
                             "onhand": float(m["onhand"] or 0),
                             "buffer": {
                                 "item": m["item_id"],
-                                "location": m["location_id"],
+                                "description": m["item__description"],
                             },
                         }
                         # List matching alternates

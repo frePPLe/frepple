@@ -4,6 +4,12 @@ Release notes
 6.19.0 (Upcoming release)
 =========================
 
+
+.. rubric:: User interface
+
+- | The detail panels in the purchase order, distribution order and manufacturing
+    order screens have been restyled and their layout optimized.
+
 .. rubric:: Odoo integration
 
 - | V14: Handling of multi-timezone situations when importing and exporting manufacturing orders,

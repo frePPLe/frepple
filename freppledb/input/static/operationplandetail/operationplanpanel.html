@@ -19,22 +19,21 @@
   <span data-ng-if="operationplan.id == -1" style="text-transform: capitalize">{{ 'selected' | translate }}&nbsp;{{ operationplan.count }}</span>
   </h4>
 </div>
-<table class="table table-condensed table-hover" id="opplan-attributes-drvtable">
+<table style="table-layout:fixed" class="table table-condensed table-hover" id="opplan-attributes-drvtable">
   <thead data-ng-if="operationplan.operation.name || operationplan.name">
     <tr>
-      <td style="min-width: 250px; width:30%">
+      <td style="width: 120px">
         <b id="thead1" style="text-transform: capitalize">{{ 'name'|translate }}&nbsp;</b>
       </td>
       <td>
-        <b style="text-transform: capitalize" data-ng-if="operationplan.hasOwnProperty('operation')">{{operationplan.operation.name}}
+        <b style="text-transform: capitalize" data-ng-if="operationplan.hasOwnProperty('operation')">
+          {{operationplan.operation.name}}
         <a href="/detail/input/operation/key/" role="input/operation" onclick="opendetail(event)">
            <span class="fa fa-caret-right"></span>
         </a>
         </b>
-        <b style="text-transform: capitalize" data-ng-if="!operationplan.hasOwnProperty('operation')">{{operationplan.name}}
-        <a href="/detail/input/operation/key/" role="input/operation" onclick="opendetail(event)">
-           <span class="fa fa-caret-right"></span>
-        </a>
+        <b style="text-transform: capitalize" data-ng-if="!operationplan.hasOwnProperty('operation')">
+          {{operationplan.name}}
         </b>
       </td>
     </tr>
@@ -54,10 +53,20 @@
     </tr>
     <tr data-ng-if="operationplan.item !== null && operationplan.id !== -1">
       <td><b style="text-transform: capitalize" translate>item</b></td>
-      <td id="itemrow">{{operationplan.item}}
+      <td id="itemrow">
+        {{operationplan.item}}
         <a href="/detail/input/item/key/" role="input/item" onclick="opendetail(event)">
            <span class="fa fa-caret-right"></span>
         </a>
+      </td>
+    </tr>
+    <tr data-ng-if="operationplan.item__description !== null && operationplan.id !== -1">
+      <td></td>
+      <td>
+        <div style="max-width: 100%; white-space: nowrap; overflow:hidden"
+          ng-attr-title="{{operationplan.item__description}}" onmouseenter="$(this).tooltip('show')">
+        {{operationplan.item__description}}
+        </div>
       </td>
     </tr>
     <tr ng-if="operationplan.supplier !== null && operationplan.id !== undefined && operationplan.id !== -1">
@@ -66,6 +75,15 @@
         <a href="/detail/input/supplier/key/" role="input/supplier" onclick="opendetail(event)">
            <span class="fa fa-caret-right"></span>
         </a>
+      </td>
+    </tr>
+    <tr data-ng-if="operationplan.supplier__description !== null && operationplan.id !== -1">
+      <td></td>
+      <td style="max-width: calc(100% - 120px); white-space: nowrap; overflow:hidden">
+        <div style="max-width: 100%; white-space: nowrap; overflow:hidden"
+          ng-attr-title="{{operationplan.supplier__description}}" onmouseenter="$(this).tooltip('show')">
+        {{operationplan.supplier__description}}
+        </div>
       </td>
     </tr>
     <tr ng-if="operationplan.location !== null && operationplan.id !== -1">

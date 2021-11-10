@@ -274,13 +274,21 @@ class Command(BaseCommand):
                     task.processid = p.pid
                     task.save(using=source)
                     p.wait()
-                    # Deactivated because a successful copy can still leave warnings and errors
-                    # if p.returncode and destination != DEFAULT_DB_ALIAS:
-                    #    # Consider the destination database free again
-                    #    destinationscenario.status = "Free"
-                    #    destinationscenario.lastrefresh = datetime.today()
-                    #    destinationscenario.save(using=DEFAULT_DB_ALIAS)
-                    #    raise Exception("Database copy failed")
+                    # Successful copy can still leave warnings and errors
+                    # To confirm copy is ok, let's check that the scenario copy task exists
+                    # in the destination database
+                    t = Task.objects.using(destination).order_by("-id").first()
+                    if not (
+                        t
+                        and t.id == task.id
+                        and t.name == task.name
+                        and t.submitted == task.submitted
+                    ):
+                        destinationscenario.status = "Free"
+                        destinationscenario.lastrefresh = datetime.today()
+                        destinationscenario.save(using=DEFAULT_DB_ALIAS)
+                        raise Exception("Database copy failed")
+
                 except Exception:
                     p.kill()
                     p.wait()

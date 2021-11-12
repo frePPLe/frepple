@@ -1767,6 +1767,8 @@ class OperationPlan : public Object,
 
   bool getForcedUpdate() const { return (flags & FORCED_UPDATE) != 0; }
 
+  bool getNoSetup() const { return (flags & NO_SETUP) != 0; }
+
   bool getActivated() const { return (flags & ACTIVATED) != 0; }
 
   bool getCompleted() const { return (flags & STATUS_COMPLETED) != 0; }
@@ -1831,6 +1833,14 @@ class OperationPlan : public Object,
       flags |= FORCED_UPDATE;
     else
       flags &= ~FORCED_UPDATE;
+  }
+
+  void setNoSetup(bool b) {
+    if (b)
+      flags |= NO_SETUP;
+    else
+      flags &= ~NO_SETUP;
+    updateSetupTime();
   }
 
   /* Update flag which allow/disallows material consumption. */
@@ -2426,6 +2436,7 @@ class OperationPlan : public Object,
   static const unsigned short FEASIBLE = 128;
   static const unsigned short ACTIVATED = 256;
   static const unsigned short FORCED_UPDATE = 512;
+  static const unsigned short NO_SETUP = 1024;
 
   /* Counter of OperationPlans, which is used to automatically assign a
    * unique identifier for each operationplan.

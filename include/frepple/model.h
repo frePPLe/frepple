@@ -6297,6 +6297,9 @@ class Resource : public HasHierarchy<Resource>,
       throw DataException("MaxEarly must be positive");
   }
 
+  /* Returns the available time between the two dates. */
+  Duration getAvailable(Date, Date) const;
+
   /* Return a pointer to the setup matrix. */
   SetupMatrix* getSetupMatrix() const { return setupmatrix; }
 

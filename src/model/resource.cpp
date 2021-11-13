@@ -654,6 +654,122 @@ void Resource::updateSetupTime() const {
   OperationPlan::setPropagateSetups(tmp);
 }
 
+Duration Resource::getAvailable(Date start, Date end) const {
+  // Get calendars
+  Calendar::EventIterator cals[2];
+  short calcount = 0;
+  if (getAvailable())
+    cals[calcount++] = Calendar::EventIterator(getAvailable(), start, true);
+  if (getLocation() && getLocation()->getAvailable() &&
+      getAvailable() != getLocation()->getAvailable())
+    cals[calcount++] =
+        Calendar::EventIterator(getLocation()->getAvailable(), start, true);
+
+  // Case 1: Zero calendars
+  if (!calcount) return end - start;
+
+  Duration actualduration = 0L;
+  Date curdate = start;
+  Date selected;
+  bool status = false;
+  bool available;
+
+  // Case 2: One calendar
+  if (calcount == 1) {
+    while (true) {
+      // Find the closest event date
+      selected = cals[0].getDate();
+      curdate = selected;
+
+      // Check whether the calendar is available at the next event date
+      if (cals[0].getDate() == selected && cals[0].getValue() == 0)
+        available = false;
+      else if (cals[0].getDate() != selected && cals[0].getPrevValue() == 0)
+        available = false;
+      else
+        available = true;
+
+      if (available && !status) {
+        // Becoming available after unavailable period
+        if (curdate >= end) {
+          // Leaving the desired date range
+          return actualduration;
+        }
+        start = curdate;
+        status = true;
+      } else if (!available && status) {
+        // Becoming unavailable after available period
+        if (curdate >= end) {
+          // Leaving the desired date range
+          actualduration += end - start;
+          return actualduration;
+        }
+        status = false;
+        actualduration += curdate - start;
+        start = curdate;
+      } else if (curdate >= end) {
+        // Leaving the desired date range
+        if (available) {
+          actualduration += end - start;
+          return actualduration;
+        }
+        return actualduration;
+      }
+
+      // Advance to the next event
+      ++cals[0];
+    }
+  }
+
+  // Case 3: more than 1 calendar
+  while (true) {
+    // Find the closest event date
+    selected = Date::infiniteFuture;
+    for (unsigned short t = 0; t < calcount; ++t) {
+      if (cals[t].getDate() < selected) selected = cals[t].getDate();
+    }
+    curdate = selected;
+
+    // Check whether all calendars are available at the next event date
+    available = true;
+    for (unsigned short t = 0; t < calcount && available; ++t) {
+      if (cals[t].getDate() == selected && cals[t].getValue() == 0)
+        available = false;
+      else if (cals[t].getDate() != selected && cals[t].getPrevValue() == 0)
+        available = false;
+    }
+
+    if (available && !status) {
+      // Becoming available after unavailable period
+      if (curdate >= end) {
+        // Leaving the desired date range
+        return actualduration;
+      }
+      start = curdate;
+      status = true;
+    } else if (!available && status) {
+      // Becoming unavailable after available period
+      if (curdate >= end) {
+        // Leaving the desired date range
+        actualduration += end - start;
+        return actualduration;
+      }
+      status = false;
+      actualduration += curdate - start;
+      start = curdate;
+    } else if (curdate >= end) {
+      // Leaving the desired date range
+      if (available) actualduration += end - start;
+      return actualduration;
+    }
+
+    // Advance to the next event
+    for (unsigned short t = 0; t < calcount; ++t)
+      if (cals[t].getDate() == selected) ++cals[t];
+  }
+  return actualduration;
+}
+
 extern "C" PyObject* ResourceBuckets::computeBucketAvailability(
     PyObject* self, PyObject* args) {
   // Get the resource model

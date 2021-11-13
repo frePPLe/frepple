@@ -25,7 +25,8 @@ namespace frepple {
 
 void Buffer::updateProblems() {
   // Delete existing problems for this buffer
-  Problem::clearProblems(*this, true, false);
+  Problem::clearProblems(*this, false, false);
+  setChanged(false);
 
   // Problem detection disabled on this buffer
   if (!getDetectProblems()) return;

@@ -185,13 +185,13 @@ void Resource::setMaximumCalendar(Calendar* c) {
       ++oo;
 
   // Null pointer passed. Change back to time independent maximum size.
+  size_max_cal = c;
   if (!c) {
     setMaximum(size_max);
     return;
   }
 
   // Create timeline structures for every bucket.
-  size_max_cal = c;
   double curMax = 0.0;
   for (CalendarDefault::EventIterator x(size_max_cal);
        x.getDate() < Date::infiniteFuture; ++x)

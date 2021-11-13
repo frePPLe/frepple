@@ -25,7 +25,8 @@ namespace frepple {
 
 void Resource::updateProblems() {
   // Delete existing problems for this resource
-  Problem::clearProblems(*this, true, false);
+  Problem::clearProblems(*this, false, false);
+  setChanged(false);
 
   // Problem detection disabled on this resource
   if (!getDetectProblems() || !getConstrained()) return;

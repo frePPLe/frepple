@@ -8093,6 +8093,8 @@ class Plan : public Plannable, public Object {
   /* A calendar to which all operationplans will align. */
   Calendar* cal;
 
+  Duration autofence;
+
   bool completed_allow_future = false;
 
   bool wip_produce_full_quantity = false;
@@ -8141,6 +8143,16 @@ class Plan : public Plannable, public Object {
    * detection for BeforeCurrent problems needs to be rerun.
    */
   void setCurrent(Date);
+
+  Duration getAutoFence() const { return autofence; }
+
+  /* the time we wait for existing confirmed supply before
+   * triggering a new replenishment.
+   */
+  void setAutoFence(Duration l) {
+    if (l < 0L) throw DataException("Invalid autofence");
+    autofence = l;
+  }
 
   /* Return the calendar to which operationplans are aligned. */
   Calendar* getCalendar() const { return cal; }
@@ -8225,6 +8237,8 @@ class Plan : public Plannable, public Object {
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
     m->addStringRefField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
+    m->addDurationField<Plan>(Tags::autofence, &Plan::getAutoFence,
+                              &Plan::setAutoFence);
     m->addStringRefField<Plan>(Tags::description, &Plan::getDescription,
                                &Plan::setDescription);
     m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);

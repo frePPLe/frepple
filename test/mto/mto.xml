@@ -247,7 +247,7 @@
 			<batch>mto2</batch> <!-- Unusable supply because a different batch -->
 		</operationplan>
 	</operationplans>
-  	
+
 	<!-- CASE 4 -->
 	<items>
 		<item name="4 - end item" xsi:type="item_mto" />
@@ -318,13 +318,13 @@
 			<item name="4 - end item"/>
 			<location name="factory"/>
 			<batch>mto2</batch> <!-- Unusable supply because a different batch -->
-			<onhand>1</onhand> 
+			<onhand>1</onhand>
 		</buffer>
 		<buffer name="4 - end item @ factory">
 			<item name="4 - end item"/>
 			<location name="factory"/>
 			<onhand>1</onhand> <!-- Generic freely available stock -->
-		</buffer>					
+		</buffer>
 	</buffers>
 	<demands>
 		<demand name="4 - mto1">
@@ -355,7 +355,7 @@
 			consume_material="false" produce_material="true">
 			<operation name="4 - make subassembly" />
 			<!-- Generic supply without batch number. -->
-		</operationplan>				
+		</operationplan>
 		<operationplan reference="4 - MO 3"
 			end="2019-12-01T00:00:00" quantity="1" status="confirmed"
 			consume_material="false" produce_material="true">
@@ -434,13 +434,13 @@
 			<item name="5 - end item"/>
 			<location name="factory"/>
 			<batch>mto2</batch> <!-- Unusable supply because a different batch -->
-			<onhand>1</onhand> 
+			<onhand>1</onhand>
 		</buffer>
 		<buffer name="5 - end item @ factory">
 			<item name="5 - end item"/>
 			<location name="factory"/>
 			<onhand>1</onhand> <!-- Generic freely available stock -->
-		</buffer>					
+		</buffer>
 	</buffers>
 	<demands>
 		<demand name="5 - mto1">
@@ -471,7 +471,7 @@
 			consume_material="false" produce_material="true">
 			<operation name="5 - make subassembly" />
 			<!-- Generic supply without batch number. -->
-		</operationplan>				
+		</operationplan>
 		<operationplan reference="5 - MO 3"
 			end="2019-04-01T00:00:00" quantity="1" status="confirmed"
 			consume_material="false" produce_material="true">
@@ -485,10 +485,10 @@ print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, autofence=90*24*3600).solve()
 frepple.saveplan("output.1.xml")
 print("CREATING UNCONSTRAINED PLAN")
-frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, autofence=0).solve()
 frepple.saveplan("output.2.xml")
 print("CREATING LEVEL-BY-LEVEL UNCONSTRAINED PLAN")
-frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, autofence=0).solve()
 frepple.saveplan("output.3.xml")
 ?>
 

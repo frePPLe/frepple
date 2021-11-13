@@ -33,6 +33,7 @@ class Tags {
   static const Keyword alternate_name;
   static const Keyword approved;
   static const Keyword autocommit;
+  static const Keyword autofence;
   static const Keyword available;
   static const Keyword batch;
   static const Keyword batchwindow;

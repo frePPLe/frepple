@@ -31,7 +31,6 @@ const Keyword SolverCreate::tag_administrativeleadtime(
     "administrativeleadtime");
 const Keyword SolverCreate::tag_minimumdelay("minimumdelay");
 const Keyword SolverCreate::tag_allowsplits("allowsplits");
-const Keyword SolverCreate::tag_autofence("autofence");
 const Keyword SolverCreate::tag_rotateresources("rotateresources");
 const Keyword SolverCreate::tag_planSafetyStockFirst("plansafetystockfirst");
 const Keyword SolverCreate::tag_iterationmax("iterationmax");

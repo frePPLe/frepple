@@ -334,7 +334,6 @@ class SolverCreate : public Solver {
     lazydelay = other.lazydelay;
     administrativeleadtime = other.administrativeleadtime;
     minimumdelay = other.minimumdelay;
-    autofence = other.autofence;
     allowSplits = other.allowSplits;
     iteration_threshold = other.iteration_threshold;
     iteration_accuracy = other.iteration_accuracy;
@@ -356,7 +355,6 @@ class SolverCreate : public Solver {
     lazydelay = other.lazydelay;
     administrativeleadtime = other.administrativeleadtime;
     minimumdelay = other.minimumdelay;
-    autofence = other.autofence;
     iteration_threshold = other.iteration_threshold;
     iteration_accuracy = other.iteration_accuracy;
     iteration_max = other.iteration_max;
@@ -480,19 +478,16 @@ class SolverCreate : public Solver {
     return old;
   }
 
-  /* Return the time we wait for existing confirmed supply before
-   * triggering a new replenishment.
-   * Default: 0
-   */
-  Duration getAutoFence() const { return autofence; }
+  Duration getAutoFence() const {
+    // This parameter is now a global setting.
+    // In earlier versions it was a solver attribute.
+    return Plan::instance().getAutoFence();
+  }
 
-  /* the time we wait for existing confirmed supply before
-   * triggering a new replenishment.
-   * Default: 0
-   */
   void setAutoFence(Duration l) {
-    if (l < 0L) throw DataException("Invalid autofence");
-    autofence = l;
+    // This parameter is now a global setting.
+    // In earlier versions it was a solver attribute.
+    Plan::instance().setAutoFence(l);
   }
 
   /* Get the threshold to stop iterating when the delta between iterations
@@ -638,7 +633,7 @@ class SolverCreate : public Solver {
                              &Cls::setAdministrativeLeadTime);
     m->addDurationField<Cls>(SolverCreate::tag_minimumdelay,
                              &Cls::getMinimumDelay, &Cls::setMinimumDelay);
-    m->addDurationField<Cls>(SolverCreate::tag_autofence, &Cls::getAutoFence,
+    m->addDurationField<Cls>(Tags::autofence, &Cls::getAutoFence,
                              &Cls::setAutoFence);
     m->addBoolField<Cls>(SolverCreate::tag_allowsplits, &Cls::getAllowSplits,
                          &Cls::setAllowSplits);
@@ -667,7 +662,6 @@ class SolverCreate : public Solver {
   static const Keyword tag_iterationaccuracy;
   static const Keyword tag_lazydelay;
   static const Keyword tag_minimumdelay;
-  static const Keyword tag_autofence;
   static const Keyword tag_allowsplits;
   static const Keyword tag_rotateresources;
   static const Keyword tag_planSafetyStockFirst;
@@ -701,10 +695,6 @@ class SolverCreate : public Solver {
    * of the plan - we can leave "holes" in the schedule.
    */
   Duration minimumdelay;
-
-  /* Time we wait for existing confirmed supply before triggering a new
-   * replenishment. */
-  Duration autofence;
 
   /* Threshold to stop iterating when the delta between iterations is
    * less than this absolute limit.

@@ -616,7 +616,7 @@ void Resource::setSetupMatrix(SetupMatrix* s) {
   updateSetupTime();
 }
 
-SetupEvent* Resource::getSetupAt(Date d, OperationPlan* opplan) {
+SetupEvent* Resource::getSetupAt(Date d, OperationPlan* opplan) const {
   LoadPlan* ldplan = nullptr;
   if (opplan) {
     for (auto l = opplan->getLoadPlans(); l != opplan->endLoadPlans(); ++l)

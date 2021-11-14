@@ -6337,7 +6337,7 @@ class Resource : public HasHierarchy<Resource>,
    * before (or at, when the parameter is true) the argument date.
    * @see LoadPlan::getSetupBefore
    */
-  SetupEvent* getSetupAt(Date, OperationPlan* = nullptr);
+  SetupEvent* getSetupAt(Date, OperationPlan* = nullptr) const;
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {

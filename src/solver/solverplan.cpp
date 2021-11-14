@@ -71,6 +71,8 @@ int SolverCreate::initialize() {
   x.addMethod("solve", solve, METH_NOARGS, "run the solver");
   x.addMethod("commit", commit, METH_NOARGS, "commit the plan changes");
   x.addMethod("rollback", rollback, METH_NOARGS, "rollback the plan changes");
+  x.addMethod("createsBatches", createsBatches, METH_NOARGS,
+              "group operationplans");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
@@ -679,6 +681,22 @@ PyObject* SolverCreate::rollback(PyObject* self, PyObject* args) {
     SolverCreate* me = static_cast<SolverCreate*>(self);
     assert(me->commands.getCommandManager());
     me->commands.getCommandManager()->rollback();
+  } catch (...) {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return nullptr;
+  }
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
+}
+
+PyObject* SolverCreate::createsBatches(PyObject* self, PyObject* args) {
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+  try {
+    SolverCreate* me = static_cast<SolverCreate*>(self);
+    for (auto& o : Operation::all()) me->createsBatches(&o, &me->getCommands());
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();

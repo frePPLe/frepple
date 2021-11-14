@@ -579,6 +579,9 @@ class SolverCreate : public Solver {
   /* Python method for undoing the plan changes. */
   static PyObject* rollback(PyObject*, PyObject*);
 
+  /* Python method for grouping operationplans. */
+  static PyObject* createsBatches(PyObject*, PyObject*);
+
   bool getRotateResources() const { return rotateResources; }
 
   void setRotateResources(bool b) { rotateResources = b; }

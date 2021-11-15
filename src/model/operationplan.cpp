@@ -1869,6 +1869,10 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args,
     // Find or create the C++ object
     PythonDataValueDict atts(kwds);
     Object* x = createOperationPlan(OperationPlan::metadata, atts);
+    if (!x) {
+      Py_INCREF(Py_None);
+      return Py_None;
+    }
     Py_INCREF(x);
 
     // Iterate over extra keywords, and set attributes.   @todo move this

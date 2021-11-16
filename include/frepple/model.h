@@ -1845,7 +1845,6 @@ class OperationPlan : public Object,
 
   /* Update flag which allow/disallows material consumption. */
   void setConsumeMaterial(bool b) {
-    if (!getConfirmed()) return;
     if (b)
       flags &= ~CONSUME_MATERIAL;
     else
@@ -1857,7 +1856,6 @@ class OperationPlan : public Object,
 
   /* Update flag which allow/disallows material production. */
   void setProduceMaterial(bool b) {
-    if (!getConfirmed()) return;
     if (b)
       flags &= ~PRODUCE_MATERIAL;
     else

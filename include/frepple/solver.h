@@ -1011,14 +1011,6 @@ class SolverCreate : public Solver {
                                  double* qty_fixed = nullptr,
                                  bool use_offset = true);
 
-  /* This function will check all constraints for an operationplan
-   * and propagate it upstream. The check does NOT check eventual
-   * sub operationplans.
-   * The return value is a flag whether the operationplan is
-   * acceptable (sometimes in reduced quantity) or not.
-   */
-  bool checkOperation(OperationPlan*, SolverData& data);
-
   /* Verifies whether this operationplan violates the leadtime
    * constraints. */
   bool checkOperationLeadTime(OperationPlan*, SolverData&, bool);
@@ -1030,6 +1022,14 @@ class SolverCreate : public Solver {
   void checkOperationCapacity(OperationPlan*, SolverData&);
 
  public:
+  /* This function will check all constraints for an operationplan
+   * and propagate it upstream. The check does NOT check eventual
+   * sub operationplans.
+   * The return value is a flag whether the operationplan is
+   * acceptable (sometimes in reduced quantity) or not.
+   */
+  bool checkOperation(OperationPlan*, SolverData& data);
+
   /* Scan the operationplans that are about to be committed to verify that
    * they are not creating any excess.
    */

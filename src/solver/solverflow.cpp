@@ -115,7 +115,7 @@ void SolverCreate::solve(const Flow* fl,
       data->state->q_qty = ask_qty = -data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
       auto topcommand = data->getCommandManager()->setBookmark();
-      curflow->getBuffer()->solve(*this, data);
+      data->state->q_flowplan->getBuffer()->solve(*this, data);
 
       // 4d) A positive reply: exit the loop
       if (data->state->a_qty > ROUNDING_ERROR) {

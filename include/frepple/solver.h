@@ -872,6 +872,9 @@ class SolverCreate : public Solver {
     SolverData(SolverCreate* s = nullptr, int c = 0,
                deque<Demand*>* d = nullptr);
 
+    /* No copying allowed. */
+    SolverData(const SolverData&) = delete;
+
     /* Destructor. */
     ~SolverData();
 
@@ -1028,7 +1031,7 @@ class SolverCreate : public Solver {
    * The return value is a flag whether the operationplan is
    * acceptable (sometimes in reduced quantity) or not.
    */
-  bool checkOperation(OperationPlan*, SolverData& data);
+  bool checkOperation(OperationPlan*, SolverData&, bool = true);
 
   /* Scan the operationplans that are about to be committed to verify that
    * they are not creating any excess.

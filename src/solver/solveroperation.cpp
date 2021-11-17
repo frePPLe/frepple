@@ -128,7 +128,8 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
 }
 
 bool SolverCreate::checkOperation(OperationPlan* opplan,
-                                  SolverCreate::SolverData& data) {
+                                  SolverCreate::SolverData& data,
+                                  bool checkCapacity) {
   // The default answer...
   data.state->a_date = Date::infiniteFuture;
   data.state->a_qty = data.state->q_qty;
@@ -213,7 +214,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
   unsigned short counter = 0;
   do {
     data.state->has_bucketized_resources = false;
-    if (isCapacityConstrained()) {
+    if (isCapacityConstrained() && checkCapacity) {
       // Verify the capacity. This can move the operationplan early or late.
       checkOperationCapacity(opplan, data);
       while (data.state->a_date <= orig_q_date_max &&

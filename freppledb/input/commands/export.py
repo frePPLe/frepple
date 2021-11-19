@@ -79,11 +79,59 @@ class cleanStatic(PlanTask):
             return -1
 
     @classmethod
+    def updateNames(cls, model, database, source):
+
+        cursor = connections[database].cursor()
+        model_name = model._meta.verbose_name
+        # detect if we have a name change
+        cursor.execute(
+            """
+            select old%s.name, new%s.name from %s old%s
+            inner join %s new%s on old%s.name != new%s.name 
+            and split_part(old%s.subcategory,',',2) = split_part(new%s.subcategory,',',2)
+            and new%s.lastmodified > old%s.lastmodified
+            and old%s.source = %%s and new%s.source = %%s
+        """
+            % ((model_name,) * 14),
+            (source, source),
+        )
+
+        for i in cursor:
+            oldname = i[0]
+            newname = i[1]
+            new_obj = model.objects.using(database).get(name=newname)
+
+            # All linked fields need updating.
+            for related in new_obj._meta.get_fields():
+                if (
+                    (related.one_to_many or related.one_to_one)
+                    and related.auto_created
+                    and not related.concrete
+                ):
+                    try:
+                        related.related_model._base_manager.using(database).filter(
+                            **{related.field.name: oldname}
+                        ).update(**{related.field.name: new_obj})
+                    except:
+                        # object with new name already exists => deleting old record
+                        related.related_model._base_manager.using(database).filter(
+                            **{related.field.name: oldname}
+                        ).delete()
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         # TODO since this is run BEFORE the export, the lastmodified field will
         # always be different from the timestamp of the current export.
         source = kwargs.get("source", None)
+
         with connections[database].cursor() as cursor:
+
+            # detect if we have an item/location/customer name change
+            if source:
+                cls.updateNames(Item, database, source)
+                cls.updateNames(Location, database, source)
+                cls.updateNames(Customer, database, source)
+
             cursor.execute(
                 """
                 delete from operationmaterial

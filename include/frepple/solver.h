@@ -618,6 +618,8 @@ class SolverCreate : public Solver {
     return commands.getCommandManager();
   }
 
+  void setIndentLevel(short i) { indentlevel = i; }
+
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
     m->addShortField<Cls>(Tags::constraints, &Cls::getConstraints,

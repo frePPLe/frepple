@@ -142,6 +142,8 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
             translation.activate(language)
         request.LANGUAGE_CODE = translation.get_language()
         request.charset = settings.DEFAULT_CHARSET
+        if request.GET.get("navbar", None):
+            request.session["navbar"] = True
 
     def process_response(self, request, response):
         # Set a clickjacking protection x-frame-option header in the

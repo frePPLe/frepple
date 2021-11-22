@@ -206,6 +206,7 @@ class Command(BaseCommand):
 
         task = None
         errors = 0
+        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             # Initialize the task
             setattr(_thread_locals, "database", self.database)
@@ -481,7 +482,7 @@ class Command(BaseCommand):
                 task.finished = datetime.now()
                 task.processid = None
                 task.save(using=self.database)
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", old_thread_locals)
 
     # accordion template
     title = _("Export plan result")

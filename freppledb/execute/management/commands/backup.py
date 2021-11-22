@@ -76,6 +76,7 @@ class Command(BaseCommand):
 
         now = datetime.now()
         task = None
+        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             # Initialize the task
             setattr(_thread_locals, "database", database)
@@ -166,7 +167,7 @@ class Command(BaseCommand):
         finally:
             if task:
                 task.save(using=database)
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", old_thread_locals)
 
     # accordion template
     title = _("Back up the database")

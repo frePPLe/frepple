@@ -87,6 +87,7 @@ class Command(BaseCommand):
 
         now = datetime.now()
         task = None
+        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             # Initialize the task
             setattr(_thread_locals, "database", database)
@@ -294,7 +295,7 @@ class Command(BaseCommand):
             raise CommandError("%s" % e)
 
         finally:
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", old_thread_locals)
 
     title = _("Empty the database")
     index = 1700

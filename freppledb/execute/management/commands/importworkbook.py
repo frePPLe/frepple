@@ -94,6 +94,7 @@ class Command(BaseCommand):
             logfile = "importworkbook_%s-%s.log" % (self.database, timestamp)
 
         task = None
+        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             setattr(_thread_locals, "database", self.database)
             # Initialize the task
@@ -292,7 +293,7 @@ class Command(BaseCommand):
             raise e
 
         finally:
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", old_thread_locals)
             if task:
                 task.save(using=self.database)
 

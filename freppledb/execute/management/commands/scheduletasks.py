@@ -97,6 +97,7 @@ class Command(BaseCommand):
 
         task = None
         now = datetime.now()
+        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             setattr(_thread_locals, "database", database)
             # Initialize the task
@@ -283,7 +284,7 @@ class Command(BaseCommand):
             raise e
 
         finally:
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", old_thread_locals)
 
     def createScheduledTasks(self, *args, **options):
         """

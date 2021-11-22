@@ -83,6 +83,7 @@ class Command(BaseCommand):
             user = None
 
         task = None
+        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             setattr(_thread_locals, "database", database)
             if "task" in options and options["task"]:
@@ -222,7 +223,7 @@ class Command(BaseCommand):
             raise e
 
         finally:
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", old_thread_locals)
             if task:
                 task.processid = None
                 task.save(using=database)

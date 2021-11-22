@@ -148,6 +148,7 @@ class Command(BaseCommand):
         now = datetime.now()
         task = None
         param = None
+        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             # Initialize the task
             setattr(_thread_locals, "database", database)
@@ -345,7 +346,7 @@ class Command(BaseCommand):
             # Final task status
             if task:
                 task.save(using=database)
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", old_thread_locals)
 
 
 class Simulator:

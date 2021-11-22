@@ -245,6 +245,7 @@ class Command(BaseCommand):
                 % (os.getpid(), settings.DATABASES[database]["NAME"])
             )
         idle_loop_done = False
+        old_thread_locals = getattr(_thread_locals, "database", None)
         setattr(_thread_locals, "database", database)
         while True:
             try:
@@ -307,7 +308,7 @@ class Command(BaseCommand):
             Parameter.objects.all().using(database).get(pk="Worker alive").delete()
         except Exception:
             pass
-        setattr(_thread_locals, "database", None)
+        setattr(_thread_locals, "database", old_thread_locals)
 
         # Remove log files exceeding the configured disk space allocation
         totallogs = 0

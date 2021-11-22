@@ -80,6 +80,7 @@ class Command(loaddata.Command):
 
         now = datetime.now()
         task = None
+        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             setattr(_thread_locals, "database", database)
             # Initialize the task
@@ -226,4 +227,4 @@ class Command(loaddata.Command):
             raise CommandError("%s" % e)
 
         finally:
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", old_thread_locals)

@@ -106,6 +106,7 @@ class Command(BaseCommand):
 
         task = None
         errors = [0, 0]
+        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             setattr(_thread_locals, "database", self.database)
             # Initialize the task
@@ -314,7 +315,7 @@ class Command(BaseCommand):
             raise e
 
         finally:
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", old_thread_locals)
             if task:
                 if errors[0] == 0:
                     task.status = "Done"

@@ -140,6 +140,7 @@ class Command(BaseCommand):
             )
 
         task = None
+        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             # Initialize the task
             setattr(_thread_locals, "database", database)
@@ -340,7 +341,7 @@ class Command(BaseCommand):
             raise e
 
         finally:
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", old_thread_locals)
 
     # accordion template
     title = _("Create a plan")

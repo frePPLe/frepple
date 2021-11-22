@@ -125,9 +125,10 @@ class Command(BaseCommand):
 
         now = datetime.now()
         task = None
+        old_thread_locals = getattr(_thread_locals, "database", None)
         try:
             # Initialize the task
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", database)
             if options["task"]:
                 if options["task"] > 0:
                     try:
@@ -290,7 +291,7 @@ class Command(BaseCommand):
                 task.processid = None
                 task.save(using=database)
             settings.DEBUG = tmp_debug
-            setattr(_thread_locals, "database", None)
+            setattr(_thread_locals, "database", old_thread_locals)
 
     # accordion template
     title = _("Generate buckets")

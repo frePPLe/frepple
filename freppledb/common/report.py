@@ -1039,6 +1039,8 @@ class GridReport(View):
             for scenario in scenario_list:
 
                 request.database = scenario
+                if hasattr(request, "query"):
+                    delattr(request, "query")                
 
                 # Loop over all records
                 for row in cls.data_query(request, *args, fields=fields, **kwargs):
@@ -1154,6 +1156,8 @@ class GridReport(View):
         try:
             for scenario in scenario_list:
                 request.database = scenario
+                if hasattr(request, "query"):
+                    delattr(request, "query")
 
                 for row in cls.data_query(request, *args, fields=fields, **kwargs):
                     # Clear the return string buffer
@@ -1624,6 +1628,8 @@ class GridReport(View):
 
                     # request.database needs to be changed for has_perm to work properly
                     request.database = scenario.name
+                    if hasattr(request, "query"):
+                        delattr(request, "query")
 
                     user = User.objects.using(scenario.name).get(
                         username=request.user.username
@@ -1835,8 +1841,9 @@ class GridReport(View):
             scenario_list = scenarios.split(",") if scenarios else [request.database]
             # Make sure scenarios are in the scenario_permissions list
             if scenarios:
-                accepted_scenarios = [t[0] for t in scenario_permissions]
-                scenario_list = [x for x in scenario_list if x in accepted_scenarios]
+                scenario_list = {
+                    t[0]: t[1] for t in scenario_permissions if t[0] in scenario_list
+                }
 
             # Return CSV data to export the data
             response = StreamingHttpResponse(
@@ -3168,6 +3175,9 @@ class GridPivot(GridReport):
         try:
             for scenario in scenario_list:
                 request.database = scenario
+                if hasattr(request, "query"):
+                    delattr(request, "query")
+
                 query = cls.data_query(request, *args, fields=fields, **kwargs)
 
                 if listformat:
@@ -3551,6 +3561,9 @@ class GridPivot(GridReport):
         try:
             for scenario in scenario_list:
                 request.database = scenario
+                if hasattr(request, "query"):
+                    delattr(request, "query")
+
                 query = cls.data_query(request, *args, fields=fields, **kwargs)
 
                 if listformat:

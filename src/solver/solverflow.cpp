@@ -129,6 +129,11 @@ void SolverCreate::solve(const Flow* fl,
           data->constrainedPlanning = originalPlanningMode;
           data->logConstraints = originalLogConstraints;
           data->state->q_qty_min = orig_q_qty_min;
+          // Optimization for detection of broken supply paths is disabled when
+          // we have alternate flows. Only when all alternates report a broken
+          // path could we use it.
+          // TODO Not implemented.
+          data->broken_path = false;
           return;
         } else {
           // Got rounded down to zero, which is not good for the iteration on

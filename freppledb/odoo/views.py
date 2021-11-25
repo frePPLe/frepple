@@ -200,7 +200,6 @@ def Upload(request):
                         )
             except Exception as e:
                 logger.error("Exception during odoo export: %s" % e)
-                pass
         if not data_ok:
             return HttpResponseServerError(_("No proposed data records selected"))
 

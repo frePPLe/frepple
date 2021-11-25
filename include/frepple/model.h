@@ -7392,7 +7392,8 @@ class Demand : public HasHierarchy<Demand>,
     m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation,
                                       &Cls::setLocation);
     m->addPointerField<Cls, Customer>(Tags::customer, &Cls::getCustomer,
-                                      &Cls::setCustomer);
+                                      &Cls::setCustomer,
+                                      BASE + WRITE_OBJECT_SVC);
     m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation,
                                        &Cls::setOperation);
     Plannable::registerFields<Cls>(m);

@@ -31,7 +31,7 @@ int LoadPlan::initialize() {
   metacategory =
       MetaCategory::registerCategory<LoadPlan>("loadplan", "loadplans", reader);
   registerFields<LoadPlan>(const_cast<MetaCategory*>(metacategory));
-  metadata = MetaClass::registerClass<LoadPlan>("loadplan", "loadplan");
+  metadata = MetaClass::registerClass<LoadPlan>("loadplan", "loadplan", true);
 
   // Initialize the Python type
   PythonType& x = FreppleCategory<LoadPlan>::getPythonType();

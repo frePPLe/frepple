@@ -29,7 +29,7 @@ int FlowPlan::initialize() {
   // Initialize the metadata
   metacategory =
       MetaCategory::registerCategory<FlowPlan>("flowplan", "flowplans", reader);
-  metadata = MetaClass::registerClass<FlowPlan>("flowplan", "flowplan");
+  metadata = MetaClass::registerClass<FlowPlan>("flowplan", "flowplan", true);
   registerFields<FlowPlan>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python type

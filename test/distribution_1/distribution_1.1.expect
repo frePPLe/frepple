@@ -307,6 +307,12 @@
 				<name>Ship In transit product from Source</name>
 				<origin>
 					<name>In transit product @ Source</name>
+					<item>
+						<name>In transit product</name>
+					</item>
+					<location>
+						<name>Source</name>
+					</location>
 				</origin>
 			</operation>
 			<start>2015-06-07T00:00:00</start>
@@ -331,9 +337,21 @@
 				<name>Ship In transit product from Source to Destination</name>
 				<origin>
 					<name>In transit product @ Source</name>
+					<item>
+						<name>In transit product</name>
+					</item>
+					<location>
+						<name>Source</name>
+					</location>
 				</origin>
 				<destination>
 					<name>In transit product @ Destination</name>
+					<item>
+						<name>In transit product</name>
+					</item>
+					<location>
+						<name>Destination</name>
+					</location>
 				</destination>
 			</operation>
 			<start>2015-06-05T00:00:00</start>
@@ -358,6 +376,12 @@
 				<name>Ship In transit product to Destination</name>
 				<destination>
 					<name>In transit product @ Destination</name>
+					<item>
+						<name>In transit product</name>
+					</item>
+					<location>
+						<name>Destination</name>
+					</location>
 				</destination>
 			</operation>
 			<start>2015-06-06T00:00:00</start>
@@ -378,9 +402,21 @@
 				<name>Ship product A from Central WH to Local DC 2b</name>
 				<origin>
 					<name>product A @ Central WH</name>
+					<item>
+						<name>product A</name>
+					</item>
+					<location>
+						<name>Central WH</name>
+					</location>
 				</origin>
 				<destination>
 					<name>product A @ Local DC 2b</name>
+					<item>
+						<name>product A</name>
+					</item>
+					<location>
+						<name>Local DC 2b</name>
+					</location>
 				</destination>
 			</operation>
 			<start>2015-06-06T00:00:00</start>

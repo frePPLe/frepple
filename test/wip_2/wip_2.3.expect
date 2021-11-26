@@ -159,9 +159,21 @@
 				<name>Ship consumed item from store to prod</name>
 				<origin>
 					<name>consumed item @ store</name>
+					<item>
+						<name>consumed item</name>
+					</item>
+					<location>
+						<name>store</name>
+					</location>
 				</origin>
 				<destination>
 					<name>consumed item @ prod</name>
+					<item>
+						<name>consumed item</name>
+					</item>
+					<location>
+						<name>prod</name>
+					</location>
 				</destination>
 			</operation>
 			<start>2018-12-29T00:00:01</start>

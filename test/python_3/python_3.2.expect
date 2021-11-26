@@ -121,6 +121,12 @@
 			<name>buffer2</name>
 			<owner>
 				<name>buffer1</name>
+				<item>
+					<name>item 1</name>
+				</item>
+				<location>
+					<name>locA</name>
+				</location>
 			</owner>
 		</buffer>
 		<buffer>

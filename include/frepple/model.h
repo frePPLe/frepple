@@ -4897,11 +4897,11 @@ class Buffer : public HasHierarchy<Buffer>,
                                        &Cls::getProducingOperation,
                                        &Cls::setProducingOperation);
     m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem,
-                                  BASE + WRITE_OBJECT_SVC);
+                                  MANDATORY + WRITE_OBJECT_SVC);
     m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation,
-                                      &Cls::setLocation);
-    m->addStringRefField<Cls>(Tags::batch, &Cls::getBatchString,
-                              &Cls::setBatch);
+                                      &Cls::setLocation, MANDATORY);
+    m->addStringRefField<Cls>(Tags::batch, &Cls::getBatchString, &Cls::setBatch,
+                              "", MANDATORY);
     Plannable::registerFields<Cls>(m);
     m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnHand, &Cls::setOnHand);
     m->addDoubleField<Cls>(Tags::minimum, &Cls::getMinimum, &Cls::setMinimum);

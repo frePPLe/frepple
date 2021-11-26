@@ -383,6 +383,12 @@
 				<name>Ship product @ factory</name>
 				<buffer>
 					<name>product @ factory</name>
+					<item>
+						<name>product</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
 				</buffer>
 			</operation>
 			<demand>

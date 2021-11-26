@@ -1392,6 +1392,12 @@
 				<name>Ship item 1 @ location 1</name>
 				<buffer>
 					<name>item 1 @ location 1</name>
+					<item>
+						<name>item 1</name>
+					</item>
+					<location>
+						<name>location 1</name>
+					</location>
 				</buffer>
 			</operation>
 			<demand>
@@ -1414,6 +1420,12 @@
 				<name>Ship item 2 @ location 2</name>
 				<buffer>
 					<name>item 2 @ location 2</name>
+					<item>
+						<name>item 2</name>
+					</item>
+					<location>
+						<name>location 2</name>
+					</location>
 				</buffer>
 			</operation>
 			<demand>
@@ -1436,6 +1448,12 @@
 				<name>Ship item 3 @ location 3</name>
 				<buffer>
 					<name>item 3 @ location 3</name>
+					<item>
+						<name>item 3</name>
+					</item>
+					<location>
+						<name>location 3</name>
+					</location>
 				</buffer>
 			</operation>
 			<demand>
@@ -1458,6 +1476,12 @@
 				<name>Ship item 3 @ location 3</name>
 				<buffer>
 					<name>item 3 @ location 3</name>
+					<item>
+						<name>item 3</name>
+					</item>
+					<location>
+						<name>location 3</name>
+					</location>
 				</buffer>
 			</operation>
 			<demand>
@@ -1480,6 +1504,12 @@
 				<name>Ship item 3 @ location 3</name>
 				<buffer>
 					<name>item 3 @ location 3</name>
+					<item>
+						<name>item 3</name>
+					</item>
+					<location>
+						<name>location 3</name>
+					</location>
 				</buffer>
 			</operation>
 			<demand>
@@ -1502,6 +1532,12 @@
 				<name>Ship item 3 @ location 3</name>
 				<buffer>
 					<name>item 3 @ location 3</name>
+					<item>
+						<name>item 3</name>
+					</item>
+					<location>
+						<name>location 3</name>
+					</location>
 				</buffer>
 			</operation>
 			<demand>
@@ -1524,6 +1560,12 @@
 				<name>Ship item 3 @ location 3</name>
 				<buffer>
 					<name>item 3 @ location 3</name>
+					<item>
+						<name>item 3</name>
+					</item>
+					<location>
+						<name>location 3</name>
+					</location>
 				</buffer>
 			</operation>
 			<demand>
@@ -1546,6 +1588,12 @@
 				<name>Ship item 4 @ location 4</name>
 				<buffer>
 					<name>item 4 @ location 4</name>
+					<item>
+						<name>item 4</name>
+					</item>
+					<location>
+						<name>location 4</name>
+					</location>
 				</buffer>
 			</operation>
 			<demand>

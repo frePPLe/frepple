@@ -197,6 +197,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
 
         // Solution zero-bis: Await confirmed supply of an MTO material
         // on the generic buffer.
+        /*
         if (b->getItem()->hasType<ItemMTO>() && b->getBatch()) {
           auto generic_buffer =
               Buffer::findOrCreate(b->getItem(), b->getLocation());
@@ -237,6 +238,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             }
           }
         }
+        */
       }
 
       // Solution zero-tris: use stock and confirmed supply on alternate

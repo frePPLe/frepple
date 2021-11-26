@@ -245,6 +245,7 @@ void SolverCreate::SolverData::commit() {
       buffer_solve_shortages_only = false;
       for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl) {
         // Step 1: Allocate from generic-MTO buffers to MTO-batch buffers
+        /*
         for (auto& b : Buffer::all()) {
           if (b.getLevel() != lvl ||
               (cluster != -1 && cluster != b.getCluster()) || !b.getItem() ||
@@ -313,6 +314,7 @@ void SolverCreate::SolverData::commit() {
             }
           }
         }
+        */
 
         // Step 2: propagate through this level of buffers
         for (auto& b : Buffer::all()) {

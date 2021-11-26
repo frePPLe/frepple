@@ -202,6 +202,7 @@ void SolverCreate::solve(const Flow* fl,
     auto orig_q_date = data->state->q_date;
 
     if (data->state->q_qty != 0.0) {
+      /*
       if (fl->getBuffer()->getItem()->hasType<ItemMTO>()) {
         auto free_specific = data->state->q_flowplan->getBuffer()->getOnHand(
             data->state->q_date, Date::infiniteFuture, true);
@@ -246,12 +247,14 @@ void SolverCreate::solve(const Flow* fl,
           }
         }
       }
+      */
 
       // Call the buffer solver
       auto thebuf = data->state->q_flowplan->getBuffer();
       thebuf->solve(*this, data);
 
       // MTO buffer using supply on generic buffer
+      /*
       if (fl->getBuffer()->getItem()->hasType<ItemMTO>()) {
         if (extra_supply)
           // Merge extra supply quantity from the generic buffer
@@ -277,6 +280,7 @@ void SolverCreate::solve(const Flow* fl,
           }
         }
       }
+      */
 
       if (data->state->a_date > fl->getEffective().getEnd()) {
         // The reply date must be less than the effectivity end date: after

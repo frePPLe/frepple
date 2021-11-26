@@ -409,6 +409,13 @@ jQuery.extend($.fn.fmatter, {
 
   duration: formatDuration,
 
+  currencyWithBlanks: function (cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue === null)
+      return '';
+    else
+      return $.fn.fmatter.call(this, "currency", cellvalue, options);
+  },
+
   image: function (cellvalue, options, rowdata) {
     return cellvalue ?
       '<img class="avatar-sm" src="/uploads/' + cellvalue + '">' :

@@ -476,7 +476,7 @@ def getCurrentDate(database=DEFAULT_DB_ALIAS):
 
 
 class GridFieldCurrency(GridField):
-    formatter = "currency"
+    formatter = "currencyWithBlanks"
     searchoptions = (
         '{sopt:["eq","ne","in","ni","lt","le","gt","ge"],"searchhidden":true}'
     )
@@ -1042,7 +1042,7 @@ class GridReport(View):
 
                 request.database = scenario
                 if hasattr(request, "query"):
-                    delattr(request, "query")                
+                    delattr(request, "query")
 
                 # Loop over all records
                 for row in cls.data_query(request, *args, fields=fields, **kwargs):

@@ -87,7 +87,7 @@ class cleanStatic(PlanTask):
         cursor.execute(
             """
             select old%s.name, new%s.name from %s old%s
-            inner join %s new%s on old%s.name != new%s.name 
+            inner join %s new%s on old%s.name != new%s.name
             and split_part(old%s.subcategory,',',2) = split_part(new%s.subcategory,',',2)
             and new%s.lastmodified > old%s.lastmodified
             and old%s.source = %%s and new%s.source = %%s
@@ -112,7 +112,7 @@ class cleanStatic(PlanTask):
                         related.related_model._base_manager.using(database).filter(
                             **{related.field.name: oldname}
                         ).update(**{related.field.name: new_obj})
-                    except:
+                    except Exception:
                         # object with new name already exists => deleting old record
                         related.related_model._base_manager.using(database).filter(
                             **{related.field.name: oldname}

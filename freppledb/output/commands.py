@@ -928,32 +928,36 @@ class ComputePeriodOfCover(PlanTask):
         else:
             return -1
 
+    @staticmethod
+    def getItemsFromCluster(
+        cluster=-1,
+    ):
+        import frepple
+
+        for i in frepple.items():
+            if i.cluster == cluster:
+                yield "%s\n" % (clean_value(i.name),)
+
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
-
         import frepple
 
         currentdate = frepple.settings.current
         cursor = connections[database].cursor()
 
         if cluster != -1:
-            items = []
-            for i in frepple.items():
-                if i.cluster == cluster:
-                    items.append((i.name,))
-
-            if len(items) == 0:
-                return
 
             cursor.execute(
                 """
                 create temp table cluster_item_tmp as select name from item where false;
             """
             )
-            cursor.executemany(
-                "insert into cluster_item_tmp values (%s);",
-                items,
+
+            cursor.copy_from(
+                CopyFromGenerator(cls.getItemsFromCluster(cluster)),
+                "cluster_item_tmp",
             )
+
             cursor.execute("create unique index on cluster_item_tmp (name);")
 
         cursor.execute(
@@ -966,6 +970,7 @@ class ComputePeriodOfCover(PlanTask):
                   (
                   select '0 days'::interval
                   from operationplanmaterial
+                  %s
                   inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
                   where operationplanmaterial.item_id = item.name and
                     (
@@ -986,6 +991,7 @@ class ComputePeriodOfCover(PlanTask):
                     else null
                     end
                   from operationplanmaterial
+                  %s
                   where flowdate < %%s
                     and operationplanmaterial.item_id = item.name
                   order by flowdate desc, id desc
@@ -998,6 +1004,7 @@ class ComputePeriodOfCover(PlanTask):
                      '999 days'::interval
                      ))
                   from operationplanmaterial
+                  %s
                   inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
                   where operationplanmaterial.quantity < 0
                     and operationplanmaterial.item_id = item.name
@@ -1006,10 +1013,15 @@ class ComputePeriodOfCover(PlanTask):
                  ),
                  '999 days'::interval
                  ))/86400)
-            %s
         """
             % (
-                "from cluster_item_tmp where item.name in (select name from cluster_item_tmp)"
+                "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
+                if cluster != -1
+                else "",
+                "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
+                if cluster != -1
+                else "",
+                "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
                 if cluster != -1
                 else "",
             ),

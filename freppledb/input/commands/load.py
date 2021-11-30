@@ -176,7 +176,7 @@ class loadParameter(LoadTask):
                     SELECT name, value
                     FROM common_parameter
                     where name in (
-                       'currentdate', 'plan.calendar', 
+                       'currentdate', 'plan.calendar',
                        'COMPLETED.allow_future', 'WIP.produce_full_quantity',
                        'plan.individualPoolResources'
                        )
@@ -1873,22 +1873,34 @@ class loadOperationPlans(LoadTask):
                     % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime)
                 )
 
-            with connections[database].cursor() as cursor:
-                # Assure the operationplan ids will be unique.
-                # We call this method only at the end, as calling it earlier gives a slower
-                # performance to load operationplans
-                # By limiting the number of digits in the query we enforce reusing numbers at some point.
+        with connections[database].cursor() as cursor:
+            # Assure the operationplan ids will be unique.
+            # We call this method only at the end, as calling it earlier gives a slower
+            # performance to load operationplans
+            # By limiting the number of digits in the query we enforce reusing numbers at some point.
+            if "supply" in os.environ:
+                # Allow reusing references of proposed operationplans
                 cursor.execute(
                     """
-                select coalesce(max(reference::bigint), 0) as max_reference
-                from operationplan
-                where status <> 'proposed'
-                and reference ~ '^[0-9]*$'
-                and char_length(reference) <= 9
-                """
+                    select coalesce(max(reference::bigint), 0) as max_reference
+                    from operationplan
+                    where status <> 'proposed'
+                    and reference ~ '^[0-9]*$'
+                    and char_length(reference) <= 9
+                    """
                 )
-                d = cursor.fetchone()
-                frepple.settings.id = d[0]
+            else:
+                # Don't reuse any references
+                cursor.execute(
+                    """
+                    select coalesce(max(reference::bigint), 0) as max_reference
+                    from operationplan
+                    where reference ~ '^[0-9]*$'
+                    and char_length(reference) <= 9
+                    """
+                )
+            d = cursor.fetchone()
+            frepple.settings.id = d[0] + 1
 
         # We only assign resource setup matrices here.
         # If we do it before the operationplans are read in, then a) the setup

@@ -25,7 +25,7 @@ from xml.sax.saxutils import quoteattr
 
 from django.utils.http import urlencode
 
-from django.db import DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS, connections
 from django.conf import settings
 
 from freppledb.common.models import Parameter
@@ -121,6 +121,18 @@ class OdooReadData(PlanTask):
             loglevel = int(Parameter.getValue("odoo.loglevel", database, "0"))
         except Exception:
             loglevel = 0
+
+        with connections[database].cursor() as cursor:
+            cursor.execute(
+                """
+                select coalesce(max(reference::bigint), 0) as max_reference
+                from operationplan
+                where reference ~ '^[0-9]*$'
+                and char_length(reference) <= 9
+                """
+            )
+            d = cursor.fetchone()
+            frepple.settings.id = d[0] + 1
 
         if not debugFile:
             url = "%sfrepple/xml?%s" % (

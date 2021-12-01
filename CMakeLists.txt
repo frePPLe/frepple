@@ -2,7 +2,7 @@
 set(CMAKE_VERBOSE_MAKEFILE ON)
 cmake_minimum_required (VERSION 3.0)
 
-project(frepple VERSION 6.19.0)
+project(frepple VERSION 6.20.0)
 
 set(PROJECT_EDITION "Community Edition")
 set(PROJECT_BRANCH "community")
@@ -45,7 +45,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
       if (OS_RELEASE MATCHES "openSUSE Leap 15")
         set(CPACK_GENERATOR "RPM")
         set(DISTRO "opensuse15")
-      endif()    
+      endif()
     endif()
   endif()
   if (NOT DISTRO)
@@ -61,7 +61,7 @@ if (WIN32)
     include_directories("${XERCESC_FOLDER}/include")
     list(APPEND CMAKE_REQUIRED_INCLUDES "${XERCESC_FOLDER}/include")
     add_library(xerces-c STATIC IMPORTED)
-    set_target_properties(xerces-c PROPERTIES 
+    set_target_properties(xerces-c PROPERTIES
        IMPORTED_LOCATION_DEBUG "${XERCESC_FOLDER}/lib/xerces-c_3D.lib"
        IMPORTED_LOCATION_RELEASE "${XERCESC_FOLDER}/lib/xerces-c_3.lib"
        )
@@ -240,8 +240,8 @@ if (valgrind)
       nowebservice=1
       constraint=13
       plantype=1
-    valgrind --tool=callgrind 
-       ${CMAKE_SOURCE_DIR}/bin/frepple 
+    valgrind --tool=callgrind
+       ${CMAKE_SOURCE_DIR}/bin/frepple
        ${CMAKE_SOURCE_DIR}/freppledb/common/commands.py
     )
 endif()
@@ -274,4 +274,4 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
 endif()
-  
+

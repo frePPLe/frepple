@@ -27,7 +27,7 @@ services:
           memory: 4096M
         reservations:
           cpus: '0.25'
-          memory: 4096M 
+          memory: 4096M
 
   frepple-@PROJECT_BRANCH@-postgres:
     image: "postgres:13"
@@ -39,9 +39,11 @@ services:
           memory: 4096M
         reservations:
           cpus: '0.25'
-          memory: 4096M    
-    # Tuning postgres configuration according to https://pgtune.leopard.in.ua/
-    # Adapt to match your allocated resources.
+          memory: 4096M
+    # Tune the postgres configuration according to https://pgtune.leopard.in.ua/
+    # to match your allocated resources.
+    # Use "data warehouse" as application type and also assure the max_connections setting
+    # is moved from the default 100 to eg 400.
     # command: postgres -c ...   TODO
     networks:
       - backend

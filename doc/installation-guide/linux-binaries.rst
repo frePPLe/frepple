@@ -20,7 +20,7 @@ Binary installation packages are available for:
 * Suse 15 (Enterprise Edition only, deprecated in favor of containers)
 * OpenSuse 15 (Enterprise Edition only, deprecated in favor of containers)
 
-Installing on other Linux distributions is also possible. You will need to 
+Installing on other Linux distributions is also possible. You will need to
 build from the source code with a standard CMake build sequence.
 
 ******************************
@@ -35,15 +35,15 @@ Here are the steps to get a fully working environment.
 
 #. **Download the installation package**
 
-   For installation on Linux you need a .deb (for 
+   For installation on Linux you need a .deb (for
    `debian-based distributions <https://en.wikipedia.org/wiki/Category:Debian-based_distributions>`_ )
    or .rpm (`RPM-based based distributions <https://en.wikipedia.org/wiki/Category:RPM-based_Linux_distributions>`_ )
    package file.
 
    The Community Edition is a free downloaded from github at https://github.com/frePPLe/frepple/releases.
-   
+
    The Enterprise Edition is available to customers from the frePPLe website at https://frepple.com/customer-portal/downloads/
-   
+
 #. **Install and tune the PostgreSQL database**
 
    Install postgreSQL 9.5 or higher, the world's most advanced open source database.
@@ -80,15 +80,18 @@ Here are the steps to get a fully working environment.
 #. **Tune the database**
 
    The default installation of PostgreSQL is not configured right for
-   intensive use. We strongly recommend using pgtune http://pgtune.leopard.in.ua/
-   to optimize the configuration for your hardware.
+   intensive use.
+
+   We advice using pgtune http://pgtune.leopard.in.ua/ to optimize the configuration
+   for your hardware. Use "data warehouse" as application type and also assure the
+   max_connection setting is moved from the default 100 to eg 400.
 
 #. **Create the database and database user**
 
    A database needs to be created for the default database, and one for each of
    the what-if scenarios you want to configure.
 
-   The same user can be used as the owner of these databases. Make sure to grant the 
+   The same user can be used as the owner of these databases. Make sure to grant the
    createrole permissions to the database user.
 
    The typical SQL statements are shown below. Replace USR, PWD, DB with the suitable
@@ -126,7 +129,7 @@ Here are the steps to get a fully working environment.
    ::
 
       sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
-      
+
 
 #. **Install the frepple binary package**
 
@@ -219,7 +222,7 @@ Here are the steps to get a fully working environment.
           # the database, using the SQL_ROLE configured above.
           'freppledb.reportmanager',
           'freppledb.executesql',
-          )    
+          )
 
    #. | **/etc/frepple/license.xml**
       | The Community Edition requires no license file and you can skip this step.
@@ -349,7 +352,7 @@ Uninstallation is as simple as:
   sudo dropdb -U <db-user> <db-name>
 
   # Uninstall the package, including log files and configuration files
-  sudo apt-get purge frepple     
+  sudo apt-get purge frepple
 
 
 ***************************
@@ -392,7 +395,7 @@ inspiration for your own deployments.
   # Install the frePPLe binary RPM package and the necessary dependencies.
   sudo dnf --nogpgcheck localinstall  frepple*.rpm
 
-  # Create frepple database schema  
+  # Create frepple database schema
   sudo frepplectl migrate --noinput
 
 ******************************

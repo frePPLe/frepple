@@ -99,7 +99,8 @@ them between different releases of the frepple image).
 
 Note that the postgres database container comes with default settings. For production
 use you should update the configuration with the pgtune recommendations from
-https://pgtune.leopard.in.ua/
+https://pgtune.leopard.in.ua/ (use "data warehouse" as application type and also assure
+the max_connections setting is moved from the default 100 to eg 400).
 
 .. code-block:: none
 

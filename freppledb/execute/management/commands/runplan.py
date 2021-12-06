@@ -183,7 +183,9 @@ class Command(BaseCommand):
 
             # Reset environment variables
             # TODO avoid having to delete the environment variables. Use options directly?
-            for label in freppledb.common.commands.PlanTaskRegistry.getLabels():
+            for label in freppledb.common.commands.PlanTaskRegistry.getLabels(
+                database=database
+            ):
                 if "env" in options:
                     # Options specified
                     if label[0] in os.environ:
@@ -354,7 +356,9 @@ class Command(BaseCommand):
 
         if request.user.has_perm("auth.generate_plan"):
             # Collect optional tasks
-            planning_options = freppledb.common.commands.PlanTaskRegistry.getLabels()
+            planning_options = freppledb.common.commands.PlanTaskRegistry.getLabels(
+                database=request.database
+            )
             plantype = "2"
             constraint = 15
             current_options = [i[0] for i in planning_options]

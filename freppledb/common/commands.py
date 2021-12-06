@@ -248,15 +248,18 @@ class PlanTaskSequence(PlanTask):
             if i.weight is not None and i.weight >= 0:
                 i.display(indentlevel=indentlevel, **kwargs)
 
-    def getLabels(self, labellist):
+    def getLabels(self, labellist, **kwargs):
         for t in self.steps:
             if t.label:
-                lbl = (t.label[0], force_text(t.label[1]))
-                if lbl not in labellist:
+                if callable(t.label):
+                    lbl = t.label(**kwargs)
+                else:
+                    lbl = (t.label[0], force_text(t.label[1]))
+                if lbl and lbl not in labellist:
                     labellist.append(lbl)
             m = getattr(t, "getLabels", None)
             if callable(m):
-                t.getLabels(labellist)
+                t.getLabels(labellist, **kwargs)
         return labellist
 
     def _sort(self):
@@ -345,9 +348,9 @@ class PlanTaskParallel(PlanTask):
                 )
             g.display(indentlevel=indentlevel + 2, **kwargs)
 
-    def getLabels(self, labellist):
+    def getLabels(self, labellist, **kwargs):
         for g in self.groups.values():
-            g.getLabels(labellist)
+            g.getLabels(labellist, **kwargs)
 
     def _sort(self):
         for g in self.groups.values():
@@ -493,10 +496,10 @@ class PlanTaskRegistry:
             logger.info("Finished planning at %s" % datetime.now().strftime("%H:%M:%S"))
 
     @classmethod
-    def getLabels(cls):
+    def getLabels(cls, **kwargs):
         cls.autodiscover()
         labellist = []
-        cls.reg.getLabels(labellist)
+        cls.reg.getLabels(labellist, **kwargs)
         return labellist
 
 

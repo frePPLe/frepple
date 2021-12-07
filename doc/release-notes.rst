@@ -1,6 +1,14 @@
 Release notes
 -------------
 
+6.20.0 (Upcoming release)
+=========================
+
+.. rubric:: Odoo integration
+
+- | V14: Implemented synchronization of work center availability calendars.
+
+
 6.19.0 (2021/12/1)
 ==================
 

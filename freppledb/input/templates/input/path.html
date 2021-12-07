@@ -132,7 +132,7 @@ function drawGraph(jsondata)
   if ($("#svggraph").children().length > 1)
   	// It has already been drawn!
   	return;
-  
+
   var count = -1;
   for (var oper in jsondata['rows'])
   {
@@ -244,13 +244,6 @@ function drawGraph(jsondata)
           links.push({source: nodes[bufindx], target: nodes[operindex], type: 'flow'});
       }
     }
-  }
-
-  // Oh dear, that's too much to visualize sensibly
-  if (links.length > 400 || nodes.length > 400)
-  {
-    $('#graph').html("<br>&nbsp;{% trans 'Too many objects to display' %}");
-    return;
   }
 
   // Compute the initial horizontal position

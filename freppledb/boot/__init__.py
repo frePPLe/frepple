@@ -31,7 +31,7 @@ from itertools import chain
 from django.conf import settings
 from django.db import models
 
-from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
 from django.db.models.signals import class_prepared
 from django.db.utils import DEFAULT_DB_ALIAS
@@ -147,11 +147,12 @@ def getAttributes(model):
     Return all attributes for a given model in the format:
       fieldname, label, fieldtype, editable (default=True), initially_hidden (default=False)
     """
-    for attr in chain(
-        _register.get("%s.%s" % (model.__module__, model.__name__), []),
-        _register.get(model._meta.db_table, []),
-    ):
-        yield attr
+    if not model._meta.proxy:
+        for attr in chain(
+            _register.get("%s.%s" % (model.__module__, model.__name__), []),
+            _register.get(model._meta.db_table, []),
+        ):
+            yield attr
     for base in model.__bases__:
         if hasattr(base, "_meta"):
             for attr in getAttributes(base):
@@ -287,7 +288,7 @@ def addAttributesFromDatabase():
         with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
             cursor.execute(
                 """
-                select 
+                select
                   model, name, label, type, editable, initially_hidden
                 from common_attribute
                 """
@@ -305,8 +306,8 @@ def addAttributesFromDatabase():
             # Loop over all scenarios
             cursor.execute(
                 """
-                select name 
-                from common_scenario 
+                select name
+                from common_scenario
                 where status='In use' or name = %s
                 """,
                 (DEFAULT_DB_ALIAS,),
@@ -323,12 +324,12 @@ def addAttributesFromDatabase():
                     # Pick up all existing attribute fields
                     cursor2.execute(
                         """
-                        select c.table_name, c.column_name, 
+                        select c.table_name, c.column_name,
                         c.data_type
                         from pg_catalog.pg_statio_all_tables as st
-                        inner join pg_catalog.pg_description pgd 
+                        inner join pg_catalog.pg_description pgd
                         on pgd.objoid=st.relid
-                        inner join information_schema.columns c 
+                        inner join information_schema.columns c
                         on pgd.objsubid=c.ordinal_position
                         and  c.table_schema=st.schemaname and c.table_name=st.relname
                         where st.schemaname = 'public'

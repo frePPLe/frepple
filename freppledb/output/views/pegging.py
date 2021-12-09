@@ -187,7 +187,7 @@ class ReportByDemand(GridReport):
 
         # Collect demand due date, all operationplans and loaded resources
         query = """
-          with pegging as (
+          with pegging_0 as (
             select
               min(rownum) as rownum,
               min(due) as due,
@@ -207,7 +207,22 @@ class ReportByDemand(GridReport):
               ) d1
               ) d2
             group by opplan, quantity
-            )
+            ),
+            pegging as (select
+              child.rownum,
+              child.due,
+              child.opplan,
+			  parent.opplan as parent_reference,
+              child.lvl,
+              child.required_quantity,
+              child.quantity
+            from pegging_0 child
+			left outer join pegging_0 parent
+			on parent.lvl = child.lvl -1
+			and parent.rownum < child.rownum
+			and not exists (select 1 from pegging_0 where lvl = parent.lvl and rownum > parent.rownum
+						   and rownum < child.rownum)
+		)
           select
             pegging.due,
             operationplan.name,
@@ -240,14 +255,16 @@ class ReportByDemand(GridReport):
             on operationplan.item_id = item.name
           inner join (
             select name,
+			  parent_reference,
               min(rownum) as rownum,
               sum(pegging.quantity) as pegged
             from pegging
             inner join operationplan
               on pegging.opplan = operationplan.reference
-            group by operationplan.name
+            group by operationplan.name, parent_reference
             ) ops
           on operationplan.name = ops.name
+		  and pegging.parent_reference is not distinct from ops.parent_reference
           left outer join operationplanresource
             on pegging.opplan = operationplanresource.operationplan_id
           group by

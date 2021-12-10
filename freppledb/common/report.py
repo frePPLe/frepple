@@ -1101,17 +1101,17 @@ class GridReport(View):
 
         allColumns = request.GET.get("allcolumns", False)
 
-        if allColumns and cls and cls.rows:
+        if allColumns and cls and request.rows:
             r = [
                 force_str(
                     f.title, encoding=settings.CSV_CHARSET, errors="ignore"
                 ).title()
-                for f in cls.rows
+                for f in request.rows
             ]
             if len(scenario_list) > 1:
                 r.insert(0, _("scenario"))
             writer.writerow(r)
-            fields = [f for f in cls.rows]
+            fields = [f for f in request.rows]
         elif request.prefs and request.prefs.get("rows", None):
             # Customized settings
             custrows = cls._validate_rows(request, request.prefs["rows"])

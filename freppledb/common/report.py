@@ -80,6 +80,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
 
 from freppledb.boot import getAttributeFields
+from freppledb.common.auth import MultiDBBackend
 from freppledb.common.models import (
     User,
     Comment,

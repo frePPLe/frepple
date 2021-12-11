@@ -124,7 +124,11 @@ def registerAttribute(model, attrlist, **kwargs):
     """
     Register a new attribute.
     The attribute list is passed as a list of tuples in the format
-      fieldname, label, fieldtype, editable (default=True), initially_hidden (default=False)
+      - fieldname: database field name
+      - label: displayed in the user interface
+      - fieldtype: supports "boolean", "duration", "integer", "number", "string", "time"
+      - editable: set to false to disable users from changing the field, default=True
+      - initially_hidden: set to true to hide this attribute by default in a screen, default=False
     """
     if model not in _register:
         _register[model] = []

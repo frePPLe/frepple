@@ -61,35 +61,38 @@ class SQLReport(AuditModel):
                     # The query is wrapped in a dummy filter, to avoid executing the
                     # inner real query. It still generates the list of all columns.
                     cursor.execute("select * from (%s) as Q where false" % self.sql)
-                    cols = []
-                    seq = 1
-                    for f in cursor.description:
-                        if f[0] in cols:
-                            raise Exception("Duplicate column name '%s'" % f[0])
-                        cols.append(f[0])
-                        if f[1] == 1700:
-                            fmt = "number"
-                        elif f[1] == 1184:
-                            fmt = "datetime"
-                        elif f[1] == 23:
-                            fmt = "integer"
-                        elif f[1] == 1186:
-                            fmt = "duration"
-                        elif f[1] == 1043:
-                            fmt = "text"
-                        else:
-                            fmt = "character"
-                        SQLColumn(
-                            report=self, sequence=seq, name=f[0], format=fmt
-                        ).save(using=db)
-                        seq += 1
+                    if self.id:
+                        cols = []
+                        seq = 1
+                        for f in cursor.description:
+                            if f[0] in cols:
+                                raise Exception("Duplicate column name '%s'" % f[0])
+                            cols.append(f[0])
+                            if f[1] == 1700:
+                                fmt = "number"
+                            elif f[1] == 1184:
+                                fmt = "datetime"
+                            elif f[1] == 23:
+                                fmt = "integer"
+                            elif f[1] == 1186:
+                                fmt = "duration"
+                            elif f[1] == 1043:
+                                fmt = "text"
+                            else:
+                                fmt = "character"
+                            SQLColumn(
+                                report=self, sequence=seq, name=f[0], format=fmt
+                            ).save(using=db)
+                            seq += 1
             finally:
                 if conn:
                     conn.close()
 
     def save(self, *args, **kwargs):
-        self.refreshColumns()
+        if not self.id:
+            self.refreshColumns()
         super().save(*args, **kwargs)
+        self.refreshColumns()
 
     class Meta:
         db_table = "reportmanager_report"

@@ -88,8 +88,8 @@ class SQLReport(AuditModel):
                     conn.close()
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
         self.refreshColumns()
+        super().save(*args, **kwargs)
 
     class Meta:
         db_table = "reportmanager_report"

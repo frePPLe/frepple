@@ -1684,6 +1684,8 @@ class GridReport(View):
             kwargs["preferences"] = request.prefs
 
         # scenario_permissions is used to display multiple scenarios in the export dialog
+        if not hasattr(request.user, "scenarios"):
+            MultiDBBackend.getScenarios(request.user)
         if len(request.user.scenarios) > 1:
             scenario_permissions = cls.getScenarios(request, *args, **kwargs)
         else:

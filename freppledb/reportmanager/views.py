@@ -545,12 +545,15 @@ class ReportManager(GridReport):
 
     @classmethod
     def post(cls, request, *args, **kwargs):
-        # Allow only post from superusers
-        if not request.user.is_superuser:
-            return HttpResponseNotAllowed(
-                ["post"], content="Only a superuser can execute SQL statements"
+        # Check permissions
+        if (
+            request.method != "POST"
+            or not request.is_ajax()
+            or (
+                not request.user.has_perm("reportmanager.add_sqlreport")
+                and not request.user.has_perm("reportmanager.change_sqlreport")
             )
-        if request.method != "POST" or not request.is_ajax():
+        ):
             return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
 
         if "format" in request.POST:

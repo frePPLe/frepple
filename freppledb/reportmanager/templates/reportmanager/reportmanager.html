@@ -4,7 +4,7 @@
 {% block extrahead %}{{block.super}}
 
 <script>
- 
+
 {% if perms.reportmanager.change_sqlreport or perms.reportmanager.add_sqlreport %}
 function getSchema() {
    $.ajax({
@@ -19,7 +19,7 @@ function getSchema() {
         });
         $("a.schemafield").on("click", function(e) {
           var field = $(e.target).closest("a").find("code").first().text();
-          if (field != "") {            
+          if (field != "") {
             var statements = $("#reportmanager_statements");
             if (statements[0].selectionStart || statements[0].selectionStart === 0) {
               var startPos = statements[0].selectionStart;
@@ -29,7 +29,7 @@ function getSchema() {
                 statements[0].value.substring(endPos, statements[0].value.length);
               statements[0].selectionStart = startPos + field.length + 2;
               statements[0].selectionEnd = startPos + field.length + 2;
-            } 
+            }
           else
             this.value += field + ", ";
           }
@@ -40,7 +40,7 @@ function getSchema() {
 }
 
 function startEdit() {
-  $("#editreport, #editbuttons").toggleClass("hidden");
+  $("#editreport, #editbuttons, #filterform").toggleClass("hidden");
   if ($("#schemacolumn").is(":empty")) getSchema();
 }
 {% endif %}
@@ -65,11 +65,11 @@ $(function() {
         return 'There are unsaved changes.';
     });
   });
-  
+
   var id = {% if report %}{{report.id}}{% else %}0{% endif %};
-  
+
   $("#reportmanager_save").on("click", function(event) {
-    var data = {        
+    var data = {
         "sql": $("#reportmanager_statements").val(),
         "save": true,
         "name": $("#id_name").val(),
@@ -90,8 +90,8 @@ $(function() {
         }
       	else {
           $("#workarea").prepend(
-            '<div id="save_ok" class="row"><div class="col-md-12" style="margin-top: 5px">' 
-            + '<ul class="alert alert-danger"><li>{% trans "Saving the report failed" %}&nbsp;:&nbsp;' 
+            '<div id="save_ok" class="row"><div class="col-md-12" style="margin-top: 5px">'
+            + '<ul class="alert alert-danger"><li>{% trans "Saving the report failed" %}&nbsp;:&nbsp;'
             + data.status
             + '</li></ul></div></div>'
             );
@@ -141,7 +141,7 @@ $(function() {
       xhr = null;
       }
   });
-  
+
   {% if not report %}
   getSchema();
   {% endif %}
@@ -154,6 +154,8 @@ $(function() {
 <button class="btn btn-xs btn-primary" onclick="startEdit()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'edit'|capfirst|force_escape %}" ><span class="fa fa-pencil"></span></button>
 {% endif %}
 {% endblock %}
+
+{% block filter %}{% if report %}{{block.super}}{% endif %}{% endblock %}
 
 {% block before_table %}
 
@@ -174,7 +176,7 @@ $(function() {
   <label class="required" style="font-weight:bold; color:#333" for="id_name">{% trans "name"|capfirst %}:</label>
 </div>
 <div class="controls col-md-10">
-  <input type="text" name="name" class="form-control vTextField" maxlength="300" 
+  <input type="text" name="name" class="form-control vTextField" maxlength="300"
     placeholder="{% trans "name"|capfirst %}" value="{{report.name}}" required id="id_name">
 </div>
 </div>
@@ -222,6 +224,6 @@ $(function() {
 </div>
 
 <!-- End editing section -->
-</div>  
+</div>
 
 {% endblock %}

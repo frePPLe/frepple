@@ -1177,45 +1177,45 @@ PROBLEM	late	990 units of demand '7. order 1' planned up to 40.7 days after its 
 PROBLEM	late	990 units of demand '7. order 2' planned up to 41.7 days after its due date	2018-01-02T00:00:00 / 2018-02-12T16:40:00
 PROBLEM	late	990 units of demand '8. order 1' planned up to 46.5 days after its due date	2018-01-02T00:00:00 / 2018-02-17T12:30:00
 PROBLEM	late	990 units of demand '9. order 1' planned up to 51.8 days after its due date	2018-01-02T00:00:00 / 2018-02-22T20:10:00
-DEMAND CONSTRAINT	1. order 1	Operation '1. make subassembly' planned in the past	2017-12-31T12:00:00 / 2018-01-01T12:00:00	
-DEMAND CONSTRAINT	1. order 1	Operation 'Purchase 1. component @ plant from 1. my personal supplier' planned in the past	2017-11-22T00:00:00 / 2018-01-01T00:00:00	
+DEMAND CONSTRAINT	1. order 1	Operation '1. make subassembly' planned in the past	2018-01-01T12:00:00 / 2018-01-07T21:00:00	
+DEMAND CONSTRAINT	1. order 1	Operation 'Purchase 1. component @ plant from 1. my personal supplier' planned in the past	2018-01-01T00:00:00 / 2018-02-10T00:00:00	
 DEMAND CONSTRAINT	1. order 1	Resource '1. assembly line' has capacity shortage of 1	2018-02-10T08:20:00 / 2018-02-16T21:00:00	
 DEMAND CONSTRAINT	1. order 1	Resource '1. operator' has capacity shortage of 1	2018-02-10T00:00:00 / 2018-02-16T06:00:00	
-DEMAND CONSTRAINT	10. order 1	Operation '10. make end item' planned in the past	2017-12-04T12:00:00 / 2018-01-01T17:00:00	
-DEMAND CONSTRAINT	10. order 1	Operation '10. make subassembly' planned in the past	2017-12-28T12:29:04 / 2018-01-26T09:29:04	
-DEMAND CONSTRAINT	10. order 1	Operation 'Purchase 10. component @ 10. plant from 10. my personal supplier' planned in the past	2017-11-22T09:00:00 / 2018-01-01T09:00:00	
+DEMAND CONSTRAINT	10. order 1	Operation '10. make end item' planned in the past	2018-01-01T17:00:00 / 2018-01-29T14:00:00	
+DEMAND CONSTRAINT	10. order 1	Operation '10. make subassembly' planned in the past	2018-01-26T09:29:04 / 2018-01-29T14:00:00	
+DEMAND CONSTRAINT	10. order 1	Operation 'Purchase 10. component @ 10. plant from 10. my personal supplier' planned in the past	2018-01-01T09:00:00 / 2018-02-10T00:00:00	
 DEMAND CONSTRAINT	10. order 1	Resource '10. assembly line' has capacity shortage of 1	2018-02-13T13:30:00 / 2018-03-13T10:10:00	
 DEMAND CONSTRAINT	10. order 1	Resource '10. operator' has capacity shortage of 1	2018-02-12T09:00:00 / 2018-03-08T15:00:00	
-DEMAND CONSTRAINT	11. order 1	Operation '11. make subassembly' planned in the past	2017-12-31T23:31:12 / 2018-01-01T23:31:12	
-DEMAND CONSTRAINT	11. order 1	Operation 'Purchase 11. component @ plant from 11. my personal supplier' planned in the past	2017-11-22T00:00:00 / 2018-01-01T00:00:00	
+DEMAND CONSTRAINT	11. order 1	Operation '11. make subassembly' planned in the past	2018-01-01T23:31:12 / 2018-01-07T21:00:00	
+DEMAND CONSTRAINT	11. order 1	Operation 'Purchase 11. component @ plant from 11. my personal supplier' planned in the past	2018-01-01T00:00:00 / 2018-02-10T00:00:00	
 DEMAND CONSTRAINT	11. order 1	Resource '11. assembly line' has capacity shortage of 1	2018-02-10T03:27:42 / 2018-02-16T11:16:08	
 DEMAND CONSTRAINT	11. order 1	Resource '11. operator' has capacity shortage of 1	2018-02-10T00:00:00 / 2018-02-13T09:14:19	
-DEMAND CONSTRAINT	2. order 1	Operation 'Purchase 2. component @ plant from 2. my personal supplier' planned in the past	2017-12-23T00:00:00 / 2018-02-01T00:00:00	
-DEMAND CONSTRAINT	3. order 1	Operation 'Purchase 3. component @ plant 3 from 3. my personal supplier' planned in the past	2017-12-13T10:30:00 / 2018-01-22T10:30:00	
+DEMAND CONSTRAINT	2. order 1	Operation 'Purchase 2. component @ plant from 2. my personal supplier' planned in the past	2018-02-01T00:00:00 / 2018-02-10T00:00:00	
+DEMAND CONSTRAINT	3. order 1	Operation 'Purchase 3. component @ plant 3 from 3. my personal supplier' planned in the past	2018-01-22T10:30:00 / 2018-02-10T00:00:00	
 DEMAND CONSTRAINT	3. order 1	Resource '3. assembly line' has capacity shortage of 1	2018-02-12T08:20:00 / 2018-02-20T21:00:00	
 DEMAND CONSTRAINT	3. order 1	Resource '3. operator' has capacity shortage of 1	2018-02-12T00:00:00 / 2018-02-20T06:00:00	
-DEMAND CONSTRAINT	4. order 1	Operation 'Purchase 4. component @ plant from 4. my personal supplier' planned in the past	2017-12-15T10:20:00 / 2018-01-24T10:20:00	
+DEMAND CONSTRAINT	4. order 1	Operation 'Purchase 4. component @ plant from 4. my personal supplier' planned in the past	2018-01-24T10:20:00 / 2018-02-10T00:00:00	
 DEMAND CONSTRAINT	4. order 1	Resource '4. assembly line' has capacity shortage of 1	2018-02-10T08:20:00 / 2018-02-16T21:00:00	
 DEMAND CONSTRAINT	4. order 1	Resource '4. operator' has capacity shortage of 1	2018-02-10T00:00:00 / 2018-02-10T08:20:00	
-DEMAND CONSTRAINT	5. order 1	Operation 'Purchase 5. component @ plant from 5. my personal supplier' planned in the past	2017-12-09T06:00:00 / 2018-01-18T06:00:00	
+DEMAND CONSTRAINT	5. order 1	Operation 'Purchase 5. component @ plant from 5. my personal supplier' planned in the past	2018-01-18T06:00:00 / 2018-02-10T00:00:00	
 DEMAND CONSTRAINT	5. order 1	Resource '5. assembly line' has capacity shortage of 1	2018-02-10T08:20:00 / 2018-02-16T21:00:00	
 DEMAND CONSTRAINT	5. order 1	Resource '5. operator' has capacity shortage of 1	2018-02-10T00:00:00 / 2018-02-11T00:00:00	
-DEMAND CONSTRAINT	6. order 1	Operation '6. make subassembly' planned in the past	2017-12-31T08:00:00 / 2018-01-01T08:00:00	
-DEMAND CONSTRAINT	6. order 1	Operation 'Purchase 6. component @ plant from 6. my personal supplier' planned in the past	2017-11-22T00:00:00 / 2018-01-01T00:00:00	
+DEMAND CONSTRAINT	6. order 1	Operation '6. make subassembly' planned in the past	2018-01-01T08:00:00 / 2018-01-07T21:00:00	
+DEMAND CONSTRAINT	6. order 1	Operation 'Purchase 6. component @ plant from 6. my personal supplier' planned in the past	2018-01-01T00:00:00 / 2018-02-10T00:00:00	
 DEMAND CONSTRAINT	6. order 1	Resource '6. assembly line' has capacity shortage of 1	2018-02-10T08:20:00 / 2018-02-16T21:00:00	
 DEMAND CONSTRAINT	6. order 1	Resource '6. operator' has capacity shortage of 1	2018-02-10T00:00:00 / 2018-02-10T08:20:00	
-DEMAND CONSTRAINT	7. order 1	Operation '7. make subassembly' planned in the past	2017-12-31T08:00:00 / 2018-01-01T08:00:00	
-DEMAND CONSTRAINT	7. order 1	Operation 'Purchase 7. component @ plant from 7. my personal supplier' planned in the past	2017-11-22T00:00:00 / 2018-01-01T00:00:00	
+DEMAND CONSTRAINT	7. order 1	Operation '7. make subassembly' planned in the past	2018-01-01T08:00:00 / 2018-01-07T21:00:00	
+DEMAND CONSTRAINT	7. order 1	Operation 'Purchase 7. component @ plant from 7. my personal supplier' planned in the past	2018-01-01T00:00:00 / 2018-02-10T00:00:00	
 DEMAND CONSTRAINT	7. order 1	Resource '7. assembly line' has capacity shortage of 0.1	2018-02-10T08:20:00 / 2018-02-13T18:00:00	
-DEMAND CONSTRAINT	7. order 2	Operation '7. make subassembly' planned in the past	2017-12-31T08:00:00 / 2018-01-01T08:00:00	
-DEMAND CONSTRAINT	7. order 2	Operation 'Purchase 7. component @ plant from 7. my personal supplier' planned in the past	2017-11-22T00:00:00 / 2018-01-01T00:00:00	
+DEMAND CONSTRAINT	7. order 2	Operation '7. make subassembly' planned in the past	2018-01-01T08:00:00 / 2018-01-07T21:00:00	
+DEMAND CONSTRAINT	7. order 2	Operation 'Purchase 7. component @ plant from 7. my personal supplier' planned in the past	2018-01-01T00:00:00 / 2018-02-10T00:00:00	
 DEMAND CONSTRAINT	7. order 2	Resource '7. assembly line' has capacity shortage of 0.1	2018-02-10T08:20:00 / 2018-02-14T02:20:00	
 DEMAND CONSTRAINT	7. order 2	Resource '7. operator' has capacity shortage of 0.1	2018-02-10T00:00:00 / 2018-02-10T08:20:00	
-DEMAND CONSTRAINT	8. order 1	Operation '8. make subassembly' planned in the past	2017-12-31T16:00:00 / 2018-01-01T04:00:00	
-DEMAND CONSTRAINT	8. order 1	Operation 'Purchase 8. component @ plant from 8. my personal supplier' planned in the past	2017-11-22T00:00:00 / 2018-01-01T00:00:00	
+DEMAND CONSTRAINT	8. order 1	Operation '8. make subassembly' planned in the past	2018-01-01T04:00:00 / 2018-01-04T10:30:00	
+DEMAND CONSTRAINT	8. order 1	Operation 'Purchase 8. component @ plant from 8. my personal supplier' planned in the past	2018-01-01T00:00:00 / 2018-02-10T00:00:00	
 DEMAND CONSTRAINT	8. order 1	Resource '8. assembly line' has capacity shortage of 1	2018-02-10T04:10:00 / 2018-02-16T16:50:00	
 DEMAND CONSTRAINT	8. order 1	Resource '8. operator' has capacity shortage of 1	2018-02-10T00:00:00 / 2018-02-10T04:10:00	
-DEMAND CONSTRAINT	9. order 1	Operation '9. make subassembly' planned in the past	2017-12-31T00:00:00 / 2018-01-01T12:00:00	
-DEMAND CONSTRAINT	9. order 1	Operation 'Purchase 9. component @ plant from 9. my personal supplier' planned in the past	2017-11-22T00:00:00 / 2018-01-01T00:00:00	
+DEMAND CONSTRAINT	9. order 1	Operation '9. make subassembly' planned in the past	2018-01-01T12:00:00 / 2018-01-11T07:30:00	
+DEMAND CONSTRAINT	9. order 1	Operation 'Purchase 9. component @ plant from 9. my personal supplier' planned in the past	2018-01-01T00:00:00 / 2018-02-10T00:00:00	
 DEMAND CONSTRAINT	9. order 1	Resource '9. assembly line' has capacity shortage of 1	2018-02-10T12:30:00 / 2018-02-17T01:10:00	
 DEMAND CONSTRAINT	9. order 1	Resource '9. operator' has capacity shortage of 1	2018-02-10T00:00:00 / 2018-02-19T09:00:00	

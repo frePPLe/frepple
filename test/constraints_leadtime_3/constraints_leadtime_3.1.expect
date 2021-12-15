@@ -15,6 +15,6 @@ PROBLEM	before current	Operation 'make end item' planned in the past	2019-12-28T
 PROBLEM	before current	Operation 'make end item' planned in the past	2019-12-28T00:00:00 / 2020-01-01T00:00:00
 PROBLEM	late	10 units of demand 'order 1' planned up to 34.0 days after its due date	2019-12-01T00:00:00 / 2020-01-04T00:00:00
 PROBLEM	late	10 units of demand 'order 2' planned up to 47.0 days after its due date	2019-12-01T00:00:00 / 2020-01-17T00:00:00
-DEMAND CONSTRAINT	order 1	Operation 'make end item' planned before fence	2019-11-24T00:00:00 / 2019-12-01T00:00:00	
-DEMAND CONSTRAINT	order 2	Operation 'make end item' planned before fence	2019-11-24T00:00:00 / 2019-12-01T00:00:00	
-DEMAND CONSTRAINT	order 2	Operation 'make subassembly' planned before fence	2019-12-23T00:00:00 / 2019-12-28T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'make end item' planned before fence	2019-12-01T00:00:00 / 2020-01-04T00:00:00	
+DEMAND CONSTRAINT	order 2	Operation 'make end item' planned before fence	2019-12-01T00:00:00 / 2020-01-04T00:00:00	
+DEMAND CONSTRAINT	order 2	Operation 'make subassembly' planned before fence	2019-12-28T00:00:00 / 2020-01-10T00:00:00	

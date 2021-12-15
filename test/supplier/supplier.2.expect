@@ -46,8 +46,8 @@ PROBLEM	late	90 units of demand 'order 1 for item B' planned up to 14.0 days aft
 PROBLEM	late	90 units of demand 'order 1 for item C' planned up to 21.0 days after its due date	2015-01-01T00:00:00 / 2015-01-22T00:00:00
 PROBLEM	short	Demand 'order 1 for item D' planned 90 units short	2015-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	unplanned	Demand 'order 2 for item D' is not planned	2015-02-01T00:00:00 / 2015-02-01T00:00:00
-DEMAND CONSTRAINT	order 1 for item A	Operation 'Purchase Component A @ warehouse from Supplier of components A and B' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item B	Operation 'Purchase Component B @ warehouse from Supplier of component B' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00	
-DEMAND CONSTRAINT	order 1 for item C	Operation 'Purchase Component C @ warehouse from Supplier of component C' planned in the past	2014-12-11T00:00:00 / 2015-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1 for item A	Operation 'Purchase Component A @ warehouse from Supplier of components A and B' planned in the past	2015-01-01T00:00:00 / 2015-01-15T00:00:00	
+DEMAND CONSTRAINT	order 1 for item B	Operation 'Purchase Component B @ warehouse from Supplier of component B' planned in the past	2015-01-01T00:00:00 / 2015-01-15T00:00:00	
+DEMAND CONSTRAINT	order 1 for item C	Operation 'Purchase Component C @ warehouse from Supplier of component C' planned in the past	2015-01-01T00:00:00 / 2015-01-22T00:00:00	
 DEMAND CONSTRAINT	order 1 for item D	Buffer 'Component D @ warehouse' has material shortage of 90	2015-01-01T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order 2 for item D	Buffer 'Component D @ warehouse' has material shortage of 100	2015-02-01T00:00:00 / 2030-12-31T00:00:00	

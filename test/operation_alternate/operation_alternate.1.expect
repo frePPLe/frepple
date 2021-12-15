@@ -42,7 +42,7 @@ PROBLEM	unplanned	Demand 'item 3 SO1' is not planned	2009-01-31T00:00:00 / 2009-
 PROBLEM	late	10 units of demand 'item 4 SO1' planned up to 10.0 days after its due date	2009-01-31T00:00:00 / 2009-02-10T00:00:00
 PROBLEM	unplanned	Demand 'item 5 SO1' is not planned	2009-01-31T00:00:00 / 2009-01-31T00:00:00
 PROBLEM	late	10 units of demand 'order prio 2 for item 1' planned up to 3.0 days after its due date	2009-01-02T00:00:00 / 2009-01-05T00:00:00
-DEMAND CONSTRAINT	item 3 SO1	Operation 'Purchase item 3 @ warehouse from MySupplier' planned in the past	2008-12-27T00:00:00 / 2009-01-10T00:00:00	
+DEMAND CONSTRAINT	item 3 SO1	Operation 'Purchase item 3 @ warehouse from MySupplier' planned in the past	2009-01-10T00:00:00 / 2009-01-15T00:00:00	
 DEMAND CONSTRAINT	item 4 SO1	Operation 'Purchase item 4 @ warehouse from MySupplier valid from 2009-02-10T00:00:00' planned before fence	2009-01-31T00:00:00 / 2009-02-10T00:00:00	
 DEMAND CONSTRAINT	item 5 SO1	Buffer 'item 5 @ warehouse' has material shortage of 10	2009-01-31T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order prio 2 for item 1	Operation 'make item 1 with routing A step 2' planned in the past	2008-12-17T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order prio 2 for item 1	Operation 'make item 1 with routing A step 2' planned in the past	2009-01-01T00:00:00 / 2009-01-07T00:00:00	

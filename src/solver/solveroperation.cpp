@@ -595,7 +595,7 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
           (threshold == Plan::instance().getCurrent())
               ? ProblemBeforeCurrent::metadata
               : ProblemBeforeFence::metadata,
-          opplan->getOperation(), original.start, original.end,
+          opplan->getOperation(), original.end, data.state->a_date,
           original.quantity);
 
     // Deny creation of the operationplan

@@ -601,7 +601,11 @@ class OverviewReport(GridPivot):
                 and operationplan.item_id = item.name and operationplan.location_id = location.name
                 and operationplan.due < operationplan.enddate
                 and  (operationplan.due , operationplan.enddate) overlaps (d.startdate, d.enddate)
-        """
+                and (
+                  out_constraint.name not in ('before current', 'before fence')
+                  or out_constraint.enddate > d.enddate
+                  )
+                """
         query = """
            select
            opplanmat.buffer,
@@ -627,13 +631,13 @@ class OverviewReport(GridPivot):
            location.source,
            location.lastmodified,
            opplanmat.opplan_batch,
-           (item.name, location.name) in 
-           (select plan->>'item', plan->>'location' 
-           from operationplan 
+           (item.name, location.name) in
+           (select plan->>'item', plan->>'location'
+           from operationplan
            where item_id = item.name
            and coalesce(location_id, destination_id) = location.name) is_ip_buffer,
            %s
-           (select json_agg(json_build_array(t.name, t.owner)) 
+           (select json_agg(json_build_array(t.name, t.owner))
            from (
                select distinct out_constraint.name, out_constraint.owner
                 from out_constraint
@@ -642,6 +646,10 @@ class OverviewReport(GridPivot):
                 and operationplan.demand_id = out_constraint.demand
                 and operationplan.due < operationplan.enddate
                 and  (operationplan.due , operationplan.enddate) overlaps (d.startdate, d.enddate)
+                and (
+                  out_constraint.name not in ('before current', 'before fence')
+                  or out_constraint.enddate > d.enddate
+                  )
                 %s
                 order by name limit 20
            )t ) reasons,
@@ -838,7 +846,7 @@ class OverviewReport(GridPivot):
                  ),
                  -- No inventory and no backlog: use the date of next consumer
                  (
-                 select greatest('0 days'::interval, least( 
+                 select greatest('0 days'::interval, least(
                      date_trunc('day', justify_interval(flowdate - greatest(d.startdate,%%s) - coalesce(operationplan.delay, '0 day'::interval))),
                      '999 days'::interval
                      ))

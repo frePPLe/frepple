@@ -194,6 +194,10 @@ class OverviewReport(GridPivot):
               and operationplan.due is not null
             and out_constraint.item = child.name
             and operationplan.enddate >= greatest(%%s,d.startdate)
+            and (
+              out_constraint.name not in ('before current', 'before fence')
+              or out_constraint.enddate > d.enddate
+              )
             and operationplan.due < d.enddate
             limit 20
             ) cte_reasons

@@ -4,6 +4,11 @@ Release notes
 6.20.0 (Upcoming release)
 =========================
 
+.. rubric:: Production planning
+
+- | Improved hovering tooltip with constraints causing backlog in the
+    demand report and inventory reports.
+
 .. rubric:: Odoo integration
 
 - | V14: Implemented synchronization of work center availability calendars.

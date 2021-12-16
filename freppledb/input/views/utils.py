@@ -1635,7 +1635,7 @@ class OperationPlanDetail(View):
                     if opplan.enddate
                     else None,
                     "setupend": opplan.plan["setupend"].replace(" ", "T")
-                    if "setupend" in opplan.plan
+                    if opplan.plan and "setupend" in opplan.plan
                     else None,
                     "quantity": float(opplan.quantity),
                     "quantity_completed": float(opplan.quantity_completed or 0),

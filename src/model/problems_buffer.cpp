@@ -32,14 +32,11 @@ void Buffer::updateProblems() {
   if (!getDetectProblems()) return;
 
   // Loop through the flowplans
-  Date excessProblemStart;
   Date shortageProblemStart;
   bool shortageProblem = false;
-  bool excessProblem = false;
   double curMax(0.0);
   double shortageQty(0.0);
   double curMin(0.0);
-  double excessQty(0.0);
   for (flowplanlist::const_iterator iter = flowplans.begin();
        iter != flowplans.end();) {
     // Process changes in the maximum or minimum targets
@@ -73,44 +70,12 @@ void Buffer::updateProblems() {
       }
     }
 
-    // Check against maximum target
-    delta = f->getOnhand() - (curMin < curMax ? curMax : curMin);
-    if (delta > ROUNDING_ERROR) {
-      if (!excessProblem) {
-        // New problem starts here
-        excessProblemStart = f->getDate();
-        excessQty = delta;
-        excessProblem = true;
-      } else if (delta > excessQty)
-        excessQty = delta;
-    } else {
-      if (excessProblem) {
-        // New excess qty
-        // New problem now ends
-        if (f->getDate() != excessProblemStart)
-          new ProblemMaterialExcess(this, excessProblemStart, f->getDate(),
-                                    excessQty);
-        excessProblem = false;
-      }
-    }
-
   }  // End of for-loop through the flowplans
-
-  // The excess lasts till the end of the horizon...
-  if (excessProblem)
-    new ProblemMaterialExcess(this, excessProblemStart, Date::infiniteFuture,
-                              excessQty);
 
   // The shortage lasts till the end of the horizon...
   if (shortageProblem)
     new ProblemMaterialShortage(this, shortageProblemStart,
                                 Date::infiniteFuture, -shortageQty);
-}
-
-string ProblemMaterialExcess::getDescription() const {
-  ostringstream ch;
-  ch << "Buffer '" << getBuffer() << "' has material excess of " << qty;
-  return ch.str();
 }
 
 string ProblemMaterialShortage::getDescription() const {

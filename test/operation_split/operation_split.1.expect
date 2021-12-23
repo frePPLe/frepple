@@ -168,7 +168,6 @@ OPERATION	make item 4 option B	2014-01-07T00:00:00	2014-01-12T00:00:00	10
 OPERATION	make item 4 option B	2014-01-17T00:00:00	2014-01-22T00:00:00	30
 OPERATION	make item 4 option C	2014-01-02T00:00:00	2014-01-12T00:00:00	10
 OPERATION	make item 4 option C	2014-01-12T00:00:00	2014-01-22T00:00:00	30
-PROBLEM	material excess	Buffer 'item 1 @ location 1' has material excess of 30	2014-01-11T00:00:00 / 2014-01-16T00:00:00
 PROBLEM	late	100 units of demand 'order 1 for item 1' planned up to 15.0 days after its due date	2014-01-01T00:00:00 / 2014-01-16T00:00:00
 PROBLEM	late	200 units of demand 'order 1 for item 2' planned up to 15.0 days after its due date	2014-01-01T00:00:00 / 2014-01-16T00:00:00
 PROBLEM	late	200 units of demand 'order 1 for item 4' planned up to 21.0 days after its due date	2014-01-01T00:00:00 / 2014-01-22T00:00:00

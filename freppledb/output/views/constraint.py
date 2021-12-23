@@ -41,7 +41,6 @@ entities = (
 names = (
     ("overload", _("overload")),
     ("underload", _("underload")),
-    ("material excess", _("material excess")),
     ("material shortage", _("material shortage")),
     ("excess", _("excess")),
     ("short", _("short")),
@@ -80,8 +79,8 @@ def getNames(request):
 
 class BaseReport(GridReport):
     """
-  A list report to show constraints.
-  """
+    A list report to show constraints.
+    """
 
     template = "output/constraint.html"
     title = _("Constraint report")

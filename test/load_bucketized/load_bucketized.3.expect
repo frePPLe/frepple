@@ -134,18 +134,6 @@ OPERATION	6. make end item	2018-04-29T20:00:00	2018-05-01T00:00:00	1
 OPERATION	6. make end item	2018-09-11T23:59:59	2018-09-17T23:59:59	30
 OPERATION	6. make end item	2018-09-18T23:59:59	2018-09-24T23:59:59	30
 OPERATION	6. make end item	2018-09-25T00:00:00	2018-10-01T00:00:00	30
-PROBLEM	material excess	Buffer '1. end item @ factory' has material excess of 60	2017-12-21T23:59:59 / 2018-01-01T00:00:00
-PROBLEM	material excess	Buffer '1. end item @ factory' has material excess of 60	2018-09-20T23:59:59 / 2018-10-01T00:00:00
-PROBLEM	material excess	Buffer '2. end item @ factory' has material excess of 60	2017-12-21T23:59:59 / 2018-01-01T00:00:00
-PROBLEM	material excess	Buffer '2. end item @ factory' has material excess of 60	2018-09-20T23:59:59 / 2018-10-01T00:00:00
-PROBLEM	material excess	Buffer '3. end item @ factory' has material excess of 60	2018-09-17T23:59:59 / 2018-10-01T00:00:00
-PROBLEM	material excess	Buffer '4. end item @ factory' has material excess of 60	2017-12-22T23:59:59 / 2018-01-01T00:00:00
-PROBLEM	material excess	Buffer '4. end item @ factory' has material excess of 60	2018-09-21T23:59:59 / 2018-10-01T00:00:00
-PROBLEM	material excess	Buffer '5. end item @ factory' has material excess of 90	2017-12-17T23:59:59 / 2018-01-01T00:00:00
-PROBLEM	material excess	Buffer '5. end item @ factory' has material excess of 1	2018-04-29T03:59:59 / 2018-05-01T00:00:00
-PROBLEM	material excess	Buffer '5. end item @ factory' has material excess of 90	2018-09-16T23:59:59 / 2018-10-01T00:00:00
-PROBLEM	material excess	Buffer '6. end item @ factory' has material excess of 60	2017-12-18T23:59:59 / 2018-01-01T00:00:00
-PROBLEM	material excess	Buffer '6. end item @ factory' has material excess of 60	2018-09-17T23:59:59 / 2018-10-01T00:00:00
 PROBLEM	overload	Resource '3. Resource' has capacity shortage of 180	2017-12-23T00:00:00 / 2017-12-25T00:00:00
 PROBLEM	before current	Operation '1. make end item' planned in the past	2017-12-15T23:59:59 / 2017-12-21T23:59:59
 PROBLEM	before current	Operation '1. make end item' planned in the past	2017-12-22T23:59:59 / 2017-12-29T23:59:59

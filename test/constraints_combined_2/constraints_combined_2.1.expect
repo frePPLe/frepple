@@ -4998,7 +4998,6 @@ OPERATION	10 step 07	2012-01-09T23:11:40	2012-01-10T00:35:00	500
 OPERATION	10 step 07	2012-01-10T00:35:00	2012-01-10T01:58:20	500
 OPERATION	10 step 07	2012-01-10T01:58:20	2012-01-10T03:21:40	500
 OPERATION	10 step 07	2012-01-10T03:21:40	2012-01-10T04:45:00	500
-PROBLEM	material excess	Buffer '05 step 04 @ Line 1' has material excess of 500	2012-01-07T00:00:00 / 2012-01-09T00:00:00
 PROBLEM	late	5000 units of demand 'Order 001 01' planned up to 2.0 days after its due date	2012-01-01T00:00:00 / 2012-01-02T23:45:00
 PROBLEM	late	5000 units of demand 'Order 001 02' planned up to 3.1 days after its due date	2012-01-01T00:00:00 / 2012-01-04T03:31:40
 PROBLEM	late	5000 units of demand 'Order 001 03' planned up to 4.3 days after its due date	2012-01-01T00:00:00 / 2012-01-05T07:18:20

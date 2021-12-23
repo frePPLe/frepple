@@ -1143,28 +1143,6 @@ OPERATION	Purchase 9. component @ plant from 9. my personal supplier	2018-01-09T
 OPERATION	Purchase 9. component @ plant from 9. my personal supplier	2018-01-10T01:25:00	2018-02-19T01:25:00	100
 OPERATION	Purchase 9. component @ plant from 9. my personal supplier	2018-01-11T02:10:00	2018-02-20T02:10:00	100
 OPERATION	Purchase 9. component @ plant from 9. my personal supplier	2018-01-12T02:55:00	2018-02-21T02:55:00	90
-PROBLEM	material excess	Buffer '10. subassembly @ 10. plant' has material excess of 150	2018-02-20T10:49:30 / 2018-03-01T11:09:04
-PROBLEM	material excess	Buffer '10. subassembly @ 10. plant' has material excess of 170	2018-03-01T11:43:10 / 2018-03-20T14:24:04
-PROBLEM	material excess	Buffer '11. component @ plant' has material excess of 0.8	2018-02-10T16:22:00 / 2018-02-11T05:34:00
-PROBLEM	material excess	Buffer '11. component @ plant' has material excess of 0.8	2018-02-11T08:52:00 / 2018-02-11T22:04:00
-PROBLEM	material excess	Buffer '11. component @ plant' has material excess of 0.8	2018-02-12T01:22:00 / 2018-02-12T14:34:00
-PROBLEM	material excess	Buffer '11. component @ plant' has material excess of 0.8	2018-02-12T17:52:00 / 2018-02-13T07:04:00
-PROBLEM	material excess	Buffer '11. component @ plant' has material excess of 0.8	2018-02-13T10:22:00 / 2018-02-13T23:34:00
-PROBLEM	material excess	Buffer '11. component @ plant' has material excess of 0.8	2018-02-14T02:52:00 / 2018-02-14T16:04:00
-PROBLEM	material excess	Buffer '11. component @ plant' has material excess of 0.8	2018-02-14T19:22:00 / 2018-02-15T08:34:00
-PROBLEM	material excess	Buffer '11. component @ plant' has material excess of 0.8	2018-02-15T11:52:00 / 2018-02-16T01:04:00
-PROBLEM	material excess	Buffer '11. component @ plant' has material excess of 0.8	2018-02-16T04:22:00 / 2018-02-16T17:34:00
-PROBLEM	material excess	Buffer '11. component @ plant' has material excess of 0.8	2018-02-16T20:52:00 / 2018-02-17T10:04:00
-PROBLEM	material excess	Buffer '4. subassembly @ plant' has material excess of 200	2018-02-10T23:00:00 / 2018-02-18T04:40:00
-PROBLEM	material excess	Buffer '5. component @ plant' has material excess of 0.666667	2018-02-14T20:20:00 / 2018-02-16T04:46:40
-PROBLEM	material excess	Buffer '5. end item @ plant' has material excess of 584	2018-02-14T04:06:40 / 2018-02-19T16:40:00
-PROBLEM	material excess	Buffer '5. subassembly @ plant' has material excess of 400	2018-02-10T13:32:00 / 2018-02-16T21:00:00
-PROBLEM	material excess	Buffer '6. subassembly @ plant' has material excess of 140	2018-02-11T08:40:00 / 2018-02-18T00:10:00
-PROBLEM	material excess	Buffer '7. component @ plant' has material excess of 0.5	2018-02-10T18:22:30 / 2018-02-10T22:50:00
-PROBLEM	material excess	Buffer '7. component @ plant' has material excess of 0.663333	2018-02-11T07:25:00 / 2018-02-11T20:09:18
-PROBLEM	material excess	Buffer '7. subassembly @ plant' has material excess of 290.5	2018-02-10T13:55:00 / 2018-02-12T08:40:00
-PROBLEM	material excess	Buffer '8. subassembly @ plant' has material excess of 510	2018-02-10T10:00:00 / 2018-02-16T20:00:00
-PROBLEM	material excess	Buffer '9. subassembly @ plant' has material excess of 350	2018-02-12T12:40:00 / 2018-02-22T03:40:00
 PROBLEM	late	990 units of demand '1. order 1' planned up to 46.7 days after its due date	2018-01-02T00:00:00 / 2018-02-17T16:40:00
 PROBLEM	late	990 units of demand '10. order 1' planned up to 78.6 days after its due date	2018-01-02T00:00:00 / 2018-03-21T14:39:04
 PROBLEM	late	990 units of demand '11. order 1' planned up to 46.7 days after its due date	2018-01-02T00:00:00 / 2018-02-17T16:40:00

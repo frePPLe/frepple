@@ -180,10 +180,6 @@ OPERATION	production 4	2021-03-01T00:00:00	2021-03-03T01:36:00	100	approved
 OPERATION	production 4	2021-03-29T22:24:00	2021-04-01T00:00:00	100	approved
 OPERATION	production 4	2021-04-25T20:00:00	2021-05-01T00:00:00	100
 OPERATION	production 4	2021-06-01T00:00:00	2021-06-01T00:00:00	100	approved
-PROBLEM	material excess	Buffer 'item 1 @ factory' has material excess of 844.2	2020-12-10T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item 2 @ factory' has material excess of 844.2	2020-12-03T14:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item 3 @ factory' has material excess of 1608	2020-12-10T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item 4 @ factory' has material excess of 1608	2020-12-03T14:00:00 / 2030-12-31T00:00:00
 PROBLEM	overload	Resource 'resource 2' has capacity shortage of 1	2020-12-01T00:00:00 / 2020-12-03T14:00:00
 PROBLEM	overload	Resource 'resource 4' has capacity shortage of 1	2020-12-01T00:00:00 / 2020-12-03T14:00:00
 PROBLEM	before current	Operation 'production 1' planned in the past	2020-12-05T00:00:00 / 2021-01-01T00:00:00

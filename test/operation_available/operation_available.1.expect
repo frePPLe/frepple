@@ -185,10 +185,6 @@ OPERATION	6. Deliver item	2017-01-29T00:00:00	2017-01-30T00:00:00	1
 OPERATION	6. Make item	2017-01-10T10:00:00	2017-01-23T11:00:00	1
 OPERATION	6. Make item	2017-01-16T10:00:00	2017-01-24T11:00:00	1
 OPERATION	6. Make item	2017-01-16T10:00:00	2017-01-24T11:00:00	1
-PROBLEM	material excess	Buffer '5. buffer' has material excess of 1	2009-01-09T00:00:00 / 2009-01-09T12:00:00
-PROBLEM	material excess	Buffer '5. buffer' has material excess of 2	2009-01-10T00:00:00 / 2009-01-11T12:00:00
-PROBLEM	material excess	Buffer '6. buffer' has material excess of 1	2017-01-23T11:00:00 / 2017-01-24T00:00:00
-PROBLEM	material excess	Buffer '6. buffer' has material excess of 1	2017-01-24T11:00:00 / 2017-01-29T00:00:00
 PROBLEM	early	Demand '1. order 3' planned P1DT12H before its due date	2009-01-10T00:00:00 / 2009-01-11T12:00:00
 PROBLEM	early	Demand '1. order 4' planned PT12H before its due date	2009-01-10T00:00:00 / 2009-01-10T12:00:00
 PROBLEM	late	6 units of demand '1. order 8' planned up to 11.0 days after its due date	2009-01-14T00:00:00 / 2009-01-25T00:00:00

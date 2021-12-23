@@ -235,22 +235,6 @@ OPERATION	Ship 4. item from warehouse to factory	2021-02-16T00:00:00	2021-02-19T
 OPERATION	Ship 4. item from warehouse to factory	2021-02-23T00:00:00	2021-02-26T00:00:00	18
 OPERATION	Ship 4. item from warehouse to factory	2021-03-16T00:00:00	2021-03-19T00:00:00	12
 OPERATION	Ship 4. item from warehouse to factory	2021-04-04T00:00:00	2021-04-07T00:00:00	6
-PROBLEM	material excess	Buffer '0. item @ factory' has material excess of 1	2021-01-20T00:00:00 / 2021-01-22T00:00:00
-PROBLEM	material excess	Buffer '1. item @ factory' has material excess of 23	2021-01-08T00:00:00 / 2021-02-05T00:00:00
-PROBLEM	material excess	Buffer '1. item @ factory' has material excess of 24	2021-02-12T00:00:00 / 2021-03-12T00:00:00
-PROBLEM	material excess	Buffer '1. item @ factory' has material excess of 12	2021-03-19T00:00:00 / 2021-04-07T00:00:00
-PROBLEM	material excess	Buffer '2. item @ factory' has material excess of 29	2021-01-08T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer '3. item @ factory' has material excess of 6	2021-01-08T00:00:00 / 2021-01-15T00:00:00
-PROBLEM	material excess	Buffer '3. item @ factory' has material excess of 12	2021-01-20T00:00:00 / 2021-02-05T00:00:00
-PROBLEM	material excess	Buffer '3. item @ factory' has material excess of 12	2021-02-12T00:00:00 / 2021-02-26T00:00:00
-PROBLEM	material excess	Buffer '3. item @ factory' has material excess of 12	2021-03-05T00:00:00 / 2021-03-19T00:00:00
-PROBLEM	material excess	Buffer '3. item @ factory' has material excess of 6	2021-03-26T00:00:00 / 2021-04-07T00:00:00
-PROBLEM	material excess	Buffer '4. item @ factory' has material excess of 2	1971-01-01T00:00:00 / 2021-01-01T00:00:00
-PROBLEM	material excess	Buffer '4. item @ factory' has material excess of 16	2021-01-04T00:00:00 / 2021-01-22T00:00:00
-PROBLEM	material excess	Buffer '4. item @ factory' has material excess of 12	2021-02-26T00:00:00 / 2021-03-12T00:00:00
-PROBLEM	material excess	Buffer '4. item @ factory' has material excess of 6	2021-03-19T00:00:00 / 2021-03-26T00:00:00
-PROBLEM	material excess	Buffer '4. item @ warehouse' has material excess of 30	1971-01-01T00:00:00 / 2021-02-02T00:00:00
-PROBLEM	material excess	Buffer '4. item @ warehouse' has material excess of 30	2021-02-20T00:00:00 / 2021-03-16T00:00:00
 PROBLEM	late	6 units of demand '0. order 1' planned up to 7.0 days after its due date	2021-01-01T00:00:00 / 2021-01-08T00:00:00
 PROBLEM	late	6 units of demand '1. order 1' planned up to 7.0 days after its due date	2021-01-01T00:00:00 / 2021-01-08T00:00:00
 PROBLEM	late	6 units of demand '2. order 1' planned up to 7.0 days after its due date	2021-01-01T00:00:00 / 2021-01-08T00:00:00

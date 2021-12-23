@@ -26,8 +26,7 @@ namespace frepple {
 bool Plannable::anyChange = false;
 bool Plannable::computationBusy = false;
 const MetaCategory* Problem::metadata;
-const MetaClass *ProblemMaterialExcess::metadata,
-    *ProblemMaterialShortage::metadata, *ProblemExcess::metadata,
+const MetaClass *ProblemMaterialShortage::metadata, *ProblemExcess::metadata,
     *ProblemShort::metadata, *ProblemEarly::metadata, *ProblemLate::metadata,
     *ProblemInvalidData::metadata, *ProblemDemandNotPlanned::metadata,
     *ProblemPrecedence::metadata, *ProblemBeforeFence::metadata,
@@ -42,9 +41,6 @@ int Problem::initialize() {
   // Register classes.
   // We register them as default to avoid saving an xsi:type header. This
   // has no further impact as there is no factory method.
-  ProblemMaterialExcess::metadata =
-      MetaClass::registerClass<ProblemMaterialExcess>("problem",
-                                                      "material excess", true);
   ProblemMaterialShortage::metadata =
       MetaClass::registerClass<ProblemMaterialShortage>(
           "problem", "material shortage", true);

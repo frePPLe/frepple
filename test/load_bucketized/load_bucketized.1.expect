@@ -143,19 +143,6 @@ OPERATION	6. make end item	2018-04-29T20:00:00	2018-05-01T00:00:00	1
 OPERATION	6. make end item	2018-09-11T23:59:59	2018-09-17T23:59:59	30
 OPERATION	6. make end item	2018-09-18T23:59:59	2018-09-24T23:59:59	30
 OPERATION	6. make end item	2018-09-25T00:00:00	2018-10-01T00:00:00	30
-PROBLEM	material excess	Buffer '1. end item @ factory' has material excess of 60	2018-01-11T23:59:59 / 2018-01-21T00:00:00
-PROBLEM	material excess	Buffer '1. end item @ factory' has material excess of 60	2018-09-20T23:59:59 / 2018-10-01T00:00:00
-PROBLEM	material excess	Buffer '2. end item @ factory' has material excess of 60	2018-01-11T23:59:59 / 2018-01-21T00:00:00
-PROBLEM	material excess	Buffer '2. end item @ factory' has material excess of 60	2018-09-20T23:59:59 / 2018-10-01T00:00:00
-PROBLEM	material excess	Buffer '3. end item @ factory' has material excess of 60	2018-01-08T23:59:59 / 2018-01-18T00:00:00
-PROBLEM	material excess	Buffer '3. end item @ factory' has material excess of 60	2018-09-17T23:59:59 / 2018-10-01T00:00:00
-PROBLEM	material excess	Buffer '4. end item @ factory' has material excess of 60	2018-01-05T23:59:59 / 2018-01-17T00:00:00
-PROBLEM	material excess	Buffer '4. end item @ factory' has material excess of 60	2018-09-21T23:59:59 / 2018-10-01T00:00:00
-PROBLEM	material excess	Buffer '5. end item @ factory' has material excess of 60	2018-01-07T23:59:59 / 2018-01-17T00:00:00
-PROBLEM	material excess	Buffer '5. end item @ factory' has material excess of 1	2018-04-29T03:59:59 / 2018-05-01T00:00:00
-PROBLEM	material excess	Buffer '5. end item @ factory' has material excess of 90	2018-09-16T23:59:59 / 2018-10-01T00:00:00
-PROBLEM	material excess	Buffer '6. end item @ factory' has material excess of 60	2018-01-08T23:59:59 / 2018-01-18T00:00:00
-PROBLEM	material excess	Buffer '6. end item @ factory' has material excess of 60	2018-09-17T23:59:59 / 2018-10-01T00:00:00
 PROBLEM	late	90 units of demand '1. order 2' planned up to 20.0 days after its due date	2018-01-01T00:00:00 / 2018-01-21T00:00:00
 PROBLEM	late	90 units of demand '2. order 2' planned up to 20.0 days after its due date	2018-01-01T00:00:00 / 2018-01-21T00:00:00
 PROBLEM	late	90 units of demand '3. order 2' planned up to 17.0 days after its due date	2018-01-01T00:00:00 / 2018-01-18T00:00:00

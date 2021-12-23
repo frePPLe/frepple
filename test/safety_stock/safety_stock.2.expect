@@ -39,11 +39,6 @@ OPERATION	make end item 1	2009-02-12T00:00:00	2009-02-12T00:00:00	10
 OPERATION	make end item 2	2008-12-23T00:00:00	2008-12-23T00:00:00	10
 OPERATION	make end item 2	2009-02-05T00:00:00	2009-02-05T00:00:00	10
 OPERATION	make end item 2	2009-03-05T00:00:00	2009-03-05T00:00:00	10
-PROBLEM	material excess	Buffer 'end item 1 @ factory' has material excess of 15	2009-03-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'end item 2 @ factory' has material excess of 10	2008-12-23T00:00:00 / 2008-12-30T00:00:00
-PROBLEM	material excess	Buffer 'end item 2 @ factory' has material excess of 10	2009-02-05T00:00:00 / 2009-02-12T00:00:00
-PROBLEM	material excess	Buffer 'end item 2 @ factory' has material excess of 10	2009-03-05T00:00:00 / 2009-03-12T00:00:00
-PROBLEM	material excess	Buffer 'end item 3 C @ factory' has material excess of 31	2009-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	before current	Operation 'Purchase end item 3 C @ factory from Component supplier' planned in the past	2008-12-28T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'buy end item 3' planned in the past	2008-12-24T00:00:00 / 2008-12-28T00:00:00
 PROBLEM	before current	Operation 'buy end item 3' planned in the past	2008-12-28T00:00:00 / 2009-01-01T00:00:00

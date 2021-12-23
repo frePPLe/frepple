@@ -46,18 +46,6 @@ OPERATION	Ship item A from DC2 to WH4	2015-12-22T00:00:00	2016-01-01T00:00:00	10
 OPERATION	Ship item B from DC2 to WH3	2015-12-22T00:00:00	2016-01-01T00:00:00	10
 OPERATION	Ship item B from DC2 to WH4	2015-11-21T00:00:00	2015-12-01T00:00:00	40
 OPERATION	Ship item B from DC2 to WH4	2015-12-22T00:00:00	2016-01-01T00:00:00	10
-PROBLEM	material excess	Buffer 'item A @ DC1' has material excess of 90	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item A @ DC2' has material excess of 80	2015-12-22T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item A @ WH1' has material excess of 10	1971-01-01T00:00:00 / 2016-01-01T00:00:00
-PROBLEM	material excess	Buffer 'item A @ WH2' has material excess of 100	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item A @ WH5' has material excess of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item A @ WH6' has material excess of 90	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item B @ DC1' has material excess of 90	2016-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item B @ DC2' has material excess of 60	2015-11-21T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item B @ WH1' has material excess of 10	1971-01-01T00:00:00 / 2016-01-01T00:00:00
-PROBLEM	material excess	Buffer 'item B @ WH2' has material excess of 100	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item B @ WH5' has material excess of 20	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item B @ WH6' has material excess of 90	2016-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	before current	Operation 'Purchase item A @ DC1 from Supplier 1' planned in the past	2015-11-02T00:00:00 / 2016-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase item A @ DC2 from Supplier 1' planned in the past	2015-10-23T00:00:00 / 2015-12-22T00:00:00
 PROBLEM	before current	Operation 'Purchase item A @ WH6 from Supplier 1' planned in the past	2015-11-02T00:00:00 / 2016-01-01T00:00:00

@@ -36,14 +36,11 @@ Each entity type has it’s own set of exceptions:
 
 * **Buffer**:
 
-  * | **material excess**:
-    | A buffer is carrying too much material during a certain period of time.
-
   * | **material shortage**:
     | A buffer is having a material shortage during a certain period of time.
-  
+
   * | **invalid data**:
-    | Flagged when a buffer has no ways of replenishment or too many. 
+    | Flagged when a buffer has no ways of replenishment or too many.
 
 * **Operation**:
 
@@ -52,7 +49,7 @@ Each entity type has it’s own set of exceptions:
     | For operations in the status approved or proposed, the start date is before the
       current date of the plan.
     | For operations in the status confirmed, the end date is before
-      the current date of the plan (ie they are overdue and should have been finished 
+      the current date of the plan (ie they are overdue and should have been finished
       already).
 
   * | **before fence**:
@@ -70,7 +67,7 @@ Field        Description
 name         Problem type.
 description  Description of the problem.
 weight       | A number expressing the seriousness of the problem.
-             | Sorting on this field allows the user to focus on the most important 
+             | Sorting on this field allows the user to focus on the most important
                problems first.
 start        Date at which the problem starts.
 end          Date at which the problem ends.

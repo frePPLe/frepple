@@ -40,9 +40,6 @@ OPERATION	delivery 1	2009-01-01T00:00:00	2009-01-02T00:00:00	10
 OPERATION	delivery 1	2009-01-10T00:00:00	2009-01-11T00:00:00	20
 OPERATION	make item 1 with routing B	2008-11-30T00:00:00	2009-01-10T00:00:00	20
 OPERATION	make item 1 with routing B	2008-12-11T00:00:00	2009-01-01T00:00:00	10
-PROBLEM	material excess	Buffer '2. item @ warehouse' has material excess of 2	2009-01-20T00:00:00 / 2009-02-20T00:00:00
-PROBLEM	material excess	Buffer 'item 2 @ warehouse' has material excess of 10	2009-01-10T00:00:00 / 2009-01-31T00:00:00
-PROBLEM	material excess	Buffer 'item 3 @ warehouse' has material excess of 10	2009-01-10T00:00:00 / 2009-01-31T00:00:00
 PROBLEM	material shortage	Buffer 'item 4 @ warehouse' has material shortage of 10	2009-01-31T00:00:00 / 2009-02-10T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'item 5 @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'item 5 @ warehouse' has material shortage of 10	2009-01-31T00:00:00 / 2030-12-31T00:00:00

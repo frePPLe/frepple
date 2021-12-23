@@ -46,12 +46,6 @@ OPERATION	Purchase C4 @ factory from Component supplier	2008-12-22T00:00:00	2009
 OPERATION	Purchase C4 @ factory from Component supplier	2008-12-24T00:00:00	2009-01-03T00:00:00	10
 OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
 OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
-PROBLEM	material excess	Buffer 'A3 @ factory' has material excess of 10	1971-01-01T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	material excess	Buffer 'B3 @ factory' has material excess of 5	1971-01-01T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	material excess	Buffer 'B4 @ factory' has material excess of 5	1971-01-01T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	material excess	Buffer 'C2 @ factory' has material excess of 10	1971-01-01T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	material excess	Buffer 'C3 @ factory' has material excess of 5	1971-01-01T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	material excess	Buffer 'C4 @ factory' has material excess of 5	1971-01-01T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase A1 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase A2 @ factory from Component supplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase A3 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00

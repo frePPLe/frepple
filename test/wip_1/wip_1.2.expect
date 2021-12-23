@@ -195,18 +195,7 @@ OPERATION	Strange WIP sizes	2015-02-04T00:00:00	2015-02-05T00:00:00	1234	confirm
 PROBLEM	invalid data	No replenishment defined for 'In5 @ Loc'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'In5 @ Loc' has material shortage of 30	2019-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'Little inventory @ Loc'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Little inventory @ Loc' has material excess of 0.1	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'Negative inventory @ Loc'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'Negative inventory @ Loc' has material shortage of 0.1	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Out1 @ Loc' has material excess of 40	2014-01-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Out2 @ Loc' has material excess of 80	2014-01-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Out3 @ Loc' has material excess of 30	2014-02-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Out3A @ Loc' has material excess of 30	2014-02-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Out3B @ Loc' has material excess of 22	2014-02-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Out3C @ Loc' has material excess of 30	2014-02-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Out4 @ Loc' has material excess of 30	2014-01-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Out4A @ Loc' has material excess of 20	2014-01-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Out4B @ Loc' has material excess of 10	2014-02-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Out5 @ Loc' has material excess of 30	2019-01-02T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	before current	Operation 'Purchase In1 @ Loc from Component supplier' planned in the past	2013-12-31T00:00:00 / 2013-12-31T00:00:00
 PROBLEM	before current	Operation 'Purchase In2 @ Loc from Component supplier' planned in the past	2013-12-31T00:00:00 / 2013-12-31T00:00:00

@@ -44,8 +44,6 @@ OPERATION	make red product	2009-01-12T00:00:00	2009-01-18T00:00:00	2
 OPERATION	make red product	2009-01-18T00:00:00	2009-01-19T00:00:00	1
 OPERATION	make red product	2009-01-24T00:00:00	2009-01-30T00:00:00	3
 OPERATION	make white product	2009-01-19T00:00:00	2009-01-24T00:00:00	3
-PROBLEM	material excess	Buffer 'red product @ factory' has material excess of 3	2009-01-18T00:00:00 / 2009-01-30T00:00:00
-PROBLEM	material excess	Buffer 'white product @ factory' has material excess of 3	2009-01-24T00:00:00 / 2009-02-01T00:00:00
 PROBLEM	late	7 units of demand 'order 1 black' planned up to 4.0 days after its due date	2009-01-05T00:00:00 / 2009-01-09T00:00:00
 DEMAND CONSTRAINT	order 1 black	Operation 'make black product' planned in the past	2008-12-29T00:00:00 / 2009-01-02T00:00:00	
 DEMAND CONSTRAINT	order 1 black	Resource 'Painting line' has capacity shortage of 1	2009-01-01T00:00:00 / 2009-01-05T00:00:00	

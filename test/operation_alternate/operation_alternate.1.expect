@@ -35,8 +35,6 @@ OPERATION	buy from supplier D	2009-01-01T00:00:00	2009-01-04T00:00:00	10
 OPERATION	delivery 1	2009-01-04T00:00:00	2009-01-05T00:00:00	10
 OPERATION	delivery 1	2009-01-10T00:00:00	2009-01-11T00:00:00	20
 OPERATION	make item 1 with routing B	2009-01-01T00:00:00	2009-01-10T00:00:00	4
-PROBLEM	material excess	Buffer '2. item @ warehouse' has material excess of 2	2009-01-20T00:00:00 / 2009-02-20T00:00:00
-PROBLEM	material excess	Buffer 'item 2 @ warehouse' has material excess of 10	2009-01-10T00:00:00 / 2009-01-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'item 5 @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	unplanned	Demand 'item 3 SO1' is not planned	2009-01-31T00:00:00 / 2009-01-31T00:00:00
 PROBLEM	late	10 units of demand 'item 4 SO1' planned up to 10.0 days after its due date	2009-01-31T00:00:00 / 2009-02-10T00:00:00

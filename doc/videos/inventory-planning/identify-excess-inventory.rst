@@ -2,8 +2,9 @@
 Where can I find stock excess situations?
 =========================================
 
-1) Navigate to Problem Report in the Inventory menu.
-2) Click on the search icon in the upper right corner and filter for Name equals material excess.
+1) Navigate to Inventory Report in the Inventory menu, or the Demand Report in the Sales menu.
+2) Use the "period of cover" field to filter and/or sort by the excess.
+   The "period of cover" is computed as the moment the last unit of your current inventory will be used up.
 
 .. raw:: html
 

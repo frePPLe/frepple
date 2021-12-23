@@ -152,7 +152,6 @@ OPERATION	make item 4	2013-12-22T00:00:00	2014-01-01T00:00:00	100
 OPERATION	make item 4 option A	2013-12-24T00:00:00	2013-12-27T00:00:00	20
 OPERATION	make item 4 option B	2013-12-27T00:00:00	2014-01-01T00:00:00	40
 OPERATION	make item 4 option C	2013-12-22T00:00:00	2014-01-01T00:00:00	40
-PROBLEM	material excess	Buffer 'item 1 @ location 1' has material excess of 30	2013-12-27T00:00:00 / 2014-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase component 1 for option A @ location 1 from My supplier' planned in the past	2013-12-17T00:00:00 / 2013-12-24T00:00:00
 PROBLEM	before current	Operation 'Purchase component 1 for option B @ location 1 from My supplier' planned in the past	2013-12-25T00:00:00 / 2013-12-27T00:00:00
 PROBLEM	before current	Operation 'Purchase component 1 for option C @ location 1 from My supplier' planned in the past	2013-12-21T00:00:00 / 2013-12-22T00:00:00

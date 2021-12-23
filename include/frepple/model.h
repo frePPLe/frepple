@@ -8899,46 +8899,6 @@ class ProblemMaterialShortage : public Problem {
   DateRange dr;
 };
 
-/* A problem of this class is created when a buffer is carrying too
- * much material during a certain period of time.
- */
-class ProblemMaterialExcess : public Problem {
- public:
-  string getDescription() const;
-
-  bool isFeasible() const { return true; }
-
-  double getWeight() const { return qty; }
-
-  ProblemMaterialExcess(Buffer* b, Date st, Date nd, double q, bool add = true)
-      : Problem(b), qty(q), dr(st, nd) {
-    if (add) addProblem();
-  }
-
-  string getEntity() const { return "material"; }
-
-  ~ProblemMaterialExcess() { removeProblem(); }
-
-  const DateRange getDates() const { return dr; }
-
-  Object* getOwner() const { return static_cast<Buffer*>(owner); }
-
-  Buffer* getBuffer() const { return static_cast<Buffer*>(owner); }
-
-  /* Return a reference to the metadata structure. */
-  const MetaClass& getType() const { return *metadata; }
-
-  /* Storing metadata on this class. */
-  static const MetaClass* metadata;
-
- private:
-  /* Excess quantity. */
-  double qty;
-
-  /* The daterange of the problem. */
-  DateRange dr;
-};
-
 /* This command is used to create an operationplan.
  *
  * The operationplan will have its loadplans and flowplans created when the

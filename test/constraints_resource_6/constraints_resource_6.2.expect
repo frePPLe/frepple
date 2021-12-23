@@ -192,10 +192,6 @@ OPERATION	4. make end item	2014-02-27T00:00:00	2014-03-06T00:00:00	20
 OPERATION	4. make end item	2014-03-04T00:00:00	2014-03-07T00:00:00	20
 OPERATION	4. make end item	2014-03-18T00:00:00	2014-03-21T00:00:00	20
 OPERATION	4. make end item	2014-03-25T00:00:00	2014-03-28T00:00:00	19
-PROBLEM	material excess	Buffer '1. end item' has material excess of 60	2014-02-14T23:59:59 / 2014-03-06T00:00:00
-PROBLEM	material excess	Buffer '2. end item' has material excess of 60	2014-02-14T23:59:59 / 2014-03-06T00:00:00
-PROBLEM	material excess	Buffer '3. end item' has material excess of 60	2014-02-13T23:59:59 / 2014-03-06T00:00:00
-PROBLEM	material excess	Buffer '4. end item' has material excess of 40	2014-02-13T23:59:59 / 2014-03-06T00:00:00
 PROBLEM	late	40 units of demand '1. order' planned up to 11.0 days after its due date	2014-03-06T00:00:00 / 2014-03-17T00:00:00
 PROBLEM	late	4 units of demand '2. order 12' planned up to 4.0 days after its due date	2014-03-06T00:00:00 / 2014-03-10T00:00:00
 PROBLEM	late	7 units of demand '2. order 13' planned up to 4.0 days after its due date	2014-03-06T00:00:00 / 2014-03-10T00:00:00

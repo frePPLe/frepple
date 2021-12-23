@@ -9,6 +9,14 @@ Release notes
 - | Improved hovering tooltip with constraints causing backlog in the
     demand report and inventory reports.
 
+- | Removed the "exces material" problem. In practice these alerts were found
+    to be too numerous and not actionable.
+  | More practical ways to identify excess inventory situations are either
+    a) using "period of cover" item attribute, b) using the "inventory status" field
+    in the inventory planning screen, c) using the "inventory days of cover" row
+    in the inventory report, and/or d) using the "period of cover" field on
+    manufacturing orders, purchase orders and distribution orders.
+
 .. rubric:: Odoo integration
 
 - | V14: Implemented synchronization of work center availability calendars.

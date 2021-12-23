@@ -33,5 +33,4 @@ OPERATION	make end item	2009-01-15T12:00:00	2009-01-16T12:00:00	10
 OPERATION	make end item	2009-01-17T00:00:00	2009-01-18T00:00:00	10
 OPERATION	make end item	2009-01-18T00:00:00	2009-01-19T00:00:00	10
 OPERATION	make end item	2009-01-18T00:00:00	2009-01-19T00:00:00	10
-PROBLEM	material excess	Buffer 'end item' has material excess of 20	2009-01-15T12:00:00 / 2009-01-19T00:00:00
 PROBLEM	overload	Resource 'Resource' has capacity shortage of 1	2009-01-18T00:00:00 / 2009-01-19T00:00:00

@@ -124,8 +124,6 @@ OPERATION	2. make item 2	2021-02-03T00:00:00	2021-02-05T00:00:00	1
 OPERATION	2. make item 2	2021-02-05T00:00:00	2021-02-07T00:00:00	1
 OPERATION	2. make item 2	2021-02-07T00:00:00	2021-02-09T00:00:00	1
 OPERATION	3. make item 1	2021-01-01T00:00:00	2021-01-02T00:00:00	10
-PROBLEM	material excess	Buffer '1. item 2 @ factory' has material excess of 20	2021-01-20T00:00:00 / 2021-02-02T00:00:00
-PROBLEM	material excess	Buffer '2. item 2 @ factory' has material excess of 16	2021-01-20T00:00:00 / 2021-02-02T00:00:00
 PROBLEM	late	10 units of demand '1. order 1' planned up to 1.0 days after its due date	2021-01-01T00:00:00 / 2021-01-02T00:00:00
 PROBLEM	late	10 units of demand '1. order 2' planned up to 11.0 days after its due date	2021-01-01T00:00:00 / 2021-01-12T00:00:00
 PROBLEM	late	10 units of demand '2. order 1' planned up to 1.0 days after its due date	2021-01-01T00:00:00 / 2021-01-02T00:00:00

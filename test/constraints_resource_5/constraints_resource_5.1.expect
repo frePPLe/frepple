@@ -868,7 +868,6 @@ OPERATION	2. make end item	2009-03-06T00:00:00	2009-03-07T00:00:00	1
 OPERATION	2. make end item	2009-03-06T00:00:00	2009-03-07T00:00:00	1
 OPERATION	2. make end item	2009-03-06T00:00:00	2009-03-07T00:00:00	1
 OPERATION	2. make end item	2009-03-07T00:00:00	2009-03-08T00:00:00	1
-PROBLEM	material excess	Buffer '1. end item @ factory' has material excess of 115	2009-02-01T00:00:00 / 2009-03-06T00:00:00
 PROBLEM	late	7 units of demand '1. order' planned up to 2.0 days after its due date	2009-03-06T00:00:00 / 2009-03-08T00:00:00
 PROBLEM	late	165 units of demand '2. order' planned up to 57.0 days after its due date	2009-01-10T00:00:00 / 2009-03-08T00:00:00
 DEMAND CONSTRAINT	1. order	Operation '1. make end item' planned in the past	2009-01-01T00:00:00 / 2009-01-02T00:00:00	

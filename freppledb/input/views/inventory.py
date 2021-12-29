@@ -1640,9 +1640,8 @@ class InventoryDetail(OperationPlanMixin):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
         GridFieldDuration(
-            "delay",
+            "operationplan__delay",
             title=_("delay"),
-            field_name="operationplan__delay",
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),
@@ -1674,6 +1673,20 @@ class InventoryDetail(OperationPlanMixin):
             editable=False,
             initially_hidden=True,
             search=False,
+        ),
+        GridFieldText(
+            "operationplan__origin",
+            title=_("origin"),
+            editable=False,
+            field_name="operationplan__origin",
+            initially_hidden=True,
+        ),
+        GridFieldText(
+            "operationplan__destination",
+            title=_("destination"),
+            editable=False,
+            field_name="operationplan__destination",
+            initially_hidden=True,
         ),
         # Optional fields referencing the item
         GridFieldText(

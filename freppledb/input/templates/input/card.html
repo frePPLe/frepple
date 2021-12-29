@@ -7,7 +7,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
       data-ng-style="{'overflow-y': 'hidden', 'background-color': opplan.color}"
       data-index="{{$index}}" data-reference="{{ opplan.id || opplan.reference }}">
     <div>
-      <span data-ng-if="opplan.dirty" class="label label-danger pull-right">{{ "unsaved"|translate }}</span>
+      <span data-ng-if="opplan.dirty && !opplan.selected" class="label label-danger pull-right">{{ "unsaved"|translate }}</span>
     </div>
     <div data-ng-if="opplan.type === 'PO'">
       <p>
@@ -107,13 +107,13 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
       </p>
       <p>{{opplan.operationplan__origin || opplan.origin}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.origin) }}/">
+          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.operationplan__origin || opplan.origin) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p>{{opplan.location || opplan.destination || oplan.operationplan__location}}&nbsp;
+      <p>{{opplan.destination || opplan.operationplan__destination || opplan.operationplan__location || opplan.location}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.location || opplan.destination || oplan.operationplan__location) }}/">
+          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.destination || opplan.operationplan__destination || opplan.operationplan__location || opplan.location) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
@@ -251,4 +251,4 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
       <p>{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</p>
     </div>
 </div>
-{% endverbatim %}    
+{% endverbatim %}

@@ -1,0 +1,18 @@
+{
+  "recommendations": [
+    // C++
+    "ms-vscode.cpptools",
+    "twxs.cmake",
+    "ms-vscode.cmake-tools",
+    // Python
+    "ms-python.vscode-pylance",
+    // Angular
+    // "angular.ng-template",
+    // Remote development
+    // "ms-vscode-remote.remote-ssh",
+    // "ms-vscode-remote.remote-wsl"
+    // Git
+    "mhutchie.git-graph",
+    "eamodio.gitlens"
+  ],
+}

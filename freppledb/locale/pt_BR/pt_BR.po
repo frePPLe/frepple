@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-06 16:45+0200\n"
-"PO-Revision-Date: 2022-01-03 21:00-0300\n"
+"PO-Revision-Date: 2022-01-03 21:07-0300\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt_BR\n"
@@ -1070,7 +1070,7 @@ msgstr "Histórico da demanda"
 
 #: archive/widget.py:168
 msgid "Show the evolution of the open sales orders"
-msgstr "Mostre a evolução das ordens de vendas abertas"
+msgstr "Mostra a evolução das ordens de vendas abertas"
 
 #: archive/widget.py:326
 msgid "Purchase order history"
@@ -2533,7 +2533,7 @@ msgstr "Limpar a base de dados"
 
 #: execute/management/commands/exporttofolder.py:499
 msgid "Export plan result"
-msgstr "Exportar resultados do planejamento"
+msgstr "Exportar resultados do plano"
 
 #: execute/management/commands/exportworkbook.py:33
 msgid "Export a spreadsheet"
@@ -2852,7 +2852,7 @@ msgstr "Está prestes a apagar todos os ficheiros"
 #: execute/templates/commands/importfromfolder.html:106
 #, python-format
 msgid "You are about to delete file %%s"
-msgstr "Você está prestes a apagar o arquivo % %s"
+msgstr "Você está prestes a apagar o arquivo %%s"
 
 #: execute/templates/commands/exporttofolder.html:67
 #: execute/templates/commands/importfromfolder.html:49
@@ -2869,7 +2869,7 @@ msgstr "Todos os ficheiros de dados foram apagados"
 #: execute/templates/commands/importfromfolder.html:133
 #, python-format
 msgid "File %%s was deleted"
-msgstr "Arquivo % %s foi apagado"
+msgstr "Arquivo %%s foi apagado"
 
 #: execute/templates/commands/exporttofolder.html:98
 #: execute/templates/commands/exporttofolder.html:104
@@ -2878,7 +2878,7 @@ msgstr "Arquivo % %s foi apagado"
 #: execute/templates/commands/importfromfolder.html:150
 #, python-format
 msgid "File %%s was not deleted"
-msgstr "Arquivo % %s não foi apagado"
+msgstr "Arquivo %%s não foi apagado"
 
 #: execute/templates/commands/exportworkbook.html:11
 msgid ""
@@ -2964,7 +2964,7 @@ msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:25
 msgid "Label shown in the scenario dropdown list"
-msgstr "Rótulo mostrado na lista do cenário"
+msgstr "Rótulo mostrado na lista de dropdown do cenário"
 
 #: execute/templates/commands/scenario_copy.html:26 forecast/models.py:1021
 #: forecast/views.py:150
@@ -3153,7 +3153,7 @@ msgstr "Nada para exportar"
 
 #: execute/views.py:1203
 msgid "Processing file"
-msgstr "Processando aquivo"
+msgstr "Processando arquivo"
 
 #: execute/views.py:1207
 msgid ""

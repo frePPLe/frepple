@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-06 16:45+0200\n"
-"PO-Revision-Date: 2022-01-03 20:35-0300\n"
+"PO-Revision-Date: 2022-01-03 21:00-0300\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt_BR\n"
@@ -3955,7 +3955,7 @@ msgstr "peso"
 
 #: input/models.py:217
 msgid "Weight of the item"
-msgstr "Peso de um item"
+msgstr "Peso do item"
 
 #: input/models.py:220 input/views/capacity.py:696 input/views/inventory.py:204
 #: input/views/inventory.py:399 input/views/inventory.py:834

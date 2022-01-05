@@ -214,13 +214,10 @@ class Command(BaseCommand):
                         x = apps.get_model(x[0], x[1])
                         if x in EXCLUDE_FROM_BULK_OPERATIONS:
                             continue
-
                         ContentTypekeys.add(ContentType.objects.get_for_model(x).pk)
-
-                        x = x._meta.db_table
-                        if x not in tables:
-                            raise
-                        models2tables.add(x)
+                        tbl = x._meta.db_table
+                        if tbl in tables or not x._meta.managed:
+                            models2tables.add(tbl)
                     except Exception as e:
                         raise CommandError("Invalid model to erase: %s" % m)
                 tables = models2tables

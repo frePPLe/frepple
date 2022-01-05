@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-06 16:45+0200\n"
-"PO-Revision-Date: 2021-05-06 17:03+0200\n"
+"PO-Revision-Date: 2022-01-03 21:07-0300\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt_BR\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: admin.py:22
@@ -736,8 +736,8 @@ msgid ""
 "%(rows)d data rows, changed %(changed)d and added %(added)d records, "
 "%(errors)d errors, %(warnings)d warnings"
 msgstr ""
-"%(rows)d linhas de registos, alterados %(changed)d e adicionados %(added)d "
-"registos, %(errors)d erros, %(warnings)d avisos"
+"%(rows)d linhas de registros, alterados %(changed)d e adicionados %(added)d "
+"registros, %(errors)d erros, %(warnings)d avisos"
 
 #: common/dataload.py:573 common/dataload.py:582
 msgid "Select a valid choice. That choice is not one of the available choices."
@@ -1207,7 +1207,7 @@ msgstr "desfazer alterações"
 #: common/templates/admin/base_site_grid.html:303
 #: inventoryplanning/templates/inventoryplanning/drp.html:2499
 msgid "select action"
-msgstr "selecionar acção"
+msgstr "selecionar ação"
 
 #: common/templates/admin/base_site_grid.html:317
 #: common/templates/admin/base_site_grid.html:320
@@ -1222,11 +1222,11 @@ msgstr "Criar novo objecto"
 
 #: common/templates/admin/base_site_grid.html:351
 msgid "Copy selected objects"
-msgstr "Copiar objectos seleccionados"
+msgstr "Copiar objectos selecionados"
 
 #: common/templates/admin/base_site_grid.html:352
 msgid "Delete selected objects"
-msgstr "Apagar objectos seleccionados"
+msgstr "Apagar objectos selecionados"
 
 #: common/templates/admin/base_site_grid.html:353
 #: common/templates/index.html:41
@@ -1566,26 +1566,25 @@ msgstr "pedido %(http_method)s"
 #: common/templates/rest_framework/api.html:77
 #, python-format
 msgid "Make an OPTIONS request to see all fields on the %(model)s object"
-msgstr "Fazer um pedido OPTIONS para ver todos os campos do objecto %(model)s"
+msgstr "Fazer um pedido OPTIONS para ver todos os campos do objeto %(model)s"
 
 #: common/templates/rest_framework/api.html:102
 #, python-format
 msgid "Make a POST request using a HTML form to create a new %(model)s object"
 msgstr ""
-"Fazer um pedido POST usando um formulário HTML para criar um novo objecto "
+"Fazer um pedido POST usando um formulário HTML para criar um novo objeto "
 "%(model)s"
 
 #: common/templates/rest_framework/api.html:129
 #, python-format
 msgid "Make a POST request in raw format to create a new %(model)s object"
-msgstr ""
-"Fazer um pedido POSTno formato RAW para criar um novo objecto %(model)s"
+msgstr "Fazer um pedido POSTno formato RAW para criar um novo objeto %(model)s"
 
 #: common/templates/rest_framework/api.html:155
 #, python-format
 msgid "Make a PUT request using a HTML form to update one %(model)s object"
 msgstr ""
-"Fazer um pedido PUT usando um formulário HTML para actualizar um objecto "
+"Fazer um pedido PUT usando um formulário HTML para atualizar um objeto "
 "%(model)s"
 
 #: common/templates/rest_framework/api.html:179
@@ -1594,7 +1593,7 @@ msgid ""
 "Make a PUT or PATCH request in raw format to update one or more existing "
 "%(model)s objects"
 msgstr ""
-"Fazer um pedido PUT ou PATCH no formato RAW actualizar um ou mais objectos "
+"Fazer um pedido PUT ou PATCH no formato RAW atualizar um ou mais objetos "
 "%(model)s existentes"
 
 #: common/templates/rest_framework/api.html:214
@@ -1603,7 +1602,7 @@ msgid ""
 "Make a DELETE request to delete one or more existing %(model)s objects "
 "(requires filtering)"
 msgstr ""
-"Fazer um pedido DELETE para apagar um ou mais objecto %(model)s existentes "
+"Fazer um pedido DELETE para apagar um ou mais objeto %(model)s existentes "
 "(necessita filtro)"
 
 #: common/templates/rest_framework/index.html:17
@@ -1654,18 +1653,18 @@ msgstr ""
 "Com esta API permite um intercâmbio facil e direto de informação com outras "
 "aplicações.<br>\n"
 "<br>\n"
-"Em \"Lista API\" tem acesso à página da lista de objetos desse modelo.<br>\n"
-"E em \"Detalhe API\" pode aceder a um objeto específico quando introduzir o "
-"seu nome.<br>\n"
-"Nestas páginas poderá realizar pedidos HTTP GET,POST,OPTIONS,PUT,PATCH e "
-"DELETE.<br>\n"
-"Os resultados poderão ser vistos no formato JSON ou co,o HTML no navegador."
+"O item \"Lista API\" leva você a página da lista de objetos.<br>\n"
+"E em \"Detalhe API\" leva voçê a um objeto específico ao digitar o nome da "
+"chave primária de um objeto.<br>\n"
+"Nestas páginas poderá realizar pedidos HTTP com os métodos GET,POST,OPTIONS,"
+"PUT,PATCH e DELETE.<br>\n"
+"Os resultados poderão ser vistos no formato JSON ou como HTML em seu "
+"navegador.<br>\n"
 "<br>\n"
-"<br>\n"
-"Usando utilitários como 'wget' ou 'curl' pode aceder à API a partir da linha "
-"de comandos.<br>\n"
-"Por exemplo, para obter uma listagem em formato JSON de todas as ordens de "
-"venda:<br><br>\n"
+"Usando ferramentas como 'wget' ou 'curl' pode acessar a API a partir da "
+"linha de comando.<br>\n"
+"Por exemplo, para obter uma lista de todas as vendas em formato JSON:"
+"<br><br>\n"
 "<div style=\"margin-left:20px\">\n"
 "Using <a style=\"text-decoration:underline\" href=\"https://en.wikipedia.org/"
 "wiki/Basic_access_authentication\" target=\"_blank\">basic authentication</"
@@ -2113,7 +2112,7 @@ msgstr "Desculpe, não tem nenhumas permissões de execução..."
 
 #: execute/templates/commands/scenario_copy.html:16
 msgid "action"
-msgstr "acção"
+msgstr "ação"
 
 #: execute/templates/commands/scenario_copy.html:26 forecast/models.py:1021
 #: forecast/views.py:150

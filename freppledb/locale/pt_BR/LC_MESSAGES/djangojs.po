@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-06 16:45+0200\n"
-"PO-Revision-Date: 2021-05-06 17:03+0200\n"
+"PO-Revision-Date: 2022-01-03 21:07-0300\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt_BR\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: common/static/js/frepple.js:197 common/static/js/frepple.min.js:11
@@ -99,7 +99,7 @@ msgstr "dias de atraso"
 
 #: common/static/js/frepple.js:730 common/static/js/frepple.min.js:11
 msgid "Selected options"
-msgstr "Opções seleccionadas"
+msgstr "Opções selecionadas"
 
 #: common/static/js/frepple.js:737 common/static/js/frepple.min.js:11
 msgid "Available options"
@@ -109,7 +109,7 @@ msgstr "Opções disponíveis"
 #: forecast/static/forecast/src/forecast.js:937
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Selected Cross"
-msgstr "Cruzamento seleccionado"
+msgstr "Cruzamento selecionado"
 
 #: common/static/js/frepple.js:790 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:945
@@ -232,7 +232,7 @@ msgstr "exportar"
 
 #: common/static/js/frepple.js:2158 common/static/js/frepple.min.js:11
 msgid "export selected records"
-msgstr "exportar registos seleccionados"
+msgstr "exportar registos selecionados"
 
 #: common/static/js/frepple.js:2168 common/static/js/frepple.js:2335
 #: common/static/js/frepple.min.js:11
@@ -308,7 +308,7 @@ msgstr "%s mensagens não lidas"
 
 #: common/static/js/frepple.js:2880 common/static/js/frepple.min.js:11
 msgid "Installed apps"
-msgstr "Apps instaladas"
+msgstr "Apps instalados"
 
 #: common/static/js/frepple.js:2909 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
@@ -329,11 +329,11 @@ msgstr ""
 
 #: common/static/js/frepple.js:2925 common/static/js/frepple.min.js:11
 msgid "files selected"
-msgstr "ficheiros seleccionados"
+msgstr "ficheiros selecionados"
 
 #: common/static/js/frepple.js:2928 common/static/js/frepple.min.js:11
 msgid "Select files"
-msgstr "Seleccionar ficheiros"
+msgstr "Selecionar ficheiros"
 
 #: common/static/js/frepple.js:2931 common/static/js/frepple.min.js:11
 msgid "or drop them here"

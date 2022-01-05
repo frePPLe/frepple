@@ -318,7 +318,7 @@ msgstr "Seleccionar sequência dos painéis"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:884
 msgid "Selected Cross"
-msgstr "Cruzamento seleccionado"
+msgstr "Cruzamento selecionado"
 
 #: freppledb/forecast/static/forecast/forecast.html:417
 msgid "Selected forecast method"
@@ -392,7 +392,7 @@ msgstr "Reverter alterações"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:45
 msgid "action"
-msgstr "acção"
+msgstr "ação"
 
 #: freppledb/forecast/static/forecast/forecast.html:375
 msgid "aggregate"

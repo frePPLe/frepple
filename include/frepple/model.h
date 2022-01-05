@@ -7412,7 +7412,7 @@ class Demand : public HasHierarchy<Demand>,
         Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans,
         DETAIL + WRITE_OBJECT + WRITE_HIDDEN);
     m->addIteratorField<Cls, Problem::List::iterator, Problem>(
-        Tags::constraints, Tags::problem, &Cls::getConstraintIterator, DETAIL);
+        Tags::constraints, Tags::problem, &Cls::getConstraintIterator, PLAN);
     m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, nullptr, 0,
                         DONT_SERIALIZE);
     m->addPointerField<Cls, Operation>(Tags::delivery_operation,

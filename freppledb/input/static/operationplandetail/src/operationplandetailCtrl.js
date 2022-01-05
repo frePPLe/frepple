@@ -577,6 +577,11 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         });
       });
     }
+    if ($scope.deleted.length) {
+      dirty.push({ delete: $scope.deleted });
+      $scope.deleted = [];
+    }
+    if (dirty) $scope.operationplan = undefined;
     return dirty;
   }
   $scope.getDirtyCards = getDirtyCards;

@@ -22,7 +22,7 @@
   {% if perms.execute.change_scheduledtask %}
   <div class="col-sm-1 text-center" style="padding-top:6px; padding-bottom:6px">
   <button class="btn btn-xs btn-primary" onclick="editScheduledTask(this, event)">
-  <span class="fa fa-edit" data-toggle="tooltip" 
+  <span class="fa fa-edit" data-toggle="tooltip"
     data-placement="top" data-original-title="{% trans "Edit" %}"></span>
   </button>
   </div>
@@ -36,7 +36,7 @@
       <button class="btn btn-primary btn-block" style="margin-bottom:20px; margin-top: 15px" onclick="saveScheduledTask(this, event)">
       {% trans "Save" %}</button>
     </div>
-    <div>  
+    <div>
       <button class="btn btn-primary btn-block" onclick="deleteScheduledTask(this, event)">
       {% trans "Delete" %}
       </button>
@@ -49,7 +49,7 @@
          <span aria-hidden="true" class="fa fa-times"></span>
          </button>
       </div>
-    </div>    
+    </div>
     <div class="form-horizontal">
        <div class="form-group">
          <label for="schedule-{{forloop.counter}}-name" class="col-sm-3 control-label">{% trans "name"|capfirst %}</label>
@@ -84,7 +84,7 @@
            class="form-check-input" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "abort on failure"|capfirst %}">
          </div>
          <div class="col-xs-1">
-         <button class="btn btn-xs btn-primary" onclick="deleteTask(this, event)">         
+         <button class="btn btn-xs btn-primary" onclick="deleteTask(this, event)">
          <span class="fa fa-trash-o" data-toggle="tooltip" data-placement="top"
            data-original-title="{% trans "Delete" %}"></span>
          </button>
@@ -100,7 +100,7 @@
          </div>
          </div>
          </div>
-       </div>       
+       </div>
  		   <div class="form-group">
          <label for="schedule-{{forloop.counter}}-start" class="col-sm-3 control-label">{% trans "start time"|capfirst %}</label>
          <div class="col-sm-9">
@@ -134,12 +134,12 @@
              <input data-field="sunday" type="checkbox" {% if schedule.data.sunday %}checked{% endif %}>{% trans "Sun" %}
            </label>
 		     </div>
-		   </div>       
+		   </div>
        <div class="form-group">
          <label for="schedule-{{forloop.counter}}-email-success" class="col-sm-3 control-label">{% trans "email on success"|capfirst %}</label>
          <div class="col-sm-9">
-           <input type="email" class="form-control" id="schedule-{{forloop.counter}}-email-success" 
-              placeholder="{% trans "List of emails, separated by commas"|capfirst %}" data-field="email_success" 
+           <input type="email" class="form-control" id="schedule-{{forloop.counter}}-email-success"
+              placeholder="{% trans "List of emails, separated by commas"|capfirst %}" data-field="email_success"
               {% if schedule.email_success %}value="{{schedule.email_success}}"{% endif %}>
          </div>
        </div>
@@ -186,7 +186,7 @@
            data-toggle="tooltip" data-placement="top" data-original-title="{% trans "abort on failure"|capfirst %}">
          </div>
          <div class="col-xs-1">
-         <button class="btn btn-xs btn-primary" onclick="deleteTask(this, event)">         
+         <button class="btn btn-xs btn-primary" onclick="deleteTask(this, event)">
          <span class="fa fa-trash-o" data-toggle="tooltip" data-placement="top"
            data-original-title="{% trans "Delete" %}"></span>
          </button>
@@ -199,7 +199,7 @@ function setTaskType(el, event) {
 	var tgt = $(el);
 	var parent = tgt.parents("ul").prev();
 	parent.html(tgt.html() + '&nbsp;<span class="caret"></span>');
-	parent.attr("data-name", tgt.html()); 
+	parent.attr("data-name", tgt.html());
 	event.preventDefault();
 }
 
@@ -266,12 +266,12 @@ function saveScheduledTask(el, event) {
       "email_success": form.find("[data-field='email_success']").val(),
       "data": {
         "starttime": starttime.hours() * 3600 + starttime.minutes() * 60 + starttime.seconds(),
-        "monday": form.find("[data-field='monday']").is(":checked"),      
-        "tuesday": form.find("[data-field='tuesday']").is(":checked"),      
-        "wednesday": form.find("[data-field='wednesday']").is(":checked"),      
-        "thursday": form.find("[data-field='thursday']").is(":checked"),      
-        "friday": form.find("[data-field='friday']").is(":checked"),      
-        "saturday": form.find("[data-field='saturday']").is(":checked"),      
+        "monday": form.find("[data-field='monday']").is(":checked"),
+        "tuesday": form.find("[data-field='tuesday']").is(":checked"),
+        "wednesday": form.find("[data-field='wednesday']").is(":checked"),
+        "thursday": form.find("[data-field='thursday']").is(":checked"),
+        "friday": form.find("[data-field='friday']").is(":checked"),
+        "saturday": form.find("[data-field='saturday']").is(":checked"),
         "sunday": form.find("[data-field='sunday']").is(":checked"),
         "tasks": tasks
         }
@@ -282,8 +282,8 @@ function saveScheduledTask(el, event) {
     	  var newrow = $("#scheduledtask_headertemplate").clone();
     	  newrow.removeAttr("id");
     	  newrow.insertBefore(form);
-    	  newrow.removeClass("hidden").toggle();    	  
-    	}    	  
+    	  newrow.removeClass("hidden").toggle();
+    	}
     	form.prev().toggle();
       form.prev().find("[data-field='next-run']").text(data);
       form.prev().find("[data-field='name']").text(schedname);
@@ -293,6 +293,10 @@ function saveScheduledTask(el, event) {
       form.toggle();
     },
     error: function(jqXHR, status, errorThrown) {
+      if (jqXHR.status == 401) {
+        location.reload();
+        return;
+      }
       $('#popup').html('<div class="modal-dialog">'+
           '<div class="modal-content">'+
             '<div class="modal-header bg-danger">'+
@@ -325,6 +329,10 @@ function deleteScheduledTask(el, event) {
     	sched.remove();
     },
     error: function(jqXHR, status, errorThrown) {
+      if (jqXHR.status == 401) {
+        location.reload();
+        return;
+      }
     	$('#popup').html('<div class="modal-dialog">'+
           '<div class="modal-content">'+
             '<div class="modal-header bg-danger">'+

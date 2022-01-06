@@ -178,6 +178,9 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = (
     True  # Whether sessions expire when a user closes his browser.
 )
 
+# Users are automatically logged out after this period of inactivity
+SESSION_LOGOUT_IDLE_TIME = 60  # minutes
+
 MESSAGE_STORAGE = "django.contrib.messages.storage.fallback.SessionStorage"
 
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
@@ -360,8 +363,8 @@ DEFAULT_DASHBOARD = [
 CACHE_GRID_COUNT = None
 CACHE_PIVOT_COUNT = None
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     }
 }
 

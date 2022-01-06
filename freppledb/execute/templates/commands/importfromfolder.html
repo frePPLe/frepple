@@ -21,11 +21,11 @@
         </span>
       </td>
       <td>
-        <span class="btn btn-xs btn-primary" style="margin-bottom:5px" data-toggle="tooltip" 
+        <span class="btn btn-xs btn-primary" style="margin-bottom:5px" data-toggle="tooltip"
            data-placement="top" data-original-title="{% trans "Download all files" %}"
            onClick="downloadImportFile(0)">
           <span class="fa fa-arrow-down"></span>
-        </span>        
+        </span>
       </td>
       <td>
         <div class="btn btn-xs btn-danger deletefile" style="margin-bottom:5px" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Delete all files' %}" onClick="deleteImportFile(0, {{filestoupload}})">
@@ -77,6 +77,10 @@ var uploadfilesajax = {
     $('#cancelbutton').one('click', function() {location.reload();});
   },
   error: function (result, stat, errorThrown) {
+    if (result.status == 401) {
+      location.reload();
+      return;
+    }
     var el = $('#uploadResponse');
     el.empty();
     $("#animatedcog").css('visibility','hidden');
@@ -138,6 +142,10 @@ function deleteImportFile(folder, filename) {
         location.reload();
       },
       error: function (result, stat, errorThrown) {
+        if (result.status == 401) {
+          location.reload();
+          return;
+        }
         var filelist = result.responseText.split(' / ');
         var elem = $("#popup .modal-body>p");
         if (filelist.length === 1) {

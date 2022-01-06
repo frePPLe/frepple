@@ -107,9 +107,12 @@ $(function() {
       width: 700
     },
 	  loadError: function(xhr,st,err) {
+      if (xhr.status == 401) {
+        location.reload();
+        return;
+      }
 	    $('#load_grid').show();
-	    if (xhr.status == 200)
-      {
+	    if (xhr.status == 200) {
         $('#curerror').html("{{_('Warning: no data found')|escapejs}}");
         $('#grid').clearGridData();
       }

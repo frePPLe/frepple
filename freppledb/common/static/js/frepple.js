@@ -188,6 +188,10 @@ $.fn.resizable = function fnResizable(options) {
 
 
 function ajaxerror(result, stat, errorThrown) {
+  if (result.status == 401) {
+    location.reload();
+    return;
+  }
   var msg;
   if (result.readyState == 0)
     // Network errors: network down, server down, access denied...
@@ -1520,6 +1524,10 @@ var grid = {
             $('#popup').modal('hide');
           },
           error: function (result, stat, errorThrown) {
+            if (result.status == 401) {
+              location.reload();
+              return;
+            }
             $('#popup .modal-body p').html(result.responseText);
             $('#popup .modal-title').html(gettext("Error"));
             $('#popup .modal-header').addClass('bg-danger');
@@ -1567,6 +1575,10 @@ var grid = {
             $('#popup').modal('hide');
           },
           error: function (result, stat, errorThrown) {
+            if (result.status == 401) {
+              location.reload();
+              return;
+            }
             $('#popup .modal-body p').html(result.responseText);
             $('#popup .modal-title').html(gettext("Error"));
             $('#popup .modal-header').addClass('bg-danger');
@@ -2195,6 +2207,10 @@ var ERPconnection = {
 
         },
         error: function (result, stat, errorThrown) {
+          if (result.status == 401) {
+            location.reload();
+            return;
+          }
           $('#popup .modal-title').html(gettext("Error"));
           $('#popup .modal-header').addClass('bg-danger');
           $('#popup .modal-body p').html(result.responseText);
@@ -2347,6 +2363,10 @@ var ERPconnection = {
               };
             },
             error: function (result, stat, errorThrown) {
+              if (result.status == 401) {
+                location.reload();
+                return;
+              }
               $('#popup .modal-title').html(gettext("Error during export"));
               $('#popup .modal-header').addClass('bg-danger');
               $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
@@ -2379,6 +2399,10 @@ var ERPconnection = {
           $("#actions1 span").text($("#actionsul").children().first().text());
       },
       error: function (result, stat, errorThrown) {
+        if (result.status == 401) {
+          location.reload();
+          return;
+        }
         $('#popup .modal-title').html(gettext("Error"));
         $('#popup .modal-header').addClass('bg-danger');
         $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
@@ -3086,7 +3110,11 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
             }
           }
         },
-        error: function () {
+        error: function (result, stat, errorThrown) {
+          if (result.status == 401) {
+            location.reload();
+            return;
+          }
           $('#cancelimportbutton').hide();
           $('#copytoclipboard').show();
           $("#animatedcog").css('visibility', 'hidden');

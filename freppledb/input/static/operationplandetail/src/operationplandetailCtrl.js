@@ -455,8 +455,9 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
           $scope.calendarevents = tmp.rows;
           $scope.totalevents = tmp.records;
         },
-        function failure(response) {
-          console.log("Error getting calendar data");
+        function (err) {
+          if (err.status == 401)
+            location.reload();
         }
       );
   }
@@ -530,7 +531,11 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
             [x.color, x.inventory_status] = formatInventoryStatus(x);
           }
           $scope.kanbanoperationplans[key] = tmp;
-        });
+        },
+          function (err) {
+            if (err.status == 401)
+              location.reload();
+          });
     });
   }
   $scope.loadKanbanData = loadKanbanData;

@@ -15,23 +15,30 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 import base64
 import jwt
 import re
 import threading
+from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib import auth, messages
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.messages import info
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
-from django.utils import translation, timezone
 from django.db import DEFAULT_DB_ALIAS
 from django.db.models import Q
 from django.http import HttpResponseNotFound
-from django.http.response import HttpResponseForbidden, HttpResponseRedirect
+from django.http.response import (
+    HttpResponse,
+    HttpResponseForbidden,
+    HttpResponseRedirect,
+)
+from django.utils import translation, timezone
+from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.auth import MultiDBBackend
 from freppledb.common.models import Scenario, User
@@ -208,6 +215,35 @@ class MultiDBMiddleware:
 
         if not hasattr(request, "user"):
             request.user = auth.get_user(request)
+
+        # Log out automatically after inactivity
+        if not request.user.is_anonymous and settings.SESSION_LOGOUT_IDLE_TIME:
+            now = datetime.now().replace(microsecond=0)
+            if "last_request" in request.session:
+                idle_time = now - datetime.fromisoformat(
+                    request.session["last_request"]
+                )
+                print(idle_time)
+                if idle_time > timedelta(minutes=settings.SESSION_LOGOUT_IDLE_TIME):
+                    logout(request)
+                    info(
+                        request,
+                        _("Your session has expired. Please login again to continue."),
+                    )
+                    if request.is_ajax():
+                        return HttpResponse(
+                            status=401,
+                            content=_(
+                                "Your session has expired. Please login again to continue."
+                            ),
+                        )
+                    else:
+                        print("reditect to ", request.path_info)
+                        return HttpResponseRedirect(request.path_info)
+                else:
+                    request.session["last_request"] = now.isoformat()
+            else:
+                request.session["last_request"] = now.isoformat()
 
         # Keep last_login date up to date
         if not request.user.is_anonymous:

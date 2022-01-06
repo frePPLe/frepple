@@ -52,6 +52,10 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
               callback(operplan);
             }
             return operplan;
+          },
+          function (err) {
+            if (err.status == 401)
+              location.reload();
           }
         );
     }
@@ -64,13 +68,17 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
       .put(getURLprefix() + '/api/input/operationplan/?reference=' + encodeURIComponent(operplan.name), operplan)
       .then(
         function (response) {
-          if (debug)  {
+          if (debug) {
             console.log("OperationPlan save '" + operplan.name + "': ", response.data);
           }
           operplan.extend(response.data);
           return operplan;
-          }
-        );
+        },
+        function (err) {
+          if (err.status == 401)
+            location.reload();
+        }
+      );
   }
 
   // REST API DELETE
@@ -83,8 +91,12 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
           if (debug)
             console.log("OperationPlan delete '" + operplan.name + "': ", response.data);
           return operplan;
-          }
-        );
+        },
+        function (err) {
+          if (err.status == 401)
+            location.reload();
+        }
+      );
   }
 
   OperationPlan.prototype = {

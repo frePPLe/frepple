@@ -17,6 +17,12 @@ Release notes
     in the inventory report, and/or d) using the "period of cover" field on
     manufacturing orders, purchase orders and distribution orders.
 
+.. rubric:: Security
+
+- | The application will automatically log users out after a period of inactivity.
+  | The threshold is configurable with the new setting "SESSION_LOGOUT_IDLE_TIME" (defaults
+    to 1 hour, and can be set to None to disable this feature).
+
 .. rubric:: Odoo integration
 
 - | V14: Implemented synchronization of work center availability calendars.

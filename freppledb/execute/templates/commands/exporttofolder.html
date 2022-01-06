@@ -15,7 +15,7 @@
       <td><strong>{% trans 'size'|capfirst %}</strong></td>
       <td><strong>{% trans 'changed'|capfirst %}</strong></td>
       <td>
-        <div class="btn btn-xs btn-primary" style="margin-bottom: 5px" data-toggle="tooltip" data-placement="top" 
+        <div class="btn btn-xs btn-primary" style="margin-bottom: 5px" data-toggle="tooltip" data-placement="top"
           data-original-title="{% trans 'Download all files' %}" onClick="downloadExportFile(1)">
           <span class="fa fa-arrow-down"></span>
         </div>
@@ -92,6 +92,10 @@ function deleteExportFile(folder, filename) {
         $('#cancelbutton').one('click', function() {location.reload();});
       },
       error: function (result, stat, errorThrown) {
+        if (result.status == 401) {
+          location.reload();
+          return;
+        }
         var filelist = result.responseText.split(' / ');
         var elem = $("#popup .modal-body>p");
         if (filelist.length === 1) {

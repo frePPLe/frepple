@@ -321,7 +321,7 @@ beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
       rowdata = jQuery("#grid").getRowData(item);
 
       //if is being edited
-      if (typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val() !== 'undefined') {
+      if (typeof $(document.getElementById(item)).find("input").attr('cm','[Object Object]').not('.cbox').val() !== 'undefined') {
         if ($("#" + item).hasClass('success')) {
           if (typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
             colname=$("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1];

@@ -234,7 +234,7 @@ LANGUAGES = (
 SESSION_COOKIE_AGE = 3600 * 24 * 3  # 3 days
 
 # Users are automatically logged out after this period of inactivity
-SESSION_LOGOUT_IDLE_TIME = 0.1  # minutes
+SESSION_LOGOUT_IDLE_TIME = 60  # minutes
 
 MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",

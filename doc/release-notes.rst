@@ -21,6 +21,9 @@ Release notes
 
 - | V14: Implemented synchronization of work center availability calendars.
 
+.. rubric:: User interface
+
+- | Reviewed Brazilian-Portugese translations. Many thanks to Neerosh!
 
 6.19.0 (2021/12/1)
 ==================

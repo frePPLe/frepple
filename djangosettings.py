@@ -233,6 +233,9 @@ LANGUAGES = (
 # Set the value to 0 to force users to log in for every browser session.
 SESSION_COOKIE_AGE = 3600 * 24 * 3  # 3 days
 
+# Users are automatically logged out after this period of inactivity
+SESSION_LOGOUT_IDLE_TIME = 0.1  # minutes
+
 MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -313,8 +316,8 @@ ATTRIBUTES = []
 CACHE_GRID_COUNT = None
 CACHE_PIVOT_COUNT = None
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     }
 }
 

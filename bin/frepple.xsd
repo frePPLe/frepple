@@ -223,6 +223,7 @@
       <xsd:element name="operationplans" type="operationplanlist" />
       <xsd:element name="location" type="location" />
       <xsd:element name="available" type="calendar" />
+      <xsd:element name="search" type="search" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="duration" type="xsd:duration" />
@@ -236,6 +237,7 @@
     <xsd:attribute name="priority" type="xsd:integer" />
     <xsd:attribute name="effective_start" type="xsd:dateTime" />
     <xsd:attribute name="effective_end" type="xsd:dateTime" />
+    <xsd:attribute name="search" type="search" />
   </xsd:complexType>
 
   <xsd:complexType name="operationlist">
@@ -282,7 +284,6 @@
     <xsd:complexContent>
       <xsd:extension base="operation">
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="search" type="search" />
           <xsd:element name="suboperations">
             <xsd:complexType>
               <xsd:sequence>
@@ -291,7 +292,6 @@
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
-        <xsd:attribute name="search" type="search" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

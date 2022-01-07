@@ -1475,8 +1475,19 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         if (!getAllowSplits() && data->state->a_qty > ROUNDING_ERROR &&
             data->state->a_qty <= tmp_askQ - ROUNDING_ERROR) {
           // Reject a partial reply
-          data->state->a_qty = 0.0;
-          data->state->a_date = tmp_askD;
+          auto maxq = (*altIter)->getOperation()->getSizeMaximum();
+          auto multq = (*altIter)->getOperation()->getSizeMultiple();
+          auto reject = true;
+          if (maxq && maxq != DBL_MAX && multq) {
+            maxq = floor(maxq / multq) * multq;
+            if (fabs(maxq - data->state->a_qty) < ROUNDING_ERROR)
+              // Answer was limited by the sizemaximum. We shouldn't reject it.
+              reject = false;
+          }
+          if (reject) {
+            data->state->a_qty = 0.0;
+            data->state->a_date = tmp_askD;
+          }
         }
       } else {
         setLogLevel(0);

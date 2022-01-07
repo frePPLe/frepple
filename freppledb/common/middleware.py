@@ -218,12 +218,11 @@ class MultiDBMiddleware:
 
         # Log out automatically after inactivity
         if not request.user.is_anonymous and settings.SESSION_LOGOUT_IDLE_TIME:
-            now = datetime.now().replace(microsecond=0)
+            now = datetime.now()
             if "last_request" in request.session:
-                idle_time = now - datetime.fromisoformat(
-                    request.session["last_request"]
+                idle_time = now - datetime.strptime(
+                    request.session["last_request"], "%y-%m-%d %H:%M:%S"
                 )
-                print(idle_time)
                 if idle_time > timedelta(minutes=settings.SESSION_LOGOUT_IDLE_TIME):
                     logout(request)
                     info(
@@ -238,12 +237,11 @@ class MultiDBMiddleware:
                             ),
                         )
                     else:
-                        print("reditect to ", request.path_info)
                         return HttpResponseRedirect(request.path_info)
                 else:
-                    request.session["last_request"] = now.isoformat()
+                    request.session["last_request"] = now.strftime("%y-%m-%d %H:%M:%S")
             else:
-                request.session["last_request"] = now.isoformat()
+                request.session["last_request"] = now.strftime("%y-%m-%d %H:%M:%S")
 
         # Keep last_login date up to date
         if not request.user.is_anonymous:

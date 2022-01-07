@@ -208,7 +208,7 @@
 
   // Controller will call this function to pass values to the grid
   function displayongrid(id, columnid, value) {
-    angular.element(document).find("#" + id).removeClass("edited").addClass("edited");
+    angular.element(document).find(document.getElementById(id)).removeClass("edited").addClass("edited");
     if (
       columnid === "startdate" ||
       columnid === "enddate" ||
@@ -321,12 +321,13 @@ beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
       rowdata = jQuery("#grid").getRowData(item);
 
       //if is being edited
-      if (typeof $(document.getElementById(item)).find("input").attr('cm','[Object Object]').not('.cbox').val() !== 'undefined') {
-        if ($("#" + item).hasClass('success')) {
-          if (typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
-            colname=$("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1];
+      var el = $(document.getElementById(item));
+      if (typeof el.find("input").attr('cm','[Object Object]').not('.cbox').val() !== 'undefined') {
+        if (el.hasClass('success')) {
+          if (typeof el.find("input").attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
+            colname=el.find("input").attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1];
             if (typeof colname !== 'undefined') {
-              rowdata[colname] = $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val();
+              rowdata[colname] = el.find("input").attr('cm','[Object Object]').not('.cbox').val();
             }
           }
         }
@@ -355,7 +356,7 @@ onSelectRow: function(rowid, status, e) {
   var editedval = "";
   jQuery.each(selection , function(index,item) {
     rowdata = jQuery("#grid").getRowData(item);
-    var elem = $("#" + $.escapeSelector(item) +" input");
+    var elem = $(document.getElementById(item)).find("input");
     editedval = elem.attr('cm','[Object Object]').not('.cbox').val();
     if ( typeof elem.attr('cm','[Object Object]').not('.cbox').val() !== 'undefined' ) {
       if (typeof elem.attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {

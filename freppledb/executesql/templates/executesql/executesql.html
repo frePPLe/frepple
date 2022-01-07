@@ -9,8 +9,8 @@ var wasPressed = false;
 
 function fkey(e) {
   e = e || window.event;
-  if( wasPressed || e.code !== 'F5') return; 
-  $("#executesql_launch").click();
+  if( wasPressed || e.code !== 'F5') return;
+  $("#executesql_launch").trigger("click");
   wasPressed = true;
   event.preventDefault();
 };
@@ -18,11 +18,11 @@ function fkey(e) {
 $(document).on("keydown", fkey);
 $(document).on("keypress", fkey);
 $(document).on("keyup", function(e ) {wasPressed= false;});
- 
+
 function render(data) {
   var grid = $("#executesql_results");
   $("#executesql_launch").prop('disabled', false);
-  $("#executesql_cancel").prop('disabled', true); 
+  $("#executesql_cancel").prop('disabled', true);
   if (!grid.is(':empty'))
     grid.jqGrid('GridUnload');
   if (data['status'] == "ok") {
@@ -38,7 +38,7 @@ function render(data) {
 	      shrinkToFit: false,
 	      rownumbers: true,
 	      maxHeight: $(window).height() - grid.offset().top - 63
-	      });	  
+	      });
   }
   else {
   	$("#error").css('display','block').text(data['status']);
@@ -79,14 +79,14 @@ $(function() {
 	    async: true
 	    });
 	});
-	
+
 	$("#executesql_cancel").on("click", function(event) {
 		if (xhr) {
 			xhr.abort();
 		  xhr = null;
 		  }
 	});
-	
+
 	$("#executesql_statements").on("change keyup paste", function() {
 		if (saveTimeout) clearTimeout(saveTimeout);
 		saveTimeout = setTimeout(function() {
@@ -110,7 +110,7 @@ $(function() {
 <button id="executesql_cancel" class="btn btn-primary" disabled>{% trans "cancel"|capfirst %}</button>
 </div>
 <div id="toolicons" class="col-xs-4 hor-align-right ver-align-middle pull-right">
-<button class="btn btn-xs btn-primary" 
+<button class="btn btn-xs btn-primary"
   onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/executesql.html');"
   data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}">
   <span class="fa fa-question"></span>

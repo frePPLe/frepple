@@ -313,7 +313,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         '</div>'
       ).modal('show');
       $('#savebutton').on('click', function () {
-        save_button.click();
+        save_button.trigger('click');
         innerFunction();
         $('#popup').modal('hide');
       });

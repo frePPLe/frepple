@@ -179,6 +179,7 @@ class Command(BaseCommand):
                             ".cpy",
                             ".cpy.gz",
                             ".xlsx",
+                            ".xlsm",
                         )
                     ):
                         continue
@@ -251,7 +252,7 @@ class Command(BaseCommand):
                             "%s Finished uploading copy file: %s"
                             % (datetime.now().replace(microsecond=0), ifile)
                         )
-                    elif ifile.lower().endswith(".xlsx"):
+                    elif ifile.lower().endswith((".xlsx", ".xlsm")):
                         logger.info(
                             "%s Started processing data in Excel file: %s"
                             % (datetime.now().replace(microsecond=0), ifile)
@@ -581,6 +582,7 @@ class Command(BaseCommand):
                             ".csv",
                             ".csv.gz",
                             ".xlsx",
+                            ".xlsm",
                             ".cpy",
                             ".sql",
                             ".cpy.gz",

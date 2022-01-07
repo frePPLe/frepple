@@ -1570,17 +1570,19 @@ class GridReport(View):
             csvcount = 0
             xlscount = 0
             for filename, file in request.FILES.items():
-                if (
-                    file.content_type
-                    == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                if file.content_type in (
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "application/vnd.ms-excel.sheet.macroenabled.12",
                 ):
                     xlscount += 1
                 elif filename.endswith(".xls"):
                     return HttpResponseNotFound(
+                        _(
+                            """
+                        Files in the old .XLS excel format can't be read.<br>
+                        Please convert them to the new .XLSX format.
                         """
-                      Files in the old .XLS excel format can't be read.<br>
-                      Please convert them to the new .XLSX format.
-                      """
+                        )
                     )
                 else:
                     csvcount += 1

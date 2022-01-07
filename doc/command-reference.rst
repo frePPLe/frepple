@@ -2,14 +2,14 @@
 Tasks
 =====
 
-FrePPLe provides a list of commands that perform actions on the 
+FrePPLe provides a list of commands that perform actions on the
 database, the input data and/or the output data.
 
 The commands can be accessed in three different ways:
 
 * From the execution screen: :doc:`/user-interface/execute`
 * From the command line: :doc:`/integration-guide/batch-commands`
-* Through a web-based API: :doc:`/integration-guide/remote-commands` 
+* Through a web-based API: :doc:`/integration-guide/remote-commands`
 
 This section provides an overview of the available actions:
 
@@ -39,7 +39,7 @@ This section provides an overview of the available actions:
   * :ref:`changepassword`
   * :ref:`flush`
   * :ref:`generatetoken`
-  
+
 * Developer commands
 
   * :ref:`shell`
@@ -84,8 +84,8 @@ A separate page provides more details on the :doc:`/developer-guide/planning-alg
 
 This command is available in the user interface, the command line and the web API:
 
-* Execution screen:  
-  
+* Execution screen:
+
   .. image:: /user-interface/_images/execution-plan.png
      :alt: Execution screen - Plan generation
 
@@ -107,7 +107,7 @@ With this option a user can execute a sequence of steps together as a group.
 The execution of the task group can be triggered manually. Or it can be scheduled automatically
 based on a predefined schedule.
 
-Optionally, a email can be sent out upon failure or success of the execution. 
+Optionally, a email can be sent out upon failure or success of the execution.
 
 For this task to be available some configuration may be required. On Windows this task
 is a front-end for the Windows Task Scheduler, and you need to assure the user running
@@ -115,8 +115,8 @@ the web server has access to use it. On Linux this task is a front-end for the a
 and you need to edit the /etc/at.allow or /etc/at.deny file to grant access for the user
 running the apache web server.
 
-* Execution screen:  
-  
+* Execution screen:
+
   .. image:: /user-interface/_images/execution-scheduletasks.png
      :alt: Execution screen - Group and schedule tasks
 
@@ -142,14 +142,14 @@ The exported file can be imported back with the task described just below.
 
 Optionally, you can make your dataset anonymous during the export to hide
 sensitive company data. All entities then get a new name during the export. It remains
-ABSOLUTELY NECESSARY to carefully review the generated spreadsheet and to remove 
+ABSOLUTELY NECESSARY to carefully review the generated spreadsheet and to remove
 any sensitive data that is still left, such as descriptions, categories, custom
 attributes, cost information.
 
 This command is available only in the user interface:
 
 * Execution screen:
-  
+
   .. image:: /user-interface/_images/execution-export.png
      :alt: Execution screen - Spreadsheet export
 
@@ -200,26 +200,26 @@ This command is available in the user interface, the command line and the web AP
     frepplectl exporttofolder
 
 * Web API::
-    
+
     Export the planning result files:
     POST /execute/api/exporttofolder/
 
     Retrieve one of the exported files:
     GET /execute/downloadfromfolder/1/<filename>/
-    
+
 .. _emailreport:
 
 Publish reports by email
 ------------------------
 
-Reports that have been exported using *Export plan result to folder* command can be 
+Reports that have been exported using *Export plan result to folder* command can be
 emailed to one or more recipients.
 
 Recipients have to be separated by a comma in the *Emails* field.
 
 Selected reports are zipped into a *reports.zip* file that is attached to the email.
 
-In order to have this command working, the EMAIL parameters in the djangosettings.py 
+In order to have this command working, the EMAIL parameters in the djangosettings.py
 file must be properly configured.
 
 This command is available in the user interface, the command line and the web API:
@@ -232,23 +232,23 @@ This command is available in the user interface, the command line and the web AP
 * Command line::
 
     frepplectl emailreport [--sender] --recipient --report
-    
+
 
 * Web API::
-    
+
     Publish reports by email:
     POST /execute/api/emailreport/?recipient=recipient1,recipient2...&report=report1,report2,report3...
-    
+
 .. _uploadreport:
 
 Publish reports by FTP
 ----------------------
 
-Reports that have been exported using *Export plan result to folder* command can be 
+Reports that have been exported using *Export plan result to folder* command can be
 pushed to a server using a ftp, ftps or sftp connection.
 
 
-In order to have this command working, the FTP parameters in the djangosettings.py 
+In order to have this command working, the FTP parameters in the djangosettings.py
 file must be properly configured.
 Note that, if you are using the SFTP protocol, the destination server needs to be added
 to the known_hosts file.
@@ -266,7 +266,7 @@ This command is available in the user interface, the command line and the web AP
     where report option is a comma-separated list of files to export.
 
 * Web API::
-    
+
     Publish reports by ftp:
     POST /execute/api/uploadreport/?report=report1,report2,report3...
 
@@ -287,19 +287,19 @@ The data files to be imported must meet the following criteria:
 
 * | The name must match the data object they store: eg demand.csv, item.csv, item.xlsx, item.csv.gz
   | This is important for frePPLe to understand the correct processing order of the files.
-  
+
 * | Multiple files for the same entity can be provided. They will be processed in alphabetical order:
-    eg "demand (1).xlsx", "demand (2).csv", "demand.1.csv", "demand.2.csv", "demand.extra.xlsx", "demand.postprocessing.sql" 
+    eg "demand (1).xlsx", "demand (2).csv", "demand.1.csv", "demand.2.csv", "demand.extra.xlsx", "demand.postprocessing.sql"
 
 * | The first line of the file should contain the field names. The field name can be in English
     or the default language configured with the LANGUAGE_CODE setting.
 
 The following file formats are accepted:
 
-  * | **Excel**:   
-    | The file name must end with .xlsx
+  * | **Excel**:
+    | The file name must end with .xlsx or .xlsm
 
-  * | **CSV**:     
+  * | **CSV**:
     | The file name must end with .csv (or .csv.gz when compressed with gzip).
     | Some specific notes on the CSV format:
 
@@ -312,16 +312,16 @@ The following file formats are accepted:
 
     * The data file is expected to be encoded in the character encoding defined by
       the setting CSV_CHARSET (default UTF-8).
-      
-  * | **PostgreSQL copy files**:  
+
+  * | **PostgreSQL copy files**:
     | The file name must end with .cpy (or .cpy.gz when compressed with gzip).
     | Uploading in this format goes MUCH quicker than the other formats. It has some
       limitations however: a) the validation of the input data is not as extensive
       as the other formats, b) a single faulty record will abort the upload and c)
-      it only supports adding new records and not updating existing records. 
+      it only supports adding new records and not updating existing records.
     | This method is therefore only recommended for loading very large data files
       with clean data.
-    
+
   * | **SQL**:
     | The file name must end with .sql (or .sql.gz when compressed with gzip).
     | For security reasons a database role with a minimal set of permissions must be
@@ -335,8 +335,8 @@ to upload to that folder.
 
 This command is available in the user interface, the command line and the web API:
 
-* Execution screen:  
-  
+* Execution screen:
+
   .. image:: /user-interface/_images/execution-importfilesfromfolder.png
      :alt: Execution screen - Import data files from folder
 
@@ -348,10 +348,10 @@ This command is available in the user interface, the command line and the web AP
 
     Upload a data file:
     POST /execute/uploadtofolder/0/ with data files in multipart/form-data format
-    
+
     Import the data files:
     POST /execute/api/importfromfolder/
-  
+
 .. _runwebservice:
 
 Web service
@@ -379,15 +379,15 @@ When the user doesn't need the what-if scenario any more, it can be released
 again.
 
 Releasing a scenario can be done from any scenario while copying and promoting
-actions can only be performed from current scenario to destination scenario. 
+actions can only be performed from current scenario to destination scenario.
 
-The label of a scenario, which is displayed in the dropdown list in the 
+The label of a scenario, which is displayed in the dropdown list in the
 upper right hand corner, can also be updated here.
 
 This command is available in the user interface, the command line and the web API:
 
-* Execution screen:  
-  
+* Execution screen:
+
   .. image:: /user-interface/_images/execution-scenarios.png
      :alt: Execution screen - what-if scenarios
 
@@ -395,10 +395,10 @@ This command is available in the user interface, the command line and the web AP
 
     To copy scenario scenario1 into scenario scenario2:
     frepplectl scenario_copy [--force --promote] scenario1 scenario2
-    
+
     To create scenario1 from a backup file:
     frepplectl scenario_copy --dumpfile=\path_to_my_file\scenario_backup.dump default scenario1
-    
+
     To release scenario scenario1:
     frepplectl scenario_release --database=scenario1
 
@@ -406,13 +406,13 @@ This command is available in the user interface, the command line and the web AP
 
     To copy a scenario (including Production) into another scenario:
     * POST /execute/api/scenario_copy/?copy=1&source=scenario1&destination=scenario2&force=1
-    
+
     To create scenario1 from a backup file:
     * POST /execute/api/scenario_copy/?copy=1&source=default&destination=scenario2&dumpfile=\path_to_my_file\scenario_backup.dump
-    
+
     To release a scenario named scenario1:
     * POST /scenario1/execute/api/scenario_copy/?release=1
-    
+
     To promote a scenario named scenario1 into Production (where "default" is the Production name):
     * POST /execute/api/scenario_copy/?promote=1&source=scenario1&destination=default
 
@@ -423,9 +423,9 @@ Back up database
 
 This task dumps the contents of the current database schema to a backup file.
 The file is created in the log folder configured in the configuration files
-djangosettings.py. It can be downloaded from the browser. 
+djangosettings.py. It can be downloaded from the browser.
 
-For security reasons the command is only available to users listed in the 
+For security reasons the command is only available to users listed in the
 setting SUPPORT_ACCOUNTS. By default this is an empty list.
 
 The command also removes dumps older than a month to limit the disk space usage.
@@ -434,7 +434,7 @@ to a different location.
 
 This command is available in the user interface, the command line and the web API:
 
-* Execution screen:  
+* Execution screen:
 
   .. image:: /user-interface/_images/execution-backup.png
      :alt: Execution screen - backup
@@ -444,13 +444,13 @@ This command is available in the user interface, the command line and the web AP
     frepplectl backup
 
 * Web API::
-  
+
     Create a backup:
     POST /execute/api/backup/
-    
+
     Download the backup file:
     GET /execute/logdownload/<task identifier>/
-   
+
 .. _empty:
 
 Empty the database
@@ -476,7 +476,7 @@ This command is available in the user interface, the command line and the web AP
 
 Administrator commands
 ~~~~~~~~~~~~~~~~~~~~~~
-     
+
 .. _loaddata:
 
 Load a dataset in the database
@@ -506,7 +506,7 @@ This command is available in the user interface, the command line and the web AP
 * Web API::
 
     POST /execute/api/loaddata/?fixture=manufacturing_demo
-    
+
 .. _createbuckets:
 
 Generate time buckets
@@ -527,37 +527,37 @@ The following arguments are used:
 * Week start: Defines the first date of a week.
 
 * | Day name, week name, month name, quarter name, year name:
-  | Template used to generate a name for the buckets.  
-  
+  | Template used to generate a name for the buckets.
+
   Any character can be used in the names and the following format codes can be used:
-  
+
   - %a: Weekday as locale's abbreviated name. Eg: Sun, Mon, ...
-  
+
   - %A: Weekday as locale's full name. Eg: Sunday, Monday, ...
-  
+
   - %w: Weekday as a decimal number, where 0 is Sunday and 6 is Saturday.
-  
+
   - %d: Day of the month as a zero-padded decimal number. Eg: 01, 02, ..., 31
-  
+
   - %b: Month as locale's abbreviated name. Eg: Jan, Feb, ...
-  
+
   - %B: Month as locale's full name. Eg: January, February, ...
-  
-  - %m: Month as a zero-padded decimal number. Eg: 01, 02, ..., 12   
+
+  - %m: Month as a zero-padded decimal number. Eg: 01, 02, ..., 12
 
   - %q: Quarter as a decimal number. Eg: 1, 2, 3, 4
 
   - %y: Year without century as a zero-padded decimal number. Eg: 00, 01, ..., 99
-     
+
   - %Y: Year with century as a decimal number. Eg: 2018, 2019, ...
-  
+
   - %j: Day of the year as a zero-padded decimal number. Eg: 001, 002, ..., 366
-     
+
   - %U: Week number of the year as a zero padded decimal number. Eg: 00, 01, ...
 
   - %W: Week number of the year as a decimal number. Eg: 0, 1, ...
 
-  - %%: A literal '%' character.  
+  - %%: A literal '%' character.
 
 This command is available in the user interface, the command line and the web API:
 
@@ -565,15 +565,15 @@ This command is available in the user interface, the command line and the web AP
 
   .. image:: /user-interface/_images/execution-buckets.png
      :alt: Execution screen - generate time buckets
-   
+
 * Command line::
 
     frepplectl createbuckets --start=2012-01-01 --end=2020-01-01 --weekstart=1
 
 * Web API::
-   
+
     POST /execute/api/createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
-    
+
 
 .. _createdatabase:
 
@@ -582,7 +582,7 @@ Create the PostgreSQL database(s)
 
 This command will create the PostgreSQl databases for frePPLe.
 
-If the database already exists you will be prompted to confirm whether you 
+If the database already exists you will be prompted to confirm whether you
 really to loose all data in the existing database. When confirmed that database
 will dropped and recreated.
 
@@ -592,8 +592,8 @@ This command is available on the command line only:
 
     # Create all scenario databases
     frepplectl createdatabase
-    
-    # Recreate only a single database 
+
+    # Recreate only a single database
     frepplectl createdatabase --database=scenario3
 
 .. _migrate:
@@ -613,8 +613,8 @@ This command is available on the command line only:
     # Migrate a specific scenario database
     frepplectl migrate --database=default
     frepplectl migrate --database=scenario1
-    
-.. _restore: 
+
+.. _restore:
 
 Restore a database backup
 -------------------------
@@ -622,13 +622,13 @@ Restore a database backup
 This command is available on the command line only.
 
 However, the scenario management command provides a comparable functionality
-whereby a user can restore a backup in a specific scenario database. 
+whereby a user can restore a backup in a specific scenario database.
 
 ::
 
     frepplectl restore database_dump_file
 
-.. _createsuperuser: 
+.. _createsuperuser:
 
 Create a new superuser
 ----------------------
@@ -640,13 +640,13 @@ This action is possible in the user interface and the command line:
 * User interface:
 
   See :doc:`/user-interface/getting-around/user-permissions-and-roles`
-   
+
 * Command line::
 
     frepplectl createsuperuser new_user_name
 
 
-.. _changepassword: 
+.. _changepassword:
 
 Change a user's password
 ------------------------
@@ -657,21 +657,21 @@ This action is possible in the user interface and the command line:
 
 * User interface:
 
-  See :doc:`/user-interface/getting-around/changing-password` and 
+  See :doc:`/user-interface/getting-around/changing-password` and
   :doc:`/user-interface/getting-around/user-permissions-and-roles`.
-   
+
 * Command line::
 
     frepplectl changepassword user_name
 
 
-.. _flush: 
+.. _flush:
 
 Remove all database objects
 ---------------------------
 
 This command completely empties all tables in the database, including all log, users,
-user preferences, permissions, etc... 
+user preferences, permissions, etc...
 
 A complete reset of the database is not very common. In most situations the command
 described above to empty the database is sufficient. It empties the data tables,
@@ -684,7 +684,7 @@ This command is available on the command line only:
     frepplectl flush
 
 
-.. _generatetoken: 
+.. _generatetoken:
 
 Generate an API token
 ---------------------
@@ -704,7 +704,7 @@ Developer commands
 .. _dbshell:
 
 Database shell prompt
---------------------- 
+---------------------
 
 This command runs an interactive SQL session on the PostgreSQL database.
 
@@ -725,7 +725,7 @@ This command runs an interactive Python interpreter session.
     frepplectl shell
 
 
-.. _dumpdata:  
+.. _dumpdata:
 
 Dump a frozen dataset
 ---------------------
@@ -739,7 +739,7 @@ contains unnecessary data.
 
 ::
 
-    frepplectl dumpdata --database=scenario1 
+    frepplectl dumpdata --database=scenario1
 
 
 .. _test:
@@ -793,12 +793,12 @@ average load, the average lead times, the number of demands.
 The command thus allows to quickly generate a sample model, and to verify its
 scalability with varying size and complexity.
 
-This command is intended for academic and research purposes. The script can 
+This command is intended for academic and research purposes. The script can
 easily be updated to create sample models in the structure you wish.
 
 ::
 
-    frepplectl createmodel --level=3 --cluster=100 --demand=10 
+    frepplectl createmodel --level=3 --cluster=100 --demand=10
 
 
 .. _forecast_simulation:
@@ -812,9 +812,9 @@ This is achieved by turning back the clock a number of buckets ago. We compute
 the forecast with the demand history we would have had available at that time.
 Comparing the actual sales and the forecasted sales in that period allows us
 to measure the forecast accuracy. This calculation is then repeated for each
-bucket to follow. 
+bucket to follow.
 
-This command is intended for academic and research purposes. The script can 
+This command is intended for academic and research purposes. The script can
 easily be updated to perform more advanced forecast accuracy studies.
 
 ::
@@ -848,7 +848,7 @@ steps in each period:
      from your suppliers.
 9. | Finish production from manufacturing orders
    | Custom code can be added here to simulate production delays, machine breakdowns,
-     rework and other production disturbances. 
+     rework and other production disturbances.
 10. | Receive material from distribution orders
     | Custom code can be added here to simulate late or early deliveries between
       locations in the warehouse.
@@ -864,4 +864,3 @@ and collect the performance metrics that are relevant.
 ::
 
     frepplectl simulation
-  

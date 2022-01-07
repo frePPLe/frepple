@@ -29,6 +29,9 @@ Release notes
 
 .. rubric:: User interface
 
+- | Allow upload of excel files with .xlsm extension.
+  | We don't run the macros in them, but process only the data cells.
+
 - | Reviewed Brazilian-Portugese translations. Many thanks to Neerosh!
 
 6.19.0 (2021/12/1)

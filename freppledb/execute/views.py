@@ -678,7 +678,16 @@ class FileManager:
     - 1: export subdirectory of the file upload folder
     """
 
-    all_extensions = (".xlsx", ".csv", ".csv.gz", ".cpy", ".cpy.gz", ".sql", ".sql.gz")
+    all_extensions = (
+        ".xlsx",
+        ".xlsm",
+        ".csv",
+        ".csv.gz",
+        ".cpy",
+        ".cpy.gz",
+        ".sql",
+        ".sql.gz",
+    )
 
     @staticmethod
     def getFolderInfo(request, foldercode):

@@ -73,7 +73,7 @@ class execute_with_commands(TransactionTestCase):
         # across different version and platforms, we can only do a rough
         # check on the output.
         management.call_command("runplan", plantype=1, constraint=15, env="supply")
-        self.assertTrue(output.models.Problem.objects.count() > 12)
+        self.assertTrue(output.models.Problem.objects.count() >= 12)
         self.assertTrue(input.models.OperationPlanMaterial.objects.count() > 400)
         self.assertTrue(input.models.OperationPlanResource.objects.count() > 20)
         self.assertTrue(input.models.OperationPlan.objects.count() > 300)

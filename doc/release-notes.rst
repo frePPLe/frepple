@@ -23,16 +23,20 @@ Release notes
   | The threshold is configurable with the new setting "SESSION_LOGOUT_IDLE_TIME" (defaults
     to 1 hour, and can be set to None to disable this feature).
 
-.. rubric:: Odoo integration
-
-- | V14: Implemented synchronization of work center availability calendars.
-
 .. rubric:: User interface
 
 - | Allow upload of excel files with .xlsm extension.
   | We don't run the macros in them, but process only the data cells.
 
 - | Reviewed Brazilian-Portugese translations. Many thanks to Neerosh!
+
+.. rubric:: Integration
+
+- | The REST API can now also retrieve and update custom attributes.
+
+.. rubric:: Odoo integration
+
+- | V14: Implemented synchronization of work center availability calendars.
 
 6.19.0 (2021/12/1)
 ==================

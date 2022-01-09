@@ -153,6 +153,15 @@ void CommandManager::rollback() {
   lastBookmark = &firstBookmark;
 }
 
+bool CommandManager::empty() const {
+  if (firstBookmark.active && !firstBookmark.empty()) return false;
+  for (auto bkmrk = firstBookmark.nextBookmark; bkmrk;
+       bkmrk = bkmrk->nextBookmark) {
+    if (!bkmrk->empty()) return false;
+  }
+  return true;
+}
+
 //
 // COMMAND SETPROPERTY
 //

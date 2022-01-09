@@ -4617,6 +4617,8 @@ class CommandManager {
 
   /* Rolling back all commands. */
   void rollback();
+
+  bool empty() const;
 };
 
 //

@@ -6001,7 +6001,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
   /* Default constructor. */
   explicit SetupMatrix()
       : ChangeOverNotAllowed(this, PooledString("NotAllowed"),
-                             PooledString("NotAllowed"), 365L * 86400L, DBL_MAX,
+                             PooledString("NotAllowed"), 7L * 86400L, DBL_MAX,
                              INT_MAX) {}
 
   /* Destructor. */

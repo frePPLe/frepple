@@ -20,6 +20,12 @@ Release notes
 - | Uniqueness of Item suppliers records has been updated. Only one record is now allowed
     with an empty location for an item/supplier/effective start date combination can be created.
 
+- | Special case for setup matrices
+  | In the corner case where no setup rule matches a changeover, we used a changeover
+    time of 1 year. This default changeover time now becomes 7 days.
+  | A small mistake in the matrix no longer messes up your entire plan.
+  | It is a best practice to explicitly use a final catch-all setup rule
+    (i.e. from .* to .*) in each matrix to avoid running in this corner case altogether.
 
 .. rubric:: Security
 

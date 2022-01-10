@@ -17,6 +17,10 @@ Release notes
     in the inventory report, and/or d) using the "period of cover" field on
     manufacturing orders, purchase orders and distribution orders.
 
+- | Uniqueness of Item suppliers records has been updated. Only one record is now allowed
+    with an empty location for an item/supplier/effective start date combination can be created.
+
+
 .. rubric:: Security
 
 - | The application will automatically log users out after a period of inactivity.

@@ -21,7 +21,9 @@ from decimal import Decimal
 from dateutil.parser import parse
 
 from django.core.cache import cache
+from django.core.exceptions import ValidationError
 from django.db import models, DEFAULT_DB_ALIAS
+from django.db.models import Q, UniqueConstraint
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django import forms
@@ -1388,10 +1390,32 @@ class ItemSupplier(AuditModel):
             self.effective_start or datetime(1971, 1, 1),
         )
 
-    def validate_unique(self, exclude=None):
+    def validate_unique(self, *args, **kwargs):
         if self.effective_start is None:
             self.effective_start = datetime(1971, 1, 1)
-        super().validate_unique(exclude=exclude)
+        if self.location is None:
+            if (
+                ItemSupplier.objects.filter(item=self.item)
+                .filter(location__isnull=True)
+                .filter(supplier=self.supplier)
+                .filter(effective_start=self.effective_start)
+                .exists()
+            ):
+                raise ValidationError(
+                    "item, supplier and effective start date already exist"
+                )
+        else:
+            if (
+                ItemSupplier.objects.filter(item=self.item)
+                .filter(location=self.location)
+                .filter(supplier=self.supplier)
+                .filter(effective_start=self.effective_start)
+                .exists()
+            ):
+                raise ValidationError(
+                    "item, location, supplier and effective start date already exist"
+                )
+        super().validate_unique(*args, **kwargs)
 
     objects = Manager()
 
@@ -1404,7 +1428,16 @@ class ItemSupplier(AuditModel):
 
     class Meta(AuditModel.Meta):
         db_table = "itemsupplier"
-        unique_together = (("item", "location", "supplier", "effective_start"),)
+        UniqueConstraint(
+            fields=["item", "location", "supplier", "effective_start"],
+            name="itemsupplier_partial1",
+            condition=Q(location__isnull=False),
+        ),
+        UniqueConstraint(
+            fields=["item", "supplier", "effective_start"],
+            name="itemsupplier_partial2",
+            condition=Q(location__isnull=True),
+        ),
         verbose_name = _("item supplier")
         verbose_name_plural = _("item suppliers")
 

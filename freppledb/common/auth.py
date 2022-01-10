@@ -242,4 +242,4 @@ def getWebserviceAuthorization(database=DEFAULT_DB_ALIAS, secret=None, **kwargs)
         payload,
         secret,
         algorithm="HS256",
-    ).decode("ascii")
+    )

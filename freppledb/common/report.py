@@ -2393,7 +2393,9 @@ class GridReport(View):
                                 yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
                                     cls.model._meta.verbose_name,
                                     error[1] if error[1] else "",
-                                    "%s%s" % (rowprefix, error[2]) if error[2] else "",
+                                    "%s%s" % (rowprefix, error[2] or "")
+                                    if rowprefix or error[2]
+                                    else "",
                                     error[3] if error[3] else "",
                                     capfirst(_("error")),
                                     error[4],
@@ -2403,7 +2405,9 @@ class GridReport(View):
                                 yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
                                     cls.model._meta.verbose_name,
                                     error[1] if error[1] else "",
-                                    "%s%s" % (rowprefix, error[2]) if error[2] else "",
+                                    "%s%s" % (rowprefix, error[2] or "")
+                                    if rowprefix or error[2]
+                                    else "",
                                     error[3] if error[3] else "",
                                     capfirst(_("warning")),
                                     error[4],
@@ -2414,7 +2418,9 @@ class GridReport(View):
                                     "danger" if numerrors > 0 else "success",
                                     cls.model._meta.verbose_name,
                                     error[1] if error[1] else "",
-                                    "%s%s" % (rowprefix, error[2]) if error[2] else "",
+                                    "%s%s" % (rowprefix, error[2] or "")
+                                    if rowprefix or error[2]
+                                    else "",
                                     error[3] if error[3] else "",
                                     error[4],
                                 )

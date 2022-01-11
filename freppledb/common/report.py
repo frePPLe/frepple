@@ -2364,6 +2364,9 @@ class GridReport(View):
                     for ws_name in wb.sheetnames:
                         rowprefix = "" if numsheets == 1 else "%s " % ws_name
                         ws = wb[ws_name]
+                        if not ws.sheet_state == "visible":
+                            # Skip hidden sheets
+                            continue
                         for error in parseExcelWorksheet(
                             cls.model,
                             ws,

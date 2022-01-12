@@ -1733,6 +1733,7 @@ class OperationPlanDetail(View):
                         # List matching alternates
                         if m["item_id"] in alts:
                             flowplan["alternates"] = list(alts[m["item_id"]])
+                            flowplan["alternates"].sort()
                         res["flowplans"].append(flowplan)
 
                 # Information on resources
@@ -1786,9 +1787,10 @@ class OperationPlanDetail(View):
                         # List matching alternates
                         for a in alts.values():
                             if m["resource_id"] in a:
-                                t = [{"name": i} for i in a if i != m["resource_id"]]
+                                t = [i for i in a if i != m["resource_id"]]
                                 if t:
-                                    ldplan["alternates"] = t
+                                    t.sort()
+                                    ldplan["alternates"] = [{"name": i} for i in t]
                                 break
                         res["loadplans"].append(ldplan)
 

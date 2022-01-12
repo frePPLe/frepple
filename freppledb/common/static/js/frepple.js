@@ -1347,11 +1347,53 @@ var grid = {
 
       // csvtable and spreadsheet table are converted into csvlist
       // Maintaining a table view with buckets as columns won't work with Excel after a bucket shift
-      url += "format=" +
-        (only_list ? "csv" : "csvlist");
+      url += "format=spreadsheetlist";
 
-      // retrieve all columns from the view
-      url += "&allcolumns=true";
+      // retrieve visible columns from the view
+      url += "&selected_rows=";
+      var colModel = $("#grid").jqGrid('getGridParam', 'colModel');
+      var firstLoop = true;
+      var pivot = false;
+      for (var i in colModel) {
+        if (colModel[i].name == 'columns' || colModel[i].name == 'graph')
+          pivot = true;
+        if (colModel[i].name != "rn"
+          && colModel[i].name != "cb"
+          && "counter" in colModel[i]
+          && !('alwayshidden' in colModel[i])
+          && !colModel[i].hidden) {
+          if (firstLoop)
+            firstLoop = false;
+          else
+            url += ",";
+          url += colModel[i].name;
+        }
+      }
+
+      var tmp = $('#grid').getGridParam("postData");
+      var filter = tmp ? tmp.filters : initialfilter;
+      if (typeof filter !== 'undefined' && filter.rules != [])
+        url += "&filters=" + filter;
+
+      var sidx = $('#grid').getGridParam('sortname');
+      if (sidx !== '') {
+        // Report is sorted
+        url += "&sidx=" + sidx;
+        url += "&sord=" + $('#grid').getGridParam('sortorder');
+      }
+
+      if (pivot) {
+        var firstLoop = true;
+        for (var i in cross_idx) {
+          if (firstLoop) {
+            url += "&selected_crosses=";
+            firstLoop = false;
+          }
+          else
+            url += ",";
+          url += cross[cross_idx[i]].key;
+        }
+      }
 
       if (scenario_permissions.length > 1) {
         var firstTime = true;

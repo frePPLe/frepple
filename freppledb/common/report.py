@@ -977,25 +977,33 @@ class GridReport(View):
             wb.add_named_style(style)
 
         # Choose fields to export and write the title row
-        if not hasattr(request, "prefs"):
-            request.prefs = request.user.getPreference(
-                cls.getKey(request, *args, **kwargs), database=request.database
-            )
-        if request.prefs and request.prefs.get("rows", None):
-            # Customized settings
-            fields = [
-                request.rows[f[0]]
-                for f in cls._validate_rows(request, request.prefs["rows"])
-                if not f[1] and not request.rows[f[0]].hidden
-            ]
-        else:
-            # Default settings
-            fields = [
-                i
-                for i in request.rows
-                if i.field_name and not i.hidden and not i.initially_hidden
-            ]
 
+        # selected_rows comes from datasource url
+        # rows can only be exported in English
+        rows = request.GET.get("selected_rows", None)
+        if rows:
+            rows = rows.split(",")
+            fields = [f for f in request.rows if f.name in rows]
+            fields.sort(key=lambda x: rows.index(x.name))
+        else:
+            if not hasattr(request, "prefs"):
+                request.prefs = request.user.getPreference(
+                    cls.getKey(request, *args, **kwargs), database=request.database
+                )
+            if request.prefs and request.prefs.get("rows", None):
+                # Customized settings
+                fields = [
+                    request.rows[f[0]]
+                    for f in cls._validate_rows(request, request.prefs["rows"])
+                    if not f[1] and not request.rows[f[0]].hidden
+                ]
+            else:
+                # Default settings
+                fields = [
+                    i
+                    for i in request.rows
+                    if i.field_name and not i.hidden and not i.initially_hidden
+                ]
         # Write a formatted header row
         header = []
         comment = None
@@ -3421,7 +3429,12 @@ class GridPivot(GridReport):
             request.prefs = request.user.getPreference(
                 cls.getKey(request, *args, **kwargs), database=request.database
             )
-        if request.prefs and "rows" in request.prefs:
+        rows = request.GET.get("selected_rows", None)
+        if rows:
+            rows = rows.split(",")
+            myrows = [f for f in request.rows if f.name in rows]
+            myrows.sort(key=lambda x: rows.index(x.name))
+        elif request.prefs and "rows" in request.prefs:
             myrows = [
                 request.rows[f[0]]
                 for f in cls._validate_rows(request, request.prefs["rows"])
@@ -3433,7 +3446,12 @@ class GridPivot(GridReport):
                 for f in request.rows
                 if f.name and not f.initially_hidden and not f.hidden
             ]
-        if request.prefs and "crosses" in request.prefs:
+        crosses = request.GET.get("selected_crosses", None)
+        if crosses:
+            crosses = crosses.split(",")
+            mycrosses = [f for f in request.crosses if f[0] in crosses]
+            mycrosses.sort(key=lambda x: crosses.index(x[0]))
+        elif request.prefs and "crosses" in request.prefs:
             mycrosses = [
                 request.crosses[f]
                 for f in cls._validate_crosses(request, request.prefs["crosses"])

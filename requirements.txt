@@ -5,7 +5,7 @@ djangorestframework-bulk == 0.2.1
 djangorestframework-filters
 django-admin-bootstrapped
 django-bootstrap3 == 11.1.0
-django-filter == 2.1.0
+django-filter == 2.4.0
 html5lib == 1.0.1
 jdcal == 1.4.1
 Markdown == 3.1.1

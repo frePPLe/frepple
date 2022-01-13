@@ -48,6 +48,11 @@ Release notes
 
 - | V14: Implemented synchronization of work center availability calendars.
 
+.. rubric:: Supported operating systems
+
+- | Adding Ubuntu 20 as supported operating system.
+  | From v7.0.0 ubuntu 20 will replace ubuntu 18 as the preferred operation system.
+
 6.19.0 (2021/12/1)
 ==================
 

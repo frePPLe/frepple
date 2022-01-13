@@ -1,4 +1,4 @@
-name: Build Community
+name: Build Community with ubuntu-20
 
 on:
   push:

@@ -217,7 +217,12 @@ class MultiDBMiddleware:
             request.user = auth.get_user(request)
 
         # Log out automatically after inactivity
-        if not request.user.is_anonymous and settings.SESSION_LOGOUT_IDLE_TIME:
+        if (
+            not request.user.is_anonymous
+            and settings.SESSION_LOGOUT_IDLE_TIME
+            and "freppledb.common.middleware.AutoLoginAsAdminUser"
+            not in settings.MIDDLEWARE
+        ):
             now = datetime.now()
             if "last_request" in request.session:
                 idle_time = now - datetime.strptime(

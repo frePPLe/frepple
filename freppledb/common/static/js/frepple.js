@@ -1375,6 +1375,8 @@ var grid = {
       if (typeof filter !== 'undefined' && filter.rules != [])
         url += "&filters=" + filter;
 
+      url += "&language=" + document.documentElement.lang;
+
       var sidx = $('#grid').getGridParam('sortname');
       if (sidx !== '') {
         // Report is sorted

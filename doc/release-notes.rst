@@ -51,6 +51,12 @@ support both Ubuntu 18 as well as Ubuntu 20.
 
 .. rubric:: User interface
 
+- | The popular `data source url <user-interface/getting-around/exporting-data>`_
+    feature has been enhanced.
+  | The column selection, filtering, sorting and language of the web page are now
+    all included in the URL. What you extract in your excel sheet will match what
+    you have on the screen.
+
 - | Allow upload of excel files with .xlsm extension.
   | We don't run the macros in them, but process only the data cells.
 
@@ -108,7 +114,7 @@ support both Ubuntu 18 as well as Ubuntu 20.
 
 .. rubric:: System administration
 
-- | A new command `generatetoken <command-reference.html#generatetoken>` is added
+- | A new command `generatetoken <command-reference.html#generatetoken>`_ is added
     to generate JWT authentication tokens. Such tokens are a more secure way to
     authenticate automated API calls to the application.
 

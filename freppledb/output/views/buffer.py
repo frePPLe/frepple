@@ -1229,7 +1229,7 @@ class OverviewReport(GridPivot):
                         )
 
                     # Add attribute fields
-                    idx = 23
+                    idx = 24
                     for f in itemattributefields:
                         res[f.field_name] = row[idx]
                         idx += 1

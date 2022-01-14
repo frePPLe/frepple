@@ -17,20 +17,13 @@
 from django.db import migrations, connections
 
 
-class Migration(migrations.Migration):
-
-    dependencies = [
-        ("input", "0060_remove_like_indexes"),
-    ]
-
-    @staticmethod
-    def dropExistingIndex(apps, schema_editor):
-        db = schema_editor.connection.alias
-        output = []
-        with connections[db].cursor() as cursor:
-            cursor.execute(
-                """
-                select
+def dropExistingIndex(apps, schema_editor):
+    db = schema_editor.connection.alias
+    output = []
+    with connections[db].cursor() as cursor:
+        cursor.execute(
+            """
+            select
                 i.relname as index_name
             from
                 pg_class t,
@@ -97,13 +90,18 @@ class Migration(migrations.Migration):
                 and t.relname like 'itemsupplier'
                 and a.attname = 'effective_start'
                 and ix.indisunique
-                """
-            )
-            for i in cursor:
-                output.append(i[0])
-            cursor.execute(
-                "alter table itemsupplier drop constraint %s" % ",".join(output)
-            )
+            """
+        )
+        for i in cursor:
+            output.append(i[0])
+        cursor.execute("alter table itemsupplier drop constraint %s" % ",".join(output))
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ("input", "0060_remove_like_indexes"),
+    ]
 
     operations = [
         migrations.RunPython(dropExistingIndex),

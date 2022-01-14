@@ -37,6 +37,7 @@ from django.http.response import (
     HttpResponseRedirect,
 )
 from django.utils import translation, timezone
+from django.utils.translation import get_supported_language_variant
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.auth import MultiDBBackend
@@ -139,7 +140,13 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
             request.theme = settings.DEFAULT_THEME
             request.pagesize = settings.DEFAULT_PAGESIZE
         else:
-            language = request.user.language
+            if "language" in request.GET:
+                try:
+                    language = get_supported_language_variant(request.GET["language"])
+                except Exception:
+                    language = request.user.language
+            else:
+                language = request.user.language
             request.theme = request.user.theme or settings.DEFAULT_THEME
             request.pagesize = request.user.pagesize or settings.DEFAULT_PAGESIZE
         if language == "auto":

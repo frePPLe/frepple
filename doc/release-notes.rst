@@ -1,6 +1,22 @@
 Release notes
 -------------
 
+Moving towards 7.0.0
+====================
+
+While we continue the more-or-less monthly release cycle on v6, v7 is gradually
+appearing on the radar.
+
+The main target is to refresh the component stack:
+- The preferred linux distribution will move from Ubuntu 18 LTS to Ubuntu 20 LTS.
+- Minimum Python version will move from 3.6 to 3.8.
+- Minimum PostgreSQL version will move from 9.5 to 12.
+- Django version will move from 2.2 LTS to 3.2 LTS.
+- The required Python and Javascript third party components will be upgraded as well.
+
+These changes will be made gradual over a couple of releases. For instance, 6.20.0 will
+support both Ubuntu 18 as well as Ubuntu 20.
+
 6.20.0 (Upcoming release)
 =========================
 

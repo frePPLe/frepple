@@ -19,7 +19,6 @@ from datetime import timedelta, datetime, date
 import json
 import logging
 import os
-from time import time
 from psycopg2.extras import execute_batch
 
 from django.db import connections, DEFAULT_DB_ALIAS, transaction

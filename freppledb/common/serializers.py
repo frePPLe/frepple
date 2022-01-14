@@ -19,7 +19,6 @@ from rest_framework_bulk.serializers import BulkListSerializer, BulkSerializerMi
 
 from freppledb.common.api.serializers import (
     ModelSerializer,
-    getAttributeAPIFilterDefinition,
     getAttributeAPIFields,
     getAttributeAPIReadOnlyFields,
 )

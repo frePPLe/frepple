@@ -515,10 +515,7 @@ class User(AbstractUser):
                                 )
                                 self.groups.add(grp.id)
                     except Exception as e:
-                        logger.warning(
-                            "Can't save user '%s' in scenario '%s': %s"
-                            % (self.username, db, e)
-                        )
+                        logger.warning("Can't save user in scenario '%s': %s" % (db, e))
 
         # Continue with the regular save, as if nothing happened.
         self.is_active = tmp_is_active
@@ -571,7 +568,7 @@ class User(AbstractUser):
                     result = p.value
             return result if result else default
         except ValueError:
-            logger.error("Invalid preference '%s' of user '%s'" % (prop, self.username))
+            logger.error("Invalid preference '%s'" % prop)
             return default
         except Exception:
             return default

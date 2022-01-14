@@ -20,7 +20,6 @@ import base64
 import jwt
 import re
 import threading
-from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib import auth, messages

@@ -23,6 +23,7 @@ class Migration(migrations.Migration):
         ("input", "0060_remove_like_indexes"),
     ]
 
+    @staticmethod
     def dropExistingIndex(apps, schema_editor):
         db = schema_editor.connection.alias
         output = []
@@ -112,6 +113,6 @@ class Migration(migrations.Migration):
             (item_id, location_id, supplier_id, effective_start) where location_id is not null;
             create unique index on itemsupplier
             (item_id, supplier_id, effective_start) where location_id is null;
-        """
+            """
         ),
     ]

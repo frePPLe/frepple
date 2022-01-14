@@ -586,7 +586,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
       dirty.push({ delete: $scope.deleted });
       $scope.deleted = [];
     }
-    if (dirty) $scope.operationplan = undefined;
+    if (dirty != []) $scope.operationplan = undefined;
     return dirty;
   }
   $scope.getDirtyCards = getDirtyCards;

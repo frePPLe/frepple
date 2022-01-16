@@ -798,6 +798,11 @@ void SolverPropagateStatus::solve(void* v) {
     lvl += 1;
     if (!operationsfound) break;
   }
+  for (auto& buf : Buffer::all()) {
+    auto oh = buf.getOnHand(Date::infinitePast, Date::infiniteFuture);
+    if (oh < 0.0 && oh > -ROUNDING_ERROR * 100)
+      buf.setOnHand(buf.getOnHand() - oh);
+  }
 }
 
 }  // namespace frepple

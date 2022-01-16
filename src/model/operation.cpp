@@ -2022,7 +2022,7 @@ double Operation::setOperationPlanQuantity(OperationPlan* oplan, double f,
       if (upd) oplan->update();
     }
     return f;
-  } else if (fabs(f - oplan->quantity) < ROUNDING_ERROR) {
+  } else if (fabs(f - oplan->quantity) < ROUNDING_ERROR / 100) {
     // No real change
     if (!execute) return oplan->quantity;
   } else {

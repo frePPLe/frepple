@@ -8,7 +8,7 @@
   #content-main th {
     line-height: 2em;
   }
-  
+
   #content-main .control-label {
     white-space: nowrap;
   }
@@ -47,6 +47,7 @@
     <div  style="max-width: 500px" class="alert alert-danger">{{ form.non_field_errors }}</div>
     {% endif %}
 
+    {% if request.user.languageList|length > 2 %}
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-xs-3" style="max-width:150px; text-align: right">
         <label class="control-label" for="id_language">{% trans 'language'|capfirst%}:</label>
@@ -65,6 +66,7 @@
         </div>
       </div>
     </div>
+    {% endif %}
 
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-xs-3" style="max-width:150px; text-align: right">
@@ -76,6 +78,7 @@
       </div>
     </div>
 
+    {% if THEMES|length > 1 %}
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-xs-3" style="max-width:150px; text-align: right">
         <label class="control-label" for="id_theme">{% trans 'theme'|capfirst%}:</label>
@@ -94,7 +97,8 @@
         </div>
       </div>
     </div>
-    
+    {% endif %}
+
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-xs-3" style="max-width:150px; text-align: right">
         <label class="control-label" for="id_avatar">{% trans 'avatar'|capfirst%}:</label>

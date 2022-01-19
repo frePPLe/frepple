@@ -66,6 +66,9 @@ support both Ubuntu 18 as well as Ubuntu 20.
 
 - | The REST API can now also retrieve and update custom attributes.
 
+- | The parameters to upload plan result files to a ftp/sftp/ftps folder
+    can be defined per scenario.
+
 .. rubric:: Odoo integration
 
 - | V14: Implemented synchronization of work center availability calendars.

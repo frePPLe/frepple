@@ -104,29 +104,91 @@ class Command(BaseCommand):
             task.processid = os.getpid()
             task.save(using=database)
 
-            if not settings.FTP_PROTOCOL:
+            ftp_protocol = (
+                settings.FTP_PROTOCOL[database]
+                if isinstance(settings.FTP_PROTOCOL, dict)
+                and database in settings.FTP_PROTOCOL
+                else (
+                    None
+                    if isinstance(settings.FTP_PROTOCOL, dict)
+                    else settings.FTP_PROTOCOL
+                )
+            )
+
+            ftp_host = (
+                settings.FTP_HOST[database]
+                if isinstance(settings.FTP_HOST, dict) and database in settings.FTP_HOST
+                else (
+                    None if isinstance(settings.FTP_HOST, dict) else settings.FTP_HOST
+                )
+            )
+
+            ftp_port = (
+                settings.FTP_PORT[database]
+                if isinstance(settings.FTP_PORT, dict) and database in settings.FTP_PORT
+                else (
+                    None if isinstance(settings.FTP_PORT, dict) else settings.FTP_PORT
+                )
+            )
+
+            ftp_user = (
+                settings.FTP_USER[database]
+                if isinstance(settings.FTP_USER, dict) and database in settings.FTP_USER
+                else (
+                    None if isinstance(settings.FTP_USER, dict) else settings.FTP_USER
+                )
+            )
+
+            ftp_password = (
+                settings.FTP_PASSWORD[database]
+                if isinstance(settings.FTP_PASSWORD, dict)
+                and database in settings.FTP_PASSWORD
+                else (
+                    None
+                    if isinstance(settings.FTP_PASSWORD, dict)
+                    else settings.FTP_PASSWORD
+                )
+            )
+
+            ftp_folder = (
+                settings.FTP_FOLDER[database]
+                if isinstance(settings.FTP_FOLDER, dict)
+                and database in settings.FTP_FOLDER
+                else (
+                    None
+                    if isinstance(settings.FTP_FOLDER, dict)
+                    else settings.FTP_FOLDER
+                )
+            )
+
+            if not ftp_protocol:
                 raise CommandError(
                     "No protocol is configured in your djangosettings.py file"
                 )
 
-            if not settings.FTP_HOST:
+            if not ftp_host:
                 raise CommandError(
                     "No FTP server is configured in your djangosettings.py file"
                 )
 
-            if not settings.FTP_PORT:
+            if not ftp_port:
                 raise CommandError(
                     "No FTP port is configured in your djangosettings.py file"
                 )
 
-            if not settings.FTP_USER:
+            if not ftp_user:
                 raise CommandError(
                     "No FTP user is configured in your djangosettings.py file"
                 )
 
-            if not settings.FTP_PASSWORD:
+            if not ftp_password:
                 raise CommandError(
                     "No FTP password is configured in your djangosettings.py file"
+                )
+
+            if not ftp_folder:
+                raise CommandError(
+                    "No FTP folder is configured in your djangosettings.py file"
                 )
 
             report = options["report"]
@@ -166,31 +228,29 @@ class Command(BaseCommand):
             task.save(using=database)
 
             # SFTP
-            if settings.FTP_PROTOCOL.strip().upper() == "SFTP":
+            if ftp_protocol.strip().upper() == "SFTP":
                 cinfo = {
-                    "host": settings.FTP_HOST,
-                    "username": settings.FTP_USER,
-                    "password": settings.FTP_PASSWORD,
-                    "port": settings.FTP_PORT,
+                    "host": ftp_host,
+                    "username": ftp_user,
+                    "password": ftp_password,
+                    "port": ftp_port,
                 }
                 conn = pysftp.Connection(**cinfo)
 
-                with conn.cd(settings.FTP_FOLDER):
+                with conn.cd(ftp_folder):
                     for r in correctedReports:
                         conn.put(r[0])
 
                 # Closes the connection
                 conn.close()
 
-            elif settings.FTP_PROTOCOL.strip().upper() in ["FTPS", "FTP"]:
+            elif ftp_protocol.strip().upper() in ["FTPS", "FTP"]:
                 session = (
-                    FTP(settings.FTP_HOST, settings.FTP_USER, settings.FTP_PASSWORD)
-                    if settings.FTP_PROTOCOL.strip().upper() == "FTP"
-                    else FTP_TLS(
-                        settings.FTP_HOST, settings.FTP_USER, settings.FTP_PASSWORD
-                    )
+                    FTP(ftp_host, ftp_user, ftp_password)
+                    if ftp_protocol.strip().upper() == "FTP"
+                    else FTP_TLS(ftp_host, ftp_user, ftp_password)
                 )
-                session.cwd(settings.FTP_FOLDER)
+                session.cwd(ftp_folder)
                 for r in correctedReports:
                     file = open(r[0], "rb")
                     session.storbinary("STOR %s" % (r[1],), file)
@@ -229,13 +289,63 @@ class Command(BaseCommand):
     @staticmethod
     def getHTML(request):
 
+        database = request.database
+        ftp_protocol = (
+            settings.FTP_PROTOCOL[database]
+            if isinstance(settings.FTP_PROTOCOL, dict)
+            and database in settings.FTP_PROTOCOL
+            else (
+                None
+                if isinstance(settings.FTP_PROTOCOL, dict)
+                else settings.FTP_PROTOCOL
+            )
+        )
+
+        ftp_host = (
+            settings.FTP_HOST[database]
+            if isinstance(settings.FTP_HOST, dict) and database in settings.FTP_HOST
+            else (None if isinstance(settings.FTP_HOST, dict) else settings.FTP_HOST)
+        )
+
+        ftp_port = (
+            settings.FTP_PORT[database]
+            if isinstance(settings.FTP_PORT, dict) and database in settings.FTP_PORT
+            else (None if isinstance(settings.FTP_PORT, dict) else settings.FTP_PORT)
+        )
+
+        ftp_user = (
+            settings.FTP_USER[database]
+            if isinstance(settings.FTP_USER, dict) and database in settings.FTP_USER
+            else (None if isinstance(settings.FTP_USER, dict) else settings.FTP_USER)
+        )
+
+        ftp_password = (
+            settings.FTP_PASSWORD[database]
+            if isinstance(settings.FTP_PASSWORD, dict)
+            and database in settings.FTP_PASSWORD
+            else (
+                None
+                if isinstance(settings.FTP_PASSWORD, dict)
+                else settings.FTP_PASSWORD
+            )
+        )
+
+        ftp_folder = (
+            settings.FTP_FOLDER[database]
+            if isinstance(settings.FTP_FOLDER, dict) and database in settings.FTP_FOLDER
+            else (
+                None if isinstance(settings.FTP_FOLDER, dict) else settings.FTP_FOLDER
+            )
+        )
+
         if (
             "FILEUPLOADFOLDER" not in settings.DATABASES[request.database]
-            or not settings.FTP_HOST
-            or not settings.FTP_USER
-            or not settings.FTP_PASSWORD
-            or not settings.FTP_PORT
-            or not settings.FTP_PROTOCOL
+            or not ftp_host
+            or not ftp_user
+            or not ftp_password
+            or not ftp_port
+            or not ftp_protocol
+            or not ftp_folder
             or not request.user.is_superuser
         ):
             return None

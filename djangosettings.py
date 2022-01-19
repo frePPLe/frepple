@@ -517,12 +517,19 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 # Configuration of the ftp/sftp/ftps server where to upload reports
 # Note that for SFTP protocol, the host needs to be defined
 # in the known_hosts file
+# These variables can either be a string if common to all scenarios
+# or a dictionary if they vary per scenario (see FTP_FOLDER EXAMPLE)
 FTP_PROTOCOL = "SFTP"  # supported protocols are SFTP, FTPS and FTP (unsecure)
 FTP_HOST = None
 FTP_PORT = 22
 FTP_USER = None
 FTP_PASSWORD = None
-FTP_FOLDER = None  # folder where the files should be uploaded
+FTP_FOLDER = {
+    "default": None,
+    "scenario1": None,
+    "scenario2": None,
+    "scenario3": None,
+}  # folder where the files should be uploaded on the remote server
 
 # Port number when not using Apache
 PORT = 8000

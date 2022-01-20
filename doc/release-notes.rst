@@ -73,6 +73,11 @@ support both Ubuntu 18 as well as Ubuntu 20.
 
 - | V14: Implemented synchronization of work center availability calendars.
 
+- | V14: Support for the "consumed in operation" field for bill of material components.
+  | In previous releases frepple consumed all bill of material components in the
+    first routing step. With the extra mapping we can now consume some components
+    at other steps.
+
 .. rubric:: Supported operating systems
 
 - | Adding Ubuntu 20 as supported operating system.

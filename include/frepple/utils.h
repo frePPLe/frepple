@@ -5088,6 +5088,11 @@ class PooledString {
   /* Return the length of the string. */
   size_t size() const { return ptr ? ptr->first.size() : 0; }
 
+  /* Returns true if the string starts with the argument. */
+  bool starts_with(const string& s) {
+    return ptr ? (ptr->first.rfind(s, 0) == 0) : false;
+  }
+
   inline const string& getString() const {
     return ptr ? ptr->first : nullstring;
   }

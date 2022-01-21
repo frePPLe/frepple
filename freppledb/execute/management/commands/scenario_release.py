@@ -140,3 +140,12 @@ class Command(BaseCommand):
             if task:
                 task.processid = None
                 task.save(using=database)
+
+    index = 1501
+
+    @staticmethod
+    def getHTML(request):
+        # Returning an empty string will:
+        #  - add the task to the task list dropdown for the task scheduler
+        #  - hide it as a panel in the main task list
+        return ""

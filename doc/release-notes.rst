@@ -17,8 +17,8 @@ The main target is to refresh the component stack:
 These changes will be made gradual over a couple of releases. For instance, 6.20.0 will
 support both Ubuntu 18 as well as Ubuntu 20.
 
-6.20.0 (Upcoming release)
-=========================
+6.20.0 (2022/1/22)
+==================
 
 .. rubric:: Production planning
 

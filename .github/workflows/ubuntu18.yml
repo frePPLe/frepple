@@ -87,6 +87,7 @@ jobs:
           body: |
             **frepple-${{ steps.get_version.outputs.tag }}-doc.tgz**\: Documentation
             **ubuntu18-frepple-${{ steps.get_version.outputs.tag }}.deb**\: Installer for Ubuntu 18.04 LTS
+            **ubuntu20-frepple-${{ steps.get_version.outputs.tag }}.deb**\: Installer for Ubuntu 20.04 LTS
             **docker container**\: Pull ghcr.io/frepple/frepple:${{ steps.get_version.outputs.tag }}
             **Source code**\: Source code in code zip or gzip format
 

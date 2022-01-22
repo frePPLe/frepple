@@ -73,10 +73,19 @@ support both Ubuntu 18 as well as Ubuntu 20.
 
 - | V14: Implemented synchronization of work center availability calendars.
 
+- | v14: The connector now freezes the current date of the plan to the time of the
+    import from odoo.
+
 - | V14: Support for the "consumed in operation" field for bill of material components.
   | In previous releases frepple consumed all bill of material components in the
     first routing step. With the extra mapping we can now consume some components
     at other steps.
+
+- | v14: Changed naming convention for operations in frePPLe. With the odoo id at the end, the
+    new name "item @ location id" is more readable than "id item @ location".
+
+- | v14: Changed naming convention for customers in frePPLe. With the odoo id at the end, the
+    new name "name id" is more readable than "id name".
 
 .. rubric:: Supported operating systems
 

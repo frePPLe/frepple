@@ -14,10 +14,10 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.db import migrations, connections
+from django.db import migrations, connections, models
 
 
-def dropExistingIndex(apps, schema_editor):
+def cleanBadRecords(apps, schema_editor):
     db = schema_editor.connection.alias
     output = []
     with connections[db].cursor() as cursor:
@@ -33,42 +33,9 @@ def dropExistingIndex(apps, schema_editor):
             delete from itemsupplier
             using cte
             where itemsupplier.id = cte.id
-            and cte.rn > 1;
-        """
-        )
-        cursor.execute(
-            """
-            select
-                i.relname as index_name, array_agg(a.attname)
-            from
-                pg_class t,
-                pg_class i,
-                pg_index ix,
-                pg_attribute a
-            where
-                t.oid = ix.indrelid
-                and i.oid = ix.indexrelid
-                and a.attrelid = t.oid
-                and a.attnum = ANY(ix.indkey)
-                and t.relkind = 'r'
-                and t.relname like 'itemsupplier'
-                and ix.indisunique
-            group by i.relname
+            and cte.rn > 1
             """
         )
-        for i in cursor:
-            if (
-                "item_id" in i[1]
-                and "location_id" in i[1]
-                and "supplier_id" in i[1]
-                and "effective_start" in i[1]
-            ):
-
-                output.append(i[0])
-        if len(output) > 0:
-            cursor.execute(
-                "alter table itemsupplier drop constraint %s" % ",".join(output)
-            )
 
 
 class Migration(migrations.Migration):
@@ -78,13 +45,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(dropExistingIndex),
-        migrations.RunSQL(
-            """
-            create unique index on itemsupplier
-            (item_id, location_id, supplier_id, effective_start) where location_id is not null;
-            create unique index on itemsupplier
-            (item_id, supplier_id, effective_start) where location_id is null;
-            """
+        migrations.RunPython(cleanBadRecords),
+        migrations.AddConstraint(
+            model_name="itemsupplier",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(location__isnull=True),
+                fields=("item", "supplier", "effective_start"),
+                name="itemsupplier_partial2",
+            ),
         ),
     ]

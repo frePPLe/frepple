@@ -1250,9 +1250,7 @@ class exportOperationResources(PlanTask):
                     r = [
                         i.operation.name,
                         i.resource.name,
-                        i.effective_start
-                        if i.effective_start != default_start
-                        else None,
+                        i.effective_start,
                         i.effective_end if i.effective_end != default_end else None,
                         round(i.quantity, 8),
                         i.setup,
@@ -1635,9 +1633,7 @@ class exportOperationMaterials(PlanTask):
                     r = [
                         i.operation.name,
                         i.buffer.item.name,
-                        i.effective_start
-                        if i.effective_start != default_start
-                        else None,
+                        i.effective_start,
                         round(i.quantity, 8),
                         i.type[5:],
                         i.effective_end if i.effective_end != default_end else None,
@@ -1764,20 +1760,20 @@ class exportItemSuppliers(PlanTask):
         source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(ItemSupplier)]
 
-        def getData():
+        def getData(null_location):
             for s in frepple.suppliers():
                 if source and source != s.source:
                     continue
                 for i in s.itemsuppliers:
                     if i.hidden or (source and source != i.source):
                         continue
+                    if null_location != (i.location is None):
+                        continue
                     r = [
                         i.item.name,
                         i.location.name if i.location else None,
                         i.supplier.name,
-                        i.effective_start
-                        if i.effective_start != default_start
-                        else None,
+                        i.effective_start,
                         i.leadtime,
                         i.size_minimum,
                         i.size_multiple,
@@ -1826,7 +1822,38 @@ class exportItemSuppliers(PlanTask):
                   %s
                 """
                 % SQL4attributes(attrs),
-                getData(),
+                getData(null_location=False),
+            )
+            execute_batch(
+                cursor,
+                """
+                insert into itemsupplier
+                (item_id,location_id,supplier_id,effective_start,leadtime,sizeminimum,
+                 sizemultiple,sizemaximum,batchwindow,extra_safety_leadtime,fence,cost,priority,effective_end,
+                 resource_id,resource_qty,source,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,
+                %%s * interval '1 second',%%s * interval '1 second',%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                on conflict (item_id, supplier_id, effective_start)
+                   where location_id is null
+                do update set
+                  leadtime=excluded.leadtime,
+                  sizeminimum=excluded.sizeminimum,
+                  sizemultiple=excluded.sizemultiple,
+                  sizemaximum=excluded.sizemaximum,
+                  batchwindow=excluded.batchwindow,
+                  extra_safety_leadtime=excluded.extra_safety_leadtime,
+                  fence=excluded.fence,
+                  cost=excluded.cost,
+                  priority=excluded.priority,
+                  effective_end=excluded.effective_end,
+                  resource_id=excluded.resource_id,
+                  resource_qty=excluded.resource_qty,
+                  source=excluded.source,
+                  lastmodified=excluded.lastmodified
+                  %s
+                """
+                % SQL4attributes(attrs),
+                getData(null_location=True),
             )
 
 
@@ -1858,9 +1885,7 @@ class exportItemDistributions(PlanTask):
                         i.item.name,
                         i.destination.name if i.destination else None,
                         i.origin.name,
-                        i.effective_start
-                        if i.effective_start != default_start
-                        else None,
+                        i.effective_start,
                         i.leadtime,
                         i.size_minimum,
                         i.size_multiple,

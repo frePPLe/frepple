@@ -739,8 +739,11 @@ class FileManager:
                 try:
                     # Validate file name
                     clean_filename = re.split(r"/|:|\\", filename)[-1]
-                    if not extensions or not clean_filename.lower().endswith(
-                        extensions
+                    cleanpath = os.path.normpath(os.path.join(folder, clean_filename))
+                    if (
+                        not cleanpath.startswith(folder)
+                        or not extensions
+                        or not clean_filename.lower().endswith(extensions)
                     ):
                         logger.error(
                             "Failed file upload: incorrect file name '%s'" % filename
@@ -757,7 +760,7 @@ class FileManager:
                         continue
 
                     # Write to a file
-                    with open(os.path.join(folder, clean_filename), "wb") as thetarget:
+                    with open(cleanpath, "wb") as thetarget:
                         for chunk in content.chunks():
                             thetarget.write(chunk)
 
@@ -815,7 +818,9 @@ class FileManager:
 
         for clean_filename in filelist:
             try:
-                os.remove(os.path.join(folder, clean_filename))
+                cleanpath = os.path.normpath(os.path.join(folder, clean_filename))
+                if cleanpath.startswith(folder):
+                    os.remove(cleanpath)
             except FileNotFoundError:
                 logger.error("Failed file deletion: file does not exist")
             except Exception as e:
@@ -844,13 +849,17 @@ class FileManager:
         if filename:
             # Download a single file
             try:
-                clean_filename = filename.split("/")[0]
-                if not os.path.isfile(os.path.join(folder, clean_filename)):
-                    if os.path.isfile(os.path.join(folder, "%s.gz" % clean_filename)):
+                clean_filename = re.split(r"/|:|\\", filename)[0]
+                cleanpath = os.path.normpath(os.path.join(folder, clean_filename))
+                if not cleanpath.startswith(folder):
+                    logger.warning("Failed file download: %s" % filename)
+                    return HttpResponseNotFound(force_text(_("Error")))
+                if not os.path.isfile(cleanpath):
+                    if os.path.isfile("%s.gz" % cleanpath):
                         # File exists in compressed format
                         clean_filename = "%s.gz" % clean_filename
                     else:
-                        logger.error("Failed file download: %s" % e)
+                        logger.warning("Failed file download: %s" % filename)
                         return HttpResponseNotFound(force_text(_("Error")))
                 return sendStaticFile(
                     request,

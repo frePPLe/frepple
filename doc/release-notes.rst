@@ -8,6 +8,7 @@ While we continue the more-or-less monthly release cycle on v6, v7 is gradually
 appearing on the radar.
 
 The main target is to refresh the component stack:
+
 - The preferred linux distribution will move from Ubuntu 18 LTS to Ubuntu 20 LTS.
 - Minimum Python version will move from 3.6 to 3.8.
 - Minimum PostgreSQL version will move from 9.5 to 12.
@@ -25,7 +26,7 @@ support both Ubuntu 18 as well as Ubuntu 20.
 - | Improved hovering tooltip with constraints causing backlog in the
     demand report and inventory reports.
 
-- | Removed the "exces material" problem. In practice these alerts were found
+- | Removed the "excess material" problem. In practice these alerts were found
     to be too numerous and not actionable.
   | More practical ways to identify excess inventory situations are either
     a) using "period of cover" item attribute, b) using the "inventory status" field
@@ -73,7 +74,7 @@ support both Ubuntu 18 as well as Ubuntu 20.
 
 - | V14: Implemented synchronization of work center availability calendars.
 
-- | v14: The connector now freezes the current date of the plan to the time of the
+- | V14: The connector now freezes the current date of the plan to the time of the
     import from odoo.
 
 - | V14: Support for the "consumed in operation" field for bill of material components.
@@ -81,10 +82,10 @@ support both Ubuntu 18 as well as Ubuntu 20.
     first routing step. With the extra mapping we can now consume some components
     at other steps.
 
-- | v14: Changed naming convention for operations in frePPLe. With the odoo id at the end, the
+- | V14: Changed naming convention for operations in frePPLe. With the odoo id at the end, the
     new name "item @ location id" is more readable than "id item @ location".
 
-- | v14: Changed naming convention for customers in frePPLe. With the odoo id at the end, the
+- | V14: Changed naming convention for customers in frePPLe. With the odoo id at the end, the
     new name "name id" is more readable than "id name".
 
 .. rubric:: Supported operating systems

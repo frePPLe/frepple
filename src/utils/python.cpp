@@ -459,6 +459,22 @@ void PythonData::setObject(Object* val) {
   Py_INCREF(obj);
 }
 
+vector<string> PythonData::getStringList() const {
+  vector<string> result;
+  PyObject* iter = PyObject_GetIter(obj);
+  if (iter) {
+    PyObject* item;
+    while ((item = PyIter_Next(iter))) {
+      PythonData tmp(item);
+      result.push_back(tmp.getString());
+      Py_DECREF(item);
+    }
+    Py_DECREF(iter);
+  }
+  PyErr_Clear();
+  return result;
+}
+
 inline Object* PythonData::getObject() const {
   if (obj && (obj->ob_type->tp_getattro == getattro_handler ||
               (obj->ob_type->tp_base &&

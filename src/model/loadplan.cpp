@@ -44,7 +44,7 @@ int LoadPlan::initialize() {
   return x.typeReady();
 }
 
-LoadPlan::LoadPlan(OperationPlan* o, const Load* r) {
+LoadPlan::LoadPlan(OperationPlan* o, const Load* r, Resource* assigned) {
   // Initialize the Python type
   initType(metadata);
 
@@ -53,7 +53,10 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r) {
   oper = o;
 
   // Update the resource field
-  res = r->findPreferredResource(o->getSetupEnd(), o);
+  if (assigned)
+    res = assigned;
+  else
+    res = r->findPreferredResource(o->getSetupEnd(), o);
 
   // Add to the operationplan
   nextLoadPlan = nullptr;
@@ -76,9 +79,9 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r) {
 
   // For pooled resource, create individual loadplans when activated
   if (ld->getResource()->isGroup() && ld->getQuantity() > 1.0 &&
-      Plan::instance().getIndividualPoolResources()) {
+      Plan::instance().getIndividualPoolResources() && !assigned) {
     for (auto tmp = ld->getQuantity(); tmp > 1.0; tmp -= 1.0) {
-      auto n = new LoadPlan(o, r, nullptr);
+      auto n = new LoadPlan(o, r, static_cast<LoadPlan*>(nullptr));
       if (!n->getResource()->hasType<ResourceBuckets>()) new LoadPlan(o, r, n);
     }
   }

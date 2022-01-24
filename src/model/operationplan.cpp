@@ -638,7 +638,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
         quantityCompletedfld ? quantityCompletedfld->getDouble() : 0.0;
     opplan = static_cast<Operation*>(oper)->createOperationPlan(
         quantity, start, end, batch, nullptr, nullptr, 0, false, id,
-        quantity_completed, status);
+        quantity_completed, status, &assigned_resources);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD)) {
       delete opplan;
       throw DataException("Can't create operationplan");
@@ -985,7 +985,8 @@ bool OperationPlan::operator<(const OperationPlan& a) const {
   return this < &a;
 }
 
-void OperationPlan::createFlowLoads() {
+void OperationPlan::createFlowLoads(
+    const vector<Resource*>* assigned_resources) {
   // Initialized already, or nothing to initialize
   if (firstflowplan || firstloadplan || !oper) return;
 
@@ -995,10 +996,22 @@ void OperationPlan::createFlowLoads() {
     setBatch(getReference());
 
   // Create loadplans
-  if (getConsumeCapacity())
-    for (auto& g : oper->getLoads()) {
-      if (!g.getAlternate()) new LoadPlan(this, &g);
-    }
+  if (getConsumeCapacity()) {
+    if (!assigned_resources)
+      // No previous assignments to restore
+      for (auto& g : oper->getLoads()) {
+        if (!g.getAlternate()) new LoadPlan(this, &g);
+      }
+    else
+      // Restore previous assignments
+      for (auto& res : *assigned_resources) {
+        for (auto& g : oper->getLoads()) {
+          if (!g.getAlternate() && res->isMemberOf(g.getResource()) &&
+              (!g.getSkill() || res->hasSkill(g.getSkill())))
+            new LoadPlan(this, &g, res);
+        }
+      }
+  }
 
   // Create flowplans for flows
   for (auto& h : oper->getFlows()) {
@@ -1906,7 +1919,8 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args,
             !attr.isA(Tags::status) && !attr.isA(Tags::statusNoPropagation) &&
             !attr.isA(Tags::location) && !attr.isA(Tags::item) &&
             !attr.isA(Tags::ordertype) && !attr.isA(Tags::origin) &&
-            !attr.isA(Tags::batch) && !attr.isA(Tags::supplier)) {
+            !attr.isA(Tags::batch) && !attr.isA(Tags::supplier) &&
+            !attr.isA(Tags::resources)) {
           const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
           if (!fmeta && x->getType().category)
             fmeta = x->getType().category->findField(attr.getHash());

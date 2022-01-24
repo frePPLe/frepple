@@ -230,7 +230,8 @@ Duration OperationRouting::getMaxEarly() const {
 OperationPlan* Operation::createOperationPlan(
     double q, Date s, Date e, const PooledString& batch, Demand* l,
     OperationPlan* ow, bool makeflowsloads, bool roundDown, const string& ref,
-    double q_completed, const string& status) const {
+    double q_completed, const string& status,
+    const vector<Resource*>* assigned_resources) const {
   OperationPlan* opplan = new OperationPlan(const_cast<Operation*>(this));
   if (!batch.empty()) opplan->setBatch(batch);
   if (!ref.empty()) opplan->setName(ref);
@@ -245,8 +246,8 @@ OperationPlan* Operation::createOperationPlan(
   setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
 
   // Create the loadplans and flowplans, if allowed
-  if (makeflowsloads) {
-    opplan->createFlowLoads();
+  if (makeflowsloads || (assigned_resources && !assigned_resources->empty())) {
+    opplan->createFlowLoads(assigned_resources);
     // Now that we know the assigned resource the duration can change
     // eg different availability or efficienicy)
     setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);

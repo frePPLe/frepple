@@ -2385,6 +2385,7 @@ class DataKeyword {
  *   - Python function pointer
  *   - string
  *   - unsigned long
+ *   - list of strings
  */
 class DataValue {
  public:
@@ -2436,6 +2437,10 @@ class DataValue {
   }
 
   virtual const string& getString() const {
+    throw LogicException("DataValue is an abstract class");
+  }
+
+  virtual vector<string> getStringList() const {
     throw LogicException("DataValue is an abstract class");
   }
 
@@ -2534,6 +2539,10 @@ class XMLData : public DataValue {
   /* Returns the string value of the XML data. The xerces library takes care
    * of appropriately unescaping special character sequences. */
   virtual const string& getString() const { return m_strData; }
+
+  virtual vector<string> getStringList() const {
+    throw LogicException("Not implemented");
+  }
 
   /* Interprets the element as a boolean value.
    * <p>Our implementation is a bit more generous and forgiving than the
@@ -2758,6 +2767,11 @@ class PythonData : public DataValue {
     }
     return result;
   }
+
+  /* Return a list of strings.
+   * We return values and not references, which is not the most efficient...
+   */
+  vector<string> getStringList() const;
 
   /* Extract an unsigned long from the Python object. */
   unsigned long getUnsignedLong() const {

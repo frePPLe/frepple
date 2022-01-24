@@ -335,6 +335,7 @@ class SolverCreate : public Solver {
     administrativeleadtime = other.administrativeleadtime;
     minimumdelay = other.minimumdelay;
     allowSplits = other.allowSplits;
+    rotateResources = other.rotateResources;
     iteration_threshold = other.iteration_threshold;
     iteration_accuracy = other.iteration_accuracy;
     iteration_max = other.iteration_max;
@@ -355,6 +356,8 @@ class SolverCreate : public Solver {
     lazydelay = other.lazydelay;
     administrativeleadtime = other.administrativeleadtime;
     minimumdelay = other.minimumdelay;
+    allowSplits = other.allowSplits;
+    rotateResources = other.rotateResources;
     iteration_threshold = other.iteration_threshold;
     iteration_accuracy = other.iteration_accuracy;
     iteration_max = other.iteration_max;

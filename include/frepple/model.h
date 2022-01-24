@@ -2155,7 +2155,7 @@ class OperationPlan : public Object,
   /* This function is used to create the loadplans, flowplans and
    * setup operationplans.
    */
-  void createFlowLoads();
+  void createFlowLoads(const vector<Resource*>* = nullptr);
 
   /* A function to compute whether an operationplan is feasible or not. */
   bool updateFeasible();
@@ -2694,7 +2694,8 @@ class Operation : public HasName<Operation>,
       double, Date, Date, const PooledString&, Demand* = nullptr,
       OperationPlan* = nullptr, bool makeflowsloads = true,
       bool roundDown = true, const string& ref = PooledString::nullstring,
-      double = 0.0, const string& = PooledString::nullstring) const;
+      double = 0.0, const string& = PooledString::nullstring,
+      const vector<Resource*>* = nullptr) const;
 
   /* Returns true for operation types that own suboperations. */
   virtual bool hasSubOperations() const { return false; }
@@ -7562,7 +7563,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
    * In other words, a single call to the constructor will create
    * two loadplan objects.
    */
-  explicit LoadPlan(OperationPlan*, const Load*);
+  explicit LoadPlan(OperationPlan*, const Load*, Resource* = nullptr);
 
   explicit LoadPlan(OperationPlan*, SetupEvent*, bool start = true);
 

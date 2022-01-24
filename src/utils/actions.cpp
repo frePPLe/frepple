@@ -195,7 +195,7 @@ CommandSetProperty::CommandSetProperty(Object* o, const string& nm,
 
 void CommandSetProperty::rollback() {
   if (!obj || name.empty()) {
-    if (old_exists) {
+    if (old_exists && obj) {
       switch (type) {
         case 1:  // Boolean
         {
@@ -224,7 +224,7 @@ void CommandSetProperty::rollback() {
         default:
           break;
       }
-    } else {
+    } else if (obj) {
       switch (type) {
         case 1:  // Boolean
           old_bool = obj->getBoolProperty(name);

@@ -652,7 +652,10 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     opplan->setStatus(status, statuspropagation, true);
     if (opplan->getApproved() ||
         (opplan->getConfirmed() && opplan->getQuantityCompleted())) {
-      opplan->createFlowLoads(&assigned_resources);
+      if (assigned_resources.empty())
+        opplan->createFlowLoads();
+      else
+        opplan->createFlowLoads(&assigned_resources);
       opplan->setOperationPlanParameters(quantity, opplan->getStart(),
                                          Date::infinitePast, false, true, false,
                                          true);

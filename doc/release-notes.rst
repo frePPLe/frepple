@@ -18,6 +18,14 @@ The main target is to refresh the component stack:
 These changes will be made gradual over a couple of releases. For instance, 6.20.0 will
 support both Ubuntu 18 as well as Ubuntu 20.
 
+6.21.0 (Upcoming release)
+=========================
+
+.. rubric:: Production planning
+
+- | Bug fix: 6.20 introduced a bug where manufacturing orders aren't correctly restored
+    on the assigned alternate resource.
+
 6.20.0 (2022/1/22)
 ==================
 

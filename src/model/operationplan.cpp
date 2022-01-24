@@ -360,6 +360,16 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     return opplan;
   }
 
+  // Get list of assigned resources
+  vector<Resource*> assigned_resources;
+  const DataValue* reslist = in.get(Tags::resources);
+  if (reslist) {
+    for (auto& resname : reslist->getStringList()) {
+      auto r = Resource::find(resname);
+      if (r) assigned_resources.push_back(r);
+    }
+  }
+
   // Create a new operation plan
   if (!start && !end) start = Plan::instance().getCurrent();
   if (ordtype == "PO") {
@@ -642,7 +652,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     opplan->setStatus(status, statuspropagation, true);
     if (opplan->getApproved() ||
         (opplan->getConfirmed() && opplan->getQuantityCompleted())) {
-      opplan->createFlowLoads();
+      opplan->createFlowLoads(&assigned_resources);
       opplan->setOperationPlanParameters(quantity, opplan->getStart(),
                                          Date::infinitePast, false, true, false,
                                          true);

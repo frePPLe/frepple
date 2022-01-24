@@ -1677,33 +1677,47 @@ class loadOperationPlans(LoadTask):
                 cnt_po = 0
                 cnt_do = 0
                 cnt_dlvr = 0
+
+                attrs = [f[0] for f in getAttributes(OperationPlan)]
+                if attrs:
+                    attrsql = ", operationplan.%s" % ", ".join(attrs)
+                else:
+                    attrsql = ""
+
                 starttime = time()
                 cursor.execute(
-                    """
-                    SELECT
-                      operationplan.operation_id, operationplan.reference, operationplan.quantity,
-                      operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
-                      operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
-                      operationplan.item_id, operationplan.location_id, operationplan.batch,
-                      coalesce(dmd.name, null), operationplan.quantity_completed
-                    FROM operationplan
-                    LEFT OUTER JOIN (select name from demand
-                      where demand.status is null or demand.status in ('open', 'quote')
-                      ) dmd
-                    on dmd.name = operationplan.demand_id
-                    WHERE operationplan.owner_id IS NULL
-                      and operationplan.quantity >= 0 and operationplan.status <> 'closed'
-                      %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
-                      and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
-                      and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
-                    ORDER BY operationplan.reference ASC
-                    """
-                    % (filter_and, confirmed_filter)
-                )
+                        """
+                        SELECT
+                        operationplan.operation_id, operationplan.reference, operationplan.quantity,
+                        operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
+                        operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
+                        operationplan.item_id, operationplan.location_id, operationplan.batch, operationplan.quantity_completed,
+                        array(
+                            select resource_id
+                            from operationplanresource
+                            where operationplan_id = operationplan.reference
+                            order by resource_id
+                        ),
+                        coalesce(dmd.name, null)
+                        %s
+                        FROM operationplan
+                        LEFT OUTER JOIN (select name from demand
+                        where demand.status is null or demand.status in ('open', 'quote')
+                        ) dmd
+                        on dmd.name = operationplan.demand_id
+                        WHERE operationplan.owner_id IS NULL
+                        and operationplan.quantity >= 0 and operationplan.status <> 'closed'
+                        %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
+                        and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
+                        and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
+                        ORDER BY operationplan.reference ASC
+                        """
+                        % (attrsql, filter_and, confirmed_filter)
+                    )
                 for i in cursor:
                     try:
-                        if i[14]:
-                            dmd = frepple.demand(name=i[14])
+                        if i[16]:
+                            dmd = frepple.demand(name=i[16])
                         else:
                             dmd = None
                         if i[7] == "MO":
@@ -1718,7 +1732,8 @@ class loadOperationPlans(LoadTask):
                                 statusNoPropagation=i[5],
                                 create=create_flag,
                                 batch=i[13],
-                                quantity_completed=i[15],
+                                quantity_completed=i[14],
+                                resources=i[15],
                             )
                             if opplan:
                                 if i[5] == "confirmed":
@@ -1804,36 +1819,49 @@ class loadOperationPlans(LoadTask):
                                 "Warning: unhandled operationplan type '%s'" % i[7]
                             )
                             continue
+
+                        if opplan:
+                            idx = 15
+                            for a in attrs:
+                                setattr(opplan, a, i[idx])
+                                idx += 1
+
                         if dmd and opplan:
                             opplan.demand = dmd
                     except Exception as e:
                         logger.error("**** %s ****" % e)
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
-                cursor.execute(
-                    """
-                SELECT
-                  operationplan.operation_id, operationplan.reference, operationplan.quantity,
-                  operationplan.startdate, operationplan.enddate, operationplan.status,
-                  operationplan.owner_id, operationplan.source, operationplan.batch,
-                  coalesce(dmd.name, null)
-                FROM operationplan
-                INNER JOIN (select reference
-                  from operationplan
-                  ) opplan_parent
-                on operationplan.owner_id = opplan_parent.reference
-                LEFT OUTER JOIN (select name from demand
-                  where demand.status is null or demand.status in ('open', 'quote')
-                  ) dmd
-                on dmd.name = operationplan.demand_id
-                WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed'
-                  %s%s and operationplan.type = 'MO'
-                  and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
-                  and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
-                ORDER BY operationplan.reference ASC
-                """
-                    % (filter_and, confirmed_filter)
-                )
+				cursor.execute(
+                        """
+                        SELECT
+                        operationplan.operation_id, operationplan.reference, operationplan.quantity,
+                        operationplan.startdate, operationplan.enddate, operationplan.status,
+                        operationplan.owner_id, operationplan.source, operationplan.batch,
+                        array(
+                            select resource_id
+                            from operationplanresource
+                            where operationplan_id = operationplan.reference
+                            order by resource_id
+                        ),
+                        coalesce(dmd.name, null) %s
+                        FROM operationplan
+                        INNER JOIN (select reference
+                        from operationplan
+                        ) opplan_parent
+                        on operationplan.owner_id = opplan_parent.reference
+                        LEFT OUTER JOIN (select name from demand
+                        where demand.status is null or demand.status in ('open', 'quote')
+                        ) dmd
+                        on dmd.name = operationplan.demand_id
+                        WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed'
+                        %s%s and operationplan.type = 'MO'
+                        and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
+                        and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
+                        ORDER BY operationplan.reference ASC
+                        """
+                        % (attrsql, filter_and, confirmed_filter)
+                    )
                 for i in cursor:
                     try:
                         cnt_mo += 1
@@ -1846,6 +1874,7 @@ class loadOperationPlans(LoadTask):
                             end=i[4],
                             statusNoPropagation=i[5],
                             batch=i[8],
+                            resources=i[9],
                         )
                         if opplan:
                             if i[5] == "confirmed":
@@ -1864,8 +1893,12 @@ class loadOperationPlans(LoadTask):
                                         "Reference %s: Can't set owner field to %s"
                                         % (i[1], i[6])
                                     )
-                            if i[9]:
-                                opplan.demand = frepple.demand(name=i[9])
+                            if i[10]:
+                                opplan.demand = frepple.demand(name=i[10])
+                            idx = 11
+                            for a in attrs:
+                                setattr(opplan, a, i[idx])
+                                idx += 1
                     except Exception as e:
                         logger.error("**** %s ****" % e)
                 logger.info(
@@ -1910,11 +1943,11 @@ class loadOperationPlans(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cursor.execute(
                     """
-                select name, setupmatrix_id
-                from resource
-                where setupmatrix_id is not null %s
-                order by name
-                """
+                    select name, setupmatrix_id
+                    from resource
+                    where setupmatrix_id is not null %s
+                    order by name
+                    """
                     % filter_and
                 )
                 for i in cursor:
@@ -1943,18 +1976,18 @@ class loadOperationPlanMaterials(LoadTask):
                 starttime = time()
                 cursor.execute(
                     """
-                select
-                  operationplan_id, opplanmat.item_id, opplanmat.location_id,
-                  coalesce(opplanmat.status, 'confirmed'), opplanmat.quantity,
-                  opplanmat.flowdate
-                from operationplanmaterial as opplanmat
-                inner join operationplan
-                  on operationplan.reference = opplanmat.operationplan_id
-                where operationplan.type = 'MO'
-                  and (opplanmat.status in ('confirmed', 'closed') or opplanmat.status is null)
-                  %s
-                order by operationplan_id
-                """
+                    select
+                    operationplan_id, opplanmat.item_id, opplanmat.location_id,
+                    coalesce(opplanmat.status, 'confirmed'), opplanmat.quantity,
+                    opplanmat.flowdate
+                    from operationplanmaterial as opplanmat
+                    inner join operationplan
+                    on operationplan.reference = opplanmat.operationplan_id
+                    where operationplan.type = 'MO'
+                    and (opplanmat.status in ('confirmed', 'closed') or opplanmat.status is null)
+                    %s
+                    order by operationplan_id
+                    """
                     % (
                         "and operationplan.status in ('approved', 'confirmed', 'completed')"
                         if "supply" in os.environ
@@ -1981,60 +2014,6 @@ class loadOperationPlanMaterials(LoadTask):
                         logger.error("**** %s ****" % e)
                 logger.info(
                     "Loaded %d operationplanmaterials in %.2f seconds"
-                    % (cnt, time() - starttime)
-                )
-
-
-@PlanTaskRegistry.register
-class loadOperationPlanResources(LoadTask):
-
-    description = "Importing operationplanresources"
-    sequence = 110
-
-    @classmethod
-    def getWeight(cls, **kwargs):
-        return -1 if kwargs.get("skipLoad", False) else 1
-
-    @classmethod
-    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        import frepple
-
-        with transaction.atomic(using=database):
-            with connections[database].chunked_cursor() as cursor:
-                cnt = 0
-                starttime = time()
-                cursor.execute(
-                    """
-                select
-                  operationplan_id, opplanres.resource_id, coalesce(opplanres.status, 'confirmed'), opplanres.source
-                from operationplanresource as opplanres
-                inner join operationplan
-                  on operationplan.reference = opplanres.operationplan_id
-                where operationplan.type = 'MO'
-                  %s
-                order by resource_id
-                """
-                    % (
-                        "and operationplan.status in ('approved', 'confirmed', 'completed')"
-                        if "supply" in os.environ
-                        else ""
-                    )
-                )
-                res = None
-                for i in cursor:
-                    cnt += 1
-                    try:
-                        opplan = frepple.operationplan(reference=i[0])
-                        if not res or res.name != i[1]:
-                            res = frepple.resource(name=i[1])
-                        # Note we don't restore the date or quantity from the operationplanresource table
-                        frepple.loadplan(
-                            operationplan=opplan, resource=res, status=i[2], source=i[3]
-                        )
-                    except Exception as e:
-                        logger.error("**** %s ****" % e)
-                logger.info(
-                    "Loaded %d operationplanresources in %.2f seconds"
                     % (cnt, time() - starttime)
                 )
 

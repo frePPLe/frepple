@@ -26,6 +26,9 @@ support both Ubuntu 18 as well as Ubuntu 20.
 - | Bug fix: 6.20 introduced a bug where manufacturing orders aren't correctly restored
     on the assigned alternate resource.
 
+- | Bug fix: Zero-time operations didn't correctly respect the availability calendars
+    in some corner cases.
+
 6.20.0 (2022/1/22)
 ==================
 

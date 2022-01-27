@@ -1686,7 +1686,7 @@ class loadOperationPlans(LoadTask):
 
                 starttime = time()
                 cursor.execute(
-                        """
+                    """
                         SELECT
                         operationplan.operation_id, operationplan.reference, operationplan.quantity,
                         operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
@@ -1712,8 +1712,8 @@ class loadOperationPlans(LoadTask):
                         and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                         ORDER BY operationplan.reference ASC
                         """
-                        % (attrsql, filter_and, confirmed_filter)
-                    )
+                    % (attrsql, filter_and, confirmed_filter)
+                )
                 for i in cursor:
                     try:
                         if i[16]:
@@ -1832,8 +1832,8 @@ class loadOperationPlans(LoadTask):
                         logger.error("**** %s ****" % e)
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
-				cursor.execute(
-                        """
+                cursor.execute(
+                    """
                         SELECT
                         operationplan.operation_id, operationplan.reference, operationplan.quantity,
                         operationplan.startdate, operationplan.enddate, operationplan.status,
@@ -1860,8 +1860,8 @@ class loadOperationPlans(LoadTask):
                         and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                         ORDER BY operationplan.reference ASC
                         """
-                        % (attrsql, filter_and, confirmed_filter)
-                    )
+                    % (attrsql, filter_and, confirmed_filter)
+                )
                 for i in cursor:
                     try:
                         cnt_mo += 1

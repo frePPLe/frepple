@@ -454,15 +454,14 @@
     </calendar>
   </calendars>
   <locations>
-    <location name="4. factory">
-      <available name="4. Working hours"/>
-    </location>
+    <location name="4. factory" />
   </locations>
   <operations>
     <operation name="4. make end item" xsi:type="operation_fixed_time">
       <size_multiple>1</size_multiple>
       <item name="4. end item" />
       <location name="4. factory"/>
+	  <available name="4. Working hours"/>
       <flows>
         <flow xsi:type="flow_end">
           <buffer name="4. end item">

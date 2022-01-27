@@ -35,9 +35,6 @@
 		<location>
 			<name>4. factory</name>
 			<source>The Matrix</source>
-			<available>
-				<name>4. Working hours</name>
-			</available>
 		</location>
 	</locations>
 	<calendars>
@@ -310,6 +307,9 @@
 			<location>
 				<name>4. factory</name>
 			</location>
+			<available>
+				<name>4. Working hours</name>
+			</available>
 			<loads>
 				<load>
 					<resource xsi:type="resource_buckets">

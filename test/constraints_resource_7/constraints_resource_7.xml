@@ -96,6 +96,9 @@
       <duration>P5D</duration>
       <duration_per>P5D</duration_per>
     </operation>
+    <operation name="2. cal test" xsi:type="operation_time_per">
+      <location name="2. factory" />
+    </operation>
   </operations>
   <demands>
     <demand name="2. order 1">
@@ -114,6 +117,134 @@
       <location name="2. factory" />
     </demand>
   </demands>
+  <operationplans>
+    <operationplan>
+      <reference>cal test #1 backward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <end>2019-07-15T00:00:00</end>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #2 backward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <end>2019-07-16T00:00:00</end>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #3 backward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <end>2019-07-17T00:00:00</end>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #4 backward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <end>2019-07-18T00:00:00</end>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #5 backward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <end>2019-07-19T00:00:00</end>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #6 backward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <end>2019-07-20T00:00:00</end>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #7 backward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <end>2019-07-21T00:00:00</end>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #1 forward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <start>2019-07-01T00:00:00</start>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #2 forward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <start>2019-07-02T00:00:00</start>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #3 forward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <start>2019-07-03T00:00:00</start>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #4 forward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <start>2019-07-04T00:00:00</start>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #5 forward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <start>2019-07-05T00:00:00</start>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #6 forward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <start>2019-07-06T00:00:00</start>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>
+    <operationplan>
+      <reference>cal test #7 forward</reference>
+      <operation>
+        <name>2. cal test</name>
+      </operation>
+      <start>2019-07-07T00:00:00</start>
+      <quantity>1</quantity>
+      <status>approved</status>
+    </operationplan>	
+  </operationplans>
 
   <!--
   TEST 3: Same as 2, but with now production split over multiple buckets.

@@ -186,6 +186,7 @@ bool OperationPlan::updateFeasible() {
 
   // Verify the capacity constraints
   for (auto ldplan = getLoadPlans(); ldplan != endLoadPlans(); ++ldplan) {
+    if (!ldplan->getResource()->getConstrained()) continue;
     if (ldplan->getResource()->hasType<ResourceDefault>() &&
         ldplan->getQuantity() > 0) {
       auto curMax = ldplan->getMax();

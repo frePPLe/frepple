@@ -7659,6 +7659,8 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
     return getQuantity() < 0 || (getLoad() && getLoad()->getHidden());
   }
 
+  bool getFeasible() const;
+
   /* Override the setQuantity of the TimeLine class, this is needed for the
    * registerFields function.
    */

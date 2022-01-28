@@ -338,6 +338,37 @@ void LoadPlan::setLoad(Load* newld) {
   setResource(newld->getResource(), false, false);
 }
 
+bool LoadPlan::getFeasible() const {
+  if (!getResource()->getConstrained())
+    // Unconstrained resource
+    return true;
+  if (getResource()->hasType<ResourceDefault>()) {
+    auto ldpln = getQuantity() > 0 ? this : getOtherLoadPlan();
+    auto curMax = ldpln->getMax();
+    for (auto cur = getResource()->getLoadPlans().begin(ldpln);
+         cur != getResource()->getLoadPlans().end(); ++cur) {
+      if (cur->getOperationPlan() == getOperationPlan() &&
+          cur->getQuantity() < 0)
+        break;
+      if (cur->getEventType() == 4) curMax = cur->getMax(false);
+      if (cur->getEventType() != 5 && cur->isLastOnDate() &&
+          cur->getOnhand() > curMax + ROUNDING_ERROR)
+        // Overload on default resource
+        return false;
+    }
+  } else if (getResource()->hasType<ResourceBuckets>()) {
+    for (auto cur = getResource()->getLoadPlans().begin(this);
+         cur != getResource()->getLoadPlans().end() && cur->getEventType() != 2;
+         ++cur) {
+      if (cur->getOnhand() < -ROUNDING_ERROR)
+        // Overloaded capacity on bucketized resource
+        return false;
+    }
+  }
+  // Not overloaded
+  return true;
+}
+
 Object* LoadPlan::reader(const MetaClass* cat, const DataValueDict& in,
                          CommandManager* mgr) {
   // Pick up the operationplan attribute. An error is reported if it's missing.

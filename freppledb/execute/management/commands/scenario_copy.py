@@ -27,6 +27,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
 from freppledb.execute.models import Task, ScheduledTask
+from freppledb.execute.views import FileManager
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Scenario, Parameter
 from freppledb import __version__
@@ -343,6 +344,16 @@ class Command(BaseCommand):
                     User.objects.using(destination).filter(
                         username=user.username
                     ).update(is_active=True)
+
+            # Delete data files present in the scenario folders
+            if destination != DEFAULT_DB_ALIAS and settings.DATABASES[destination][
+                "FILEUPLOADFOLDER"
+            ] not in (
+                settings.DATABASES[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"],
+                settings.DATABASES[source]["FILEUPLOADFOLDER"],
+            ):
+                FileManager.cleanFolder(0, destination)
+                FileManager.cleanFolder(1, destination)
 
             # Logging message
             task.processid = None

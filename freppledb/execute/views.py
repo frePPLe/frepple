@@ -709,6 +709,28 @@ class FileManager:
             raise Http404("Invalid folder code")
 
     @staticmethod
+    def cleanFolder(foldercode, database=DEFAULT_DB_ALIAS):
+        if foldercode == 0:
+            folder = settings.DATABASES[database]["FILEUPLOADFOLDER"]
+            extensions = FileManager.all_extensions
+        elif foldercode == 1:
+            folder = os.path.join(
+                settings.DATABASES[database]["FILEUPLOADFOLDER"], "export"
+            )
+            extensions = None
+        else:
+            raise Exception("Invalid folder code")
+        if os.path.isdir(folder):
+            for filename in os.listdir(folder):
+                if (
+                    not extensions or filename.lower().endswith(extensions)
+                ) and not filename.lower().endswith(".log"):
+                    try:
+                        os.remove(os.path.join(folder, filename))
+                    except Exception:
+                        pass
+
+    @staticmethod
     @csrf_exempt
     @basicauthentication(allow_logged_in=True)
     @staff_member_required

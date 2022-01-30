@@ -1,4 +1,4 @@
-{% load i18n admin_static admin_urls admin_modify bootstrapped_goodies_tags %}
+{% load i18n static admin_urls admin_modify bootstrapped_goodies_tags %}
 {% comment %}
   Starting point is the template at https://github.com/django-admin-bootstrapped/django-admin-bootstrapped/blob/master/django_admin_bootstrapped/templates/admin/edit_inline/tabular.html
   FrePPLe limits the number of related objects for performance reasons.
@@ -81,7 +81,7 @@
        {% if inline_admin_formset.formset.there_are_more_records and forloop.last %}
         <tr><td colspan="{{ inline_admin_form|cell_count }}"><div class="alert alert-warning" role="alert">
         {% blocktrans with count=inline_admin_formset.formset.there_are_more_records.0 limit=inline_admin_formset.formset.there_are_more_records.1 %}Only {{limit}} out of {{count}} records are shown.{% endblocktrans %}</div></td></tr>
-       {% endif %}     
+       {% endif %}
      {% endfor %}
      </tbody>
    </table>

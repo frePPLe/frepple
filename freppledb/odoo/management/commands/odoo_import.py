@@ -28,7 +28,7 @@ class Command(BaseCommand):
 
     help = "Loads data from an Odoo instance into the frePPLe database"
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__

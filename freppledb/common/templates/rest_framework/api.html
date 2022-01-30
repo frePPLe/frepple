@@ -28,14 +28,14 @@ $(function() {
 <br>
 {% autoescape off %}
 {% for key, val in response_headers.items %}<b>&nbsp;&nbsp;{{ key }}:&nbsp;&nbsp;</b>
-{{ val|break_long_headers|urlize_quoted_links }}<br>
+{{ val|break_long_headers|urlize }}<br>
 {% endfor %}
 </div>
 
 <div class="response-info" style="margin-top: 20px; margin-bottom: 20px">
 
 {% trans "HTTP response content" %}:<br>
-<textarea class='form-control' id="records" rows="20" style="width:100%">{{ content|urlize_quoted_links }}</textarea>
+<textarea class='form-control' id="records" rows="20" style="width:100%">{{ content|urlize }}</textarea>
 {% endautoescape %}
 </div>
 

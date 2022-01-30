@@ -44,7 +44,7 @@ from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import get_text_list
 
 from .models import Comment
@@ -415,7 +415,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
                         None,
                         None,
                         None,
-                        force_text(
+                        force_str(
                             _("Skipping unknown field %(column)s" % {"column": col})
                         ),
                     )
@@ -432,7 +432,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
                     None,
                     None,
                     None,
-                    force_text(
+                    force_str(
                         _(
                             "Some keys were missing: %(keys)s"
                             % {"keys": ", ".join(required_fields)}
@@ -509,7 +509,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
                             rownumber,
                             None,
                             None,
-                            force_text(_("Key fields not unique")),
+                            force_str(_("Key fields not unique")),
                         )
                         continue
                 else:
@@ -538,7 +538,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
                                     user_id=user.id,
                                     content_type_id=content_type_id,
                                     object_pk=obj.pk,
-                                    object_repr=force_text(obj)[:200],
+                                    object_repr=force_str(obj)[:200],
                                     type="change",
                                     comment="Changed %s."
                                     % get_text_list(form.changed_data, "and"),
@@ -548,7 +548,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
                                     user_id=user.id,
                                     content_type_id=content_type_id,
                                     object_pk=obj.pk,
-                                    object_repr=force_text(obj)[:200],
+                                    object_repr=force_str(obj)[:200],
                                     type="add",
                                     comment="Added",
                                 ).save(using=database)

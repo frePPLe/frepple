@@ -37,7 +37,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import format_html
 from django.utils.http import urlquote
 from django.utils.safestring import mark_safe
@@ -96,11 +96,6 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         urlpatterns = [
             path("", wrap(self.changelist_view), name="%s_%s_changelist" % info),
             path("add/", wrap(self.add_view), name="%s_%s_add" % info),
-            path(
-                "autocomplete/",
-                wrap(self.autocomplete_view),
-                name="%s_%s_autocomplete" % info,
-            ),
             path(
                 "<path:object_id>/comment/",
                 wrap(self.comment_view),
@@ -448,7 +443,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         preserved_filters = self.get_preserved_filters(request)
 
         msg_dict = {
-            "name": force_text(opts.verbose_name),
+            "name": force_str(opts.verbose_name),
             "obj": format_html('<a href="{}">{}</a>', urlquote(request.path), obj),
         }
         if "_continue" in request.POST:
@@ -521,7 +516,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         request.session["lasttab"] = "edit"
         new_extra_context = extra_context or {}
         new_extra_context["title"] = (
-            force_text(self.model._meta.verbose_name) + " " + unquote(object_id)
+            force_str(self.model._meta.verbose_name) + " " + unquote(object_id)
         )
         new_extra_context["post_title"] = _("edit")
         new_extra_context["admin"] = self
@@ -584,7 +579,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 request,
                 "common/comments.html",
                 context={
-                    "title": force_text(modelinstance._meta.verbose_name)
+                    "title": force_str(modelinstance._meta.verbose_name)
                     + " "
                     + (bufferName if "bufferName" in vars() else object_id),
                     "post_title": _("messages"),

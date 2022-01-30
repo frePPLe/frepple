@@ -148,6 +148,7 @@ else:
 STATIC_URL = "/static/"
 USE_L10N = True  # Represent data in the local format
 USE_I18N = True  # Use translated strings
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # A boolean that specifies if datetimes will be timezone-aware by default or not.
 # If this is set to True, we will use timezone-aware datetimes internally.

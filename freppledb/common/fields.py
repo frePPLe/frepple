@@ -27,9 +27,9 @@ import django.db.models as models
 
 class DurationField(models.DecimalField):
     """
-  Obsoleted database field type.
-  Not used any longer, but the code is required to be kept here to make migrations run.
-  """
+    Obsoleted database field type.
+    Not used any longer, but the code is required to be kept here to make migrations run.
+    """
 
     pass
 
@@ -49,6 +49,12 @@ class JSONField(models.TextField):
 
     def to_python(self, value):
         """Convert a json string to a Python value."""
+        if isinstance(value, str) and value:
+            return json.loads(value)
+        else:
+            return value
+
+    def from_db_value(self, value, expression, connection):
         if isinstance(value, str) and value:
             return json.loads(value)
         else:
@@ -94,13 +100,13 @@ class JSONBField(JSONField):
 
 class AliasField(models.Field):
     """
-  This field is an alias for another database field
+    This field is an alias for another database field
 
-  Sources:
-  https://shezadkhan.com/aliasing-fields-in-django/
+    Sources:
+    https://shezadkhan.com/aliasing-fields-in-django/
 
-  Note: This uses some django functions that are being deprecated in django 2.0.
-  """
+    Note: This uses some django functions that are being deprecated in django 2.0.
+    """
 
     def contribute_to_class(self, cls, name, private_only=False):
         super().contribute_to_class(cls, name, private_only=True)
@@ -115,13 +121,13 @@ class AliasField(models.Field):
 
 class AliasDateTimeField(models.DateTimeField):
     """
-  This field is an alias for another database field
+    This field is an alias for another database field
 
-  Sources:
-  https://shezadkhan.com/aliasing-fields-in-django/
+    Sources:
+    https://shezadkhan.com/aliasing-fields-in-django/
 
-  Note: This uses some django functions that are being deprecated in django 2.0.
-  """
+    Note: This uses some django functions that are being deprecated in django 2.0.
+    """
 
     def contribute_to_class(self, cls, name, private_only=False):
         super().contribute_to_class(cls, name, private_only=True)

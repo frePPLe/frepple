@@ -30,7 +30,7 @@ from django.http.response import StreamingHttpResponse, HttpResponseServerError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ungettext
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
@@ -102,7 +102,7 @@ def search(request):
                                 count,
                             )
                             % {
-                                "name": force_text(cls._meta.verbose_name),
+                                "name": force_str(cls._meta.verbose_name),
                                 "count": count,
                             }
                         ).capitalize(),
@@ -368,7 +368,7 @@ class PathReport(GridReport):
                 buffer_name = args[0]
 
         return {
-            "title": force_text(reportclass.objecttype._meta.verbose_name)
+            "title": force_str(reportclass.objecttype._meta.verbose_name)
             + " "
             + (buffer_name if "buffer_name" in vars() else args[0]),
             "post_title": _("where used")
@@ -2017,7 +2017,7 @@ class OperationPlanDetail(View):
     @method_decorator(staff_member_required)
     def get(self, request):
         # Only accept ajax requests on this URL
-        if not request.is_ajax():
+        if request.headers.get("x-requested-with") != "XMLHttpRequest":
             raise Http404("Only ajax requests allowed")
 
         # Stream back the response
@@ -2031,7 +2031,7 @@ class OperationPlanDetail(View):
     @method_decorator(staff_member_required)
     def post(self, request):
         # Only accept ajax requests on this URL
-        if not request.is_ajax():
+        if request.headers.get("x-requested-with") != "XMLHttpRequest":
             raise Http404("Only ajax requests allowed")
 
         # Parse the posted data

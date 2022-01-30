@@ -686,7 +686,7 @@ class Resource(AuditModel, HierarchyModel):
         choices=types,
         default="default",
     )
-    constrained = models.NullBooleanField(
+    constrained = models.BooleanField(
         _("constrained"),
         null=True,
         blank=True,

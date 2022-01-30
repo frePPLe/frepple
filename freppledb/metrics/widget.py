@@ -20,7 +20,7 @@ from django.contrib.admin.utils import quote
 from django.db import DEFAULT_DB_ALIAS
 from django.db.models import F
 from django.http import HttpResponse
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import escape
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
@@ -60,10 +60,10 @@ class AnalysisDemandProblems(Widget):
             '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th>'
             '<th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
-                capfirst(force_text(_("item"))),
-                capfirst(force_text(_("value of late demands"))),
-                capfirst(force_text(_("quantity of late demands"))),
-                capfirst(force_text(_("number of late demands"))),
+                capfirst(force_str(_("item"))),
+                capfirst(force_str(_("value of late demands"))),
+                capfirst(force_str(_("quantity of late demands"))),
+                capfirst(force_str(_("number of late demands"))),
             ),
         ]
         if orderby == "latedemandcount":

@@ -240,7 +240,7 @@ class MultiDBMiddleware:
                         request,
                         _("Your session has expired. Please login again to continue."),
                     )
-                    if request.is_ajax():
+                    if request.headers.get("x-requested-with") == "XMLHttpRequest":
                         return HttpResponse(
                             status=401,
                             content=_(

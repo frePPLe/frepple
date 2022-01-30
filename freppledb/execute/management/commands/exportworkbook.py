@@ -36,7 +36,7 @@ class Command(BaseCommand):
     def get_version(self):
         return __version__
 
-    requires_system_checks = False
+    requires_system_checks = []
     title = _("Export a spreadsheet")
     index = 1000
     help_url = "command-reference.html#exportworkbook"

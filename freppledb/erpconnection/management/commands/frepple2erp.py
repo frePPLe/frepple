@@ -43,7 +43,7 @@ class Command(BaseCommand):
     # For the display in the execution screen
     index = 1500
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__
@@ -88,8 +88,8 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         """
-    Uploads approved operationplans to the ERP system.
-    """
+        Uploads approved operationplans to the ERP system.
+        """
 
         # Select the correct frePPLe scenario database
         self.database = options["database"]
@@ -173,11 +173,11 @@ class Command(BaseCommand):
 
     def extractPurchaseOrders(self):
         """
-    Export purchase orders from frePPle.
-    We export:
-      - approved purchase orders.
-      - proposed purchase orders that start within the next day and with a total cost less than 500$.
-    """
+        Export purchase orders from frePPle.
+        We export:
+          - approved purchase orders.
+          - proposed purchase orders that start within the next day and with a total cost less than 500$.
+        """
         print("Start exporting purchase orders")
         self.cursor_frepple.execute(
             """
@@ -220,7 +220,7 @@ class Command(BaseCommand):
       inner join item on item_id = item.name
       where type = 'DO'
         and (
-          status = 'approved' 
+          status = 'approved'
           or (status = 'proposed' and quantity * cost < 500 and startdate < now() + interval '1 day')
           )
       order by origin_id, destination_id
@@ -239,11 +239,11 @@ class Command(BaseCommand):
 
     def extractManufacturingOrders(self):
         """
-    Export manufacturing orders from frePPle.
-    We export:
-      - approved manufacturing orders.
-      - proposed manufacturing orders that start within the next day.
-    """
+        Export manufacturing orders from frePPle.
+        We export:
+          - approved manufacturing orders.
+          - proposed manufacturing orders that start within the next day.
+        """
         print("Start exporting manufacturing orders")
         self.cursor_frepple.execute(
             """

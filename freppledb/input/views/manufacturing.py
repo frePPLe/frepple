@@ -22,7 +22,7 @@ from django.db.models.functions import Cast
 from django.db.models.expressions import RawSQL
 from django.template import Template
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 
 from freppledb.boot import getAttributeFields
@@ -1221,17 +1221,17 @@ class ManufacturingOrderList(OperationPlanMixin):
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
         groupingcfg = OrderedDict()
-        groupingcfg["operation__location__name"] = force_text(_("location"))
-        groupingcfg["operation__category"] = force_text(
+        groupingcfg["operation__location__name"] = force_str(_("location"))
+        groupingcfg["operation__category"] = force_str(
             format_lazy("{} - {}", _("operation"), _("category"))
         )
-        groupingcfg["operation__subcategory"] = force_text(
+        groupingcfg["operation__subcategory"] = force_str(
             format_lazy("{} - {}", _("operation"), _("subcategory"))
         )
-        groupingcfg["operation__item__category"] = force_text(
+        groupingcfg["operation__item__category"] = force_str(
             format_lazy("{} - {}", _("item"), _("category"))
         )
-        groupingcfg["operation__item__subcategory"] = force_text(
+        groupingcfg["operation__item__subcategory"] = force_str(
             format_lazy("{} - {}", _("item"), _("subcategory"))
         )
         if args and args[0]:
@@ -1244,7 +1244,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Location,
-                    "title": force_text(Location._meta.verbose_name) + " " + args[0],
+                    "title": force_str(Location._meta.verbose_name) + " " + args[0],
                     "post_title": _("manufacturing orders"),
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(database=request.database),
@@ -1257,7 +1257,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Operation,
-                    "title": force_text(Operation._meta.verbose_name) + " " + args[0],
+                    "title": force_str(Operation._meta.verbose_name) + " " + args[0],
                     "post_title": _("manufacturing orders"),
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(database=request.database),
@@ -1268,7 +1268,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("manufacturing orders"),
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(database=request.database),
@@ -1279,8 +1279,8 @@ class ManufacturingOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_text(
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                    "post_title": force_str(
                         _("work in progress in %(loc)s at %(date)s")
                         % {"loc": args[1], "date": args[2]}
                     ),
@@ -1293,8 +1293,8 @@ class ManufacturingOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_text(
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                    "post_title": force_str(
                         _("produced in %(loc)s between %(date1)s and %(date2)s")
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
@@ -1307,8 +1307,8 @@ class ManufacturingOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_text(
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                    "post_title": force_str(
                         _("consumed in %(loc)s between %(date1)s and %(date2)s")
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
@@ -1329,7 +1329,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                 "default_operationplan_type": "MO",
                 "groupBy": "status",
                 "active_tab": "plandetail",
-                "title": force_text(ManufacturingOrder._meta.verbose_name)
+                "title": force_str(ManufacturingOrder._meta.verbose_name)
                 + " "
                 + request.GET["parentreference"],
                 "groupingcfg": groupingcfg,
@@ -1423,7 +1423,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                         """
                         select operationplan_id
                         from operationplan
-                        inner join operationplanmaterial 
+                        inner join operationplanmaterial
                           on operationplanmaterial.operationplan_id = operationplan.reference
                           and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
                           and operationplanmaterial.flowdate >= %s and operationplanmaterial.flowdate < %s

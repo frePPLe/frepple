@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS, connections
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from freppledb.execute.models import Task
 
@@ -254,7 +254,7 @@ class PlanTaskSequence(PlanTask):
                 if callable(t.label):
                     lbl = t.label(**kwargs)
                 else:
-                    lbl = (t.label[0], force_text(t.label[1]))
+                    lbl = (t.label[0], force_str(t.label[1]))
                 if lbl and lbl not in labellist:
                     labellist.append(lbl)
             m = getattr(t, "getLabels", None)

@@ -22,7 +22,7 @@ from django.db.models import Q, F, FloatField, DateTimeField, DurationField
 from django.db.models.expressions import RawSQL
 from django.template import Template
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 
 from freppledb.boot import getAttributeFields
@@ -403,12 +403,12 @@ class PurchaseOrderList(OperationPlanMixin):
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
         groupingcfg = OrderedDict()
-        groupingcfg["supplier"] = force_text(_("supplier"))
-        groupingcfg["location"] = force_text(_("location"))
-        groupingcfg["item__category"] = force_text(
+        groupingcfg["supplier"] = force_str(_("supplier"))
+        groupingcfg["location"] = force_str(_("location"))
+        groupingcfg["item__category"] = force_str(
             format_lazy("{} - {}", _("item"), _("category"))
         )
-        groupingcfg["item__subcategory"] = force_text(
+        groupingcfg["item__subcategory"] = force_str(
             format_lazy("{} - {}", _("item"), _("subcategory"))
         )
         if args and args[0]:
@@ -421,7 +421,7 @@ class PurchaseOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "purchaseorders",
                     "model": Supplier,
-                    "title": force_text(Supplier._meta.verbose_name) + " " + args[0],
+                    "title": force_str(Supplier._meta.verbose_name) + " " + args[0],
                     "post_title": _("purchase orders"),
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(request.database),
@@ -434,7 +434,7 @@ class PurchaseOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "purchaseorders",
                     "model": Location,
-                    "title": force_text(Location._meta.verbose_name) + " " + args[0],
+                    "title": force_str(Location._meta.verbose_name) + " " + args[0],
                     "post_title": _("purchase orders"),
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(request.database),
@@ -445,7 +445,7 @@ class PurchaseOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "purchaseorders",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("purchase orders"),
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(request.database),
@@ -456,8 +456,8 @@ class PurchaseOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "purchaseorders",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_text(
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                    "post_title": force_str(
                         _("on order in %(loc)s at %(date)s")
                         % {"loc": args[1], "date": args[2]}
                     ),
@@ -470,8 +470,8 @@ class PurchaseOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "purchaseorders",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_text(
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                    "post_title": force_str(
                         _("on order in %(loc)s between %(date1)s and %(date2)s")
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
@@ -492,7 +492,7 @@ class PurchaseOrderList(OperationPlanMixin):
                 "default_operationplan_type": "PO",
                 "groupBy": "status",
                 "active_tab": "edit",
-                "title": force_text(PurchaseOrder._meta.verbose_name)
+                "title": force_str(PurchaseOrder._meta.verbose_name)
                 + " "
                 + request.GET["parentreference"],
                 "groupingcfg": groupingcfg,

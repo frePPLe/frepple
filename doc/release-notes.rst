@@ -29,6 +29,12 @@ support both Ubuntu 18 as well as Ubuntu 20.
 - | Bug fix: Zero-time operations didn't correctly respect the availability calendars
     in some corner cases.
 
+.. rubric:: Third party components
+
+- | The django version is bumped up from 2.2 LTS to 3.2 LTS.
+  | Upgrade your python packages with:
+     sudo -H pip install --force-reinstall -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
+
 6.20.0 (2022/1/22)
 ==================
 

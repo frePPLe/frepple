@@ -33,7 +33,7 @@ class Command(BaseCommand):
       This command releases a scenario. It changes its status from "In use" to "Free".
       """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__

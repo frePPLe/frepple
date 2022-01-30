@@ -54,7 +54,7 @@ from django.http import (
     HttpResponseNotAllowed,
 )
 from django.contrib import messages
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import capfirst
 from django.core.management import get_commands, call_command
 
@@ -338,7 +338,7 @@ def LaunchTask(request, action):
     except Exception as e:
         logger.error("Error launching task: %s" % e)
         messages.add_message(
-            request, messages.ERROR, force_text(_("Failure launching task"))
+            request, messages.ERROR, force_str(_("Failure launching task"))
         )
         return HttpResponseRedirect("%s/execute/" % request.prefix)
 
@@ -559,7 +559,10 @@ def wrapTask(request, action):
 @csrf_protect
 def CancelTask(request, taskid):
     # Allow only post
-    if request.method != "POST" or not request.is_ajax():
+    if (
+        request.method != "POST"
+        or request.headers.get("x-requested-with") != "XMLHttpRequest"
+    ):
         raise Http404("Only ajax post requests allowed")
     try:
         task = Task.objects.all().using(request.database).get(pk=taskid)
@@ -613,7 +616,7 @@ def DownloadLogFile(request, taskid):
         filename.lower().endswith(".dump")
         and request.user.username not in settings.SUPPORT_USERS
     ) or not filename.lower().endswith((".log", ".dump")):
-        return HttpResponseNotFound(force_text(_("Error")))
+        return HttpResponseNotFound(force_str(_("Error")))
     return sendStaticFile(
         request,
         settings.FREPPLE_LOGDIR,
@@ -634,7 +637,7 @@ def logfile(request, taskid):
     try:
         filename = Task.objects.using(request.database).get(id=taskid).logfile
         if not filename.lower().endswith(".log"):
-            return HttpResponseNotFound(force_text(_("Error")))
+            return HttpResponseNotFound(force_str(_("Error")))
 
         f = open(os.path.join(settings.FREPPLE_LOGDIR, filename), "rb")
     except Exception:
@@ -648,7 +651,7 @@ def logfile(request, taskid):
                 d = f.read(50000)
                 d = d[d.index(b"\n") :]  # Strip the first, incomplete line
                 logdata = (
-                    force_text(_("Displaying only the last 50K from the log file"))
+                    force_str(_("Displaying only the last 50K from the log file"))
                     + "...\n\n..."
                     + d.decode("utf8", "ignore")
                 )
@@ -663,7 +666,7 @@ def logfile(request, taskid):
         request,
         "execute/logfrepple.html",
         {
-            "title": " ".join([force_text(capfirst(_("log file"))), taskid]),
+            "title": " ".join([force_str(capfirst(_("log file"))), taskid]),
             "logdata": logdata,
             "taskid": taskid,
         },
@@ -787,7 +790,7 @@ class FileManager:
                             thetarget.write(chunk)
 
                     response.write(
-                        force_text(
+                        force_str(
                             "%s: <strong>%s</strong><br>" % (clean_filename, _("OK"))
                         )
                     )
@@ -798,7 +801,7 @@ class FileManager:
                         % (clean_filename, _("Upload failed"))
                     )
                     errorcount += 1
-            response.write(force_text("%s" % capfirst(_("finished"))))
+            response.write(force_str("%s" % capfirst(_("finished"))))
         if errorcount:
             response.status_code = 400
             response.reason_phrase = "%s files failed to upload correctly" % errorcount
@@ -818,7 +821,7 @@ class FileManager:
         if extensions is None:
             extensions = FileManager.all_extensions
 
-        fileerrors = force_text(_("Error deleting file"))
+        fileerrors = force_str(_("Error deleting file"))
         errorcount = 0
         filelist = list()
         if files == "AllFiles":
@@ -875,14 +878,14 @@ class FileManager:
                 cleanpath = os.path.normpath(os.path.join(folder, clean_filename))
                 if not cleanpath.startswith(folder):
                     logger.warning("Failed file download: %s" % filename)
-                    return HttpResponseNotFound(force_text(_("Error")))
+                    return HttpResponseNotFound(force_str(_("Error")))
                 if not os.path.isfile(cleanpath):
                     if os.path.isfile("%s.gz" % cleanpath):
                         # File exists in compressed format
                         clean_filename = "%s.gz" % clean_filename
                     else:
                         logger.warning("Failed file download: %s" % filename)
-                        return HttpResponseNotFound(force_text(_("Error")))
+                        return HttpResponseNotFound(force_str(_("Error")))
                 return sendStaticFile(
                     request,
                     folder,
@@ -894,7 +897,7 @@ class FileManager:
                 )
             except Exception as e:
                 logger.error("Failed file download: %s" % e)
-                return HttpResponseNotFound(force_text(_("Error")))
+                return HttpResponseNotFound(force_str(_("Error")))
         else:
             # Download all files
             b = BytesIO()
@@ -925,7 +928,9 @@ class FileManager:
 @staff_member_required
 @never_cache
 def scheduletasks(request):
-    if not request.is_ajax() or request.method not in ("POST", "DELETE"):
+    if request.headers.get(
+        "x-requested-with"
+    ) != "XMLHttpRequest" or request.method not in ("POST", "DELETE"):
         return HttpResponseNotAllowed("Only post and delete ajax requests are allowed")
     try:
         data = json.loads(request.body.decode(request.encoding))
@@ -1021,7 +1026,7 @@ def exportWorkbook(request):
 
             # Create sheet
             ok = True
-            ws = wb.create_sheet(title=force_text(model._meta.verbose_name))
+            ws = wb.create_sheet(title=force_str(model._meta.verbose_name))
 
             # Build a list of fields and properties
             fields = []
@@ -1046,22 +1051,20 @@ def exportWorkbook(request):
                 elif not (exclude and i.name in exclude):
                     fields.append(i.column)
                     modelfields.append(i)
-                    cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
+                    cell = WriteOnlyCell(ws, value=force_str(i.verbose_name).title())
                     if i.editable:
                         cell.style = "headerstyle"
                         if isinstance(i, ForeignKey):
                             cell.comment = CellComment(
-                                force_text(
+                                force_str(
                                     _("Values in this field must exist in the %s table")
-                                    % force_text(
-                                        i.remote_field.model._meta.verbose_name
-                                    )
+                                    % force_str(i.remote_field.model._meta.verbose_name)
                                 ),
                                 "Author",
                             )
                         elif i.choices:
                             cell.comment = CellComment(
-                                force_text(
+                                force_str(
                                     _("Accepted values are: %s")
                                     % ", ".join([c[0] for c in i.choices])
                                 ),
@@ -1071,7 +1074,7 @@ def exportWorkbook(request):
                         cell.style = "readlonlyheaderstyle"
                         if not comment:
                             comment = CellComment(
-                                force_text(_("Read only")),
+                                force_str(_("Read only")),
                                 "Author",
                                 height=20,
                                 width=80,
@@ -1089,17 +1092,17 @@ def exportWorkbook(request):
                     if i.export:
                         fields.append(i.name)
                         cell = WriteOnlyCell(
-                            ws, value=force_text(i.verbose_name).title()
+                            ws, value=force_str(i.verbose_name).title()
                         )
                         if i.editable:
                             cell.style = "headerstyle"
                             if isinstance(i, ForeignKey):
                                 cell.comment = CellComment(
-                                    force_text(
+                                    force_str(
                                         _(
                                             "Values in this field must exist in the %s table"
                                         )
-                                        % force_text(
+                                        % force_str(
                                             i.remote_field.model._meta.verbose_name
                                         )
                                     ),
@@ -1107,7 +1110,7 @@ def exportWorkbook(request):
                                 )
                         elif i.choices:
                             cell.comment = CellComment(
-                                force_text(
+                                force_str(
                                     _("Accepted values are: %s")
                                     % ", ".join([c[0] for c in i.choices])
                                 ),
@@ -1117,7 +1120,7 @@ def exportWorkbook(request):
                             cell.style = "readlonlyheaderstyle"
                             if not comment:
                                 comment = CellComment(
-                                    force_text(_("Read only")),
+                                    force_str(_("Read only")),
                                     "Author",
                                     height=20,
                                     width=80,
@@ -1127,17 +1130,17 @@ def exportWorkbook(request):
                         modelfields.append(i)
             if source:
                 fields.append("source")
-                cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
+                cell = WriteOnlyCell(ws, value=force_str(_("source")).title())
                 cell.style = "headerstyle"
                 header.append(cell)
                 modelfields.append(source)
             if lastmodified:
                 fields.append("lastmodified")
-                cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
+                cell = WriteOnlyCell(ws, value=force_str(_("last modified")).title())
                 cell.style = "readlonlyheaderstyle"
                 if not comment:
                     comment = CellComment(
-                        force_text(_("Read only")), "Author", height=20, width=80
+                        force_str(_("Read only")), "Author", height=20, width=80
                     )
                 cell.comment = comment
                 header.append(cell)
@@ -1214,7 +1217,7 @@ def importWorkbook(request):
     try:
         # Find all models in the workbook
         for filename, file in request.FILES.items():
-            yield "<strong>" + force_text(
+            yield "<strong>" + force_str(
                 _("Processing file")
             ) + " " + filename + "</strong><br>"
             if filename.endswith(".xls"):
@@ -1240,7 +1243,7 @@ def importWorkbook(request):
                         contenttype_id = ct
                         break
                 if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
-                    yield '<div class="alert alert-warning">' + force_text(
+                    yield '<div class="alert alert-warning">' + force_str(
                         _("Ignoring data in worksheet: %s") % ws_name
                     ) + "</div>"
                 elif not request.user.has_perm(
@@ -1251,7 +1254,7 @@ def importWorkbook(request):
                     )
                 ):
                     # Check permissions
-                    yield '<div class="alert alert-danger">' + force_text(
+                    yield '<div class="alert alert-danger">' + force_str(
                         _("You don't permissions to add: %s") % ws_name
                     ) + "</div>"
                 else:

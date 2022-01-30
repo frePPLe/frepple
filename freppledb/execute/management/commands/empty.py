@@ -47,7 +47,7 @@ class Command(BaseCommand):
     - execute log
     """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__
@@ -273,7 +273,7 @@ class Command(BaseCommand):
                         )
                 if "common_bucket" in tables:
                     cursor.execute("update common_user set horizonbuckets = null")
-                for stmt in connections[database].ops.sql_flush(no_style(), tables, []):
+                for stmt in connections[database].ops.sql_flush(no_style(), tables):
                     cursor.execute(stmt)
 
             # Task update

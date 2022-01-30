@@ -22,7 +22,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections, transaction
 from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Demand, Item
@@ -102,7 +102,7 @@ class OverviewReport(GridPivot):
         if args and args[0]:
             request.session["lasttab"] = "plan"
             return {
-                "title": force_text(Item._meta.verbose_name) + " " + args[0],
+                "title": force_str(Item._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan"),
                 "model": Item,
             }
@@ -274,7 +274,10 @@ class OverviewReport(GridPivot):
 @staff_member_required
 def OperationPlans(request):
     # Check permissions
-    if request.method != "GET" or not request.is_ajax():
+    if (
+        request.method != "GET"
+        or request.headers.get("x-requested-with") != "XMLHttpRequest"
+    ):
         return HttpResponseBadRequest("Only ajax get requests allowed")
     if not request.user.has_perm("view_demand_report"):
         return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))

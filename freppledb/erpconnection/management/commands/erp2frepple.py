@@ -50,7 +50,7 @@ class Command(BaseCommand):
     # For the display in the execution screen
     index = 1400
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__
@@ -448,8 +448,8 @@ class Command(BaseCommand):
 
     def extractSuboperation(self):
         """
-    Map JobBOSS joboperations into frePPLe suboperations.
-    """
+        Map JobBOSS joboperations into frePPLe suboperations.
+        """
         outfilename = os.path.join(self.destination, "suboperation.%s" % self.ext)
         print("Start extracting suboperations to %s" % outfilename)
         self.cursor.execute(
@@ -476,8 +476,8 @@ class Command(BaseCommand):
 
     def extractOperationResource(self):
         """
-    Map JobBOSS joboperation workcenters into frePPLe operation-resources.
-    """
+        Map JobBOSS joboperation workcenters into frePPLe operation-resources.
+        """
         outfilename = os.path.join(self.destination, "operationresource.%s" % self.ext)
         print("Start extracting operationresource to %s" % outfilename)
         self.cursor.execute(
@@ -509,8 +509,8 @@ class Command(BaseCommand):
 
     def extractOperationMaterial(self):
         """
-    Map JobBOSS joboperation workcenters into frePPLe operation-materials.
-    """
+        Map JobBOSS joboperation workcenters into frePPLe operation-materials.
+        """
         outfilename = os.path.join(self.destination, "operationmaterial.%s" % self.ext)
         print("Start extracting operationmaterial to %s" % outfilename)
         self.cursor.execute(
@@ -553,8 +553,8 @@ class Command(BaseCommand):
 
     def extractBuffer(self):
         """
-    Map JobBOSS operation completed into frePPLe buffer onhand.
-    """
+        Map JobBOSS operation completed into frePPLe buffer onhand.
+        """
         outfilename = os.path.join(self.destination, "buffer.%s" % self.ext)
         print("Start extracting buffer to %s" % outfilename)
         self.cursor.execute(
@@ -583,14 +583,14 @@ class Command(BaseCommand):
 
     def extractItemSupplier(self):
         """
-    Extract the purchasing parameters for each item from its suppliers.
-    """
+        Extract the purchasing parameters for each item from its suppliers.
+        """
         pass
 
     def extractCalendar(self):
         """
-    Extract working hours calendars from the ERP system.
-    """
+        Extract working hours calendars from the ERP system.
+        """
         outfilename = os.path.join(self.destination, "calendar.%s" % self.ext)
         print("Start extracting calendar to %s" % outfilename)
         self.cursor.execute(

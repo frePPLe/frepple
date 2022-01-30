@@ -25,7 +25,7 @@ from django.db.models.expressions import RawSQL
 from django.shortcuts import redirect
 from django.template import Template
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 
 from freppledb.boot import getAttributeFields
@@ -582,12 +582,12 @@ class DistributionOrderList(OperationPlanMixin):
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
         groupingcfg = OrderedDict()
-        groupingcfg["destination"] = force_text(_("destination"))
-        groupingcfg["origin"] = force_text(_("origin"))
-        groupingcfg["item__category"] = force_text(
+        groupingcfg["destination"] = force_str(_("destination"))
+        groupingcfg["origin"] = force_str(_("origin"))
+        groupingcfg["item__category"] = force_str(
             format_lazy("{} - {}", _("item"), _("category"))
         )
-        groupingcfg["item__subcategory"] = force_text(
+        groupingcfg["item__subcategory"] = force_str(
             format_lazy("{} - {}", _("item"), _("subcategory"))
         )
         if args and args[0]:
@@ -598,8 +598,8 @@ class DistributionOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "distributionorders",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_text(
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                    "post_title": force_str(
                         _("in transit in %(loc)s at %(date)s")
                         % {"loc": args[1], "date": args[2]}
                     ),
@@ -612,8 +612,8 @@ class DistributionOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "distributionorders",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_text(
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                    "post_title": force_str(
                         _("received in %(loc)s between %(date1)s and %(date2)s")
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
@@ -626,8 +626,8 @@ class DistributionOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "distributionorders",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_text(
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                    "post_title": force_str(
                         _("shipped from %(loc)s between %(date1)s and %(date2)s")
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
@@ -640,7 +640,7 @@ class DistributionOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "distributionorders",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("distribution orders"),
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(database=request.database),
@@ -653,9 +653,7 @@ class DistributionOrderList(OperationPlanMixin):
                         "groupBy": "status",
                         "active_tab": "inboundorders",
                         "model": Location,
-                        "title": force_text(Location._meta.verbose_name)
-                        + " "
-                        + args[0],
+                        "title": force_str(Location._meta.verbose_name) + " " + args[0],
                         "post_title": _("inbound distribution"),
                         "groupingcfg": groupingcfg,
                         "currentdate": getCurrentDate(database=request.database),
@@ -666,9 +664,7 @@ class DistributionOrderList(OperationPlanMixin):
                         "groupBy": "status",
                         "active_tab": "outboundorders",
                         "model": Location,
-                        "title": force_text(Location._meta.verbose_name)
-                        + " "
-                        + args[0],
+                        "title": force_str(Location._meta.verbose_name) + " " + args[0],
                         "post_title": _("outbound distribution"),
                         "groupingcfg": groupingcfg,
                         "currentdate": getCurrentDate(database=request.database),
@@ -687,7 +683,7 @@ class DistributionOrderList(OperationPlanMixin):
                 "default_operationplan_type": "DO",
                 "groupBy": "status",
                 "active_tab": "edit",
-                "title": force_text(DistributionOrder._meta.verbose_name)
+                "title": force_str(DistributionOrder._meta.verbose_name)
                 + " "
                 + request.GET["parentreference"],
                 "groupingcfg": groupingcfg,
@@ -1358,11 +1354,11 @@ class InventoryDetail(OperationPlanMixin):
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
         groupingcfg = OrderedDict()
-        groupingcfg["location"] = force_text(_("location"))
-        groupingcfg["item__category"] = force_text(
+        groupingcfg["location"] = force_str(_("location"))
+        groupingcfg["item__category"] = force_str(
             format_lazy("{} - {}", _("item"), _("category"))
         )
-        groupingcfg["item__subcategory"] = force_text(
+        groupingcfg["item__subcategory"] = force_str(
             format_lazy("{} - {}", _("item"), _("subcategory"))
         )
         if args and args[0]:
@@ -1375,7 +1371,7 @@ class InventoryDetail(OperationPlanMixin):
                     "groupBy": "operationplan__status",
                     "active_tab": "inventorydetail",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("inventory detail"),
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(database=request.database),
@@ -1397,7 +1393,7 @@ class InventoryDetail(OperationPlanMixin):
                     "groupBy": "operationplan__status",
                     "active_tab": "plandetail",
                     "model": Buffer,
-                    "title": force_text(Buffer._meta.verbose_name)
+                    "title": force_str(Buffer._meta.verbose_name)
                     + " "
                     + item
                     + " @ "

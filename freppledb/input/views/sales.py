@@ -21,7 +21,7 @@ from django.db.models import F, Q
 from django.db.models.expressions import RawSQL
 from django.template import Template
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 
 from freppledb.boot import getAttributeFields
@@ -878,8 +878,8 @@ class DeliveryOrderList(GridReport):
                 return {
                     "active_tab": "deliveryorders",
                     "model": Item,
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_text(
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                    "post_title": force_str(
                         _("delivered from %(loc)s between %(date1)s and %(date2)s")
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
@@ -887,7 +887,7 @@ class DeliveryOrderList(GridReport):
             else:
                 return {
                     "active_tab": "deliveryorders",
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("delivery orders"),
                 }
         else:

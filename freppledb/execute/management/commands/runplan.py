@@ -26,7 +26,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.template import Template, RequestContext
 
 import freppledb.common.commands
@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
     help = "Runs frePPLe to generate a plan"
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__
@@ -421,10 +421,10 @@ class Command(BaseCommand):
           </p>
           {%% endif %%}
           <p><b>%s</b><br>
-          <input type="radio" id="plantype1" name="plantype" {%% ifnotequal plantype '2' %%}checked {%% endifnotequal %%}value="1"/>
+          <input type="radio" id="plantype1" name="plantype" {%% if plantype != '2' %%}checked {%% endif %%}value="1"/>
           <label for="plantype1">%s
           <span class="fa fa-question-circle" style="display:inline-block;"></span></label><br>
-          <input type="radio" id="plantype2" name="plantype" {%% ifequal plantype '2' %%}checked {%% endifequal %%}value="2"/>
+          <input type="radio" id="plantype2" name="plantype" {%% if plantype == '2' %%}checked {%% endif %%}value="2"/>
           <label for="plantype2">%s
               <span class="fa fa-question-circle" style="display:inline-block;"></span></label><br>
               </p>
@@ -440,27 +440,27 @@ class Command(BaseCommand):
         </form>
       """
                 % (
-                    force_text(
+                    force_str(
                         _(
                             "Load all input data, run the planning algorithm, and export the results."
                         )
                     ),
-                    force_text(_("optional planning steps")),
-                    force_text(_("Plan type")),
-                    force_text(
+                    force_str(_("optional planning steps")),
+                    force_str(_("Plan type")),
+                    force_str(
                         _(
                             '<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.">Constrained plan</span>'
                         )
                     ),
-                    force_text(
+                    force_str(
                         _(
                             '<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="Generate a supply plan that shows material, capacity and operation problems that prevent the demand from being planned in time.<br>The demand is always met completely and on time.">Unconstrained plan</span>'
                         )
                     ),
-                    force_text(_("constraints")),
-                    force_text(_("Capacity: respect capacity limits")),
-                    force_text(_("Lead time: do not plan in the past")),
-                    force_text(
+                    force_str(_("constraints")),
+                    force_str(_("Capacity: respect capacity limits")),
+                    force_str(_("Lead time: do not plan in the past")),
+                    force_str(
                         _("Release fence: do not plan within the release time window")
                     ),
                 )

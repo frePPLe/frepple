@@ -127,7 +127,10 @@ class ExecuteSQL(View):
             return HttpResponseNotAllowed(
                 ["post"], content="Only a superuser can execute SQL statements"
             )
-        if request.method != "POST" or not request.is_ajax():
+        if (
+            request.method != "POST"
+            or request.headers.get("x-requested-with") != "XMLHttpRequest"
+        ):
             raise Http404("Only ajax post requests allowed")
 
         return StreamingHttpResponse(

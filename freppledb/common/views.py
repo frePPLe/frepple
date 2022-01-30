@@ -36,7 +36,7 @@ from django.db.models.expressions import RawSQL
 from django.urls import reverse, resolve
 from django import forms
 from django.template import Template
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
 from django.contrib.auth.models import Group
@@ -108,7 +108,7 @@ def handler404(request, exception):
     messages.add_message(
         request,
         messages.ERROR,
-        force_text(
+        force_str(
             _("Page not found") + ": " + request.prefix + request.get_full_path()
         ),
     )
@@ -237,14 +237,14 @@ def preferences(request):
                 messages.add_message(
                     request,
                     messages.INFO,
-                    force_text(_("Successfully updated preferences")),
+                    force_str(_("Successfully updated preferences")),
                 )
             except Exception as e:
                 logger.error("Failure updating preferences: %s" % e)
                 messages.add_message(
                     request,
                     messages.ERROR,
-                    force_text(_("Failure updating preferences")),
+                    force_str(_("Failure updating preferences")),
                 )
     else:
         form = PreferencesForm(
@@ -311,7 +311,10 @@ def horizon(request):
 @login_required
 @csrf_protect
 def saveSettings(request):
-    if request.method != "POST" or not request.is_ajax():
+    if (
+        request.method != "POST"
+        or request.headers.get("x-requested-with") != "XMLHttpRequest"
+    ):
         raise Http404("Only ajax post requests allowed")
     try:
         data = json.loads(request.body.decode(request.encoding))
@@ -500,7 +503,7 @@ class FollowerList(GridReport):
                     app_label, model = x.split(".", 2)
                     try:
                         sub.append(
-                            force_text(
+                            force_str(
                                 ContentType.objects.get_by_natural_key(
                                     app_label.strip(), model.strip()
                                 )
@@ -512,7 +515,7 @@ class FollowerList(GridReport):
                         pass
             yield {
                 "id": row.id,
-                "content_type__model": force_text(
+                "content_type__model": force_str(
                     row.content_type.model_class()._meta.verbose_name
                 ),
                 "object_pk": row.object_pk,
@@ -754,7 +757,7 @@ def uploads(request, filename):
 
 @login_required
 def inbox(request):
-    if request.is_ajax():
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
         if request.method == "GET":
             # Return summary json to ajax requests
             return JsonResponse(
@@ -825,7 +828,10 @@ def inbox(request):
 
 @login_required
 def follow(request):
-    if request.is_ajax() and request.method == "POST":
+    if (
+        request.headers.get("x-requested-with") == "XMLHttpRequest"
+        and request.method == "POST"
+    ):
         # Updating followers posted in the format:
         # [{
         #  'object_pk': "my product", 'model': 'input.item',
@@ -916,7 +922,10 @@ def follow(request):
             return HttpResponse(content="NOT OK", status=400)
         else:
             return HttpResponse(content="OK")
-    elif request.is_ajax() and request.method == "GET":
+    elif (
+        request.headers.get("x-requested-with") == "XMLHttpRequest"
+        and request.method == "GET"
+    ):
         # Return follower information for an object
         try:
             object_pk = request.GET.get("object_pk", None)

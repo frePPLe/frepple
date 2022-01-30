@@ -17,7 +17,7 @@
 
 import operator
 
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.contrib.auth.models import Permission
 from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
@@ -248,10 +248,10 @@ class Menu:
         for i in self._groups:
             items = []
             for j in i[3]:
-                items.append((j.index, capfirst(force_text(j.label)), j))
+                items.append((j.index, capfirst(force_str(j.label)), j))
             # Sort by 1) id and 2) label. Note that the order can be different for each language!
             items.sort(key=operator.itemgetter(0, 1))
-            m.append((force_text(i[1]), items))
+            m.append((force_str(i[1]), items))
 
         # Put the new result in the cache and return
         self._cached_menu[language] = m

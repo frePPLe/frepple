@@ -72,7 +72,7 @@ def add_extra_model_fields(sender, **kwargs):
                 editable=editable,
             )
         elif fieldtype == "boolean":
-            field = models.NullBooleanField(
+            field = models.BooleanField(
                 label, null=True, blank=True, db_index=True, editable=editable
             )
         elif fieldtype == "number":

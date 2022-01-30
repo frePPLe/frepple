@@ -17,7 +17,7 @@
 
 from django.db import connections, transaction
 from django.db.models.expressions import RawSQL
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -225,7 +225,7 @@ class OverviewReport(GridPivot):
             request.session["lasttab"] = "plan"
             return {
                 "units": reportclass.getUnits(request),
-                "title": force_text(Resource._meta.verbose_name) + " " + args[0],
+                "title": force_str(Resource._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan"),
                 "model": Resource,
             }

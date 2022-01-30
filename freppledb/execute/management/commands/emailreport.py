@@ -42,7 +42,7 @@ class Command(BaseCommand):
   This command will email reports found in the export folder to specific recipients.
   """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__

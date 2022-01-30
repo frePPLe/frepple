@@ -37,7 +37,7 @@ class Command(BaseCommand):
       This command initializes the date bucketization table in the database.
       """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__

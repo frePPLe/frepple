@@ -548,7 +548,7 @@ class ReportManager(GridReport):
         # Check permissions
         if (
             request.method != "POST"
-            or not request.is_ajax()
+            or request.headers.get("x-requested-with") != "XMLHttpRequest"
             or (
                 not request.user.has_perm("reportmanager.add_sqlreport")
                 and not request.user.has_perm("reportmanager.change_sqlreport")

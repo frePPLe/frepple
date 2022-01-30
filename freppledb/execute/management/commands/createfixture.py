@@ -31,7 +31,7 @@ class Command(BaseCommand):
   This command dumps the content of the database in a fixture format file.
   """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__

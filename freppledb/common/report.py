@@ -2169,7 +2169,7 @@ class GridReport(View):
                     sql_list.extend(m.getDeleteStatements())
                 else:
                     sql_list = connections[request.database].ops.sql_flush(
-                        no_style(), [m._meta.db_table for m in deps], []
+                        no_style(), [m._meta.db_table for m in deps]
                     )
             for sql in sql_list:
                 cursor.execute(sql)

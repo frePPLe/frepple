@@ -21,7 +21,7 @@ from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.template import Template
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 
 from freppledb.boot import getAttributeFields
@@ -461,18 +461,18 @@ class ResourceDetail(OperationPlanMixin):
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
         groupingcfg = OrderedDict()
-        groupingcfg["resource"] = force_text(_("resource"))
-        groupingcfg["operationplan__location"] = force_text(_("location"))
-        groupingcfg["operationplan__operation__category"] = force_text(
+        groupingcfg["resource"] = force_str(_("resource"))
+        groupingcfg["operationplan__location"] = force_str(_("location"))
+        groupingcfg["operationplan__operation__category"] = force_str(
             format_lazy("{} - {}", _("operation"), _("category"))
         )
-        groupingcfg["operationplan__operation__subcategory"] = force_text(
+        groupingcfg["operationplan__operation__subcategory"] = force_str(
             format_lazy("{} - {}", _("operation"), _("subcategory"))
         )
-        groupingcfg["resource__category"] = force_text(
+        groupingcfg["resource__category"] = force_str(
             format_lazy("{} - {}", _("resource"), _("category"))
         )
-        groupingcfg["resource__subcategory"] = force_text(
+        groupingcfg["resource__subcategory"] = force_str(
             format_lazy("{} - {}", _("resource"), _("subcategory"))
         )
         if args and args[0]:
@@ -482,7 +482,7 @@ class ResourceDetail(OperationPlanMixin):
                 "groupBy": "operationplan__status",
                 "active_tab": "plandetail",
                 "model": Resource,
-                "title": force_text(Resource._meta.verbose_name) + " " + args[0],
+                "title": force_str(Resource._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan detail"),
                 "groupingcfg": groupingcfg,
                 "currentdate": getCurrentDate(database=request.database),

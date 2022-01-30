@@ -21,7 +21,7 @@ from urllib.parse import urlencode
 from django.contrib.admin.utils import quote
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.http import HttpResponse
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import escape
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
@@ -76,13 +76,13 @@ class LateOrdersWidget(Widget):
             '<th class="aligncenter">%s</th><th class="aligncenter">%s</th>'
             '<th class="aligncenter">%s</th></tr></thead>'
             % (
-                capfirst(force_text(_("name"))),
-                capfirst(force_text(_("item"))),
-                capfirst(force_text(_("location"))),
-                capfirst(force_text(_("customer"))),
-                capfirst(force_text(_("due"))),
-                capfirst(force_text(_("planned date"))),
-                capfirst(force_text(_("delay"))),
+                capfirst(force_str(_("name"))),
+                capfirst(force_str(_("item"))),
+                capfirst(force_str(_("location"))),
+                capfirst(force_str(_("customer"))),
+                capfirst(force_str(_("due"))),
+                capfirst(force_str(_("planned date"))),
+                capfirst(force_str(_("delay"))),
             ),
         ]
         alt = False
@@ -155,12 +155,12 @@ class ShortOrdersWidget(Widget):
             '<thead><tr><th class="alignleft">%s</th><th class="alignleft">%s</th><th class="alignleft">%s</th>'
             '<th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
-                capfirst(force_text(_("name"))),
-                capfirst(force_text(_("item"))),
-                capfirst(force_text(_("location"))),
-                capfirst(force_text(_("customer"))),
-                capfirst(force_text(_("due"))),
-                capfirst(force_text(_("short"))),
+                capfirst(force_str(_("name"))),
+                capfirst(force_str(_("item"))),
+                capfirst(force_str(_("location"))),
+                capfirst(force_str(_("customer"))),
+                capfirst(force_str(_("due"))),
+                capfirst(force_str(_("short"))),
             ),
         ]
         alt = False
@@ -307,7 +307,7 @@ class ManufacturingOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    """ % force_text(
+    """ % force_str(
         _("units")
     )
 
@@ -403,13 +403,13 @@ class ManufacturingOrderWidget(Widget):
                     % (
                         rec[3],
                         rec[4],
-                        force_text(_("units")),
+                        force_str(_("units")),
                         currency[0],
                         rec[5],
                         currency[1],
                         request.prefix,
-                        force_text(_("Review")),
-                        force_text(_("confirmed orders")),
+                        force_str(_("Review")),
+                        force_str(_("confirmed orders")),
                     )
                 )
             elif rec[0] == 2 and fence1:
@@ -419,14 +419,14 @@ class ManufacturingOrderWidget(Widget):
                     % (
                         rec[3],
                         rec[4],
-                        force_text(_("units")),
+                        force_str(_("units")),
                         currency[0],
                         rec[5],
                         currency[1],
                         request.prefix,
                         limit_fence1.strftime("%Y-%m-%d"),
-                        force_text(_("Review")),
-                        force_text(
+                        force_str(_("Review")),
+                        force_str(
                             _("proposed orders within %(fence)s days")
                             % {"fence": fence1}
                         ),
@@ -439,14 +439,14 @@ class ManufacturingOrderWidget(Widget):
                     % (
                         rec[3],
                         rec[4],
-                        force_text(_("units")),
+                        force_str(_("units")),
                         currency[0],
                         rec[5],
                         currency[1],
                         request.prefix,
                         limit_fence2.strftime("%Y-%m-%d"),
-                        force_text(_("Review")),
-                        force_text(
+                        force_str(_("Review")),
+                        force_str(
                             _("proposed orders within %(fence)s days")
                             % {"fence": fence2}
                         ),
@@ -576,7 +576,7 @@ class DistributionOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    """ % force_text(
+    """ % force_str(
         _("units")
     )
 
@@ -669,13 +669,13 @@ class DistributionOrderWidget(Widget):
                     % (
                         rec[3],
                         rec[4],
-                        force_text(_("units")),
+                        force_str(_("units")),
                         currency[0],
                         rec[5],
                         currency[1],
                         request.prefix,
-                        force_text(_("Review")),
-                        force_text(_("confirmed orders")),
+                        force_str(_("Review")),
+                        force_str(_("confirmed orders")),
                     )
                 )
             elif rec[0] == 2 and fence1:
@@ -685,14 +685,14 @@ class DistributionOrderWidget(Widget):
                     % (
                         rec[3],
                         rec[4],
-                        force_text(_("units")),
+                        force_str(_("units")),
                         currency[0],
                         rec[5],
                         currency[1],
                         request.prefix,
                         limit_fence1.strftime("%Y-%m-%d"),
-                        force_text(_("Review")),
-                        force_text(
+                        force_str(_("Review")),
+                        force_str(
                             _("proposed orders within %(fence)s days")
                             % {"fence": fence1}
                         ),
@@ -705,14 +705,14 @@ class DistributionOrderWidget(Widget):
                     % (
                         rec[3],
                         rec[4],
-                        force_text(_("units")),
+                        force_str(_("units")),
                         currency[0],
                         rec[5],
                         currency[1],
                         request.prefix,
                         limit_fence2.strftime("%Y-%m-%d"),
-                        force_text(_("Review")),
-                        force_text(
+                        force_str(_("Review")),
+                        force_str(
                             _("proposed orders within %(fence)s days")
                             % {"fence": fence2}
                         ),
@@ -855,7 +855,7 @@ class PurchaseOrderWidget(Widget):
       .attr('class', 'graphline')
       .attr("stroke","#FFC000")
       .attr("d", line_count(data));
-    """ % force_text(
+    """ % force_str(
         _("units")
     )
 
@@ -987,13 +987,13 @@ class PurchaseOrderWidget(Widget):
                     % (
                         rec[3],
                         rec[4],
-                        force_text(_("units")),
+                        force_str(_("units")),
                         currency[0],
                         rec[5],
                         currency[1],
                         request.prefix,
-                        force_text(_("Review")),
-                        force_text(_("confirmed orders")),
+                        force_str(_("Review")),
+                        force_str(_("confirmed orders")),
                     )
                 )
             elif rec[0] == 2 and fence1:
@@ -1003,14 +1003,14 @@ class PurchaseOrderWidget(Widget):
                     % (
                         rec[3],
                         rec[4],
-                        force_text(_("units")),
+                        force_str(_("units")),
                         currency[0],
                         rec[5],
                         currency[1],
                         request.prefix,
                         limit_fence1.strftime("%Y-%m-%d"),
-                        force_text(_("Review")),
-                        force_text(
+                        force_str(_("Review")),
+                        force_str(
                             _("proposed orders within %(fence)s days")
                             % {"fence": fence1}
                         ),
@@ -1023,14 +1023,14 @@ class PurchaseOrderWidget(Widget):
                     % (
                         rec[3],
                         rec[4],
-                        force_text(_("units")),
+                        force_str(_("units")),
                         currency[0],
                         rec[5],
                         currency[1],
                         request.prefix,
                         limit_fence2.strftime("%Y-%m-%d"),
-                        force_text(_("Review")),
-                        force_text(
+                        force_str(_("Review")),
+                        force_str(
                             _("proposed orders within %(fence)s days")
                             % {"fence": fence2}
                         ),
@@ -1067,11 +1067,11 @@ class PurchaseQueueWidget(Widget):
             '<div class="table-responsive"><table class="table table-condensed table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
-                capfirst(force_text(_("item"))),
-                capfirst(force_text(_("supplier"))),
-                capfirst(force_text(_("enddate"))),
-                capfirst(force_text(_("quantity"))),
-                capfirst(force_text(_("criticality"))),
+                capfirst(force_str(_("item"))),
+                capfirst(force_str(_("supplier"))),
+                capfirst(force_str(_("enddate"))),
+                capfirst(force_str(_("quantity"))),
+                capfirst(force_str(_("criticality"))),
             ),
         ]
         alt = False
@@ -1123,12 +1123,12 @@ class DistributionQueueWidget(Widget):
             '<div class="table-responsive"><table class="table table-condensed table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
-                capfirst(force_text(_("item"))),
-                capfirst(force_text(_("origin"))),
-                capfirst(force_text(_("destination"))),
-                capfirst(force_text(_("enddate"))),
-                capfirst(force_text(_("quantity"))),
-                capfirst(force_text(_("criticality"))),
+                capfirst(force_str(_("item"))),
+                capfirst(force_str(_("origin"))),
+                capfirst(force_str(_("destination"))),
+                capfirst(force_str(_("enddate"))),
+                capfirst(force_str(_("quantity"))),
+                capfirst(force_str(_("criticality"))),
             ),
         ]
         alt = False
@@ -1181,12 +1181,12 @@ class ShippingQueueWidget(Widget):
             '<div class="table-responsive"><table class="table table-condensed table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
-                capfirst(force_text(_("item"))),
-                capfirst(force_text(_("origin"))),
-                capfirst(force_text(_("destination"))),
-                capfirst(force_text(_("quantity"))),
-                capfirst(force_text(_("start date"))),
-                capfirst(force_text(_("criticality"))),
+                capfirst(force_str(_("item"))),
+                capfirst(force_str(_("origin"))),
+                capfirst(force_str(_("destination"))),
+                capfirst(force_str(_("quantity"))),
+                capfirst(force_str(_("start date"))),
+                capfirst(force_str(_("criticality"))),
             ),
         ]
         alt = False
@@ -1243,12 +1243,12 @@ class ResourceQueueWidget(Widget):
             '<th class="aligncenter">%s</th>'
             '<th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
-                capfirst(force_text(_("resource"))),
-                capfirst(force_text(_("operation"))),
-                capfirst(force_text(_("startdate"))),
-                capfirst(force_text(_("enddate"))),
-                capfirst(force_text(_("quantity"))),
-                capfirst(force_text(_("criticality"))),
+                capfirst(force_str(_("resource"))),
+                capfirst(force_str(_("operation"))),
+                capfirst(force_str(_("startdate"))),
+                capfirst(force_str(_("enddate"))),
+                capfirst(force_str(_("quantity"))),
+                capfirst(force_str(_("criticality"))),
             ),
         ]
         alt = False
@@ -1299,11 +1299,11 @@ class PurchaseAnalysisWidget(Widget):
             '<div class="table-responsive"><table class="table table-condensed table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
-                capfirst(force_text(_("item"))),
-                capfirst(force_text(_("supplier"))),
-                capfirst(force_text(_("enddate"))),
-                capfirst(force_text(_("quantity"))),
-                capfirst(force_text(_("inventory status"))),
+                capfirst(force_str(_("item"))),
+                capfirst(force_str(_("supplier"))),
+                capfirst(force_str(_("enddate"))),
+                capfirst(force_str(_("quantity"))),
+                capfirst(force_str(_("inventory status"))),
             ),
         ]
         alt = False
@@ -1352,9 +1352,9 @@ class AlertsWidget(Widget):
             '<div class="table-responsive"><table class="table table-condensed table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
-                capfirst(force_text(_("type"))),
-                capfirst(force_text(_("count"))),
-                capfirst(force_text(_("weight"))),
+                capfirst(force_str(_("type"))),
+                capfirst(force_str(_("count"))),
+                capfirst(force_str(_("weight"))),
             ),
         ]
         cursor = connections[db].cursor()
@@ -1754,7 +1754,7 @@ class DeliveryPerformanceWidget(Widget):
         result = [
             '<div style="text-align: center"><span id="otd"></span></div>',
             '<span id="otd_label" style="display:none">%s</span>'
-            % force_text(_("On time delivery")),
+            % force_str(_("On time delivery")),
             '<span id="otd_value" style="display:none">%s</span>' % val,
             '<span id="otd_green" style="display:none">%s</span>' % green,
             '<span id="otd_yellow" style="display:none">%s</span>' % yellow,

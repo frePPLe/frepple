@@ -18,7 +18,7 @@
 from datetime import datetime, timedelta
 
 from django.db import connections, transaction
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.input.models import Demand
@@ -114,7 +114,7 @@ class ReportByDemand(GridReport):
             request.session["lasttab"] = "plan"
             return {
                 "active_tab": "plan",
-                "title": force_text(Demand._meta.verbose_name) + " " + args[0],
+                "title": force_str(Demand._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan"),
                 "model": Demand,
             }

@@ -58,7 +58,7 @@ class Command(BaseCommand):
       on a different platform or version can give different results).
     """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__
@@ -183,21 +183,17 @@ class Command(BaseCommand):
                     status="0%",
                     user=user,
                 )
-            task.arguments = (
-                "--cluster=%s --demand=%s --forecast_per_item=%s --level=%s --resource=%s "
-                "--resource_size=%s --components=%s --components_per=%s --deliver_lt=%s --procure_lt=%s"
-                % (
-                    cluster,
-                    demand,
-                    forecast_per_item,
-                    level,
-                    resource,
-                    resource_size,
-                    components,
-                    components_per,
-                    deliver_lt,
-                    procure_lt,
-                )
+            task.arguments = "--cluster=%s --demand=%s --forecast_per_item=%s --level=%s --resource=%s " "--resource_size=%s --components=%s --components_per=%s --deliver_lt=%s --procure_lt=%s" % (
+                cluster,
+                demand,
+                forecast_per_item,
+                level,
+                resource,
+                resource_size,
+                components,
+                components_per,
+                deliver_lt,
+                procure_lt,
             )
             task.save(using=database)
 

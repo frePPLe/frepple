@@ -53,7 +53,7 @@ class Command(BaseCommand):
     start with the name of the data model.
     """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def add_arguments(self, parser):
         parser.add_argument("--user", help="User running the command")

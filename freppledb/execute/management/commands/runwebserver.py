@@ -30,7 +30,7 @@ class Command(BaseCommand):
       Runs a multithreaded web server for frePPLe.
       """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__

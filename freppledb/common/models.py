@@ -42,7 +42,7 @@ from django import forms
 from django.forms.models import modelform_factory
 from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import mark_safe, escape
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
@@ -1277,13 +1277,13 @@ class NotificationFactory:
         status = {
             "users": [],
             "object_pk": object_pk,
-            "label": force_text(model._meta.verbose_name),
+            "label": force_str(model._meta.verbose_name),
             "model": modelname,
             "type": "online",
             "models": [
                 {
                     "model": modelname,
-                    "label": force_text(model._meta.verbose_name),
+                    "label": force_str(model._meta.verbose_name),
                     "checked": False,
                 }
             ],
@@ -1298,7 +1298,7 @@ class NotificationFactory:
                         if key not in children and m != model:
                             children[key] = {
                                 "model": key,
-                                "label": force_text(m._meta.verbose_name_plural),
+                                "label": force_str(m._meta.verbose_name_plural),
                                 "checked": False,
                             }
             for flw in (
@@ -1346,7 +1346,7 @@ class NotificationFactory:
                                         {
                                             "url": flw.getURL(database),
                                             "object_pk": flw.object_pk,
-                                            "model": force_text(
+                                            "model": force_str(
                                                 flw.content_type.model_class()._meta.verbose_name
                                             ),
                                         }

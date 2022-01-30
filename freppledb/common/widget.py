@@ -18,7 +18,7 @@
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.utils import formats
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import escape
 from django.utils.text import capfirst
 from django.utils.timesince import timesince
@@ -129,7 +129,7 @@ class InboxWidget(Widget):
                     notif.comment.getURL(),
                     notif.comment.object_repr,
                     escape(
-                        capfirst(force_text(_(notif.comment.content_type.name)))
+                        capfirst(force_str(_(notif.comment.content_type.name)))
                         if notif.comment.content_type
                         else ""
                     ),

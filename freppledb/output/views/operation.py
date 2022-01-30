@@ -19,7 +19,7 @@ from django.db import connections, transaction
 from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import format_lazy
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import (
@@ -308,7 +308,7 @@ class OverviewReport(GridPivot):
         if args and args[0]:
             request.session["lasttab"] = "plan"
             return {
-                "title": force_text(Operation._meta.verbose_name) + " " + args[0],
+                "title": force_str(Operation._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan"),
                 "model": Operation,
             }

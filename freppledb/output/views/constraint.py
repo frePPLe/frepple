@@ -18,7 +18,7 @@
 from django.db.models import Count
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from freppledb.output.models import Constraint
 from freppledb.common.report import (
@@ -128,7 +128,7 @@ class BaseReport(GridReport):
                 bufferName = b.item.name + " @ " + b.location.name
             return {
                 "active_tab": "constraint",
-                "title": force_text(reportclass.detailmodel._meta.verbose_name)
+                "title": force_str(reportclass.detailmodel._meta.verbose_name)
                 + " "
                 + (bufferName if "bufferName" in vars() else args[0]),
                 "post_title": reportclass.detail_post_title,

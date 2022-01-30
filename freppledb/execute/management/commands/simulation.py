@@ -89,7 +89,7 @@ class Command(BaseCommand):
   Make a backup if you can't afford loosing the current contents.
   """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__

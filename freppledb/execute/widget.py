@@ -17,7 +17,7 @@
 
 from django.middleware.csrf import get_token
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from freppledb.common.dashboard import Dashboard, Widget
 
@@ -43,7 +43,7 @@ class ExecuteWidget(Widget):
       """ % (
             _thread_locals.request.prefix,
             get_token(_thread_locals.request),
-            force_text(_("Create a plan")),
+            force_str(_("Create a plan")),
         )
 
 

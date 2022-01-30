@@ -27,7 +27,7 @@ from django.conf import settings
 from django.db import models, connections
 from django.utils.translation import gettext as _
 from django.utils.http import urlquote
-from django.utils.encoding import iri_to_uri, force_text
+from django.utils.encoding import iri_to_uri, force_str
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
@@ -251,7 +251,7 @@ class ModelTabs(Node):
                         'class="active" ' if active_tab == tab["name"] else "",
                         context["request"].prefix,
                         reverse(tab["view"], args=(obj,)),
-                        force_text(tab["label"]).capitalize(),
+                        force_str(tab["label"]).capitalize(),
                     )
                 )
             result.append("</ul></div></div>")
@@ -385,7 +385,7 @@ def duration(value):
     try:
         if value is None:
             return ""
-        value = Decimal(force_text(value))
+        value = Decimal(force_str(value))
         if value == 0:
             return "0 s"
         if value % 604800 == 0:
@@ -595,8 +595,8 @@ register.tag("getMenu", getMenu)
 #
 class ModelDependenciesNode(Node):
     r"""
-  A tag to return JSON string with all models and their dependencies
-  """
+    A tag to return JSON string with all models and their dependencies
+    """
 
     def render(self, context):
         res = {}
@@ -656,8 +656,8 @@ register.tag("getModelDependencies", getModelDependencies)
 #
 class DashboardNode(Node):
     r"""
-  A tag to return HTML code for the dashboard.
-  """
+    A tag to return HTML code for the dashboard.
+    """
 
     def __init__(self, varname, hiddenvarname):
         self.varname = varname

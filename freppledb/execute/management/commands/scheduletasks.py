@@ -48,7 +48,7 @@ class Command(BaseCommand):
     This command is normally executed automatically, scheduled with the at-command.
     Only in rare situations would you need to run this command manually.
     """
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__

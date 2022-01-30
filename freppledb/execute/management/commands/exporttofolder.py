@@ -46,7 +46,7 @@ class Command(BaseCommand):
     Exports tables from the frePPLe database to CSV files in a folder
     """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     # Any sql statements that should be executed before the export
     pre_sql_statements = ()

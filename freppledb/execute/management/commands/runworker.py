@@ -194,7 +194,7 @@ class Command(BaseCommand):
     The command is intended only to be used internally by frePPLe, not by an API or user.
     """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__

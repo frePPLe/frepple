@@ -28,7 +28,7 @@ from django.db import transaction
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.template.loader import render_to_string
 
 from freppledb import __version__
@@ -51,7 +51,7 @@ class Command(BaseCommand):
     # help = "Loads XLS workbook file into the frePPLe database"
     help = "command not implemented yet"
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def add_arguments(self, parser):
         parser.add_argument("--user", help="User running the command")
@@ -149,11 +149,11 @@ class Command(BaseCommand):
                                     break
                             if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
                                 print(
-                                    force_text(
+                                    force_str(
                                         _("Ignoring data in worksheet: %s") % ws_name
                                     )
                                 )
-                                # yield '<div class="alert alert-warning">' + force_text(_("Ignoring data in worksheet: %s") % ws_name) + '</div>'
+                                # yield '<div class="alert alert-warning">' + force_str(_("Ignoring data in worksheet: %s") % ws_name) + '</div>'
                             elif not self.user.has_perm(
                                 "%s.%s"
                                 % (
@@ -163,11 +163,11 @@ class Command(BaseCommand):
                             ):
                                 # Check permissions
                                 print(
-                                    force_text(
+                                    force_str(
                                         _("You don't permissions to add: %s") % ws_name
                                     )
                                 )
-                                # yield '<div class="alert alert-danger">' + force_text(_("You don't permissions to add: %s") % ws_name) + '</div>'
+                                # yield '<div class="alert alert-danger">' + force_str(_("You don't permissions to add: %s") % ws_name) + '</div>'
                             else:
                                 deps = set([model])
                                 GridReport.dependent_models(model, deps)
@@ -179,7 +179,7 @@ class Command(BaseCommand):
                         # Process all rows in each worksheet
                         for ws_name, model, contenttype_id, dependencies in models:
                             print(
-                                force_text(
+                                force_str(
                                     _("Processing data in worksheet: %s") % ws_name
                                 )
                             )

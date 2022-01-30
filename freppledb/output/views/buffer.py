@@ -21,7 +21,7 @@ from django.conf import settings
 from django.db import connections, transaction
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
@@ -552,7 +552,7 @@ class OverviewReport(GridPivot):
             ) or request.path_info.startswith("/detail/input/item/"):
                 request.session["lasttab"] = "inventory"
                 r = {
-                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
+                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("inventory"),
                     "active_tab": "inventory",
                     "model": Item,
@@ -570,7 +570,7 @@ class OverviewReport(GridPivot):
                 if index == -1:
                     buffer = Buffer.objects.get(id=args[0])
                 return {
-                    "title": force_text(Buffer._meta.verbose_name)
+                    "title": force_str(Buffer._meta.verbose_name)
                     + " "
                     + (
                         args[0]

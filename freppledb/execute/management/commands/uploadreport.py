@@ -39,7 +39,7 @@ class Command(BaseCommand):
   This command will upload reports from the export folder to sftp or ftps server configured in djangosettings.
   """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__

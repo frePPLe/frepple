@@ -29,7 +29,7 @@ class Command(BaseCommand):
     This command generates an API authentication token for a user.
     """
 
-    requires_system_checks = False
+    requires_system_checks = []
 
     def get_version(self):
         return __version__

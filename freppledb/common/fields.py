@@ -37,11 +37,12 @@ class DurationField(models.DecimalField):
 #
 # JSONFIELD
 #
-# JSONField is a generic textfield that serializes/unserializes JSON objects.
-#
-# This code is very loosely inspired on the code found at:
-#    https://github.com/bradjasper/django-jsonfield
 class JSONField(models.TextField):
+    """
+    Obsoleted database field type.
+    Not used any longer, but the code is required to be kept here to make migrations run.
+    """
+
     def __init__(self, *args, **kwargs):
         self.dump_kwargs = kwargs.pop("dump_kwargs", {"separators": (",", ":")})
         self.load_kwargs = kwargs.pop("load_kwargs", {})
@@ -86,6 +87,11 @@ class JSONField(models.TextField):
 
 
 class JSONBField(JSONField):
+    """
+    Obsoleted database field type.
+    Not used any longer, but the code is required to be kept here to make migrations run.
+    """
+
     def db_type(self, connection):
         # A jsonb field is 1) much more efficient in querying the field,
         # 2) allows indexes to be defined on the content, but 3) takes a bit

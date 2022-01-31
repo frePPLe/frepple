@@ -20,7 +20,6 @@ from datetime import datetime, timedelta
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from freppledb.common.fields import JSONBField
 from freppledb.common.models import User
 
 import logging
@@ -99,7 +98,7 @@ class ScheduledTask(models.Model):
     email_success = models.CharField(
         "email_success", max_length=300, null=True, blank=True
     )
-    data = JSONBField(null=True, blank=True)
+    data = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return self.name

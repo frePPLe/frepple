@@ -30,7 +30,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import format_lazy
 
-from freppledb.common.fields import JSONBField, AliasDateTimeField
+from freppledb.common.fields import AliasDateTimeField
 from freppledb.common.models import (
     HierarchyModel,
     AuditModel,
@@ -1698,7 +1698,7 @@ class Demand(AuditModel, HierarchyModel):
         blank=True,
         editable=False,
     )
-    plan = JSONBField(default="{}", null=True, blank=True, editable=False)
+    plan = models.JSONField(default="{}", null=True, blank=True, editable=False)
 
     # Convenience methods
     def __str__(self):
@@ -1783,7 +1783,7 @@ class OperationPlan(AuditModel):
         editable=False,
     )
     delay = models.DurationField(_("delay"), null=True, blank=True, editable=False)
-    plan = JSONBField(default="{}", null=True, blank=True, editable=False)
+    plan = models.JSONField(default="{}", null=True, blank=True, editable=False)
     # Used only for manufacturing orders
     operation = models.ForeignKey(
         Operation,

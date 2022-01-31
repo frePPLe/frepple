@@ -36,9 +36,6 @@ from django.db import connections
 from django.db.models.signals import class_prepared
 from django.db.utils import DEFAULT_DB_ALIAS
 
-from freppledb.common.fields import JSONBField
-
-
 _register = {}
 _register_kwargs = {}
 
@@ -114,7 +111,9 @@ def add_extra_model_fields(sender, **kwargs):
                 label, null=True, blank=True, db_index=True, editable=editable
             )
         elif fieldtype == "jsonb":
-            field = JSONBField(default="{}", null=True, blank=True, editable=editable)
+            field = models.JSONField(
+                default="{}", null=True, blank=True, editable=editable
+            )
         else:
             raise ImproperlyConfigured("Invalid attribute type '%s'." % fieldtype)
         field.contribute_to_class(sender, field_name)

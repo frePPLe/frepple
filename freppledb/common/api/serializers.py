@@ -17,12 +17,8 @@
 
 from rest_framework.serializers import ModelSerializer as DefaultModelSerializer
 from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
-from rest_framework.fields import JSONField
 
-from freppledb.common.fields import JSONBField
 from freppledb.boot import getAttributes
-
-DefaultModelSerializer.serializer_field_mapping[JSONBField] = JSONField
 
 
 class ModelSerializer(DefaultModelSerializer):

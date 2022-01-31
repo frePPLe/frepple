@@ -1348,7 +1348,16 @@ class InventoryDetail(OperationPlanMixin):
         return base.select_related().annotate(
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
-            )
+            ),
+            operation=RawSQL(
+                """
+            case when exists (select 1 from operation where operationplan.operation_id = operation.name)
+            then operationplan.operation_id
+            else null
+            end
+            """,
+                [],
+            ),
         )
 
     @classmethod
@@ -1469,10 +1478,10 @@ class InventoryDetail(OperationPlanMixin):
             editable=False,
         ),
         GridFieldText(
-            "operationplan__name",
+            "operation",
             title=_("operation"),
             editable=False,
-            field_name="operationplan__name",
+            field_name="operation",
             formatter="detail",
             extra='"role":"input/operation"',
         ),

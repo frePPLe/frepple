@@ -155,14 +155,13 @@ $(".scenariocopy").on("click", function(event) {
 });
 $(".scenariolabel").on("change", function(event) {
   event.preventDefault();
-  var target = "/" + $(this).attr("data-target");
-  if (target == "/default")
-    target = "";
+
   $.ajax({
-   url: target + "/execute/launch/scenario_copy/",
+   url: "/default/execute/launch/scenario_copy/",
    type: 'POST',
    data: {
      update: 1,
+     scenario: $(this).attr("data-target"),
      description: $(this).val()
      },
    success: function() {

@@ -467,7 +467,8 @@ def wrapTask(request, action):
             # Note: update is immediate and synchronous.
             if not request.user.has_perm("common.release_scenario"):
                 raise Exception("Missing execution privileges")
-            sc = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=request.database)
+            scenario = args["scenario"]
+            sc = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=scenario)
             sc.description = args.get("description", None)
             sc.save(using=DEFAULT_DB_ALIAS)
         else:

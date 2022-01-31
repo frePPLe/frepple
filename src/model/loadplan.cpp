@@ -251,18 +251,10 @@ string LoadPlan::getStatus() const {
 
 void LoadPlan::setStatus(const string& s) {
   if (s == "confirmed") {
-    if (getOperationPlan()->getProposed())
-      throw DataException(
-          "OperationPlanResource status change to confirmed while "
-          "OperationPlan is proposed");
     setConfirmed(true);
   } else if (s == "proposed")
     setProposed(true);
   else if (s == "closed") {
-    if (getOperationPlan()->getProposed())
-      throw DataException(
-          "OperationPlanResource status change to closed while OperationPlan "
-          "is proposed");
     setClosed(true);
   } else
     throw DataException("invalid operationplanresource status:" + s);

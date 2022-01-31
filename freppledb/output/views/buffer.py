@@ -654,12 +654,12 @@ class OverviewReport(GridPivot):
                 order by name limit 20
            )t ) reasons,
            case
-             when d.history then jsonb_build_object(
+             when d.history then json_build_object(
                'onhand', min(ax_buffer.onhand)
                )
            else coalesce(
              (
-             select jsonb_build_object(
+             select json_build_object(
                'onhand', onhand,
                'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
                'periodofcover', periodofcover
@@ -674,7 +674,7 @@ class OverviewReport(GridPivot):
              order by flowdate desc, id desc limit 1
              ),
              (
-             select jsonb_build_object(
+             select json_build_object(
                'onhand', 0.0,
                'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
                'periodofcover', 1
@@ -690,7 +690,7 @@ class OverviewReport(GridPivot):
              order by flowdate asc, id asc limit 1
              ),
              (
-             select jsonb_build_object(
+             select json_build_object(
                'onhand', 0.0,
                'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
                'periodofcover', 1
@@ -758,9 +758,9 @@ class OverviewReport(GridPivot):
             order by priority
             limit 1)
             end as safetystock,
-            case when d.history then jsonb_build_object()
+            case when d.history then json_build_object()
             else (
-             select jsonb_build_object(
+             select json_build_object(
                'work_in_progress_mo', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
                'work_in_progress_mo_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
                'work_in_progress_mo_proposed', sum(case when operationplan.status = 'proposed' and operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),

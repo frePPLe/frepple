@@ -1698,7 +1698,7 @@ class Demand(AuditModel, HierarchyModel):
         blank=True,
         editable=False,
     )
-    plan = models.JSONField(default="{}", null=True, blank=True, editable=False)
+    plan = models.JSONField(default=dict, null=True, blank=True, editable=False)
 
     # Convenience methods
     def __str__(self):
@@ -1783,7 +1783,7 @@ class OperationPlan(AuditModel):
         editable=False,
     )
     delay = models.DurationField(_("delay"), null=True, blank=True, editable=False)
-    plan = models.JSONField(default="{}", null=True, blank=True, editable=False)
+    plan = models.JSONField(default=dict, null=True, blank=True, editable=False)
     # Used only for manufacturing orders
     operation = models.ForeignKey(
         Operation,

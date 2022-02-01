@@ -47,7 +47,6 @@ from django.utils.html import mark_safe, escape
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
 
-from .fields import JSONBField
 from freppledb import runFunction
 from freppledb.boot import addAttributesFromDatabase
 
@@ -643,7 +642,7 @@ class UserPreference(models.Model):
         on_delete=models.CASCADE,
     )
     property = models.CharField(max_length=100, blank=False, null=False)
-    value = JSONBField(max_length=1000, blank=False, null=False)
+    value = models.JSONField(max_length=1000, blank=False, null=False)
 
     def natural_key(self):
         return (self.user, self.property)
@@ -919,7 +918,7 @@ class Follower(models.Model):
     type = models.CharField(
         _("type"), max_length=10, null=False, default="O", choices=type_list
     )
-    args = JSONBField(blank=True, null=True)
+    args = models.JSONField(blank=True, null=True)
 
     def getURL(self, database=DEFAULT_DB_ALIAS):
         if database == DEFAULT_DB_ALIAS:

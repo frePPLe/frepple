@@ -2357,6 +2357,14 @@ class OperationPlan : public Object,
     return tmp;
   }
 
+  /* Update the loadplans and flowplans of the operationplan based on the
+   * latest information of quantity, date and locked flag.
+   * This method will NOT update parent or child operationplans.
+   *
+   * Only intended for internal use by update()
+   */
+  void resizeFlowLoadPlans();
+
  private:
   /* A tree structure with all operationplans to allow a fast lookup by id. */
   static Tree st;
@@ -2381,14 +2389,6 @@ class OperationPlan : public Object,
    * @ see getTotalFlow
    */
   double getTotalFlowAux(const Buffer*) const;
-
-  /* Update the loadplans and flowplans of the operationplan based on the
-   * latest information of quantity, date and locked flag.
-   * This method will NOT update parent or child operationplans.
-   *
-   * Only intended for internal use by update()
-   */
-  void resizeFlowLoadPlans();
 
   /* Maintain the operationplan list in sorted order.
    *

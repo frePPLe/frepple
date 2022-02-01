@@ -486,6 +486,7 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const {
       lp->getOperationPlan()->getCompleted())
     // No capacity consumption required
     return 0.0;
+  if (lp->getConfirmed()) return lp->getQuantity();
   if (!lp->getOperationPlan()->getDates().overlap(getEffective()) &&
       (lp->getOperationPlan()->getDates().getDuration() ||
        !getEffective().within(lp->getOperationPlan()->getStart())))

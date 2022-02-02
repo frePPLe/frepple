@@ -79,10 +79,10 @@ class frepplePermissionClass(permissions.DjangoModelPermissions):
 
 class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):
     """
-  Customized API view for the REST framework.:
-     - support for request-specific scenario database
-     - add 'title' to the context of the html view
-  """
+    Customized API view for the REST framework.:
+        - support for request-specific scenario database
+        - add 'title' to the context of the html view
+    """
 
     filter_backends = (DjangoFilterBackend,)
     permission_classes = (frepplePermissionClass,)
@@ -107,10 +107,10 @@ class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):
 
 class frePPleRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     """
-  Customized API view for the REST framework.
-     - support for request-specific scenario database
-     - add 'title' to the context of the html view
-  """
+    Customized API view for the REST framework.
+       - support for request-specific scenario database
+       - add 'title' to the context of the html view
+    """
 
     permission_classes = (frepplePermissionClass,)
 

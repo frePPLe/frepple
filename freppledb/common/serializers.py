@@ -197,6 +197,7 @@ class ParameterSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
         model = models.Parameter
         fields = ("name", "source", "lastmodified", "value", "description")
+        read_only_fields = ("lastmodified",)
         list_serializer_class = BulkListSerializer
         update_lookup_field = "name"
         partial = True

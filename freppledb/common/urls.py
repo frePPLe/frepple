@@ -135,6 +135,7 @@ urlpatterns = [
     ),
     re_path(r"^api/$", APIIndexView),
     re_path(r"^about/$", freppledb.common.views.AboutView, name="about"),
+    re_path(r"^scenarios/$", freppledb.common.views.ScenarioView, name="scenarios"),
     # Forgotten password
     re_path(
         r"^reset_password_confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$",

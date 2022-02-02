@@ -32,6 +32,7 @@ from django.contrib.auth.password_validation import (
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
+from django.db import DEFAULT_DB_ALIAS
 from django.db.models.expressions import RawSQL
 from django.urls import reverse, resolve
 from django import forms
@@ -57,6 +58,7 @@ from .models import (
     Attribute,
     User,
     Parameter,
+    Scenario,
     Comment,
     Bucket,
     BucketDetail,
@@ -83,6 +85,21 @@ def AboutView(request):
             "apps": settings.INSTALLED_APPS,
             "website": settings.DOCUMENTATION_URL,
         }
+    )
+
+
+@login_required
+def ScenarioView(request):
+    if request.method != "GET":
+        raise Http404("Only get requests allowed")
+    return JsonResponse(
+        [
+            sc
+            for sc in Scenario.objects.all()
+            .using(DEFAULT_DB_ALIAS)
+            .values("name", "status", "description")
+        ],
+        safe=False,
     )
 
 

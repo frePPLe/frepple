@@ -16,17 +16,25 @@
 #
 import os
 import logging
+import tempfile
 import uuid
 from time import time
 from datetime import datetime, date
 from dateutil.parser import parse
 
+from django.conf import settings
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 
 from freppledb.boot import getAttributes
 from freppledb.common.models import Parameter
-from freppledb.common.commands import PlanTaskRegistry, PlanTask
-from freppledb.input.models import Resource, Item, Location, OperationPlan
+from freppledb.common.commands import PlanTaskRegistry, PlanTask, CopyFromGenerator
+from freppledb.input.models import (
+    Resource,
+    Item,
+    Location,
+    OperationPlan,
+    OperationMaterial,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -157,6 +165,88 @@ class checkBuckets(CheckTask):
                     (q[1],),
                 )
                 cursor.execute("comment on index %s is %%s" % q[0], (q[1],))
+
+
+@PlanTaskRegistry.register
+class checkBrokenSupplyPath(CheckTask):
+    # check for item location combinations in the demand
+    # check for item location that are consumed in operation materials
+    # and make sure they can be either manufactured, transported and purchased
+    description = "Check broken supply paths"
+    sequence = 78
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+
+        Item.rebuildHierarchy(database)
+        Location.rebuildHierarchy(database)
+        with_fcst_module = "freppledb.forecast" in settings.INSTALLED_APPS
+
+        with connections[database].cursor() as cursor:
+            cursor = connections[database].cursor()
+            # cleaning previous records
+            cursor.execute(
+                """
+                        delete from itemsupplier where supplier_id = 'Unknown supplier';
+                        insert into supplier (name, description)
+                        values
+                        ('Unknown supplier', 'automatically created to resolve broken supply paths')
+                        on conflict (name)
+                        do nothing;
+                    """
+            )
+
+            # inserting combinations with no replenishment
+            cursor.execute(
+                """
+                        insert into itemsupplier (supplier_id, item_id, location_id)
+                        (select distinct 'Unknown supplier', item_id, location_id from demand where status in ('open','quote')
+                        union
+                        select distinct 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
+                        inner join operation on operation.name = operationmaterial.operation_id
+                        where operationmaterial.quantity < 0
+                        %s
+                        )
+                        except
+                        (select 'Unknown supplier', item.name, location_id from itemdistribution
+                        inner join item parentitem on itemdistribution.item_id = parentitem.name
+                        inner join item on item.lft between parentitem.lft and parentitem.rght
+                        inner join location on itemdistribution.location_id = location.name
+                        union
+                        select 'Unknown supplier', item_id, location.name from itemsupplier
+                        left outer join location parentlocation on parentlocation.name = coalesce(itemsupplier.location_id, 'All locations')
+                        left outer join location on location.lft between parentlocation.lft and parentlocation.rght
+                        union
+                        select 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
+                        inner join operation on operation.name = operationmaterial.operation_id
+                        where operationmaterial.quantity > 0
+                        union
+                        select 'Unknown supplier', item_id, location_id from operation
+                        )
+
+                        """
+                % (
+                    """
+                        union
+                            select distinct item_id, location_id from forecast where planned
+                        """
+                    if with_fcst_module
+                    else "",
+                )
+            )
+
+            # removing unknown supplier if no invalid record has been found
+            if cursor.rowcount == 0:
+                cursor.execute(
+                    """
+                update operationplan set supplier_id = null where supplier_id = 'Unknown supplier';
+                delete from supplier where name = 'Unknown supplier';
+                """
+                )
 
 
 @PlanTaskRegistry.register

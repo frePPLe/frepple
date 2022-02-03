@@ -29,6 +29,10 @@ support both Ubuntu 18 as well as Ubuntu 20.
 - | Bug fix: Zero-time operations didn't correctly respect the availability calendars
     in some corner cases.
 
+- | Item suppliers records are automatically created for item-locations for which no
+    replenishment has been defined. These records, created with an 'Unknown supplier', prevent the
+    demand from not being planned.
+
 .. rubric:: Third party components
 
 - | The django version is bumped up from 2.2 LTS to 3.2 LTS.

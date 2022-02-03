@@ -16,10 +16,9 @@
 #
 import os
 import logging
-import tempfile
 import uuid
 from time import time
-from datetime import datetime, date
+from datetime import datetime
 from dateutil.parser import parse
 
 from django.conf import settings

@@ -183,6 +183,16 @@ class checkBrokenSupplyPath(CheckTask):
         Item.rebuildHierarchy(database)
         Location.rebuildHierarchy(database)
         with_fcst_module = "freppledb.forecast" in settings.INSTALLED_APPS
+        param = True
+        try:
+            p = Parameter.objects.using(database).get(name="plan.fixBrokenSupplyPath")
+            param = p.value.strip().lower() == "true"
+        except:
+            pass
+
+        if not param:
+            logger.info("skipping search of broken supply")
+            return
 
         with connections[database].cursor() as cursor:
             cursor = connections[database].cursor()
@@ -245,6 +255,9 @@ class checkBrokenSupplyPath(CheckTask):
                 delete from supplier where name = 'Unknown supplier';
                 """
                 )
+                logger.info("No broken supply path detected")
+            else:
+                logger.info("Created %d item suppliers records" % (cursor.rowcount,))
 
 
 @PlanTaskRegistry.register

@@ -27,13 +27,12 @@ from django.db import connections, transaction, DEFAULT_DB_ALIAS
 
 from freppledb.boot import getAttributes
 from freppledb.common.models import Parameter
-from freppledb.common.commands import PlanTaskRegistry, PlanTask, CopyFromGenerator
+from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.input.models import (
     Resource,
     Item,
     Location,
     OperationPlan,
-    OperationMaterial,
 )
 
 logger = logging.getLogger(__name__)

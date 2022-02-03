@@ -331,12 +331,12 @@ class Command(BaseCommand):
 
             # Give access to the destination scenario to:
             #  a) the user doing the copy
-            #  b) all superusers from the source schema
+            #  b) all active superusers from the source schema
             # unless it's a promotion
             if destination != DEFAULT_DB_ALIAS:
-                User.objects.using(destination).filter(is_superuser=True).update(
-                    is_active=True
-                )
+                User.objects.using(destination).filter(
+                    is_superuser=True, is_active=True
+                ).update(is_active=True)
                 User.objects.using(destination).filter(is_superuser=False).update(
                     is_active=False
                 )

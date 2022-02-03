@@ -230,7 +230,7 @@ class checkBrokenSupplyPath(CheckTask):
                 % (
                     """
                         union
-                            select distinct item_id, location_id from forecast where planned
+                            select distinct 'Unknown supplier', item_id, location_id from forecast where planned
                         """
                     if with_fcst_module
                     else "",

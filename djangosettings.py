@@ -270,7 +270,6 @@ INSTALLED_APPS = (
     "freppledb.common",
     "django_filters",
     "rest_framework",
-    "django_admin_bootstrapped",
     "django.contrib.admin",
     "freppledb.archive",
     # The next two apps allow users to run their own SQL statements on

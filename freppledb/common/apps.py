@@ -43,7 +43,6 @@ def check_python_packages(app_configs, **kwargs):
         ("portend", "portend"),
         ("rest_framework", "djangorestframework"),
         ("rest_framework_bulk", "djangorestframework-bulk"),
-        ("django_admin_bootstrapped", "django-admin-bootstrapped"),
         ("bootstrap3", "django-bootstrap3"),
         ("django_filters", "django-filter"),
         ("html5lib", "html5lib"),
@@ -95,7 +94,6 @@ class CommonConfig(AppConfig):
             "freppledb.archive",
             "django_filters",
             "rest_framework",
-            "django_admin_bootstrapped",
             "django.contrib.admin",
             "freppledb.reportmanager",
         ]

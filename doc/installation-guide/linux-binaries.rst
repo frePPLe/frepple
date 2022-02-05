@@ -16,7 +16,7 @@ Binary installation packages are available for:
 
 * Ubuntu 18 LTS
 * Red Hat Enterprise Linux 8 (Enterprise Edition only, deprecated in favor of containers)
-* CentOS 8 (Enterprise Edition only, deprecated in favor of containers)
+* Rocky Linux 8 (Enterprise Edition only, deprecated in favor of containers)
 * Suse 15 (Enterprise Edition only, deprecated in favor of containers)
 * OpenSuse 15 (Enterprise Edition only, deprecated in favor of containers)
 
@@ -128,7 +128,7 @@ Here are the steps to get a fully working environment.
    with the appropriate version number.
    ::
 
-      sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
+      sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
 
 
 #. **Install the frepple binary package**
@@ -216,7 +216,6 @@ Here are the steps to get a fully working environment.
           'freppledb.common',
           'django_filters',
           'rest_framework',
-          'django_admin_bootstrapped',
           'django.contrib.admin',
           # The next two apps allow users to run their own SQL statements on
           # the database, using the SQL_ROLE configured above.
@@ -390,7 +389,7 @@ inspiration for your own deployments.
 
   # Install python3 and required python modules
   sudo dnf install python3 python3-pip
-  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
+  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
 
   # Install the frePPLe binary RPM package and the necessary dependencies.
   sudo dnf --nogpgcheck localinstall  frepple*.rpm
@@ -423,7 +422,6 @@ You can use it as a guideline and inspiration for your own deployments.
   sudo zypper install apache2-mod_wsgi-python3
   sudo zypper addrepo http://download.opensuse.org/repositories/devel:languages:python3/SLE_12_SP1/devel:languages:python3.repo
   sudo zypper refresh
-  sudo zypper install python3-psycopg2
 
   # Create user, create databases, configure access
   sudo su
@@ -449,7 +447,7 @@ You can use it as a guideline and inspiration for your own deployments.
   # Install python3 and required python modules
   sudo zypper install python3 python3-pip
   sudo python3 -m ensure pip
-  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/5.0.0/requirements.txt
+  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
 
   #install Apache2 modules:
   sudo a2enmod mod_access_compat mod_deflate

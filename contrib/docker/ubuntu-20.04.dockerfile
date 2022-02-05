@@ -21,8 +21,8 @@
 FROM ubuntu:20.04 as builder
 
 RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
-  cmake g++ git python3 python3-pip python3-dev python3-psycopg2 python3-sphinx \
-  libxerces-c3.2 libxerces-c-dev openssl libssl-dev libpq5 libpq-dev python3-lxml
+  cmake g++ git python3 python3-pip python3-dev \
+  libxerces-c3.2 libxerces-c-dev openssl libssl-dev libpq5 libpq-dev
 
 # An alternative to the copy is to clone from git:
 # RUN git clone https://github.com/frepple/frepple.git frepple
@@ -33,7 +33,7 @@ RUN src=`basename --suffix=.tar.gz frepple-*` && \
   rm *.tar.gz && \
   cd $src && \
   python3 -m pip install --upgrade pip && \
-  python3 -m pip install -r requirements.txt && \
+  python3 -m pip install -r requirements.dev.txt && \
   mkdir build && \
   cd build && \
   cmake .. && \

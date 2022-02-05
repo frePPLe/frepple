@@ -4,7 +4,7 @@ find_program(gpg NAMES gpg)
 
 if (docker)
 
-# Main build & runtime image 
+# Main build & runtime image
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ubuntu-18.04.dockerfile" ubuntu-18.04/dockerfile COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh" ubuntu-18.04/entrypoint.sh COPYONLY)
 configure_file("${CMAKE_SOURCE_DIR}/requirements.dev.txt" ubuntu-18.04/requirements.dev.txt COPYONLY)
@@ -33,9 +33,9 @@ configure_file(
 add_custom_target(
   "docker-up"
   COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-    ${docker} compose 
+    ${docker} compose
       --project-name frepple-${PROJECT_BRANCH}
-      up    
+      up
       --detach
 )
 add_custom_target(
@@ -47,12 +47,13 @@ add_custom_target(
 )
 
 # Build-only images
-foreach(dist ubuntu-20.04 opensuse-15.1 centos-8 debian-10)
+foreach(dist ubuntu-20.04 opensuse-15.1 rockylinux-8 debian-10)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${dist}.dockerfile ${dist}/dockerfile COPYONLY)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh ${dist}/entrypoint.sh COPYONLY)
   add_custom_target(
     "docker-${dist}"
-    # COMMAND "${CMAKE_COMMAND}" --build . --target package_source
+    COMMAND "${CMAKE_COMMAND}" --build . --target package_source
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/${dist}/"
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
       ${docker} build --target package --output type=local,dest=. ${dist}
     )
@@ -68,11 +69,11 @@ add_custom_target(
   "docker-rhel-8"
   #COMMAND "${CMAKE_COMMAND}" --build . --target package_source
   COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-    ${docker} build 
-      --target package 
+    ${docker} build
+      --target package
       --output type=local,dest=.
       --build-arg RHEL_USER=${RHEL_USER}
-      --build-arg RHEL_PASSWORD=${RHEL_PASSWORD} 
+      --build-arg RHEL_PASSWORD=${RHEL_PASSWORD}
       rhel-8
   )
 

@@ -404,7 +404,6 @@ REST_FRAMEWORK = {
 }
 
 # Bootstrap
-DAB_FIELD_RENDERER = "django_admin_bootstrapped.renderers.BootstrapFieldRenderer"
 MESSAGE_TAGS = {
     messages.SUCCESS: "alert-success",
     messages.WARNING: "alert-warning",

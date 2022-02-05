@@ -29,9 +29,9 @@ RUN subscription-manager register --username $RHEL_USER --password $RHEL_PASSWOR
   yum -y update && \
   yum -y install epel-release && \
   yum -y install xerces-c python36 rpm-build rpm-sign git wget \
-  python3-psycopg2 python3-pip postgresql-devel openssl openssl-devel \
+  python3-pip postgresql-devel openssl openssl-devel \
   libtool make python3-devel xerces-c-devel automake autoconf gcc-c++ && \
-  yum clean all 
+  yum clean all
 RUN subscription-manager unregister
 
 RUN useradd builder -u 6666 -m -G users && \
@@ -45,7 +45,7 @@ RUN useradd builder -u 6666 -m -G users && \
 # OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
 ADD requirements.txt gpg_key* ./
 USER builder
-RUN pip3 install --user -r requirements.txt sphinx
+RUN pip3 install --user -r requirements.dev.txt
 
 # An alternative to the copy is to clone from git:
 # RUN git clone https://github.com/frepple/frepple.git frepple

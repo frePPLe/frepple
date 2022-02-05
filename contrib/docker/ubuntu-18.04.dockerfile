@@ -24,8 +24,8 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
-  cmake g++ git python3 python3-pip python3-dev python3-psycopg2 \
-  libxerces-c3.2 libxerces-c-dev python3-lxml \
+  cmake g++ git python3 python3-pip python3-dev \
+  libxerces-c3.2 libxerces-c-dev \
   openssl libssl-dev libpq5 libpq-dev locales
 
 COPY requirements.dev.txt /
@@ -64,7 +64,7 @@ RUN apt-get -y -q update && \
   apt-get -y -q update && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
   libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 python3-pip postgresql-client-13 \
-  python3-setuptools python3-wheel build-essential python3-dev python3-psycopg2 \
+  python3-setuptools python3-wheel build-essential python3-dev \
   libpq5 openssl python3-lxml libapache2-mod-xsendfile ssl-cert locales
 
 COPY requirements.txt /
@@ -88,7 +88,7 @@ RUN dpkg -i *.deb && \
 
 EXPOSE 80
 
-# Use the following lines to enable HTTPS. 
+# Use the following lines to enable HTTPS.
 # Inherit from this base image, add the following lines in your dockerfile
 # and copy your certificate files into the image.
 # RUN a2enmod ssl && \

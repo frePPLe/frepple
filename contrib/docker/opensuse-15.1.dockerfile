@@ -24,7 +24,7 @@ FROM opensuse/leap:15.1 as builder
 RUN zypper refresh && \
   zypper --non-interactive update && \
   zypper --non-interactive install --force-resolution --replacefiles \
-    libxerces-c-3_1 httpd python3 python3-pip python3-psycopg2 gcc rpmbuild \
+    libxerces-c-3_1 httpd python3 python3-pip gcc rpmbuild \
     libxerces-c-devel openssl cmake python3-devel gcc-c++ gcc tar gzip \
     libpq5 postgresql-devel postgresql openssl-devel && \
   pip3 install sphinx && \
@@ -39,7 +39,7 @@ RUN src=`basename --suffix=.tar.gz frepple-*` && \
   rm *.tar.gz && \
   cd $src && \
   python3 -m pip install --upgrade pip && \
-  python3 -m pip install -r requirements.txt && \
+  python3 -m pip install -r requirements.dev.txt && \
   mkdir build && \
   cd build && \
   cmake .. && \

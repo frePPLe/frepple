@@ -33,9 +33,9 @@ instructions below for some common linux distributions.
 
    * | python-sphinx (optional)
      | A modern documentation generation tool.
-     
+
    * | PostgreSQL, 9.5 or higher
-     | The world's most advanced open source relational database. And that's not 
+     | The world's most advanced open source relational database. And that's not
        an overstatement...
 
 #. Pick up the latest code from the repository:
@@ -48,7 +48,7 @@ instructions below for some common linux distributions.
    The CMakeLists.txt file has some logic to detect your Linux distribution
    and configure the build script. In case you're working on an unknown distribution
    or version, you will need to update this file.
-     
+
    The initialization step will also check for all required build software and
      report any missing packages.
 
@@ -65,7 +65,7 @@ instructions below for some common linux distributions.
 
      cd <project_directory>/build
      cmake --build . --config Release
-     
+
 #. Install the software
 
    ::
@@ -106,10 +106,9 @@ instructions below for some common linux distributions.
       # Clone the source code from the git repository
       git clone https://github.com/frePPLe/frePPLe.git -b master ~/frepple
 
-      # Install Python packages 
+      # Install Python packages
       cd ~/frepple
-      sudo pip3 install -r ./requirements.txt
-      sudo pip3 install psycopg2 Sphinx
+      sudo pip3 install -r ./requirements.dev.txt
 
       # Compile
       mkdir ~/frepple/build

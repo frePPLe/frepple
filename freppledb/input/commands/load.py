@@ -199,49 +199,52 @@ class checkBrokenSupplyPath(CheckTask):
             # cleaning previous records
             cursor.execute(
                 """
-                        delete from itemsupplier where supplier_id = 'Unknown supplier';
-                        insert into supplier (name, description)
-                        values
-                        ('Unknown supplier', 'automatically created to resolve broken supply paths')
-                        on conflict (name)
-                        do nothing;
-                    """
+                delete from itemsupplier where supplier_id = 'Unknown supplier';
+                insert into supplier (name, description)
+                values
+                ('Unknown supplier', 'automatically created to resolve broken supply paths')
+                on conflict (name)
+                do nothing;
+                """
             )
 
             # inserting combinations with no replenishment
             cursor.execute(
                 """
-                        insert into itemsupplier (supplier_id, item_id, location_id)
-                        (select distinct 'Unknown supplier', item_id, location_id from demand where status in ('open','quote')
-                        union
-                        select distinct 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
-                        inner join operation on operation.name = operationmaterial.operation_id
-                        where operationmaterial.quantity < 0
-                        %s
-                        )
-                        except
-                        (select 'Unknown supplier', item.name, location_id from itemdistribution
-                        inner join item parentitem on itemdistribution.item_id = parentitem.name
-                        inner join item on item.lft between parentitem.lft and parentitem.rght
-                        inner join location on itemdistribution.location_id = location.name
-                        union
-                        select 'Unknown supplier', item_id, location.name from itemsupplier
-                        left outer join location parentlocation on parentlocation.name = coalesce(itemsupplier.location_id, 'All locations')
-                        left outer join location on location.lft between parentlocation.lft and parentlocation.rght
-                        union
-                        select 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
-                        inner join operation on operation.name = operationmaterial.operation_id
-                        where operationmaterial.quantity > 0
-                        union
-                        select 'Unknown supplier', item_id, location_id from operation
-                        )
-
-                        """
+                insert into itemsupplier (supplier_id, item_id, location_id)
+                (select distinct 'Unknown supplier', item_id, location_id from demand where status in ('open','quote')
+                union
+                select distinct 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
+                inner join operation on operation.name = operationmaterial.operation_id
+                where operationmaterial.quantity < 0
+                %s
+                )
+                except
+                (select 'Unknown supplier', item.name, location_id from itemdistribution
+                inner join item parentitem on itemdistribution.item_id = parentitem.name
+                inner join item on item.lft between parentitem.lft and parentitem.rght
+                inner join location on itemdistribution.location_id = location.name
+                union
+                select 'Unknown supplier', item_id, location.name from itemsupplier
+                left outer join location parentlocation on parentlocation.name = coalesce(itemsupplier.location_id, (select name from location where location.lvl = 0 limit 1))
+                left outer join location on location.lft between parentlocation.lft and parentlocation.rght
+                union
+                select 'Unknown supplier', item_id, location.name from itemsupplier
+                cross join location
+                where itemsupplier.location_id is null
+                union
+                select 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
+                inner join operation on operation.name = operationmaterial.operation_id
+                where operationmaterial.quantity > 0
+                union
+                select 'Unknown supplier', item_id, location_id from operation
+                )
+                """
                 % (
                     """
-                        union
-                            select distinct 'Unknown supplier', item_id, location_id from forecast where planned
-                        """
+                    union
+                    select distinct 'Unknown supplier', item_id, location_id from forecast where planned
+                    """
                     if with_fcst_module
                     else "",
                 )
@@ -251,9 +254,9 @@ class checkBrokenSupplyPath(CheckTask):
             if cursor.rowcount == 0:
                 cursor.execute(
                     """
-                update operationplan set supplier_id = null where supplier_id = 'Unknown supplier';
-                delete from supplier where name = 'Unknown supplier';
-                """
+                    update operationplan set supplier_id = null where supplier_id = 'Unknown supplier';
+                    delete from supplier where name = 'Unknown supplier';
+                    """
                 )
                 logger.info("No broken supply path detected")
             else:

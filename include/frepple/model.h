@@ -779,6 +779,9 @@ class Problem::List {
   /* End iterator. */
   Problem::iterator end() const;
 
+  /* Move the problems from this list to a new owner. */
+  void transfer(HasProblems*);
+
  private:
   /* Pointer to the head of the list. */
   Problem* first = nullptr;

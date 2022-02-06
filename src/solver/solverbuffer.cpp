@@ -66,16 +66,16 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     data->recent_buffers.echoSince(o, b);
     data->state->a_qty = 0.0;
     data->state->a_date = Date::infiniteFuture;
-    if (data->logConstraints && data->planningDemand) {
+    if (data->logConstraints && data->constraints) {
       bool already_logged = false;
-      for (auto t = data->planningDemand->getConstraints().begin();
-           t != data->planningDemand->getConstraints().end(); ++t)
+      for (auto t = data->constraints->begin(); t != data->constraints->end();
+           ++t)
         if (t->getDescription() == o.str()) {
           already_logged = true;
           break;
         }
       if (!already_logged)
-        data->planningDemand->getConstraints().push(new ProblemInvalidData(
+        data->constraints->push(new ProblemInvalidData(
             const_cast<Buffer*>(b), o.str(), "material", Date::infinitePast,
             Date::infiniteFuture, data->state->q_qty, false));
     }
@@ -170,10 +170,10 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
               if (free_stock > -ROUNDING_ERROR) {
                 // Existing supply covers the complete requirement
-                if (firstmsg1 && data->logConstraints && data->planningDemand)
-                  data->planningDemand->getConstraints().push(
-                      ProblemAwaitSupply::metadata, b, theDate,
-                      scanner->getDate(), theDelta);
+                if (firstmsg1 && data->logConstraints && data->constraints)
+                  data->constraints->push(ProblemAwaitSupply::metadata, b,
+                                          theDate, scanner->getDate(),
+                                          theDelta);
                 if (getLogLevel() > 1 && firstmsg1) {
                   logger
                       << indentlevel
@@ -214,8 +214,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 continue;
               auto tmp = scanner->getOperationPlan();
               if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
-                if (firstmsg1 && data->logConstraints && data->planningDemand)
-                  data->planningDemand->getConstraints().push(
+                if (firstmsg1 && data->logConstraints && data->constraints)
+                  data->constraints->push(
                       ProblemAwaitSupply::metadata, generic_buffer, theDate,
                       scanner->getDate(), theDelta);
                 if (scanner->getDate() > requested_date &&
@@ -295,10 +295,10 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 continue;
               auto tmp = scanner->getOperationPlan();
               if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
-                if (firstmsg3 && data->logConstraints && data->planningDemand)
-                  data->planningDemand->getConstraints().push(
-                      ProblemAwaitSupply::metadata, b, theDate,
-                      scanner->getDate(), theDelta);
+                if (firstmsg3 && data->logConstraints && data->constraints)
+                  data->constraints->push(ProblemAwaitSupply::metadata, b,
+                                          theDate, scanner->getDate(),
+                                          theDelta);
                 if (getLogLevel() > 1 && firstmsg3) {
                   logger << indentlevel
                          << "Refuse to create extra supply because confirmed "
@@ -545,10 +545,9 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     // Note that if there is a producing operation the constraint is flagged
     // on the operation instead of on this buffer.
     if (!b->getProducingOperation() && data->logConstraints &&
-        shortage > ROUNDING_ERROR && data->planningDemand)
-      data->planningDemand->getConstraints().push(
-          ProblemMaterialShortage::metadata, b, requested_date,
-          Date::infiniteFuture, shortage);
+        shortage > ROUNDING_ERROR && data->constraints)
+      data->constraints->push(ProblemMaterialShortage::metadata, b,
+                              requested_date, Date::infiniteFuture, shortage);
   } else {
     // Enough inventory or supply available, or not material constrained.
     // In case of a plan that is not material constrained, the buffer tries to

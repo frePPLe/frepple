@@ -918,6 +918,8 @@ class SolverCreate : public Solver {
     /* Removes a state from the status stack. */
     void pop(bool copy_answer = false);
 
+    void setConstraintOwner(Problem::List* v) { constraints = v; }
+
    private:
     static const int MAXSTATES = 256;
 
@@ -944,7 +946,7 @@ class SolverCreate : public Solver {
     OperatorDelete* operator_delete = nullptr;
 
     /* Points to the demand being planned. */
-    Demand* planningDemand = nullptr;
+    Problem::List* constraints = nullptr;
 
     /* A deque containing all demands to be (re-)planned. */
     deque<Demand*>* demands;

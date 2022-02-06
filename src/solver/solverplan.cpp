@@ -514,7 +514,7 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
         state->q_date = Date::infinitePast;
         state->a_cost = 0.0;
         state->a_penalty = 0.0;
-        planningDemand = nullptr;
+        constraints = nullptr;
         state->curDemand = nullptr;
         state->curOwnerOpplan = nullptr;
         buffer_solve_shortages_only = false;

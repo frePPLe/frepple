@@ -178,7 +178,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
         data->state->q_qty = plan_qty;
         data->state->q_qty_min = l->getMinShipment();
         data->state->q_date = plan_date;
-        data->planningDemand = const_cast<Demand*>(l);
+        data->constraints = &(const_cast<Demand*>(l)->getConstraints());
         data->state->curDemand = const_cast<Demand*>(l);
         data->state->curOwnerOpplan = nullptr;
         data->state->curBatch = l->getBatch();

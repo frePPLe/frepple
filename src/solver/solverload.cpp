@@ -256,10 +256,10 @@ void SolverCreate::chooseResource(
     data->state->a_qty = 0;
 
     // Maintain the constraint list
-    if (originalLogConstraints && data->planningDemand)
-      data->planningDemand->getConstraints().push(
-          ProblemCapacityOverload::metadata, l->getResource(),
-          originalOpplan.start, originalOpplan.end, -originalLoadplanQuantity);
+    if (originalLogConstraints && data->constraints)
+      data->constraints->push(ProblemCapacityOverload::metadata,
+                              l->getResource(), originalOpplan.start,
+                              originalOpplan.end, -originalLoadplanQuantity);
 
     // Restore the planning mode
     data->constrainedPlanning = originalPlanningMode;
@@ -476,11 +476,11 @@ void SolverCreate::solve(const Load* l, void* v) {
   data->constrainedPlanning = originalPlanningMode;
 
   // Maintain the constraint list
-  if (originalLogConstraints && data->planningDemand) {
+  if (originalLogConstraints && data->constraints) {
     const Load* primary = *(thealternates.begin());
-    data->planningDemand->getConstraints().push(
-        ProblemCapacityOverload::metadata, primary->getResource(),
-        originalOpplan.start, originalOpplan.end, -originalLoadplanQuantity);
+    data->constraints->push(ProblemCapacityOverload::metadata,
+                            primary->getResource(), originalOpplan.start,
+                            originalOpplan.end, -originalLoadplanQuantity);
   }
   data->logConstraints = originalLogConstraints;
 

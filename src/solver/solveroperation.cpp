@@ -150,15 +150,15 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
     if (opplan->getEnd() == Date::infiniteFuture) {
       string msg = "No available time found on operation '" +
                    opplan->getOperation()->getName() + "'";
-      if (data.logConstraints && data.planningDemand) {
-        auto j = data.planningDemand->getConstraints().begin();
-        while (j != data.planningDemand->getConstraints().end()) {
+      if (data.logConstraints && data.constraints) {
+        auto j = data.constraints->begin();
+        while (j != data.constraints->end()) {
           if (j->hasType<ProblemInvalidData>() && j->getDescription() == msg)
             break;
           ++j;
         }
-        if (j == data.planningDemand->getConstraints().end())
-          data.planningDemand->getConstraints().push(new ProblemInvalidData(
+        if (j == data.constraints->end())
+          data.constraints->push(new ProblemInvalidData(
               opplan->getOperation(), msg, "operation",
               Plan::instance().getCurrent(), Date::infiniteFuture,
               data.state->q_qty, false));
@@ -590,13 +590,12 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
     opplan->setQuantity(0.0);
 
     // Log the constraint
-    if (data.logConstraints && data.planningDemand)
-      data.planningDemand->getConstraints().push(
-          (threshold == Plan::instance().getCurrent())
-              ? ProblemBeforeCurrent::metadata
-              : ProblemBeforeFence::metadata,
-          opplan->getOperation(), original.end, data.state->a_date,
-          original.quantity);
+    if (data.logConstraints && data.constraints)
+      data.constraints->push((threshold == Plan::instance().getCurrent())
+                                 ? ProblemBeforeCurrent::metadata
+                                 : ProblemBeforeFence::metadata,
+                             opplan->getOperation(), original.end,
+                             data.state->a_date, original.quantity);
 
     // Deny creation of the operationplan
     return false;
@@ -695,19 +694,19 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
       string problemtext = string("Invalid producing operation '") +
                            oper->getName() + "' for buffer '" +
                            data->state->curBuffer->getName() + "'";
-      auto dmd = data->planningDemand;
+      auto dmd = data->constraints;
       if (dmd) {
-        auto j = dmd->getConstraints().begin();
-        while (j != dmd->getConstraints().end()) {
+        auto j = dmd->begin();
+        while (j != dmd->end()) {
           if (j->hasType<ProblemInvalidData>() &&
               j->getDescription() == problemtext)
             break;
           ++j;
         }
-        if (j == dmd->getConstraints().end()) {
-          dmd->getConstraints().push(
-              new ProblemInvalidData(dmd, problemtext, "demand", dmd->getDue(),
-                                     dmd->getDue(), dmd->getQuantity(), false));
+        if (j == dmd->end()) {
+          dmd->push(new ProblemInvalidData(data->state->curBuffer, problemtext,
+                                           "material", Date::infinitePast,
+                                           Date::infiniteFuture, 1, false));
         }
       }
       if (getLogLevel() > 1) {
@@ -803,9 +802,8 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   }
 
   // Find the current list of constraints
-  Problem* topConstraint = data->planningDemand
-                               ? data->planningDemand->getConstraints().top()
-                               : nullptr;
+  Problem* topConstraint =
+      data->constraints ? data->constraints->top() : nullptr;
 
   // Subtract offset between operationplan end and flowplan date
   if (use_offset && producing_flow && producing_flow->getOffset()) {
@@ -902,8 +900,8 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   // Ignore any constraints if we get a complete reply.
   // Sometimes constraints are flagged due to a pre- or post-operation time.
   // Such constraints ultimately don't result in lateness and can be ignored.
-  if (data->state->a_qty >= orig_q_qty - ROUNDING_ERROR && data->planningDemand)
-    data->planningDemand->getConstraints().pop(topConstraint);
+  if (data->state->a_qty >= orig_q_qty - ROUNDING_ERROR && data->constraints)
+    data->constraints->pop(topConstraint);
 
   // Increment the cost
   if (data->state->a_qty > 0.0) {
@@ -1030,15 +1028,15 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
     if (!flow_qty_fixed && !flow_qty_per) {
       string msg =
           "Operation doesn't produce into " + data->state->curBuffer->getName();
-      if (data->logConstraints && data->planningDemand) {
-        auto j = data->planningDemand->getConstraints().begin();
-        while (j != data->planningDemand->getConstraints().end()) {
+      if (data->logConstraints && data->constraints) {
+        auto j = data->constraints->begin();
+        while (j != data->constraints->end()) {
           if (j->hasType<ProblemInvalidData>() && j->getDescription() == msg)
             break;
           ++j;
         }
-        if (j == data->planningDemand->getConstraints().end())
-          data->planningDemand->getConstraints().push(new ProblemInvalidData(
+        if (j == data->constraints->end())
+          data->constraints->push(new ProblemInvalidData(
               const_cast<OperationRouting*>(oper), msg, "operation",
               Plan::instance().getCurrent(), Date::infiniteFuture, 1.0, false));
       }
@@ -1257,9 +1255,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 
   // Remember the top constraint
   bool originalLogConstraints = data->logConstraints;
-  Problem* topConstraint = data->planningDemand
-                               ? data->planningDemand->getConstraints().top()
-                               : nullptr;
+  Problem* topConstraint =
+      data->constraints ? data->constraints->top() : nullptr;
 
   // Try all alternates:
   // - First, all alternates that are a) fully effective and b) fit within the
@@ -1352,20 +1349,19 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           // trouble... Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;
           string msg = "Operation doesn't produce into " + buf->getName();
-          if (data->logConstraints && data->planningDemand) {
-            auto j = data->planningDemand->getConstraints().begin();
-            while (j != data->planningDemand->getConstraints().end()) {
+          if (data->logConstraints && data->constraints) {
+            auto j = data->constraints->begin();
+            while (j != data->constraints->end()) {
               if (j->hasType<ProblemInvalidData>() &&
                   j->getDescription() == msg)
                 break;
               ++j;
             }
-            if (j == data->planningDemand->getConstraints().end())
-              data->planningDemand->getConstraints().push(
-                  new ProblemInvalidData(const_cast<OperationAlternate*>(oper),
-                                         msg, "operation",
-                                         Plan::instance().getCurrent(),
-                                         Date::infiniteFuture, 1.0, false));
+            if (j == data->constraints->end())
+              data->constraints->push(new ProblemInvalidData(
+                  const_cast<OperationAlternate*>(oper), msg, "operation",
+                  Plan::instance().getCurrent(), Date::infiniteFuture, 1.0,
+                  false));
           }
           bool problem_already_exists = false;
           auto probiter = Problem::iterator(oper);
@@ -1396,8 +1392,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       else {
         // Forget previous constraints if we are replanning the first alternate
         // multiple times
-        if (data->planningDemand)
-          data->planningDemand->getConstraints().pop(topConstraint);
+        if (data->constraints) data->constraints->pop(topConstraint);
         // Potentially keep track of constraints
         data->logConstraints = originalLogConstraints;
       }
@@ -1460,8 +1455,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
                  << "' answers: 0 " << (*altIter)->getEffectiveStart() << endl;
         data->state->a_qty = 0.0;
         data->state->a_date = (*altIter)->getEffectiveStart();
-        if (data->logConstraints && data->planningDemand)
-          data->planningDemand->getConstraints().push(
+        if (data->logConstraints && data->constraints)
+          data->constraints->push(
               ProblemBeforeFence::metadata, (*altIter)->getOperation(),
               origQDate, (*altIter)->getEffectiveStart(), data->state->q_qty);
       } else if (search == SearchMode::PRIORITY) {
@@ -1688,9 +1683,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   }  // End while loop until the a_qty > 0
 
   // Forget any constraints if we are not short or are planning unconstrained
-  if (data->planningDemand &&
-      (a_qty < ROUNDING_ERROR || !originalLogConstraints))
-    data->planningDemand->getConstraints().pop(topConstraint);
+  if (data->constraints && (a_qty < ROUNDING_ERROR || !originalLogConstraints))
+    data->constraints->pop(topConstraint);
 
   // Unconstrained plan: If some unplanned quantity remains, switch to
   // unconstrained planning on the first alternate.
@@ -1915,15 +1909,15 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
         // we're in trouble...
         string msg = "Operation doesn't produce into " +
                      data->state->curBuffer->getName();
-        if (data->logConstraints && data->planningDemand) {
-          auto j = data->planningDemand->getConstraints().begin();
-          while (j != data->planningDemand->getConstraints().end()) {
+        if (data->logConstraints && data->constraints) {
+          auto j = data->constraints->begin();
+          while (j != data->constraints->end()) {
             if (j->hasType<ProblemInvalidData>() && j->getDescription() == msg)
               break;
             ++j;
           }
-          if (j == data->planningDemand->getConstraints().end())
-            data->planningDemand->getConstraints().push(new ProblemInvalidData(
+          if (j == data->constraints->end())
+            data->constraints->push(new ProblemInvalidData(
                 const_cast<OperationSplit*>(oper), msg, "operation",
                 Plan::instance().getCurrent(), Date::infiniteFuture, 1.0,
                 false));

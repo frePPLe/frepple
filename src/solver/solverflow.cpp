@@ -62,7 +62,6 @@ void SolverCreate::solve(const Flow* fl,
 
     // Remember the top constraint
     bool originalLogConstraints = data->logConstraints;
-    // Problem* topConstraint = data->planningDemand->getConstraints().top();
 
     // 4) Loop through the alternates till we find a non-zero reply
     Date min_next_date(Date::infiniteFuture);

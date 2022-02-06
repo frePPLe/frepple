@@ -151,6 +151,18 @@ void Plannable::setDetectProblems(bool b) {
   useProblemDetection = b;
 }
 
+void Problem::List::transfer(HasProblems* newowner) {
+  if (!newowner) return;
+  if (!newowner->firstProblem) {
+    newowner->firstProblem = first;
+  } else {
+    auto* ptr = newowner->firstProblem;
+    while (ptr->nextProblem) ptr = ptr->nextProblem;
+    ptr->nextProblem = first;
+  }
+  first = nullptr;
+}
+
 void Plannable::computeProblems() {
   // Exit immediately if the list is up to date
   if (!anyChange && !computationBusy) return;

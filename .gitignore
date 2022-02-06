@@ -17,18 +17,12 @@
 *.pyd
 dist 
 build
+venv
 
 # Log files
 *.log
 *.out
 *.stackdump
-
-# Eclipse
-.settings
-.cproject
-.project
-.pydevproject
-.tern-project
 
 # Visual Studio Code
 .vscode/*

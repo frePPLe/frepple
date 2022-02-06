@@ -27,13 +27,9 @@ import sys
 if __name__ == "__main__":
     # Initialize Python virtual environments
     if "VIRTUAL_ENV" in os.environ:
-        activate_script = os.path.join(
-            os.environ["VIRTUAL_ENV"],
-            "Scripts" if os.name == "nt" else "bin",
-            "activate_this.py",
-        )
-        with open(activate_script) as f:
-            exec(f.read(), {"__file__": activate_script})
+        from freppledb import activateVirtualEnv
+
+        activateVirtualEnv()
 
     # Initialize django
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")

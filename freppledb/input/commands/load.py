@@ -225,11 +225,14 @@ class checkBrokenSupplyPath(CheckTask):
                 inner join item on item.lft between parentitem.lft and parentitem.rght
                 inner join location on itemdistribution.location_id = location.name
                 union
-                select 'Unknown supplier', item_id, location.name from itemsupplier
-                left outer join location parentlocation on parentlocation.name = coalesce(itemsupplier.location_id, (select name from location where location.lvl = 0 limit 1))
-                left outer join location on location.lft between parentlocation.lft and parentlocation.rght
+                select 'Unknown supplier', item.name, location_id from itemsupplier
+                inner join item parentitem on itemsupplier.item_id = parentitem.name
+                inner join item on item.lft between parentitem.lft and parentitem.rght
+                inner join location on itemsupplier.location_id = location.name
                 union
-                select 'Unknown supplier', item_id, location.name from itemsupplier
+                select 'Unknown supplier', item.name, location.name from itemsupplier
+                inner join item parentitem on itemsupplier.item_id = parentitem.name
+                inner join item on item.lft between parentitem.lft and parentitem.rght
                 cross join location
                 where itemsupplier.location_id is null
                 union

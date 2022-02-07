@@ -19,7 +19,6 @@ from django.db import migrations, connections, models
 
 def cleanBadRecords(apps, schema_editor):
     db = schema_editor.connection.alias
-    output = []
     with connections[db].cursor() as cursor:
         # delete records that will fail with the new indexes
         cursor.execute(

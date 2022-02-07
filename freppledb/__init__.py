@@ -127,7 +127,7 @@ def activateVirtualEnv():
         )
         prev_length = len(sys.path)
         path = os.path.realpath(os.path.join(venv, "Lib", "site-packages"))
-        site.addsitedir(path.decode("utf-8") if "" else path)
+        site.addsitedir(path)
         sys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]
         sys.real_prefix = sys.prefix
         sys.prefix = venv

@@ -2730,7 +2730,7 @@ var dashboard = {
     // Make sure name is unique
     var newname = $("#id_name").val();
     var cnt = 2;
-    while ($("[data-cockpit-row='" + newname + "']").length >= 1)
+    while ($("[data-cockpit-row='" + $.escapeSelector(newname) + "']").length >= 1)
       newname = $("#id_name").val() + ' - ' + (cnt++);
 
     // Build new content
@@ -2753,9 +2753,9 @@ var dashboard = {
 
     // Insert in page
     if (position_above)
-      $.find("[data-cockpit-row='" + rowname + "']").first().before($(newelements));
+      $("[data-cockpit-row='" + $.escapeSelector(rowname) + "']").first().before($(newelements));
     else
-      $.find("[data-cockpit-row='" + rowname + "']").last().after($(newelements));
+      $("[data-cockpit-row='" + $.escapeSelector(rowname) + "']").last().after($(newelements));
 
     // Almost done
     if (newwidget != '')

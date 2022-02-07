@@ -187,7 +187,7 @@ class checkBrokenSupplyPath(CheckTask):
         try:
             p = Parameter.objects.using(database).get(name="plan.fixBrokenSupplyPath")
             param = p.value.strip().lower() == "true"
-        except:
+        except Exception:
             pass
 
         if not param:

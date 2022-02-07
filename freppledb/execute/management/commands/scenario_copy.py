@@ -278,13 +278,8 @@ class Command(BaseCommand):
                     # Successful copy can still leave warnings and errors
                     # To confirm copy is ok, let's check that the scenario copy task exists
                     # in the destination database
-                    t = Task.objects.using(destination).order_by("-id").first()
-                    if not (
-                        t
-                        and t.id == task.id
-                        and t.name == task.name
-                        and t.submitted == task.submitted
-                    ):
+                    t = Task.objects.using(destination).filter(id=task.id).first()
+                    if not t or t.name != task.name or t.submitted != task.submitted:
                         destinationscenario.status = "Free"
                         destinationscenario.lastrefresh = datetime.today()
                         destinationscenario.save(using=DEFAULT_DB_ALIAS)

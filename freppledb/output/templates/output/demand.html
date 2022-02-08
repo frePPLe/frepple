@@ -43,7 +43,7 @@ function drawGraphs(jsondata)
   }
   var x = d3.scale.ordinal()
     .domain(domain_x)
-    .rangeRoundBands([0, width], .1);
+    .rangeRoundBands([0, width], 0);
   var x_width = x.rangeBand();
   {% if mode == "graph" and not args.0 %}graph.header(margin.left, x);{% endif %}
 
@@ -129,14 +129,14 @@ function drawGraphs(jsondata)
 	          if (d3.event.defaultPrevented || (d['demand'] == 0 && d['backlog'] == 0))
 	            return;
 	          d3.select("#tooltip").style('display', 'none');
-	
+
 	          window.location = "{{ request.prefix }}"
-	            +"/data/input/demand"	            
+	            +"/data/input/demand"
 	            +"/?noautofilter&amp;deliverydate__gte=" + timebuckets[d['bucket']]['startdate']
 	            +"&amp;due__lt=" + timebuckets[d['bucket']]['enddate']
 	            +"&amp;item__name=" + admin_escape(d['item'])
 	            +"&amp;status__in=open,quote";
-	
+
 	          var coord = d3.mouse(document.body);
 	          d3.event.stopPropagation();
 	        })
@@ -160,7 +160,7 @@ function drawGraphs(jsondata)
            graph.showTooltip(txt);
            })
 	      .on("mouseleave", graph.hideTooltip)
-	      .on("mousemove", graph.moveTooltip);	      
+	      .on("mousemove", graph.moveTooltip);
       });
 
     // Create D3 line
@@ -242,20 +242,20 @@ function crosses (cellvalue, options, rowdata)
     {
       case 0:
         if (cellvalue[cross_idx[i]] != 0.0)
-          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/demand/?noautofilter' +            
+          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/demand/?noautofilter' +
             '&amp;due__gte=' + options['colModel']['startdate'] +
             '&amp;due__lt=' + options['colModel']['enddate'] +
-            '&amp;item__name__ico=' + admin_escape(rowdata['item']) + 
+            '&amp;item__name__ico=' + admin_escape(rowdata['item']) +
             '&amp;status__in=' + admin_escape('quote,open') + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
         break;
       case 2:
         if (cellvalue[cross_idx[i]] != 0.0)
-          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/demand/?noautofilter' +            
+          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/demand/?noautofilter' +
             '&amp;deliverydate__gte=' + options['colModel']['enddate'] +
             '&amp;due__lt=' + options['colModel']['enddate'] +
-            '&amp;item__name__ico=' + admin_escape(rowdata['item']) + 
+            '&amp;item__name__ico=' + admin_escape(rowdata['item']) +
             '&amp;status__in=' + admin_escape('quote,open') + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';

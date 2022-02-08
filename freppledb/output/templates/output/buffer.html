@@ -54,7 +54,7 @@ function drawGraphs(jsondata)
   }
   var x = d3.scale.ordinal()
     .domain(domain_x)
-    .rangeRoundBands([0, width], .1);
+    .rangeRoundBands([0, width], 0);
   var x_width = x.rangeBand();
   {% if mode == "graph" and not args.0 %}graph.header(margin.left, x);{% endif %}
   

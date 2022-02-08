@@ -17,7 +17,7 @@ function drawGraphs(jsondata)
 
   // Define X-axis
   var domain_x = [];
-  var bucketnamelength = 0;  
+  var bucketnamelength = 0;
   for (var i in timebuckets)
   {
     domain_x.push(timebuckets[i]['name']);
@@ -25,7 +25,7 @@ function drawGraphs(jsondata)
   }
   var x = d3.scale.ordinal()
     .domain(domain_x)
-    .rangeRoundBands([0, width], .1);
+    .rangeRoundBands([0, width], 0);
   var x_width = x.rangeBand();
   {% if mode == "graph" and not args.0 %}graph.header(margin.left, x);{% endif %}
 
@@ -70,9 +70,9 @@ function drawGraphs(jsondata)
       if (tmp[3] > max_y && 3 in fields)
         max_y = tmp[3];
       else if (tmp[2] > max_y && 2 in fields)
-        max_y = tmp[2]; 
+        max_y = tmp[2];
       if (tmp[5] > max_y && 5 in fields)
-        max_y = tmp[5];   
+        max_y = tmp[5];
     }
 
     // Update the scale of the Y-axis by looking for the max value
@@ -124,8 +124,8 @@ function drawGraphs(jsondata)
         {
           var newtop = y(d['total_start']);
           bucket.append("rect")
-            .attr("width", x_width/numbars) 
-            .attr("x", barnum[0] * x_width / numbars)          
+            .attr("width", x_width/numbars)
+            .attr("x", barnum[0] * x_width / numbars)
             .attr("y", newtop)
             .attr("height", top - newtop)
             .style("fill","#2B95EC")
@@ -189,7 +189,7 @@ function drawGraphs(jsondata)
                 var coord = d3.mouse(document.body);
                 d3.event.stopPropagation();
               });
-        }        
+        }
         // Invisible rectangle for the tooltip
       	bucket.append("rect")
 	      .attr("height", height)
@@ -228,7 +228,7 @@ function drawGraphs(jsondata)
 	          );
 	        })
 	      .on("mouseleave", graph.hideTooltip)
-	      .on("mousemove", graph.moveTooltip);	      
+	      .on("mousemove", graph.moveTooltip);
       });
 
     // Create D3 line
@@ -263,13 +263,13 @@ function crosses (cellvalue, options, rowdata)
     {
       case 0:
         if (cellvalue[0] != 0.0)
-          result += grid.formatNumber(cellvalue[0]) 
+          result += grid.formatNumber(cellvalue[0])
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?noautofilter'
-            + '&amp;item__name=' + admin_escape(rowdata['item']) 
-            + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
+            + '&amp;item__name=' + admin_escape(rowdata['item'])
+            + '&amp;origin__name=' + admin_escape(rowdata['origin'])
             + '&amp;destination__name=' + admin_escape(rowdata['destination'])
             + '&amp;startdate__gte=' + options['colModel']['startdate']
-            + '&amp;startdate__lt=' + options['colModel']['enddate'] 
+            + '&amp;startdate__lt=' + options['colModel']['enddate']
             + '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
@@ -278,11 +278,11 @@ function crosses (cellvalue, options, rowdata)
         if (cellvalue[1] != 0.0)
           result += grid.formatNumber(cellvalue[1])
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?noautofilter'
-            + '&amp;item__name=' + admin_escape(rowdata['item']) 
-            + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
+            + '&amp;item__name=' + admin_escape(rowdata['item'])
+            + '&amp;origin__name=' + admin_escape(rowdata['origin'])
             + '&amp;destination__name=' + admin_escape(rowdata['destination'])
             + '&startdate__gte=' + options['colModel']['startdate']
-            + '&amp;startdate__lt=' + options['colModel']['enddate'] 
+            + '&amp;startdate__lt=' + options['colModel']['enddate']
             + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
@@ -291,22 +291,22 @@ function crosses (cellvalue, options, rowdata)
         if (cellvalue[2] != 0.0)
           result += grid.formatNumber(cellvalue[2])
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?noautofilter'
-            + '&amp;item__name=' + admin_escape(rowdata['item']) 
-            + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
-            + '&amp;destination__name=' + admin_escape(rowdata['destination'])                
+            + '&amp;item__name=' + admin_escape(rowdata['item'])
+            + '&amp;origin__name=' + admin_escape(rowdata['origin'])
+            + '&amp;destination__name=' + admin_escape(rowdata['destination'])
             + '&enddate__gte=' + options['colModel']['startdate']
-            + '&amp;enddate__lt=' + options['colModel']['enddate'] 
+            + '&amp;enddate__lt=' + options['colModel']['enddate']
             + '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
         break;
       case 3:
         if (cellvalue[3] != 0.0)
-          result += grid.formatNumber(cellvalue[3]) 
+          result += grid.formatNumber(cellvalue[3])
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?noautofilter'
-            + '&amp;item__name=' + admin_escape(rowdata['item']) 
-            + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
-            + '&amp;destination__name=' + admin_escape(rowdata['destination'])                
+            + '&amp;item__name=' + admin_escape(rowdata['item'])
+            + '&amp;origin__name=' + admin_escape(rowdata['origin'])
+            + '&amp;destination__name=' + admin_escape(rowdata['destination'])
             + '&enddate__gte=' + options['colModel']['startdate']
             + '&amp;enddate__lt=' + options['colModel']['enddate']
             + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
@@ -317,28 +317,28 @@ function crosses (cellvalue, options, rowdata)
         if (cellvalue[4] != 0.0)
           result += grid.formatNumber(cellvalue[4])
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?noautofilter'
-            + '&amp;item__name=' + admin_escape(rowdata['item']) 
-            + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
-            + '&amp;destination__name=' + admin_escape(rowdata['destination'])                
+            + '&amp;item__name=' + admin_escape(rowdata['item'])
+            + '&amp;origin__name=' + admin_escape(rowdata['origin'])
+            + '&amp;destination__name=' + admin_escape(rowdata['destination'])
             + '&startdate__lt=' + options['colModel']['enddate']
-            + '&amp;enddate__gte=' + options['colModel']['enddate'] 
+            + '&amp;enddate__gte=' + options['colModel']['enddate']
             + '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
         break;
       case 5:
         if (cellvalue[5] != 0.0)
-          result += grid.formatNumber(cellvalue[5]) 
+          result += grid.formatNumber(cellvalue[5])
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?noautofilter'
-            + '&amp;item__name=' + admin_escape(rowdata['item']) 
-            + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
-            + '&amp;destination__name=' + admin_escape(rowdata['destination'])                
+            + '&amp;item__name=' + admin_escape(rowdata['item'])
+            + '&amp;origin__name=' + admin_escape(rowdata['origin'])
+            + '&amp;destination__name=' + admin_escape(rowdata['destination'])
             + '&startdate__lt=' + options['colModel']['enddate']
             + '&amp;enddate__gte=' + options['colModel']['enddate']
             + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
-        break;        
+        break;
     }
   return result;
 };

@@ -36,7 +36,7 @@ function drawGraphs(jsondata)
 
   // Define X-axis
   var domain_x = [];
-  var bucketnamelength = 0;  
+  var bucketnamelength = 0;
   for (var i in timebuckets)
   {
     domain_x.push(timebuckets[i]['name']);
@@ -44,7 +44,7 @@ function drawGraphs(jsondata)
   }
   var x = d3.scale.ordinal()
     .domain(domain_x)
-    .rangeRoundBands([0, width], .1);
+    .rangeRoundBands([0, width], 0);
   var x_width = x.rangeBand();
   {% if mode == "graph" and not args.0 %}graph.header(margin.left, x);{% endif %}
 
@@ -91,7 +91,7 @@ function drawGraphs(jsondata)
       if (tmp[5] > max_y && 5 in fields)
         max_y = tmp[5];
       else if (tmp[4] > max_y && 4 in fields)
-        max_y = tmp[4];        
+        max_y = tmp[4];
     }
 
     // Update the scale of the Y-axis by looking for the max value
@@ -105,7 +105,7 @@ function drawGraphs(jsondata)
     else {
       barnum[1]--;
       barnum[2]--;
-    }      
+    }
     if (2 in fields || 3 in fields)
       numbars++;
     else
@@ -149,8 +149,8 @@ function drawGraphs(jsondata)
         {
           var newtop = y(d['total_start']);
           bucket.append("rect")
-            .attr("width", x_width/numbars) 
-            .attr("x", barnum[0] * x_width / numbars)          
+            .attr("width", x_width/numbars)
+            .attr("x", barnum[0] * x_width / numbars)
             .attr("y", newtop)
             .attr("height", top - newtop)
             .style("fill","#2B95EC")
@@ -271,13 +271,13 @@ function drawGraphs(jsondata)
 	      .on("click", function(d) {
 	          if (d3.event.defaultPrevented || d['total_start'] == 0) return;
 	          d3.select("#tooltip").style('display', 'none');
-	
+
 	          window.location = "{{ request.prefix }}"
 	            +"/data/input/manufacturingorder/"
 	            +"?noautofilter&operation__name="+admin_escape(d['operation'])
 	            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
 	            +"&enddate__gte="+timebuckets[d['bucket']]['startdate'];
-	
+
 	          var coord = d3.mouse(document.body);
 	          d3.event.stopPropagation();
 	        })
@@ -301,7 +301,7 @@ function drawGraphs(jsondata)
 	          );
 	        })
 	      .on("mouseleave", graph.hideTooltip)
-	      .on("mousemove", graph.moveTooltip);        
+	      .on("mousemove", graph.moveTooltip);
       });
 
     // Display Y-Axis
@@ -370,7 +370,7 @@ function crosses (cellvalue, options, rowdata)
     {
       case 0:
         if (cellvalue[0] != 0.0)
-          result += grid.formatNumber(cellvalue[0]) + 
+          result += grid.formatNumber(cellvalue[0]) +
             '<a href="{{ request.prefix }}/data/input/manufacturingorder/?noautofilter' +
             '&amp;operation__name=' + admin_escape(rowdata['operation']) +
             '&amp;startdate__gte=' + options['colModel']['startdate'] +
@@ -433,7 +433,7 @@ function crosses (cellvalue, options, rowdata)
             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
-        break;        
+        break;
       default:
         result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<br>';
     }

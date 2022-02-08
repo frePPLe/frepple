@@ -54,10 +54,10 @@ function drawGraphs(jsondata)
   }
   var x = d3.scale.ordinal()
     .domain(domain_x)
-    .rangeRoundBands([0, width], .1);
+    .rangeRoundBands([0, width], 0);
   var x_width = x.rangeBand();
   {% if mode == "graph" and not args.0 %}graph.header(margin.left, x);{% endif %}
-  
+
   // Define Y-axis
   var y = d3.scale.linear().rangeRound([height, 0]);
 
@@ -164,7 +164,7 @@ function drawGraphs(jsondata)
             .attr("height", y(top) - y(newtop))
             .style("fill","#FF0000");
         }
-        
+
         // Build line points
         if (0 in fields) {
 		    if (1 in fields) {
@@ -176,7 +176,7 @@ function drawGraphs(jsondata)
 		        x(timebuckets[d['bucket']]['name']) + x_width,
 		        y(d['available'] + d['unavailable'])
 		        ]);
-		    } 
+		    }
 		    else {
 		      linedata.push([
 		        x(timebuckets[d['bucket']]['name']),
@@ -185,10 +185,10 @@ function drawGraphs(jsondata)
 		      linedata.push([
 		        x(timebuckets[d['bucket']]['name']) + x_width,
 		        y(d['available'])
-		        ]);    
+		        ]);
 		    };
 		};
-		
+
 		// Draw hoover tooltip
       	bucket.append("rect")
 	      .attr("height", height)
@@ -197,13 +197,13 @@ function drawGraphs(jsondata)
 	      .on("click", function(d) {
 	          if (d3.event.defaultPrevented || d['load'] + d['setup'] == 0) return;
 	          d3.select("#tooltip").style('display', 'none');
-	
+
 	          window.location = url_prefix
 	            + "/data/input/operationplanresource/resource/"
 	            + admin_escape(d['resource'])
 	            + "/?noautofilter&operationplan__startdate__lt=" + timebuckets[d['bucket']]['enddate']
 	            + (typeof d['type'] !== 'undefined' && d['type'].includes('bucket') ?
-	               "&operationplan__startdate__gte=" : 
+	               "&operationplan__startdate__gte=" :
 	               "&operationplan__enddate__gt=")
 	            + timebuckets[d['bucket']]['startdate'];
 	          d3.event.stopPropagation();
@@ -227,7 +227,7 @@ function drawGraphs(jsondata)
 	      .on("mouseleave", graph.hideTooltip)
 	      .on("mousemove", graph.moveTooltip);
       });
-            
+
     // Draw line for the available capacity
     if (0 in fields)
     {
@@ -239,7 +239,7 @@ function drawGraphs(jsondata)
         .attr("stroke","#8BBA00")
         .attr("d", line(linedata));
     }
-    
+
     // Display Y-Axis
     var yAxis = d3.svg.axis()
       .scale(y)

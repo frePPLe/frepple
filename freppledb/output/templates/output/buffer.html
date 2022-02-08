@@ -155,7 +155,47 @@ function drawGraphs(jsondata)
       	bucket.append("rect")
 	      .attr("height", height)
 	      .attr("width", x_width)
-	      .attr("fill-opacity", 0)
+        .attr("fill-opacity", function(d) {
+          if (d["startinv"] >= 0 && (d["startinv"] >= d["safetystock"] || d["safetystock"] == 0))
+             return 0;
+          else
+             return 0.2;
+        })
+        .attr("fill", function(d) {
+          if (d["startinv"] < 0)
+            var gradient_idx = 0;
+          else if (d["startinv"] >= d["safetystock"] || d["safetystock"] == 0)
+            return null;
+          else
+             var gradient_idx = Math.round(d["startinv"] / d["safetystock"] * 165);
+          var grad = d3.selectAll("#gradient_" + gradient_idx);
+          if (grad.size() == 0) {
+            var newgrad = d3.select("#gradients")
+              .append("linearGradient")
+              .attr("id", "gradient_" + gradient_idx)
+              .attr("x1", 0)
+              .attr("x2", 0)
+              .attr("y1", 0)
+              .attr("y2", 1);
+            newgrad.append("stop")
+              .attr("offset", "0%")
+              .attr("stop-color", "#f0f0f0")
+              .attr("stop-opacity", 1);
+            newgrad.append("stop")
+              .attr("offset", "40%")
+              .attr("stop-color", "rgb(255," + gradient_idx + ",0)")
+              .attr("stop-opacity", 1);
+            newgrad.append("stop")
+              .attr("offset", "60%")
+              .attr("stop-color", "rgb(255," + gradient_idx + ",0)")
+              .attr("stop-opacity", 1);
+            newgrad.append("stop")
+              .attr("offset", "100%")
+              .attr("stop-color", "#f0f0f0")
+              .attr("stop-opacity", 0);
+          }
+          return "url(#gradient_" + gradient_idx + ")";
+        })
 	      .on("click", function(d) {
 	          if (d3.event.defaultPrevented || (d['produced'] == 0 && d['consumed'] == 0))
 	            return;
@@ -368,7 +408,6 @@ function drawGraphs(jsondata)
 {% if args.0 or mode == "table" %}
 function crosses (cellvalue, options, rowdata)
 {
-  var result = '';
   var last_currentdate = "{{request.current_date}}";
   
   // dict that gives from an id the name of the cross
@@ -380,7 +419,21 @@ function crosses (cellvalue, options, rowdata)
     field_by_id[cross_idx[i]] = cross[cross_idx[i]]["key"];
     id_by_field[cross[cross_idx[i]]["key"]] = cross_idx[i];
   }
-  
+
+  // Cell background
+  var oh = cellvalue[id_by_field['startoh']];
+  var safety = cellvalue[id_by_field['safetystock']];
+  if (oh < 0)
+     var result = '<div style="background-color: rgb(255,0,0,0.4)">';
+  else if (oh >= safety || safety == 0)
+     var result = '<div>';
+  else
+     var result = '<div style="background-color: rgb(255,'
+       + Math.round(oh / safety * 165)
+       + ',0,'
+       + (0.4 - Math.round(oh / safety * 40) / 100.0)
+       + ')">';
+
   for (var i in cross_idx)
     switch(field_by_id[cross_idx[i]])
     {
@@ -935,8 +988,8 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['color']] != 0) {
-          result += grid.formatNumber(rowdata['is_ip_buffer'] == "True" ? cellvalue[id_by_field['color']] : Math.abs(cellvalue[id_by_field['color']])) + 
-          (rowdata['is_ip_buffer'] == "True" ? " %" : (" days " + (cellvalue[id_by_field['color']] < 0 ? "early" : "late"))) 
+          result += grid.formatNumber(rowdata['is_ip_buffer'] == "True" ? cellvalue[id_by_field['color']] : Math.abs(cellvalue[id_by_field['color']])) +
+          (rowdata['is_ip_buffer'] == "True" ? " %" : (" days " + (cellvalue[id_by_field['color']] < 0 ? "early" : "late")))
           + "<br>";
         }
         else
@@ -955,6 +1008,7 @@ function crosses (cellvalue, options, rowdata)
           result += '<br>';
         }
     }
+  result += "</div>";
   return result;
 };
 {% endif %}{% endblock %}
@@ -962,3 +1016,9 @@ function crosses (cellvalue, options, rowdata)
 {% block extra_grid %}{% if args.0 or mode == "graph" %}loadComplete: drawGraphs,
 {% endif %}{% endblock %}
 
+{% block after_table %}
+  <svg width="0" height="0">
+  <defs id="gradients">
+  </defs>
+</svg>
+{% endblock %}

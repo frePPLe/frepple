@@ -23,6 +23,9 @@ support both Ubuntu 18 as well as Ubuntu 20.
 
 .. rubric:: Production planning
 
+- | The inventory report now uses colors to highlight periods where the onhand goes below
+    the safety stock.
+
 - | Bug fix: 6.20 introduced a bug where manufacturing orders aren't correctly restored
     on the assigned alternate resource.
 

@@ -179,7 +179,7 @@ function drawGraphs(jsondata)
               .attr("y2", 1);
             newgrad.append("stop")
               .attr("offset", "0%")
-              .attr("stop-color", "#f0f0f0")
+              .attr("stop-color", "white")
               .attr("stop-opacity", 1);
             newgrad.append("stop")
               .attr("offset", "40%")
@@ -191,7 +191,7 @@ function drawGraphs(jsondata)
               .attr("stop-opacity", 1);
             newgrad.append("stop")
               .attr("offset", "100%")
-              .attr("stop-color", "#f0f0f0")
+              .attr("stop-color", "white")
               .attr("stop-opacity", 0);
           }
           return "url(#gradient_" + gradient_idx + ")";
@@ -424,15 +424,15 @@ function crosses (cellvalue, options, rowdata)
   var oh = cellvalue[id_by_field['startoh']];
   var safety = cellvalue[id_by_field['safetystock']];
   if (oh < 0)
-     var result = '<div style="background-color: rgb(255,0,0,0.4)">';
+     var result = '<div style="margin: -5px; background: linear-gradient(white 0%, rgba(255,0,0,0.2) 40%, rgba(255,0,0,0.2) 60%, #f0f0f0 100%)">';
   else if (oh >= safety || safety == 0)
      var result = '<div>';
   else
-     var result = '<div style="background-color: rgb(255,'
-       + Math.round(oh / safety * 165)
-       + ',0,'
-       + (0.4 - Math.round(oh / safety * 40) / 100.0)
-       + ')">';
+     var result = '<div style="margin: -5px; background: linear-gradient(white 0%, rgba(255,'
+     + Math.round(oh / safety * 165)
+     + ',0,0.2) 40%, rgba(255,'
+     + Math.round(oh / safety * 165)
+     + ',0,0.2) 60%, white 100%)">';
 
   for (var i in cross_idx)
     switch(field_by_id[cross_idx[i]])
@@ -996,6 +996,14 @@ function crosses (cellvalue, options, rowdata)
           result += '0' + (rowdata['is_ip_buffer'] == "True" ? " %" : "") + '<br>';
         break;
       case 'startoh':
+        if (cellvalue[cross_idx[i]] !== null) {
+          if (oh < 0 || !(oh >= safety || safety == 0))
+            result += '<span style="color: red; font-weight: bold">'+ grid.formatNumber(cellvalue[cross_idx[i]]) + '</span>';
+          else
+            result += grid.formatNumber(cellvalue[cross_idx[i]]);
+        }
+        result += '<br>';
+        break;
       case 'safetystock':
         if (cellvalue[cross_idx[i]] !== null)
           result += grid.formatNumber(cellvalue[cross_idx[i]]);

@@ -414,7 +414,7 @@ class PathReport(GridReport):
            coalesce(operation.priority, 1) as operation_priority,
            operation.duration as operation_duration,
            operation.duration_per as operation_duration_per,
-           case when operation.item_id is not null then json_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::json end
+           case when operation.item_id is not null then jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::jsonb end
            ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id,
                               coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed,0)) filter (where operationmaterial.id is not null) as operation_om,
            jsonb_object_agg(operationresource.resource_id, operationresource.quantity) filter (where operationresource.id is not null) as operation_or,
@@ -429,18 +429,18 @@ class PathReport(GridReport):
            sibling.duration_per as sibling_duration_per,
            case when grandparentoperation.item_id is not null
            and coalesce(sibling.priority, 1) = (select max(priority) from operation where owner_id = parentoperation.name)
-           then json_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::json end
+           then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
            ||case when parentoperation.item_id is not null
            and coalesce(sibling.priority, 1) = (select max(priority) from operation where owner_id = parentoperation.name)
-           then json_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
-           ||case when sibling.item_id is not null then json_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
+           then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
            ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id,
-                                       coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed,0)) filter (where siblingoperationmaterial.id is not null), '{}'::json) as sibling_om,
+                                       coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed,0)) filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation,
            grandparentoperation.type as grandparentoperation_type,
            coalesce(grandparentoperation.priority, 1) as grandparentoperation_priority,
-           json_build_object( 'operation_min', operation.sizeminimum,
+           jsonb_build_object( 'operation_min', operation.sizeminimum,
                                'operation_multiple', operation.sizemultiple,
                                'operation_max', operation.sizemaximum,
                                'parentoperation_min', parentoperation.sizeminimum,
@@ -478,11 +478,11 @@ class PathReport(GridReport):
       itemdistribution.location_id,
       'distribution' as type,
       priority,
-      json_build_object(item.name||' @ '||itemdistribution.origin_id, -1,
+      jsonb_build_object(item.name||' @ '||itemdistribution.origin_id, -1,
                          item.name||' @ '||itemdistribution.location_id, 1) as operation_om,
       case when itemdistribution.resource_id is not null
-      then json_build_object(itemdistribution.resource_id, itemdistribution.resource_qty)
-      else '{}'::json end operation_or,
+      then jsonb_build_object(itemdistribution.resource_id, itemdistribution.resource_qty)
+      else '{}'::jsonb end operation_or,
       leadtime as duration,
       null as duration_per,
       null,
@@ -491,7 +491,7 @@ class PathReport(GridReport):
       null,
       null,
       null,
-      json_build_object( 'operation_min', itemdistribution.sizeminimum,
+      jsonb_build_object( 'operation_min', itemdistribution.sizeminimum,
                                'operation_multiple', itemdistribution.sizemultiple,
                                'operation_max', itemdistribution.sizemaximum) as sizes,
       null,
@@ -531,8 +531,8 @@ class PathReport(GridReport):
       location.name as location_id,
       'purchase' as type,
       priority,
-      json_build_object(item.name||' @ '|| location.name,1),
-      case when itemsupplier.resource_id is not null then json_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::json end resources,
+      jsonb_build_object(item.name||' @ '|| location.name,1),
+      case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
       null as duration_per,
       null,
@@ -541,11 +541,9 @@ class PathReport(GridReport):
       null,
       null,
       null,
-      json_build_object(
-          'operation_min', itemsupplier.sizeminimum,
-          'operation_multiple', itemsupplier.sizemultiple,
-          'operation_max', itemsupplier.sizemaximum
-          ) as sizes,
+      jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
+                               'operation_multiple', itemsupplier.sizemultiple,
+                               'operation_max', itemsupplier.sizemaximum) as sizes,
       null,
       null,
       item.name,
@@ -562,8 +560,8 @@ class PathReport(GridReport):
       location.name as location_id,
       'purchase' as type,
       priority,
-      json_build_object(item.name||' @ '|| location.name,1),
-      case when itemsupplier.resource_id is not null then json_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::json end resources,
+      jsonb_build_object(item.name||' @ '|| location.name,1),
+      case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
       null as duration_per,
       null,
@@ -572,7 +570,7 @@ class PathReport(GridReport):
       null,
       null,
       null,
-      json_build_object( 'operation_min', itemsupplier.sizeminimum,
+      jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
                                'operation_multiple', itemsupplier.sizemultiple,
                                'operation_max', itemsupplier.sizemaximum) as sizes,
       null,
@@ -639,7 +637,7 @@ class PathReport(GridReport):
            operation.priority as operation_priority,
            operation.duration as operation_duration,
            operation.duration_per as operation_duration_per,
-           case when operation.item_id is not null then json_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::json end
+           case when operation.item_id is not null then jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::jsonb end
            ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id,
                               coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed, 0)) filter (where operationmaterial.id is not null) as operation_om,
            jsonb_object_agg(operationresource.resource_id, operationresource.quantity) filter (where operationresource.id is not null) as operation_or,
@@ -654,19 +652,18 @@ class PathReport(GridReport):
            sibling.duration_per as sibling_duration_per,
            case when grandparentoperation.item_id is not null
            and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name)
-           then json_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::json end
+           then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
            ||case when parentoperation.item_id is not null
            and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name)
-           then json_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::json end
-           ||case when sibling.item_id is not null then json_build_object(sibling.item_id||' @ '||sibling.location_id, 1)
-           else '{}'::json end
-           || coalesce(json_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id,
-                                        coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::json) as sibling_om,
+           then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
+           || coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id,
+                                        coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation,
            grandparentoperation.type as grandparentoperation_type,
            grandparentoperation.priority as grandparentoperation_priority,
-           json_build_object( 'operation_min', operation.sizeminimum,
+           jsonb_build_object( 'operation_min', operation.sizeminimum,
                                'operation_multiple', operation.sizemultiple,
                                'operation_max', operation.sizemaximum,
                                'parentoperation_min', parentoperation.sizeminimum,
@@ -704,11 +701,11 @@ class PathReport(GridReport):
       itemdistribution.location_id,
       'distribution' as type,
       priority,
-      json_build_object(item.name||' @ '||itemdistribution.origin_id, -1,
+      jsonb_build_object(item.name||' @ '||itemdistribution.origin_id, -1,
                          item.name||' @ '||itemdistribution.location_id, 1) as operation_om,
       case when itemdistribution.resource_id is not null
-      then json_build_object(itemdistribution.resource_id, itemdistribution.resource_qty)
-      else '{}'::json end operation_or,
+      then jsonb_build_object(itemdistribution.resource_id, itemdistribution.resource_qty)
+      else '{}'::jsonb end operation_or,
       leadtime as duration,
       null as duration_per,
       null,
@@ -717,7 +714,7 @@ class PathReport(GridReport):
       null,
       null,
       null,
-      json_build_object( 'operation_min', itemdistribution.sizeminimum,
+      jsonb_build_object( 'operation_min', itemdistribution.sizeminimum,
                                'operation_multiple', itemdistribution.sizemultiple,
                                'operation_max', itemdistribution.sizemaximum) as sizes,
       null,
@@ -736,8 +733,8 @@ class PathReport(GridReport):
       location.name as location_id,
       'purchase' as type,
       priority,
-      json_build_object(item.name||' @ '|| location.name,1),
-      case when itemsupplier.resource_id is not null then json_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::json end resources,
+      jsonb_build_object(item.name||' @ '|| location.name,1),
+      case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
       null as duration_per,
       null,
@@ -746,9 +743,9 @@ class PathReport(GridReport):
       null,
       null,
       null,
-      json_build_object( 'operation_min', itemsupplier.sizeminimum,
-                         'operation_multiple', itemsupplier.sizemultiple,
-                         'operation_max', itemsupplier.sizemaximum) as sizes,
+      jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
+                               'operation_multiple', itemsupplier.sizemultiple,
+                               'operation_max', itemsupplier.sizemaximum) as sizes,
       null,
       null,
       item.name,
@@ -766,8 +763,8 @@ class PathReport(GridReport):
       location.name as location_id,
       'purchase' as type,
       priority,
-      json_build_object(item.name||' @ '|| location.name,1),
-      case when itemsupplier.resource_id is not null then json_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::json end resources,
+      jsonb_build_object(item.name||' @ '|| location.name,1),
+      case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
       null as duration_per,
       null,
@@ -776,9 +773,9 @@ class PathReport(GridReport):
       null,
       null,
       null,
-      json_build_object( 'operation_min', itemsupplier.sizeminimum,
-                         'operation_multiple', itemsupplier.sizemultiple,
-                         'operation_max', itemsupplier.sizemaximum) as sizes,
+      jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
+                               'operation_multiple', itemsupplier.sizemultiple,
+                               'operation_max', itemsupplier.sizemaximum) as sizes,
       null,
       null,
       item.name,
@@ -838,7 +835,7 @@ class PathReport(GridReport):
            operation.priority as operation_priority,
            operation.duration as operation_duration,
            operation.duration_per as operation_duration_per,
-           case when operation.item_id is not null then json_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::json end
+           case when operation.item_id is not null then jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::jsonb end
            ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id,
                               coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed, 0)) filter (where operationmaterial.id is not null) as operation_om,
            jsonb_object_agg(operationresource.resource_id, operationresource.quantity) filter (where operationresource.id is not null) as operation_or,
@@ -853,18 +850,18 @@ class PathReport(GridReport):
            sibling.duration_per as sibling_duration_per,
            case when grandparentoperation.item_id is not null
            and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name)
-           then json_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::json end
+           then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
            ||case when parentoperation.item_id is not null
            and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name)
-           then json_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::json end
-           ||case when sibling.item_id is not null then json_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::json end
-           ||coalesce(json_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id,
-                                       coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::json) as sibling_om,
-           json_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
+           then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
+           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id,
+                                       coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
+           jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation,
            grandparentoperation.type as grandparentoperation_type,
            grandparentoperation.priority as grandparentoperation_priority,
-           json_build_object( 'operation_min', operation.sizeminimum,
+           jsonb_build_object( 'operation_min', operation.sizeminimum,
                                'operation_multiple', operation.sizemultiple,
                                'operation_max', operation.sizemaximum,
                                'parentoperation_min', parentoperation.sizeminimum,
@@ -950,7 +947,7 @@ class PathReport(GridReport):
            operation.priority as operation_priority,
            operation.duration as operation_duration,
            operation.duration_per as operation_duration_per,
-           case when operation.item_id is not null then json_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::json end
+           case when operation.item_id is not null then jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::jsonb end
            ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id,
                               coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed, 0)) filter (where operationmaterial.id is not null) as operation_om,
            jsonb_object_agg(operationresource.resource_id, operationresource.quantity) filter (where operationresource.id is not null) as operation_or,
@@ -965,26 +962,26 @@ class PathReport(GridReport):
            sibling.duration_per as sibling_duration_per,
            case when grandparentoperation.item_id is not null
            and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name)
-           then json_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::json end
+           then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
            ||case when parentoperation.item_id is not null
            and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name)
-           then json_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::json end
-           ||case when sibling.item_id is not null then json_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::json end
-           ||coalesce(json_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id,
-                                       coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::json) as sibling_om,
+           then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
+           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id,
+                                       coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation,
            grandparentoperation.type as grandparentoperation_type,
            grandparentoperation.priority as grandparentoperation_priority,
-           json_build_object( 'operation_min', operation.sizeminimum,
-                              'operation_multiple', operation.sizemultiple,
-                              'operation_max', operation.sizemaximum,
-                              'parentoperation_min', parentoperation.sizeminimum,
-                              'parentoperation_multiple',parentoperation.sizemultiple,
-                              'parentoperation_max', parentoperation.sizemaximum,
-                              'grandparentoperation_min', grandparentoperation.sizeminimum,
-                              'grandparentoperation_multiple', grandparentoperation.sizemultiple,
-                              'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes,
+           jsonb_build_object( 'operation_min', operation.sizeminimum,
+                               'operation_multiple', operation.sizemultiple,
+                               'operation_max', operation.sizemaximum,
+                               'parentoperation_min', parentoperation.sizeminimum,
+                               'parentoperation_multiple',parentoperation.sizemultiple,
+                               'parentoperation_max', parentoperation.sizemaximum,
+                               'grandparentoperation_min', grandparentoperation.sizeminimum,
+                               'grandparentoperation_multiple', grandparentoperation.sizemultiple,
+                               'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes,
            grandparentitem.name as grandparentitem_name,
            parentitem.name as parentitem_name,
            item.name as item_name,
@@ -1015,11 +1012,11 @@ class PathReport(GridReport):
       itemdistribution.location_id,
       'distribution' as type,
       priority,
-      json_build_object(item.name||' @ '||itemdistribution.origin_id, -1,
-                        item.name||' @ '||itemdistribution.location_id, 1) as operation_om,
+      jsonb_build_object(item.name||' @ '||itemdistribution.origin_id, -1,
+                         item.name||' @ '||itemdistribution.location_id, 1) as operation_om,
       case when itemdistribution.resource_id is not null
-      then json_build_object(itemdistribution.resource_id, itemdistribution.resource_qty)
-      else '{}'::json end operation_or,
+      then jsonb_build_object(itemdistribution.resource_id, itemdistribution.resource_qty)
+      else '{}'::jsonb end operation_or,
       leadtime as duration,
       null as duration_per,
       null,
@@ -1028,7 +1025,7 @@ class PathReport(GridReport):
       null,
       null,
       null,
-      json_build_object( 'operation_min', itemdistribution.sizeminimum,
+      jsonb_build_object( 'operation_min', itemdistribution.sizeminimum,
                                'operation_multiple', itemdistribution.sizemultiple,
                                'operation_max', itemdistribution.sizemaximum) as sizes,
       null,
@@ -1071,8 +1068,8 @@ class PathReport(GridReport):
       location.name as location_id,
       'purchase' as type,
       priority,
-      json_build_object(item.name||' @ '|| location.name,1),
-      case when itemsupplier.resource_id is not null then json_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::json end resources,
+      jsonb_build_object(item.name||' @ '|| location.name,1),
+      case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
       null as duration_per,
       null,
@@ -1081,9 +1078,9 @@ class PathReport(GridReport):
       null,
       null,
       null,
-      json_build_object( 'operation_min', itemsupplier.sizeminimum,
-                         'operation_multiple', itemsupplier.sizemultiple,
-                         'operation_max', itemsupplier.sizemaximum) as sizes,
+      jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
+                               'operation_multiple', itemsupplier.sizemultiple,
+                               'operation_max', itemsupplier.sizemaximum) as sizes,
       null,
       null,
       item.name,
@@ -1100,8 +1097,8 @@ class PathReport(GridReport):
       location.name as location_id,
       'purchase' as type,
       priority,
-      json_build_object(item.name||' @ '|| location.name,1),
-      case when itemsupplier.resource_id is not null then json_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::json end resources,
+      jsonb_build_object(item.name||' @ '|| location.name,1),
+      case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
       null as duration_per,
       null,
@@ -1110,9 +1107,9 @@ class PathReport(GridReport):
       null,
       null,
       null,
-      json_build_object( 'operation_min', itemsupplier.sizeminimum,
-                         'operation_multiple', itemsupplier.sizemultiple,
-                         'operation_max', itemsupplier.sizemaximum) as sizes,
+      jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
+                               'operation_multiple', itemsupplier.sizemultiple,
+                               'operation_max', itemsupplier.sizemaximum) as sizes,
       null,
       null,
       item.name,
@@ -1165,6 +1162,7 @@ class PathReport(GridReport):
         # First can we go further ?
         if len(reportclass.node_count) > 400:
             return
+        opdetail = json.loads(i[14])
 
         # do we have a grandparentoperation
         if i[11] and not i[11] in reportclass.operation_dict:
@@ -1199,9 +1197,9 @@ class PathReport(GridReport):
                 "expanded": "true",
                 "numsuboperations": reportclass.suboperations_count_dict[i[11]],
                 "realdepth": -depth if reportclass.downstream else depth,
-                "sizeminimum": i[14]["grandparentoperation_min"],
-                "sizemaximum": i[14]["grandparentoperation_max"],
-                "sizemultiple": i[14]["grandparentoperation_multiple"],
+                "sizeminimum": opdetail["grandparentoperation_min"],
+                "sizemaximum": opdetail["grandparentoperation_max"],
+                "sizemultiple": opdetail["grandparentoperation_multiple"],
                 "alternate": "false",
             }
             reportclass.node_count.add(i[11])
@@ -1249,9 +1247,9 @@ class PathReport(GridReport):
                 "expanded": "true",
                 "numsuboperations": reportclass.suboperations_count_dict[i[8]],
                 "realdepth": -depth if reportclass.downstream else depth,
-                "sizeminimum": i[14]["parentoperation_min"],
-                "sizemaximum": i[14]["parentoperation_max"],
-                "sizemultiple": i[14]["parentoperation_multiple"],
+                "sizeminimum": opdetail["parentoperation_min"],
+                "sizemaximum": opdetail["parentoperation_max"],
+                "sizemultiple": opdetail["parentoperation_multiple"],
                 "alternate": "false",
             }
             reportclass.node_count.add(i[8])
@@ -1277,7 +1275,7 @@ class PathReport(GridReport):
                 "item": i[17],
                 "description": i[20],
                 "location": i[1],
-                "resources": tuple(i[5].items()) if i[5] else None,
+                "resources": tuple(json.loads(i[5]).items()) if i[5] else None,
                 "parentoper": i[8],
                 "suboperation": 0
                 if not i[8]
@@ -1289,7 +1287,7 @@ class PathReport(GridReport):
                 "duration": i[6],
                 "duration_per": i[7],
                 "quantity": bom_quantity,
-                "buffers": tuple(i[4].items()) if i[4] else None,
+                "buffers": tuple(json.loads(i[4]).items()) if i[4] else None,
                 "parent": reportclass.operation_dict[i[8]]
                 if i[8]
                 else (
@@ -1301,9 +1299,9 @@ class PathReport(GridReport):
                 "expanded": "true",
                 "numsuboperations": 0,
                 "realdepth": -depth if reportclass.downstream else depth,
-                "sizeminimum": i[14]["operation_min"],
-                "sizemaximum": i[14]["operation_max"],
-                "sizemultiple": i[14]["operation_multiple"],
+                "sizeminimum": opdetail["operation_min"],
+                "sizemaximum": opdetail["operation_max"],
+                "sizemultiple": opdetail["operation_multiple"],
                 "alternate": "false",
                 "alternate_priority": (i[13] or i[10] or i[3] or 999),
                 "alternate_operation": (i[11] or i[8] or i[0]),
@@ -1312,11 +1310,11 @@ class PathReport(GridReport):
             yield operation
 
         if i[5]:
-            for resource, quantity in tuple(i[5].items()):
+            for resource, quantity in tuple(json.loads(i[5]).items()):
                 reportclass.node_count.add(resource)
 
         if i[4]:
-            for buffer, quantity in tuple(i[4].items()):
+            for buffer, quantity in tuple(json.loads(i[4]).items()):
 
                 # I might already have visisted that buffer
                 if buffer in reportclass.node_count:

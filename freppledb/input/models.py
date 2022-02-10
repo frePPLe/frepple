@@ -1907,6 +1907,16 @@ class OperationPlan(AuditModel):
                     subop.status = self.status
                     subop.save(update_fields=["status"])
 
+        # A parent operationplan can't be proposed when it's children already have a different status
+        if (
+            self.type == "MO"
+            and self.owner
+            and self.status != "proposed"
+            and self.owner.status == "proposed"
+        ):
+            self.owner.status = "approved"
+            self.owner.save(update_fields=["status"])
+
         if self.status not in ("completed", "closed"):
             return
 

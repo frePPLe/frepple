@@ -72,17 +72,17 @@ void OperationPlan::updateProblems() {
     if (typeid(curprob) == typeid(ProblemBeforeCurrent)) {
       if (needsBeforeCurrent)
         needsBeforeCurrent = false;
-      else
+      else if (this == curprob.getOwner())
         delete &curprob;
     } else if (typeid(curprob) == typeid(ProblemBeforeFence)) {
       if (needsBeforeFence)
         needsBeforeFence = false;
-      else
+      else if (this == curprob.getOwner())
         delete &curprob;
     } else if (typeid(curprob) == typeid(ProblemPrecedence)) {
       if (needsPrecedence)
         needsPrecedence = false;
-      else
+      else if (this == curprob.getOwner())
         delete &curprob;
     }
   }
@@ -96,21 +96,30 @@ void OperationPlan::updateProblems() {
 OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* o)
     : Problem::iterator(o->firstProblem), opplan(o) {
   // Adding related material problems
-  for (FlowPlanIterator flpln = opplan->beginFlowPlans();
-       flpln != opplan->endFlowPlans(); ++flpln) {
-    for (Problem::iterator prob(flpln->getBuffer()); prob != Problem::end();
-         ++prob)
-      if (prob->getDates().overlap(opplan->getDates()) && !prob->isFeasible())
-        relatedproblems.push(&*prob);
+  for (auto flpln = opplan->beginFlowPlans(); flpln != opplan->endFlowPlans();
+       ++flpln) {
+    if (flpln->getOnhandAfterDate() < -ROUNDING_ERROR)
+      for (Problem::iterator prob(flpln->getBuffer()); prob != Problem::end();
+           ++prob)
+        if (prob->getDates().overlap(opplan->getDates()) && !prob->isFeasible())
+          relatedproblems.push(&*prob);
   }
 
   // Adding related capacity problems
-  for (LoadPlanIterator ldpln = opplan->beginLoadPlans();
-       ldpln != opplan->endLoadPlans(); ++ldpln) {
-    for (Problem::iterator prob(ldpln->getResource()); prob != Problem::end();
-         ++prob)
-      if (prob->getDates().overlap(opplan->getDates()) && !prob->isFeasible())
-        relatedproblems.push(&*prob);
+  for (auto ldpln = opplan->beginLoadPlans(); ldpln != opplan->endLoadPlans();
+       ++ldpln) {
+    auto prob_iter = ldpln->getResource()->getProblems();
+    if (ldpln->getResource()->hasType<ResourceBuckets>()) {
+      while (Problem* prob = prob_iter.next()) {
+        if (prob->getDates().within(opplan->getStart()) && !prob->isFeasible())
+          relatedproblems.push(&*prob);
+      }
+    } else {
+      while (Problem* prob = prob_iter.next()) {
+        if (prob->getDates().overlap(opplan->getDates()) && !prob->isFeasible())
+          relatedproblems.push(&*prob);
+      }
+    }
   }
 
   // Update the first problem pointer

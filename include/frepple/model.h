@@ -726,6 +726,11 @@ class HasProblems {
                          &Cls::setDetectProblems, BOOL_TRUE);
   }
 
+  bool hasNoProblems() {
+    updateProblems();
+    return firstProblem == nullptr;
+  }
+
  private:
   /* A pointer to the first problem of this object. Problems are maintained
    * in a single linked list. */

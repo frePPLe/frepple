@@ -1775,7 +1775,15 @@ class loadOperationPlans(LoadTask):
                     == "true"
                 )
                 if "supply" in os.environ:
-                    confirmed_filter = " and operationplan.status in ('confirmed', 'approved', 'completed')"
+                    confirmed_filter = """ and (
+                      operationplan.status in ('confirmed', 'approved', 'completed')
+                      or exists (
+                        select 1 from operationplan as child_opplans
+                        where child_opplans.owner_id = operationplan.reference
+                        and child_opplans.status in ('approved', 'confirmed', 'completed')
+                        )
+                      )
+                      """
                     create_flag = True
                 else:
                     confirmed_filter = ""

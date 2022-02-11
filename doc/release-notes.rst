@@ -42,6 +42,14 @@ support both Ubuntu 18 as well as Ubuntu 20.
   | Upgrade your python packages with:
      sudo -H pip install --force-reinstall -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
 
+6.20.1 (2022/2/11)
+==================
+
+.. rubric:: Production planning
+
+- | Bug fix: the effectivity dates were not verified correctly in some corner
+    cases.
+
 6.20.0 (2022/1/22)
 ==================
 

@@ -2146,7 +2146,7 @@ double OperationPlan::getEfficiency(Date d) const {
       for (Resource::memberRecursiveIterator mmbr(h->getResource());
            !mmbr.empty(); ++mmbr) {
         if (!mmbr->isGroup() &&
-            (!h->getSkill() || mmbr->hasSkill(h->getSkill()))) {
+            (!h->getSkill() || mmbr->hasSkill(h->getSkill(), d))) {
           auto my_eff =
               mmbr->getEfficiencyCalendar()
                   ? mmbr->getEfficiencyCalendar()->getValue(d ? d : getStart())

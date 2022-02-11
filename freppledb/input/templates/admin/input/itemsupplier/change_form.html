@@ -9,7 +9,7 @@
 </legend>
 <div class="row">
   <div class="control-label col-md-3"><p>
-     <a href="{{ request.prefix }}/data/input/purchaseorder/?supplier__name__ico={{ adminform.form.instance.supplier | urlencode }}&item__name__ico={{ adminform.form.instance.item | urlencode }}&noautofilter">
+     <a href="{{ request.prefix }}/data/input/purchaseorder/?supplier__name={{ adminform.form.instance.supplier | urlencode }}&item__name__ico={{ adminform.form.instance.item | urlencode }}&noautofilter">
      {% trans "purchase orders"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>

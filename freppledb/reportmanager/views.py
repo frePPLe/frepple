@@ -491,23 +491,33 @@ class ReportManager(GridReport):
                 .order_by("sequence")
             ):
                 if c.format == "number":
-                    cols.append(GridFieldNumber(_(c.name), editable=False))
+                    cols.append(
+                        GridFieldNumber(c.name, title=_(c.name), editable=False)
+                    )
                 elif c.format == "datetime":
-                    cols.append(GridFieldDateTime(_(c.name), editable=False))
+                    cols.append(
+                        GridFieldDateTime(c.name, title=_(c.name), editable=False)
+                    )
                 elif c.format == "date":
-                    cols.append(GridFieldDate(_(c.name), editable=False))
+                    cols.append(GridFieldDate(c.name, title=_(c.name), editable=False))
                 elif c.format == "integer":
-                    cols.append(GridFieldInteger(_(c.name), editable=False))
+                    cols.append(
+                        GridFieldInteger(c.name, title=_(c.name), editable=False)
+                    )
                 elif c.format == "duration":
-                    cols.append(GridFieldDuration(_(c.name), editable=False))
+                    cols.append(
+                        GridFieldDuration(c.name, title=_(c.name), editable=False)
+                    )
                 elif c.format == "text":
-                    cols.append(GridFieldText(_(c.name), editable=False))
+                    cols.append(GridFieldText(c.name, title=_(c.name), editable=False))
                 elif c.format == "character":
-                    cols.append(GridFieldText(_(c.name), editable=False))
+                    cols.append(GridFieldText(c.name, title=_(c.name), editable=False))
                 elif c.format == "bool":
-                    cols.append(GridFieldBool(_(c.name), editable=False))
+                    cols.append(GridFieldBool(c.name, title=_(c.name), editable=False))
                 elif c.format == "currency":
-                    cols.append(GridFieldCurrency(_(c.name), editable=False))
+                    cols.append(
+                        GridFieldCurrency(c.name, title=_(c.name), editable=False)
+                    )
         return cols
 
     @classmethod

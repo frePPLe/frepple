@@ -36,6 +36,11 @@ support both Ubuntu 18 as well as Ubuntu 20.
     replenishment has been defined. These records, created with an 'Unknown supplier', prevent the
     demand from not being planned.
 
+.. rubric:: Odoo integration
+
+- | V14: The previous release introduced a bug when exporting manufacturing orders
+    from frepple to odoo.
+
 .. rubric:: Third party components
 
 - | The django version is bumped up from 2.2 LTS to 3.2 LTS.

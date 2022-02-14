@@ -674,7 +674,7 @@ class ExportOperationPlans(PlanTask):
                 enddate timestamp with time zone,
                 criticality numeric(20,8),
                 delay numeric,
-                plan json,
+                plan jsonb,
                 source character varying(300),
                 lastmodified timestamp with time zone NOT NULL,
                 operation_id character varying(300),

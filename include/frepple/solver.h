@@ -120,6 +120,8 @@ class SolverCreate : public Solver {
    * By default all constraints are enabled. */
   short constrts = 15;
 
+  bool create_deliveries = true;
+
   bool allowSplits = true;
 
   bool rotateResources = true;
@@ -332,6 +334,7 @@ class SolverCreate : public Solver {
     // Copy fields
     plantype = other.plantype;
     lazydelay = other.lazydelay;
+    create_deliveries = other.create_deliveries;
     administrativeleadtime = other.administrativeleadtime;
     minimumdelay = other.minimumdelay;
     allowSplits = other.allowSplits;
@@ -354,6 +357,7 @@ class SolverCreate : public Solver {
   SolverCreate& operator=(const SolverCreate& other) {
     plantype = other.plantype;
     lazydelay = other.lazydelay;
+    create_deliveries = other.create_deliveries;
     administrativeleadtime = other.administrativeleadtime;
     minimumdelay = other.minimumdelay;
     allowSplits = other.allowSplits;
@@ -417,6 +421,10 @@ class SolverCreate : public Solver {
 
   /* Returns true if any constraint is relevant for the solver. */
   bool isConstrained() const { return constrts > 0; }
+
+  bool getCreateDeliveries() const { return create_deliveries; }
+
+  void setCreateDeliveries(bool b) { create_deliveries = b; }
 
   /* Returns the plan type:
    *  - 1: Constrained plan.
@@ -636,6 +644,8 @@ class SolverCreate : public Solver {
                            &Cls::setIterationAccuracy);
     m->addDurationField<Cls>(SolverCreate::tag_lazydelay, &Cls::getLazyDelay,
                              &Cls::setLazyDelay);
+    m->addBoolField<Cls>(SolverCreate::tag_createdeliveries,
+                         &Cls::getCreateDeliveries, &Cls::setCreateDeliveries);
     m->addDurationField<Cls>(SolverCreate::tag_administrativeleadtime,
                              &Cls::getAdministrativeLeadTime,
                              &Cls::setAdministrativeLeadTime);
@@ -669,6 +679,7 @@ class SolverCreate : public Solver {
   static const Keyword tag_iterationthreshold;
   static const Keyword tag_iterationaccuracy;
   static const Keyword tag_lazydelay;
+  static const Keyword tag_createdeliveries;
   static const Keyword tag_minimumdelay;
   static const Keyword tag_allowsplits;
   static const Keyword tag_rotateresources;

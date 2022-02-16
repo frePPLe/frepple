@@ -27,6 +27,7 @@ const MetaClass* SolverCreate::metadata;
 const Keyword SolverCreate::tag_iterationthreshold("iterationthreshold");
 const Keyword SolverCreate::tag_iterationaccuracy("iterationaccuracy");
 const Keyword SolverCreate::tag_lazydelay("lazydelay");
+const Keyword SolverCreate::tag_createdeliveries("createdeliveries");
 const Keyword SolverCreate::tag_administrativeleadtime(
     "administrativeleadtime");
 const Keyword SolverCreate::tag_minimumdelay("minimumdelay");
@@ -68,7 +69,7 @@ int SolverCreate::initialize() {
   x.supportgetattro();
   x.supportsetattro();
   x.supportcreate(create);
-  x.addMethod("solve", solve, METH_NOARGS, "run the solver");
+  x.addMethod("solve", solve, METH_VARARGS, "run the solver");
   x.addMethod("commit", commit, METH_NOARGS, "commit the plan changes");
   x.addMethod("rollback", rollback, METH_NOARGS, "rollback the plan changes");
   x.addMethod("createsBatches", createsBatches, METH_NOARGS,
@@ -200,7 +201,8 @@ void SolverCreate::SolverData::pop(bool copy_answer) {
 void SolverCreate::SolverData::commit() {
   // Check
   SolverCreate* solver = getSolver();
-  if (!demands || !solver) throw LogicException("Missing demands or solver.");
+  if (!solver || (!demands && solver->getCreateDeliveries()))
+    throw LogicException("Missing demands or solver.");
 
   // Message
   if (solver->getLogLevel() > 0)
@@ -212,31 +214,33 @@ void SolverCreate::SolverData::commit() {
       // Special case to use a single sweep for truely unconstrained plans
 
       // Step 1: Create a delivery operationplan for all demands
-      for (auto i = demands->begin(); i != demands->end(); ++i) {
-        // Determine the quantity to be planned and the date for the planning
-        // loop
-        double plan_qty = (*i)->getQuantity() - (*i)->getPlannedQuantity();
-        if ((*i)->getDue() == Date::infiniteFuture ||
-            (*i)->getDue() == Date::infinitePast)
-          continue;
+      if (solver->getCreateDeliveries()) {
+        for (auto i = demands->begin(); i != demands->end(); ++i) {
+          // Determine the quantity to be planned and the date for the planning
+          // loop
+          double plan_qty = (*i)->getQuantity() - (*i)->getPlannedQuantity();
+          if ((*i)->getDue() == Date::infiniteFuture ||
+              (*i)->getDue() == Date::infinitePast)
+            continue;
 
-        // Select delivery operation
-        Operation* deliveryoper = (*i)->getDeliveryOperation();
-        if (!deliveryoper) continue;
+          // Select delivery operation
+          Operation* deliveryoper = (*i)->getDeliveryOperation();
+          if (!deliveryoper) continue;
 
-        while (plan_qty > ROUNDING_ERROR) {
-          // Respect minimum shipment quantities
-          if (plan_qty < (*i)->getMinShipment())
-            plan_qty = (*i)->getMinShipment();
+          while (plan_qty > ROUNDING_ERROR) {
+            // Respect minimum shipment quantities
+            if (plan_qty < (*i)->getMinShipment())
+              plan_qty = (*i)->getMinShipment();
 
-          // Create a delivery operationplan for the remaining quantity
-          OperationPlan* deli = deliveryoper->createOperationPlan(
-              plan_qty, Date::infinitePast, (*i)->getDue(), (*i)->getBatch(),
-              *i, nullptr, 0, false);
-          deli->activate();
+            // Create a delivery operationplan for the remaining quantity
+            OperationPlan* deli = deliveryoper->createOperationPlan(
+                plan_qty, Date::infinitePast, (*i)->getDue(), (*i)->getBatch(),
+                *i, nullptr, 0, false);
+            deli->activate();
 
-          // Prepare for next loop
-          plan_qty -= deli->getQuantity();
+            // Prepare for next loop
+            plan_qty -= deli->getQuantity();
+          }
         }
       }
 
@@ -563,30 +567,32 @@ void SolverCreate::solve(void* v) {
 
   // Count how many clusters we have to plan
   int cl = 1;
-  if (cluster == -1 && getConstraints())
+  if (cluster == -1 && getConstraints() && getCreateDeliveries())
     cl = HasLevel::getNumberOfClusters() + 1;
 
   // Categorize all demands in their cluster
   demands_per_cluster.resize(cl);
-  if (!getConstraints()) {
-    // Dumb unconstrained plan is running in a single thread
-    for (auto& i : Demand::all())
-      if (i.getQuantity() > 0 && (i.getStatus() == Demand::status::OPEN ||
-                                  i.getStatus() == Demand::status::QUOTE))
-        demands_per_cluster[0].push_back(&i);
-  } else if (cluster == -1 && !userexit_nextdemand) {
-    // Many clusters to solve
-    for (auto& i : Demand::all())
-      if (i.getQuantity() > 0 && (i.getStatus() == Demand::status::OPEN ||
-                                  i.getStatus() == Demand::status::QUOTE))
-        demands_per_cluster[i.getCluster()].push_back(&i);
-  } else if (!userexit_nextdemand) {
-    // Only a single cluster to plan
-    for (auto& i : Demand::all())
-      if (i.getCluster() == cluster && i.getQuantity() > 0 &&
-          (i.getStatus() == Demand::status::OPEN ||
-           i.getStatus() == Demand::status::QUOTE))
-        demands_per_cluster[0].push_back(&i);
+  if (getCreateDeliveries()) {
+    if (!getConstraints()) {
+      // Dumb unconstrained plan is running in a single thread
+      for (auto& i : Demand::all())
+        if (i.getQuantity() > 0 && (i.getStatus() == Demand::status::OPEN ||
+                                    i.getStatus() == Demand::status::QUOTE))
+          demands_per_cluster[0].push_back(&i);
+    } else if (cluster == -1 && !userexit_nextdemand) {
+      // Many clusters to solve
+      for (auto& i : Demand::all())
+        if (i.getQuantity() > 0 && (i.getStatus() == Demand::status::OPEN ||
+                                    i.getStatus() == Demand::status::QUOTE))
+          demands_per_cluster[i.getCluster()].push_back(&i);
+    } else if (!userexit_nextdemand) {
+      // Only a single cluster to plan
+      for (auto& i : Demand::all())
+        if (i.getCluster() == cluster && i.getQuantity() > 0 &&
+            (i.getStatus() == Demand::status::OPEN ||
+             i.getStatus() == Demand::status::QUOTE))
+          demands_per_cluster[0].push_back(&i);
+    }
   }
 
   // Delete of operationplans
@@ -606,13 +612,15 @@ void SolverCreate::solve(void* v) {
   // Otherwise we use as many worker threads as processor cores.
   ThreadGroup threads;
   if (getLogLevel() > 0 || !getAutocommit() || cluster != -1 ||
-      !getConstraints())
+      !getConstraints() || !getCreateDeliveries())
     threads.setMaxParallel(1);
 
   // Register all clusters to be solved
   for (int j = 0; j < cl; ++j) {
     int tmp;
-    if (!getConstraints() && cluster == -1)
+    if (!getCreateDeliveries())
+      tmp = -1;
+    else if (!getConstraints() && cluster == -1)
       tmp = -1;
     else if (cluster == -1)
       tmp = j;

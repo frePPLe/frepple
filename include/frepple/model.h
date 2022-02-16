@@ -4656,6 +4656,8 @@ class OperationItemSupplier : public OperationFixedTime {
                                           &Cls::getItemSupplier, nullptr);
     m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, nullptr,
                                     DONT_SERIALIZE);
+    m->addDurationField<Cls>(Tags::duration, &Cls::getDuration,
+                             &Cls::setDuration);
   }
 
   /* Scan and trim operationplans creating excess inventory in the

@@ -36,6 +36,15 @@ support both Ubuntu 18 as well as Ubuntu 20.
     replenishment has been defined. These records, created with an 'Unknown supplier', prevent the
     demand from not being planned.
 
+- | Bug fix: the effectivity dates of skills were not verified correctly in some corner
+    cases.
+
+- | Bug fix: the effectivity dates of operation materials were not verified correctly in some corner
+    cases.
+
+- | Bug fix: partially complete routing manufacturing order with some steps in the status
+    "closed" were not correctly treated.
+
 .. rubric:: Odoo integration
 
 - | V14: The previous release introduced a bug when exporting manufacturing orders
@@ -47,12 +56,23 @@ support both Ubuntu 18 as well as Ubuntu 20.
   | Upgrade your python packages with:
      sudo -H pip install --force-reinstall -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
 
+6.20.2 (2022/2/18)
+==================
+
+.. rubric:: Production planning
+
+- | Bug fix: the effectivity dates of operation materials were not verified correctly in some corner
+    cases.
+
+- | Bug fix: partially complete routing manufacturing order with some steps in the status
+    "closed" were not correctly treated.
+
 6.20.1 (2022/2/11)
 ==================
 
 .. rubric:: Production planning
 
-- | Bug fix: the effectivity dates were not verified correctly in some corner
+- | Bug fix: the effectivity dates of skills were not verified correctly in some corner
     cases.
 
 6.20.0 (2022/1/22)

@@ -1821,7 +1821,7 @@ class loadOperationPlans(LoadTask):
                         ) dmd
                         on dmd.name = operationplan.demand_id
                         WHERE operationplan.owner_id IS NULL
-                        and operationplan.quantity >= 0 and operationplan.status <> 'closed'
+                        and operationplan.quantity >= 0
                         %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
                         and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
                         and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
@@ -1969,13 +1969,21 @@ class loadOperationPlans(LoadTask):
                         where demand.status is null or demand.status in ('open', 'quote')
                         ) dmd
                         on dmd.name = operationplan.demand_id
-                        WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed'
-                        %s%s and operationplan.type = 'MO'
+                        WHERE operationplan.quantity >= 0
+                        and (
+                          operationplan.status <> 'closed'
+                          or exists (
+                            select 1 from operationplan as parent_opplan
+                            where parent_opplan.reference = operationplan.owner_id
+                            and parent_opplan.status <> 'closed'
+                            )
+                        )
+                        %s and operationplan.type = 'MO'
                         and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
                         and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                         ORDER BY operationplan.reference ASC
                         """
-                    % (attrsql, filter_and, confirmed_filter)
+                    % (attrsql, filter_and)
                 )
                 for i in cursor:
                     try:

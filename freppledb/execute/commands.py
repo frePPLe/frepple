@@ -63,7 +63,7 @@ class UpdateLastCurrentDate(PlanTask):
             )
             p.value = frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S")
             if created:
-                p.descrption = "This parameter is automatically populated. It stores the date of the last plan execution"
+                p.description = "This parameter is automatically populated. It stores the date of the last plan execution"
             p.save(using=database)
         except Exception:
             logger.warning("Failed to set last_currentdate parameter")

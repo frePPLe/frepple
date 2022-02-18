@@ -698,7 +698,7 @@ class ExportOperationPlans(PlanTask):
                 cls.getData(
                     cls.parent.timestamp,
                     cluster=cluster,
-                    accepted_status=["confirmed", "approved", "completed"],
+                    accepted_status=["confirmed", "approved", "completed", "closed"],
                 )
             ),
             table="tmp_operationplan",
@@ -725,7 +725,7 @@ class ExportOperationPlans(PlanTask):
         cursor.execute(
             """
             delete from operationplan
-            where status in ('confirmed','approved','completed')
+            where status in ('confirmed','approved','completed','closed')
             and type = 'MO'
             and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
             """
@@ -761,7 +761,7 @@ class ExportOperationPlans(PlanTask):
                 cls.getData(
                     cls.parent.timestamp,
                     cluster=cluster,
-                    accepted_status=["proposed", "closed"],
+                    accepted_status=["proposed"],
                 )
             ),
             table="operationplan",

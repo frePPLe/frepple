@@ -17,12 +17,24 @@ The main target is to refresh the component stack:
 These changes will be made gradual over a couple of releases. For instance, 6.20.0 will
 support both Ubuntu 18 as well as Ubuntu 20.
 
+
+6.20.2 (2022/2/18)
+==================
+
+.. rubric:: Production planning
+
+- | Bug fix: the effectivity dates of operation materials were not verified correctly in some corner
+    cases.
+
+- | Bug fix: partially complete routing manufacturing order with some steps in the status
+    "closed" were not correctly treated.
+
 6.20.1 (2022/2/11)
 ==================
 
 .. rubric:: Production planning
 
-- | Bug fix: the effectivity dates were not verified correctly in some corner
+- | Bug fix: the effectivity dates of skills were not verified correctly in some corner
     cases.
 6.20.0 (2022/1/22)
 ==================

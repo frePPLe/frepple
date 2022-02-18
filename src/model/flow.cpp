@@ -243,7 +243,7 @@ pair<Date, double> FlowStart::getFlowplanDateQuantity(
     return make_pair(dt, 0.0);
   else if (fl->getConfirmed())
     return make_pair(dt, fl->getQuantity());
-  else if (!getEffective().within(fl->getDate()) ||
+  else if (!getEffective().within(fl->getOperationPlan()->getEnd()) ||
            !fl->getOperationPlan()->getQuantity())
     return make_pair(dt, 0.0);
   else {
@@ -279,7 +279,7 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const {
   else if (fl->getConfirmed())
     return make_pair(dt, fl->getQuantity());
   else if (!fl->getOperationPlan()->getQuantity() ||
-           !getEffective().within(fl->getDate()))
+           !getEffective().within(fl->getOperationPlan()->getEnd()))
     return make_pair(dt, 0.0);
   else {
     auto q = getQuantityFixed() +
@@ -311,7 +311,7 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
       return make_pair(dt, 0.0);
     else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
       return make_pair(dt, 0.0);
-    else if (!getEffective().within(fl->getDate()) ||
+    else if (!getEffective().within(fl->getOperationPlan()->getEnd()) ||
              !fl->getOperationPlan()->getQuantity())
       return make_pair(dt, 0.0);
     else {

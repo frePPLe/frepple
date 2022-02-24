@@ -36,6 +36,13 @@ support both Ubuntu 18 as well as Ubuntu 20.
     replenishment has been defined. These records, created with an 'Unknown supplier', prevent the
     demand from not being planned.
 
+- | The time window over which the item metrics "late demand count/quantity/value"
+    and "unplanned demand count/quantity/value" are computed is now configurable
+    with the parameter "metrics.demand_window".
+  | This recognizes the fact that planners focus their day to day work to a certain time
+    horizon, and all later forecast and sales orders are purely treated as "FYI".
+  | For backwards compatibility, the default value is 999 - ie compute with all demand.
+
 - | Bug fix: the effectivity dates of skills were not verified correctly in some corner
     cases.
 

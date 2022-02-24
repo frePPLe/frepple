@@ -1,0 +1,3 @@
+[
+{"model": "common.parameter", "fields": {"name": "metrics.demand_window", "description": "Time horizon (in days) over which the item attributes 'late demand count/quantity/value' and 'unplanned demand count/quantity/value' are computed.", "value": "999"}}
+]

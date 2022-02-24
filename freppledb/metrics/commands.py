@@ -16,10 +16,12 @@
 #
 
 import os
+from datetime import timedelta, datetime
 
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
+from freppledb.common.models import Parameter
 from freppledb.input.models import Item, Resource
 
 
@@ -39,9 +41,21 @@ class GetPlanMetrics(PlanTask):
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
         with connections[database].cursor() as cursor:
             # Update item metrics
             try:
+
+                try:
+                    window = frepple.settings.current + timedelta(
+                        days=int(
+                            Parameter.getValue("metrics.demand_window", database, "999")
+                        )
+                    )
+                except Exception:
+                    print("Warning: invalid parameter 'metrics.demand_window'")
+                    window = datetime(2030, 12, 31)
 
                 Item.createRootObject(database=database)
 
@@ -62,8 +76,10 @@ class GetPlanMetrics(PlanTask):
                      from out_problem
                     inner join demand on demand.name = out_problem.owner
                     inner join item on item.name = demand.item_id
-                    where out_problem.name in ('unplanned', 'late');
-                    """
+                    where out_problem.name in ('unplanned', 'late')
+                    and out_problem.startdate < %s;
+                    """,
+                    (window,),
                 )
 
                 cursor.execute(

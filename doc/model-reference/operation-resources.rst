@@ -16,26 +16,26 @@ skill           skill             | Skill required of the resource.
 quantity        double            | Required quantity of the resource.
                                   | The default value is 1.0.
                                   | The use of the value is different per resource type:
-                                    
+
                                   * | Type 'default':
                                     | The resource is used during the complete duration of the
-                                      manufacturing order. 
-                                    | If the resource has a size of 1 and the 
+                                      manufacturing order.
+                                    | If the resource has a size of 1 and the
                                       operationresource record has a quantity of 1, then only
                                       1 operation can be planned in parallel.
-                                  
+
                                   * | Type 'time buckets' and 'quantity buckets':
                                     | The total capacity consumed by a manufacturing order
                                       is equal to the (quantity_fixed + quantity * manufacturing
                                       order quantity) / efficiency.
                                     | This quantity is consumed from the capacity bucket where
                                       the manufacturing order starts.
-                                     
+
 quantity_fixed  double            | For a resource of type 'time buckets' or 'quantity buckets'
                                     the total capacity consumed by a manufacturing order
-                                    is equal to the (quantity_fixed + quantity * manufacturing 
+                                    is equal to the (quantity_fixed + quantity * manufacturing
                                     order quantity) / efficiency.
-                                  | The default value is 0.0.             
+                                  | The default value is 0.0.
 effective_start dateTime          | Date after which the resource load is valid.
                                   | Before this date the planned quantity is always 0.
 effective_end   dateTime          | Date at which the resource load becomes invalid.
@@ -89,6 +89,8 @@ at a single moment of time. Different loading policies can be specified:
     at the start date.
   | The offset is computed based on the available periods of the operation,
     and skips unavailable periods.
+  | THIS FUNCTIONALITY IS NOT AVAILABLE IN THE USER INTERFACE, AND IT IS ONLY IN
+    BETA STATE IN THE PLANNING ENGINE.
 
 * | load_bucketized_start:
   | A load of this type loads a bucketized resource at a specified
@@ -99,6 +101,8 @@ at a single moment of time. Different loading policies can be specified:
     at the end date.
   | The offset is computed using the available periods of the operation,
     and skips unavailable periods.
+  | THIS FUNCTIONALITY IS NOT AVAILABLE IN THE USER INTERFACE, AND IT IS ONLY IN
+    BETA STATE IN THE PLANNING ENGINE.
 
 * | load_bucketized_percentage:
   | A load of this type loads a bucketized resource at a percentage of the
@@ -107,3 +111,5 @@ at a single moment of time. Different loading policies can be specified:
   | An offset of 100 means loading the resource at the end of the operation.
   | The calculations consider the available periods of the operations, and
     skip unavailable periods.
+  | THIS FUNCTIONALITY IS NOT AVAILABLE IN THE USER INTERFACE, AND IT IS ONLY IN
+    BETA STATE IN THE PLANNING ENGINE.

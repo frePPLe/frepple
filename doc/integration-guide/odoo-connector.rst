@@ -217,6 +217,11 @@ The section below describes the installation and configuration of these.
     .. image:: _images/odoo-settings.png
        :alt: Configuring the Odoo add-on.
 
+  * | **Review time zone setting**
+    | The time zone preference of the odoo user utilized by the connector is important.
+      Odoo sends all dates to frepple converted to this timezone, and frepple returns dates
+      in this timezone.
+
   * | You can run a **quick test** of the above by opening a web browser to the URL
       http\://<host>:<port>/frepple/xml?database=<db>&language=<language>&company=<company>.
       The parameters db and company determine which odoo database to connect to.

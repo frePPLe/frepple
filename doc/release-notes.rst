@@ -57,6 +57,11 @@ support both Ubuntu 18 as well as Ubuntu 20.
 - | V14: The previous release introduced a bug when exporting manufacturing orders
     from frepple to odoo.
 
+- | v14: The connector is now consistently using the timezone preference of the odoo
+    user used by the connector.
+  | In previous releases you could see some unexpected time shifts when the odoo
+    and frepple servers run in different timezones.
+
 .. rubric:: Third party components
 
 - | The django version is bumped up from 2.2 LTS to 3.2 LTS.

@@ -51,7 +51,7 @@ class UpdateLastCurrentDate(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        return 0.1 if "supply" in os.environ else -1
+        return 0.1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -61,7 +61,10 @@ class UpdateLastCurrentDate(PlanTask):
             p, created = Parameter.objects.using(database).get_or_create(
                 pk="last_currentdate"
             )
-            p.value = frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S")
+            newval = frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S")
+            if p.value == newval:
+                return
+            p.value = newval
             if created:
                 p.description = "This parameter is automatically populated. It stores the date of the last plan execution"
             p.save(using=database)

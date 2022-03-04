@@ -498,13 +498,13 @@ class Command(BaseCommand):
         ):
             return None
 
-        # Function to convert from bytes to human readabl format
+        # Function to convert from bytes to human readable format
         def sizeof_fmt(num):
             for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
                 if abs(num) < 1024.0:
-                    return "%3.1f%sB" % (num, unit)
+                    return "%3.0f %sB" % (num, unit)
                 num /= 1024.0
-            return "%.1f%sB" % (num, "Yi")
+            return "%.0f %sB" % (num, "Yi")
 
         # List available data files
         filesexported = []

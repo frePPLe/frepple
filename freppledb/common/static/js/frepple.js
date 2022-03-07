@@ -2193,13 +2193,13 @@ var ERPconnection = {
       var r = grid.jqGrid('getRowData', sel[i]);
       if (r.type === undefined)
         r.type = transactiontype;
-      if (r.status == 'proposed')
+      if (r.status == 'proposed' || !(['PO', 'MO', 'DO'].includes(r.type)))
         data.push(r);
     }
     if (data == [])
       return;
 
-    // Send to the server for upload into openbravo
+    // Send to the server for upload to the ERP
     $('#timebuckets').modal('hide');
     $.jgrid.hideModal("#searchmodfbox_grid");
     $('#popup').html('' +
@@ -2332,7 +2332,7 @@ var ERPconnection = {
           '</table>' +
           '</div>');
 
-        var labels = ["id", "type", "item", "value", "quantity", "location", "origin", "startdate", "enddate", "criticality"];
+        var labels = ["reference", "type", "item", "value", "quantity", "location", "origin", "startdate", "enddate", "criticality"];
 
         if (transactiontype == 'SO') {
           var tableheadercontent = $('<tr/>');
@@ -2376,7 +2376,7 @@ var ERPconnection = {
 
           $.each(rows, function (key, value) {
             row1 = value.children;
-            row1data['id'] = row1[1].textContent;
+            row1data['reference'] = row1[1].textContent;
             row1data['type'] = row1[2].textContent;
             row1data['item'] = row1[3].textContent;
             row1data['value'] = row1[4].textContent;

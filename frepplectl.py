@@ -25,24 +25,30 @@ import os
 import sys
 
 if __name__ == "__main__":
-    # Initialize Python virtual environments
-    if "VIRTUAL_ENV" in os.environ:
-        from freppledb import activateVirtualEnv
+    try:
+        # Initialize Python virtual environments
+        if "VIRTUAL_ENV" in os.environ:
+            from freppledb import activateVirtualEnv
 
-        activateVirtualEnv()
+            activateVirtualEnv()
 
-    # Initialize django
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
-    import django
+        # Initialize django
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
+        import django
 
-    django.setup()
+        django.setup()
 
-    # Synchronize the scenario table with the settings
-    from freppledb.common.models import Scenario
+        # Synchronize the scenario table with the settings
+        from freppledb.common.models import Scenario
 
-    Scenario.syncWithSettings()
+        Scenario.syncWithSettings()
 
-    # Run the command
-    from django.core.management import execute_from_command_line
+        # Run the command
+        from django.core.management import execute_from_command_line
 
-    execute_from_command_line(sys.argv)
+        execute_from_command_line(sys.argv)
+        from django.conf import settings
+
+    except KeyboardInterrupt:
+        print("\nInterrupted with Ctrl-C")
+        sys.exit(1)

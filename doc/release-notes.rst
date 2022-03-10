@@ -62,6 +62,13 @@ support both Ubuntu 18 as well as Ubuntu 20.
   | In previous releases you could see some unexpected time shifts when the odoo
     and frepple servers run in different timezones.
 
+- | v14: Bug fix, approved purchase orders didn't get the price field populated.
+
+- | It is now possible to approve a workorder in frepple to approve the complete
+    manufacturing order to odoo.
+  | In previous releases users had to filter out the routing manufacturing orders
+    in frepple and only approve those. Quite tedious, isn't it?
+
 .. rubric:: Third party components
 
 - | The django version is bumped up from 2.2 LTS to 3.2 LTS.

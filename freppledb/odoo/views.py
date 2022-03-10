@@ -156,6 +156,10 @@ def Upload(request):
                     op = OperationPlan.objects.using(request.database).get(
                         reference=rec["reference"]
                     )
+                    if op.owner:
+                        # Approving a routing step MO (ie odoo work order) translates into
+                        # approving the routing MO (ie odoo manufacturing order)
+                        op = op.owner
                     if (
                         not op.operation.source
                         or op.status != "proposed"

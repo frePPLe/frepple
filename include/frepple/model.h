@@ -1959,6 +1959,10 @@ class OperationPlan : public Object,
 
   SetupEvent* getSetupEvent() const { return setupevent; }
 
+  SetupMatrixRule* getSetupRule() const {
+    return setupevent ? setupevent->getRule() : nullptr;
+  }
+
   /* Return a pointer to the next suboperationplan of the owner. */
   OperationPlan* getNextSubOpplan() const { return nextsubopplan; }
 
@@ -2353,6 +2357,8 @@ class OperationPlan : public Object,
                                       &Cls::setOrigin);
     m->addPointerField<Cls, Supplier>(Tags::supplier, &Cls::getSupplier,
                                       &Cls::setSupplier);
+    m->addPointerField<Cls, SetupMatrixRule>(Tags::rule, &Cls::getSetupRule,
+                                             nullptr, DONT_SERIALIZE);
   }
 
   static PyObject* createIterator(PyObject* self, PyObject* args);

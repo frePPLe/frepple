@@ -413,6 +413,8 @@ class ExportOperationPlans(PlanTask):
                 pln["item"] = buffer.item.name
             if buffer.location:
                 pln["location"] = buffer.location.name
+        if opplan.rule:
+            pln["setuprule"] = [opplan.rule.setupmatrix.name, opplan.rule.priority]
         # We need to double any backslash to assure that the string remains
         # valid when passing it through postgresql (which eats them away)
         return json.dumps(pln).replace("\\", "\\\\")

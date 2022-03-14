@@ -32,6 +32,7 @@ from django.http import (
     HttpResponseForbidden,
     HttpResponseNotAllowed,
     HttpResponseServerError,
+    Http404,
 )
 from django.shortcuts import render
 from django.template import Template
@@ -531,7 +532,12 @@ class ReportManager(GridReport):
     def get(cls, request, *args, **kwargs):
         # Extra permission check
         if args:
-            request.report = SQLReport.objects.using(request.database).get(pk=args[0])
+            try:
+                request.report = SQLReport.objects.using(request.database).get(
+                    pk=args[0]
+                )
+            except SQLReport.DoesNotExist:
+                raise Http404("Report doesn't exist")
             if not cls.has_permission(request.user) or (
                 not request.report.public and request.report.user.id != request.user.id
             ):

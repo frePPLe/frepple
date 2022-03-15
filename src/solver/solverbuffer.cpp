@@ -52,6 +52,13 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   Date requested_date(data->state->q_date);
   bool tried_requested_date(false);
 
+  // Skip too small quantities
+  if (data->state->q_qty < ROUNDING_ERROR) {
+    data->state->a_qty = data->state->q_qty;
+    data->state->a_date = data->state->q_date;
+    return;
+  }
+
   // Message
   if (getLogLevel() > 1)
     logger << ++indentlevel << "Buffer '" << b

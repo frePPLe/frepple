@@ -284,6 +284,13 @@ class Command(BaseCommand):
                         destinationscenario.lastrefresh = datetime.today()
                         destinationscenario.save(using=DEFAULT_DB_ALIAS)
                         raise Exception("Database copy failed")
+                    t.status = "Done"
+                    t.finished = datetime.now()
+                    t.message = "Scenario copied from %s" % source
+                    t.save(
+                        using=destination,
+                        update_fields=["status", "finished", "message"],
+                    )
 
                 except Exception:
                     p.kill()

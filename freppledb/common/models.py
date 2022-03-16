@@ -1377,7 +1377,7 @@ class NotificationFactory:
             status["users"].append(
                 {
                     "username": usr.username,
-                    "avatar": usr.avatar.filename if usr.avatar else None,
+                    "avatar": usr.avatar.path if usr.avatar else None,
                     "first_name": usr.first_name,
                     "last_name": usr.last_name,
                     "following": followers.get(usr.username, "no"),

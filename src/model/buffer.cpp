@@ -145,8 +145,8 @@ void Buffer::inspect(const string& msg, const short i) const {
   for (auto oo = getFlowPlans().begin(); oo != getFlowPlans().end(); ++oo) {
     if (oo->getEventType() == 3) curmin = oo->getMin();
     logger << indentstring << "    " << oo->getDate()
-           << " qty:" << oo->getQuantity() << ", oh:" << oo->getOnhand()
-           << ", min:" << curmin;
+           << " qty:" << oo->getQuantity() << ", oh:" << oo->getOnhand();
+    if (curmin) logger << ", min:" << curmin;
     switch (oo->getEventType()) {
       case 1:
         logger << ", " << oo->getOperationPlan() << endl;
@@ -489,8 +489,10 @@ Buffer::~Buffer() {
     else {
       Buffer* buf = it->firstItemBuffer;
       while (buf && buf->nextItemBuffer != this) buf = buf->nextItemBuffer;
-      if (!buf) logger << "Error: Corrupted buffer list for an item" << endl;
-      buf->nextItemBuffer = nextItemBuffer;
+      if (!buf)
+        logger << "Error: Corrupted buffer list for an item" << endl;
+      else
+        buf->nextItemBuffer = nextItemBuffer;
     }
   }
 

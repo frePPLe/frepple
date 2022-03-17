@@ -86,9 +86,9 @@
                 <buffer name="inventory item 1" />
                 <quantity>1</quantity>
               </flow>
-            </flows>          
+            </flows>
           </operation>
-          <priority>1</priority>          
+          <priority>1</priority>
         </suboperation>
         <suboperation>
           <operation name="make item 1 with routing B">
@@ -97,7 +97,7 @@
                 <buffer name="inventory item 1" />
                 <quantity>1</quantity>
               </flow>
-            </flows>          
+            </flows>
           </operation>
           <priority>2</priority>
         </suboperation>
@@ -108,7 +108,7 @@
                 <buffer name="inventory item 1" />
                 <quantity>1</quantity>
               </flow>
-            </flows>          
+            </flows>
           </operation>
           <priority>3</priority>
         </suboperation>
@@ -119,7 +119,7 @@
                 <buffer name="inventory item 1" />
                 <quantity>1</quantity>
               </flow>
-            </flows>          
+            </flows>
           </operation>
           <priority>4</priority>
         </suboperation>
@@ -316,9 +316,62 @@
 	  </demand>
   </demands>
 
+  <!-- Case: corner case with allowsplits=false and partial availability. -->
+  <operations>
+    <operation name="3. broken path" xsi:type="operation_fixed_time">
+      <item name="3. item"/>
+      <location name="warehouse" />
+      <priority>1</priority>
+      <flows>
+        <flow xsi:type="flow_start">
+          <item name="3. unavailable component" />
+          <quantity>-1</quantity>
+        </flow>
+	    </flows>
+      <duration>PT1H</duration>
+    </operation>
+    <operation name="3. producing" xsi:type="operation_time_per">
+      <item name="3. item"/>
+      <location name="warehouse" />
+      <priority>2</priority>
+      <flows>
+        <flow xsi:type="flow_start">
+          <item name="3. component" />
+          <quantity>-1</quantity>
+        </flow>
+	    </flows>
+      <duration>P1D</duration>
+      <duration_per>P1D</duration_per>
+    </operation>
+  </operations>
+	<buffers>
+	  <buffer name="3. component @ warehouse" onhand="5">
+	    <item name="3. component" />
+	    <location name="warehouse" />
+	  </buffer>
+	</buffers>
+  <suppliers>
+    <supplier name="3. Supplier">
+	    <itemsuppliers>
+	      <itemsupplier>
+          <item name="3. component"/>
+          <leadtime>P70D</leadtime>
+        </itemsupplier>
+	    </itemsuppliers>
+	  </supplier>
+  </suppliers>
+  <demands>
+	  <demand name="3. SO1">
+	    <quantity>10</quantity>
+	    <due>2009-01-21T00:00:00</due>
+	    <item name="3. item"/>
+      <location name="warehouse" />
+	  </demand>
+  </demands>
+
 <?python
 print("CREATING CONSTRAINED PLAN")
-sol = frepple.solver_mrp(constraints=15, loglevel=2)
+sol = frepple.solver_mrp(constraints=15, loglevel=2, allowsplits=True)
 sol.solve()
 frepple.saveplan("output.1.xml")
 print("CREATING UNCONSTRAINED PLAN")
@@ -326,8 +379,20 @@ sol.plantype = 2
 sol.solve()
 frepple.saveplan("output.2.xml")
 print("CREATING SIMPLE UNCONSTRAINED PLAN")
-frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, allowsplits=True).solve()
 frepple.saveplan("output.3.xml")
+
+print("CREATING CONSTRAINED PLAN with allowsplits=False")
+sol = frepple.solver_mrp(constraints=15, loglevel=2, allowsplits=False)
+sol.solve()
+frepple.saveplan("output.4.xml")
+print("CREATING UNCONSTRAINED PLAN with allowsplits=False")
+sol.plantype = 2
+sol.solve()
+frepple.saveplan("output.5.xml")
+print("CREATING SIMPLE UNCONSTRAINED PLAN with allowsplits=False")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, allowsplits=False).solve()
+frepple.saveplan("output.6.xml")
 ?>
 
 </plan>

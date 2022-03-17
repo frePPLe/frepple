@@ -1481,7 +1481,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           }
           if (reject) {
             data->state->a_qty = 0.0;
-            data->state->a_date = tmp_askD;
+            data->state->a_date = tmp_askD + getLazyDelay();
           }
         }
       } else {

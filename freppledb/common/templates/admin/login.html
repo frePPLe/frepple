@@ -26,6 +26,8 @@ The changes are:
 </style>
 {% endblock %}
 
+{% block messages %}{% endblock %}
+
 {% block extrahead %}
 <script src="{{STATIC_URL}}js/jquery-3.6.0.min.js"></script>
 <script>
@@ -91,7 +93,7 @@ $(function() {
 		  </div>
 	  {% setting "SESSION_COOKIE_AGE" as persistent_cookie %}
 	  {% if persistent_cookie %}
-      <div style="text-align: center; margin-bottom: 10px">		  
+      <div style="text-align: center; margin-bottom: 10px">
 		  <input type="checkbox" id="remember_me" name="remember_me" value="false">&nbsp;
 		  <label for="remember_me">{% trans "Remember Me" %}</label>
       </div>
@@ -118,6 +120,13 @@ $(function() {
     {{ error }}
 </div></div>
 {% endfor %}
+{% endif %}
+
+{% if messages %}<div class="row">
+<div class="col-xs-4 center-block" style="min-width: 200px; max-width:300px; float:none; text-align:center">{% for message in messages %}
+<ul class="alert {{message.tags}}"><li>{{message}}</li></ul>
+{% endfor %}</div>
+</div>
 {% endif %}
 
 {% checkPassword "admin" "admin" as recommend_reset %}

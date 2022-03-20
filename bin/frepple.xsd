@@ -532,6 +532,7 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="name" type="non-empty-string" />
       <xsd:element name="resourceskills" type="resourceskilllist" />
       <xsd:element name="source" type="xsd:normalizedString" />
       <xsd:element name="booleanproperty" type="booleanproperty" />

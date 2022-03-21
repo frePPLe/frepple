@@ -2416,6 +2416,317 @@ class ManufacturingOrder(OperationPlan):
 
     objects = ManufacturingOrderManager()
 
+    def parseData(data, rowmapper, user, database, ping):
+
+        selfReferencing = []
+
+        def formfieldCallback(f):
+            # global selfReferencing
+            if isinstance(f, RelatedField):
+                tmp = BulkForeignKeyFormField(field=f, using=database)
+                if f.remote_field.model == ManufacturingOrder:
+                    selfReferencing.append(tmp)
+                return tmp
+            else:
+                return f.formfield(localize=True)
+
+        # Initialize
+        headers = []
+        rownumber = 0
+        changed = 0
+        added = 0
+        content_type_id = ContentType.objects.get_for_model(
+            ManufacturingOrder, for_concrete_model=False
+        ).pk
+
+        # Call the beforeUpload method if it is defined
+        if hasattr(ManufacturingOrder, "beforeUpload"):
+            ManufacturingOrder.beforeUpload(database)
+
+        errors = 0
+        warnings = 0
+        has_pk_field = False
+        processed_header = False
+        rowWrapper = rowmapper()
+
+        # Detect excel autofilter data tables
+        if isinstance(data, Worksheet) and data.auto_filter.ref:
+            try:
+                bounds = CellRange(data.auto_filter.ref).bounds
+            except Exception:
+                bounds = None
+        else:
+            bounds = None
+
+        for row in data:
+            rownumber += 1
+            if bounds:
+                # Only process data in the excel auto-filter range
+                if rownumber < bounds[1]:
+                    continue
+                elif rownumber > bounds[3]:
+                    break
+                else:
+                    rowWrapper.setData(row)
+            else:
+                rowWrapper.setData(row)
+
+            # Case 1: Skip empty rows
+            if rowWrapper.empty():
+                continue
+
+            # Case 2: The first line is read as a header line
+            elif not processed_header:
+                processed_header = True
+
+                # Collect required fields
+                required_fields = set()
+                for i in ManufacturingOrder._meta.fields:
+                    if (
+                        not i.blank
+                        and i.default == NOT_PROVIDED
+                        and not isinstance(i, AutoField)
+                    ):
+                        required_fields.add(i.name)
+
+                # Validate all columns
+                for col in rowWrapper.values():
+                    col = str(col).strip().strip("#").lower() if col else ""
+                    if col == "":
+                        headers.append(None)
+                        continue
+                    ok = False
+
+                    if col == "resources":
+                        headers.append(
+                            models.JSONField(
+                                name="resource", null=True, blank=True, editable=False
+                            )
+                        )
+                        ok = True
+                        continue
+
+                    for i in ManufacturingOrder._meta.fields:
+                        # Try with translated field names
+                        if (
+                            col == i.name.lower()
+                            or col == i.verbose_name.lower()
+                            or col
+                            == (
+                                "%s - %s"
+                                % (ManufacturingOrder.__name__, i.verbose_name)
+                            ).lower()
+                        ):
+                            if i.editable is True:
+                                headers.append(i)
+                            else:
+                                headers.append(None)
+                            required_fields.discard(i.name)
+                            ok = True
+                            break
+                        if translation.get_language() != "en":
+                            # Try with English field names
+                            with translation.override("en"):
+                                if (
+                                    col == i.name.lower()
+                                    or col == i.verbose_name.lower()
+                                    or col
+                                    == (
+                                        "%s - %s"
+                                        % (ManufacturingOrder.__name__, i.verbose_name)
+                                    ).lower()
+                                ):
+                                    if i.editable is True:
+                                        headers.append(i)
+                                    else:
+                                        headers.append(None)
+                                    required_fields.discard(i.name)
+                                    ok = True
+                                    break
+                    if not ok:
+                        headers.append(None)
+                        warnings += 1
+                        yield (
+                            WARNING,
+                            None,
+                            None,
+                            None,
+                            force_str(
+                                _("Skipping unknown field %(column)s" % {"column": col})
+                            ),
+                        )
+                    if (
+                        col == ManufacturingOrder._meta.pk.name.lower()
+                        or col == ManufacturingOrder._meta.pk.verbose_name.lower()
+                    ):
+                        has_pk_field = True
+                if required_fields:
+                    # We are missing some required fields
+                    errors += 1
+                    yield (
+                        ERROR,
+                        None,
+                        None,
+                        None,
+                        force_str(
+                            _(
+                                "Some keys were missing: %(keys)s"
+                                % {"keys": ", ".join(required_fields)}
+                            )
+                        ),
+                    )
+                # Abort when there are errors
+                if errors:
+                    if isinstance(data, Worksheet) and len(data.parent.sheetnames) > 1:
+                        # Skip this sheet an continue with the next one
+                        return
+                    else:
+                        raise NameError("Can't proceed")
+
+                # Create a form class that will be used to validate the data
+                fields = [i.name for i in headers if i]
+                if hasattr(ManufacturingOrder, "getModelForm"):
+                    UploadForm = ManufacturingOrder.getModelForm(
+                        tuple(fields), database=database
+                    )
+                else:
+                    UploadForm = modelform_factory(
+                        ManufacturingOrder,
+                        fields=tuple(fields),
+                        formfield_callback=formfieldCallback,
+                    )
+                rowWrapper = rowmapper(headers)
+
+                # Get natural keys for the class
+                natural_key = None
+                if hasattr(ManufacturingOrder.objects, "get_by_natural_key"):
+                    if ManufacturingOrder._meta.unique_together:
+                        natural_key = ManufacturingOrder._meta.unique_together[0]
+                    elif hasattr(ManufacturingOrder, "natural_key") and isinstance(
+                        ManufacturingOrder.natural_key, tuple
+                    ):
+                        natural_key = ManufacturingOrder.natural_key
+
+            # Case 3: Process a data row
+            else:
+                try:
+                    # Step 1: Send a ping-alive message to make the upload interruptable
+                    if ping:
+                        if rownumber % 50 == 0:
+                            yield (DEBUG, rownumber, None, None, None)
+
+                    # Step 2: Fill the form with data, either updating an existing
+                    # instance or creating a new one.
+                    if has_pk_field:
+                        # A primary key is part of the input fields
+                        try:
+                            # Try to find an existing record with the same primary key
+                            it = ManufacturingOrder.objects.using(database).get(
+                                pk=rowWrapper[ManufacturingOrder._meta.pk.name]
+                            )
+                            form = UploadForm(rowWrapper, instance=it)
+                        except ManufacturingOrder.DoesNotExist:
+                            form = UploadForm(rowWrapper)
+                            it = None
+                    elif natural_key:
+                        # A natural key exists for this model
+                        try:
+                            # Build the natural key
+                            key = []
+                            for x in natural_key:
+                                key.append(rowWrapper.get(x, None))
+                            # Try to find an existing record using the natural key
+                            it = ManufacturingOrder.objects.get_by_natural_key(*key)
+                            form = UploadForm(rowWrapper, instance=it)
+                        except ManufacturingOrder.DoesNotExist:
+                            form = UploadForm(rowWrapper)
+                            it = None
+                        except ManufacturingOrder.MultipleObjectsReturned:
+                            yield (
+                                ERROR,
+                                rownumber,
+                                None,
+                                None,
+                                force_str(_("Key fields not unique")),
+                            )
+                            continue
+                    else:
+                        # No primary key required for this model
+                        form = UploadForm(rowWrapper)
+                        it = None
+
+                    # Step 3: Validate the form and model, and save to the database
+                    if form.has_changed():
+                        if form.is_valid():
+                            # Save the form
+                            obj = form.save(commit=False)
+                            if it:
+                                changed += 1
+                                obj.save(using=database, force_update=True)
+                            else:
+                                added += 1
+                                obj.save(using=database)
+                                # Add the new object in the cache of available keys
+                                for x in selfReferencing:
+                                    if x.cache is not None and obj.pk not in x.cache:
+                                        x.cache[obj.pk] = obj
+                            if user:
+                                if it:
+                                    Comment(
+                                        user_id=user.id,
+                                        content_type_id=content_type_id,
+                                        object_pk=obj.pk,
+                                        object_repr=force_str(obj)[:200],
+                                        type="change",
+                                        comment="Changed %s."
+                                        % get_text_list(form.changed_data, "and"),
+                                    ).save(using=database)
+                                else:
+                                    Comment(
+                                        user_id=user.id,
+                                        content_type_id=content_type_id,
+                                        object_pk=obj.pk,
+                                        object_repr=force_str(obj)[:200],
+                                        type="add",
+                                        comment="Added",
+                                    ).save(using=database)
+                        else:
+                            # Validation fails
+                            for error in form.non_field_errors():
+                                errors += 1
+                                yield (ERROR, rownumber, None, None, error)
+                            for field in form:
+                                for error in field.errors:
+                                    errors += 1
+                                    yield (
+                                        ERROR,
+                                        rownumber,
+                                        field.name,
+                                        rowWrapper[field.name],
+                                        error,
+                                    )
+
+                except Exception as e:
+                    errors += 1
+                    yield (ERROR, None, None, None, "Exception during upload: %s" % e)
+
+        yield (
+            INFO,
+            None,
+            None,
+            None,
+            _(
+                "%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings"
+            )
+            % {
+                "rows": rownumber - 1,
+                "changed": changed,
+                "added": added,
+                "errors": errors,
+                "warnings": warnings,
+            },
+        )
+
     @classmethod
     def getModelForm(cls, fields, database=DEFAULT_DB_ALIAS):
         template = modelform_factory(
@@ -2441,11 +2752,12 @@ class ManufacturingOrder(OperationPlan):
                     for res in ast.literal_eval(self.cleaned_data["resource"]):
                         if isinstance(res, str):
                             rsrc = Resource.objects.all().using(database).get(name=res)
+                            cleaned.append((rsrc, 1))
                         else:
                             rsrc = (
                                 Resource.objects.all().using(database).get(name=res[0])
                             )
-                        cleaned.append(rsrc)
+                            cleaned.append((rsrc, res[1]))
                         rsrc.top_rsrc = (
                             Resource.objects.all()
                             .using(database)
@@ -2471,6 +2783,7 @@ class ManufacturingOrder(OperationPlan):
             def save(self, commit=True):
                 instance = super(MO_form, self).save(commit=False)
 
+                new_opr = []
                 if "resource" in fields:
                     try:
                         opreslist = [
@@ -2479,15 +2792,17 @@ class ManufacturingOrder(OperationPlan):
                                 "resource"
                             )
                         ]
-                        for res in self.cleaned_data["resource"]:
+                        for res, quantity in self.cleaned_data["resource"]:
                             newopres = None
                             for o in opreslist:
                                 if o.resource.lft <= res.lft < o.resource.rght:
                                     newopres = o
                                     break
+                            found = False
                             for opplanres in instance.resources.all().select_related(
                                 "resource"
                             ):
+                                found = True
                                 oldopres = None
                                 for o in opreslist:
                                     if (
@@ -2511,10 +2826,24 @@ class ManufacturingOrder(OperationPlan):
                                     opplanres.resource = res
                                     opplanres.save(using=database)
                                     break
+                            # record creation, no operationplanresource exists
+                            if not found:
+                                opr = OperationPlanResource(
+                                    resource=res,
+                                    quantity=quantity,
+                                    status="proposed",
+                                    operationplan=instance,
+                                    startdate=instance.startdate,
+                                    enddate=instance.enddate,
+                                )
+                                new_opr.append(opr)
+
                     except Exception:
                         pass
-                    if commit:
-                        instance.save()
+                    if commit or len(new_opr) > 0:
+                        instance.save(using=database)
+                        for i in new_opr:
+                            i.save(using=database)
 
                 if "material" in fields:
                     try:

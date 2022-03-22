@@ -2831,7 +2831,7 @@ class ManufacturingOrder(OperationPlan):
                                 opr = OperationPlanResource(
                                     resource=res,
                                     quantity=quantity,
-                                    status="proposed",
+                                    status=instance.status,
                                     operationplan=instance,
                                     startdate=instance.startdate,
                                     enddate=instance.enddate,

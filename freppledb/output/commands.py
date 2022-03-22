@@ -138,6 +138,7 @@ class TruncatePlan(PlanTask):
                     select oplan.reference
                     from operationplan as oplan
                     inner join cluster_keys on oplan.item_id = cluster_keys.name
+                    where oplan.status='proposed' or oplan.status is null or oplan.type='STCK'
                 ),
                 opplanmat as (
                 delete from operationplanmaterial

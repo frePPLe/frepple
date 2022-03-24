@@ -52,7 +52,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   if (typeof $scope.displayongrid === 'function') {
     //watch is only needed if we can update the grid
     $scope.$watchGroup(
-      ['operationplan.id', 'operationplan.start', 'operationplan.end', 'operationplan.quantity', 'operationplan.status', 'operationplan.quantity_completed', "operationplan.loadplans", "operationplan.resource"],
+      ['operationplan.id', 'operationplan.start', 'operationplan.end', 'operationplan.quantity', 'operationplan.status', 'operationplan.quantity_completed', "operationplan.remark", "operationplan.loadplans", "operationplan.resource"],
       function (newValue, oldValue) {
         if (oldValue[0] === newValue[0] && newValue[0] !== -1 && typeof oldValue[0] !== 'undefined') {
           //is a change to the current operationplan
@@ -89,6 +89,12 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
               $scope.$broadcast("selectedEdited", "quantity_completed", oldValue[5], $scope.operationplan.quantity_completed);
             else
               $scope.displayongrid($scope.operationplan.id, "quantity_completed", $scope.operationplan.quantity_completed);
+          }
+          if (typeof oldValue[6] !== 'undefined' && typeof newValue[6] !== 'undefined' && oldValue[6] !== newValue[6]) {
+            if ($scope.mode == "kanban" || $scope.mode.startsWith("calendar"))
+              $scope.$broadcast("selectedEdited", "remark", oldValue[6], $scope.operationplan.remark);
+            else
+              $scope.displayongrid($scope.operationplan.id, "remark", $scope.operationplan.remark);
           }
         }
         oldValue[0] = newValue[0];

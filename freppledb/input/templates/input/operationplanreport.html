@@ -214,6 +214,7 @@
       columnid === "enddate" ||
       columnid === "quantity" ||
       columnid === "quantity_completed" ||
+      columnid === "remark" ||
       (columnid === "status" && ['proposed', 'approved', 'confirmed', 'completed', 'closed'].indexOf(value) > -1)
     ) {
       angular.element(document).find("#grid").jqGrid("setCell", id, columnid, value, "dirty-cell");

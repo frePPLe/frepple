@@ -741,12 +741,9 @@ class ExportOperationPlans(PlanTask):
             sep="\v",
         )
 
-        if with_fcst:
-            forecastfield0 = " forecast=tmp.forecast,"
-            forecastfield1 = ",forecast"
-        else:
-            forecastfield0 = ""
-            forecastfield1 = ""
+        forecastfield0 = ""
+        forecastfield1 = ""
+
         # Merge temp table into the actual table
         sql = (
             """

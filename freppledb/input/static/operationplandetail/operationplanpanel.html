@@ -193,7 +193,7 @@
         </div>
       </td>
     </tr>
-    <tr data-ng-if="operationplan.hasOwnProperty('remark') && operationplan.status != 'proposed' && operationplan.type !== 'STCK'">
+    <tr data-ng-if="operationplan.hasOwnProperty('remark') && operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize">{{'Remark'|translate}}</b></td>
       <td><input class="form-control" data-ng-model="operationplan.remark"></td>
     </tr>

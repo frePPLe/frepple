@@ -125,7 +125,7 @@ def registerAttribute(model, attrlist, **kwargs):
     The attribute list is passed as a list of tuples in the format
       - fieldname: database field name
       - label: displayed in the user interface
-      - fieldtype: supports "boolean", "duration", "integer", "number", "string", "time"
+      - fieldtype: supports "boolean", "duration", "integer", "number", "string", "time", "date", "datetime"
       - editable: set to false to disable users from changing the field, default=True
       - initially_hidden: set to true to hide this attribute by default in a screen, default=False
     """

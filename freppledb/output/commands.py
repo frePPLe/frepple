@@ -29,6 +29,8 @@ from freppledb.common.commands import (
     clean_value,
     CopyFromGenerator,
 )
+from freppledb.input.models import OperationPlan
+from freppledb.boot import getAttributes
 
 logger = logging.getLogger(__name__)
 
@@ -424,6 +426,11 @@ class ExportOperationPlans(PlanTask):
     def getData(cls, timestamp, cluster=-1, accepted_status=[]):
         import frepple
 
+        linetemplate = "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s"
+        for i in cls.attrs:
+            linetemplate += "\v%s"
+        linetemplate += "\n"
+
         for i in frepple.operations():
             if cluster != -1 and cluster != i.cluster:
                 continue
@@ -439,9 +446,10 @@ class ExportOperationPlans(PlanTask):
                 delay = j.delay
                 color = 100 - delay / 86400
 
+                data = None
                 if isinstance(i, frepple.operation_inventory):
                     # Export inventory
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    data = [
                         clean_value(i.name),
                         "STCK",
                         status,
@@ -476,10 +484,10 @@ class ExportOperationPlans(PlanTask):
                         clean_value(j.reference),
                         clean_value(j.batch),
                         "\\N",
-                    )
+                    ]
                 elif isinstance(i, frepple.operation_itemdistribution):
                     # Export DO
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    data = [
                         clean_value(i.name),
                         "DO",
                         status,
@@ -524,10 +532,10 @@ class ExportOperationPlans(PlanTask):
                         clean_value(j.reference),
                         clean_value(j.batch),
                         "\\N",
-                    )
+                    ]
                 elif isinstance(i, frepple.operation_itemsupplier):
                     # Export PO
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    data = [
                         clean_value(i.name),
                         "PO",
                         status,
@@ -566,10 +574,10 @@ class ExportOperationPlans(PlanTask):
                         clean_value(j.reference),
                         clean_value(j.batch),
                         "\\N",
-                    )
+                    ]
                 elif not i.hidden:
                     # Export MO
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    data = [
                         clean_value(i.name),
                         "MO",
                         status,
@@ -618,10 +626,10 @@ class ExportOperationPlans(PlanTask):
                         round(j.quantity_completed, 8)
                         if j.quantity_completed
                         else "\\N",
-                    )
+                    ]
                 elif j.demand or (j.owner and j.owner.demand):
                     # Export shipments (with automatically created delivery operations)
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    data = [
                         clean_value(i.name),
                         "DLVR",
                         status,
@@ -656,18 +664,22 @@ class ExportOperationPlans(PlanTask):
                         clean_value(j.reference),
                         clean_value(j.batch),
                         "\\N",
-                    )
-
+                    ]
+                if data:
+                    for attr in cls.attrs:
+                        data.append(clean_value(getattr(j, attr[0], None)))
+                    yield linetemplate % tuple(data)
                 if status == "proposed":
                     proposedFound = True
                     proposedFoundDate = j.start
 
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
+        cls.attrs = [x for x in getAttributes(OperationPlan) if x[0] != "forecast"]
+
         # Export operationplans to a temporary table
         cursor = connections[database].cursor()
-        cursor.execute(
-            """
+        sql = """
             create temporary table tmp_operationplan (
                 name character varying(1000),
                 type character varying(5) NOT NULL,
@@ -693,9 +705,29 @@ class ExportOperationPlans(PlanTask):
                 reference character varying(300) NOT NULL,
                 batch character varying(300),
                 quantity_completed numeric(20,8)
-            )
             """
-        )
+        for attr in cls.attrs:
+            if attr[2] == "boolean":
+                sql += ", %s boolean" % attr[0]
+            elif attr[2] == "duration":
+                sql += ", %s interval" % attr[0]
+            elif attr[2] == "integer":
+                sql += ", %s integer" % attr[0]
+            elif attr[2] == "number":
+                sql += ", %s numeric(15,6)" % attr[0]
+            elif attr[2] == "string":
+                sql += ", %s character varying(300)" % attr[0]
+            elif attr[2] == "time":
+                sql += ", %s time without time zone" % attr[0]
+            elif attr[2] == "date":
+                sql += ", %s date" % attr[0]
+            elif attr[2] == "datetime":
+                sql += ", %s timestamp with time zone" % attr[0]
+            else:
+                raise Exception("Unknown attribute type %s" % attr[2])
+        sql += ")"
+        cursor.execute(sql)
+
         cursor.copy_from(
             CopyFromGenerator(
                 cls.getData(
@@ -709,8 +741,14 @@ class ExportOperationPlans(PlanTask):
             sep="\v",
         )
 
+        if with_fcst:
+            forecastfield0 = " forecast=tmp.forecast,"
+            forecastfield1 = ",forecast"
+        else:
+            forecastfield0 = ""
+            forecastfield1 = ""
         # Merge temp table into the actual table
-        cursor.execute(
+        sql = (
             """
             update operationplan
                 set name=tmp.name, type=tmp.type, status=tmp.status,
@@ -720,11 +758,20 @@ class ExportOperationPlans(PlanTask):
                 lastmodified=tmp.lastmodified, operation_id=tmp.operation_id, owner_id=tmp.owner_id,
                 item_id=tmp.item_id, destination_id=tmp.destination_id, origin_id=tmp.origin_id,
                 location_id=tmp.location_id, supplier_id=tmp.supplier_id, demand_id=tmp.demand_id,
-                due=tmp.due, color=tmp.color, batch=tmp.batch, quantity_completed=tmp.quantity_completed
-            from tmp_operationplan as tmp
-            where operationplan.reference = tmp.reference;
+                due=tmp.due,%s color=tmp.color, batch=tmp.batch, quantity_completed=tmp.quantity_completed
             """
+            % forecastfield0
         )
+        for a in cls.attrs:
+            sql += ", %s=tmp.%s" % (a[0], a[0])
+        sql += """
+            from tmp_operationplan as tmp
+            where operationplan.reference = tmp.reference
+            """
+        cursor.execute(sql)
+
+        # Make sure any deleted confirmed MO from Plan Editor gets deleted in the database
+        # Only MO can currently be deleted through Plan Editor
         cursor.execute(
             """
             delete from operationplan
@@ -742,13 +789,13 @@ class ExportOperationPlans(PlanTask):
               operation_id,owner_id,
               item_id,destination_id,origin_id,
               location_id,supplier_id,
-              demand_id,due,color,reference,batch,quantity_completed)
+              demand_id,due,color,reference,batch,quantity_completed%s)
             select name,type,status,quantity,startdate,enddate,
               criticality,delay * interval '1 second',plan,source,lastmodified,
               operation_id,owner_id,
               item_id,destination_id,origin_id,
               location_id,supplier_id,
-              demand_id,due,color,reference,batch,quantity_completed
+              demand_id,due,color,reference,batch,quantity_completed%s
             from tmp_operationplan
             where not exists (
               select 1
@@ -756,6 +803,7 @@ class ExportOperationPlans(PlanTask):
               where operationplan.reference = tmp_operationplan.reference
               );
             """
+            % (forecastfield1, forecastfield1)
         )
 
         # directly injecting proposed records in operationplan table
@@ -770,7 +818,7 @@ class ExportOperationPlans(PlanTask):
             table="operationplan",
             size=1024,
             sep="\v",
-            columns=(
+            columns=[
                 "name",
                 "type",
                 "status",
@@ -795,7 +843,8 @@ class ExportOperationPlans(PlanTask):
                 "reference",
                 "batch",
                 "quantity_completed",
-            ),
+            ]
+            + [a[0] for a in cls.attrs],
         )
 
         # update demand table specific fields

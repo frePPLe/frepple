@@ -74,6 +74,13 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.operationplan__enddate"
           data-ng-model="opplan.operationplan__enddate" data-ng-change="changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)">
       </p>
+      <p data-ng-if="opplan.remark || opplan.operationplan__remark">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ opplan.remark || opplan.operationplan__remark}}</span>
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__remark')" data-ng-focus="oldValue=opplan.remark"
+          data-ng-model="opplan.remark" data-ng-change="changeCard(opplan, 'remark', oldValue, opplan.remark)">
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__remark')" data-ng-focus="oldValue=opplan.operationplan__remark"
+          data-ng-model="opplan.operationplan__remark" data-ng-change="changeCard(opplan, 'operationplan__remark', oldValue, opplan.operationplan__remark)">
+      </p>
     </div>
     <div data-ng-if="(opplan.type || opplan.operationplan__type || type) === 'DO'">
       <p>
@@ -139,6 +146,13 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           data-ng-model="opplan.enddate" data-ng-change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.operationplan__enddate"
           data-ng-model="opplan.operationplan__enddate" data-ng-change="changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)">
+      </p>
+      <p data-ng-if="opplan.remark || opplan.operationplan__remark">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ opplan.remark || opplan.operationplan__remark}}</span>
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__remark')" data-ng-focus="oldValue=opplan.remark"
+          data-ng-model="opplan.remark" data-ng-change="changeCard(opplan, 'remark', oldValue, opplan.remark)">
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__remark')" data-ng-focus="oldValue=opplan.operationplan__remark"
+          data-ng-model="opplan.operationplan__remark" data-ng-change="changeCard(opplan, 'operationplan__remark', oldValue, opplan.operationplan__remark)">
       </p>
     </div>
     <div data-ng-if="opplan.type === 'MO'">

@@ -269,6 +269,14 @@ class AuditModel(models.Model):
 
     objects = MultiDBManager()  # The default manager.
 
+    @classmethod
+    def fieldExists(cls, field):
+        try:
+            cls._meta.get_field(field)
+            return True
+        except models.FieldDoesNotExist:
+            return False
+
     def save(self, *args, **kwargs):
         # Update the field with every change
         self.lastmodified = datetime.now()

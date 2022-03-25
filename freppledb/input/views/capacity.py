@@ -457,6 +457,14 @@ class ResourceDetail(OperationPlanMixin):
             ):
                 f.editable = False
                 reportclass.rows += (f,)
+            # Adding custom operationplan attributes
+            for f in getAttributeFields(
+                OperationPlan,
+                related_name_prefix="operationplan",
+                initially_hidden=True,
+            ):
+                f.editable = False
+                reportclass.rows += (f,)
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):

@@ -1300,6 +1300,14 @@ class InventoryDetail(OperationPlanMixin):
             for f in getAttributeFields(Item, related_name_prefix="item"):
                 f.editable = False
                 reportclass.rows += (f,)
+            # Adding custom operationplan attributes
+            for f in getAttributeFields(
+                OperationPlan,
+                related_name_prefix="operationplan",
+                initially_hidden=True,
+            ):
+                f.editable = False
+                reportclass.rows += (f,)
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

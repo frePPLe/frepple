@@ -21,6 +21,12 @@ These changes will be made gradual over a couple of releases. For instance, from
 6.21.0 (2022/3/25)
 ==================
 
+.. rubric:: Third party components
+
+- | The django version is bumped up from 2.2 LTS to 3.2 LTS.
+  | When upgradeing from a previous release, upgrade your python packages with:
+     sudo -H pip install --force-reinstall -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
+
 .. rubric:: Production planning
 
 - | The inventory report now uses colors to highlight periods where the onhand goes below
@@ -70,12 +76,6 @@ These changes will be made gradual over a couple of releases. For instance, from
     manufacturing order to odoo.
   | In previous releases users had to filter out the routing manufacturing orders
     in frepple and only approve those. Quite tedious, isn't it?
-
-.. rubric:: Third party components
-
-- | The django version is bumped up from 2.2 LTS to 3.2 LTS.
-  | Upgrade your python packages with:
-     sudo -H pip install --force-reinstall -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
 
 6.20.2 (2022/2/18)
 ==================

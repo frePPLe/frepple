@@ -15,11 +15,11 @@ The main target is to refresh the component stack:
 - Django version will move from 2.2 LTS to 3.2 LTS.
 - The required Python and Javascript third party components will be upgraded as well.
 
-These changes will be made gradual over a couple of releases. For instance, 6.20.0 will
-support both Ubuntu 18 as well as Ubuntu 20.
+These changes will be made gradual over a couple of releases. For instance, from
+6.20.0 onwards frepple supports both Ubuntu 18 as well as Ubuntu 20.
 
-6.21.0 (Upcoming release)
-=========================
+6.21.0 (2022/3/25)
+==================
 
 .. rubric:: Production planning
 

@@ -667,7 +667,27 @@ class ExportOperationPlans(PlanTask):
                     ]
                 if data:
                     for attr in cls.attrs:
-                        data.append(clean_value(getattr(j, attr[0], None)))
+                        v = getattr(j, attr[0], None)
+                        if v is None:
+                            data.append("\\N")
+                        elif attr[2] == "boolean":
+                            data.append(True if v else False)
+                        elif attr[2] == "duration":
+                            data.append(v)
+                        elif attr[2] == "integer":
+                            data.append(round(v))
+                        elif attr[2] == "number":
+                            data.append(round(v, 6))
+                        elif attr[2] == "string":
+                            data.append(clean_value(v))
+                        elif attr[2] == "time":
+                            data.append(v)
+                        elif attr[2] == "date":
+                            data.append(v)
+                        elif attr[2] == "datetime":
+                            data.append(v)
+                        else:
+                            raise Exception("Unknown attribute type %s" % attr[2])
                     yield linetemplate % tuple(data)
                 if status == "proposed":
                     proposedFound = True

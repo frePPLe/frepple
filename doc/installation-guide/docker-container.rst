@@ -83,7 +83,7 @@ on the URL http://localhost:9000/
      --name frepple-community-local \
      --publish 9000:80 \
      --detach \
-     frepple-community:latest
+     ghcr.io/frepple/frepple-community:latest
 
 ******************************
 Deployment with docker compose

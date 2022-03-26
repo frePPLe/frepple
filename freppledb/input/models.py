@@ -2426,6 +2426,7 @@ class ManufacturingOrder(OperationPlan):
 
     objects = ManufacturingOrderManager()
 
+    @staticmethod
     def parseData(data, rowmapper, user, database, ping):
 
         selfReferencing = []

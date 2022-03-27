@@ -24,9 +24,10 @@ These changes will be made gradual over a couple of releases. For instance, from
 .. rubric:: Third party components
 
 - | The django version is bumped up from 2.2 LTS to 3.2 LTS.
-  | When upgradeing from a previous release, upgrade your python packages with:
-     sudo -H pip3 uninstall django-admin-bootstrapped
-     sudo -H pip3 install --force-reinstall -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
+  | When upgrading from a previous release, upgrade your python packages with:
+
+  |  sudo -H pip3 uninstall django-admin-bootstrapped
+  |  sudo -H pip3 install --force-reinstall -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
 
 .. rubric:: Production planning
 

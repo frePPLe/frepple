@@ -155,8 +155,13 @@ class ItemSupplierList(GridReport):
         ),
         GridFieldDuration("leadtime", title=_("lead time")),
         GridFieldDuration(
+            "hard_safety_leadtime",
+            title=_("hard safety lead time"),
+            initially_hidden=True,
+        ),
+        GridFieldDuration(
             "extra_safety_leadtime",
-            title=_("extra safety lead time"),
+            title=_("soft safety lead time"),
             initially_hidden=True,
         ),
         GridFieldNumber("sizeminimum", title=_("size minimum")),

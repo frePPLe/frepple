@@ -18,6 +18,21 @@ The main target is to refresh the component stack:
 These changes will be made gradual over a couple of releases. For instance, from
 6.20.0 onwards frepple supports both Ubuntu 18 as well as Ubuntu 20.
 
+6.22.0 (Upcoming release)
+=========================
+
+.. rubric:: Production planning
+
+- | The `itemsupplier <model-reference/item-suppliers.html>`_  table get an extra
+    field "hard_safety_leadtime" to model an extra delay to be considered when a
+    purchase order is received.
+  | We already had a field "extra_safety_leadtime". This models a *soft* constraint
+    (we try to respect, but can compress it if needed). The new field models a *hard*
+    constraint - regardless of the urgency, we need to plan for the extra delay when
+    a purchase order is received.
+  | Typical use cases are for modeling quality control, material handling or administrative
+    delays.
+
 6.21.0 (2022/3/25)
 ==================
 

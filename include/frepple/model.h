@@ -4434,6 +4434,10 @@ class ItemSupplier : public Object,
 
   void setExtraSafetyLeadTime(Duration d) { extra_safety_leadtime = d; }
 
+  Duration getHardSafetyLeadTime() const { return hard_safety_leadtime; }
+
+  void setHardSafetyLeadTime(Duration d) { hard_safety_leadtime = d; }
+
   /* Return the applicable location. */
   Location* getLocation() const { return loc; }
 
@@ -4504,6 +4508,9 @@ class ItemSupplier : public Object,
     m->addDurationField<Cls>(Tags::extra_safety_leadtime,
                              &Cls::getExtraSafetyLeadTime,
                              &Cls::setExtraSafetyLeadTime);
+    m->addDurationField<Cls>(Tags::hard_safety_leadtime,
+                             &Cls::getHardSafetyLeadTime,
+                             &Cls::setHardSafetyLeadTime);
     m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum,
                            &Cls::setSizeMaximum, DBL_MAX);
     m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
@@ -4546,6 +4553,8 @@ class ItemSupplier : public Object,
   double cost = 0.0;
 
   Duration batchwindow;
+
+  Duration hard_safety_leadtime;
 
   Duration extra_safety_leadtime;
 

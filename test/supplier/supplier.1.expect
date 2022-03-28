@@ -22,6 +22,9 @@
 			<name>Supplier of component C</name>
 		</supplier>
 		<supplier>
+			<name>Supplier of component E</name>
+		</supplier>
+		<supplier>
 			<name>Supplier of components A and B</name>
 		</supplier>
 	</suppliers>
@@ -82,6 +85,20 @@
 		<item>
 			<name>Component D</name>
 			<cost>1</cost>
+		</item>
+		<item>
+			<name>Component E</name>
+			<cost>1</cost>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Supplier of component E</name>
+					</supplier>
+					<leadtime>P21D</leadtime>
+					<extra_safety_leadtime>P10D</extra_safety_leadtime>
+					<hard_safety_leadtime>P4D</hard_safety_leadtime>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>Component group A and B</name>
@@ -188,6 +205,18 @@
 			<priority>1</priority>
 		</demand>
 		<demand>
+			<name>order 1 for item E</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component E</name>
+			</item>
+			<location>
+				<name>warehouse</name>
+			</location>
+			<due>2015-01-10T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
 			<name>order 2 for item A</name>
 			<quantity>100</quantity>
 			<item>
@@ -233,6 +262,90 @@
 				<name>warehouse</name>
 			</location>
 			<due>2015-02-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 2 for item E</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component E</name>
+			</item>
+			<location>
+				<name>warehouse</name>
+			</location>
+			<due>2015-01-14T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 3 for item E</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component E</name>
+			</item>
+			<location>
+				<name>warehouse</name>
+			</location>
+			<due>2015-01-18T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 4 for item E</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component E</name>
+			</item>
+			<location>
+				<name>warehouse</name>
+			</location>
+			<due>2015-01-22T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 5 for item E</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component E</name>
+			</item>
+			<location>
+				<name>warehouse</name>
+			</location>
+			<due>2015-01-26T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 6 for item E</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component E</name>
+			</item>
+			<location>
+				<name>warehouse</name>
+			</location>
+			<due>2015-01-30T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 7 for item E</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component E</name>
+			</item>
+			<location>
+				<name>warehouse</name>
+			</location>
+			<due>2015-02-10T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order 8 for item E</name>
+			<quantity>100</quantity>
+			<item>
+				<name>Component E</name>
+			</item>
+			<location>
+				<name>warehouse</name>
+			</location>
+			<due>2015-02-20T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 	</demands>

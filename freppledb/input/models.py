@@ -1289,10 +1289,16 @@ class ItemSupplier(AuditModel):
         _("lead time"), null=True, blank=True, help_text=_("Purchasing lead time")
     )
     extra_safety_leadtime = models.DurationField(
-        _("extra safety lead time"),
+        _("soft safety lead time"),
         null=True,
         blank=True,
-        help_text=_("Extra safety purchasing lead time"),
+        help_text=_("soft safety lead time"),
+    )
+    hard_safety_leadtime = models.DurationField(
+        _("hard safety lead time"),
+        null=True,
+        blank=True,
+        help_text=_("hard safety lead time"),
     )
     sizeminimum = models.DecimalField(
         _("size minimum"),

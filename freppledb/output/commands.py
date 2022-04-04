@@ -1081,6 +1081,7 @@ class ComputePeriodOfCover(PlanTask):
                  ),
                  '999 days'::interval
                  ))/86400)
+                 %s
         """
             % (
                 "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
@@ -1090,6 +1091,9 @@ class ComputePeriodOfCover(PlanTask):
                 if cluster != -1
                 else "",
                 "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
+                if cluster != -1
+                else "",
+                "where name in (select name from cluster_item_tmp)"
                 if cluster != -1
                 else "",
             ),

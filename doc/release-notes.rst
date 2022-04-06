@@ -37,6 +37,8 @@ These changes will be made gradual over a couple of releases. For instance, from
 
 - | V14: Connector is improved to handle deep odoo location hierarchies.
 
+- | V14: Extra links from the odoo menus to the frepple screens.
+
 6.21.0 (2022/3/25)
 ==================
 

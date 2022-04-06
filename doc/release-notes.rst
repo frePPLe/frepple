@@ -23,7 +23,7 @@ These changes will be made gradual over a couple of releases. For instance, from
 
 .. rubric:: Production planning
 
-- | The `itemsupplier <model-reference/item-suppliers.html>`_  table get an extra
+- | The `itemsupplier <model-reference/item-suppliers.html>`_ table gets an extra
     field "hard_safety_leadtime" to model an extra delay to be considered when a
     purchase order is received.
   | We already had a field "extra_safety_leadtime". This models a *soft* constraint
@@ -32,6 +32,10 @@ These changes will be made gradual over a couple of releases. For instance, from
     a purchase order is received.
   | Typical use cases are for modeling quality control, material handling or administrative
     delays.
+
+.. rubric:: Odoo integration
+
+- | V14: Connector is improved to handle deep odoo location hierarchies.
 
 6.21.0 (2022/3/25)
 ==================

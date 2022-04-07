@@ -2,7 +2,7 @@ cheroot == 8.4.5
 portend == 2.5
 djangorestframework == 3.13.1
 djangorestframework-bulk == 0.2.1
-djangorestframework-filters
+djangorestframework-filters == 0.10.2
 django-bootstrap3 == 15.0.0
 django-filter == 2.4.0
 html5lib == 1.0.1

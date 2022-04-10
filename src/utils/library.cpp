@@ -94,11 +94,6 @@ void LibraryUtils::initialize() {
 
   // Initialize the Python interpreter
   PythonInterpreter::initialize();
-
-  // Register new methods in Python
-  PythonInterpreter::registerGlobalMethod(
-      "loadmodule", loadModule, METH_VARARGS,
-      "Dynamically load a module in memory.");
 }
 
 string Environment::searchFile(const string filename) {
@@ -220,74 +215,6 @@ void Environment::setProcessName() {
     prctl(PR_SET_NAME, nm.c_str());
   }
 #endif
-}
-
-void Environment::loadModule(string lib) {
-  // Type definition of the initialization function
-  typedef const char* (*func)();
-
-  // Validate
-  if (lib.empty())
-    throw DataException("Error: No library name specified for loading");
-
-#ifdef WIN32
-  // Load the library - The windows way
-
-  // Change the error mode: we handle errors now, not the operating system
-  UINT em = SetErrorMode(SEM_FAILCRITICALERRORS);
-  HINSTANCE handle =
-      LoadLibraryEx(lib.c_str(), nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
-  if (!handle) handle = LoadLibraryEx(lib.c_str(), nullptr, 0);
-  if (!handle) {
-    // Get the error description
-    char error[256];
-    FormatMessage(FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-                  nullptr, GetLastError(), 0, error, 256, nullptr);
-    throw RuntimeException(error);
-  }
-  SetErrorMode(em);  // Restore the previous error mode
-
-  // Find the initialization routine
-  func inithandle =
-      reinterpret_cast<func>(GetProcAddress(HMODULE(handle), "initialize"));
-  if (!inithandle) {
-    // Get the error description
-    char error[256];
-    FormatMessage(FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-                  nullptr, GetLastError(), 0, error, 256, nullptr);
-    throw RuntimeException(error);
-  }
-
-#else
-  // Load the library - The UNIX way
-
-  // Search the frePPLe directories for the library
-  string fullpath = Environment::searchFile(lib);
-  if (fullpath.empty())
-    throw RuntimeException("Module '" + lib + "' not found");
-  dlerror();  // Clear the previous error
-  void* handle = dlopen(fullpath.c_str(), RTLD_NOW | RTLD_GLOBAL);
-  const char* err = dlerror();  // Pick up the error string
-  if (err) {
-    // Search the normal path for the library
-    dlerror();  // Clear the previous error
-    handle = dlopen(lib.c_str(), RTLD_NOW | RTLD_GLOBAL);
-    err = dlerror();  // Pick up the error string
-    if (err) throw RuntimeException(err);
-  }
-
-  // Find the initialization routine
-  func inithandle = (func)(dlsym(handle, "initialize"));
-  err = dlerror();  // Pick up the error string
-  if (err) throw RuntimeException(err);
-#endif
-
-  // Call the initialization routine with the parameter list
-  string x = (inithandle)();
-  if (x.empty()) throw DataException("Invalid module");
-
-  // Insert the new module in the registry
-  moduleRegistry.insert(x);
 }
 
 void MetaClass::addClass(const string& a, const string& b, bool def,

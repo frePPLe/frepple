@@ -427,7 +427,7 @@ class ExportOperationPlans(PlanTask):
         import frepple
 
         linetemplate = "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s"
-        for i in cls.attrs:
+        for unused in cls.attrs:
             linetemplate += "\v%s"
         linetemplate += "\n"
 

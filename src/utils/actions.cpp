@@ -309,44 +309,5 @@ void ThreadGroup::wrapper(ThreadGroup* grp) {
   };
 }
 
-//
-// LOADMODULE FUNCTION
-//
-
-PyObject* loadModule(PyObject* self, PyObject* args, PyObject* kwds) {
-  // Create the command
-  char* data = nullptr;
-  int ok = PyArg_ParseTuple(args, "s:loadmodule", &data);
-  if (!ok || !data) return nullptr;
-
-  // Free Python interpreter for other threads.
-  // This is important since the module may also need access to Python
-  // during its initialization...
-  Py_BEGIN_ALLOW_THREADS;
-  try {
-    // Load the library
-    Environment::loadModule(data);
-  } catch (...) {
-    Py_BLOCK_THREADS;
-    PythonType::evalException();
-    return nullptr;
-  }
-  // Reclaim Python interpreter
-  Py_END_ALLOW_THREADS;
-  return Py_BuildValue("");
-}
-
-void Environment::printModules() {
-  bool first = true;
-  for (auto i = moduleRegistry.begin(); i != moduleRegistry.end(); ++i) {
-    if (first) {
-      logger << "Loaded modules:" << endl;
-      first = false;
-    }
-    logger << "   " << *i << endl;
-  }
-  if (!first) logger << endl;
-}
-
 }  // namespace utils
 }  // namespace frepple

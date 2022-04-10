@@ -2652,21 +2652,7 @@ class Environment {
    * FREPPLE_PROCESSNAME is set. Maximum 7 characters are used. */
   static void setProcessName();
 
-  /* Function to dynamically load a shared library in frePPLe.
-   *
-   * After loading the library, the function "initialize" of the module
-   * is executed.
-   *
-   * The current implementation supports the following platforms:
-   *  - Windows
-   *  - Linux
-   *  - Unix systems supporting the dlopen function in the standard way.
-   *    Some unix systems have other or deviating APIs. A pretty messy story :-<
-   */
-  static void loadModule(string lib);
 
-  /* Print all modules that have been loaded. */
-  static void printModules();
 };
 
 /* This class instantiates the abstract DataValue class, and is a
@@ -6903,9 +6889,6 @@ class LibraryUtils {
  public:
   static void initialize();
 };
-
-/* This Python function loads a frepple extension module in memory. */
-PyObject* loadModule(PyObject*, PyObject*, PyObject*);
 
 /* A template class to expose category classes which use a string
  * as the key to Python. */

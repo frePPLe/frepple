@@ -407,9 +407,6 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
            << __DATE__ << ")" << endl
            << endl;
 
-    // Print loaded modules
-    Environment::printModules();
-
     // Print the number of clusters
     logger << "Clusters: " << HasLevel::getNumberOfClusters() << endl << endl;
 

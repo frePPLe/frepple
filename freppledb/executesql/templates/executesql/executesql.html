@@ -29,7 +29,7 @@ function render(data) {
   	$("#error").css('display','none');
 	  var colmodel = [];
 	  for (var c in data['columns'])
-	  	colmodel.push({"name": data['columns'][c]});
+	  	colmodel.push({"name": c, "label": data['columns'][c]});
 	  grid.jqGrid({
 	      colModel: colmodel,
 	      datatype: "local",

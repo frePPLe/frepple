@@ -509,6 +509,12 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
     // Flowplans for buffers representing tools have no pegging either.
     return;
 
+  if (curflowplan->getBuffer()->hasType<BufferInfinite>() &&
+      ((curflowplan->getQuantity() < 0 && !iter.isDownstream()) ||
+       (curflowplan->getQuantity() > 0 && iter.isDownstream())))
+    // No pegging across infinite buffers
+    return;
+
   Buffer::flowplanlist::iterator f = getFlowPlans().begin(curflowplan);
   if (curflowplan->getQuantity() < -ROUNDING_ERROR && !iter.isDownstream()) {
     // CASE 1:

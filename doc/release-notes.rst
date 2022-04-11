@@ -33,6 +33,10 @@ These changes will be made gradual over a couple of releases. For instance, from
   | Typical use cases are for modeling quality control, material handling or administrative
     delays.
 
+- | Infinite buffers no longer peg consumer and producers.
+  | The FIFO assocation between consumers and producers makes sense for regular buffers,
+    but only gives confusing results in infinite buffers.
+
 .. rubric:: Odoo integration
 
 - | V14: Connector is improved to handle deep odoo location hierarchies.

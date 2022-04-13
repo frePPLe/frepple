@@ -603,8 +603,11 @@ class ReportManager(GridReport):
                     # Exposing the exception to the user is acceptable here.
                     # Otherwise we don't provide feedback on how the query needs correcting
                     return JsonResponse(
-                        {"id": m.id, "status": "Error: %s" % e}
-                    )  # lgtm[py/stack-trace-exposure]
+                        {
+                            "id": m.id,
+                            "status": "Error: %s" % e,  # lgtm[py/stack-trace-exposure]
+                        }
+                    )
             else:
                 return HttpResponseServerError("Error saving report")
 

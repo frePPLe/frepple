@@ -148,7 +148,7 @@ def Upload(request):
                             quoteattr(do.origin.subcategory or ""),
                             quoteattr(do.destination.subcategory or ""),
                             quoteattr(do.item.subcategory or ""),
-                            int(do.criticality),
+                            int(do.criticality or 0),
                             quoteattr(do.batch or ""),
                         )
                     )
@@ -181,7 +181,7 @@ def Upload(request):
                                 op.quantity,
                                 quoteattr(op.location.subcategory or ""),
                                 quoteattr(op.item.subcategory or ""),
-                                int(op.criticality),
+                                int(op.criticality or 0),
                                 quoteattr(op.batch or ""),
                             )
                         )
@@ -198,7 +198,7 @@ def Upload(request):
                                 op.quantity,
                                 quoteattr(op.operation.location.subcategory or ""),
                                 quoteattr(op.operation.item.subcategory or ""),
-                                int(op.criticality),
+                                int(op.criticality or 0),
                                 quoteattr(op.batch or ""),
                             )
                         )

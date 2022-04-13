@@ -2033,7 +2033,7 @@ class GridReport(View):
                                 user_id=request.user.pk,
                                 content_type_id=content_type_id,
                                 object_pk=obj.pk,
-                                object_repr=force_str(obj),
+                                object_repr=force_str(obj)[:200],
                                 type="change",
                                 comment="Changed %s."
                                 % get_text_list(form.changed_data, "and"),

@@ -43,6 +43,10 @@ These changes will be made gradual over a couple of releases. For instance, from
 
 - | V14: Extra links from the odoo menus to the frepple screens.
 
+.. rubric:: Third party components - Security
+
+- | Django release is upgraded to 3.2.13 to address a security issue.
+
 6.21.0 (2022/3/25)
 ==================
 

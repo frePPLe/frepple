@@ -122,6 +122,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   bool firstmsg1 = true;
   bool firstmsg2 = true;
   bool firstmsg3 = true;
+  bool supply_exists_already = false;
 
   bool hasTransferbatching = false;
   for (auto fl = b->getFlows().begin(); fl != b->getFlows().end(); ++fl)
@@ -160,7 +161,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       //    single batch.
       //  - Scan forward for producer we can replace in a single batch.
       //  - Create new supply for the shortage at that date.
-      bool supply_exists_already = false;
+      supply_exists_already = false;
       if (theDelta < -ROUNDING_ERROR && autofence) {
         // Solution zero: wait for confirmed supply that is already existing
         auto free_stock = b->getOnHand(Date::infiniteFuture);
@@ -536,7 +537,9 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   }
 
   // Final evaluation of the replenishment
-  if (data->constrainedPlanning && isConstrained()) {
+  if (data->constrainedPlanning && isConstrained() &&
+      (!supply_exists_already || isFenceConstrained() ||
+       isLeadTimeConstrained())) {
     // Use the constrained planning result
     data->state->a_qty = requested_qty - shortage;
     if (data->state->a_qty < ROUNDING_ERROR) {

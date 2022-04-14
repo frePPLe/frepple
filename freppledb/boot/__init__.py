@@ -418,7 +418,7 @@ def addAttributesFromDatabase():
                                         col[0],
                                     )
                                 )
-    except Exception as e:
+    except Exception:
         # Database or attribute table may not exist yet.
         pass
 

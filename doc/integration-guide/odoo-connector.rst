@@ -214,6 +214,16 @@ The section below describes the installation and configuration of these.
         location.
       | All bills of materials are modeled there.
 
+    * | Frepple server:
+      | URL of your frepple server.
+      | Do not include a slash at the end of the URL.
+
+    * | Disclose stack trace:
+      | To debug the connector and data issues it can be useful to send any connector
+        stack traces also to your frepple server.
+      | By default this option is not active for security reasons.
+      | It is recommended to activate this option only during development or testing.
+
     .. image:: _images/odoo-settings.png
        :alt: Configuring the Odoo add-on.
 

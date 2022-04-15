@@ -43,6 +43,10 @@ These changes will be made gradual over a couple of releases. For instance, from
 
 - | V14: Extra links from the odoo menus to the frepple screens.
 
+- | V14: New configuration to send stack traces from the connector back to your frepple
+    instance. This is useful to debug data and connector issues. By default this option
+    is not active for security reasons.
+
 .. rubric:: Third party components - Security
 
 - | Django release is upgraded to 3.2.13 to address a security issue.

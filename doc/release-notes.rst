@@ -47,6 +47,11 @@ These changes will be made gradual over a couple of releases. For instance, from
     instance. This is useful to debug data and connector issues. By default this option
     is not active for security reasons.
 
+.. rubric:: System administration
+
+- | The solver now has a built-in protection to avoid excessively large log files.
+  | This avoids annoying disk-full issues.
+
 .. rubric:: Third party components - Security
 
 - | Django release is upgraded to 3.2.13 to address a security issue.

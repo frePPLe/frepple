@@ -8255,6 +8255,10 @@ class Plan : public Plannable, public Object {
     OperationPlan::setCounterMin(l);
   }
 
+  unsigned long getloglimit() const { return Environment::getloglimit(); }
+
+  void setloglimit(unsigned long l) { Environment::setloglimit(l); }
+
   const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;
   static const MetaCategory* metacategory;
@@ -8271,6 +8275,8 @@ class Plan : public Plannable, public Object {
     m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
     m->addStringRefField<Plan>(Tags::logfile, &Plan::getLogFile,
                                &Plan::setLogFile, "", DONT_SERIALIZE);
+    m->addUnsignedLongField(Tags::loglimit, &Plan::getloglimit,
+                            &Plan::setloglimit, 0UL, DONT_SERIALIZE);
     m->addUnsignedLongField(Tags::id, &Plan::getOperationPlanCounterMin,
                             &Plan::setOperationPlanCounterMin, 0UL,
                             DONT_SERIALIZE);

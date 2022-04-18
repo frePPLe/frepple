@@ -19,6 +19,7 @@ from datetime import datetime
 import os
 import logging
 
+from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
 
@@ -246,7 +247,13 @@ class SupplyPlanning(PlanTask):
                 cls.solver.userexit_nextdemand = cls.nextDemand
         logger.info("Plan type: %s" % plantype)
         logger.info("Constraints: %s" % constraint)
-        cls.solver.solve()
+        try:
+            if loglevel <= 2 and not settings.DEBUG:
+                # Solver output is limited to 300000 lines
+                frepple.settings.loglimit = 300000
+            cls.solver.solve()
+        finally:
+            frepple.settings.loglimit = 0
         frepple.printsize()
 
 

@@ -128,6 +128,7 @@ class Tags {
   static const Keyword locations;
   static const Keyword locked;
   static const Keyword logfile;
+  static const Keyword loglimit;
   static const Keyword loglevel;
   static const Keyword maxearly;
   static const Keyword maximum;

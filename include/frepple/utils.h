@@ -261,6 +261,20 @@ inline ostream& operator<<(ostream& os, const Signal& d) {
 /* This stream is the general output for all logging and debugging messages. */
 extern ostream logger;
 
+class StreambufWrapper : public filebuf {
+ public:
+  void setLogLimit(unsigned long long);
+
+  unsigned long long getLogLimit() const { return max_size; }
+
+  virtual int sync();
+
+ private:
+  unsigned long long start_size = 0;
+  unsigned long long cur_size = 0;
+  unsigned long long max_size = 0;
+};
+
 /* Auxilary structure for easy indenting in the log stream. */
 class indent {
  public:
@@ -2610,7 +2624,7 @@ class Environment {
   static int processorcores;
 
   /* A file where output is directed to. */
-  static ofstream logfile;
+  static StreambufWrapper logfile;
 
   /* The name of the log file. */
   static string logfilename;
@@ -2652,7 +2666,20 @@ class Environment {
    * FREPPLE_PROCESSNAME is set. Maximum 7 characters are used. */
   static void setProcessName();
 
+  static unsigned long getloglimit() {
+    if (logfilename.empty()) return 0;
+    auto s = logfile.getLogLimit();
+    if (s > ULONG_MAX) s = ULONG_MAX;
+    return static_cast<unsigned long>(s);
+  }
 
+  static void setloglimit(unsigned long l) {
+    if (!logfilename.empty()) logfile.setLogLimit(l);
+  }
+
+  static void truncateLogFile(unsigned long long);
+
+  static unsigned long getLogFileSize();
 };
 
 /* This class instantiates the abstract DataValue class, and is a

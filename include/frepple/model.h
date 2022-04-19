@@ -3005,7 +3005,7 @@ class Operation : public HasName<Operation>,
   /* Return the release fence, expressed in available time, of this operation.
    * The difference with the previous method is that it considers the working
    * hour and holiday calendars. */
-  Date getFence(OperationPlan* opplan) const;
+  Date getFence(const OperationPlan* opplan) const;
 
   /* Update the release fence of this operation. */
   void setFence(Duration t) {
@@ -5745,6 +5745,8 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
    * quantity are changed.
    */
   void update();
+
+  bool getFeasible() const;
 
   /* Return a pointer to the timeline data structure owning this flowplan. */
   TimeLine<FlowPlan>* getTimeLine() const { return &(buf->flowplans); }
@@ -9128,13 +9130,13 @@ class PeggingIterator : public Object {
   /* Constructor for demand pegging. */
   PeggingIterator(const Demand*);
 
-  /* Constructor for operationplan pegging. */
+  /* Constructor for operationplan pegging, downstream (default) or upstream. */
   PeggingIterator(const OperationPlan*, bool = true);
 
-  /* Constructor for flowplan pegging. */
-  PeggingIterator(FlowPlan*, bool = true);
+  /* Constructor for flowplan pegging, downstream (default) or upstream. */
+  PeggingIterator(const FlowPlan*, bool = true);
 
-  /* Constructor for loadplan pegging. */
+  /* Constructor for loadplan pegging, downstream (default) or upstream. */
   PeggingIterator(LoadPlan*, bool = true);
 
   /* Return the operationplan. */

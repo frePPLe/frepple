@@ -140,7 +140,7 @@ PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b)
                 0.0, 0, 0L);
 }
 
-PeggingIterator::PeggingIterator(FlowPlan* fp, bool b)
+PeggingIterator::PeggingIterator(const FlowPlan* fp, bool b)
     : downstream(b), firstIteration(true), first(false), second_pass(false) {
   initType(metadata);
   if (!fp) return;

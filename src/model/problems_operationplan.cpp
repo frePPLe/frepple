@@ -91,6 +91,9 @@ void OperationPlan::updateProblems() {
   if (needsBeforeCurrent) new ProblemBeforeCurrent(this);
   if (needsBeforeFence) new ProblemBeforeFence(this);
   if (needsPrecedence) new ProblemPrecedence(this);
+
+  // Recalculate the feasible flag
+  updateFeasible();
 }
 
 OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* o)
@@ -145,7 +148,7 @@ OperationPlan::ProblemIterator& OperationPlan::ProblemIterator::operator++() {
 }
 
 bool OperationPlan::updateFeasible() {
-  if (!getOperation()->getDetectProblems()) {
+  if (!getOperation()->getDetectProblems() || getCompleted() || getClosed()) {
     // No problems to be flagged on this operation
     setFeasible(true);
     return true;
@@ -195,45 +198,43 @@ bool OperationPlan::updateFeasible() {
 
   // Verify the capacity constraints
   for (auto ldplan = getLoadPlans(); ldplan != endLoadPlans(); ++ldplan) {
-    if (!ldplan->getResource()->getConstrained()) continue;
-    if (ldplan->getResource()->hasType<ResourceDefault>() &&
-        ldplan->getQuantity() > 0) {
-      auto curMax = ldplan->getMax();
-      for (auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
-           cur != ldplan->getResource()->getLoadPlans().end(); ++cur) {
-        if (cur->getOperationPlan() == this && cur->getQuantity() < 0) break;
-        if (cur->getEventType() == 4) curMax = cur->getMax(false);
-        if (cur->getEventType() != 5 && cur->isLastOnDate() &&
-            cur->getOnhand() > curMax + ROUNDING_ERROR) {
-          // Overload on default resource
+    if (((ldplan->getQuantity() > 0 &&
+          ldplan->getResource()->hasType<ResourceDefault>()) ||
+         (ldplan->getQuantity() < 0 &&
+          ldplan->getResource()->hasType<ResourceBuckets>())) &&
+        !ldplan->getFeasible()) {
+      setFeasible(false);
+      return false;
+    }
+  }
+
+  // Verify local and upstream material constraints
+  for (PeggingIterator p(this, false); p; --p) {
+    const OperationPlan* m = p.getOperationPlan();
+    if (m->getCompleted() || m->getClosed()) continue;
+    if (!m->firstsubopplan) {
+      if (m->getConfirmed()) {
+        if (m->getEnd() < Plan::instance().getCurrent()) {
+          // Before current violation
           setFeasible(false);
           return false;
         }
-      }
-    } else if (ldplan->getResource()->hasType<ResourceBuckets>()) {
-      for (auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
-           cur != ldplan->getResource()->getLoadPlans().end() &&
-           cur->getEventType() != 2;
-           ++cur) {
-        if (cur->getOnhand() < -ROUNDING_ERROR) {
-          // Overloaded capacity on bucketized resource
+      } else {
+        if (m->getStart() < Plan::instance().getCurrent()) {
+          // Before current violation
+          setFeasible(false);
+          return false;
+        } else if (m->getProposed() &&
+                   m->getStart() < m->getOperation()->getFence(m)) {
+          // Before fence violation
+                 << endl;
           setFeasible(false);
           return false;
         }
       }
     }
-  }
-
-  // Verify the material constraints
-  for (auto flplan = beginFlowPlans(); flplan != endFlowPlans(); ++flplan) {
-    if (!flplan->getFlow()->isConsumer() ||
-        flplan->getBuffer()->hasType<BufferInfinite>())
-      continue;
-    auto flplaniter = flplan->getBuffer()->getFlowPlans();
-    for (auto cur = flplaniter.begin(&*flplan); cur != flplaniter.end();
-         ++cur) {
-      if (cur->getOnhand() < -ROUNDING_ERROR && cur->isLastOnDate()) {
-        // Material shortage
+    for (auto fp = m->beginFlowPlans(); fp != m->endFlowPlans(); ++fp) {
+      if (!fp->getFeasible()) {
         setFeasible(false);
         return false;
       }

@@ -174,7 +174,7 @@ OperationPlan::iterator Operation::getOperationPlans() const {
   return OperationPlan::iterator(this);
 }
 
-Date Operation::getFence(OperationPlan* opplan) const {
+Date Operation::getFence(const OperationPlan* opplan) const {
   if (fence > 0L)
     return calculateOperationTime(opplan, Plan::instance().getCurrent(), fence,
                                   true)

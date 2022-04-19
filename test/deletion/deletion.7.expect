@@ -262,6 +262,7 @@
 			<start>2009-01-31T00:00:00</start>
 			<end>2009-02-01T00:00:00</end>
 			<quantity>1</quantity>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<reference>2</reference>
@@ -274,6 +275,7 @@
 			<start>2009-02-28T00:00:00</start>
 			<end>2009-03-01T00:00:00</end>
 			<quantity>1</quantity>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<reference>3</reference>
@@ -286,6 +288,7 @@
 			<start>2009-03-31T00:00:00</start>
 			<end>2009-04-01T00:00:00</end>
 			<quantity>1</quantity>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<reference>4</reference>

@@ -227,7 +227,6 @@ bool OperationPlan::updateFeasible() {
         } else if (m->getProposed() &&
                    m->getStart() < m->getOperation()->getFence(m)) {
           // Before fence violation
-                 << endl;
           setFeasible(false);
           return false;
         }

@@ -214,7 +214,7 @@
   </demands>
   <operationplans>
     <operationplan ordertype="PO" end="2015-06-06T00:00:00"
-      quantity="100" status="confirmed">
+      reference="PO #1" quantity="100" status="confirmed">
       <item name="Component C"/>
       <location name="warehouse"/>
       <supplier name="Supplier of component B"/>

@@ -8083,12 +8083,12 @@ inline Problem::iterator Problem::List::end() const {
 
 class OperationPlan::ProblemIterator : public Problem::iterator {
  private:
-  stack<Problem*> relatedproblems;
+  vector<Problem*> relatedproblems;
   const OperationPlan* opplan;
 
  public:
   /* Constructor. */
-  ProblemIterator(const OperationPlan*);
+  ProblemIterator(const OperationPlan*, bool include_related = true);
 
   /* Advance the iterator. */
   ProblemIterator& operator++();
@@ -8359,7 +8359,10 @@ class ProblemBeforeCurrent : public Problem {
     return ch.str();
   }
 
-  bool isFeasible() const { return false; }
+  bool isFeasible() const {
+    return oper ? false
+                : static_cast<OperationPlan*>(getOwner())->getConfirmed();
+  }
 
   double getWeight() const {
     return oper ? qty : static_cast<OperationPlan*>(getOwner())->getQuantity();

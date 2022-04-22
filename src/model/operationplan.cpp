@@ -582,7 +582,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       if (!found)
         new ProblemInvalidData(opplan,
                                "Distribution order '" + opplan->getReference() +
-                                   "'on unknown item distribution",
+                                   "' on unknown item distribution",
                                "operationplan", start, end, quantity);
     } else
       // Create operation plan

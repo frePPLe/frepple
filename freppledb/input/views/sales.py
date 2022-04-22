@@ -230,19 +230,25 @@ class DemandList(GridReport):
             reportclass.attr_sql = ""
             # Adding custom item attributes
             for f in getAttributeFields(
-                Item, related_name_prefix="item", initially_hidden=True
+                Item, related_name_prefix="item", initially_hidden=True, editable=False
             ):
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "item.%s, " % f.name.split("__")[-1]
             # Adding custom location attributes
             for f in getAttributeFields(
-                Location, related_name_prefix="location", initially_hidden=True
+                Location,
+                related_name_prefix="location",
+                initially_hidden=True,
+                editable=False,
             ):
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "location.%s, " % f.name.split("__")[-1]
             # Adding custom customer attributes
             for f in getAttributeFields(
-                Customer, related_name_prefix="customer", initially_hidden=True
+                Customer,
+                related_name_prefix="customer",
+                initially_hidden=True,
+                editable=False,
             ):
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "customer.%s, " % f.name.split("__")[-1]
@@ -899,16 +905,20 @@ class DeliveryOrderList(GridReport):
             reportclass._attributes_added = 2
             for f in getAttributeFields(DeliveryOrder):
                 reportclass.rows += (f,)
-            for f in getAttributeFields(Item, related_name_prefix="item"):
-                f.editable = False
-                f.initially_hidden = True
-                reportclass.rows += (f,)
-            for f in getAttributeFields(Location, related_name_prefix="location"):
+            for f in getAttributeFields(
+                Item, related_name_prefix="item", editable=False
+            ):
                 f.editable = False
                 f.initially_hidden = True
                 reportclass.rows += (f,)
             for f in getAttributeFields(
-                Customer, related_name_prefix="demand__customer"
+                Location, related_name_prefix="location", editable=False
+            ):
+                f.editable = False
+                f.initially_hidden = True
+                reportclass.rows += (f,)
+            for f in getAttributeFields(
+                Customer, related_name_prefix="demand__customer", editable=False
             ):
                 f.editable = False
                 f.initially_hidden = True

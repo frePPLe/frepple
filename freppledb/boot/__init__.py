@@ -307,6 +307,9 @@ def addAttributesFromDatabase():
                     attributes[table] = [
                         (x[1], x[2], x[3], x[4], x[5]),
                     ]
+            if not attributes:
+                # Shortcut for performance reasons
+                return
 
             # Loop over all scenarios
             cursor.execute(

@@ -250,9 +250,15 @@ bool OperationPlan::updateFeasible() {
     if (!flplan->getFlow()->isConsumer() ||
         flplan->getBuffer()->hasType<BufferInfinite>())
       continue;
+    if (flplan->getBuffer()->getOnHand(Date::infiniteFuture) <
+        -ROUNDING_ERROR) {
+      // Material shortage
+      setFeasible(false);
+      return false;
+    }
     auto flplaniter = flplan->getBuffer()->getFlowPlans();
-    for (auto cur = flplaniter.begin(&*flplan); cur != flplaniter.end();
-         ++cur) {
+    for (auto cur = flplaniter.begin(&*flplan);
+         cur != flplaniter.end() && cur->getDate() < getEnd(); ++cur) {
       if (cur->getOnhand() < -ROUNDING_ERROR && cur->isLastOnDate()) {
         // Material shortage
         setFeasible(false);

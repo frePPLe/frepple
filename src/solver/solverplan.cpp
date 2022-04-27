@@ -637,8 +637,10 @@ PyObject* SolverCreate::solve(PyObject* self, PyObject* args) {
   // Parse the argument
   PyObject* dem = nullptr;
   if (args && !PyArg_ParseTuple(args, "|O:solve", &dem)) return nullptr;
-  if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass)) {
-    PyErr_SetString(PythonDataException, "solve(d) argument must be a demand");
+  if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass) &&
+      !PyObject_TypeCheck(dem, Buffer::metadata->pythonClass)) {
+    PyErr_SetString(PythonDataException,
+                    "solve(d) argument must be a demand or a buffer");
     return nullptr;
   }
 
@@ -654,7 +656,20 @@ PyObject* SolverCreate::solve(PyObject* self, PyObject* args) {
       // Incrementally plan a single demand
       sol->setAutocommit(false);
       sol->update_user_exits();
-      static_cast<Demand*>(dem)->solve(*sol, &(sol->getCommands()));
+      if (PyObject_TypeCheck(dem, Demand::metadata->pythonClass))
+        static_cast<Demand*>(dem)->solve(*sol, &(sol->getCommands()));
+      else if (PyObject_TypeCheck(dem, Buffer::metadata->pythonClass)) {
+        auto state = sol->getCommands().state;
+        state->q_qty = -1.0;
+        state->curBuffer = static_cast<Buffer*>(dem);
+        state->q_date = Date::infinitePast;
+        state->a_cost = 0.0;
+        state->a_penalty = 0.0;
+        state->curDemand = nullptr;
+        state->curOwnerOpplan = nullptr;
+        state->curBatch = state->curBuffer->getBatch();
+        state->curBuffer->solve(*sol, &(sol->getCommands()));
+      }
     }
   } catch (...) {
     Py_BLOCK_THREADS;

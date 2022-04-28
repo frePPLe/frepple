@@ -51,6 +51,11 @@ These changes will be made gradual over a couple of releases. For instance, from
     instance. This is useful to debug data and connector issues. By default this option
     is not active for security reasons.
 
+- | V14: Ability to limit the data to a single odoo company only.
+  | By default, the connector extracts data for all allowed companies the connector user
+    has access to into a single frepple dataset.
+  | With the new option you can separate the frepple datasets per odoo company.
+
 .. rubric:: System administration
 
 - | The solver now has a built-in protection to avoid excessively large log files.

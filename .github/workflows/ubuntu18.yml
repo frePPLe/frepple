@@ -3,7 +3,7 @@ name: Build Community
 on:
   push:
     paths-ignore:
-      - "docs/**"
+      - "doc/**"
   pull_request:
 
 env:

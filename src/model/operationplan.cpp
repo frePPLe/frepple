@@ -1362,29 +1362,37 @@ bool OperationPlan::updateSetupTime(bool report) {
     if (get<1>(setup)) {
       // Apply setup rule duration
       if (getConfirmed()) {
-        setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
-                      get<1>(setup));
-        if (getStart() != end_of_setup) {
-          changed = true;
+        if (getStart() != end_of_setup || !setupevent) {
+          setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                        get<1>(setup));
           setStartAndEnd(end_of_setup, getEnd());
-        }
+          changed = true;
+        } else
+          setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                        get<1>(setup));
       } else {
         DateRange tmp = oper->calculateOperationTime(
             this, end_of_setup, get<1>(setup)->getDuration(), false);
-        setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
-                      get<1>(setup));
-        if (tmp.getStart() != getStart()) {
+        if (tmp.getStart() != getStart() || !setupevent) {
+          setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                        get<1>(setup));
           setStartAndEnd(tmp.getStart(), getEnd());
           changed = true;
-        }
+        } else
+          setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                        get<1>(setup));
       }
-    } else if (getStart() != end_of_setup) {
+    } else {
       // Zero time event
-      setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup), get<1>(setup));
-      setStartAndEnd(end_of_setup, getEnd());
-      changed = true;
+      if (getStart() != end_of_setup || !setupevent) {
+        setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                      get<1>(setup));
+        setStartAndEnd(end_of_setup, getEnd());
+        changed = true;
+      } else
+        setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                      get<1>(setup));
     }
-
   } else {
     // No setup event required
     if (setupevent) {

@@ -639,18 +639,19 @@ SetupEvent* Resource::getSetupAt(Date d, OperationPlan* opplan) const {
 }
 
 void Resource::updateSetupTime() const {
+  if (!setupmatrix) return;
   bool tmp = OperationPlan::setPropagateSetups(false);
-  if (setupmatrix) {
-    while (true) {
-      bool changed = false;
-      for (auto qq = getLoadPlans().rbegin();
-           qq != getLoadPlans().end() && !changed; --qq) {
-        if (qq->getEventType() == 1 && qq->getQuantity() < 0.0)
-          changed = qq->getOperationPlan()->updateSetupTime();
+  // TODO following loop can be inefficiently repeating things
+  while (true) {
+    bool changed = false;
+    for (auto qq = getLoadPlans().rbegin();
+         qq != getLoadPlans().end() && !changed; --qq) {
+      if (qq->getEventType() == 1 && qq->getQuantity() < 0.0) {
+        changed = qq->getOperationPlan()->updateSetupTime();
       }
-      if (!changed) break;
-    };
-  }
+    }
+    if (!changed) break;
+  };
   OperationPlan::setPropagateSetups(tmp);
 }
 

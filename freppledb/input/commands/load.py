@@ -1806,7 +1806,10 @@ class loadOperationPlans(LoadTask):
                     """
                         SELECT
                         operationplan.operation_id, operationplan.reference, operationplan.quantity,
-                        operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
+                        case when operationplan.plan ? 'setupend'
+                           then (operationplan.plan->>'setupend')::timestamp
+                           else operationplan.startdate
+                           end, operationplan.enddate, operationplan.status, operationplan.source,
                         operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
                         operationplan.item_id, operationplan.location_id, operationplan.batch, operationplan.quantity_completed,
                         array(
@@ -1953,7 +1956,10 @@ class loadOperationPlans(LoadTask):
                     """
                         SELECT
                         operationplan.operation_id, operationplan.reference, operationplan.quantity,
-                        operationplan.startdate, operationplan.enddate, operationplan.status,
+                        case when operationplan.plan ? 'setupend'
+                           then (operationplan.plan->>'setupend')::timestamp
+                           else operationplan.startdate
+                           end, operationplan.enddate, operationplan.status,
                         operationplan.owner_id, operationplan.source, operationplan.batch,
                         array(
                             select resource_id

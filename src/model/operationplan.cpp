@@ -659,9 +659,11 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
         opplan->createFlowLoads();
       else
         opplan->createFlowLoads(&assigned_resources);
-      opplan->setOperationPlanParameters(quantity, opplan->getStart(),
-                                         Date::infinitePast, false, true, false,
-                                         true);
+      // The end date of the approved operationplan needs to be computed in
+      // function of the start date and the quantity completed.
+      opplan->setOperationPlanParameters(
+          quantity, start ? start : opplan->getStart(), Date::infinitePast,
+          false, true, false, true);
     } else
       opplan->freezeStatus(start ? start : opplan->getStart(),
                            end ? end : opplan->getEnd(), quantity);

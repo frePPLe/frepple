@@ -25,8 +25,8 @@ These changes will be made gradual over a couple of releases. For instance, from
 
 - | When drilling into an item, the "Plan" tab has been removed as the same information
     can be found in the "Inventory" tab.
-    
-  | Inventory report: Backlog is calculated at the end of the bucket. It used to be 
+
+  | Inventory report: Backlog is calculated at the end of the bucket. It used to be
     calculated at the start of the bucket
 
 .. rubric:: Production planning
@@ -63,6 +63,10 @@ These changes will be made gradual over a couple of releases. For instance, from
   | By default, the connector extracts data for all allowed companies the connector user
     has access to into a single frepple dataset.
   | With the new option you can separate the frepple datasets per odoo company.
+
+.. rubric:: User interface
+
+- | Bug fix: Editing grid fields of type currency was broken in a previous release.
 
 .. rubric:: System administration
 

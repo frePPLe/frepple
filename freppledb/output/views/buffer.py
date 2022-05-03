@@ -1264,13 +1264,13 @@ class OverviewReport(GridPivot):
                         "total_demand": None
                         if history
                         else (row[24] or 0) + (row[25] or 0),
-                        "order_backlog": max(0, order_backlog)
-                        if order_backlog
-                        else None,
-                        "forecast_backlog": forecast_backlog,
+                        "order_backlog": None if history else max(0, order_backlog),
+                        "forecast_backlog": None
+                        if history
+                        else max(0, forecast_backlog),
                         "total_backlog": None
                         if history
-                        else order_backlog + forecast_backlog,
+                        else max(0, forecast_backlog) + max(0, order_backlog),
                         "endoh": None
                         if history
                         else (

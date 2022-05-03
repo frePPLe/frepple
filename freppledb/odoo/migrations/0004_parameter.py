@@ -13,7 +13,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("odoo", "0003_parameters")]
+    dependencies = [("odoo", "0003_parameter")]
 
     operations = [
         migrations.RunSQL(

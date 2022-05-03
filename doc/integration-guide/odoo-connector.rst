@@ -279,8 +279,13 @@ The section below describes the installation and configuration of these.
       | If translated names of products, items, locations, etc they will be used.
       | The default value is en_US.
 
-    * odoo.company: Company name for which to create purchase quotation and
-      manufacturing orders
+    * | odoo.company: Company name for which to create purchase quotation and
+        manufacturing orders.
+
+    * | odoo.singlecompany:
+      | When false (the default) the connector downloads all allowed companies for the odoo integration
+        user.
+      | When true the connector only downloads the data of the configured odoo.company.
 
     * | odoo.filter_export_purchase_order: Python filter expression for the
         automatic export of purchase orders.

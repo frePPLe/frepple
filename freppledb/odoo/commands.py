@@ -91,6 +91,7 @@ class OdooReadData(PlanTask):
             odoo_url = odoo_url + "/"
 
         odoo_company = Parameter.getValue("odoo.company", database, None)
+        singlecompany = Parameter.getValue("odoo.singlecompany", database, "false")
         ok = True
 
         # Set debugFile=PathToXmlFile if you want frePPLe to read that file
@@ -144,6 +145,7 @@ class OdooReadData(PlanTask):
                         "language": odoo_language,
                         "company": odoo_company,
                         "mode": cls.mode,
+                        "singlecompany": singlecompany,
                     }
                 ),
             )

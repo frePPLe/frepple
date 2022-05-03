@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             insert into common_parameter
             (name, value, description, lastmodified)
             values
-            ('odoo.loglevel','0','Odoo connector: Odoo connector: Set to non-zero to get a verbose log. Default is 0.', now())
+            ('odoo.loglevel','0','Odoo connector: Set to non-zero to get a verbose log. Default is 0.', now())
             on conflict(name) do nothing
             """
         )

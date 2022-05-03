@@ -29,7 +29,7 @@ function drawGraphs(jsondata)
   {% else %}var margin = {top: 0, right: 0, bottom: 0, left: 70};
   {% endif %}var width = Math.max($({% if args.0 %}"#graph"{% else %}"#grid_graph"{% endif %}).width() - margin.left - margin.right, 0);
   var height = {% if args.0 %}$("#graph").height(){% else %}80{% endif %} - margin.top - margin.bottom;
-  
+
   // Lookup table of displayed columns
   var fields = new Set();
   // dict that gives from an id the name of the cross
@@ -57,7 +57,7 @@ function drawGraphs(jsondata)
     .rangeRoundBands([0, width], 0);
   var x_width = x.rangeBand();
   {% if mode == "graph" and not args.0 %}graph.header(margin.left, x);{% endif %}
-  
+
   // Define Y-axis
   var y = d3.scale.linear().rangeRound([height, 0]);
 
@@ -86,7 +86,7 @@ function drawGraphs(jsondata)
 	        'bucket': bckt,
 	        'startinv': tmp[id_by_field['startoh']],
 	        'startohdoc': tmp[id_by_field['startohdoc']],
-	        'safetystock': tmp[id_by_field['safetystock']],    
+	        'safetystock': tmp[id_by_field['safetystock']],
 	        'consumed': tmp[id_by_field['consumed']],
 	        'consumedMO': tmp[id_by_field['consumedMO']],
 	        'consumedDO': tmp[id_by_field['consumedDO']],
@@ -107,10 +107,10 @@ function drawGraphs(jsondata)
       for (var i in cross_idx)
       {
         var t = field_by_id[cross_idx[i]];
-        if (t == 'startoh' 
-            || t == 'safetystock' 
-            || t == 'consumed' 
-            || t == 'produced' 
+        if (t == 'startoh'
+            || t == 'safetystock'
+            || t == 'consumed'
+            || t == 'produced'
             || t == 'endoh'
             || t == 'total_backlog') {
           if (tmp[cross_idx[i]] < min_y) min_y = tmp[cross_idx[i]];
@@ -200,13 +200,13 @@ function drawGraphs(jsondata)
 	          if (d3.event.defaultPrevented || (d['produced'] == 0 && d['consumed'] == 0))
 	            return;
 	          d3.select("#tooltip").style('display', 'none');
-	
+
 	          window.location = url_prefix
 	            + "/data/input/operationplanmaterial/buffer/"
 	            + admin_escape(d['buffer'])
 	            + "/?noautofilter&flowdate__gte=" + timebuckets[d['bucket']]['startdate']
 	            + "&flowdate__lt=" + timebuckets[d['bucket']]['enddate'];
-	
+
 	          d3.event.stopPropagation();
 	        })
 	      .on("mouseenter", function(d) {
@@ -216,7 +216,7 @@ function drawGraphs(jsondata)
               + '<table><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
               + grid.formatNumber(d['startinv'])
               + '</td></tr><tr><td>{{_('safety stock')|capfirst}}</td><td style="text-align:right">'
-              + grid.formatNumber(d['safetystock']);              
+              + grid.formatNumber(d['safetystock']);
           }
           else {
             var tiptext = '<div class="panel-heading" style="text-align:center; font-weight:bold">'
@@ -266,9 +266,9 @@ function drawGraphs(jsondata)
             if (d['total_backlog'])
               tiptext += '</td></tr><tr><td>{{_('total backlog')|capfirst}}</td><td style="text-align:right">'
                 + grid.formatNumber(d['total_backlog']);
-            
+
             tiptext += '</td></tr></table>';
-            
+
             if (d['reasons']) {
               tiptext += '<div class="panel-heading" style="text-align:center; font-weight:bold">'
                 + '{{_('constraints')|capfirst}}</div><table style="white-space:nowrap">';
@@ -276,12 +276,12 @@ function drawGraphs(jsondata)
                 tiptext += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>';
               tiptext += '</table>';
             }
-          }          
-          
+          }
+
 	        graph.showTooltip(tiptext);
 	        })
 	      .on("mouseleave", graph.hideTooltip)
-	      .on("mousemove", graph.moveTooltip);        
+	      .on("mousemove", graph.moveTooltip);
       });
 
     // Create D3 line
@@ -380,10 +380,10 @@ function drawGraphs(jsondata)
 
     for (var i in cross_idx)
     {
-      if (field_by_id[cross_idx[i]] == 'startoh' 
-            || field_by_id[cross_idx[i]] == 'safetystock' 
-            || field_by_id[cross_idx[i]] == 'consumed' 
-            || field_by_id[cross_idx[i]] == 'produced' 
+      if (field_by_id[cross_idx[i]] == 'startoh'
+            || field_by_id[cross_idx[i]] == 'safetystock'
+            || field_by_id[cross_idx[i]] == 'consumed'
+            || field_by_id[cross_idx[i]] == 'produced'
             || field_by_id[cross_idx[i]] == 'endoh'
             || field_by_id[cross_idx[i]] == 'total_backlog') {
               legend.append("rect")
@@ -409,7 +409,7 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata)
 {
   var last_currentdate = "{{request.current_date}}";
-  
+
   // dict that gives from an id the name of the cross
   // TODO optimization: build this dictionary once, rather than for each cell
   var field_by_id = {};
@@ -486,7 +486,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?noautofilter" +  
+              "?noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -501,7 +501,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?status__in=confirmed,approved,completed&amp;noautofilter" +  
+              "?status__in=confirmed,approved,completed&amp;noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -516,7 +516,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?status=proposed&amp;noautofilter" +  
+              "?status=proposed&amp;noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -576,7 +576,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?noautofilter" + 
+              "?noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
               "&amp;orders=True" +"'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -591,7 +591,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?noautofilter" + 
+              "?noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
               "&amp;orders=False" +"'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -816,11 +816,11 @@ function crosses (cellvalue, options, rowdata)
           result += '<br>';
         else if (cellvalue[id_by_field['proposed_ordering']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['proposed_ordering']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/?noautofilter" +
-              "&amp;item=" + admin_escape(rowdata['item']) + 
+              "&amp;item=" + admin_escape(rowdata['item']) +
               "&amp;location=" + admin_escape(rowdata['location']) +
               "&amp;startdate__lt=" + options['colModel']['enddate'] +
               "&amp;startdate__gte=" + options['colModel']['startdate'] +
-              "&amp;status=proposed" + 
+              "&amp;status=proposed" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -895,12 +895,12 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['open_orders']] != 0.0)
-        result += grid.formatNumber(cellvalue[id_by_field['open_orders']]) + "<a href='{{request.prefix}}/data/input/demand/" +           
-            "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
-            "&amp;location=" + admin_escape(rowdata['location']) + 
-            "&amp;due__gte=" + 
-            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) + 
-            "&amp;due__lt=" +  options['colModel']['enddate'] + 
+        result += grid.formatNumber(cellvalue[id_by_field['open_orders']]) + "<a href='{{request.prefix}}/data/input/demand/" +
+            "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
+            "&amp;due__gte=" +
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) +
+            "&amp;due__lt=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -911,12 +911,12 @@ function crosses (cellvalue, options, rowdata)
           result += '<br>';
         else if (cellvalue[id_by_field['net_forecast']] != 0.0)
           result += grid.formatNumber(cellvalue[id_by_field['net_forecast']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
-          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
-            "&amp;location=" + admin_escape(rowdata['location']) + 
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;orders=false" +
-            "&amp;demand__due__gte=" + 
-            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) + 
-            "&amp;demand__due__lt=" +  options['colModel']['enddate'] + 
+            "&amp;demand__due__gte=" +
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) +
+            "&amp;demand__due__lt=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -927,11 +927,11 @@ function crosses (cellvalue, options, rowdata)
           result += '<br>';
         else if (cellvalue[id_by_field['total_demand']] != 0.0)
           result += grid.formatNumber(cellvalue[id_by_field['total_demand']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
-          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
-            "&amp;location=" + admin_escape(rowdata['location']) + 
-            "&amp;demand__due__gte=" + 
-            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) + 
-            "&amp;demand__due__lt=" +  options['colModel']['enddate'] + 
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
+            "&amp;demand__due__gte=" +
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) +
+            "&amp;demand__due__lt=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -942,12 +942,12 @@ function crosses (cellvalue, options, rowdata)
           result += '<br>';
         else if (cellvalue[id_by_field['order_backlog']] != 0.0)
           result += grid.formatNumber(cellvalue[id_by_field['order_backlog']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
-          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
-            "&amp;location=" + admin_escape(rowdata['location']) + 
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;orders=True" +
             "&amp;duedate__lt=" +
-            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['startdate']) + 
-            "&amp;enddate__gte=" +  options['colModel']['startdate'] + 
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['enddate']) +
+            "&amp;enddate__gte=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -958,12 +958,12 @@ function crosses (cellvalue, options, rowdata)
           result += '<br>';
         else if (cellvalue[id_by_field['forecast_backlog']] != 0.0)
           result += grid.formatNumber(cellvalue[id_by_field['forecast_backlog']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
-          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
-            "&amp;location=" + admin_escape(rowdata['location']) + 
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;orders=False" +
             "&amp;duedate__lt=" +
-            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['startdate']) + 
-            "&amp;enddate__gte=" +  options['colModel']['startdate'] + 
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['enddate']) +
+            "&amp;enddate__gte=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -974,11 +974,11 @@ function crosses (cellvalue, options, rowdata)
           result += '<br>';
         else if (cellvalue[id_by_field['total_backlog']] != 0.0)
           result += grid.formatNumber(cellvalue[id_by_field['total_backlog']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
-          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) + 
-            "&amp;location=" + admin_escape(rowdata['location']) +           
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;duedate__lt=" +
-            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['startdate']) + 
-            "&amp;enddate__gte=" +  options['colModel']['startdate'] + 
+            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['enddate']) +
+            "&amp;enddate__gte=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else

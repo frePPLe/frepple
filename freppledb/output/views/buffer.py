@@ -516,7 +516,7 @@ class OverviewReport(GridPivot):
             {
                 "title": _("total backlog"),
                 "expand": ["forecast_backlog", "order_backlog"],
-                "initially_hidden": True,
+                "initially_hidden": False,
             },
         ),
         ("color", {"title": _("inventory status"), "initially_hidden": True}),
@@ -592,6 +592,114 @@ class OverviewReport(GridPivot):
             with_col_aliases=False
         )
 
+        # Execute a query to get the backlog at the start of the horizon
+        startbacklogdict = {}
+
+        # code assumes no max lateness is set to calculate the backlog
+
+        backlog_fcst = """
+            union all
+          select opm.item_id, opm.location_id, 0::numeric qty_orders, coalesce(sum((forecastplan.value->>'forecastnet')::numeric),0) qty_forecast
+          from forecastplan
+          inner join item on item.name = forecastplan.item_id
+          left outer join common_parameter cp on cp.name = 'forecast.DueWithinBucket'
+          inner join (%s) opm on forecastplan.item_id = opm.item_id
+          inner join operationplan on operationplan.reference = opm.operationplan_id
+          and forecastplan.location_id = opm.location_id
+          and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opm.opplan_batch)
+          where forecastplan.customer_id = (select name from customer where lvl=0)
+          and case when coalesce(cp.value, 'start') = 'start' then forecastplan.startdate
+                   when coalesce(cp.value, 'start') = 'end' then forecastplan.enddate - interval '1 second'
+                   when coalesce(cp.value, 'start') = 'middle' then forecastplan.startdate + age(forecastplan.enddate, forecastplan.startdate)/2 end < %%s
+          group by opm.item_id, opm.location_id
+        """ % (
+            basesql,
+        )
+
+        deliveries_no_fcst = """
+            select opm.item_id, opm.location_id,
+                sum(case when operationplan.demand_id is not null then opm.quantity end) qty_orders,
+                0 qty_forecast
+            from (%s) opm2
+            inner join operationplanmaterial opm on opm.item_id = opm2.item_id and opm.location_id = opm2.location_id
+            inner join item on item.name = opm.item_id
+            inner join operationplan on operationplan.reference = opm.operationplan_id
+                and operationplan.demand_id is not null
+                and operationplan.enddate < %%s
+                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opm2.opplan_batch)
+            group by opm.item_id, opm.location_id
+        """ % (
+            basesql,
+        )
+
+        deliveries_fcst = """
+            select opm.item_id, opm.location_id,
+            sum(case when operationplan.demand_id is not null then opm.quantity end) qty_orders,
+            sum(case when operationplan.forecast is not null then opm.quantity end) qty_forecast
+          from (%s) opm2
+          inner join operationplanmaterial opm on opm.item_id = opm2.item_id and opm.location_id = opm2.location_id
+          and opm2.batch is not distinct from opm.batch
+          inner join item on item.name = opm.item_id
+          inner join operationplan on operationplan.reference = opm.operationplan_id
+          and (operationplan.demand_id is not null or operationplan.forecast is not null)
+          and operationplan.enddate < %%s
+          and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opm2.opplan_batch)
+          group by opm.item_id, opm.location_id
+        """ % (
+            basesql,
+        )
+
+        query = """
+          select item_id, location_id, sum(qty_orders), sum(qty_forecast) from
+          (
+          select opm.item_id, opm.location_id, sum(demand.quantity) qty_orders, 0::numeric qty_forecast
+          from (%s) opm
+          inner join demand on demand.item_id = opm.item_id
+          and demand.location_id = opm.location_id
+          and demand.status in ('open','quote') and due < %%s
+          group by opm.item_id, opm.location_id
+          %s
+          union all
+          -- deliveries
+          %s
+          ) t
+          group by item_id, location_id
+        """ % (
+            basesql,
+            backlog_fcst if "freppledb.forecast" in settings.INSTALLED_APPS else "",
+            deliveries_fcst
+            if "freppledb.forecast" in settings.INSTALLED_APPS
+            else deliveries_no_fcst,
+        )
+
+        with transaction.atomic(using=request.database):
+            with connections[request.database].chunked_cursor() as cursor_chunked:
+                current_date = datetime.strptime(
+                    request.current_date, "%Y-%m-%d %H:%M:%S"
+                )
+                cursor_chunked.execute(
+                    query,
+                    baseparams
+                    + (max(request.report_startdate, current_date),)
+                    + baseparams
+                    + (max(request.report_startdate, current_date),)
+                    + (
+                        baseparams
+                        if "freppledb.forecast" in settings.INSTALLED_APPS
+                        else ()
+                    )
+                    + (
+                        (max(request.report_startdate, current_date),)
+                        if "freppledb.forecast" in settings.INSTALLED_APPS
+                        else ()
+                    ),
+                )
+                for row in cursor_chunked:
+                    if row[0]:
+                        startbacklogdict[(row[0], row[1])] = (
+                            max(float(row[2]), 0),
+                            max(float(row[3]), 0),
+                        )
         # Execute the actual query
         reasons_forecast = """
                 union all
@@ -606,6 +714,19 @@ class OverviewReport(GridPivot):
                   or out_constraint.enddate > d.enddate
                   )
                 """
+        net_forecast = """
+        (select sum((forecastplan.value->>'forecastnet')::numeric)
+            from forecastplan
+            left outer join common_parameter cp on cp.name = 'forecast.DueWithinBucket'
+            where forecastplan.item_id = item.name and forecastplan.location_id = location.name
+            and forecastplan.customer_id = (select name from customer where lvl=0)
+            and case when coalesce(cp.value, 'start') = 'start' then forecastplan.startdate
+                   when coalesce(cp.value, 'start') = 'end' then forecastplan.enddate - interval '1 second'
+                   when coalesce(cp.value, 'start') = 'middle' then forecastplan.startdate
+                   + age(forecastplan.enddate, forecastplan.startdate)/2 end between d.startdate
+                   and d.enddate - interval '1 ms')
+        """
+
         query = """
            select
            opplanmat.buffer,
@@ -636,6 +757,10 @@ class OverviewReport(GridPivot):
            from operationplan
            where item_id = item.name
            and coalesce(location_id, destination_id) = location.name) is_ip_buffer,
+           (select sum(quantity) from demand where status in ('open','quote')
+           and item_id = item.name and location_id = location.name
+           and due >= d.startdate and due < d.enddate) open_orders,
+           %s net_forecast,
            %s
            (select json_agg(json_build_array(t.name, t.owner))
            from (
@@ -797,10 +922,7 @@ class OverviewReport(GridPivot):
                'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedPO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedPO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'open_orders', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is not null and ((operationplan.due >= greatest(d.startdate,%%s) or (%%s >= d.startdate and %%s < d.enddate)) and operationplan.due < d.enddate) then -opm.quantity else 0 end),
                'net_forecast', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is null and ((operationplan.due >= greatest(d.startdate,%%s) or (%%s >= d.startdate and %%s < d.enddate)) and operationplan.due < d.enddate) then -opm.quantity else 0 end),
-               'order_backlog', case when %%s >= d.startdate and %%s < d.enddate then sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is not null and operationplan.due < %%s then -opm.quantity else 0 end) else -1 end,
-               'forecast_backlog', case when %%s >= d.startdate and %%s < d.enddate then sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is null and operationplan.due < %%s then -opm.quantity else 0 end) else -1 end,
                'max_delay', max(extract(epoch from case when opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate then operationplan.delay else interval '0 second' end) / 86400)
                )
              from operationplanmaterial opm
@@ -913,6 +1035,7 @@ class OverviewReport(GridPivot):
            d.history
            order by %s, d.startdate
         """ % (
+            net_forecast if "freppledb.forecast" in settings.INSTALLED_APPS else "0",
             reportclass.attr_sql,
             reasons_forecast if "freppledb.forecast" in settings.INSTALLED_APPS else "",
             basesql,
@@ -932,12 +1055,9 @@ class OverviewReport(GridPivot):
                         request.report_startdate,
                         request.report_startdate,  # safetystock
                     )
-                    + (request.report_startdate,) * 27
-                    + (request.current_date,) * 2
+                    + (request.report_startdate,) * 26
                     + (request.report_startdate,) * 1  # net forecast
                     + (request.current_date,) * 2  # net forecast
-                    + (request.current_date,) * 3  # order_backlog
-                    + (request.current_date,) * 3  # forecast_backlog
                     + (request.report_startdate,) * 1
                     + (request.current_date,) * 2  # ongoing
                     + (request.current_date,) * 6  # period of cover
@@ -958,29 +1078,27 @@ class OverviewReport(GridPivot):
 
                 prev_buffer = None
                 for row in cursor_chunked:
-                    if prev_buffer != row[0]:
-                        order_backlog = None
-                        forecast_backlog = None
-                        prev_buffer = row[0]
                     numfields = len(row)
                     history = row[numfields - 4]
-                    if (
-                        not history
-                        and datetime.strptime(request.current_date, "%Y-%m-%d %H:%M:%S")
-                        >= row[numfields - 6]
-                        and datetime.strptime(request.current_date, "%Y-%m-%d %H:%M:%S")
-                        < row[numfields - 5]
-                    ):
-                        order_backlog = (
-                            (row[numfields - 2]["order_backlog"] or 0)
-                            if order_backlog is None
-                            else order_backlog
+                    if prev_buffer != row[0] and not history:
+
+                        order_backlog, forecast_backlog = startbacklogdict.get(
+                            (row[1], row[2]), (0, 0)
                         )
-                        forecast_backlog = (
-                            (row[numfields - 2]["forecast_backlog"] or 0)
-                            if forecast_backlog is None
-                            else forecast_backlog
+                        prev_buffer = row[0]
+                    if history:
+                        order_backlog = None
+                    else:
+                        order_backlog += (float(row[24] or 0)) - (
+                            row[numfields - 2]["consumedSO"] or 0
                         )
+                    if history:
+                        forecast_backlog = None
+                    else:
+                        forecast_backlog += (
+                            row[numfields - 2]["net_forecast"] or 0
+                        ) - (row[numfields - 2]["consumedFcst"] or 0)
+
                     res = {
                         "buffer": row[0],
                         "item": row[1],
@@ -1006,6 +1124,8 @@ class OverviewReport(GridPivot):
                         "location__lastmodified": row[21],
                         "batch": row[22],
                         "is_ip_buffer": row[23],
+                        "open_orders": None if history else row[24] or 0,
+                        "net_forecast": None if history else row[25] or 0,
                         "color": None
                         if history
                         else (
@@ -1144,38 +1264,16 @@ class OverviewReport(GridPivot):
                         "in_transit_do_proposed": None
                         if history
                         else row[numfields - 2]["in_transit_do_proposed"] or 0,
-                        "open_orders": None
-                        if history
-                        else row[numfields - 2]["open_orders"] or 0,
-                        "net_forecast": None
-                        if history
-                        else row[numfields - 2]["net_forecast"] or 0,
                         "total_demand": None
                         if history
-                        else (row[numfields - 2]["net_forecast"] or 0)
-                        + (row[numfields - 2]["open_orders"] or 0),
-                        "order_backlog": 0
-                        if order_backlog and order_backlog < 0
-                        else order_backlog,
-                        "forecast_backlog": 0
-                        if forecast_backlog and forecast_backlog < 0
-                        else forecast_backlog,
-                        "total_backlog": (
-                            (
-                                0
-                                if order_backlog and order_backlog < 0
-                                else order_backlog
-                            )
-                            or 0
-                        )
-                        + (
-                            (
-                                0
-                                if forecast_backlog and forecast_backlog < 0
-                                else forecast_backlog
-                            )
-                            or 0
-                        ),
+                        else (row[24] or 0) + (row[25] or 0),
+                        "order_backlog": max(0, order_backlog)
+                        if order_backlog
+                        else None,
+                        "forecast_backlog": forecast_backlog,
+                        "total_backlog": None
+                        if history
+                        else order_backlog + forecast_backlog,
                         "endoh": None
                         if history
                         else (
@@ -1190,46 +1288,8 @@ class OverviewReport(GridPivot):
                         "reasons": None if history else json.dumps(row[numfields - 9]),
                     }
 
-                    if order_backlog is not None:
-                        order_backlog += (
-                            (row[numfields - 2]["open_orders"] or 0)
-                            - (
-                                order_backlog
-                                if datetime.strptime(
-                                    request.current_date, "%Y-%m-%d %H:%M:%S"
-                                )
-                                >= row[numfields - 6]
-                                and datetime.strptime(
-                                    request.current_date, "%Y-%m-%d %H:%M:%S"
-                                )
-                                < row[numfields - 5]
-                                else 0
-                            )
-                            - (row[numfields - 2]["consumedSO"] or 0)
-                        )
-                    if forecast_backlog is not None:
-                        forecast_backlog += (
-                            (row[numfields - 2]["net_forecast"] or 0)
-                            - (
-                                forecast_backlog
-                                if datetime.strptime(
-                                    request.current_date, "%Y-%m-%d %H:%M:%S"
-                                )
-                                >= row[numfields - 6]
-                                and datetime.strptime(
-                                    request.current_date, "%Y-%m-%d %H:%M:%S"
-                                )
-                                < row[numfields - 5]
-                                else 0
-                            )
-                            - (
-                                (row[numfields - 2]["consumed"] or 0)
-                                - (row[numfields - 2]["consumedSO"] or 0)
-                            )
-                        )
-
                     # Add attribute fields
-                    idx = 24
+                    idx = 26
                     for f in itemattributefields:
                         res[f.field_name] = row[idx]
                         idx += 1

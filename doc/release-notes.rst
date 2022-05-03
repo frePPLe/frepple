@@ -21,6 +21,14 @@ These changes will be made gradual over a couple of releases. For instance, from
 6.22.0 (Upcoming release)
 =========================
 
+.. rubric:: User interface
+
+- | When drilling into an item, the "Plan" tab has been removed as the same information
+    can be found in the "Inventory" tab.
+    
+  | Inventory report: Backlog is calculated at the end of the bucket. It used to be 
+    calculated at the start of the bucket
+
 .. rubric:: Production planning
 
 - | The `itemsupplier <model-reference/item-suppliers.html>`_ table gets an extra

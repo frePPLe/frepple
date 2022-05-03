@@ -596,17 +596,15 @@ class OverviewReport(GridPivot):
         startbacklogdict = {}
 
         # code assumes no max lateness is set to calculate the backlog
+        # forecast knows nothing about batch so all is counted as backlog
 
         backlog_fcst = """
             union all
           select opm.item_id, opm.location_id, 0::numeric qty_orders, coalesce(sum((forecastplan.value->>'forecastnet')::numeric),0) qty_forecast
           from forecastplan
-          inner join item on item.name = forecastplan.item_id
           left outer join common_parameter cp on cp.name = 'forecast.DueWithinBucket'
           inner join (%s) opm on forecastplan.item_id = opm.item_id
-          inner join operationplan on operationplan.reference = opm.operationplan_id
           and forecastplan.location_id = opm.location_id
-          and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opm.opplan_batch)
           where forecastplan.customer_id = (select name from customer where lvl=0)
           and case when coalesce(cp.value, 'start') = 'start' then forecastplan.startdate
                    when coalesce(cp.value, 'start') = 'end' then forecastplan.enddate - interval '1 second'
@@ -638,7 +636,6 @@ class OverviewReport(GridPivot):
             sum(case when operationplan.forecast is not null then opm.quantity end) qty_forecast
           from (%s) opm2
           inner join operationplanmaterial opm on opm.item_id = opm2.item_id and opm.location_id = opm2.location_id
-          and opm2.batch is not distinct from opm.batch
           inner join item on item.name = opm.item_id
           inner join operationplan on operationplan.reference = opm.operationplan_id
           and (operationplan.demand_id is not null or operationplan.forecast is not null)

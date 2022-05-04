@@ -298,7 +298,12 @@ class OverviewReport(GridPivot):
             "consumed_proposed",
             {
                 "title": _("total consumed proposed"),
-                "expand": ["consumedMO_proposed", "consumedDO_proposed", "consumedSO"],
+                "expand": [
+                    "consumedMO_proposed",
+                    "consumedDO_proposed",
+                    "consumedSO",
+                    "consumedFcst",
+                ],
                 "initially_hidden": True,
             },
         ),
@@ -919,7 +924,6 @@ class OverviewReport(GridPivot):
                'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedPO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'producedPO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'net_forecast', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is null and ((operationplan.due >= greatest(d.startdate,%%s) or (%%s >= d.startdate and %%s < d.enddate)) and operationplan.due < d.enddate) then -opm.quantity else 0 end),
                'max_delay', max(extract(epoch from case when opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate then operationplan.delay else interval '0 second' end) / 86400)
                )
              from operationplanmaterial opm
@@ -1092,9 +1096,9 @@ class OverviewReport(GridPivot):
                     if history:
                         forecast_backlog = None
                     else:
-                        forecast_backlog += (
-                            row[numfields - 2]["net_forecast"] or 0
-                        ) - (row[numfields - 2]["consumedFcst"] or 0)
+                        forecast_backlog += (float(row[25] or 0)) - (
+                            row[numfields - 2]["consumedFcst"] or 0
+                        )
 
                     res = {
                         "buffer": row[0],

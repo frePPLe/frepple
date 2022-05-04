@@ -1056,7 +1056,7 @@ class OverviewReport(GridPivot):
                         request.report_startdate,
                         request.report_startdate,  # safetystock
                     )
-                    + (request.report_startdate,) * 26
+                    + (request.report_startdate,) * 23
                     + (request.report_startdate,) * 1  # net forecast
                     + (request.current_date,) * 2  # net forecast
                     + (request.report_startdate,) * 1

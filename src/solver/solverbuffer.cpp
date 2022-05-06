@@ -108,6 +108,11 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   Duration autofence = getAutoFence();
   Date currentDate;
   const TimeLine<FlowPlan>::Event* prev = nullptr;
+  double initial_shortage = 0.0;
+  if (data->coordination_run) {
+    initial_shortage = b->getOnHand(data->state->q_date, false);
+    if (initial_shortage > 0.0) initial_shortage = 0.0;
+  }
   double shortage(0.0);
   Date extraSupplyDate(Date::infiniteFuture);
   Date extraInventoryDate(Date::infiniteFuture);
@@ -540,7 +545,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       (b->getOnHand(Date::infiniteFuture) < -ROUNDING_ERROR ||
        isFenceConstrained() || isLeadTimeConstrained())) {
     // Use the constrained planning result
-    data->state->a_qty = requested_qty - shortage;
+    data->state->a_qty = requested_qty - shortage - initial_shortage;
     if (data->state->a_qty < ROUNDING_ERROR) {
       data->getCommandManager()->rollback(topcommand);
       data->state->a_qty = 0.0;

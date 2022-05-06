@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Material constraint test model</name>
+	<current>2022-01-01T00:00:00</current>
+	<buffers>
+		<buffer name="item 1 @ factory">
+			<item name="item 1"/>
+			<location name="factory"/>
+		</buffer>
+	</buffers>
+	<suppliers>
+		<supplier name="Supplier of component A">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="item 1"/>
+					<location name="factory"/>
+					<leadtime>P7D</leadtime>
+					<priority>1</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<operations>
+		<operation name="consume item 1" xsi:type="operation_fixed_time" duration="P5D">
+			<flows><flow xsi:type="flow_start">
+				<buffer name="item 1 @ factory"/>
+				<quantity>-1</quantity>
+			</flow>
+			</flows>
+		</operation>
+	</operations>
+	<operationplans>
+		<operationplan start="2022-03-03T00:00:00" reference="MO #1" quantity="10" status="confirmed">
+			<operation name="consume item 1"/>
+		</operationplan>
+		<operationplan start="2022-02-02T00:00:00" reference="MO #2" quantity="10" status="confirmed">
+			<operation name="consume item 1"/>
+		</operationplan>
+		<operationplan ordertype="PO" end="2022-04-01T00:00:00" reference="PO #1" quantity="100" status="confirmed">
+			<item name="item 1"/>
+			<location name="factory"/>
+			<supplier name="Supplier of component A"/>
+		</operationplan>
+		<operationplan ordertype="PO" end="2022-04-10T00:00:00" reference="PO #2" quantity="100" status="confirmed">
+			<item name="item 1"/>
+			<location name="factory"/>
+			<supplier name="Supplier of component A"/>
+		</operationplan>
+	</operationplans>
+	<demands>
+		<demand name="order for item 1">
+			<quantity>150</quantity>
+			<due>2022-01-30T00:00:00</due>
+			<item name="item 1"/>
+			<location name="factory"/>
+			<maxlateness>P999D</maxlateness>
+		</demand>
+	</demands>
+
+<?python
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, autofence="P999D").solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, autofence="P999D").solve()
+frepple.saveplan("output.2.xml")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, autofence="P999D").solve()
+frepple.saveplan("output.3.xml")
+?>
+</plan>

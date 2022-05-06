@@ -182,6 +182,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
         data->state->curDemand = const_cast<Demand*>(l);
         data->state->curOwnerOpplan = nullptr;
         data->state->curBatch = l->getBatch();
+        data->coordination_run = false;
         data->recent_buffers.clear();
         deliveryoper->solve(*this, v);
         Date next_date = data->state->a_date;
@@ -378,6 +379,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
                 data->state->curDemand = const_cast<Demand*>(l);
                 data->state->curBatch = l->getBatch();
                 data->state->curBuffer = nullptr;
+                data->coordination_run = true;
                 data->recent_buffers.clear();
                 deliveryoper->solve(*this, v);
                 if (data->state->a_qty < ROUNDING_ERROR) {
@@ -468,6 +470,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
           data->state->curDemand = const_cast<Demand*>(l);
           data->state->curBatch = l->getBatch();
           data->state->curBuffer = nullptr;
+          data->coordination_run = true;
           data->recent_buffers.clear();
           deliveryoper->solve(*this, v);
           if (data->state->a_qty < ROUNDING_ERROR) {

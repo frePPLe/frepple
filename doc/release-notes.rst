@@ -45,6 +45,10 @@ These changes will be made gradual over a couple of releases. For instance, from
   | The FIFO assocation between consumers and producers makes sense for regular buffers,
     but only gives confusing results in infinite buffers.
 
+- | Bug fix: The planning algorithm created a plan with unnecessary lateness in
+    situations where a buffer has both an unresolvable material shortage and
+    confirmed supply exists further in the horizon.
+  | Not a normal and common situation, but it can happpen...
 .. rubric:: Odoo integration
 
 - | V14: Connector is improved to handle deep odoo location hierarchies.

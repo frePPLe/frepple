@@ -216,6 +216,9 @@ void SolverCreate::SolverData::commit() {
       // Step 1: Create a delivery operationplan for all demands
       if (solver->getCreateDeliveries()) {
         for (auto i = demands->begin(); i != demands->end(); ++i) {
+          if (solver->userexit_demand)
+            solver->userexit_demand.call(*i, PythonData(constrainedPlanning));
+
           // Determine the quantity to be planned and the date for the planning
           // loop
           double plan_qty = (*i)->getQuantity() - (*i)->getPlannedQuantity();

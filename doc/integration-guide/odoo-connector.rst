@@ -256,18 +256,15 @@ The section below describes the installation and configuration of these.
     * | Make sure the setting MIDDLEWARE doesn't include the
         "django.middleware.clickjacking.XFrameOptionsMiddleware" class.
 
-    * | Add a line "SESSION_COOKIE_SAMESITE = None"
+    * | If frePPLe and Odoo are installed on 2 different domains (example: https://myfrepple.frepple.com
+        and https://myodoo.odoo.com), then following lines need to be added:
 
-    * | Update the security policy to allow embedding frepple as a iframe
-        on the odoo user interface:
-          CONTENT_SECURITY_POLICY = "frame-ancestors 'self' domain-of-your-odoo-server;"
+        .. code-block:: Python
 
-    * | if frePPLe and Odoo are installed on 2 different domains (example: https://myfrepple.frepple.com
-    *   and https://myodoo.odoo.com), then following lines need to be added:
-    *     X_FRAME_OPTIONS = None
-          SESSION_COOKIE_SAMESITE = "none"            # NOTE: "none", not None
-          CSRF_COOKIE_SAMESITE = "none"               # NOTE: "none", not None
-
+           CONTENT_SECURITY_POLICY = "frame-ancestors 'self' domain-of-your-odoo-server;"
+           X_FRAME_OPTIONS = None
+           SESSION_COOKIE_SAMESITE = "none"            # NOTE: "none", not None
+           CSRF_COOKIE_SAMESITE = "none"               # NOTE: "none", not None
 
   * **Configure parameters**
 

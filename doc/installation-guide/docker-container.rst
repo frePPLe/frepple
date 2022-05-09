@@ -171,7 +171,7 @@ image. Here is a an example dockerfile that adds a new frePPLe app (coded as a P
      python3 my-python-package/setup.py install
 
    # Update the djangosettings.py configuration file with extra settings
-   echo "MYAPPSETTING=True" >> /etc/frepple/djangosettings.py
+   RUN echo "MYAPPSETTING=True" >> /etc/frepple/djangosettings.py
 
 ******************************************
 Running frepplectl commands on a container

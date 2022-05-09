@@ -974,6 +974,8 @@ class SolverCreate : public Solver {
     /* Flags whether or not constraints are being tracked. */
     bool logConstraints;
 
+    bool coordination_run;
+
     /* Flags whether a resource in the supply path did hit its max_earlylimit.
      * This is then used to replan at a different date. */
     Duration hitMaxEarly;

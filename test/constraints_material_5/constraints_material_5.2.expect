@@ -1,0 +1,11 @@
+BUFFER	item 1 @ factory	2022-01-30T00:00:00	-150	-150
+BUFFER	item 1 @ factory	2022-02-02T00:00:00	-10	-160
+BUFFER	item 1 @ factory	2022-03-03T00:00:00	-10	-170
+BUFFER	item 1 @ factory	2022-04-01T00:00:00	100	-70
+BUFFER	item 1 @ factory	2022-04-10T00:00:00	100	30
+DEMAND	order for item 1	2022-01-30T00:00:00	150
+OPERATION	Purchase item 1 @ factory from Supplier of component A	2022-03-25T00:00:00	2022-04-01T00:00:00	100	confirmed
+OPERATION	Purchase item 1 @ factory from Supplier of component A	2022-04-03T00:00:00	2022-04-10T00:00:00	100	confirmed
+OPERATION	consume item 1	2022-02-02T00:00:00	2022-02-07T00:00:00	10	confirmed
+OPERATION	consume item 1	2022-03-03T00:00:00	2022-03-08T00:00:00	10	confirmed
+PROBLEM	material shortage	Buffer 'item 1 @ factory' has material shortage of 170	2022-01-30T00:00:00 / 2022-04-10T00:00:00

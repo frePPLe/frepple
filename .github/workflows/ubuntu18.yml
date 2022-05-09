@@ -2,6 +2,8 @@ name: Build Community
 
 on:
   push:
+    paths-ignore:
+      - "doc/**"
   pull_request:
 
 env:

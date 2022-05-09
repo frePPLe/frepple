@@ -365,6 +365,13 @@ class AutoLoginAsAdminUser:
                     if db.name == DEFAULT_DB_ALIAS:
                         if request.user.is_active:
                             db.is_superuser = request.user.is_superuser
+                            db.horizonlength = request.user.horizonlength
+                            db.horizonbefore = request.user.horizonbefore
+                            db.horizontype = request.user.horizontype
+                            db.horizonbuckets = request.user.horizonbuckets
+                            db.horizonstart = request.user.horizonstart
+                            db.horizonend = request.user.horizonend
+                            db.horizonunit = request.user.horizonunit
                             request.user.scenarios.append(db)
                     else:
                         try:
@@ -373,6 +380,13 @@ class AutoLoginAsAdminUser:
                             )
                             if user2.is_active:
                                 db.is_superuser = user2.is_superuser
+                                db.horizonlength = user2.horizonlength
+                                db.horizonbefore = user2.horizonbefore
+                                db.horizontype = user2.horizontype
+                                db.horizonbuckets = user2.horizonbuckets
+                                db.horizonstart = user2.horizonstart
+                                db.horizonend = user2.horizonend
+                                db.horizonunit = user2.horizonunit
                                 request.user.scenarios.append(db)
                         except Exception:
                             # Silently ignore errors. Eg user doesn't exist in scenario

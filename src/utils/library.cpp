@@ -66,7 +66,7 @@ int Environment::processorcores = -1;
 ostream logger(cout.rdbuf());
 
 // Output file stream
-ofstream Environment::logfile;
+StreambufWrapper Environment::logfile;
 
 // Name of the log file
 string Environment::logfilename;
@@ -94,11 +94,6 @@ void LibraryUtils::initialize() {
 
   // Initialize the Python interpreter
   PythonInterpreter::initialize();
-
-  // Register new methods in Python
-  PythonInterpreter::registerGlobalMethod(
-      "loadmodule", loadModule, METH_VARARGS,
-      "Dynamically load a module in memory.");
 }
 
 string Environment::searchFile(const string filename) {
@@ -172,6 +167,25 @@ int Environment::getProcessorCores() {
   return processorcores;
 }
 
+void StreambufWrapper::setLogLimit(unsigned long long i) {
+  if (!max_size) {
+    start_size = Environment::getLogFileSize();
+    cur_size = 0;
+  }
+  max_size = i;
+}
+
+int StreambufWrapper::sync() {
+  if (max_size && ++cur_size > max_size) {
+    cur_size = 0;
+    auto r = filebuf::sync();
+    Environment::truncateLogFile(start_size);
+    logger << "\nTruncated some output here...\n" << endl;
+    return r;
+  } else
+    return filebuf::sync();
+}
+
 void Environment::setLogFile(const string& x) {
   // Bye bye message
   if (!logfilename.empty()) logger << "Stop logging at " << Date::now() << endl;
@@ -187,15 +201,17 @@ void Environment::setLogFile(const string& x) {
   }
 
   // Open the file: either as a new file, either appending to existing file
-  if (x[0] != '+')
-    logfile.open(x.c_str(), ios::out);
-  else
-    logfile.open(x.c_str() + 1, ios::app);
-  if (!logfile.good()) {
+  if (x[0] == '+')
+    throw RuntimeException("Appending to a log file is no longer supported");
+  auto status = logfile.open(x.c_str(), ios::out);
+  if (!status) {
     // Redirect to the previous logfile (or cout if that's not possible)
     if (logfile.is_open()) logfile.close();
-    logfile.open(logfilename.c_str(), ios::app);
-    logger.rdbuf(logfile.is_open() ? logfile.rdbuf() : cout.rdbuf());
+    status = logfile.open(logfilename.c_str(), ios::app);
+    if (status)
+      logger.rdbuf(&logfile);
+    else
+      logger.rdbuf(cout.rdbuf());
     // The log file could not be opened
     throw RuntimeException("Could not open log file '" + x + "'");
   }
@@ -204,11 +220,45 @@ void Environment::setLogFile(const string& x) {
   logfilename = x;
 
   // Redirect the log file.
-  logger.rdbuf(logfile.rdbuf());
+  logger.rdbuf(&logfile);
 
   // Print a nice header
   logger << "Start logging frePPLe " << PACKAGE_VERSION << " (" << __DATE__
          << ") at " << Date::now() << endl;
+}
+
+void Environment::truncateLogFile(unsigned long long sz) {
+  if (logfilename.empty()) return;
+
+  // Close an eventual existing log file.
+  if (logfile.is_open()) logfile.close();
+
+    // Resize the file
+    // Code inspired on Boost fileystem::resize_file.
+#ifdef WIN32
+  HANDLE handle = CreateFile(logfilename.c_str(), GENERIC_WRITE, 0, 0,
+                             OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+  LARGE_INTEGER lg;
+  lg.QuadPart = sz;
+  auto exitcode = handle != INVALID_HANDLE_VALUE &&
+                  SetFilePointerEx(handle, lg, 0, FILE_BEGIN) &&
+                  SetEndOfFile(handle) && CloseHandle(handle);
+#elif defined HAVE_TRUNCATE
+  auto exitcode = truncate(logfilename.c_str(), sz) == 0;
+#else
+#error "This platform doesn't have a file resizing api."
+#endif
+
+  // Reopen the file
+  logfile.open(logfilename.c_str(), ios::app);
+  // logger.rdbuf(&logfile);  // : cout.rdbuf());
+}
+
+unsigned long Environment::getLogFileSize() {
+  if (logfilename.empty()) return 0;
+  struct stat statbuf;
+  auto f = stat(logfilename.c_str(), &statbuf);
+  return f != -1 ? statbuf.st_size : 0;
 }
 
 void Environment::setProcessName() {
@@ -220,74 +270,6 @@ void Environment::setProcessName() {
     prctl(PR_SET_NAME, nm.c_str());
   }
 #endif
-}
-
-void Environment::loadModule(string lib) {
-  // Type definition of the initialization function
-  typedef const char* (*func)();
-
-  // Validate
-  if (lib.empty())
-    throw DataException("Error: No library name specified for loading");
-
-#ifdef WIN32
-  // Load the library - The windows way
-
-  // Change the error mode: we handle errors now, not the operating system
-  UINT em = SetErrorMode(SEM_FAILCRITICALERRORS);
-  HINSTANCE handle =
-      LoadLibraryEx(lib.c_str(), nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
-  if (!handle) handle = LoadLibraryEx(lib.c_str(), nullptr, 0);
-  if (!handle) {
-    // Get the error description
-    char error[256];
-    FormatMessage(FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-                  nullptr, GetLastError(), 0, error, 256, nullptr);
-    throw RuntimeException(error);
-  }
-  SetErrorMode(em);  // Restore the previous error mode
-
-  // Find the initialization routine
-  func inithandle =
-      reinterpret_cast<func>(GetProcAddress(HMODULE(handle), "initialize"));
-  if (!inithandle) {
-    // Get the error description
-    char error[256];
-    FormatMessage(FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM,
-                  nullptr, GetLastError(), 0, error, 256, nullptr);
-    throw RuntimeException(error);
-  }
-
-#else
-  // Load the library - The UNIX way
-
-  // Search the frePPLe directories for the library
-  string fullpath = Environment::searchFile(lib);
-  if (fullpath.empty())
-    throw RuntimeException("Module '" + lib + "' not found");
-  dlerror();  // Clear the previous error
-  void* handle = dlopen(fullpath.c_str(), RTLD_NOW | RTLD_GLOBAL);
-  const char* err = dlerror();  // Pick up the error string
-  if (err) {
-    // Search the normal path for the library
-    dlerror();  // Clear the previous error
-    handle = dlopen(lib.c_str(), RTLD_NOW | RTLD_GLOBAL);
-    err = dlerror();  // Pick up the error string
-    if (err) throw RuntimeException(err);
-  }
-
-  // Find the initialization routine
-  func inithandle = (func)(dlsym(handle, "initialize"));
-  err = dlerror();  // Pick up the error string
-  if (err) throw RuntimeException(err);
-#endif
-
-  // Call the initialization routine with the parameter list
-  string x = (inithandle)();
-  if (x.empty()) throw DataException("Invalid module");
-
-  // Insert the new module in the registry
-  moduleRegistry.insert(x);
 }
 
 void MetaClass::addClass(const string& a, const string& b, bool def,

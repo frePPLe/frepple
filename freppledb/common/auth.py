@@ -61,6 +61,13 @@ class MultiDBBackend(ModelBackend):
             if db.name == DEFAULT_DB_ALIAS:
                 if user.is_active:
                     db.is_superuser = user.is_superuser
+                    db.horizonlength = user.horizonlength
+                    db.horizonbefore = user.horizonbefore
+                    db.horizontype = user.horizontype
+                    db.horizonbuckets = user.horizonbuckets
+                    db.horizonstart = user.horizonstart
+                    db.horizonend = user.horizonend
+                    db.horizonunit = user.horizonunit
                     user.scenarios.append(db)
             else:
                 try:

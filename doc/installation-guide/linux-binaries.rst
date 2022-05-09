@@ -255,7 +255,8 @@ Here are the steps to get a fully working environment.
      sudo a2enmod expires
      sudo a2enmod wsgi
      sudo a2enmod ssl
-     sudo a2ensite default-ssl
+     sudo a2ensite default-ssl  # Deploying your own certificate instead!
+     sudo a2enmod http2   # Optional allow http2 protocol
      sudo a2ensite z_frepple
      sudo service apache2 restart
 
@@ -326,7 +327,8 @@ inspiration for your own deployments.
   sudo a2enmod wsgi
   sudo a2enmod ssl
   sudo a2enmod xsendfile
-  sudo a2ensite default-ssl
+  sudo a2ensite default-ssl # Deploying your own certificate instead!
+  sudo a2enmod http2   # Optional allow http2 protocol
   sudo a2ensite z_frepple
   sudo service apache2 restart
 

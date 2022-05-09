@@ -427,7 +427,7 @@ class ExportOperationPlans(PlanTask):
         import frepple
 
         linetemplate = "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s"
-        for i in cls.attrs:
+        for unused in cls.attrs:
             linetemplate += "\v%s"
         linetemplate += "\n"
 
@@ -645,10 +645,18 @@ class ExportOperationPlans(PlanTask):
                         clean_value(j.owner.reference)
                         if j.owner and not j.owner.operation.hidden
                         else "\\N",
-                        clean_value(j.operation.buffer.item.name),
+                        clean_value(
+                            j.owner.demand.item.name
+                            if j.owner and j.owner.demand
+                            else j.demand.item.name
+                        ),
                         "\\N",
                         "\\N",
-                        clean_value(j.operation.buffer.location.name),
+                        clean_value(
+                            j.owner.demand.location.name
+                            if j.owner and j.owner.demand
+                            else j.demand.location.name
+                        ),
                         "\\N",
                         clean_value(j.demand.name)
                         if j.demand
@@ -1081,6 +1089,7 @@ class ComputePeriodOfCover(PlanTask):
                  ),
                  '999 days'::interval
                  ))/86400)
+                 %s
         """
             % (
                 "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
@@ -1090,6 +1099,9 @@ class ComputePeriodOfCover(PlanTask):
                 if cluster != -1
                 else "",
                 "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
+                if cluster != -1
+                else "",
+                "where name in (select name from cluster_item_tmp)"
                 if cluster != -1
                 else "",
             ),

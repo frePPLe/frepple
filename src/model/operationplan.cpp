@@ -431,7 +431,9 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(
           quantity, start, end, batch, nullptr, nullptr, 0, false, id);
-      new ProblemInvalidData(opplan, "Purchase orders on unauthorized supplier",
+      new ProblemInvalidData(opplan,
+                             "Purchase order '" + opplan->getReference() +
+                                 "' on unauthorized supplier ",
                              "operationplan", start, end, quantity);
     } else
       // Create the operationplan
@@ -578,9 +580,10 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
         }
       }
       if (!found)
-        new ProblemInvalidData(
-            opplan, "Distribution order on unknown item distribution",
-            "operationplan", start, end, quantity);
+        new ProblemInvalidData(opplan,
+                               "Distribution order '" + opplan->getReference() +
+                                   "' on unknown item distribution",
+                               "operationplan", start, end, quantity);
     } else
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(
@@ -656,9 +659,11 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
         opplan->createFlowLoads();
       else
         opplan->createFlowLoads(&assigned_resources);
-      opplan->setOperationPlanParameters(quantity, opplan->getStart(),
-                                         Date::infinitePast, false, true, false,
-                                         true);
+      // The end date of the approved operationplan needs to be computed in
+      // function of the start date and the quantity completed.
+      opplan->setOperationPlanParameters(
+          quantity, start ? start : opplan->getStart(), Date::infinitePast,
+          false, true, false, true);
     } else
       opplan->freezeStatus(start ? start : opplan->getStart(),
                            end ? end : opplan->getEnd(), quantity);
@@ -1359,29 +1364,37 @@ bool OperationPlan::updateSetupTime(bool report) {
     if (get<1>(setup)) {
       // Apply setup rule duration
       if (getConfirmed()) {
-        setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
-                      get<1>(setup));
-        if (getStart() != end_of_setup) {
-          changed = true;
+        if (getStart() != end_of_setup || !setupevent) {
+          setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                        get<1>(setup));
           setStartAndEnd(end_of_setup, getEnd());
-        }
+          changed = true;
+        } else
+          setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                        get<1>(setup));
       } else {
         DateRange tmp = oper->calculateOperationTime(
             this, end_of_setup, get<1>(setup)->getDuration(), false);
-        setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
-                      get<1>(setup));
-        if (tmp.getStart() != getStart()) {
+        if (tmp.getStart() != getStart() || !setupevent) {
+          setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                        get<1>(setup));
           setStartAndEnd(tmp.getStart(), getEnd());
           changed = true;
-        }
+        } else
+          setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                        get<1>(setup));
       }
-    } else if (getStart() != end_of_setup) {
+    } else {
       // Zero time event
-      setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup), get<1>(setup));
-      setStartAndEnd(end_of_setup, getEnd());
-      changed = true;
+      if (getStart() != end_of_setup || !setupevent) {
+        setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                      get<1>(setup));
+        setStartAndEnd(end_of_setup, getEnd());
+        changed = true;
+      } else
+        setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                      get<1>(setup));
     }
-
   } else {
     // No setup event required
     if (setupevent) {

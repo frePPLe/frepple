@@ -443,17 +443,23 @@ class ResourceDetail(OperationPlanMixin):
             reportclass._attributes_added = 2
             # Adding custom operation attributes
             for f in getAttributeFields(
-                Operation, related_name_prefix="operationplan__operation"
+                Operation,
+                related_name_prefix="operationplan__operation",
+                editable=False,
             ):
                 f.editable = False
                 reportclass.rows += (f,)
             # Adding custom resource attributes
-            for f in getAttributeFields(Resource, related_name_prefix="resource"):
+            for f in getAttributeFields(
+                Resource, related_name_prefix="resource", editable=False
+            ):
                 f.editable = False
                 reportclass.rows += (f,)
             # Adding custom item attributes
             for f in getAttributeFields(
-                Item, related_name_prefix="operationplan__operation__item"
+                Item,
+                related_name_prefix="operationplan__operation__item",
+                editable=False,
             ):
                 f.editable = False
                 reportclass.rows += (f,)
@@ -462,6 +468,7 @@ class ResourceDetail(OperationPlanMixin):
                 OperationPlan,
                 related_name_prefix="operationplan",
                 initially_hidden=True,
+                editable=False,
             ):
                 f.editable = False
                 reportclass.rows += (f,)

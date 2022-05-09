@@ -162,7 +162,9 @@ def getAttributes(model):
                 yield attr
 
 
-def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
+def getAttributeFields(
+    model, related_name_prefix=None, initially_hidden=False, editable=True
+):
     """
     Return report fields for all attributes of a given model.
     """
@@ -175,7 +177,7 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
     from freppledb.common.report import GridFieldDuration, GridFieldTime
 
     result = []
-    for field_name, label, fieldtype, editable, hidden in getAttributes(model):
+    for field_name, label, fieldtype, dflt_editable, hidden in getAttributes(model):
         if related_name_prefix:
             field_name = "%s__%s" % (related_name_prefix, field_name)
             label = "%s - %s" % (related_name_prefix.split("__")[-1], label)
@@ -187,7 +189,7 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
                     field_name,
                     title=label,
                     initially_hidden=hidden or initially_hidden,
-                    editable=editable,
+                    editable=editable and dflt_editable,
                 )
             )
         elif fieldtype == "boolean":
@@ -196,7 +198,7 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
                     field_name,
                     title=label,
                     initially_hidden=hidden or initially_hidden,
-                    editable=editable,
+                    editable=editable and dflt_editable,
                 )
             )
         elif fieldtype == "number":
@@ -205,7 +207,7 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
                     field_name,
                     title=label,
                     initially_hidden=hidden or initially_hidden,
-                    editable=editable,
+                    editable=editable and dflt_editable,
                 )
             )
         elif fieldtype == "integer":
@@ -214,7 +216,7 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
                     field_name,
                     title=label,
                     initially_hidden=hidden or initially_hidden,
-                    editable=editable,
+                    editable=editable and dflt_editable,
                 )
             )
         elif fieldtype == "date":
@@ -223,7 +225,7 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
                     field_name,
                     title=label,
                     initially_hidden=hidden or initially_hidden,
-                    editable=editable,
+                    editable=editable and dflt_editable,
                 )
             )
         elif fieldtype == "datetime":
@@ -232,7 +234,7 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
                     field_name,
                     title=label,
                     initially_hidden=hidden or initially_hidden,
-                    editable=editable,
+                    editable=editable and dflt_editable,
                 )
             )
         elif fieldtype == "duration":
@@ -241,7 +243,7 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
                     field_name,
                     title=label,
                     initially_hidden=hidden or initially_hidden,
-                    editable=editable,
+                    editable=editable and dflt_editable,
                 )
             )
         elif fieldtype == "time":
@@ -250,7 +252,7 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
                     field_name,
                     title=label,
                     initially_hidden=hidden or initially_hidden,
-                    editable=editable,
+                    editable=editable and dflt_editable,
                 )
             )
         elif fieldtype == "jsonb":
@@ -259,7 +261,7 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
                     field_name,
                     title=label,
                     initially_hidden=hidden or initially_hidden,
-                    editable=editable,
+                    editable=editable and dflt_editable,
                 )
             )
         else:
@@ -305,6 +307,9 @@ def addAttributesFromDatabase():
                     attributes[table] = [
                         (x[1], x[2], x[3], x[4], x[5]),
                     ]
+            if not attributes:
+                # Shortcut for performance reasons
+                return
 
             # Loop over all scenarios
             cursor.execute(
@@ -418,7 +423,7 @@ def addAttributesFromDatabase():
                                         col[0],
                                     )
                                 )
-    except Exception as e:
+    except Exception:
         # Database or attribute table may not exist yet.
         pass
 

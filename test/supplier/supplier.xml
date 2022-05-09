@@ -66,6 +66,17 @@
     </item>
     <!-- Item D has no supplier. -->
     <item name="Component D" cost="1"/>
+    <!-- Item E has hard and soft extra lead time. -->
+    <item name="Component E" cost="1">
+      <itemsuppliers>
+	      <itemsupplier>
+          <supplier name="Supplier of component E" />
+          <leadtime>P21D</leadtime>
+          <extra_safety_leadtime>P10D</extra_safety_leadtime>
+          <hard_safety_leadtime>P4D</hard_safety_leadtime>
+        </itemsupplier>
+	    </itemsuppliers>
+    </item>
   </items>
 
   <buffers>
@@ -144,10 +155,66 @@
       <item name="Component D" />
       <location name="warehouse" />
     </demand>
+    <demand name="order 1 for item E">
+      <quantity>100</quantity>
+      <due>2015-01-10T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component E" />
+      <location name="warehouse" />
+    </demand>
+    <demand name="order 2 for item E">
+      <quantity>100</quantity>
+      <due>2015-01-14T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component E" />
+      <location name="warehouse" />
+    </demand>
+    <demand name="order 3 for item E">
+      <quantity>100</quantity>
+      <due>2015-01-18T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component E" />
+      <location name="warehouse" />
+    </demand>
+    <demand name="order 4 for item E">
+      <quantity>100</quantity>
+      <due>2015-01-22T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component E" />
+      <location name="warehouse" />
+    </demand>
+    <demand name="order 5 for item E">
+      <quantity>100</quantity>
+      <due>2015-01-26T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component E" />
+      <location name="warehouse" />
+    </demand>
+    <demand name="order 6 for item E">
+      <quantity>100</quantity>
+      <due>2015-01-30T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component E" />
+      <location name="warehouse" />
+    </demand>
+    <demand name="order 7 for item E">
+      <quantity>100</quantity>
+      <due>2015-02-10T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component E" />
+      <location name="warehouse" />
+    </demand>
+    <demand name="order 8 for item E">
+      <quantity>100</quantity>
+      <due>2015-02-20T00:00:00</due>
+      <priority>1</priority>
+      <item name="Component E" />
+      <location name="warehouse" />
+    </demand>
   </demands>
   <operationplans>
     <operationplan ordertype="PO" end="2015-06-06T00:00:00"
-      quantity="100" status="confirmed">
+      reference="PO #1" quantity="100" status="confirmed">
       <item name="Component C"/>
       <location name="warehouse"/>
       <supplier name="Supplier of component B"/>
@@ -180,6 +247,12 @@ with open("output.4.xml","wt") as output:
     print("Item", i.name, ":", file=output)
     for j in i.itemsuppliers:
       print("     ", j.supplier.name, file=output)
+
+# Reset python references before we delete objects!
+s = None
+r = None
+i = None
+j = None
 
 print("ERASE PLAN DATA")
 frepple.erase(False)

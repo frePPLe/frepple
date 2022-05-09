@@ -99,12 +99,12 @@ class ExecuteSQL(View):
                             for result in cursor.fetchall():
                                 if first:
                                     yield json.dumps(
-                                        dict(zip(columns, [str(i) for i in result]))
+                                        {ind: str(i) for ind, i in enumerate(result)}
                                     )
                                     first = False
                                 else:
                                     yield ",%s" % json.dumps(
-                                        dict(zip(columns, [str(i) for i in result]))
+                                        {ind: str(i) for ind, i in enumerate(result)}
                                     )
                             yield "]}"
                         elif cursor.rowcount:

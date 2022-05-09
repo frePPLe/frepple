@@ -18,6 +18,70 @@ The main target is to refresh the component stack:
 These changes will be made gradual over a couple of releases. For instance, from
 6.20.0 onwards frepple supports both Ubuntu 18 as well as Ubuntu 20.
 
+6.22.0 (2022/5/6)
+=================
+
+.. rubric:: User interface
+
+- | When drilling into an item, the "Plan" tab has been removed as the same information
+    can be found in the "Inventory" tab.
+
+  | Inventory report: Backlog is calculated at the end of the bucket. It used to be
+    calculated at the start of the bucket
+
+.. rubric:: Production planning
+
+- | The `itemsupplier <model-reference/item-suppliers.html>`_ table gets an extra
+    field "hard_safety_leadtime" to model an extra delay to be considered when a
+    purchase order is received.
+  | We already had a field "extra_safety_leadtime". This models a *soft* constraint
+    (we try to respect, but can compress it if needed). The new field models a *hard*
+    constraint - regardless of the urgency, we need to plan for the extra delay when
+    a purchase order is received.
+  | Typical use cases are for modeling quality control, material handling or administrative
+    delays.
+
+- | Infinite buffers no longer peg consumer and producers.
+  | The FIFO assocation between consumers and producers makes sense for regular buffers,
+    but only gives confusing results in infinite buffers.
+
+- | Bug fix: The planning algorithm created a plan with unnecessary lateness in
+    situations where a buffer has both an unresolvable material shortage and
+    confirmed supply exists further in the horizon.
+  | Not a normal and common situation, but it can happen...
+
+.. rubric:: Odoo integration
+
+- | V14: Connector is improved to handle deep odoo location hierarchies.
+
+- | V14: Extra links from the odoo menus to the frepple screens.
+
+- | V14: Bug fix. Sales orders with an individual as customer were not picked up.
+    Only orders from a company did go through.
+  | Now we pass the sales order correctly mapped to his/her company.
+
+- | V14: New configuration to send stack traces from the connector back to your frepple
+    instance. This is useful to debug data and connector issues. By default this option
+    is not active for security reasons.
+
+- | V14: Ability to limit the data to a single odoo company only.
+  | By default, the connector extracts data for all allowed companies the connector user
+    has access to into a single frepple dataset.
+  | With the new option you can separate the frepple datasets per odoo company.
+
+.. rubric:: User interface
+
+- | Bug fix: Editing grid fields of type currency was broken in a previous release.
+
+.. rubric:: System administration
+
+- | The solver now has a built-in protection to avoid excessively large log files.
+  | This avoids annoying disk-full issues.
+
+.. rubric:: Third party components - Security
+
+- | Django release is upgraded to 3.2.13 to address a security issue.
+
 6.21.0 (2022/3/25)
 ==================
 

@@ -28,3 +28,4 @@ interaction with the frePPLe planning engine.
    openbravo-connector
    generic-erp-connector
    erpnext-connector
+   uzerp-connector

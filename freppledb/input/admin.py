@@ -257,7 +257,6 @@ class Item_admin(MultiDBModelAdmin):
         },
         {"name": "supplypath", "label": _("supply path"), "view": "supplypath_item"},
         {"name": "whereused", "label": _("where used"), "view": "whereused_item"},
-        {"name": "plan", "label": _("plan"), "view": "output_demand_plandetail"},
         {
             "name": "inventory",
             "label": _("inventory"),
@@ -291,6 +290,7 @@ class ItemSupplier_admin(MultiDBModelAdmin):
                     "sizemultiple",
                     "sizemaximum",
                     "batchwindow",
+                    "hard_safety_leadtime",
                     "extra_safety_leadtime",
                     "priority",
                     "fence",

@@ -73,7 +73,7 @@ $(function() {
           </a>
         </div>
 		    <li class="dropdown">
-		    <a href="#" class="dropdown-toggle" style="padding-right: 20px" data-toggle="dropdown" 
+		    <a href="#" class="dropdown-toggle" style="padding-right: 20px" data-toggle="dropdown"
           role="button" aria-haspopup="true" aria-expanded="false">
           {% if user.avatar %}<img src="{{ user.avatar.url }}" class="avatar-sm">
           {% else %}<i style="font-size: 1.5em" class="fa fa-user-circle-o"></i>
@@ -101,8 +101,9 @@ $(function() {
 			  <div class="selectdb ">
 				{% if user.scenarios|length > 1 %}
 					<button class="form-control btn btn-default dropdown-toggle" type="button" id="database"
-					   data-original-title="{% trans "Choose a what-if scenario" %}" data-placement="left"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" name="{{ request.scenario.name }}">
+					   data-delay="2000" data-placement="left"
+					   data-original-title="{% trans "Select a what-if scenario.<br>Click <a class='underline' href='/execute/#scenario_copy'>here</a> to manage scenarios." %}"
+                       data-toggle="dropdown" aria-haspopup="true" data-html="true" aria-expanded="true" name="{{ request.scenario.name }}">
 					{{ request.scenario.description }}&nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" aria-labelledby="database">

@@ -721,15 +721,24 @@ class OperationList(GridReport):
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
             reportclass.attr_sql = ""
+            # Adding custom operation attributes
+            for f in getAttributeFields(
+                Operation,
+            ):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "operation.%s, " % f.name.split("__")[-1]
             # Adding custom item attributes
             for f in getAttributeFields(
-                Item, related_name_prefix="item", initially_hidden=True
+                Item, related_name_prefix="item", initially_hidden=True, editable=False
             ):
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "item.%s, " % f.name.split("__")[-1]
             # Adding custom location attributes
             for f in getAttributeFields(
-                Location, related_name_prefix="location", initially_hidden=True
+                Location,
+                related_name_prefix="location",
+                initially_hidden=True,
+                editable=False,
             ):
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "location.%s, " % f.name.split("__")[-1]

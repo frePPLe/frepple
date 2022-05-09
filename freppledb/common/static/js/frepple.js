@@ -550,6 +550,25 @@ jQuery.extend($.fn.fmatter.listdetail, {
   }
 });
 
+jQuery.extend($.fn.fmatter.currencyWithBlanks, {
+  unformat: function (cellval, options, cell) {
+    // Copied from the jqgrid source code
+    var prefix = options.colModel.formatoptions.prefix;
+    var suffix = options.colModel.formatoptions.suffix;
+    var thegrid = $(cell).closest("table").first();
+    var thousandsSeparator = thegrid.jqGrid("getGridRes", "formatter.currency.thousandsSeparator")
+      .replace(/([\.\*\_\'\(\)\{\}\+\?\\])/g, "\\$1");
+    var decimalSeparator = thegrid.jqGrid("getGridRes", "formatter.currency.decimalSeparator");
+    if (prefix && prefix.length)
+      cellval = cellval.substr(prefix.length);
+    if (suffix && suffix.length)
+      cellval = cellval.substr(0, cellval.length - suffix.length);
+    cellval = cellval.replace(new RegExp(thousandsSeparator, "g"), "");
+    if (decimalSeparator != ".")
+      cellval = cellval.replace(decimalSeparator, ".");
+    return cellval;
+  }
+});
 
 //
 // Functions related to jqgrid

@@ -1021,7 +1021,8 @@ class loadItemSuppliers(LoadTask):
                     SELECT
                     supplier_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
                     cost, priority, effective_start, effective_end, source, leadtime,
-                    resource_id, resource_qty, fence, batchwindow, extra_safety_leadtime
+                    resource_id, resource_qty, fence, batchwindow, extra_safety_leadtime,
+                    hard_safety_leadtime
                     FROM itemsupplier %s
                     ORDER BY supplier_id, item_id, location_id, priority desc
                     """
@@ -1049,6 +1050,7 @@ class loadItemSuppliers(LoadTask):
                             if i[15] is not None
                             else 7 * 86400,
                             extra_safety_leadtime=i[16].total_seconds() if i[16] else 0,
+                            hard_safety_leadtime=i[17].total_seconds() if i[17] else 0,
                         )
                         if i[2]:
                             curitemsupplier.location = frepple.location(name=i[2])
@@ -1804,7 +1806,10 @@ class loadOperationPlans(LoadTask):
                     """
                         SELECT
                         operationplan.operation_id, operationplan.reference, operationplan.quantity,
-                        operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
+                        case when operationplan.plan ? 'setupend'
+                           then (operationplan.plan->>'setupend')::timestamp
+                           else operationplan.startdate
+                           end, operationplan.enddate, operationplan.status, operationplan.source,
                         operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
                         operationplan.item_id, operationplan.location_id, operationplan.batch, operationplan.quantity_completed,
                         array(
@@ -1951,7 +1956,10 @@ class loadOperationPlans(LoadTask):
                     """
                         SELECT
                         operationplan.operation_id, operationplan.reference, operationplan.quantity,
-                        operationplan.startdate, operationplan.enddate, operationplan.status,
+                        case when operationplan.plan ? 'setupend'
+                           then (operationplan.plan->>'setupend')::timestamp
+                           else operationplan.startdate
+                           end, operationplan.enddate, operationplan.status,
                         operationplan.owner_id, operationplan.source, operationplan.batch,
                         array(
                             select resource_id

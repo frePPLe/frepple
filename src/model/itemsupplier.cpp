@@ -225,7 +225,8 @@ OperationItemSupplier::OperationItemSupplier(ItemSupplier* i, Buffer* b)
   setCost(i->getCost());
   setFence(i->getFence());
   setHidden(true);
-  new FlowEnd(this, b, 1);
+  auto fl = new FlowEnd(this, b, 1);
+  fl->setOffset(i->getHardSafetyLeadTime());
   initType(metadata);
 
   // Optionally, link with a supplier location and related availability

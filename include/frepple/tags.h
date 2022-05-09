@@ -102,6 +102,7 @@ class Tags {
   static const Keyword flowplans;
   static const Keyword flows;
   static const Keyword fromsetup;
+  static const Keyword hard_safety_leadtime;
   static const Keyword hasSuperOperations;
   static const Keyword headeratts;
   static const Keyword headerstart;
@@ -127,6 +128,7 @@ class Tags {
   static const Keyword locations;
   static const Keyword locked;
   static const Keyword logfile;
+  static const Keyword loglimit;
   static const Keyword loglevel;
   static const Keyword maxearly;
   static const Keyword maximum;

@@ -175,6 +175,7 @@ class TaskReport(GridReport):
                 if getattr(accord, "index", -1) >= 0 and getattr(
                     accord, "getHTML", None
                 ):
+                    accord.name = commandname
                     accordions.add(accord)
             except Exception as e:
                 logger.warning(

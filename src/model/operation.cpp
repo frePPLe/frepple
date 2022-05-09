@@ -174,7 +174,7 @@ OperationPlan::iterator Operation::getOperationPlans() const {
   return OperationPlan::iterator(this);
 }
 
-Date Operation::getFence(OperationPlan* opplan) const {
+Date Operation::getFence(const OperationPlan* opplan) const {
   if (fence > 0L)
     return calculateOperationTime(opplan, Plan::instance().getCurrent(), fence,
                                   true)
@@ -2196,12 +2196,13 @@ Duration OperationAlternate::getDecoupledLeadTime(double qty) const {
   }
 
   // Also loop over the flows of the suboperation
-  for (auto fl = suboper->getFlows().begin(); fl != suboper->getFlows().end();
-       ++fl) {
-    if (fl->getQuantity() >= 0) continue;
-    Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, false);
-    if (tmp > leadtime) leadtime = tmp;
-  }
+  if (!suboper->hasType<OperationRouting>())
+    for (auto fl = suboper->getFlows().begin(); fl != suboper->getFlows().end();
+         ++fl) {
+      if (fl->getQuantity() >= 0) continue;
+      Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, false);
+      if (tmp > leadtime) leadtime = tmp;
+    }
 
   // Add the operation's own duration
   if (suboper->hasType<OperationFixedTime, OperationItemDistribution,
@@ -2214,11 +2215,13 @@ Duration OperationAlternate::getDecoupledLeadTime(double qty) const {
     OperationTimePer* op = static_cast<OperationTimePer*>(suboper);
     leadtime +=
         op->getDuration() + static_cast<long>(op->getDurationPer() * qty2);
+  } else if (suboper->hasType<OperationRouting>()) {
+    leadtime +=
+        static_cast<OperationRouting*>(suboper)->getDecoupledLeadTime(qty2);
   } else
-    // TODO We don't handle routing operations here?
-    logger << "Warning: suboperation of unsupported type for an alternate "
-              "operation"
-           << endl;
+    logger << "Warning: suboperation of unsupported type for alternate "
+              "operation '"
+           << getName() << "'" << endl;
   return leadtime;
 }
 
@@ -2250,13 +2253,14 @@ Duration OperationSplit::getDecoupledLeadTime(double qty) const {
     }
 
     // Also loop over the flows of the suboperation
-    for (auto fl = suboper->getFlows().begin(); fl != suboper->getFlows().end();
-         ++fl) {
-      if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
-        continue;
-      Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, false);
-      if (tmp > maxSub) maxSub = tmp;
-    }
+    if (!suboper->hasType<OperationRouting>())
+      for (auto fl = suboper->getFlows().begin();
+           fl != suboper->getFlows().end(); ++fl) {
+        if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
+          continue;
+        Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, false);
+        if (tmp > maxSub) maxSub = tmp;
+      }
 
     // Add the operation's own duration
     if (suboper->hasType<OperationFixedTime, OperationItemDistribution,
@@ -2269,10 +2273,13 @@ Duration OperationSplit::getDecoupledLeadTime(double qty) const {
       OperationTimePer* op = static_cast<OperationTimePer*>(suboper);
       maxSub +=
           op->getDuration() + static_cast<long>(op->getDurationPer() * qty2);
+    } else if (suboper->hasType<OperationRouting>()) {
+      maxSub +=
+          static_cast<OperationRouting*>(suboper)->getDecoupledLeadTime(qty2);
     } else
       logger
-          << "Warning: suboperation of unsupported type for a split operation"
-          << endl;
+          << "Warning: suboperation of unsupported type for split operation '"
+          << getName() << "'" << endl;
 
     // Keep track of the longest of all suboperations
     if (maxSub > totalmax) totalmax = maxSub;
@@ -2288,6 +2295,7 @@ Duration OperationRouting::getDecoupledLeadTime(double qty) const {
         getSizeMinimumCalendar()->getValue(Plan::instance().getCurrent());
     if (qty < curmin) qty = curmin;
   }
+
   // The lead time of a routing step is the sum of:
   //  - Duration of any subsequent routing steps
   //  - Its own duration
@@ -2325,8 +2333,8 @@ Duration OperationRouting::getDecoupledLeadTime(double qty) const {
           op->getDuration() + static_cast<long>(op->getDurationPer() * qty);
     } else
       logger
-          << "Warning: suboperation of unsupported type for a routing operation"
-          << endl;
+          << "Warning: suboperation of unsupported type for routing operation '"
+          << getName() << "'" << endl;
 
     // Take the longest of all routing steps
     if (maxSub + nextStepsDuration > totalmax)

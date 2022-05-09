@@ -525,9 +525,6 @@ if __name__ == "__main__":
             settings.FREPPLE_LOGDIR, os.environ["FREPPLE_LOGFILE"]
         )
 
-    # Welcome message
-    print("FrePPLe on %s using database '%s'" % (sys.platform, database))
-
     # Update the task with my processid
     if "FREPPLE_TASKID" in os.environ:
         try:

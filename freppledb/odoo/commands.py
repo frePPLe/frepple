@@ -16,6 +16,7 @@
 #
 import base64
 import email
+from html.parser import HTMLParser
 import jwt
 import os
 import time
@@ -90,6 +91,7 @@ class OdooReadData(PlanTask):
             odoo_url = odoo_url + "/"
 
         odoo_company = Parameter.getValue("odoo.company", database, None)
+        singlecompany = Parameter.getValue("odoo.singlecompany", database, "false")
         ok = True
 
         # Set debugFile=PathToXmlFile if you want frePPLe to read that file
@@ -143,6 +145,7 @@ class OdooReadData(PlanTask):
                         "language": odoo_language,
                         "company": odoo_company,
                         "mode": cls.mode,
+                        "singlecompany": singlecompany,
                     }
                 ),
             )
@@ -154,15 +157,32 @@ class OdooReadData(PlanTask):
                 request.add_header(
                     "Authorization", "Basic %s" % encoded.decode("ascii")
                 )
+
+                # Download and parse XML data
+                with urlopen(request) as f:
+                    frepple.readXMLdata(
+                        f.read().decode("utf-8"), False, False, loglevel
+                    )
+
             except HTTPError as e:
-                logger.error("Error connecting to odoo at %s: %s" % (url, e))
+                print("Error connecting to odoo at %s" % url)
+                odoo_data = e.read()
+                if odoo_data:
+
+                    class OdooMsgParser(HTMLParser):
+                        def handle_data(self, data):
+                            if "Error generating frePPLe XML data" in data:
+                                self.echo = True
+                                print("Odoo stack trace:")
+                            elif hasattr(self, "echo"):
+                                print("Odoo:", data)
+
+                    odoo_msg = OdooMsgParser()
+                    odoo_msg.feed(odoo_data.decode("utf-8"))
                 raise e
 
-            # Download and parse XML data
-            with urlopen(request) as f:
-                frepple.readXMLdata(f.read().decode("utf-8"), False, False, loglevel)
         else:
-            # Download and parse XML data
+            # Parse XML data file
             with open(debugFile, encoding="utf-8") as f:
                 frepple.readXMLdata(f.read(), False, False, loglevel)
 

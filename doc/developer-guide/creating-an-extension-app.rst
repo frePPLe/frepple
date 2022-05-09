@@ -184,7 +184,7 @@ their fields and indexes.
 This file only declares the model structure. The actual table will be created in a
 later step.
 
-You can find all details on models and fields on https://docs.djangoproject.com/en/2.2/ref/models/fields/
+You can find all details on models and fields on https://docs.djangoproject.com/en/3.2/ref/models/fields/
 
 .. _app_migrations:
 
@@ -240,7 +240,7 @@ need review and/or coding by developers.
            )
        ]
 
-You can find all details on migrations on https://docs.djangoproject.com/en/2.2/topics/migrations/
+You can find all details on migrations on https://docs.djangoproject.com/en/3.2/topics/migrations/
 
 .. _app_rest_api:
 
@@ -322,7 +322,7 @@ The file **admin.py** defines a form to edit objects of your models.
            },
        ]
 
-You can find all details on admin forms on https://docs.djangoproject.com/en/2.2/ref/contrib/admin/
+You can find all details on admin forms on https://docs.djangoproject.com/en/3.2/ref/contrib/admin/
 
 .. _app_views:
 
@@ -388,7 +388,7 @@ The url where the report is published is defined in the file **urls.py**.
        url(r"^api/my_app/my_model/$", MyModelSerializerAPI.as_view()),
    ]
 
-You can find more detailed information on https://docs.djangoproject.com/en/2.2/topics/http/urls/
+You can find more detailed information on https://docs.djangoproject.com/en/3.2/topics/http/urls/
 
 .. _app_menu:
 
@@ -443,7 +443,7 @@ or through a web API.
 .. image:: _images/my_fixture.png
    :alt: Loading my own dataset
 
-You can find more detailed information on https://docs.djangoproject.com/en/2.2/howto/initial-data/
+You can find more detailed information on https://docs.djangoproject.com/en/3.2/howto/initial-data/
 
 .. _app_plan_generation:
 
@@ -565,7 +565,7 @@ Simplified, the code for a command looks as follows:
            )
            return template.render(context)
 
-You can find more detailed information on https://docs.djangoproject.com/en/2.2/howto/custom-management-commands/
+You can find more detailed information on https://docs.djangoproject.com/en/3.2/howto/custom-management-commands/
 
 .. _app_unit_tests:
 
@@ -587,7 +587,7 @@ The code for a unit test looks as follows:
      def test_basic_addition(self):
          self.assertEqual(1 + 1, 2)    # Just making sure
 
-You can find more detailed information on https://docs.djangoproject.com/en/2.2/topics/testing/overview/
+You can find more detailed information on https://docs.djangoproject.com/en/3.2/topics/testing/overview/
 
 .. _app_more_info:
 

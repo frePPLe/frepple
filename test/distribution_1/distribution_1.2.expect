@@ -61,10 +61,10 @@ OPERATION	Ship product A from Regional DC 2 to Local DC 2b	2015-02-26T00:00:00	2
 PROBLEM	invalid data	No replenishment defined for 'In transit product @ Destination'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'In transit product @ Source'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'In transit product @ Source' has material shortage of 200	2015-06-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	invalid data	Distribution order on unknown item distribution	1971-01-01T00:00:00 / 2015-06-07T00:00:00
-PROBLEM	invalid data	Distribution order on unknown item distribution	1971-01-01T00:00:00 / 2015-06-05T00:00:00
-PROBLEM	invalid data	Distribution order on unknown item distribution	1971-01-01T00:00:00 / 2015-06-06T00:00:00
-PROBLEM	invalid data	Distribution order on unknown item distribution	1971-01-01T00:00:00 / 2015-06-06T00:00:00
+PROBLEM	invalid data	Distribution order '4' on unknown item distribution	1971-01-01T00:00:00 / 2015-06-07T00:00:00
+PROBLEM	invalid data	Distribution order '2' on unknown item distribution	1971-01-01T00:00:00 / 2015-06-05T00:00:00
+PROBLEM	invalid data	Distribution order '3' on unknown item distribution	1971-01-01T00:00:00 / 2015-06-06T00:00:00
+PROBLEM	invalid data	Distribution order '1' on unknown item distribution	1971-01-01T00:00:00 / 2015-06-06T00:00:00
 PROBLEM	late	50 units of demand 'order 1a for product A' planned up to 20.0 days after its due date	2015-01-01T00:00:00 / 2015-01-21T00:00:00
 PROBLEM	late	50 units of demand 'order 1b for product A' planned up to 20.0 days after its due date	2015-01-01T00:00:00 / 2015-01-21T00:00:00
 PROBLEM	late	100 units of demand 'order 3 for product A' planned up to 10.0 days after its due date	2015-01-01T00:00:00 / 2015-01-11T00:00:00

@@ -3005,7 +3005,7 @@ class Operation : public HasName<Operation>,
   /* Return the release fence, expressed in available time, of this operation.
    * The difference with the previous method is that it considers the working
    * hour and holiday calendars. */
-  Date getFence(OperationPlan* opplan) const;
+  Date getFence(const OperationPlan* opplan) const;
 
   /* Update the release fence of this operation. */
   void setFence(Duration t) {
@@ -4434,6 +4434,10 @@ class ItemSupplier : public Object,
 
   void setExtraSafetyLeadTime(Duration d) { extra_safety_leadtime = d; }
 
+  Duration getHardSafetyLeadTime() const { return hard_safety_leadtime; }
+
+  void setHardSafetyLeadTime(Duration d) { hard_safety_leadtime = d; }
+
   /* Return the applicable location. */
   Location* getLocation() const { return loc; }
 
@@ -4504,6 +4508,9 @@ class ItemSupplier : public Object,
     m->addDurationField<Cls>(Tags::extra_safety_leadtime,
                              &Cls::getExtraSafetyLeadTime,
                              &Cls::setExtraSafetyLeadTime);
+    m->addDurationField<Cls>(Tags::hard_safety_leadtime,
+                             &Cls::getHardSafetyLeadTime,
+                             &Cls::setHardSafetyLeadTime);
     m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum,
                            &Cls::setSizeMaximum, DBL_MAX);
     m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
@@ -4546,6 +4553,8 @@ class ItemSupplier : public Object,
   double cost = 0.0;
 
   Duration batchwindow;
+
+  Duration hard_safety_leadtime;
 
   Duration extra_safety_leadtime;
 
@@ -5736,6 +5745,8 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
    * quantity are changed.
    */
   void update();
+
+  bool getFeasible() const;
 
   /* Return a pointer to the timeline data structure owning this flowplan. */
   TimeLine<FlowPlan>* getTimeLine() const { return &(buf->flowplans); }
@@ -8072,12 +8083,12 @@ inline Problem::iterator Problem::List::end() const {
 
 class OperationPlan::ProblemIterator : public Problem::iterator {
  private:
-  stack<Problem*> relatedproblems;
+  vector<Problem*> relatedproblems;
   const OperationPlan* opplan;
 
  public:
   /* Constructor. */
-  ProblemIterator(const OperationPlan*);
+  ProblemIterator(const OperationPlan*, bool include_related = true);
 
   /* Advance the iterator. */
   ProblemIterator& operator++();
@@ -8246,6 +8257,10 @@ class Plan : public Plannable, public Object {
     OperationPlan::setCounterMin(l);
   }
 
+  unsigned long getloglimit() const { return Environment::getloglimit(); }
+
+  void setloglimit(unsigned long l) { Environment::setloglimit(l); }
+
   const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;
   static const MetaCategory* metacategory;
@@ -8262,6 +8277,8 @@ class Plan : public Plannable, public Object {
     m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
     m->addStringRefField<Plan>(Tags::logfile, &Plan::getLogFile,
                                &Plan::setLogFile, "", DONT_SERIALIZE);
+    m->addUnsignedLongField(Tags::loglimit, &Plan::getloglimit,
+                            &Plan::setloglimit, 0UL, DONT_SERIALIZE);
     m->addUnsignedLongField(Tags::id, &Plan::getOperationPlanCounterMin,
                             &Plan::setOperationPlanCounterMin, 0UL,
                             DONT_SERIALIZE);
@@ -8342,7 +8359,10 @@ class ProblemBeforeCurrent : public Problem {
     return ch.str();
   }
 
-  bool isFeasible() const { return false; }
+  bool isFeasible() const {
+    return oper ? false
+                : static_cast<OperationPlan*>(getOwner())->getConfirmed();
+  }
 
   double getWeight() const {
     return oper ? qty : static_cast<OperationPlan*>(getOwner())->getQuantity();
@@ -9113,13 +9133,13 @@ class PeggingIterator : public Object {
   /* Constructor for demand pegging. */
   PeggingIterator(const Demand*);
 
-  /* Constructor for operationplan pegging. */
+  /* Constructor for operationplan pegging, downstream (default) or upstream. */
   PeggingIterator(const OperationPlan*, bool = true);
 
-  /* Constructor for flowplan pegging. */
-  PeggingIterator(FlowPlan*, bool = true);
+  /* Constructor for flowplan pegging, downstream (default) or upstream. */
+  PeggingIterator(const FlowPlan*, bool = true);
 
-  /* Constructor for loadplan pegging. */
+  /* Constructor for loadplan pegging, downstream (default) or upstream. */
   PeggingIterator(LoadPlan*, bool = true);
 
   /* Return the operationplan. */

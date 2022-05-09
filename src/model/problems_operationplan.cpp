@@ -93,37 +93,77 @@ void OperationPlan::updateProblems() {
   if (needsPrecedence) new ProblemPrecedence(this);
 }
 
-OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* o)
+OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* o,
+                                                bool include_related)
     : Problem::iterator(o->firstProblem), opplan(o) {
-  // Adding related material problems
-  for (auto flpln = opplan->beginFlowPlans(); flpln != opplan->endFlowPlans();
-       ++flpln) {
-    if (flpln->getOnhandAfterDate() < -ROUNDING_ERROR)
-      for (Problem::iterator prob(flpln->getBuffer()); prob != Problem::end();
-           ++prob)
-        if (prob->getDates().overlap(opplan->getDates()) && !prob->isFeasible())
-          relatedproblems.push(&*prob);
-  }
+  if (!include_related) return;
 
   // Adding related capacity problems
   for (auto ldpln = opplan->beginLoadPlans(); ldpln != opplan->endLoadPlans();
        ++ldpln) {
+    if (!ldpln->getResource()->getConstrained()) continue;
     auto prob_iter = ldpln->getResource()->getProblems();
     if (ldpln->getResource()->hasType<ResourceBuckets>()) {
       while (Problem* prob = prob_iter.next()) {
-        if (prob->getDates().within(opplan->getStart()) && !prob->isFeasible())
-          relatedproblems.push(&*prob);
+        if (prob->getDates().within(opplan->getStart()) &&
+            !prob->isFeasible()) {
+          relatedproblems.push_back(&*prob);
+          break;
+        }
       }
     } else {
       while (Problem* prob = prob_iter.next()) {
-        if (prob->getDates().overlap(opplan->getDates()) && !prob->isFeasible())
-          relatedproblems.push(&*prob);
+        if (prob->getDates().overlap(opplan->getDates()) &&
+            !prob->isFeasible()) {
+          relatedproblems.push_back(&*prob);
+          break;
+        }
       }
     }
   }
 
+  // Adding local and upstream material problems
+  for (PeggingIterator p(o, false); p; --p) {
+    const OperationPlan* m = p.getOperationPlan();
+    if (m->getCompleted() || m->getClosed()) continue;
+    if (m != o) {
+      ProblemIterator probs(m, false);
+      while (auto p = probs.next()) {
+        if (p->isFeasible() ||
+            !p->hasType<ProblemBeforeCurrent, ProblemBeforeFence,
+                        ProblemPrecedence>())
+          continue;
+        bool exists = false;
+        for (auto& x : relatedproblems)
+          if (static_cast<OperationPlan*>(x->getOwner())->getOperation() ==
+              static_cast<OperationPlan*>(p->getOwner())->getOperation()) {
+            exists = true;
+            break;
+          }
+        if (!exists) relatedproblems.push_back(&*p);
+      }
+    }
+    for (auto fp = m->beginFlowPlans(); fp != m->endFlowPlans(); ++fp) {
+      if (fp->getOnhandAfterDate() < -ROUNDING_ERROR)
+        for (Problem::iterator prob(fp->getBuffer()); prob != Problem::end();
+             ++prob) {
+          if (prob->isFeasible()) continue;
+          if (prob->getDates().overlap(m->getDates()) && !prob->isFeasible()) {
+            bool exists = false;
+            for (auto& x : relatedproblems)
+              if (x->getOwner() == prob->getOwner()) {
+                exists = true;
+                break;
+              }
+            if (!exists) relatedproblems.push_back(&*prob);
+            break;
+          }
+        }
+    }
+  }
+
   // Update the first problem pointer
-  if (!relatedproblems.empty()) iter = relatedproblems.top();
+  if (!relatedproblems.empty()) iter = relatedproblems.back();
 }
 
 OperationPlan::ProblemIterator& OperationPlan::ProblemIterator::operator++() {
@@ -131,11 +171,11 @@ OperationPlan::ProblemIterator& OperationPlan::ProblemIterator::operator++() {
   if (!iter) return *this;
 
   if (!relatedproblems.empty()) {
-    relatedproblems.pop();
+    relatedproblems.pop_back();
     if (relatedproblems.empty())
       iter = opplan->firstProblem;
     else
-      iter = relatedproblems.top();
+      iter = relatedproblems.back();
     return *this;
   }
 
@@ -145,7 +185,7 @@ OperationPlan::ProblemIterator& OperationPlan::ProblemIterator::operator++() {
 }
 
 bool OperationPlan::updateFeasible() {
-  if (!getOperation()->getDetectProblems()) {
+  if (!getOperation()->getDetectProblems() || getCompleted() || getClosed()) {
     // No problems to be flagged on this operation
     setFeasible(true);
     return true;
@@ -195,32 +235,13 @@ bool OperationPlan::updateFeasible() {
 
   // Verify the capacity constraints
   for (auto ldplan = getLoadPlans(); ldplan != endLoadPlans(); ++ldplan) {
-    if (!ldplan->getResource()->getConstrained()) continue;
-    if (ldplan->getResource()->hasType<ResourceDefault>() &&
-        ldplan->getQuantity() > 0) {
-      auto curMax = ldplan->getMax();
-      for (auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
-           cur != ldplan->getResource()->getLoadPlans().end(); ++cur) {
-        if (cur->getOperationPlan() == this && cur->getQuantity() < 0) break;
-        if (cur->getEventType() == 4) curMax = cur->getMax(false);
-        if (cur->getEventType() != 5 && cur->isLastOnDate() &&
-            cur->getOnhand() > curMax + ROUNDING_ERROR) {
-          // Overload on default resource
-          setFeasible(false);
-          return false;
-        }
-      }
-    } else if (ldplan->getResource()->hasType<ResourceBuckets>()) {
-      for (auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
-           cur != ldplan->getResource()->getLoadPlans().end() &&
-           cur->getEventType() != 2;
-           ++cur) {
-        if (cur->getOnhand() < -ROUNDING_ERROR) {
-          // Overloaded capacity on bucketized resource
-          setFeasible(false);
-          return false;
-        }
-      }
+    if (((ldplan->getQuantity() > 0 &&
+          ldplan->getResource()->hasType<ResourceDefault>()) ||
+         (ldplan->getQuantity() < 0 &&
+          ldplan->getResource()->hasType<ResourceBuckets>())) &&
+        !ldplan->getFeasible()) {
+      setFeasible(false);
+      return false;
     }
   }
 
@@ -229,9 +250,15 @@ bool OperationPlan::updateFeasible() {
     if (!flplan->getFlow()->isConsumer() ||
         flplan->getBuffer()->hasType<BufferInfinite>())
       continue;
+    if (flplan->getBuffer()->getOnHand(Date::infiniteFuture) <
+        -ROUNDING_ERROR) {
+      // Material shortage
+      setFeasible(false);
+      return false;
+    }
     auto flplaniter = flplan->getBuffer()->getFlowPlans();
-    for (auto cur = flplaniter.begin(&*flplan); cur != flplaniter.end();
-         ++cur) {
+    for (auto cur = flplaniter.begin(&*flplan);
+         cur != flplaniter.end() && cur->getDate() < getEnd(); ++cur) {
       if (cur->getOnhand() < -ROUNDING_ERROR && cur->isLastOnDate()) {
         // Material shortage
         setFeasible(false);

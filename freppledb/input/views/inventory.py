@@ -298,6 +298,31 @@ class BufferList(GridReport):
         ),
     )
 
+    @classmethod
+    def initialize(reportclass, request):
+        if reportclass._attributes_added != 2:
+            reportclass._attributes_added = 2
+            reportclass.attr_sql = ""
+            # Adding custom item attributes
+            for f in getAttributeFields(
+                Item, related_name_prefix="item", initially_hidden=True, editable=False
+            ):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "item.%s, " % f.name.split("__")[-1]
+            # Adding custom location attributes
+            for f in getAttributeFields(
+                Location,
+                related_name_prefix="location",
+                initially_hidden=True,
+                editable=False,
+            ):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "location.%s, " % f.name.split("__")[-1]
+            # Adding custom buffer attributes
+            for f in getAttributeFields(Buffer, initially_hidden=True):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "buffer.%s, " % f.name.split("__")[-1]
+
 
 class ItemDistributionList(GridReport):
     title = _("item distributions")
@@ -551,6 +576,40 @@ class ItemDistributionList(GridReport):
             editable=False,
         ),
     )
+
+    @classmethod
+    def initialize(reportclass, request):
+        if reportclass._attributes_added != 2:
+            reportclass._attributes_added = 2
+            reportclass.attr_sql = ""
+            # Adding custom item attributes
+            for f in getAttributeFields(
+                Item, related_name_prefix="item", initially_hidden=True, editable=False
+            ):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "item.%s, " % f.name.split("__")[-1]
+            # Adding custom source location attributes
+            for f in getAttributeFields(
+                Location,
+                related_name_prefix="origin",
+                initially_hidden=True,
+                editable=False,
+            ):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "origin.%s, " % f.name.split("__")[-1]
+            # Adding custom destination location attributes
+            for f in getAttributeFields(
+                Location,
+                related_name_prefix="location",
+                initially_hidden=True,
+                editable=False,
+            ):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "location.%s, " % f.name.split("__")[-1]
+            # Adding custom itemdistribution attributes
+            for f in getAttributeFields(ItemDistribution, initially_hidden=True):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "itemdistribution.%s, " % f.name.split("__")[-1]
 
 
 class DistributionOrderList(OperationPlanMixin):

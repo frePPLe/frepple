@@ -1779,6 +1779,7 @@ class exportItemSuppliers(PlanTask):
                         i.size_multiple,
                         i.size_maximum if i.size_maximum < 10 ** 12 else None,
                         i.batchwindow,
+                        i.hard_safety_leadtime,
                         i.extra_safety_leadtime,
                         i.fence,
                         i.cost,
@@ -1799,10 +1800,12 @@ class exportItemSuppliers(PlanTask):
                 """
                 insert into itemsupplier
                 (item_id,location_id,supplier_id,effective_start,leadtime,sizeminimum,
-                 sizemultiple,sizemaximum,batchwindow,extra_safety_leadtime,fence,cost,priority,effective_end,
+                 sizemultiple,sizemaximum,batchwindow,hard_safety_leadtime,extra_safety_leadtime,
+                 fence,cost,priority,effective_end,
                  resource_id,resource_qty,source,lastmodified%s)
                 values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,
-                %%s * interval '1 second',%%s * interval '1 second',%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                %%s * interval '1 second',%%s * interval '1 second',%%s * interval '1 second',
+                %%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
                 on conflict (item_id, location_id, supplier_id, effective_start)
                 do update set
                   leadtime=excluded.leadtime,
@@ -1810,6 +1813,7 @@ class exportItemSuppliers(PlanTask):
                   sizemultiple=excluded.sizemultiple,
                   sizemaximum=excluded.sizemaximum,
                   batchwindow=excluded.batchwindow,
+                  hard_safety_leadtime=excluded.hard_safety_leadtime,
                   extra_safety_leadtime=excluded.extra_safety_leadtime,
                   fence=excluded.fence,
                   cost=excluded.cost,
@@ -1829,10 +1833,12 @@ class exportItemSuppliers(PlanTask):
                 """
                 insert into itemsupplier
                 (item_id,location_id,supplier_id,effective_start,leadtime,sizeminimum,
-                 sizemultiple,sizemaximum,batchwindow,extra_safety_leadtime,fence,cost,priority,effective_end,
+                 sizemultiple,sizemaximum,batchwindow,hard_safety_leadtime,extra_safety_leadtime,
+                 fence,cost,priority,effective_end,
                  resource_id,resource_qty,source,lastmodified%s)
                 values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,
-                %%s * interval '1 second',%%s * interval '1 second',%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                %%s * interval '1 second',%%s * interval '1 second',%%s * interval '1 second',
+                %%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
                 on conflict (item_id, supplier_id, effective_start)
                    where location_id is null
                 do update set
@@ -1841,6 +1847,7 @@ class exportItemSuppliers(PlanTask):
                   sizemultiple=excluded.sizemultiple,
                   sizemaximum=excluded.sizemaximum,
                   batchwindow=excluded.batchwindow,
+                  hard_safety_leadtime=excluded.hard_safety_leadtime,
                   extra_safety_leadtime=excluded.extra_safety_leadtime,
                   fence=excluded.fence,
                   cost=excluded.cost,

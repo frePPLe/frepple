@@ -599,8 +599,15 @@ class ReportManager(GridReport):
                     m.user = request.user
                     m.save()
                     return JsonResponse({"id": m.id, "status": "ok"})
-                except Exception:
-                    return JsonResponse({"id": m.id, "status": "could not save report"})
+                except Exception as e:
+                    # Exposing the exception to the user is acceptable here.
+                    # Otherwise we don't provide feedback on how the query needs correcting
+                    return JsonResponse(
+                        {
+                            "id": m.id,
+                            "status": "Error: %s" % e,  # lgtm[py/stack-trace-exposure]
+                        }
+                    )
             else:
                 return HttpResponseServerError("Error saving report")
 

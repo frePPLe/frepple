@@ -214,6 +214,16 @@ The section below describes the installation and configuration of these.
         location.
       | All bills of materials are modeled there.
 
+    * | Frepple server:
+      | URL of your frepple server.
+      | Do not include a slash at the end of the URL.
+
+    * | Disclose stack trace:
+      | To debug the connector and data issues it can be useful to send any connector
+        stack traces also to your frepple server.
+      | By default this option is not active for security reasons.
+      | It is recommended to activate this option only during development or testing.
+
     .. image:: _images/odoo-settings.png
        :alt: Configuring the Odoo add-on.
 
@@ -276,8 +286,13 @@ The section below describes the installation and configuration of these.
       | If translated names of products, items, locations, etc they will be used.
       | The default value is en_US.
 
-    * odoo.company: Company name for which to create purchase quotation and
-      manufacturing orders
+    * | odoo.company: Company name for which to create purchase quotation and
+        manufacturing orders.
+
+    * | odoo.singlecompany:
+      | When false (the default) the connector downloads all allowed companies for the odoo integration
+        user.
+      | When true the connector only downloads the data of the configured odoo.company.
 
     * | odoo.filter_export_purchase_order: Python filter expression for the
         automatic export of purchase orders.

@@ -346,10 +346,10 @@ LOGGING = {
     "loggers": {
         # A handler to log all SQL queries.
         # The setting "DEBUG" also needs to be set to True higher up in this file.
-        #'django.db.backends': {
-        #    'handlers': ['console'],
-        #    'level': 'DEBUG',
-        #    'propagate': False,
+        # "django.db.backends": {
+        #     "handlers": ["console"],
+        #     "level": "DEBUG",
+        #     "propagate": False,
         # },
         "django": {"handlers": ["console"], "level": "INFO"},
         "freppledb": {"handlers": ["console"], "level": "INFO"},

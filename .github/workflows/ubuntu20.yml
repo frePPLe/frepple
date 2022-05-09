@@ -2,6 +2,8 @@ name: Build Community with ubuntu-20
 
 on:
   push:
+    paths-ignore:
+      - "doc/**"
   pull_request:
 
 env:

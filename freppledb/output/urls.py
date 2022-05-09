@@ -51,11 +51,6 @@ urlpatterns = [
         name="output_demand_operationplans",
     ),
     re_path(
-        r"^demand/(.+)/$",
-        freppledb.output.views.demand.OverviewReport.as_view(),
-        name="output_demand_plandetail",
-    ),
-    re_path(
         r"^demand/$",
         freppledb.output.views.demand.OverviewReport.as_view(),
         name="output_demand_plan",

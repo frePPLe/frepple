@@ -1496,8 +1496,7 @@ class Attribute(AuditModel):
                     "distributionorder",
                 )
             ]
-        except Exception as e:
-            print(e)
+        except Exception:
             return []
 
     # Database fields

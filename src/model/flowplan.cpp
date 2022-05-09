@@ -460,4 +460,15 @@ Duration FlowPlan::getPeriodOfCover() const {
   return Duration(999L * 86400L);
 }
 
+bool FlowPlan::getFeasible() const {
+  if (getBuffer()->hasType<BufferInfinite>()) return true;
+  auto flplaniter = getBuffer()->getFlowPlans();
+  for (auto cur = flplaniter.begin(this); cur != flplaniter.end(); ++cur) {
+    if (cur->getOnhand() < -ROUNDING_ERROR && cur->isLastOnDate())
+      // Material shortage
+      return false;
+  }
+  return true;
+}
+
 }  // namespace frepple

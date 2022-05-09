@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2020 by frePPLe bv
+# Copyright (C) 2022 by frePPLe bv
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -15,21 +14,24 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.db import migrations
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
 
-    dependencies = [("odoo", "0002_parameters")]
+    dependencies = [
+        ("input", "0062_parameter_fix_supply_path"),
+    ]
 
     operations = [
-        migrations.RunSQL(
-            """
-            insert into common_parameter
-            (name, value, description, lastmodified)
-            values
-            ('odoo.loglevel','0','Odoo connector: Set to non-zero to get a verbose log. Default is 0.', now())
-            on conflict(name) do nothing
-            """
-        )
+        migrations.AddField(
+            model_name="itemsupplier",
+            name="hard_safety_leadtime",
+            field=models.DurationField(
+                blank=True,
+                help_text="hard safety lead time",
+                null=True,
+                verbose_name="hard safety lead time",
+            ),
+        ),
     ]

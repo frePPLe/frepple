@@ -252,6 +252,13 @@ The section below describes the installation and configuration of these.
         on the odoo user interface:
           CONTENT_SECURITY_POLICY = "frame-ancestors 'self' domain-of-your-odoo-server;"
 
+    * | if frePPLe and Odoo are installed on 2 different domains (example: https://myfrepple.frepple.com
+    *   and https://myodoo.odoo.com), then following lines need to be added:
+    *     X_FRAME_OPTIONS = None
+          SESSION_COOKIE_SAMESITE = "none"            # NOTE: "none", not None
+          CSRF_COOKIE_SAMESITE = "none"               # NOTE: "none", not None
+
+
   * **Configure parameters**
 
     * | odoo.url: URL of the Odoo server

@@ -2950,6 +2950,7 @@ function about_show() {
         '<div class="modal-body">' +
         '<div class="row">';
       content += '<div class="col-sm-5"><br><br>' +
+        '<p><a target="_blank" href="' + website + '/docs/current/release-notes.php"><strong>Check for updates &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
         '<p><a target="_blank" href="' + website + '"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
         '<p><a target="_blank" href="' + website + '/docs/' + version[0] + '.' + version[1] + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
         '<p><a target="_blank" href="' + website + '/docs/' + version[0] + '.' + version[1] + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +

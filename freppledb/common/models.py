@@ -507,8 +507,6 @@ class User(AbstractUser):
                     try:
                         with transaction.atomic(using=db, savepoint=False):
                             newuser = True
-                            self.is_active = False
-                            self.is_superuser = False
                             super().save(
                                 force_insert=force_insert,
                                 force_update=force_update,

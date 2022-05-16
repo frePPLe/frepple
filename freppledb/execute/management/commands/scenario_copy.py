@@ -186,7 +186,7 @@ class Command(BaseCommand):
 
             # Logging message - always logging in the default database
             destinationscenario.status = "Busy"
-            destinationscenario.save(using=DEFAULT_DB_ALIAS)
+            destinationscenario.save(update_fields=["status"], using=DEFAULT_DB_ALIAS)
 
             # tables excluded from promotion task
             excludedTables = [
@@ -282,7 +282,10 @@ class Command(BaseCommand):
                     if not t or t.name != task.name or t.submitted != task.submitted:
                         destinationscenario.status = "Free"
                         destinationscenario.lastrefresh = datetime.today()
-                        destinationscenario.save(using=DEFAULT_DB_ALIAS)
+                        destinationscenario.save(
+                            update_fields=["status", "lastrefresh"],
+                            using=DEFAULT_DB_ALIAS,
+                        )
                         raise Exception("Database copy failed")
                     t.status = "Done"
                     t.finished = datetime.now()
@@ -299,7 +302,10 @@ class Command(BaseCommand):
                     if destination != DEFAULT_DB_ALIAS:
                         destinationscenario.status = "Free"
                         destinationscenario.lastrefresh = datetime.today()
-                        destinationscenario.save(using=DEFAULT_DB_ALIAS)
+                        destinationscenario.save(
+                            update_fields=["status", "lastrefresh"],
+                            using=DEFAULT_DB_ALIAS,
+                        )
                     raise Exception("Database copy failed")
 
             # Check the permissions after restoring a backup.
@@ -320,7 +326,14 @@ class Command(BaseCommand):
             destinationscenario.lastrefresh = datetime.today()
             if options["description"]:
                 destinationscenario.description = options["description"]
-            destinationscenario.save(using=DEFAULT_DB_ALIAS)
+                destinationscenario.save(
+                    update_fields=["status", "lastrefresh", "description"],
+                    using=DEFAULT_DB_ALIAS,
+                )
+            else:
+                destinationscenario.save(
+                    update_fields=["status", "lastrefresh"], using=DEFAULT_DB_ALIAS
+                )
 
             # Delete parameter that marks a running worker
             if destination != DEFAULT_DB_ALIAS:
@@ -422,7 +435,12 @@ class Command(BaseCommand):
                     destinationscenario.status = "In use"
                 else:
                     destinationscenario.status = "Free"
-                destinationscenario.save(using=DEFAULT_DB_ALIAS)
+                destinationscenario.save(
+                    update_fields=[
+                        "status",
+                    ],
+                    using=DEFAULT_DB_ALIAS,
+                )
             raise e
 
         finally:

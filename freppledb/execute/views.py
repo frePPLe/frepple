@@ -471,7 +471,7 @@ def wrapTask(request, action):
             scenario = args["scenario"]
             sc = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=scenario)
             sc.description = args.get("description", None)
-            sc.save(using=DEFAULT_DB_ALIAS)
+            sc.save(update_fields=["description"], using=DEFAULT_DB_ALIAS)
         else:
             raise Exception("Invalid scenario task")
     # G

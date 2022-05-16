@@ -171,7 +171,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['backlog']); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#8BBA00")
+        .attr("stroke","#000000")
         .attr("d", line(data));
     }
 

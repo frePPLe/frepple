@@ -8,7 +8,8 @@
   function extraPreference() {
     return {
        "height": Math.round($("#gbox_grid").height() - 48),
-       "refresh": (refresh !== null)
+       "refresh": (refresh !== null),
+       "expandtask": $("#tasks .collapse.in").first().attr("data-task")
        };
   }
 
@@ -104,7 +105,15 @@
     if(location.hash != null && location.hash != "") {
         $("#tasks .collapse").removeClass('in');
         $("#tasks").find('.collapse[data-task="' + location.hash + '"]').addClass("in");
+    } else if (preferences && preferences.hasOwnProperty("expandtask")) {
+        var el = $("#tasks").find('.collapse[data-task="' + preferences.expandtask + '"]');
+        if (el.length > 0) {
+           $("#tasks .collapse").removeClass('in');
+           el.addClass("in");
+        }
     }
+
+    $('#tasks').on("shown.bs.collapse", grid.saveColumnConfiguration);
 
     {% if not "refresh" in preferences or preferences.refresh %}
     // Refresh the grid every 5 seconds

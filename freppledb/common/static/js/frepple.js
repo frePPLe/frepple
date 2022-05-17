@@ -3277,7 +3277,15 @@ var graph = {
           .attr('class', timebuckets[i]['history'] ? 'svgheaderhistory' : 'svgheadertext')
           .attr('x', w)
           .attr('y', '12')
-          .text(timebuckets[i]['name']);
+          .attr('data-bucket', i)
+          .text(timebuckets[i]['name'])
+          .on("mouseenter", function (d) {
+            var bucket = parseInt($(this).attr("data-bucket"));
+            var tiptext = "&nbsp;" + timebuckets[bucket]["startdate"] + ' - ' + timebuckets[bucket]["enddate"] + "&nbsp;";
+            graph.showTooltip(tiptext.replaceAll(" 00:00:00", ""));
+          })
+          .on("mouseleave", graph.hideTooltip)
+          .on("mousemove", graph.moveTooltip);
         wt = w + t.node().getComputedTextLength() + 12;
       }
     }

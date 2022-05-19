@@ -30,6 +30,10 @@ These changes will be made gradual over a couple of releases. For instance, from
     very long manufacturing orders and with many work orders this extra detail is
     important.
 
+- | V12: Performance improvement for reading large amounts of product templates.
+  | We noticed that the runtime increases exponentially as the number of product
+    templates goes up. Newer odoo releases don't show the same inefficiency.
+
 6.22.0 (2022/5/6)
 =================
 

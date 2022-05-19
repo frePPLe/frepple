@@ -410,6 +410,12 @@ class User(AbstractUser):
         editable=False,
         db_index=True,
     )
+    default_scenario = models.CharField(
+        _("default scenario"),
+        max_length=300,
+        null=True,
+        blank=True,
+    )
 
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None

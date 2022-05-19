@@ -24,6 +24,10 @@
       $("#id_theme span").text($(this).text());
       $("#theme").val($(this).prop('name'));
     });
+    $("#id_default_scenarioul li a").click(function() {
+      $("#id_default_scenario span").text($(this).text());
+      $("#default_scenario").val($(this).prop('name'));
+    });
   });
 </script>
 
@@ -43,6 +47,7 @@
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <input type="hidden" name="language" id="language" value="{{ request.user.language }}">
     <input type="hidden" name="theme" id="theme" value="{{ request.user.theme }}">
+    <input type="hidden" name="default_scenario" id="default_scenario" value="{{ request.user.default_scenario }}">
     {% if form.non_field_errors %}
     <div  style="max-width: 500px" class="alert alert-danger">{{ form.non_field_errors }}</div>
     {% endif %}
@@ -92,6 +97,27 @@
           <ul class="dropdown-menu col-xs-12" aria-labelledby="id_theme" id="id_themeul">
             {% for j in THEMES %}
             <li><a name="{{j}}">{% filter capfirst %}{{j}}{%endfilter%}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if SCENARIOS|length > 1 %}
+    <div class="row" style="padding-bottom: 20px;">
+      <div class="col-xs-3" style="max-width:150px; text-align: right">
+        <label class="control-label" for="id_default_scenario">{% trans 'default scenario'|capfirst%}:</label>
+      </div>
+      <div class="col-xs-9" style="max-width:260px">
+        <div class="dropdown dropdown-submit-input">
+          <button class="btn btn-default dropdown-toggle form-control" id="id_default_scenario" name="default_scenario" value="" type="button" data-toggle="dropdown">
+            <span>{% filter capfirst %}{{ request.user.default_scenario }}{%endfilter%}</span>&nbsp;&nbsp;
+            <i class="caret"></i>
+          </button>
+          <ul class="dropdown-menu col-xs-12" aria-labelledby="id_default_scenario" id="id_default_scenarioul">
+            {% for j in SCENARIOS %}
+            <li><a name="{{j.name}}">{% filter capfirst %}{%if j.description %}{{j.description}}{% else %}{{j.name}}{% endif %}{%endfilter%}</a></li>
             {% endfor %}
           </ul>
         </div>

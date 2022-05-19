@@ -166,6 +166,11 @@ class PreferencesForm(forms.Form):
         required=False,
         choices=[(i, capfirst(i)) for i in settings.THEMES],
     )
+    default_scenario = forms.ChoiceField(
+        label=_("default scenario"),
+        required=False,
+        choices=[(i, i) for i in settings.DATABASES.keys()],
+    )
     cur_password = forms.CharField(
         label=_("Change password"),
         required=False,
@@ -235,6 +240,8 @@ def preferences(request):
                 request.user.pagesize = newdata["pagesize"]
                 if newdata["avatar"]:
                     request.user.avatar = newdata["avatar"]
+                if newdata["default_scenario"]:
+                    request.user.default_scenario = newdata["default_scenario"]
                 if newdata["cur_password"]:
                     request.user.set_password(newdata["new_password1"])
                     # Updating the password logs out all other sessions for the user
@@ -270,6 +277,7 @@ def preferences(request):
                 "theme": request.user.theme,
                 "pagesize": request.user.pagesize,
                 "avatar": request.user.avatar,
+                "default_scenario": request.user.default_scenario,
             }
         )
     LANGUAGE = User.languageList[0][1]
@@ -284,6 +292,9 @@ def preferences(request):
             "form": form,
             "THEMES": settings.THEMES,
             "LANGUAGE": LANGUAGE,
+            "SCENARIOS": Scenario.objects.using(DEFAULT_DB_ALIAS)
+            .filter(status="In use")
+            .order_by("name"),
         },
     )
 

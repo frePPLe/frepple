@@ -30,6 +30,7 @@ from freppledb.execute.models import Task, ScheduledTask
 from freppledb.execute.views import FileManager
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Scenario, Parameter
+from freppledb.input.models import Item
 from freppledb import __version__
 
 
@@ -472,6 +473,8 @@ class Command(BaseCommand):
         in_use_scenarios = []
         dumps = []
 
+        default_db_not_empty = Item.objects.using(DEFAULT_DB_ALIAS).count() > 0
+
         # look for dump files in the log folder of production
         for f in sorted(os.listdir(settings.FREPPLE_LOGDIR)):
             if os.path.isfile(
@@ -493,7 +496,7 @@ class Command(BaseCommand):
 
                 if user.has_perm("common.release_scenario"):
                     release_perm.append(scenario.name)
-                if user.has_perm("common.promote_scenario"):
+                if default_db_not_empty and user.has_perm("common.promote_scenario"):
                     promote_perm.append(scenario.name)
                 if user.has_perm("common.copy_scenario"):
                     copy_perm.append(scenario.name)

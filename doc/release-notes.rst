@@ -21,6 +21,13 @@ These changes will be made gradual over a couple of releases. For instance, from
 6.23.0 (Upcoming release)
 =========================
 
+.. rubric:: User interface
+
+- | Your user preferences now include an option to set a default scenario.
+  | Some users do the majority of their day-to-day actions in a scenario different
+    from the default production scenario. This option will make the life of such
+    users easier.
+
 .. rubric:: Odoo integration
 
 - | V14: The connector code has been refactored to clean up and simplify the code.

@@ -949,8 +949,7 @@ function crosses (cellvalue, options, rowdata)
           "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
             "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;orders=True" +
-            "&amp;duedate__lt=" +
-            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['enddate']) +
+            "&amp;duedate__lt=" + options['colModel']['enddate'] +
             "&amp;enddate__gte=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
@@ -965,8 +964,7 @@ function crosses (cellvalue, options, rowdata)
           "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
             "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;orders=False" +
-            "&amp;duedate__lt=" +
-            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['enddate']) +
+            "&amp;duedate__lt=" + options['colModel']['enddate'] +
             "&amp;enddate__gte=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
@@ -980,8 +978,7 @@ function crosses (cellvalue, options, rowdata)
           result += grid.formatNumber(cellvalue[id_by_field['total_backlog']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
           "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
             "&amp;location=" + admin_escape(rowdata['location']) +
-            "&amp;duedate__lt=" +
-            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? last_currentdate : options['colModel']['enddate']) +
+            "&amp;duedate__lt=" + options['colModel']['enddate'] +
             "&amp;enddate__gte=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
             "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";

@@ -184,7 +184,7 @@ LANGUAGE_CODE = "en"
 
 # Google analytics code to report usage statistics to.
 # The value None disables this feature.
-GOOGLE_ANALYTICS = None  # "UA-1950616-4"
+GOOGLE_ANALYTICS = None
 
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
 

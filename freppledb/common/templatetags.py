@@ -726,15 +726,13 @@ def google_analytics():
     """
     if settings.GOOGLE_ANALYTICS and not settings.DEBUG:
         return mark_safe(
+            "<script async src='https://www.googletagmanager.com/gtag/js?id=%s'></script>\n"
             "<script>\n"
-            "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n"
-            "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n"
-            "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n"
-            "})\n"
-            "(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n"
-            "ga('create', '%s', 'auto');\n"
-            "ga('send', 'pageview');\n"
-            "</script>" % settings.GOOGLE_ANALYTICS
+            "window.dataLayer = window.dataLayer || [];\n"
+            "function gtag(){dataLayer.push(arguments);}\n"
+            "gtag('js', new Date())\n;"
+            "gtag('config', '%s')\n;"
+            "</script>\n" % (settings.GOOGLE_ANALYTICS, settings.GOOGLE_ANALYTICS)
         )
     else:
         return mark_safe("")

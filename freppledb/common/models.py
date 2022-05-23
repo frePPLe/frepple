@@ -489,6 +489,7 @@ class User(AbstractUser):
                 "pagesize",
                 "lastmodified",
                 "is_staff",
+                "default_scenario",
             ]
         else:
             # Important is NOT to save the is_active and is_superuser fields.

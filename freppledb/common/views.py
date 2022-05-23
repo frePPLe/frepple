@@ -359,12 +359,12 @@ def login(request, extra_context=None):
     if "remember_me" in request.POST and settings.SESSION_COOKIE_AGE:
         request.session.set_expiry(settings.SESSION_COOKIE_AGE)
     if (
-        # Automatically switch to the default scenario
         request.path == "/data/login/"
         and getattr(request.user, "default_scenario", None)
         and isinstance(response, HttpResponseRedirect)
         and response.url == "/"
     ):
+        # Automatically switch to the default scenario
         return HttpResponseRedirect("/%s/" % request.user.default_scenario)
     else:
         return response

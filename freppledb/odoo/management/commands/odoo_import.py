@@ -65,18 +65,16 @@ class Command(BaseCommand):
             )
         if database not in settings.DATABASES.keys():
             raise CommandError("No database settings known for '%s'" % self.database)
+        kwargs = {
+            "env": environment,
+            "database": database,
+            "task": task,
+            "constraint": 0,
+            "plantype": 2,
+        }
         if options["user"]:
-            management.call_command(
-                "runplan",
-                env=environment,
-                database=database,
-                user=options["user"],
-                task=task,
-            )
-        else:
-            management.call_command(
-                "runplan", env=environment, database=database, task=task
-            )
+            kwargs["user"] = options["user"]
+        management.call_command("runplan", **kwargs)
 
     # accordion template
     title = _("Import data from %(erp)s") % {"erp": "odoo"}

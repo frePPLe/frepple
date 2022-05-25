@@ -23,13 +23,6 @@
 
 #include "frepple/model.h"
 
-// This is the name used for the dummy operation used to represent the
-// inventory.
-#define INVENTORY_OPERATION
-
-// This is the name used for the dummy operation used to represent procurements
-#define PURCHASE_OPERATION "Purchase " + string(getName())
-
 namespace frepple {
 
 template <class Buffer>
@@ -763,16 +756,20 @@ void Buffer::buildProducingOperation() {
             // Already exists
             continue;
         } else {
+          bool exists = false;
           SubOperation::iterator subiter(
               producing_operation->getSubOperations());
           while (SubOperation* o = subiter.next())
             if (o->getOperation()->hasType<OperationItemSupplier>()) {
               OperationItemSupplier* s =
                   static_cast<OperationItemSupplier*>(o->getOperation());
-              if (s->getItemSupplier() == supitem)
+              if (s->getItemSupplier() == supitem) {
                 // Already exists
-                continue;
+                exists = true;
+                break;
+              }
             }
+          if (exists) continue;
         }
       }
 
@@ -877,16 +874,20 @@ void Buffer::buildProducingOperation() {
             // Already exists
             continue;
         } else {
+          bool exists = false;
           SubOperation::iterator subiter(
               producing_operation->getSubOperations());
           while (SubOperation* o = subiter.next())
             if (o->getOperation()->hasType<OperationItemDistribution>()) {
               OperationItemDistribution* s =
                   static_cast<OperationItemDistribution*>(o->getOperation());
-              if (s->getItemDistribution() == itemdist)
+              if (s->getItemDistribution() == itemdist) {
                 // Already exists
-                continue;
+                exists = true;
+                break;
+              }
             }
+          if (exists) continue;
         }
       }
 

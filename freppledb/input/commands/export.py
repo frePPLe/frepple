@@ -1701,11 +1701,16 @@ class exportSuppliers(PlanTask):
             for i in frepple.suppliers():
                 if source and source != i.source:
                     continue
+                try:
+                    available = frepple.location(name=i.name, action="C").available
+                except Exception:
+                    available = None
                 r = [
                     i.name,
                     i.description,
                     i.category,
                     i.subcategory,
+                    available.name if available else None,
                     i.source,
                     cls.timestamp,
                 ]
@@ -1723,13 +1728,14 @@ class exportSuppliers(PlanTask):
                 cursor,
                 """
                 insert into supplier
-                (name,description,category,subcategory,source,lastmodified,owner_id%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,null%s)
+                (name,description,category,subcategory,available_id,source,lastmodified,owner_id%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,null%s)
                 on conflict (name)
                 do update set
                   description=excluded.description,
                   category=excluded.category,
                   subcategory=excluded.subcategory,
+                  available_id=excluded.available_id,
                   source=excluded.source,
                   lastmodified=excluded.lastmodified,
                   owner_id=excluded.owner_id

@@ -169,7 +169,7 @@ class PreferencesForm(forms.Form):
     default_scenario = forms.ChoiceField(
         label=_("default scenario"),
         required=False,
-        choices=[(i, i) for i in settings.DATABASES.keys()],
+        choices=[(i, i) for i in settings.DATABASES.keys()] + [(None, None)],
     )
     cur_password = forms.CharField(
         label=_("Change password"),

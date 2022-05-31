@@ -1833,6 +1833,8 @@ var grid = {
       oper = gettext("within");
     else if (rule.op == "ico")
       oper = gettext("is child of");
+    else if (rule.op == "isnull")
+      oper = gettext("is null");
     else {
       for (var firstKey in $.jgrid.locales)
         var operands = $.jgrid.locales[firstKey].search.odata;

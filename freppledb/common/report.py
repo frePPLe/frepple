@@ -351,7 +351,7 @@ class GridFieldDateTime(GridField):
     formatter = "date"
     extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
     searchoptions = (
-        '{"sopt":["eq","ne","lt","le","gt","ge","win"],"searchhidden": true}'
+        '{"sopt":["eq","ne","lt","le","gt","ge","win","isnull"],"searchhidden": true}'
     )
     width = 140
 
@@ -373,7 +373,7 @@ class GridFieldInteger(GridField):
     formatter = "integer"
     extra = '"formatoptions":{"defaultValue": ""}'
     searchoptions = (
-        '{sopt:["eq","ne","in","ni","lt","le","gt","ge"],"searchhidden":true}'
+        '{sopt:["eq","ne","in","ni","lt","le","gt","ge","isnull"],"searchhidden":true}'
     )
     width = 70
     searchrules = '"integer":true'
@@ -383,7 +383,7 @@ class GridFieldNumber(GridField):
     formatter = "number"
     extra = '"formatoptions":{"defaultValue":"","decimalPlaces":"auto"}'
     searchoptions = (
-        '{sopt:["eq","ne","in","ni","lt","le","gt","ge"],"searchhidden":true}'
+        '{sopt:["eq","ne","in","ni","lt","le","gt","ge","isnull"],"searchhidden":true}'
     )
     width = 70
     searchrules = '"number":true'
@@ -416,11 +416,11 @@ class GridFieldLocalDateTime(GridFieldDateTime):
 class GridFieldText(GridField):
     width = 200
     align = "left"
-    searchoptions = '{"sopt":["cn","nc","eq","ne","lt","le","gt","ge","bw","bn","in","ni","ew","en"],"searchhidden":true}'
+    searchoptions = '{"sopt":["cn","nc","eq","ne","lt","le","gt","ge","bw","bn","in","ni","ew","en","isnull"],"searchhidden":true}'
 
 
 class GridFieldHierarchicalText(GridFieldText):
-    searchoptions = '{"sopt":["cn","nc","eq","ne","lt","le","gt","ge","bw","bn","in","ni","ew","en","ico"],"searchhidden":true}'
+    searchoptions = '{"sopt":["cn","nc","eq","ne","lt","le","gt","ge","bw","bn","in","ni","ew","en","ico","isnull"],"searchhidden":true}'
 
 
 class GridFieldChoice(GridField):
@@ -479,7 +479,7 @@ def getCurrentDate(database=DEFAULT_DB_ALIAS):
 class GridFieldCurrency(GridField):
     formatter = "currencyWithBlanks"
     searchoptions = (
-        '{sopt:["eq","ne","in","ni","lt","le","gt","ge"],"searchhidden":true}'
+        '{sopt:["eq","ne","in","ni","lt","le","gt","ge","isnull"],"searchhidden":true}'
     )
 
     def extra(self):
@@ -1456,7 +1456,7 @@ class GridReport(View):
     @classmethod
     def data_query(cls, request, *args, fields=None, page=None, **kwargs):
         if not fields:
-            raise Exception("No fields gives")
+            raise Exception("No fields provided as argument")
         if not hasattr(request, "query"):
             if callable(cls.basequeryset):
                 request.query = cls.filter_items(
@@ -2670,6 +2670,16 @@ class GridReport(View):
         return models.Q(**{"%s__lte" % reportrow.field_name: limit})
 
     @staticmethod
+    def _filter_isnull(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+        print(
+            ["0", "false", force_str(_("false"))], "totoot", translation.get_language()
+        )
+        if data.lower() in ["0", "false", force_str(_("false"))]:
+            return ~models.Q(**{"%s__isnull" % reportrow.field_name: data})
+        else:
+            return models.Q(**{"%s__isnull" % reportrow.field_name: data})
+
+    @staticmethod
     def _filter_ico(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         # rebuild hierarchy
         if issubclass(reportrow.model, HierarchyModel):
@@ -2717,6 +2727,7 @@ class GridReport(View):
         "cn": _filter_cn.__func__,
         "win": _filter_win.__func__,
         "ico": _filter_ico.__func__,
+        "isnull": _filter_isnull.__func__,
     }
 
     _filter_map_django_jqgrid = {
@@ -2735,6 +2746,7 @@ class GridReport(View):
         "iendswith": "ew",
         "icontains": "cn",
         "ico": "ico",
+        "isnull": "isnull",
         # 'win' exist in jqgrid, but not in django
     }
 

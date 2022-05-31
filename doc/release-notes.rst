@@ -28,6 +28,9 @@ These changes will be made gradual over a couple of releases. For instance, from
     from the default production scenario. This option will make the life of such
     users easier.
 
+- | A new filter "is null" is now available on fields of reports.
+  | This makes it easier to filer empty fields or non-empty fields.
+
 .. rubric:: Odoo integration
 
 - | V14: The connector code has been refactored to clean up and simplify the code.

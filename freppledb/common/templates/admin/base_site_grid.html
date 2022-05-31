@@ -198,6 +198,16 @@ function displayGrid(load) {
             }
           }
         },
+      isnull: {
+          operand: "is null",
+          text: "is null",
+          filter: function (options) {
+            var v = options.item[options.cmName];
+            if (v === undefined || v === null || v === "") {
+              return true;
+            }
+          }
+        },
     },
     height: {% if reportclass.height %}
           {% if not reportclass.variableheight or not preferences.details or preferences.details == "bottom" %}

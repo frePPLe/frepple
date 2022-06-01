@@ -595,7 +595,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     Buffer* destbuffer = nullptr;
     Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
     while (Buffer* tmpbuf = buf_iter.next()) {
-      if (tmpbuf->getLocation() == static_cast<Location*>(locval)) {
+      if (tmpbuf->getLocation() == static_cast<Location*>(locval) &&
+          !tmpbuf->getBatch()) {
         if (destbuffer) {
           stringstream o;
           o << "Multiple buffers found for item '"

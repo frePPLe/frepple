@@ -89,6 +89,8 @@ class SQLReport(AuditModel):
                     conn.close()
 
     def save(self, *args, **kwargs):
+        if self.sql and "pg_" in self.sql:
+            raise Exception("Uhuh... What are trying to do?")
         if not self.id:
             self.refreshColumns()
         super().save(*args, **kwargs)

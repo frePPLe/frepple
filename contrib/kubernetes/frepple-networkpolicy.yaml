@@ -1,0 +1,13 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frepple-network
+spec:
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              frepple.network: "true"
+  podSelector:
+    matchLabels:
+      frepple.network: "true"

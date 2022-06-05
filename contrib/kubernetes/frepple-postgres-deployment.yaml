@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: frepple-postgres-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frepple-postgres
+  name: frepple-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frepple-postgres
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        frepple.network: "true"
+        app: frepple-postgres
+    spec:
+      containers:
+        - env:
+            - name: POSTGRES_DB
+              value: frepple
+            - name: POSTGRES_PASSWORD
+              value: frepple
+            - name: POSTGRES_USER
+              value: frepple
+          image: postgres:14
+          name: frepple-postgres
+          ports:
+            - containerPort: 5432
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4294967296"
+            requests:
+              cpu: 250m
+              memory: "4294967296"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data/
+              name: frepple-postgres-data
+      volumes:
+        - name: frepple-postgres-data
+          persistentVolumeClaim:
+            claimName: frepple-postgres-data
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frepple-postgres
+spec:
+  ports:
+    - name: "5432"
+      port: 5432
+      targetPort: 5432
+  selector:
+    app: frepple-postgres
+status:
+  loadBalancer: {}

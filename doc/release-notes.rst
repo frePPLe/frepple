@@ -44,6 +44,11 @@ These changes will be made gradual over a couple of releases. For instance, from
   | We noticed that the runtime increases exponentially as the number of product
     templates goes up. Newer odoo releases don't show the same inefficiency.
 
+.. rubric:: System administration
+
+- | A set of Kubernetes configuration files is now available for quick deployment
+    on a kubernetes cluster.
+
 6.22.0 (2022/5/6)
 =================
 

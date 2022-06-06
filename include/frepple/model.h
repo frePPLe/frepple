@@ -5088,6 +5088,16 @@ class OperationDelivery : public OperationFixedTime {
     m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer,
                                     &Cls::setBuffer, MANDATORY);
   }
+
+  static Duration getDeliveryDuration() { return deliveryduration; }
+
+  static void setDeliveryDuration(Duration d) {
+    if (d < 0L) throw DataException("Delivery duration must be >= 0.");
+    deliveryduration = d;
+  }
+
+ private:
+  static Duration deliveryduration;
 };
 
 inline bool OperationPlan::getHidden() const {
@@ -8183,6 +8193,14 @@ class Plan : public Plannable, public Object {
     autofence = l;
   }
 
+  Duration getDeliveryDuration() const {
+    return OperationDelivery::getDeliveryDuration();
+  }
+
+  void setDeliveryDuration(Duration l) {
+    OperationDelivery::setDeliveryDuration(l);
+  }
+
   /* Return the calendar to which operationplans are aligned. */
   Calendar* getCalendar() const { return cal; }
 
@@ -8272,6 +8290,9 @@ class Plan : public Plannable, public Object {
     m->addStringRefField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
     m->addDurationField<Plan>(Tags::autofence, &Plan::getAutoFence,
                               &Plan::setAutoFence);
+    m->addDurationField<Plan>(Tags::deliveryduration,
+                              &Plan::getDeliveryDuration,
+                              &Plan::setDeliveryDuration);
     m->addStringRefField<Plan>(Tags::description, &Plan::getDescription,
                                &Plan::setDescription);
     m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);

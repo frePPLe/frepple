@@ -72,6 +72,7 @@ class Tags {
   static const Keyword delay;
   static const Keyword delivery;
   static const Keyword delivery_operation;
+  static const Keyword deliveryduration;
   static const Keyword demand;
   static const Keyword demands;
   static const Keyword description;

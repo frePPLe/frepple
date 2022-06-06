@@ -71,6 +71,7 @@ const Keyword Tags::deflt("default");
 const Keyword Tags::delay("delay");
 const Keyword Tags::delivery("delivery");
 const Keyword Tags::delivery_operation("delivery_operation");
+const Keyword Tags::deliveryduration("deliveryduration");
 const Keyword Tags::demand("demand");
 const Keyword Tags::demands("demands");
 const Keyword Tags::description("description");

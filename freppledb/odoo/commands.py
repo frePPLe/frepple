@@ -33,6 +33,13 @@ from freppledb.common.models import Parameter
 from freppledb.common.commands import (
     PlanTaskRegistry,
     PlanTask,
+    PlanTaskParallel,
+    PlanTaskSequence,
+)
+from freppledb.input.commands import (
+    LoadTask,
+    loadOperationPlans,
+    loadOperationPlanMaterials,
 )
 
 logger = logging.getLogger(__name__)
@@ -64,9 +71,33 @@ class OdooReadData(PlanTask):
         for i in range(5):
             if ("odoo_read_%s" % i) in os.environ:
                 cls.mode = i
-                PlanTaskRegistry.addArguments(
-                    exportstatic=True, source="odoo_%s" % i, skipLoad=True
-                )
+                if (
+                    Parameter.getValue(
+                        "odoo.allowSharedOwnership", database=database, default="false"
+                    ).lower()
+                    == "true"
+                ):
+                    for stdLoad in PlanTaskRegistry.reg.steps:
+                        if isinstance(stdLoad, (PlanTaskParallel, PlanTaskSequence)):
+                            continue
+                        if issubclass(stdLoad, LoadTask):
+                            if stdLoad in (
+                                loadOperationPlans,
+                                loadOperationPlanMaterials,
+                            ):
+                                stdLoad.filter = "false"
+                            else:
+                                stdLoad.filter = (
+                                    "(source is null or source<>'odoo_%s')" % cls.mode
+                                )
+                            stdLoad.description += " - non-odoo source"
+                    PlanTaskRegistry.addArguments(
+                        exportstatic=True, source="odoo_%s" % i
+                    )
+                else:
+                    PlanTaskRegistry.addArguments(
+                        exportstatic=True, source="odoo_%s" % i, skipLoad=True
+                    )
                 return 1
         return -1
 

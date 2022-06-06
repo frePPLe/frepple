@@ -291,6 +291,12 @@ The section below describes the installation and configuration of these.
         user.
       | When true the connector only downloads the data of the configured odoo.company.
 
+    * | odoo.allowSharedOwnership:
+      | By default records read from odoo aren't editable in frepple. You loose your
+        edits with every run of the connector.
+      | If this flag is set to true you can override the odoo data if the source field
+        of the overridden records is also edited.
+
     * | odoo.filter_export_purchase_order: Python filter expression for the
         automatic export of purchase orders.
       | This parameter currently not used.

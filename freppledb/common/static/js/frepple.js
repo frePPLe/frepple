@@ -516,7 +516,7 @@ jQuery.extend($.fn.fmatter, {
       return '';
 
     // Ignores color field and read the delay field
-    var thedelay = Math.round(parseInt(rowdata.delay) / 8640) / 10;
+    var thedelay = Math.round(parseInt(rowdata.delay) / 86400);
     if (parseInt(rowdata.criticality) === 999 || parseInt(rowdata.operationplan__criticality) === 999) {
       return '';
     } else if (thedelay < 0) {

@@ -5,8 +5,6 @@
 
 function delayfmt(cellvalue, options, rowdata) {
   var days = 0;
-  var hours = 0;
-  var minutes = 0;
   var seconds = 0;
   var sign;
   var d = [];
@@ -46,15 +44,12 @@ function delayfmt(cellvalue, options, rowdata) {
     }
   }
   seconds = Math.abs(seconds); //remove the sign
-  days = Math.floor(seconds / 86400);
-  hours = Math.floor((seconds - (days * 86400)) / 3600);
-  minutes = Math.floor((seconds - (days * 86400) - (hours * 3600)) / 60);
-  seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
+  days = sign < 0 ? Math.floor(seconds / 86400) : Math.ceil(seconds / 86400);
 
   var thecolor0 = '';
   var thecolor1 = '';
   if (options.colModel.name === 'delay') {
-    var thenumber = sign * (days + hours/24 + minutes/60/24 + seconds/3600/24);    
+    var thenumber = sign * days;
     if (thenumber <= 0)
       thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #008000">';
     else if (thenumber > 7)
@@ -63,14 +58,7 @@ function delayfmt(cellvalue, options, rowdata) {
       thecolor0 = '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+Math.round((1-thenumber/7)*255)+','+0+')">';
     thecolor1 = '</div>';
   }
-
-  if (days > 0)
-    return thecolor0 + (sign*days).toString() + ((hours < 10) ? " 0" : " ") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds) + thecolor1;
-  if (hours > 0)
-    return thecolor0 + (sign*hours).toString() + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds) + thecolor1;
-  if (minutes > 0)
-    return thecolor0 + (sign*minutes).toString() + ((seconds < 10) ? ":0" : ":") + Math.ceil(seconds) + thecolor1;
-  return thecolor0 + (sign*seconds).toFixed(3) + thecolor1;
+  return thecolor0 + (sign*days).toString() + " " + gettext("days") + thecolor1;
 }
 
 function plannedquantitycellattr(rowId, value, rowdata) {

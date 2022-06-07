@@ -297,27 +297,6 @@ The section below describes the installation and configuration of these.
       | If this flag is set to true you can override the odoo data if the source field
         of the overridden records is also edited.
 
-    * | odoo.filter_export_purchase_order: Python filter expression for the
-        automatic export of purchase orders.
-      | This parameter currently not used.
-      | The expression gets as arguments 'operationplan' and 'buffer', and it
-        should return True if the transaction is to be included in the automated
-        bulk export.
-
-    * | odoo.filter_export_manufacturing_order: Python filter expression for the
-        automatic export of manufacturing orders.
-      | This parameter currently not used.
-      | The expression gets as arguments 'operationplan' and 'buffer', and it
-        should return True if the transaction is to be included in the automated
-        bulk export.
-
-    * | odoo.filter_export_distribution_order: Python filter expression for the
-        automatic export of distribution orders.
-      | This parameter currently not used.
-      | The expression gets as arguments 'operationplan' and 'buffer', and it
-        should return True if the transaction is to be included in the automated
-        bulk export.
-
 Data mapping details
 --------------------
 

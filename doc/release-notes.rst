@@ -40,6 +40,13 @@ These changes will be made gradual over a couple of releases. For instance, from
     very long manufacturing orders and with many work orders this extra detail is
     important.
 
+- | A new parameter odoo.allowSharedOwnership allows users to edit records
+    read from odoo.
+  | By default records read from odoo aren't editable in frepple. You loose your
+    edits with every run of the connector.
+  | If this flag is set to true you can override the odoo data if the source field
+    of the overridden records is also edited.
+
 - | V12: Performance improvement for reading large amounts of product templates.
   | We noticed that the runtime increases exponentially as the number of product
     templates goes up. Newer odoo releases don't show the same inefficiency.

@@ -239,7 +239,7 @@ class Command(BaseCommand):
                 item__source__startswith="odoo",
                 startdate__lte=today + timedelta(days=7),
             )
-            .order_by("startdate")[:2]
+            .order_by("startdate")
         ):
             if (
                 i.status not in ("proposed", "approved")
@@ -273,7 +273,7 @@ class Command(BaseCommand):
                 item__source__startswith="odoo",
                 startdate__lte=today + timedelta(days=7),
             )
-            .order_by("startdate")[:2]
+            .order_by("startdate")
         ):
             if (
                 i.status not in ("proposed", "approved")
@@ -310,7 +310,7 @@ class Command(BaseCommand):
                 item__source__startswith="odoo",
                 startdate__lte=today + timedelta(days=7),
             )
-            .order_by("startdate")[:2]
+            .order_by("startdate")
         ):
             if (
                 i.status not in ("proposed", "approved")

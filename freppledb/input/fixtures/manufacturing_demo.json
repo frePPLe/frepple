@@ -113,7 +113,7 @@
 {"model": "input.demand", "fields": {"name":"Demand 11","due":"2016-01-02 00:00:00","status":"open","quantity":10,"priority":1,"customer_id":"Customer near shop 2","item_id":"chair","location_id":"shop 2"}},
 {"model": "common.parameter", "fields": {"name": "allowsplits", "value": "true", "description": "Controls whether a sales order or forecast can be split across multiple manufacturing orders during planning. Default: true"}},
 {"model": "common.parameter", "fields": {"name":"currentdate","value":"2016-01-01 00:00:00","description":"Current date of the plan, formatted as YYYY-MM-DD HH:MM:SS"}},
-{"model": "common.parameter", "fields": {"name":"loading_time_units","value":"days","description":"Time units to be used for the resource report: hours, days, weeks"}},
+{"model": "common.parameter", "fields": {"name":"loading_time_units","value":"hours","description":"Time units to be used for the resource report: hours, days, weeks"}},
 {"model": "common.parameter", "fields": {"name": "plan.administrativeLeadtime", "value": "0", "description": "Specifies the number of days (value can be decimal) sales orders should be planned ahead of their due date to take into account for an administrative lead time. Default: 0"}},
 {"model": "common.parameter", "fields": {"name": "plan.minimumdelay", "value": "3600", "description": "Specifies a minimum delivery date increment (in seconds) used by the planning algorithm in its search. Default: 0"}},
 {"model": "common.parameter", "fields": {"name":"plan.loglevel","value":"0","description":"Controls the verbosity of the planning log file. Accepted values are 0(silent - default), 1 and 2 (verbose)"}},

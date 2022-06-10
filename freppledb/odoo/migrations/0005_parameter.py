@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             where name in (
               'odoo.filter_export_purchase_order',
               'odoo.filter_export_manufacturing_order',
-              'odoo.filter_export_distribution_order"
+              'odoo.filter_export_distribution_order'
               )
             """
         ),

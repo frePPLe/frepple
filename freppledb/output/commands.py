@@ -21,6 +21,7 @@ import logging
 import os
 from psycopg2.extras import execute_batch
 
+from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 
 from freppledb.common.commands import (
@@ -703,6 +704,9 @@ class ExportOperationPlans(PlanTask):
 
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
+
+        with_fcst = "freppledb.forecast" in settings.INSTALLED_APPS
+
         cls.attrs = [x for x in getAttributes(OperationPlan) if x[0] != "forecast"]
 
         # Export operationplans to a temporary table
@@ -769,30 +773,43 @@ class ExportOperationPlans(PlanTask):
             sep="\v",
         )
 
-        forecastfield0 = ""
-        forecastfield1 = ""
+        if with_fcst:
+            forecastfield0 = " ,forecast=excluded.forecast"
+            forecastfield1 = " ,forecast"
+        else:
+            forecastfield0 = ""
+            forecastfield1 = ""
 
         # Merge temp table into the actual table
-        sql = (
-            """
-            update operationplan
-                set name=tmp.name, type=tmp.type, status=tmp.status,
-                quantity=tmp.quantity, startdate=tmp.startdate, enddate=tmp.enddate,
-                criticality=tmp.criticality, delay=tmp.delay * interval '1 second',
-                plan=tmp.plan, source=tmp.source,
-                lastmodified=tmp.lastmodified, operation_id=tmp.operation_id, owner_id=tmp.owner_id,
-                item_id=tmp.item_id, destination_id=tmp.destination_id, origin_id=tmp.origin_id,
-                location_id=tmp.location_id, supplier_id=tmp.supplier_id, demand_id=tmp.demand_id,
-                due=tmp.due,%s color=tmp.color, batch=tmp.batch, quantity_completed=tmp.quantity_completed
-            """
-            % forecastfield0
+        sql = """
+            insert into operationplan (reference, name, type, status, quantity, startdate, enddate,
+            criticality, delay, plan, source, lastmodified, operation_id, owner_id, item_id,
+            destination_id, origin_id, location_id, supplier_id, demand_id, due%s, color, batch, quantity_completed %s)
+
+            select reference, name, type, status, quantity, startdate, enddate,
+            criticality, delay * interval '1 second', plan, source, lastmodified, operation_id, owner_id, item_id,
+            destination_id, origin_id, location_id, supplier_id, demand_id, due%s, color, batch, quantity_completed %s
+            from tmp_operationplan
+
+            on conflict (reference) do update
+
+            set name=excluded.name, type=excluded.type, status=excluded.status,
+                quantity=excluded.quantity, startdate=excluded.startdate, enddate=excluded.enddate,
+                criticality=excluded.criticality, delay=excluded.delay,
+                plan=excluded.plan, source=excluded.source,
+                lastmodified=excluded.lastmodified, operation_id=excluded.operation_id, owner_id=excluded.owner_id,
+                item_id=excluded.item_id, destination_id=excluded.destination_id, origin_id=excluded.origin_id,
+                location_id=excluded.location_id, supplier_id=excluded.supplier_id, demand_id=excluded.demand_id,
+                due=excluded.due%s, color=excluded.color, batch=excluded.batch, quantity_completed=excluded.quantity_completed%s
+            """ % (
+            forecastfield1,
+            "".join(",%s " % a[0] for a in cls.attrs),
+            forecastfield1,
+            "".join(",%s " % a[0] for a in cls.attrs),
+            forecastfield0,
+            "".join([", %s = excluded.%s" % (a[0], a[0]) for a in cls.attrs]),
         )
-        for a in cls.attrs:
-            sql += ", %s=tmp.%s" % (a[0], a[0])
-        sql += """
-            from tmp_operationplan as tmp
-            where operationplan.reference = tmp.reference
-            """
+
         cursor.execute(sql)
 
         # Make sure any deleted confirmed MO from Plan Editor gets deleted in the database

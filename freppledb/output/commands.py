@@ -823,31 +823,6 @@ class ExportOperationPlans(PlanTask):
             """
         )
 
-        cursor.execute(
-            """
-            insert into operationplan
-              (name,type,status,quantity,startdate,enddate,
-              criticality,delay,plan,source,lastmodified,
-              operation_id,owner_id,
-              item_id,destination_id,origin_id,
-              location_id,supplier_id,
-              demand_id,due,color,reference,batch,quantity_completed%s)
-            select name,type,status,quantity,startdate,enddate,
-              criticality,delay * interval '1 second',plan,source,lastmodified,
-              operation_id,owner_id,
-              item_id,destination_id,origin_id,
-              location_id,supplier_id,
-              demand_id,due,color,reference,batch,quantity_completed%s
-            from tmp_operationplan
-            where not exists (
-              select 1
-              from operationplan
-              where operationplan.reference = tmp_operationplan.reference
-              );
-            """
-            % (forecastfield1, forecastfield1)
-        )
-
         # directly injecting proposed records in operationplan table
         cursor.copy_from(
             CopyFromGenerator(

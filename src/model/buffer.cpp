@@ -1228,14 +1228,29 @@ Buffer* Buffer::findFromName(string nm) {
   Buffer* buf = Buffer::find(nm);
   if (buf) return buf;
 
-  // Check if has the structure "item @ location"
   size_t pos = nm.find(" @ ");
   if (pos == string::npos) return nullptr;
   Item* it = Item::find(nm.substr(0, pos));
-  Location* loc = Location::find(nm.substr(pos + 3, string::npos));
-  if (it && loc) {
+  if (!it) return nullptr;
+  auto locstring = nm.substr(pos + 3, string::npos);
+  pos = locstring.find(" @ ");
+  if (pos == string::npos) {
+    // Buffer name matches "item @ location"
+    Location* loc = Location::find(locstring);
+    if (!loc) return nullptr;
     buf = new BufferDefault();
     static_cast<BufferDefault*>(buf)->setName(nm);
+    static_cast<BufferDefault*>(buf)->setItem(it);
+    static_cast<BufferDefault*>(buf)->setLocation(loc);
+    return buf;
+  } else {
+    // Buffer name matches "item @ batch @ location"
+    Location* loc = Location::find(locstring.substr(pos + 3, string::npos));
+    if (!loc) return nullptr;
+    auto batch = locstring.substr(0, pos);
+    buf = new BufferDefault();
+    static_cast<BufferDefault*>(buf)->setName(nm);
+    static_cast<BufferDefault*>(buf)->setBatch(batch);
     static_cast<BufferDefault*>(buf)->setItem(it);
     static_cast<BufferDefault*>(buf)->setLocation(loc);
     return buf;

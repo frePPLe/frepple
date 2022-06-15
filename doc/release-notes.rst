@@ -18,6 +18,15 @@ The main target is to refresh the component stack:
 These changes will be made gradual over a couple of releases. For instance, from
 6.20.0 onwards frepple supports both Ubuntu 18 as well as Ubuntu 20.
 
+6.24.0 (Upcoming release)
+=========================
+
+.. rubric:: Third party components - Performance
+
+- | A django patch has been backported to the frepple django fork.
+  | It reduces the number of required database connections and will
+    improve performance for deployments with many scenario databases.
+
 6.23.0 (2022/6/8)
 =================
 

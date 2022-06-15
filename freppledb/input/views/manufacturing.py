@@ -1466,6 +1466,13 @@ class ManufacturingOrderList(OperationPlanMixin):
             setup_end=Cast(
                 RawSQL("(operationplan.plan->>'setupend')", []), DateTimeField()
             ),
+            setup_override=Cast(
+                RawSQL(
+                    "(operationplan.plan->>'setupoverride')::numeric * '1 second'::interval",
+                    [],
+                ),
+                DurationField(),
+            ),
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
             ),
@@ -1769,7 +1776,7 @@ class ManufacturingOrderList(OperationPlanMixin):
         ),
         GridFieldDuration(
             "setup_duration",
-            title=_("setup time"),
+            title=_("setup duration"),
             initially_hidden=True,
             search=False,
             editable=False,
@@ -1777,6 +1784,13 @@ class ManufacturingOrderList(OperationPlanMixin):
         GridFieldDateTime(
             "setup_end",
             title=_("setup end date"),
+            initially_hidden=True,
+            search=True,
+            editable=False,
+        ),
+        GridFieldDuration(
+            "setup_override",
+            title=_("setup duration override"),
             initially_hidden=True,
             search=True,
             editable=False,

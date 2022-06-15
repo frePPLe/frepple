@@ -432,6 +432,7 @@ class ResourceDetail(OperationPlanMixin):
             ),
             setup_end=RawSQL("(operationplan.plan->>'setupend')", []),
             setup_duration=RawSQL("(operationplan.plan->>'setup')", []),
+            setup_override=RawSQL("(operationplan.plan->>'setupoverride')", []),
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
             ),
@@ -753,6 +754,13 @@ class ResourceDetail(OperationPlanMixin):
             editable=False,
             initially_hidden=True,
             search=False,
+        ),
+        GridFieldDuration(
+            "setup_override",
+            title=_("setup duration override"),
+            initially_hidden=True,
+            search=True,
+            editable=False,
         ),
         GridFieldBool(
             "feasible",

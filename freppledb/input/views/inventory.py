@@ -139,7 +139,7 @@ class BufferList(GridReport):
             extra='"role":"input/buffer"',
             initially_hidden=True,
         ),
-        GridFieldText("description", title=_("description")),
+        GridFieldText("description", title=_("description"), initially_hidden=True),
         GridFieldText("category", title=_("category"), initially_hidden=True),
         GridFieldText("subcategory", title=_("subcategory"), initially_hidden=True),
         GridFieldHierarchicalText(

@@ -1818,6 +1818,9 @@ class loadOperationPlans(LoadTask):
                             where operationplan_id = operationplan.reference
                             order by resource_id
                         ),
+                        case when operationplan.plan ? 'setupoverride'
+                          then (operationplan.plan->>'setupoverride')::integer
+                        end,
                         coalesce(dmd.name, null)
                         %s
                         FROM operationplan
@@ -1836,8 +1839,8 @@ class loadOperationPlans(LoadTask):
                 )
                 for i in cursor:
                     try:
-                        if i[16]:
-                            dmd = frepple.demand(name=i[16])
+                        if i[17]:
+                            dmd = frepple.demand(name=i[17])
                         else:
                             dmd = None
                         if i[7] == "MO":
@@ -1864,6 +1867,8 @@ class loadOperationPlans(LoadTask):
                                 elif i[5] == "completed":
                                     if not consume_material_completed:
                                         opplan.consume_material = False
+                                if i[16] is not None:
+                                    opplan.setupoverride = i[16]
                         elif i[7] == "PO":
                             cnt_po += 1
                             opplan = frepple.operationplan(
@@ -1941,7 +1946,7 @@ class loadOperationPlans(LoadTask):
                             continue
 
                         if opplan:
-                            idx = 15
+                            idx = 18
                             for a in attrs:
                                 setattr(opplan, a, i[idx])
                                 idx += 1

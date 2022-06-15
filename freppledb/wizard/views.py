@@ -470,14 +470,8 @@ def getWizardSteps(request, mode):
         # Production - review the network
         if not locked:
             done = (
-                ManufacturingOrder.objects.all()
-                .using(request.database)
-                .filter(status="proposed")
-                .exists()
-                or PurchaseOrder.objects.all()
-                .using(request.database)
-                .filter(status="proposed")
-                .exists()
+                Operation.objects.all().using(request.database).exists()
+                or ItemSupplier.objects.all().using(request.database).exists()
             )
         steps.append(
             {

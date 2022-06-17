@@ -61,7 +61,6 @@ class Command(BaseCommand):
     def handle(self, **options):
         self.verbosity = int(options["verbosity"])
         self.database = options["database"]
-        task = options.get("task", None)
         if self.database not in settings.DATABASES.keys():
             raise CommandError("No database settings known for '%s'" % self.database)
 

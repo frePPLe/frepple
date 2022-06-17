@@ -116,7 +116,11 @@ class CrumbsNode(Node):
 
                 if not exists:
                     # Add the current URL to the stack
-                    if not req.GET or "noautofilter" in req.GET:
+                    if not req.GET or (
+                        "noautofilter" in req.GET
+                        and "parentreference"
+                        not in req.GET  # Special case for MO search
+                    ):
                         args = ""
                     else:
                         args = "?%s" % iri_to_uri(req.GET.urlencode())

@@ -2042,7 +2042,7 @@ var favorite = {
       $("#favoritelist").prepend('<li role="separator" class="divider"></li>');
       divider = $("#favoritelist li.divider");
     }
-    var newfav_li = $('<li id="zorro"></li>');
+    var newfav_li = $('<li></li>');
     var newfav_a = $('<a href="#" onclick="favorite.open(event)"></a>');
     newfav_a.text(fav);
     newfav_a.append(

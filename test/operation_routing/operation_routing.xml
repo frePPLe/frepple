@@ -20,7 +20,7 @@
           </itemsupplier>
         </itemsuppliers>
       </item>
-      <onhand>20</onhand>      
+      <onhand>20</onhand>
     </buffer>
     <buffer name="component B1 @ factory" xsi:type="buffer_infinite">
       <item name="component B1" />
@@ -267,6 +267,87 @@
       <location name="factory"/>
     </demand>
 
+    <!--
+      Case 8: Post-operation time in routing as soft constraint
+    -->
+    <demand name="order 8A">
+      <quantity>10</quantity>
+      <due>2009-01-06T00:00:00</due>
+      <priority>12</priority>
+      <item name="product 8" />
+      <location name="factory"/>
+      <operation name="routing 8" xsi:type="operation_routing">
+        <suboperations>
+          <suboperation>
+            <operation name="routing 8 step 1" xsi:type="operation_fixed_time" duration="P2D" posttime="P4D">
+          	  <location name="factory"/>
+            </operation>
+            <priority>1</priority>
+          </suboperation>
+          <suboperation>
+            <operation name="routing 8 step 2" xsi:type="operation_fixed_time" duration="P2D" posttime="P4D">
+          	  <location name="factory"/>
+            </operation>
+            <priority>2</priority>
+          </suboperation>
+          <suboperation>
+            <operation name="routing 8 step 3" xsi:type="operation_fixed_time" duration="P2D" posttime="P4D">
+          	  <location name="factory"/>
+            </operation>
+            <priority>3</priority>
+          </suboperation>
+        </suboperations>
+      </operation>
+    </demand>
+    <demand name="order 8B">
+      <quantity>10</quantity>
+      <due>2009-09-20T00:00:00</due>
+      <priority>13</priority>
+      <item name="product 8" />
+      <location name="factory"/>
+      <operation name="routing 8" xsi:type="operation_routing"/>
+    </demand>
+
+    <!--
+      Case 9: Post-operation time in routing as hard constraint
+    -->
+    <demand name="order 9A">
+      <quantity>10</quantity>
+      <due>2009-01-06T00:00:00</due>
+      <priority>14</priority>
+      <item name="product 9" />
+      <location name="factory"/>
+      <operation name="routing 9" xsi:type="operation_routing" hard_posttime="true">
+        <suboperations>
+          <suboperation>
+            <operation name="routing 9 step 1" xsi:type="operation_fixed_time" duration="P2D" posttime="P4D">
+          	  <location name="factory"/>
+            </operation>
+            <priority>1</priority>
+          </suboperation>
+          <suboperation>
+            <operation name="routing 9 step 2" xsi:type="operation_fixed_time" duration="P2D" posttime="P4D">
+          	  <location name="factory"/>
+            </operation>
+            <priority>2</priority>
+          </suboperation>
+          <suboperation>
+            <operation name="routing 9 step 3" xsi:type="operation_fixed_time" duration="P2D" posttime="P4D">
+          	  <location name="factory"/>
+            </operation>
+            <priority>3</priority>
+          </suboperation>
+        </suboperations>
+      </operation>
+    </demand>
+    <demand name="order 9B">
+      <quantity>10</quantity>
+      <due>2009-09-20T00:00:00</due>
+      <priority>15</priority>
+      <item name="product 9" />
+      <location name="factory"/>
+      <operation name="routing 9" xsi:type="operation_routing"/>
+    </demand>
   </demands>
 
 <?python

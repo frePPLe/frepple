@@ -620,14 +620,27 @@ void SolverCreate::solve(const Operation* oper, void* v) {
   auto asked_qty = data->state->q_qty;
   bool repeat;
   auto ask_early = oper->getPostTime();
+  bool hard_posttime = false;
+  if (ask_early && data->state->curOwnerOpplan &&
+      data->state->curOwnerOpplan->getOperation()
+          ->hasType<OperationRouting>()) {
+    auto rtg = static_cast<OperationRouting*>(
+        data->state->curOwnerOpplan->getOperation());
+    hard_posttime = rtg->getHardPostTime();
+    if (hard_posttime) {
+      // Subtract the post-operation time as hard constraint
+      asked_date -= ask_early;
+      data->state->q_date -= ask_early;
+    }
+  }
   auto delta = data->getSolver()->getMinimumDelay();
   if (!delta) delta = Duration(3600L);
   do {
     repeat = false;
     auto bm = data->getCommandManager()->setBookmark();
     data->push(asked_qty, asked_date, true);
-    // Subtract the post-operation time.
-    data->state->q_date -= ask_early;
+    // Subtract the post-operation time as soft constraint
+    if (!hard_posttime) data->state->q_date -= ask_early;
     auto tmpopplan = createOperation(oper, data, true, true);
     data->pop(true);
     if (!data->state->a_qty) {
@@ -640,7 +653,8 @@ void SolverCreate::solve(const Operation* oper, void* v) {
         tmpopplan->setOwner(nullptr);
         delete tmpopplan;
       }
-      if (data->state->a_date <= asked_date && ask_early > Duration(0L)) {
+      if (data->state->a_date <= asked_date && ask_early > Duration(0L) &&
+          !hard_posttime) {
         repeat = true;
         if (ask_early > delta)
           ask_early -= delta;

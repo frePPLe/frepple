@@ -3604,6 +3604,10 @@ class OperationRouting : public Operation {
   /* Returns the minimum maxearly of any load. */
   virtual Duration getMaxEarly() const;
 
+  bool getHardPostTime() const { return hardposttime; }
+
+  void setHardPostTime(bool b) { hardposttime = b; }
+
   /* A operation of this type enforces the following rules on its
    * operationplans:
    *  - If an end date is given, sequentially use this method on the
@@ -3661,6 +3665,8 @@ class OperationRouting : public Operation {
     m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(
         Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator,
         BASE + WRITE_OBJECT);
+    m->addBoolField<Cls>(Tags::hard_posttime, &Cls::getHardPostTime,
+                         &Cls::setHardPostTime, BOOL_FALSE, BASE);
   }
 
   /* Return the memory size. */
@@ -3679,6 +3685,8 @@ class OperationRouting : public Operation {
  private:
   /* Stores a double linked list of all step suboperations. */
   Operationlist steps;
+
+  bool hardposttime = false;
 };
 
 /* This class represents a split between multiple operations. */

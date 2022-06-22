@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from importlib import import_module
 import json
 import os.path
 from mimetypes import guess_type
@@ -79,10 +80,17 @@ logger = logging.getLogger(__name__)
 
 @staff_member_required
 def AboutView(request):
+    apps = []
+    for a in settings.INSTALLED_APPS:
+        try:
+            v = import_module(a).__version__
+            apps.append("%s %s" % (a, v) if v else a)
+        except Exception:
+            apps.append(a)
     return JsonResponse(
         {
             "version": __version__,
-            "apps": settings.INSTALLED_APPS,
+            "apps": apps,
             "website": settings.DOCUMENTATION_URL,
         }
     )

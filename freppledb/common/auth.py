@@ -245,8 +245,9 @@ def getWebserviceAuthorization(database=DEFAULT_DB_ALIAS, secret=None, **kwargs)
             payload["exp"] = round(time.time()) + value
         else:
             payload[key] = value
-    return jwt.encode(
+    token = jwt.encode(
         payload,
         secret,
         algorithm="HS256",
-    ).decode("ascii")
+    )
+    return token.decode("ascii") if not isinstance(token, str) else token

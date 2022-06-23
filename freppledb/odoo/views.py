@@ -51,18 +51,20 @@ def Upload(request):
             odoo_password = Parameter.getValue("odoo.password", request.database)
         if not odoo_db or not odoo_company or not odoo_user or not odoo_password:
             return HttpResponseServerError(_("Invalid configuration parameters"))
+        token = jwt.encode(
+            {"exp": round(time.time()) + 600, "user": odoo_user},
+            settings.DATABASES[request.database].get(
+                "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
+            ),
+            algorithm="HS256",
+        )
+        if not isinstance(token, str):
+            token = token.decode("ascii")
         data_odoo = [
             "--%s" % boundary,
             'Content-Disposition: form-data; name="webtoken"\r',
             "\r",
-            "%s\r"
-            % jwt.encode(
-                {"exp": round(time.time()) + 600, "user": odoo_user},
-                settings.DATABASES[request.database].get(
-                    "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
-                ),
-                algorithm="HS256",
-            ).decode("ascii"),
+            "%s\r" % token,
             "--%s\r" % boundary,
             'Content-Disposition: form-data; name="database"',
             "",

@@ -202,13 +202,16 @@ class Command(BaseCommand):
         yield "--%s\r" % self.boundary
         yield 'Content-Disposition: form-data; name="webtoken"\r'
         yield "\r"
-        yield "%s\r" % jwt.encode(
+        token = jwt.encode(
             {"exp": round(time.time()) + 600, "user": self.odoo_user},
             settings.DATABASES[self.database].get(
                 "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
             ),
             algorithm="HS256",
-        ).decode("ascii")
+        )
+        if not isinstance(token, str):
+            token = token.decode("ascii")
+        yield "%s\r" % token
         yield "--%s\r" % self.boundary
         yield 'Content-Disposition: form-data; name="database"\r'
         yield "\r"

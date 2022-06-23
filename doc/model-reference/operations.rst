@@ -49,36 +49,36 @@ item                   item              | Reference to the item being produced.
                                            then we use its item as the item of the operation.
                                          | Only in exceptional modeling situations should you worry
                                            about setting this field yourself. Eg when an operation
-                                           produces multiple items. 
-                                           
+                                           produces multiple items.
+
 location               location          Location of the operation.
-                                         
+
                                          The working hours and holidays for the operation are
                                          calculated as the intersection of:
-                                   
+
                                          - the availability calendar of the operation.
                                          - the availability calendar of the operation's location.
-                                         - the availability calendar of all resources loaded by the 
+                                         - the availability calendar of all resources loaded by the
                                            operation.
                                          - the availability calendar of the location of all resources
                                            loaded by the operation.
-                                   
+
                                          Default is null.
-                                                           
+
 available              calendar          A calendar specifying the working hours for the operation.
-                                         
+
                                          The working hours and holidays for the operation are
                                          calculated as the intersection of:
-                                   
+
                                          - the availability calendar of the operation.
                                          - the availability calendar of the operation's location.
-                                         - the availability calendar of all resources loaded by the 
+                                         - the availability calendar of all resources loaded by the
                                            operation.
                                          - the availability calendar of the location of all resources
                                            loaded by the operation.
-                                   
+
                                          Default is null.
-                                                                                                                              
+
 effective_start        dateTime          Date when the operation becomes valid.
 
                                          The value of this field is only used when the item field is
@@ -92,8 +92,8 @@ effective_end          dateTime          Date after which the operation becomes 
                                          as a replenishment method for the item at this location.
 
 priority               integer           Priority of this operation to produce the specified item.
-                                         
-                                         This is useful when there are multiple operations 
+
+                                         This is useful when there are multiple operations
                                          producing the same item-location, or the same item-location
                                          can also be replenished with :doc:`purchase orders<item-suppliers>`
                                          and/or :doc:`distribution orders<item-distributions>`.
@@ -101,10 +101,10 @@ priority               integer           Priority of this operation to produce t
                                          The value of this field is only used when the item field is
                                          populated on the operation. Only then is the operation registered
                                          as a replenishment method for the item at this location.
-                                         
+
                                          When the priority is 0, the operation is not actively used
                                          during planning.
-                                          
+
 description            string            Free format description.
 
 category               string            Free format category.
@@ -115,41 +115,41 @@ fence                  duration          Time window from the current date of th
                                          which all manufacturing orders are expected to be
                                          frozen/released. The duration refers to available time (i.e.
                                          respecting the working hours and holiday calendars mentioned above).
-                                         
+
                                          When the 'FENCE' constraint is enabled in the solver, it
                                          won't create any new operation plans in this time fence.
                                          Only the externally supplied and locked manufacturing orders
                                          will then exist in this time window.
-                                         
+
                                          By default the fence is 0, we can plan operations to be
                                          started immediately.
 
 batchwindow            duration          The solver algorithm will scan for opportunities to create
-                                         batches within this time window before and after the 
+                                         batches within this time window before and after the
                                          requirement date.
-                                         
+
                                          By default the batching windows is 0, which disables this
                                          feature.
-                                                                                  
+
 size_minimum           positive double   A minimum quantity for manufacturing orders.
-                                         
+
                                          A request for a lower, non-zero quantity will be rounded up.
 
                                          This field also influences the alternate choices when multiple
                                          operations are available to produce an item. The planning
                                          algorithm will try to plan on those alternates where the
-                                         requirement is between the size_minimum and size_maximum. 
+                                         requirement is between the size_minimum and size_maximum.
 
                                          The default value is 1.
-                                         
+
 size_minimum_calendar  calendar          A calendar to define the minimum size of manufacturing orders
                                          when this value varies over time. The end date of the
                                          manufacturing orders determines which date we use as lookup in the
                                          calendar.
-                                         
-                                         If both the size_minimum and size_minimum_calendar are 
+
+                                         If both the size_minimum and size_minimum_calendar are
                                          specified, we use the highest value.
-                                         
+
 size_multiple          positive double   A multiple quantity for manufacturing orders.
 size_maximum           positive double   | The maximum quantity for manufacturing orders.
 
@@ -162,7 +162,7 @@ size_maximum           positive double   | The maximum quantity for manufacturin
                                          | This field also influences the alternate choices when multiple
                                            operations are available to produce an item. The planning
                                            algorithm will try to plan on those alternates where the
-                                           requirement is between the size_minimum and size_maximum. 
+                                           requirement is between the size_minimum and size_maximum.
 
 cost                   double            | The cost of executing this operation, per unit of the
                                            operation_plan.
@@ -306,4 +306,10 @@ Field            Type              Description
 ================ ================= ===========================================================
 suboperations    List of           List of sub-operations to execute in sequence.
                  suboperation      | See :doc:`suboperations`
+hard_posttime    Boolean           | A flag to mark whether the post-operation time of the
+                                     routing steps should be used as a hard or soft constraint.
+                                   | The default is false, i.e. a soft constraint.
+                                   | Note that this field currently is not defined in the
+                                     user interface or database. It is only available to
+                                     customizations working in the planning engine.
 ================ ================= ===========================================================

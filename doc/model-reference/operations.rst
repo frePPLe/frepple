@@ -304,7 +304,7 @@ Models a sequence a number of ‘step’ sub-operations, to be executed sequenti
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-suboperations    List of           List of sub-operations to execute in sequence.
+suboperations    List of           | List of sub-operations to execute in sequence.
                  suboperation      | See :doc:`suboperations`
 hard_posttime    Boolean           | A flag to mark whether the post-operation time of the
                                      routing steps should be used as a hard or soft constraint.

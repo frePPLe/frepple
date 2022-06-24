@@ -808,7 +808,7 @@ class loadOperations(LoadTask):
                                 subcategory=i[14],
                                 source=i[15],
                                 # Uncomment the next line if you want to treat post-operation times
-                                # between operation steps as a hard constraint.
+                                # between routing steps as a hard constraint.
                                 # By default they are a soft constraint only, meaning that we can
                                 # compress them to deliver sales orders faster.
                                 # hard_posttime=True,

@@ -36,18 +36,11 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--nopullbase",
-            action="store_false",
-            dest="pullbase",
-            default=True,
-            help="Disable refreshing the odoo base image",
-        )
-        parser.add_argument(
-            "--nodatabaserebuild",
-            action="store_false",
-            dest="databaserebuild",
-            default=True,
-            help="Disable refreshing the odoo database",
+            "--full",
+            action="store_true",
+            dest="full",
+            default=False,
+            help="Complete rebuild of image and database",
         )
 
     def getOdooVersion(self, dockerfile):
@@ -68,7 +61,7 @@ class Command(BaseCommand):
         # Used as docker image name, docker container name, odoo database name
         name = "odoo_frepple_%s" % odooversion
 
-        if options["pullbase"]:
+        if options["full"]:
             print("PULLING ODOO BASE IMAGE")
             subprocess.run(["docker", "pull", "odoo:%s" % odooversion])
 
@@ -89,7 +82,7 @@ class Command(BaseCommand):
         print("DELETE OLD CONTAINER")
         subprocess.run(["docker", "rm", "--force", name])
 
-        if options["databaserebuild"]:
+        if options["full"]:
             print("CREATE NEW DATABASE")
             os.environ["PGPASSWORD"] = settings.DATABASES[DEFAULT_DB_ALIAS]["PASSWORD"]
             extraargs = []
@@ -161,6 +154,10 @@ class Command(BaseCommand):
                 "-d",
                 "-p",
                 "8069:8069",
+                "-p",
+                "8071:8071",
+                "-p",
+                "8072:8072",
                 "-e",
                 "HOST=%s"
                 % (

@@ -115,11 +115,11 @@ class DataLoadTest(TestCase):
 
     def test_csv_upload(self):
         self.assertEqual(
-            [(i.name, i.category or u"") for i in Location.objects.all()],
+            [(i.name, i.category or "") for i in Location.objects.all()],
             [
-                (u"All locations", u""),
-                (u"factory 1", u""),
-                (u"factory 2", u""),
+                ("All locations", ""),
+                ("factory 1", ""),
+                ("factory 2", ""),
             ],  # Test result is different in Enterprise Edition
         )
         try:
@@ -133,13 +133,13 @@ class DataLoadTest(TestCase):
         finally:
             data.close()
         self.assertEqual(
-            [(i.name, i.category or u"") for i in Location.objects.order_by("name")],
+            [(i.name, i.category or "") for i in Location.objects.order_by("name")],
             [
-                (u"All locations", u""),
-                (u"factory 1", u""),
-                (u"factory 2", u""),
-                (u"factory 3", u"cat1"),
-                (u"factory 4", u""),
+                ("All locations", ""),
+                ("factory 1", ""),
+                ("factory 2", ""),
+                ("factory 3", "cat1"),
+                ("factory 4", ""),
             ],  # Test result is different in Enterprise Edition
         )
 

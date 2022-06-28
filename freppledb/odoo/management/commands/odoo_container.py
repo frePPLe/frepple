@@ -180,6 +180,6 @@ class Command(BaseCommand):
             text=True,
         ).stdout
 
-        print("CONTAINER %s READY\n" % container)
-        print("\nHit CTRL-C to stop displaying the container log")
+        print("CONTAINER READY: %s " % container)
+        print("Hit CTRL-C to stop displaying the container log")
         subprocess.run(["docker", "attach", container], shell=True)

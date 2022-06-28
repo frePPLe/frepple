@@ -147,7 +147,7 @@ class Command(BaseCommand):
             )
 
         print("CREATING DOCKER CONTAINER")
-        subprocess.run(
+        container = subprocess.run(
             [
                 "docker",
                 "run",
@@ -175,5 +175,11 @@ class Command(BaseCommand):
                 name,
                 "odoo",
                 "--database=%s" % name,
-            ]
-        )
+            ],
+            capture_output=True,
+            text=True,
+        ).stdout
+
+        print("CONTAINER %s READY\n" % container)
+        print("\nHit CTRL-C to stop displaying the container log")
+        subprocess.run(["docker", "attach", container], shell=True)

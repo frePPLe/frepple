@@ -27,6 +27,23 @@ These changes will be made gradual over a couple of releases. For instance, from
   | It reduces the number of required database connections and will
     improve performance for deployments with many scenario databases.
 
+.. rubric:: Odoo integration
+
+- | Odoo 15 is now also supported by the connector
+
+- | Ability to write back the scheduled start and finish dates of work orders
+    from frepple to odoo.
+
+- | v14: Bug fixes for multi-company odoo configurations.
+
+- | v14: Bug fix, manufacturing orders in the status "to close" were
+    incorrectly being ignored.
+
+- | v14: assure compatibility with the latest releases of the Python
+    package pyjwt.
+
+- | v14: Reduced memory footprint.
+
 6.23.0 (2022/6/8)
 =================
 

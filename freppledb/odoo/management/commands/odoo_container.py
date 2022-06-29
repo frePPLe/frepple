@@ -15,6 +15,7 @@
 #
 
 import os.path
+import psycopg2
 import subprocess
 
 from django.conf import settings
@@ -58,7 +59,8 @@ class Command(BaseCommand):
             raise CommandError("Can't find dockerfile")
         odooversion = self.getOdooVersion(dockerfile)
 
-        # Used as docker image name, docker container name, odoo database name
+        # Used as a) docker image name, b) docker container name,
+        # c) docker volume name and d) odoo database name.
         name = "odoo_frepple_%s" % odooversion
 
         if options["full"]:
@@ -81,6 +83,8 @@ class Command(BaseCommand):
 
         print("DELETE OLD CONTAINER")
         subprocess.run(["docker", "rm", "--force", name])
+        if options["full"]:
+            subprocess.run(["docker", "volume", "rm", "--force", name])
 
         if options["full"]:
             print("CREATE NEW DATABASE")
@@ -124,6 +128,8 @@ class Command(BaseCommand):
                     "run",
                     "--rm",
                     "-it",
+                    "-v",
+                    "%s:/var/lib/odoo" % name,
                     "-e",
                     "HOST=%s"
                     % (
@@ -140,11 +146,55 @@ class Command(BaseCommand):
                     "-t",
                     name,
                     "odoo",
-                    "--init=base,purchase,mrp,sale,stock,frepple",
+                    "--init=base,product,purchase,sale,sale_management,resource,mrp,frepple,autologin",
+                    "--load=web,autologin",
                     "--database=%s" % name,
                     "--stop-after-init",
                 ]
             )
+
+            print("CONFIGURE ODOO DATABASE")
+            conn_params = {
+                "database": name,
+                "user": settings.DATABASES[DEFAULT_DB_ALIAS]["USER"],
+                "password": settings.DATABASES[DEFAULT_DB_ALIAS]["PASSWORD"],
+            }
+            if settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"]:
+                conn_params["host"] = settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"]
+            if settings.DATABASES[DEFAULT_DB_ALIAS]["PORT"]:
+                conn_params["port"] = settings.DATABASES[DEFAULT_DB_ALIAS]["PORT"]
+            with psycopg2.connect(**conn_params) as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        """
+                        update res_company set
+                          manufacturing_warehouse = (
+                             select id
+                             from stock_warehouse
+                             where name = 'San Francisco'
+                             ),
+                          webtoken_key = '%s',
+                          frepple_server = 'http://localhost:8000',
+                          disclose_stack_trace = true
+                        where name = 'My Company (San Francisco)'
+                        """
+                        % settings.SECRET_KEY
+                    )
+                    cursor.execute(
+                        """
+                        update res_company set
+                          manufacturing_warehouse = (
+                             select id
+                             from stock_warehouse
+                             where name = 'Chicago 1'
+                             ),
+                          webtoken_key = '%s',
+                          frepple_server = 'http://localhost:8000',
+                          disclose_stack_trace = true
+                        where name = 'My Company (Chicago)'
+                        """
+                        % settings.SECRET_KEY
+                    )
 
         print("CREATING DOCKER CONTAINER")
         container = subprocess.run(
@@ -158,6 +208,8 @@ class Command(BaseCommand):
                 "8071:8071",
                 "-p",
                 "8072:8072",
+                "-v",
+                "%s:/var/lib/odoo" % name,
                 "-e",
                 "HOST=%s"
                 % (

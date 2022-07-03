@@ -786,16 +786,26 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan,
             "Only a single resource with a setup matrix is allowed per "
             "operation");
 
-      // Calculate the setup time
-      SetupEvent* cursetup =
-          ldplan->getResource()->getSetupAt(setupend, opplan);
-      if (prevevent) *prevevent = cursetup;
-      return SetupInfo(
-          ldplan->getResource(),
-          ldplan->getResource()->getSetupMatrix()->calculateSetup(
-              cursetup ? cursetup->getSetup() : PooledString::emptystring,
-              ldplan->getLoad()->getSetup(), ldplan->getResource()),
-          ldplan->getLoad()->getSetup());
+      if (ldplan->getResource()->getFrozenSetups()) {
+        // Return the current setup event
+        auto ev = opplan->getSetupEvent();
+        if (ev)
+          return SetupInfo(ldplan->getResource(), ev->getRule(),
+                           ldplan->getLoad()->getSetup());
+        else
+          return SetupInfo(nullptr, nullptr, PooledString());
+      } else {
+        // Calculate the setup time
+        SetupEvent* cursetup =
+            ldplan->getResource()->getSetupAt(setupend, opplan);
+        if (prevevent) *prevevent = cursetup;
+        return SetupInfo(
+            ldplan->getResource(),
+            ldplan->getResource()->getSetupMatrix()->calculateSetup(
+                cursetup ? cursetup->getSetup() : PooledString::emptystring,
+                ldplan->getLoad()->getSetup(), ldplan->getResource()),
+            ldplan->getLoad()->getSetup());
+      }
     }
   }
   return SetupInfo(nullptr, nullptr, PooledString());
@@ -862,14 +872,18 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     if (forward) {
       // Compute forward from the start date
       setuptime_required = calculateSetup(opplan, d, opplan->getSetupEvent());
-      if (get<0>(setuptime_required)) {
-        if (get<1>(setuptime_required) && efficiency > 0.0) {
+      if (get<0>(setuptime_required) || opplan->getSetupOverride() >= 0L) {
+        if ((get<1>(setuptime_required) && efficiency > 0.0) ||
+            opplan->getSetupOverride() >= 0L) {
           // Apply a setup matrix rule
-          setup_wanted_duration =
-              opplan->getQuantityCompleted()
-                  ? 0.0
-                  : double(get<1>(setuptime_required)->getDuration()) /
-                        efficiency;
+          if (opplan->getSetupOverride() >= 0L)
+            setup_wanted_duration = opplan->getSetupOverride();
+          else
+            setup_wanted_duration =
+                opplan->getQuantityCompleted()
+                    ? 0.0
+                    : double(get<1>(setuptime_required)->getDuration()) /
+                          efficiency;
           setup_dates = calculateOperationTime(opplan, d, setup_wanted_duration,
                                                true, &setup_duration);
           if (setup_duration != setup_wanted_duration)
@@ -912,13 +926,17 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
       else {
         setuptime_required =
             calculateSetup(opplan, production_dates.getStart());
-        if (get<1>(setuptime_required)) {
+        if ((get<1>(setuptime_required) && efficiency > 0.0) ||
+            opplan->getSetupOverride() >= 0L) {
           // Apply setup matrix rule
-          setup_wanted_duration =
-              opplan->getQuantityCompleted()
-                  ? 0.0
-                  : double(get<1>(setuptime_required)->getDuration()) /
-                        efficiency;
+          if (opplan->getSetupOverride() >= 0L)
+            setup_wanted_duration = opplan->getSetupOverride();
+          else
+            setup_wanted_duration =
+                opplan->getQuantityCompleted()
+                    ? 0.0
+                    : double(get<1>(setuptime_required)->getDuration()) /
+                          efficiency;
           setup_dates = calculateOperationTime(
               opplan, production_dates.getStart(), setup_wanted_duration, false,
               &setup_duration);
@@ -930,7 +948,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     }
 
     if (production_duration != production_wanted_duration ||
-        (get<1>(setuptime_required) &&
+        ((get<1>(setuptime_required) || opplan->getSetupOverride() >= 0L) &&
          setup_duration != setup_wanted_duration)) {
       // Not enough time found for the setup and the operation duration
       if (!execute)
@@ -1140,11 +1158,16 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
     // Case 1: Both the start and end date are specified: Compute the quantity.
     // Calculate the available time between those dates
     setuptime_required = calculateSetup(opplan, s);
-    if (get<1>(setuptime_required) && efficiency > 0.0) {
-      setup_wanted_duration =
-          opplan->getQuantityCompleted()
-              ? 0.0
-              : double(get<1>(setuptime_required)->getDuration()) / efficiency;
+    if ((get<1>(setuptime_required) && efficiency > 0.0) ||
+        opplan->getSetupOverride() >= 0L) {
+      if (opplan->getSetupOverride() >= 0L)
+        setup_wanted_duration = opplan->getSetupOverride();
+      else
+        setup_wanted_duration =
+            opplan->getQuantityCompleted()
+                ? 0.0
+                : double(get<1>(setuptime_required)->getDuration()) /
+                      efficiency;
       setup_dates = calculateOperationTime(opplan, s, setup_wanted_duration,
                                            true, &setup_duration);
       if (setup_dates.getEnd() > e || setup_duration != setup_wanted_duration) {
@@ -1223,7 +1246,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
         } else
           return OperationPlanState(production_dates, q);
       }
-      if (get<0>(setuptime_required))
+      if (get<0>(setuptime_required) || opplan->getSetupOverride() >= 0L)
         opplan->setSetupEvent(get<0>(setuptime_required), setup_dates.getEnd(),
                               get<2>(setuptime_required),
                               get<1>(setuptime_required));
@@ -1257,12 +1280,16 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
     if (production_duration == production_wanted_duration) {
       // Size is as desired
       setuptime_required = calculateSetup(opplan, production_dates.getStart());
-      if (get<1>(setuptime_required)) {
-        setup_wanted_duration =
-            opplan->getQuantityCompleted()
-                ? 0.0
-                : double(get<1>(setuptime_required)->getDuration()) /
-                      efficiency;
+      if ((get<1>(setuptime_required) && efficiency > 0.0) ||
+          opplan->getSetupOverride() >= 0L) {
+        if (opplan->getSetupOverride() >= 0L)
+          setup_wanted_duration = opplan->getSetupOverride();
+        else
+          setup_wanted_duration =
+              opplan->getQuantityCompleted()
+                  ? 0.0
+                  : double(get<1>(setuptime_required)->getDuration()) /
+                        efficiency;
         setup_dates = calculateOperationTime(
             opplan, production_dates.getStart(), setup_wanted_duration, false,
             &setup_duration);
@@ -1287,7 +1314,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
         } else
           return OperationPlanState(production_dates, q);
       }
-      if (get<0>(setuptime_required))
+      if (get<0>(setuptime_required) || opplan->getSetupOverride() >= 0L)
         opplan->setSetupEvent(get<0>(setuptime_required), setup_dates.getEnd(),
                               get<2>(setuptime_required),
                               get<1>(setuptime_required));
@@ -1307,12 +1334,16 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
 
       // Compute the required setup time
       setuptime_required = calculateSetup(opplan, production_dates.getStart());
-      if (get<1>(setuptime_required)) {
-        setup_wanted_duration =
-            opplan->getQuantityCompleted()
-                ? 0.0
-                : double(get<1>(setuptime_required)->getDuration()) /
-                      efficiency;
+      if ((get<1>(setuptime_required) && efficiency > 0.0) ||
+          opplan->getSetupOverride() >= 0L) {
+        if (opplan->getSetupOverride() >= 0L)
+          setup_wanted_duration = opplan->getSetupOverride();
+        else
+          setup_wanted_duration =
+              opplan->getQuantityCompleted()
+                  ? 0.0
+                  : double(get<1>(setuptime_required)->getDuration()) /
+                        efficiency;
         setup_dates = calculateOperationTime(
             opplan, production_dates.getStart(), setup_wanted_duration, false,
             &setup_duration);
@@ -1365,7 +1396,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
         } else
           return OperationPlanState(production_dates, q);
       }
-      if (get<0>(setuptime_required))
+      if (get<0>(setuptime_required) || opplan->getSetupOverride() >= 0L)
         opplan->setSetupEvent(get<0>(setuptime_required), setup_dates.getEnd(),
                               get<2>(setuptime_required),
                               get<1>(setuptime_required));
@@ -1391,13 +1422,17 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
     while (true) {
       // Compute the setup time
       setuptime_required = calculateSetup(opplan, d, nullptr);
-      if (efficiency > 0 && get<0>(setuptime_required) &&
-          get<1>(setuptime_required)) {
-        setup_wanted_duration =
-            opplan->getQuantityCompleted()
-                ? 0.0
-                : double(get<1>(setuptime_required)->getDuration()) /
-                      efficiency;
+      if ((efficiency > 0 && get<0>(setuptime_required) &&
+           get<1>(setuptime_required)) ||
+          opplan->getSetupOverride() >= 0L) {
+        if (opplan->getSetupOverride() >= 0L)
+          setup_wanted_duration = opplan->getSetupOverride();
+        else
+          setup_wanted_duration =
+              opplan->getQuantityCompleted()
+                  ? 0.0
+                  : double(get<1>(setuptime_required)->getDuration()) /
+                        efficiency;
         setup_dates = calculateOperationTime(opplan, d, setup_wanted_duration,
                                              true, &setup_duration);
         if (setup_duration != setup_wanted_duration) {
@@ -1434,7 +1469,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
           } else
             return OperationPlanState(production_dates, q);
         }
-        if (get<0>(setuptime_required))
+        if (get<0>(setuptime_required) || opplan->getSetupOverride() >= 0L)
           opplan->setSetupEvent(
               get<0>(setuptime_required), setup_dates.getEnd(),
               get<2>(setuptime_required), get<1>(setuptime_required));
@@ -1486,7 +1521,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
             } else
               return OperationPlanState(production_dates, q);
           }
-          if (get<0>(setuptime_required))
+          if (get<0>(setuptime_required) || opplan->getSetupOverride() >= 0L)
             opplan->setSetupEvent(
                 get<0>(setuptime_required), setup_dates.getEnd(),
                 get<2>(setuptime_required), get<1>(setuptime_required));

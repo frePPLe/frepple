@@ -1358,11 +1358,20 @@ bool OperationPlan::updateSetupTime(bool report) {
   bool changed = false;
 
   // Keep the setup end date constant during the update
-  Operation::SetupInfo setup =
-      oper->calculateSetup(this, end_of_setup, setupevent);
-  if (get<0>(setup)) {
+  auto setup = oper->calculateSetup(this, end_of_setup, setupevent);
+
+  if (setupevent && !setupevent->getTimeLine() && getSetupOverride() >= 0L) {
+    for (auto ld = getOperation()->getLoads().begin();
+         ld != getOperation()->getLoads().end(); ++ld)
+      if (ld->getResource() && ld->getResource()->getSetupMatrix()) {
+        setupevent->setTimeLine(ld->getResource()->getLoadPlans());
+        get<0>(setup) = ld->getResource();
+        break;
+      }
+  }
+  if (get<0>(setup) || getSetupOverride() >= 0L) {
     // Setup event required
-    if (get<1>(setup)) {
+    if (get<1>(setup) || getSetupOverride() >= 0L) {
       // Apply setup rule duration
       if (getConfirmed()) {
         if (getStart() != end_of_setup || !setupevent) {
@@ -1375,7 +1384,10 @@ bool OperationPlan::updateSetupTime(bool report) {
                         get<1>(setup));
       } else {
         DateRange tmp = oper->calculateOperationTime(
-            this, end_of_setup, get<1>(setup)->getDuration(), false);
+            this, end_of_setup,
+            getSetupOverride() >= 0L ? getSetupOverride()
+                                     : get<1>(setup)->getDuration(),
+            false);
         if (tmp.getStart() != getStart() || !setupevent) {
           setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
                         get<1>(setup));
@@ -1398,7 +1410,7 @@ bool OperationPlan::updateSetupTime(bool report) {
     }
   } else {
     // No setup event required
-    if (setupevent) {
+    if (setupevent && getSetupOverride() < 0L) {
       clearSetupEvent();
       changed = true;
     }
@@ -2244,18 +2256,17 @@ Date OperationPlan::computeOperationToFlowDate(Date d) const {
 }
 
 Duration OperationPlan::getSetup() const {
-  if (setupevent) {
-    if (getOperation()) {
-      // Convert date difference back to active time
-      Duration actual;
-      getOperation()->calculateOperationTime(this, dates.getStart(),
-                                             setupevent->getDate(), &actual);
-      return actual;
-    } else
-      return setupevent->getDate() - dates.getStart();
-  } else
-    // No setup event
-    return 0L;
+  if (!setupevent) return Duration(-1L);
+  if (setupevent->getSetupOverride() >= Duration(0L))
+    return setupevent->getSetupOverride();
+  if (getConfirmed()) return Duration(0L);
+  if (getSetupRule()) return getSetupRule()->getDuration();
+  for (auto ldplan = beginLoadPlans(); ldplan != endLoadPlans(); ++ldplan) {
+    if (!ldplan->getLoad()->getSetup().empty() &&
+        ldplan->getResource()->getSetupMatrix())
+      return Duration(0L);
+  }
+  return Duration(-1L);
 }
 
 void OperationPlan::setSetupEvent(TimeLine<LoadPlan>* res, Date d,
@@ -2287,6 +2298,12 @@ double OperationPlan::getSetupCost() const {
     return 0.0;
 }
 
+SetupEvent::SetupEvent(OperationPlan* x)
+    : TimeLine<LoadPlan>::Event(5), opplan(x) {
+  initType(metadata);
+  if (opplan) dt = x->getStart();
+}
+
 SetupEvent::~SetupEvent() {
   if (opplan) opplan->nullSetupEvent();
 }
@@ -2310,13 +2327,13 @@ void SetupEvent::update(TimeLine<LoadPlan>* res, Date d, const PooledString& s,
   if (!tmline) {
     // First insert
     tmline = res;
-    tmline->insert(this);
+    if (tmline) tmline->insert(this);
     if (r && r->getResource()) new LoadPlan(opplan, this);
   } else if (res != tmline) {
     // Reinsert at another resource
-    tmline->erase(this);
+    if (tmline) tmline->erase(this);
     tmline = res;
-    tmline->insert(this);
+    if (tmline) tmline->insert(this);
   } else
     // Update the position in the list
     tmline->update(this, d);

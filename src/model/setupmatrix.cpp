@@ -310,12 +310,8 @@ PyObject* SetupMatrix::calculateSetupPython(PyObject* self, PyObject* args) {
   try {
     PooledString setup_1(pysetup_1);
     PooledString setup_2(pysetup_2);
-    auto tmp =
-        static_cast<SetupMatrix*>(self)->calculateSetup(setup_1, setup_2);
-    if (tmp)
-      return PythonData(tmp->getDuration());
-    else
-      return PythonData(0);
+    return PythonData(
+        static_cast<SetupMatrix*>(self)->calculateSetup(setup_1, setup_2));
   } catch (...) {
     PythonType::evalException();
     return nullptr;

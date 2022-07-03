@@ -826,8 +826,13 @@ void SolverPropagateStatus::solve(void* v) {
   }
   for (auto& buf : Buffer::all()) {
     auto oh = buf.getOnHand(Date::infinitePast, Date::infiniteFuture);
-    if (oh < 0.0 && oh > -ROUNDING_ERROR * 100)
-      buf.setOnHand(buf.getOnHand() - oh);
+    if (oh < 0.0) {
+      unsigned int cnt = 0;
+      for (auto oo = buf.getFlowPlans().begin(); oo != buf.getFlowPlans().end();
+           ++oo)
+        ++cnt;
+      if (oh > -ROUNDING_ERROR * cnt) buf.setOnHand(buf.getOnHand() - oh);
+    }
   }
 }
 

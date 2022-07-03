@@ -1463,6 +1463,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
   TimeLine<LoadPlan>* tmline = nullptr;
   SetupMatrixRule* rule = nullptr;
   OperationPlan* opplan = nullptr;
+  Duration setup_override = -1L;
 
  public:
   virtual TimeLine<LoadPlan>* getTimeLine() const { return tmline; }
@@ -1484,13 +1485,22 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
       setup = x->setup;
       rule = x->rule;
       dt = x->getDate();
+      setup_override = x->setup_override;
     }
   }
+
+  SetupEvent(OperationPlan* x);
 
   /* Destructor. */
   virtual ~SetupEvent();
 
   void erase();
+
+  void reset() {
+    setup = PooledString();
+    tmline = nullptr;
+    rule = nullptr;
+  }
 
   /* Assignment operator.
    * We don't relink the event in the timeline yet.
@@ -1501,6 +1511,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
     setup = other.setup;
     tmline = other.tmline;
     rule = other.rule;
+    setup_override = other.setup_override;
     return *this;
   }
 
@@ -1513,6 +1524,8 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
     rule = r;
     if (opplan && tmline) tmline->insert(this);
   }
+
+  void setTimeLine(TimeLine<LoadPlan>& t) { tmline = &t; }
 
   virtual OperationPlan* getOperationPlan() const { return opplan; }
 
@@ -1527,6 +1540,10 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
   void setSetup(const PooledString& s) { setup = s; }
 
   SetupEvent* getSetupBefore() const;
+
+  Duration getSetupOverride() const { return setup_override; }
+
+  void setSetupOverride(Duration d) { setup_override = d; }
 
   void update(TimeLine<LoadPlan>*, Date, const PooledString&, SetupMatrixRule*);
 
@@ -1544,6 +1561,8 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
     m->addStringRefField<Cls>(Tags::setup, &Cls::getSetupString);
     m->addPointerField<Cls, SetupMatrixRule>(Tags::rule, &Cls::getRule);
     m->addDateField<Cls>(Tags::date, &Cls::getDate);
+    m->addDurationField<Cls>(Tags::setupoverride, &Cls::getSetupOverride,
+                             &Cls::setSetupOverride, -1L);
   }
 };
 
@@ -1963,6 +1982,16 @@ class OperationPlan : public Object,
     return setupevent ? setupevent->getRule() : nullptr;
   }
 
+  Duration getSetupOverride() const {
+    return setupevent ? setupevent->getSetupOverride() : Duration(-1L);
+  }
+
+  void setSetupOverride(Duration d) {
+    if (!setupevent) setupevent = new SetupEvent(this);
+    setupevent->setSetupOverride(d);
+    update();
+  }
+
   /* Return a pointer to the next suboperationplan of the owner. */
   OperationPlan* getNextSubOpplan() const { return nextsubopplan; }
 
@@ -2014,12 +2043,19 @@ class OperationPlan : public Object,
   void clearSetupEvent() {
     if (!setupevent) return;
     setupevent->erase();
-    delete setupevent;
-    setupevent = nullptr;
+    if (getSetupOverride() != Duration(-1L))
+      setupevent->reset();
+    else {
+      delete setupevent;
+      setupevent = nullptr;
+    }
   }
 
   /* Remove the setup event. */
-  void nullSetupEvent() { setupevent = nullptr; }
+  void nullSetupEvent() {
+    if (setupevent && getSetupOverride() != Duration(-1L)) setupevent->reset();
+    setupevent = nullptr;
+  }
 
   /* Return true if the operationplan is redundant, ie all material
    * it produces is not used at all.
@@ -2274,7 +2310,8 @@ class OperationPlan : public Object,
                          Date::infiniteFuture);
     m->addDateField<Cls>(Tags::end_force, &Cls::getEnd, &Cls::setEndForce,
                          Date::infiniteFuture, DONT_SERIALIZE);
-    m->addDurationField<Cls>(Tags::setup, &Cls::getSetup, nullptr, 0L, PLAN);
+    m->addDurationField<Cls>(Tags::setup, &Cls::getSetup,
+                             &Cls::setSetupOverride, -1L, PLAN);
     m->addDateField<Cls>(Tags::setupend, &Cls::getSetupEnd, nullptr,
                          Date::infinitePast, PLAN);
     m->addDoubleField<Cls>(Tags::priority, &Cls::getPriority, nullptr, 999.0,
@@ -2359,6 +2396,8 @@ class OperationPlan : public Object,
                                       &Cls::setSupplier);
     m->addPointerField<Cls, SetupMatrixRule>(Tags::rule, &Cls::getSetupRule,
                                              nullptr, DONT_SERIALIZE);
+    m->addDurationField<Cls>(Tags::setupoverride, &Cls::getSetupOverride,
+                             &Cls::setSetupOverride, -1L);
   }
 
   static PyObject* createIterator(PyObject* self, PyObject* args);
@@ -6227,6 +6266,13 @@ class Resource : public HasHierarchy<Resource>,
     if (!hasType<ResourceInfinite>()) is_constrained = b;
   }
 
+  bool getFrozenSetups() const { return frozen_setups; }
+
+  void setFrozenSetups(bool b) const {
+    const_cast<Resource*>(this)->frozen_setups = b;
+    if (!b) updateSetupTime();
+  }
+
   Calendar* getEfficiencyCalendar() const { return efficiency_calendar; }
 
   void setEfficiencyCalendar(Calendar* c) { efficiency_calendar = c; }
@@ -6477,6 +6523,9 @@ class Resource : public HasHierarchy<Resource>,
   /* Controls whether this resource */
   bool is_constrained = true;
 
+  /* When set the setup rule of existing operationplans isn't recalculated. */
+  bool frozen_setups = false;
+
   /* Python method that returns an iterator over the resource plan. */
   static PyObject* plan(PyObject*, PyObject*);
 };
@@ -6484,7 +6533,7 @@ class Resource : public HasHierarchy<Resource>,
 inline void OperationPlan::setSetupEvent(Resource* r, Date d,
                                          const PooledString& s,
                                          SetupMatrixRule* m) {
-  setSetupEvent(&(r->getLoadPlans()), d, s, m);
+  setSetupEvent(r ? &(r->getLoadPlans()) : nullptr, d, s, m);
 }
 
 /* This class provides an efficient way to iterate over

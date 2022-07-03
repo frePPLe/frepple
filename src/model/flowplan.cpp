@@ -219,8 +219,10 @@ void FlowPlan::setFlow(Flow* newfl) {
       if (fl->getOperation() != newfl->getOperation())
         throw DataException(
             "Only switching to a flow on the same operation is allowed");
-      buf->flowplans.erase(this);
-      buf->setChanged();
+      if (buf) {
+        buf->flowplans.erase(this);
+        buf->setChanged();
+      }
     }
 
     // Insert in the new buffer

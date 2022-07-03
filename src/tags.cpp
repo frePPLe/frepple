@@ -188,6 +188,7 @@ const Keyword Tags::setupmatrices("setupmatrices");
 const Keyword Tags::setupmatrix("setupmatrix");
 const Keyword Tags::setuponly("setuponly");
 const Keyword Tags::size_maximum("size_maximum");
+const Keyword Tags::setupoverride("setupoverride");
 const Keyword Tags::size_minimum("size_minimum");
 const Keyword Tags::size_minimum_calendar("size_minimum_calendar");
 const Keyword Tags::size_multiple("size_multiple");

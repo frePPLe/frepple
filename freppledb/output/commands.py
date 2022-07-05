@@ -90,7 +90,7 @@ class TruncatePlan(PlanTask):
                 "create temporary table cluster_keys (name character varying(300), constraint cluster_key_pkey primary key (name))"
             )
             for i in frepple.items():
-                if i.cluster == cluster:
+                if i.cluster in cluster:
                     cursor.execute(
                         "insert into cluster_keys (name) values (%s)", (i.name,)
                     )
@@ -165,7 +165,7 @@ class TruncatePlan(PlanTask):
 
             cursor.execute("truncate table cluster_keys")
             for i in frepple.resources():
-                if i.cluster == cluster:
+                if i.cluster in cluster:
                     cursor.execute(
                         "insert into cluster_keys (name) values (%s)", (i.name,)
                     )
@@ -191,7 +191,7 @@ class TruncatePlan(PlanTask):
             )
             cursor.execute("truncate table cluster_keys")
             for i in frepple.operations():
-                if i.cluster == cluster:
+                if i.cluster in cluster:
                     cursor.execute(
                         "insert into cluster_keys (name) values (%s)", (i.name,)
                     )
@@ -267,7 +267,7 @@ class ExportProblems(PlanTask):
                 owner = i.owner.operation
             else:
                 owner = i.owner
-            if cluster != -1 and owner.cluster != cluster:
+            if cluster != -1 and owner.cluster not in cluster:
                 continue
             yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                 clean_value(i.entity),
@@ -318,7 +318,7 @@ class ExportConstraints(PlanTask):
         import frepple
 
         for d in frepple.demands():
-            if cluster != -1 and cluster != d.cluster:
+            if cluster != -1 and d.cluster not in cluster:
                 continue
             for i in d.constraints:
                 yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
@@ -433,7 +433,7 @@ class ExportOperationPlans(PlanTask):
         linetemplate += "\n"
 
         for i in frepple.operations():
-            if cluster != -1 and cluster != i.cluster:
+            if cluster != -1 and i.cluster not in cluster:
                 continue
 
             # variable used to make sure only first proposed operationplan has its color set.
@@ -921,7 +921,7 @@ class ExportOperationPlanMaterials(PlanTask):
         import frepple
 
         for i in buffers or frepple.buffers():
-            if cluster != -1 and cluster != i.cluster:
+            if cluster != -1 and i.cluster not in cluster:
                 continue
             for j in i.flowplans:
                 if not j.quantity:
@@ -1003,7 +1003,7 @@ class ComputePeriodOfCover(PlanTask):
         import frepple
 
         for i in frepple.items():
-            if i.cluster == cluster:
+            if i.cluster in cluster:
                 yield "%s\n" % (clean_value(i.name),)
 
     @classmethod
@@ -1024,6 +1024,7 @@ class ComputePeriodOfCover(PlanTask):
             cursor.copy_from(
                 CopyFromGenerator(cls.getItemsFromCluster(cluster)),
                 "cluster_item_tmp",
+                sep="\v",
             )
 
             cursor.execute("create unique index on cluster_item_tmp (name);")
@@ -1123,7 +1124,7 @@ class ExportOperationPlanResources(PlanTask):
         import frepple
 
         for i in resources or frepple.resources():
-            if cluster != -1 and cluster != i.cluster:
+            if cluster != -1 and i.cluster not in cluster:
                 continue
             for j in i.loadplans:
                 if j.quantity >= 0:
@@ -1216,7 +1217,7 @@ class ExportResourcePlans(PlanTask):
         startdate = datetime.max
         enddate = datetime.min
         for i in frepple.resources():
-            if cluster != -1 and cluster != i.cluster:
+            if cluster != -1 and i.cluster not in cluster:
                 continue
             for j in i.loadplans:
                 if j.startdate < startdate:
@@ -1295,7 +1296,7 @@ class ExportPegging(PlanTask):
         import frepple
 
         for i in frepple.demands():
-            if cluster != -1 and cluster != i.cluster:
+            if cluster != -1 and i.cluster not in cluster:
                 continue
             if i.hidden or not isinstance(i, frepple.demand_default):
                 continue

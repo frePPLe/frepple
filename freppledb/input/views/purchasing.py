@@ -379,6 +379,12 @@ class ItemSupplierList(GridReport):
             for f in getAttributeFields(ItemSupplier, initially_hidden=True):
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "itemsupplier.%s, " % f.name.split("__")[-1]
+            # Adding custom supplier attibutes
+            for f in getAttributeFields(
+                Supplier, related_name_prefix="supplier", initially_hidden=True
+            ):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "supplier.%s, " % f.name.split("__")[-1]
 
 
 class PurchaseOrderList(OperationPlanMixin):

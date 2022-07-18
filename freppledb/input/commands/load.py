@@ -276,6 +276,8 @@ class loadParameter(LoadTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        if settings.TIME_ZONE:
+            frepple.settings.timezone = settings.TIME_ZONE
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
                 cursor.execute(

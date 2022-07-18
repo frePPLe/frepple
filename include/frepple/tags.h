@@ -213,6 +213,7 @@ class Tags {
   static const Keyword supplier;
   static const Keyword suppliers;
   static const Keyword supply;
+  static const Keyword timezone;
   static const Keyword tool;
   static const Keyword tosetup;
   static const Keyword transferbatch;

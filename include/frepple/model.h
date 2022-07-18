@@ -8187,7 +8187,7 @@ class Plan : public Plannable, public Object {
   string descr;
 
   /* A calendar to which all operationplans will align. */
-  Calendar* cal;
+  Calendar* cal = nullptr;
 
   Duration autofence;
 
@@ -8202,13 +8202,15 @@ class Plan : public Plannable, public Object {
    */
   bool individual_pool_resources = false;
 
+  string timezone;
+
   /* Pointer to the singleton plan object. */
   static Plan* thePlan;
 
   /* The only constructor of this class is made private. An object of this
    * class is created by the instance() member function.
    */
-  Plan() : cur_Date(Date::now()), cal(nullptr) { initType(metadata); }
+  Plan() : cur_Date(Date::now()) { initType(metadata); }
 
  public:
   /* Return a pointer to the singleton plan object.
@@ -8239,6 +8241,10 @@ class Plan : public Plannable, public Object {
    * detection for BeforeCurrent problems needs to be rerun.
    */
   void setCurrent(Date);
+
+  string getTimeZone() const { return timezone; }
+
+  void setTimeZone(const string& s) { timezone = s; }
 
   Duration getAutoFence() const { return autofence; }
 
@@ -8371,6 +8377,8 @@ class Plan : public Plannable, public Object {
     m->addBoolField<Cls>(
         Tags::individualPoolResources, &Cls::getIndividualPoolResources,
         &Cls::setIndividualPoolResources, BOOL_FALSE, DONT_SERIALIZE);
+    m->addStringField<Cls>(Tags::timezone, &Cls::getTimeZone, &Cls::setTimeZone,
+                           "", DONT_SERIALIZE);
     Plannable::registerFields<Plan>(m);
     m->addIteratorField<Plan, Location::iterator, Location>(
         Tags::locations, Tags::location, &Plan::getLocations,

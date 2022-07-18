@@ -174,8 +174,8 @@ This command is available only in the user interface:
 
 .. _exporttofolder:
 
-Export plan result to folder
-----------------------------
+Export plan result
+------------------
 
 This task allows exporting data to a set of files in CSV or Excel format.
 The purpose of this task is to help the exchange of information with other systems.
@@ -193,7 +193,7 @@ This command is available in the user interface, the command line and the web AP
 * Execution screen:
 
   .. image:: /user-interface/_images/execution-exportplantofolder.png
-     :alt: Execution screen - Export plan data to folder
+     :alt: Execution screen - Export plan result
 
 * Command line::
 
@@ -212,7 +212,7 @@ This command is available in the user interface, the command line and the web AP
 Publish reports by email
 ------------------------
 
-Reports that have been exported using *Export plan result to folder* command can be
+Reports that have been exported using *Export plan result* command can be
 emailed to one or more recipients.
 
 Recipients have to be separated by a comma in the *Emails* field.
@@ -244,7 +244,7 @@ This command is available in the user interface, the command line and the web AP
 Publish reports by FTP
 ----------------------
 
-Reports that have been exported using *Export plan result to folder* command can be
+Reports that have been exported using *Export plan result* command can be
 pushed to a server using a ftp, ftps or sftp connection.
 
 
@@ -273,8 +273,8 @@ This command is available in the user interface, the command line and the web AP
 
 .. _importfromfolder:
 
-Import data files from folder
------------------------------
+Import data files
+-----------------
 
 This task allows importing data from a set of CSV-formatted files (eventually GZ-compressed).
 The purpose of this task is to help the exchange of information with other systems.
@@ -338,7 +338,7 @@ This command is available in the user interface, the command line and the web AP
 * Execution screen:
 
   .. image:: /user-interface/_images/execution-importfilesfromfolder.png
-     :alt: Execution screen - Import data files from folder
+     :alt: Execution screen - Import data files
 
 * Command line::
 

@@ -958,13 +958,13 @@ These changes will be made gradual over a couple of releases. For instance, from
 .. rubric:: Integration
 
 - Data files in SQL format can now be processed with the command
-  `import data files from folder <command-reference.html#importfromfolder>`_.
+  `import data files <command-reference.html#importfromfolder>`_.
   For security reasons this functionality is only active when the setting SQL_ROLE is
   set. It should be configured by an administrator to a database role that is correctly
   tuned to a minimal set of privileges.
 
 - Data files in the PostgreSQL COPY format can now be processed with the command
-  `import data files from folder <command-reference.html#importfromfolder>`_.
+  `import data files <command-reference.html#importfromfolder>`_.
   Data files in this format are uploaded MUCH faster.
 
 - Postgresql foreign key constraint on operationplanmaterial and operationplanresource

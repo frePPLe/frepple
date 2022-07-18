@@ -239,10 +239,12 @@ void SolverCreate::SolverData::commit() {
             OperationPlan* deli = deliveryoper->createOperationPlan(
                 plan_qty, Date::infinitePast, (*i)->getDue(), (*i)->getBatch(),
                 *i, nullptr, 0, false);
-            deli->activate();
 
             // Prepare for next loop
-            plan_qty -= deli->getQuantity();
+            if (deli->activate())
+              plan_qty -= deli->getQuantity();
+            else
+              break;
           }
         }
       }

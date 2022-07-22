@@ -21,6 +21,14 @@ These changes will be made gradual over a couple of releases. For instance, from
 6.24.0 (Upcoming release)
 =========================
 
+.. rubric:: Production planning
+
+- | When selecting a resource from a pool, the planning algorithm now uses
+    the resource efficiency as tie breaker in case the priority, cost or
+    penalty criterion is identical for multiple alternative resources.
+  | Earlier releases used the resource name as tie breaker, which is quite
+    arbitrary.
+
 .. rubric:: Third party components - Performance
 
 - | A django patch has been backported to the frepple django fork.

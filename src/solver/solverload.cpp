@@ -28,7 +28,18 @@ bool sortLoad(const Load* lhs, const Load* rhs) {
   auto r = rhs->getPriority();
   if (!l) l = INT_MAX;
   if (!r) r = INT_MAX;
-  return l < r;
+  if (l == r)
+    return lhs->getResource()->getEfficiency() <
+           rhs->getResource()->getEfficiency();
+  else
+    return l < r;
+}
+
+bool sortResource(const Resource* lhs, const Resource* rhs) {
+  if (lhs->getEfficiency() == rhs->getEfficiency())
+    return lhs->getName() < rhs->getName();
+  else
+    return lhs->getEfficiency() < rhs->getEfficiency();
 }
 
 void SolverCreate::chooseResource(
@@ -73,20 +84,49 @@ void SolverCreate::chooseResource(
       lplan->getOperationPlan()->endLoadPlans())
     lplan->getOperationPlan()->createFlowLoads();
 
+  // Build a list of candidate resources
+  vector<Resource*> res_stack;
+  if (l->getResource()->isGroup()) {
+    for (auto c1 = l->getResource()->getMembers(); c1 != Resource::end();
+         ++c1) {
+      if (c1->isGroup()) {
+        for (auto c2 = c1->getMembers(); c2 != Resource::end(); ++c2) {
+          if (c2->isGroup()) {
+            for (auto c3 = c2->getMembers(); c3 != Resource::end(); ++c3) {
+              if (c3->isGroup()) {
+                for (auto c4 = c3->getMembers(); c4 != Resource::end(); ++c4) {
+                  if (c4->isGroup()) {
+                    for (auto c5 = c4->getMembers(); c5 != Resource::end();
+                         ++c5) {
+                      if (c5->isGroup())
+                        logger << "Warning: Resource "
+                                  "hierarchies can only have up to 5 levels"
+                               << endl;
+                      else
+                        res_stack.push_back(&*c5);
+                    }
+                  } else
+                    res_stack.push_back(&*c4);
+                }
+              } else
+                res_stack.push_back(&*c3);
+            }
+          } else
+            res_stack.push_back(&*c2);
+        }
+      } else
+        res_stack.push_back(&*c1);
+    }
+    // Sort the list by efficiciency and name
+    sort(res_stack.begin(), res_stack.end(), sortResource);
+  } else
+    res_stack.push_back(l->getResource());
+
   // Loop over all candidate resources
-  stack<Resource*> res_stack;
-  res_stack.push(l->getResource());
   while (!res_stack.empty()) {
     // Pick next resource
-    Resource* res = res_stack.top();
-    res_stack.pop();
-
-    // If it's an aggregate, push it's members on the stack
-    if (res->isGroup()) {
-      for (auto x = res->getMembers(); x != Resource::end(); ++x)
-        res_stack.push(&*x);
-      continue;
-    }
+    Resource* res = res_stack.back();
+    res_stack.pop_back();
 
     // Check if the resource has the right skill
     ResourceSkill* rscSkill = nullptr;

@@ -848,6 +848,8 @@ class loadOperations(LoadTask):
                             x.effective_end = i[19]
                         if i[20]:
                             x.available = frepple.calendar(name=i[20])
+                        if i[13] == "subcontractor":
+                            x.nolocationcalendar = True
                     except Exception as e:
                         logger.error("**** %s ****" % e)
                 logger.info(

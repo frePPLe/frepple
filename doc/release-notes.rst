@@ -42,6 +42,9 @@ These changes will be made gradual over a couple of releases. For instance, from
 - | Ability to write back the scheduled start and finish dates of work orders
     from frepple to odoo.
 
+- | v14: Bug fix, subcontractor lead time was interpreted by frepple in
+    working hours rather than calendar days.
+
 - | v14: Bug fixes for multi-company odoo configurations.
 
 - | v14: Bug fix, manufacturing orders in the status "to close" were

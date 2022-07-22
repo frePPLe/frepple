@@ -224,6 +224,7 @@
       <xsd:element name="location" type="location" />
       <xsd:element name="available" type="calendar" />
       <xsd:element name="search" type="search" />
+      <xsd:element name="nolocationcalendar" type="xsd:boolean" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="duration" type="xsd:duration" />
@@ -238,6 +239,7 @@
     <xsd:attribute name="effective_start" type="xsd:dateTime" />
     <xsd:attribute name="effective_end" type="xsd:dateTime" />
     <xsd:attribute name="search" type="search" />
+    <xsd:attribute name="nolocationcalendar" type="xsd:boolean" />
   </xsd:complexType>
 
   <xsd:complexType name="operationlist">

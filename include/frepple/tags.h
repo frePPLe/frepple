@@ -144,6 +144,7 @@ class Tags {
   static const Keyword mininventory;
   static const Keyword minshipment;
   static const Keyword name;
+  static const Keyword nolocationcalendar;
   static const Keyword offset;
   static const Keyword onhand;
   static const Keyword operation;

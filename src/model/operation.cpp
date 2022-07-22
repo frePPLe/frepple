@@ -492,12 +492,14 @@ DateRange Operation::calculateOperationTime(
 unsigned short Operation::collectCalendars(
     Calendar::EventIterator cals[], Date start, const OperationPlan* opplan,
     bool forward, bool considerResourceCalendars) const {
+  auto nolocationcalendar = getNoLocationCalendar();
   unsigned short calcount = 0;
   // a) operation
   if (available)
     cals[calcount++] = Calendar::EventIterator(available, start, forward);
   // b) operation location
-  if (loc && loc->getAvailable() && getAvailable() != loc->getAvailable())
+  if (loc && loc->getAvailable() && getAvailable() != loc->getAvailable() &&
+      !nolocationcalendar)
     cals[calcount++] =
         Calendar::EventIterator(loc->getAvailable(), start, forward);
 
@@ -524,7 +526,8 @@ unsigned short Operation::collectCalendars(
                                 getName() + "'");
         }
       }
-      if (res->getLocation() && res->getLocation()->getAvailable()) {
+      if (res->getLocation() && res->getLocation()->getAvailable() &&
+          !nolocationcalendar) {
         bool exists = false;
         for (unsigned short t = 0; t < calcount; ++t) {
           // d) resource location
@@ -563,7 +566,8 @@ unsigned short Operation::collectCalendars(
                                 getName() + "'");
         }
       }
-      if (res->getLocation() && res->getLocation()->getAvailable()) {
+      if (res->getLocation() && res->getLocation()->getAvailable() &&
+          !nolocationcalendar) {
         bool exists = false;
         for (unsigned short t = 0; t < calcount; ++t) {
           // d) resource location

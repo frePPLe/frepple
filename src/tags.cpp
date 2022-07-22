@@ -143,6 +143,7 @@ const Keyword Tags::minimum_calendar("minimum_calendar");
 const Keyword Tags::mininventory("mininventory");
 const Keyword Tags::minshipment("minshipment");
 const Keyword Tags::name("name");
+const Keyword Tags::nolocationcalendar("nolocationcalendar");
 const Keyword Tags::offset("offset");
 const Keyword Tags::onhand("onhand");
 const Keyword Tags::operation("operation");

@@ -3076,6 +3076,17 @@ class Operation : public HasName<Operation>,
 
   bool getMTO() const { return (flags & FLAGS_MTO) != 0; }
 
+  bool getNoLocationCalendar() const {
+    return (flags & FLAGS_NOLOCATIONCALENDAR) != 0;
+  }
+
+  void setNoLocationCalendar(bool b) {
+    if (b)
+      flags |= FLAGS_NOLOCATIONCALENDAR;
+    else
+      flags &= ~FLAGS_NOLOCATIONCALENDAR;
+  }
+
   void updateMTO();
 
   static Operation* findFromName(string);
@@ -3124,6 +3135,8 @@ class Operation : public HasName<Operation>,
         Tags::flows, Tags::flow, &Cls::getFlowIterator, BASE + WRITE_OBJECT);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
+    m->addBoolField<Cls>(Tags::nolocationcalendar, &Cls::getNoLocationCalendar,
+                         &Cls::setNoLocationCalendar, BOOL_FALSE, BASE);
     m->addBoolField<Cls>(Tags::hasSuperOperations, &Cls::hasSuperOperations,
                          nullptr, BOOL_FALSE, DONT_SERIALIZE);
     m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch,
@@ -3235,6 +3248,7 @@ class Operation : public HasName<Operation>,
   /* Bit fields. */
   static const unsigned short FLAGS_HIDDEN = 1;
   static const unsigned short FLAGS_MTO = 2;
+  static const unsigned short FLAGS_NOLOCATIONCALENDAR = 4;
   unsigned short flags = 0;
 
   /* Mode to select the preferred alternates. */

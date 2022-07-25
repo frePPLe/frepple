@@ -50,7 +50,10 @@ These changes will be made gradual over a couple of releases. For instance, from
 - | v14: Bug fix, manufacturing orders in the status "to close" were
     incorrectly being ignored.
 
-- | v14: assure compatibility with the latest releases of the Python
+- | v14: Bug fix, improved logic to handle cases with multiple purchase records
+    for the same item+supplier combination are present.
+
+- | v14: Assure compatibility with the latest releases of the Python
     package pyjwt.
 
 - | v14: Reduced memory footprint.

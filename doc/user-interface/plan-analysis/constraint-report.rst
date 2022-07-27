@@ -15,15 +15,23 @@ Field        Description
 ============ ==============================================================================
 demand       Demand impacted by this constraint.
 name         Constraint type causing the lateness or shortness:
-             
-             * | **operation before current**:
+
+             * | **Operation before current**:
                | The demand was planned late (or short) because of a lead time constraint.
                | The operation should have been started some time ago in the past to
                  deliver the demand on time.
-                   
-             * | **capacity overload**:
+
+             * | **Capacity overload**:
                | The demand was planned late (or short) because of a capacity shortage on
                  a resource.
+
+             * | **Operation before fence**
+               | The demand was planned late (or short) because a new replenishment would
+                 need to be proposed with the release fence.
+
+             * | **Await supply**
+               | The demand was planned late (or short) because we are awaiting an existing
+                 confirmed or approved replenishment.
 
 description  Description of the constraint.
 weight       A number expressing the seriousness of the constraint.

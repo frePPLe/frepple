@@ -1011,11 +1011,18 @@ void OperationPlan::createFlowLoads(
     else
       // Restore previous assignments
       for (auto& res : *assigned_resources) {
+        bool found = false;
         for (auto& g : oper->getLoads()) {
           if (!g.getAlternate() && res->isMemberOf(g.getResource()) &&
-              (!g.getSkill() || res->hasSkill(g.getSkill())))
+              (!g.getSkill() || res->hasSkill(g.getSkill(), getStart()))) {
             new LoadPlan(this, &g, res);
+            found = true;
+            break;
+          }
         }
+        if (!found)
+          logger << "Warning: Assigned resource '" << res << "' on '"
+                 << getReference() << "' is invalid." << endl;
       }
   }
 

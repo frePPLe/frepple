@@ -29,6 +29,12 @@ These changes will be made gradual over a couple of releases. For instance, from
   | Earlier releases used the resource name as tie breaker, which is quite
     arbitrary.
 
+.. rubric:: User interface
+
+- | The 'export workbook' task no longer exports automatically generated
+    identifier fields.
+  | The presence of such fields could interfere when importing the excel workbook again.
+
 .. rubric:: Third party components - Performance
 
 - | A django patch has been backported to the frepple django fork.

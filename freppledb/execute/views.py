@@ -37,6 +37,7 @@ from django.conf import settings
 from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
+from django.db.models.fields import AutoField
 from django.db.models.fields.related import ForeignKey
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render
@@ -1044,7 +1045,11 @@ def exportWorkbook(request):
             except Exception:
                 exclude = None
             for i in model._meta.fields:
-                if i.name in ["lft", "rght", "lvl"]:
+                if isinstance(i, AutoField) and i.primary_key:
+                    # Don't export automatically generated primary keys.
+                    # We rely on the natural for restoring the data.
+                    continue
+                elif i.name in ["lft", "rght", "lvl"]:
                     continue  # Skip some fields of HierarchyModel
                 elif i.name == "source":
                     source = i  # Put the source field at the end

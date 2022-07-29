@@ -18,8 +18,8 @@ The main target is to refresh the component stack:
 These changes will be made gradual over a couple of releases. For instance, from
 6.20.0 onwards frepple supports both Ubuntu 18 as well as Ubuntu 20.
 
-6.24.0 (Upcoming release)
-=========================
+6.24.0 (2022/07/29)
+===================
 
 .. rubric:: Production planning
 
@@ -50,6 +50,8 @@ These changes will be made gradual over a couple of releases. For instance, from
 
 - | v14: Bug fix, subcontractor lead time was interpreted by frepple in
     working hours rather than calendar days.
+
+- | v14: Bug fix for mapping odoo reorderpoints to frepple.
 
 - | v14: Bug fixes for multi-company odoo configurations.
 

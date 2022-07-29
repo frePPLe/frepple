@@ -1265,6 +1265,39 @@ class loadBuffers(LoadTask):
                         b.minimum = i[5]
                     if i[6]:
                         b.minimum_calendar = frepple.calendar(name=i[6])
+
+                    # Try association with a safety stock calendar
+                    try:
+                        ss_calendar = frepple.calendar(
+                            name="SS for %s" % i[0], action="C"
+                        )
+                        b.minimum_calendar = ss_calendar
+                    except Exception:
+                        pass
+
+                    # Try association with a replenishment quantity calendar
+                    try:
+                        roq_calendar = frepple.calendar(
+                            name="ROQ for %s" % i[0], action="C"
+                        )
+                        if isinstance(
+                            b.producing,
+                            (
+                                frepple.operation_routing,
+                                frepple.operation_alternate,
+                            ),
+                        ):
+                            for o in b.producing.suboperations:
+                                o.operation.size_minimum_calendar = roq_calendar
+                                if isinstance(o.operation, frepple.operation_routing):
+                                    for o2 in o.operation.suboperations:
+                                        o2.operation.size_minimum_calendar = (
+                                            roq_calendar
+                                        )
+                        elif b.producing:
+                            b.producing.size_minimum_calendar = roq_calendar
+                    except Exception:
+                        pass
                 logger.info(
                     "Loaded %d buffers in %.2f seconds" % (cnt, time() - starttime)
                 )

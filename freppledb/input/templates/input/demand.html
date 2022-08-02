@@ -48,16 +48,14 @@ function delayfmt(cellvalue, options, rowdata) {
 
   var thecolor0 = '';
   var thecolor1 = '';
-  if (options.colModel.name === 'delay') {
-    var thenumber = sign * days;
-    if (thenumber <= 0)
-      thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #008000">';
-    else if (thenumber > 7)
-      thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #f00">';
-    else
-      thecolor0 = '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+Math.round((1-thenumber/7)*255)+','+0+')">';
-    thecolor1 = '</div>';
-  }
+  var thenumber = sign * days;
+  if (thenumber <= 0)
+    thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #008000">';
+  else if (thenumber > 7)
+    thecolor0 = '<div class="invStatus" style="text-align: center; background-color: #f00">';
+  else
+    thecolor0 = '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+Math.round((1-thenumber/7)*255)+','+0+')">';
+  thecolor1 = '</div>';
   return thecolor0 + (sign*days).toString() + " " + gettext("days") + thecolor1;
 }
 

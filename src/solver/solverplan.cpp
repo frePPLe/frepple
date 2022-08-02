@@ -426,10 +426,9 @@ void SolverCreate::SolverData::commit() {
       } while (true);
 
       // Completely recreate all purchasing operation plans
-      for (auto o = purchase_buffers.begin(); o != purchase_buffers.end();
-           ++o) {
+      for (auto o : purchase_buffers) {
         // Erase existing proposed purchases
-        const_cast<Buffer*>(*o)->getProducingOperation()->deleteOperationPlans(
+        const_cast<Buffer*>(o)->getProducingOperation()->deleteOperationPlans(
             false);
         // Create new proposed purchases
         auto tmp_buffer_solve_shortages_only = buffer_solve_shortages_only;
@@ -444,8 +443,8 @@ void SolverCreate::SolverData::commit() {
           state->curDemand = nullptr;
           state->curOwnerOpplan = nullptr;
           state->a_qty = 0;
-          state->curBatch = (*o)->getBatch();
-          (*o)->solve(*solver, this);
+          state->curBatch = o->getBatch();
+          o->solve(*solver, this);
           getCommandManager()->commit();
         } catch (...) {
           getCommandManager()->rollback();

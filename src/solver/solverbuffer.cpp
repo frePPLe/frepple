@@ -683,8 +683,9 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
 
           // Validate whether confirmed/approved supply exists within the
           // autofence window.
-          // Note: no check for overall shortage here.
-          if (getAutoFence()) {
+          // Note: no check for overall shortage here, just checking whether
+          // stock stays positive in a constrained plan.
+          if (getAutoFence() && (theOnHand > 0 || getPlanType() == 2)) {
             bool exists = false;
             for (auto f = b->getFlowPlans().begin();
                  f != b->getFlowPlans().end(); ++f) {
@@ -733,11 +734,12 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
           data->safety_stock_planning = data_safety_stock_planning;
           data->buffer_solve_shortages_only = data_buffer_solve_shortages_only;
 
-          if (data->state->a_qty > ROUNDING_ERROR)
+          if (data->state->a_qty > ROUNDING_ERROR) {
             // If we got some extra supply, we retry to get some more supply.
             // Only when no extra material is obtained, we give up.
             theDelta += data->state->a_qty;
-          else {
+            theOnHand += data->state->a_qty;
+          } else {
             data->getCommandManager()->rollback(topcommand);
             if ((cur != b->getFlowPlans().end() &&
                  data->state->a_date < cur->getDate()) ||

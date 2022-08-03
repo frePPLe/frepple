@@ -220,7 +220,13 @@ def Upload(request):
         )
         logger.debug("Uploading %d bytes of planning results to Odoo" % size)
         req = Request(
-            "%sfrepple/xml/" % Parameter.getValue("odoo.url", request.database),
+            "%s%sfrepple/xml/"
+            % (
+                Parameter.getValue("odoo.url", request.database),
+                "/"
+                if not Parameter.getValue("odoo.url", request.database).endswith("/")
+                else "",
+            ),
             data=body,
             headers={
                 "Authorization": "Basic %s" % encoded.decode("ascii")[:-1],

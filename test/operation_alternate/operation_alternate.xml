@@ -34,7 +34,7 @@
       </maximum_calendar>
     </resource>
   </resources>
-	<operations>
+    <operations>
     <operation name="make item 1 with routing A" xsi:type="operation_routing">
       <cost>13</cost>
       <suboperations>
@@ -125,107 +125,107 @@
         </suboperation>
       </suboperations>
     </operation>
-	</operations>
-	<buffers>
-	  <buffer name="inventory item 1">
-	    <item name="item 1" />
-	    <producing name="alternatives for making item 1" />
-	  </buffer>
-	</buffers>
-	<demands>
-	  <demand name="order prio 1 for item 1">
-	    <quantity>20</quantity>
-	    <due>2009-01-11T00:00:00</due>
-	    <priority>1</priority>
-	    <item name="item 1" />
-	    <operation name="delivery 1" duration="P1D" xsi:type="operation_fixed_time">
-	      <flows>
-	        <flow xsi:type="flow_start">
-	          <buffer name="inventory item 1" />
-	          <quantity>-1</quantity>
-	        </flow>
-	      </flows>
-	    </operation>
-	  </demand>
-	  <demand name="order prio 2 for item 1">
-	    <quantity>10</quantity>
-	    <due>2009-01-02T00:00:00</due>
-	    <priority>2</priority>
-	    <item name="item 1"/>
-	    <operation name="delivery 1"/>
-	  </demand>
-	</demands>
+    </operations>
+    <buffers>
+      <buffer name="inventory item 1">
+        <item name="item 1" />
+        <producing name="alternatives for making item 1" />
+      </buffer>
+    </buffers>
+    <demands>
+      <demand name="order prio 1 for item 1">
+        <quantity>20</quantity>
+        <due>2009-01-11T00:00:00</due>
+        <priority>1</priority>
+        <item name="item 1" />
+        <operation name="delivery 1" duration="P1D" xsi:type="operation_fixed_time">
+          <flows>
+            <flow xsi:type="flow_start">
+              <buffer name="inventory item 1" />
+              <quantity>-1</quantity>
+            </flow>
+          </flows>
+        </operation>
+      </demand>
+      <demand name="order prio 2 for item 1">
+        <quantity>10</quantity>
+        <due>2009-01-02T00:00:00</due>
+        <priority>2</priority>
+        <item name="item 1"/>
+        <operation name="delivery 1"/>
+      </demand>
+    </demands>
 
   <!--
     Corner cases with date effective alternates
   -->
   <items>
     <item name="item 2" cost="1">
-	    <itemsuppliers>
-	      <itemsupplier>
+        <itemsuppliers>
+          <itemsupplier>
           <supplier name="MySupplier" />
           <location name="warehouse" />
           <leadtime>P2D</leadtime>
           <priority>1</priority>
           <effective_end>2009-01-10T00:00:00</effective_end>
         </itemsupplier>
-	    </itemsuppliers>
+        </itemsuppliers>
     </item>
   </items>
   <demands>
-	  <demand name="item 2 SO1">
-	    <quantity>10</quantity>
-	    <due>2009-01-31T00:00:00</due>
-	    <priority>2</priority>
-	    <item name="item 2"/>
+      <demand name="item 2 SO1">
+        <quantity>10</quantity>
+        <due>2009-01-31T00:00:00</due>
+        <priority>2</priority>
+        <item name="item 2"/>
       <location name="warehouse" />
-	  </demand>
+      </demand>
   </demands>
 
   <items>
     <item name="item 3" cost="1">
-	    <itemsuppliers>
-	      <itemsupplier>
+        <itemsuppliers>
+          <itemsupplier>
           <supplier name="MySupplier" />
           <location name="warehouse" />
           <leadtime>P14D</leadtime>
           <priority>1</priority>
           <effective_end>2009-01-10T00:00:00</effective_end>
         </itemsupplier>
-	    </itemsuppliers>
+        </itemsuppliers>
     </item>
   </items>
   <demands>
-	  <demand name="item 3 SO1">
-	    <quantity>10</quantity>
-	    <due>2009-01-31T00:00:00</due>
-	    <priority>2</priority>
-	    <item name="item 3"/>
+      <demand name="item 3 SO1">
+        <quantity>10</quantity>
+        <due>2009-01-31T00:00:00</due>
+        <priority>2</priority>
+        <item name="item 3"/>
       <location name="warehouse" />
-	  </demand>
+      </demand>
   </demands>
 
   <items>
     <item name="item 4" cost="1">
-	    <itemsuppliers>
-	      <itemsupplier>
+        <itemsuppliers>
+          <itemsupplier>
           <supplier name="MySupplier" />
           <location name="warehouse" />
           <leadtime>P14D</leadtime>
           <priority>1</priority>
           <effective_start>2009-02-10T00:00:00</effective_start>
         </itemsupplier>
-	    </itemsuppliers>
+        </itemsuppliers>
     </item>
   </items>
   <demands>
-	  <demand name="item 4 SO1">
-	    <quantity>10</quantity>
-	    <due>2009-01-31T00:00:00</due>
-	    <priority>2</priority>
-	    <item name="item 4"/>
+      <demand name="item 4 SO1">
+        <quantity>10</quantity>
+        <due>2009-01-31T00:00:00</due>
+        <priority>2</priority>
+        <item name="item 4"/>
       <location name="warehouse" />
-	  </demand>
+      </demand>
   </demands>
 
   <!--
@@ -233,24 +233,24 @@
   -->
   <items>
     <item name="item 5" cost="1">
-	    <itemsuppliers>
-	      <itemsupplier>
+        <itemsuppliers>
+          <itemsupplier>
           <supplier name="MySupplier" />
           <location name="warehouse" />
           <leadtime>P14D</leadtime>
           <priority>0</priority>
         </itemsupplier>
-	    </itemsuppliers>
+        </itemsuppliers>
     </item>
   </items>
   <demands>
-	  <demand name="item 5 SO1">
-	    <quantity>10</quantity>
-	    <due>2009-01-31T00:00:00</due>
-	    <priority>2</priority>
-	    <item name="item 5"/>
+      <demand name="item 5 SO1">
+        <quantity>10</quantity>
+        <due>2009-01-31T00:00:00</due>
+        <priority>2</priority>
+        <item name="item 5"/>
       <location name="warehouse" />
-	  </demand>
+      </demand>
   </demands>
 
   <!--
@@ -296,24 +296,24 @@
     </operation>
   </operations>
   <demands>
-	  <demand name="2. item SO1">
-	    <quantity>3</quantity>
-	    <due>2009-01-20T00:00:00</due>
-	    <item name="2. item"/>
+      <demand name="2. item SO1">
+        <quantity>3</quantity>
+        <due>2009-01-20T00:00:00</due>
+        <item name="2. item"/>
       <location name="warehouse" />
-	  </demand>
-	  <demand name="2. item SO2">
-	    <quantity>15</quantity>
-	    <due>2009-02-20T00:00:00</due>
-	    <item name="2. item"/>
+      </demand>
+      <demand name="2. item SO2">
+        <quantity>15</quantity>
+        <due>2009-02-20T00:00:00</due>
+        <item name="2. item"/>
       <location name="warehouse" />
-	  </demand>
-	  <demand name="2. item SO3">
-	    <quantity>30</quantity>
-	    <due>2009-03-20T00:00:00</due>
-	    <item name="2. item"/>
+      </demand>
+      <demand name="2. item SO3">
+        <quantity>30</quantity>
+        <due>2009-03-20T00:00:00</due>
+        <item name="2. item"/>
       <location name="warehouse" />
-	  </demand>
+      </demand>
   </demands>
 
   <!-- Case: corner case with allowsplits=false and partial availability. -->
@@ -327,7 +327,7 @@
           <item name="3. unavailable component" />
           <quantity>-1</quantity>
         </flow>
-	    </flows>
+        </flows>
       <duration>PT1H</duration>
     </operation>
     <operation name="3. producing" xsi:type="operation_time_per">
@@ -339,34 +339,94 @@
           <item name="3. component" />
           <quantity>-1</quantity>
         </flow>
-	    </flows>
+        </flows>
       <duration>P1D</duration>
       <duration_per>P1D</duration_per>
     </operation>
   </operations>
-	<buffers>
-	  <buffer name="3. component @ warehouse" onhand="5">
-	    <item name="3. component" />
-	    <location name="warehouse" />
-	  </buffer>
-	</buffers>
+  <buffers>
+    <buffer name="3. component @ warehouse" onhand="5">
+      <item name="3. component" />
+      <location name="warehouse" />
+    </buffer>
+  </buffers>
   <suppliers>
     <supplier name="3. Supplier">
-	    <itemsuppliers>
-	      <itemsupplier>
+        <itemsuppliers>
+          <itemsupplier>
           <item name="3. component"/>
           <leadtime>P70D</leadtime>
         </itemsupplier>
-	    </itemsuppliers>
-	  </supplier>
+        </itemsuppliers>
+      </supplier>
   </suppliers>
   <demands>
-	  <demand name="3. SO1">
-	    <quantity>10</quantity>
-	    <due>2009-01-21T00:00:00</due>
-	    <item name="3. item"/>
+    <demand name="3. SO1">
+      <quantity>10</quantity>
+      <due>2009-01-21T00:00:00</due>
+      <item name="3. item"/>
       <location name="warehouse" />
-	  </demand>
+    </demand>
+  </demands>
+
+  <!-- Case: corner case with mincost search across size-based alternates. -->
+  <operations>
+    <operation name="4. alternate A" xsi:type="operation_fixed_time">
+      <item name="4. item"/>
+      <location name="warehouse" />
+      <priority>1</priority>
+	  <cost>30</cost>
+	  <size_minimum>1</size_minimum>
+	  <size_maximum>1</size_maximum>
+	  <search>MINCOST</search>
+      <loads>
+        <load>
+          <resource name="4. machine" />
+          <quantity>1</quantity>
+        </load>
+      </loads>
+      <duration>PT1H</duration>
+    </operation>
+    <operation name="4. alternate B" xsi:type="operation_fixed_time">
+      <item name="4. item"/>
+      <location name="warehouse" />
+      <priority>2</priority>
+	  <cost>5</cost>
+	  <size_minimum>1</size_minimum>
+	  <size_maximum>1</size_maximum>
+	  <search>MINCOST</search>
+      <loads>
+        <load>
+          <resource name="4. machine" />
+          <quantity>1</quantity>
+        </load>
+      </loads>
+      <duration>PT1H</duration>
+    </operation>
+    <operation name="4. alternate C" xsi:type="operation_fixed_time">
+      <item name="4. item"/>
+      <location name="warehouse" />
+      <priority>3</priority>
+	  <cost>20</cost>
+	  <size_minimum>1</size_minimum>
+	  <size_maximum>1</size_maximum>
+	  <search>MINCOST</search>
+      <loads>
+        <load>
+          <resource name="4. machine" />
+          <quantity>1</quantity>
+        </load>
+      </loads>
+      <duration>PT1H</duration>
+    </operation>	
+  </operations>
+  <demands>
+    <demand name="4. SO1">
+      <quantity>10</quantity>
+      <due>2009-01-21T00:00:00</due>
+      <item name="4. item"/>
+      <location name="warehouse" />
+    </demand>
   </demands>
 
 <?python

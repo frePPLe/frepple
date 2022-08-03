@@ -1300,28 +1300,21 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 
       // Filter out alternates that are not suitable
       bool bad = false;
+      bool goodalt = (*altIter)->getEffective().within(data->state->q_date);
+      if (goodalt &&
+          !(*altIter)
+               ->getOperation()
+               ->hasType<OperationItemDistribution, OperationItemSupplier>())
+        goodalt =
+            data->state->q_qty >=
+                (*altIter)->getOperation()->getSizeMinimum() &&
+            data->state->q_qty <= (*altIter)->getOperation()->getSizeMaximum();
       if ((*altIter)->getPriority() == 0)
         bad = true;
-      else if (!effectiveOnly &&
-               (*altIter)->getEffective().within(data->state->q_date) &&
-               data->state->q_qty >=
-                   (*altIter)->getOperation()->getSizeMinimum() &&
-               data->state->q_qty <=
-                   (*altIter)->getOperation()->getSizeMaximum())
+      else if (!effectiveOnly && goodalt)
         bad = true;
-      else if (effectiveOnly) {
-        if (!(*altIter)->getEffective().within(data->state->q_date))
-          bad = true;
-        else if (!(*altIter)
-                      ->getOperation()
-                      ->hasType<OperationItemDistribution,
-                                OperationItemSupplier>() &&
-                 (data->state->q_qty <
-                      (*altIter)->getOperation()->getSizeMinimum() ||
-                  data->state->q_qty >
-                      (*altIter)->getOperation()->getSizeMaximum()))
-          bad = true;
-      }
+      else if (effectiveOnly && !goodalt)
+        bad = true;
       if (bad) {
         ++altIter;
         if (altIter == oper->getSubOperations().end() && effectiveOnly) {
@@ -1610,6 +1603,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           bestQDate = ask_date;
         }
         // This was only an evaluation
+        data->state->q_qty = origQqty;
         data->getCommandManager()->rollback(topcommand);
       }
 

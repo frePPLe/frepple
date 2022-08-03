@@ -219,13 +219,12 @@ def Upload(request):
             ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
         )
         logger.debug("Uploading %d bytes of planning results to Odoo" % size)
+        url = Parameter.getValue("odoo.url", request.database)
         req = Request(
             "%s%sfrepple/xml/"
             % (
-                Parameter.getValue("odoo.url", request.database),
-                "/"
-                if not Parameter.getValue("odoo.url", request.database).endswith("/")
-                else "",
+                url,
+                "/" if not url.endswith("/") else "",
             ),
             data=body,
             headers={

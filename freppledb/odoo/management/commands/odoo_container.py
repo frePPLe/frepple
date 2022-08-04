@@ -146,7 +146,7 @@ class Command(BaseCommand):
                     "-t",
                     name,
                     "odoo",
-                    "--init=base,product,purchase,sale,sale_management,resource,mrp,frepple,autologin",
+                    "--init=base,product,purchase,sale,sale_management,resource,stock,mrp,frepple,freppledata,autologin",
                     "--load=web,autologin",
                     "--database=%s" % name,
                     "--stop-after-init",

@@ -44,10 +44,10 @@ class Command(BaseCommand):
             help="Complete rebuild of image and database",
         )
         parser.add_argument(
-            "--showlog",
-            action="store_false",
+            "--nolog",
+            action="store_true",
             dest="nolog",
-            default=True,
+            default=False,
             help="Tail the odoo log at the end of this command",
         )
         parser.add_argument(
@@ -271,6 +271,6 @@ class Command(BaseCommand):
         ).stdout
 
         print("CONTAINER READY: %s " % container)
-        if options["showlog"]:
+        if not options["nolog"]:
             print("Hit CTRL-C to stop displaying the container log")
             subprocess.run(["docker", "attach", container], shell=True)

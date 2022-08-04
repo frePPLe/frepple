@@ -81,6 +81,11 @@ class Command(BaseCommand):
             default=settings.DATABASES[DEFAULT_DB_ALIAS]["PASSWORD"],
             help="Database password to use for odoo. Defaults to the same as used by frepple.",
         )
+        parser.add_argument(
+            "--odoo-addon-path",
+            default=os.path.join(os.path.dirname(__file__), "..", "..", "odoo_addon"),
+            help="Location of the odoo connectors to install.",
+        )
 
     def getOdooVersion(self, dockerfile):
         with open(dockerfile, mode="rt") as f:
@@ -90,9 +95,7 @@ class Command(BaseCommand):
             raise CommandError("Can't find odoo version in dockerfile")
 
     def handle(self, **options):
-        dockerfile = os.path.join(
-            os.path.dirname(__file__), "..", "..", "odoo_addon", "dockerfile"
-        )
+        dockerfile = os.path.join(options["odoo_addon_path"], "dockerfile")
         if not os.path.exists(dockerfile):
             raise CommandError("Can't find dockerfile")
         odooversion = self.getOdooVersion(dockerfile)
@@ -116,7 +119,7 @@ class Command(BaseCommand):
                 name,
                 ".",
             ],
-            cwd=os.path.join(os.path.dirname(__file__), "..", "..", "odoo_addon"),
+            cwd=options["odoo_addon_path"],
         )
 
         print("DELETE OLD CONTAINER")

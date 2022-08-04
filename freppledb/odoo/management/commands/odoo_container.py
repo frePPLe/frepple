@@ -43,6 +43,44 @@ class Command(BaseCommand):
             default=False,
             help="Complete rebuild of image and database",
         )
+        parser.add_argument(
+            "--showlog",
+            action="store_false",
+            dest="nolog",
+            default=True,
+            help="Tail the odoo log at the end of this command",
+        )
+        parser.add_argument(
+            "--container-port",
+            type=int,
+            default=8069,
+            help="Port number for odoo. Defaults to 8069",
+        )
+        parser.add_argument(
+            "--frepple-url",
+            default="http://localhost:8000",
+            help="URL where frepple is available. Defaults to 'http://localhost:8000'",
+        )
+        parser.add_argument(
+            "--odoo-db-host",
+            default=settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"],
+            help="Database host to use for odoo. Defaults to the same as used by frepple.",
+        )
+        parser.add_argument(
+            "--odoo-db-port",
+            default=settings.DATABASES[DEFAULT_DB_ALIAS]["PORT"],
+            help="Database port to use for odoo. Defaults to the same as used by frepple.",
+        )
+        parser.add_argument(
+            "--odoo-db-user",
+            default=settings.DATABASES[DEFAULT_DB_ALIAS]["USER"],
+            help="Database user to use for odoo. Defaults to the same as used by frepple.",
+        )
+        parser.add_argument(
+            "--odoo-db-password",
+            default=settings.DATABASES[DEFAULT_DB_ALIAS]["PASSWORD"],
+            help="Database password to use for odoo. Defaults to the same as used by frepple.",
+        )
 
     def getOdooVersion(self, dockerfile):
         with open(dockerfile, mode="rt") as f:
@@ -88,23 +126,23 @@ class Command(BaseCommand):
 
         if options["full"]:
             print("CREATE NEW DATABASE")
-            os.environ["PGPASSWORD"] = settings.DATABASES[DEFAULT_DB_ALIAS]["PASSWORD"]
+            os.environ["PGPASSWORD"] = options["odoo_db_password"]
             extraargs = []
-            if settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"]:
+            if options["odoo_db_host"]:
                 extraargs = extraargs + [
                     "-h",
-                    settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"],
+                    options["odoo_db_host"],
                 ]
-            if settings.DATABASES[DEFAULT_DB_ALIAS]["PORT"]:
+            if options["odoo_db_port"]:
                 extraargs = extraargs + [
                     "-p",
-                    settings.DATABASES[DEFAULT_DB_ALIAS]["PORT"],
+                    options["odoo_db_port"],
                 ]
             subprocess.run(
                 [
                     "dropdb",
                     "-U",
-                    settings.DATABASES[DEFAULT_DB_ALIAS]["USER"],
+                    options["odoo_db_user"],
                     "--force",
                     "--if-exists",
                     name,
@@ -115,7 +153,7 @@ class Command(BaseCommand):
                 [
                     "createdb",
                     "-U",
-                    settings.DATABASES[DEFAULT_DB_ALIAS]["USER"],
+                    options["odoo_db_user"],
                     name,
                 ]
                 + extraargs
@@ -134,13 +172,13 @@ class Command(BaseCommand):
                     "HOST=%s"
                     % (
                         "host.docker.internal"
-                        if not settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"]
-                        else settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"]
+                        if not options["odoo_db_host"]
+                        else options["odoo_db_host"]
                     ),
                     "-e",
-                    "USER=%s" % settings.DATABASES[DEFAULT_DB_ALIAS]["USER"],
+                    "USER=%s" % options["odoo_db_user"],
                     "-e",
-                    "PASSWORD=%s" % settings.DATABASES[DEFAULT_DB_ALIAS]["PASSWORD"],
+                    "PASSWORD=%s" % options["odoo_db_password"],
                     "--name",
                     name,
                     "-t",
@@ -156,13 +194,13 @@ class Command(BaseCommand):
             print("CONFIGURE ODOO DATABASE")
             conn_params = {
                 "database": name,
-                "user": settings.DATABASES[DEFAULT_DB_ALIAS]["USER"],
-                "password": settings.DATABASES[DEFAULT_DB_ALIAS]["PASSWORD"],
+                "user": options["odoo_db_user"],
+                "password": options["odoo_db_password"],
             }
-            if settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"]:
-                conn_params["host"] = settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"]
-            if settings.DATABASES[DEFAULT_DB_ALIAS]["PORT"]:
-                conn_params["port"] = settings.DATABASES[DEFAULT_DB_ALIAS]["PORT"]
+            if options["odoo_db_host"]:
+                conn_params["host"] = options["odoo_db_host"]
+            if options["odoo_db_port"]:
+                conn_params["port"] = options["odoo_db_port"]
             with psycopg2.connect(**conn_params) as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
@@ -174,11 +212,11 @@ class Command(BaseCommand):
                              where name = 'San Francisco'
                              ),
                           webtoken_key = '%s',
-                          frepple_server = 'http://localhost:8000',
+                          frepple_server = '%s',
                           disclose_stack_trace = true
-                        where name = 'My Company (San Francisco)'
+                        where name in ('My Company (San Francisco)', 'YourCompany')
                         """
-                        % settings.SECRET_KEY
+                        % (settings.SECRET_KEY, options["frepple_url"])
                     )
                     cursor.execute(
                         """
@@ -189,11 +227,11 @@ class Command(BaseCommand):
                              where name = 'Chicago 1'
                              ),
                           webtoken_key = '%s',
-                          frepple_server = 'http://localhost:8000',
+                          frepple_server = '%s',
                           disclose_stack_trace = true
                         where name = 'My Company (Chicago)'
                         """
-                        % settings.SECRET_KEY
+                        % (settings.SECRET_KEY, options["frepple_url"])
                     )
 
         print("CREATING DOCKER CONTAINER")
@@ -203,24 +241,24 @@ class Command(BaseCommand):
                 "run",
                 "-d",
                 "-p",
-                "8069:8069",
+                "8069:%s" % (options["container_port"],),
                 "-p",
-                "8071:8071",
+                "8071:%s" % (options["container_port"] + 2,),
                 "-p",
-                "8072:8072",
+                "8072:%s" % (options["container_port"] + 3,),
                 "-v",
                 "%s:/var/lib/odoo" % name,
                 "-e",
                 "HOST=%s"
                 % (
                     "host.docker.internal"
-                    if not settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"]
-                    else settings.DATABASES[DEFAULT_DB_ALIAS]["HOST"]
+                    if not options["odoo_db_host"]
+                    else options["odoo_db_host"]
                 ),
                 "-e",
-                "USER=%s" % settings.DATABASES[DEFAULT_DB_ALIAS]["USER"],
+                "USER=%s" % options["odoo_db_user"],
                 "-e",
-                "PASSWORD=%s" % settings.DATABASES[DEFAULT_DB_ALIAS]["PASSWORD"],
+                "PASSWORD=%s" % options["odoo_db_password"],
                 "--name",
                 name,
                 "-t",
@@ -233,5 +271,6 @@ class Command(BaseCommand):
         ).stdout
 
         print("CONTAINER READY: %s " % container)
-        print("Hit CTRL-C to stop displaying the container log")
-        subprocess.run(["docker", "attach", container], shell=True)
+        if options["showlog"]:
+            print("Hit CTRL-C to stop displaying the container log")
+            subprocess.run(["docker", "attach", container], shell=True)

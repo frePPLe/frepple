@@ -679,15 +679,19 @@ void TimeLine<type>::erase(Event* e) {
 
   if (e->prev)
     e->prev->next = e->next;
-  else
+  else if (first == e)
     // Erasing the head
     first = e->next;
+  else
+    logger << "Warning: corrupted timeline head" << endl;
 
   if (e->next)
     e->next->prev = e->prev;
-  else
+  else if (last == e)
     // Erasing the tail
     last = e->prev;
+  else
+    logger << "Warning: corrupted timeline tail" << endl;
 
   // Clear prev and next pointers
   e->prev = nullptr;

@@ -1457,6 +1457,7 @@ class SubOperation : public Object, public HasSource {
  */
 class SetupEvent : public TimeLine<LoadPlan>::Event {
   friend class TimeLine<LoadPlan>::Event;
+  friend class OperationPlanState;
 
  private:
   PooledString setup;
@@ -1464,6 +1465,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
   SetupMatrixRule* rule = nullptr;
   OperationPlan* opplan = nullptr;
   Duration setup_override = -1L;
+  bool stateinfo = false;
 
  public:
   virtual TimeLine<LoadPlan>* getTimeLine() const { return tmline; }
@@ -1498,7 +1500,10 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
 
   void reset() {
     setup = PooledString();
-    tmline = nullptr;
+    if (stateinfo)
+      tmline = nullptr;
+    else
+      setTimeLine(nullptr);
     rule = nullptr;
   }
 
@@ -1517,15 +1522,28 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
 
   /* Constructor. */
   SetupEvent(TimeLine<LoadPlan>* t, Date d, const PooledString& s,
-             SetupMatrixRule* r = nullptr, OperationPlan* o = nullptr)
-      : TimeLine<LoadPlan>::Event(5), setup(s), tmline(t), opplan(o) {
+             SetupMatrixRule* r = nullptr, OperationPlan* o = nullptr,
+             bool state = false)
+      : TimeLine<LoadPlan>::Event(5),
+        setup(s),
+        tmline(t),
+        opplan(o),
+        stateinfo(state) {
     initType(metadata);
     dt = d;
     rule = r;
-    if (opplan && tmline) tmline->insert(this);
+    if (opplan && tmline && !stateinfo) tmline->insert(this);
   }
 
-  void setTimeLine(TimeLine<LoadPlan>& t) { tmline = &t; }
+  void setTimeLine(TimeLine<LoadPlan>* t) {
+    if (stateinfo)
+      tmline = t;
+    else if (tmline != t) {
+      if (tmline) tmline->erase(this);
+      tmline = t;
+      if (tmline) tmline->insert(this);
+    }
+  }
 
   virtual OperationPlan* getOperationPlan() const { return opplan; }
 
@@ -1543,7 +1561,10 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
 
   Duration getSetupOverride() const { return setup_override; }
 
-  void setSetupOverride(Duration d) { setup_override = d; }
+  void setSetupOverride(Duration d) {
+    if (d >= 0L) rule = nullptr;
+    setup_override = d;
+  }
 
   void update(TimeLine<LoadPlan>*, Date, const PooledString&, SetupMatrixRule*);
 
@@ -3448,7 +3469,7 @@ class OperationPlanState  // @todo should also be able to remember and restore
   double quantity = 0.0;
 
   /* Default constructor. */
-  OperationPlanState() {}
+  OperationPlanState() { setup.stateinfo = true; }
 
   /* Constructor. */
   OperationPlanState(const OperationPlan* x) : setup(x->getSetupEvent()) {
@@ -3456,6 +3477,7 @@ class OperationPlanState  // @todo should also be able to remember and restore
     start = x->getStart();
     end = x->getEnd();
     quantity = x->getQuantity();
+    setup.stateinfo = true;
     tmline = x->getSetupEvent() ? x->getSetupEvent()->getTimeLine() : nullptr;
   }
 
@@ -3465,19 +3487,23 @@ class OperationPlanState  // @todo should also be able to remember and restore
         end(x.end),
         setup(x.setup),
         tmline(x.tmline),
-        quantity(x.quantity) {}
+        quantity(x.quantity) {
+    setup.stateinfo = true;
+  }
 
   /* Constructor. */
   OperationPlanState(const Date x, const Date y, double q,
                      SetupEvent* z = nullptr)
       : start(x), end(y), setup(z), quantity(q) {
     if (z) tmline = z->getTimeLine();
+    setup.stateinfo = true;
   }
 
   /* Constructor. */
   OperationPlanState(const DateRange& x, double q, SetupEvent* z = nullptr)
       : start(x.getStart()), end(x.getEnd()), setup(z), quantity(q) {
     if (z) tmline = z->getTimeLine();
+    setup.stateinfo = true;
   }
 
   /* Assignment operator. */
@@ -3487,6 +3513,7 @@ class OperationPlanState  // @todo should also be able to remember and restore
     setup = other.setup;
     quantity = other.quantity;
     tmline = other.tmline;
+    setup.stateinfo = true;
     return *this;
   }
 };

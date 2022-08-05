@@ -1367,15 +1367,30 @@ bool OperationPlan::updateSetupTime(bool report) {
   // Keep the setup end date constant during the update
   auto setup = oper->calculateSetup(this, end_of_setup, setupevent);
 
-  if (setupevent && !setupevent->getTimeLine() && getSetupOverride() >= 0L) {
-    for (auto ld = getOperation()->getLoads().begin();
-         ld != getOperation()->getLoads().end(); ++ld)
-      if (ld->getResource() && ld->getResource()->getSetupMatrix()) {
-        setupevent->setTimeLine(ld->getResource()->getLoadPlans());
-        get<0>(setup) = ld->getResource();
-        break;
-      }
+  if (setupevent && getSetupOverride() >= 0L && !getNoSetup()) {
+    auto ldplan = beginLoadPlans();
+    if (ldplan == endLoadPlans()) {
+      for (auto ld = getOperation()->getLoads().begin();
+           ld != getOperation()->getLoads().end(); ++ld)
+        if (ld->getResource() && ld->getResource()->getSetupMatrix()) {
+          if (!setupevent->getTimeLine() && !getNoSetup()) {
+            setupevent->setTimeLine(&(ld->getResource()->getLoadPlans()));
+          }
+          get<0>(setup) = ld->getResource();
+          break;
+        }
+    } else {
+      for (; ldplan != endLoadPlans(); ++ldplan)
+        if (ldplan->getResource() && ldplan->getResource()->getSetupMatrix()) {
+          if (!setupevent->getTimeLine() && !getNoSetup()) {
+            setupevent->setTimeLine(&(ldplan->getResource()->getLoadPlans()));
+          }
+          get<0>(setup) = ldplan->getResource();
+          break;
+        }
+    }
   }
+
   if (get<0>(setup) || getSetupOverride() >= 0L) {
     // Setup event required
     if (get<1>(setup) || getSetupOverride() >= 0L) {
@@ -2316,6 +2331,7 @@ SetupEvent::~SetupEvent() {
 }
 
 void SetupEvent::erase() {
+  if (stateinfo) return;
   if (tmline) tmline->erase(this);
   if (opplan && rule && rule->getResource()) {
     for (auto l = opplan->beginLoadPlans(); l != opplan->endLoadPlans();) {
@@ -2331,17 +2347,13 @@ void SetupEvent::update(TimeLine<LoadPlan>* res, Date d, const PooledString& s,
                         SetupMatrixRule* r) {
   setup = s;
   rule = r;
-  if (!tmline) {
-    // First insert
+  if (stateinfo) {
+    dt = d;
     tmline = res;
-    if (tmline) tmline->insert(this);
-    if (r && r->getResource()) new LoadPlan(opplan, this);
-  } else if (res != tmline) {
-    // Reinsert at another resource
-    if (tmline) tmline->erase(this);
-    tmline = res;
-    if (tmline) tmline->insert(this);
-  } else
+  } else if (res != tmline)
+    // Insert in resource timeling
+    setTimeLine(res);
+  else
     // Update the position in the list
     tmline->update(this, d);
 }

@@ -986,7 +986,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
       if (get<1>(setuptime_required)) {
         SetupEvent tmp(&(get<0>(setuptime_required)->getLoadPlans()),
                        setup_dates.getEnd(), get<2>(setuptime_required),
-                       get<1>(setuptime_required));
+                       get<1>(setuptime_required), nullptr, true);
         return OperationPlanState(setup_dates.getStart(),
                                   production_dates.getEnd(), q, &tmp);
       } else
@@ -1244,7 +1244,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
         if (get<0>(setuptime_required)) {
           SetupEvent tmp(&(get<0>(setuptime_required)->getLoadPlans()),
                          setup_dates.getEnd(), get<2>(setuptime_required),
-                         get<1>(setuptime_required));
+                         get<1>(setuptime_required), nullptr, true);
           return OperationPlanState(setup_dates.getStart(),
                                     production_dates.getEnd(), q, &tmp);
         } else
@@ -1312,7 +1312,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
         if (get<0>(setuptime_required)) {
           SetupEvent tmp(&(get<0>(setuptime_required)->getLoadPlans()),
                          setup_dates.getEnd(), get<2>(setuptime_required),
-                         get<1>(setuptime_required));
+                         get<1>(setuptime_required), nullptr, true);
           return OperationPlanState(setup_dates.getStart(),
                                     production_dates.getEnd(), q, &tmp);
         } else
@@ -1394,7 +1394,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
         if (get<0>(setuptime_required)) {
           SetupEvent tmp(&(get<0>(setuptime_required)->getLoadPlans()),
                          setup_dates.getEnd(), get<2>(setuptime_required),
-                         get<1>(setuptime_required));
+                         get<1>(setuptime_required), nullptr, true);
           return OperationPlanState(setup_dates.getStart(),
                                     production_dates.getEnd(), q, &tmp);
         } else
@@ -1467,7 +1467,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
           if (get<0>(setuptime_required)) {
             SetupEvent tmp(&(get<0>(setuptime_required)->getLoadPlans()),
                            setup_dates.getEnd(), get<2>(setuptime_required),
-                           get<1>(setuptime_required));
+                           get<1>(setuptime_required), nullptr, true);
             return OperationPlanState(setup_dates.getStart(),
                                       production_dates.getEnd(), q, &tmp);
           } else
@@ -1519,7 +1519,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
             if (get<0>(setuptime_required)) {
               SetupEvent tmp(&(get<0>(setuptime_required)->getLoadPlans()),
                              setup_dates.getEnd(), get<2>(setuptime_required),
-                             get<1>(setuptime_required));
+                             get<1>(setuptime_required), nullptr, true);
               return OperationPlanState(setup_dates.getStart(),
                                         production_dates.getEnd(), q, &tmp);
             } else

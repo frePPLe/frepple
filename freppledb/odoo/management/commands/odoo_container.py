@@ -226,7 +226,13 @@ class Command(BaseCommand):
                           frepple_server = '%s',
                           disclose_stack_trace = true
                         """
-                        % (settings.SECRET_KEY, options["frepple_url"])
+                        % (
+                            settings.DATABASES[DEFAULT_DB_ALIAS].get(
+                                "SECRET_WEBTOKEN_KEY", None
+                            )
+                            or settings.SECRET_KEY,
+                            options["frepple_url"],
+                        )
                     )
                     cursor.execute(
                         """

@@ -14,6 +14,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from datetime import datetime
+
 from django.core import management
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -22,6 +24,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template import Template, RequestContext
 
 from freppledb import __version__
+from freppledb.execute.models import Task
 
 
 class Command(BaseCommand):
@@ -72,7 +75,16 @@ class Command(BaseCommand):
             "constraint": 0,
             "plantype": 2,
         }
-        if options["user"]:
+        if not options["task"]:
+            task = Task(
+                name="odoo_import",
+                submitted=datetime.now(),
+                status="Waiting",
+                user=options["user"],
+            )
+            task.save(using=database)
+            kwargs["task"] = task.id
+        elif options["user"]:
             kwargs["user"] = options["user"]
         management.call_command("runplan", **kwargs)
 

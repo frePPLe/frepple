@@ -24,6 +24,7 @@ from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb import __version__
+from freppledb.common.models import Parameter
 
 
 class Command(BaseCommand):
@@ -60,6 +61,11 @@ class Command(BaseCommand):
             "--frepple-url",
             default="http://localhost:8000",
             help="URL where frepple is available. Defaults to 'http://localhost:8000'",
+        )
+        parser.add_argument(
+            "--odoo-url",
+            default="http://localhost:8069",
+            help="URL where odoo is available. Defaults to 'http://localhost:8069'",
         )
         parser.add_argument(
             "--odoo-db-host",
@@ -212,30 +218,41 @@ class Command(BaseCommand):
                           manufacturing_warehouse = (
                              select id
                              from stock_warehouse
-                             where name = 'San Francisco'
+                             where stock_warehouse.company_id = res_company.id
+                             order by id
+                             limit 1
                              ),
                           webtoken_key = '%s',
                           frepple_server = '%s',
                           disclose_stack_trace = true
-                        where name in ('My Company (San Francisco)', 'YourCompany')
                         """
                         % (settings.SECRET_KEY, options["frepple_url"])
                     )
                     cursor.execute(
                         """
-                        update res_company set
-                          manufacturing_warehouse = (
-                             select id
-                             from stock_warehouse
-                             where name = 'Chicago 1'
-                             ),
-                          webtoken_key = '%s',
-                          frepple_server = '%s',
-                          disclose_stack_trace = true
-                        where name = 'My Company (Chicago)'
+                        select res_company.name, stock_warehouse.name
+                        from res_company
+                        inner join res_users
+                          on res_users.company_id = res_company.id
+                          and login = 'admin'
+                        inner join stock_warehouse
+                          on stock_warehouse.company_id = res_company.id
+                        order by stock_warehouse.id
                         """
-                        % (settings.SECRET_KEY, options["frepple_url"])
                     )
+                    company, mfglocation = cursor.fetchone()
+
+            print("CONFIGURE FREPPLE PARAMETERS")
+            Parameter.objects.all().filter(name="odoo.company").update(value=company)
+            Parameter.objects.all().filter(name="odoo.db").update(value=name)
+            Parameter.objects.all().filter(name="odoo.user").update(value="admin")
+            Parameter.objects.all().filter(name="odoo.password").update(value="admin")
+            Parameter.objects.all().filter(name="odoo.production_location").update(
+                value=mfglocation
+            )
+            Parameter.objects.all().filter(name="odoo.url").update(
+                value=options["odoo_url"]
+            )
 
         print("CREATING DOCKER CONTAINER")
         container = subprocess.run(

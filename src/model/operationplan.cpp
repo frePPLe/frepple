@@ -2302,7 +2302,7 @@ void OperationPlan::setSetupEvent(TimeLine<LoadPlan>* res, Date d,
         l.deleteLoadPlan();
     }
   }
-  if (!res) {
+  if (!res && (!setupevent || setupevent->getSetupOverride() < 0L)) {
     delete setupevent;
     setupevent = nullptr;
     return;

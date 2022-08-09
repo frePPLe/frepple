@@ -3848,7 +3848,7 @@ def _getCellValue(data, field=None, exportConfig=None, request=None):
             model = field.related_model
         else:
             return str(data)
-        if model._meta.app_label == "common":
+        if getattr(model, "obfuscate", True):
             return str(data)
         modelname = model._meta.model_name
         if modelname not in exportConfig:

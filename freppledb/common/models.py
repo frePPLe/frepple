@@ -289,6 +289,8 @@ class AuditModel(models.Model):
 
 
 class Parameter(AuditModel):
+    obfuscate = False
+
     # Database fields
     name = models.CharField(_("name"), max_length=60, primary_key=True)
     value = models.CharField(_("value"), max_length=1000, null=True, blank=True)
@@ -1435,6 +1437,8 @@ class Bucket(AuditModel):
 
 
 class BucketDetail(AuditModel):
+    obfuscate = False
+
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True)
     bucket = models.ForeignKey(
@@ -1465,6 +1469,7 @@ class BucketDetail(AuditModel):
 
 
 class Attribute(AuditModel):
+    obfuscate = False
     types = (
         ("string", _("string")),
         ("boolean", _("boolean")),

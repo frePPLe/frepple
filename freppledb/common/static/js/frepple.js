@@ -512,7 +512,7 @@ jQuery.extend($.fn.fmatter, {
 
   color: function (cellvalue, options, rowdata) {
 
-    if (rowdata.color === undefined || rowdata.color === '')
+    if (rowdata.color === undefined || rowdata.color === '' || cellvalue === null)
       return '';
 
     // Ignores color field and read the delay field

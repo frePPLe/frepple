@@ -86,7 +86,6 @@ class CalendarBucket_admin(MultiDBModelAdmin):
 class Calendar_admin(MultiDBModelAdmin):
     model = Calendar
     save_on_top = True
-    inlines = [CalendarBucket_inline]
     fieldsets = (
         (None, {"fields": ("name", "defaultvalue")}),
         (

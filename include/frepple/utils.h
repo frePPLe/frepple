@@ -5800,7 +5800,7 @@ class Association {
     C* nextA = nullptr;
     C* nextB = nullptr;
     DateRange effectivity;
-    string name;
+    PooledString name;
     int priority = 1;
 
    public:

@@ -248,7 +248,10 @@ def preferences(request):
                 request.user.pagesize = newdata["pagesize"]
                 if newdata["avatar"]:
                     request.user.avatar = newdata["avatar"]
-                if newdata["default_scenario"]:
+                if (
+                    newdata["default_scenario"]
+                    and newdata["default_scenario"] != "None"
+                ):
                     request.user.default_scenario = newdata["default_scenario"]
                 if newdata["cur_password"]:
                     request.user.set_password(newdata["new_password1"])
@@ -368,7 +371,7 @@ def login(request, extra_context=None):
         request.session.set_expiry(settings.SESSION_COOKIE_AGE)
     if (
         request.path == "/data/login/"
-        and getattr(request.user, "default_scenario", None)
+        and getattr(request.user, "default_scenario", None) in settings.DATABASES
         and isinstance(response, HttpResponseRedirect)
         and response.url == "/"
     ):

@@ -1,6 +1,3 @@
-// Django sets this variable in the admin/base.html template.
-window.__admin_media_prefix__ = "/static/admin/";
-
 //check for browser features
 function isDragnDropUploadCapable() {
   var adiv = document.createElement('div');

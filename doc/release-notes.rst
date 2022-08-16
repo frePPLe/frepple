@@ -18,6 +18,13 @@ The main target is to refresh the component stack:
 These changes will be made gradual over a couple of releases. For instance, from
 6.20.0 onwards frepple supports both Ubuntu 18 as well as Ubuntu 20.
 
+6.25 (Upcoming)
+===============
+
+.. rubric:: Production planning
+
+- | Bug fix: Operation batching didn't consider infinite buffers correctly.
+
 6.24.0 (2022/07/29)
 ===================
 

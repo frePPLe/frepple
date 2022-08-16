@@ -1018,7 +1018,7 @@ class ComputePeriodOfCover(PlanTask):
             cursor.execute(
                 """
                 create temp table cluster_item_tmp as select name from item where false;
-            """
+                """
             )
 
             cursor.copy_from(

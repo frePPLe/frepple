@@ -2063,7 +2063,9 @@ void SolverCreate::createsBatches(Operation* oper, void* v) {
         FlowPlan* flpln;
         bool ok = true;
         while ((flpln = flplniter.next()) && ok) {
-          if (flpln->getQuantity() > -ROUNDING_ERROR) continue;
+          if (flpln->getQuantity() > -ROUNDING_ERROR ||
+              flpln->getBuffer()->hasType<BufferInfinite>())
+            continue;
           auto flpln_check = flpln->getBuffer()->getFlowPlans().begin(flpln);
           for (--flpln_check;
                flpln_check != flpln->getBuffer()->getFlowPlans().end() && ok;

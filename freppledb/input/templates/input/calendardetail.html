@@ -1,0 +1,130 @@
+{% extends "admin/base_site_grid.html" %}
+
+{% block tools %}
+{% include "common/snippet_follow.html" %}
+{% tabs "input.calendar" %}
+{{block.super}}
+{% endblock %}
+
+{% block before_table %}
+<div id="graph" style="clear: both; height: 250px; padding: 10px"></div>
+{% endblock %}
+
+{% block extrahead %}{{block.super}}
+<script src="{{STATIC_URL}}js/d3.min.js"></script>
+<script>
+var events = {{events|json}};
+var horizonstart = new Date({{request.report_startdate|date:"Y"}},{{request.report_startdate|date:"n"}}-1,{{request.report_startdate|date:"j"}});
+var horizonend = new Date({{request.report_enddate|date:"Y"}},{{request.report_enddate|date:"n"}}-1,{{request.report_enddate|date:"j"}});
+var viewstart = new Date(horizonstart.getTime());
+var viewend = new Date((horizonstart.getTime() + horizonend.getTime()) / 2);
+
+function drawGraph(jsondata) {
+    var width = $("#graph").width();
+    var height = $("#graph").height();
+
+    $("#graph").html("");
+    var svg = d3.select($("#graph").get(0))
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g");
+
+    svg.call(d3.behavior.zoom().on("zoom", function() {
+        var ev = d3.event;
+        console.log("erere", ev.translate, ev.scale , ev);
+      }));
+
+    var min_y = 0;
+    var max_y = 0;
+    var min_x;
+    var max_x;
+    for (var e of events) {
+      e[0] = new Date(e[0]);
+      if (!min_x) min_x = e[0];
+      max_x = e[0];
+      if (e[2] < min_y) min_y = e[2];
+      if (e[2] > max_y) max_y = e[2];
+    }
+    var x = d3.scale.linear().rangeRound([0, width]).domain([min_x, max_x]);
+    var y1 = d3.scale.linear().rangeRound([0, height * 0.7]).domain([max_y, min_y]);
+    var y2 = d3.scale.linear().rangeRound([height * 0.8, height]).domain([max_y, min_y]);
+
+    var linedata1 = [];
+    var linedata2 = [];
+    var last_y1 = null;
+    var last_y2 = null;
+    var last_x = 0;
+    svg.selectAll("g")
+      .data(events)
+      .enter()
+      .append("g")
+      .each(function(d) {
+        var tmp_x = x(d[0]);
+        if (last_y1 !== null) {
+            linedata1.push([tmp_x, last_y1]);
+            linedata2.push([tmp_x, last_y2]);
+        }
+        last_y1 = y1(d[2]);
+        linedata1.push([tmp_x, last_y1]);
+        last_y2 = y2(d[2]);
+        linedata2.push([tmp_x, last_y2]);
+        svg.append("rect")
+           .attr("x", last_x)
+           .attr("width", tmp_x)
+           .attr("y", 0)
+           .attr("height", height*0.8)
+           .attr("opacity", 0)
+           .on("mouseenter", function() {
+               graph.showTooltip(
+                d[0] + "<br>" +
+                d[1] + "<br>" +
+                d[2]
+	           );
+             })
+	       .on("mouseleave", graph.hideTooltip)
+	       .on("mousemove", graph.moveTooltip);
+        last_x = tmp_x;
+    });
+
+    svg.append("rect")
+      .attr("x", x(viewstart))
+      .attr("width", x(viewend) - x(viewstart))
+      .attr("y", height * 0.85)
+      .attr("height", height*0.1)
+      .attr("fill", "gray")
+      .attr("opacity", 0.3);
+
+    var line = d3.svg.line()
+        .x(function(d) { return d[0]; })
+        .y(function(d) { return d[1]; });
+    svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#8BBA00")
+        .attr("d", line(linedata1));
+    svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#8BBA00")
+        .attr("d", line(linedata2));
+
+    svg.append("rect")
+      .attr("x", x(viewstart)-3)
+      .attr("width", 6)
+      .attr("y", height * 0.85)
+      .attr("height", height*0.1)
+      .attr("fill", "gray")
+      .attr("rx", 2)
+      .attr("ry", 2);
+    svg.append("rect")
+      .attr("x", x(viewend)-3)
+      .attr("width", 6)
+      .attr("y", height * 0.85)
+      .attr("height", height*0.1)
+      .attr("fill", "gray")
+      .attr("rx", 2)
+      .attr("ry", 2);
+    }
+</script>
+{% endblock %}
+
+{% block extra_grid %}loadComplete: drawGraph,{% endblock %}

@@ -76,6 +76,11 @@ urlpatterns = [
         name="input_calendar_changelist",
     ),
     re_path(
+        r"^data/input/calendardetail/(.+)/$",
+        freppledb.input.views.manufacturing.CalendarDetail.as_view(),
+        name="input_calendardetail",
+    ),
+    re_path(
         r"^data/input/calendarbucket/$",
         freppledb.input.views.CalendarBucketList.as_view(),
         name="input_calendarbucket_changelist",

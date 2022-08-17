@@ -105,6 +105,11 @@ class Calendar_admin(MultiDBModelAdmin):
             "permissions": "input.change_calendar",
         },
         {
+            "name": "plan",
+            "label": _("detail"),
+            "view": "input_calendardetail",
+        },
+        {
             "name": "messages",
             "label": _("messages"),
             "view": "admin:input_calendar_comment",

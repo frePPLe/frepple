@@ -23,6 +23,12 @@ These changes will be made gradual over a couple of releases. For instance, from
 
 .. rubric:: Production planning
 
+- | Graphical calendar editor.
+  | A new screen visualizes how the calendar value changes over time. The
+    new screen also allows easy creation of extra calendar buckets.
+  | Until now, calendar buckets have been quite abstract to grasp and understand.
+    The new screen should make this a lot easier and intuitive.
+
 - | Bug fix: Operation batching didn't consider infinite buffers correctly.
 
 6.24.0 (2022/07/29)

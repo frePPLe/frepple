@@ -258,7 +258,7 @@ var upload = {
     upload.selectedRows = [];
   },
 
-  save: function () {
+  save: function (ok_callback) {
     if ($('#save').hasClass("btn-primary")) return;
 
     // Pick up all changed cells. If a function "getData" is defined on the
@@ -284,6 +284,7 @@ var upload = {
         success: function () {
           upload.undo();
           $("#save i").addClass('hidden');
+          if (typeof ok_callback !== 'undefined') ok_callback();
         },
         error: ajaxerror
       });

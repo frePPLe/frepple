@@ -146,16 +146,12 @@ class TruncatePlan(PlanTask):
                 opplanmat as (
                 delete from operationplanmaterial
                 using opplans
-                where status is distinct from 'closed'
-                  and status is distinct from 'confirmed'
-                  and opplans.reference = operationplan_id
+                where opplans.reference = operationplan_id
                 ),
                 opplanres as (
                 delete from operationplanresource
                 using opplans
-                where status is distinct from 'closed'
-                  and status is distinct from 'confirmed'
-                  and opplans.reference = operationplan_id
+                where opplans.reference = operationplan_id
                 )
                 delete from operationplan
                 using opplans
@@ -953,7 +949,6 @@ class ExportOperationPlanMaterials(PlanTask):
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, timestamp=None, **kwargs):
         cursor = connections[database].cursor()
-        updates = []
         cursor.copy_from(
             CopyFromGenerator(
                 cls.getData(
@@ -978,8 +973,6 @@ class ExportOperationPlanMaterials(PlanTask):
             size=1024,
             sep="\v",
         )
-        if len(updates) > 0:
-            cursor.execute("\n".join(updates))
 
 
 @PlanTaskRegistry.register

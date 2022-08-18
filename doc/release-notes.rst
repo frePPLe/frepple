@@ -31,6 +31,11 @@ These changes will be made gradual over a couple of releases. For instance, from
 
 - | Bug fix: Operation batching didn't consider infinite buffers correctly.
 
+.. rubric:: Odoo integration
+
+- | v14 & 15: Products of type "consumable" are no longer interfaced to frepple.
+    These are assumed not be of interest for planning.
+
 6.24.0 (2022/07/29)
 ===================
 

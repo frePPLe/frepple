@@ -3,5 +3,6 @@
     "[python]": {
         "editor.formatOnPaste": false,
         "editor.formatOnSaveMode": "file"
-    }
+    },
+    "esbonio.sphinx.confDir": ""
 }

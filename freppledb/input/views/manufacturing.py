@@ -787,6 +787,7 @@ class CalendarDetail(GridReport):
         # Build up event list
         events = []
         curDate = request.report_startdate
+        prevDate = request.report_startdate
         curBucket = reportclass.findBucket(curDate, buckets)
         curPriority = curBucket.priority if curBucket else maxsize
         lastPriority = curPriority
@@ -795,6 +796,9 @@ class CalendarDetail(GridReport):
             if curBucket:
                 events.append(
                     (
+                        min(prevDate, request.report_enddate).strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        ),
                         min(curDate, request.report_enddate).strftime(
                             "%Y-%m-%d %H:%M:%S"
                         ),
@@ -805,6 +809,9 @@ class CalendarDetail(GridReport):
             else:
                 events.append(
                     (
+                        min(prevDate, request.report_enddate).strftime(
+                            "%Y-%m-%d %H:%M:%S"
+                        ),
                         min(curDate, request.report_enddate).strftime(
                             "%Y-%m-%d %H:%M:%S"
                         ),
@@ -814,6 +821,7 @@ class CalendarDetail(GridReport):
                 )
             if curDate >= request.report_enddate:
                 break
+            prevDate = curDate
 
             # Go over all entries and evaluate if they qualify for the next event
             refDate = curDate

@@ -7,7 +7,8 @@
 {% endblock %}
 
 {% block before_table %}
-<div id="graph" style="clear: both; height: 250px; padding: 10px"></div>
+<div id="focusgraph" style="clear: both; height: 200px; padding: 10px"></div>
+<div id="contextgraph" style="clear: both; height: 50px; padding: 10px"></div>
 {% endblock %}
 
 {% block extrahead %}{{block.super}}
@@ -19,63 +20,136 @@ var horizonend = new Date({{request.report_enddate|date:"Y"}},{{request.report_e
 var viewstart = new Date(horizonstart.getTime());
 var viewend = new Date((horizonstart.getTime() + horizonend.getTime()) / 2);
 
+var min_y = 0;
+var max_y = 0;
+var min_x;
+var max_x;
+
+var brush;
+var zoom;
+var zoom_start;
+var zoom_end;
+
 $(function() {
     $("#save").attr("onclick", "upload.save(function() {window.location.href = window.location.href})");
 });
 
-function drawGraph(jsondata) {
-    var width = $("#graph").width();
-    var height = $("#graph").height();
+function drawContextGraph() {
+    var width = $("#contextgraph").width();
+    var height = $("#contextgraph").height();
 
-    $("#graph").html("");
-    var svg = d3.select($("#graph").get(0))
+    $("#contextgraph").html("");
+    var svg = d3.select($("#contextgraph").get(0))
       .append("svg")
       .attr("width", width)
       .attr("height", height)
       .append("g");
 
-    svg.call(d3.behavior.zoom().on("zoom", function() {
-        var ev = d3.event;
-        console.log("erere", ev.translate, ev.scale , ev);
-      }));
-
-    var min_y = 0;
-    var max_y = 0;
-    var min_x;
-    var max_x;
     for (var e of events) {
       e[0] = new Date(e[0]);
+      e[1] = new Date(e[1]);
       if (!min_x) min_x = e[0];
-      max_x = e[0];
-      if (e[2] < min_y) min_y = e[2];
-      if (e[2] > max_y) max_y = e[2];
+      max_x = e[1];
+      if (e[3] < min_y) min_y = e[3];
+      if (e[3] > max_y) max_y = e[3];
     }
     var x = d3.scale.linear().rangeRound([0, width]).domain([min_x, max_x]);
-    var y1 = d3.scale.linear().rangeRound([0, height * 0.7]).domain([max_y, min_y]);
-    var y2 = d3.scale.linear().rangeRound([height * 0.8, height]).domain([max_y, min_y]);
+    var y = d3.scale.linear().rangeRound([0, height]).domain([max_y, min_y]);
 
-    var linedata1 = [];
-    var linedata2 = [];
-    var last_y1 = null;
-    var last_y2 = null;
+    var linedata = [];
+    var last_y = null;
     var last_x = 0;
     svg.selectAll("g")
       .data(events)
       .enter()
       .append("g")
       .each(function(d) {
-        var tmp_x = x(d[0]);
-        if (last_y1 !== null) {
-            linedata1.push([tmp_x, last_y1]);
-            linedata2.push([tmp_x, last_y2]);
-        }
-        last_y1 = y1(d[2]);
-        linedata1.push([tmp_x, last_y1]);
-        last_y2 = y2(d[2]);
-        linedata2.push([tmp_x, last_y2]);
+        var tmp_x = x(d[1]);
+        if (last_y !== null)
+            linedata.push([tmp_x, last_y]);
+        last_y = y(d[3]);
+        linedata.push([tmp_x, last_y]);
+        last_x = tmp_x;
+    });
+    linedata.push([last_x, y(0)]);
+    linedata.push([x(horizonstart), y(0)]);
+
+    var line = d3.svg.line()
+        .x(function(d) { return d[0]; })
+        .y(function(d) { return d[1]; });
+    svg.append("svg:path")
+        .attr("stroke","#8BBA00")
+        .attr("fill","#8BBA00")
+        .attr("stroke-width", 0)
+        .attr("d", line(linedata));
+
+    brush = d3.svg.brush()
+        .x(x)
+        .extent([viewstart, viewend])
+        .on("brush", function() {
+           if (brush.empty()) {
+             viewstart = horizonstart;
+             viewend = horizonend;
+           } else {
+              var tmp = brush.extent();
+              viewstart = new Date(tmp[0]);
+              viewend = new Date(tmp[1]);
+           }
+           drawFocusGraph();
+        });
+
+    var brushg = svg.append("g").call(brush);
+
+    brushg.selectAll(".extent")
+      .attr("x", x(viewstart))
+      .attr("width", x(viewend) - x(viewstart))
+      .attr("y", height /4)
+      .attr("fill", "gray")
+      .attr("opacity", 0.4)
+      .attr("height", height / 2);
+
+    brushg.selectAll(".resize")
+        .append("rect")
+        .attr("width", 6)
+        .attr("fill", "gray")
+        .attr("transform", "translate(-2," + height/4 + ")")
+        .attr('rx', 2)
+        .attr('ry', 2)
+        .attr("height", height / 2)
+        .attr("width", 4);
+}
+
+function drawFocusGraph() {
+    var width = $("#focusgraph").width();
+    var height = $("#focusgraph").height();
+
+    $("#focusgraph").html("");
+    var svg = d3.select($("#focusgraph").get(0))
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g");
+
+    var x = d3.scale.linear().rangeRound([0, width]).domain([viewstart, viewend]);
+    var y = d3.scale.linear().rangeRound([0, height]).domain([max_y, min_y]);
+
+    var linedata = [];
+    var last_y = null;
+    var last_x = 0;
+    svg.selectAll("g")
+      .data(events)
+      .enter()
+      .append("g")
+      .each(function(d) {
+        if (d[1] < viewstart || d[0] > viewend)
+          return;
+        var tmp_x = x(d[1]);
+        if (last_y !== null) linedata.push([tmp_x, last_y]);
+        last_y = y(d[3]);
+        linedata.push([tmp_x, last_y]);
         svg.append("rect")
            .attr("x", last_x)
-           .attr("width", tmp_x)
+           .attr("width", tmp_x - last_x)
            .attr("y", 0)
            .attr("height", height*0.8)
            .attr("opacity", 0)
@@ -83,55 +157,55 @@ function drawGraph(jsondata) {
                graph.showTooltip(
                 d[0] + "<br>" +
                 d[1] + "<br>" +
-                d[2]
+                d[2] + "<br>" +
+                d[3]
 	           );
              })
 	       .on("mouseleave", graph.hideTooltip)
 	       .on("mousemove", graph.moveTooltip);
         last_x = tmp_x;
     });
-
-    svg.append("rect")
-      .attr("x", x(viewstart))
-      .attr("width", x(viewend) - x(viewstart))
-      .attr("y", height * 0.85)
-      .attr("height", height*0.1)
-      .attr("fill", "gray")
-      .attr("opacity", 0.3)
-      .style("cursor", "move");
+    linedata.push([last_x, y(0)]);
+    linedata.push([x(min_x), y(0)]);
 
     var line = d3.svg.line()
         .x(function(d) { return d[0]; })
         .y(function(d) { return d[1]; });
     svg.append("svg:path")
-        .attr('class', 'graphline')
-        .attr("stroke","#8BBA00")
-        .attr("d", line(linedata1));
-    svg.append("svg:path")
-        .attr('class', 'graphline')
-        .attr("stroke","#8BBA00")
-        .attr("d", line(linedata2));
+        .attr("stroke","#E68BBA00")
+        .attr("stroke-width", 0)
+        .attr("fill","#8BBA00")
+        .attr("d", line(linedata));
 
-    svg.append("rect")
-      .attr("x", x(viewstart)-3)
-      .attr("width", 6)
-      .attr("y", height * 0.85)
-      .attr("height", height*0.1)
-      .attr("fill", "gray")
-      .attr("rx", 2)
-      .attr("ry", 2)
-      .style("cursor", "ew-resize");
-    svg.append("rect")
-      .attr("x", x(viewend)-3)
-      .attr("width", 6)
-      .attr("y", height * 0.85)
-      .attr("height", height*0.1)
-      .attr("fill", "gray")
-      .attr("rx", 2)
-      .attr("ry", 2)
-      .style("cursor", "ew-resize");
-    }
+    zoom = d3.behavior.zoom()
+        .x(x)
+        .on("zoom", function(arg) {
+          var initial_range = zoom_end.getTime() - zoom_start.getTime();
+          var delta_range = initial_range * (d3.event.scale -1);
+          var translate_range = d3.event.translate[0] / x.range()[1] * initial_range;
+          viewstart = new Date(zoom_start.getTime() - delta_range / 2 + translate_range);
+          viewend = new Date(zoom_end.getTime() + delta_range / 2 + translate_range);
+          if (viewstart < horizonstart)
+             viewstart = horizonstart;
+          if (viewend > horizonend)
+             viewend = horizonend;
+          brush.extent([viewstart, viewend]);
+          drawContextGraph();
+          drawFocusGraph();
+        })
+        .on("zoomstart", function() {
+          zoom_start = viewstart;
+          zoom_end = viewend;
+        });
+    svg.call(zoom);
+}
+
+function initGraphs(jsondata) {
+  drawContextGraph();
+  drawFocusGraph();
+}
+
 </script>
 {% endblock %}
 
-{% block extra_grid %}loadComplete: drawGraph,{% endblock %}
+{% block extra_grid %}loadComplete: initGraphs,{% endblock %}

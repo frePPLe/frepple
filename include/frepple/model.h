@@ -7342,6 +7342,30 @@ class Demand : public HasHierarchy<Demand>,
            (STATUS_CLOSED + STATUS_INQUIRY + STATUS_OPEN + STATUS_QUOTE);
   }
 
+  /* Update the status. */
+  void setStatus(unsigned int s) {
+    if (s & STATUS_OPEN) {
+      flags &=
+          ~(STATUS_QUOTE + STATUS_INQUIRY + STATUS_CLOSED + STATUS_CANCELED);
+      flags |= STATUS_OPEN;
+    } else if (s & STATUS_CLOSED) {
+      flags &= ~(STATUS_QUOTE + STATUS_INQUIRY + STATUS_OPEN + STATUS_CANCELED);
+      flags |= STATUS_CLOSED;
+    } else if (s & STATUS_QUOTE) {
+      flags &=
+          ~(STATUS_OPEN + STATUS_INQUIRY + STATUS_CLOSED + STATUS_CANCELED);
+      flags |= STATUS_QUOTE;
+    } else if (s & STATUS_INQUIRY) {
+      flags &= ~(STATUS_QUOTE + STATUS_OPEN + STATUS_CLOSED + STATUS_CANCELED);
+      flags |= STATUS_INQUIRY;
+    } else if (s & STATUS_CANCELED) {
+      flags &= ~(STATUS_OPEN + STATUS_QUOTE + STATUS_INQUIRY + STATUS_CLOSED);
+      flags |= STATUS_CANCELED;
+    } else
+      throw DataException("Demand status not recognized");
+    setChanged();
+  }
+
   /* Return the status as a string. */
   string getStatusString() const {
     if (flags & STATUS_OPEN)

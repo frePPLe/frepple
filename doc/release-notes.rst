@@ -29,12 +29,22 @@ These changes will be made gradual over a couple of releases. For instance, from
   | Until now, calendar buckets have been quite abstract to grasp and understand.
     The new screen should make this a lot easier and intuitive.
 
+- | Bug fix: Updating purchase orders, manufacturing orders or distribution orders
+    could create incorrect duplicate records in the inventory detail table.
+
 - | Bug fix: Operation batching didn't consider infinite buffers correctly.
+
+- | Bug fix: Safety stock planning could leave material shortages in the plan in some
+    conditions.
+  | The corner cases where this potentially happens have confirmed purchase orders
+    within the autofence window of safety stock shortfalls.
 
 .. rubric:: Odoo integration
 
 - | v14 & 15: Products of type "consumable" are no longer interfaced to frepple.
     These are assumed not be of interest for planning.
+
+- | v14: Bug fix for mapping odoo reorderpoints to frepple.
 
 6.24.0 (2022/07/29)
 ===================

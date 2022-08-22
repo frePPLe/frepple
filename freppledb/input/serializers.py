@@ -1664,6 +1664,7 @@ class DemandSerializer(BulkSerializerMixin, ModelSerializer):
             "minshipment",
             "maxlateness",
             "owner",
+            "policy",
         ) + getAttributeAPIFields(models.Demand)
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.Demand

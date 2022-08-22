@@ -38,8 +38,9 @@ void Demand::updateProblems() {
   // Problem detection disabled on this demand
   if (!getDetectProblems()) return;
 
-  // Closed demands don't have any problems
-  if (getStatus() != status::CLOSED) {
+  // Closed or canceled demands don't have any problems
+  auto tmp_status = getStatus();
+  if (tmp_status != STATUS_CLOSED && tmp_status != STATUS_CANCELED) {
     // Check which problems need to be created
     if (deli.empty()) {
       // Check if a new ProblemDemandNotPlanned needs to be created

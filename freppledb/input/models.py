@@ -1615,7 +1615,7 @@ class ItemDistribution(AuditModel):
         verbose_name_plural = _("item distributions")
 
 
-class Demand(AuditModel, HierarchyModel):
+class Demand(AuditModel):
     # Status
     demandstatus = (
         ("inquiry", _("inquiry")),
@@ -1625,7 +1625,18 @@ class Demand(AuditModel, HierarchyModel):
         ("canceled", _("canceled")),
     )
 
+    # Delivery policies
+    delivery_policies = (
+        ("independent", _("independent")),
+        ("alltogether", _("all together")),
+        ("inratio", _("in ratio")),
+    )
+
     # Database fields
+    name = models.CharField(
+        _("name"), max_length=300, primary_key=True, help_text=_("Unique identifier")
+    )
+    owner = models.CharField(_("owner"), max_length=300, null=True, blank=True, db_index=True)
     description = models.CharField(
         _("description"), max_length=500, null=True, blank=True
     )
@@ -1654,7 +1665,9 @@ class Demand(AuditModel, HierarchyModel):
         blank=True,
         choices=demandstatus,
         default="open",
-        help_text=_('Status of the demand. Only "open" demands are planned'),
+        help_text=_(
+            'Status of the demand. Only "open" and "quote" demands are planned'
+        ),
     )
     operation = models.ForeignKey(
         Operation,
@@ -1688,6 +1701,15 @@ class Demand(AuditModel, HierarchyModel):
         null=True,
         blank=True,
         help_text=_("Maximum lateness allowed when planning this demand"),
+    )
+    policy = models.CharField(
+        _("policy"),
+        max_length=15,
+        null=True,
+        blank=True,
+        choices=delivery_policies,
+        default="independent",
+        help_text=_("Defines how sales orders are shipped together"),
     )
     batch = models.CharField(
         _("batch"),

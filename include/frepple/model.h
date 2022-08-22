@@ -7190,7 +7190,15 @@ class Demand : public HasHierarchy<Demand>,
   friend class Item;
 
  public:
-  enum class status { QUOTE, INQUIRY, OPEN, CLOSED, CANCELED };
+  static const unsigned short STATUS_QUOTE = 1;
+  static const unsigned short STATUS_INQUIRY = 2;
+  static const unsigned short STATUS_OPEN = 4;
+  static const unsigned short STATUS_CLOSED = 16;
+  static const unsigned short STATUS_CANCELED = 32;
+  static const unsigned short POLICY_INDEPENDENT = 64;
+  static const unsigned short POLICY_ALLTOGETHER = 128;
+  static const unsigned short POLICY_INRATIO = 256;
+  static const unsigned short HIDDEN = 512;
 
   typedef forward_list<OperationPlan*> OperationPlanList;
 
@@ -7329,46 +7337,79 @@ class Demand : public HasHierarchy<Demand>,
   DeliveryIterator getOperationPlans() const { return DeliveryIterator(this); }
 
   /* Return the status. */
-  status getStatus() const { return state; }
-
-  /* Update the status. */
-  void setStatus(status s) {
-    state = s;
-    setChanged();
+  unsigned short getStatus() const {
+    return flags &
+           (STATUS_CLOSED + STATUS_INQUIRY + STATUS_OPEN + STATUS_QUOTE);
   }
 
   /* Return the status as a string. */
   string getStatusString() const {
-    switch (state) {
-      case status::QUOTE:
-        return "quote";
-      case status::INQUIRY:
-        return "inquiry";
-      case status::OPEN:
-        return "open";
-      case status::CLOSED:
-        return "closed";
-      case status::CANCELED:
-        return "canceled";
-      default:
-        throw LogicException("Demand status not recognized");
-    }
+    if (flags & STATUS_OPEN)
+      return "open";
+    else if (flags & STATUS_QUOTE)
+      return "quote";
+    else if (flags & STATUS_INQUIRY)
+      return "inquiry";
+    else if (flags & STATUS_CLOSED)
+      return "closed";
+    else if (flags & STATUS_CANCELED)
+      return "canceled";
+    else
+      throw LogicException("Demand status not recognized");
   }
 
   /* Update the demand status from a string. */
   void setStatusString(const string& s) {
-    if (s == "open" || s.empty())
-      state = status::OPEN;
-    else if (s == "closed")
-      state = status::CLOSED;
-    else if (s == "quote")
-      state = status::QUOTE;
-    else if (s == "inquiry")
-      state = status::INQUIRY;
-    else if (s == "canceled")
-      state = status::CANCELED;
-    else
+    if (s == "open" || s.empty()) {
+      flags &=
+          ~(STATUS_QUOTE + STATUS_INQUIRY + STATUS_CLOSED + STATUS_CANCELED);
+      flags |= STATUS_OPEN;
+    } else if (s == "closed") {
+      flags &= ~(STATUS_QUOTE + STATUS_INQUIRY + STATUS_OPEN + STATUS_CANCELED);
+      flags |= STATUS_CLOSED;
+    } else if (s == "quote") {
+      flags &=
+          ~(STATUS_OPEN + STATUS_INQUIRY + STATUS_CLOSED + STATUS_CANCELED);
+      flags |= STATUS_QUOTE;
+    } else if (s == "inquiry") {
+      flags &= ~(STATUS_QUOTE + STATUS_OPEN + STATUS_CLOSED + STATUS_CANCELED);
+      flags |= STATUS_INQUIRY;
+    } else if (s == "canceled") {
+      flags &= ~(STATUS_OPEN + STATUS_QUOTE + STATUS_INQUIRY + STATUS_CLOSED);
+      flags |= STATUS_CANCELED;
+    } else
       throw DataException("Demand status not recognized");
+    setChanged();
+  }
+
+  unsigned short getPolicy() const {
+    return flags & (POLICY_ALLTOGETHER + POLICY_INDEPENDENT + POLICY_INRATIO);
+  }
+
+  string getPolicyString() const {
+    if (flags & POLICY_INDEPENDENT)
+      return "independent";
+    else if (flags & POLICY_ALLTOGETHER)
+      return "alltogether";
+    else if (flags & POLICY_INRATIO)
+      return "inratio";
+    else
+      throw LogicException("Demand policy not recognized");
+  }
+
+  void setPolicyString(const string& s) {
+    if (s == "independent" || s.empty()) {
+      flags &= ~(POLICY_ALLTOGETHER + POLICY_INRATIO);
+      flags |= POLICY_INDEPENDENT;
+    } else if (s == "alltogether") {
+      flags &= ~(POLICY_INDEPENDENT + POLICY_INRATIO);
+      flags |= POLICY_ALLTOGETHER;
+    } else if (s == "inratio") {
+      flags &= ~(POLICY_ALLTOGETHER + POLICY_INDEPENDENT);
+      flags |= POLICY_INRATIO;
+    } else
+      throw DataException("Demand policy not recognized");
+    setChanged();
   }
 
   PooledString getBatch() const { return batch; }
@@ -7378,6 +7419,14 @@ class Demand : public HasHierarchy<Demand>,
   void setBatch(const string& s) { batch = s; }
 
   void setBatch(const PooledString& s) { batch = s; }
+
+  PooledString getParent() const { return delivery_parent; }
+
+  const string& getParentString() const { return delivery_parent; }
+
+  void setParentString(const string& s) { delivery_parent = s; }
+
+  void setParent(const PooledString& s) { delivery_parent = s; }
 
   /* Return a pointer to the next demand for the same item. */
   Demand* getNextItemDemand() const { return nextItemDemand; }
@@ -7495,10 +7544,15 @@ class Demand : public HasHierarchy<Demand>,
 
   /* Specifies whether of not this demand is to be hidden from
    * serialization. The default value is false. */
-  void setHidden(bool b) { hidden = b; }
+  void setHidden(bool b) {
+    if (b)
+      flags |= HIDDEN;
+    else
+      flags &= ~HIDDEN;
+  }
 
   /* Returns true if this demand is to be hidden from serialization. */
-  bool getHidden() const { return hidden; }
+  bool getHidden() const { return flags & HIDDEN; }
 
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaCategory* metadata;
@@ -7561,6 +7615,10 @@ class Demand : public HasHierarchy<Demand>,
                            nullptr, -1.0, PLAN);
     m->addStringRefField<Cls>(Tags::batch, &Cls::getBatchString,
                               &Cls::setBatch);
+    m->addStringRefField<Cls>(Tags::parent, &Cls::getParentString,
+                              &Cls::setParentString);
+    m->addStringField<Cls>(Tags::policy, &Cls::getPolicyString,
+                           &Cls::setPolicyString, "independent");
   }
 
  private:
@@ -7612,14 +7670,12 @@ class Demand : public HasHierarchy<Demand>,
   /* A linked list with all demands of an item. */
   Demand* nextItemDemand = nullptr;
 
-  /* Status of the demand. */
-  status state = status::OPEN;
+  unsigned short flags = STATUS_OPEN + POLICY_INDEPENDENT;
+
+  PooledString delivery_parent;
 
   /* Priority. Lower numbers indicate a higher priority level.*/
   int prio = 0;
-
-  /* Hide this demand or not. */
-  bool hidden = false;
 
   /* Batch name */
   PooledString batch;

@@ -580,21 +580,21 @@ void SolverCreate::solve(void* v) {
     if (!getConstraints()) {
       // Dumb unconstrained plan is running in a single thread
       for (auto& i : Demand::all())
-        if (i.getQuantity() > 0 && (i.getStatus() == Demand::status::OPEN ||
-                                    i.getStatus() == Demand::status::QUOTE))
+        if (i.getQuantity() > 0 && (i.getStatus() == Demand::STATUS_OPEN ||
+                                    i.getStatus() == Demand::STATUS_QUOTE))
           demands_per_cluster[0].push_back(&i);
     } else if (cluster == -1 && !userexit_nextdemand) {
       // Many clusters to solve
       for (auto& i : Demand::all())
-        if (i.getQuantity() > 0 && (i.getStatus() == Demand::status::OPEN ||
-                                    i.getStatus() == Demand::status::QUOTE))
+        if (i.getQuantity() > 0 && (i.getStatus() == Demand::STATUS_OPEN ||
+                                    i.getStatus() == Demand::STATUS_QUOTE))
           demands_per_cluster[i.getCluster()].push_back(&i);
     } else if (!userexit_nextdemand) {
       // Only a single cluster to plan
       for (auto& i : Demand::all())
         if (i.getCluster() == cluster && i.getQuantity() > 0 &&
-            (i.getStatus() == Demand::status::OPEN ||
-             i.getStatus() == Demand::status::QUOTE))
+            (i.getStatus() == Demand::STATUS_OPEN ||
+             i.getStatus() == Demand::STATUS_QUOTE))
           demands_per_cluster[0].push_back(&i);
     }
   }

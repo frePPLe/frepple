@@ -355,9 +355,12 @@ class DemandList(GridReport):
         GridFieldText(
             "owner",
             title=_("owner"),
-            field_name="owner__name",
-            formatter="detail",
-            extra='"role":"input/demand"',
+            initially_hidden=True,
+        ),
+        GridFieldChoice(
+            "policy",
+            title=_("policy"),
+            choices=Demand.delivery_policies,
             initially_hidden=True,
         ),
         GridFieldDuration(
@@ -365,9 +368,6 @@ class DemandList(GridReport):
         ),
         GridFieldNumber(
             "minshipment", title=_("minimum shipment"), initially_hidden=True
-        ),
-        GridFieldText(
-            "batch", title=_("batch"), field_name="batch", initially_hidden=True
         ),
         GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),

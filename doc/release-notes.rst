@@ -29,6 +29,21 @@ These changes will be made gradual over a couple of releases. For instance, from
   | Until now, calendar buckets have been quite abstract to grasp and understand.
     The new screen should make this a lot easier and intuitive.
 
+- | Synchronised delivery of sales order.
+  | So far each sales order was planned independent. In practice it is pretty
+    common that sales orders are grouped together under a header and the delivery
+    within the group needs to be synchronised.
+  | A new field "policy" is added, with 3 possible values: "independent",
+    "all together" and "in ratio".
+  | The "independent" policy is the default and treats each sales order
+    separately, just as in previous releases.
+  | The "all together" policy assures all sales orders with the same owner
+    and the same due date are shipped together to the customer.
+  | The "in ratio" policy assures that partial deliveries maintain the same
+    ratio as the initial order. For instance, imagine a customer requires 5
+    tables and 20 chairs. You can ship 1 table and 4 chairs, but not 1 table
+    and all 20 chairs.
+
 - | Bug fix: Updating purchase orders, manufacturing orders or distribution orders
     could create incorrect duplicate records in the inventory detail table.
 

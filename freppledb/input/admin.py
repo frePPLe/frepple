@@ -939,13 +939,14 @@ class DeliveryOrder_admin(MultiDBModelAdmin):
 @admin.register(Demand, site=data_site)
 class Demand_admin(MultiDBModelAdmin):
     model = Demand
-    raw_id_fields = ("customer", "item", "operation", "owner")
+    raw_id_fields = ("customer", "item", "operation")
     fieldsets = (
         (
             None,
             {
                 "fields": (
                     "name",
+                    "owner",
                     "item",
                     "location",
                     "customer",
@@ -965,6 +966,7 @@ class Demand_admin(MultiDBModelAdmin):
                     "subcategory",
                     "batch",
                     "operation",
+                    "policy",
                     "minshipment",
                     "maxlateness",
                 ]

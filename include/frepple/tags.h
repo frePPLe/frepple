@@ -154,6 +154,7 @@ class Tags {
   static const Keyword ordertype;
   static const Keyword origin;
   static const Keyword owner;
+  static const Keyword parent;
   static const Keyword pegging;
   static const Keyword pegging_demand;
   static const Keyword pegging_downstream;
@@ -163,6 +164,7 @@ class Tags {
   static const Keyword plan;
   static const Keyword planned_quantity;
   static const Keyword plantype;
+  static const Keyword policy;
   static const Keyword posttime;
   static const Keyword pretime;
   static const Keyword priority;

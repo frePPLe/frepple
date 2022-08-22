@@ -5,7 +5,7 @@ Wizard to load your data
 **This section accompanies the data loading wizard available in the user interface.
 That wizard guides you through a number of logical steps and contains links to this section.**
 
-This section guides users during the creation of their first frePPLe model. 
+This section guides users during the creation of their first frePPLe model.
 
 .. image:: _images/wizard.png
    :width: 100%
@@ -28,3 +28,4 @@ This section guides users during the creation of their first frePPLe model.
    manufacturing-bom/index
    manufacturing-capacity/index
    generate-plan
+   common-modeling-mistakes

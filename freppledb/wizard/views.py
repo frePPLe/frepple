@@ -974,6 +974,10 @@ def getWizardSteps(request, mode):
          </thead>
          <tbody>
          <tr>
+         <td><a href="{docroot}/modeling-wizard/common-modeling-mistakes.html" class="underline" target="_blank">Common mistakes</a></td>
+         <td>Learn about the most common gotchas and mistakes made by first-time users.</td>
+         </tr>
+         <tr>
          <td><a href="{docroot}/examples/calendar/working-hours.html" class="underline" target="_blank">Working&nbsp;hours</a></td>
          <td>Modeling working hours, shifts and holidays is required to get a realistic plan.</td>
          </tr>

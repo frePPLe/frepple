@@ -30,18 +30,15 @@ between the end item and the raw materials.
 The most common modeling mistake is to forget this definition for one or more buffers.
 
 Symptoms:
-
   - When generating a constrained plan, your sales order is not planned.
 
 Diagnosis:
-
   - | Drill into the sales order and check the "why short or late" tab.
     | You will see a constraint with a description "no replenishment defined
       for <item> @ <location>".
 
 Correction:
-
-  Apply one of these:
+  Apply one of these solutions:
 
   - Define either an operation, an item supplier or an item distribution for the buffer.
   - Switch the buffer type to be "infinite".
@@ -61,12 +58,10 @@ Another common mistake is to use a resource maximum calendar that also
 reflects the working hours of the resource.
 
 Symptoms:
-
   - Some sales orders are not getting planned in a capacity constrained plan.
   - In a capacity UNconstrained plan all sales orders are getting planned.
 
 Diagnosis:
-
   - | Your resource is of type "default" and has "maximum calendar".
     | Your maximum calendar has some calendar buckets where the size is 0.
   - | Some operations have a duration that is larger than the time between
@@ -74,20 +69,18 @@ Diagnosis:
   - | In the log file you find a message "no free capacity slot found".
 
 Correction:
-
-  Apply one of these:
+  Apply one of these solutions:
 
   - | Change the maximum calendar to reflect only the real changes in the resource
-      size.
-    | Don't use the maximum calendar to reflect the working hours of the resource.
-      Instead, use an availability calendar on the resources.
-    | In many models this means that you can leave the maximum calendar blank
-      on your resources.
-  - | In case you still need or want a maximum calendar withe 0-size periods,
+      size. Don't use the maximum calendar to reflect the working hours of the resource.
+      Instead, use an availability calendar on the resources. In many models this means
+      that you can leave the maximum calendar blank on your resources.
+  - | In case you still need or want a maximum calendar with 0-size periods,
       make sure all your manufacturing orders fit between the 0-size periods.
-    | You can use the "operation.size maximum" field to assure this.
+    | You can use the "operation.size maximum" field to break up large
+      manufacturing orders into smaller ones.
 
-  | This problem is ca)used by the fact that frepple doesn't allow a manufacturing
+  | This problem is caused by the fact that frepple doesn't allow a manufacturing
     order to be planned over a period where the size is 0.
   | E.g. If the resource size is 0 every weekday between 18:00 and 24:00, we will
     not be able to find any time slot for a manufacturing order that takes more
@@ -116,16 +109,13 @@ end up in an infinite loop. There are built-in protections against loops like th
 above example. However, some more subtle and complex cycles can still go undetected.
 
 Symptoms:
-
   - The plan generation hangs or takes a veeeeery long time. It eventually
     crashes with an out-of-memory error.
 
 Diagnosis:
-
-  - | The supply path of the sales orders in question shows a cycle.
+  - The supply path of the sales orders in question shows a cycle.
 
 Correction:
-
   It's pretty simple - the cycles must be removed. The supply path should be
   thought as a uni-directional graph.
 

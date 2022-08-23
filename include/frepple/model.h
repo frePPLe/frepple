@@ -7447,7 +7447,7 @@ class Demand : public HasHierarchy<Demand>,
   static PyObject* addConstraint(PyObject*, PyObject*, PyObject*);
 
   /* Returns the due date of the demand. */
-  Date getDue() const { return dueDate; }
+  virtual Date getDue() const { return dueDate; }
 
   /* Updates the due date of the demand. */
   virtual void setDue(Date d) {
@@ -7763,8 +7763,15 @@ class DemandGroup : public Demand {
 
   virtual void setPriority(int i);
 
+  virtual Date getDue() const;
+
+  virtual void setDue(Date d);
+
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
+    m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment,
+                           &Cls::setMinShipment, -1, BASE + PLAN,
+                           &Cls::isMinShipmentDefault);
     m->addStringField<Cls>(Tags::policy, &Cls::getPolicyString,
                            &Cls::setPolicyString, "independent");
   }

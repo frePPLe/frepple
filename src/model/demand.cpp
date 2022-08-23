@@ -350,4 +350,16 @@ void DemandGroup::setPriority(int i) {
   for (auto m = getMembers(); m != end(); ++m) m->setPriority(i);
 }
 
+Date DemandGroup::getDue() const {
+  auto latest = Date::infiniteFuture;
+  for (auto m = getMembers(); m != end(); ++m) {
+    if (m->getDue() < latest) latest = m->getDue();
+  };
+  return latest;
+}
+
+void DemandGroup::setDue(Date d) {
+  for (auto m = getMembers(); m != end(); ++m) m->setDue(d);
+}
+
 }  // namespace frepple

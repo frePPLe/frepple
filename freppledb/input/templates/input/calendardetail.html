@@ -42,8 +42,7 @@ function drawContextGraph() {
     var svg = d3.select($("#contextgraph").get(0))
       .append("svg")
       .attr("width", width)
-      .attr("height", height)
-      .append("g");
+      .attr("height", height);
 
     for (var e of events) {
       e[0] = new Date(e[0]);
@@ -56,24 +55,22 @@ function drawContextGraph() {
     var x = d3.scale.linear().rangeRound([0, width]).domain([min_x, max_x]);
     var y = d3.scale.linear().rangeRound([0, height]).domain([max_y, min_y]);
 
+    // Build line graph data
     var linedata = [];
     var last_y = null;
     var last_x = 0;
-    svg.selectAll("g")
-      .data(events)
-      .enter()
-      .append("g")
-      .each(function(d) {
-        var tmp_x = x(d[1]);
-        if (last_y !== null)
-            linedata.push([tmp_x, last_y]);
-        last_y = y(d[3]);
-        linedata.push([tmp_x, last_y]);
-        last_x = tmp_x;
-    });
+    for (var d of events) {
+      var tmp_x = x(d[1]);
+      if (last_y !== null)
+          linedata.push([tmp_x, last_y]);
+      last_y = y(d[3]);
+      linedata.push([tmp_x, last_y]);
+      last_x = tmp_x;
+    }
     linedata.push([last_x, y(0)]);
     linedata.push([x(horizonstart), y(0)]);
 
+    // Draw line graph
     var line = d3.svg.line()
         .x(function(d) { return d[0]; })
         .y(function(d) { return d[1]; });
@@ -83,6 +80,7 @@ function drawContextGraph() {
         .attr("stroke-width", 0)
         .attr("d", line(linedata));
 
+    // Draw brush
     brush = d3.svg.brush()
         .x(x)
         .extent([viewstart, viewend])
@@ -97,9 +95,7 @@ function drawContextGraph() {
            }
            drawFocusGraph();
         });
-
     var brushg = svg.append("g").call(brush);
-
     brushg.selectAll(".extent")
       .attr("x", x(viewstart))
       .attr("width", x(viewend) - x(viewstart))
@@ -107,7 +103,6 @@ function drawContextGraph() {
       .attr("fill", "gray")
       .attr("opacity", 0.4)
       .attr("height", height / 2);
-
     brushg.selectAll(".resize")
         .append("rect")
         .attr("width", 6)
@@ -133,41 +128,21 @@ function drawFocusGraph() {
     var x = d3.scale.linear().rangeRound([0, width]).domain([viewstart, viewend]);
     var y = d3.scale.linear().rangeRound([0, height]).domain([max_y, min_y]);
 
+    // Build line graph
     var linedata = [];
     var last_y = null;
     var last_x = 0;
-    svg.selectAll("g")
-      .data(events)
-      .enter()
-      .append("g")
-      .each(function(d) {
-        if (d[1] < viewstart || d[0] > viewend)
-          return;
-        var tmp_x = x(d[1]);
-        if (last_y !== null) linedata.push([tmp_x, last_y]);
-        last_y = y(d[3]);
-        linedata.push([tmp_x, last_y]);
-        svg.append("rect")
-           .attr("x", last_x)
-           .attr("width", tmp_x - last_x)
-           .attr("y", 0)
-           .attr("height", height*0.8)
-           .attr("opacity", 0)
-           .on("mouseenter", function() {
-               graph.showTooltip(
-                d[0] + "<br>" +
-                d[1] + "<br>" +
-                d[2] + "<br>" +
-                d[3]
-	           );
-             })
-	       .on("mouseleave", graph.hideTooltip)
-	       .on("mousemove", graph.moveTooltip);
-        last_x = tmp_x;
-    });
+    for (var d of events) {
+      if (d[1] < viewstart || d[0] > viewend)
+        continue;
+      var tmp_x = x(d[1]);
+      if (last_y !== null) linedata.push([tmp_x, last_y]);
+      last_y = y(d[3]);
+      linedata.push([tmp_x, last_y]);
+      last_x = tmp_x;
+    };
     linedata.push([last_x, y(0)]);
     linedata.push([x(min_x), y(0)]);
-
     var line = d3.svg.line()
         .x(function(d) { return d[0]; })
         .y(function(d) { return d[1]; });
@@ -177,11 +152,37 @@ function drawFocusGraph() {
         .attr("fill","#8BBA00")
         .attr("d", line(linedata));
 
+    // Build tooltips
+    last_x = 0;
+    svg.selectAll("g")
+      .data(events)
+      .enter()
+      .append("rect")
+      .filter(function(d) { return d[1] >= viewstart && d[0] <= viewend; })
+           .attr("x", function(d) { return x(d[0]); })
+           .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+           .attr("y", 0)
+           .attr("height", height)
+           .attr("opacity", 0)
+           .on("mouseenter", function(d) {
+               jQuery("#grid").jqGrid('resetSelection');
+               if (d[2]) jQuery("#grid").jqGrid('setSelection', d[2], false);
+               graph.showTooltip(
+                d[0] + "<br>" +
+                d[1] + "<br>" +
+                d[2] + "<br>" +
+                d[3]
+	           );
+             })
+	         .on("mouseleave", graph.hideTooltip)
+	         .on("mousemove", graph.moveTooltip);
+
+    // Zoom & scroll behavior
     zoom = d3.behavior.zoom()
         .x(x)
         .on("zoom", function(arg) {
           var initial_range = zoom_end.getTime() - zoom_start.getTime();
-          var delta_range = initial_range * (d3.event.scale -1);
+          var delta_range = initial_range / d3.event.scale - initial_range;
           var translate_range = d3.event.translate[0] / x.range()[1] * initial_range;
           viewstart = new Date(zoom_start.getTime() - delta_range / 2 + translate_range);
           viewend = new Date(zoom_end.getTime() + delta_range / 2 + translate_range);

@@ -897,8 +897,6 @@
       <xsd:element name="maxlateness" type="xsd:duration" />
       <xsd:element name="detectproblems" type="xsd:boolean" />
       <xsd:element name="status" type="xsd:string" />
-	  <xsd:element name="parent" type="xsd:string" />
-	  <xsd:element name="policy" type="xsd:string" />
       <xsd:element name="owner" type="demand" />
       <xsd:element name="members">
         <xsd:complexType>
@@ -920,10 +918,19 @@
     <xsd:attribute name="maxlateness" type="xsd:duration" />
     <xsd:attribute name="minshipment" type="positiveDouble" />
     <xsd:attribute name="status" type="xsd:string" />
-	<xsd:attribute name="policy" type="xsd:string" />
-	<xsd:attribute name="parent" type="xsd:string" />
   </xsd:complexType>
 
+  <xsd:complexType name="demand_group">
+    <xsd:complexContent>
+      <xsd:extension base="demand">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="policy" type="xsd:string" />
+        </xsd:choice>
+        <xsd:attribute name="policy" type="xsd:string" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
   <xsd:complexType name="demandlist">
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="demand" type="demand" />

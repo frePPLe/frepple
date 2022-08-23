@@ -29,6 +29,9 @@
           -> A delivery of 20 units on 10 Jan
        G) The minimum shipment quantity is higher than the order quantity.
           We are forced to ship an excess quantity.
+       H) Example of demand group with independent policy
+       I) Example of demand group with alltogether policy
+       J) Example of demand group with inratio policy
   </description>
   <current>2009-01-01T00:00:00</current>
   <operations>
@@ -140,57 +143,131 @@
       <onhand>15</onhand>
     </buffer>
   </buffers>
-	<operationplans>
-	  <operationplan id="1001">
+  <operationplans>
+    <operationplan reference="1001">
       <operation name="supply item A"/>
-	    <start>2009-01-10T00:00:00</start>
-	    <end>2009-01-10T00:00:00</end>
-	    <quantity>10</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="1002">
+      <start>2009-01-10T00:00:00</start>
+      <end>2009-01-10T00:00:00</end>
+      <quantity>10</quantity>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan reference="1002">
       <operation name="supply item B"/>
-	    <start>2009-01-10T00:00:00</start>
-	    <end>2009-01-10T00:00:00</end>
-	    <quantity>10</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="1003">
+      <start>2009-01-10T00:00:00</start>
+      <end>2009-01-10T00:00:00</end>
+      <quantity>10</quantity>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan reference="1003">
       <operation name="supply item C"/>
-	    <start>2009-01-10T00:00:00</start>
-	    <end>2009-01-10T00:00:00</end>
-	    <quantity>10</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="1004">
+      <start>2009-01-10T00:00:00</start>
+      <end>2009-01-10T00:00:00</end>
+      <quantity>10</quantity>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan reference="1004">
       <operation name="supply item D"/>
-	    <start>2009-01-10T00:00:00</start>
-	    <end>2009-01-10T00:00:00</end>
-	    <quantity>10</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-	  <operationplan id="1005">
+      <start>2009-01-10T00:00:00</start>
+      <end>2009-01-10T00:00:00</end>
+      <quantity>10</quantity>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan reference="1005">
       <operation name="supply item E"/>
-	    <start>2009-01-10T00:00:00</start>
-	    <end>2009-01-10T00:00:00</end>
-	    <quantity>10</quantity>
-	    <status>confirmed</status>
-	  </operationplan>
-    <operationplan id="1006">
+      <start>2009-01-10T00:00:00</start>
+      <end>2009-01-10T00:00:00</end>
+      <quantity>10</quantity>
+      <status>confirmed</status>
+      </operationplan>
+    <operationplan reference="1006">
       <operation name="supply item F"/>
       <start>2009-01-10T00:00:00</start>
       <end>2009-01-10T00:00:00</end>
       <quantity>10</quantity>
       <status>confirmed</status>
     </operationplan>
-    <operationplan id="1007">
+    <operationplan reference="1007">
       <operation name="supply item G"/>
       <start>2009-01-10T00:00:00</start>
       <end>2009-01-10T00:00:00</end>
       <quantity>50</quantity>
       <status>confirmed</status>
     </operationplan>
-	</operationplans>
+  </operationplans>
+  <items>
+    <item name="item H1">
+	  <itemsuppliers>
+	    <itemsupplier>
+          <supplier name="Supplier for H" />
+          <leadtime>P14D</leadtime>
+        </itemsupplier>
+	  </itemsuppliers>
+    </item>
+    <item name="item H2">
+	  <itemsuppliers>
+	    <itemsupplier>
+          <supplier name="Supplier for H" />
+          <leadtime>P6D</leadtime>
+        </itemsupplier>
+	  </itemsuppliers>
+    </item>
+    <item name="item H3">
+	  <itemsuppliers>
+	    <itemsupplier>
+          <supplier name="Supplier for H" />
+          <leadtime>P30D</leadtime>
+        </itemsupplier>
+	  </itemsuppliers>
+    </item>
+    <item name="item I1">
+	  <itemsuppliers>
+	    <itemsupplier>
+          <supplier name="Supplier for I" />
+          <leadtime>P14D</leadtime>
+        </itemsupplier>
+	  </itemsuppliers>
+    </item>
+    <item name="item I2">
+	  <itemsuppliers>
+	    <itemsupplier>
+          <supplier name="Supplier for I" />
+          <leadtime>P6D</leadtime>
+        </itemsupplier>
+	  </itemsuppliers>
+    </item>
+    <item name="item I3">
+	  <itemsuppliers>
+	    <itemsupplier>
+          <supplier name="Supplier for I" />
+          <leadtime>P30D</leadtime>
+        </itemsupplier>
+	  </itemsuppliers>
+    </item>
+    <item name="item J1">
+	  <itemsuppliers>
+	    <itemsupplier>
+          <supplier name="Supplier for J" />
+          <leadtime>P14D</leadtime>
+        </itemsupplier>
+	  </itemsuppliers>
+    </item>
+    <item name="item J2">
+	  <itemsuppliers>
+	    <itemsupplier>
+          <supplier name="Supplier for J" />
+          <leadtime>P6D</leadtime>
+        </itemsupplier>
+	  </itemsuppliers>
+    </item>
+    <item name="item J3">
+	  <itemsuppliers>
+	    <itemsupplier>
+          <supplier name="Supplier for J" />
+          <leadtime>P30D</leadtime>
+        </itemsupplier>
+	  </itemsuppliers>
+    </item>	
+  </items>
   <demands>
     <demand name="order A">
       <quantity>20</quantity>
@@ -248,6 +325,84 @@
       <location name="factory"/>
       <minshipment>30</minshipment>
     </demand>
+    <demand name="order H" xsi:type="demand_group">
+      <members>
+        <demand name="order H1">
+          <quantity>20</quantity>
+          <due>2009-01-05T00:00:00</due>
+          <priority>1</priority>
+          <item name="item H1" />
+          <location name="factory"/>
+        </demand>
+        <demand name="order H2">
+          <quantity>20</quantity>
+          <due>2009-01-05T00:00:00</due>
+          <priority>1</priority>
+          <item name="item H2" />
+          <location name="factory"/>
+        </demand>
+        <demand name="order H3">
+          <quantity>20</quantity>
+          <due>2009-01-05T00:00:00</due>
+          <priority>1</priority>
+          <item name="item H3" />
+          <location name="factory"/>
+        </demand>
+      </members>
+      <policy>independent</policy>
+    </demand>
+    <demand name="order I" xsi:type="demand_group">
+      <members>
+        <demand name="order I1">
+          <quantity>20</quantity>
+          <due>2009-01-05T00:00:00</due>
+          <priority>1</priority>
+          <item name="item I1" />
+          <location name="factory"/>
+        </demand>
+        <demand name="order I2">
+          <quantity>20</quantity>
+          <due>2009-01-05T00:00:00</due>
+          <priority>1</priority>
+          <item name="item I2" />
+          <location name="factory"/>
+        </demand>
+        <demand name="order I3">
+          <quantity>20</quantity>
+          <due>2009-01-05T00:00:00</due>
+          <priority>1</priority>
+          <item name="item I3" />
+          <location name="factory"/>
+        </demand>
+      </members>
+      <policy>alltogether</policy>
+    </demand>
+    <demand name="order J" xsi:type="demand_group">
+      <members>
+        <demand name="order J1">
+          <quantity>20</quantity>
+          <due>2009-01-05T00:00:00</due>
+          <priority>1</priority>
+          <item name="item J1" />
+          <location name="factory"/>
+        </demand>
+        <demand name="order J2">
+          <quantity>20</quantity>
+          <due>2009-01-05T00:00:00</due>
+          <priority>1</priority>
+          <item name="item J2" />
+          <location name="factory"/>
+        </demand>
+        <demand name="order J3">
+          <quantity>20</quantity>
+          <due>2009-01-05T00:00:00</due>
+          <priority>1</priority>
+          <item name="item J3" />
+          <location name="factory"/>
+        </demand>
+      </members>
+      <policy>inratio</policy>
+    </demand>
     <demand name="ignore me">
       <status>closed</status>
       <quantity>20</quantity>
@@ -260,8 +415,15 @@
   </demands>
 
 <?python
-frepple.solver_mrp(constraints=15, loglevel=2).solve()
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
+print("CREATING SMART UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
 ?>
 
 </plan>

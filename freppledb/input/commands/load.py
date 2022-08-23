@@ -1740,9 +1740,9 @@ class loadDemand(LoadTask):
                     """
                 SELECT
                   name, due, quantity, priority, item_id,
-                  operation_id, customer_id, owner_id, minshipment, maxlateness,
+                  operation_id, customer_id, owner, minshipment, maxlateness,
                   category, subcategory, source, location_id, status,
-                  batch, description
+                  batch, description, policy
                 FROM demand
                 WHERE (status IS NULL OR status in ('open', 'quote')) %s
                 """
@@ -1769,7 +1769,10 @@ class loadDemand(LoadTask):
                         if i[6]:
                             x.customer = frepple.customer(name=i[6])
                         if i[7]:
-                            x.owner = frepple.demand(name=i[7])
+                            # Group demand by owner + due date
+                            x.owner = frepple.demand_group(name="%s %s" % (i[7], i[1]))
+                            if i[17]:
+                                x.owner.policy = i[17]
                         if i[8] is not None:
                             x.minshipment = i[8]
                         if i[9] is not None:

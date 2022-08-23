@@ -1381,6 +1381,12 @@ class exportDemands(PlanTask):
                     or (source and source != i.source)
                 ):
                     continue
+                has_parent = (
+                    i.owner
+                    and isinstance(i.owner, frepple.demand_group)
+                    and not i.owner.hidden
+                    and (not source or source == i.owner.source)
+                )
                 r = [
                     i.name,
                     i.batch if i.batch else None,
@@ -1401,20 +1407,12 @@ class exportDemands(PlanTask):
                     i.description,
                     cls.timestamp,
                     i.status,
+                    i.owner.name if has_parent else None,
+                    i.policy if has_parent else None,
                 ]
                 for a in attrs:
                     r.append(getattr(i, a, None))
                 yield r
-
-        def getOwners():
-            for i in frepple.demands():
-                if (
-                    i.owner
-                    and isinstance(i, frepple.demand_default)
-                    and not i.hidden
-                    and (not source or source == i.source)
-                ):
-                    yield (i.owner.name, i.name)
 
         with connections[database].cursor() as cursor:
             execute_batch(
@@ -1423,8 +1421,8 @@ class exportDemands(PlanTask):
                 insert into demand
                 (name,batch,due,quantity,priority,item_id,location_id,operation_id,customer_id,
                  minshipment,maxlateness,category,subcategory,source,description,lastmodified,
-                 status,owner_id%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,null%s)
+                 status,owner,policy%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
                 on conflict (name)
                 do update set
                   batch=excluded.batch,
@@ -1442,15 +1440,13 @@ class exportDemands(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified,
                   status=excluded.status,
-                  owner_id=excluded.owner_id
+                  owner=excluded.owner,
+                  policy=excluded.policy,
                   %s
                 """
                 % SQL4attributes(attrs),
                 getData(),
             )
-        execute_batch(
-            cursor, "update demand set owner_id=%s where name=%s", getOwners()
-        )
 
 
 @PlanTaskRegistry.register

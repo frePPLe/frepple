@@ -41,6 +41,7 @@ class ResourceInfinite;
 class ResourceBuckets;
 class Problem;
 class Demand;
+class DemandGroup;
 class OperationPlan;
 class Item;
 class ItemSupplier;
@@ -820,6 +821,10 @@ class Solver : public Object {
 
   virtual void solve(const Demand*, void* = nullptr) {
     throw LogicException("Called undefined solve(Demand*) method");
+  }
+
+  virtual void solve(const DemandGroup* o, void* v = nullptr) {
+    solve(reinterpret_cast<const Demand*>(o), v);
   }
 
   virtual void solve(const Operation*, void* = nullptr) {
@@ -7249,7 +7254,7 @@ class Demand : public HasHierarchy<Demand>,
   /* Returns the priority of the demand.
    * Lower numbers indicate a higher priority level.
    */
-  int getPriority() const { return prio; }
+  virtual int getPriority() const { return prio; }
 
   /* Updates the priority of the forecast.
    * Lower numbers indicate a higher priority level.
@@ -7406,36 +7411,6 @@ class Demand : public HasHierarchy<Demand>,
     setChanged();
   }
 
-  unsigned short getPolicy() const {
-    return flags & (POLICY_ALLTOGETHER + POLICY_INDEPENDENT + POLICY_INRATIO);
-  }
-
-  string getPolicyString() const {
-    if (flags & POLICY_INDEPENDENT)
-      return "independent";
-    else if (flags & POLICY_ALLTOGETHER)
-      return "alltogether";
-    else if (flags & POLICY_INRATIO)
-      return "inratio";
-    else
-      throw LogicException("Demand policy not recognized");
-  }
-
-  void setPolicyString(const string& s) {
-    if (s == "independent" || s.empty()) {
-      flags &= ~(POLICY_ALLTOGETHER + POLICY_INRATIO);
-      flags |= POLICY_INDEPENDENT;
-    } else if (s == "alltogether") {
-      flags &= ~(POLICY_INDEPENDENT + POLICY_INRATIO);
-      flags |= POLICY_ALLTOGETHER;
-    } else if (s == "inratio") {
-      flags &= ~(POLICY_ALLTOGETHER + POLICY_INDEPENDENT);
-      flags |= POLICY_INRATIO;
-    } else
-      throw DataException("Demand policy not recognized");
-    setChanged();
-  }
-
   PooledString getBatch() const { return batch; }
 
   const string& getBatchString() const { return batch; }
@@ -7443,14 +7418,6 @@ class Demand : public HasHierarchy<Demand>,
   void setBatch(const string& s) { batch = s; }
 
   void setBatch(const PooledString& s) { batch = s; }
-
-  PooledString getParent() const { return delivery_parent; }
-
-  const string& getParentString() const { return delivery_parent; }
-
-  void setParentString(const string& s) { delivery_parent = s; }
-
-  void setParent(const PooledString& s) { delivery_parent = s; }
 
   /* Return a pointer to the next demand for the same item. */
   Demand* getNextItemDemand() const { return nextItemDemand; }
@@ -7639,10 +7606,6 @@ class Demand : public HasHierarchy<Demand>,
                            nullptr, -1.0, PLAN);
     m->addStringRefField<Cls>(Tags::batch, &Cls::getBatchString,
                               &Cls::setBatch);
-    m->addStringRefField<Cls>(Tags::parent, &Cls::getParentString,
-                              &Cls::setParentString);
-    m->addStringField<Cls>(Tags::policy, &Cls::getPolicyString,
-                           &Cls::setPolicyString, "independent");
   }
 
  private:
@@ -7694,15 +7657,14 @@ class Demand : public HasHierarchy<Demand>,
   /* A linked list with all demands of an item. */
   Demand* nextItemDemand = nullptr;
 
-  unsigned short flags = STATUS_OPEN + POLICY_INDEPENDENT;
-
-  PooledString delivery_parent;
-
   /* Priority. Lower numbers indicate a higher priority level.*/
   int prio = 0;
 
   /* Batch name */
   PooledString batch;
+
+ protected:
+  unsigned short flags = STATUS_OPEN + POLICY_INDEPENDENT;
 };
 
 class Item::demandIterator {
@@ -7756,6 +7718,55 @@ class DemandDefault : public Demand {
     m->addDoubleField<Cls>(Tags::minshipment, &Cls::getMinShipment,
                            &Cls::setMinShipment, -1, BASE + PLAN,
                            &Cls::isMinShipmentDefault);
+  }
+};
+
+class DemandGroup : public Demand {
+ public:
+  explicit DemandGroup() { initType(metadata); }
+
+  virtual const MetaClass& getType() const { return *metadata; }
+  static const MetaClass* metadata;
+  static int initialize();
+
+  unsigned short getPolicy() const {
+    return flags & (POLICY_ALLTOGETHER + POLICY_INDEPENDENT + POLICY_INRATIO);
+  }
+
+  string getPolicyString() const {
+    if (flags & POLICY_INDEPENDENT)
+      return "independent";
+    else if (flags & POLICY_ALLTOGETHER)
+      return "alltogether";
+    else if (flags & POLICY_INRATIO)
+      return "inratio";
+    else
+      throw LogicException("Demand policy not recognized");
+  }
+
+  void setPolicyString(const string& s) {
+    if (s == "independent" || s.empty()) {
+      flags &= ~(POLICY_ALLTOGETHER + POLICY_INRATIO);
+      flags |= POLICY_INDEPENDENT;
+    } else if (s == "alltogether") {
+      flags &= ~(POLICY_INDEPENDENT + POLICY_INRATIO);
+      flags |= POLICY_ALLTOGETHER;
+    } else if (s == "inratio") {
+      flags &= ~(POLICY_ALLTOGETHER + POLICY_INDEPENDENT);
+      flags |= POLICY_INRATIO;
+    } else
+      throw DataException("Demand policy not recognized");
+    setChanged();
+  }
+
+  virtual int getPriority() const;
+
+  virtual void setPriority(int i);
+
+  template <class Cls>
+  static inline void registerFields(MetaClass* m) {
+    m->addStringField<Cls>(Tags::policy, &Cls::getPolicyString,
+                           &Cls::setPolicyString, "independent");
   }
 };
 

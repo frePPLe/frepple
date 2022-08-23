@@ -27,6 +27,7 @@ template <class Demand>
 Tree utils::HasName<Demand>::st;
 const MetaCategory* Demand::metadata;
 const MetaClass* DemandDefault::metadata;
+const MetaClass* DemandGroup::metadata;
 
 OperationFixedTime* Demand::uninitializedDelivery = nullptr;
 
@@ -55,6 +56,16 @@ int DemandDefault::initialize() {
 
   // Initialize the Python class
   return FreppleClass<DemandDefault, Demand>::initialize();
+}
+
+int DemandGroup::initialize() {
+  // Initialize the metadata
+  DemandGroup::metadata = MetaClass::registerClass<DemandGroup>(
+      "demand", "demand_group", Object::create<DemandGroup>);
+  registerFields<DemandGroup>(const_cast<MetaClass*>(metadata));
+
+  // Initialize the Python class
+  return FreppleClass<DemandGroup, Demand>::initialize();
 }
 
 void Demand::setQuantity(double f) {
@@ -324,6 +335,19 @@ PeggingIterator Demand::getPegging() const { return PeggingIterator(this); }
 
 Problem::List::iterator Demand::getConstraintIterator() const {
   return constraints.begin();
+}
+
+int DemandGroup::getPriority() const {
+  int lowest = INT_MAX;
+  for (auto m = getMembers(); m != end(); ++m) {
+    if (m->getPriority() < lowest) lowest = m->getPriority();
+  };
+  return lowest;
+}
+
+void DemandGroup::setPriority(int i) {
+  Demand::setPriority(i);
+  for (auto m = getMembers(); m != end(); ++m) m->setPriority(i);
 }
 
 }  // namespace frepple

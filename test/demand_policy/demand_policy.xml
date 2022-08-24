@@ -107,37 +107,37 @@
     </operation>
   </operations>
   <buffers>
-    <buffer name="buffer A">
+    <buffer name="buffer A @ factory">
       <item name="item A" />
       <location name="factory"/>
       <onhand>10</onhand>
     </buffer>
-    <buffer name="buffer B">
+    <buffer name="buffer B @ factory">
       <item name="item B" />
       <location name="factory"/>
       <onhand>10</onhand>
     </buffer>
-    <buffer name="buffer C">
+    <buffer name="buffer C @ factory">
       <item name="item C" />
       <location name="factory"/>
       <onhand>10</onhand>
     </buffer>
-    <buffer name="buffer D">
+    <buffer name="buffer D @ factory">
       <item name="item D" />
       <location name="factory"/>
       <onhand>10</onhand>
     </buffer>
-    <buffer name="buffer E">
+    <buffer name="buffer E @ factory">
       <item name="item E" />
       <location name="factory"/>
       <onhand>10</onhand>
     </buffer>
-    <buffer name="buffer F">
+    <buffer name="buffer F @ factory">
       <item name="item F" />
       <location name="factory"/>
       <onhand>15</onhand>
     </buffer>
-    <buffer name="buffer G">
+    <buffer name="buffer G @ factory">
       <item name="item G" />
       <location name="factory"/>
       <onhand>15</onhand>
@@ -424,6 +424,10 @@ frepple.saveplan("output.2.xml")
 print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
 frepple.saveplan("output.3.xml")
+
+with open("output.4.xml","wt") as output:
+  for buf in sorted(frepple.buffers(), key=lambda b: b.name):
+    print(buf.name, buf.cluster, buf.level, file=output)
 ?>
 
 </plan>

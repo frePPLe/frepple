@@ -42,9 +42,24 @@ void HasLevel::computeLevels() {
 
   // Another thread may already have computed the levels while this thread was
   // waiting for the lock. In that case the while loop will be skipped.
+  multimap<Operation*, Demand*> clustereddeliveries;
   while (recomputeLevels) {
     // Force creation of all delivery operations
-    for (auto& gdem : Demand::all()) gdem.getDeliveryOperation();
+    for (auto& gdem : Demand::all()) {
+      auto dlvr = gdem.getDeliveryOperation();
+      if (dlvr && gdem.getOwner() && gdem.getOwner()->hasType<DemandGroup>()) {
+        auto search = clustereddeliveries.equal_range(dlvr);
+        bool exists = false;
+        for (auto it = search.first; it != search.second; ++it) {
+          if (it->second == gdem.getOwner()) {
+            exists = true;
+            break;
+          }
+        }
+        if (!exists)
+          clustereddeliveries.insert(make_pair(dlvr, gdem.getOwner()));
+      }
+    }
 
     // Reset current levels on buffers, resources and operations.
     // Creating the producing operations of the buffers can cause new buffers
@@ -296,6 +311,17 @@ void HasLevel::computeLevels() {
             }
         }  // End of flow loop
 
+        // Push grouped deliveries on the stack
+        auto search = clustereddeliveries.equal_range(cur_oper);
+        for (auto it = search.first; it != search.second; ++it) {
+          for (auto m = it->second->getMembers(); m != Demand::end(); ++m) {
+            auto dlvr = m->getDeliveryOperation();
+            if (dlvr && !dlvr->cluster) {
+              opstack.push(make_pair(dlvr, -1));
+              dlvr->cluster = cur_cluster;
+            }
+          }
+        }
       }  // End while stack not empty
 
     }  // End of Operation loop

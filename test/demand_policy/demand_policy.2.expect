@@ -1,24 +1,24 @@
-BUFFER	buffer A	1971-01-01T00:00:00	10	10
-BUFFER	buffer A	2009-01-05T00:00:00	-20	-10
-BUFFER	buffer A	2009-01-10T00:00:00	10	0
-BUFFER	buffer B	1971-01-01T00:00:00	10	10
-BUFFER	buffer B	2009-01-05T00:00:00	-20	-10
-BUFFER	buffer B	2009-01-10T00:00:00	10	0
-BUFFER	buffer C	1971-01-01T00:00:00	10	10
-BUFFER	buffer C	2009-01-05T00:00:00	-20	-10
-BUFFER	buffer C	2009-01-10T00:00:00	10	0
-BUFFER	buffer D	1971-01-01T00:00:00	10	10
-BUFFER	buffer D	2009-01-05T00:00:00	-20	-10
-BUFFER	buffer D	2009-01-10T00:00:00	10	0
-BUFFER	buffer E	1971-01-01T00:00:00	10	10
-BUFFER	buffer E	2009-01-05T00:00:00	-20	-10
-BUFFER	buffer E	2009-01-10T00:00:00	10	0
-BUFFER	buffer F	1971-01-01T00:00:00	15	15
-BUFFER	buffer F	2009-01-05T00:00:00	-20	-5
-BUFFER	buffer F	2009-01-10T00:00:00	10	5
-BUFFER	buffer G	1971-01-01T00:00:00	15	15
-BUFFER	buffer G	2009-01-05T00:00:00	-30	-15
-BUFFER	buffer G	2009-01-10T00:00:00	50	35
+BUFFER	buffer A @ factory	1971-01-01T00:00:00	10	10
+BUFFER	buffer A @ factory	2009-01-05T00:00:00	-20	-10
+BUFFER	buffer A @ factory	2009-01-10T00:00:00	10	0
+BUFFER	buffer B @ factory	1971-01-01T00:00:00	10	10
+BUFFER	buffer B @ factory	2009-01-05T00:00:00	-20	-10
+BUFFER	buffer B @ factory	2009-01-10T00:00:00	10	0
+BUFFER	buffer C @ factory	1971-01-01T00:00:00	10	10
+BUFFER	buffer C @ factory	2009-01-05T00:00:00	-20	-10
+BUFFER	buffer C @ factory	2009-01-10T00:00:00	10	0
+BUFFER	buffer D @ factory	1971-01-01T00:00:00	10	10
+BUFFER	buffer D @ factory	2009-01-05T00:00:00	-20	-10
+BUFFER	buffer D @ factory	2009-01-10T00:00:00	10	0
+BUFFER	buffer E @ factory	1971-01-01T00:00:00	10	10
+BUFFER	buffer E @ factory	2009-01-05T00:00:00	-20	-10
+BUFFER	buffer E @ factory	2009-01-10T00:00:00	10	0
+BUFFER	buffer F @ factory	1971-01-01T00:00:00	15	15
+BUFFER	buffer F @ factory	2009-01-05T00:00:00	-20	-5
+BUFFER	buffer F @ factory	2009-01-10T00:00:00	10	5
+BUFFER	buffer G @ factory	1971-01-01T00:00:00	15	15
+BUFFER	buffer G @ factory	2009-01-05T00:00:00	-30	-15
+BUFFER	buffer G @ factory	2009-01-10T00:00:00	50	35
 BUFFER	item H1 @ factory	2009-01-05T00:00:00	20	20
 BUFFER	item H1 @ factory	2009-01-05T00:00:00	-20	0
 BUFFER	item H2 @ factory	2009-01-05T00:00:00	20	20
@@ -69,20 +69,20 @@ OPERATION	supply item D	2009-01-10T00:00:00	2009-01-10T00:00:00	10	confirmed
 OPERATION	supply item E	2009-01-10T00:00:00	2009-01-10T00:00:00	10	confirmed
 OPERATION	supply item F	2009-01-10T00:00:00	2009-01-10T00:00:00	10	confirmed
 OPERATION	supply item G	2009-01-10T00:00:00	2009-01-10T00:00:00	50	confirmed
-PROBLEM	invalid data	No replenishment defined for 'buffer A'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'buffer A' has material shortage of 10	2009-01-05T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'buffer B'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'buffer B' has material shortage of 10	2009-01-05T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'buffer C'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'buffer C' has material shortage of 10	2009-01-05T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'buffer D'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'buffer D' has material shortage of 10	2009-01-05T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'buffer E'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'buffer E' has material shortage of 10	2009-01-05T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'buffer F'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'buffer F' has material shortage of 5	2009-01-05T00:00:00 / 2009-01-10T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'buffer G'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material shortage	Buffer 'buffer G' has material shortage of 15	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'buffer A @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'buffer A @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'buffer B @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'buffer B @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'buffer C @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'buffer C @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'buffer D @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'buffer D @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'buffer E @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'buffer E @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'buffer F @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'buffer F @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2009-01-10T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'buffer G @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'buffer G @ factory' has material shortage of 15	2009-01-05T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	before current	Operation 'Purchase item H1 @ factory from Supplier for H' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase item H2 @ factory from Supplier for H' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase item H3 @ factory from Supplier for H' planned in the past	2008-12-06T00:00:00 / 2009-01-01T00:00:00

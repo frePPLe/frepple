@@ -418,9 +418,11 @@
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
+
 print("CREATING SMART UNCONSTRAINED PLAN")
 frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
+
 print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
 frepple.saveplan("output.3.xml")
@@ -428,6 +430,8 @@ frepple.saveplan("output.3.xml")
 with open("output.4.xml","wt") as output:
   for buf in sorted(frepple.buffers(), key=lambda b: b.name):
     print(buf.name, buf.cluster, buf.level, file=output)
+	
+frepple.saveXMLfile("output.5.xml")
 ?>
 
 </plan>

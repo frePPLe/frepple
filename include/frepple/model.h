@@ -7245,7 +7245,7 @@ class Demand : public HasHierarchy<Demand>,
   }
 
   /* Returns the quantity of the demand. */
-  double getQuantity() const { return qty; }
+  virtual double getQuantity() const { return qty; }
 
   /* Updates the quantity of the demand. The quantity must be be greater
    * than or equal to 0. */
@@ -7331,8 +7331,8 @@ class Demand : public HasHierarchy<Demand>,
   Operation* getDeliveryOperation() const;
 
   /* Returns the cluster which this demand belongs to. */
-  int getCluster() const {
-    Operation* o = getDeliveryOperation();
+  virtual int getCluster() const {
+    auto o = getDeliveryOperation();
     return o ? o->getCluster() : 0;
   }
 
@@ -7758,6 +7758,15 @@ class DemandGroup : public Demand {
       throw DataException("Demand policy not recognized");
     setChanged();
   }
+
+  virtual int getCluster() const {
+    auto firstmember = getFirstChild();
+    if (!firstmember) return 0;
+    auto dlvr = firstmember->getDeliveryOperation();
+    return dlvr ? dlvr->getCluster() : 0;
+  }
+
+  virtual double getQuantity() const { return 0.0; }
 
   virtual int getPriority() const;
 

@@ -1,0 +1,1394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>actual plan</name>
+	<description>
+    Verify the demand policies.
+    The supply situation is such that half of the demand can be met in time, and
+    half of it late.
+      demand = 20 on due date 5 Jan
+      Supply = 10 available as inventory
+               + 10 arriving on 10 Jan
+    The demand policy controls how the demand is allowed to be planned:
+       A) The default policy is to allow demands to be planned without any limits
+          on the timing and quantity of the deliveries.
+          -&gt; Delivery of 10 units on 5 Jan and a second delivery on 10 Jan
+       B) No lateness is allowed.
+          -&gt; A delivery of 10 units on 5 Jan
+       C) Lateness is allowed, but we only accept a delivery for the full
+          requested quantity.
+          -&gt; A delivery of 20 units on 10 Jan
+       D) No lateness is allowed, and we also only accept a delivery for the full
+          requested quantity.
+          -&gt; No delivery planned
+       E) The maximum allowed delivery date is jan 7, without any restriction on
+          the delivered quantity.
+          -&gt; A delivery of 10 units on 5 Jan
+       F) The minimum quantity shipped is 11, without any restriction on the
+          delivery date.
+          In this case the onhand on jan 5 is increased to 15.
+          -&gt; A delivery of 20 units on 10 Jan
+       G) The minimum shipment quantity is higher than the order quantity.
+          We are forced to ship an excess quantity.
+       H) Example of demand group with independent policy
+       I) Example of demand group with alltogether policy
+       J) Example of demand group with inratio policy
+  </description>
+	<current>2009-01-01T00:00:00</current>
+	<locations>
+		<location>
+			<name>factory</name>
+		</location>
+	</locations>
+	<suppliers>
+		<supplier>
+			<name>Supplier for H</name>
+		</supplier>
+		<supplier>
+			<name>Supplier for I</name>
+		</supplier>
+		<supplier>
+			<name>Supplier for J</name>
+		</supplier>
+	</suppliers>
+	<items>
+		<item>
+			<name>item A</name>
+		</item>
+		<item>
+			<name>item B</name>
+		</item>
+		<item>
+			<name>item C</name>
+		</item>
+		<item>
+			<name>item D</name>
+		</item>
+		<item>
+			<name>item E</name>
+		</item>
+		<item>
+			<name>item F</name>
+		</item>
+		<item>
+			<name>item G</name>
+		</item>
+		<item>
+			<name>item H1</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Supplier for H</name>
+					</supplier>
+					<leadtime>P14D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>item H2</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Supplier for H</name>
+					</supplier>
+					<leadtime>P6D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>item H3</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Supplier for H</name>
+					</supplier>
+					<leadtime>P30D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>item I1</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Supplier for I</name>
+					</supplier>
+					<leadtime>P14D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>item I2</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Supplier for I</name>
+					</supplier>
+					<leadtime>P6D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>item I3</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Supplier for I</name>
+					</supplier>
+					<leadtime>P30D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>item J1</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Supplier for J</name>
+					</supplier>
+					<leadtime>P14D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>item J2</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Supplier for J</name>
+					</supplier>
+					<leadtime>P6D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>item J3</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Supplier for J</name>
+					</supplier>
+					<leadtime>P30D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+	</items>
+	<buffers>
+		<buffer>
+			<name>buffer A @ factory</name>
+			<item>
+				<name>item A</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<onhand>10</onhand>
+		</buffer>
+		<buffer>
+			<name>buffer B @ factory</name>
+			<item>
+				<name>item B</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<onhand>10</onhand>
+		</buffer>
+		<buffer>
+			<name>buffer C @ factory</name>
+			<item>
+				<name>item C</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<onhand>10</onhand>
+		</buffer>
+		<buffer>
+			<name>buffer D @ factory</name>
+			<item>
+				<name>item D</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<onhand>10</onhand>
+		</buffer>
+		<buffer>
+			<name>buffer E @ factory</name>
+			<item>
+				<name>item E</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<onhand>10</onhand>
+		</buffer>
+		<buffer>
+			<name>buffer F @ factory</name>
+			<item>
+				<name>item F</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<onhand>15</onhand>
+		</buffer>
+		<buffer>
+			<name>buffer G @ factory</name>
+			<item>
+				<name>item G</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<onhand>15</onhand>
+		</buffer>
+		<buffer>
+			<name>item H1 @ factory</name>
+			<item>
+				<name>item H1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>item H2 @ factory</name>
+			<item>
+				<name>item H2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>item H3 @ factory</name>
+			<item>
+				<name>item H3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>item I1 @ factory</name>
+			<item>
+				<name>item I1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>item I2 @ factory</name>
+			<item>
+				<name>item I2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>item I3 @ factory</name>
+			<item>
+				<name>item I3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>item J1 @ factory</name>
+			<item>
+				<name>item J1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>item J2 @ factory</name>
+			<item>
+				<name>item J2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>item J3 @ factory</name>
+			<item>
+				<name>item J3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+	</buffers>
+	<operations>
+		<operation>
+			<name>supply item A</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<priority>0</priority>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>item A</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>supply item B</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<priority>0</priority>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>item B</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>supply item C</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<priority>0</priority>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>item C</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>supply item D</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<priority>0</priority>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>item D</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>supply item E</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<priority>0</priority>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>item E</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>supply item F</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<priority>0</priority>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>item F</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation>
+			<name>supply item G</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<priority>0</priority>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>item G</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+		</operation>
+	</operations>
+	<demands>
+		<demand>
+			<name>ignore me</name>
+			<quantity>20</quantity>
+			<item>
+				<name>item G</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+			<status>closed</status>
+			<minshipment>30</minshipment>
+		</demand>
+		<demand>
+			<name>order A</name>
+			<quantity>20</quantity>
+			<item>
+				<name>item A</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order B</name>
+			<quantity>20</quantity>
+			<item>
+				<name>item B</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+			<maxlateness>P0D</maxlateness>
+		</demand>
+		<demand>
+			<name>order C</name>
+			<quantity>20</quantity>
+			<item>
+				<name>item C</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>20</minshipment>
+		</demand>
+		<demand>
+			<name>order D</name>
+			<quantity>20</quantity>
+			<item>
+				<name>item D</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+			<maxlateness>P0D</maxlateness>
+			<minshipment>20</minshipment>
+		</demand>
+		<demand>
+			<name>order E</name>
+			<quantity>20</quantity>
+			<item>
+				<name>item E</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+			<maxlateness>P2D</maxlateness>
+		</demand>
+		<demand>
+			<name>order F</name>
+			<quantity>20</quantity>
+			<item>
+				<name>item F</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>11</minshipment>
+		</demand>
+		<demand>
+			<name>order G</name>
+			<quantity>20</quantity>
+			<item>
+				<name>item G</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>30</minshipment>
+		</demand>
+		<demand xsi:type="demand_group">
+			<name>order H</name>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order H1</name>
+			<owner xsi:type="demand_group">
+				<name>order H</name>
+			</owner>
+			<quantity>20</quantity>
+			<item>
+				<name>item H1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order H2</name>
+			<owner xsi:type="demand_group">
+				<name>order H</name>
+			</owner>
+			<quantity>20</quantity>
+			<item>
+				<name>item H2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order H3</name>
+			<owner xsi:type="demand_group">
+				<name>order H</name>
+			</owner>
+			<quantity>20</quantity>
+			<item>
+				<name>item H3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand xsi:type="demand_group">
+			<name>order I</name>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+			<policy>alltogether</policy>
+		</demand>
+		<demand>
+			<name>order I1</name>
+			<owner xsi:type="demand_group">
+				<name>order I</name>
+			</owner>
+			<quantity>20</quantity>
+			<item>
+				<name>item I1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order I2</name>
+			<owner xsi:type="demand_group">
+				<name>order I</name>
+			</owner>
+			<quantity>20</quantity>
+			<item>
+				<name>item I2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order I3</name>
+			<owner xsi:type="demand_group">
+				<name>order I</name>
+			</owner>
+			<quantity>20</quantity>
+			<item>
+				<name>item I3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand xsi:type="demand_group">
+			<name>order J</name>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+			<policy>inratio</policy>
+		</demand>
+		<demand>
+			<name>order J1</name>
+			<owner xsi:type="demand_group">
+				<name>order J</name>
+			</owner>
+			<quantity>20</quantity>
+			<item>
+				<name>item J1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order J2</name>
+			<owner xsi:type="demand_group">
+				<name>order J</name>
+			</owner>
+			<quantity>20</quantity>
+			<item>
+				<name>item J2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>order J3</name>
+			<owner xsi:type="demand_group">
+				<name>order J</name>
+			</owner>
+			<quantity>20</quantity>
+			<item>
+				<name>item J3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<due>2009-01-05T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan>
+			<reference>1008</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase item H1 @ factory from Supplier for H</name>
+			</operation>
+			<start>2008-12-22T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>item H1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Supplier for H</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>1009</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase item H2 @ factory from Supplier for H</name>
+			</operation>
+			<start>2008-12-30T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>item H2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Supplier for H</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>1010</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase item H3 @ factory from Supplier for H</name>
+			</operation>
+			<start>2008-12-06T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>item H3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Supplier for H</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>1011</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase item I1 @ factory from Supplier for I</name>
+			</operation>
+			<start>2008-12-22T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>item I1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Supplier for I</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>1012</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase item I2 @ factory from Supplier for I</name>
+			</operation>
+			<start>2008-12-30T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>item I2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Supplier for I</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>1013</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase item I3 @ factory from Supplier for I</name>
+			</operation>
+			<start>2008-12-06T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>item I3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Supplier for I</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>1014</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase item J1 @ factory from Supplier for J</name>
+			</operation>
+			<start>2008-12-22T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>item J1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Supplier for J</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>1015</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase item J2 @ factory from Supplier for J</name>
+			</operation>
+			<start>2008-12-30T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>item J2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Supplier for J</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>1016</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase item J3 @ factory from Supplier for J</name>
+			</operation>
+			<start>2008-12-06T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>item J3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Supplier for J</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>1017</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship buffer A @ factory</name>
+				<buffer>
+					<name>buffer A @ factory</name>
+					<item>
+						<name>item A</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order A</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item A</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1018</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship buffer B @ factory</name>
+				<buffer>
+					<name>buffer B @ factory</name>
+					<item>
+						<name>item B</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order B</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item B</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1019</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship buffer C @ factory</name>
+				<buffer>
+					<name>buffer C @ factory</name>
+					<item>
+						<name>item C</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order C</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item C</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1020</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship buffer D @ factory</name>
+				<buffer>
+					<name>buffer D @ factory</name>
+					<item>
+						<name>item D</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order D</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item D</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1021</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship buffer E @ factory</name>
+				<buffer>
+					<name>buffer E @ factory</name>
+					<item>
+						<name>item E</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order E</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item E</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1022</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship buffer F @ factory</name>
+				<buffer>
+					<name>buffer F @ factory</name>
+					<item>
+						<name>item F</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order F</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item F</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1023</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship buffer G @ factory</name>
+				<buffer>
+					<name>buffer G @ factory</name>
+					<item>
+						<name>item G</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order G</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>30</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item G</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1024</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item H1 @ factory</name>
+				<buffer>
+					<name>item H1 @ factory</name>
+					<item>
+						<name>item H1</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order H1</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item H1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1025</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item H2 @ factory</name>
+				<buffer>
+					<name>item H2 @ factory</name>
+					<item>
+						<name>item H2</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order H2</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item H2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1026</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item H3 @ factory</name>
+				<buffer>
+					<name>item H3 @ factory</name>
+					<item>
+						<name>item H3</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order H3</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item H3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1027</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item I1 @ factory</name>
+				<buffer>
+					<name>item I1 @ factory</name>
+					<item>
+						<name>item I1</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order I1</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item I1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1028</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item I2 @ factory</name>
+				<buffer>
+					<name>item I2 @ factory</name>
+					<item>
+						<name>item I2</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order I2</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item I2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1029</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item I3 @ factory</name>
+				<buffer>
+					<name>item I3 @ factory</name>
+					<item>
+						<name>item I3</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order I3</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item I3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1030</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item J1 @ factory</name>
+				<buffer>
+					<name>item J1 @ factory</name>
+					<item>
+						<name>item J1</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order J1</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item J1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1031</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item J2 @ factory</name>
+				<buffer>
+					<name>item J2 @ factory</name>
+					<item>
+						<name>item J2</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order J2</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item J2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1032</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship item J3 @ factory</name>
+				<buffer>
+					<name>item J3 @ factory</name>
+					<item>
+						<name>item J3</name>
+					</item>
+					<location>
+						<name>factory</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>order J3</name>
+			</demand>
+			<start>2009-01-05T00:00:00</start>
+			<end>2009-01-05T00:00:00</end>
+			<quantity>20</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>item J3</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>1001</reference>
+			<operation>
+				<name>supply item A</name>
+			</operation>
+			<start>2009-01-10T00:00:00</start>
+			<end>2009-01-10T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+		</operationplan>
+		<operationplan>
+			<reference>1002</reference>
+			<operation>
+				<name>supply item B</name>
+			</operation>
+			<start>2009-01-10T00:00:00</start>
+			<end>2009-01-10T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+		</operationplan>
+		<operationplan>
+			<reference>1003</reference>
+			<operation>
+				<name>supply item C</name>
+			</operation>
+			<start>2009-01-10T00:00:00</start>
+			<end>2009-01-10T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+		</operationplan>
+		<operationplan>
+			<reference>1004</reference>
+			<operation>
+				<name>supply item D</name>
+			</operation>
+			<start>2009-01-10T00:00:00</start>
+			<end>2009-01-10T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+		</operationplan>
+		<operationplan>
+			<reference>1005</reference>
+			<operation>
+				<name>supply item E</name>
+			</operation>
+			<start>2009-01-10T00:00:00</start>
+			<end>2009-01-10T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+		</operationplan>
+		<operationplan>
+			<reference>1006</reference>
+			<operation>
+				<name>supply item F</name>
+			</operation>
+			<start>2009-01-10T00:00:00</start>
+			<end>2009-01-10T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+		</operationplan>
+		<operationplan>
+			<reference>1007</reference>
+			<operation>
+				<name>supply item G</name>
+			</operation>
+			<start>2009-01-10T00:00:00</start>
+			<end>2009-01-10T00:00:00</end>
+			<quantity>50</quantity>
+			<status>confirmed</status>
+		</operationplan>
+	</operationplans>
+</plan>

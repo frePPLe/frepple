@@ -585,17 +585,35 @@ void SolverCreate::solve(void* v) {
           demands_per_cluster[0].push_back(&i);
     } else if (cluster == -1 && !userexit_nextdemand) {
       // Many clusters to solve
-      for (auto& i : Demand::all())
-        if (i.getQuantity() > 0 && (i.getStatus() == Demand::STATUS_OPEN ||
-                                    i.getStatus() == Demand::STATUS_QUOTE))
+      for (auto& i : Demand::all()) {
+        bool isGroup = i.hasType<DemandGroup>() &&
+                       static_cast<DemandGroup&>(i).getPolicy() !=
+                           Demand::POLICY_INDEPENDENT;
+        bool isMemberOfGroup =
+            i.getOwner() && i.getOwner()->hasType<DemandGroup>() &&
+            static_cast<DemandGroup*>(i.getOwner())->getPolicy() !=
+                Demand::POLICY_INDEPENDENT;
+        if ((isGroup || (i.getQuantity() > 0 && !isMemberOfGroup)) &&
+            (i.getStatus() == Demand::STATUS_OPEN ||
+             i.getStatus() == Demand::STATUS_QUOTE))
           demands_per_cluster[i.getCluster()].push_back(&i);
+      }
     } else if (!userexit_nextdemand) {
       // Only a single cluster to plan
-      for (auto& i : Demand::all())
-        if (i.getCluster() == cluster && i.getQuantity() > 0 &&
+      for (auto& i : Demand::all()) {
+        if (i.getCluster() != cluster) continue;
+        bool isGroup = i.hasType<DemandGroup>() &&
+                       static_cast<DemandGroup&>(i).getPolicy() !=
+                           Demand::POLICY_INDEPENDENT;
+        bool isMemberOfGroup =
+            i.getOwner() && i.getOwner()->hasType<DemandGroup>() &&
+            static_cast<DemandGroup*>(i.getOwner())->getPolicy() !=
+                Demand::POLICY_INDEPENDENT;
+        if ((isGroup || (i.getQuantity() > 0 && !isMemberOfGroup)) &&
             (i.getStatus() == Demand::STATUS_OPEN ||
              i.getStatus() == Demand::STATUS_QUOTE))
           demands_per_cluster[0].push_back(&i);
+      }
     }
   }
 

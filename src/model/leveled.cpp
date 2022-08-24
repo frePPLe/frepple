@@ -47,7 +47,9 @@ void HasLevel::computeLevels() {
     // Force creation of all delivery operations
     for (auto& gdem : Demand::all()) {
       auto dlvr = gdem.getDeliveryOperation();
-      if (dlvr && gdem.getOwner() && gdem.getOwner()->hasType<DemandGroup>()) {
+      if (dlvr && gdem.getOwner() && gdem.getOwner()->hasType<DemandGroup>() &&
+          static_cast<DemandGroup*>(gdem.getOwner())->getPolicy() !=
+              Demand::POLICY_INDEPENDENT) {
         auto search = clustereddeliveries.equal_range(dlvr);
         bool exists = false;
         for (auto it = search.first; it != search.second; ++it) {

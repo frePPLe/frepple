@@ -123,10 +123,11 @@ function drawFocusGraph() {
       .append("svg")
       .attr("width", width)
       .attr("height", height)
-      .append("g");
+      .append("g")
+      .attr("transform", "translate(50,0)");
 
-    var x = d3.scale.linear().rangeRound([0, width]).domain([viewstart, viewend]);
-    var y = d3.scale.linear().rangeRound([0, height]).domain([max_y, min_y]);
+    var x = d3.scale.linear().rangeRound([0, width - 50]).domain([viewstart, viewend]);
+    var y = d3.scale.linear().rangeRound([0, height - 20]).domain([max_y, min_y]);
 
     // Build line graph
     var linedata = [];
@@ -142,7 +143,7 @@ function drawFocusGraph() {
       last_x = tmp_x;
     };
     linedata.push([last_x, y(0)]);
-    linedata.push([x(min_x), y(0)]);
+    linedata.push([x(viewstart), y(0)]);
     var line = d3.svg.line()
         .x(function(d) { return d[0]; })
         .y(function(d) { return d[1]; });
@@ -162,7 +163,7 @@ function drawFocusGraph() {
            .attr("x", function(d) { return x(d[0]); })
            .attr("width", function(d) { return x(d[1]) - x(d[0]); })
            .attr("y", 0)
-           .attr("height", height)
+           .attr("height", height-30)
            .attr("opacity", 0)
            .on("mouseenter", function(d) {
                jQuery("#grid").jqGrid('resetSelection');
@@ -176,6 +177,30 @@ function drawFocusGraph() {
              })
 	         .on("mouseleave", graph.hideTooltip)
 	         .on("mousemove", graph.moveTooltip);
+
+    // Display Y-Axis
+    var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .ticks(4)
+      .tickFormat(d3.format("s"));
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+    // Display X-Axis
+    var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom")
+      //;//.ticks(d3.time.days, 1)
+      .tickFormat(function(d, i) {
+        var v = new Date(d);
+        return v.getFullYear()  + "/" + (v.getMonth()+1) + "/" + v.getDate();
+      });
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + (height - 20) + ")")
+      .call(xAxis);
 
     // Zoom & scroll behavior
     zoom = d3.behavior.zoom()
@@ -205,6 +230,8 @@ function initGraphs(jsondata) {
   drawContextGraph();
   drawFocusGraph();
 }
+
+$(window).resize(initGraphs);
 
 </script>
 {% endblock %}

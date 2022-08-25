@@ -31,7 +31,8 @@ const MetaClass *ProblemMaterialShortage::metadata, *ProblemExcess::metadata,
     *ProblemInvalidData::metadata, *ProblemDemandNotPlanned::metadata,
     *ProblemPrecedence::metadata, *ProblemBeforeFence::metadata,
     *ProblemBeforeCurrent::metadata, *ProblemCapacityUnderload::metadata,
-    *ProblemCapacityOverload::metadata, *ProblemAwaitSupply::metadata;
+    *ProblemCapacityOverload::metadata, *ProblemAwaitSupply::metadata,
+    *ProblemSyncDemand::metadata;
 
 int Problem::initialize() {
   // Initialize the problem metadata.
@@ -66,6 +67,8 @@ int Problem::initialize() {
                                                      "before current", true);
   ProblemAwaitSupply::metadata = MetaClass::registerClass<ProblemAwaitSupply>(
       "problem", "await supply", true);
+  ProblemSyncDemand::metadata = MetaClass::registerClass<ProblemSyncDemand>(
+      "problem", "sync demand", true);
   ProblemCapacityUnderload::metadata =
       MetaClass::registerClass<ProblemCapacityUnderload>("problem", "underload",
                                                          true);

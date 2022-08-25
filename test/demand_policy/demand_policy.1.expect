@@ -25,10 +25,10 @@ BUFFER	item H2 @ factory	2009-01-07T00:00:00	20	20
 BUFFER	item H2 @ factory	2009-01-07T00:00:00	-20	0
 BUFFER	item H3 @ factory	2009-01-31T00:00:00	20	20
 BUFFER	item H3 @ factory	2009-01-31T00:00:00	-20	0
-BUFFER	item I1 @ factory	2009-01-15T00:00:00	20	20
-BUFFER	item I1 @ factory	2009-01-15T00:00:00	-20	0
-BUFFER	item I2 @ factory	2009-01-07T00:00:00	20	20
-BUFFER	item I2 @ factory	2009-01-07T00:00:00	-20	0
+BUFFER	item I1 @ factory	2009-01-31T00:00:00	20	20
+BUFFER	item I1 @ factory	2009-01-31T00:00:00	-20	0
+BUFFER	item I2 @ factory	2009-01-31T00:00:00	20	20
+BUFFER	item I2 @ factory	2009-01-31T00:00:00	-20	0
 BUFFER	item I3 @ factory	2009-01-31T00:00:00	20	20
 BUFFER	item I3 @ factory	2009-01-31T00:00:00	-20	0
 BUFFER	item J1 @ factory	2009-01-15T00:00:00	20	20
@@ -47,8 +47,8 @@ DEMAND	order G	2009-01-10T00:00:00	30
 DEMAND	order H1	2009-01-15T00:00:00	20
 DEMAND	order H2	2009-01-07T00:00:00	20
 DEMAND	order H3	2009-01-31T00:00:00	20
-DEMAND	order I1	2009-01-15T00:00:00	20
-DEMAND	order I2	2009-01-07T00:00:00	20
+DEMAND	order I1	2009-01-31T00:00:00	20
+DEMAND	order I2	2009-01-31T00:00:00	20
 DEMAND	order I3	2009-01-31T00:00:00	20
 DEMAND	order J1	2009-01-15T00:00:00	20
 DEMAND	order J2	2009-01-07T00:00:00	20
@@ -56,8 +56,8 @@ DEMAND	order J3	2009-01-31T00:00:00	20
 OPERATION	Purchase item H1 @ factory from Supplier for H	2009-01-01T00:00:00	2009-01-15T00:00:00	20
 OPERATION	Purchase item H2 @ factory from Supplier for H	2009-01-01T00:00:00	2009-01-07T00:00:00	20
 OPERATION	Purchase item H3 @ factory from Supplier for H	2009-01-01T00:00:00	2009-01-31T00:00:00	20
-OPERATION	Purchase item I1 @ factory from Supplier for I	2009-01-01T00:00:00	2009-01-15T00:00:00	20
-OPERATION	Purchase item I2 @ factory from Supplier for I	2009-01-01T00:00:00	2009-01-07T00:00:00	20
+OPERATION	Purchase item I1 @ factory from Supplier for I	2009-01-17T00:00:00	2009-01-31T00:00:00	20
+OPERATION	Purchase item I2 @ factory from Supplier for I	2009-01-25T00:00:00	2009-01-31T00:00:00	20
 OPERATION	Purchase item I3 @ factory from Supplier for I	2009-01-01T00:00:00	2009-01-31T00:00:00	20
 OPERATION	Purchase item J1 @ factory from Supplier for J	2009-01-01T00:00:00	2009-01-15T00:00:00	20
 OPERATION	Purchase item J2 @ factory from Supplier for J	2009-01-01T00:00:00	2009-01-07T00:00:00	20
@@ -85,13 +85,13 @@ PROBLEM	late	20 units of demand 'order F' planned up to 5.0 days after its due d
 PROBLEM	excess	Demand 'order G' planned 10 units excess	2009-01-05T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	late	30 units of demand 'order G' planned up to 5.0 days after its due date	2009-01-05T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	late	20 units of demand 'order H1' planned up to 10.0 days after its due date	2009-01-05T00:00:00 / 2009-01-15T00:00:00
-PROBLEM	late	20 units of demand 'order H2' planned up to 2.0 days after its due date	2009-01-05T00:00:00 / 2009-01-07T00:00:00
+PROBLEM	late	20 units of demand 'order H2' planned up to 1.0 days after its due date	2009-01-06T00:00:00 / 2009-01-07T00:00:00
 PROBLEM	late	20 units of demand 'order H3' planned up to 26.0 days after its due date	2009-01-05T00:00:00 / 2009-01-31T00:00:00
-PROBLEM	late	20 units of demand 'order I1' planned up to 10.0 days after its due date	2009-01-05T00:00:00 / 2009-01-15T00:00:00
-PROBLEM	late	20 units of demand 'order I2' planned up to 2.0 days after its due date	2009-01-05T00:00:00 / 2009-01-07T00:00:00
+PROBLEM	late	20 units of demand 'order I1' planned up to 26.0 days after its due date	2009-01-05T00:00:00 / 2009-01-31T00:00:00
+PROBLEM	late	20 units of demand 'order I2' planned up to 25.0 days after its due date	2009-01-06T00:00:00 / 2009-01-31T00:00:00
 PROBLEM	late	20 units of demand 'order I3' planned up to 26.0 days after its due date	2009-01-05T00:00:00 / 2009-01-31T00:00:00
 PROBLEM	late	20 units of demand 'order J1' planned up to 10.0 days after its due date	2009-01-05T00:00:00 / 2009-01-15T00:00:00
-PROBLEM	late	20 units of demand 'order J2' planned up to 2.0 days after its due date	2009-01-05T00:00:00 / 2009-01-07T00:00:00
+PROBLEM	late	20 units of demand 'order J2' planned up to 1.0 days after its due date	2009-01-06T00:00:00 / 2009-01-07T00:00:00
 PROBLEM	late	20 units of demand 'order J3' planned up to 26.0 days after its due date	2009-01-05T00:00:00 / 2009-01-31T00:00:00
 DEMAND CONSTRAINT	order A	Buffer 'buffer A @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order B	Buffer 'buffer B @ factory' has material shortage of 10	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
@@ -101,11 +101,11 @@ DEMAND CONSTRAINT	order E	Buffer 'buffer E @ factory' has material shortage of 1
 DEMAND CONSTRAINT	order F	Buffer 'buffer F @ factory' has material shortage of 5	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order G	Buffer 'buffer G @ factory' has material shortage of 15	2009-01-05T00:00:00 / 2030-12-31T00:00:00	
 DEMAND CONSTRAINT	order H1	Operation 'Purchase item H1 @ factory from Supplier for H' planned in the past	2009-01-05T00:00:00 / 2009-01-15T00:00:00	
-DEMAND CONSTRAINT	order H2	Operation 'Purchase item H2 @ factory from Supplier for H' planned in the past	2009-01-05T00:00:00 / 2009-01-07T00:00:00	
+DEMAND CONSTRAINT	order H2	Operation 'Purchase item H2 @ factory from Supplier for H' planned in the past	2009-01-06T00:00:00 / 2009-01-07T00:00:00	
 DEMAND CONSTRAINT	order H3	Operation 'Purchase item H3 @ factory from Supplier for H' planned in the past	2009-01-05T00:00:00 / 2009-01-31T00:00:00	
-DEMAND CONSTRAINT	order I1	Operation 'Purchase item I1 @ factory from Supplier for I' planned in the past	2009-01-05T00:00:00 / 2009-01-15T00:00:00	
-DEMAND CONSTRAINT	order I2	Operation 'Purchase item I2 @ factory from Supplier for I' planned in the past	2009-01-05T00:00:00 / 2009-01-07T00:00:00	
-DEMAND CONSTRAINT	order I3	Operation 'Purchase item I3 @ factory from Supplier for I' planned in the past	2009-01-05T00:00:00 / 2009-01-31T00:00:00	
+DEMAND CONSTRAINT	order I1	Demand 'order I1' is synchronized with order I3	2009-01-05T00:00:00 / 2009-01-31T00:00:00	
+DEMAND CONSTRAINT	order I2	Demand 'order I2' is synchronized with order I3	2009-01-06T00:00:00 / 2009-01-31T00:00:00	
+DEMAND CONSTRAINT	order I3	Operation 'Purchase item I3 @ factory from Supplier for I' planned in the past	2009-01-15T00:00:00 / 2009-01-31T00:00:00	
 DEMAND CONSTRAINT	order J1	Operation 'Purchase item J1 @ factory from Supplier for J' planned in the past	2009-01-05T00:00:00 / 2009-01-15T00:00:00	
 DEMAND CONSTRAINT	order J2	Operation 'Purchase item J2 @ factory from Supplier for J' planned in the past	2009-01-05T00:00:00 / 2009-01-07T00:00:00	
 DEMAND CONSTRAINT	order J3	Operation 'Purchase item J3 @ factory from Supplier for J' planned in the past	2009-01-05T00:00:00 / 2009-01-31T00:00:00	

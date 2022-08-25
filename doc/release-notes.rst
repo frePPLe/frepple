@@ -38,7 +38,7 @@ These changes will be made gradual over a couple of releases. For instance, from
   | The "independent" policy is the default and treats each sales order
     separately, just as in previous releases.
   | The "all together" policy assures all sales orders with the same owner
-    and the same due date are shipped together to the customer.
+    are shipped together to the customer.
   | The "in ratio" policy assures that partial deliveries maintain the same
     ratio as the initial order. For instance, imagine a customer requires 5
     tables and 20 chairs. You can ship 1 table and 4 chairs, but not 1 table

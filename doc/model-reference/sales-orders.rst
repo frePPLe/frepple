@@ -49,8 +49,8 @@ minshipment    positive double   | The minimum quantity allowed for the delivery
                                    value as round_down(quantity / 10). This means that we allow
                                    the demand to be met only with at most 10 partial deliveries.
 owner          string            | A string to group sales order lines together under a parent.
-policy         string            | Defines how different sales orders with the same owner and
-                                   same due date are shipped towards the customer.
+policy         string            | Defines how different sales orders with the same owner are
+                                   shipped towards the customer.
                                  | Possible values are:
 
                                  - | independent:
@@ -58,9 +58,8 @@ policy         string            | Defines how different sales orders with the s
                                      each other. This is the default behavior.
 
                                  - | alltogether:
-                                   | All sales orders with the same owner and due date need to
-                                     be shipped on the same date and in full quantity to the
-                                     customer.
+                                   | All sales orders with the same owner need to be shipped on
+                                     the same date and in full quantity to the customer.
 
                                  - | inratio:
                                    | This policy assures that partial deliveries maintain the

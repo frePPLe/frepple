@@ -1769,8 +1769,7 @@ class loadDemand(LoadTask):
                         if i[6]:
                             x.customer = frepple.customer(name=i[6])
                         if i[7]:
-                            # Group demand by owner + due date
-                            x.owner = frepple.demand_group(name="%s %s" % (i[7], i[1]))
+                            x.owner = frepple.demand_group(name=i[7])
                             if i[17]:
                                 x.owner.policy = i[17]
                         if i[8] is not None:

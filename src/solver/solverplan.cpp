@@ -236,9 +236,14 @@ void SolverCreate::SolverData::commit() {
               plan_qty = (*i)->getMinShipment();
 
             // Create a delivery operationplan for the remaining quantity
+            auto isGroupMember =
+                (*i)->getOwner() && (*i)->getOwner()->hasType<DemandGroup>() &&
+                static_cast<DemandGroup*>((*i)->getOwner())->getPolicy() !=
+                    Demand::POLICY_INDEPENDENT;
             OperationPlan* deli = deliveryoper->createOperationPlan(
-                plan_qty, Date::infinitePast, (*i)->getDue(), (*i)->getBatch(),
-                *i, nullptr, 0, false);
+                plan_qty, Date::infinitePast,
+                isGroupMember ? (*i)->getOwner()->getDue() : (*i)->getDue(),
+                (*i)->getBatch(), *i, nullptr, 0, false);
 
             // Prepare for next loop
             if (deli->activate())

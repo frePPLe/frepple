@@ -570,7 +570,7 @@
 			<location>
 				<name>factory</name>
 			</location>
-			<due>2009-01-05T00:00:00</due>
+			<due>2009-01-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 		<demand>
@@ -621,7 +621,7 @@
 			<location>
 				<name>factory</name>
 			</location>
-			<due>2009-01-05T00:00:00</due>
+			<due>2009-01-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 		<demand>
@@ -672,7 +672,7 @@
 			<location>
 				<name>factory</name>
 			</location>
-			<due>2009-01-05T00:00:00</due>
+			<due>2009-01-06T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 		<demand>
@@ -717,8 +717,8 @@
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase item H2 @ factory from Supplier for H</name>
 			</operation>
-			<start>2008-12-30T00:00:00</start>
-			<end>2009-01-05T00:00:00</end>
+			<start>2008-12-31T00:00:00</start>
+			<end>2009-01-06T00:00:00</end>
 			<quantity>20</quantity>
 			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
@@ -777,8 +777,8 @@
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase item I2 @ factory from Supplier for I</name>
 			</operation>
-			<start>2008-12-30T00:00:00</start>
-			<end>2009-01-05T00:00:00</end>
+			<start>2008-12-31T00:00:00</start>
+			<end>2009-01-06T00:00:00</end>
 			<quantity>20</quantity>
 			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
@@ -837,8 +837,8 @@
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase item J2 @ factory from Supplier for J</name>
 			</operation>
-			<start>2008-12-30T00:00:00</start>
-			<end>2009-01-05T00:00:00</end>
+			<start>2008-12-31T00:00:00</start>
+			<end>2009-01-06T00:00:00</end>
 			<quantity>20</quantity>
 			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
@@ -1113,8 +1113,8 @@
 			<demand>
 				<name>order H2</name>
 			</demand>
-			<start>2009-01-05T00:00:00</start>
-			<end>2009-01-05T00:00:00</end>
+			<start>2009-01-06T00:00:00</start>
+			<end>2009-01-06T00:00:00</end>
 			<quantity>20</quantity>
 			<ordertype>DLVR</ordertype>
 			<item>
@@ -1197,8 +1197,8 @@
 			<demand>
 				<name>order I2</name>
 			</demand>
-			<start>2009-01-05T00:00:00</start>
-			<end>2009-01-05T00:00:00</end>
+			<start>2009-01-06T00:00:00</start>
+			<end>2009-01-06T00:00:00</end>
 			<quantity>20</quantity>
 			<ordertype>DLVR</ordertype>
 			<item>
@@ -1281,8 +1281,8 @@
 			<demand>
 				<name>order J2</name>
 			</demand>
-			<start>2009-01-05T00:00:00</start>
-			<end>2009-01-05T00:00:00</end>
+			<start>2009-01-06T00:00:00</start>
+			<end>2009-01-06T00:00:00</end>
 			<quantity>20</quantity>
 			<ordertype>DLVR</ordertype>
 			<item>

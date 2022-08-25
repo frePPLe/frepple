@@ -336,7 +336,7 @@
         </demand>
         <demand name="order H2">
           <quantity>20</quantity>
-          <due>2009-01-05T00:00:00</due>
+          <due>2009-01-06T00:00:00</due>
           <priority>1</priority>
           <item name="item H2" />
           <location name="factory"/>
@@ -362,7 +362,7 @@
         </demand>
         <demand name="order I2">
           <quantity>20</quantity>
-          <due>2009-01-05T00:00:00</due>
+          <due>2009-01-06T00:00:00</due>
           <priority>1</priority>
           <item name="item I2" />
           <location name="factory"/>
@@ -388,7 +388,7 @@
         </demand>
         <demand name="order J2">
           <quantity>20</quantity>
-          <due>2009-01-05T00:00:00</due>
+          <due>2009-01-06T00:00:00</due>
           <priority>1</priority>
           <item name="item J2" />
           <location name="factory"/>

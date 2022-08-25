@@ -8744,6 +8744,47 @@ class ProblemAwaitSupply : public Problem {
   double qty = 0.0;
 };
 
+/* An instance of this class is used to flag constraints where a
+ * demand isn't planned because the delivery needs to be synchronized with
+ * other demands in the same group.
+ */
+class ProblemSyncDemand : public Problem {
+ public:
+  string getDescription() const {
+    ostringstream ch;
+    ch << "Demand '" << static_cast<Demand*>(getOwner())
+       << "' is synchronized with " << synced_with;
+    return ch.str();
+  }
+
+  bool isFeasible() const { return true; }
+
+  double getWeight() const { return 1; }
+
+  explicit ProblemSyncDemand(Demand* b, Demand* s)
+      : Problem(b), synced_with(s) {
+    if (b) dates.setStartAndEnd(b->getDue(), b->getDeliveryDate());
+  }
+
+  ~ProblemSyncDemand() { removeProblem(); }
+
+  string getEntity() const { return "demand"; }
+
+  Object* getOwner() const { return static_cast<Demand*>(owner); }
+
+  const DateRange getDates() const { return dates; }
+
+  /* Return a reference to the metadata structure. */
+  const MetaClass& getType() const { return *metadata; }
+
+  /* Storing metadata on this class. */
+  static const MetaClass* metadata;
+
+ private:
+  Demand* synced_with = nullptr;
+  DateRange dates;
+};
+
 /* A problem of this class is created when the sequence of two
  * operationplans in a routing isn't respected.
  */

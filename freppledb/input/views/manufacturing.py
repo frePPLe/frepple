@@ -679,12 +679,15 @@ class CalendarDetail(GridReport):
         if not args:
             raise Exception("Expecting calendar argument")
         request.session["lasttab"] = "plan"
+        events, minpriority = reportclass.getEvents(request, *args, **kwargs)
         return {
             "active_tab": "plan",
             "title": force_str(Calendar._meta.verbose_name) + " " + args[0],
             "post_title": _("detail"),
             "model": CalendarBucket,
-            "events": reportclass.getEvents(request, *args, **kwargs),
+            "events": events,
+            "minpriority": minpriority - 1,
+            "calendar": args[0],
         }
 
     rows = (
@@ -693,6 +696,7 @@ class CalendarDetail(GridReport):
             title=_("identifier"),
             formatter="detail",
             extra='"role":"input/calendarbucket"',
+            editable=False,
         ),
         GridFieldText(
             "calendar",
@@ -745,6 +749,7 @@ class CalendarDetail(GridReport):
         """
         calendar = Calendar.objects.all().using(request.database).get(name=args[0])
         buckets = []
+        minpriority = maxsize
         for b in (
             CalendarBucket.objects.all()
             .using(request.database)
@@ -752,6 +757,8 @@ class CalendarDetail(GridReport):
             .order_by("startdate", "priority")
         ):
             b.weekdays = []
+            if b.priority < minpriority:
+                minpriority = b.priority
             if b.monday:
                 b.weekdays.append(0)
             if b.tuesday:
@@ -783,6 +790,8 @@ class CalendarDetail(GridReport):
                 and b.starttime == time.min
                 and b.endtime == time.max
             )
+        if minpriority == maxsize:
+            minpriority = 0
 
         # Build up event list
         events = []
@@ -951,7 +960,7 @@ class CalendarDetail(GridReport):
             lastPriority = curPriority
 
         # Final result
-        return events
+        return (events, minpriority)
 
 
 class CalendarBucketList(GridReport):

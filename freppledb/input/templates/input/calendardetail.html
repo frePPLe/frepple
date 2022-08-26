@@ -1,4 +1,5 @@
 {% extends "admin/base_site_grid.html" %}
+{% load i18n %}
 
 {% block tools %}
 {% include "common/snippet_follow.html" %}
@@ -7,8 +8,74 @@
 {% endblock %}
 
 {% block before_table %}
-<div id="focusgraph" style="clear: both; height: 200px; padding: 10px"></div>
-<div id="contextgraph" style="clear: both; height: 50px; padding: 10px"></div>
+<div class="row">
+  <div id="focusgraph" style="clear: both; height: 200px; padding: 10px"></div>
+</div>
+<div class="row">
+  <div id="contextgraph" style="clear: both; height: 50px; padding: 10px"></div>
+</div>
+{% endblock %}
+
+{% block table %}
+{% if hasaddperm %}
+<div class="row">
+  <div class="col-xs-12" style="padding-top: 1em">
+    <form class="form-inline">
+      <button class="btn btn-primary" id="add_button" disabled>{% trans "add"|capfirst %}</button>
+      &nbsp;&nbsp;
+      <div class="form-group">
+        <input type="datetime-local" class="vDateField form-control" id="add_start_date">
+        <span class="help-block">{% trans "start date"|capfirst %}</span>
+      </div>
+      <div class="form-group">
+        <input type="datetime-local" class="vDateField form-control" id="add_end_date">
+        <span class="help-block">{% trans "end date"|capfirst %}</span>
+      </div>
+      <div class="form-group">
+        <input type="number" size="9" class="form-control" id="add_value">
+        <span class="help-block">{% trans "value"|capfirst %}</span>
+      </div>
+      <div class="form-group" style="text-align:center">
+        <input type="checkbox" id="add_monday" checked>
+        <span class="help-block">&nbsp;{% trans "monday"|capfirst %}&nbsp;</span>
+      </div>
+      <div class="form-group" style="text-align:center">
+        <input type="checkbox" id="add_tuesday" checked>
+        <span class="help-block">&nbsp;{% trans "tuesday"|capfirst %}&nbsp;</span>
+      </div>
+      <div class="form-group" style="text-align:center">
+        <input type="checkbox" id="add_wednesday" checked>
+        <span class="help-block">&nbsp;{% trans "wednesday"|capfirst %}&nbsp;</span>
+      </div>
+      <div class="form-group" style="text-align:center">
+        <input type="checkbox" id="add_thursday" checked>
+        <span class="help-block">&nbsp;{% trans "thursday"|capfirst %}&nbsp;</span>
+      </div>
+      <div class="form-group" style="text-align:center">
+        <input type="checkbox" id="add_friday" checked>
+        <span class="help-block">{% trans "friday"|capfirst %}&nbsp;</span>
+      </div>
+      <div class="form-group" style="text-align:center">
+        <input type="checkbox" id="add_saturday" checked>
+        <span class="help-block">&nbsp;{% trans "saturday"|capfirst %}&nbsp;</span>
+      </div>
+      <div class="form-group" style="text-align:center">
+        <input type="checkbox" id="add_sunday" checked>
+        <span class="help-block">&nbsp;{% trans "sunday"|capfirst %}&nbsp;</span>
+      </div>
+      <div class="form-group">
+        <input type="time" class="form-control" id="add_start_time" value="00:00:00">
+        <span class="help-block">{% trans "start time"|capfirst %}</span>
+      </div>
+      <div class="form-group">
+        <input type="time" class="form-control" id="add_end_time" value="23:59:59">
+        <span class="help-block">{% trans "end time"|capfirst %}</span>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+{{ block.super }}
 {% endblock %}
 
 {% block extrahead %}{{block.super}}
@@ -32,7 +99,56 @@ var zoom_end;
 
 $(function() {
     $("#save").attr("onclick", "upload.save(function() {window.location.href = window.location.href})");
+{% if hasaddperm %}
+    updateAddForm();
+    $("#add_value").on("input", function() {
+      $("#add_button").attr("disabled", $(this).val() == "");
+    });
+    $("#add_button").on("click", function(event) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      data = [{
+          "calendar": "{{calendar|escapejs}}",
+          "startdate": $("#add_start_date").val(),
+          "enddate": $("#add_end_date").val(),
+          "value": $("#add_value").val(),
+          "priority": {{minpriority}},
+          "monday": $("#add_monday").is(":checked"),
+          "tuesday": $("#add_tuesday").is(":checked"),
+          "wednesday": $("#add_wednesday").is(":checked"),
+          "thursday": $("#add_thursday").is(":checked"),
+          "friday": $("#add_friday").is(":checked"),
+          "saturday": $("#add_saturday").is(":checked"),
+          "sunday": $("#add_sunday").is(":checked"),
+          "starttime": $("#add_start_time").val(),
+          "endtime": $("#add_end_time").val(),
+      }];
+      $.ajax({
+        url: url_prefix + "/api/input/calendarbucket/",
+        data: JSON.stringify(data),
+        type: "POST",
+        contentType: "application/json",
+        success: function () {
+          window.location.href = window.location.href;
+        },
+        error: ajaxerror
+      });
+    });
+{% endif %}
 });
+
+{% if hasaddperm %}
+function updateAddForm() {
+  var tmp = viewstart.getFullYear() + "-"
+       + ("0" + (viewstart.getMonth() + 1)).slice(-2) + "-"
+       + ("0" + viewstart.getDate()).slice(-2) + "T00:00";
+  $("#add_start_date").prop("value", tmp);
+  tmp = viewend.getFullYear() + "-"
+       + ("0" + (viewend.getMonth() + 1)).slice(-2) + "-"
+       + ("0" + viewend.getDate()).slice(-2) + "T00:00";
+  $("#add_end_date").prop("value", tmp);
+}
+{% endif %}
 
 function drawContextGraph() {
     var width = $("#contextgraph").width();
@@ -52,7 +168,7 @@ function drawContextGraph() {
       if (e[3] < min_y) min_y = e[3];
       if (e[3] > max_y) max_y = e[3];
     }
-    var x = d3.scale.linear().rangeRound([0, width]).domain([min_x, max_x]);
+    var x = d3.scale.linear().rangeRound([50, width]).domain([min_x, max_x]);
     var y = d3.scale.linear().rangeRound([0, height]).domain([max_y, min_y]);
 
     // Build line graph data
@@ -94,6 +210,7 @@ function drawContextGraph() {
               viewend = new Date(tmp[1]);
            }
            drawFocusGraph();
+           {% if hasaddperm %}updateAddForm();{% endif %}
         });
     var brushg = svg.append("g").call(brush);
     brushg.selectAll(".extent")
@@ -117,6 +234,8 @@ function drawContextGraph() {
 function drawFocusGraph() {
     var width = $("#focusgraph").width();
     var height = $("#focusgraph").height();
+
+    var selectedRows = $("#grid").jqGrid("getGridParam", "selarrrow");
 
     $("#focusgraph").html("");
     var svg = d3.select($("#focusgraph").get(0))
@@ -163,12 +282,13 @@ function drawFocusGraph() {
            .attr("x", function(d) { return x(d[0]); })
            .attr("width", function(d) { return x(d[1]) - x(d[0]); })
            .attr("y", 0)
-           .attr("height", height-30)
-           .attr("opacity", 0)
+           .attr("fill", "black")
+           .attr("height", height-20)
+           .attr("opacity", function(d) { return selectedRows.includes("" + d[2]) ? 0.2 : 0;})
            .on("mouseenter", function(d) {
-               jQuery("#grid").jqGrid('resetSelection');
-               if (d[2]) jQuery("#grid").jqGrid('setSelection', d[2], false);
-               graph.showTooltip(
+              jQuery("#grid").jqGrid('resetSelection');
+              if (d[2]) jQuery("#grid").jqGrid('setSelection', d[2], false);
+              graph.showTooltip(
                 d[0] + "<br>" +
                 d[1] + "<br>" +
                 d[2] + "<br>" +
@@ -192,7 +312,6 @@ function drawFocusGraph() {
     var xAxis = d3.svg.axis()
       .scale(x)
       .orient("bottom")
-      //;//.ticks(d3.time.days, 1)
       .tickFormat(function(d, i) {
         var v = new Date(d);
         return v.getFullYear()  + "/" + (v.getMonth()+1) + "/" + v.getDate();
@@ -200,7 +319,8 @@ function drawFocusGraph() {
     svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + (height - 20) + ")")
-      .call(xAxis);
+      .call(xAxis)
+      ;// .tickValues(ticks);
 
     // Zoom & scroll behavior
     zoom = d3.behavior.zoom()
@@ -208,7 +328,7 @@ function drawFocusGraph() {
         .on("zoom", function(arg) {
           var initial_range = zoom_end.getTime() - zoom_start.getTime();
           var delta_range = initial_range / d3.event.scale - initial_range;
-          var translate_range = d3.event.translate[0] / x.range()[1] * initial_range;
+          var translate_range = 0; // TODO d3.event.translate[0] / x.range()[1] * initial_range;
           viewstart = new Date(zoom_start.getTime() - delta_range / 2 + translate_range);
           viewend = new Date(zoom_end.getTime() + delta_range / 2 + translate_range);
           if (viewstart < horizonstart)
@@ -218,6 +338,7 @@ function drawFocusGraph() {
           brush.extent([viewstart, viewend]);
           drawContextGraph();
           drawFocusGraph();
+          {% if hasaddperm %}updateAddForm();{% endif %}
         })
         .on("zoomstart", function() {
           zoom_start = viewstart;
@@ -236,4 +357,12 @@ $(window).resize(initGraphs);
 </script>
 {% endblock %}
 
-{% block extra_grid %}loadComplete: initGraphs,{% endblock %}
+{% block extra_grid %}
+  loadComplete: initGraphs,
+  onSelectRow: function(rowid, status, e) {
+      var selection = $(this).jqGrid('getGridParam','selarrrow').slice(); //this makes this list a static list of values
+      grid.markSelectedRow(selection.length);
+      drawFocusGraph();
+  },
+  onSelectAll: drawFocusGraph,
+{% endblock %}

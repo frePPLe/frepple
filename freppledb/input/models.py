@@ -1636,7 +1636,9 @@ class Demand(AuditModel):
     name = models.CharField(
         _("name"), max_length=300, primary_key=True, help_text=_("Unique identifier")
     )
-    owner = models.CharField(_("owner"), max_length=300, null=True, blank=True, db_index=True)
+    owner = models.CharField(
+        _("owner"), max_length=300, null=True, blank=True, db_index=True
+    )
     description = models.CharField(
         _("description"), max_length=500, null=True, blank=True
     )
@@ -1649,8 +1651,12 @@ class Demand(AuditModel):
     customer = models.ForeignKey(
         Customer, verbose_name=_("customer"), db_index=True, on_delete=models.CASCADE
     )
+    # No index on the item field, because have an index on item + location + customer + due
     item = models.ForeignKey(
-        Item, verbose_name=_("item"), db_index=True, on_delete=models.CASCADE
+        Item,
+        verbose_name=_("item"),
+        on_delete=models.CASCADE,
+        db_index=False,
     )
     location = models.ForeignKey(
         Location, verbose_name=_("location"), db_index=True, on_delete=models.CASCADE
@@ -1747,6 +1753,11 @@ class Demand(AuditModel):
         verbose_name = _("sales order")
         verbose_name_plural = _("sales orders")
         ordering = ["name"]
+        indexes = [
+            models.Index(
+                fields=["item", "location", "customer", "due"], name="demand_sorted"
+            )
+        ]
 
 
 class OperationPlan(AuditModel):

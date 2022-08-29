@@ -158,7 +158,7 @@ class checkBuckets(CheckTask):
 
             for q in queries:
                 cursor.execute(
-                    "create index %s on common_bucketdetail (startdate, enddate) where bucket_id  = %%s"
+                    "create index %s on common_bucketdetail (startdate, enddate) include(name) where bucket_id  = %%s"
                     % q[0],
                     (q[1],),
                 )

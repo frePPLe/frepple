@@ -288,12 +288,25 @@ function drawFocusGraph() {
            .on("mouseenter", function(d) {
               jQuery("#grid").jqGrid('resetSelection');
               if (d[2]) jQuery("#grid").jqGrid('setSelection', d[2], false);
-              graph.showTooltip(
-                d[0] + "<br>" +
-                d[1] + "<br>" +
-                d[2] + "<br>" +
-                d[3]
-	           );
+              if (d[2])
+                graph.showTooltip(interpolate(
+                  "Between %s and %s<br>the entry %s sets value %s",
+                  [
+                    moment(d[0]).format("yyyy-MM-DD HH:mm:ss"),
+                    moment(d[1]).format("yyyy-MM-DD HH:mm:ss"),
+                    d[2],
+                    d[3]
+                  ]
+                  ));
+              else
+                  graph.showTooltip(interpolate(
+                  "Between %s and %s<br>the default value %s is set",
+                  [
+                    moment(d[0]).format("yyyy-MM-DD HH:mm:ss"),
+                    moment(d[1]).format("yyyy-MM-DD HH:mm:ss"),
+                    d[3]
+                  ]
+                  ));
              })
 	         .on("mouseleave", graph.hideTooltip)
 	         .on("mousemove", graph.moveTooltip);

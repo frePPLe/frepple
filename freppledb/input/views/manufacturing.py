@@ -666,7 +666,7 @@ class CalendarDetail(GridReport):
     frozenColumns = 1
     hasTimeBuckets = True
     template = "input/calendardetail.html"
-    help_url = "model-reference/calendar-buckets.html"
+    help_url = "model-reference/calendars.html"
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

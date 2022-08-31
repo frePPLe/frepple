@@ -14,13 +14,29 @@ Different other models refer to calendars for any property that changes over tim
 * A resource refers to a calendar to define the resource size varying over time.
 * A buffer refers to a calendar to define the safety stock varying over time.
 
-A calendar has multiple buckets to define the values over time. See 
-:doc:`calendar buckets <calendar-buckets>` for more details. To determine the 
-calendar value at a certain date the calendar will evaluate each of the
-buckets and combine the results in the following way:
+============ ================= ===========================================================
+Field        Type              Description
+============ ================= ===========================================================
+name         non-empty string  Unique name of the calendar.
+                               This is the key field and a required attribute.
+default      double            The default value of the calendar when no bucket is
+                               effective.
+============ ================= ===========================================================
 
-* | A bucket is only valid from its "start" date (inclusive) till its "end"
-    date (exclusive).
+The calendar editor screen visualizes how the calendar varies over time. You can
+easily specify the value for a certain time period. The screen also allows you to
+interactively verify which calendar bucket is effective at a given time.
+
+  .. image:: _images/calendar-editor.png
+     :width: 100%
+     :alt: Calendar editor
+
+A calendar has multiple :doc:`calendar buckets <calendar-buckets>` to define the values over time.
+
+The following rules define which entry is valid at a certain time:
+
+* | A bucket is only valid from its "start date" (inclusive) till its "end
+    date" (exclusive).
   | Outside of this date range a bucket is never selected.
 
 * | If multiple bucket are effective on a date, the one with the lowest
@@ -31,11 +47,3 @@ buckets and combine the results in the following way:
 * In case no bucket is effective on a certain date, the calendar will return
   the "default" value.
 
-============ ================= ===========================================================
-Field        Type              Description
-============ ================= ===========================================================
-name         non-empty string  Unique name of the calendar.
-                               This is the key field and a required attribute.
-default      double            The default value of the calendar when no bucket is
-                               effective.
-============ ================= ===========================================================

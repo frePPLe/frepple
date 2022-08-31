@@ -802,32 +802,6 @@ class CalendarDetail(GridReport):
         lastPriority = curPriority
         lastBucket = curBucket
         while True:
-            if curBucket:
-                events.append(
-                    (
-                        min(prevDate, request.report_enddate).strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        ),
-                        min(curDate, request.report_enddate).strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        ),
-                        curBucket.id,
-                        float(curBucket.value),
-                    )
-                )
-            else:
-                events.append(
-                    (
-                        min(prevDate, request.report_enddate).strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        ),
-                        min(curDate, request.report_enddate).strftime(
-                            "%Y-%m-%d %H:%M:%S"
-                        ),
-                        None,
-                        float(calendar.defaultvalue),
-                    )
-                )
             if curDate >= request.report_enddate:
                 break
             prevDate = curDate
@@ -954,6 +928,17 @@ class CalendarDetail(GridReport):
                             curDate = tmp
                             curBucket = b
                             curPriority = b.priority
+
+            events.append(
+                (
+                    min(prevDate, request.report_enddate).strftime("%Y-%m-%d %H:%M:%S"),
+                    min(curDate, request.report_enddate).strftime("%Y-%m-%d %H:%M:%S"),
+                    curBucket.id if curBucket else None,
+                    float(curBucket.value if curBucket else calendar.defaultvalue),
+                    lastBucket.id if lastBucket else None,
+                    float(lastBucket.value if lastBucket else calendar.defaultvalue),
+                )
+            )
 
             # Remember the bucket that won the evaluation
             lastBucket = curBucket

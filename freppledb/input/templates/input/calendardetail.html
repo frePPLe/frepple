@@ -177,8 +177,7 @@ function drawContextGraph() {
     var last_x = 0;
     for (var d of events) {
       var tmp_x = x(d[1]);
-      if (last_y !== null)
-          linedata.push([tmp_x, last_y]);
+      linedata.push([tmp_x, (last_y !== null) ? last_y : y(min_y)]);
       last_y = y(d[3]);
       linedata.push([tmp_x, last_y]);
       last_x = tmp_x;
@@ -245,6 +244,12 @@ function drawFocusGraph() {
       .append("g")
       .attr("transform", "translate(50,0)");
 
+    svg.append("defs").append("clipPath")
+      .attr("id", "clip")
+      .append("rect")
+      .attr("width", width-50)
+      .attr("height", height)-20;
+
     var x = d3.scale.linear().rangeRound([0, width - 50]).domain([viewstart, viewend]);
     var y = d3.scale.linear().rangeRound([0, height - 20]).domain([max_y, min_y]);
 
@@ -253,10 +258,8 @@ function drawFocusGraph() {
     var last_y = null;
     var last_x = 0;
     for (var d of events) {
-      if (d[1] < viewstart || d[0] > viewend)
-        continue;
       var tmp_x = x(d[1]);
-      if (last_y !== null) linedata.push([tmp_x, last_y]);
+      linedata.push([tmp_x, (last_y !== null) ? last_y : y(min_y)]);
       last_y = y(d[3]);
       linedata.push([tmp_x, last_y]);
       last_x = tmp_x;
@@ -270,6 +273,7 @@ function drawFocusGraph() {
         .attr("stroke","#E68BBA00")
         .attr("stroke-width", 0)
         .attr("fill","#8BBA00")
+        .attr("clip-path", "url(#clip)")
         .attr("d", line(linedata));
 
     // Build tooltips
@@ -284,27 +288,28 @@ function drawFocusGraph() {
            .attr("y", 0)
            .attr("fill", "black")
            .attr("height", height-20)
-           .attr("opacity", function(d) { return selectedRows.includes("" + d[2]) ? 0.2 : 0;})
+           .attr("opacity", function(d) { return selectedRows.includes("" + d[4]) ? 0.2 : 0;})
+           .attr("clip-path", "url(#clip)")
            .on("mouseenter", function(d) {
               jQuery("#grid").jqGrid('resetSelection');
-              if (d[2]) jQuery("#grid").jqGrid('setSelection', d[2], false);
-              if (d[2])
+              if (d[4]) jQuery("#grid").jqGrid('setSelection', d[4], false);
+              if (d[4])
                 graph.showTooltip(interpolate(
-                  "Between %s and %s<br>the entry %s sets value %s",
+                  "Between %s<br>and %s<br>the entry %s<br>sets value %s",
                   [
                     moment(d[0]).format("yyyy-MM-DD HH:mm:ss"),
                     moment(d[1]).format("yyyy-MM-DD HH:mm:ss"),
-                    d[2],
-                    d[3]
+                    d[4],
+                    d[5]
                   ]
                   ));
               else
                   graph.showTooltip(interpolate(
-                  "Between %s and %s<br>the default value %s is set",
+                  "Between %s<br>and %s<br>the default value %s is set",
                   [
                     moment(d[0]).format("yyyy-MM-DD HH:mm:ss"),
                     moment(d[1]).format("yyyy-MM-DD HH:mm:ss"),
-                    d[3]
+                    d[5]
                   ]
                   ));
              })
@@ -322,9 +327,18 @@ function drawFocusGraph() {
       .call(yAxis);
 
     // Display X-Axis
+    var ticks = [];
+    var tickinterval = Math.max((viewend - viewstart) / 10, 86400000);
+    var tick = new Date(viewstart.getTime() + 86400000);
+    while(tick < viewend) {
+      tick = new Date(tick.getFullYear(), tick.getMonth(), tick.getDate());
+      ticks.push(tick);
+      tick = new Date(tick.getTime() + tickinterval);
+    }
     var xAxis = d3.svg.axis()
       .scale(x)
       .orient("bottom")
+      .tickValues(ticks)
       .tickFormat(function(d, i) {
         var v = new Date(d);
         return v.getFullYear()  + "/" + (v.getMonth()+1) + "/" + v.getDate();
@@ -332,8 +346,7 @@ function drawFocusGraph() {
     svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + (height - 20) + ")")
-      .call(xAxis)
-      ;// .tickValues(ticks);
+      .call(xAxis);
 
     // Zoom & scroll behavior
     zoom = d3.behavior.zoom()

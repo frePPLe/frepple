@@ -62,6 +62,7 @@ policy         string            | Defines how different sales orders with the s
                                      the same date and in full quantity to the customer.
 
                                  - | inratio:
+                                   | CURRENTLY NOT IMPLEMENTED YET!
                                    | This policy assures that partial deliveries maintain the
                                      same ratio as the initial order.
                                    | For instance, imagine a customer orders 5 tables and 20

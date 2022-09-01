@@ -685,7 +685,9 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
           // autofence window.
           // Note: no check for overall shortage here, just checking whether
           // stock stays positive in a constrained plan.
-          if (getAutoFence() && (theOnHand > 0 || getPlanType() == 2)) {
+          if (getAutoFence() &&
+              (theOnHand > 0 || getPlanType() == 2 ||
+               (!isLeadTimeConstrained() && !isFenceConstrained()))) {
             bool exists = false;
             for (auto f = b->getFlowPlans().begin();
                  f != b->getFlowPlans().end(); ++f) {

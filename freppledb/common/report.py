@@ -2671,9 +2671,6 @@ class GridReport(View):
 
     @staticmethod
     def _filter_isnull(query, reportrow, data, database=DEFAULT_DB_ALIAS):
-        print(
-            ["0", "false", force_str(_("false"))], "totoot", translation.get_language()
-        )
         if data.lower() in ["0", "false", force_str(_("false"))]:
             return ~models.Q(**{"%s__isnull" % reportrow.field_name: data})
         else:

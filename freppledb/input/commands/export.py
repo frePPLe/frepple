@@ -135,13 +135,19 @@ class cleanStatic(PlanTask):
             cursor.execute(
                 """
                 delete from operationmaterial
-                where (source = %s and lastmodified <> %s)
-                  or operation_id in (
+                where source = %s and lastmodified <> %s
+                """,
+                (source, cls.timestamp),
+            )
+            cursor.execute(
+                """
+                delete from operationmaterial
+                where operation_id in (
                     select name from operation
                     where operation.source = %s and operation.lastmodified <> %s
                     )
                 """,
-                (source, cls.timestamp, source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from buffer where source = %s and lastmodified <> %s",

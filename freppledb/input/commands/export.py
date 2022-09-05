@@ -1414,7 +1414,7 @@ class exportDemands(PlanTask):
                     cls.timestamp,
                     i.status,
                     i.owner.name if has_parent else None,
-                    i.policy if has_parent else None,
+                    i.owner.policy if has_parent else None,
                 ]
                 for a in attrs:
                     r.append(getattr(i, a, None))
@@ -1447,7 +1447,7 @@ class exportDemands(PlanTask):
                   lastmodified=excluded.lastmodified,
                   status=excluded.status,
                   owner=excluded.owner,
-                  policy=excluded.policy,
+                  policy=excluded.policy
                   %s
                 """
                 % SQL4attributes(attrs),

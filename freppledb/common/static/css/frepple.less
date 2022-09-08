@@ -219,6 +219,25 @@ li, dt, dd {
     font-size: @font-size-base; /* fix django admin form problems */
 }
 
+.clockbox, .calendarbox, .calendar, .calendar-cancel, .calendar-shortcuts {
+    /* fix django admin form problems */
+    padding-right: 1em;
+    padding-left: 1em;
+    background-color: inherit;
+}
+
+.calendar table {
+    /* fix django admin form problems */
+    background-color: inherit;
+}
+
+.calendar td a:focus, .timelist a:focus, .calendar td a:hover, .timelist a:hover, .calendar-shortcuts a:hover {
+    /* fix django admin form problems */
+    background-color: inherit;
+    color: inherit;
+	font-weight: bold;
+}
+
 .disc {
     list-style: disc !important;
 }

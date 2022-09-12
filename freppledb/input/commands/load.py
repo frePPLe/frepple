@@ -27,12 +27,7 @@ from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from freppledb.boot import getAttributes
 from freppledb.common.models import Parameter
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
-from freppledb.input.models import (
-    Resource,
-    Item,
-    Location,
-    OperationPlan,
-)
+from freppledb.input.models import Resource, Item, Location, OperationPlan, Demand
 
 logger = logging.getLogger(__name__)
 
@@ -356,10 +351,10 @@ class loadLocations(LoadTask):
 
                 cursor.execute(
                     """
-                SELECT
-                  name, description, owner_id, available_id, category, subcategory, source %s
-                FROM location %s
-                """
+                    SELECT
+                    name, description, owner_id, available_id, category, subcategory, source %s
+                    FROM location %s
+                    """
                     % (attrsql, filter_where)
                 )
 
@@ -1732,21 +1727,27 @@ class loadDemand(LoadTask):
         else:
             filter_and = ""
 
+        attrs = [f[0] for f in getAttributes(Demand)]
+        if attrs:
+            attrsql = ", %s" % ", ".join(attrs)
+        else:
+            attrsql = ""
+
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
                 cursor.execute(
                     """
-                SELECT
-                  name, due, quantity, priority, item_id,
-                  operation_id, customer_id, owner, minshipment, maxlateness,
-                  category, subcategory, source, location_id, status,
-                  batch, description, policy
-                FROM demand
-                WHERE (status IS NULL OR status in ('open', 'quote')) %s
-                """
-                    % filter_and
+                    SELECT
+                    name, due, quantity, priority, item_id,
+                    operation_id, customer_id, owner, minshipment, maxlateness,
+                    category, subcategory, source, location_id, status,
+                    batch, description, policy %s
+                    FROM demand
+                    WHERE (status IS NULL OR status in ('open', 'quote')) %s
+                    """
+                    % (attrsql, filter_and)
                 )
                 for i in cursor:
                     cnt += 1
@@ -1778,6 +1779,10 @@ class loadDemand(LoadTask):
                             x.maxlateness = i[9].total_seconds()
                         if i[13]:
                             x.location = frepple.location(name=i[13])
+                        idx = 18
+                        for a in attrs:
+                            setattr(x, a, i[idx])
+                            idx += 1
                     except Exception as e:
                         logger.error("**** %s ****" % e)
                 logger.info(

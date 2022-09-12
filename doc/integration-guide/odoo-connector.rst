@@ -190,8 +190,8 @@ The section below describes the installation and configuration of these.
 
   * | **Configure the Odoo server**
     | FrePPLe needs to be loaded as a server wide module. This is achieved
-      by updating an option in the Odoo configuration file:
-      "server_wide_modules= frepple,web,web_kanban"
+      by updating an option in the Odoo configuration file odoo.conf:
+      "server_wide_modules = base,web,frepple"
 
   * | **Configure the Odoo addon**
     | The module adds some configuration on the company. You can edit these

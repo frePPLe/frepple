@@ -143,6 +143,11 @@ the max_connections setting is moved from the default 100 to eg 400).
   networks:
     backend:
 
+Another option is fork this git repository https://github.com/ursais/frepple-template
+(maintained by https://www.opensourceintegrators.com/) as a starting point for your own
+wrapper. This repository is also suited for the frepple Enterprise Edition, and it
+already accounts for any custom frepple addons.
+
 **************************
 Deployment with Kubernetes
 **************************

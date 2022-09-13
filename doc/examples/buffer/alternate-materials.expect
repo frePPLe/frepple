@@ -3,18 +3,18 @@ Inventory C @ MyFactory,1971-01-01 00:00:00,1971-01-01 00:00:00,33.0
 Make X version 1,2019-01-11 00:00:00,2019-01-12 00:00:00,100.0
 Make X version 2,2019-01-31 00:00:00,2019-02-01 00:00:00,100.0
 Make X version 2,2019-02-28 00:00:00,2019-03-01 00:00:00,100.0
-Make X version 2,2019-03-30 23:00:00,2019-04-01 00:00:00,100.0
+Make X version 2,2019-03-31 00:00:00,2019-04-01 00:00:00,100.0
 Purchase B @ MyFactory from MySupplier,2019-01-01 00:00:00,2019-01-11 00:00:00,100.0
 Purchase C @ MyFactory from MySupplier,2019-01-01 00:00:00,2019-01-11 00:00:00,67.0
 Purchase C @ MyFactory from MySupplier,2019-01-21 00:00:00,2019-01-31 00:00:00,100.0
 Purchase C @ MyFactory from MySupplier,2019-02-18 00:00:00,2019-02-28 00:00:00,100.0
-Purchase C-alt @ MyFactory from MySupplier,2019-01-19 23:00:00,2019-03-30 23:00:00,100.0
+Purchase C-alt @ MyFactory from MySupplier,2019-01-20 00:00:00,2019-03-31 00:00:00,100.0
 Purchase D @ MyFactory from MySupplier,2019-01-21 00:00:00,2019-01-31 00:00:00,100.0
 Purchase D @ MyFactory from MySupplier,2019-02-18 00:00:00,2019-02-28 00:00:00,100.0
-Purchase D @ MyFactory from MySupplier,2019-03-20 23:00:00,2019-03-30 23:00:00,100.0
+Purchase D @ MyFactory from MySupplier,2019-03-21 00:00:00,2019-03-31 00:00:00,100.0
 Purchase E @ MyFactory from MySupplier,2019-01-21 00:00:00,2019-01-31 00:00:00,100.0
 Purchase E @ MyFactory from MySupplier,2019-02-18 00:00:00,2019-02-28 00:00:00,100.0
-Purchase E @ MyFactory from MySupplier,2019-03-20 23:00:00,2019-03-30 23:00:00,100.0
+Purchase E @ MyFactory from MySupplier,2019-03-21 00:00:00,2019-03-31 00:00:00,100.0
 Ship X @ MyFactory,2019-01-12 00:00:00,2019-01-12 00:00:00,100.0
 Ship X @ MyFactory,2019-02-01 00:00:00,2019-02-01 00:00:00,100.0
 Ship X @ MyFactory,2019-03-01 00:00:00,2019-03-01 00:00:00,100.0

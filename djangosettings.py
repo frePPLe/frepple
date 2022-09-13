@@ -196,14 +196,27 @@ SUPPORT_USERS = []
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
 ODOO_PASSWORDS = {"default": "", "scenario1": "", "scenario2": "", "scenario3": ""}
 
-# Local time zone for this installation. Choices can be found here:
+# If passwords are set in this file they will be used instead of the ones set in the database parameters table
+OPENBRAVO_PASSWORDS = {"default": "", "scenario1": "", "scenario2": "", "scenario3": ""}
+
+# Retrieve the server time zone and use it for the database
+# we need to convert that string into iana/olson format using package tzlocal
+try:
+    from tzlocal import get_localzone
+
+    TIME_ZONE = str(get_localzone())
+except:
+    TIME_ZONE = "Europe/Brussels"
+
+# TIME_ZONE can still be overriden by uncommenting following line
+# That will force the database and the server to use that timezone
+# Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
 # On Unix systems, a value of None will cause Django to use the same
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = "Europe/Brussels"
+# TIME_ZONE = "Europe/Brussels"
 
 # Supported language codes, sorted by language code.
 # Language names and codes should match the ones in Django.

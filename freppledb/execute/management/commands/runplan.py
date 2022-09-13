@@ -20,6 +20,7 @@ from datetime import datetime
 import psutil
 import shlex
 import subprocess
+import time
 from time import sleep
 
 from django.core.management.base import BaseCommand, CommandError
@@ -105,6 +106,13 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options):
+
+        # Set the server timezone to the TIME_ZONE parameter of djangosettings
+        # unsupported by windows
+        if not os.name == "nt":
+            os.environ["TZ"] = settings.TIME_ZONE
+            time.tzset()
+
         # Pick up the options
         now = datetime.now()
 

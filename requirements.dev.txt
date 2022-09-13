@@ -1,6 +1,9 @@
 # Runtime packages
 -r requirements.txt
 
+# Package to support timezone conversions
+tzlocal
+
 # Extra packages for development environments
 black >= 19.3b0
 Sphinx

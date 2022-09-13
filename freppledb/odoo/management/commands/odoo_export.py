@@ -21,7 +21,7 @@ import json
 import jwt
 import time
 from xml.sax.saxutils import quoteattr
-from urllib.request import urlopen, Request
+from urllib.request import urlopen, Request, HTTPError, URLError
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -184,6 +184,22 @@ class Command(BaseCommand):
             task.message = None
             task.finished = datetime.now()
             task.processid = None
+
+        except HTTPError as e:
+            if task:
+                task.status = "Failed"
+                task.message = "Internal server error %s on odoo side" % e.code
+                task.finished = datetime.now()
+                task.processid = None
+            raise e
+
+        except URLError:
+            if task:
+                task.status = "Failed"
+                task.message = "Couldn't connect to odoo"
+                task.finished = datetime.now()
+                task.processid = None
+            raise e
 
         except Exception as e:
             if task:

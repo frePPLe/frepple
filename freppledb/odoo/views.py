@@ -20,12 +20,12 @@ import email
 import json
 import jwt
 import time
-from urllib.request import urlopen, HTTPError, Request
+from urllib.request import urlopen, HTTPError, Request, URLError
 from xml.sax.saxutils import quoteattr
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseServerError, HttpResponseNotAllowed
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
@@ -40,6 +40,8 @@ logger = logging.getLogger(__name__)
 @login_required
 @csrf_protect
 def Upload(request):
+    if request.method != "POST":
+        return HttpResponseNotAllowed("Only POST requests are allowed")
     try:
         # Prepare a message for odoo
         boundary = email.generator._make_boundary()
@@ -244,10 +246,15 @@ def Upload(request):
             i.save(using=request.database)
         return HttpResponse("OK")
 
-    except HTTPError:
+    except HTTPError as e:
+        msg = "Internal server error %s on odoo side" % e.code
+        logger.error(msg)
+        return HttpResponseServerError(msg)
+
+    except URLError:
         logger.error("Can't connect to the Odoo server")
         return HttpResponseServerError("Can't connect to the odoo server")
 
     except Exception as e:
         logger.error(e)
-        return HttpResponseServerError("internal server error")
+        return HttpResponseServerError("Internal server error on frepple side")

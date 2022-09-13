@@ -512,6 +512,8 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 # Alternative: allow embedding in a specific domain
 #   CONTENT_SECURITY_POLICY = "frame-ancestors 'self' mydomain.com;"
 #   X_FRAME_OPTIONS = None
+#   SESSION_COOKIE_SAMESITE = "none"
+#   CSRF_COOKIE_SAMESITE = "none"
 
 # Configuration of the ftp/sftp/ftps server where to upload reports
 # Note that for SFTP protocol, the host needs to be defined

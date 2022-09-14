@@ -219,8 +219,8 @@ except:
 # TIME_ZONE = "Europe/Brussels"
 
 # tests have to be done in UTC
-TESTING = sys.argv[1:2] == ["test"]
-if TESTING:
+print(dir(sys))
+if "test" in sys.argv:
     TIME_ZONE = "UTC"
 
 # Supported language codes, sorted by language code.

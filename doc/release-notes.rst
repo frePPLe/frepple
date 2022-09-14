@@ -54,6 +54,10 @@ These changes will be made gradual over a couple of releases. For instance, from
   | The corner cases where this potentially happens have confirmed purchase orders
     within the autofence window of safety stock shortfalls.
 
+- | Bug fix: Bucketized resources didn't handle the parameter allowsplits=false
+    correctly.
+  | Thanks to kobsam from a nice open source contribution!
+
 .. rubric:: Odoo integration
 
 - | v14 & 15: Products of type "consumable" are no longer interfaced to frepple.

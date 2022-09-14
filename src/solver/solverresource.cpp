@@ -582,13 +582,13 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
         if (cur->getOnhand() < overloadQty) overloadQty = cur->getOnhand();
 
       // Solve the overload in the bucket by resizing the operationplan.
-      // If the complete operationplan is overload then we can skip this step.
+      // If the complete operationplan is overload or allowsplits = false then we can skip this step.
       // Because of operation size constraints (minimum and multiple values)
       // it is possible that the resizing fails.
       if (overloadQty < -ROUNDING_ERROR &&
           orig_q_qty > -overloadQty + ROUNDING_ERROR &&
           data->state->q_loadplan->getLoad()->getQuantity() &&
-          !time_per_logic) {
+          !time_per_logic && getAllowSplits()) {
         OperationPlanState beforeSqueeze(opplan);
         Date oldEnd = opplan->getEnd();
         double oldQty = opplan->getQuantity();

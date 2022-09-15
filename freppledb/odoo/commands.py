@@ -122,10 +122,9 @@ class OdooReadData(PlanTask):
         singlecompany = Parameter.getValue("odoo.singlecompany", database, "false")
         ok = True
 
-        # Set debugFile=PathToXmlFile if you want frePPLe to read that file
-        # rather than the data at url
-        # else leave it to False
-        debugFile = False  # "c:/temp/frepple_data.xml"
+        # Set the environment variable FREPPLE_ODOO_DEBUGFILE if you want frePPLe
+        # to read that file rather than the data at url.
+        debugFile = os.environ.get("FREPPLE_ODOO_DEBUGFILE", False)
 
         if not odoo_user and not debugFile:
             logger.error("Missing or invalid parameter odoo.user")

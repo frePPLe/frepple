@@ -62,8 +62,13 @@ These changes will be made gradual over a couple of releases. For instance, from
 
 - | v14 & 15: Products of type "consumable" are no longer interfaced to frepple.
     These are assumed not be of interest for planning.
+  | Variant management. The connectors are now managing the variants.
+    The BOMs are correctly reflecting the "Apply on variants" field.
 
 - | v14: Bug fix for mapping odoo reorderpoints to frepple.
+
+- | v12: Variant management. The connectors are now managing the variants.
+    The BOMs are correctly reflecting the "Apply on variants" field.
 
 6.24.0 (2022/07/29)
 ===================

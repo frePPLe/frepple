@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from datetime import datetime
 import base64
 
 from html.parser import HTMLParser
@@ -166,6 +167,7 @@ class OdooReadData(PlanTask):
                         "company": odoo_company,
                         "mode": cls.mode,
                         "singlecompany": singlecompany,
+                        "version": frepple.version,
                     }
                 ),
             )
@@ -205,6 +207,19 @@ class OdooReadData(PlanTask):
             # Parse XML data file
             with open(debugFile, encoding="utf-8") as f:
                 frepple.readXMLdata(f.read(), False, False, loglevel)
+
+        # Freeze the date of the extract (in memory and in database)
+        frepple.settings.current = datetime.now()
+        with connections[database].cursor() as cursor:
+            cursor.execute(
+                """
+                insert into common_parameter
+                (name, value) values ('currentdate', %s)
+                on conflict(name)
+                do update set value = excluded.value
+                """,
+                (frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S"),),
+            )
 
         # Hierarchy correction: Count how many items/locations/customers have no owner
         # If we find 2+ then we use All items/All customers/All locations as root

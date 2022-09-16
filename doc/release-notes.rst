@@ -65,10 +65,16 @@ These changes will be made gradual over a couple of releases. For instance, from
   | Variant management. The connectors are now managing the variants.
     The BOMs are correctly reflecting the "Apply on variants" field.
 
-- | v14: Bug fix for mapping odoo reorderpoints to frepple.
-
-- | v12: Variant management. The connectors are now managing the variants.
+- | v12, v14 & v15: Variant management. The connectors are now managing the variants.
     The BOMs are correctly reflecting the "Apply on variants" field.
+
+- | v14 & v15: Material consumption of a manufacturing order level are now
+    included in the interface.
+  | These can deviate from the material consumption defined in the bill of material:
+    e.g. when the bill of material is changed, or when the user manually edited the
+    materials on the manufacturing order.
+
+- | v14: Bug fix for mapping odoo reorderpoints to frepple.
 
 6.24.0 (2022/07/29)
 ===================

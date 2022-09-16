@@ -672,6 +672,13 @@
 					</item>
 					<quantity>-1</quantity>
 				</flow>
+				<flow>
+					<item>
+						<name>In4</name>
+					</item>
+					<quantity>-1</quantity>
+					<effective_end>1971-01-01T00:00:00</effective_end>
+				</flow>
 			</flows>
 			<duration>P1D</duration>
 		</operation>
@@ -1526,6 +1533,25 @@
 		<operationplan>
 			<reference>5036</reference>
 			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase In4 @ Loc from Component supplier</name>
+			</operation>
+			<start>2014-03-02T00:00:00</start>
+			<end>2014-03-02T00:00:00</end>
+			<quantity>10</quantity>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>In4</name>
+			</item>
+			<location>
+				<name>Loc</name>
+			</location>
+			<supplier>
+				<name>Component supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<reference>5037</reference>
+			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4A @ Loc from Component supplier</name>
 			</operation>
 			<start>2014-01-04T00:00:00</start>
@@ -1543,7 +1569,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<reference>5037</reference>
+			<reference>5038</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4A @ Loc from Component supplier</name>
 			</operation>
@@ -1562,7 +1588,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<reference>5038</reference>
+			<reference>5039</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4B @ Loc from Component supplier</name>
 			</operation>

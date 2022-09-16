@@ -5675,6 +5675,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   /* Finds the flowplan on the operationplan when we read data. */
   static Object* reader(const MetaClass*, const DataValueDict&,
                         CommandManager*);
+  static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
   /* Is this operationplanmaterial locked?
       LEAVE THIS VARIABLE DECLARATION BELOW THE OTHERS
@@ -5736,10 +5737,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
    * This can only be called once.
    */
   void setOperationPlan(OperationPlan* o) {
-    if (oper && oper != o)
-      throw DataException("Can't change the operationplan of a flowplan");
-    else
-      oper = o;
+    if (!oper) oper = o;
   }
 
   /* Update the flow of an already existing flowplan.

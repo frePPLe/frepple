@@ -1,25 +1,19 @@
 Release notes
 -------------
 
-Moving towards 7.0.0
-====================
+7.0 (Upcoming)
+==============
 
-While we continue the more-or-less monthly release cycle on v6, v7 is gradually
-appearing on the radar.
+.. rubric:: Software stack
 
-The main target is to refresh the component stack:
+- | Support for Ubuntu 18 is dropped.
+  | The frepple team will only support Ubuntu 20. Use a Docker container
+    to run on other platforms.
 
-- The preferred linux distribution will move from Ubuntu 18 LTS to Ubuntu 20 LTS.
-- Minimum Python version will move from 3.6 to 3.8.
-- Minimum PostgreSQL version will move from 9.5 to 12.
-- Django version will move from 2.2 LTS to 3.2 LTS.
-- The required Python and Javascript third party components will be upgraded as well.
+- | The minimum PostgreSQL version is now 12.
 
-These changes will be made gradual over a couple of releases. For instance, from
-6.20.0 onwards frepple supports both Ubuntu 18 as well as Ubuntu 20.
-
-6.25 (Upcoming)
-===============
+6.25 (2022/09/16)
+==================
 
 .. rubric:: Production planning
 

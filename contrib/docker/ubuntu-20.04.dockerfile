@@ -60,10 +60,10 @@ ENV LC_ALL C.UTF-8
 RUN apt-get -y -q update && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends curl ca-certificates gnupg && \
   curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-  echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+  echo "deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   apt-get -y -q update && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
-  libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 python3-pip postgresql-client-13 \
+  libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 python3-pip postgresql-client-14 \
   python3-setuptools python3-wheel build-essential python3-dev \
   libpq5 openssl python3-lxml libapache2-mod-xsendfile ssl-cert locales
 

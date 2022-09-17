@@ -25,8 +25,8 @@ ENV LC_ALL C.UTF-8
 
 RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
   cmake g++ git python3 python3-pip python3-dev \
-  libxerces-c3.2 libxerces-c-dev openssl libssl-dev \
-  libpq5 libpq-dev locales
+  libxerces-c3.2 libxerces-c-dev psmisc \
+  openssl libssl-dev libpq5 libpq-dev locales
 
 # An alternative to the copy is to clone from git:
 # RUN git clone https://github.com/frepple/frepple.git frepple

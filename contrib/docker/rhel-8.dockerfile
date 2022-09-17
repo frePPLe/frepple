@@ -45,7 +45,7 @@ RUN useradd builder -u 6666 -m -G users && \
 # OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
 ADD requirements.txt gpg_key* ./
 USER builder
-RUN pip3 install --user -r requirements.dev.txt
+RUN pip3 install --user -r requirements.txt
 
 # An alternative to the copy is to clone from git:
 # RUN git clone https://github.com/frepple/frepple.git frepple

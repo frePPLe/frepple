@@ -24,24 +24,22 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
-  cmake g++ git python3 python3-pip python3-dev \
+  cmake g++ git python3 python3-pip python3-dev psmisc \
   libxerces-c3.2 libxerces-c-dev openssl libssl-dev \
   libpq5 libpq-dev locales
 
-COPY requirements.dev.txt /
-COPY requirements.txt /
-
-RUN python3 -m pip install --upgrade pip && \
-  python3 -m pip install -r requirements.dev.txt
-
-# An alternative to the copy would be to clone or download from github
+# An alternative to the copy is to clone from git:
+# RUN git clone https://github.com/frepple/frepple.git frepple
 COPY frepple-*.tar.gz ./
 
 RUN src=`basename --suffix=.tar.gz frepple-*` && \
   tar -xzf *.tar.gz && \
-  rm *.tar.gz *.txt && \
-  mkdir "$src/build" && \
-  cd "$src/build" && \
+  rm *.tar.gz && \
+  cd $src && \
+  python3 -m pip install --upgrade pip && \
+  python3 -m pip install -r requirements.dev.txt && \
+  mkdir build && \
+  cd build && \
   cmake .. && \
   cmake --build . --target package -- -j 2
 
@@ -64,7 +62,7 @@ RUN apt-get -y -q update && \
   apt-get -y -q update && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
   libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 python3-pip postgresql-client-14 \
-  python3-setuptools python3-wheel build-essential python3-dev \
+  python3-setuptools python3-wheel build-essential python3-dev psmisc \
   libpq5 openssl python3-lxml libapache2-mod-xsendfile ssl-cert locales
 
 COPY requirements.txt /

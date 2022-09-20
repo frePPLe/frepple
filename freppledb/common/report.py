@@ -63,7 +63,7 @@ from django.contrib.admin.utils import unquote, quote
 from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
-from django.db.models.fields import CharField, AutoField
+from django.db.models.fields import CharField, AutoField, DateField, DateTimeField
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotFound
@@ -2022,6 +2022,18 @@ class GridReport(View):
                                 formfield_callback=lambda f: (
                                     isinstance(f, RelatedField)
                                     and f.formfield(using=request.database)
+                                )
+                                or (
+                                    isinstance(f, DateTimeField)
+                                    and f.formfield(
+                                        input_formats=settings.DATETIME_INPUT_FORMATS
+                                    )
+                                )
+                                or (
+                                    isinstance(f, DateField)
+                                    and f.formfield(
+                                        input_formats=settings.DATE_INPUT_FORMATS
+                                    )
                                 )
                                 or f.formfield(),
                             )

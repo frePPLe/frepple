@@ -22,7 +22,7 @@ function markMessageRead(el, status) {
   if (el) {
     // Single message update
     var msg = $(el).closest("tr");
-    status = msg.attr("data-status") == "U" ? "R" : "U";    
+    status = msg.attr("data-status") == "U" ? "R" : "U";
   }
   else
     // Update all selected
@@ -30,7 +30,7 @@ function markMessageRead(el, status) {
   msg.each(function() {
     data.push({
        "id": $(this).attr("data-message"),
-       "status": status 
+       "status": status
        });
     });
   $.ajax({

@@ -27,7 +27,7 @@ function enableSave() {
     <div class="col-md-12">
 {% if perms.common.add_comment %}
       <form method="post" enctype="multipart/form-data">{% csrf_token %}
-        <textarea id="comment" name="comment" class="form-control" rows="10" style="width:100%; resize:vertical" oninput="enableSave()"></textarea>                
+        <textarea id="comment" name="comment" class="form-control" rows="10" style="width:100%; resize:vertical" oninput="enableSave()"></textarea>
         <label for="attachment">{% trans "Add an attachment" %}
         <input style="padding-top: 1em; display:inline" type="file" name="attachment" accept="{% setting 'MEDIA_EXTENSIONS' %}" id="attachment" onchange="enableSave()">
         </label>

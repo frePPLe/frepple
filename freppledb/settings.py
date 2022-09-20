@@ -146,7 +146,7 @@ else:
     # All other layout types
     STATIC_ROOT = os.path.normpath(os.path.join(FREPPLE_APP, "static"))
 STATIC_URL = "/static/"
-USE_L10N = True  # Represent data in the local format
+USE_L10N = False  # Represent data in the local format
 USE_I18N = True  # Use translated strings
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 

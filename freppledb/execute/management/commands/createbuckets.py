@@ -301,6 +301,13 @@ class Command(BaseCommand):
     @staticmethod
     def getHTML(request):
         if request.user.has_perm("auth.run_db"):
-            return render_to_string("commands/createbuckets.html", request=request)
+            return render_to_string(
+                "commands/createbuckets.html",
+                {
+                    "startdate": datetime(2017, 1, 1),
+                    "enddate": datetime(2030, 12, 31),
+                },
+                request=request,
+            )
         else:
             return None

@@ -12,6 +12,13 @@ Release notes
 
 - | The minimum PostgreSQL version is now 12.
 
+.. rubric:: User interface
+
+- | The date format is now configurable.
+  | The settings DATE_FORMAT and DATETIME_FORMAT in the djangosettings.py
+    configuration file now control how date formats are displayed in the user
+    interface.
+
 6.25 (2022/09/16)
 ==================
 

@@ -1,15 +1,14 @@
-
 # Uncomment the next line to see the compiler commands
 # set(CMAKE_VERBOSE_MAKEFILE ON)
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/frepple.rc.in"
   "${CMAKE_CURRENT_BINARY_DIR}/frepple.rc"
-  )
+)
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/frepple.ico"
   "${CMAKE_CURRENT_BINARY_DIR}/frepple.ico"
   COPYONLY
-  )
+)
 
 # Auxilary static libraries
 add_library(utils STATIC
@@ -21,7 +20,7 @@ add_library(utils STATIC
   "${CMAKE_SOURCE_DIR}/include/frepple/utils.h"
   "${CMAKE_SOURCE_DIR}/include/frepple/xml.h"
   "${CMAKE_BINARY_DIR}/include/config.h"
-  )
+)
 
 add_library(model STATIC
   "model/actions.cpp"
@@ -56,7 +55,7 @@ add_library(model STATIC
   "model/suboperation.cpp"
   "model/supplier.cpp"
   "${CMAKE_SOURCE_DIR}/include/frepple/model.h"
-  )
+)
 add_dependencies(model utils)
 
 add_library(solver STATIC
@@ -69,7 +68,7 @@ add_library(solver STATIC
   "solver/solverplan.cpp"
   "solver/solverresource.cpp"
   "${CMAKE_SOURCE_DIR}/include/frepple/solver.h"
-  )
+)
 add_dependencies(solver model)
 
 # Main shared library
@@ -77,37 +76,39 @@ add_library(frepple SHARED
   dllmain.cpp
   tags.cpp
   "${CMAKE_CURRENT_BINARY_DIR}/frepple.rc"
-  )
+)
 target_link_libraries(frepple PUBLIC utils)
 target_link_libraries(frepple PUBLIC model)
 target_link_libraries(frepple PUBLIC solver)
 target_link_libraries(frepple PUBLIC xerces-c)
-if (WIN32)
+
+if(WIN32)
   target_link_libraries(frepple PRIVATE ${PYTHON_LIBRARY_RELEASE})
   set_target_properties(frepple PROPERTIES LINK_FLAGS "/ignore:4099")
 else()
   target_link_libraries(frepple PRIVATE ${PYTHON_LIBRARIES})
 endif()
+
 install(
   TARGETS frepple
   DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-  )
+)
 
 # Main executable
-add_executable (frepple-main
+add_executable(frepple-main
   main.cpp
   "${CMAKE_SOURCE_DIR}/include/freppleinterface.h"
   "${CMAKE_CURRENT_BINARY_DIR}/frepple.rc"
-  )
-target_link_libraries (frepple-main LINK_PUBLIC frepple)
+)
+target_link_libraries(frepple-main LINK_PUBLIC frepple)
 set_target_properties(frepple-main PROPERTIES
   OUTPUT_NAME "frepple"
   PDB_NAME_DEBUG "frepple-main"
-  )
+)
 install(
   TARGETS frepple-main
   DESTINATION "${CMAKE_INSTALL_BINDIR}"
-  )
+)
 
 # Put the compiled binaries in the source folder.
 # This violates the out-of-source build principle, and mixes up multi-configuration builds.

@@ -38,6 +38,7 @@ int FlowPlan::initialize() {
   x.setDoc("frePPLe flowplan");
   x.supportgetattro();
   x.supportsetattro();
+  x.supportcreate(create);
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
@@ -436,14 +437,76 @@ Object* FlowPlan::reader(const MetaClass* cat, const DataValueDict& in,
 
   // Find the flow for this item on the operationplan.
   // If multiple exist, we pick up the first one.
-  // If none is found, we throw a data error.
   // TODO detect situations where the flowplan is on an alternate material
   auto flplniter = opplan->getFlowPlans();
   FlowPlan* flpln;
   while ((flpln = flplniter.next())) {
     if (flpln->getItem() == itm) return flpln;
   }
-  return nullptr;
+  auto subopplans = opplan->getSubOperationPlans();
+  OperationPlan* firstChildOpplan = nullptr;
+  while (auto subopplan = subopplans.next()) {
+    if (!firstChildOpplan) firstChildOpplan = subopplan;
+    auto subflplniter = subopplan->getFlowPlans();
+    FlowPlan* subflpln;
+    while ((subflpln = subflplniter.next())) {
+      if (subflpln->getItem() == itm) return subflpln;
+    }
+  }
+
+  // No existing flow is found, create a new one.
+  // TODO code assumes consuming flows
+  if (firstChildOpplan) opplan = firstChildOpplan;
+  auto loc = opplan->getLocation();
+  if (!loc) {
+    loc = opplan->getOperation()->getLocation();
+    if (!loc) return nullptr;
+  }
+  auto buf = Buffer::findOrCreate(itm, loc, opplan->getBatch());
+  auto fl = new FlowStart(opplan->getOperation(), buf, -1);
+  fl->setHidden(true);
+  fl->setEffectiveEnd(Date::infinitePast);
+  return new FlowPlan(opplan, fl);
+}
+
+PyObject* FlowPlan::create(PyTypeObject* pytype, PyObject* args,
+                           PyObject* kwds) {
+  try {
+    // Find or create the C++ object
+    PythonDataValueDict atts(kwds);
+    Object* x = reader(FlowPlan::metadata, atts, nullptr);
+    if (!x) {
+      Py_INCREF(Py_None);
+      return Py_None;
+    }
+    Py_INCREF(x);
+
+    // Iterate over extra keywords, and set attributes.
+    if (x) {
+      PyObject *key, *value;
+      Py_ssize_t pos = 0;
+      while (PyDict_Next(kwds, &pos, &key, &value)) {
+        PythonData field(value);
+        PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+        DataKeyword attr(PyBytes_AsString(key_utf8));
+        Py_DECREF(key_utf8);
+        if (!attr.isA(Tags::operationplan) && !attr.isA(Tags::item)) {
+          const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
+          if (!fmeta && x->getType().category)
+            fmeta = x->getType().category->findField(attr.getHash());
+          if (fmeta)
+            // Update the attribute
+            fmeta->setField(x, field);
+          else
+            x->setProperty(attr.getName(), value);
+        }
+      };
+    }
+    return x;
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
 }
 
 Duration FlowPlan::getPeriodOfCover() const {

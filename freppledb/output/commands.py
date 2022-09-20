@@ -907,7 +907,7 @@ class ExportOperationPlanMaterials(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ:
+        if "supply" in os.environ or kwargs.get("exportstatic", False):
             return 1
         else:
             return -1
@@ -1107,7 +1107,7 @@ class ExportOperationPlanResources(PlanTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        if "supply" in os.environ:
+        if "supply" in os.environ or kwargs.get("exportstatic", False):
             return 1
         else:
             return -1

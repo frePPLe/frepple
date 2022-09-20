@@ -86,7 +86,7 @@ $(function() {
       success: function(data) {
       	if (data.status == "ok") {
           $("#reportmanager_save").addClass("btn-primary").removeClass("btn-danger");
-          window.location.href = window.location.href;
+          window.location.href = url_prefix + "/reportmanager/" + data.id + '/';
         }
       	else {
           $("#workarea").prepend(
@@ -164,7 +164,7 @@ $(function() {
 {% if perms.reportmanager.change_sqlreport %}
 <div id="editbuttons" class="col-md-5{% if report %} hidden{% endif %}">
 <button id="reportmanager_save" class="btn btn-primary">{% trans "save"|capfirst %}</button>
-<button id="reportmanager_format" class="btn btn-primary">{% trans "format"|capfirst %}</button>
+<button id="reportmanager_format" class="btn btn-primary">{% trans "format SQL query"|capfirst %}</button>
 {% if report %}<button id="reportmanager_delete" class="btn btn-primary">{% trans "Delete" %}</button>{% endif %}
 </div>
 {% endif %}

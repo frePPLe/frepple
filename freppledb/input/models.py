@@ -1470,8 +1470,8 @@ class ItemDistribution(AuditModel):
     location = models.ForeignKey(
         Location,
         verbose_name=_("location"),
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         db_index=True,
         related_name="itemdistributions_destination",
         on_delete=models.CASCADE,

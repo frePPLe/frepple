@@ -2162,7 +2162,7 @@ class loadOperationPlanMaterials(LoadTask):
                 cursor.execute(
                     """
                     select
-                    operationplan_id, opplanmat.item_id, opplanmat.location_id,
+                    operationplan_id, opplanmat.item_id,
                     coalesce(opplanmat.status, 'confirmed'), opplanmat.quantity,
                     opplanmat.flowdate
                     from operationplanmaterial as opplanmat
@@ -2182,19 +2182,12 @@ class loadOperationPlanMaterials(LoadTask):
                 for i in cursor:
                     cnt += 1
                     try:
-                        opplan = frepple.operationplan(id=i[0])
-                        # Logic doesn't allow switching to an alternate material
-                        for fl in opplan.flowplans:
-                            if (
-                                fl.buffer.item
-                                and fl.buffer.item.name == i[1]
-                                and fl.buffer.location
-                                and fl.buffer.location.name == i[2]
-                            ):
-                                fl.status = i[3]
-                                if i[3] == "confirmed":
-                                    fl.quantity = i[4]
-                                break
+                        frepple.flowplan(
+                            operationplan=frepple.operationplan(id=i[0]),
+                            item=frepple.item(name=i[1]),
+                            status=i[2],
+                            quantity=i[3],
+                        )
                     except Exception as e:
                         logger.error("**** %s ****" % e)
                 logger.info(

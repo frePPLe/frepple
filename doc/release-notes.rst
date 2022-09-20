@@ -1,25 +1,19 @@
 Release notes
 -------------
 
-Moving towards 7.0.0
-====================
+7.0 (Upcoming)
+==============
 
-While we continue the more-or-less monthly release cycle on v6, v7 is gradually
-appearing on the radar.
+.. rubric:: Software stack
 
-The main target is to refresh the component stack:
+- | Support for Ubuntu 18 is dropped.
+  | The frepple team will only support Ubuntu 20. Use a Docker container
+    to run on other platforms.
 
-- The preferred linux distribution will move from Ubuntu 18 LTS to Ubuntu 20 LTS.
-- Minimum Python version will move from 3.6 to 3.8.
-- Minimum PostgreSQL version will move from 9.5 to 12.
-- Django version will move from 2.2 LTS to 3.2 LTS.
-- The required Python and Javascript third party components will be upgraded as well.
+- | The minimum PostgreSQL version is now 12.
 
-These changes will be made gradual over a couple of releases. For instance, from
-6.20.0 onwards frepple supports both Ubuntu 18 as well as Ubuntu 20.
-
-6.25 (Upcoming)
-===============
+6.25 (2022/09/16)
+==================
 
 .. rubric:: Production planning
 
@@ -54,10 +48,25 @@ These changes will be made gradual over a couple of releases. For instance, from
   | The corner cases where this potentially happens have confirmed purchase orders
     within the autofence window of safety stock shortfalls.
 
+- | Bug fix: Bucketized resources didn't handle the parameter allowsplits=false
+    correctly.
+  | Thanks to kobsam from a nice open source contribution!
+
 .. rubric:: Odoo integration
 
 - | v14 & 15: Products of type "consumable" are no longer interfaced to frepple.
     These are assumed not be of interest for planning.
+  | Variant management. The connectors are now managing the variants.
+    The BOMs are correctly reflecting the "Apply on variants" field.
+
+- | v12, v14 & v15: Variant management. The connectors are now managing the variants.
+    The BOMs are correctly reflecting the "Apply on variants" field.
+
+- | v14 & v15: Material consumption of a manufacturing order level are now
+    included in the interface.
+  | These can deviate from the material consumption defined in the bill of material:
+    e.g. when the bill of material is changed, or when the user manually edited the
+    materials on the manufacturing order.
 
 - | v14: Bug fix for mapping odoo reorderpoints to frepple.
 

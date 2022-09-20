@@ -33,6 +33,7 @@ const MetaClass *BufferDefault::metadata, *BufferInfinite::metadata,
 const double Buffer::default_max = 1e37;
 OperationFixedTime* Buffer::uninitializedProducing = nullptr;
 Duration OperationDelivery::deliveryduration = 0L;
+std::set<string> flowplansUsed = {};
 
 int Buffer::initialize() {
   // Initialize the metadata
@@ -553,34 +554,60 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
       }
     } else {
       // CASE 1B: Produced too much already: move backward
-      while (f != getFlowPlans().end() &&
-             ((f->getQuantity() <= 0 && f->getCumulativeProduced() > endQty) ||
-              (f->getQuantity() > 0 &&
-               f->getCumulativeProduced() - f->getQuantity() > endQty)))
-        --f;
-      while (f != getFlowPlans().end() &&
-             f->getCumulativeProduced() > startQty) {
-        if (f->getQuantity() > ROUNDING_ERROR) {
-          double newqty = f->getQuantity();
-          double newoffset = 0.0;
-          if (f->getCumulativeProduced() - f->getQuantity() < startQty) {
-            newoffset =
-                startQty - (f->getCumulativeProduced() - f->getQuantity());
-            newqty -= newoffset;
+      if (false) {
+        while (
+            f != getFlowPlans().end() &&
+            ((f->getQuantity() <= 0 && f->getCumulativeProduced() > endQty) ||
+             (f->getQuantity() > 0 &&
+              f->getCumulativeProduced() - f->getQuantity() > endQty)))
+          --f;
+        while (f != getFlowPlans().end() &&
+               f->getCumulativeProduced() > startQty) {
+          if (f->getQuantity() > ROUNDING_ERROR) {
+            double newqty = f->getQuantity();
+            double newoffset = 0.0;
+            if (f->getCumulativeProduced() - f->getQuantity() < startQty) {
+              newoffset =
+                  startQty - (f->getCumulativeProduced() - f->getQuantity());
+              newqty -= newoffset;
+            }
+            if (f->getCumulativeProduced() > endQty)
+              newqty -= f->getCumulativeProduced() - endQty;
+            OperationPlan* opplan =
+                dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
+            OperationPlan* topopplan = opplan->getTopOwner();
+            if (topopplan->getOperation()->hasType<OperationSplit>())
+              topopplan = opplan;
+            iter.updateStack(
+                topopplan, topopplan->getQuantity() * newqty / f->getQuantity(),
+                topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
+                curflowplan->getDate() - f->getDate());
           }
-          if (f->getCumulativeProduced() > endQty)
-            newqty -= f->getCumulativeProduced() - endQty;
-          OperationPlan* opplan =
-              dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
-          OperationPlan* topopplan = opplan->getTopOwner();
-          if (topopplan->getOperation()->hasType<OperationSplit>())
-            topopplan = opplan;
-          iter.updateStack(
-              topopplan, topopplan->getQuantity() * newqty / f->getQuantity(),
-              topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
-              curflowplan->getDate() - f->getDate());
+          --f;
         }
-        --f;
+      } else {
+        // MY THING
+        for (auto flow = getFlowPlans().begin(); flow != getFlowPlans().end();
+             flow++) {
+          std::set<std::string>::iterator it =
+              flowplansUsed.find(flow->getOperationPlan()->getReference());
+          if (flow->getOperationPlan()->getOrderType() == "MO" &&
+              flow->getOperationPlan()->getQuantity() >
+                  fabs(curflowplan->getQuantity()) - ROUNDING_ERROR &&
+              flow->getOperationPlan()->getQuantity() <
+                  fabs(curflowplan->getQuantity()) + ROUNDING_ERROR &&
+              it == flowplansUsed.end() && flow->getOperationPlan()->getStatus() != "confirmed") {
+
+            flowplansUsed.insert(flow->getOperationPlan()->getReference());
+
+            OperationPlan* opplan =
+                dynamic_cast<FlowPlan*>(&(*flow))->getOperationPlan();
+
+            iter.updateStack(opplan, opplan->getQuantity(), 0, lvl,
+                             curflowplan->getDate() - f->getDate());
+            break;
+          }
+        }
       }
     }
     return;

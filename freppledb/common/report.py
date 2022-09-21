@@ -91,6 +91,7 @@ from freppledb.common.models import (
     NotificationFactory,
 )
 from freppledb.common.dataload import parseExcelWorksheet, parseCSVdata
+from freppledb.common.localization import parseLocalizedDate, parseLocalizedDateTime
 
 
 logger = logging.getLogger(__name__)
@@ -2498,6 +2499,14 @@ class GridReport(View):
             return ~models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
             )
+        elif isinstance(reportrow, GridFieldDateTime):
+            return ~models.Q(
+                **{"%s__exact" % reportrow.field_name: parseLocalizedDateTime(data)}
+            )
+        elif isinstance(reportrow, GridFieldDate):
+            return ~models.Q(
+                **{"%s__exact" % reportrow.field_name: parseLocalizedDate(data)}
+            )
         else:
             return ~models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
@@ -2609,6 +2618,14 @@ class GridReport(View):
             return models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
             )
+        elif isinstance(reportrow, GridFieldDateTime):
+            return models.Q(
+                **{"%s__exact" % reportrow.field_name: parseLocalizedDateTime(data)}
+            )
+        elif isinstance(reportrow, GridFieldDate):
+            return models.Q(
+                **{"%s__exact" % reportrow.field_name: parseLocalizedDate(data)}
+            )
         else:
             return models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
@@ -2633,18 +2650,34 @@ class GridReport(View):
 
     @staticmethod
     def _filter_gt(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+        if isinstance(reportrow, GridFieldDateTime):
+            data = parseLocalizedDateTime(data)
+        elif isinstance(reportrow, GridFieldDate):
+            data = parseLocalizedDate(data)
         return models.Q(**{"%s__gt" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
     def _filter_gte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+        if isinstance(reportrow, GridFieldDateTime):
+            data = parseLocalizedDateTime(data)
+        elif isinstance(reportrow, GridFieldDate):
+            data = parseLocalizedDate(data)
         return models.Q(**{"%s__gte" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
     def _filter_lt(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+        if isinstance(reportrow, GridFieldDateTime):
+            data = parseLocalizedDateTime(data)
+        elif isinstance(reportrow, GridFieldDate):
+            data = parseLocalizedDate(data)
         return models.Q(**{"%s__lt" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
     def _filter_lte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+        if isinstance(reportrow, GridFieldDateTime):
+            data = parseLocalizedDateTime(data)
+        elif isinstance(reportrow, GridFieldDate):
+            data = parseLocalizedDate(data)
         return models.Q(**{"%s__lte" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod

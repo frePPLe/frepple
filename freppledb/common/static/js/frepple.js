@@ -1111,16 +1111,10 @@ var grid = {
     };
 
     if (colmodel.formatter == 'date') {
-      if (colmodel.formatoptions['srcformat'] == "Y-m-d")
-        $(document.getElementById(iRow + '_' + cellname)).on('focusin', function () {
-          $(this).parent().css({ 'position': 'relative', 'overflow': 'visible' });
-          $(this).datetimepicker({ format: dateformat, useCurrent: false, calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang, widgetPositioning: { horizontal: 'auto', vertical: (iRow < 11 ? 'bottom' : 'auto') } });
-        });
-      else
-        $(document.getElementById(iRow + '_' + cellname)).on('focusin', function () {
-          $(this).parent().css({ 'position': 'relative', 'overflow': 'visible' });
-          $(this).datetimepicker({ format: datetimeformat, useCurrent: false, calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang, widgetPositioning: { horizontal: 'auto', vertical: (iRow < 11 ? 'bottom' : 'auto') } });
-        });
+      $(document.getElementById(iRow + '_' + cellname)).on('focusin', function () {
+        $(this).parent().css({ 'position': 'relative', 'overflow': 'visible' });
+        $(this).datetimepicker({ format: dateformat, useCurrent: false, calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang, widgetPositioning: { horizontal: 'auto', vertical: (iRow < 11 ? 'bottom' : 'auto') } });
+      });
     }
     else
       $(document.getElementById(iRow + '_' + cellname)).trigger("select");

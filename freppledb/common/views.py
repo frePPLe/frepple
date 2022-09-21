@@ -314,8 +314,12 @@ class HorizonForm(forms.Form):
     horizonbuckets = forms.ModelChoiceField(
         queryset=Bucket.objects.all().values_list("name", flat=True)
     )
-    horizonstart = forms.DateField(required=False)
-    horizonend = forms.DateField(required=False)
+    horizonstart = forms.DateField(
+        required=False, input_formats=settings.DATE_INPUT_FORMATS
+    )
+    horizonend = forms.DateField(
+        required=False, input_formats=settings.DATE_INPUT_FORMATS
+    )
     horizontype = forms.ChoiceField(choices=(("1", "1"), ("0", "0")))
     horizonbefore = forms.IntegerField(required=False, min_value=0)
     horizonlength = forms.IntegerField(required=False, min_value=1)

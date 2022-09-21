@@ -349,7 +349,10 @@ class GridField:
 
 class GridFieldDateTime(GridField):
     formatter = "date"
-    extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
+    extra = (
+        '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s"}'
+        % settings.DATETIME_FORMAT
+    )
     searchoptions = (
         '{"sopt":["eq","ne","lt","le","gt","ge","win","isnull"],"searchhidden": true}'
     )
@@ -364,7 +367,9 @@ class GridFieldTime(GridField):
 
 class GridFieldDate(GridField):
     formatter = "date"
-    extra = '"formatoptions":{"srcformat":"Y-m-d","newformat":"Y-m-d"}'
+    extra = (
+        '"formatoptions":{"srcformat":"Y-m-d","newformat":"%s"}' % settings.DATE_FORMAT
+    )
     searchoptions = '{"sopt":["eq","ne","lt","le","gt","ge","win"],"searchhidden":true}'
     width = 140
 

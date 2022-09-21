@@ -1114,12 +1114,12 @@ var grid = {
       if (colmodel.formatoptions['srcformat'] == "Y-m-d")
         $(document.getElementById(iRow + '_' + cellname)).on('focusin', function () {
           $(this).parent().css({ 'position': 'relative', 'overflow': 'visible' });
-          $(this).datetimepicker({ format: 'YYYY-MM-DD', useCurrent: false, calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang, widgetPositioning: { horizontal: 'auto', vertical: (iRow < 11 ? 'bottom' : 'auto') } });
+          $(this).datetimepicker({ format: dateformat, useCurrent: false, calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang, widgetPositioning: { horizontal: 'auto', vertical: (iRow < 11 ? 'bottom' : 'auto') } });
         });
       else
         $(document.getElementById(iRow + '_' + cellname)).on('focusin', function () {
           $(this).parent().css({ 'position': 'relative', 'overflow': 'visible' });
-          $(this).datetimepicker({ format: 'YYYY-MM-DD HH:mm:ss', useCurrent: false, calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang, widgetPositioning: { horizontal: 'auto', vertical: (iRow < 11 ? 'bottom' : 'auto') } });
+          $(this).datetimepicker({ format: datetimeformat, useCurrent: false, calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang, widgetPositioning: { horizontal: 'auto', vertical: (iRow < 11 ? 'bottom' : 'auto') } });
         });
     }
     else
@@ -1491,13 +1491,13 @@ var grid = {
       close: 'fa fa-remove'
     };
     $("#horizonstart").parent().datetimepicker({
-      format: 'YYYY-MM-DD',
+      format: dateformat,
       calendarWeeks: true,
       icons: iconslist,
       locale: document.documentElement.lang
     });
     $("#horizonend").parent().datetimepicker({
-      format: 'YYYY-MM-DD',
+      format: dateformat,
       calendarWeeks: true,
       icons: iconslist,
       locale: document.documentElement.lang

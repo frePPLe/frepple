@@ -22,6 +22,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from django.utils.formats import date_format
 from django.template.loader import render_to_string
 
 from freppledb.common.middleware import _thread_locals
@@ -44,10 +45,14 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--start", default="2017-1-1", help="Start date in YYYY-MM-DD format"
+            "--start",
+            default=date_format(date(2017, 1, 1), format="DATE_FORMAT", use_l10n=False),
+            help="Start date in %s format" % settings.DATE_FORMAT,
         )
         parser.add_argument(
-            "--end", default="2030-1-1", help="End date in YYYY-MM-DD format"
+            "--end",
+            default=date_format(date(2030, 1, 1), format="DATE_FORMAT", use_l10n=False),
+            help="End date in %s format" % settings.DATE_FORMAT,
         )
         parser.add_argument(
             "--weekstart",
@@ -162,10 +167,12 @@ class Command(BaseCommand):
 
             # Validate the date arguments
             try:
-                curdate = datetime.strptime(start, "%Y-%m-%d")
-                enddate = datetime.strptime(end, "%Y-%m-%d")
+                curdate = datetime.strptime(start, settings.DATE_INPUT_FORMATS[0])
+                enddate = datetime.strptime(end, settings.DATE_INPUT_FORMATS[0])
             except Exception as e:
-                raise CommandError("Date is not matching format YYYY-MM-DD")
+                raise CommandError(
+                    "Date is not matching format %s" % settings.DATE_INPUT_FORMATS[0]
+                )
 
             with transaction.atomic(using=database, savepoint=False):
                 # Delete previous contents

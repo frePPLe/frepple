@@ -222,6 +222,43 @@ except:
 if not hasattr(sys, "argv") or "test" in sys.argv:
     TIME_ZONE = "UTC"
 
+# Date and time formats
+# We provide 3 main options, but you add your own:
+#  - Year-month-day, international format, default
+#  - month-day-year, US format
+#  - day-month-year, European format
+
+# Option 1: International style, default
+DATE_FORMAT = "Y|m|d"  # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+DATETIME_FORMAT = "Y|m|d H:i:s"  # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+DATE_FORMAT_JS = "YYYY|MM|DD"  # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
+DATE_INPUT_FORMATS = [
+    # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+    "%Y|%m|%d",  # '2006-10-25'
+    "%m/%d/%Y",  # '10/25/2006'
+    "%m/%d/%y",  # '10/25/06'
+    "%b %d %Y",  # 'Oct 25 2006'
+    "%b %d, %Y",  # 'Oct 25, 2006'
+    "%d %b %Y",  # '25 Oct 2006'
+    "%d %b %Y",  #  '25 Oct, 2006'
+    "%B %d %Y",  # 'October 25 2006'
+    "%B %d, %Y",  # 'October 25, 2006'
+    "%d %B %Y",  # '25 October 2006'
+    "%d %B, %Y",  # '25 October, 2006'
+]
+DATETIME_INPUT_FORMATS = [
+    # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+    "%Y|%m|%d %H:%M:%S",  # '2006-10-25 14:30:59'
+    "%Y-%m-%d %H:%M:%S.%f",  # '2006-10-25 14:30:59.000200'
+    "%Y-%m-%d %H:%M",  # '2006-10-25 14:30'
+    "%m/%d/%Y %H:%M:%S",  # '10/25/2006 14:30:59'
+    "%m/%d/%Y %H:%M:%S.%f",  # '10/25/2006 14:30:59.000200'
+    "%m/%d/%Y %H:%M",  # '10/25/2006 14:30'
+    "%m/%d/%y %H:%M:%S",  # '10/25/06 14:30:59'
+    "%m/%d/%y %H:%M:%S.%f",  # '10/25/06 14:30:59.000200'
+    "%m/%d/%y %H:%M",  # '10/25/06 14:30'
+]
+
 # Supported language codes, sorted by language code.
 # Language names and codes should match the ones in Django.
 # You can see the list supported by Django at:

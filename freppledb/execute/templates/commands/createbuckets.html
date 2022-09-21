@@ -91,7 +91,7 @@ $(function() {
   // Date picker
   $(".vDateField").on('focusin', function() {
     $(this).parent().css('position', 'relative');
-    $(this).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang});
+    $(this).datetimepicker({format: dateformat, calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang});
   });
 
   $("#weekstartul li a").click(function(){

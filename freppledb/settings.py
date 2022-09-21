@@ -146,14 +146,14 @@ else:
     # All other layout types
     STATIC_ROOT = os.path.normpath(os.path.join(FREPPLE_APP, "static"))
 STATIC_URL = "/static/"
-USE_L10N = False  # Represent data in the local format
+USE_L10N = False  # No automatic localization
 USE_I18N = True  # Use translated strings
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # A boolean that specifies if datetimes will be timezone-aware by default or not.
 # If this is set to True, we will use timezone-aware datetimes internally.
 # Otherwise, we use naive datetimes in local time.
-USE_TZ = False  # TODO Test with this parameter set to True
+USE_TZ = False
 
 # Clickjacking security http headers
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options

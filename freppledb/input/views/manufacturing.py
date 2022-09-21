@@ -796,7 +796,6 @@ class CalendarDetail(GridReport):
         # Build up event list
         events = []
         curDate = request.report_startdate
-        prevDate = request.report_startdate
         curBucket = reportclass.findBucket(curDate, buckets)
         curPriority = curBucket.priority if curBucket else maxsize
         lastPriority = curPriority

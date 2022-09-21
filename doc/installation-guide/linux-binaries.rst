@@ -151,11 +151,14 @@ Here are the steps to get a fully working environment.
 
    #. **/etc/frepple/djangosettings.py**
 
-      | Edit the "TIMEZONE" variable to your local setting:
+      | Edit the "TIME_ZONE" variable if required. By default, the server time zone
+        (where frepple is installed) will be used for both the database and the server.
+        It's however possible to override this setting with a different time zone 
+        by uncommenting following line and setting desired time zone.
 
       ::
 
-          TIME_ZONE = 'Europe/Brussels'
+          # TIME_ZONE = 'Europe/Brussels'
 
       Edit the "DATABASES" with your database parameters. Make sure the
       settings match the connection and authentication configured in the

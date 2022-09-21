@@ -74,7 +74,7 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str, force_str
 from django.utils.html import escape
 from django.utils.translation import gettext as _
-from django.utils.formats import get_format
+from django.utils.formats import get_format, date_format
 from django.utils.text import capfirst, get_text_list, format_lazy
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
@@ -636,18 +636,16 @@ class GridReport(View):
 
     @classmethod
     def _localize(cls, value, decimal_separator):
-        """
-        Localize numbers.
-        Dates are always represented as YYYY-MM-DD hh:mm:ss since this is
-        a format that is understood uniformly across different regions in the
-        world.
-        """
         if callable(value):
             value = value()
         if isinstance(value, numericTypes):
             return (
                 decimal_separator == "," and str(value).replace(".", ",") or str(value)
             )
+        elif isinstance(value, datetime):
+            return date_format(value, format="DATETIME_FORMAT", use_l10n=False)
+        elif isinstance(value, date):
+            return date_format(value, format="DATE_FORMAT", use_l10n=False)
         elif isinstance(value, timedelta):
             return _parseSeconds(value)
         elif isinstance(value, (list, tuple)):
@@ -2795,6 +2793,7 @@ class GridReport(View):
         "ico": "ico",
         "isnull": "isnull",
         # 'win' exist in jqgrid, but not in django
+        # 'ne' exist in jqgrid, but not in django
     }
 
     @classmethod

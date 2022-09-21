@@ -29,6 +29,7 @@ from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import Bucket, BucketDetail
 from freppledb.execute.models import Task
 from freppledb.common.models import User
+from freppledb.common.localization import parseLocalizedDateTime
 from freppledb import __version__
 
 
@@ -167,8 +168,8 @@ class Command(BaseCommand):
 
             # Validate the date arguments
             try:
-                curdate = datetime.strptime(start, settings.DATE_INPUT_FORMATS[0])
-                enddate = datetime.strptime(end, settings.DATE_INPUT_FORMATS[0])
+                curdate = parseLocalizedDateTime(start)
+                enddate = parseLocalizedDateTime(end)
             except Exception as e:
                 raise CommandError(
                     "Date is not matching format %s" % settings.DATE_INPUT_FORMATS[0]

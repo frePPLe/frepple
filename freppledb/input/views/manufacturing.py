@@ -1864,12 +1864,14 @@ class ManufacturingOrderList(OperationPlanMixin):
         GridFieldDateTime(
             "startdate",
             title=_("start date"),
-            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"',
+            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s", "defaultValue":""}, "summaryType":"min"'
+            % settings.DATETIME_FORMAT,
         ),
         GridFieldDateTime(
             "enddate",
             title=_("end date"),
-            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"',
+            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s", "defaultValue":""}, "summaryType":"max"'
+            % settings.DATETIME_FORMAT,
         ),
         GridFieldDuration(
             "opplan_duration",

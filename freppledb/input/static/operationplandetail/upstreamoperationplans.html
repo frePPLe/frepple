@@ -30,22 +30,22 @@
   <span class="fa fa-caret-right"></span></a></td>
 <td data-ng-if="peg[2] == 'STCK'">{{peg[1]}}</td>
 
-<td>{{peg[2]}}</td>   
+<td>{{peg[2]}}</td>
 
 <td data-ng-if="peg[2] == 'MO'">{{peg[3]}}<a href="/detail/input/operation/key/" role="input/operation" onclick="opendetail(event)">
-  <span class="fa fa-caret-right"></span></a></td>  
+  <span class="fa fa-caret-right"></span></a></td>
 <td data-ng-if="peg[2] != 'MO'">{{peg[3]}}</td>
-  
+
 <td>{{peg[4]}}</td>
 
 <td>{{peg[5]}}<a href="/detail/input/item/key/" role="input/item" onclick="opendetail(event)">
   <span class="fa fa-caret-right"></span></a></td>
-    
+
 <td>{{peg[6]}}<a href="/detail/input/location/key/" role="input/location" onclick="opendetail(event)">
   <span class="fa fa-caret-right"></span></a></td>
-    
-<td>{{peg[7]}}</td>  
-<td>{{peg[8]}}</td>  
+
+<td>{{peg[7]|formatdatetime}}</td>
+<td>{{peg[8]|formatdatetime}}</td>
 <td>{{peg[9]}}</td>
 </tr>
 </tbody>

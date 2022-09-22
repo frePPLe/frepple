@@ -402,7 +402,10 @@ class GridFieldBool(GridField):
 
 class GridFieldLastModified(GridField):
     formatter = "date"
-    extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
+    extra = (
+        '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s"}'
+        % settings.DATETIME_FORMAT
+    )
     searchoptions = '{"sopt":["em","nm","in","ni","eq","bw","ew","bn","nc","en","win"],"searchhidden":true}'
     title = _("last modified")
     editable = False

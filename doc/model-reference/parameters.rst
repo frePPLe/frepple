@@ -16,19 +16,19 @@ application.
 ============================ =======================================================================
 Parameter                    Description
 ============================ =======================================================================
-allowsplits                  | When set to true (default value), a sales order or forecast is
+allowsplits                  | When set to true, a sales order or forecast is
                                allowed to be planned in multiple manufacturing orders. An order of
                                eg 100 pieces can be planned with 2 manufacturing of 50 pieces.
-                             | When the parameter is set to false, this splitting is disabled. This
-                               will result in a plan with less manufacturing orders. The plan 
-                               generation will be considerably faster, but can have additional 
+                             | When the parameter is set to false (default value), this splitting is disabled. This
+                               will result in a plan with less manufacturing orders. The plan
+                               generation will be considerably faster, but can have additional
                                delivery delays of the customer orders and forecasts.
 currentdate                  | Current date of the plan, preferred format is YYYY-MM-DD HH:MM:SS
                                but most known formats to represent a date and/or time are accepted.
-                             | When the parameter is set to "today", we use today 00:00 / midnight 
+                             | When the parameter is set to "today", we use today 00:00 / midnight
                                as the currrent date.
                              | When the parameter is set to "now", we use the system time as current date.
-                             | If the parameter is missing, empty or has an uncognized format, the system 
+                             | If the parameter is missing, empty or has an uncognized format, the system
                                time is also used as current date.
 currency                     | Currency symbol.
                              | This parameter may be only set on the default database and will be
@@ -40,21 +40,21 @@ currency                     | Currency symbol.
 loading_time_units           | Time units to be used for the resource report.
                              | Accepted values are: hours, days, weeks.
 plan.administrativeLeadtime  | Specifies an administrative lead time in days.
-                             | FrePPLe will plan the sales orders this amount of time ahead of their 
+                             | FrePPLe will plan the sales orders this amount of time ahead of their
                                due date. This creates extra safety in the delivery schedule and also
                                moves all material and capacity needs early.
                              | Default value: 0 days
                              | Accepted values : Any positive decimal number.
-plan.autoFenceOperations     | The number of days the solver should wait for a confirmed 
-                               replenishment before generating a proposed order. 
+plan.autoFenceOperations     | The number of days the solver should wait for a confirmed
+                               replenishment before generating a proposed order.
                              | Default: 999 (wait indefinitely)
                              | Default before release 5.0.0: 0 (don't wait)
 plan.individualPoolResources | Defines the behavior of aggregate resource.
-                             
+
                              | A operation-resource record with quantity N for an aggregate resource
                                can mean either:
                              | - Find a member resource with size N. Value false, default.
-                             | - Find N member resources of size 1. Value true.                        
+                             | - Find N member resources of size 1. Value true.
 plan.calendar                | Name of a calendar to align the end date of new manufacturing orders,
                                purchase orders, distribution orders and delivery orders with.
                              | When this parameter is used, the plan results are effectively grouped
@@ -65,11 +65,11 @@ plan.calendar                | Name of a calendar to align the end date of new m
 plan.loglevel                | Controls the verbosity of the planning log file.
                              | Accepted values are 0 (silent – default), 1 (minimal) and 2 (verbose).
 plan.minimumdelay            | Specifies a minimum delay the algorithm applies when the requested
-                               date isn't feasible.                            
+                               date isn't feasible.
                              | The default value is 3600. This value should only be changed when the
                                planning run is taking a long time and the log file shows that demands
                                take many iterations to be planned - where the requested delivery
-                               date for each iteration is advancing only in tiny increments.              
+                               date for each iteration is advancing only in tiny increments.
 plan.planSafetyStockFirst    | Controls whether safety stock is planned before or after the demand.
                              | Accepted values are false (default) and true.
 plan.rotateResources         | When set to true, the algorithm will better distribute
@@ -77,34 +77,34 @@ plan.rotateResources         | When set to true, the algorithm will better distr
                                the preferred operation.
 plan.webservice              | Specifies whether we keep the plan in memory as a web service for
                                quick incremental planning. This functionality is only available in
-                               the Enterprise and Cloud Editions. 
+                               the Enterprise and Cloud Editions.
                              | Accepted values are false and true (default).
-COMPLETED.consume_material   | Determines whether completed manufacturing orders consume material 
+COMPLETED.consume_material   | Determines whether completed manufacturing orders consume material
                                or not.
                              | Default is true.
 COMPLETED.allow_future       | We assume that completed operations are always ending in the past.
                                The planning engine will automatically adjust the end date to enforce
                                this rule, unless this parameter is set to true.
-                             | Default is false.                            
-WIP.consume_material         | Determines whether confirmed manufacturing orders consume material 
+                             | Default is false.
+WIP.consume_material         | Determines whether confirmed manufacturing orders consume material
                                or not.
                              | Default is true.
-WIP.consume_capacity         | Determines whether confirmed manufacturing orders, purchase orders 
+WIP.consume_capacity         | Determines whether confirmed manufacturing orders, purchase orders
                                and distribution orders consume capacity or not.
                              | Default is true.
 WIP.produce_full_quantity    | Controls how material is produced from partially completed
                                manufacturing orders.
                              | When set to "false" (the default) a partially completed manufacturing
                                order is producing only the remaining quantity of material. We assume
-                               that the on hand inventory has already been incremented to reflect 
+                               that the on hand inventory has already been incremented to reflect
                                the produced material.
-                             | When set to "true" a partially completed manufacturing ordre will 
+                             | When set to "true" a partially completed manufacturing ordre will
                                still produce the full quantity of the material. We assume that the
-                               produced material will only be booked as inventory when the 
+                               produced material will only be booked as inventory when the
                                manufacturing order is fully finished.
 ============================ =======================================================================
 
-**Demand forecasting parameters** 
+**Demand forecasting parameters**
 
 The recommended default parameters for the demand forecasting module are different for weekly and
 monthly time buckets. The datasets parameters_month_forecast and parameters_week_forecast allow
@@ -121,7 +121,7 @@ forecast.Croston_minAlfa                             Minimum parameter for the C
 forecast.Croston_minIntermittence                    Minimum intermittence (defined as the percentage of zero demand buckets)
                                                      before the Croston method is applied.
 forecast.DeadAfterInactivity                         Number of days of inactivity before a forecast is marked dead and it's
-                                                     baseline forecast will be 0. Default is 365.                            
+                                                     baseline forecast will be 0. Default is 365.
 forecast.DoubleExponential_dampenTrend               Dampening factor applied to the trend in future periods.
 forecast.DoubleExponential_initialAlfa               Initial smoothing constant.
 forecast.DoubleExponential_initialGamma              Initial trend smoothing constant.
@@ -173,12 +173,12 @@ forecast.Skip                                        Specifies the number of tim
 forecast.SmapeAlfa                                   Specifies how the sMAPE forecast error is weighted for different
                                                      time buckets.
 ==================================================== ===========================================================================
-                                      
-**Inventory planning parameters** 
+
+**Inventory planning parameters**
 
 ==================================================== ===========================================================================
 Parameter                                            Description
-==================================================== ===========================================================================    
+==================================================== ===========================================================================
 inventoryplanning.average_window_duration            | The number of days used to average the demand to limit reorder quantity
                                                        and safety stock variability over periods.
                                                      | Default value : 180
@@ -200,22 +200,21 @@ inventoryplanning.service_level_on_average_inventory | Flag whether the service 
                                                        on the safety stock.
                                                      | Default value: false
 ==================================================== ===========================================================================
-                                      
-**Inventory rebalancing parameters** 
+
+**Inventory rebalancing parameters**
 
 ==================================================== ===========================================================================
 Parameter                                            Description
-==================================================== ===========================================================================    
+==================================================== ===========================================================================
 inventoryplanning.rebalancing_burnout_threshold      | The minimum time to burn up excess inventory (compared to forecast) that
-                                                       can be rebalanced (in days). If the burn out period (Excess Quantity / 
+                                                       can be rebalanced (in days). If the burn out period (Excess Quantity /
                                                        Forecast) is less than the threshold, the rebalancing will not occur.
                                                      | Default value: 60
 inventoryplanning.rebalancing_part_cost_threshold    | The minimum part cost threshold used to trigger a rebalancing. Parts with
                                                        a cost below the threshold will not be rebalanced.
                                                      | Default value: 100000
-inventoryplanning.rebalancing_total_cost_threshold   | The minimum total cost threshold to trigger a rebalancing (equals to 
+inventoryplanning.rebalancing_total_cost_threshold   | The minimum total cost threshold to trigger a rebalancing (equals to
                                                        rebalanced qty multiplied by item cost). Rebalancing requests with total
                                                        cost below the threshold will not be created.
                                                      | Default value: 1000000
 ==================================================== ===========================================================================
-                                                     

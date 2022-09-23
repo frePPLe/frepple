@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  Copyright (C) 2007-2013 by frePPLe bv
 
@@ -15,7 +15,7 @@
  You should have received a copy of the GNU Affero General Public
  License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema' elementFormDefault="unqualified" attributeFormDefault="unqualified">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified">
 
   <!-- ACTION -->
   <xsd:simpleType name="action">
@@ -61,7 +61,7 @@
 
   <xsd:simpleType name="non-empty-string">
     <xsd:restriction base="xsd:normalizedString">
-      <xsd:minLength value="1"/>
+      <xsd:minLength value="1" />
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -250,8 +250,7 @@
 
   <xsd:complexType name="operation_fixed_time">
     <xsd:complexContent>
-      <xsd:extension base="operation">
-      </xsd:extension>
+      <xsd:extension base="operation"></xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
@@ -586,7 +585,7 @@
       <xsd:element name="constrained" type="xsd:boolean" />
       <xsd:element name="detectproblems" type="xsd:boolean" />
       <xsd:element name="loads" type="loadlist" />
-      <xsd:element name="loadplans" type="loadplanlist"/>
+      <xsd:element name="loadplans" type="loadplanlist" />
       <xsd:element name="setup" type="non-empty-string" minOccurs="0" />
       <xsd:element name="setupmatrix" type="setupmatrix" minOccurs="0" />
       <xsd:element name="resourceskills" type="resourceskilllist" minOccurs="0" />
@@ -940,8 +939,8 @@
   <!-- CALENDAR -->
   <xsd:simpleType name="bucketdays">
     <xsd:restriction base="xsd:integer">
-      <xsd:minInclusive value="0"/>
-      <xsd:maxInclusive value="127"/>
+      <xsd:minInclusive value="0" />
+      <xsd:maxInclusive value="127" />
     </xsd:restriction>
   </xsd:simpleType>
 

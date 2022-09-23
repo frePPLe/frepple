@@ -328,6 +328,8 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
         fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter));
       if (!fp || !fp->getOperationPlan()->getProposed() ||
           fp->getOperationPlan()->getDemand() ||
+          (fp->getOperationPlan()->getOwner() &&
+           fp->getOperationPlan()->getOwner()->getDemand()) ||
           fp->getFlow()->hasType<FlowTransferBatch>()) {
         // It's locked or a delivery operationplan
         // TODO we currently also exclude transferbatch producers, which isn't

@@ -123,7 +123,7 @@
         <small data-ng-if="operationplan.colmodel.operationplan__startdate">({{ operationplan.colmodel.operationplan__startdate.type|translate }})</small>
       </td>
       <td>
-        {{(operationplan.start || operationplan.operationplan__startdate)|formatdate}}
+        {{(operationplan.start || operationplan.operationplan__startdate)|formatdatetime}}
         <!--
         <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("start")' class="form-control" type="datetime-local" ng-model="operationplan.start" ng-model-options="{debounce: 300}">
         <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__startdate")' class="form-control" type="datetime-local" ng-model="operationplan.operationplan__startdate" ng-model-options="{debounce: 300}">
@@ -132,7 +132,7 @@
     </tr>
     <tr data-ng-if="operationplan.setupend">
       <td><b style="text-transform: capitalize">{{'setup end date'|translate}}</b></td>
-      <td>{{(operationplan.setupend || operationplan.operationplan__setupend)|formatdate}}</td>
+      <td>{{(operationplan.setupend || operationplan.operationplan__setupend)|formatdatetime}}</td>
     </tr>
     <tr data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize" ng-if="operationplan.type == 'MO'">{{'end date'|translate}}</b>
@@ -144,7 +144,7 @@
         <small data-ng-if="operationplan.colmodel.operationplan__enddate">({{ operationplan.colmodel.operationplan__enddate.type|translate }})</small>
       </td>
       <td>
-        {{(operationplan.end || operationplan.operationplan__enddate)|formatdate}}
+        {{(operationplan.end || operationplan.operationplan__enddate)|formatdatetime}}
         <!--
         <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("end")' class="form-control" type="datetime-local" ng-model="operationplan.end" ng-model-options="{debounce: 300}">
         <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__enddate")' class="form-control" type="datetime-local" ng-model="operationplan.operationplan__enddate" ng-model-options="{debounce: 300}">

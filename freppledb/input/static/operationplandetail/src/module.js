@@ -37,7 +37,7 @@ operationplandetailapp.run(['gettextCatalog', function (gettextCatalog) {
 
 operationplandetailapp.filter('formatdate', function () {
   return function (datestr) {
-    if (typeof (datestr) !== "undefined") {
+    if (datestr && typeof (datestr) !== "undefined") {
       return moment(Date.parse(datestr)).format(dateformat);
     }
   };
@@ -45,7 +45,7 @@ operationplandetailapp.filter('formatdate', function () {
 
 operationplandetailapp.filter('formatdatetime', function () {
   return function (datestr) {
-    if (typeof (datestr) !== "undefined") {
+    if (datestr && typeof (datestr) !== "undefined") {
       return moment(Date.parse(datestr)).format(datetimeformat);
     }
   };

@@ -74,6 +74,8 @@ int SolverCreate::initialize() {
   x.addMethod("rollback", rollback, METH_NOARGS, "rollback the plan changes");
   x.addMethod("createsBatches", createsBatches, METH_NOARGS,
               "group operationplans");
+  x.addMethod("markAutofence", markAutofence, METH_NOARGS,
+              "recognize buffers to which autofence applies");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
@@ -749,6 +751,36 @@ PyObject* SolverCreate::createsBatches(PyObject* self, PyObject* args) {
   try {
     SolverCreate* me = static_cast<SolverCreate*>(self);
     for (auto& o : Operation::all()) me->createsBatches(&o, &me->getCommands());
+  } catch (...) {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return nullptr;
+  }
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
+}
+
+PyObject* SolverCreate::markAutofence(PyObject* self, PyObject* args) {
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+  try {
+    SolverCreate* me = static_cast<SolverCreate*>(self);
+    for (auto& buf : Buffer::all()) {
+      // A buffer should have autofence active if it doesn't have proposed
+      // replenishments
+      bool has_proposed_supply = false;
+      for (auto& flpln : buf.getFlowPlans()) {
+        if (flpln.getQuantity() > 0 &&
+            flpln.getOperationPlan()->getProposed()) {
+          has_proposed_supply = true;
+          break;
+        }
+      }
+      buf.setAutofence(!has_proposed_supply);
+      if (has_proposed_supply && me->getLogLevel() > 1)
+        logger << buf << " deactivates autofence" << endl;
+    }
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();

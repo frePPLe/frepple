@@ -593,6 +593,9 @@ class SolverCreate : public Solver {
   /* Python method for grouping operationplans. */
   static PyObject* createsBatches(PyObject*, PyObject*);
 
+  /* Python method for grouping operationplans. */
+  static PyObject* markAutofence(PyObject*, PyObject*);
+
   bool getRotateResources() const { return rotateResources; }
 
   void setRotateResources(bool b) { rotateResources = b; }

@@ -297,8 +297,8 @@ function drawFocusGraph() {
                 graph.showTooltip(interpolate(
                   "Between %s<br>and %s<br>the entry %s<br>sets value %s",
                   [
-                    moment(d[0]).format("yyyy-MM-DD HH:mm:ss"),
-                    moment(d[1]).format("yyyy-MM-DD HH:mm:ss"),
+                    moment(d[0]).format(datetimeformat),
+                    moment(d[1]).format(datetimeformat),
                     d[4],
                     d[5]
                   ]
@@ -307,8 +307,8 @@ function drawFocusGraph() {
                   graph.showTooltip(interpolate(
                   "Between %s<br>and %s<br>the default value %s is set",
                   [
-                    moment(d[0]).format("yyyy-MM-DD HH:mm:ss"),
-                    moment(d[1]).format("yyyy-MM-DD HH:mm:ss"),
+                    moment(d[0]).format(datetimeformat),
+                    moment(d[1]).format(datetimeformat),
                     d[5]
                   ]
                   ));

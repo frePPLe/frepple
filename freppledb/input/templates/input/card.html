@@ -268,7 +268,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p>{{ (opplan.operationplan__enddate || opplan.enddate) | date: "yyyy-MM-dd" }}</p>
+      <p>{{ (opplan.operationplan__enddate || opplan.enddate) | formatdate }}</p>
       <p>{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</p>
     </div>
 </div>

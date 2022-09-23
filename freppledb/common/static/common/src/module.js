@@ -22,14 +22,13 @@ angular.module("frepple.common", []);
 angular.module("frepple.common")
   .constant('getURLprefix', function getURLprefix() {
     return database === 'default' ? '' : '/' + database;
-    }
+  }
   );
 
 // Date formatting filter, expecting a moment instance as input
 angular.module("frepple.common")
   .filter('dateTimeFormat', function dateTimeFormat() {
     return function (input, fmt) {
-      fmt = fmt || 'YYYY-MM-DD HH:mm:ss';
-      return input ? input.format(fmt) : '';
+      return input ? input.format(fmt || datetimeformat) : '';
     };
   });

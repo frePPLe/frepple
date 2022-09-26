@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from datetime import date
 from itertools import chain
 import os
 import random
@@ -29,6 +30,7 @@ from django.core import management
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase, TransactionTestCase
 from django.utils import translation
+from django.utils.formats import date_format
 
 from freppledb.common.dataload import parseCSVdata
 from freppledb.common.models import (
@@ -199,7 +201,9 @@ class DataLoadTest(TestCase):
                 "destination": loc2,
                 "quantity": 1,
                 "status": "confirmed",
-                "shipping_date_0": "2019-01-01",
+                "shipping_date_0": date_format(
+                    date(2019, 1, 1), format="DATE_FORMAT", use_l10n=False
+                ),
                 "shipping_date_1": "00:00:00",
             },
         )

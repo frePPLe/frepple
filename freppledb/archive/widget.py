@@ -19,6 +19,7 @@ from urllib.parse import urlencode
 
 from django.db import connections
 from django.http import HttpResponse
+from django.utils.formats import date_format
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 
@@ -139,7 +140,7 @@ class ArchivedBufferWidget(Widget):
             """
             select * from (
             select
-              to_char(snapshot_date, 'YYYY-MM-DD') as snapshot,
+              snapshot_date,
               coalesce(sum(onhand), 0),
               coalesce(sum(onhand * cost), 0)
             from ax_manager
@@ -149,14 +150,18 @@ class ArchivedBufferWidget(Widget):
             order by snapshot_date desc
             limit %s
             ) d
-            order by snapshot asc
+            order by snapshot_date asc
             """,
             (history,),
         )
         for res in cursor.fetchall():
             result.append(
                 "<tr><td>%s</td><td>%.1f</td><td>%.1f</td></tr>"
-                % (escape(res[0]), res[1], res[2])
+                % (
+                    escape(date_format(res[0], format="DATE_FORMAT", use_l10n=False)),
+                    res[1],
+                    res[2],
+                )
             )
         result.append("</table>")
         return HttpResponse("\n".join(result))
@@ -296,7 +301,7 @@ class ArchivedDemandWidget(Widget):
             """
             select * from (
             select
-              to_char(snapshot_date, 'YYYY-MM-DD') as snapshot,
+              snapshot_date,
               coalesce(sum(quantity), 0),
               coalesce(sum(quantity*cost), 0),
               coalesce(sum(case when due < snapshot_date_id then quantity end), 0),
@@ -308,14 +313,20 @@ class ArchivedDemandWidget(Widget):
             order by snapshot_date desc
             limit %s
             ) d
-            order by snapshot asc
+            order by snapshot_date asc
             """,
             (history,),
         )
         for res in cursor.fetchall():
             result.append(
                 "<tr><td>%s</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>"
-                % (escape(res[0]), res[1], res[2], res[3], res[4])
+                % (
+                    escape(date_format(res[0], format="DATE_FORMAT", use_l10n=False)),
+                    res[1],
+                    res[2],
+                    res[3],
+                    res[4],
+                )
             )
         result.append("</table>")
         return HttpResponse("\n".join(result))
@@ -455,7 +466,7 @@ class ArchivedPurchaseOrderWidget(Widget):
             """
             select * from (
             select
-              to_char(snapshot_date, 'YYYY-MM-DD') as snapshot,
+              snapshot_date,
               coalesce(sum(quantity), 0),
               coalesce(sum(quantity * item_cost), 0),
               coalesce(sum(case when enddate < snapshot_date_id then quantity end), 0),
@@ -468,14 +479,20 @@ class ArchivedPurchaseOrderWidget(Widget):
             order by snapshot_date desc
             limit %s
             ) d
-            order by snapshot
+            order by snapshot_date
             """,
             (history,),
         )
         for res in cursor.fetchall():
             result.append(
                 "<tr><td>%s</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>"
-                % (escape(res[0]), res[1], res[2], res[3], res[4])
+                % (
+                    escape(date_format(res[0], format="DATE_FORMAT", use_l10n=False)),
+                    res[1],
+                    res[2],
+                    res[3],
+                    res[4],
+                )
             )
         result.append("</table>")
         return HttpResponse("\n".join(result))

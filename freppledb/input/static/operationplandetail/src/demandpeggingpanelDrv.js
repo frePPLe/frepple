@@ -20,9 +20,9 @@
 
 angular.module('operationplandetailapp').directive('showoperationpeggingpanelDrv', showoperationpeggingpanelDrv);
 
-showoperationpeggingpanelDrv.$inject = ['$window', 'gettextCatalog'];
+showoperationpeggingpanelDrv.$inject = ['$window', 'gettextCatalog', '$filter'];
 
-function showoperationpeggingpanelDrv($window, gettextCatalog) {
+function showoperationpeggingpanelDrv($window, gettextCatalog, $filter) {
 
   var directive = {
     restrict: 'EA',
@@ -72,7 +72,7 @@ function showoperationpeggingpanelDrv($window, gettextCatalog) {
               rows += $.jgrid.htmlEncode(thedemand.demand.item.name);
             rows += "<a href=\"" + url_prefix + "/detail/input/item/" + admin_escape(thedemand.demand.item.name)
               + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
-              + '</td><td>' + thedemand.demand.due
+              + '</td><td>' + $filter('formatdate')(thedemand.demand.due)
               + '</td><td>' + grid.formatNumber(thedemand.quantity) + '</td></tr>';
           });
         }

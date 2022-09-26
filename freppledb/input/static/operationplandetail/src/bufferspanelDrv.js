@@ -20,9 +20,9 @@
 
 angular.module('operationplandetailapp').directive('showbufferspanelDrv', showbufferspanelDrv);
 
-showbufferspanelDrv.$inject = ['$window', 'gettextCatalog'];
+showbufferspanelDrv.$inject = ['$window', 'gettextCatalog', '$filter'];
 
-function showbufferspanelDrv($window, gettextCatalog) {
+function showbufferspanelDrv($window, gettextCatalog, $filter) {
 
   var directive = {
     restrict: 'EA',
@@ -83,7 +83,7 @@ function showbufferspanelDrv($window, gettextCatalog) {
             }
             rows += '<td>' + grid.formatNumber(theflow.quantity)
               + '</td><td>' + grid.formatNumber(theflow.onhand)
-              + '</td><td style="white-space: nowrap">' + theflow.date
+              + '</td><td style="white-space: nowrap">' + $filter('formatdatetime')(theflow.date)
               + '</td></tr>';
           });
           angular.element(document).find('#attributes-operationflowplans thead').css('display', 'table-header-group');

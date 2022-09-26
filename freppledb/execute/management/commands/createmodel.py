@@ -29,6 +29,7 @@ from freppledb.input.models import CalendarBucket, Customer, Demand, Supplier
 from freppledb.input.models import Item, OperationMaterial, OperationResource
 from freppledb.input.models import ItemSupplier
 from freppledb.execute.models import Task
+from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.models import User
 from freppledb import __version__
 
@@ -105,7 +106,8 @@ class Command(BaseCommand):
             "--procure_lt", type=int, help="Average procurement lead time", default=40
         )
         parser.add_argument(
-            "--currentdate", help="Current date of the plan in YYYY-MM-DD format"
+            "--currentdate",
+            help="Current date of the plan in %s format" % settings.DATE_FORMAT,
         )
         parser.add_argument(
             "--database",
@@ -140,10 +142,6 @@ class Command(BaseCommand):
             components_per = 0
         deliver_lt = int(options["deliver_lt"])
         procure_lt = int(options["procure_lt"])
-        if options["currentdate"]:
-            currentdate = options["currentdate"]
-        else:
-            currentdate = datetime.strftime(date.today(), "%Y-%m-%d")
         database = options["database"]
         if database not in settings.DATABASES:
             raise CommandError("No database settings known for '%s'" % database)
@@ -198,10 +196,16 @@ class Command(BaseCommand):
             task.save(using=database)
 
             # Pick up the startdate
-            try:
-                startdate = datetime.strptime(currentdate, "%Y-%m-%d")
-            except Exception:
-                raise CommandError("current date is not matching format YYYY-MM-DD")
+            if options["currentdate"]:
+                try:
+                    startdate = parseLocalizedDateTime(options["currentdate"])
+                except Exception:
+                    raise CommandError(
+                        "Current date is not matching format %s"
+                        % settings.DATE_INPUT_FORMATS[0]
+                    )
+            else:
+                startdate = date.today()
 
             # Check whether the database is empty
             if (

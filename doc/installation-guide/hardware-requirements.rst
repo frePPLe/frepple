@@ -18,4 +18,4 @@ Nevertheless we can provide some example configurations:
 
   - Servers can be physical servers, virtual servers or containers.
   - Database server: Postgresql, 50 GB disk space, 2 cpu cores, 8 GB RAM
-  - Application server:  Unbuntu 18 or 20, 30 GB disk space, 2 cpu cores, 8 GB RAM
+  - Application server:  Unbuntu 20, 30 GB disk space, 2 cpu cores, 8 GB RAM

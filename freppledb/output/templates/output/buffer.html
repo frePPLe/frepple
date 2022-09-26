@@ -15,11 +15,26 @@
 {% endif %}{% endblock %}
 
 {% block crosses %}
-{% if args.0 %}$(function(){
+// dict that gives from an id the name of the cross
+var field_by_id = {};
+// dict that gives from the name of a cross the id
+var id_by_field = {};
+
+$(function(){
+{% if args.0 %}
   // Resize top graph
-  var h = $(window).height();
-  $("#graph").width($(window).width()-60).height(h>800 || h<550 ? 360 : h-450);
-});{% endif %}
+  var available = $(window).height() - $("#graph").offset().top - cross_idx.length * 21 - 145;
+  if (available > 350)
+    available = 350;
+  else if (available < 200)
+    available = 200;
+  $("#graph").width($(window).width()-60).height(available);
+{% endif %}
+  for (var i in cross_idx)
+    field_by_id[cross_idx[i]] = cross[cross_idx[i]]["key"];
+  for (var i in cross)
+    id_by_field[cross[i]["key"]] = i;
+});
 
 {% if args.0 or mode == "graph" %}
 function drawGraphs(jsondata)
@@ -413,16 +428,6 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata)
 {
   var last_currentdate = "{{request.current_date}}";
-
-  // dict that gives from an id the name of the cross
-  // TODO optimization: build this dictionary once, rather than for each cell
-  var field_by_id = {};
-  // dict that gives from the name of a cross the id
-  var id_by_field = {};
-  for (var i in cross_idx) {
-    field_by_id[cross_idx[i]] = cross[cross_idx[i]]["key"];
-    id_by_field[cross[cross_idx[i]]["key"]] = cross_idx[i];
-  }
 
   // Cell background
   var oh = cellvalue[id_by_field['startoh']];

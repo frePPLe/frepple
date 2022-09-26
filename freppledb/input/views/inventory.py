@@ -965,12 +965,14 @@ class DistributionOrderList(OperationPlanMixin):
         GridFieldDateTime(
             "startdate",
             title=_("shipping date"),
-            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"',
+            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s", "defaultValue":""}, "summaryType":"min"'
+            % settings.DATETIME_FORMAT,
         ),
         GridFieldDateTime(
             "enddate",
             title=_("receipt date"),
-            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"',
+            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s", "defaultValue":""}, "summaryType":"max"'
+            % settings.DATETIME_FORMAT,
         ),
         GridFieldNumber(
             "quantity",
@@ -1665,7 +1667,8 @@ class InventoryDetail(OperationPlanMixin):
             "flowdate",
             title=_("date"),
             editable=False,
-            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"',
+            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s", "defaultValue":""}, "summaryType":"min"'
+            % settings.DATETIME_FORMAT,
         ),
         GridFieldNumber(
             "quantity",
@@ -1689,13 +1692,15 @@ class InventoryDetail(OperationPlanMixin):
             "operationplan__startdate",
             title=_("start date"),
             editable=True,
-            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"',
+            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s", "defaultValue":""}, "summaryType":"min"'
+            % settings.DATETIME_FORMAT,
         ),
         GridFieldDateTime(
             "operationplan__enddate",
             title=_("end date"),
             editable=True,
-            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"',
+            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s", "defaultValue":""}, "summaryType":"max"'
+            % settings.DATETIME_FORMAT,
         ),
         GridFieldChoice(
             "operationplan__status",

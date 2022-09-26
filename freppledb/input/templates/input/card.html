@@ -59,7 +59,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           data-ng-model="opplan.operationplan__quantity" data-ng-change="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)">
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal')}">
-        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__startdate || opplan.startdate) | date: "yyyy-MM-dd" }}</span>
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__startdate || opplan.startdate) | formatdate }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__startdate')" type="date"
           data-ng-focus="oldValue=opplan.startdate" data-ng-model="opplan.startdate"
           data-ng-change="changeCard(opplan, 'startdate', oldValue, opplan.startdate)">
@@ -68,7 +68,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           data-ng-change="changeCard(opplan, 'operationplan__startdate', oldValue, opplan.operationplan__startdate)">
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal')}">
-        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__enddate || opplan.enddate) | date: "yyyy-MM-dd" }}</span>
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__enddate || opplan.enddate) | formatdate }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.enddate"
           data-ng-model="opplan.enddate" data-ng-change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.operationplan__enddate"
@@ -132,7 +132,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           data-ng-model="opplan.operationplan__quantity" data-ng-change="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)">
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal')}">
-        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__startdate || opplan.startdate) | date: "yyyy-MM-dd" }}</span>
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__startdate || opplan.startdate) | formatdate }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__startdate')" type="date"
           data-ng-focus="oldValue=opplan.startdate" data-ng-model="opplan.startdate"
           data-ng-change="changeCard(opplan, 'startdate', oldValue, opplan.startdate)">
@@ -141,7 +141,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           data-ng-change="changeCard(opplan, 'operationplan__startdate', oldValue, opplan.operationplan__startdate)">
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal')}">
-        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__enddate || opplan.enddate) | date: "yyyy-MM-dd" }}</span>
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__enddate || opplan.enddate) | formatdate }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.enddate"
           data-ng-model="opplan.enddate" data-ng-change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.operationplan__enddate"
@@ -210,7 +210,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           data-ng-model="opplan.quantity_completed" data-ng-change="changeCard(opplan, 'quantity_completed', oldValue, opplan.quantity_completed)">
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal')}">
-        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__startdate || opplan.startdate) | date: "yyyy-MM-dd HH:mm:ss" }}</span>
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__startdate || opplan.startdate) | formatdatetime }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__startdate')" type="datetime-local"
           data-ng-focus="oldValue=opplan.startdate" data-ng-model="opplan.startdate"
           data-ng-change="changeCard(opplan, 'startdate', oldValue, opplan.startdate)">
@@ -219,7 +219,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           data-ng-change="changeCard(opplan, 'operationplan__startdate', oldValue, opplan.operationplan__startdate)">
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal')}">
-        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__enddate || opplan.enddate) | date: "yyyy-MM-dd HH:mm:ss" }}</span>
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__enddate || opplan.enddate) | formatdatetime }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__enddate')" type="datetime-local" data-ng-focus="oldValue=opplan.enddate"
           data-ng-model="opplan.enddate" data-ng-change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="datetime-local" data-ng-focus="oldValue=opplan.operationplan__enddate"
@@ -268,7 +268,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p>{{ (opplan.operationplan__enddate || opplan.enddate) | date: "yyyy-MM-dd" }}</p>
+      <p>{{ (opplan.operationplan__enddate || opplan.enddate) | formatdate }}</p>
       <p>{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</p>
     </div>
 </div>

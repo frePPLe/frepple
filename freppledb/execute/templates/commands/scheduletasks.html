@@ -17,7 +17,7 @@
   </div>
   <div class="col-sm-6" data-field="name" style="padding-top:6px; padding-bottom:6px">{{ schedule.name }}</div>
   <div class="col-sm-3" data-field="next-run" style="padding-top:6px; padding-bottom:6px">
-  {% if schedule.next_run %}{{ schedule.next_run|date:"Y-m-d H:i:s" }}{% endif %}
+  {% if schedule.next_run %}{{ schedule.next_run|date:"DATETIME_FORMAT" }}{% endif %}
   </div>
   {% if perms.execute.change_scheduledtask %}
   <div class="col-sm-1 text-center" style="padding-top:6px; padding-bottom:6px">

@@ -66,6 +66,10 @@ DATABASES = {
         "TEST": {
             "NAME": "test_frepple"  # Database name used when running the test suite.
         },
+        # The FILEUPLOADFOLDER setting is used by the "import data files" task.
+        # By default all scenario databases use the same data folder on the server.
+        # By configuring this setting you can configure a dedicated data folder for each
+        # scenario database.
         "FILEUPLOADFOLDER": os.path.normpath(
             os.path.join(FREPPLE_LOGDIR, "data", "default")
         ),
@@ -100,6 +104,10 @@ DATABASES = {
         "TEST": {
             "NAME": "test_scenario1"  # Database name used when running the test suite.
         },
+        # The FILEUPLOADFOLDER setting is used by the "import data files" task.
+        # By default all scenario databases use the same data folder on the server.
+        # By configuring this setting you can configure a dedicated data folder for each
+        # scenario database.
         "FILEUPLOADFOLDER": os.path.normpath(
             os.path.join(FREPPLE_LOGDIR, "data", "scenario1")
         ),
@@ -134,6 +142,10 @@ DATABASES = {
         "TEST": {
             "NAME": "test_scenario2"  # Database name used when running the test suite.
         },
+        # The FILEUPLOADFOLDER setting is used by the "import data files" task.
+        # By default all scenario databases use the same data folder on the server.
+        # By configuring this setting you can configure a dedicated data folder for each
+        # scenario database.
         "FILEUPLOADFOLDER": os.path.normpath(
             os.path.join(FREPPLE_LOGDIR, "data", "scenario2")
         ),
@@ -168,6 +180,10 @@ DATABASES = {
         "TEST": {
             "NAME": "test_scenario3"  # Database name used when running the test suite.
         },
+        # The FILEUPLOADFOLDER setting is used by the "import data files" task.
+        # By default all scenario databases use the same data folder on the server.
+        # By configuring this setting you can configure a dedicated data folder for each
+        # scenario database.
         "FILEUPLOADFOLDER": os.path.normpath(
             os.path.join(FREPPLE_LOGDIR, "data", "scenario3")
         ),

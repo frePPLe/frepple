@@ -236,13 +236,11 @@ def getHorizon(request, future_only=False):
     else:
         # Second type: Absolute start and end dates given
         try:
-            horizonstart = datetime.strptime(
-                request.GET.get("horizonstart"), "%Y-%m-%d"
-            )
+            horizonstart = parseLocalizedDate(request.GET.get("horizonstart"))
         except Exception:
             horizonstart = request.user.horizonstart
         try:
-            horizonend = datetime.strptime(request.GET.get("horizonend"), "%Y-%m-%d")
+            horizonend = parseLocalizedDate(request.GET.get("horizonend"))
         except Exception:
             horizonend = request.user.horizonend
         start = horizonstart

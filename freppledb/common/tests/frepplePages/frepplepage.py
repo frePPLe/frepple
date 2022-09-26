@@ -33,6 +33,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 
 from django.conf import settings
+from django.utils.formats import date_format
 
 ### Special page for common actions only
 
@@ -156,13 +157,14 @@ class TablePage(BasePage):
         time.sleep(0.3)
 
     def enter_text_in_inputdatefield(self, targetinputdatefield, newdate):
+        val = date_format(newdate, "DATETME_FORMAT", False)
         targetinputdatefield.clear()
         time.sleep(0.3)
-        targetinputdatefield.send_keys(newdate.strftime("%Y-%m-%d %H:%M:%S"))
+        targetinputdatefield.send_keys(val)
         time.sleep(0.3)
         targetinputdatefield.send_keys(Keys.RETURN)
         time.sleep(0.3)
-        return newdate.strftime("%Y-%m-%d %H:%M:%S")
+        return val
 
     # def is_title_matches(self): # change to current url
     #    return "Purchase orders" in self.driver.title

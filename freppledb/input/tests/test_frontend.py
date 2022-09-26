@@ -22,6 +22,7 @@ from datetime import datetime
 from django.db.models import Q
 from django.core import management
 
+from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.tests.seleniumsetup import SeleniumTest, noSelenium
 from freppledb.common.tests.frepplePages.frepplepage import TablePage
 from freppledb.input.models import (
@@ -68,8 +69,8 @@ class PurchaseOrderScreen(SeleniumTest):
             enddate_content, "enddate"
         )
 
-        oldEndDate = datetime.strptime(
-            enddate_inputdatefield.get_attribute("value"), "%Y-%m-%d %H:%M:%S"
+        oldEndDate = parseLocalizedDateTime(
+            enddate_inputdatefield.get_attribute("value")
         )
         newEndDate = oldEndDate + mainDate.timedelta(days=9)
         newdatetext = table_page.enter_text_in_inputdatefield(

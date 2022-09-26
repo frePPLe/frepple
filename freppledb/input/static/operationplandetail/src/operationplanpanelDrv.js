@@ -43,7 +43,9 @@ function showoperationplanDrv($window, gettextCatalog) {
     }
 
     scope.$on("cardChanged", function (event, field, oldvalue, newvalue) {
-      if (field === "startdate")
+      if (!scope.operationplan)
+        return;
+      else if (field === "startdate")
         scope.operationplan["start"] = newvalue;
       else if (field === "enddate")
         scope.operationplan["end"] = newvalue;

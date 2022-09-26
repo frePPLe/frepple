@@ -130,6 +130,50 @@ LANGUAGES = (
     ("uk", _("Ukrainian")),
 )
 
+# Default date & time formats
+DATE_FORMAT = (
+    # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+    "Y-m-d"
+)
+DATETIME_FORMAT = (
+    # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+    "Y-m-d H:i:s"
+)
+DATE_FORMAT_JS = (
+    # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
+    "YYYY-MM-DD"
+)
+DATETIME_FORMAT_JS = (
+    # see https://momentjs.com/docs/#/displaying/
+    "YYYY-MM-DD HH:mm:ss"
+)
+DATE_INPUT_FORMATS = [
+    # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+    "%Y-%m-%d",
+    "%y-%m-%d",
+    "%Y/%m/%d",
+    "%y/%m/%d",
+    "%b %d %Y",
+    "%b %d, %Y",
+    "%d %b %Y",
+    "%d %b %Y",
+    "%B %d %Y",
+    "%B %d, %Y",
+    "%d %B %Y",
+    "%d %B, %Y",
+]
+DATETIME_INPUT_FORMATS = [
+    # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+    "%Y-%m-%d %H:%M:%S",
+    "%Y-%m-%d %H:%M",
+    "%y-%m-%d %H:%M:%S",
+    "%y-%m-%d %H:%M",
+    "%Y/%m/%d %H:%M:%S",
+    "%Y/%m/%d %H:%M",
+    "%y/%m/%d %H:%M:%S",
+    "%y/%m/%d %H:%M",
+]
+
 # The default redirects URLs not ending with a slash.
 # This causes trouble in combination with the DatabaseSelectionMiddleware.
 # We prefer not to redirect and report this as an incorrect URL.

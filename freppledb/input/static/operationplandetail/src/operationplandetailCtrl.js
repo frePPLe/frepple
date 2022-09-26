@@ -588,7 +588,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         });
       });
     }
-    if ($scope.deleted.length) {
+    if ($scope.deleted && $scope.deleted.length) {
       dirty.push({ delete: $scope.deleted });
       $scope.deleted = [];
     }

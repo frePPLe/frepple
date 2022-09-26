@@ -223,55 +223,143 @@ if not hasattr(sys, "argv") or "test" in sys.argv:
     TIME_ZONE = "UTC"
 
 # We provide 3 options for formatting dates (and you always add your own).
-#  - year-month-day: international format, default
 #  - month-day-year: US format
 #  - day-month-year: European format
+#  - year-month-day: international format. This is the default
 DATE_STYLE = "year-month-date"
 
-if DATE_STYLE == "year-month-date":
-    # Option 1: International style, default
+if DATE_STYLE == "month-date-year":
+    # Option 1: US style
     DATE_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
-        "Y|m|d"
+        "m/d/Y"
     )
     DATETIME_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
-        "Y|m|d H:i:s"
+        "m/d/Y H:i:s"
     )
     DATE_FORMAT_JS = (
         # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
-        "YYYY|MM|DD"
+        "MM/DD/YYYY"
     )
     DATETIME_FORMAT_JS = (
         # see https://momentjs.com/docs/#/displaying/
-        "YYYY|MM|DD HH:mm:ss"
+        "DD_MM_YYYY HH:mm:ss"
     )
     DATE_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
-        "%Y|%m|%d",  # '2006-10-25'
-        "%m/%d/%Y",  # '10/25/2006'
-        "%m/%d/%y",  # '10/25/06'
-        "%b %d %Y",  # 'Oct 25 2006'
-        "%b %d, %Y",  # 'Oct 25, 2006'
-        "%d %b %Y",  # '25 Oct 2006'
-        "%d %b %Y",  #  '25 Oct, 2006'
-        "%B %d %Y",  # 'October 25 2006'
-        "%B %d, %Y",  # 'October 25, 2006'
-        "%d %B %Y",  # '25 October 2006'
-        "%d %B, %Y",  # '25 October, 2006'
+        "%m/%d/%Y",
+        "%m/%d/%y",
+        "%m-%d-%Y",
+        "%m-%d-%y",
+        "%b %d %Y",
+        "%b %d, %Y",
+        "%d %b %Y",
+        "%d %b %Y",
+        "%B %d %Y",
+        "%B %d, %Y",
+        "%d %B %Y",
+        "%d %B, %Y",
     ]
     DATETIME_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
-        "%Y|%m|%d %H:%M:%S",  # '2006-10-25 14:30:59'
-        "%Y-%m-%d %H:%M:%S.%f",  # '2006-10-25 14:30:59.000200'
-        "%Y-%m-%d %H:%M",  # '2006-10-25 14:30'
-        "%m/%d/%Y %H:%M:%S",  # '10/25/2006 14:30:59'
-        "%m/%d/%Y %H:%M:%S.%f",  # '10/25/2006 14:30:59.000200'
-        "%m/%d/%Y %H:%M",  # '10/25/2006 14:30'
-        "%m/%d/%y %H:%M:%S",  # '10/25/06 14:30:59'
-        "%m/%d/%y %H:%M:%S.%f",  # '10/25/06 14:30:59.000200'
-        "%m/%d/%y %H:%M",  # '10/25/06 14:30'
+        "%m/%d/%Y %H:%M:%S",
+        "%m-%d-%Y %H:%M:%S",
+        "%m-%d-%Y %H:%M",
+        "%m/%d/%Y %H:%M:%S",
+        "%m/%d/%Y %H:%M",
+        "%m/%d/%y %H:%M:%S",
+        "%m/%d/%y %H:%M",
     ]
+elif DATE_STYLE == "day-month-year":
+    # Option 2: European style
+    DATE_FORMAT = (
+        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        "d-m-Y"
+    )
+    DATETIME_FORMAT = (
+        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        "d-m-Y H:i:s"
+    )
+    DATE_FORMAT_JS = (
+        # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
+        "DD-MM-YYYY"
+    )
+    DATETIME_FORMAT_JS = (
+        # see https://momentjs.com/docs/#/displaying/
+        "DD-MM-YYYY HH:mm:ss"
+    )
+    DATE_INPUT_FORMATS = [
+        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+        "%d-%m-%Y",
+        "%d-%m-%y",
+        "%d/%m/%Y",
+        "%d/%m/%y",
+        "%b %d %Y",
+        "%b %d, %Y",
+        "%d %b %Y",
+        "%d %b, %Y",
+        "%B %d %Y",
+        "%B %d, %Y",
+        "%d %B %Y",
+        "%d %B, %Y",
+    ]
+    DATETIME_INPUT_FORMATS = [
+        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+        "%d-%m-%Y %H:%M:%S",
+        "%d-%m-%Y %H:%M",
+        "%d/%m/%y %H:%M:%S",
+        "%d/%m/%y %H:%M",
+        "%d/%m/%Y %H:%M:%S",
+        "%f/%m/%Y %H:%M",
+        "%d/%m/%y %H:%M:%S",
+        "%d/%m/%y %H:%M",
+    ]
+else:
+    # Option 3: International style, default
+    DATE_FORMAT = (
+        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        "Y_m_d"
+    )
+    DATETIME_FORMAT = (
+        # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+        "Y_m_d H:i:s"
+    )
+    DATE_FORMAT_JS = (
+        # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
+        "YYYY_MM_DD"
+    )
+    DATETIME_FORMAT_JS = (
+        # see https://momentjs.com/docs/#/displaying/
+        "YYYY_MM_DD HH:mm:ss"
+    )
+    DATE_INPUT_FORMATS = [
+        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+        "%Y_%m_%d",
+        "%y_%m_%d",
+        "%Y/%m/%d",
+        "%y/%m/%d",
+        "%b %d %Y",
+        "%b %d, %Y",
+        "%d %b %Y",
+        "%d %b %Y",
+        "%B %d %Y",
+        "%B %d, %Y",
+        "%d %B %Y",
+        "%d %B, %Y",
+    ]
+    DATETIME_INPUT_FORMATS = [
+        # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+        "%Y_%m_%d %H:%M:%S",
+        "%Y_%m_%d %H:%M",
+        "%y_%m_%d %H:%M:%S",
+        "%y_%m_%d %H:%M",
+        "%Y/%m/%d %H:%M:%S",
+        "%Y/%m/%d %H:%M",
+        "%y/%m/%d %H:%M:%S",
+        "%y/%m/%d %H:%M",
+    ]
+
 
 # Supported language codes, sorted by language code.
 # Language names and codes should match the ones in Django.

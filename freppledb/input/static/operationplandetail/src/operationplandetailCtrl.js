@@ -313,7 +313,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         '</div>' +
         '<div class="modal-footer">' +
         '<input type="submit" id="savebutton" role="button" class="btn btn-danger pull-left" value="' + gettext('Save') + '">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Return to page') + '">' +
         '</div>' +
         '</div>' +
         '</div>'

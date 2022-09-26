@@ -43,7 +43,7 @@
       <td><b style="text-transform: capitalize">{{'reference'|translate}}</b></td>
       <td id="referencerow">{{operationplan.reference}}</td>
     </tr>
-    <tr data-ng-if="operationplan.owner !== null && operationplan.id !== -1">
+    <tr data-ng-if="operationplan.type == 'MO' && operationplan.owner">
       <td><b style="text-transform: capitalize">{{'owner'|translate}}</b></td>
       <td id="ownerrow">{{operationplan.owner}}
         <a href="/detail/input/manufacturingorder/key/" role="input/manufacturingorder" onclick="opendetail(event)">
@@ -69,7 +69,7 @@
         </div>
       </td>
     </tr>
-    <tr ng-if="operationplan.supplier !== null && operationplan.id !== undefined && operationplan.id !== -1">
+    <tr ng-if="operationplan.type == 'PO'">
       <td><b style="text-transform: capitalize">{{'supplier'|translate}}</b></td>
       <td id="supplierrow">{{operationplan.supplier}}
         <a href="/detail/input/supplier/key/" role="input/supplier" onclick="opendetail(event)">
@@ -94,7 +94,7 @@
         </a>
       </td>
     </tr>
-    <tr ng-if="operationplan.origin !== null && operationplan.id !== undefined && operationplan.id !== -1">
+    <tr ng-if="operationplan.type == 'DO'">
       <td><b style="text-transform: capitalize">{{'origin'|translate}}</b></td>
       <td id="originrow">{{operationplan.origin}}
         <a href="/detail/input/location/key/" role="input/location" onclick="opendetail(event)">
@@ -102,7 +102,7 @@
         </a>
       </td>
     </tr>
-    <tr ng-if="operationplan.destination !== null && operationplan.id !== undefined && operationplan.id !== -1">
+    <tr ng-if="operationplan.type == 'DO'">
       <td>
       <b data-ng-if="operationplan.type !== 'STCK'" style="text-transform: capitalize">{{'destination'|translate}}</b>
       <b data-ng-if="operationplan.type === 'STCK'" style="text-transform: capitalize">{{'location'|translate}}</b>
@@ -183,6 +183,7 @@
     <tr id="statusrow" data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize">{{'status'|translate}}</b></td>
       <td>
+        <span data-ng-if="actions.hasOwnProperty('erp_incr_export') && operationplan.status != 'proposed'" style="text-transform: capitalize">{{operationplan.status|translate}}</span>
         <div class="btn-group" role="group">
           <button id="proposedBtn" data-ng-if="actions.hasOwnProperty('proposed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize" disabled="disabled" data-toggle="tooltip" title="{{'proposed'|translate}}"> <i class="fa fa-unlock"></i></button>
           <button id="approvedBtn" data-ng-if="actions.hasOwnProperty('approved')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize" disabled="disabled" data-toggle="tooltip" title="{{'approved'|translate}}"><i class="fa fa-unlock-alt"></i></button>

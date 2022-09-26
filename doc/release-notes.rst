@@ -15,20 +15,20 @@ Release notes
 .. rubric:: User interface
 
 - | The date format is now configurable.
-  | The settings in the djangosettings.py configuration file now control how date
-    formats are displayed in the user interface.
+  | The setting DATE_STYLE in the djangosettings.py configuration file now controls
+    how date formats are displayed in the user interface.
+
+.. rubric:: Production planning
+
+- | The default value of parameter allowsplits is changed from true to false.
 
 .. rubric:: Odoo integration
 
 - | v12 & 13 & 14 & 15: Correction of a bug in the uom conversion. Quantities were
     divided instead of multiplied by uom conversion factor and vice versa.
 
-.. rubric:: Production planning
-
-- | The default value of parameter allowsplits is changed from true to false.
-
 6.25 (2022/09/16)
-==================
+=================
 
 .. rubric:: Production planning
 

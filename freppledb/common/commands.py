@@ -21,16 +21,25 @@ from importlib import import_module
 from operator import attrgetter
 import os
 import sys
+import site
 import logging
 from threading import Thread
 
 
 if __name__ == "__main__":
     # Support for running in Python virtual environments
-    if "VIRTUAL_ENV" in os.environ:
-        from freppledb import activateVirtualEnv
-
-        activateVirtualEnv()
+    venv = os.environ.get("VIRTUAL_ENV", None)
+    if venv:
+        os.environ["PATH"] = os.pathsep.join(
+            [os.path.join(venv, "Scripts")]
+            + os.environ.get("PATH", "").split(os.pathsep)
+        )
+        prev_length = len(sys.path)
+        path = os.path.realpath(os.path.join(venv, "Lib", "site-packages"))
+        site.addsitedir(path)
+        sys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]
+        sys.real_prefix = sys.prefix
+        sys.prefix = venv
 
     # Initialize django
     import django

@@ -2016,14 +2016,24 @@ class GridReport(View):
                                 rec[i] == "\xa0"
                             ):  # Workaround for Jqgrid issue: date field can't be set to blank
                                 rec[i] = None
+                        # Assure all unique-together fields are included
+                        flds = set(rec.keys())
+                        for c in cls.model._meta.unique_together:
+                            for cf in c:
+                                if cf in flds:
+                                    for cf2 in c:
+                                        if cf2 not in flds:
+                                            rec[cf2] = str(getattr(obj, cf2))
+                                            flds.add(cf2)
+                                    break
                         if hasattr(cls.model, "getModelForm"):
                             UploadForm = cls.model.getModelForm(
-                                tuple(rec.keys()), database=request.database
+                                tuple(flds), database=request.database
                             )
                         else:
                             UploadForm = modelform_factory(
                                 cls.model,
-                                fields=tuple(rec.keys()),
+                                fields=tuple(flds),
                                 formfield_callback=lambda f: (
                                     isinstance(f, RelatedField)
                                     and f.formfield(using=request.database)
@@ -2043,7 +2053,9 @@ class GridReport(View):
                                 or f.formfield(),
                             )
                         form = UploadForm(rec, instance=obj)
-                        if form.has_changed():
+                        if not form.is_valid():
+                            raise ValueError
+                        elif form.has_changed():
                             obj = form.save(commit=False)
                             obj.save(using=request.database)
                             Comment(
@@ -2072,7 +2084,14 @@ class GridReport(View):
                                 resp.write(
                                     escape(
                                         "%s %s: %s: %s"
-                                        % (obj.pk, field.name, rec[field.name], error)
+                                        % (
+                                            obj.pk,
+                                            field.name,
+                                            rec.get(
+                                                field.name, getattr(obj, field.name)
+                                            ),
+                                            error,
+                                        )
                                     )
                                 )
                                 resp.write("<br>")

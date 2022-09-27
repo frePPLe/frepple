@@ -22,6 +22,12 @@ Release notes
 
 - | The default value of parameter allowsplits is changed from true to false.
 
+- | Bug fix: The planning algorithm has been improved to handle corner
+    cases with the autofence parameter.
+  | When awaiting confirmed supply conditions did occur where a demand
+    with a later due date was planned before a demand with an earlier
+    due date.
+
 .. rubric:: Odoo integration
 
 - | v12 & 13 & 14 & 15: Correction of a bug in the uom conversion. Quantities were

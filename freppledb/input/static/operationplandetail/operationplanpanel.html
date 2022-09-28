@@ -174,11 +174,13 @@
       </td>
     </tr>
     <tr data-ng-repeat="(key, value) in operationplan.colmodel"
-      data-ng-if="['delay', 'criticality', 'quantity', 'startdate', 'enddate', 'color', 'quantity_completed', 'operationplan__delay', 'operationplan__criticality', 'operationplan__quantity', 'operationplan__startdate', 'operationplan__enddate', 'operationplan__color', 'operationplan__quantity_completed'].indexOf(key) == -1">
+      data-ng-if="['delay', 'criticality', 'quantity', 'startdate', 'enddate', 'color', 'quantity_completed', 'operationplan__delay', 'operationplan__criticality', 'operationplan__quantity', 'operationplan__startdate', 'operationplan__enddate', 'operationplan__color', 'operationplan__quantity_completed'].indexOf(key) == -1 && operationplan.hasOwnProperty(key) && operationplan[key] != null">
       <td><b style="text-transform: capitalize">{{value.label|translate}}</b>&nbsp;
         <small>({{ value.type|translate }})</small>
       </td>
-      <td>{{(operationplan[key])|number:0}}</td>
+      <td data-ng-if="['number', 'color', 'currency', 'currencyWithBlanks', 'duration'].includes(value['formatter'])">{{operationplan[key]|number:0}}</td>
+      <td data-ng-if="value['formatter'] == 'date'">{{operationplan[key]|date:formatdatetime}}</td>
+      <td data-ng-if="!['date', 'number', 'color', 'currency', 'currencyWithBlanks', 'duration'].includes(value['formatter'])">xxx{{value['formatter']}}xx{{operationplan[key]}}</td>
     </tr>
     <tr id="statusrow" data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize">{{'status'|translate}}</b></td>

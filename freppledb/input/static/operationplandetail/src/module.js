@@ -37,16 +37,18 @@ operationplandetailapp.run(['gettextCatalog', function (gettextCatalog) {
 
 operationplandetailapp.filter('formatdate', function () {
   return function (datestr) {
-    if (datestr && typeof (datestr) !== "undefined") {
-      return moment(Date.parse(datestr)).format(dateformat);
-    }
+    if (moment.isMoment(datestr))
+      return datestr.format(dateformat);
+    else if (datestr && typeof (datestr) !== "undefined")
+      return moment(datestr, datetimeformat).format(dateformat);
   };
 });
 
 operationplandetailapp.filter('formatdatetime', function () {
   return function (datestr) {
-    if (datestr && typeof (datestr) !== "undefined") {
-      return moment(Date.parse(datestr)).format(datetimeformat);
-    }
+    if (moment.isMoment(datestr))
+      return datestr.format(datetimeformat);
+    else if (datestr && typeof (datestr) !== "undefined")
+      return moment(datestr, datetimeformat).format(datetimeformat);
   };
 });

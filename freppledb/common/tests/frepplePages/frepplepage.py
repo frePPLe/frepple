@@ -17,12 +17,11 @@
 
 from freppledb.common.tests.frepplePages.freppleelement import (
     BasePageElement,
-)  # in here, import the class containing all the elements from your target page
+)
 from freppledb.common.tests.frepplePages.frepplelocators import (
     TableLocators,
     BasePageLocators,
-)  # here, we should find all the locators for your target page
-
+)
 
 import time
 
@@ -157,7 +156,7 @@ class TablePage(BasePage):
         time.sleep(0.3)
 
     def enter_text_in_inputdatefield(self, targetinputdatefield, newdate):
-        val = date_format(newdate, "DATETME_FORMAT", False)
+        val = date_format(newdate, "DATETIME_FORMAT", use_l10n=False)
         targetinputdatefield.clear()
         time.sleep(0.3)
         targetinputdatefield.send_keys(val)

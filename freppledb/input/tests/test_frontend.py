@@ -21,6 +21,7 @@ from datetime import datetime
 
 from django.db.models import Q
 from django.core import management
+from django.utils.formats import date_format
 
 from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.tests.seleniumsetup import SeleniumTest, noSelenium
@@ -73,9 +74,7 @@ class PurchaseOrderScreen(SeleniumTest):
             enddate_inputdatefield.get_attribute("value")
         )
         newEndDate = oldEndDate + mainDate.timedelta(days=9)
-        newdatetext = table_page.enter_text_in_inputdatefield(
-            enddate_inputdatefield, newEndDate
-        )
+        table_page.enter_text_in_inputdatefield(enddate_inputdatefield, newEndDate)
 
         enddate_content = table_page.get_content_of_row_column(firstrow, "enddate")
         enddate_inputdatefield = table_page.click_target_cell(
@@ -83,7 +82,7 @@ class PurchaseOrderScreen(SeleniumTest):
         )
         self.assertEqual(
             enddate_inputdatefield.get_attribute("value"),
-            newEndDate.strftime("%Y-%m-%d %H:%M:%S"),
+            date_format(newEndDate, "DATETIME_FORMAT", False),
             "the input field of Receipt Date hasn't been modified",
         )
 
@@ -95,7 +94,7 @@ class PurchaseOrderScreen(SeleniumTest):
             PurchaseOrder.objects.all()
             .filter(
                 reference=reference,
-                enddate=newdatetext,
+                enddate=newEndDate,
                 supplier_id=newSupplier,
                 quantity=newQuantity,
             )
@@ -175,13 +174,11 @@ class DistributionOrderScreen(SeleniumTest):
             enddate_content, "enddate"
         )
 
-        oldEndDate = datetime.strptime(
-            enddate_inputdatefield.get_attribute("value"), "%Y-%m-%d %H:%M:%S"
+        oldEndDate = parseLocalizedDateTime(
+            enddate_inputdatefield.get_attribute("value")
         )
         newEndDate = oldEndDate + mainDate.timedelta(days=9)
-        newdatetext = table_page.enter_text_in_inputdatefield(
-            enddate_inputdatefield, newEndDate
-        )
+        table_page.enter_text_in_inputdatefield(enddate_inputdatefield, newEndDate)
 
         enddate_content = table_page.get_content_of_row_column(firstrow, "enddate")
         enddate_inputdatefield = table_page.click_target_cell(
@@ -189,7 +186,7 @@ class DistributionOrderScreen(SeleniumTest):
         )
         self.assertEqual(
             enddate_inputdatefield.get_attribute("value"),
-            newEndDate.strftime("%Y-%m-%d %H:%M:%S"),
+            date_format(newEndDate, "DATETIME_FORMAT", False),
             "the input field of Receipt Date hasn't been modified",
         )
 
@@ -201,7 +198,7 @@ class DistributionOrderScreen(SeleniumTest):
             DistributionOrder.objects.all()
             .filter(
                 reference=reference,
-                enddate=newdatetext,
+                enddate=newEndDate,
                 destination_id=newDestination,
                 quantity=newQuantity,
             )
@@ -284,13 +281,11 @@ class ManufacturingOrderScreen(SeleniumTest):
             enddate_content, "enddate"
         )
 
-        oldEndDate = datetime.strptime(
-            enddate_inputdatefield.get_attribute("value"), "%Y-%m-%d %H:%M:%S"
+        oldEndDate = parseLocalizedDateTime(
+            enddate_inputdatefield.get_attribute("value")
         )
         newEndDate = oldEndDate + mainDate.timedelta(days=9)
-        newdatetext = table_page.enter_text_in_inputdatefield(
-            enddate_inputdatefield, newEndDate
-        )
+        table_page.enter_text_in_inputdatefield(enddate_inputdatefield, newEndDate)
 
         enddate_content = table_page.get_content_of_row_column(firstrow, "enddate")
         enddate_inputdatefield = table_page.click_target_cell(
@@ -298,7 +293,7 @@ class ManufacturingOrderScreen(SeleniumTest):
         )
         self.assertEqual(
             enddate_inputdatefield.get_attribute("value"),
-            newEndDate.strftime("%Y-%m-%d %H:%M:%S"),
+            date_format(newEndDate, "DATETIME_FORMAT", False),
             "the input field of Receipt Date hasn't been modified",
         )
 
@@ -310,7 +305,7 @@ class ManufacturingOrderScreen(SeleniumTest):
             ManufacturingOrder.objects.all()
             .filter(
                 reference=reference,
-                enddate=newdatetext,
+                enddate=newEndDate,
                 operation_id=newOperation,
                 quantity=newQuantity,
             )

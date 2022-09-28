@@ -805,6 +805,12 @@ class SolverCreate : public Solver {
      */
     Demand* curDemand;
 
+    /* Demandname for which we currently plan.
+     * This field is used when we plan with allowSplits = false and
+     * resource_buckets because then we have only one operationplan per demand.
+     */
+    string demandReference;
+
     /* Points to the current owner operationplan. This is used when
      * operations are nested. */
     OperationPlan* curOwnerOpplan;

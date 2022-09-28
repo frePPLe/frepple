@@ -230,6 +230,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             data->constraints = &(const_cast<Demand*>(l)->getConstraints());
             data->state->curDemand = const_cast<Demand*>(l);
             data->state->curOwnerOpplan = nullptr;
+            data->state->demandReference = const_cast<Demand*>(l)->getName();
             data->state->curBatch = l->getBatch();
             data->coordination_run = false;
             data->recent_buffers.clear();

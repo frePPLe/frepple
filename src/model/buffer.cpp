@@ -554,7 +554,22 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
       }
     } else {
       // CASE 1B: Produced too much already: move backward
-      if (false) {
+      bool alreadyAssigned = false;
+      for (auto flow = getFlowPlans().begin(); flow != getFlowPlans().end();
+           flow++) {
+        if (flow->getOperationPlan()->getDemandReference().compare(
+                curflowplan->getOperationPlan()->getDemand()->getName()) == 0) {
+          alreadyAssigned = true;
+          auto currentOperationPlan =
+              dynamic_cast<FlowPlan*>(&(*flow))->getOperationPlan();
+          iter.updateStack(
+              currentOperationPlan, currentOperationPlan->getQuantity(), 0, lvl,
+              curflowplan->getDate() - currentOperationPlan->getStart());
+          break;
+        }
+      }
+
+      if (!alreadyAssigned) {
         while (
             f != getFlowPlans().end() &&
             ((f->getQuantity() <= 0 && f->getCumulativeProduced() > endQty) ||
@@ -584,29 +599,6 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
                 curflowplan->getDate() - f->getDate());
           }
           --f;
-        }
-      } else {
-        // MY THING
-        for (auto flow = getFlowPlans().begin(); flow != getFlowPlans().end();
-             flow++) {
-          std::set<std::string>::iterator it =
-              flowplansUsed.find(flow->getOperationPlan()->getReference());
-          if (flow->getOperationPlan()->getOrderType() == "MO" &&
-              flow->getOperationPlan()->getQuantity() >
-                  fabs(curflowplan->getQuantity()) - ROUNDING_ERROR &&
-              flow->getOperationPlan()->getQuantity() <
-                  fabs(curflowplan->getQuantity()) + ROUNDING_ERROR &&
-              it == flowplansUsed.end() && flow->getOperationPlan()->getStatus() != "confirmed") {
-
-            flowplansUsed.insert(flow->getOperationPlan()->getReference());
-
-            OperationPlan* opplan =
-                dynamic_cast<FlowPlan*>(&(*flow))->getOperationPlan();
-
-            iter.updateStack(opplan, opplan->getQuantity(), 0, lvl,
-                             curflowplan->getDate() - f->getDate());
-            break;
-          }
         }
       }
     }

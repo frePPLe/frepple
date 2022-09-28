@@ -1702,6 +1702,11 @@ class OperationPlan : public Object,
    */
   bool mergeIfPossible();
 
+  /* Gets the demandname of the corresponding demand if allowSplit is false */
+  string getDemandReference() { return demandReference; }
+
+  void setDemandReference(string demandReference);
+
   friend class iterator;
 
   /* This is a factory method that creates an operationplan pointer based
@@ -2584,6 +2589,9 @@ class OperationPlan : public Object,
 
   /* Quantity. */
   double quantity = 0.0;
+
+  /* Demand name to identify which demand takes this operationplan */
+  string demandReference = "";
 
   /* Completed quantity. */
   double quantity_completed = 0.0;

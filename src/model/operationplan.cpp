@@ -2252,6 +2252,10 @@ double OperationPlan::getEfficiency(Date d) const {
     return 0.0;
 }
 
+void OperationPlan::setDemandReference(string demand){
+  demandReference = demand;
+}
+
 void OperationPlan::setBatch(const PooledString& s, bool up) {
   if (getTopOwner() != this && up)
     getTopOwner()->setBatch(s, false);

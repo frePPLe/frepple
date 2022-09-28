@@ -641,6 +641,7 @@ void SolverCreate::solve(const Operation* oper, void* v) {
     data->push(asked_qty, asked_date, true);
     // Subtract the post-operation time as soft constraint
     if (!hard_posttime) data->state->q_date -= ask_early;
+    data->state->demandReference = data->prevstate->demandReference;
     auto tmpopplan = createOperation(oper, data, true, true);
     data->pop(true);
     if (!data->state->a_qty) {
@@ -877,6 +878,9 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
       data->state->curDemand = nullptr;
       z = a->getOperationPlan();
       data->getCommandManager()->add(a);
+
+      if (!getAllowSplits() && data->state->has_bucketized_resources)
+        z->setDemandReference(data->state->demandReference);
     }
   }
   assert(z);

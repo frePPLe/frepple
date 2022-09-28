@@ -123,11 +123,11 @@ class Location_admin(MultiDBModelAdmin):
     raw_id_fields = ("available", "owner")
     save_on_top = True
     fieldsets = (
-        (None, {"fields": ("name", "owner")}),
+        (None, {"fields": ("name", "owner", "available")}),
         (
             _("advanced"),
             {
-                "fields": ["description", "category", "subcategory", "available"]
+                "fields": ["description", "category", "subcategory"]
                 + [a[0] for a in getAttributes(Location) if a[3]],
                 "classes": ("collapse",),
             },

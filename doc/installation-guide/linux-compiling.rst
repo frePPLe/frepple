@@ -21,7 +21,7 @@ instructions below for some common linux distributions.
      | Xerces is a validating XML parser provided by the Apache Foundation.
      | You need to install the libraries as well as the development libraries.
 
-   * | python 3.5 or higher
+   * | python 3.8 or higher
      | Python is a modern, easy to learn interpreted programming language.
      | You need to install the language as well as the development libraries.
 
@@ -34,7 +34,7 @@ instructions below for some common linux distributions.
    * | python-sphinx (optional)
      | A modern documentation generation tool.
 
-   * | PostgreSQL, 9.5 or higher
+   * | PostgreSQL, 12 or higher
      | The world's most advanced open source relational database. And that's not
        an overstatement...
 

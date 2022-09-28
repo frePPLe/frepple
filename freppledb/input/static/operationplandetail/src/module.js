@@ -21,24 +21,34 @@
 var operationplandetailapp = angular.module('operationplandetailapp',
   ['ngCookies', 'gettext', 'ngWebSocket', 'frepple.input', 'frepple.common', 'calendar'],
   ['$locationProvider', function ($locationProvider) {
-    $locationProvider.html5Mode({enabled: true, requireBase: false});
-}]);
+    $locationProvider.html5Mode({ enabled: true, requireBase: false });
+  }]);
 
 operationplandetailapp.config(['$httpProvider', function ($httpProvider) {
-    $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+  $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+  $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+  $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 }]);
 
 operationplandetailapp.run(['gettextCatalog', function (gettextCatalog) {
-    gettextCatalog.setCurrentLanguage(language);
-    //gettextCatalog.debug = true; //show missing label on untranslated strings
+  gettextCatalog.setCurrentLanguage(language);
+  //gettextCatalog.debug = true; //show missing label on untranslated strings
 }]);
 
-operationplandetailapp.filter('formatdate', function(){
-  return function(datestr){
-    if (typeof(datestr) !== "undefined" ){
-      return moment(Date.parse(datestr)).format("YYYY-MM-DD HH:mm:ss");
-    }
+operationplandetailapp.filter('formatdate', function () {
+  return function (datestr) {
+    if (moment.isMoment(datestr))
+      return datestr.format(dateformat);
+    else if (datestr && typeof (datestr) !== "undefined")
+      return moment(datestr, datetimeformat).format(dateformat);
+  };
+});
+
+operationplandetailapp.filter('formatdatetime', function () {
+  return function (datestr) {
+    if (moment.isMoment(datestr))
+      return datestr.format(datetimeformat);
+    else if (datestr && typeof (datestr) !== "undefined")
+      return moment(datestr, datetimeformat).format(datetimeformat);
   };
 });

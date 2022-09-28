@@ -370,7 +370,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                   // Oops, we didn't get a proper answer we can use for the next
                   // loop. Print a warning and simply a bit later.
                   plan_date = copy_plan_date + getLazyDelay();
-                  if (loglevel > 0)
+                  if (loglevel > 1)
                     logger << indentlevel << "Demand '" << l
                            << "': Easy retry on " << plan_date
                            << " rather than " << next_date << endl;
@@ -386,7 +386,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                 // Oops, we didn't get a proper answer we can use for the next
                 // loop. Print a warning and simply try a bit later.
                 plan_date = copy_plan_date + getLazyDelay();
-                if (loglevel > 0)
+                if (loglevel > 1)
                   logger << indentlevel << "Demand '" << l
                          << "': Easy retry on " << plan_date << " rather than "
                          << next_date << endl;

@@ -110,7 +110,11 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
       if (value.hasOwnProperty('summaryType')) {
         aggColModel.push([key, value.name, value.summaryType, value.formatter]);
         aggregatedopplan[value.name] = null;
-        aggregatedopplan.colmodel[value.name] = { 'type': value.summaryType, 'label': value.label };
+        aggregatedopplan.colmodel[value.name] = {
+          'type': value.summaryType,
+          'label': value.label,
+          'formatter': value.formatter
+        };
       }
     });
     angular.forEach(selectionData, function (opplan) {
@@ -143,13 +147,10 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
               }
             }
           } else if (field[3] === 'date') {
-            temp = new moment(opplan[field[1]]);
+            temp = new moment(opplan[field[1]], datetimeformat);
             if (temp._d !== 'Invalid Date') {
-              if (aggregatedopplan[field[1]] === null) {
+              if (aggregatedopplan[field[1]] === null || temp.isAfter(aggregatedopplan[field[1]]))
                 aggregatedopplan[field[1]] = temp;
-              } else {
-                aggregatedopplan[field[1]] = moment.max(aggregatedopplan[field[1]], temp);
-              }
             }
           }
 
@@ -174,7 +175,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
               }
             }
           } else if (field[3] === 'date') {
-            temp = new moment(opplan[field[1]]);
+            temp = new moment(opplan[field[1]], datetimeformat);
             if (temp._d !== 'Invalid Date') {
               if (aggregatedopplan[field[1]] === null) {
                 aggregatedopplan[field[1]] = temp;
@@ -313,7 +314,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         '</div>' +
         '<div class="modal-footer">' +
         '<input type="submit" id="savebutton" role="button" class="btn btn-danger pull-left" value="' + gettext('Save') + '">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Return to page') + '">' +
         '</div>' +
         '</div>' +
         '</div>'
@@ -588,7 +589,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         });
       });
     }
-    if ($scope.deleted.length) {
+    if ($scope.deleted && $scope.deleted.length) {
       dirty.push({ delete: $scope.deleted });
       $scope.deleted = [];
     }

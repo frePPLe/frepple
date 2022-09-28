@@ -130,6 +130,50 @@ LANGUAGES = (
     ("uk", _("Ukrainian")),
 )
 
+# Default date & time formats
+DATE_FORMAT = (
+    # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+    "Y-m-d"
+)
+DATETIME_FORMAT = (
+    # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
+    "Y-m-d H:i:s"
+)
+DATE_FORMAT_JS = (
+    # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
+    "YYYY-MM-DD"
+)
+DATETIME_FORMAT_JS = (
+    # see https://momentjs.com/docs/#/displaying/
+    "YYYY-MM-DD HH:mm:ss"
+)
+DATE_INPUT_FORMATS = [
+    # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
+    "%Y-%m-%d",
+    "%y-%m-%d",
+    "%Y/%m/%d",
+    "%y/%m/%d",
+    "%b %d %Y",
+    "%b %d, %Y",
+    "%d %b %Y",
+    "%d %b %Y",
+    "%B %d %Y",
+    "%B %d, %Y",
+    "%d %B %Y",
+    "%d %B, %Y",
+]
+DATETIME_INPUT_FORMATS = [
+    # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
+    "%Y-%m-%d %H:%M:%S",
+    "%Y-%m-%d %H:%M",
+    "%y-%m-%d %H:%M:%S",
+    "%y-%m-%d %H:%M",
+    "%Y/%m/%d %H:%M:%S",
+    "%Y/%m/%d %H:%M",
+    "%y/%m/%d %H:%M:%S",
+    "%y/%m/%d %H:%M",
+]
+
 # The default redirects URLs not ending with a slash.
 # This causes trouble in combination with the DatabaseSelectionMiddleware.
 # We prefer not to redirect and report this as an incorrect URL.
@@ -146,14 +190,14 @@ else:
     # All other layout types
     STATIC_ROOT = os.path.normpath(os.path.join(FREPPLE_APP, "static"))
 STATIC_URL = "/static/"
-USE_L10N = True  # Represent data in the local format
+USE_L10N = False  # No automatic localization
 USE_I18N = True  # Use translated strings
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # A boolean that specifies if datetimes will be timezone-aware by default or not.
 # If this is set to True, we will use timezone-aware datetimes internally.
 # Otherwise, we use naive datetimes in local time.
-USE_TZ = False  # TODO Test with this parameter set to True
+USE_TZ = False
 
 # Clickjacking security http headers
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options

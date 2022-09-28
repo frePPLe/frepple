@@ -22,6 +22,7 @@ from django.contrib.admin.utils import quote
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.http import HttpResponse
 from django.utils.encoding import force_str
+from django.utils.formats import date_format
 from django.utils.html import escape
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
@@ -101,8 +102,12 @@ class LateOrdersWidget(Widget):
                     escape(rec[1]),
                     escape(rec[2]),
                     escape(rec[3]),
-                    rec[4].date(),
-                    rec[5].date(),
+                    date_format(rec[4], format="DATE_FORMAT", use_l10n=False)
+                    if rec[4]
+                    else "",
+                    date_format(rec[5], format="DATE_FORMAT", use_l10n=False)
+                    if rec[5]
+                    else "",
                     int(rec[6]),
                 )
             )
@@ -127,17 +132,17 @@ class ShortOrdersWidget(Widget):
     limit = 20
 
     query = """
-    select
-      out_problem.owner, demand.item_id, demand.location_id, demand.customer_id,
-      out_problem.startdate, out_problem.weight
-    from out_problem
-    left outer join demand
-      on out_problem.owner = demand.name
-    where out_problem.name in ('short', 'unplanned') and out_problem.entity = 'demand'
-      and demand.name is not null
-    order by out_problem.startdate desc
-    limit %s
-    """
+        select
+          out_problem.owner, demand.item_id, demand.location_id, demand.customer_id,
+          out_problem.startdate, out_problem.weight
+        from out_problem
+        left outer join demand
+          on out_problem.owner = demand.name
+        where out_problem.name in ('short', 'unplanned') and out_problem.entity = 'demand'
+          and demand.name is not null
+        order by out_problem.startdate desc
+        limit %s
+        """
 
     def args(self):
         return "?%s" % urlencode({"limit": self.limit})
@@ -178,7 +183,9 @@ class ShortOrdersWidget(Widget):
                     escape(rec[1]),
                     escape(rec[2]),
                     escape(rec[3]),
-                    rec[4].date(),
+                    date_format(rec[4], format="DATE_FORMAT", use_l10n=False)
+                    if rec[4]
+                    else "",
                     int(rec[5]),
                 )
             )
@@ -325,55 +332,55 @@ class ManufacturingOrderWidget(Widget):
         GridReport.getBuckets(request)
         cursor = connections[db].cursor()
         query = """
-      select
-         0, common_bucketdetail.name, common_bucketdetail.startdate,
-         count(operationplan.name), coalesce(round(sum(quantity)),0),
-         coalesce(round(sum(quantity * cost)),0)
-      from common_bucketdetail
-      left outer join operationplan
-        on operationplan.startdate >= common_bucketdetail.startdate
-        and operationplan.startdate < common_bucketdetail.enddate
-        and status in ('confirmed', 'proposed', 'approved')
-        and operationplan.type = 'MO'
-      left outer join operation
-        on operationplan.operation_id = operation.name
-      where bucket_id = %%s and common_bucketdetail.enddate > %%s
-        and common_bucketdetail.startdate < %%s
-      group by common_bucketdetail.name, common_bucketdetail.startdate
-      union all
-      select
-        1, null, null, count(*),
-        coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(quantity * cost)),0)
-      from operationplan
-      inner join operation
-        on operationplan.operation_id = operation.name
-      where status in ('confirmed', 'approved')
-        and operationplan.type = 'MO'
-      union all
-      select
-        2, null, null, count(*),
-        coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(quantity * cost)),0)
-      from operationplan
-      inner join operation
-        on operationplan.operation_id = operation.name
-      where status = 'proposed'
-        and startdate < %%s + interval '%s day'
-        and operationplan.type = 'MO'
-      union all
-      select
-        3, null, null, count(*),
-        coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(quantity * cost)),0)
-      from operationplan
-      inner join operation
-        on operationplan.operation_id = operation.name
-      where status = 'proposed'
-        and startdate < %%s + interval '%s day'
-        and operationplan.type = 'MO'
-      order by 1, 3
-      """ % (
+          select
+            0, common_bucketdetail.name, common_bucketdetail.startdate,
+            count(operationplan.name), coalesce(round(sum(quantity)),0),
+            coalesce(round(sum(quantity * cost)),0)
+          from common_bucketdetail
+          left outer join operationplan
+            on operationplan.startdate >= common_bucketdetail.startdate
+            and operationplan.startdate < common_bucketdetail.enddate
+            and status in ('confirmed', 'proposed', 'approved')
+            and operationplan.type = 'MO'
+          left outer join operation
+            on operationplan.operation_id = operation.name
+          where bucket_id = %%s and common_bucketdetail.enddate > %%s
+            and common_bucketdetail.startdate < %%s
+          group by common_bucketdetail.name, common_bucketdetail.startdate
+          union all
+          select
+            1, null, null, count(*),
+            coalesce(round(sum(quantity)),0),
+            coalesce(round(sum(quantity * cost)),0)
+          from operationplan
+          inner join operation
+            on operationplan.operation_id = operation.name
+          where status in ('confirmed', 'approved')
+            and operationplan.type = 'MO'
+          union all
+          select
+            2, null, null, count(*),
+            coalesce(round(sum(quantity)),0),
+            coalesce(round(sum(quantity * cost)),0)
+          from operationplan
+          inner join operation
+            on operationplan.operation_id = operation.name
+          where status = 'proposed'
+            and startdate < %%s + interval '%s day'
+            and operationplan.type = 'MO'
+          union all
+          select
+            3, null, null, count(*),
+            coalesce(round(sum(quantity)),0),
+            coalesce(round(sum(quantity * cost)),0)
+          from operationplan
+          inner join operation
+            on operationplan.operation_id = operation.name
+          where status = 'proposed'
+            and startdate < %%s + interval '%s day'
+            and operationplan.type = 'MO'
+          order by 1, 3
+          """ % (
             fence1,
             fence2,
         )
@@ -1086,7 +1093,9 @@ class PurchaseQueueWidget(Widget):
                     alt and ' class="altRow"' or "",
                     escape(po.item.name),
                     escape(po.supplier.name),
-                    po.enddate.date(),
+                    date_format(po.enddate, format="DATE_FORMAT", use_l10n=False)
+                    if po.enddate
+                    else "",
                     int(po.quantity),
                     int(po.criticality),
                 )
@@ -1144,7 +1153,9 @@ class DistributionQueueWidget(Widget):
                     escape(po.item.name),
                     escape(po.origin.name if po.origin else ""),
                     escape(po.destination.name),
-                    po.enddate.date(),
+                    date_format(po.enddate, format="DATE_FORMAT", use_l10n=False)
+                    if po.enddate
+                    else "",
                     int(po.quantity),
                     int(po.criticality),
                 )
@@ -1203,7 +1214,9 @@ class ShippingQueueWidget(Widget):
                     escape(do.origin.name),
                     escape(do.destination),
                     int(do.quantity),
-                    do.startdate.date(),
+                    date_format(do.enddate, format="DATE_FORMAT", use_l10n=False)
+                    if do.enddate
+                    else "",
                     int(do.criticality),
                 )
             )
@@ -1265,8 +1278,12 @@ class ResourceQueueWidget(Widget):
                     quote(ldplan.resource),
                     escape(ldplan.resource),
                     escape(ldplan.operationplan.operation),
-                    ldplan.startdate,
-                    ldplan.enddate,
+                    date_format(ldplan.startdate, format="DATE_FORMAT", use_l10n=False)
+                    if ldplan.startdate
+                    else "",
+                    date_format(ldplan.enddate, format="DATE_FORMAT", use_l10n=False)
+                    if ldplan.enddate
+                    else "",
                     int(ldplan.operationplan.quantity),
                     int(ldplan.operationplan.criticality),
                 )
@@ -1319,7 +1336,9 @@ class PurchaseAnalysisWidget(Widget):
                     alt and ' class="altRow"' or "",
                     escape(po.item.name if po.item else ""),
                     escape(po.supplier.name if po.supplier else ""),
-                    po.enddate.date() if po.enddate else "",
+                    date_format(po.enddate, format="DATE_FORMAT", use_l10n=False)
+                    if po.enddate
+                    else "",
                     int(po.quantity) if po.quantity else "",
                     int(po.color) if po.color is not None else "",
                 )
@@ -1569,7 +1588,7 @@ class InventoryByLocationWidget(Widget):
       .attr("width", x_width - 2)
       .style("fill", "#828915");
 
-// Location label
+    // Location label
     bar.append("text")
       .attr("y", y_zero)
       .attr("x", x_width/2)
@@ -1736,17 +1755,17 @@ class DeliveryPerformanceWidget(Widget):
         GridReport.getBuckets(request)
         query = (
             """
-      select case when count(*) = 0 then 0 else 100 - sum(late) * 100.0 / count(*) end
-      from (
-        select
-          demand_id, max(case when enddate > operationplan.due then 1 else 0 end) late
-        from operationplan
-        left outer join demand
-          on operationplan.demand_id = demand.name
-        where demand.due < '%s'
-        group by demand_id
-      ) demands
-      """
+            select case when count(*) = 0 then 0 else 100 - sum(late) * 100.0 / count(*) end
+            from (
+              select
+                demand_id, max(case when enddate > operationplan.due then 1 else 0 end) late
+              from operationplan
+              left outer join demand
+                on operationplan.demand_id = demand.name
+              where demand.due < '%s'
+              group by demand_id
+            ) demands
+            """
             % request.report_enddate
         )
         cursor.execute(query)

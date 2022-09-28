@@ -92,7 +92,7 @@
       <input class="scenariolabel" type="text" data-target="{{ j.name }}"
       value="{% if j.description %}{{j.description|escape}}{% else %}{{ j.name }}{% endif %}">
     </td>
-    <td style="padding:5px 10px 5px 10px; text-align: center">{{j.lastrefresh|date:"Y-m-d G:i:s"}}</td>
+    <td style="padding:5px 10px 5px 10px; text-align: center">{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
   </tr>
   {% endif %}
   {% endfor %}

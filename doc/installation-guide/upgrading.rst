@@ -21,7 +21,7 @@ Generic instructions
 
 #. **Upgrade the PostgreSQL database**
 
-   FrePPLe requires postgresql 9.5 or higher. If you're on an older version, upgrading
+   FrePPLe requires 12 or higher. If you're on an older version, upgrading
    your PostgreSQL database is the first step.
 
    Note: When running on Windows, the migration process described here

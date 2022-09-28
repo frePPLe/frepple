@@ -215,7 +215,7 @@ class SupplyPlanning(PlanTask):
             loglevel=loglevel,
             lazydelay=int(Parameter.getValue("lazydelay", database, "86400")),
             allowsplits=(
-                Parameter.getValue("allowsplits", database, "true").lower() == "true"
+                Parameter.getValue("allowsplits", database, "false").lower() == "true"
             ),
             minimumdelay=int(Parameter.getValue("plan.minimumdelay", database, "3600")),
             rotateresources=(

@@ -23,14 +23,23 @@ This command is the wrapper for all administrative actions on frePPLe.
 
 import os
 import sys
+import site
 
 if __name__ == "__main__":
     try:
         # Initialize Python virtual environments
-        if "VIRTUAL_ENV" in os.environ:
-            from freppledb import activateVirtualEnv
-
-            activateVirtualEnv()
+        venv = os.environ.get("VIRTUAL_ENV", None)
+        if venv:
+            os.environ["PATH"] = os.pathsep.join(
+                [os.path.join(venv, "Scripts")]
+                + os.environ.get("PATH", "").split(os.pathsep)
+            )
+            prev_length = len(sys.path)
+            path = os.path.realpath(os.path.join(venv, "Lib", "site-packages"))
+            site.addsitedir(path)
+            sys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]
+            sys.real_prefix = sys.prefix
+            sys.prefix = venv
 
         # Initialize django
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")

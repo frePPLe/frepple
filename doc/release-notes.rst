@@ -12,8 +12,29 @@ Release notes
 
 - | The minimum PostgreSQL version is now 12.
 
+.. rubric:: User interface
+
+- | The date format is now configurable.
+  | The setting DATE_STYLE in the djangosettings.py configuration file now controls
+    how date formats are displayed in the user interface.
+
+.. rubric:: Production planning
+
+- | The default value of parameter allowsplits is changed from true to false.
+
+- | Bug fix: The planning algorithm has been improved to handle corner
+    cases with the autofence parameter.
+  | When awaiting confirmed supply conditions did occur where a demand
+    with a later due date was planned before a demand with an earlier
+    due date.
+
+.. rubric:: Odoo integration
+
+- | v12 & 13 & 14 & 15: Correction of a bug in the uom conversion. Quantities were
+    divided instead of multiplied by uom conversion factor and vice versa.
+
 6.25 (2022/09/16)
-==================
+=================
 
 .. rubric:: Production planning
 

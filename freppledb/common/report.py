@@ -63,7 +63,7 @@ from django.contrib.admin.utils import unquote, quote
 from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
-from django.db.models.fields import CharField, AutoField
+from django.db.models.fields import CharField, AutoField, DateField, DateTimeField
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotFound
@@ -74,7 +74,7 @@ from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str, force_str
 from django.utils.html import escape
 from django.utils.translation import gettext as _
-from django.utils.formats import get_format
+from django.utils.formats import get_format, date_format
 from django.utils.text import capfirst, get_text_list, format_lazy
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
@@ -91,6 +91,7 @@ from freppledb.common.models import (
     NotificationFactory,
 )
 from freppledb.common.dataload import parseExcelWorksheet, parseCSVdata
+from freppledb.common.localization import parseLocalizedDate, parseLocalizedDateTime
 
 
 logger = logging.getLogger(__name__)
@@ -235,13 +236,11 @@ def getHorizon(request, future_only=False):
     else:
         # Second type: Absolute start and end dates given
         try:
-            horizonstart = datetime.strptime(
-                request.GET.get("horizonstart"), "%Y-%m-%d"
-            )
+            horizonstart = parseLocalizedDate(request.GET.get("horizonstart"))
         except Exception:
             horizonstart = request.user.horizonstart
         try:
-            horizonend = datetime.strptime(request.GET.get("horizonend"), "%Y-%m-%d")
+            horizonend = parseLocalizedDate(request.GET.get("horizonend"))
         except Exception:
             horizonend = request.user.horizonend
         start = horizonstart
@@ -349,7 +348,10 @@ class GridField:
 
 class GridFieldDateTime(GridField):
     formatter = "date"
-    extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
+    extra = (
+        '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s"}'
+        % settings.DATETIME_FORMAT
+    )
     searchoptions = (
         '{"sopt":["eq","ne","lt","le","gt","ge","win","isnull"],"searchhidden": true}'
     )
@@ -364,7 +366,9 @@ class GridFieldTime(GridField):
 
 class GridFieldDate(GridField):
     formatter = "date"
-    extra = '"formatoptions":{"srcformat":"Y-m-d","newformat":"Y-m-d"}'
+    extra = (
+        '"formatoptions":{"srcformat":"Y-m-d","newformat":"%s"}' % settings.DATE_FORMAT
+    )
     searchoptions = '{"sopt":["eq","ne","lt","le","gt","ge","win"],"searchhidden":true}'
     width = 140
 
@@ -396,7 +400,10 @@ class GridFieldBool(GridField):
 
 class GridFieldLastModified(GridField):
     formatter = "date"
-    extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
+    extra = (
+        '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s"}'
+        % settings.DATETIME_FORMAT
+    )
     searchoptions = '{"sopt":["em","nm","in","ni","eq","bw","ew","bn","nc","en","win"],"searchhidden":true}'
     title = _("last modified")
     editable = False
@@ -630,18 +637,16 @@ class GridReport(View):
 
     @classmethod
     def _localize(cls, value, decimal_separator):
-        """
-        Localize numbers.
-        Dates are always represented as YYYY-MM-DD hh:mm:ss since this is
-        a format that is understood uniformly across different regions in the
-        world.
-        """
         if callable(value):
             value = value()
         if isinstance(value, numericTypes):
             return (
                 decimal_separator == "," and str(value).replace(".", ",") or str(value)
             )
+        elif isinstance(value, datetime):
+            return date_format(value, format="DATETIME_FORMAT", use_l10n=False)
+        elif isinstance(value, date):
+            return date_format(value, format="DATE_FORMAT", use_l10n=False)
         elif isinstance(value, timedelta):
             return _parseSeconds(value)
         elif isinstance(value, (list, tuple)):
@@ -2011,22 +2016,46 @@ class GridReport(View):
                                 rec[i] == "\xa0"
                             ):  # Workaround for Jqgrid issue: date field can't be set to blank
                                 rec[i] = None
+                        # Assure all unique-together fields are included
+                        flds = set(rec.keys())
+                        for c in cls.model._meta.unique_together:
+                            for cf in c:
+                                if cf in flds:
+                                    for cf2 in c:
+                                        if cf2 not in flds:
+                                            rec[cf2] = str(getattr(obj, cf2))
+                                            flds.add(cf2)
+                                    break
                         if hasattr(cls.model, "getModelForm"):
                             UploadForm = cls.model.getModelForm(
-                                tuple(rec.keys()), database=request.database
+                                tuple(flds), database=request.database
                             )
                         else:
                             UploadForm = modelform_factory(
                                 cls.model,
-                                fields=tuple(rec.keys()),
+                                fields=tuple(flds),
                                 formfield_callback=lambda f: (
                                     isinstance(f, RelatedField)
                                     and f.formfield(using=request.database)
                                 )
+                                or (
+                                    isinstance(f, DateTimeField)
+                                    and f.formfield(
+                                        input_formats=settings.DATETIME_INPUT_FORMATS
+                                    )
+                                )
+                                or (
+                                    isinstance(f, DateField)
+                                    and f.formfield(
+                                        input_formats=settings.DATE_INPUT_FORMATS
+                                    )
+                                )
                                 or f.formfield(),
                             )
                         form = UploadForm(rec, instance=obj)
-                        if form.has_changed():
+                        if not form.is_valid():
+                            raise ValueError
+                        elif form.has_changed():
                             obj = form.save(commit=False)
                             obj.save(using=request.database)
                             Comment(
@@ -2055,7 +2084,14 @@ class GridReport(View):
                                 resp.write(
                                     escape(
                                         "%s %s: %s: %s"
-                                        % (obj.pk, field.name, rec[field.name], error)
+                                        % (
+                                            obj.pk,
+                                            field.name,
+                                            rec.get(
+                                                field.name, getattr(obj, field.name)
+                                            ),
+                                            error,
+                                        )
                                     )
                                 )
                                 resp.write("<br>")
@@ -2481,6 +2517,14 @@ class GridReport(View):
             return ~models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
             )
+        elif isinstance(reportrow, GridFieldDateTime):
+            return ~models.Q(
+                **{"%s__exact" % reportrow.field_name: parseLocalizedDateTime(data)}
+            )
+        elif isinstance(reportrow, GridFieldDate):
+            return ~models.Q(
+                **{"%s__exact" % reportrow.field_name: parseLocalizedDate(data)}
+            )
         else:
             return ~models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
@@ -2592,6 +2636,14 @@ class GridReport(View):
             return models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
             )
+        elif isinstance(reportrow, GridFieldDateTime):
+            return models.Q(
+                **{"%s__exact" % reportrow.field_name: parseLocalizedDateTime(data)}
+            )
+        elif isinstance(reportrow, GridFieldDate):
+            return models.Q(
+                **{"%s__exact" % reportrow.field_name: parseLocalizedDate(data)}
+            )
         else:
             return models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
@@ -2616,18 +2668,34 @@ class GridReport(View):
 
     @staticmethod
     def _filter_gt(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+        if isinstance(reportrow, GridFieldDateTime):
+            data = parseLocalizedDateTime(data)
+        elif isinstance(reportrow, GridFieldDate):
+            data = parseLocalizedDate(data)
         return models.Q(**{"%s__gt" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
     def _filter_gte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+        if isinstance(reportrow, GridFieldDateTime):
+            data = parseLocalizedDateTime(data)
+        elif isinstance(reportrow, GridFieldDate):
+            data = parseLocalizedDate(data)
         return models.Q(**{"%s__gte" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
     def _filter_lt(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+        if isinstance(reportrow, GridFieldDateTime):
+            data = parseLocalizedDateTime(data)
+        elif isinstance(reportrow, GridFieldDate):
+            data = parseLocalizedDate(data)
         return models.Q(**{"%s__lt" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
     def _filter_lte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+        if isinstance(reportrow, GridFieldDateTime):
+            data = parseLocalizedDateTime(data)
+        elif isinstance(reportrow, GridFieldDate):
+            data = parseLocalizedDate(data)
         return models.Q(**{"%s__lte" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
@@ -2745,6 +2813,7 @@ class GridReport(View):
         "ico": "ico",
         "isnull": "isnull",
         # 'win' exist in jqgrid, but not in django
+        # 'ne' exist in jqgrid, but not in django
     }
 
     @classmethod

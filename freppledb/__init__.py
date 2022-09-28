@@ -112,22 +112,3 @@ def runFunction(func, *args, **kwargs):
     mod_name, func_name = func.rsplit(".", 1)
     mod = importlib.import_module(mod_name)
     getattr(mod, func_name).start(*args, **kwargs)
-
-
-def activateVirtualEnv():
-    import os
-    import site
-    import sys
-
-    venv = os.environ.get("VIRTUAL_ENV", None)
-    if venv:
-        os.environ["PATH"] = os.pathsep.join(
-            [os.path.join(venv, "Scripts")]
-            + os.environ.get("PATH", "").split(os.pathsep)
-        )
-        prev_length = len(sys.path)
-        path = os.path.realpath(os.path.join(venv, "Lib", "site-packages"))
-        site.addsitedir(path)
-        sys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]
-        sys.real_prefix = sys.prefix
-        sys.prefix = venv

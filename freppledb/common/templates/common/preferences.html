@@ -32,17 +32,19 @@
 </script>
 
 {% endblock %} {% block content_title %}
+  <form action="." method="post" class="form" enctype="multipart/form-data">
 <div class="row">
   <div class="col-xs-12">
     {% if title %}
-    <h1>{{ title }}</h1>
+    <h1>{{ title }}&nbsp;&nbsp;
+    <input type="submit" value="{% trans "Save" %}" class="btn btn-primary">
+    </h1>
     {% endif %}
   </div>
 </div>
 {% endblock %} {% block content %}
 
 <div id="content-main">
-  <form action="." method="post" class="form" enctype="multipart/form-data">
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <input type="hidden" name="language" id="language" value="{{ request.user.language }}">
@@ -51,6 +53,12 @@
     {% if form.non_field_errors %}
     <div  style="max-width: 500px" class="alert alert-danger">{{ form.non_field_errors }}</div>
     {% endif %}
+
+    <div class="row" style="padding-bottom: 20px;">
+      <div class="col-xs-3" style="max-width:150px; text-align: right">
+
+      </div>
+    </div>
 
     {% if request.user.languageList|length > 2 %}
     <div class="row" style="padding-bottom: 20px;">
@@ -155,15 +163,7 @@
         {% endif %}
       </div>
     </div>
-
-    <div class="row" style="padding-bottom: 20px;">
-      <div class="col-xs-3" style="max-width:150px; text-align: right">
-      </div>
-      <div class="col-xs-9" style="max-width:260px">
-        <input type="submit" value="{% trans "Save" %}" class="btn btn-primary">
-      </div>
-    </div>
-  </form>
-</div>
+  </div>
+</form>
 
 {% endblock %}

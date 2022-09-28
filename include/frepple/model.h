@@ -4905,6 +4905,15 @@ class Buffer : public HasHierarchy<Buffer>,
       flags &= ~TOOL;
   }
 
+  bool getAutofence() const { return (flags & AUTOFENCE) != 0; }
+
+  void setAutofence(bool b) {
+    if (b)
+      flags |= AUTOFENCE;
+    else
+      flags &= ~AUTOFENCE;
+  }
+
   /* Debugging function. */
   void inspect(const string& = "", const short = 0) const;
 
@@ -5035,6 +5044,8 @@ class Buffer : public HasHierarchy<Buffer>,
     m->addIteratorField<Cls, flowlist::const_iterator, Flow>(
         Tags::flows, Tags::flow, &Cls::getFlowIterator, DETAIL);
     m->addBoolField<Cls>(Tags::tool, &Cls::getTool, &Cls::setTool, BOOL_FALSE);
+    m->addBoolField<Cls>(Tags::autofence, &Cls::getAutofence,
+                         &Cls::setAutofence, BOOL_TRUE);
     m->addIteratorField<Cls, flowplanlist::const_iterator, FlowPlan>(
         Tags::flowplans, Tags::flowplan, &Cls::getFlowPlanIterator,
         PLAN + WRITE_OBJECT + WRITE_HIDDEN);
@@ -5117,7 +5128,8 @@ class Buffer : public HasHierarchy<Buffer>,
 
   /* A flag that marks whether this buffer represents a tool or not. */
   static const unsigned short TOOL = 1;
-  unsigned short flags = 0;
+  static const unsigned short AUTOFENCE = 2;
+  unsigned short flags = AUTOFENCE;
 
   /* Marks decoupling points. */
   bool ip_data = false;

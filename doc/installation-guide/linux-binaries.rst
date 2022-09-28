@@ -14,7 +14,6 @@ Supported distributions
 
 Binary installation packages are available for:
 
-* Ubuntu 18 LTS
 * Ubuntu 20 LTS
 * Red Hat Enterprise Linux 8 (Enterprise Edition only, deprecated in favor of containers)
 * Rocky Linux 8 (Enterprise Edition only, deprecated in favor of containers)
@@ -47,7 +46,7 @@ Here are the steps to get a fully working environment.
 
 #. **Install and tune the PostgreSQL database**
 
-   Install postgreSQL 9.5 or higher, the world's most advanced open source database.
+   Install postgreSQL 12 or higher, the world's most advanced open source database.
 
    FrePPLe assumes that the database uses UTF-8 encoding.
 
@@ -150,13 +149,12 @@ Here are the steps to get a fully working environment.
    The previous step installed a number of configuration files, which you
    now need to review and edit:
 
-   #. **/etc/frepple/djangosettings.py**
+   #. | **/etc/frepple/license.xml**
+      | The Community Edition requires no license file and you can skip this step.
+      | For the Enterprise Edition, replace this file with the
+        license file you received from us.
 
-      | Edit the "TIMEZONE" variable to your local setting:
-
-      ::
-
-          TIME_ZONE = 'Europe/Brussels'
+   #. **/etc/frepple/djangosettings.py - DATABASES**
 
       Edit the "DATABASES" with your database parameters. Make sure the
       settings match the connection and authentication configured in the
@@ -181,16 +179,50 @@ Here are the steps to get a fully working environment.
                                    # Specify the port number when using a TCP socket.
             'OPTIONS': {},         # Backend specific configuration parameters.
             'CONN_MAX_AGE': 60,
+            'FILEUPLOADFOLDER": os.path.normpath(
+                os.path.join(FREPPLE_LOGDIR, 'data', 'default')
+            ),
+            'SQL_ROLE': 'report_role',
+            'FREPPLE_PORT': '127.0.0.1:8002',   # Enterprise Edition only
+            'SECRET_WEBTOKEN_KEY': SECRET_KEY,
             'TEST': {
               'NAME': 'test_frepple' # Database name used when running the test suite.
               }
             },
          ...
 
-      Change the "SECRET_KEY" to some arbitrary value - important for security reasons.
+      You can configure as many scenario database as you desire. Just assure the NAME
+      points to a separate database name for each scenario. In the Enterprise Edition
+      you also need to assign a unique port number in the FREPPLE_PORT setting.
+
+      Also pay attention to the FILEUPLOADFOLDER setting of each scenario. The
+      setting is used by the `import data files <command-reference.html#importfromfolder>`_
+      task. By default all scenario databases use the same data folder on the server.
+      By updating this setting you can configure a dedicated data folder for each
+      scenario database.
+
+   #. **/etc/frepple/djangosettings.py - SECRET_KEY**
+
+      Change the "SECRET_KEY" to some arbitrary value - very important for security reasons.
       ::
 
          SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
+
+   #. **/etc/frepple/djangosettings.py - DATE_STYLE**
+
+      Each country has its own preferred format of displaying dates.
+
+      With this setting you can choose from 3 preconfigured styles, or you can
+      customize your own format:
+      ::
+
+        # We provide 3 options for formatting dates (and you always add your own).
+        #  - month-day-year: US format
+        #  - day-month-year: European format
+        #  - year-month-day: international format. This is the default
+        DATE_STYLE = "year-month-date"
+
+   #. **/etc/frepple/djangosettings.py - INSTZALLED_APPS**
 
       Change the "INSTALLED_APPS" to match your environment and the licensed modules.
       ::
@@ -219,10 +251,16 @@ Here are the steps to get a fully working environment.
           'freppledb.executesql',
           )
 
-   #. | **/etc/frepple/license.xml**
-      | The Community Edition requires no license file and you can skip this step.
-      | For the Enterprise Edition, replace this file with the
-        license file you received from us.
+   #. **/etc/frepple/djangosettings.py - TIMEZONE**
+
+      | Edit the "TIME_ZONE" variable if required. By default, the server time zone
+        (where frepple is installed) will be used for both the database and the server.
+        It's however possible to override this setting with a different time zone
+        by uncommenting following line and setting desired time zone.
+
+      ::
+
+          # TIME_ZONE = 'Europe/Brussels'
 
    #. | **/etc/httpd/conf.d/z_frepple.conf**
       | For a standard deployment this file doesn't need modification.

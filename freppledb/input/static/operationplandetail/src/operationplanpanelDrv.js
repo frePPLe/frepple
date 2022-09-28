@@ -43,7 +43,9 @@ function showoperationplanDrv($window, gettextCatalog) {
     }
 
     scope.$on("cardChanged", function (event, field, oldvalue, newvalue) {
-      if (field === "startdate")
+      if (!scope.operationplan)
+        return;
+      else if (field === "startdate")
         scope.operationplan["start"] = newvalue;
       else if (field === "enddate")
         scope.operationplan["end"] = newvalue;
@@ -73,9 +75,9 @@ function showoperationplanDrv($window, gettextCatalog) {
         angular.element(elem).find('#statusrow .btn').removeClass('active');
 
         if (scope.operationplan.hasOwnProperty('start'))
-          angular.element(elem).find("#setStart").val(moment(scope.operationplan.start).format('YYYY-MM-DD HH:mm:ss'));
+          angular.element(elem).find("#setStart").val(moment.utc(scope.operationplan.start, datetimeformat).format(datetimeformat));
         if (scope.operationplan.hasOwnProperty('end'))
-          angular.element(elem).find("#setEnd").val(moment(scope.operationplan.end).format('YYYY-MM-DD HH:mm:ss'));
+          angular.element(elem).find("#setEnd").val(moment.utc(scope.operationplan.end, datetimeformat).format(datetimeformat));
 
         if (scope.operationplan.hasOwnProperty('status')) {
           angular.element(elem).find('#statusrow .btn').removeClass('active');

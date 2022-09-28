@@ -1,0 +1,3 @@
+[
+{"model": "common.parameter", "fields": {"name": "archive.frequency", "description": "Frequency of history snapshot. Values: week, month, none", "value": "week"}}
+]

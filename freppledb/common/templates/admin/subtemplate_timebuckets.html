@@ -12,7 +12,7 @@
       <form method="get" action="#">
       <input type="hidden" name="horizonbuckets" id="horizonbuckets"{% if request.user.horizonbuckets %} value="{{request.user.horizonbuckets}}"{% endif %}>
       <input type="hidden" name="horizonunit" id="horizonunit" value="{{request.user.horizonunit}}">
-      <input id="horizonoriginal" type="hidden" value="{{request.user.horizonbuckets}}|{{request.user.horizonstart|date:"Y-m-d"}}|{{request.user.horizonend|date:"Y-m-d"}}|{{request.user.horizontype}}|{{request.user.horizonbefore}}|{{request.user.horizonlength}}|{{request.user.horizonunit}}"/>
+      <input id="horizonoriginal" type="hidden" value="{{request.user.horizonbuckets}}|{{request.user.horizonstart|date:"DATE_FORMAT"}}|{{request.user.horizonend|date:"DATE_FORMAT"}}|{{request.user.horizontype}}|{{request.user.horizonbefore}}|{{request.user.horizonlength}}|{{request.user.horizonunit}}"/>
           <div class="row" style="padding-bottom: 15px">
             <div class="col-xs-12">
               {% trans 'bucket size'|capfirst %}&nbsp;&nbsp;
@@ -30,18 +30,18 @@
           </div>
 
           <div class="row" style="padding-bottom: 15px">
-            <div class="col-xs-12 form-inline">              
+            <div class="col-xs-12 form-inline">
               <input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>
               &nbsp;&nbsp;{% trans 'from'|capfirst %}&nbsp;
               <div class="input-group date">
-              <input id="horizonstart"  style="display:inline; width:8em" type="text" class="vDateField form-control" value="{{request.user.horizonstart|date:"Y-m-d"}}"/>
+              <input id="horizonstart"  style="display:inline; width:8em" type="text" class="vDateField form-control" value="{{request.user.horizonstart|date:"DATE_FORMAT"}}"/>
               <span class="input-group-addon">
                 <span class="fa fa-calendar"></span>
               </span>
               </div>
               &nbsp;{% trans 'till' %}&nbsp;
               <div class="input-group date">
-              <input id="horizonend" style="display:inline; width:8em" type="text" class="vDateField form-control" value="{{request.user.horizonend|date:"Y-m-d"}}"/>
+              <input id="horizonend" style="display:inline; width:8em" type="text" class="vDateField form-control" value="{{request.user.horizonend|date:"DATE_FORMAT"}}"/>
               <span class="input-group-addon">
                 <span class="fa fa-calendar"></span>
               </span>

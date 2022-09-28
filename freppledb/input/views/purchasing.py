@@ -844,12 +844,14 @@ class PurchaseOrderList(OperationPlanMixin):
         GridFieldDateTime(
             "startdate",
             title=_("ordering date"),
-            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"',
+            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s", "defaultValue":""}, "summaryType":"min"'
+            % settings.DATETIME_FORMAT,
         ),
         GridFieldDateTime(
             "enddate",
             title=_("receipt date"),
-            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"',
+            extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s", "defaultValue":""}, "summaryType":"max"'
+            % settings.DATETIME_FORMAT,
         ),
         GridFieldNumber(
             "quantity",

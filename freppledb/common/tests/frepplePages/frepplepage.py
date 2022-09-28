@@ -165,9 +165,6 @@ class TablePage(BasePage):
         time.sleep(0.3)
         return val
 
-    # def is_title_matches(self): # change to current url
-    #    return "Purchase orders" in self.driver.title
-
     def click_save_button(self):
         save_button = self.driver.find_element(*TableLocators.TABLE_SAVE_BUTTON)
         ActionChains(self.driver).move_to_element(save_button).click().perform()

@@ -75,9 +75,9 @@ function showoperationplanDrv($window, gettextCatalog) {
         angular.element(elem).find('#statusrow .btn').removeClass('active');
 
         if (scope.operationplan.hasOwnProperty('start'))
-          angular.element(elem).find("#setStart").val(moment(scope.operationplan.start, datetimeformat).format(datetimeformat));
+          angular.element(elem).find("#setStart").val(moment.utc(scope.operationplan.start, datetimeformat).format(datetimeformat));
         if (scope.operationplan.hasOwnProperty('end'))
-          angular.element(elem).find("#setEnd").val(moment(scope.operationplan.end, datetimeformat).format(datetimeformat));
+          angular.element(elem).find("#setEnd").val(moment.utc(scope.operationplan.end, datetimeformat).format(datetimeformat));
 
         if (scope.operationplan.hasOwnProperty('status')) {
           angular.element(elem).find('#statusrow .btn').removeClass('active');

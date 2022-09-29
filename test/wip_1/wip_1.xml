@@ -304,6 +304,32 @@
          </load>
        </loads>
     </operation>
+    <operation name="Oper6" xsi:type="operation_time_per">
+      <location name="Loc"/>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="Out6" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="In6" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>      
+      <loads>
+         <load>
+           <resource name="Res6">
+		      <members>
+			     <resource name="Res6a"/>
+				 <resource name="Res6b"/>
+				 <resource name="Res6c" efficiency="50"/>
+			  </members>
+		   </resource>
+         </load>
+       </loads>
+      <duration>P1D</duration>
+	  <duration_per>P1D</duration_per>
+    </operation>	
   </operations>
   <operationplans>
     <!-- WIP with funky quantities and duration -->
@@ -488,9 +514,32 @@
       consume_material="false" produce_material="false" consume_capacity="false">
       <operation name="Oper5"/>
     </operationplan>
+	<!-- Corner case -->
+	<operationplan reference="6001" quantity="3" status="confirmed" start="2020-02-05T00:00:00" end="2020-03-05T00:00:00">
+       <operation name="Oper6"/>
+       <loadplans>
+         <loadplan>
+           <resource name="Res6b"/>
+         </loadplan>
+       </loadplans>	   
+    </operationplan>
   </operationplans>
 
 <?python
+from datetime import date
+
+frepple.operationplan(
+	operation=frepple.operation(name="Oper6"),
+	reference="6002",
+	quantity=2,
+	start=date(2020,2,5),
+	end=date(2020,3,5),
+	statusNoPropagation="confirmed",
+	create=True,
+	batch=None,
+	resources=["Res6c"],
+    )
+
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")

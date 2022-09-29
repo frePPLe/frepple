@@ -244,13 +244,17 @@ OperationPlan* Operation::createOperationPlan(
 
   // Setting the dates and quantity
   setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
+  if (status == "confirmed" && s != Date::infinitePast &&
+      e != Date::infinitePast)
+    opplan->setStartEndAndQuantity(s, e, q);
 
   // Create the loadplans and flowplans, if allowed
   if (makeflowsloads || (assigned_resources && !assigned_resources->empty())) {
     opplan->createFlowLoads(assigned_resources);
     // Now that we know the assigned resource the duration can change
     // eg different availability or efficienicy)
-    setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
+    if (status != "confirmed")
+      setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
   }
 
   // Update flow and loadplans, and mark for problem detection

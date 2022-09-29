@@ -4,6 +4,7 @@ on:
   push:
     paths-ignore:
       - "doc/**"
+      - "*.md"
   pull_request:
 
 env:

@@ -49,6 +49,8 @@ jobs:
       - if: matrix.language == 'cpp'
         name: Compile C++
         run: |
+          sudo apt-get update
+          sudo apt-get install libxerces-c-dev openssl libssl-dev libpq5 libpq-dev python3-dev
           mkdir build
           cd build
           cmake ..

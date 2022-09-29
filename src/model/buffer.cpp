@@ -554,22 +554,27 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
       }
     } else {
       // CASE 1B: Produced too much already: move backward
-      bool alreadyAssigned = false;
-      for (auto flow = getFlowPlans().begin(); flow != getFlowPlans().end();
-           flow++) {
-        if (flow->getOperationPlan()->getDemandReference().compare(
-                curflowplan->getOperationPlan()->getDemand()->getName()) == 0) {
-          alreadyAssigned = true;
-          auto currentOperationPlan =
-              dynamic_cast<FlowPlan*>(&(*flow))->getOperationPlan();
-          iter.updateStack(
-              currentOperationPlan, currentOperationPlan->getQuantity(), 0, lvl,
-              curflowplan->getDate() - currentOperationPlan->getStart());
-          break;
+      bool notAssigned = true;
+      for (auto flow = getFlowPlans().begin();
+           flow != getFlowPlans().end() && lvl == 1; flow++) {
+        if (flow->getOperationPlan() != nullptr &&
+            !flow->getOperationPlan()->getDemandReference().empty()) {
+          if (flow->getOperationPlan()->getDemandReference().compare(
+                  curflowplan->getOperationPlan()->getDemand()->getName()) ==
+                  0 &&
+              flow->getOperationPlan()->getDemandReference().compare("") != 0) {
+            auto currentOperationPlan =
+                dynamic_cast<FlowPlan*>(&(*flow))->getOperationPlan();
+            iter.updateStack(
+                currentOperationPlan, currentOperationPlan->getQuantity(), 0,
+                lvl, curflowplan->getDate() - currentOperationPlan->getStart());
+            notAssigned = false;
+            break;
+          }
         }
       }
 
-      if (!alreadyAssigned) {
+      if (notAssigned) {
         while (
             f != getFlowPlans().end() &&
             ((f->getQuantity() <= 0 && f->getCumulativeProduced() > endQty) ||

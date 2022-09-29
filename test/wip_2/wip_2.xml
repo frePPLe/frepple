@@ -10,7 +10,7 @@
       <members>
         <resource name="X"/>
         <resource name="Y"/>
-        <resource name="Z"/>
+        <resource name="W"/>
       </members>
     </resource>
   </resources>
@@ -65,7 +65,7 @@
       <status>confirmed</status>
       <loadplans>
         <loadplan>
-          <resource name="Z"/>
+          <resource name="W" />
           <quantity>0.2</quantity>
           <status>confirmed</status>
         </loadplan>

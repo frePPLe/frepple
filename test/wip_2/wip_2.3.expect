@@ -16,6 +16,12 @@
 	</suppliers>
 	<resources>
 		<resource>
+			<name>W</name>
+			<owner>
+				<name>operators</name>
+			</owner>
+		</resource>
+		<resource>
 			<name>X</name>
 			<owner>
 				<name>operators</name>
@@ -23,12 +29,6 @@
 		</resource>
 		<resource>
 			<name>Y</name>
-			<owner>
-				<name>operators</name>
-			</owner>
-		</resource>
-		<resource>
-			<name>Z</name>
 			<owner>
 				<name>operators</name>
 			</owner>

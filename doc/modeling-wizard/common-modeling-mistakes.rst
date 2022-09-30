@@ -22,7 +22,7 @@ Here's our shortlist:
 Broken supply paths
 -------------------
 
-The :doc:`modeling-wizard/concepts` page describe how you define a buffer's replenishment
+The :doc:`/modeling-wizard/concepts` page describe how you define a buffer's replenishment
 through either a) purchase orders, b) distribution orders or c) manufacturing orders.
 To generate a valid plan frepple needs the complete replenishment chain for all buffers
 between the end item and the raw materials.

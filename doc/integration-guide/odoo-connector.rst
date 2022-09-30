@@ -218,6 +218,13 @@ The section below describes the installation and configuration of these.
       | URL of your frepple server.
       | Do not include a slash at the end of the URL.
 
+    * | Respect reservations:
+      | When this flag is checked, frepple fully respects the material
+        reservations of odoo. Frepple only plans with the unreserved materials.
+      | When this flag is false, frepple plans with the full material availability
+        regardless of any reserved quantities in odoo. The implicit assumption is
+        that any reservations will be unreserved in odoo when needed.
+
     * | Disclose stack trace:
       | To debug the connector and data issues it can be useful to send any connector
         stack traces also to your frepple server.

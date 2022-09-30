@@ -33,6 +33,13 @@ Release notes
 - | v12 & 13 & 14 & 15: Correction of a bug in the uom conversion. Quantities were
     divided instead of multiplied by uom conversion factor and vice versa.
 
+- | 14 & 15: A new configuration flag "respect_reservations" is added for the connector.
+  | When this flag is checked frepple fully respects the material reservations
+    of odoo. Frepple only plans with the unreserved materials.
+  | When this flag is false, frepple plans with the full material availability
+    regardless of any reserved quantities in odoo. The implicit assumption is that
+    any reservations will be unreserved in odoo when needed.
+
 6.25 (2022/09/16)
 =================
 

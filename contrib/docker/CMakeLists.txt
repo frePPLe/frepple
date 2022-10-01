@@ -14,7 +14,9 @@ if(docker)
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
     ${docker} build --target package --output type=local,dest=. ubuntu-20.04
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-    ${docker} build ubuntu-20.04 --squash
+    ${docker} build ubuntu-20.04
+    --progress=plain
+    --squash
     --tag "frepple-${PROJECT_BRANCH}-ubuntu-20.04:${PROJECT_VERSION}"
     --tag "frepple-${PROJECT_BRANCH}:${PROJECT_VERSION}"
     --tag "ghcr.io/frepple/frepple-${PROJECT_BRANCH}:${PROJECT_VERSION}"

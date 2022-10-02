@@ -24,6 +24,7 @@
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/bin",
+            "console": "integratedTerminal",
             "environment": [
                 {
                     "name": "FREPPLE_PLANTYPE",
@@ -65,9 +66,69 @@
                     "name": "xVIRTUAL_ENV",
                     "value": "${workspaceFolder}/venv"
                 }
-            }
-        ],
-        "console": "integratedTerminal"
-    }
-]
+            ]
+        },
+        {
+            "name": "Engine Debug Linux",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/frepple",
+            "args": [
+                "${workspaceFolder}/freppledb/common/commands.py"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/bin",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "environment": [
+                {
+                    "name": "FREPPLE_PLANTYPE",
+                    "value": "1"
+                },
+                {
+                    "name": "FREPPLE_CONSTRAINT",
+                    "value": "15"
+                },
+                {
+                    "name": "FREPPLE_DATABASE",
+                    "value": "default"
+                },
+                {
+                    "name": "PYTHONPATH",
+                    "value": "${workspaceFolder}"
+                },
+                {
+                    "name": "DJANGO_SETTINGS_MODULE",
+                    "value": "freppledb.settings"
+                },
+                {
+                    "name": "SUPPLY",
+                    "value": "1"
+                },
+                {
+                    "name": "FCST",
+                    "value": "1"
+                },
+                {
+                    "name": "INVPLAN",
+                    "value": "1"
+                },
+                {
+                    "name": "FREPPLE_LOGFILE",
+                    "value": "frepple.log"
+                },
+                {
+                    "name": "xVIRTUAL_ENV",
+                    "value": "${workspaceFolder}/venv"
+                }
+            ]
+        }
+    ]
 }

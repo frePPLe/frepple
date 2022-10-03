@@ -106,8 +106,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   // The loop goes from the requested date till the very end. Whenever the
   // event date changes, we evaluate if a shortage exists.
   Duration autofence = getAutoFence();
-  if (!b->getAutofence() && autofence > Duration(7L * 86400L))
-    autofence = 7L * 86400L;
+  if (!b->getAutofence() && autofence > Duration(14L * 86400L))
+    autofence = 14L * 86400L;
   Date currentDate;
   const TimeLine<FlowPlan>::Event* prev = nullptr;
   double initial_shortage = 0.0;
@@ -688,10 +688,10 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
           // Note: no check for overall shortage here, just checking whether
           // stock stays positive in a constrained plan.
           Duration autofence = getAutoFence();
-          if (!b->getAutofence() && autofence > Duration(7L * 86400L))
-            autofence = 7L * 86400L;
+          if (!b->getAutofence() && autofence > Duration(14L * 86400L))
+            autofence = 14L * 86400L;
           if (autofence &&
-              (theOnHand > 0 || getPlanType() == 2 ||
+              (theOnHand > -ROUNDING_ERROR || getPlanType() == 2 ||
                (!isLeadTimeConstrained() && !isFenceConstrained()))) {
             bool exists = false;
             for (auto f = b->getFlowPlans().begin();

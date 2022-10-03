@@ -49,12 +49,23 @@
       return cellvalue;
   }
 
+  function deletebutton(url) {
+    $.ajax({
+        url: url,
+        type: "POST",
+        error: ajaxerror
+      });
+  }
+
   function logbutton (cellvalue, options, rowdata) {
     if (typeof(cellvalue) !== 'undefined') {
       var taskid = rowdata['id'];
       var taskname = rowdata['name'];
       if (taskname == "backup")
-        return '<a class="btn btn-primary" style="padding:0 0.5em 0 0.5em; font-size:66%" href="{{request.prefix}}/execute/logdownload/'+taskid+'/">{% trans "download"|capfirst|force_escape %}</a>';
+        return '<a class="btn btn-primary" style="padding:0 0.5em 0 0.5em; font-size:66%" href="{{request.prefix}}/execute/logdownload/'
+          + taskid + '/">{% trans "download"|capfirst|force_escape %}</a>&nbsp;'
+          + '<a class="btn btn-primary" style="padding:0 0.5em 0 0.5em; font-size:66%" onclick="deletebutton(\'{{request.prefix}}/execute/logdelete/'
+          + taskid + '/\')">{% trans "delete"|capfirst|force_escape %}</a>';
       else
         return '<a class="btn btn-primary" style="padding:0 0.5em 0 0.5em; font-size:66%" href="{{request.prefix}}/execute/logfrepple/'+taskid+'/">{% trans "view"|capfirst|force_escape %}</a>';
     } else {

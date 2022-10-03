@@ -51,6 +51,7 @@ from django.http import (
     HttpResponseServerError,
     HttpResponse,
     HttpResponseNotFound,
+    HttpResponseForbidden,
     StreamingHttpResponse,
     HttpResponseNotAllowed,
 )
@@ -629,6 +630,28 @@ def DownloadLogFile(request, taskid):
             "Content-Disposition": 'inline; filename="%s"' % filename,
         },
     )
+
+
+@staff_member_required
+@never_cache
+def DeleteLogFile(request, taskid):
+    if request.method != "POST":
+        return HttpResponseNotAllowed(
+            ["post"], content="Only POST request method is allowed"
+        )
+    filename = Task.objects.using(request.database).get(id=taskid).logfile
+    if (
+        filename.lower().endswith(".dump")
+        and request.user.username not in settings.SUPPORT_USERS
+    ) or not filename.lower().endswith((".log", ".dump")):
+        return HttpResponseNotFound(force_str(_("Error")))
+    try:
+        os.remove(os.path.join(settings.FREPPLE_LOGDIR, filename))
+        Task.objects.using(request.database).filter(id=taskid).update(logfile=None)
+        return HttpResponse(content="OK")
+    except Exception as e:
+        logger.error("Couldn't delete log file: %s" % e)
+        return HttpResponseForbidden(force_str(_("Couldn't delete file")))
 
 
 @staff_member_required

@@ -102,7 +102,14 @@ class Command(BaseCommand):
             task.save(using=database)
 
             # Choose the backup file name
-            backupfile = now.strftime("database.%s.%%Y%%m%%d.%%H%%M%%S.dump" % database)
+            if __version__ == "development":
+                backupfile = now.strftime(
+                    "database.%s.%%Y%%m%%d.%%H%%M%%S.dump" % database
+                )
+            else:
+                backupfile = now.strftime(
+                    "database_%s.%s.%%Y%%m%%d.%%H%%M%%S.dump" % (__version__, database)
+                )
             task.message = "Backup to file %s" % backupfile
 
             # Run the backup command

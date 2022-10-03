@@ -47,6 +47,11 @@ urlpatterns = [
         name="execute_download_log",
     ),
     re_path(
+        r"^execute/logdelete/(.+)/$",
+        freppledb.execute.views.DeleteLogFile,
+        name="execute_delete_log",
+    ),
+    re_path(
         r"^execute/api/(.+)/$", freppledb.execute.views.APITask, name="execute_api"
     ),
     re_path(

@@ -40,6 +40,13 @@ Release notes
     regardless of any reserved quantities in odoo. The implicit assumption is that
     any reservations will be unreserved in odoo when needed.
 
+.. rubric:: System administration
+
+- | The ubuntu installer can now automatically migrate your databases when installing
+    a frepple upgrade. A prompt is shown to confirm whether or not you want to do this.
+  | We've added this step to avoid the classic upgrade mistake of forgetting about the
+    migrations...
+
 6.25 (2022/09/16)
 =================
 

@@ -23,8 +23,8 @@ FROM ubuntu:20.04 as builder
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-RUN apt-get -y -q update && \
-  DEBIAN_FRONTEND=noninteractive apt-get -y install \
+RUN apt -y -q update && \
+  DEBIAN_FRONTEND=noninteractive apt -y install \
   cmake g++ git python3 python3-pip python3-dev psmisc \
   libxerces-c3.2 libxerces-c-dev openssl libssl-dev \
   libpq5 libpq-dev locales && \
@@ -57,12 +57,12 @@ FROM ubuntu:20.04
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-RUN apt-get -y -q update && \
-  DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends curl ca-certificates gnupg && \
+RUN apt -y -q update && \
+  DEBIAN_FRONTEND=noninteractive apt -y install --no-install-recommends curl ca-certificates gnupg && \
   curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
   echo "deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-  apt-get -y -q update && \
-  DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
+  apt -y -q update && \
+  DEBIAN_FRONTEND=noninteractive apt -y install --no-install-recommends \
     libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 python3-pip postgresql-client-14 \
     python3-setuptools python3-wheel build-essential python3-dev psmisc \
     libpq5 openssl python3-lxml libapache2-mod-xsendfile ssl-cert locales
@@ -76,14 +76,14 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip && \
 COPY --from=builder frepple-*/build/*.deb .
 
 RUN dpkg -i *.deb && \
-  apt-get -f -y -q install && \
+  apt -f -y -q install && \
   a2enmod expires && \
   a2enmod wsgi && \
   a2ensite z_frepple && \
   a2enmod proxy && \
   a2enmod proxy_wstunnel && \
-  apt-get -y purge --autoremove build-essential python3-dev && \
-  apt-get clean && \
+  apt -y purge --autoremove build-essential python3-dev && \
+  apt clean && \
   rm -rf *.deb /var/lib/apt/lists/* /etc/apt/sources.list.d/pgdg.list
 
 EXPOSE 80

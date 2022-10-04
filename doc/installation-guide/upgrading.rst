@@ -17,17 +17,12 @@ Generic instructions
 
    You're not going to start without a proper backup of the previous installation,
    are you? We strongly recommend you start off with a backup of a) all PostgreSQL
-   databases and b) the configuration file djangosettings.py.
+   databases and b) the configuration file /etc/frepple/djangosettings.py.
 
 #. **Upgrade the PostgreSQL database**
 
    FrePPLe requires 12 or higher. If you're on an older version, upgrading
    your PostgreSQL database is the first step.
-
-   Note: When running on Windows, the migration process described here
-   assumes that you are NOT using the embedded PostgreSQL database. Migrating data
-   between different PostgreSQL installations is possible but requires additional
-   steps.
 
 #. **Install the new python package dependencies**
 
@@ -43,17 +38,21 @@ Generic instructions
    with the appropriate release number.
    ::
 
-      sudo -H pip3 install --force-reinstall -r https://raw.githubusercontent.com/frePPLe/frepple/6.21.0/requirements.txt
+      sudo -H pip3 install --force-reinstall -r https://raw.githubusercontent.com/frePPLe/frepple/7.0.0/requirements.txt
 
 
 #. **Install the new frePPLe release.**
 
-   Install the new version as described on the other pages.
+   Install the new .deb or .rpm package.
+   ::
 
-   You can skip the step to generate the database schema. We'll do this
-   a bit later.
+      sudo dpkg --force-confold -i ./*.deb
 
-#. **Update the configuration file djangosettings.py**
+   The installer will prompt you whether you want to migrate your database now
+   to the new release. If you case you allow run it now, you can skip one
+   of the steps below.
+
+#. **Update the configuration file /etc/frepple/djangosettings.py**
 
    The installation created a new version of the configuration file. Now,
    you'll need to merge your edits from the old file into the new file.
@@ -64,11 +63,11 @@ Generic instructions
 
 #. **Migrate the frePPLe databases**
 
-   The following command needs to be repeated for each scenario database (as
-   found in the keys in the DATABASES setting in /etc/frepple/djangosettings.py).
+   In case you didn't opt to migrate your databases as part of the installation
+   process you will need to run it manually.
    ::
 
-      frepplectl migrate --database=default
+      frepplectl migrate
 
    On a fresh installation, this command intializes all database objects. When
    running it on an existing installation it will incrementally update the
@@ -76,10 +75,7 @@ Generic instructions
 
 #. **Restart your apache server**
 
-   After a restart of the web server, the new environment should be up and running.
-
-.. tip::
-   It is not possible to have multiple versions simultaneously on the same server.
+   After a restart of the web server, the new environment will be up and running.
 
 *********************
 Debian upgrade script
@@ -90,12 +86,12 @@ a Debian/Ubuntu Linux server.
 
 ::
 
-  sudo apt-get -y -q update
-  sudo apt-get -y -q upgrade
+  sudo apt -y -q update
+  sudo apt -y -q upgrade
 
   # Upgrade of the PostgreSQL database isn't covered in these commands.
 
-  sudo -H pip3 install --force-reinstall -r https://raw.githubusercontent.com/frePPLe/frepple/6.21.0/requirements.txt
+  sudo -H pip3 install --force-reinstall -r https://raw.githubusercontent.com/frePPLe/frepple/7.0.0/requirements.txt
 
   # Download the debian package of the new release here.
 

@@ -20,7 +20,7 @@
 
 FROM debian:10-slim as builder
 
-RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
+RUN apt -y -q update && DEBIAN_FRONTEND=noninteractive apt -y install \
   libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 \
   python3-pip postgresql \
   git cmake g++ python3-dev libxerces-c-dev \

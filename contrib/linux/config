@@ -1,0 +1,7 @@
+#!/bin/sh
+set -e
+. /usr/share/debconf/confmodule
+if [ "$1" = "configure" ] && [ -n "$2" ]; then
+  db_input high frepple/run_migration || true
+  db_go || true
+fi

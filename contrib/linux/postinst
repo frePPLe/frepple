@@ -1,6 +1,6 @@
 #!/bin/sh
-
 set -e
+. /usr/share/debconf/confmodule
 
 # Create new group for frepple
 getent group frepple > /dev/null 2>&1 || addgroup --quiet frepple
@@ -11,7 +11,7 @@ chmod o= /usr/bin/frepple /usr/bin/frepplectl
 
 # Add apache user to the frepple user group
 . /etc/apache2/envvars
-adduser www-data frepple
+adduser --silent www-data frepple
 
 # Set permissions on configuration files
 chgrp frepple /etc/frepple /etc/frepple/*
@@ -23,8 +23,7 @@ chgrp frepple /usr/lib/python3/dist-packages/freppledb/wsgi.py
 chmod 770 /usr/lib/python3/dist-packages/freppledb/wsgi.py
 
 # Create log directory and set its permissions
-if [ ! -d /var/log/frepple ]
-then
+if [ ! -d /var/log/frepple ]; then
   mkdir -p /var/log/frepple
   chgrp frepple /var/log/frepple
   chmod g=rwx,o= /var/log/frepple
@@ -33,8 +32,16 @@ fi
 # Update secret key in the configuration file
 sed -i "s/RANDOMSTRING/`date`/" /etc/frepple/djangosettings.py
 
+# Offer to run migration during an upgrade
+if [ "$1" = "configure" ] && [ -n "$2" ]; then
+  db_get frepple/run_migration
+  if [ "$RET" = true ]; then
+      frepplectl migrate
+  fi
+fi
+
 if [ "$1" = "configure" ]; then
   ldconfig
-fi 
-           
+fi
+
 exit 0

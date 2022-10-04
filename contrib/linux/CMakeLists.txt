@@ -11,6 +11,8 @@ set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
   "${CMAKE_CURRENT_SOURCE_DIR}/postrm"
   "${CMAKE_CURRENT_SOURCE_DIR}/postinst"
   "${CMAKE_CURRENT_SOURCE_DIR}/conffiles"
+  "${CMAKE_CURRENT_SOURCE_DIR}/templates"
+  "${CMAKE_CURRENT_SOURCE_DIR}/config"
    )
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
   "adduser, libxerces-c3.2 | libxerces-c3.1, apache2, libapache2-mod-wsgi-py3, libapache2-mod-xsendfile, postgresql-client"

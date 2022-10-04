@@ -49,8 +49,8 @@ jobs:
       - if: matrix.language == 'cpp'
         name: Compile C++
         run: |
-          sudo apt-get update
-          sudo apt-get install libxerces-c-dev openssl libssl-dev libpq5 libpq-dev python3-dev
+          sudo apt update
+          sudo apt install libxerces-c-dev openssl libssl-dev libpq5 libpq-dev python3-dev
           sudo -H python3 -m pip install --upgrade pip
           sudo -H pip3 install -r "${{github.workspace}}/requirements.dev.txt"
           mkdir build

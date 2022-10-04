@@ -1,0 +1,7 @@
+Template: frepple/run_migration
+Type: boolean
+Default: true
+Description: Run migration now?
+   The postgres database(s) need to be migrated to the new release.
+   We can run that now.
+   When answering NO, you need to run the command "frepplectl migrate" manually.

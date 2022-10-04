@@ -118,7 +118,7 @@ Here are the steps to get a fully working environment.
    On Debian based distributions:
    ::
 
-     apt-get install python3 python3-pip
+     apt install python3 python3-pip
 
 #. **Install the Python modules**
 
@@ -128,7 +128,7 @@ Here are the steps to get a fully working environment.
    with the appropriate version number.
    ::
 
-      sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
+      sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/7.0.0/requirements.txt
 
 
 #. **Install the frepple binary package**
@@ -136,8 +136,7 @@ Here are the steps to get a fully working environment.
    On Debian based distributions:
    ::
 
-     dpkg -i frepple_*.deb
-     apt-get -f -y -q install
+     apt install -f ./*.deb
 
    On RHEL:
    ::
@@ -333,13 +332,13 @@ inspiration for your own deployments.
 ::
 
   # Bring the server up to date
-  sudo apt-get -y -q update
-  sudo apt-get -y -q upgrade
+  sudo apt -y -q update
+  sudo apt -y -q upgrade
 
   # Install PostgreSQL
   # For a production installation you'll need to tune the database
   # configuration to match the available hardware.
-  sudo apt-get -y install postgresql
+  sudo apt -y install postgresql
   sudo su - postgres
   psql template1 -c "create user frepple with password 'frepple' createrole"
   psql template1 -c "create database frepple encoding 'utf-8' owner frepple"
@@ -353,12 +352,11 @@ inspiration for your own deployments.
   sudo service postgresql restart
 
   # Install python3 and required python modules
-  sudo apt-get -y install python3 python3-pip
+  sudo apt -y install python3 python3-pip
   sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
 
   # Install the frePPLe binary .deb package and the necessary dependencies.
-  sudo dpkg -i frepple_*.deb
-  sudo apt-get -f -y -q install
+  sudo apt -f ./*.deb
 
   # Configure apache web server
   sudo a2enmod expires
@@ -387,7 +385,7 @@ Uninstallation is as simple as:
   sudo dropdb -U <db-user> <db-name>
 
   # Uninstall the package, including log files and configuration files
-  sudo apt-get purge frepple
+  sudo apt purge frepple
 
 
 ***************************
@@ -425,7 +423,7 @@ inspiration for your own deployments.
 
   # Install python3 and required python modules
   sudo dnf install python3 python3-pip
-  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
+  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/7.0.0/requirements.txt
 
   # Install the frePPLe binary RPM package and the necessary dependencies.
   sudo dnf --nogpgcheck localinstall  frepple*.rpm
@@ -483,7 +481,7 @@ You can use it as a guideline and inspiration for your own deployments.
   # Install python3 and required python modules
   sudo zypper install python3 python3-pip
   sudo python3 -m ensure pip
-  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.21.0/requirements.txt
+  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/7.0.0/requirements.txt
 
   #install Apache2 modules:
   sudo a2enmod mod_access_compat mod_deflate

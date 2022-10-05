@@ -40,6 +40,8 @@ Release notes
     regardless of any reserved quantities in odoo. The implicit assumption is that
     any reservations will be unreserved in odoo when needed.
 
+- | v14 & 15: Access rights to frepple are now configurable per user.
+
 .. rubric:: System administration
 
 - | The ubuntu installer can now automatically migrate your databases when installing

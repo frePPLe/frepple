@@ -40,7 +40,9 @@ Release notes
     regardless of any reserved quantities in odoo. The implicit assumption is that
     any reservations will be unreserved in odoo when needed.
 
-- | v14 & 15: Access rights to frepple are now configurable per user.
+- | v14 & 15: Access rights to frepple are now configurable per user in odoo.
+    The connector will also automatically synchronize the list of authorised users
+    between odoo and frepple.
 
 .. rubric:: System administration
 

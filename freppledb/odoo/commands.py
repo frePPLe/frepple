@@ -19,15 +19,16 @@ import base64
 
 from html.parser import HTMLParser
 import os
+import json
 import logging
 from urllib.request import urlopen, HTTPError, Request
 
-from django.utils.http import urlencode
-
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.conf import settings
+from django.contrib.auth.models import Group, Permission
+from django.utils.http import urlencode
 
-from freppledb.common.models import Parameter
+from freppledb.common.models import Parameter, User
 from freppledb.common.commands import (
     PlanTaskRegistry,
     PlanTask,
@@ -220,6 +221,50 @@ class OdooReadData(PlanTask):
                 """,
                 (frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S"),),
             )
+
+        # Synchronize users
+        if hasattr(frepple.settings, "users"):
+            try:
+                odoo_group, created = Group.objects.get_or_create(name="Odoo users")
+                if created:
+                    # Newly odoo user group. Assign all permissions by default.
+                    for p in Permission.objects.all():
+                        odoo_group.permissions.add(p)
+                odoo_users = [
+                    u.username for u in odoo_group.user_set.all().only("username")
+                ]
+                users = {}
+                for u in User.objects.all():
+                    users[u.username] = u
+                for usr_data in json.loads(frepple.settings.users):
+                    user = users.get(usr_data[1], None)
+                    if not user:
+                        # Create a new user
+                        user = User.objects.create_user(
+                            username=usr_data[1],
+                            email=usr_data[1],
+                            first_name=usr_data[0],
+                            # Note: users can navigate from odoo into frepple with
+                            # a webtoken. No password is ever needed.
+                            # A user can still use the password reset feature if they
+                            # still prefer to log in directly into frepple.
+                            # So, we can set a random password here that nobody will ever
+                            # need to know.
+                            password=User.objects.make_random_password(),
+                        )
+                    if not user.is_active:
+                        user.is_active = True
+                        user.save()
+                    if user.username in odoo_users:
+                        odoo_users.remove(user.username)
+                    else:
+                        user.groups.add(odoo_group)
+
+                # Remove users that no longer have access rights
+                for o in odoo_users:
+                    users[o].groups.remove(odoo_group)
+            except Exception as e:
+                print("Error synchronizing odoo users:", e)
 
         # Hierarchy correction: Count how many items/locations/customers have no owner
         # If we find 2+ then we use All items/All customers/All locations as root

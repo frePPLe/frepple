@@ -304,6 +304,28 @@ The section below describes the installation and configuration of these.
       | If this flag is set to true you can override the odoo data if the source field
         of the overridden records is also edited.
 
+* **Configuring access rights**
+
+  Out of the box, the integrated solution will grant all odoo users access to all
+  frepple functionality. With the information below you can tailor this towards
+  a more restricted access.
+
+  * | In odoo, you allow people to access frepple by granting the "frepple user" access
+      right.
+    | By default, all users are granted this permission. You can change the default
+      access right.
+
+  * | All odoo users with the "frepple user" permission are automatically synchronised
+      with frepple.
+    | Of course, you can add additional users in frepple beyond these odoo users.
+
+  * | These odoo users are added to the "odoo users" group in frepple. The members of
+      that group get complete permissions in frepple.
+    | You can change the default permissions of the group.
+    | You can also grant additional priviliges to a user beyond the privileges of the group.
+    | The permissions are only synchronized in the default, main scenario in frepple.
+
+
 Data mapping details
 --------------------
 

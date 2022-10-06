@@ -22,4 +22,5 @@
 			<stringproperty name="string_field" value="1"/>
 		</item>
 	</items>
+	<stringproperty name="toplevel" value="test"/>
 </plan>

@@ -6,6 +6,7 @@
   The fields can be set and updated through the XML and the Python interface.
   The values are also saved in the XML output file.
   </description>
+  <stringproperty name="toplevel" value="test"/>
   <current>2010-01-01T00:00:00</current>
   <items>
     <item name="test" source="ERP">

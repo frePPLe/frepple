@@ -364,14 +364,24 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
   // Ignore content between tags
   reading = false;
 
-  if (objectindex == 0 && objects[objectindex].object && dataindex >= 0 &&
-      data[dataindex].field && !data[dataindex].field->isGroup()) {
+  if (objectindex == 0 && objects[objectindex].object && dataindex >= 0) {
     // Immediately process updates to the root object
-    if (loglevel)
-      logger << "Updating field " << data[dataindex].field->getName().getName()
-             << " on the root object" << endl;
-    data[dataindex].field->setField(objects[objectindex].object,
-                                    data[dataindex].value, getCommandManager());
+    if (data[dataindex].field && !data[dataindex].field->isGroup()) {
+      if (loglevel)
+        logger << "Updating field "
+               << data[dataindex].field->getName().getName()
+               << " on the root object" << endl;
+      data[dataindex].field->setField(objects[objectindex].object,
+                                      data[dataindex].value,
+                                      getCommandManager());
+    } else if (!data[dataindex].name.empty()) {
+      if (loglevel)
+        logger << "Updating property " << data[dataindex].name
+               << " on the root object" << endl;
+      objects[objectindex].object->setProperty(
+          data[dataindex].name, data[dataindex].value, 4, getCommandManager());
+      data[dataindex].name = "";
+    }
     --dataindex;
   }
 

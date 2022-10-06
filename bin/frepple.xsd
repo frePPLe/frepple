@@ -1164,6 +1164,10 @@
         <xsd:element name="resourceskills" type="resourceskilllist" />
         <xsd:element name="itemsuppliers" type="itemsupplierlist" />
         <xsd:element name="itemdistributions" type="itemdistributionlist" />
+        <xsd:element name="booleanproperty" type="booleanproperty" />
+        <xsd:element name="stringproperty" type="stringproperty" />
+        <xsd:element name="doubleproperty" type="doubleproperty" />
+        <xsd:element name="dateproperty" type="dateproperty" />		
       </xsd:choice>
       <xsd:attribute name="name" type="xsd:normalizedString" />
       <xsd:attribute name="source" type="xsd:normalizedString" />

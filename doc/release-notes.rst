@@ -16,7 +16,7 @@ Release notes
 
 - | The date format is now configurable.
   | The setting DATE_STYLE in the djangosettings.py configuration file now controls
-    how date formats are displayed in the user interface.
+    how dates are formatted in the user interface.
 
 .. rubric:: Production planning
 

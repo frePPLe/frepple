@@ -774,7 +774,11 @@ class CalendarDetail(GridReport):
             if b.sunday:
                 b.weekdays.append(6)
             buckets.append(b)
-            if b.endtime.second < 59:
+            if not b.starttime:
+                b.starttime = time.min
+            if not b.endtime:
+                b.endtime = time.max
+            elif b.endtime.second < 59:
                 b.endtime = b.endtime.replace(second=b.endtime.second + 1)
             elif b.endtime.minute < 59:
                 b.endtime = b.endtime.replace(minute=b.endtime.minute + 1, second=0)

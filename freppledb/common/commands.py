@@ -27,15 +27,46 @@ from threading import Thread
 
 
 if __name__ == "__main__":
-    # Support for running in Python virtual environments
+    # Autodetect Python virtual enviroment
     venv = os.environ.get("VIRTUAL_ENV", None)
+    if not venv:
+        curdir = os.path.dirname(os.path.realpath(__file__))
+        for candidate in (
+            # Development layout
+            os.path.join(curdir, "venv"),
+            # Linux install layout
+            os.path.join(curdir, "..", "share", "frepple", "venv"),
+        ):
+            if (
+                # Linux
+                os.name != "nt"
+                and os.path.isfile(os.path.join(candidate, "bin", "python3"))
+                and os.path.isfile(os.path.join(candidate, "bin", "activate"))
+            ) or (
+                # Windows
+                os.name == "nt"
+                and os.path.isfile(os.path.join(candidate, "Scripts", "python3.exe"))
+                and os.path.isfile(os.path.join(candidate, "Scripts", "pip3.exe"))
+            ):
+                os.environ["VIRTUAL_ENV"] = candidate
+                venv = candidate
+                break
+
+    # Activate Python virtual environment
     if venv:
-        os.environ["PATH"] = os.pathsep.join(
-            [os.path.join(venv, "Scripts")]
-            + os.environ.get("PATH", "").split(os.pathsep)
-        )
         prev_length = len(sys.path)
-        path = os.path.realpath(os.path.join(venv, "Lib", "site-packages"))
+        if os.name == "nt":
+            os.environ["PATH"] = os.pathsep.join(
+                [os.path.join(venv, "Scripts")]
+                + os.environ.get("PATH", "").split(os.pathsep)
+            )
+            path = os.path.realpath(os.path.join(venv, "Lib", "site-packages"))
+        else:
+            os.environ["PATH"] = os.pathsep.join(
+                [os.path.join(venv, "bin")]
+                + os.environ.get("PATH", "").split(os.pathsep)
+            )
+            path = os.path.realpath(os.path.join(venv, "lib", "site-packages"))
         site.addsitedir(path)
         sys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]
         sys.real_prefix = sys.prefix

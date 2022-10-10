@@ -11,7 +11,7 @@ chmod o= /usr/bin/frepple /usr/bin/frepplectl
 
 # Add apache user to the frepple user group
 . /etc/apache2/envvars
-adduser --silent www-data frepple
+adduser --quiet www-data frepple
 
 # Set permissions on configuration files
 chgrp frepple /etc/frepple /etc/frepple/*

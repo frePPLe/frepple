@@ -242,7 +242,7 @@ if not hasattr(sys, "argv") or "test" in sys.argv:
 #  - month-day-year: US format
 #  - day-month-year: European format
 #  - year-month-day: international format. This is the default
-DATE_STYLE = "year-month-date"
+DATE_STYLE = "year-month-day"
 
 if DATE_STYLE == "month-date-year":
     # Option 1: US style

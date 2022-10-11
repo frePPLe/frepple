@@ -1,29 +1,6 @@
-extraction:
-  cpp:
-    prepare:
-      packages:
-        - cmake
-    configure:
-      command:
-        - pip3 install -r requirements.txt
-        - mkdir build
-        - cd build
-        - cmake ..
-    index:
-      build_command:
-        - cd build
-        - cmake --build .
-  python:
-    python_setup:
-      requirements_files: requirements.txt
-      version: 3
-      setup_py: false
-  javascript:
-    index:
-      exclude:
-        - "freppledb/common/static/js/angular*.js"
-        - "freppledb/common/static/js/*.src.js"
-        - "freppledb/common/static/js/jquery.jqgrid.src.js"
-        - "freppledb/common/static/js/d3.js"
-        - "freppledb/common/static/js/bootstrap.js"
-      typescript: none
+paths-ignore:
+  - "freppledb/common/static/js/angular*.js"
+  - "freppledb/common/static/js/*.src.js"
+  - "freppledb/common/static/js/jquery.jqgrid.src.js"
+  - "freppledb/common/static/js/d3.js"
+  - "freppledb/common/static/js/bootstrap.js"

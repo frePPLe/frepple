@@ -221,7 +221,7 @@ try:
     from tzlocal import get_localzone
 
     TIME_ZONE = str(get_localzone())
-except:
+except Exception:
     TIME_ZONE = "Europe/Brussels"
 
 # TIME_ZONE can still be overriden by uncommenting following line

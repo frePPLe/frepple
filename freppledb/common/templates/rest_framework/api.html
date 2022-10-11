@@ -13,6 +13,12 @@ $(function() {
 </script>
 {% endblock %}
 
+{% block tools %}
+<h1 class="pull-right">
+<button class="btn btn-xs btn-primary" onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/integration-guide/rest-api/detail-api-from-your-browser.html');" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}"><span class="fa fa-question"></span></button>
+</h1>
+{% endblock %}
+
 {% block content %}
 <div id="content-main">
 

@@ -53,6 +53,7 @@ jobs:
           cp djangosettings.py djangosettings.original.py
           sed -i "s/\"HOST\":.\"\"/\"HOST\":\"localhost\"/g" djangosettings.py
           sed -i "s/\"PORT\":.\"\"/\"PORT\":\"${{ job.services.postgres.ports[5432] }}\"/g" djangosettings.py
+          sed -i "s/DATE_STYLE = \"year-month-date\"/DATE_STYLE = \"day-month-year\"/g" djangosettings.py
           ./test/runtest.py --regression
           ./frepplectl.py test freppledb --verbosity=2
 

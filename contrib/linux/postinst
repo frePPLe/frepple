@@ -18,9 +18,16 @@ chgrp frepple /etc/frepple /etc/frepple/*
 chmod 770 /etc/frepple
 chmod 750 /etc/frepple/*
 
+# Activate apache modules
+a2enmod -q expires
+a2ensite -q z_frepple
+a2enmod -q http2
+a2enmod -q proxy
+a2enmod -q proxy_wstunnel
+
 # Wsgi file must bre writeable to the group to allow reloading the app
-chgrp frepple /usr/lib/python3/dist-packages/freppledb/wsgi.py
-chmod 770 /usr/lib/python3/dist-packages/freppledb/wsgi.py
+chgrp frepple /usr/share/frepple/venv/lib/python*/site-packages/freppledb/wsgi.py
+chmod 770 /usr/share/frepple/venv/lib/python*/site-packages/freppledb/wsgi.py
 
 # Create log directory and set its permissions
 if [ ! -d /var/log/frepple ]; then

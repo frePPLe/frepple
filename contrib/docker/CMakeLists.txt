@@ -12,7 +12,7 @@ if(docker)
     COMMAND ${CMAKE_COMMAND} --build . --target package_source
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/ubuntu-20.04/"
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-    ${docker} build --target package --output type=local,dest=. ubuntu-20.04
+    ${docker} build --progress=plain --target package --output type=local,dest=. ubuntu-20.04
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
     ${docker} build ubuntu-20.04
     --progress=plain

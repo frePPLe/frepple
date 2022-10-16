@@ -45,8 +45,8 @@ if __name__ == "__main__":
             ) or (
                 # Windows
                 os.name == "nt"
-                and os.path.isfile(os.path.join(candidate, "Scripts", "python3.exe"))
-                and os.path.isfile(os.path.join(candidate, "Scripts", "pip3.exe"))
+                and os.path.isfile(os.path.join(candidate, "Scripts", "python.exe"))
+                and os.path.isfile(os.path.join(candidate, "Scripts", "activate"))
             ):
                 os.environ["VIRTUAL_ENV"] = candidate
                 venv = candidate
@@ -66,7 +66,14 @@ if __name__ == "__main__":
                 [os.path.join(venv, "bin")]
                 + os.environ.get("PATH", "").split(os.pathsep)
             )
-            path = os.path.realpath(os.path.join(venv, "lib", "site-packages"))
+            path = os.path.realpath(
+                os.path.join(
+                    venv,
+                    "lib",
+                    "python%d.%d" % sys.version_info[:2],
+                    "site-packages",
+                )
+            )
         site.addsitedir(path)
         sys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]
         sys.real_prefix = sys.prefix

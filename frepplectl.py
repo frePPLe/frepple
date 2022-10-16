@@ -27,7 +27,7 @@ import site
 
 if __name__ == "__main__":
     try:
-        # Autodetect Python virtuall enviroment
+        # Autodetect Python virtual enviroment
         venv = os.environ.get("VIRTUAL_ENV", None)
         if not venv:
             curdir = os.path.dirname(os.path.realpath(__file__))
@@ -39,12 +39,14 @@ if __name__ == "__main__":
             ):
                 if (
                     # Linux
-                    os.path.isfile(os.path.join(candidate, "bin", "python3"))
+                    os.name != "nt"
+                    and os.path.isfile(os.path.join(candidate, "bin", "python3"))
                     and os.path.isfile(os.path.join(candidate, "bin", "activate"))
                 ) or (
                     # Windows
-                    os.path.isfile(os.path.join(candidate, "Scripts", "python3.exe"))
-                    and os.path.isfile(os.path.join(candidate, "Scripts", "pip3.exe"))
+                    os.name == "nt"
+                    and os.path.isfile(os.path.join(candidate, "Scripts", "python.exe"))
+                    and os.path.isfile(os.path.join(candidate, "Scripts", "activate"))
                 ):
                     os.environ["VIRTUAL_ENV"] = candidate
                     venv = candidate
@@ -64,7 +66,14 @@ if __name__ == "__main__":
                     [os.path.join(venv, "bin")]
                     + os.environ.get("PATH", "").split(os.pathsep)
                 )
-                path = os.path.realpath(os.path.join(venv, "lib", "site-packages"))
+                path = os.path.realpath(
+                    os.path.join(
+                        venv,
+                        "lib",
+                        "python%d.%d" % sys.version_info[:2],
+                        "site-packages",
+                    )
+                )
             site.addsitedir(path)
             sys.path[:] = sys.path[prev_length:] + sys.path[0:prev_length]
             sys.real_prefix = sys.prefix

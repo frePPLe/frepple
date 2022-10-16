@@ -55,7 +55,6 @@ def check_python_packages(app_configs, **kwargs):
         ("dateutil", "python-dateutil"),
         ("PIL", "pillow"),
         ("psutil", "psutil"),
-        ("setuptools_rust", "setuptools-rust"),
         ("pysftp", "pysftp"),
     ]:
         try:

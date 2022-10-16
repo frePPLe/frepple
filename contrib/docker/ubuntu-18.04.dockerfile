@@ -23,8 +23,9 @@ FROM ubuntu:18.04 as builder
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
-RUN apt -y -q update && DEBIAN_FRONTEND=noninteractive apt -y install \
-  cmake g++ git python3 python3-pip python3-dev \
+RUN apt-get -y -q update && \
+  DEBIAN_FRONTEND=noninteractive apt-get -y install \
+  cmake g++ git python3 python3-pip python3-dev python3-venv \
   libxerces-c3.2 libxerces-c-dev psmisc \
   openssl libssl-dev libpq5 libpq-dev locales
 

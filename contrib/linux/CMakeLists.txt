@@ -15,8 +15,7 @@ set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
   "${CMAKE_CURRENT_SOURCE_DIR}/config"
    )
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
-  "adduser, libxerces-c3.2 | libxerces-c3.1, apache2, libapache2-mod-wsgi-py3, libapache2-mod-xsendfile, postgresql-client"
-  )
+  "adduser, libxerces-c3.2 | libxerces-c3.1, apache2, libapache2-mod-wsgi-py3, libapache2-mod-xsendfile, postgresql-client-15 | postgresql-client-14 | postgresql-client, psmisc, locales, libpq5, openssl, python3-lxml, ssl-cert")
 
 # RPM style packaging
 if (DISTRO STREQUAL "opensuse15")

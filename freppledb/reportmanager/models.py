@@ -72,7 +72,7 @@ class SQLReport(AuditModel):
                                 fmt = "number"
                             elif f[1] == 1184:
                                 fmt = "datetime"
-                            elif f[1] == 23:
+                            elif f[1] in (23, 20):
                                 fmt = "integer"
                             elif f[1] == 1186:
                                 fmt = "duration"

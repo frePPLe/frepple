@@ -1,0 +1,25 @@
+  {% extends "admin/base_site_grid.html" %}
+
+{% block extrahead %}{{block.super}}
+<script>
+
+function grouplistformatter(cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue === '')
+      return '';
+      console.log(cellvalue)
+    if (options['colModel']['popup'])
+      return cellvalue;
+    var result = '';
+    var count = cellvalue.length;
+    for (var i = 0; i < count; i++) {
+      if (result != '')
+        result += '&nbsp;&nbsp;';
+      result += '<span><span class="listdetailkey">' + $.jgrid.htmlEncode(cellvalue[i][1])
+        + "</span><a href=\"" + url_prefix + "/detail/auth/group/" + cellvalue[i][0]
+        + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='auth/group'>"
+        + "</span></a></span>&nbsp;";
+    }
+    return result;
+  };
+</script>
+{% endblock %}

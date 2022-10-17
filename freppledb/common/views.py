@@ -67,7 +67,13 @@ from .models import (
     Follower,
 )
 from .report import GridReport, GridFieldLastModified, GridFieldText, GridFieldBool
-from .report import GridFieldDateTime, GridFieldInteger, getCurrency, GridFieldChoice
+from .report import (
+    GridFieldDateTime,
+    GridFieldInteger,
+    getCurrency,
+    GridFieldChoice,
+    GridFieldJSON,
+)
 
 from freppledb.admin import data_site
 from freppledb import __version__
@@ -387,7 +393,16 @@ def login(request, extra_context=None):
 
 class UserList(GridReport):
     title = _("users")
-    basequeryset = User.objects.all()
+    template = "common/userlist.html"
+    basequeryset = User.objects.all().annotate(
+        group_dict=RawSQL(
+            "select json_agg(json_build_array(auth_group.id::text, auth_group.name)) "
+            "from common_user_groups "
+            "inner join auth_group on common_user_groups.group_id = auth_group.id "
+            "where common_user_groups.user_id = common_user.id",
+            (),
+        )
+    )
     model = User
     frozenColumns = 2
     permissions = (("change_user", "Can change user"),)
@@ -415,6 +430,14 @@ class UserList(GridReport):
         GridFieldText("last_name", title=_("last name")),
         GridFieldBool("is_active", title=_("active")),
         GridFieldBool("is_superuser", title=_("superuser status"), width=120),
+        GridFieldJSON(
+            "group_dict",
+            title=_("groups"),
+            formatter="listdetail",
+            extra='"formatter": grouplistformatter',
+            width=120,
+            editable=False,
+        ),
         GridFieldDateTime("date_joined", title=_("date joined"), editable=False),
         GridFieldDateTime("last_login", title=_("last login"), editable=False),
     )

@@ -30,7 +30,10 @@ if __name__ == "__main__":
     # Autodetect Python virtual enviroment
     venv = os.environ.get("VIRTUAL_ENV", None)
     if not venv:
-        curdir = os.path.dirname(os.path.realpath(__file__))
+        try:
+            curdir = os.path.dirname(os.path.realpath(__file__))
+        except NameError:
+            curdir = os.getcwd()
         for candidate in (
             # Development layout
             os.path.join(curdir, "venv"),

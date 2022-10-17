@@ -46,10 +46,16 @@ Release notes
 
 .. rubric:: System administration
 
-- | The ubuntu installer can now automatically migrate your databases when installing
-    a frepple upgrade. A prompt is shown to confirm whether or not you want to do this.
-  | We've added this step to avoid the classic upgrade mistake of forgetting about the
-    migrations...
+- | The installation process has been simplified. Except for the postgresql configuration,
+    everything else is now handled in the installer.
+
+    - The installer now automatically can migrate your databases during
+      a frepple upgrade. A prompt is shown to confirm whether or not you want to do this.
+
+    - All python dependencies are now included as a virtual environment. You no longer
+      have to deal witht the requirements.txt file yourself.
+
+    - A number of apache configurations are now done by the installer.
 
 6.25 (2022/09/16)
 =================

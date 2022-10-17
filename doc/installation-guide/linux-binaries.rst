@@ -4,8 +4,8 @@ Linux binary packages
 
 * `Supported distributions`_
 * `Installation and configuration`_
-* `Debian installation script`_
-* `Debian uninstallation script`_
+* `Ubuntu installation script`_
+* `Ubuntu uninstallation script`_
 * `Red Hat installation script`_
 
 ***********************
@@ -42,7 +42,7 @@ Here are the steps to get a fully working environment.
 
    The Community Edition is a free downloaded from github at https://github.com/frePPLe/frepple/releases.
 
-   The Enterprise Edition is available to customers from the frePPLe website at https://frepple.com/customer-portal/downloads/
+   The Enterprise Edition is available to customers from github at https://github.com/frePPLe/frepple-enterprise/releases
 
 #. **Install and tune the PostgreSQL database**
 
@@ -104,36 +104,9 @@ Here are the steps to get a fully working environment.
        create database DB2 encoding 'utf-8' owner USR;
        create database DB3 encoding 'utf-8' owner USR;
 
-#. **Install Python3 and pip3**
+#. **Install the frepple package**
 
-   You'll need to install the Python 3.4 or higher and ensure the pip3 command is available.
-   Most Linux distributions provide python2 by default, and you'll need python3 in parallel
-   with it.
-
-   On RPM based distributions:
-   ::
-
-     dnf install python3 python3-pip
-
-   On Debian based distributions:
-   ::
-
-     apt install python3 python3-pip
-
-#. **Install the Python modules**
-
-   The python3 modules used by frePPLe are listed in the dependency file "requirements.txt". You can
-   install these with a pip3 command. Make sure to run it as root user or use sudo (otherwise
-   the packages will be installed locally for that user instead of system-wide), and to replace 6.0.0
-   with the appropriate version number.
-   ::
-
-      sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/7.0.0/requirements.txt
-
-
-#. **Install the frepple binary package**
-
-   On Debian based distributions:
+   On Ubuntu:
    ::
 
      apt install -f ./*.deb
@@ -283,20 +256,6 @@ Here are the steps to get a fully working environment.
 
      frepplectl loaddata demo
 
-#. **Update apache web server (Ubuntu only)**
-
-   On Ubuntu the following statements are required to complete the deployment
-   on the Apache web server.
-   ::
-
-     sudo a2enmod expires
-     sudo a2enmod wsgi
-     sudo a2enmod ssl
-     sudo a2ensite default-ssl  # Deploying your own certificate instead!
-     sudo a2enmod http2   # Optional allow http2 protocol
-     sudo a2ensite z_frepple
-     sudo service apache2 restart
-
 #. **Verify the installation**
 
    If all went well you can now point your browser to http://localhost.
@@ -320,11 +279,11 @@ Here are the steps to get a fully working environment.
    Until it is changed, a message is displayed on the login page.
 
 **************************
-Debian installation script
+Ubuntu installation script
 **************************
 
 This section shows the completely automated installation script for installing
-and configuring frePPLe with a PostgreSQL database on a Debian server.
+and configuring frePPLe with a PostgreSQL database on an Ubuntu server.
 
 We use this script for our unit tests. You can use it as a guideline and
 inspiration for your own deployments.
@@ -351,29 +310,15 @@ inspiration for your own deployments.
   sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/*/main/pg_hba.conf
   sudo service postgresql restart
 
-  # Install python3 and required python modules
-  sudo apt -y install python3 python3-pip
-  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
-
   # Install the frePPLe binary .deb package and the necessary dependencies.
   sudo apt -f ./*.deb
-
-  # Configure apache web server
-  sudo a2enmod expires
-  sudo a2enmod wsgi
-  sudo a2enmod ssl
-  sudo a2enmod xsendfile
-  sudo a2ensite default-ssl # Deploying your own certificate instead!
-  sudo a2enmod http2   # Optional allow http2 protocol
-  sudo a2ensite z_frepple
-  sudo service apache2 restart
 
   # Create frepple database schema
   sudo frepplectl migrate --noinput
 
 
 ****************************
-Debian uninstallation script
+Ubuntu uninstallation script
 ****************************
 
 Uninstallation is as simple as:
@@ -420,10 +365,6 @@ inspiration for your own deployments.
   # sockets to communicate with the PostgreSQL database.
   sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/*/main/pg_hba.conf
   sudo service postgresql restart
-
-  # Install python3 and required python modules
-  sudo dnf install python3 python3-pip
-  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/7.0.0/requirements.txt
 
   # Install the frePPLe binary RPM package and the necessary dependencies.
   sudo dnf --nogpgcheck localinstall  frepple*.rpm
@@ -478,11 +419,6 @@ You can use it as a guideline and inspiration for your own deployments.
   sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /var/lib/pgsql/data/pg_hba.conf
   sudo systemctl restart postgresql
 
-  # Install python3 and required python modules
-  sudo zypper install python3 python3-pip
-  sudo python3 -m ensure pip
-  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/7.0.0/requirements.txt
-
   #install Apache2 modules:
   sudo a2enmod mod_access_compat mod_deflate
   sudo a2enmod proxy proxy_wstunnel    # Only Enterprise Edition
@@ -497,8 +433,6 @@ You can use it as a guideline and inspiration for your own deployments.
   # LoadModule proxy_wstunnel                            /usr/lib64/apache2/mod_proxy_wstunnel.so
 
   # Install the frePPLe binary RPM package and the necessary dependencies.
-  # There are frepple, frepple-doc and frepple-dev package files.
-  # Normally you only need to install the frepple package.
   sudo rpm -i *.rpm
   or
   sudo zypper install *.rpm

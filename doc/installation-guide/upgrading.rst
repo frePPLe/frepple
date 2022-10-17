@@ -24,23 +24,6 @@ Generic instructions
    FrePPLe requires 12 or higher. If you're on an older version, upgrading
    your PostgreSQL database is the first step.
 
-#. **Install the new python package dependencies**
-
-   Different frePPLe releases may require different versions of third party
-   Python libraries.
-
-   Minor releases (ie the third number in the release number changes) never require
-   new dependencies, and you can skip this step.
-
-   The following command will bring these to the right level as required for the
-   new release. Make sure to run it as root user or use sudo (otherwise the packages
-   will be installed locally for that user instead of system-wide), and to replace 5.0.0
-   with the appropriate release number.
-   ::
-
-      sudo -H pip3 install --force-reinstall -r https://raw.githubusercontent.com/frePPLe/frepple/7.0.0/requirements.txt
-
-
 #. **Install the new frePPLe release.**
 
    Install the new .deb or .rpm package.
@@ -78,11 +61,11 @@ Generic instructions
    After a restart of the web server, the new environment will be up and running.
 
 *********************
-Debian upgrade script
+Ubuntu upgrade script
 *********************
 
 The commands below are a convenience summary of the above steps implemented for
-a Debian/Ubuntu Linux server.
+a Ubuntu Linux server.
 
 ::
 
@@ -91,17 +74,14 @@ a Debian/Ubuntu Linux server.
 
   # Upgrade of the PostgreSQL database isn't covered in these commands.
 
-  sudo -H pip3 install --force-reinstall -r https://raw.githubusercontent.com/frePPLe/frepple/7.0.0/requirements.txt
-
-  # Download the debian package of the new release here.
+  # Download the ubuntu package of the new release here.
 
   sudo dpkg --force-confold -i <frepple installation package>.deb
 
   # Manually edit the /etc/frepple/djangosettings.py file. The previous line
   # keeps the old configuration file, which may not be ok for the new release.
 
-  frepplectl migrate --database=default
-
-  # Repeat the above line for all scenarios that are in use
+  # This step can be skipped if you choose to run it during the installation.
+  frepplectl migrate
 
   sudo service apache2 reload

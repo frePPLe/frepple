@@ -34,7 +34,6 @@ jobs:
         uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
-          config-file: ./.github/code_scanning_config.yml
 
       - if: matrix.language != 'cpp'
         name: Autobuild

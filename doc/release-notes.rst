@@ -30,17 +30,29 @@ Release notes
 
 .. rubric:: Odoo integration
 
-- | v12 & 13 & 14 & 15: Correction of a bug in the uom conversion. Quantities were
+- | The new Odoo 16 is now also supported by the connector.
+
+- | v12 & 13 & 14 & 15 & 16: Correction of a bug in the uom conversion. Quantities were
     divided instead of multiplied by uom conversion factor and vice versa.
 
-- | 14 & 15: A new configuration flag "respect_reservations" is added for the connector.
-  | When this flag is checked frepple fully respects the material reservations
+- | 14 & 15 & 16: Confirmed sales orders are now synchronized through information
+    from the deliveries instead of the sales order lines.
+  | This provides more detailed information on partial deliveries, reservations
+    and scheduled shipment dates.
+
+- | 14 & 15 & 16: Confirmed purchase orders are now synchronized through information
+    from the receipts instead of the purchase order lines.
+  | This provides more detailed information on partial deliveries, reservations
+    and scheduled receipt dates.
+
+- | 14 & 15 & 16: A new configuration flag "respect_reservations" is added for the connector.
+  | When this flag is checked, frepple fully respects the material reservations
     of odoo. Frepple only plans with the unreserved materials.
   | When this flag is false, frepple plans with the full material availability
     regardless of any reserved quantities in odoo. The implicit assumption is that
     any reservations will be unreserved in odoo when needed.
 
-- | v14 & 15: Access rights to frepple are now configurable per user in odoo.
+- | v14 & 15 & 16: Access rights to frepple are now configurable per user in odoo.
     The connector will also automatically synchronize the list of authorised users
     between odoo and frepple.
 

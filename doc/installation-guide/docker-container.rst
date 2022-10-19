@@ -22,7 +22,7 @@ docker repository:
    docker pull ghcr.io/frepple/frepple-community:latest
 
    # Enterprise Edition: download image from portal and load into your registry
-   docker load --input frepple*.tar
+   docker pull ghcr.io/frepple/freppe-enterprise:latest
 
 | The container includes the frePPLe planning software, plus a web server.
 | It does NOT include the required PostgreSQL database, which needs to provided
@@ -183,7 +183,7 @@ image. Here is a an example dockerfile that adds a new frePPLe app (coded as a P
 
 .. code-block:: none
 
-   FROM frepple-enterprise:latest
+   FROM ghcr.io/frepple/frepple-enterprise:latest
 
    COPY my-requirements.txt /
    COPY my-python-package /

@@ -7,7 +7,7 @@ FrePPLe allows migrating an existing installation to a new release without any l
 This page documents the steps for this process.
 
 * `Generic instructions`_
-* `Debian upgrade script`_
+* `Ubuntu upgrade script`_
 
 ********************
 Generic instructions

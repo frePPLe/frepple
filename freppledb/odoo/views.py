@@ -84,6 +84,10 @@ def Upload(request):
             "",
             "2",  # Marks incremental export
             "--%s" % boundary,
+            'Content-Disposition: form-data; name="actual_user"',
+            "",
+            request.user.username,
+            "--%s" % boundary,
             'Content-Disposition: file; name="frePPLe plan"; filename="frepple_plan.xml"',
             "Content-Type: application/xml",
             "",

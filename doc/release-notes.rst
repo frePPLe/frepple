@@ -35,6 +35,11 @@ Release notes
 - | v12 & 13 & 14 & 15 & 16: Correction of a bug in the uom conversion. Quantities were
     divided instead of multiplied by uom conversion factor and vice versa.
 
+- | 14 & 15 & 16: When planners manually approve purchase and manufacturing orders, the
+    odoo transaction is mark with that planner as responsible.
+  | In previous releases, the generic account running the frepple connector was used
+    instead. Which isn't very useful or handy...
+
 - | 14 & 15 & 16: Confirmed sales orders are now synchronized through information
     from the deliveries instead of the sales order lines.
   | This provides more detailed information on partial deliveries, reservations

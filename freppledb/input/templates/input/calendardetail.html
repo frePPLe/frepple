@@ -341,7 +341,7 @@ function drawFocusGraph() {
       .tickValues(ticks)
       .tickFormat(function(d, i) {
         var v = new Date(d);
-        return v.getFullYear()  + "/" + (v.getMonth()+1) + "/" + v.getDate();
+        return moment(v).format(dateformat);
       });
     svg.append("g")
       .attr("class", "x axis")

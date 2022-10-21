@@ -257,11 +257,9 @@ void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
 
   // Check for loops in the pegging
   for (auto& e : states) {
-    if (e.opplan == op && e.quantity == qty && e.offset == o && e.gap == gap) {
-      // We've been here before...
-      logger << " BAILING OUT " << op << endl;
+    if (e.opplan == op && e.quantity == qty &&
+        e.offset == o)  // We've been here before...
       return;
-    }
   }
 
   if (first) {

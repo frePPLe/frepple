@@ -2029,11 +2029,16 @@ double OperationPlan::getCriticality() const {
   // Handle an upstream operationplan
   Duration minslack = 86313600L;  // 999 days in seconds
   vector<Duration> gaps(HasLevel::getNumberOfLevels() + 5);
+  set<const OperationPlan*> opplans;
   for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p) {
+    const OperationPlan* m = p.getOperationPlan();
+    if (opplans.find(m) != opplans.end())
+      break;
+    else
+      opplans.insert(m);
     vector<Duration>::size_type lvl = p.getLevel();
     if (lvl >= gaps.size()) gaps.resize(lvl + 5);
     gaps[lvl] = p.getGap();
-    const OperationPlan* m = p.getOperationPlan();
     if (m && m->getTopOwner()->getDemand()) {
       // Reached a demand. Get the total slack now.
       Duration myslack = m->getTopOwner()->getDemand()->getDue() - m->getEnd();
@@ -2061,11 +2066,16 @@ Duration OperationPlan::getDelay() const {
   // Handle an upstream operationplan
   Duration maxdelay = Duration::MIN;
   vector<Duration> gaps(HasLevel::getNumberOfLevels() + 5);
+  set<const OperationPlan*> opplans;
   for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p) {
+    const OperationPlan* m = p.getOperationPlan();
+    if (opplans.find(m) != opplans.end())
+      break;
+    else
+      opplans.insert(m);
     vector<Duration>::size_type lvl = p.getLevel();
     if (lvl >= gaps.size()) gaps.resize(lvl + 5);
     gaps[lvl] = p.getGap();
-    const OperationPlan* m = p.getOperationPlan();
     if (m && m->getTopOwner()->getDemand()) {
       // Reached a demand. All time is processing except the gaps
       Duration mydelay = m->getEnd() - m->getTopOwner()->getDemand()->getDue();

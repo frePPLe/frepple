@@ -45,6 +45,13 @@ class Command(BaseCommand):
             help="Complete rebuild of image and database",
         )
         parser.add_argument(
+            "--destroy",
+            action="store_true",
+            dest="destroy",
+            default=False,
+            help="Use this option to clean up all docker objects",
+        )
+        parser.add_argument(
             "--nolog",
             action="store_true",
             dest="nolog",
@@ -110,11 +117,47 @@ class Command(BaseCommand):
         # c) docker volume name and d) odoo database name.
         name = "odoo_frepple_%s" % odooversion
 
+        if options["destroy"]:
+            if options["verbosity"]:
+                print("DELETING DOCKER CONTAINER")
+            subprocess.run(["docker", "rm", "--force", name])
+            if options["verbosity"]:
+                print("DELETING DOCKER VOLUME")
+            subprocess.run(["docker", "volume", "rm", "--force", name])
+            if options["verbosity"]:
+                print("DELETING ODOO DATABASE")
+            cmd = [
+                "dropdb",
+                "-U",
+                options["odoo_db_user"],
+                "--force",
+                "--if-exists",
+                name,
+            ]
+            if options["odoo_db_host"]:
+                cmd.extend(
+                    [
+                        "-h",
+                        options["odoo_db_host"],
+                    ]
+                )
+            if options["odoo_db_port"]:
+                cmd.extend(
+                    [
+                        "-p",
+                        options["odoo_db_port"],
+                    ]
+                )
+            subprocess.run(cmd)
+            return
+
         if options["full"]:
-            print("PULLING ODOO BASE IMAGE")
+            if options["verbosity"]:
+                print("PULLING ODOO BASE IMAGE")
             subprocess.run(["docker", "pull", "odoo:%s" % odooversion])
 
-        print("BUILDING DOCKER IMAGE")
+        if options["verbosity"]:
+            print("BUILDING DOCKER IMAGE")
         subprocess.run(
             [
                 "docker",
@@ -128,13 +171,15 @@ class Command(BaseCommand):
             cwd=options["odoo_addon_path"],
         )
 
-        print("DELETE OLD CONTAINER")
+        if options["verbosity"]:
+            print("DELETE OLD CONTAINER")
         subprocess.run(["docker", "rm", "--force", name])
         if options["full"]:
             subprocess.run(["docker", "volume", "rm", "--force", name])
 
         if options["full"]:
-            print("CREATE NEW DATABASE")
+            if options["verbosity"]:
+                print("CREATE NEW DATABASE")
             os.environ["PGPASSWORD"] = options["odoo_db_password"]
             extraargs = []
             if options["odoo_db_host"]:
@@ -168,7 +213,8 @@ class Command(BaseCommand):
                 + extraargs
             )
 
-            print("INITIALIZE ODOO DATABASE")
+            if options["verbosity"]:
+                print("INITIALIZE ODOO DATABASE")
             subprocess.run(
                 [
                     "docker",
@@ -198,7 +244,8 @@ class Command(BaseCommand):
                 ]
             )
 
-            print("CONFIGURE ODOO DATABASE")
+            if options["verbosity"]:
+                print("CONFIGURE ODOO DATABASE")
             conn_params = {
                 "database": name,
                 "user": options["odoo_db_user"],
@@ -246,19 +293,29 @@ class Command(BaseCommand):
                     )
                     company, mfglocation = cursor.fetchone()
 
-            print("CONFIGURE FREPPLE PARAMETERS")
-            Parameter.objects.all().filter(name="odoo.company").update(value=company)
-            Parameter.objects.all().filter(name="odoo.db").update(value=name)
-            Parameter.objects.all().filter(name="odoo.user").update(value="admin")
-            Parameter.objects.all().filter(name="odoo.password").update(value="admin")
-            Parameter.objects.all().filter(name="odoo.production_location").update(
-                value=mfglocation
-            )
-            Parameter.objects.all().filter(name="odoo.url").update(
-                value=options["odoo_url"]
-            )
+            if options["verbosity"]:
+                print("CONFIGURE FREPPLE PARAMETERS")
+            p = Parameter.objects.get_or_create(name="odoo.company")[0]
+            p.value = company
+            p.save()
+            p = Parameter.objects.get_or_create(name="odoo.db")[0]
+            p.value = name
+            p.save()
+            p = Parameter.objects.get_or_create(name="odoo.user")[0]
+            p.value = "admin"
+            p.save()
+            p = Parameter.objects.get_or_create(name="odoo.password")[0]
+            p.value = "admin"
+            p.save()
+            p = Parameter.objects.get_or_create(name="odoo.production_location")[0]
+            p.value = mfglocation
+            p.save()
+            p = Parameter.objects.get_or_create(name="odoo.url")[0]
+            p.value = options["odoo_url"]
+            p.save()
 
-        print("CREATING DOCKER CONTAINER")
+        if options["verbosity"]:
+            print("CREATING DOCKER CONTAINER")
         container = subprocess.run(
             [
                 "docker",
@@ -294,7 +351,8 @@ class Command(BaseCommand):
             text=True,
         ).stdout
 
-        print("CONTAINER READY: %s " % container)
-        if not options["nolog"]:
-            print("Hit CTRL-C to stop displaying the container log")
-            subprocess.run(["docker", "attach", container], shell=True)
+        if options["verbosity"]:
+            print("CONTAINER READY: %s " % container)
+            if not options["nolog"]:
+                print("Hit CTRL-C to stop displaying the container log")
+                subprocess.run(["docker", "attach", container], shell=True)

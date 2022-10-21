@@ -6,6 +6,8 @@ on:
       - "doc/**"
       - "*.md"
   pull_request:
+  repository_dispatch:
+    types: [odoo_connector]
 
 env:
   BUILD_TYPE: Release
@@ -56,6 +58,13 @@ jobs:
           sed -i "s/DATE_STYLE = \"year-month-date\"/DATE_STYLE = \"day-month-year\"/g" djangosettings.py
           ./test/runtest.py --regression
           ./frepplectl.py test freppledb --verbosity=2
+
+      - name: Odoo integration test
+        if: github.event.client_payload.message.branch
+        run: |
+          git -C freppledb/odoo/odoo_addon checkout ${{ github.event.client_payload.message.branch }}
+          sed -i "s/#'freppledb.odoo'/'freppledb.odoo'/g" djangosettings.py
+          frepplectl test freppledb.odoo
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:

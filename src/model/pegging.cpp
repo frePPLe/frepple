@@ -255,6 +255,15 @@ void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
   // Avoid very small pegging quantities
   if (qty < ROUNDING_ERROR) return;
 
+  // Check for loops in the pegging
+  for (auto& e : states) {
+    if (e.opplan == op && e.quantity == qty && e.offset == o && e.gap == gap) {
+      // We've been here before...
+      logger << " BAILING OUT " << op << endl;
+      return;
+    }
+  }
+
   if (first) {
     // Update the current top element of the stack
     state& t = states.back();

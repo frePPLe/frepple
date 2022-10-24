@@ -29,6 +29,8 @@ jobs:
     steps:
       - name: Checking out source code
         uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Set up Nodes
         uses: actions/setup-node@v2
@@ -62,10 +64,6 @@ jobs:
       - name: Odoo integration test
         if: github.event.client_payload.message.branch
         run: |
-          pwd
-          ls freppledb/odoo/odoo_addon
-          git status
-          git -C freppledb/odoo/odoo_addon status
           git -C freppledb/odoo/odoo_addon checkout ${{ github.event.client_payload.message.branch }}
           sed -i "s/#'freppledb.odoo'/'freppledb.odoo'/g" djangosettings.py
           frepplectl test freppledb.odoo

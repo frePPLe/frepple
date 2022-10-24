@@ -20,7 +20,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   if(DISTRO STREQUAL "opensuse15")
     set(CPACK_RPM_PACKAGE_REQUIRES "libxerces-c-3_1, httpd, apache2-mod_wsgi-python3, python3, gcc, python3-devel")
   else()
-    set(CPACK_RPM_PACKAGE_REQUIRES "xerces-c, httpd, python3-mod_wsgi, mod_xsendfile, python3, postgresql-client")
+    set(CPACK_RPM_PACKAGE_REQUIRES "xerces-c, httpd, python3-mod_wsgi, python3, postgresql-client")
     set(CPACK_RPM_PACKAGE_REQUIRES_POST "shadow-utils")
   endif()
 

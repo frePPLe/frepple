@@ -25,7 +25,7 @@ a2enmod -q http2
 a2enmod -q proxy
 a2enmod -q proxy_wstunnel
 
-# Wsgi file must bre writeable to the group to allow reloading the app
+# Wsgi file must be writeable to the group to allow reloading the app
 chgrp frepple /usr/share/frepple/venv/lib/python*/site-packages/freppledb/wsgi.py
 chmod 770 /usr/share/frepple/venv/lib/python*/site-packages/freppledb/wsgi.py
 

@@ -20,8 +20,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [("output", "0004_squashed_41"), ("output", "0005_number_precision")]
-
     initial = True
 
     dependencies = [("common", "0008_squashed_41")]

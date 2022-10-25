@@ -22,14 +22,6 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [
-        ("execute", "0001_initial"),
-        ("execute", "0002_task_logfile"),
-        ("execute", "0003_Task_name_size_up"),
-        ("execute", "0004_parameter_distribution_solver"),
-        ("execute", "0004_task_processid"),
-    ]
-
     initial = True
 
     dependencies = [("common", "0001_initial")]

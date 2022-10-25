@@ -38,40 +38,10 @@ def loadParameters(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    replaces = [
-        ("input", "0016_squashed_41"),
-        ("input", "0017_jsonb"),
-        ("input", "0018_operationplan_index"),
-        ("input", "0019_available"),
-        ("input", "0020_buffer_owner"),
-        ("input", "0021_operationplanresource"),
-        ("input", "0022_demand_due"),
-        ("input", "0023_transferbatch"),
-        ("input", "0024_number_precision"),
-        ("input", "0025_resource_efficiency"),
-        ("input", "0026_operationplanmaterial_nullable"),
-        ("input", "0027_resource_efficiency_calendar"),
-        ("input", "0028_operationmaterial_quantityfixed"),
-        ("input", "0029_opm_minimum_poc"),
-        ("input", "0030_suboperations_unique"),
-        ("input", "0031_operationplanmaterial_index"),
-        ("input", "0032_operationresource_quantityfixed"),
-        ("input", "0033_lastmodified_default"),
-        ("input", "0034_sizemaximum"),
-        ("input", "0035_parameter_wip"),
-        ("input", "0036_setupmatrixrule"),
-        ("input", "0037_supplier_available"),
-        ("input", "0038_operationplanreference"),
-        ("input", "0039_operationplanreference"),
-        ("input", "0040_autofence_parameter"),
-        ("input", "0041_buffer_remove_name"),
-        ("input", "0042_operation_owner"),
-        ("input", "0043_resource_constrained"),
-    ]
 
     initial = True
 
-    dependencies = [("common", "0008_squashed_41"), ("admin", "0001_initial")]
+    dependencies = [("common", "0014_squashed_60"), ("admin", "0001_initial")]
 
     operations = [
         migrations.CreateModel(

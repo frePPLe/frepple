@@ -195,11 +195,12 @@ execute_process(
 install(CODE "execute_process(COMMAND mkdir -p \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple)")
 install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} -m venv \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv)")
 install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/activate)")
-install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/pip3 install pip install --upgrade pip wheel )")
+install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/pip3 install pip install --upgrade pip wheel six appdirs setuptools)")
 install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/pip3 install -r ${CMAKE_SOURCE_DIR}/requirements.txt)")
 install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/python3 ${CMAKE_CURRENT_BINARY_DIR}/setup.py install --quiet)")
 install(CODE "execute_process(COMMAND rm \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/lib64)")
-install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin -type f -name '*ctivate*' -exec sed -i \"s|\$ENV{DESTDIR}||g\" {} \\;)")
+install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv -type f -exec sed -i \"s|/usr/bin/env python$|/usr/bin/env python3|g\" {} \;)")
+install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin -type f -name \"*ctivate*\" -exec sed -i \"s|\$ENV{DESTDIR}||g\" {} \\;)")
 install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin -type f -executable -exec sed -i \"s|\$ENV{DESTDIR}||g\" {} \\;)")
 
 # Packaging of the static files

@@ -43,7 +43,7 @@ RUN src=`basename --suffix=.tar.gz frepple-*` && \
   mkdir build && \
   cd build && \
   cmake .. && \
-  cmake --build . --target package
+  cmake --build . --target package -- -j 2
 
 FROM scratch as package
 COPY --from=builder frepple-*/build/*.rpm .

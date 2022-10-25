@@ -55,7 +55,7 @@ if(docker)
       COMMAND ${CMAKE_COMMAND} --build . --target package_source
       COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/${dist}/"
       COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-      ${docker} build --target package --output type=local,dest=. ${dist}
+      ${docker} build --progress=plain --target package --output type=local,dest=. ${dist}
     )
   endforeach()
 
@@ -73,6 +73,7 @@ if(docker)
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/rhel-8/"
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
     ${docker} build
+    --progress=plain
     --target package
     --output type=local,dest=.
     --build-arg RHEL_USER=${RHEL_USER}

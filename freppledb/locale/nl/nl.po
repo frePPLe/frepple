@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-25 13:05+0200\n"
-"PO-Revision-Date: 2021-05-06 16:46+0200\n"
+"PO-Revision-Date: 2022-10-25 14:14+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -67,7 +67,7 @@ msgstr "Bewaar"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:338
 msgid "Return to page"
-msgstr ""
+msgstr "Terug naar pagina"
 
 #: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
 msgid "select"
@@ -255,7 +255,7 @@ msgstr "is kind van"
 
 #: common/static/js/frepple.js:1881 common/static/js/frepple.min.js:11
 msgid "is null"
-msgstr ""
+msgstr "is blanco"
 
 #: common/static/js/frepple.js:1913 common/static/js/frepple.min.js:11
 msgid "days"
@@ -447,9 +447,8 @@ msgstr "OF"
 
 #: forecast/static/forecast/src/forecast.js:941
 #: forecast/static/js/frepple-forecast.min.js:11
-#, fuzzy
 msgid "Show descriptions"
-msgstr "omschrijving"
+msgstr "Toon omschrijvingen"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
@@ -473,18 +472,16 @@ msgstr "huidige voorraad"
 #: planningboard/static/planningboard/src/planningboard.js:863
 #: planningboard/static/planningboard/src/planningboard.js:884
 #: planningboard/static/planningboard/src/planningboard.js:885
-#, fuzzy
 msgid "minutes"
-msgstr "%d minuut"
+msgstr "minuten"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:65
 #: planningboard/static/planningboard/src/planningboard.js:861
 #: planningboard/static/planningboard/src/planningboard.js:892
 #: planningboard/static/planningboard/src/planningboard.js:893
-#, fuzzy
 msgid "seconds"
-msgstr "een seconde geleden"
+msgstr "seconden"
 
 #: output/views/resource.py:255
 msgid "hours"
@@ -493,27 +490,24 @@ msgstr "uren"
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:880
 #: planningboard/static/planningboard/src/planningboard.js:881
-#, fuzzy
 msgid "hour"
-msgstr "uren"
+msgstr "uur"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:888
 #: planningboard/static/planningboard/src/planningboard.js:889
-#, fuzzy
 msgid "minute"
-msgstr "%d minuut"
+msgstr "minuten"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:895
 #: planningboard/static/planningboard/src/planningboard.js:896
-#, fuzzy
 msgid "second"
-msgstr "een seconde geleden"
+msgstr "seconde"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
-msgstr ""
+msgstr "ABC klasse"
 
 #: admin.py:22
 #, python-format
@@ -1343,9 +1337,8 @@ msgid "Select a valid choice. That choice is not one of the available choices."
 msgstr "Selecteer een geldige keuze. Deze keuze is niet beschikbaar."
 
 #: common/localization.py:38 common/localization.py:56
-#, fuzzy
 msgid "Invalid date format"
-msgstr "Ongeldig getal"
+msgstr "Ongeldig datumformaat"
 
 #: common/menu.py:117
 msgid "Documentation"
@@ -1365,7 +1358,7 @@ msgstr "Over frePPLe"
 
 #: common/middleware.py:234 common/middleware.py:240
 msgid "Your session has expired. Please login again to continue."
-msgstr ""
+msgstr "Uw sessie is afgelopen. Log opnieuw in om verder te gaan."
 
 #: common/models.py:56 forecast/models.py:1094 input/models.py:884
 #: input/models.py:1644 input/models.py:1795
@@ -1572,9 +1565,8 @@ msgstr "pagina grootte"
 
 #: common/models.py:409 common/templates/common/preferences.html:118
 #: common/views.py:177
-#, fuzzy
 msgid "default scenario"
-msgstr "scenario"
+msgstr "standaardscenario"
 
 #: common/models.py:558 common/models.py:645 common/models.py:706
 #: common/models.py:924 common/models.py:995 common/views.py:497
@@ -1698,22 +1690,20 @@ msgid "bucket dates"
 msgstr "tijdsperiode details"
 
 #: common/models.py:1467
-#, fuzzy
 msgid "string"
-msgstr "Tekenreeks"
+msgstr "string"
 
 #: common/models.py:1468
 msgid "boolean"
-msgstr ""
+msgstr "boolean"
 
 #: common/models.py:1469 forecast/models.py:1090
 msgid "number"
 msgstr "nummer"
 
 #: common/models.py:1470
-#, fuzzy
 msgid "integer"
-msgstr "Geheel getal"
+msgstr "geheel getal"
 
 #: common/models.py:1471 forecast/widget.py:396 input/models.py:2331
 #: input/views/inventory.py:1727
@@ -1722,9 +1712,8 @@ msgid "date"
 msgstr "datum"
 
 #: common/models.py:1472
-#, fuzzy
 msgid "datetime"
-msgstr "Datum/tijd"
+msgstr "datum en tijd"
 
 #: common/models.py:1473 execute/views.py:151 input/models.py:385
 #: input/models.py:837 input/views/capacity.py:103 input/views/capacity.py:542
@@ -1738,13 +1727,12 @@ msgid "duration"
 msgstr "duur"
 
 #: common/models.py:1474
-#, fuzzy
 msgid "time"
-msgstr "op tijd"
+msgstr "tijd"
 
 #: common/models.py:1475
 msgid "JSON"
-msgstr ""
+msgstr "JSON"
 
 #: common/models.py:1508 common/views.py:506 common/views.py:707
 msgid "model"
@@ -1757,9 +1745,8 @@ msgid "label"
 msgstr "label"
 
 #: common/models.py:1517 common/views.py:722
-#, fuzzy
 msgid "editable"
-msgstr "tabel"
+msgstr "aanpasbaar"
 
 #: common/models.py:1519 common/views.py:726 forecast/models.py:1145
 #: forecast/views.py:353
@@ -1767,14 +1754,12 @@ msgid "initially hidden"
 msgstr "initieel verborgen"
 
 #: common/models.py:1538 forecast/models.py:1193
-#, fuzzy
 msgid "Name can only be alphanumeric"
-msgstr "Measure naam moet alfanumeriek zijn"
+msgstr "Naam moet alfanumeriek zijn"
 
 #: common/models.py:1580
-#, fuzzy
 msgid "attribute"
-msgstr "eigenschappen"
+msgstr "attribuut"
 
 #: common/models.py:1581 common/views.py:679
 #: inventoryplanning/templates/inventoryplanning/drp.html:2596
@@ -1893,9 +1878,8 @@ msgid "warning"
 msgstr "waarschuwing"
 
 #: common/report.py:2399
-#, fuzzy
 msgid "file"
-msgstr "logbestand"
+msgstr "bestand"
 
 #: common/report.py:2741
 #: inventoryplanning/templates/inventoryplanning/drp.html:2929
@@ -2008,7 +1992,7 @@ msgstr "geen segment"
 #: output/templates/output/pegging.html:266
 #: planningboard/static/planningboard/planningboard.html:49
 msgid "Bookmark your favorite report configurations"
-msgstr ""
+msgstr "Bookmark je favoriete rapport configuraties"
 
 #: common/templates/admin/base_site_grid.html:373
 #: common/templates/admin/base_site_gridpivot.html:223
@@ -3166,9 +3150,8 @@ msgid "Upload data files"
 msgstr "Upload databestanden"
 
 #: execute/templates/commands/importfromfolder.html:19
-#, fuzzy
 msgid "Upload"
-msgstr "load"
+msgstr "Upload"
 
 #: execute/templates/commands/importfromfolder.html:44
 msgid "Download file"
@@ -3235,13 +3218,12 @@ msgid "manage"
 msgstr "manage"
 
 #: execute/templates/commands/scenario_copy.html:50
-#, fuzzy
 msgid "Copy from"
-msgstr "Gekopieerd van  %s."
+msgstr "Kopieer van"
 
 #: execute/templates/commands/scenario_copy.html:54
 msgid "Restore from backup"
-msgstr ""
+msgstr "Herstel met een backup"
 
 #: execute/templates/commands/scenario_copy.html:73
 msgid "Release: You will lose ALL data in this scenario!"
@@ -3278,14 +3260,13 @@ msgstr "stop bij foutmelding"
 
 #: execute/templates/commands/scheduletasks.html:91
 #: execute/templates/commands/scheduletasks.html:199
-#, fuzzy
 msgid "Move down"
-msgstr "verwijder rij"
+msgstr "Move down"
 
 #: execute/templates/commands/scheduletasks.html:95
 #: execute/templates/commands/scheduletasks.html:203
 msgid "Move up"
-msgstr ""
+msgstr "Move up"
 
 #: execute/templates/commands/scheduletasks.html:111 input/models.py:113
 #: input/templates/input/calendardetail.html:68
@@ -3364,9 +3345,8 @@ msgid "download"
 msgstr "download"
 
 #: execute/templates/execute/execute.html:68
-#, fuzzy
 msgid "delete"
-msgstr "Verwijder"
+msgstr "verwijder"
 
 #: execute/templates/execute/execute.html:70 forecast/models.py:1089
 msgid "view"
@@ -3393,14 +3373,12 @@ msgid "finished"
 msgstr "geëindigd"
 
 #: execute/views.py:346
-#, fuzzy
 msgid "Failure launching task"
-msgstr "Probleem tijdens starten van taak: %(msg)s"
+msgstr "Probleem tijdens starten van taak"
 
 #: execute/views.py:719
-#, fuzzy
 msgid "Couldn't delete file"
-msgstr "Verwijder bestand"
+msgstr "Kan bestand niet verwijderen"
 
 #: execute/views.py:745
 msgid "Displaying only the last 50K from the log file"
@@ -3753,9 +3731,8 @@ msgid "Bucket '%(name)s' not found"
 msgstr "Bucket '%(name)s' niet gevonden"
 
 #: forecast/models.py:528
-#, fuzzy
 msgid "multiplier"
-msgstr "multiple lotgrootte"
+msgstr "multiplier"
 
 #: forecast/models.py:635
 msgid "No editable fields found"
@@ -4057,9 +4034,8 @@ msgstr "gewicht"
 #: inventoryplanning/views.py:624 output/views/buffer.py:173
 #: output/views/demand.py:69 output/views/operation.py:215
 #: output/views/operation.py:552 output/views/operation.py:1008
-#, fuzzy
 msgid "unit of measure"
-msgstr "measure"
+msgstr "maateenheid"
 
 #: forecast/views.py:221 input/models.py:252 input/models.py:2339
 #: input/views/capacity.py:761 input/views/inventory.py:223
@@ -4212,9 +4188,8 @@ msgid "plan detail"
 msgstr "plan detail"
 
 #: input/admin.py:534
-#, fuzzy
 msgid "matrix detail"
-msgstr "plan detail"
+msgstr "matrix detail"
 
 #: input/admin.py:1010
 msgid "computed fields"
@@ -4293,9 +4268,8 @@ msgid "Volume of the item"
 msgstr "Volume van het item"
 
 #: input/models.py:255
-#, fuzzy
 msgid "Period of cover in days"
-msgstr "dekkingsperiode"
+msgstr "Dekkingsperiode in dagen"
 
 #: input/models.py:265 input/views/sales.py:144
 msgid "items"
@@ -4895,14 +4869,12 @@ msgid "Purchasing lead time"
 msgstr "Aankooplevertijd"
 
 #: input/models.py:1293 input/models.py:1296 input/views/purchasing.py:160
-#, fuzzy
 msgid "soft safety lead time"
-msgstr "voorraad na de lead time"
+msgstr "softe veiligsheidslevertijd"
 
 #: input/models.py:1299 input/models.py:1302 input/views/purchasing.py:155
-#, fuzzy
 msgid "hard safety lead time"
-msgstr "voorraad na de lead time"
+msgstr "harde veiligheidslevertijd"
 
 #: input/models.py:1311
 msgid "A minimum purchasing quantity"
@@ -4918,7 +4890,7 @@ msgstr "Maximale aankoophoeveelheid"
 
 #: input/models.py:1334
 msgid "Proposed purchase orders within this window will be grouped together"
-msgstr ""
+msgstr "Voorgestelde aankooporders in dit tijdsvenster worden gegroepeerd"
 
 #: input/models.py:1344
 msgid "Purchasing cost per unit"
@@ -4988,7 +4960,7 @@ msgstr "Maximale leverhoeveelheid"
 #: input/models.py:1522
 msgid ""
 "Proposed distribution orders within this window will be grouped together"
-msgstr ""
+msgstr "Voorgestelde distributieorders in dit tijdsvenster worden gegroepeerd"
 
 #: input/models.py:1532
 msgid "Shipping cost per unit"
@@ -5049,36 +5021,32 @@ msgid "closed"
 msgstr "afgesloten"
 
 #: input/models.py:1637
-#, fuzzy
 msgid "independent"
-msgstr "afhankelijke vraag"
+msgstr "onafhankelijk"
 
 #: input/models.py:1638
-#, fuzzy
 msgid "all together"
-msgstr "Klein geheel getal"
+msgstr "samen"
 
 #: input/models.py:1639
-#, fuzzy
 msgid "in ratio"
-msgstr "netto duurtijd"
+msgstr "in verhouding"
 
 #: input/models.py:1672
 msgid "Due date of the sales order"
 msgstr "Leverdatum van de verkooporder"
 
 #: input/models.py:1682
-#, fuzzy
 msgid "Status of the demand. Only \"open\" and \"quote\" demands are planned"
-msgstr "Status van de order. Enkel \"open\" orders worden gepland"
+msgstr "Status van de order. Enkel \"open\" en \"quote\" orders worden gepland"
 
 #: input/models.py:1719 input/views/sales.py:358
 msgid "policy"
-msgstr ""
+msgstr "policy"
 
 #: input/models.py:1725
 msgid "Defines how sales orders are shipped together"
-msgstr ""
+msgstr "Definieert hoe verkooporders same worden geleverd"
 
 #: input/models.py:1733 input/models.py:1867
 msgid "MTO batch name"
@@ -5157,9 +5125,8 @@ msgid "Order type"
 msgstr "Order type"
 
 #: input/models.py:1817 input/views/manufacturing.py:1922
-#, fuzzy
 msgid "completed quantity"
-msgstr "verbruikte hoeveelheid"
+msgstr "afgewerkte hoeveelheid"
 
 #: input/models.py:1820 inventoryplanning/models.py:423
 msgid "color"
@@ -5236,39 +5203,32 @@ msgid "add"
 msgstr "toevoegen"
 
 #: input/templates/input/calendardetail.html:40
-#, fuzzy
 msgid "monday"
-msgstr "Maandag"
+msgstr "maandag"
 
 #: input/templates/input/calendardetail.html:44
-#, fuzzy
 msgid "tuesday"
-msgstr "Dinsdag"
+msgstr "dinsdag"
 
 #: input/templates/input/calendardetail.html:48
-#, fuzzy
 msgid "wednesday"
-msgstr "Woensdag"
+msgstr "woensdag"
 
 #: input/templates/input/calendardetail.html:52
-#, fuzzy
 msgid "thursday"
-msgstr "Donderdag"
+msgstr "donderdag"
 
 #: input/templates/input/calendardetail.html:56
-#, fuzzy
 msgid "friday"
-msgstr "Vrijdag"
+msgstr "vrijdag"
 
 #: input/templates/input/calendardetail.html:60
-#, fuzzy
 msgid "saturday"
-msgstr "Zaterdag"
+msgstr "zaterdag"
 
 #: input/templates/input/calendardetail.html:64
-#, fuzzy
 msgid "sunday"
-msgstr "Zondag"
+msgstr "zondag"
 
 #: input/templates/input/operationplanreport.html:303
 msgid "display kanban cards"
@@ -5315,9 +5275,8 @@ msgid "setup duration"
 msgstr "omsteltijd"
 
 #: input/views/capacity.py:698 input/views/manufacturing.py:2143
-#, fuzzy
 msgid "setup duration override"
-msgstr "omsteltijd"
+msgstr "aangepaste omsteltijd"
 
 #: input/views/capacity.py:705 input/views/inventory.py:1112
 #: input/views/inventory.py:1817 input/views/manufacturing.py:2150
@@ -6301,7 +6260,7 @@ msgstr "totaal in pogress"
 
 #: output/templates/output/buffer.html:312 output/views/buffer.py:444
 msgid "work in progress MO"
-msgstr "in pogress MO"
+msgstr "in progress MO"
 
 #: output/templates/output/buffer.html:315 output/views/buffer.py:463
 msgid "on order PO"
@@ -6463,14 +6422,12 @@ msgid "total consumed"
 msgstr "totale consumptie"
 
 #: output/views/buffer.py:285
-#, fuzzy
 msgid "total consumed confirmed"
-msgstr "totale consumptie"
+msgstr "totale bevestigde consumptie"
 
 #: output/views/buffer.py:293
-#, fuzzy
 msgid "total consumed proposed"
-msgstr "totale consumptie"
+msgstr "totale voorgestelde consumptie"
 
 #: output/views/buffer.py:306
 msgid "consumed by MO"
@@ -6481,14 +6438,12 @@ msgid "consumed by DO"
 msgstr "geconsumeerd door DO"
 
 #: output/views/buffer.py:339
-#, fuzzy
 msgid "total produced confirmed"
-msgstr "totale productie"
+msgstr "totale bevestigde productie"
 
 #: output/views/buffer.py:351
-#, fuzzy
 msgid "total produced proposed"
-msgstr "totale productie"
+msgstr "totale voorgestelde productie"
 
 #: output/views/buffer.py:363
 msgid "produced by MO"
@@ -6508,24 +6463,20 @@ msgid "produced by PO proposed"
 msgstr "geproduceerd door PO"
 
 #: output/views/buffer.py:420
-#, fuzzy
 msgid "total in progress confirmed"
-msgstr "totaal in pogress"
+msgstr "totaal bevestigd in pogress"
 
 #: output/views/buffer.py:432
-#, fuzzy
 msgid "total in progress proposed"
-msgstr "totaal in pogress"
+msgstr "totaal voorgesteld in pogress"
 
 #: output/views/buffer.py:454
-#, fuzzy
 msgid "work in progress MO confirmed"
-msgstr "in pogress MO"
+msgstr "bevestigde in progress MO"
 
 #: output/views/buffer.py:458
-#, fuzzy
 msgid "work in progress MO proposed"
-msgstr "in pogress MO"
+msgstr "voorgestelde in progress MO"
 
 #: output/views/buffer.py:470
 #, fuzzy
@@ -6815,9 +6766,8 @@ msgid "Saving the report failed"
 msgstr "Opslaan van het rapport mislukte"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:167
-#, fuzzy
 msgid "format SQL query"
-msgstr "SQL query"
+msgstr "formatteer SQL query"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:197
 #: reportmanager/views.py:123
@@ -6838,11 +6788,11 @@ msgstr "Rapport toevoegen"
 
 #: retail/management/commands/runpartitions.py:35
 msgid "Runs all the partitions"
-msgstr ""
+msgstr "Run alle partities"
 
 #: retail/templates/maintenance.html:4 retail/templates/maintenance.html:7
 msgid "The application is currently not available."
-msgstr ""
+msgstr "De applicatie is momenteel niet beschikbaar."
 
 #: settings.py:109
 msgid "English"
@@ -7580,9 +7530,8 @@ msgstr ""
 "<br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1475
-#, fuzzy
 msgid "Due date color setup"
-msgstr "Setup voor kleur per vertraging"
+msgstr "Setup voor kleur per leverdatum"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1330
 #: freppledb/planningboard/static/planningboard/planningboard.html:1365
@@ -7592,7 +7541,7 @@ msgstr "Geef naam"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:194
 msgid "Remark"
-msgstr ""
+msgstr "Opmerking"
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:78
 msgid "View end events"
@@ -7628,7 +7577,7 @@ msgstr "geen informatie over upstream operaties"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:527
 msgid "remark"
-msgstr ""
+msgstr "opmerking"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:19
 msgid "selected"

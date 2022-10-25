@@ -33,7 +33,7 @@ jobs:
           submodules: recursive
 
       - name: Set up Nodes
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
 
       - name: Install packages
         run: |

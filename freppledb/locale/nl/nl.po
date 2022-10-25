@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-25 13:05+0200\n"
-"PO-Revision-Date: 2022-10-25 14:14+0200\n"
+"PO-Revision-Date: 2022-10-25 15:00+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -4870,7 +4870,7 @@ msgstr "Aankooplevertijd"
 
 #: input/models.py:1293 input/models.py:1296 input/views/purchasing.py:160
 msgid "soft safety lead time"
-msgstr "softe veiligsheidslevertijd"
+msgstr "softe veiligheidslevertijd"
 
 #: input/models.py:1299 input/models.py:1302 input/views/purchasing.py:155
 msgid "hard safety lead time"

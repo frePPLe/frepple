@@ -24,7 +24,7 @@ class Migration(AttributeMigration):
 
     extends_app_label = "input"
 
-    dependencies = [("input", "0016_squashed_41")]
+    dependencies = []
 
     operations = [
         migrations.AddField(

@@ -244,75 +244,86 @@ class Command(BaseCommand):
                 ]
             )
 
-            if options["verbosity"]:
-                print("CONFIGURE ODOO DATABASE")
-            conn_params = {
-                "database": name,
-                "user": options["odoo_db_user"],
-                "password": options["odoo_db_password"],
-            }
-            if options["odoo_db_host"]:
-                conn_params["host"] = options["odoo_db_host"]
-            if options["odoo_db_port"]:
-                conn_params["port"] = options["odoo_db_port"]
-            with psycopg2.connect(**conn_params) as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        update res_company set
-                          manufacturing_warehouse = (
-                             select id
-                             from stock_warehouse
-                             where stock_warehouse.company_id = res_company.id
-                             order by id
-                             limit 1
-                             ),
-                          webtoken_key = '%s',
-                          frepple_server = '%s',
-                          disclose_stack_trace = true
-                        """
-                        % (
-                            settings.DATABASES[DEFAULT_DB_ALIAS].get(
-                                "SECRET_WEBTOKEN_KEY", None
-                            )
-                            or settings.SECRET_KEY,
-                            options["frepple_url"],
+        if options["verbosity"]:
+            print("CONFIGURE ODOO DATABASE")
+        conn_params = {
+            "database": name,
+            "user": options["odoo_db_user"],
+            "password": options["odoo_db_password"],
+        }
+        if options["odoo_db_host"]:
+            conn_params["host"] = options["odoo_db_host"]
+        if options["odoo_db_port"]:
+            conn_params["port"] = options["odoo_db_port"]
+        with psycopg2.connect(**conn_params) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    update res_company set
+                        manufacturing_warehouse = (
+                            select id
+                            from stock_warehouse
+                            where stock_warehouse.company_id = res_company.id
+                            order by id
+                            limit 1
+                            ),
+                        webtoken_key = '%s',
+                        frepple_server = '%s',
+                        disclose_stack_trace = true
+                    """
+                    % (
+                        settings.DATABASES[DEFAULT_DB_ALIAS].get(
+                            "SECRET_WEBTOKEN_KEY", None
                         )
+                        or settings.SECRET_KEY,
+                        options["frepple_url"],
                     )
-                    cursor.execute(
-                        """
-                        select res_company.name, stock_warehouse.name
-                        from res_company
-                        inner join res_users
-                          on res_users.company_id = res_company.id
-                          and login = 'admin'
-                        inner join stock_warehouse
-                          on stock_warehouse.company_id = res_company.id
-                        order by stock_warehouse.id
-                        """
-                    )
-                    company, mfglocation = cursor.fetchone()
+                )
+                cursor.execute(
+                    """
+                    select res_company.name, stock_warehouse.name
+                    from res_company
+                    inner join res_users
+                        on res_users.company_id = res_company.id
+                        and login = 'admin'
+                    inner join stock_warehouse
+                        on stock_warehouse.company_id = res_company.id
+                    order by stock_warehouse.id
+                    """
+                )
+                company, mfglocation = cursor.fetchone()
 
+        if options["verbosity"]:
+            print("CONFIGURE FREPPLE PARAMETERS")
+        p = Parameter.objects.get_or_create(name="odoo.company")[0]
+        p.value = company
+        p.save()
+        p = Parameter.objects.get_or_create(name="odoo.db")[0]
+        p.value = name
+        p.save()
+        p = Parameter.objects.get_or_create(name="odoo.user")[0]
+        p.value = "admin"
+        p.save()
+        p = Parameter.objects.get_or_create(name="odoo.password")[0]
+        p.value = "admin"
+        p.save()
+        p = Parameter.objects.get_or_create(name="odoo.production_location")[0]
+        p.value = mfglocation
+        p.save()
+        p = Parameter.objects.get_or_create(name="odoo.url")[0]
+        p.value = options["odoo_url"]
+        p.save()
+
+        # Stop other odoo container already running on port 8069
+        container = subprocess.run(
+            ["docker", "ps", "--filter", "expose=8069", "--format", "{{.ID}}"],
+            capture_output=True,
+            text=True,
+        ).stdout
+        if container:
             if options["verbosity"]:
-                print("CONFIGURE FREPPLE PARAMETERS")
-            p = Parameter.objects.get_or_create(name="odoo.company")[0]
-            p.value = company
-            p.save()
-            p = Parameter.objects.get_or_create(name="odoo.db")[0]
-            p.value = name
-            p.save()
-            p = Parameter.objects.get_or_create(name="odoo.user")[0]
-            p.value = "admin"
-            p.save()
-            p = Parameter.objects.get_or_create(name="odoo.password")[0]
-            p.value = "admin"
-            p.save()
-            p = Parameter.objects.get_or_create(name="odoo.production_location")[0]
-            p.value = mfglocation
-            p.save()
-            p = Parameter.objects.get_or_create(name="odoo.url")[0]
-            p.value = options["odoo_url"]
-            p.save()
+                print("STOPPING ANOTHER ODOO CONTAINER %s")
+            subprocess.run(["docker", "stop", container.strip()])
 
         if options["verbosity"]:
             print("CREATING DOCKER CONTAINER")

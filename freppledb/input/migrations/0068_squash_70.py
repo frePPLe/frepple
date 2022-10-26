@@ -37,17 +37,13 @@ def recreateConstraintsCascade(apps, schema_editor):
         return cursor.fetchone()[0]
 
     with connections[schema_editor.connection.alias].cursor() as cursor:
-        c = getConstraint(cursor, "operationplanmaterial")
-        if c:
-            cursor.execute(
+        cursor.execute(
                 "alter table operationplanmaterial drop constraint %s"
-                % (c,)
+                % (getConstraint(cursor, "operationplanmaterial"),)
             )
-        c = getConstraint(cursor, "operationplanresource")
-        if c:
-            cursor.execute(
+        cursor.execute(
                 "alter table operationplanresource drop constraint %s"
-                % (c,)
+                % (getConstraint(cursor, "operationplanresource"),)
             )
         cursor.execute(
             """

@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-25 13:05+0200\n"
-"PO-Revision-Date: 2021-05-06 16:52+0200\n"
+"POT-Creation-Date: 2022-10-26 16:33+0200\n"
+"PO-Revision-Date: 2022-10-26 16:59+0200\n"
 "Last-Translator: Blago Čuljak <blago.culjak@hotmail.com>\n"
 "Language-Team: klaus\n"
 "Language: hr\n"
@@ -30,9 +30,8 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: common/static/js/frepple.js:195 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Connection failed"
-msgstr "prekid neuspjeha"
+msgstr ""
 
 #: common/static/js/frepple.js:208 common/static/js/frepple.js:1641
 #: common/static/js/frepple.js:1690 common/static/js/frepple.js:2323
@@ -172,9 +171,8 @@ msgstr "Format izvoza"
 
 #: common/static/js/frepple.js:1223 common/static/js/frepple.js:1273
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Scenarios to export"
-msgstr "Scenariji izvoza"
+msgstr ""
 
 #: common/static/js/frepple.js:1230 common/static/js/frepple.js:1281
 #: common/static/js/frepple.js:1323 common/static/js/frepple.js:1356
@@ -191,16 +189,14 @@ msgstr "CSV popis"
 #: common/static/js/frepple.js:1233 common/static/js/frepple.js:1285
 #: common/static/js/frepple.js:1327 common/static/js/frepple.js:1361
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Data source URL"
-msgstr "URL izvora podataka"
+msgstr ""
 
 #: common/static/js/frepple.js:1235 common/static/js/frepple.js:1287
 #: common/static/js/frepple.js:1329 common/static/js/frepple.js:1363
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Using this link external applications can pull data from frePPLe"
-msgstr "Korištenje ove veze vanjske aplikacije mogu povući podatke iz frePPLe"
+msgstr ""
 
 #: common/static/js/frepple.js:1242 common/static/js/frepple.js:1294
 #: common/static/js/frepple.js:1336 common/static/js/frepple.js:1370
@@ -211,6 +207,7 @@ msgstr "Kopirati u međupohranu"
 
 #: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
 #: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
+#: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
 #: common/static/js/frepple.min.js:11
 msgid "Export"
 msgstr "Izvezi"
@@ -258,9 +255,8 @@ msgid "within"
 msgstr "unutar"
 
 #: common/static/js/frepple.js:1879 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "is child of"
-msgstr "podređena operacija"
+msgstr ""
 
 #: common/static/js/frepple.js:1881 common/static/js/frepple.min.js:11
 msgid "is null"
@@ -282,11 +278,6 @@ msgstr "i"
 #: common/static/js/frepple.js:2103 common/static/js/frepple.min.js:11
 msgid "Click ok to confirm deleting the favorite"
 msgstr "Kliknite OK za potvrdu brisanja favorita"
-
-#: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
-#: common/static/js/frepple.min.js:11
-msgid "export"
-msgstr "Izvoz"
 
 #: common/static/js/frepple.js:2278 common/static/js/frepple.min.js:11
 msgid "export selected records"
@@ -360,9 +351,9 @@ msgid "Delete"
 msgstr "Ukloni"
 
 #: common/static/js/frepple.js:2871 common/static/js/frepple.min.js:11
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%s unread messages"
-msgstr "%s nepročitane poruke"
+msgstr ""
 
 #: common/static/js/frepple.js:2876 common/static/js/frepple.min.js:11
 #, fuzzy
@@ -426,9 +417,9 @@ msgid "Canceled"
 msgstr "Otkazano"
 
 #: common/static/js/frepple.js:3220 common/static/js/frepple.min.js:11
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%s records processed"
-msgstr "%s obrađeni zapisi"
+msgstr ""
 
 #: common/static/js/frepple.js:3954 common/static/js/frepple.min.js:11
 #, fuzzy
@@ -441,9 +432,9 @@ msgid "Update"
 msgstr "Ažuriraj"
 
 #: common/static/js/frepple.js:3973 common/static/js/frepple.min.js:11
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Manage notifications of %s"
-msgstr "Obavijesti"
+msgstr ""
 
 #: common/static/js/frepple.js:3981 common/static/js/frepple.min.js:11
 #, fuzzy
@@ -451,20 +442,22 @@ msgid "Following"
 msgstr "Praćenja"
 
 #: common/static/js/frepple.js:4002 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Add followers"
-msgstr "Sljedbenika"
+msgstr ""
 
 #: common/static/js/frepple.min.js:11
 #, fuzzy
 msgid "OR"
-msgstr "Ili"
+msgstr "ILI"
+
+#: common/static/js/frepple.min.js:11
+msgid "export"
+msgstr "Izvoz"
 
 #: forecast/static/forecast/src/forecast.js:941
 #: forecast/static/js/frepple-forecast.min.js:11
-#, fuzzy
 msgid "Show descriptions"
-msgstr "opis"
+msgstr ""
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
@@ -490,7 +483,7 @@ msgstr "trenutna zaliha"
 #: planningboard/static/planningboard/src/planningboard.js:885
 #, fuzzy
 msgid "minutes"
-msgstr "0 minuta"
+msgstr "minute"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:65
@@ -499,7 +492,7 @@ msgstr "0 minuta"
 #: planningboard/static/planningboard/src/planningboard.js:893
 #, fuzzy
 msgid "seconds"
-msgstr "prije %(count)s sekunde"
+msgstr "sekundi"
 
 #: output/views/resource.py:255
 msgid "hours"
@@ -510,21 +503,21 @@ msgstr "Sati"
 #: planningboard/static/planningboard/src/planningboard.js:881
 #, fuzzy
 msgid "hour"
-msgstr "Sati"
+msgstr "sat"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:888
 #: planningboard/static/planningboard/src/planningboard.js:889
 #, fuzzy
 msgid "minute"
-msgstr "%d minutu"
+msgstr "minuta"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:895
 #: planningboard/static/planningboard/src/planningboard.js:896
 #, fuzzy
 msgid "second"
-msgstr "prije %(count)s sekunde"
+msgstr "sekunda"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
@@ -540,9 +533,8 @@ msgstr ""
 "biti velika i mala slova."
 
 #: admin.py:24
-#, fuzzy
 msgid "This user is inactive."
-msgstr "Ovaj korisnik je neaktivan."
+msgstr ""
 
 #: archive/models.py:44 common/models.py:642 common/models.py:679
 #: common/models.py:917 common/models.py:991 common/models.py:1436
@@ -562,9 +554,8 @@ msgstr "Ovaj korisnik je neaktivan."
 #: inventoryplanning/models.py:375 inventoryplanning/views.py:172
 #: inventoryplanning/views.py:215 reportmanager/models.py:20
 #: reportmanager/models.py:103 reportmanager/views.py:118
-#, fuzzy
 msgid "identifier"
-msgstr "Identifikator"
+msgstr ""
 
 #: archive/models.py:62 archive/models.py:89 archive/models.py:132
 #: forecast/models.py:65 forecast/models.py:325 forecast/views.py:102
@@ -791,9 +782,8 @@ msgstr "lokacija"
 #: input/views/inventory.py:1589 input/views/manufacturing.py:1855
 #: input/views/purchasing.py:916 input/views/sales.py:303
 #: input/views/sales.py:601 output/views/buffer.py:253
-#, fuzzy
 msgid "batch"
-msgstr "Serije"
+msgstr ""
 
 #: archive/models.py:66 archive/models.py:91 forecast/views.py:197
 #: forecast/views.py:607 forecast/views.py:1982 input/models.py:225
@@ -961,9 +951,8 @@ msgstr "quantità pianificata"
 #: input/views/manufacturing.py:1848 input/views/purchasing.py:825
 #: input/views/sales.py:594
 #: inventoryplanning/templates/inventoryplanning/drp.html:160
-#, fuzzy
 msgid "reference"
-msgstr "Referenca"
+msgstr ""
 
 #: archive/models.py:119 common/models.py:681 common/models.py:927
 #: common/models.py:1000 common/models.py:1515 common/views.py:503
@@ -1119,14 +1108,12 @@ msgid "owner"
 msgstr "Vlasnik"
 
 #: archive/models.py:134
-#, fuzzy
 msgid "item cost"
-msgstr "trošak artikla"
+msgstr ""
 
 #: archive/models.py:137
-#, fuzzy
 msgid "itemsupplier cost"
-msgstr "trošak asuppliera"
+msgstr ""
 
 #: archive/models.py:140 input/models.py:1483 input/models.py:1881
 #: input/views/inventory.py:369 input/views/inventory.py:531
@@ -1186,34 +1173,28 @@ msgid "demand"
 msgstr "potražnja"
 
 #: archive/widget.py:28
-#, fuzzy
 msgid "Inventory history"
-msgstr "Povijest inventara"
+msgstr ""
 
 #: archive/widget.py:29
-#, fuzzy
 msgid "Show the history of the on hand inventory"
-msgstr "Prikagodaj povijest inventara na ruci"
+msgstr ""
 
 #: archive/widget.py:172
-#, fuzzy
 msgid "Demand history"
-msgstr "Prikazuje odmetnike otkrivene u povijesti zahtjeva"
+msgstr ""
 
 #: archive/widget.py:173
-#, fuzzy
 msgid "Show the evolution of the open sales orders"
-msgstr "Pokažite evoluciju otvorenih prodajnih naloga"
+msgstr ""
 
 #: archive/widget.py:337
-#, fuzzy
 msgid "Purchase order history"
-msgstr "Povijest narudžbi narudžbi"
+msgstr ""
 
 #: archive/widget.py:338
-#, fuzzy
 msgid "Show the evolution of the open purchase orders"
-msgstr "Pokažite evoluciju otvorenih narudžbenici"
+msgstr ""
 
 #: common/admin.py:28 common/admin.py:39
 msgid "Personal info"
@@ -1224,9 +1205,8 @@ msgid "password"
 msgstr "lozinka"
 
 #: common/admin.py:32
-#, fuzzy
 msgid "scenario access"
-msgstr "pristup scenariju"
+msgstr ""
 
 #: common/admin.py:43
 msgid "Permissions in this scenario"
@@ -1265,55 +1245,47 @@ msgstr "uredi"
 #: inventoryplanning/admin.py:132 reportmanager/admin.py:45
 #, fuzzy
 msgid "messages"
-msgstr "Poruke"
+msgstr "poruke"
 
 #: common/adminforms.py:312 common/adminforms.py:341
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The {name} \"{obj}\" was added successfully."
-msgstr "Uspješno {name} dodana {obj} \"{obj}\"."
+msgstr ""
 
 #: common/adminforms.py:314
-#, fuzzy
 msgid "You may edit it again below."
-msgstr "Možete ga ponovno urediti u nastavku."
+msgstr ""
 
 #: common/adminforms.py:327
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "The {name} \"{obj}\" was added successfully. You may add another {name} "
 "below."
 msgstr ""
-"Uspješno {name} dodana {obj} \"{obj}\". U nastavku možete dodati još {name} "
-"oglasa."
 
 #: common/adminforms.py:445
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "The {name} \"{obj}\" was changed successfully. You may edit it again below."
 msgstr ""
-"Tekst {name} \"{obj}\" uspješno promijenjen. Možete ga ponovno urediti u "
-"nastavku."
 
 #: common/adminforms.py:460
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "The {name} \"{obj}\" was added successfully. You may edit it again below."
 msgstr ""
-"Uspješno {name} dodana {obj} \"{obj}\". Možete ga ponovno urediti u nastavku."
 
 #: common/adminforms.py:479
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "The {name} \"{obj}\" was changed successfully. You may add another {name} "
 "below."
 msgstr ""
-"Tekst {name} \"{obj}\" uspješno promijenjen. U nastavku možete dodati još "
-"{name} oglasa."
 
 #: common/adminforms.py:496
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "The {name} \"{obj}\" was changed successfully."
-msgstr "Tekst {name} \"{obj}\" uspješno promijenjen."
+msgstr ""
 
 #: common/adminforms.py:609 reportmanager/views.py:615
 #, python-format
@@ -1326,23 +1298,20 @@ msgid "Cannot delete %(name)s"
 msgstr "Nije moguće izbrisati %(name)s"
 
 #: common/adminforms.py:704
-#, fuzzy
 msgid "About to delete!"
-msgstr "O brisanju!"
+msgstr ""
 
 #: common/adminforms.py:705
 msgid "Are you sure?"
 msgstr "Jeste li sigurni?"
 
 #: common/adminforms.py:750
-#, fuzzy
 msgid "Required."
-msgstr "Potrebno."
+msgstr ""
 
 #: common/adminforms.py:752 common/adminforms.py:755
-#, fuzzy
 msgid "Required. Max 30 characters."
-msgstr "Potrebno. Max 30 znakova."
+msgstr ""
 
 #: common/api/views.py:40
 msgid "REST API Help"
@@ -1376,9 +1345,8 @@ msgid "Select a valid choice. That choice is not one of the available choices."
 msgstr "Izaberite ispravnu opciju. Ta opcija nije jedna od dostupnih opcija."
 
 #: common/localization.py:38 common/localization.py:56
-#, fuzzy
 msgid "Invalid date format"
-msgstr "Nevaljan broj"
+msgstr ""
 
 #: common/menu.py:117
 msgid "Documentation"
@@ -1487,7 +1455,7 @@ msgstr "Izvor"
 msgid "last modified"
 msgstr "zadnja promjena"
 
-#: common/models.py:289 common/report.py:2297 common/report.py:2432
+#: common/models.py:289 common/report.py:2295 common/report.py:2430
 #: common/views.py:475 execute/management/commands/importworkbook.py:202
 #: execute/views.py:1394 input/models.py:102
 #: input/templates/input/calendardetail.html:36
@@ -1581,8 +1549,8 @@ msgid "scenarios"
 msgstr "scenariji"
 
 #: common/models.py:366 common/report.py:1041 common/report.py:1122
-#: common/report.py:1138 common/report.py:1155 common/report.py:3270
-#: common/report.py:3661 execute/templates/commands/scenario_copy.html:15
+#: common/report.py:1138 common/report.py:1155 common/report.py:3268
+#: common/report.py:3659 execute/templates/commands/scenario_copy.html:15
 msgid "scenario"
 msgstr "Scenarij"
 
@@ -1605,9 +1573,8 @@ msgstr "Veličina stranice"
 
 #: common/models.py:409 common/templates/common/preferences.html:118
 #: common/views.py:177
-#, fuzzy
 msgid "default scenario"
-msgstr "Scenarij"
+msgstr ""
 
 #: common/models.py:558 common/models.py:645 common/models.py:706
 #: common/models.py:924 common/models.py:995 common/views.py:497
@@ -1622,6 +1589,7 @@ msgstr "korisnici"
 
 #: common/models.py:673 execute/templates/commands/scheduletasks.html:104
 #: execute/templates/commands/scheduletasks.html:169
+#: input/templates/input/calendardetail.html:24
 msgid "Add"
 msgstr "Novi unos"
 
@@ -1660,16 +1628,12 @@ msgid "comments"
 msgstr "Komentar"
 
 #: common/models.py:919 common/views.py:610
-#, fuzzy
 msgid "model name"
-msgstr "naziv modela"
+msgstr ""
 
 #: common/models.py:921 common/views.py:616
-#, fuzzy
 msgid "object name"
 msgstr ""
-"Brisanje %(object_name)s '%(escaped_object)s' rezultiralo bi brisanjem "
-"povezanih objekta, ali vi nemate privilegije za brisanje navedenih objekta: "
 
 #: common/models.py:982
 msgid "followers"
@@ -1680,9 +1644,8 @@ msgid "notification"
 msgstr "obavijest"
 
 #: common/models.py:1022
-#, fuzzy
 msgid "notifications"
-msgstr "Obavijesti"
+msgstr ""
 
 #: common/models.py:1412 input/models.py:676
 #: input/templates/input/operationplanreport.html:317
@@ -1715,8 +1678,8 @@ msgstr "razina"
 msgid "Higher values indicate more granular time buckets"
 msgstr "Više vrijednosti ukazuju na detaljnije vremenske skupove"
 
-#: common/models.py:1427 common/models.py:1438 common/report.py:3226
-#: common/report.py:3594 common/views.py:665 forecast/models.py:378
+#: common/models.py:1427 common/models.py:1438 common/report.py:3224
+#: common/report.py:3592 common/views.py:665 forecast/models.py:378
 #: forecast/models.py:514
 msgid "bucket"
 msgstr "Skup"
@@ -1736,23 +1699,20 @@ msgid "bucket dates"
 msgstr "Vremenski skupovi"
 
 #: common/models.py:1467
-#, fuzzy
 msgid "string"
-msgstr "Linija (Line string)"
+msgstr ""
 
 #: common/models.py:1468
 msgid "boolean"
 msgstr ""
 
 #: common/models.py:1469 forecast/models.py:1090
-#, fuzzy
 msgid "number"
-msgstr "Broj zapisa na stranici"
+msgstr ""
 
 #: common/models.py:1470
-#, fuzzy
 msgid "integer"
-msgstr "Cijeli broj"
+msgstr ""
 
 #: common/models.py:1471 forecast/widget.py:396 input/models.py:2331
 #: input/views/inventory.py:1727
@@ -1761,9 +1721,8 @@ msgid "date"
 msgstr "Datum/vrijeme"
 
 #: common/models.py:1472
-#, fuzzy
 msgid "datetime"
-msgstr "Datum/vrijeme"
+msgstr ""
 
 #: common/models.py:1473 execute/views.py:151 input/models.py:385
 #: input/models.py:837 input/views/capacity.py:103 input/views/capacity.py:542
@@ -1779,7 +1738,7 @@ msgstr "trajanje"
 #: common/models.py:1474
 #, fuzzy
 msgid "time"
-msgstr "na vrijeme"
+msgstr "jednom"
 
 #: common/models.py:1475
 msgid "JSON"
@@ -1796,25 +1755,21 @@ msgid "label"
 msgstr "oznaka"
 
 #: common/models.py:1517 common/views.py:722
-#, fuzzy
 msgid "editable"
-msgstr "Tablice"
+msgstr ""
 
 #: common/models.py:1519 common/views.py:726 forecast/models.py:1145
 #: forecast/views.py:353
-#, fuzzy
 msgid "initially hidden"
-msgstr "u početku skriveno"
+msgstr ""
 
 #: common/models.py:1538 forecast/models.py:1193
-#, fuzzy
 msgid "Name can only be alphanumeric"
-msgstr "Naziv mjere može biti samo alfanumerički"
+msgstr ""
 
 #: common/models.py:1580
-#, fuzzy
 msgid "attribute"
-msgstr "Atributi"
+msgstr ""
 
 #: common/models.py:1581 common/views.py:679
 #: inventoryplanning/templates/inventoryplanning/drp.html:2596
@@ -1831,8 +1786,8 @@ msgstr "Ne"
 msgid "Yes"
 msgstr "Da"
 
-#: common/report.py:834 common/report.py:1915 common/report.py:1918
-#: common/report.py:2193 common/report.py:2247 common/report.py:2370
+#: common/report.py:834 common/report.py:1913 common/report.py:1916
+#: common/report.py:2191 common/report.py:2245 common/report.py:2368
 #: common/templates/403.html:4 common/templates/403.html:7
 #: executesql/views.py:60 forecast/views.py:1076 forecast/views.py:1250
 #: forecast/views.py:1389 forecast/views.py:1522 forecast/views.py:1666
@@ -1845,112 +1800,104 @@ msgstr "Da"
 #: planningboard/views.py:175 reportmanager/views.py:541
 #: reportmanager/views.py:566 retail/views.py:30 retail/views.py:122
 #: retail/views.py:210
-#, fuzzy
 msgid "Permission denied"
-msgstr "Odbijeno dopuštenje"
+msgstr ""
 
-#: common/report.py:1019 common/report.py:3572 common/report.py:3601
+#: common/report.py:1019 common/report.py:3570 common/report.py:3599
 #: execute/views.py:1155 execute/views.py:1198
-#, fuzzy, python-format
+#, python-format
 msgid "Values in this field must exist in the %s table"
-msgstr "Vrijednosti u tom području moraju postojati u %s tablici"
+msgstr ""
 
-#: common/report.py:1027 common/report.py:3580 common/report.py:3609
+#: common/report.py:1027 common/report.py:3578 common/report.py:3607
 #: execute/views.py:1163 execute/views.py:1209
-#, fuzzy, python-format
+#, python-format
 msgid "Accepted values are: %s"
-msgstr "Prihvaćene vrijednosti su: %s"
+msgstr ""
 
-#: common/report.py:1036 common/report.py:3589 common/report.py:3618
-#: common/report.py:3647 execute/views.py:1172 execute/views.py:1218
+#: common/report.py:1036 common/report.py:3587 common/report.py:3616
+#: common/report.py:3645 execute/views.py:1172 execute/views.py:1218
 #: execute/views.py:1238
 #, fuzzy
 msgid "Read only"
 msgstr "Samo čitanje"
 
-#: common/report.py:1590
-#, fuzzy
+#: common/report.py:1590 execute/views.py:1320
 msgid ""
-"\n"
-"                        Files in the old .XLS excel format can't be read."
-"<br>\n"
-"                        Please convert them to the new .XLSX format.\n"
-"                        "
+"Files in the old .XLS excel format can't be read.<br>Please convert them to "
+"the new .XLSX format."
 msgstr ""
-"Datoteke u starom . XLS excel format ne može se čitati.<br>Molimo vas da ih "
-"pretvorite u novo . XLSX format."
 
-#: common/report.py:1749
+#: common/report.py:1747
 #, python-format
 msgid "%(title)s for %(entity)s"
 msgstr "%(title)s za %(entity)s"
 
-#: common/report.py:1949 common/report.py:1997 common/report.py:2073
+#: common/report.py:1947 common/report.py:1995 common/report.py:2071
 #, python-format
 msgid "Can't find %s"
 msgstr "Ne mogu naći %s"
 
-#: common/report.py:1982
+#: common/report.py:1980
 #, python-format
 msgid "Can't copy %s"
 msgstr "Ne mogu kopirati %s"
 
-#: common/report.py:2222
+#: common/report.py:2220
 #, python-format
 msgid "Erasing data from %(model)s"
 msgstr "Izbriši podatke iz %(model)s"
 
-#: common/report.py:2241 common/report.py:2364
+#: common/report.py:2239 common/report.py:2362
 msgid "Invalid upload request"
 msgstr "Učitavanje nije moguće"
 
-#: common/report.py:2294 common/report.py:2429
+#: common/report.py:2292 common/report.py:2427
 #: execute/management/commands/importworkbook.py:199 execute/views.py:1371
 #: execute/views.py:1391
 msgid "worksheet"
 msgstr "Radnog lista"
 
-#: common/report.py:2295 common/report.py:2430
+#: common/report.py:2293 common/report.py:2428
 #: execute/management/commands/importworkbook.py:200 execute/views.py:1392
 msgid "row"
 msgstr "redak"
 
-#: common/report.py:2296 common/report.py:2431
+#: common/report.py:2294 common/report.py:2429
 #: execute/management/commands/importworkbook.py:201 execute/views.py:1393
 msgid "field"
 msgstr "Polje"
 
-#: common/report.py:2298 common/report.py:2309 common/report.py:2433
-#: common/report.py:2446 execute/management/commands/importworkbook.py:203
+#: common/report.py:2296 common/report.py:2307 common/report.py:2431
+#: common/report.py:2444 execute/management/commands/importworkbook.py:203
 #: execute/management/commands/importworkbook.py:222 execute/views.py:1395
 #: execute/views.py:1406
 msgid "error"
 msgstr "Greška"
 
-#: common/report.py:2300 common/report.py:2319 common/report.py:2435
-#: common/report.py:2458 execute/management/commands/importworkbook.py:205
+#: common/report.py:2298 common/report.py:2317 common/report.py:2433
+#: common/report.py:2456 execute/management/commands/importworkbook.py:205
 #: execute/management/commands/importworkbook.py:243 execute/views.py:1397
 #: execute/views.py:1416
 msgid "warning"
 msgstr "upozorenje"
 
-#: common/report.py:2399
-#, fuzzy
+#: common/report.py:2397
 msgid "file"
-msgstr "log"
+msgstr ""
 
-#: common/report.py:2741
+#: common/report.py:2739
 #: inventoryplanning/templates/inventoryplanning/drp.html:2929
 #: inventoryplanning/templates/inventoryplanning/drp.html:2948
 msgid "false"
 msgstr "lažno"
 
-#: common/report.py:3241 common/report.py:3397 common/report.py:3453
-#: common/report.py:3633
+#: common/report.py:3239 common/report.py:3395 common/report.py:3451
+#: common/report.py:3631
 msgid "title"
 msgstr "naslov"
 
-#: common/report.py:3256 common/report.py:3652 forecast/models.py:385
+#: common/report.py:3254 common/report.py:3650 forecast/models.py:385
 #: forecast/models.py:521
 msgid "data field"
 msgstr "podatkovno polje"
@@ -1972,19 +1919,16 @@ msgid "Server Error <em>(500)</em>"
 msgstr "Greška na serveru <em>(500)</em>"
 
 #: common/templates/500.html:8
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Oops, something went wrong.<br>\n"
 "Your administrator can find more information on the error in the log file "
 "%(logfile)s"
 msgstr ""
-"Ups, nešto je pošlo po zlu.<br>Vaš administrator može pronaći više "
-"informacija o pogrešci u datoteci zapisnika %(logfile)s"
 
 #: common/templates/admin/auth/user/add_form.html:4
-#, fuzzy
 msgid "Add user - required fields"
-msgstr "Dodavanje korisnika - potrebna polja"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:9
 #: common/templates/admin/base_site_gridpivot.html:9
@@ -1993,9 +1937,8 @@ msgstr "Filter"
 
 #: common/templates/admin/base_site_grid.html:13
 #: common/templates/admin/base_site_gridpivot.html:13
-#, fuzzy
 msgid "Filter editor"
-msgstr "Urednik filtra"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:51
 #: common/templates/admin/base_site_gridpivot.html:79
@@ -2132,19 +2075,18 @@ msgid "Help"
 msgstr "Pomoć"
 
 #: common/templates/admin/base_site_nav.html:78
-#, fuzzy, python-format
+#, python-format
 msgid "Your license expired %(x)s days ago"
-msgstr "Vaša licenca istekla %(x)s dana prije"
+msgstr ""
 
 #: common/templates/admin/base_site_nav.html:81
-#, fuzzy
 msgid "License expired"
-msgstr "Licenca istekla"
+msgstr ""
 
 #: common/templates/admin/base_site_nav.html:87
-#, fuzzy, python-format
+#, python-format
 msgid "Your license expires in %(x)s days"
-msgstr "Vaša licenca istječe u %(x)danima"
+msgstr ""
 
 #: common/templates/admin/base_site_nav.html:92
 #, fuzzy
@@ -2174,9 +2116,8 @@ msgstr ""
 #: common/templates/admin/change_form.html:91
 #: common/templates/admin/login.html:111
 #: common/templates/auth/change_password.html:17
-#, fuzzy
 msgid "Please correct the error below."
-msgstr "Pogrešku ispravite u nastavku."
+msgstr ""
 
 #: common/templates/admin/change_form.html:92
 #: common/templates/admin/login.html:112
@@ -2196,11 +2137,8 @@ msgstr "Molimo ispravite navedene greške."
 #: input/templates/admin/input/setupmatrix/change_form.html:8
 #: input/templates/admin/input/skill/change_form.html:8
 #: input/templates/admin/input/supplier/change_form.html:8
-#, fuzzy
 msgid "related"
 msgstr ""
-"Brisanje %(object_name)s '%(escaped_object)s' bi zahtijevalo i brisanje "
-"sljedećih zaštićenih povezanih objekata:"
 
 #: common/templates/admin/delete_confirmation.html:11
 #, python-format
@@ -2251,9 +2189,9 @@ msgid "View on site"
 msgstr "Pogledaj na stranicama"
 
 #: common/templates/admin/edit_inline/tabular.html:83
-#, fuzzy, python-format
+#, python-format
 msgid "Only %(limit)s out of %(count)s records are shown."
-msgstr "Prikazani su samo %(limit)s iz %(count)evidencije."
+msgstr ""
 
 #: common/templates/admin/edit_inline/tabular.html:138
 #, python-format
@@ -2320,14 +2258,12 @@ msgid "from"
 msgstr "od"
 
 #: common/templates/admin/subtemplate_timebuckets.html:42
-#, fuzzy
 msgid "till"
-msgstr "do"
+msgstr ""
 
 #: common/templates/admin/subtemplate_timebuckets.html:58
-#, fuzzy
 msgid "before till"
-msgstr "prije trenutnog"
+msgstr ""
 
 #: common/templates/admin/subtemplate_timebuckets.html:63
 #: common/templates/admin/subtemplate_timebuckets.html:69
@@ -2342,14 +2278,8 @@ msgid "months"
 msgstr "Mjeseci"
 
 #: common/templates/admin/subtemplate_timebuckets.html:73
-#, fuzzy
 msgid "after current date"
-msgstr "prema planu, trenutnom datumu"
-
-#: common/templates/admin/subtemplate_timebuckets.html:81
-#: executesql/templates/executesql/executesql.html:110
-msgid "cancel"
-msgstr "odustani"
+msgstr ""
 
 #: common/templates/auth/change_password.html:21
 #, python-format
@@ -2362,16 +2292,14 @@ msgid "Change password"
 msgstr "Promijeni lozinku"
 
 #: common/templates/common/comments.html:31
-#, fuzzy
 msgid "Add an attachment"
-msgstr "Dodavanje privitak"
+msgstr ""
 
 #: common/templates/common/follower.html:31
 #: common/templates/common/inbox.html:92 common/views.py:889
 #: common/widget.py:98
-#, fuzzy
 msgid "inbox"
-msgstr "Inbox"
+msgstr ""
 
 #: common/templates/common/follower.html:34
 #: common/templates/common/inbox.html:95 common/views.py:535
@@ -2385,37 +2313,30 @@ msgid "Unread"
 msgstr "Nepročitane"
 
 #: common/templates/common/inbox.html:111
-#, fuzzy
 msgid "Select/unselect all messages"
-msgstr "Odaberite/odaberite sve poruke"
+msgstr ""
 
 #: common/templates/common/inbox.html:141
-#, fuzzy
 msgid "Mark message unread"
-msgstr "Označite poruku nepročitanom"
+msgstr ""
 
 #: common/templates/common/inbox.html:144
-#, fuzzy
 msgid "Mark message read"
-msgstr "Poruka o oznaci pročitana"
+msgstr ""
 
 #: common/templates/common/preferences.html:90
 msgid "Number of records per page"
 msgstr "Broj zapisa na stranici"
 
 #: common/templates/common/preferences.html:138 common/views.py:417
-#, fuzzy
 msgid "avatar"
-msgstr "Avatar"
+msgstr ""
 
 #: common/templates/common/preferences.html:145
-#, fuzzy
 msgid ""
 "Upload a square picture of yourself.<br>Accepted formats are jpeg, png and "
 "gif.<br>Max file size is 100kB."
 msgstr ""
-"Uploadajte kvadratnu sliku sebe.<br>Prihvaćeni formati su jpeg, png i gif."
-"<br>Maksimalna veličina datoteke je 100kB."
 
 #: common/templates/common/preferences.html:154
 #: common/templates/registration/password_change_form.html:21
@@ -2433,14 +2354,12 @@ msgid "New password confirmation"
 msgstr "Potvrda nove lozinke"
 
 #: common/templates/common/snippet_follow.html:8
-#, fuzzy
 msgid "Manage notifications in your inbox"
-msgstr "Slanje obavijesti u pristiglu poštu kada postoji aktivnost"
+msgstr ""
 
 #: common/templates/common/snippet_follow.html:14
-#, fuzzy
 msgid "Get a notification in your inbox when there is activity"
-msgstr "Slanje obavijesti u pristiglu poštu kada postoji aktivnost"
+msgstr ""
 
 #: common/templates/index.html:97 execute/templates/execute/execute.html:39
 msgid "failed"
@@ -2489,19 +2408,16 @@ msgid "Change my password"
 msgstr "Promijeni moju lozinku"
 
 #: common/templates/rest_framework/api.html:27
-#, fuzzy
 msgid "HTTP request"
-msgstr "HTTP zahtjev"
+msgstr ""
 
 #: common/templates/rest_framework/api.html:32
-#, fuzzy
 msgid "HTTP response headers"
-msgstr "HTTP zaglavlja odgovora"
+msgstr ""
 
 #: common/templates/rest_framework/api.html:43
-#, fuzzy
 msgid "HTTP response content"
-msgstr "Sadržaj odgovora na HTTP"
+msgstr ""
 
 #: common/templates/rest_framework/api.html:55
 #, python-format
@@ -2550,13 +2466,11 @@ msgid "Make a PUT request using a HTML form to update one %(model)s object"
 msgstr "Make a PUT request using a HTML form to update one %(model)s object"
 
 #: common/templates/rest_framework/api.html:185
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Make a PUT or PATCH request in raw format to update one or more existing "
 "%(model)s objects"
 msgstr ""
-"Napravite PUT ili PATCH zahtjev u sirovom formatu za ažuriranje jednog ili "
-"više postojećih %(model)objekata"
 
 #: common/templates/rest_framework/api.html:220
 #, python-format
@@ -2568,7 +2482,7 @@ msgstr ""
 "(requires filtering)"
 
 #: common/templates/rest_framework/index.html:23
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This page helps developers to learn and experiment with the\n"
 "<a style=\"text-decoration:underline\" target=\"_blank\" rel=\"noopener\" "
@@ -2609,35 +2523,6 @@ msgid ""
 "</div>\n"
 "</div>\n"
 msgstr ""
-"Ova stranica pomaže razvojnim programerima da nauče i eksperimentiraju s\n"
-"<a style=\"text-decoration:underline\" target=\"_blank\" rel=\"noopener\" "
-"href=\"https://en.wikipedia.org/wiki/Representational_state_transfer"
-"\">ODMOR</a>\n"
-"API od frePPLe.<br>Ovaj API omogućuje vašoj aplikaciji razmjenu informacija "
-"s frePPLe.<br>\n"
-"<br>Veza \"popis API\" vodi vas na stranicu popisa objekata.<br>A veza "
-"\"detalj API\" vodi vas do određenog objekta kada unesete primarni ključ "
-"objekta.<br>Na tim stranicama moći ćete izvoditi HTTP zahtjeve s metodama "
-"GET, POST, OPTIONS, PUT, PATCH i DELETE.<br>Rezultati se mogu prikazati u "
-"JSON formatu ili kao HTML u vašem pregledniku.<br>\n"
-"<br>Pomoću alata kao što su \"wget\" ili \"curl\" možete pristupiti API-u iz "
-"naredbene linije.<br>Na primjer, za vraćanje popisa svih naloga za prodaju u "
-"JSON formatu:<br><br>\n"
-"<div style=\"margin-left:20px\">Korištenje <a style=\"text-decoration:"
-"underline\" href=\"https://en.wikipedia.org/wiki/Basic_access_authentication"
-"\" target=\"_blank\">osnovne autentifikacije</a>:<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">wget --http-user="
-"%(korisničko ime)s --http-password=PASSWORD http://127.0.0.1:8000/api/input/"
-"demand/<br><br>curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/"
-"demand/</div>Korištenje <a style=\"text-decoration:underline\" href="
-"\"https://jwt.io/\" target=\"_blank\">JSON Web Token provjere autentičnosti</"
-"a> vrijedi za sljedeći <input id=\"jwt\" type=\"number\" value=\"%(exp)s\" "
-"min=\"0\" step=\"1\" style=\"width:4em\"/>  Dani:<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">wget --zaglavlje "
-"'Autorizacija: Nositelj %(token)s' http://127.0.0.1:8000/api/input/demand/"
-"<br><br>curl -H 'Prihvati: prijava/json' --zaglavlje 'Autorizacija: Nositelj "
-"%(token)s' http://127.0.0.1:8000/api/input/demand/</div>\n"
-"</div>\n"
 
 #: common/templates/rest_framework/index.html:56
 msgid "List API"
@@ -2713,9 +2598,8 @@ msgid "last login"
 msgstr "posljednja prijava"
 
 #: common/views.py:521
-#, fuzzy
 msgid "attachment"
-msgstr "Privitak"
+msgstr ""
 
 #: common/widget.py:27 settings.py:404
 msgid "Welcome"
@@ -2726,7 +2610,7 @@ msgid "Some links to get started"
 msgstr "Neki linkovi za početak"
 
 #: common/widget.py:54
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Welcome to the world's leading open source production planning tool!<br>\n"
 "Click one of images below to explore the main interactive planning screens:"
@@ -2756,33 +2640,6 @@ msgid ""
 "</a>\n"
 "</div>\n"
 msgstr ""
-"Dobrodošli u vodeći svjetski alat za planiranje proizvodnje otvorenog koda!"
-"<br>Kliknite jednu od slika u nastavku da biste istražili glavne "
-"interaktivne zaslone za planiranje:<br><br>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
-"align: center\">\n"
-"<a href=\"%(prefix)s/forecast/editor/\">\n"
-"  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: 100%%"
-"\" alt=\"Forecast Editor\"><br>\n"
-"  <b>Urednik predviđanja</b>\n"
-"</a>\n"
-"</div>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
-"align: center\">\n"
-"<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
-"  <img src=\"/static/img/inventory-planning-thumbnail.png\" style=\"width: "
-"100%%\" alt=\"Inventory Planning\"><br>\n"
-"  <b>Planiranje zaliha</b>\n"
-"</a>\n"
-"</div>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
-"align: center\">\n"
-"<a href=\"%(prefix)s/planningboard/\">\n"
-"  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%\" "
-"alt=\"Plan Editor\"><br>\n"
-"  <b>Urednik plana</b>\n"
-"</a>\n"
-"</div>\n"
 
 #: common/widget.py:85
 msgid "News"
@@ -2793,24 +2650,23 @@ msgid "Show the latest news items from the frePPLe website"
 msgstr "Prikaži najnovije vijesti s web stranice FrePPLe."
 
 #: common/widget.py:99
-#, fuzzy
 msgid "Unread messages from your inbox"
-msgstr "Nepročitane poruke iz pristigle pošte"
+msgstr ""
 
 #: demandhits/attributes.py:21 demandhits/attributes.py:42
-#, fuzzy, python-format
+#, python-format
 msgid "sales orders last %(num)d months"
-msgstr "prodajni nalozi traju %(num)d mjeseci"
+msgstr ""
 
 #: demandhits/attributes.py:28 demandhits/attributes.py:49
-#, fuzzy, python-format
+#, python-format
 msgid "sales units last %(num)d months"
-msgstr "prodajne jedinice traju %(num)d mjeseci"
+msgstr ""
 
 #: demandhits/attributes.py:35 demandhits/attributes.py:56
-#, fuzzy, python-format
+#, python-format
 msgid "sales value last %(num)d months"
-msgstr "prodajna vrijednost zadnjih %(num)d mjeseci"
+msgstr ""
 
 #: erpconnection/management/commands/erp2frepple.py:41
 #: odoo/management/commands/odoo_import.py:86
@@ -2839,27 +2695,24 @@ msgid "Generate buckets"
 msgstr "Generiraj skupove"
 
 #: execute/management/commands/emailreport.py:225
-#, fuzzy
 msgid "Publish reports by email"
-msgstr "Objavljivanje izvješća e-poštom"
+msgstr ""
 
 #: execute/management/commands/empty.py:315
 msgid "Empty the database"
 msgstr "Ispraznite bazu"
 
 #: execute/management/commands/exporttofolder.py:516
-#, fuzzy
 msgid "Export plan result"
-msgstr "Rezultat plana izvoza"
+msgstr ""
 
 #: execute/management/commands/exportworkbook.py:33
 msgid "Export a spreadsheet"
 msgstr "Export tablice"
 
 #: execute/management/commands/importfromfolder.py:546
-#, fuzzy
 msgid "Import data files"
-msgstr "Datoteke podataka o uvozu"
+msgstr ""
 
 #: execute/management/commands/importworkbook.py:146 execute/views.py:1342
 #, python-format
@@ -2895,12 +2748,9 @@ msgid "Create a plan"
 msgstr "Kreiraj plan"
 
 #: execute/management/commands/runplan.py:446
-#, fuzzy
 msgid ""
 "Load all input data, run the planning algorithm, and export the results."
 msgstr ""
-"Učitajte sve ulazne podatke, otvorite algoritam planiranja i izvezene "
-"rezultate."
 
 #: execute/management/commands/runplan.py:449
 msgid "optional planning steps"
@@ -2911,7 +2761,6 @@ msgid "Plan type"
 msgstr "Tip plana"
 
 #: execute/management/commands/runplan.py:453
-#, fuzzy
 msgid ""
 "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
 "original-title=\"Generate a supply plan that respects all constraints.<br>In "
@@ -2924,7 +2773,6 @@ msgstr ""
 "span>"
 
 #: execute/management/commands/runplan.py:458
-#, fuzzy
 msgid ""
 "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
 "original-title=\"Generate a supply plan that shows material, capacity and "
@@ -2954,23 +2802,20 @@ msgid "Lead time: do not plan in the past"
 msgstr "Lead time: ne planirajte u prošlosti"
 
 #: execute/management/commands/runplan.py:465
-#, fuzzy
 msgid "Release fence: do not plan within the release time window"
-msgstr "Otpustite ogradu: ne planirajte unutar vremenskog razdoblja otpuštanja"
+msgstr ""
 
 #: execute/management/commands/scenario_copy.py:458
 msgid "scenario management"
 msgstr "upravljanje scenarijem"
 
 #: execute/management/commands/scheduletasks.py:392
-#, fuzzy
 msgid "Group and schedule tasks"
-msgstr "Zadaci grupe i rasporeda"
+msgstr ""
 
 #: execute/management/commands/uploadreport.py:278
-#, fuzzy
 msgid "Publish reports by FTP"
-msgstr "Objavljivanje izvješća po FTP-u"
+msgstr ""
 
 #: execute/menu.py:20 execute/widget.py:20
 msgid "Execute"
@@ -3002,14 +2847,12 @@ msgid "task"
 msgstr "zadatak"
 
 #: execute/models.py:101
-#, fuzzy
 msgid "scheduled tasks"
-msgstr "zakazani zadaci"
+msgstr ""
 
 #: execute/models.py:102
-#, fuzzy
 msgid "scheduled task"
-msgstr "zakazani zadatak"
+msgstr ""
 
 #: execute/templates/commands/backup.html:5
 #: execute/templates/commands/createbuckets.html:7
@@ -3027,9 +2870,8 @@ msgid "Dump the database contents to a file."
 msgstr "Sadržaj baze u file"
 
 #: execute/templates/commands/createbuckets.html:10
-#, fuzzy
 msgid "create time buckets for reporting."
-msgstr "stvoriti vremenske kante za izvješćivanje."
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:24
 msgid "week starts on"
@@ -3072,23 +2914,20 @@ msgid "Saturday"
 msgstr "Subota"
 
 #: execute/templates/commands/createbuckets.html:44
-#, fuzzy
 msgid "day name"
-msgstr "dnevna imena"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:50
 msgid "week name"
 msgstr "naziv tjedna"
 
 #: execute/templates/commands/createbuckets.html:56
-#, fuzzy
 msgid "month name"
-msgstr "naziv mjeseca"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:62
-#, fuzzy
 msgid "quarter name"
-msgstr "naziv tromjesečja"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:68
 msgid "year name"
@@ -3096,26 +2935,21 @@ msgstr "naziv godine"
 
 #: execute/templates/commands/emailreport.html:6
 #: execute/templates/commands/uploadreport.html:6
-#, fuzzy
 msgid "publish"
-msgstr "javno"
+msgstr ""
 
 #: execute/templates/commands/emailreport.html:9
-#, fuzzy
 msgid ""
 "Emails the selected reports to a comma separated list of recipients. Files "
 "are zipped and attached to email."
 msgstr ""
-"Pošaljite e-poštu odabranim izvješćima na popis primatelja odvojen zarezom. "
-"Datoteke su zakopčane i priložene e-pošti."
 
 #: execute/templates/commands/emailreport.html:16
 #: execute/templates/commands/exporttofolder.html:14
 #: execute/templates/commands/importfromfolder.html:14
 #: execute/templates/commands/uploadreport.html:16
-#, fuzzy
 msgid "file name"
-msgstr "naziv datoteke"
+msgstr ""
 
 #: execute/templates/commands/emailreport.html:18
 #: execute/templates/commands/exporttofolder.html:15
@@ -3125,19 +2959,16 @@ msgid "size"
 msgstr "veličina"
 
 #: execute/templates/commands/emailreport.html:34
-#, fuzzy
 msgid "emails"
-msgstr "Elektronička pošta"
+msgstr ""
 
 #: execute/templates/commands/emailreport.html:66
-#, fuzzy
 msgid "please correct invalid email addresses"
-msgstr "ispravite nevažeće adrese e-pošte"
+msgstr ""
 
 #: execute/templates/commands/emailreport.html:70
-#, fuzzy
 msgid "please enter email addresses"
-msgstr "unesite adrese e-pošte"
+msgstr ""
 
 #: execute/templates/commands/empty.html:7
 msgid "Erase selected tables."
@@ -3154,9 +2985,8 @@ msgid "admin tables"
 msgstr "Tablice administratora"
 
 #: execute/templates/commands/empty.html:30
-#, fuzzy
 msgid "plan history"
-msgstr "povijest planiranja"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:9
 msgid ""
@@ -3173,15 +3003,13 @@ msgstr "promjenjeno"
 
 #: execute/templates/commands/exporttofolder.html:19
 #: execute/templates/commands/importfromfolder.html:25
-#, fuzzy
 msgid "Download all files"
-msgstr "Preuzmite sve datoteke"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:25
 #: execute/templates/commands/importfromfolder.html:31
-#, fuzzy
 msgid "Delete all files"
-msgstr "Izbrišite sve datoteke"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:57
 #: execute/templates/commands/importfromfolder.html:106
@@ -3203,34 +3031,29 @@ msgstr "Izbriši datoteku"
 
 #: execute/templates/commands/exporttofolder.html:86
 #: execute/templates/commands/importfromfolder.html:135
-#, fuzzy
 msgid "All data files were deleted"
-msgstr "Sve datoteke podataka su izbrisane"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:88
 #: execute/templates/commands/importfromfolder.html:137
-#, fuzzy, python-format
+#, python-format
 msgid "File %%s was deleted"
-msgstr "Datoteka %% je izbrisana"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:102
 #: execute/templates/commands/exporttofolder.html:108
 #: execute/templates/commands/importfromfolder.html:152
 #: execute/templates/commands/importfromfolder.html:156
 #: execute/templates/commands/importfromfolder.html:158
-#, fuzzy, python-format
+#, python-format
 msgid "File %%s was not deleted"
-msgstr "Datoteka %% nije izbrisana"
+msgstr ""
 
 #: execute/templates/commands/exportworkbook.html:11
-#, fuzzy
 msgid ""
 "Download all input data in a single spreadsheet.<br>Optionally, you can make "
 "the data anonymous during the export to hide sensitive company data."
 msgstr ""
-"Preuzmite sve ulazne podatke u jednu proračunsku tablicu.<br>Opcionalno, "
-"podatke možete učiniti anonimnima tijekom izvoza kako biste sakrili "
-"osjetljive podatke tvrtke."
 
 #: execute/templates/commands/importfromfolder.html:6
 #: execute/templates/commands/importworkbook.html:5
@@ -3248,19 +3071,17 @@ msgstr ""
 
 #: execute/templates/commands/importfromfolder.html:18
 #: execute/templates/commands/importfromfolder.html:19
-#, fuzzy
 msgid "Upload data files"
-msgstr "Prijenos podatkovnih datoteka"
+msgstr ""
 
 #: execute/templates/commands/importfromfolder.html:19
 #, fuzzy
 msgid "Upload"
-msgstr "opterećenje"
+msgstr "Učitaj"
 
 #: execute/templates/commands/importfromfolder.html:44
-#, fuzzy
 msgid "Download file"
-msgstr "Preuzimanje datoteke"
+msgstr ""
 
 #: execute/templates/commands/importworkbook.html:8
 msgid ""
@@ -3275,9 +3096,8 @@ msgid "Load one of the available datasets."
 msgstr "Učitavanje dostupnih podataka."
 
 #: execute/templates/commands/loaddata.html:28
-#, fuzzy
 msgid "Execute plan after loading is done"
-msgstr "Izvršite plan nakon učitavanja"
+msgstr ""
 
 #: execute/templates/commands/loaddata.html:49
 #: execute/templates/execute/execute.html:249
@@ -3285,7 +3105,6 @@ msgid "Sorry, You don't have any execute permissions..."
 msgstr "Izvinite, nemate nijednu dozvolu izvršenja ..."
 
 #: execute/templates/commands/scenario_copy.html:8
-#, fuzzy
 msgid ""
 "You have a number of available scenario databases available.<br>\n"
 "        You can copy data into a scenario database to create a isolated "
@@ -3294,18 +3113,12 @@ msgid ""
 "which scenario you're working in.\n"
 "        "
 msgstr ""
-"Imate na raspolaganju niz dostupnih baza podataka scenarija.<br>Možete "
-"kopirati podatke u bazu podataka scenarija kako biste stvorili izolirani "
-"pješčanik za analizu što-ako.<br>Upotrijebite pad u gornjem desnom kutu "
-"zaslona da biste odabrali u kojem scenariju radite.        "
 
 #: execute/templates/commands/scenario_copy.html:16
-#, fuzzy
 msgid "action"
-msgstr "Akcijske"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:19
-#, fuzzy
 msgid ""
 "<b>In use</b>: Contains data<br><b>Free</b>: Available to copy data "
 "into<br><b>Busy</b>: Data copy in progress"
@@ -3314,39 +3127,33 @@ msgstr ""
 "podataka u<br><b>Zauzeto</b>: Kopija podataka u tijeku"
 
 #: execute/templates/commands/scenario_copy.html:25
-#, fuzzy
 msgid "Label shown in the scenario dropdown list"
-msgstr "Oznaka prikazana na popisu za odustajanje od scenarija"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:30
-#, fuzzy
 msgid "Date of the last state change"
-msgstr "Datum posljednje promjene stanja"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:46
 #: execute/templates/commands/scenario_copy.html:68
-#, fuzzy
 msgid "manage"
-msgstr "Upravljanje"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:50
-#, fuzzy
 msgid "Copy from"
-msgstr "Kopirano od/iz %s."
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:54
 msgid "Restore from backup"
 msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:73
-#, fuzzy
 msgid "Release: You will lose ALL data in this scenario!"
-msgstr "Izdanje: Izgubit ćete SVE podatke u ovom scenariju!"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:78
-#, fuzzy
 msgid "Promote: All data will be copied to Production"
-msgstr "Promocija: Svi podaci bit će kopirani u proizvodnju"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:87
 #, fuzzy
@@ -3354,14 +3161,12 @@ msgid "Free"
 msgstr "Besplatno"
 
 #: execute/templates/commands/scheduletasks.html:3
-#, fuzzy
 msgid "Run a sequence of tasks, and schedule it to run automatically."
-msgstr "Pokretanje niza zadataka i zakazivanje automatskog rada."
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:8
-#, fuzzy
 msgid "next scheduled run"
-msgstr "sljedeće zakazano trčanje"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:26
 #, fuzzy
@@ -3374,20 +3179,20 @@ msgstr "jedinstveno ime"
 
 #: execute/templates/commands/scheduletasks.html:84
 #: execute/templates/commands/scheduletasks.html:192
-#, fuzzy
 msgid "abort on failure"
-msgstr "prekid neuspjeha"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:91
 #: execute/templates/commands/scheduletasks.html:199
 #, fuzzy
 msgid "Move down"
-msgstr "uklanjanje redaka"
+msgstr "Pomakni dolje"
 
 #: execute/templates/commands/scheduletasks.html:95
 #: execute/templates/commands/scheduletasks.html:203
+#, fuzzy
 msgid "Move up"
-msgstr ""
+msgstr "Pomakni gore"
 
 #: execute/templates/commands/scheduletasks.html:111 input/models.py:113
 #: input/templates/input/calendardetail.html:68
@@ -3428,33 +3233,27 @@ msgid "Sun"
 msgstr "Ned"
 
 #: execute/templates/commands/scheduletasks.html:145
-#, fuzzy
 msgid "email on success"
-msgstr "e-pošta o uspjehu"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:148
 #: execute/templates/commands/scheduletasks.html:156
-#, fuzzy
 msgid "List of emails, separated by commas"
-msgstr "Popis poruka e-pošte, odvojenih zarezima"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:153
-#, fuzzy
 msgid "email on failure"
-msgstr "e-pošta o neuspjehu"
+msgstr ""
 
 #: execute/templates/commands/uploadreport.html:9
-#, fuzzy
 msgid ""
 "Select all reports that will be pushed to the configured FTP/FTPS/SFTP "
 "folder."
 msgstr ""
-"Odaberite sva izvješća koja će se gurnuti u konfiguriranu FTP/FTPS/SFTP mapu."
 
 #: execute/templates/execute/execute.html:41
-#, fuzzy
 msgid "waiting"
-msgstr "Čekanja"
+msgstr ""
 
 #: execute/templates/execute/execute.html:43
 msgid "done"
@@ -3466,14 +3265,8 @@ msgid "canceled"
 msgstr "otkazano"
 
 #: execute/templates/execute/execute.html:66
-#, fuzzy
 msgid "download"
-msgstr "Preuzimanje datoteke"
-
-#: execute/templates/execute/execute.html:68
-#, fuzzy
-msgid "delete"
-msgstr "Ukloni"
+msgstr ""
 
 #: execute/templates/execute/execute.html:70 forecast/models.py:1089
 #, fuzzy
@@ -3501,28 +3294,25 @@ msgid "finished"
 msgstr "završeno"
 
 #: execute/views.py:346
-#, fuzzy
 msgid "Failure launching task"
-msgstr "Neuspjeh pokretanja akcije: %(msg)s"
+msgstr ""
 
 #: execute/views.py:719
-#, fuzzy
 msgid "Couldn't delete file"
-msgstr "Izbriši datoteku"
+msgstr ""
 
 #: execute/views.py:745
 msgid "Displaying only the last 50K from the log file"
 msgstr "Prikazivanje samo posljednjih 50K iz datoteke zapisa"
 
 #: execute/views.py:871
-#, fuzzy, python-format
+#, python-format
 msgid "Filename extension must be among %(ext)s"
-msgstr "Proširenje filenama mora biti među %(ext)s"
+msgstr ""
 
 #: execute/views.py:892
-#, fuzzy
 msgid "Upload failed"
-msgstr "Prijenos nije uspio"
+msgstr ""
 
 #: execute/views.py:915
 msgid "Error deleting file"
@@ -3533,18 +3323,8 @@ msgid "Nothing to export"
 msgstr "Ništa nije dostupno za izvoz"
 
 #: execute/views.py:1316
-#, fuzzy
 msgid "Processing file"
-msgstr "Datoteka za obradu"
-
-#: execute/views.py:1320
-#, fuzzy
-msgid ""
-"Files in the old .XLS excel format can't be read.<br>Please convert them to "
-"the new .XLSX format."
 msgstr ""
-"Datoteke u starom . XLS excel format ne može se čitati.<br>Molimo vas da ih "
-"pretvorite u novo . XLSX format."
 
 #: execute/views.py:1327
 msgid "Unsupported file format."
@@ -3556,22 +3336,19 @@ msgstr "Stvorite ograničeni plan"
 
 #: executesql/menu.py:16 reportmanager/menu.py:51 reportmanager/models.py:96
 #: reportmanager/views.py:98
-#, fuzzy
 msgid "my reports"
-msgstr "moja izvješća"
+msgstr ""
 
 #: executesql/menu.py:22 executesql/views.py:52
-#, fuzzy
 msgid "Execute SQL"
-msgstr "Izvršite SQL"
+msgstr ""
 
 #: forecast/admin.py:40 input/admin.py:85 input/admin.py:121 input/admin.py:172
 #: input/admin.py:203 input/admin.py:240 input/admin.py:283 input/admin.py:327
 #: input/admin.py:383 input/admin.py:454 input/admin.py:574 input/admin.py:611
 #: input/admin.py:674 input/admin.py:715 input/admin.py:961
-#, fuzzy
 msgid "advanced"
-msgstr "Napredne"
+msgstr ""
 
 #: forecast/admin.py:65 input/admin.py:255 input/admin.py:416
 #: input/admin.py:478 input/admin.py:642 input/admin.py:986
@@ -3603,18 +3380,16 @@ msgid "forecast"
 msgstr "prognoza"
 
 #: forecast/attributes.py:23
-#, fuzzy
 msgid "demand_pattern"
-msgstr "demand_pattern"
+msgstr ""
 
 #: forecast/attributes.py:24
 msgid "adi"
 msgstr "adi"
 
 #: forecast/attributes.py:25
-#, fuzzy
 msgid "cv2"
-msgstr "cv2 (životopis2)"
+msgstr ""
 
 #: forecast/commands.py:1084 forecast/commands.py:1105
 #: forecast/commands.py:1132 forecast/commands.py:1220
@@ -3627,19 +3402,16 @@ msgid "Generate forecast"
 msgstr "Stvori prognozu"
 
 #: forecast/management/commands/measure_copy.py:229
-#, fuzzy
 msgid "measure management"
-msgstr "upravljanje mjerom"
+msgstr ""
 
 #: forecast/management/commands/measure_copy.py:288
-#, fuzzy
 msgid "Copy source measure"
-msgstr "Mjera izvora kopiranja"
+msgstr ""
 
 #: forecast/management/commands/measure_copy.py:288
-#, fuzzy
 msgid "to destination measure"
-msgstr "do odredišne mjere"
+msgstr ""
 
 #: forecast/menu.py:32 forecast/templates/forecast.html:4
 #: forecast/views.py:2293 input/views/utils.py:107
@@ -3841,9 +3613,8 @@ msgid "planned"
 msgstr "planirano"
 
 #: forecast/models.py:124
-#, fuzzy
 msgid "Specifies whether this forecast record should be planned"
-msgstr "Navodi treba li planirati taj zapis predviđanja"
+msgstr ""
 
 #: forecast/models.py:128 input/models.py:1687 input/views/sales.py:344
 #: quoting/views.py:90
@@ -3872,14 +3643,12 @@ msgid "Bucket '%(name)s' not found"
 msgstr "Skup '%(name)s' nije pronađen"
 
 #: forecast/models.py:528
-#, fuzzy
 msgid "multiplier"
-msgstr "Višestruka količina"
+msgstr ""
 
 #: forecast/models.py:635
-#, fuzzy
 msgid "No editable fields found"
-msgstr "Nisu pronađena polja koja se mogu uređivati"
+msgstr ""
 
 #: forecast/models.py:792
 msgid "total orders 3 years ago"
@@ -3890,14 +3659,12 @@ msgid "orders adjustment 3 years ago"
 msgstr "prilagodba narudžbe prije 3 godine"
 
 #: forecast/models.py:811
-#, fuzzy
 msgid "total orders value 3 years ago"
-msgstr "ukupna vrijednost narudžbi prije 3 godine"
+msgstr ""
 
 #: forecast/models.py:821
-#, fuzzy
 msgid "orders adjustment value 3 years ago"
-msgstr "vrijednost prilagodbe narudžbi prije 3 godine"
+msgstr ""
 
 #: forecast/models.py:831
 msgid "total orders 2 years ago"
@@ -3908,34 +3675,28 @@ msgid "orders adjustment 2 years ago"
 msgstr "prilagodba narudžbe prije 2 godine"
 
 #: forecast/models.py:850
-#, fuzzy
 msgid "total orders value 2 years ago"
-msgstr "ukupna vrijednost narudžbi prije 2 godine"
+msgstr ""
 
 #: forecast/models.py:860
-#, fuzzy
 msgid "orders adjustment value 2 years ago"
-msgstr "vrijednost prilagodbe narudžbi prije 2 godine"
+msgstr ""
 
 #: forecast/models.py:870
-#, fuzzy
 msgid "total orders 1 years ago"
-msgstr "ukupne narudžbe prije 1 godine"
+msgstr ""
 
 #: forecast/models.py:879
-#, fuzzy
 msgid "orders adjustment 1 years ago"
-msgstr "prilagodba narudžbi prije 1 godinu"
+msgstr ""
 
 #: forecast/models.py:888
-#, fuzzy
 msgid "total orders value 1 years ago"
-msgstr "ukupna vrijednost narudžbi prije 1 godinu"
+msgstr ""
 
 #: forecast/models.py:898
-#, fuzzy
 msgid "orders adjustment value 1 years ago"
-msgstr "vrijednost prilagodbe narudžbi prije 1 godinu"
+msgstr ""
 
 #: forecast/models.py:909 forecast/templates/forecast/forecast.html:263
 #: inventoryplanning/templates/inventoryplanning/drp.html:1690
@@ -3996,15 +3757,13 @@ msgid "planned net forecast"
 msgstr "planirana neto prognoza"
 
 #: forecast/models.py:988 output/views/buffer.py:507
-#, fuzzy
 msgid "order backlog"
-msgstr "zaostaci narudžbi"
+msgstr ""
 
 #: forecast/models.py:997 output/templates/output/demand_forecast.html:156
 #: output/views/buffer.py:510 output/views/demand.py:315
-#, fuzzy
 msgid "forecast backlog"
-msgstr "zaostaci u prognozama"
+msgstr ""
 
 #: forecast/models.py:1006 forecast/templates/forecast/forecast.html:268
 #: output/templates/output/demand.html:150
@@ -4027,98 +3786,80 @@ msgid "total supply"
 msgstr "ukupno narudžba"
 
 #: forecast/models.py:1033
-#, fuzzy
 msgid "order backlog value"
-msgstr "vrijednost zaostalih narudžbi"
+msgstr ""
 
 #: forecast/models.py:1043
-#, fuzzy
 msgid "forecast backlog value"
-msgstr "prognoza zaostaci vrijednost"
+msgstr ""
 
 #: forecast/models.py:1053
-#, fuzzy
 msgid "backlog value"
-msgstr "vrijednost zaostatka"
+msgstr ""
 
 #: forecast/models.py:1063 inventoryplanning/models.py:506
 msgid "total demand value"
 msgstr "ukupna vrijednost potražnje"
 
 #: forecast/models.py:1073
-#, fuzzy
 msgid "total supply value"
-msgstr "ukupna vrijednost ponude"
+msgstr ""
 
 #: forecast/models.py:1085
-#, fuzzy
 msgid "aggregate"
-msgstr "Agregatno"
+msgstr ""
 
 #: forecast/models.py:1086
-#, fuzzy
 msgid "local"
-msgstr "vrijednost lokalne prognoze"
+msgstr ""
 
 #: forecast/models.py:1087
-#, fuzzy
 msgid "computed"
-msgstr "Kompjutorska"
+msgstr ""
 
 #: forecast/models.py:1089
-#, fuzzy
 msgid "hide"
-msgstr "Sakrij"
+msgstr ""
 
 #: forecast/models.py:1090
-#, fuzzy
 msgid "currency"
-msgstr "Valute"
+msgstr ""
 
 #: forecast/models.py:1101
-#, fuzzy
 msgid "Label to be displayed in the user interface"
-msgstr "Oznaka koja se prikazuje u korisničkom sučelju"
+msgstr ""
 
 #: forecast/models.py:1115 forecast/views.py:351
-#, fuzzy
 msgid "mode in future periods"
-msgstr "način rada u budućim razdobljima"
+msgstr ""
 
 #: forecast/models.py:1123 forecast/views.py:348
-#, fuzzy
 msgid "mode in past periods"
-msgstr "način rada u proteklim razdobljima"
+msgstr ""
 
 #: forecast/models.py:1131 forecast/views.py:357
-#, fuzzy
 msgid "compute expression"
-msgstr "računalni izraz"
+msgstr ""
 
 #: forecast/models.py:1135
-#, fuzzy
 msgid "Formula to compute values"
-msgstr "Formula za izračun vrijednosti"
+msgstr ""
 
 #: forecast/models.py:1138 forecast/views.py:358
-#, fuzzy
 msgid "update expression"
-msgstr "ažuriranje izraza"
+msgstr ""
 
 #: forecast/models.py:1142
-#, fuzzy
 msgid "Formula executed when updating this field"
-msgstr "Formula izvršena prilikom ažuriranje ovog polja"
+msgstr ""
 
 #: forecast/models.py:1148
-#, fuzzy
 msgid "controls whether or not this measure is visible by default"
-msgstr "kontrolira je li ta mjera vidljiva prema zadanim postavkama"
+msgstr ""
 
 #: forecast/models.py:1151 forecast/views.py:354
-#, fuzzy
 msgid "format"
-msgstr "Nepodržani format datoteke."
+msgstr ""
 
 #: forecast/models.py:1160 forecast/views.py:356 input/models.py:66
 #: input/views/manufacturing.py:654
@@ -4126,19 +3867,16 @@ msgid "default value"
 msgstr "početna vrijednost"
 
 #: forecast/models.py:1168 forecast/views.py:359
-#, fuzzy
 msgid "override measure"
-msgstr "mjera premošćivanje"
+msgstr ""
 
 #: forecast/models.py:1197
-#, fuzzy
 msgid "measure"
-msgstr "Mjere"
+msgstr ""
 
 #: forecast/models.py:1198 forecast/views.py:331
-#, fuzzy
 msgid "measures"
-msgstr "Mjere"
+msgstr ""
 
 #: forecast/templates/forecast/forecast.html:264
 #: inventoryplanning/templates/inventoryplanning/drp.html:1700
@@ -4151,9 +3889,8 @@ msgstr "ukupno prognozirano"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1717
 #: inventoryplanning/templates/inventoryplanning/drp.html:1753
 #: inventoryplanning/templates/inventoryplanning/drp.html:1830
-#, fuzzy
 msgid "past forecast"
-msgstr "prošla prognoza"
+msgstr ""
 
 #: forecast/templates/forecast/forecast.html:383
 #: inventoryplanning/templates/inventoryplanning/drp.html:1099
@@ -4167,9 +3904,8 @@ msgid "method"
 msgstr "metoda"
 
 #: forecast/views.py:156
-#, fuzzy
 msgid "standard deviation of forecast error"
-msgstr "Procijenjena pogreška prognoze"
+msgstr ""
 
 #: forecast/views.py:203 input/models.py:244 input/views/capacity.py:743
 #: input/views/inventory.py:205 input/views/inventory.py:438
@@ -4181,9 +3917,8 @@ msgstr "Procijenjena pogreška prognoze"
 #: inventoryplanning/views.py:612 output/views/buffer.py:161
 #: output/views/demand.py:67 output/views/operation.py:203
 #: output/views/operation.py:540 output/views/operation.py:996
-#, fuzzy
 msgid "volume"
-msgstr "obim"
+msgstr ""
 
 #: forecast/views.py:209 input/models.py:236 input/views/capacity.py:749
 #: input/views/inventory.py:211 input/views/inventory.py:450
@@ -4210,9 +3945,8 @@ msgstr "Težina"
 #: inventoryplanning/views.py:624 output/views/buffer.py:173
 #: output/views/demand.py:69 output/views/operation.py:215
 #: output/views/operation.py:552 output/views/operation.py:1008
-#, fuzzy
 msgid "unit of measure"
-msgstr "Mjere"
+msgstr ""
 
 #: forecast/views.py:221 input/models.py:252 input/models.py:2339
 #: input/views/capacity.py:761 input/views/inventory.py:223
@@ -4308,14 +4042,12 @@ msgid "detail"
 msgstr "Detail"
 
 #: input/admin.py:138 input/views/inventory.py:718
-#, fuzzy
 msgid "inbound distribution"
-msgstr "ulazna distribucija"
+msgstr ""
 
 #: input/admin.py:143 input/views/inventory.py:729
-#, fuzzy
 msgid "outbound distribution"
-msgstr "Izlazna distribucija"
+msgstr ""
 
 #: input/admin.py:148 input/admin.py:423 input/models.py:2962
 #: input/templates/admin/input/item/change_form.html:43
@@ -4353,9 +4085,8 @@ msgstr "Zaliha"
 
 #: input/admin.py:264 input/models.py:2373 input/models.py:2374
 #: input/views/inventory.py:1512
-#, fuzzy
 msgid "inventory detail"
-msgstr "pojedinosti o inventaru"
+msgstr ""
 
 #: input/admin.py:428 input/admin.py:488 input/admin.py:654
 #: output/views/constraint.py:86
@@ -4368,14 +4099,12 @@ msgid "plan detail"
 msgstr "plan detaljno"
 
 #: input/admin.py:534
-#, fuzzy
 msgid "matrix detail"
-msgstr "plan detaljno"
+msgstr ""
 
 #: input/admin.py:1010
-#, fuzzy
 msgid "computed fields"
-msgstr "izračunana polja"
+msgstr ""
 
 #: input/models.py:47
 msgid "minimum cost"
@@ -4395,14 +4124,12 @@ msgstr "Vrijednost koja se koristi kada nijedan unos nije učinkovit"
 
 #: input/models.py:80 input/models.py:91 input/views/manufacturing.py:699
 #: input/views/manufacturing.py:980
-#, fuzzy
 msgid "calendar"
-msgstr "Kalendar"
+msgstr ""
 
 #: input/models.py:81 input/views/manufacturing.py:615
-#, fuzzy
 msgid "calendars"
-msgstr "Kalendara"
+msgstr ""
 
 #: input/models.py:116 input/templates/input/calendardetail.html:72
 #: input/views/manufacturing.py:716 input/views/manufacturing.py:997
@@ -4432,33 +4159,28 @@ msgid "customers"
 msgstr "partner"
 
 #: input/models.py:210
-#, fuzzy
 msgid "make to stock"
-msgstr "napraviti na zalihe"
+msgstr ""
 
 #: input/models.py:211
-#, fuzzy
 msgid "make to order"
-msgstr "po narudžbi"
+msgstr ""
 
 #: input/models.py:230
 msgid "Cost of the item"
 msgstr "Trošak artikla"
 
 #: input/models.py:241
-#, fuzzy
 msgid "Weight of the item"
-msgstr "Trošak artikla"
+msgstr ""
 
 #: input/models.py:249
-#, fuzzy
 msgid "Volume of the item"
-msgstr "Trošak artikla"
+msgstr ""
 
 #: input/models.py:255
-#, fuzzy
 msgid "Period of cover in days"
-msgstr "period pokrivanja"
+msgstr ""
 
 #: input/models.py:265 input/views/sales.py:144
 msgid "items"
@@ -4485,15 +4207,12 @@ msgid "split"
 msgstr "razdjeli"
 
 #: input/models.py:306
-#, fuzzy
 msgid "Item produced by this operation"
-msgstr "Artikl proizveden ovom operacijom"
+msgstr ""
 
 #: input/models.py:319
-#, fuzzy
 msgid "Parent operation (which must be of type routing, alternate or split)"
 msgstr ""
-"Rad roditelja (koji mora biti tip usmjeravanja, alternativni ili podijeljeni)"
 
 #: input/models.py:327 input/models.py:1351 input/models.py:1539
 msgid "Priority among all alternates"
@@ -4586,9 +4305,8 @@ msgid "size minimum"
 msgstr "min veličina"
 
 #: input/models.py:358
-#, fuzzy
 msgid "Minimum production quantity"
-msgstr "Minimalna količina proizvodnje"
+msgstr ""
 
 #: input/models.py:361 input/models.py:1314 input/models.py:1502
 #: input/views/capacity.py:567 input/views/inventory.py:377
@@ -4604,9 +4322,8 @@ msgid "size multiple"
 msgstr "Višestruka količina"
 
 #: input/models.py:366
-#, fuzzy
 msgid "Multiple production quantity"
-msgstr "Višestruka količina proizvodnje"
+msgstr ""
 
 #: input/models.py:369 input/models.py:1322 input/models.py:1510
 #: input/views/capacity.py:572 input/views/inventory.py:378
@@ -4620,19 +4337,16 @@ msgid "size maximum"
 msgstr "maksimalna veličina"
 
 #: input/models.py:374
-#, fuzzy
 msgid "Maximum production quantity"
-msgstr "Maksimalna količina proizvodnje"
+msgstr ""
 
 #: input/models.py:382
-#, fuzzy
 msgid "Cost per produced unit"
-msgstr "Trošak po proizvedenoj jedinici"
+msgstr ""
 
 #: input/models.py:388
-#, fuzzy
 msgid "Fixed production time for setup and overhead"
-msgstr "Fiksno vrijeme proizvodnje za postavljanje i režijske troškove"
+msgstr ""
 
 #: input/models.py:391 input/views/capacity.py:547
 #: input/views/inventory.py:1646 input/views/manufacturing.py:177
@@ -4644,9 +4358,8 @@ msgid "duration per unit"
 msgstr "trajanje po jedinici"
 
 #: input/models.py:394
-#, fuzzy
 msgid "Production time per produced piece"
-msgstr "Vrijeme proizvodnje po proizvedenom komadu"
+msgstr ""
 
 #: input/models.py:397 input/models.py:1035 input/models.py:1179
 #: input/views/capacity.py:597 input/views/inventory.py:1696
@@ -4666,18 +4379,14 @@ msgstr "Metoda za odabir željene alternative"
 #: input/views/inventory.py:379 input/views/inventory.py:1300
 #: input/views/manufacturing.py:1244 input/views/purchasing.py:166
 #: input/views/purchasing.py:1003 output/views/operation.py:626
-#, fuzzy
 msgid "batching window"
-msgstr "prozor za serije"
+msgstr ""
 
 #: input/models.py:417
-#, fuzzy
 msgid ""
 "The solver algorithm will scan for opportunities to create batches within "
 "this time window before and after the requirement date"
 msgstr ""
-"Algoritam rješavača tražit će prilike za stvaranje serija u tom vremenskom "
-"razdoblju prije i nakon datuma potrebe"
 
 #: input/models.py:427 input/templates/admin/input/item/change_form.html:25
 #: input/templates/admin/input/location/change_form.html:37
@@ -4776,15 +4485,13 @@ msgstr "matrice za postavljanje"
 
 #: input/models.py:701 input/views/capacity.py:152 input/views/capacity.py:862
 #: output/views/resource.py:76
-#, fuzzy
 msgid "constrained"
-msgstr "ograničeno od"
+msgstr ""
 
 #: input/models.py:705
-#, fuzzy
 msgid ""
 "controls whether or not this resource is planned in finite capacity mode"
-msgstr "kontrolira je li taj resurs planiran u ograničenom načinu kapaciteta"
+msgstr ""
 
 #: input/models.py:709 input/views/capacity.py:153 input/views/capacity.py:868
 #: input/views/manufacturing.py:283 output/views/resource.py:83
@@ -4835,27 +4542,23 @@ msgid "Setup of the resource at the start of the plan"
 msgstr "Ressourcen Aufstellung zu Planungsbeginn"
 
 #: input/models.py:777 input/views/capacity.py:181
-#, fuzzy, no-python-format
+#, no-python-format
 msgid "efficiency %"
-msgstr "% učinkovitosti"
+msgstr ""
 
 #: input/models.py:782
-#, fuzzy
 msgid "Efficiency percentage of the resource"
-msgstr "Postotak učinkovitosti resursa"
+msgstr ""
 
 #: input/models.py:787 input/views/capacity.py:185
-#, fuzzy, no-python-format
+#, no-python-format
 msgid "efficiency % calendar"
-msgstr "učinkovitost % calendar"
+msgstr ""
 
 #: input/models.py:793
-#, fuzzy
 msgid ""
 "Calendar defining the efficiency percentage of the resource varying over time"
 msgstr ""
-"Kalendar koji definira postotak učinkovitosti resursa koji se s vremenom "
-"mijenja"
 
 #: input/models.py:803 input/models.py:849 input/models.py:903
 #: input/models.py:1109 input/models.py:1369 input/models.py:1563
@@ -4913,9 +4616,8 @@ msgid "Cost of the conversion"
 msgstr "Trošak promjene/changeover"
 
 #: input/models.py:855
-#, fuzzy
 msgid "Extra resource used during this changeover"
-msgstr "Dodatni resurs korišten tijekom ove promjene"
+msgstr ""
 
 #: input/models.py:877
 msgid "setup matrix rule"
@@ -4958,24 +4660,20 @@ msgid "End"
 msgstr "Ende"
 
 #: input/models.py:955
-#, fuzzy
 msgid "Batch transfer"
-msgstr "Prijenos serije"
+msgstr ""
 
 #: input/models.py:985
-#, fuzzy
 msgid "Quantity to consume or produce per piece"
-msgstr "Količina za konzumiranje ili proizvodnju po komadu"
+msgstr ""
 
 #: input/models.py:988 input/views/manufacturing.py:399
-#, fuzzy
 msgid "fixed quantity"
-msgstr "fiksna količina"
+msgstr ""
 
 #: input/models.py:993
-#, fuzzy
 msgid "Fixed quantity to consume or produce"
-msgstr "Fiksna količina za konzumaciju ili proizvodnju"
+msgstr ""
 
 #: input/models.py:1003
 msgid "Consume/produce material at the start or the end of the operationplan"
@@ -4983,35 +4681,28 @@ msgstr ""
 "Potrošiti / proizvesti materijal na početku ili na kraju operativnog plana "
 
 #: input/models.py:1025
-#, fuzzy
 msgid "Name of this operation material to identify alternates"
-msgstr "Naziv ovog materijala za operaciju za identifikaciju zamjenika"
+msgstr ""
 
 #: input/models.py:1032
 msgid "Priority of this operation material in a group of alternates"
 msgstr "Prioritet ovog radnog materijala u grupi alternativa"
 
 #: input/models.py:1043 input/views/manufacturing.py:415
-#, fuzzy
 msgid "transfer batch quantity"
-msgstr "prijenos količine serije"
+msgstr ""
 
 #: input/models.py:1048
-#, fuzzy
 msgid "Batch size by in which material is produced or consumed"
-msgstr "Veličina serije u kojoj se materijal proizvodi ili troši"
+msgstr ""
 
 #: input/models.py:1051 input/views/manufacturing.py:417
-#, fuzzy
 msgid "offset"
-msgstr "Offset"
+msgstr ""
 
 #: input/models.py:1054
-#, fuzzy
 msgid "Time offset from the start or end to consume or produce material"
 msgstr ""
-"Vremenska nadoknada od početka ili kraja za konzumiranje ili proizvodnju "
-"materijala"
 
 #: input/models.py:1091
 msgid "operation material"
@@ -5024,34 +4715,28 @@ msgid "operation materials"
 msgstr "radni materijal"
 
 #: input/models.py:1124
-#, fuzzy
 msgid "Required skill to perform the operation"
-msgstr "Potrebna vještina za izvođenje operacije"
+msgstr ""
 
 #: input/models.py:1131
-#, fuzzy
 msgid "Required quantity of the resource"
-msgstr "Potrebna količina resursa"
+msgstr ""
 
 #: input/models.py:1134 input/views/manufacturing.py:119
-#, fuzzy
 msgid "quantity fixed"
-msgstr "fiksna količina"
+msgstr ""
 
 #: input/models.py:1140
-#, fuzzy
 msgid "Constant part of the capacity consumption (bucketized resources only)"
-msgstr "Stalni dio potrošnje kapaciteta (samo bucketized resursi)"
+msgstr ""
 
 #: input/models.py:1162
-#, fuzzy
 msgid "Name of this operation resource to identify alternates"
-msgstr "Naziv ovog resursa operacije za identifikaciju zamjenika"
+msgstr ""
 
 #: input/models.py:1169
-#, fuzzy
 msgid "Priority of this operation resource in a group of alternates"
-msgstr "Prioritet ovog resursa operacije u skupini zamjenika"
+msgstr ""
 
 #: input/models.py:1176
 msgid "Setup required on the resource for this operation"
@@ -5090,14 +4775,12 @@ msgid "Purchasing lead time"
 msgstr "Lead time nabave"
 
 #: input/models.py:1293 input/models.py:1296 input/views/purchasing.py:160
-#, fuzzy
 msgid "soft safety lead time"
-msgstr "Dostupno na lead time"
+msgstr ""
 
 #: input/models.py:1299 input/models.py:1302 input/views/purchasing.py:155
-#, fuzzy
 msgid "hard safety lead time"
-msgstr "Dostupno na lead time"
+msgstr ""
 
 #: input/models.py:1311
 msgid "A minimum purchasing quantity"
@@ -5108,9 +4791,8 @@ msgid "A multiple purchasing quantity"
 msgstr "Višestruka količina kupnje"
 
 #: input/models.py:1327
-#, fuzzy
 msgid "A maximum purchasing quantity"
-msgstr "Maksimalna količina kupnje"
+msgstr ""
 
 #: input/models.py:1334
 msgid "Proposed purchase orders within this window will be grouped together"
@@ -5158,19 +4840,16 @@ msgid "item suppliers"
 msgstr "dobavljači artikla"
 
 #: input/models.py:1479
-#, fuzzy
 msgid "Destination location to be replenished"
-msgstr "Mjesto odredišta koje treba nadopuniti"
+msgstr ""
 
 #: input/models.py:1487
-#, fuzzy
 msgid "Source location shipping the item"
-msgstr "Izvorna lokacija koja šalje artikl"
+msgstr ""
 
 #: input/models.py:1490
-#, fuzzy
 msgid "Transport lead time"
-msgstr "Vrijeme olova u prijevozu"
+msgstr ""
 
 #: input/models.py:1499
 msgid "A minimum shipping quantity"
@@ -5181,9 +4860,8 @@ msgid "A multiple shipping quantity"
 msgstr "Višestruka količina isporuke"
 
 #: input/models.py:1515
-#, fuzzy
 msgid "A maximum shipping quantity"
-msgstr "Maksimalna količina dostave"
+msgstr ""
 
 #: input/models.py:1522
 msgid ""
@@ -5195,14 +4873,12 @@ msgid "Shipping cost per unit"
 msgstr "Trošak dostave po jedinici"
 
 #: input/models.py:1542 input/views/inventory.py:383
-#, fuzzy
 msgid "push priority"
-msgstr "push prioritet"
+msgstr ""
 
 #: input/models.py:1545
-#, fuzzy
 msgid "Priority for the push mode"
-msgstr "Prioritet za način guranja"
+msgstr ""
 
 #: input/models.py:1569
 msgid "Resource to model the distribution capacity"
@@ -5251,29 +4927,24 @@ msgid "closed"
 msgstr "zatvoreno"
 
 #: input/models.py:1637
-#, fuzzy
 msgid "independent"
-msgstr "ovisna potražnja"
+msgstr ""
 
 #: input/models.py:1638
-#, fuzzy
 msgid "all together"
-msgstr "Mali broj"
+msgstr ""
 
 #: input/models.py:1639
-#, fuzzy
 msgid "in ratio"
-msgstr "neto trajanje"
+msgstr ""
 
 #: input/models.py:1672
-#, fuzzy
 msgid "Due date of the sales order"
-msgstr "Datum dospijeva na prodajni nalog"
+msgstr ""
 
 #: input/models.py:1682
-#, fuzzy
 msgid "Status of the demand. Only \"open\" and \"quote\" demands are planned"
-msgstr "Status Bedarfsnachfrage. Nur offene Bestellungen werden eingeplant"
+msgstr ""
 
 #: input/models.py:1719 input/views/sales.py:358
 msgid "policy"
@@ -5284,9 +4955,8 @@ msgid "Defines how sales orders are shipped together"
 msgstr ""
 
 #: input/models.py:1733 input/models.py:1867
-#, fuzzy
 msgid "MTO batch name"
-msgstr "Naziv MTO serije"
+msgstr ""
 
 #: input/models.py:1735 input/models.py:1841 input/views/capacity.py:658
 #: input/views/inventory.py:1078 input/views/inventory.py:1780
@@ -5320,9 +4990,8 @@ msgid "distribution order"
 msgstr "nalog za distribuciju"
 
 #: input/models.py:1777 input/models.py:3006
-#, fuzzy
 msgid "delivery order"
-msgstr "nalog za dostavu"
+msgstr ""
 
 #: input/models.py:1782 input/models.py:2231 input/models.py:2302
 #: input/views/capacity.py:995 input/views/inventory.py:1321
@@ -5363,9 +5032,8 @@ msgid "Order type"
 msgstr "Vrsta narudžbe"
 
 #: input/models.py:1817 input/views/manufacturing.py:1922
-#, fuzzy
 msgid "completed quantity"
-msgstr "potrošena količina"
+msgstr ""
 
 #: input/models.py:1820 inventoryplanning/models.py:423
 msgid "color"
@@ -5392,40 +5060,33 @@ msgid "operationplans"
 msgstr "operativni planovi"
 
 #: input/models.py:2265
-#, fuzzy
 msgid "load status"
-msgstr "status opterećenja"
+msgstr ""
 
 #: input/models.py:2270
-#, fuzzy
 msgid "Status of the resource assignment"
-msgstr "Status dodjele resursa"
+msgstr ""
 
 #: input/models.py:2295 input/models.py:2296 input/views/capacity.py:308
-#, fuzzy
 msgid "resource detail"
-msgstr "pojedinosti o resursima"
+msgstr ""
 
 #: input/models.py:2342 input/views/inventory.py:1961
-#, fuzzy
 msgid "material status"
-msgstr "materijalni status"
+msgstr ""
 
 #: input/models.py:2347
-#, fuzzy
 msgid "status of the material production or consumption"
-msgstr "status materijalne proizvodnje ili potrošnje"
+msgstr ""
 
 #: input/models.py:2381 input/views/inventory.py:992
-#, fuzzy
 msgid "shipping date"
-msgstr "datum dostave"
+msgstr ""
 
 #: input/models.py:2384 input/models.py:2426 input/views/inventory.py:998
 #: input/views/purchasing.py:872
-#, fuzzy
 msgid "receipt date"
-msgstr "datum primitka"
+msgstr ""
 
 #: input/models.py:2417 input/templates/admin/input/item/change_form.html:55
 #: input/templates/admin/input/itemdistribution/change_form.html:13
@@ -5437,63 +5098,48 @@ msgid "distribution orders"
 msgstr "nalozi za distribuciju"
 
 #: input/models.py:2423 input/views/purchasing.py:866
-#, fuzzy
 msgid "ordering date"
-msgstr "datum naručivanja"
+msgstr ""
 
 #: input/models.py:3007 input/views/sales.py:583 input/views/sales.py:980
 msgid "delivery orders"
 msgstr "nalozi za ispruku"
 
-#: input/templates/input/calendardetail.html:24
-#, fuzzy
-msgid "add"
-msgstr "i"
-
 #: input/templates/input/calendardetail.html:40
-#, fuzzy
 msgid "monday"
-msgstr "Ponedjeljak"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:44
-#, fuzzy
 msgid "tuesday"
-msgstr "Utorak"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:48
-#, fuzzy
 msgid "wednesday"
-msgstr "Srijeda"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:52
-#, fuzzy
 msgid "thursday"
-msgstr "Četvrtak"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:56
-#, fuzzy
 msgid "friday"
-msgstr "Petak"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:60
-#, fuzzy
 msgid "saturday"
-msgstr "Subota"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:64
-#, fuzzy
 msgid "sunday"
-msgstr "Nedjelja"
+msgstr ""
 
 #: input/templates/input/operationplanreport.html:303
-#, fuzzy
 msgid "display kanban cards"
-msgstr "prikaz kanban kartica"
+msgstr ""
 
 #: input/templates/input/operationplanreport.html:307
-#, fuzzy
 msgid "display calendar"
-msgstr "prikaz kalendara"
+msgstr ""
 
 #: input/views/capacity.py:78
 msgid "setup rules"
@@ -5505,14 +5151,12 @@ msgid "maxearly"
 msgstr "najranije"
 
 #: input/views/capacity.py:630 input/views/manufacturing.py:1910
-#, fuzzy
 msgid "net duration"
-msgstr "neto trajanje"
+msgstr ""
 
 #: input/views/capacity.py:641
-#, fuzzy
 msgid "quantity completed"
-msgstr "fiksna količina"
+msgstr ""
 
 #: input/views/capacity.py:664 input/views/inventory.py:1085
 #: input/views/inventory.py:1808 input/views/manufacturing.py:1972
@@ -5525,26 +5169,22 @@ msgid "load quantity"
 msgstr "load quantity"
 
 #: input/views/capacity.py:685 input/views/manufacturing.py:2136
-#, fuzzy
 msgid "setup end date"
-msgstr "datum završetka postavljanja"
+msgstr ""
 
 #: input/views/capacity.py:691 input/views/manufacturing.py:2129
-#, fuzzy
 msgid "setup duration"
-msgstr "trajanje postavljanja"
+msgstr ""
 
 #: input/views/capacity.py:698 input/views/manufacturing.py:2143
-#, fuzzy
 msgid "setup duration override"
-msgstr "trajanje postavljanja"
+msgstr ""
 
 #: input/views/capacity.py:705 input/views/inventory.py:1112
 #: input/views/inventory.py:1817 input/views/manufacturing.py:2150
 #: input/views/purchasing.py:966
-#, fuzzy
 msgid "feasible"
-msgstr "Izvedivo"
+msgstr ""
 
 #: input/views/capacity.py:895 input/views/manufacturing.py:310
 #: output/views/resource.py:113
@@ -5575,19 +5215,19 @@ msgid "change status to {status}"
 msgstr "Promjenite status u {status}"
 
 #: input/views/inventory.py:664
-#, fuzzy, python-format
+#, python-format
 msgid "in transit in %(loc)s at %(date)s"
-msgstr "u tranzitu u %(loc)s na %(date)s"
+msgstr ""
 
 #: input/views/inventory.py:678
-#, fuzzy, python-format
+#, python-format
 msgid "received in %(loc)s between %(date1)s and %(date2)s"
-msgstr "primljeno u %(loc)s između %(date1)s i %(date2)s"
+msgstr ""
 
 #: input/views/inventory.py:692
-#, fuzzy, python-format
+#, python-format
 msgid "shipped from %(loc)s between %(date1)s and %(date2)s"
-msgstr "otpremljeno iz %(loc)s između %(date1)s i %(date2)s"
+msgstr ""
 
 #: input/views/inventory.py:1047 input/views/manufacturing.py:1928
 #: input/views/purchasing.py:896
@@ -5596,15 +5236,13 @@ msgstr "ukupni trošak"
 
 #: input/views/inventory.py:1054 input/views/manufacturing.py:1936
 #: input/views/purchasing.py:903
-#, fuzzy
 msgid "total volume"
-msgstr "ukupno potrošeno"
+msgstr ""
 
 #: input/views/inventory.py:1061 input/views/manufacturing.py:1944
 #: input/views/purchasing.py:910
-#, fuzzy
 msgid "total weight"
-msgstr "ukupno naručivanje"
+msgstr ""
 
 #: input/views/inventory.py:1094 input/views/manufacturing.py:2019
 #: input/views/purchasing.py:949
@@ -5618,76 +5256,70 @@ msgstr "lokacija zalihe"
 
 #: input/views/inventory.py:1261 input/views/manufacturing.py:2280
 #: input/views/purchasing.py:1188
-#, fuzzy
 msgid "end items"
-msgstr "krajnji predmeti"
+msgstr ""
 
 #: input/views/inventory.py:1378
-#, fuzzy
 msgid "Inventory detail"
-msgstr "Detalji inventara"
+msgstr ""
 
 #: input/views/inventory.py:1740
-#, fuzzy
 msgid "expected onhand"
-msgstr "očekuje se na ruku"
+msgstr ""
 
 #: input/views/inventory.py:1786
 msgid "operationplan quantity"
 msgstr "količina po planu"
 
 #: input/views/inventory.py:1792
-#, fuzzy
 msgid "operationplan quantity completed"
-msgstr "količina po planu"
+msgstr ""
 
 #: input/views/manufacturing.py:1606
-#, fuzzy, python-format
+#, python-format
 msgid "work in progress in %(loc)s at %(date)s"
-msgstr "rad u tijeku u %(loc)s na %(date)s"
+msgstr ""
 
 #: input/views/manufacturing.py:1620
-#, fuzzy, python-format
+#, python-format
 msgid "produced in %(loc)s between %(date1)s and %(date2)s"
-msgstr "proizvedeno u %(loc)s između %(date1)s i %(date2)s"
+msgstr ""
 
 #: input/views/manufacturing.py:1634
-#, fuzzy, python-format
+#, python-format
 msgid "consumed in %(loc)s between %(date1)s and %(date2)s"
-msgstr "konzumira u %(loc)s između %(date1)s i %(date2)s"
+msgstr ""
 
 #: input/views/manufacturing.py:1981
 msgid "materials"
 msgstr "materijali"
 
 #: input/views/manufacturing.py:2001
-#, fuzzy
 msgid "setups"
-msgstr "Postava"
+msgstr ""
 
 #: input/views/purchasing.py:474
-#, fuzzy, python-format
+#, python-format
 msgid "on order in %(loc)s at %(date)s"
-msgstr "po narudžbi u %(loc)s na %(date)s"
+msgstr ""
 
 #: input/views/purchasing.py:488
-#, fuzzy, python-format
+#, python-format
 msgid "on order in %(loc)s between %(date1)s and %(date2)s"
-msgstr "po narudžbi u %(loc)s između %(date1)s i %(date2)s"
+msgstr ""
 
 #: input/views/sales.py:334
-#, fuzzy
 msgid "quantity planned short"
-msgstr "količina planirana kratko"
+msgstr ""
 
 #: input/views/sales.py:631
 msgid "demand quantity"
 msgstr "količina potražnje"
 
 #: input/views/sales.py:972
-#, fuzzy, python-format
+#, python-format
 msgid "delivered from %(loc)s between %(date1)s and %(date2)s"
-msgstr "isporučeno iz %(loc)s između %(date1)s i %(date2)s"
+msgstr ""
 
 #: input/views/utils.py:103 input/views/utils.py:140 input/views/utils.py:189
 #, python-format
@@ -5718,9 +5350,8 @@ msgid "Safety stock quantity"
 msgstr "Količina sigurnosnih zaliha"
 
 #: inventoryplanning/attributes.py:18
-#, fuzzy
 msgid "Successor part"
-msgstr "Dio sljednikom"
+msgstr ""
 
 #: inventoryplanning/commands.py:669
 msgid "Compute inventory parameters"
@@ -5822,14 +5453,12 @@ msgstr "Erzwingt einen Sicherheitsbestand von 0 und einer Bestellmenge von 1"
 #: inventoryplanning/models.py:111 inventoryplanning/models.py:178
 #: inventoryplanning/models.py:317 inventoryplanning/views.py:277
 #: inventoryplanning/views.py:347
-#, fuzzy
 msgid "Push mode"
-msgstr "Način guranja"
+msgstr ""
 
 #: inventoryplanning/models.py:114 inventoryplanning/models.py:181
-#, fuzzy
 msgid "Activate stock push mode which moves all inventory downstream"
-msgstr "Aktivirajte način guranja dionica koji pomiče sav inventar nizvodno"
+msgstr ""
 
 #: inventoryplanning/models.py:117 inventoryplanning/models.py:124
 #: inventoryplanning/models.py:131 inventoryplanning/models.py:136
@@ -5848,19 +5477,16 @@ msgid "segment"
 msgstr "nema segmenta"
 
 #: inventoryplanning/models.py:186
-#, fuzzy
 msgid "Overrides the decoupled lead time"
-msgstr "Nadjačava razdvojeno vrijeme protoka"
+msgstr ""
 
 #: inventoryplanning/models.py:201
-#, fuzzy
 msgid "inventory policy"
-msgstr "pravila inventara"
+msgstr ""
 
 #: inventoryplanning/models.py:202 inventoryplanning/views.py:206
-#, fuzzy
 msgid "inventory policies"
-msgstr "pravila inventara"
+msgstr ""
 
 #: inventoryplanning/models.py:219 inventoryplanning/views.py:151
 msgid "query"
@@ -5883,14 +5509,12 @@ msgid "ROQ Maximum Quantity"
 msgstr "Minimalna količina ROQ"
 
 #: inventoryplanning/models.py:309
-#, fuzzy
 msgid "ROQ Minimum Period of Cover (days)"
-msgstr "ROQ minimalno razdoblje pokrića (dani)"
+msgstr ""
 
 #: inventoryplanning/models.py:310
-#, fuzzy
 msgid "ROQ Maximum Period of Cover (days)"
-msgstr "ROQ maksimalno razdoblje pokrića (dana)"
+msgstr ""
 
 #: inventoryplanning/models.py:311
 msgid "Service Level"
@@ -5905,14 +5529,12 @@ msgid "Safety Stock Maximum Quantity"
 msgstr "Minimalna količina sigurnosnih zaliha"
 
 #: inventoryplanning/models.py:314
-#, fuzzy
 msgid "Safety Stock Minimum Period of Cover (days)"
-msgstr "Minimalno razdoblje pokrića sigurnosnih zaliha (dani)"
+msgstr ""
 
 #: inventoryplanning/models.py:315
-#, fuzzy
 msgid "Safety Stock Maximum Period of Cover (days)"
-msgstr "Sigurnosna zaliha Maksimalno razdoblje pokrića (dani)"
+msgstr ""
 
 #: inventoryplanning/models.py:324
 msgid "Business Rule"
@@ -5946,34 +5568,28 @@ msgid "open sales orders"
 msgstr "otvorene potvrde nardužbe"
 
 #: inventoryplanning/models.py:431 inventoryplanning/views.py:590
-#, fuzzy
 msgid "proposed purchase orders"
-msgstr "predloženih narudžbenici"
+msgstr ""
 
 #: inventoryplanning/models.py:434 inventoryplanning/views.py:595
-#, fuzzy
 msgid "proposed distribution orders"
-msgstr "predloženih naloga za distribuciju"
+msgstr ""
 
 #: inventoryplanning/models.py:437 inventoryplanning/views.py:580
-#, fuzzy
 msgid "open purchase orders"
-msgstr "otvoreni narudžbenici"
+msgstr ""
 
 #: inventoryplanning/models.py:440 inventoryplanning/views.py:630
-#, fuzzy
 msgid "open purchase orders beyond lead time"
-msgstr "otvorena vrijednost narudžbe"
+msgstr ""
 
 #: inventoryplanning/models.py:446 inventoryplanning/views.py:585
-#, fuzzy
 msgid "open distribution orders"
-msgstr "otvoreni distribucijski nalozi"
+msgstr ""
 
 #: inventoryplanning/models.py:449
-#, fuzzy
 msgid "open distribution orders beyond lead time"
-msgstr "otvorena vrijednost naloga za distribuciju"
+msgstr ""
 
 #: inventoryplanning/models.py:455
 msgid "onhand value"
@@ -5988,34 +5604,28 @@ msgid "open sales orders value"
 msgstr "vrijednost otvorenih potvrda narudžbe"
 
 #: inventoryplanning/models.py:464
-#, fuzzy
 msgid "proposed purchase order value"
-msgstr "predložena vrijednost narudžbene narudžbe"
+msgstr ""
 
 #: inventoryplanning/models.py:467
-#, fuzzy
 msgid "proposed distribution order value"
-msgstr "predložena vrijednost naloga za distribuciju"
+msgstr ""
 
 #: inventoryplanning/models.py:473
-#, fuzzy
 msgid "open purchase order value"
-msgstr "otvorena vrijednost narudžbe"
+msgstr ""
 
 #: inventoryplanning/models.py:476
-#, fuzzy
-msgid "open purchase order beyond lead time value"
-msgstr "otvorena vrijednost narudžbe"
+msgid "open purchase orders beyond lead time value"
+msgstr ""
 
 #: inventoryplanning/models.py:482
-#, fuzzy
 msgid "open distribution order value"
-msgstr "otvorena vrijednost naloga za distribuciju"
+msgstr ""
 
 #: inventoryplanning/models.py:485
-#, fuzzy
-msgid "open distribution order beyond lead time value"
-msgstr "otvorena vrijednost naloga za distribuciju"
+msgid "open distribution orders beyond lead time value"
+msgstr ""
 
 #: inventoryplanning/models.py:491 inventoryplanning/views.py:545
 msgid "local forecast"
@@ -6058,9 +5668,8 @@ msgstr "početna zaliha"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:239
 #: output/templates/output/buffer.html:263 output/views/buffer.py:265
-#, fuzzy
 msgid "start inventory days of cover"
-msgstr "početak inventara dana pokrića"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:240
 #: inventoryplanning/templates/inventoryplanning/drp.html:1556
@@ -6094,27 +5703,25 @@ msgstr "Želite li najprije spremiti promjene?"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:330
 #: inventoryplanning/templates/inventoryplanning/drp.html:902
-#, fuzzy
 msgid "Error retrieving data"
-msgstr "Podaci o dohvaćanju pogrešaka"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1463
 #: output/templates/output/buffer.html:253
 #, fuzzy
 msgid "Archived"
-msgstr "Arhivirane"
+msgstr "Arhivirano"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2156
-#, fuzzy
 msgid "superseded"
-msgstr "superseded"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2180
 #: inventoryplanning/templates/inventoryplanning/drp.html:2181
 #: inventoryplanning/templates/inventoryplanning/drp.html:2182
-#, fuzzy, python-format
+#, python-format
 msgid "Last %(x)s months"
-msgstr "Posljednji %(x)mjeseci"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2494
 #: inventoryplanning/templates/inventoryplanning/drp.html:2501
@@ -6265,12 +5872,10 @@ msgid "computed economic reorder quantity"
 msgstr "izračunata ek. količina reorganizacije"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2913
-#, fuzzy
 msgid "Stocking policy"
-msgstr "Politika čarapa"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2918
-#, fuzzy
 msgid ""
 "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
 "data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
@@ -6288,7 +5893,6 @@ msgid "true"
 msgstr "istina"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2937
-#, fuzzy
 msgid ""
 "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
 "data-original-title=\"In push mode, any excess inventory will be distributed "
@@ -6319,9 +5923,8 @@ msgid "on hand"
 msgstr "dostupno"
 
 #: inventoryplanning/views.py:636
-#, fuzzy
 msgid "open distribution order beyond lead time"
-msgstr "otvorena vrijednost naloga za distribuciju"
+msgstr ""
 
 #: inventoryplanning/views.py:1607
 msgid "Buy"
@@ -6340,18 +5943,17 @@ msgid "Invalid number"
 msgstr "Nevaljan broj"
 
 #: inventoryplanning/views.py:2501
-#, fuzzy, python-format
+#, python-format
 msgid "Changed %s."
-msgstr "Promijenio %s."
+msgstr ""
 
 #: inventoryplanning/views.py:2528
 msgid "No forecast found"
 msgstr "Nije pronađena prognoza"
 
 #: inventoryplanning/widget.py:25
-#, fuzzy
 msgid "Display the current status of your current inventory"
-msgstr "Prikaz trenutačnog statusa trenutnog inventara"
+msgstr ""
 
 #: inventoryplanning/widget.py:132
 msgid "green"
@@ -6398,59 +6000,48 @@ msgid "admin"
 msgstr "Administracija"
 
 #: metrics/attributes.py:19
-#, fuzzy
 msgid "count of late demands"
-msgstr "brojanje zakašnjelih zahtjeva"
+msgstr ""
 
 #: metrics/attributes.py:20 metrics/widget.py:59
-#, fuzzy
 msgid "quantity of late demands"
-msgstr "količina zakašnjelih zahtjeva"
+msgstr ""
 
 #: metrics/attributes.py:21
-#, fuzzy
 msgid "value of late demand"
-msgstr "vrijednost zakašnjele potražnje"
+msgstr ""
 
 #: metrics/attributes.py:24
-#, fuzzy
 msgid "count of unplanned demands"
-msgstr "brojanje neplaniranih zahtjeva"
+msgstr ""
 
 #: metrics/attributes.py:31
-#, fuzzy
 msgid "quantity of unplanned demands"
-msgstr "količina neplaniranih zahtjeva"
+msgstr ""
 
 #: metrics/attributes.py:38
-#, fuzzy
 msgid "value of unplanned demands"
-msgstr "vrijednost neplaniranih zahtjeva"
+msgstr ""
 
 #: metrics/attributes.py:51
-#, fuzzy
 msgid "count of capacity overload problems"
-msgstr "brojanje problema preopterećenja kapaciteta"
+msgstr ""
 
 #: metrics/widget.py:31
-#, fuzzy
 msgid "analyze late demands"
-msgstr "analizirati zakašnjele zahtjeve"
+msgstr ""
 
 #: metrics/widget.py:32
-#, fuzzy
 msgid "Spot the top items with many late demands"
-msgstr "Uočite najbolje stavke s mnogim zakašnjelim zahtjevima"
+msgstr ""
 
 #: metrics/widget.py:58
-#, fuzzy
 msgid "value of late demands"
-msgstr "vrijednost zakašnjelih zahtjeva"
+msgstr ""
 
 #: metrics/widget.py:60
-#, fuzzy
 msgid "number of late demands"
-msgstr "broj zakašnjelih zahtjeva"
+msgstr ""
 
 #: odoo/views.py:48
 msgid "Invalid configuration parameters"
@@ -6506,86 +6097,70 @@ msgstr "opterećenje"
 
 #: output/templates/output/buffer.html:268
 #: output/templates/output/buffer.html:271 output/views/buffer.py:402
-#, fuzzy
 msgid "produced by PO confirmed"
-msgstr "proizvedeno od strane PO"
+msgstr ""
 
 #: output/templates/output/buffer.html:274 output/views/buffer.py:370
-#, fuzzy
 msgid "produced by MO confirmed"
-msgstr "proizvedeno od strane MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:277 output/views/buffer.py:374
-#, fuzzy
 msgid "produced by MO proposed"
-msgstr "proizvedeno od strane MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:280 output/views/buffer.py:386
-#, fuzzy
 msgid "produced by DO confirmed"
-msgstr "proizvedeno od strane DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:283 output/views/buffer.py:390
-#, fuzzy
 msgid "produced by DO proposed"
-msgstr "proizvedeno od strane DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:286 output/views/buffer.py:313
-#, fuzzy
 msgid "consumed by MO confirmed"
-msgstr "konzumira MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:289 output/views/buffer.py:317
-#, fuzzy
 msgid "consumed by MO proposed"
-msgstr "konzumira MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:292 output/views/buffer.py:335
-#, fuzzy
 msgid "consumed by SO"
-msgstr "konzumira SO"
+msgstr ""
 
 #: output/templates/output/buffer.html:295 output/views/buffer.py:496
-#, fuzzy
 msgid "consumed by Fcst"
-msgstr "konzumira Fcst"
+msgstr ""
 
 #: output/templates/output/buffer.html:298 output/views/buffer.py:329
-#, fuzzy
 msgid "consumed by DO confirmed"
-msgstr "konzumira DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:301 output/views/buffer.py:333
-#, fuzzy
 msgid "consumed by DO proposed"
-msgstr "konzumira DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:309 output/views/buffer.py:412
-#, fuzzy
 msgid "total in progress"
-msgstr "ukupno u tijeku"
+msgstr ""
 
 #: output/templates/output/buffer.html:312 output/views/buffer.py:444
-#, fuzzy
 msgid "work in progress MO"
-msgstr "rad u tijeku MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:315 output/views/buffer.py:463
-#, fuzzy
 msgid "on order PO"
-msgstr "po narudžbi PO"
+msgstr ""
 
 #: output/templates/output/buffer.html:318 output/views/buffer.py:483
-#, fuzzy
 msgid "in transit DO"
-msgstr "u tranzitu DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:324
 #: output/templates/output/buffer.html:435 output/views/buffer.py:515
 #: output/views/demand.py:317
-#, fuzzy
 msgid "total backlog"
-msgstr "ukupni zaostatak"
+msgstr ""
 
 #: output/templates/output/buffer.html:432
 msgid "consumed"
@@ -6609,47 +6184,40 @@ msgid "net forecast"
 msgstr "neto prognoza"
 
 #: output/templates/output/demand_forecast.html:152 output/views/demand.py:311
-#, fuzzy
 msgid "sales order backlog"
-msgstr "zaostaci prodajnih naloga"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:215
 #: output/views/operation.py:1122
-#, fuzzy
 msgid "proposed shipping"
-msgstr "predložena dostava"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:217
 #: output/views/operation.py:1123
-#, fuzzy
 msgid "total shipping"
-msgstr "ukupna dostava"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:219
 #: output/templates/output/purchase_order_summary.html:219
 #: output/views/operation.py:678 output/views/operation.py:1124
-#, fuzzy
 msgid "proposed receiving"
-msgstr "predloženo primanje"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:221
 #: output/templates/output/purchase_order_summary.html:221
 #: output/views/operation.py:679 output/views/operation.py:1125
-#, fuzzy
 msgid "total receiving"
-msgstr "ukupno primanje"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:223
 #: output/views/operation.py:1128
-#, fuzzy
 msgid "proposed in transit"
-msgstr "predloženo u tranzitu"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:225
 #: output/views/operation.py:1130
-#, fuzzy
 msgid "total in transit"
-msgstr "ukupno u tranzitu"
+msgstr ""
 
 #: output/templates/output/operation.html:288
 #: output/templates/output/operation.html:339 output/views/operation.py:247
@@ -6671,14 +6239,12 @@ msgstr "Ukupni završeci"
 
 #: output/templates/output/operation.html:296
 #: output/templates/output/operation.html:343 output/views/operation.py:253
-#, fuzzy
 msgid "proposed production"
-msgstr "predložena proizvodnja"
+msgstr ""
 
 #: output/templates/output/operation.html:298 output/views/operation.py:255
-#, fuzzy
 msgid "total production"
-msgstr "ukupna proizvodnja"
+msgstr ""
 
 #: output/templates/output/operation.html:338
 msgid "approved and confirmed starts"
@@ -6702,27 +6268,23 @@ msgstr "smanje"
 
 #: output/templates/output/purchase_order_summary.html:215
 #: output/views/buffer.py:474 output/views/operation.py:676
-#, fuzzy
 msgid "proposed ordering"
-msgstr "predloženo naručivanje"
+msgstr ""
 
 #: output/templates/output/purchase_order_summary.html:217
 #: output/views/operation.py:677
-#, fuzzy
 msgid "total ordering"
-msgstr "ukupno naručivanje"
+msgstr ""
 
 #: output/templates/output/purchase_order_summary.html:223
 #: output/views/operation.py:682
-#, fuzzy
 msgid "proposed on order"
-msgstr "predloženo po nalogu"
+msgstr ""
 
 #: output/templates/output/purchase_order_summary.html:225
 #: output/views/operation.py:684
-#, fuzzy
 msgid "total on order"
-msgstr "ukupno po narudžbi"
+msgstr ""
 
 #: output/templates/output/resource.html:279 output/views/constraint.py:35
 msgid "overload"
@@ -6732,116 +6294,90 @@ msgstr "preopterećenje"
 msgid "Inventory report"
 msgstr "Izvještaj zaliha"
 
-#: output/views/buffer.py:258
-#, fuzzy
-msgid "is_ip_buffer"
-msgstr "međuspremnik"
-
 #: output/views/buffer.py:271
-#, fuzzy
 msgid "total produced"
-msgstr "ukupno proizvedeno"
+msgstr ""
 
 #: output/views/buffer.py:278
-#, fuzzy
 msgid "total consumed"
-msgstr "ukupno potrošeno"
+msgstr ""
 
 #: output/views/buffer.py:285
-#, fuzzy
 msgid "total consumed confirmed"
-msgstr "ukupno potrošeno"
+msgstr ""
 
 #: output/views/buffer.py:293
-#, fuzzy
 msgid "total consumed proposed"
-msgstr "ukupno potrošeno"
+msgstr ""
 
 #: output/views/buffer.py:306
-#, fuzzy
 msgid "consumed by MO"
-msgstr "konzumira MO"
+msgstr ""
 
 #: output/views/buffer.py:322
-#, fuzzy
 msgid "consumed by DO"
-msgstr "konzumira DO"
+msgstr ""
 
 #: output/views/buffer.py:339
-#, fuzzy
 msgid "total produced confirmed"
-msgstr "ukupno proizvedeno"
+msgstr ""
 
 #: output/views/buffer.py:351
-#, fuzzy
 msgid "total produced proposed"
-msgstr "ukupno proizvedeno"
+msgstr ""
 
 #: output/views/buffer.py:363
-#, fuzzy
 msgid "produced by MO"
-msgstr "proizvedeno od strane MO"
+msgstr ""
 
 #: output/views/buffer.py:379
-#, fuzzy
 msgid "produced by DO"
-msgstr "proizvedeno od strane DO"
+msgstr ""
 
 #: output/views/buffer.py:395
-#, fuzzy
 msgid "produced by PO"
-msgstr "proizvedeno od strane PO"
+msgstr ""
 
 #: output/views/buffer.py:406
-#, fuzzy
 msgid "produced by PO proposed"
-msgstr "proizvedeno od strane PO"
+msgstr ""
 
 #: output/views/buffer.py:420
-#, fuzzy
 msgid "total in progress confirmed"
-msgstr "ukupno u tijeku"
+msgstr ""
 
 #: output/views/buffer.py:432
-#, fuzzy
 msgid "total in progress proposed"
-msgstr "ukupno u tijeku"
+msgstr ""
 
 #: output/views/buffer.py:454
-#, fuzzy
 msgid "work in progress MO confirmed"
-msgstr "rad u tijeku MO"
+msgstr ""
 
 #: output/views/buffer.py:458
-#, fuzzy
 msgid "work in progress MO proposed"
-msgstr "rad u tijeku MO"
+msgstr ""
 
 #: output/views/buffer.py:470
-#, fuzzy
 msgid "on order PO confirmed"
-msgstr "po narudžbi PO"
+msgstr ""
 
 #: output/views/buffer.py:478
-#, fuzzy
 msgid "on order PO proposed"
-msgstr "po narudžbi PO"
+msgstr ""
 
 #: output/views/buffer.py:490
-#, fuzzy
 msgid "in transit DO confirmed"
-msgstr "u tranzitu DO"
+msgstr ""
 
 #: output/views/buffer.py:494
-#, fuzzy
 msgid "in transit DO proposed"
-msgstr "u tranzitu DO"
+msgstr ""
 
 #: output/views/buffer.py:521 output/views/demand.py:80
 #: output/views/demand.py:318
-#, fuzzy
 msgid "reasons"
-msgstr "Razloga"
+msgstr ""
 
 #: output/views/constraint.py:29
 msgid "material"
@@ -6900,33 +6436,28 @@ msgid "Performance Indicators"
 msgstr "Pokazatelji performansi"
 
 #: output/views/operation.py:41
-#, fuzzy
 msgid "Manufacturing order summary"
-msgstr "Sažetak narudžbe za proizvodnju"
+msgstr ""
 
 #: output/views/operation.py:490
-#, fuzzy
 msgid "Purchase order summary"
-msgstr "Sažetak narudžbene narudžbe"
+msgstr ""
 
 #: output/views/operation.py:946
-#, fuzzy
 msgid "Distribution order summary"
-msgstr "Sažetak naloga za distribuciju"
+msgstr ""
 
 #: output/views/pegging.py:32
 msgid "Demand plan"
 msgstr "Plan potražnje"
 
 #: output/views/pegging.py:66
-#, fuzzy
 msgid "item description"
-msgstr "opis stavke"
+msgstr ""
 
 #: output/views/pegging.py:80
-#, fuzzy
 msgid "required quantity"
-msgstr "potrebna količina"
+msgstr ""
 
 #: output/views/problem.py:55
 msgid "Problem report"
@@ -6941,9 +6472,8 @@ msgid "utilization %"
 msgstr " % iskorištenosti"
 
 #: output/views/resource.py:172
-#, fuzzy
 msgid "available calendar"
-msgstr "dostupan kalendar"
+msgstr ""
 
 #: output/widget.py:35
 msgid "late orders"
@@ -7105,19 +6635,16 @@ msgid "SQL query"
 msgstr "SQL upit"
 
 #: reportmanager/models.py:95 reportmanager/views.py:616
-#, fuzzy
 msgid "my report"
-msgstr "moje izvješće"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:94
-#, fuzzy
 msgid "Saving the report failed"
-msgstr "Spremanje izvješća nije uspjelo"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:167
-#, fuzzy
 msgid "format SQL query"
-msgstr "SQL upit"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:197
 #: reportmanager/views.py:123
@@ -7126,19 +6653,16 @@ msgid "public"
 msgstr "javno"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:217
-#, fuzzy
 msgid "schema"
-msgstr "Sheme"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/schema.html:8
-#, fuzzy
 msgid "table"
-msgstr "Tablice"
+msgstr ""
 
 #: reportmanager/views.py:291
-#, fuzzy
 msgid "Add custom report"
-msgstr "kupac"
+msgstr ""
 
 #: retail/management/commands/runpartitions.py:35
 msgid "Runs all the partitions"
@@ -7218,9 +6742,8 @@ msgid "web service"
 msgstr "web servis"
 
 #: webservice/templates/commands/runwebservice.html:9
-#, fuzzy
 msgid "Start the web service."
-msgstr "Započnite web uslugu."
+msgstr ""
 
 #: webservice/templates/commands/runwebservice.html:14
 msgid "Stop"
@@ -7233,9 +6756,8 @@ msgstr "Zaustavite web uslugu."
 #: wizard/templates/wizard/features.html:6
 #: wizard/templates/wizard/features.html:11
 #: wizard/templates/wizard/index.html:12
-#, fuzzy
 msgid "explore features"
-msgstr "Izbriši sve značajke"
+msgstr ""
 
 #: wizard/templates/wizard/features.html:19
 #: wizard/templates/wizard/index.html:20
@@ -7245,78 +6767,65 @@ msgstr "dashboard"
 
 #: wizard/templates/wizard/quickstart_forecast.html:61
 #: wizard/templates/wizard/quickstart_production.html:396
-#, fuzzy
 msgid "item name"
-msgstr "naziv stavke"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:73
 #: wizard/templates/wizard/quickstart_production.html:408
-#, fuzzy
 msgid "location name"
-msgstr "naziv lokacije izvora"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:85
 #: wizard/templates/wizard/quickstart_production.html:420
-#, fuzzy
 msgid "customer name"
-msgstr "ime kupca"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:92
-#, fuzzy, python-format
+#, python-format
 msgid "Sales history in the last %(buckets)s"
-msgstr "Povijest prodaje u posljednjim %(buckets)s"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:97
-#, fuzzy
 msgid "a list of integers:eg 10  20  30"
-msgstr "popis integers:npr 10 20 30"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:130
-#, fuzzy
 msgid "supplier name"
-msgstr "naziv dobavljača"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:142
-#, fuzzy
 msgid "lead time (in days)"
-msgstr "vrijeme olova (u danima)"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:169
-#, fuzzy
 msgid "operation name"
-msgstr "naziv operacije"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:181
-#, fuzzy
 msgid "fixed time"
-msgstr "vrijeme_Pripreme"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:193
-#, fuzzy
 msgid "time per piece"
-msgstr "vrijeme po komadu"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:210
-#, fuzzy
 msgid "resource name"
-msgstr "naziv resursa"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:217
-#, fuzzy
 msgid "consumed items"
-msgstr "konzumirane stavke"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:222
 #: wizard/templates/wizard/quickstart_production.html:303
-#, fuzzy
 msgid "component or subassembly item name"
-msgstr "sastavni ili subassembly naziv stavke"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:226
 #: wizard/templates/wizard/quickstart_production.html:307
-#, fuzzy
 msgid "consumed quantity"
-msgstr "potrošena količina"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:258
 msgid "source location"
@@ -7327,131 +6836,102 @@ msgid "source location name"
 msgstr "naziv lokacije izvora"
 
 #: wizard/templates/wizard/quickstart_production.html:270
-#, fuzzy
 msgid "transport time"
-msgstr "vrijeme prijevoza"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:275
-#, fuzzy
 msgid "transport time (in days)"
-msgstr "vrijeme prijevoza (u danima)"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:384
-#, fuzzy
 msgid "unique sales order name"
-msgstr "jedinstveni naziv prodajnog naloga"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:439
 #: wizard/templates/wizard/quickstart_production.html:444
-#, fuzzy
 msgid "due date"
-msgstr "Dospijeća"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:449
-#, fuzzy
 msgid "Create sales order"
-msgstr "Izrada naloga za prodaju"
+msgstr ""
 
 #: wizard/views.py:2296
-#, fuzzy
 msgid "Data loading wizard for forecasting"
-msgstr "Čarobnjak za učitavanje podataka za predviđanje"
+msgstr ""
 
 #: wizard/views.py:2298
-#, fuzzy
 msgid "Data loading wizard for inventory planning"
-msgstr "Čarobnjak za učitavanje podataka za planiranje zaliha"
+msgstr ""
 
 #: wizard/views.py:2300
-#, fuzzy
 msgid "Data loading wizard for production planning"
-msgstr "Čarobnjak za učitavanje podataka za planiranje proizvodnje"
+msgstr ""
 
 #: wizard/views.py:2302
-#, fuzzy
 msgid "Get started - Data loading wizard"
-msgstr "Započnite - Čarobnjak za učitavanje podataka"
+msgstr ""
 
 #: wizard/views.py:2433
-#, fuzzy
 msgid "Quickstart production planning"
-msgstr "Brzo planiranje proizvodnje"
+msgstr ""
 
 #: wizard/views.py:2685
-#, fuzzy
 msgid "Quickstart forecasting"
-msgstr "Quickstart predviđanje"
+msgstr ""
 
 #: wizard/views.py:2691
-#, fuzzy
 msgid "quarters"
-msgstr "Kabinu"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:523
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:557
-#, fuzzy
 msgid "%s allocated out of %s"
-msgstr "%s dodijeljeno iz %s"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1343
 #: freppledb/planningboard/static/planningboard/planningboard.html:1372
 #: freppledb/planningboard/static/planningboard/planningboard.html:1398
-#, fuzzy
 msgid "Add to the graph"
-msgstr "Dodavanje grafikonu"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1608
-#, fuzzy
 msgid ""
 "An operation gets the color of its category.<br>\n"
 "                        The operation categories should be filled in the "
 "operation table.\n"
 "                        <br><br>"
 msgstr ""
-"Operacija dobiva boju svoje kategorije.<br>Kategorije operacija trebaju biti "
-"popunjene u tablici operacije.                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1643
-#, fuzzy
 msgid ""
 "An operation gets the color of its subcategory.<br>\n"
 "                        The operation subcategories should be filled in the "
 "operation table.\n"
 "                        <br><br>"
 msgstr ""
-"Operacija dobiva boju svoje potkategorije.<br>Potkategorije operacije treba "
-"popuniti u operacijsku tablicu.                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1540
-#, fuzzy
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"Operacija dobiva boju kategorije stavke koju proizvodi.<br>Kategorije stavki "
-"treba popuniti u tablici stavki.                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1574
-#, fuzzy
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"Operacija dobiva boju potkategorije stavke koju proizvodi.<br>Potkategorije "
-"predmeta treba popuniti u tablici stavki.                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1481
-#, fuzzy
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br>"
 msgstr ""
-"Operacija dobiva boju svoje kategorije.<br>Kategorije operacija trebaju biti "
-"popunjene u tablici operacije.                        <br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:319
 #, fuzzy
@@ -7459,14 +6939,12 @@ msgid "Apply"
 msgstr "Primjeni"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:65
-#, fuzzy
 msgid "Automatically resolve infeasiblities in the plan"
-msgstr "Automatski riješite neispitivanje u planu"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1346
-#, fuzzy
 msgid "Clear the plan of selected demands"
-msgstr "Očistite plan odabranih zahtjeva"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:403
 #, fuzzy
@@ -7482,14 +6960,12 @@ msgid "Continue"
 msgstr "Nastavi"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1420
-#, fuzzy
 msgid "Criticality color setup"
-msgstr "Postavljanje kritičnosti u boji"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1448
-#, fuzzy
 msgid "Delay color setup"
-msgstr "Odgoda postavljanja boja"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:46
 #, fuzzy
@@ -7497,14 +6973,12 @@ msgid "Delivery"
 msgstr "Dostava"
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:44
-#, fuzzy
 msgid "Distribution Order"
-msgstr "nalog za distribuciju"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1475
-#, fuzzy
 msgid "Due date color setup"
-msgstr "Odgoda postavljanja boja"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:283
 #: freppledb/planningboard/static/planningboard/planningboard.html:362
@@ -7518,21 +6992,18 @@ msgstr "Dupliciraj"
 #: freppledb/planningboard/static/planningboard/planningboard.html:1330
 #: freppledb/planningboard/static/planningboard/planningboard.html:1365
 #: freppledb/planningboard/static/planningboard/planningboard.html:1392
-#, fuzzy
 msgid "Enter name"
-msgstr "Unesite ime"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:30
 #: freppledb/quoting/static/quoting/quoting.html:43
 #: freppledb/quoting/static/quoting/quoting.html:56
-#, fuzzy
 msgid "Enter your search terms"
-msgstr "Unesite svoje pojmove za pretraživanje"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:441
-#, fuzzy
 msgid "Estimated forecast error"
-msgstr "Procijenjena pogreška prognoze"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:415
 #, fuzzy
@@ -7540,19 +7011,16 @@ msgid "Intermittent"
 msgstr "Isprekidano"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1534
-#, fuzzy
 msgid "Item category color setup"
-msgstr "Postavljanje boja kategorije stavke"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1568
-#, fuzzy
 msgid "Item subcategory color setup"
-msgstr "Postavljanje potkategorije u boji stavke"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:42
-#, fuzzy
 msgid "Manufacturing Order"
-msgstr "radni nalog"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:419
 #, fuzzy
@@ -7560,57 +7028,47 @@ msgid "Moving average"
 msgstr "Pomični prosjek"
 
 #: freppledb/forecast/static/forecast/forecast.html:262
-#, fuzzy
 msgid "No comments yet"
-msgstr "bez komentara"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:139
-#, fuzzy
 msgid "No plan yet"
-msgstr "Još nema plana."
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1602
-#, fuzzy
 msgid "Operation category color setup"
-msgstr "Postavljanje boja u kategoriji operacija"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1637
-#, fuzzy
 msgid "Operation subcategory color setup"
-msgstr "Operacija podkategorija postava boja"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:321
-#, fuzzy
 msgid "Operationplan"
-msgstr "operativni plan"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1337
 #: freppledb/planningboard/static/planningboard/planningboard.html:887
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:259
-#, fuzzy
 msgid "Plan selected demands backward from their due date"
-msgstr "Planirajte odabrane zahtjeve unatrag od datuma dospija"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1340
 #: freppledb/planningboard/static/planningboard/planningboard.html:890
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:260
-#, fuzzy
 msgid "Plan selected demands forward from the current date"
-msgstr "Planirajte odabrane zahtjeve unaprijed od trenutnog datuma"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:54
 #: freppledb/planningboard/static/planningboard/planningboard.html:155
-#, fuzzy
 msgid "Please be patient, the chart may take some time to complete."
-msgstr "Budite strpljivi, grafikon može potrajati neko vrijeme."
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1507
-#, fuzzy
 msgid "Priority color setup"
-msgstr "Prioritetno postavljanje boja"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1512
-#, fuzzy
 msgid ""
 "Priority is a demand property, available in the demands table. The priority "
 "value will have effect in the plan results.<br>\n"
@@ -7618,10 +7076,6 @@ msgid ""
 "value the lower the priority.\n"
 "                        <br><br>"
 msgstr ""
-"Prioritet je nekretnina potražnje, dostupna u tablici zahtjeva. Prioritetna "
-"vrijednost imat će učinka u rezultatima plana.<br>Najveća prioritetna "
-"vrijednost je 0, a što je veća vrijednost, to je manji "
-"prioritet.                        <br><br>"
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:43
 #, fuzzy
@@ -7629,28 +7083,20 @@ msgid "Purchase Order"
 msgstr "Narudžbenica"
 
 #: freppledb/quoting/static/quoting/quoting.html:192
-#, fuzzy
 msgid "Quoting error"
-msgstr "Pogreška u citiranju"
-
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:194
-msgid "Remark"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:884
-#, fuzzy
 msgid "Remove this demand from planning"
-msgstr "Uklonite ovu potražnju iz planiranja"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:163
-#, fuzzy
 msgid "Save changes to the database"
-msgstr "Spremi promjene u bazu podataka"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:172
-#, fuzzy
 msgid "Save plan from memory to the database"
-msgstr "Spremi plan iz memorije u bazu podataka"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:411
 #, fuzzy
@@ -7658,41 +7104,33 @@ msgid "Seasonal"
 msgstr "Sezonski"
 
 #: freppledb/forecast/static/forecast/forecast.html:391
-#, fuzzy
 msgid ""
 "Select forecast method, only possible at single item/location/customer level"
 msgstr ""
-"Odaberite metodu predviđanja, moguću samo na jednoj artikala/lokaciji/razini "
-"kupca"
 
 #: freppledb/forecast/static/forecast/forecast.html:49
-#, fuzzy
 msgid "Select panel measure"
-msgstr "Odaberite mjeru ploče"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:5
-#, fuzzy
 msgid "Select panel sequence"
-msgstr "Odaberite redoslijed panela"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:432
-#, fuzzy
 msgid "Selected forecast method"
-msgstr "izabrani metod prognoze"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:171
-#, fuzzy
 msgid "Simulate changes without saving"
-msgstr "simuliraj promjene bez spremanja"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:289
 #: freppledb/planningboard/static/planningboard/planningboard.html:368
 #: freppledb/planningboard/static/planningboard/planningboard.html:552
 #: freppledb/planningboard/static/planningboard/planningboard.html:678
 #: freppledb/planningboard/static/planningboard/planningboard.html:804
-#, fuzzy
 msgid "Split in half"
-msgstr "Podjela na pola"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:45
 #, fuzzy
@@ -7701,12 +7139,10 @@ msgstr "Lager"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:53
 #: freppledb/planningboard/static/planningboard/planningboard.html:154
-#, fuzzy
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
-msgstr "Gantt grafikon ograničen je na {{rowlimit}} redove."
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1425
-#, fuzzy
 msgid ""
 "The criticality of an operationplan measures the slack time available till "
 "the delivery of the customer demand.<br>\n"
@@ -7716,14 +7152,8 @@ msgid ""
 "not immediately impact the delivery of any demand.\n"
 "                        <br><br>"
 msgstr ""
-"Kritičnost operacijog aviona mjeri vrijeme zatišja koje je dostupno do "
-"isporuke potražnje kupaca.<br>Kritičnost od 0 ukazuje na to da je poredak na "
-"kritičnom putu jednog ili više zahtjeva.<br>Više vrijednosti kritičnosti "
-"upućuju na to da kašnjenje neće odmah utjecati na isporuku bilo kakve "
-"potražnje.                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1453
-#, fuzzy
 msgid ""
 "The delay of an operationplan compares its end date with the delivery due "
 "date of the customer demand(s) it feeds.<br>\n"
@@ -7731,10 +7161,6 @@ msgid ""
 "operations still required to produce the finished end item.\n"
 "                        <br><br>"
 msgstr ""
-"Kašnjenje operacijog plana uspoređuje njegov krajnji datum s datumom "
-"isporuke potražnje kupaca(e) koji hrani.<br>Time se također razmatra "
-"trajanje naknadnih operacija koje su još uvijek potrebne za izradu gotovog "
-"krajnjeg artikla.                        <br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:407
 #, fuzzy
@@ -7742,91 +7168,74 @@ msgid "Trend"
 msgstr "Trend"
 
 #: freppledb/forecast/static/forecast/forecast.html:167
-#, fuzzy
 msgid "Undo changes"
-msgstr "Poništavanje promjena"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:78
-#, fuzzy
 msgid "View end events"
-msgstr "Prikaz završnih događaja"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:80
-#, fuzzy
 msgid "View full duration"
-msgstr "trajanje postavljanja"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:79
-#, fuzzy
 msgid "View start and end events"
-msgstr "Prikaz početnih i završnih događaja"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:77
-#, fuzzy
 msgid "View start events"
-msgstr "početna zaliha"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:254
-#, fuzzy
 msgid "approved: {{aggregatedoperationplans.status.approved }}"
-msgstr "odobreno: {{aggregatedoperationplans.status.approved }}"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:263
-#, fuzzy
 msgid "closed: {{aggregatedoperationplans.status.closed }}"
-msgstr "zatvoreno: {{aggregatedoperationplans.status.closed }}"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:11
-#, fuzzy
 msgid "color by"
-msgstr "Boja"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:192
-#, fuzzy
 msgid "colors"
-msgstr "Boje"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:260
-#, fuzzy
 msgid "completed: {{aggregatedoperationplans.status.completed }}"
-msgstr "dovršeno: {{aggregatedoperationplans.status.completed }}"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:100
-#, fuzzy
 msgid "confirm"
-msgstr "Potvrdi"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:257
-#, fuzzy
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
-msgstr "potvrđeno: {{aggregatedoperationplans.status.confirmed }}"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:214
-#, fuzzy
 msgid "customer delivery"
-msgstr "isporuka kupaca"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:462
 #: freppledb/input/static/operationplandetail/operationplandetail.html:47
 #: freppledb/planningboard/static/planningboard/planningboard.html:148
-#, fuzzy
 msgid "database transaction failed"
-msgstr "transakcija baze podataka nije uspjela"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
-#, fuzzy
 msgid "delivery"
-msgstr "Količina planirana za isporuku"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:145
-#, fuzzy
 msgid "delivery quantity"
-msgstr "količina isporuke"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:2
-#, fuzzy
 msgid "downstream operations"
-msgstr "operacije nizvodno"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:35
 #: freppledb/planningboard/static/planningboard/planningboard.html:1058
@@ -7842,134 +7251,110 @@ msgid "end"
 msgstr "kraj"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:83
-#, fuzzy
 msgid "export as Excel file"
-msgstr "izvoz kao Excel datoteka"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:15
-#, fuzzy
 msgid "feasibility"
-msgstr "Izvedivosti"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:46
 #: freppledb/planningboard/static/planningboard/planningboard.html:147
-#, fuzzy
 msgid "gantt chart rows limit"
-msgstr "Ograničenje redaka gantt grafikona"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:188
-#, fuzzy
 msgid "history"
-msgstr "Povijest"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:33
-#, fuzzy
 msgid "item category"
-msgstr "kategorija stavke"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:36
-#, fuzzy
 msgid "item subcategory"
-msgstr "potkategorija stavki"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:85
-#, fuzzy
 msgid "maximum lateness (in days)"
-msgstr "maksimalna kašnjenja (u danima)"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:28
-#, fuzzy
 msgid "network status"
-msgstr "Status mreže"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:260
-#, fuzzy
 msgid "new customer comment"
-msgstr "novi komentar kupca"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:46
-#, fuzzy
 msgid "no demands"
-msgstr "potražnja"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:17
-#, fuzzy
 msgid "no downstream operationplans information"
-msgstr "nema informacija o nizvodnim pogonima"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:44
-#, fuzzy
 msgid "no movements"
-msgstr "bez pokreta"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:52
-#, fuzzy
 msgid "no network information"
-msgstr "nema mrežnih informacija"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:42
-#, fuzzy
 msgid "no problems"
-msgstr "Problemi"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:40
-#, fuzzy
 msgid "no resources"
-msgstr "resursi"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:18
-#, fuzzy
 msgid "no selection"
-msgstr "nema odabira"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:54
-#, fuzzy
 msgid "no supply information"
-msgstr "Informacije zaluhe"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:17
-#, fuzzy
 msgid "no upstream operationplans information"
-msgstr "nema informacija o uzlaznim pogonima"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:39
-#, fuzzy
 msgid "operation category"
-msgstr "kategorija operacije"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:42
-#, fuzzy
 msgid "operation subcategory"
-msgstr "operacijska potkategorija"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:251
-#, fuzzy
 msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
-msgstr "predloženo: {{aggregatedoperationplans.status.proposed }}"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:8
-#, fuzzy
 msgid "quote form"
-msgstr "obrazac ponude"
+msgstr ""
 
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:194
 #: freppledb/planningboard/static/planningboard/planningboard.html:527
 msgid "remark"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:80
-#, fuzzy
 msgid "remove all rows"
-msgstr "uklonite sve redove"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:77
-#, fuzzy
 msgid "remove row"
-msgstr "uklanjanje redaka"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:258
-#, fuzzy
 msgid "remove this demand from planning"
-msgstr "uklonite tu potražnju iz planiranja"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:19
 #, fuzzy
@@ -7979,15 +7364,13 @@ msgstr "odabrane"
 #: freppledb/planningboard/static/planningboard/planningboard.html:444
 #: freppledb/planningboard/static/planningboard/planningboard.html:596
 #: freppledb/planningboard/static/planningboard/planningboard.html:718
-#, fuzzy
 msgid "setup end"
-msgstr "kraj postavljanja"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/calendar.html:24
 #: freppledb/input/static/operationplandetail/kanban.html:15
-#, fuzzy
 msgid "shown"
-msgstr "pokazano"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:33
 #: freppledb/planningboard/static/planningboard/planningboard.html:1055
@@ -7998,9 +7381,8 @@ msgstr "pokazano"
 #: freppledb/planningboard/static/planningboard/planningboard.html:705
 #: freppledb/planningboard/static/planningboard/planningboard.html:843
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:1084
-#, fuzzy
 msgid "start"
-msgstr "Start"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:33
 #, fuzzy
@@ -8008,41 +7390,49 @@ msgid "stock"
 msgstr "zaliha"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:28
-#, fuzzy
 msgid "supply information"
-msgstr "Informacije zaluhe"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:33
-#, fuzzy
 msgid "types"
-msgstr "Vrste"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:461
 #: freppledb/input/static/operationplandetail/operationplandetail.html:45
 #: freppledb/planningboard/static/planningboard/planningboard.html:146
-#, fuzzy
 msgid "unsaved changes"
-msgstr "Nespremljene promjene"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:2
-#, fuzzy
 msgid "upstream operations"
-msgstr "uzlazne operacije"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/month.html:13
-#, fuzzy
 msgid "week number"
-msgstr "naziv tjedna"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:215
-#, fuzzy
 msgid "{{ aggregatedoperationplans.count }} selected"
-msgstr "{{ agregoperacijskeplane.count }} odabrane"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:331
-#, fuzzy
 msgid "{{m.label}}"
-msgstr "{{m.label}}"
+msgstr ""
+
+#, fuzzy
+#~ msgid "add"
+#~ msgstr "i"
+
+#, fuzzy
+#~ msgid "is_ip_buffer"
+#~ msgstr "međuspremnik"
+
+#~ msgid "cancel"
+#~ msgstr "odustani"
+
+#, fuzzy
+#~ msgid "delete"
+#~ msgstr "Ukloni"
 
 #~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
 #~ msgstr "Nevažeći format (Format: JJJJ-MM-TT HH:MM:SS)"
@@ -8055,6 +7445,17 @@ msgstr "{{m.label}}"
 
 #~ msgid "material excess"
 #~ msgstr "Višak materijala"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "                        Files in the old .XLS excel format can't be read."
+#~ "<br>\n"
+#~ "                        Please convert them to the new .XLSX format.\n"
+#~ "                        "
+#~ msgstr ""
+#~ "Datoteke u starom . XLS excel format ne može se čitati.<br>Molimo vas da "
+#~ "ih pretvorite u novo . XLSX format."
 
 #, fuzzy
 #~ msgid "favorites"

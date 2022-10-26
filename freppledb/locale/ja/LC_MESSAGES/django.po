@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-25 13:05+0200\n"
+"POT-Creation-Date: 2022-10-26 16:33+0200\n"
 "PO-Revision-Date: 2021-05-06 16:35+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
@@ -964,7 +964,7 @@ msgstr "ソース"
 msgid "last modified"
 msgstr "最終変更日"
 
-#: common/models.py:289 common/report.py:2297 common/report.py:2432
+#: common/models.py:289 common/report.py:2295 common/report.py:2430
 #: common/views.py:475 execute/management/commands/importworkbook.py:202
 #: execute/views.py:1394 input/models.py:102
 #: input/templates/input/calendardetail.html:36
@@ -1058,8 +1058,8 @@ msgid "scenarios"
 msgstr "シナリオ"
 
 #: common/models.py:366 common/report.py:1041 common/report.py:1122
-#: common/report.py:1138 common/report.py:1155 common/report.py:3270
-#: common/report.py:3661 execute/templates/commands/scenario_copy.html:15
+#: common/report.py:1138 common/report.py:1155 common/report.py:3268
+#: common/report.py:3659 execute/templates/commands/scenario_copy.html:15
 msgid "scenario"
 msgstr "シナリオ"
 
@@ -1100,6 +1100,7 @@ msgstr "ユーザー"
 
 #: common/models.py:673 execute/templates/commands/scheduletasks.html:104
 #: execute/templates/commands/scheduletasks.html:169
+#: input/templates/input/calendardetail.html:24
 msgid "Add"
 msgstr "追加"
 
@@ -1111,6 +1112,7 @@ msgstr "変更"
 #: execute/templates/commands/scheduletasks.html:41
 #: execute/templates/commands/scheduletasks.html:87
 #: execute/templates/commands/scheduletasks.html:195
+#: execute/templates/execute/execute.html:68
 #: reportmanager/templates/reportmanager/reportmanager.html:168
 msgid "Delete"
 msgstr "削除"
@@ -1206,8 +1208,8 @@ msgstr "レベル"
 msgid "Higher values indicate more granular time buckets"
 msgstr "高い値はより細かいタイムバケットを示します"
 
-#: common/models.py:1427 common/models.py:1438 common/report.py:3226
-#: common/report.py:3594 common/views.py:665 forecast/models.py:378
+#: common/models.py:1427 common/models.py:1438 common/report.py:3224
+#: common/report.py:3592 common/views.py:665 forecast/models.py:378
 #: forecast/models.py:514
 msgid "bucket"
 msgstr "バケット"
@@ -1321,8 +1323,8 @@ msgstr "いいえ"
 msgid "Yes"
 msgstr "はい"
 
-#: common/report.py:834 common/report.py:1915 common/report.py:1918
-#: common/report.py:2193 common/report.py:2247 common/report.py:2370
+#: common/report.py:834 common/report.py:1913 common/report.py:1916
+#: common/report.py:2191 common/report.py:2245 common/report.py:2368
 #: common/templates/403.html:4 common/templates/403.html:7
 #: executesql/views.py:60 forecast/views.py:1076 forecast/views.py:1250
 #: forecast/views.py:1389 forecast/views.py:1522 forecast/views.py:1666
@@ -1338,104 +1340,100 @@ msgstr "はい"
 msgid "Permission denied"
 msgstr "アクセス拒否"
 
-#: common/report.py:1019 common/report.py:3572 common/report.py:3601
+#: common/report.py:1019 common/report.py:3570 common/report.py:3599
 #: execute/views.py:1155 execute/views.py:1198
 #, python-format
 msgid "Values in this field must exist in the %s table"
 msgstr ""
 
-#: common/report.py:1027 common/report.py:3580 common/report.py:3609
+#: common/report.py:1027 common/report.py:3578 common/report.py:3607
 #: execute/views.py:1163 execute/views.py:1209
 #, python-format
 msgid "Accepted values are: %s"
 msgstr ""
 
-#: common/report.py:1036 common/report.py:3589 common/report.py:3618
-#: common/report.py:3647 execute/views.py:1172 execute/views.py:1218
+#: common/report.py:1036 common/report.py:3587 common/report.py:3616
+#: common/report.py:3645 execute/views.py:1172 execute/views.py:1218
 #: execute/views.py:1238
 msgid "Read only"
 msgstr "読み取り専用"
 
-#: common/report.py:1590
-msgid ""
-"\n"
-"                        Files in the old .XLS excel format can't be read.<br>\n"
-"                        Please convert them to the new .XLSX format.\n"
-"                        "
+#: common/report.py:1590 execute/views.py:1320
+msgid "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
 msgstr ""
 
-#: common/report.py:1749
+#: common/report.py:1747
 #, python-format
 msgid "%(title)s for %(entity)s"
 msgstr "%(entity)s の %(title)s"
 
-#: common/report.py:1949 common/report.py:1997 common/report.py:2073
+#: common/report.py:1947 common/report.py:1995 common/report.py:2071
 #, python-format
 msgid "Can't find %s"
 msgstr "%s が見つかりません"
 
-#: common/report.py:1982
+#: common/report.py:1980
 #, python-format
 msgid "Can't copy %s"
 msgstr "%s がコピーできません"
 
-#: common/report.py:2222
+#: common/report.py:2220
 #, python-format
 msgid "Erasing data from %(model)s"
 msgstr "%(model)s からデータを削除しました"
 
-#: common/report.py:2241 common/report.py:2364
+#: common/report.py:2239 common/report.py:2362
 msgid "Invalid upload request"
 msgstr "不正なアップロードリクエスト"
 
-#: common/report.py:2294 common/report.py:2429
+#: common/report.py:2292 common/report.py:2427
 #: execute/management/commands/importworkbook.py:199 execute/views.py:1371
 #: execute/views.py:1391
 msgid "worksheet"
 msgstr ""
 
-#: common/report.py:2295 common/report.py:2430
+#: common/report.py:2293 common/report.py:2428
 #: execute/management/commands/importworkbook.py:200 execute/views.py:1392
 msgid "row"
 msgstr "行"
 
-#: common/report.py:2296 common/report.py:2431
+#: common/report.py:2294 common/report.py:2429
 #: execute/management/commands/importworkbook.py:201 execute/views.py:1393
 msgid "field"
 msgstr "データフィールド"
 
-#: common/report.py:2298 common/report.py:2309 common/report.py:2433
-#: common/report.py:2446 execute/management/commands/importworkbook.py:203
+#: common/report.py:2296 common/report.py:2307 common/report.py:2431
+#: common/report.py:2444 execute/management/commands/importworkbook.py:203
 #: execute/management/commands/importworkbook.py:222 execute/views.py:1395
 #: execute/views.py:1406
 msgid "error"
 msgstr "エラー"
 
-#: common/report.py:2300 common/report.py:2319 common/report.py:2435
-#: common/report.py:2458 execute/management/commands/importworkbook.py:205
+#: common/report.py:2298 common/report.py:2317 common/report.py:2433
+#: common/report.py:2456 execute/management/commands/importworkbook.py:205
 #: execute/management/commands/importworkbook.py:243 execute/views.py:1397
 #: execute/views.py:1416
 msgid "warning"
 msgstr "警告"
 
-#: common/report.py:2399
+#: common/report.py:2397
 #, fuzzy
 #| msgid "log file"
 msgid "file"
 msgstr "ログファイル"
 
-#: common/report.py:2741
+#: common/report.py:2739
 #: inventoryplanning/templates/inventoryplanning/drp.html:2929
 #: inventoryplanning/templates/inventoryplanning/drp.html:2948
 msgid "false"
 msgstr "偽"
 
-#: common/report.py:3241 common/report.py:3397 common/report.py:3453
-#: common/report.py:3633
+#: common/report.py:3239 common/report.py:3395 common/report.py:3451
+#: common/report.py:3631
 msgid "title"
 msgstr "タイトル"
 
-#: common/report.py:3256 common/report.py:3652 forecast/models.py:385
+#: common/report.py:3254 common/report.py:3650 forecast/models.py:385
 #: forecast/models.py:521
 msgid "data field"
 msgstr "データフィールド"
@@ -1859,8 +1857,12 @@ msgid "OK"
 msgstr "OK"
 
 #: common/templates/admin/subtemplate_timebuckets.html:81
+#: execute/templates/commands/exporttofolder.html:74
+#: execute/templates/commands/importfromfolder.html:123
+#: execute/templates/execute/execute.html:41
+#: execute/templates/execute/execute.html:47
 #: executesql/templates/executesql/executesql.html:110
-msgid "cancel"
+msgid "Cancel"
 msgstr "キャンセル"
 
 #: common/templates/auth/change_password.html:21
@@ -2622,13 +2624,6 @@ msgstr "ファイル削除"
 msgid "Confirm"
 msgstr "確認"
 
-#: execute/templates/commands/exporttofolder.html:74
-#: execute/templates/commands/importfromfolder.html:123
-#: execute/templates/execute/execute.html:41
-#: execute/templates/execute/execute.html:47
-msgid "Cancel"
-msgstr "キャンセル"
-
 #: execute/templates/commands/exporttofolder.html:86
 #: execute/templates/commands/importfromfolder.html:135
 msgid "All data files were deleted"
@@ -2866,12 +2861,6 @@ msgstr "キャンセル"
 msgid "download"
 msgstr "ダウンロード"
 
-#: execute/templates/execute/execute.html:68
-#, fuzzy
-#| msgid "Delete"
-msgid "delete"
-msgstr "削除"
-
 #: execute/templates/execute/execute.html:70 forecast/models.py:1089
 msgid "view"
 msgstr "表示"
@@ -2936,10 +2925,6 @@ msgstr "エクスポートはありません"
 #| msgid "log file"
 msgid "Processing file"
 msgstr "ログファイル"
-
-#: execute/views.py:1320
-msgid "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
-msgstr ""
 
 #: execute/views.py:1327
 msgid "Unsupported file format."
@@ -4857,12 +4842,6 @@ msgstr "終了日"
 msgid "delivery orders"
 msgstr "配達作業"
 
-#: input/templates/input/calendardetail.html:24
-#, fuzzy
-#| msgid "Add"
-msgid "add"
-msgstr "追加"
-
 #: input/templates/input/calendardetail.html:40
 #, fuzzy
 #| msgid "Monday"
@@ -5477,7 +5456,7 @@ msgstr "販売オーダー価格を開く"
 #: inventoryplanning/models.py:476
 #, fuzzy
 #| msgid "Shows purchase orders by ordering date"
-msgid "open purchase order beyond lead time value"
+msgid "open purchase orders beyond lead time value"
 msgstr "購入オーダーを注文日順に表示"
 
 #: inventoryplanning/models.py:482
@@ -5489,7 +5468,7 @@ msgstr "配信順序"
 #: inventoryplanning/models.py:485
 #, fuzzy
 #| msgid "Shows distribution orders by start date"
-msgid "open distribution order beyond lead time value"
+msgid "open distribution orders beyond lead time value"
 msgstr "流通オーダーを開始日順に表示"
 
 #: inventoryplanning/models.py:491 inventoryplanning/views.py:545
@@ -6228,12 +6207,6 @@ msgstr "過負荷"
 msgid "Inventory report"
 msgstr "棚卸レポート"
 
-#: output/views/buffer.py:258
-#, fuzzy
-#| msgid "buffer"
-msgid "is_ip_buffer"
-msgstr "バッファ"
-
 #: output/views/buffer.py:271
 #, fuzzy
 #| msgid "produced"
@@ -6899,6 +6872,24 @@ msgstr "ローカル予測"
 #| msgid "quarter"
 msgid "quarters"
 msgstr "四半期"
+
+#, fuzzy
+#~| msgid "Add"
+#~ msgid "add"
+#~ msgstr "追加"
+
+#, fuzzy
+#~| msgid "buffer"
+#~ msgid "is_ip_buffer"
+#~ msgstr "バッファ"
+
+#~ msgid "cancel"
+#~ msgstr "キャンセル"
+
+#, fuzzy
+#~| msgid "Delete"
+#~ msgid "delete"
+#~ msgstr "削除"
 
 #~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
 #~ msgstr "正しくない日付: 入力すべき形式 YYYY-MM-DD HH:MM:SS"

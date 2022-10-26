@@ -248,10 +248,6 @@ msgstr ""
 msgid "Recalculate"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:194
-msgid "Remark"
-msgstr ""
-
 #: freppledb/planningboard/static/planningboard/planningboard.html:286
 #: freppledb/planningboard/static/planningboard/planningboard.html:365
 #: freppledb/planningboard/static/planningboard/planningboard.html:549
@@ -1062,6 +1058,7 @@ msgstr ""
 msgid "reference"
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:194
 #: freppledb/planningboard/static/planningboard/planningboard.html:527
 msgid "remark"
 msgstr ""

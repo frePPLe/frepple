@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-25 13:05+0200\n"
-"PO-Revision-Date: 2021-05-06 16:35+0200\n"
+"POT-Creation-Date: 2022-10-26 16:33+0200\n"
+"PO-Revision-Date: 2022-10-26 17:00+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: ja\n"
@@ -66,8 +66,9 @@ msgstr "保存"
 #: common/static/js/frepple.js:312 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:338
+#, fuzzy
 msgid "Return to page"
-msgstr ""
+msgstr "ページに戻る"
 
 #: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
 msgid "select"
@@ -76,25 +77,22 @@ msgstr "選択"
 #: common/static/js/frepple.js:562 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:406
-#, fuzzy
 msgid "days early"
-msgstr "日早く"
+msgstr ""
 
 #: common/static/js/frepple.js:564 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:408
-#, fuzzy
 msgid "on time"
-msgstr "終了時間"
+msgstr ""
 
 #: common/static/js/frepple.js:567 common/static/js/frepple.js:569
 #: common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:411
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:413
-#, fuzzy
 msgid "days late"
-msgstr "遅い日数"
+msgstr ""
 
 #: common/static/js/frepple.js:709 common/static/js/frepple.min.js:11
 msgid "Select action"
@@ -168,9 +166,8 @@ msgstr "フォーマットをエクスポート"
 
 #: common/static/js/frepple.js:1223 common/static/js/frepple.js:1273
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Scenarios to export"
-msgstr "エクスポートするシナリオ"
+msgstr ""
 
 #: common/static/js/frepple.js:1230 common/static/js/frepple.js:1281
 #: common/static/js/frepple.js:1323 common/static/js/frepple.js:1356
@@ -187,18 +184,14 @@ msgstr "CSVリスト"
 #: common/static/js/frepple.js:1233 common/static/js/frepple.js:1285
 #: common/static/js/frepple.js:1327 common/static/js/frepple.js:1361
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Data source URL"
-msgstr "データ ソース URL"
+msgstr ""
 
 #: common/static/js/frepple.js:1235 common/static/js/frepple.js:1287
 #: common/static/js/frepple.js:1329 common/static/js/frepple.js:1363
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Using this link external applications can pull data from frePPLe"
 msgstr ""
-"このリンクを使用して外部アプリケーションは、frePPLe からデータをプルすること"
-"ができます。"
 
 #: common/static/js/frepple.js:1242 common/static/js/frepple.js:1294
 #: common/static/js/frepple.js:1336 common/static/js/frepple.js:1370
@@ -208,6 +201,7 @@ msgstr "クリップボードにコピー"
 
 #: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
 #: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
+#: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
 #: common/static/js/frepple.min.js:11
 msgid "Export"
 msgstr "エクスポート"
@@ -251,14 +245,12 @@ msgid "Search"
 msgstr "検索"
 
 #: common/static/js/frepple.js:1877 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "within"
-msgstr "フェンスを解放: 解放された時間ウインドウの中で計画しない"
+msgstr ""
 
 #: common/static/js/frepple.js:1879 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "is child of"
-msgstr "子作業"
+msgstr ""
 
 #: common/static/js/frepple.js:1881 common/static/js/frepple.min.js:11
 msgid "is null"
@@ -278,25 +270,17 @@ msgid "and"
 msgstr "と"
 
 #: common/static/js/frepple.js:2103 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Click ok to confirm deleting the favorite"
-msgstr "[OK] をクリックして、お気に入りの削除を確定します。"
-
-#: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
-#: common/static/js/frepple.min.js:11
-msgid "export"
-msgstr "エクスポート"
+msgstr ""
 
 #: common/static/js/frepple.js:2278 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "export selected records"
-msgstr "選択したレコードをエクスポートする"
+msgstr ""
 
 #: common/static/js/frepple.js:2288 common/static/js/frepple.js:2459
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "connecting"
-msgstr "接続"
+msgstr ""
 
 #: common/static/js/frepple.js:2297 common/static/js/frepple.js:2466
 #: common/static/js/frepple.min.js:11
@@ -361,9 +345,9 @@ msgid "Delete"
 msgstr "削除"
 
 #: common/static/js/frepple.js:2871 common/static/js/frepple.min.js:11
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%s unread messages"
-msgstr "未読メッセージの%s"
+msgstr ""
 
 #: common/static/js/frepple.js:2876 common/static/js/frepple.min.js:11
 msgid "No unread messages"
@@ -398,9 +382,8 @@ msgid "Select files"
 msgstr "ファイルを選択"
 
 #: common/static/js/frepple.js:3058 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "or drop them here"
-msgstr "またはここにドロップ"
+msgstr ""
 
 #: common/static/js/frepple.js:3067 common/static/js/frepple.min.js:11
 msgid "Data file"
@@ -427,9 +410,9 @@ msgid "Canceled"
 msgstr "キャンセル"
 
 #: common/static/js/frepple.js:3220 common/static/js/frepple.min.js:11
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%s records processed"
-msgstr "処理されたレコード%s"
+msgstr ""
 
 #: common/static/js/frepple.js:3954 common/static/js/frepple.min.js:11
 msgid "Follow"
@@ -440,40 +423,41 @@ msgid "Update"
 msgstr "更新"
 
 #: common/static/js/frepple.js:3973 common/static/js/frepple.min.js:11
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Manage notifications of %s"
-msgstr "%sの通知を管理する"
+msgstr ""
 
 #: common/static/js/frepple.js:3981 common/static/js/frepple.min.js:11
 msgid "Following"
 msgstr "フォロー中"
 
 #: common/static/js/frepple.js:4002 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Add followers"
-msgstr "フォロワーを追加する"
+msgstr ""
 
 #: common/static/js/frepple.min.js:11
 msgid "OR"
 msgstr "または"
 
+#: common/static/js/frepple.min.js:11
+msgid "export"
+msgstr "エクスポート"
+
 #: forecast/static/forecast/src/forecast.js:941
 #: forecast/static/js/frepple-forecast.min.js:11
 #, fuzzy
 msgid "Show descriptions"
-msgstr "記述"
+msgstr "説明の表示"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
-#, fuzzy
 msgid "inventory status"
-msgstr "在庫ステータス"
+msgstr ""
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:29
-#, fuzzy
 msgid "onhand at lead time"
-msgstr "リードタイムでの直接"
+msgstr ""
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
@@ -489,7 +473,7 @@ msgstr "現在の在庫"
 #: planningboard/static/planningboard/src/planningboard.js:885
 #, fuzzy
 msgid "minutes"
-msgstr "%d 分"
+msgstr "分"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:65
@@ -498,7 +482,7 @@ msgstr "%d 分"
 #: planningboard/static/planningboard/src/planningboard.js:893
 #, fuzzy
 msgid "seconds"
-msgstr "%(count)s秒前"
+msgstr "秒"
 
 #: output/views/resource.py:255
 msgid "hours"
@@ -509,21 +493,21 @@ msgstr "時"
 #: planningboard/static/planningboard/src/planningboard.js:881
 #, fuzzy
 msgid "hour"
-msgstr "時"
+msgstr "時間"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:888
 #: planningboard/static/planningboard/src/planningboard.js:889
 #, fuzzy
 msgid "minute"
-msgstr "%d 分"
+msgstr "分"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:895
 #: planningboard/static/planningboard/src/planningboard.js:896
 #, fuzzy
 msgid "second"
-msgstr "%(count)s秒前"
+msgstr "秒"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
@@ -539,9 +523,8 @@ msgstr ""
 "と小文字は区別されます。"
 
 #: admin.py:24
-#, fuzzy
 msgid "This user is inactive."
-msgstr "このユーザーは非アクティブです。"
+msgstr ""
 
 #: archive/models.py:44 common/models.py:642 common/models.py:679
 #: common/models.py:917 common/models.py:991 common/models.py:1436
@@ -789,9 +772,8 @@ msgstr "地域"
 #: input/views/inventory.py:1589 input/views/manufacturing.py:1855
 #: input/views/purchasing.py:916 input/views/sales.py:303
 #: input/views/sales.py:601 output/views/buffer.py:253
-#, fuzzy
 msgid "batch"
-msgstr "バッチ"
+msgstr ""
 
 #: archive/models.py:66 archive/models.py:91 forecast/views.py:197
 #: forecast/views.py:607 forecast/views.py:1982 input/models.py:225
@@ -1116,14 +1098,12 @@ msgid "owner"
 msgstr "所有者"
 
 #: archive/models.py:134
-#, fuzzy
 msgid "item cost"
-msgstr "品目原価"
+msgstr ""
 
 #: archive/models.py:137
-#, fuzzy
 msgid "itemsupplier cost"
-msgstr "品目供給元原価"
+msgstr ""
 
 #: archive/models.py:140 input/models.py:1483 input/models.py:1881
 #: input/views/inventory.py:369 input/views/inventory.py:531
@@ -1183,34 +1163,28 @@ msgid "demand"
 msgstr "需要"
 
 #: archive/widget.py:28
-#, fuzzy
 msgid "Inventory history"
-msgstr "在庫履歴"
+msgstr ""
 
 #: archive/widget.py:29
-#, fuzzy
 msgid "Show the history of the on hand inventory"
-msgstr "手持在庫の履歴を表示"
+msgstr ""
 
 #: archive/widget.py:172
-#, fuzzy
 msgid "Demand history"
-msgstr "需要履歴"
+msgstr ""
 
 #: archive/widget.py:173
-#, fuzzy
 msgid "Show the evolution of the open sales orders"
-msgstr "オープン販売注文の進化を表示する"
+msgstr ""
 
 #: archive/widget.py:337
-#, fuzzy
 msgid "Purchase order history"
-msgstr "発注書の履歴"
+msgstr ""
 
 #: archive/widget.py:338
-#, fuzzy
 msgid "Show the evolution of the open purchase orders"
-msgstr "オープン発注書の進化を表示する"
+msgstr ""
 
 #: common/admin.py:28 common/admin.py:39
 msgid "Personal info"
@@ -1221,9 +1195,8 @@ msgid "password"
 msgstr "パスワード"
 
 #: common/admin.py:32
-#, fuzzy
 msgid "scenario access"
-msgstr "シナリオアクセス"
+msgstr ""
 
 #: common/admin.py:43
 msgid "Permissions in this scenario"
@@ -1314,9 +1287,8 @@ msgid "Cannot delete %(name)s"
 msgstr "%(name)s が削除できません"
 
 #: common/adminforms.py:704
-#, fuzzy
 msgid "About to delete!"
-msgstr "削除しようとしています!"
+msgstr ""
 
 #: common/adminforms.py:705
 msgid "Are you sure?"
@@ -1327,9 +1299,8 @@ msgid "Required."
 msgstr "必須。"
 
 #: common/adminforms.py:752 common/adminforms.py:755
-#, fuzzy
 msgid "Required. Max 30 characters."
-msgstr "必須。最大 30 文字。"
+msgstr ""
 
 #: common/api/views.py:40
 msgid "REST API Help"
@@ -1346,9 +1317,8 @@ msgid "Some keys were missing: %(keys)s"
 msgstr "いくつかのキーが欠落しています: %(keys)s"
 
 #: common/dataload.py:505 input/models.py:2707
-#, fuzzy
 msgid "Key fields not unique"
-msgstr "キー フィールドは一意ではありません"
+msgstr ""
 
 #: common/dataload.py:574 forecast/models.py:745 input/models.py:2776
 #, python-format
@@ -1366,7 +1336,7 @@ msgstr "正しく選択してください。選択したものは候補にあり
 #: common/localization.py:38 common/localization.py:56
 #, fuzzy
 msgid "Invalid date format"
-msgstr "不正な入力フィールド"
+msgstr "無効な日付形式"
 
 #: common/menu.py:117
 msgid "Documentation"
@@ -1387,6 +1357,7 @@ msgstr "frePPLeについて"
 #: common/middleware.py:234 common/middleware.py:240
 msgid "Your session has expired. Please login again to continue."
 msgstr ""
+"セッションの有効期限が切れています。続行するには、再度ログインしてください。"
 
 #: common/models.py:56 forecast/models.py:1094 input/models.py:884
 #: input/models.py:1644 input/models.py:1795
@@ -1475,7 +1446,7 @@ msgstr "ソース"
 msgid "last modified"
 msgstr "最終変更日"
 
-#: common/models.py:289 common/report.py:2297 common/report.py:2432
+#: common/models.py:289 common/report.py:2295 common/report.py:2430
 #: common/views.py:475 execute/management/commands/importworkbook.py:202
 #: execute/views.py:1394 input/models.py:102
 #: input/templates/input/calendardetail.html:36
@@ -1569,8 +1540,8 @@ msgid "scenarios"
 msgstr "シナリオ"
 
 #: common/models.py:366 common/report.py:1041 common/report.py:1122
-#: common/report.py:1138 common/report.py:1155 common/report.py:3270
-#: common/report.py:3661 execute/templates/commands/scenario_copy.html:15
+#: common/report.py:1138 common/report.py:1155 common/report.py:3268
+#: common/report.py:3659 execute/templates/commands/scenario_copy.html:15
 msgid "scenario"
 msgstr "シナリオ"
 
@@ -1593,9 +1564,8 @@ msgstr "ページサイズ"
 
 #: common/models.py:409 common/templates/common/preferences.html:118
 #: common/views.py:177
-#, fuzzy
 msgid "default scenario"
-msgstr "シナリオ"
+msgstr ""
 
 #: common/models.py:558 common/models.py:645 common/models.py:706
 #: common/models.py:924 common/models.py:995 common/views.py:497
@@ -1610,6 +1580,7 @@ msgstr "ユーザー"
 
 #: common/models.py:673 execute/templates/commands/scheduletasks.html:104
 #: execute/templates/commands/scheduletasks.html:169
+#: input/templates/input/calendardetail.html:24
 msgid "Add"
 msgstr "追加"
 
@@ -1623,9 +1594,8 @@ msgid "comment"
 msgstr "コメント"
 
 #: common/models.py:677 common/models.py:981 common/models.py:1003
-#, fuzzy
 msgid "follower"
-msgstr "弟子"
+msgstr ""
 
 #: common/models.py:685
 msgid "content type"
@@ -1649,14 +1619,12 @@ msgid "comments"
 msgstr "コメント"
 
 #: common/models.py:919 common/views.py:610
-#, fuzzy
 msgid "model name"
-msgstr "モデル名"
+msgstr ""
 
 #: common/models.py:921 common/views.py:616
-#, fuzzy
 msgid "object name"
-msgstr "オブジェクト名"
+msgstr ""
 
 #: common/models.py:982
 msgid "followers"
@@ -1668,9 +1636,8 @@ msgid "notification"
 msgstr "通知"
 
 #: common/models.py:1022
-#, fuzzy
 msgid "notifications"
-msgstr "通知"
+msgstr ""
 
 #: common/models.py:1412 input/models.py:676
 #: input/templates/input/operationplanreport.html:317
@@ -1703,8 +1670,8 @@ msgstr "レベル"
 msgid "Higher values indicate more granular time buckets"
 msgstr "高い値はより細かいタイムバケットを示します"
 
-#: common/models.py:1427 common/models.py:1438 common/report.py:3226
-#: common/report.py:3594 common/views.py:665 forecast/models.py:378
+#: common/models.py:1427 common/models.py:1438 common/report.py:3224
+#: common/report.py:3592 common/views.py:665 forecast/models.py:378
 #: forecast/models.py:514
 msgid "bucket"
 msgstr "バケット"
@@ -1726,11 +1693,12 @@ msgstr "バケット日"
 #: common/models.py:1467
 #, fuzzy
 msgid "string"
-msgstr "線"
+msgstr "文字列"
 
 #: common/models.py:1468
+#, fuzzy
 msgid "boolean"
-msgstr ""
+msgstr "真偽値"
 
 #: common/models.py:1469 forecast/models.py:1090
 msgid "number"
@@ -1748,9 +1716,8 @@ msgid "date"
 msgstr "日時"
 
 #: common/models.py:1472
-#, fuzzy
 msgid "datetime"
-msgstr "日付/時刻"
+msgstr ""
 
 #: common/models.py:1473 execute/views.py:151 input/models.py:385
 #: input/models.py:837 input/views/capacity.py:103 input/views/capacity.py:542
@@ -1766,11 +1733,12 @@ msgstr "かかる時間"
 #: common/models.py:1474
 #, fuzzy
 msgid "time"
-msgstr "終了時間"
+msgstr "時間"
 
 #: common/models.py:1475
+#, fuzzy
 msgid "JSON"
-msgstr ""
+msgstr "JSON"
 
 #: common/models.py:1508 common/views.py:506 common/views.py:707
 msgid "model"
@@ -1783,20 +1751,17 @@ msgid "label"
 msgstr "ラベル"
 
 #: common/models.py:1517 common/views.py:722
-#, fuzzy
 msgid "editable"
-msgstr "テーブル"
+msgstr ""
 
 #: common/models.py:1519 common/views.py:726 forecast/models.py:1145
 #: forecast/views.py:353
-#, fuzzy
 msgid "initially hidden"
-msgstr "最初に隠された"
+msgstr ""
 
 #: common/models.py:1538 forecast/models.py:1193
-#, fuzzy
 msgid "Name can only be alphanumeric"
-msgstr "メジャー名は英数字のみ指定できます"
+msgstr ""
 
 #: common/models.py:1580
 #, fuzzy
@@ -1818,8 +1783,8 @@ msgstr "いいえ"
 msgid "Yes"
 msgstr "はい"
 
-#: common/report.py:834 common/report.py:1915 common/report.py:1918
-#: common/report.py:2193 common/report.py:2247 common/report.py:2370
+#: common/report.py:834 common/report.py:1913 common/report.py:1916
+#: common/report.py:2191 common/report.py:2245 common/report.py:2368
 #: common/templates/403.html:4 common/templates/403.html:7
 #: executesql/views.py:60 forecast/views.py:1076 forecast/views.py:1250
 #: forecast/views.py:1389 forecast/views.py:1522 forecast/views.py:1666
@@ -1835,108 +1800,101 @@ msgstr "はい"
 msgid "Permission denied"
 msgstr "アクセス拒否"
 
-#: common/report.py:1019 common/report.py:3572 common/report.py:3601
+#: common/report.py:1019 common/report.py:3570 common/report.py:3599
 #: execute/views.py:1155 execute/views.py:1198
-#, fuzzy, python-format
+#, python-format
 msgid "Values in this field must exist in the %s table"
-msgstr "このフィールドの値は、%s テーブルに存在する必要があります"
+msgstr ""
 
-#: common/report.py:1027 common/report.py:3580 common/report.py:3609
+#: common/report.py:1027 common/report.py:3578 common/report.py:3607
 #: execute/views.py:1163 execute/views.py:1209
-#, fuzzy, python-format
+#, python-format
 msgid "Accepted values are: %s"
-msgstr "受け入れ可能な値は次 %sのとおりです。"
+msgstr ""
 
-#: common/report.py:1036 common/report.py:3589 common/report.py:3618
-#: common/report.py:3647 execute/views.py:1172 execute/views.py:1218
+#: common/report.py:1036 common/report.py:3587 common/report.py:3616
+#: common/report.py:3645 execute/views.py:1172 execute/views.py:1218
 #: execute/views.py:1238
 msgid "Read only"
 msgstr "読み取り専用"
 
-#: common/report.py:1590
-#, fuzzy
+#: common/report.py:1590 execute/views.py:1320
 msgid ""
-"\n"
-"                        Files in the old .XLS excel format can't be read."
-"<br>\n"
-"                        Please convert them to the new .XLSX format.\n"
-"                        "
+"Files in the old .XLS excel format can't be read.<br>Please convert them to "
+"the new .XLSX format."
 msgstr ""
-"古いファイル.XLS Excel 形式を読み取ることができません。<br>それらを新しいに変"
-"換してください.XLSX 形式。"
 
-#: common/report.py:1749
+#: common/report.py:1747
 #, python-format
 msgid "%(title)s for %(entity)s"
 msgstr "%(entity)s の %(title)s"
 
-#: common/report.py:1949 common/report.py:1997 common/report.py:2073
+#: common/report.py:1947 common/report.py:1995 common/report.py:2071
 #, python-format
 msgid "Can't find %s"
 msgstr "%s が見つかりません"
 
-#: common/report.py:1982
+#: common/report.py:1980
 #, python-format
 msgid "Can't copy %s"
 msgstr "%s がコピーできません"
 
-#: common/report.py:2222
+#: common/report.py:2220
 #, python-format
 msgid "Erasing data from %(model)s"
 msgstr "%(model)s からデータを削除しました"
 
-#: common/report.py:2241 common/report.py:2364
+#: common/report.py:2239 common/report.py:2362
 msgid "Invalid upload request"
 msgstr "不正なアップロードリクエスト"
 
-#: common/report.py:2294 common/report.py:2429
+#: common/report.py:2292 common/report.py:2427
 #: execute/management/commands/importworkbook.py:199 execute/views.py:1371
 #: execute/views.py:1391
-#, fuzzy
 msgid "worksheet"
-msgstr "ワークシート"
+msgstr ""
 
-#: common/report.py:2295 common/report.py:2430
+#: common/report.py:2293 common/report.py:2428
 #: execute/management/commands/importworkbook.py:200 execute/views.py:1392
 msgid "row"
 msgstr "行"
 
-#: common/report.py:2296 common/report.py:2431
+#: common/report.py:2294 common/report.py:2429
 #: execute/management/commands/importworkbook.py:201 execute/views.py:1393
 msgid "field"
 msgstr "データフィールド"
 
-#: common/report.py:2298 common/report.py:2309 common/report.py:2433
-#: common/report.py:2446 execute/management/commands/importworkbook.py:203
+#: common/report.py:2296 common/report.py:2307 common/report.py:2431
+#: common/report.py:2444 execute/management/commands/importworkbook.py:203
 #: execute/management/commands/importworkbook.py:222 execute/views.py:1395
 #: execute/views.py:1406
 msgid "error"
 msgstr "エラー"
 
-#: common/report.py:2300 common/report.py:2319 common/report.py:2435
-#: common/report.py:2458 execute/management/commands/importworkbook.py:205
+#: common/report.py:2298 common/report.py:2317 common/report.py:2433
+#: common/report.py:2456 execute/management/commands/importworkbook.py:205
 #: execute/management/commands/importworkbook.py:243 execute/views.py:1397
 #: execute/views.py:1416
 msgid "warning"
 msgstr "警告"
 
-#: common/report.py:2399
+#: common/report.py:2397
 #, fuzzy
 msgid "file"
-msgstr "ログファイル"
+msgstr "ファイル"
 
-#: common/report.py:2741
+#: common/report.py:2739
 #: inventoryplanning/templates/inventoryplanning/drp.html:2929
 #: inventoryplanning/templates/inventoryplanning/drp.html:2948
 msgid "false"
 msgstr "偽"
 
-#: common/report.py:3241 common/report.py:3397 common/report.py:3453
-#: common/report.py:3633
+#: common/report.py:3239 common/report.py:3395 common/report.py:3451
+#: common/report.py:3631
 msgid "title"
 msgstr "タイトル"
 
-#: common/report.py:3256 common/report.py:3652 forecast/models.py:385
+#: common/report.py:3254 common/report.py:3650 forecast/models.py:385
 #: forecast/models.py:521
 msgid "data field"
 msgstr "データフィールド"
@@ -1958,19 +1916,16 @@ msgid "Server Error <em>(500)</em>"
 msgstr "サーバーエラー <em>(500)</em>"
 
 #: common/templates/500.html:8
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Oops, something went wrong.<br>\n"
 "Your administrator can find more information on the error in the log file "
 "%(logfile)s"
 msgstr ""
-"おっと、何かがうまくいかなかった。<br>管理者は、エラーに関する詳細情報をログ "
-"ファイル %(logfile)s で確認できます。"
 
 #: common/templates/admin/auth/user/add_form.html:4
-#, fuzzy
 msgid "Add user - required fields"
-msgstr "ユーザーの追加 - 必須フィールド"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:9
 #: common/templates/admin/base_site_gridpivot.html:9
@@ -1979,9 +1934,8 @@ msgstr "フィルター"
 
 #: common/templates/admin/base_site_grid.html:13
 #: common/templates/admin/base_site_gridpivot.html:13
-#, fuzzy
 msgid "Filter editor"
-msgstr "フィルター エディター"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:51
 #: common/templates/admin/base_site_gridpivot.html:79
@@ -2026,9 +1980,8 @@ msgstr "アクションを選択"
 #: common/templates/admin/base_site_grid.html:347
 #: inventoryplanning/templates/inventoryplanning/drp.html:2510
 #: inventoryplanning/templates/inventoryplanning/drp.html:2516
-#, fuzzy
 msgid "no segment"
-msgstr "セグメント"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:362
 #: common/templates/admin/base_site_gridpivot.html:212
@@ -2118,18 +2071,18 @@ msgid "Help"
 msgstr "ヘルプ"
 
 #: common/templates/admin/base_site_nav.html:78
-#, fuzzy, python-format
+#, python-format
 msgid "Your license expired %(x)s days ago"
-msgstr "ライセンスの有効期限が切れた %(x)s 日前"
+msgstr "ライセンスの有効期限が %(x)s の日前です"
 
 #: common/templates/admin/base_site_nav.html:81
 msgid "License expired"
 msgstr "ライセンス失効"
 
 #: common/templates/admin/base_site_nav.html:87
-#, fuzzy, python-format
+#, python-format
 msgid "Your license expires in %(x)s days"
-msgstr "ライセンスの有効期限は %(x)s 日です"
+msgstr "ライセンスの有効期限は %(x)s 日後です"
 
 #: common/templates/admin/base_site_nav.html:92
 msgid "days left"
@@ -2231,9 +2184,9 @@ msgid "View on site"
 msgstr "サイト上で表示"
 
 #: common/templates/admin/edit_inline/tabular.html:83
-#, fuzzy, python-format
+#, python-format
 msgid "Only %(limit)s out of %(count)s records are shown."
-msgstr "%(count)のレコードのうち%(limit)s のみが表示されます。"
+msgstr ""
 
 #: common/templates/admin/edit_inline/tabular.html:138
 #, python-format
@@ -2300,12 +2253,11 @@ msgstr "から"
 #: common/templates/admin/subtemplate_timebuckets.html:42
 #, fuzzy
 msgid "till"
-msgstr "耕す"
+msgstr "至"
 
 #: common/templates/admin/subtemplate_timebuckets.html:58
-#, fuzzy
 msgid "before till"
-msgstr "まで"
+msgstr ""
 
 #: common/templates/admin/subtemplate_timebuckets.html:63
 #: common/templates/admin/subtemplate_timebuckets.html:69
@@ -2320,14 +2272,8 @@ msgid "months"
 msgstr "月"
 
 #: common/templates/admin/subtemplate_timebuckets.html:73
-#, fuzzy
 msgid "after current date"
-msgstr "現在の日付以降"
-
-#: common/templates/admin/subtemplate_timebuckets.html:81
-#: executesql/templates/executesql/executesql.html:110
-msgid "cancel"
-msgstr "キャンセル"
+msgstr ""
 
 #: common/templates/auth/change_password.html:21
 #, python-format
@@ -2361,19 +2307,16 @@ msgid "Unread"
 msgstr "未読"
 
 #: common/templates/common/inbox.html:111
-#, fuzzy
 msgid "Select/unselect all messages"
-msgstr "すべてのメッセージを選択/選択解除する"
+msgstr ""
 
 #: common/templates/common/inbox.html:141
-#, fuzzy
 msgid "Mark message unread"
-msgstr "メッセージを未読にする"
+msgstr ""
 
 #: common/templates/common/inbox.html:144
-#, fuzzy
 msgid "Mark message read"
-msgstr "メッセージを既読にマーク"
+msgstr ""
 
 #: common/templates/common/preferences.html:90
 msgid "Number of records per page"
@@ -2384,13 +2327,10 @@ msgid "avatar"
 msgstr "アバター"
 
 #: common/templates/common/preferences.html:145
-#, fuzzy
 msgid ""
 "Upload a square picture of yourself.<br>Accepted formats are jpeg, png and "
 "gif.<br>Max file size is 100kB."
 msgstr ""
-"自分の正方形の画像をアップロードします。<br>使用できる形式は jpeg、png、gif "
-"です。<br>最大ファイル サイズは 100kB です。"
 
 #: common/templates/common/preferences.html:154
 #: common/templates/registration/password_change_form.html:21
@@ -2408,14 +2348,12 @@ msgid "New password confirmation"
 msgstr "新しいパスワード(確認用)"
 
 #: common/templates/common/snippet_follow.html:8
-#, fuzzy
 msgid "Manage notifications in your inbox"
-msgstr "受信トレイで通知を管理する"
+msgstr ""
 
 #: common/templates/common/snippet_follow.html:14
-#, fuzzy
 msgid "Get a notification in your inbox when there is activity"
-msgstr "アクティビティがあるときに受信トレイに通知を受け取る"
+msgstr ""
 
 #: common/templates/index.html:97 execute/templates/execute/execute.html:39
 msgid "failed"
@@ -2443,7 +2381,6 @@ msgid "Password change successful"
 msgstr "パスワードを変更しました"
 
 #: common/templates/registration/password_change_done.html:14
-#, fuzzy
 msgid "Your password was changed."
 msgstr "パスワードが変更されました。"
 
@@ -2468,14 +2405,12 @@ msgid "HTTP request"
 msgstr "HTTP リクエスト"
 
 #: common/templates/rest_framework/api.html:32
-#, fuzzy
 msgid "HTTP response headers"
-msgstr "HTTP 応答ヘッダー"
+msgstr ""
 
 #: common/templates/rest_framework/api.html:43
-#, fuzzy
 msgid "HTTP response content"
-msgstr "HTTP 応答の内容"
+msgstr ""
 
 #: common/templates/rest_framework/api.html:55
 #, python-format
@@ -2713,7 +2648,7 @@ msgid "Some links to get started"
 msgstr "開始するためのリンク"
 
 #: common/widget.py:54
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Welcome to the world's leading open source production planning tool!<br>\n"
 "Click one of images below to explore the main interactive planning screens:"
@@ -2743,68 +2678,40 @@ msgid ""
 "</a>\n"
 "</div>\n"
 msgstr ""
-"世界有数のオープンソース生産計画ツールへようこそ!<br>以下の画像のいずれかをク"
-"リックして、メインのインタラクティブな計画画面を表示します。<br><br>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
-"align: center\">\n"
-"<a href=\"%(prefix)s/forecast/editor/\">\n"
-"  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: 100%%"
-"\" alt=\"Forecast Editor\"><br>\n"
-"  <b>予測エディター</b>\n"
-"</a>\n"
-"</div>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
-"align: center\">\n"
-"<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
-"  <img src=\"/static/img/inventory-planning-thumbnail.png\" style=\"width: "
-"100%%\" alt=\"Inventory Planning\"><br>\n"
-"  <b>在庫計画</b>\n"
-"</a>\n"
-"</div>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
-"align: center\">\n"
-"<a href=\"%(prefix)s/planningboard/\">\n"
-"  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%\" "
-"alt=\"Plan Editor\"><br>\n"
-"  <b>プランエディタ</b>\n"
-"</a>\n"
-"</div>\n"
 
 #: common/widget.py:85
 msgid "News"
 msgstr "ニュース"
 
 #: common/widget.py:86
-#, fuzzy
 msgid "Show the latest news items from the frePPLe website"
-msgstr "frePPLe ウェブサイトの最新ニュース項目を表示する"
+msgstr ""
 
 #: common/widget.py:99
-#, fuzzy
 msgid "Unread messages from your inbox"
-msgstr "受信トレイからの未読メッセージ"
+msgstr ""
 
 #: demandhits/attributes.py:21 demandhits/attributes.py:42
-#, fuzzy, python-format
+#, python-format
 msgid "sales orders last %(num)d months"
-msgstr "販売注文の最後の %(num)d 月"
+msgstr ""
 
 #: demandhits/attributes.py:28 demandhits/attributes.py:49
-#, fuzzy, python-format
+#, python-format
 msgid "sales units last %(num)d months"
-msgstr "販売単位の最後の %(num)d 月"
+msgstr ""
 
 #: demandhits/attributes.py:35 demandhits/attributes.py:56
-#, fuzzy, python-format
+#, python-format
 msgid "sales value last %(num)d months"
-msgstr "販売額は過去 %(num)d 月"
+msgstr ""
 
 #: erpconnection/management/commands/erp2frepple.py:41
 #: odoo/management/commands/odoo_import.py:86
 #: openbravo/management/commands/openbravo_import.py:3650
-#, fuzzy, python-format
+#, python-format
 msgid "Import data from %(erp)s"
-msgstr "%(erp)からデータをインポートする"
+msgstr ""
 
 #: erpconnection/management/commands/frepple2erp.py:34
 #: odoo/management/commands/odoo_export.py:436
@@ -2826,27 +2733,24 @@ msgid "Generate buckets"
 msgstr "バケットを生成"
 
 #: execute/management/commands/emailreport.py:225
-#, fuzzy
 msgid "Publish reports by email"
-msgstr "電子メールでレポートを発行する"
+msgstr ""
 
 #: execute/management/commands/empty.py:315
 msgid "Empty the database"
 msgstr "データベースを空にする"
 
 #: execute/management/commands/exporttofolder.py:516
-#, fuzzy
 msgid "Export plan result"
-msgstr "計画結果のエクスポート"
+msgstr ""
 
 #: execute/management/commands/exportworkbook.py:33
 msgid "Export a spreadsheet"
 msgstr "表をエクスポート"
 
 #: execute/management/commands/importfromfolder.py:546
-#, fuzzy
 msgid "Import data files"
-msgstr "データ ファイルのインポート"
+msgstr ""
 
 #: execute/management/commands/importworkbook.py:146 execute/views.py:1342
 #, python-format
@@ -2882,21 +2786,17 @@ msgid "Create a plan"
 msgstr "計画を作成"
 
 #: execute/management/commands/runplan.py:446
-#, fuzzy
 msgid ""
 "Load all input data, run the planning algorithm, and export the results."
 msgstr ""
-"すべての入力データをロードし、計画アルゴリズムを実行し、結果をエクスポートし"
-"ます。"
 
 #: execute/management/commands/runplan.py:449
 msgid "optional planning steps"
 msgstr "追加の計画手順"
 
 #: execute/management/commands/runplan.py:450
-#, fuzzy
 msgid "Plan type"
-msgstr "計画タイプ"
+msgstr ""
 
 #: execute/management/commands/runplan.py:453
 msgid ""
@@ -2946,14 +2846,12 @@ msgid "scenario management"
 msgstr "シナリオ管理"
 
 #: execute/management/commands/scheduletasks.py:392
-#, fuzzy
 msgid "Group and schedule tasks"
-msgstr "タスクのグループ化とスケジュール"
+msgstr ""
 
 #: execute/management/commands/uploadreport.py:278
-#, fuzzy
 msgid "Publish reports by FTP"
-msgstr "FTP によるレポートの発行"
+msgstr ""
 
 #: execute/menu.py:20 execute/widget.py:20
 msgid "Execute"
@@ -2985,14 +2883,12 @@ msgid "task"
 msgstr "タスク"
 
 #: execute/models.py:101
-#, fuzzy
 msgid "scheduled tasks"
-msgstr "スケジュールされたタスク"
+msgstr ""
 
 #: execute/models.py:102
-#, fuzzy
 msgid "scheduled task"
-msgstr "スケジュールされたタスク"
+msgstr ""
 
 #: execute/templates/commands/backup.html:5
 #: execute/templates/commands/createbuckets.html:7
@@ -3006,19 +2902,16 @@ msgid "launch"
 msgstr "起動"
 
 #: execute/templates/commands/backup.html:6
-#, fuzzy
 msgid "Dump the database contents to a file."
-msgstr "データベースの内容をファイルにダンプします。"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:10
-#, fuzzy
 msgid "create time buckets for reporting."
-msgstr "レポート用のタイムバケットを作成します。"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:24
-#, fuzzy
 msgid "week starts on"
-msgstr "週の開始日"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:28
 #: execute/templates/commands/createbuckets.html:33 input/models.py:105
@@ -3057,29 +2950,24 @@ msgid "Saturday"
 msgstr "土曜日"
 
 #: execute/templates/commands/createbuckets.html:44
-#, fuzzy
 msgid "day name"
-msgstr "曜日名"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:50
-#, fuzzy
 msgid "week name"
-msgstr "週名"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:56
-#, fuzzy
 msgid "month name"
-msgstr "月名"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:62
-#, fuzzy
 msgid "quarter name"
-msgstr "四半期名"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:68
-#, fuzzy
 msgid "year name"
-msgstr "年名"
+msgstr ""
 
 #: execute/templates/commands/emailreport.html:6
 #: execute/templates/commands/uploadreport.html:6
@@ -3087,13 +2975,10 @@ msgid "publish"
 msgstr "公開中"
 
 #: execute/templates/commands/emailreport.html:9
-#, fuzzy
 msgid ""
 "Emails the selected reports to a comma separated list of recipients. Files "
 "are zipped and attached to email."
 msgstr ""
-"選択したレポートを、受信者のコンマ区切りリストに電子メールで送信します。ファ"
-"イルは圧縮され、電子メールに添付されます。"
 
 #: execute/templates/commands/emailreport.html:16
 #: execute/templates/commands/exporttofolder.html:14
@@ -3114,45 +2999,36 @@ msgid "emails"
 msgstr "メール"
 
 #: execute/templates/commands/emailreport.html:66
-#, fuzzy
 msgid "please correct invalid email addresses"
-msgstr "無効な電子メール アドレスを修正してください"
+msgstr ""
 
 #: execute/templates/commands/emailreport.html:70
-#, fuzzy
 msgid "please enter email addresses"
-msgstr "メールアドレスを入力してください"
+msgstr ""
 
 #: execute/templates/commands/empty.html:7
-#, fuzzy
 msgid "Erase selected tables."
-msgstr "選択したテーブルを消去します。"
+msgstr ""
 
 #: execute/templates/commands/empty.html:9
 #: execute/templates/commands/exportworkbook.html:18
-#, fuzzy
 msgid "data tables"
-msgstr "データ テーブル"
+msgstr ""
 
 #: execute/templates/commands/empty.html:19
 #: execute/templates/commands/exportworkbook.html:31
-#, fuzzy
 msgid "admin tables"
-msgstr "管理テーブル"
+msgstr ""
 
 #: execute/templates/commands/empty.html:30
-#, fuzzy
 msgid "plan history"
-msgstr "計画履歴"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:9
-#, fuzzy
 msgid ""
 "Exports the plan (purchase orders, distribution orders and manufacturing "
 "orders) as a set of CSV files."
 msgstr ""
-"計画 (発注書、流通指図、製造指図) を CSV ファイルのセットとしてエクスポートし"
-"ます。"
 
 #: execute/templates/commands/exporttofolder.html:16
 #: execute/templates/commands/importfromfolder.html:16
@@ -3161,9 +3037,8 @@ msgstr "変更された"
 
 #: execute/templates/commands/exporttofolder.html:19
 #: execute/templates/commands/importfromfolder.html:25
-#, fuzzy
 msgid "Download all files"
-msgstr "すべてのファイルをダウンロード"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:25
 #: execute/templates/commands/importfromfolder.html:31
@@ -3172,15 +3047,14 @@ msgstr "すべてのファイルを削除します。"
 
 #: execute/templates/commands/exporttofolder.html:57
 #: execute/templates/commands/importfromfolder.html:106
-#, fuzzy
 msgid "You are about to delete all files"
-msgstr "すべてのファイルを削除しようとしています"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:61
 #: execute/templates/commands/importfromfolder.html:110
-#, fuzzy, python-format
+#, python-format
 msgid "You are about to delete file %%s"
-msgstr "ファイル %%を削除しようとしています"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:67
 #: execute/templates/commands/importfromfolder.html:49
@@ -3190,34 +3064,29 @@ msgstr "ファイル削除"
 
 #: execute/templates/commands/exporttofolder.html:86
 #: execute/templates/commands/importfromfolder.html:135
-#, fuzzy
 msgid "All data files were deleted"
-msgstr "すべてのデータ ファイルが削除されました"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:88
 #: execute/templates/commands/importfromfolder.html:137
-#, fuzzy, python-format
+#, python-format
 msgid "File %%s was deleted"
-msgstr "ファイル%%が削除されました"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:102
 #: execute/templates/commands/exporttofolder.html:108
 #: execute/templates/commands/importfromfolder.html:152
 #: execute/templates/commands/importfromfolder.html:156
 #: execute/templates/commands/importfromfolder.html:158
-#, fuzzy, python-format
+#, python-format
 msgid "File %%s was not deleted"
-msgstr "ファイル%%は削除されませんでした"
+msgstr ""
 
 #: execute/templates/commands/exportworkbook.html:11
-#, fuzzy
 msgid ""
 "Download all input data in a single spreadsheet.<br>Optionally, you can make "
 "the data anonymous during the export to hide sensitive company data."
 msgstr ""
-"すべての入力データを 1 つのスプレッドシートにダウンロードします。<br>必要に応"
-"じて、エクスポート時にデータを匿名にして、機密性の高い会社のデータを非表示に"
-"することもできます。"
 
 #: execute/templates/commands/importfromfolder.html:6
 #: execute/templates/commands/importworkbook.html:5
@@ -3225,25 +3094,20 @@ msgid "import"
 msgstr "インポート"
 
 #: execute/templates/commands/importfromfolder.html:9
-#, fuzzy
 msgid ""
 "Import CSV or Excel files. The file names must match the names of data "
 "objects and the first line in the file must contain the field names."
 msgstr ""
-"CSV ファイルまたは Excel ファイルをインポートします。ファイル名はデータ オブ"
-"ジェクトの名前と一致する必要があり、ファイルの最初の行にはフィールド名が含ま"
-"れている必要があります。"
 
 #: execute/templates/commands/importfromfolder.html:18
 #: execute/templates/commands/importfromfolder.html:19
-#, fuzzy
 msgid "Upload data files"
-msgstr "データ ファイルのアップロード"
+msgstr ""
 
 #: execute/templates/commands/importfromfolder.html:19
 #, fuzzy
 msgid "Upload"
-msgstr "負荷"
+msgstr "アップロード"
 
 #: execute/templates/commands/importfromfolder.html:44
 msgid "Download file"
@@ -3258,14 +3122,12 @@ msgstr ""
 "造を一致させなければなりません。"
 
 #: execute/templates/commands/loaddata.html:15
-#, fuzzy
 msgid "Load one of the available datasets."
-msgstr "使用可能なデータセットのいずれかを読み込みます。"
+msgstr ""
 
 #: execute/templates/commands/loaddata.html:28
-#, fuzzy
 msgid "Execute plan after loading is done"
-msgstr "読み込みが完了した後でプランを実行する"
+msgstr ""
 
 #: execute/templates/commands/loaddata.html:49
 #: execute/templates/execute/execute.html:249
@@ -3273,7 +3135,6 @@ msgid "Sorry, You don't have any execute permissions..."
 msgstr "申し訳ありません、実行権限がありません..."
 
 #: execute/templates/commands/scenario_copy.html:8
-#, fuzzy
 msgid ""
 "You have a number of available scenario databases available.<br>\n"
 "        You can copy data into a scenario database to create a isolated "
@@ -3282,98 +3143,84 @@ msgid ""
 "which scenario you're working in.\n"
 "        "
 msgstr ""
-"使用可能なシナリオ データベースの数があります。<br>シナリオ データベースに"
-"データをコピーして、what-if 分析用の分離されたサンドボックスを作成できます。"
-"<br>画面の右上隅にあるドロップダウンを使用して、作業しているシナリオを選択し"
-"ます。        "
 
 #: execute/templates/commands/scenario_copy.html:16
 msgid "action"
 msgstr "操作"
 
 #: execute/templates/commands/scenario_copy.html:19
-#, fuzzy
 msgid ""
 "<b>In use</b>: Contains data<br><b>Free</b>: Available to copy data "
 "into<br><b>Busy</b>: Data copy in progress"
 msgstr ""
-"<b>使用中</b>: データが含まれています<br><b>無料</b>: にデータをコピーするた"
-"めに利用可能<br><b>ビジー状態</b>: データのコピーが進行中です"
 
 #: execute/templates/commands/scenario_copy.html:25
-#, fuzzy
 msgid "Label shown in the scenario dropdown list"
-msgstr "シナリオのドロップダウン リストに表示されるラベル"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:30
-#, fuzzy
 msgid "Date of the last state change"
-msgstr "最後の状態変更の日付"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:46
 #: execute/templates/commands/scenario_copy.html:68
-#, fuzzy
 msgid "manage"
-msgstr "取り締まる"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:50
 #, fuzzy
 msgid "Copy from"
-msgstr "%s からコピーしました"
+msgstr "コピー元"
 
 #: execute/templates/commands/scenario_copy.html:54
+#, fuzzy
 msgid "Restore from backup"
-msgstr ""
+msgstr "バックアップからの復元"
 
 #: execute/templates/commands/scenario_copy.html:73
-#, fuzzy
 msgid "Release: You will lose ALL data in this scenario!"
-msgstr "リリース: このシナリオでは、すべてのデータが失われます!"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:78
-#, fuzzy
 msgid "Promote: All data will be copied to Production"
-msgstr "プロモート: すべてのデータが本番にコピーされます"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:87
 msgid "Free"
 msgstr "無料"
 
 #: execute/templates/commands/scheduletasks.html:3
-#, fuzzy
 msgid "Run a sequence of tasks, and schedule it to run automatically."
-msgstr "一連のタスクを実行し、自動的に実行するようにスケジュールします。"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:8
-#, fuzzy
 msgid "next scheduled run"
-msgstr "次回のスケジュール済み実行"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:26
 msgid "Edit"
 msgstr "編集"
 
 #: execute/templates/commands/scheduletasks.html:58
-#, fuzzy
 msgid "unique name"
-msgstr "一意の名前"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:84
 #: execute/templates/commands/scheduletasks.html:192
-#, fuzzy
 msgid "abort on failure"
-msgstr "失敗時に中止する"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:91
 #: execute/templates/commands/scheduletasks.html:199
 #, fuzzy
 msgid "Move down"
-msgstr "行の削除"
+msgstr "下に移動"
 
 #: execute/templates/commands/scheduletasks.html:95
 #: execute/templates/commands/scheduletasks.html:203
+#, fuzzy
 msgid "Move up"
-msgstr ""
+msgstr "上へ移動"
 
 #: execute/templates/commands/scheduletasks.html:111 input/models.py:113
 #: input/templates/input/calendardetail.html:68
@@ -3382,9 +3229,8 @@ msgid "start time"
 msgstr "開始時間"
 
 #: execute/templates/commands/scheduletasks.html:119
-#, fuzzy
 msgid "weekly schedule"
-msgstr "週単位のスケジュール"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:122
 msgid "Mon"
@@ -3415,34 +3261,27 @@ msgid "Sun"
 msgstr "日"
 
 #: execute/templates/commands/scheduletasks.html:145
-#, fuzzy
 msgid "email on success"
-msgstr "成功時の電子メール"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:148
 #: execute/templates/commands/scheduletasks.html:156
-#, fuzzy
 msgid "List of emails, separated by commas"
-msgstr "電子メールの一覧 (カンマで区切って)"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:153
-#, fuzzy
 msgid "email on failure"
-msgstr "失敗時の電子メール"
+msgstr ""
 
 #: execute/templates/commands/uploadreport.html:9
-#, fuzzy
 msgid ""
 "Select all reports that will be pushed to the configured FTP/FTPS/SFTP "
 "folder."
 msgstr ""
-"設定された FTP/FTPS/SFTP フォルダにプッシュされるすべてのレポートを選択しま"
-"す。"
 
 #: execute/templates/execute/execute.html:41
-#, fuzzy
 msgid "waiting"
-msgstr "待つこと"
+msgstr ""
 
 #: execute/templates/execute/execute.html:43
 msgid "done"
@@ -3456,11 +3295,6 @@ msgstr "キャンセル"
 #: execute/templates/execute/execute.html:66
 msgid "download"
 msgstr "ダウンロード"
-
-#: execute/templates/execute/execute.html:68
-#, fuzzy
-msgid "delete"
-msgstr "削除"
 
 #: execute/templates/execute/execute.html:70 forecast/models.py:1089
 msgid "view"
@@ -3487,55 +3321,41 @@ msgid "finished"
 msgstr "完了"
 
 #: execute/views.py:346
-#, fuzzy
 msgid "Failure launching task"
-msgstr "アクション起動に失敗: %(msg)s"
+msgstr ""
 
 #: execute/views.py:719
-#, fuzzy
 msgid "Couldn't delete file"
-msgstr "ファイル削除"
+msgstr ""
 
 #: execute/views.py:745
 msgid "Displaying only the last 50K from the log file"
 msgstr "ログファイルの最終50キロバイト分のみ表示しています"
 
 #: execute/views.py:871
-#, fuzzy, python-format
+#, python-format
 msgid "Filename extension must be among %(ext)s"
-msgstr "ファイル名の拡張子は %(ext)s に含む必要があります"
+msgstr ""
 
 #: execute/views.py:892
 msgid "Upload failed"
 msgstr "アップロードに失敗しました。"
 
 #: execute/views.py:915
-#, fuzzy
 msgid "Error deleting file"
-msgstr "ファイルの削除中にエラーが発生しました"
+msgstr ""
 
 #: execute/views.py:1285
 msgid "Nothing to export"
 msgstr "エクスポートはありません"
 
 #: execute/views.py:1316
-#, fuzzy
 msgid "Processing file"
-msgstr "ファイルの処理"
-
-#: execute/views.py:1320
-#, fuzzy
-msgid ""
-"Files in the old .XLS excel format can't be read.<br>Please convert them to "
-"the new .XLSX format."
 msgstr ""
-"古いファイル.XLS Excel 形式を読み取ることができません。<br>それらを新しいに変"
-"換してください.XLSX 形式。"
 
 #: execute/views.py:1327
-#, fuzzy
 msgid "Unsupported file format."
-msgstr "サポートされていないファイル形式です。"
+msgstr ""
 
 #: execute/widget.py:22
 msgid "Generate a constrained plan"
@@ -3543,22 +3363,19 @@ msgstr "制約あり計画を生成"
 
 #: executesql/menu.py:16 reportmanager/menu.py:51 reportmanager/models.py:96
 #: reportmanager/views.py:98
-#, fuzzy
 msgid "my reports"
-msgstr "私のレポート"
+msgstr ""
 
 #: executesql/menu.py:22 executesql/views.py:52
-#, fuzzy
 msgid "Execute SQL"
-msgstr "SQL の実行"
+msgstr ""
 
 #: forecast/admin.py:40 input/admin.py:85 input/admin.py:121 input/admin.py:172
 #: input/admin.py:203 input/admin.py:240 input/admin.py:283 input/admin.py:327
 #: input/admin.py:383 input/admin.py:454 input/admin.py:574 input/admin.py:611
 #: input/admin.py:674 input/admin.py:715 input/admin.py:961
-#, fuzzy
 msgid "advanced"
-msgstr "アドバンスド"
+msgstr ""
 
 #: forecast/admin.py:65 input/admin.py:255 input/admin.py:416
 #: input/admin.py:478 input/admin.py:642 input/admin.py:986
@@ -3578,9 +3395,8 @@ msgstr "計画"
 
 #: forecast/admin.py:71 forecast/views.py:1216 input/admin.py:989
 #: output/views/constraint.py:147
-#, fuzzy
 msgid "why short or late?"
-msgstr "なぜ短いか遅い?"
+msgstr ""
 
 #: forecast/attributes.py:17 forecast/models.py:138 forecast/models.py:371
 #: forecast/models.py:507 forecast/views.py:62 forecast/views.py:523
@@ -3591,18 +3407,16 @@ msgid "forecast"
 msgstr "予測"
 
 #: forecast/attributes.py:23
-#, fuzzy
 msgid "demand_pattern"
-msgstr "demand_pattern"
+msgstr ""
 
 #: forecast/attributes.py:24
 msgid "adi"
 msgstr "adi"
 
 #: forecast/attributes.py:25
-#, fuzzy
 msgid "cv2"
-msgstr "cv2"
+msgstr ""
 
 #: forecast/commands.py:1084 forecast/commands.py:1105
 #: forecast/commands.py:1132 forecast/commands.py:1220
@@ -3615,19 +3429,16 @@ msgid "Generate forecast"
 msgstr "予測を作成"
 
 #: forecast/management/commands/measure_copy.py:229
-#, fuzzy
 msgid "measure management"
-msgstr "メジャー管理"
+msgstr ""
 
 #: forecast/management/commands/measure_copy.py:288
-#, fuzzy
 msgid "Copy source measure"
-msgstr "ソース メジャーのコピー"
+msgstr ""
 
 #: forecast/management/commands/measure_copy.py:288
-#, fuzzy
 msgid "to destination measure"
-msgstr "宛先メジャーへ"
+msgstr ""
 
 #: forecast/menu.py:32 forecast/templates/forecast.html:4
 #: forecast/views.py:2293 input/views/utils.py:107
@@ -3829,9 +3640,8 @@ msgid "planned"
 msgstr "計画済み"
 
 #: forecast/models.py:124
-#, fuzzy
 msgid "Specifies whether this forecast record should be planned"
-msgstr "この予測レコードを計画するかどうかを指定します"
+msgstr ""
 
 #: forecast/models.py:128 input/models.py:1687 input/views/sales.py:344
 #: quoting/views.py:90
@@ -3860,14 +3670,12 @@ msgid "Bucket '%(name)s' not found"
 msgstr "バケット '%(name)s' が見つかりません"
 
 #: forecast/models.py:528
-#, fuzzy
 msgid "multiplier"
-msgstr "サイズ倍数"
+msgstr ""
 
 #: forecast/models.py:635
-#, fuzzy
 msgid "No editable fields found"
-msgstr "編集可能なフィールドが見つかりません"
+msgstr ""
 
 #: forecast/models.py:792
 msgid "total orders 3 years ago"
@@ -3878,14 +3686,12 @@ msgid "orders adjustment 3 years ago"
 msgstr "3年前のオーダー調整"
 
 #: forecast/models.py:811
-#, fuzzy
 msgid "total orders value 3 years ago"
-msgstr "3年前の注文合計値"
+msgstr ""
 
 #: forecast/models.py:821
-#, fuzzy
 msgid "orders adjustment value 3 years ago"
-msgstr "注文調整値 3 年前"
+msgstr ""
 
 #: forecast/models.py:831
 msgid "total orders 2 years ago"
@@ -3896,34 +3702,28 @@ msgid "orders adjustment 2 years ago"
 msgstr "2年前のオーダー調整"
 
 #: forecast/models.py:850
-#, fuzzy
 msgid "total orders value 2 years ago"
-msgstr "2 年前の注文合計値"
+msgstr ""
 
 #: forecast/models.py:860
-#, fuzzy
 msgid "orders adjustment value 2 years ago"
-msgstr "注文調整値 2 年前"
+msgstr ""
 
 #: forecast/models.py:870
-#, fuzzy
 msgid "total orders 1 years ago"
-msgstr "1年前の総注文数"
+msgstr ""
 
 #: forecast/models.py:879
-#, fuzzy
 msgid "orders adjustment 1 years ago"
-msgstr "1 年前の注文調整"
+msgstr ""
 
 #: forecast/models.py:888
-#, fuzzy
 msgid "total orders value 1 years ago"
-msgstr "1 年前の注文合計値"
+msgstr ""
 
 #: forecast/models.py:898
-#, fuzzy
 msgid "orders adjustment value 1 years ago"
-msgstr "注文調整値 1 年前"
+msgstr ""
 
 #: forecast/models.py:909 forecast/templates/forecast/forecast.html:263
 #: inventoryplanning/templates/inventoryplanning/drp.html:1690
@@ -3984,15 +3784,13 @@ msgid "planned net forecast"
 msgstr "計画済みのトータル予測"
 
 #: forecast/models.py:988 output/views/buffer.py:507
-#, fuzzy
 msgid "order backlog"
-msgstr "注文バックログ"
+msgstr ""
 
 #: forecast/models.py:997 output/templates/output/demand_forecast.html:156
 #: output/views/buffer.py:510 output/views/demand.py:315
-#, fuzzy
 msgid "forecast backlog"
-msgstr "予測バックログ"
+msgstr ""
 
 #: forecast/models.py:1006 forecast/templates/forecast/forecast.html:268
 #: output/templates/output/demand.html:150
@@ -4015,28 +3813,24 @@ msgid "total supply"
 msgstr "総供給"
 
 #: forecast/models.py:1033
-#, fuzzy
 msgid "order backlog value"
-msgstr "注文バックログ値"
+msgstr ""
 
 #: forecast/models.py:1043
-#, fuzzy
 msgid "forecast backlog value"
-msgstr "予測バックログ値"
+msgstr ""
 
 #: forecast/models.py:1053
-#, fuzzy
 msgid "backlog value"
-msgstr "バックログ値"
+msgstr ""
 
 #: forecast/models.py:1063 inventoryplanning/models.py:506
 msgid "total demand value"
 msgstr "総需要価格"
 
 #: forecast/models.py:1073
-#, fuzzy
 msgid "total supply value"
-msgstr "総供給額"
+msgstr ""
 
 #: forecast/models.py:1085
 msgid "aggregate"
@@ -4047,9 +3841,8 @@ msgid "local"
 msgstr "ローカル"
 
 #: forecast/models.py:1087
-#, fuzzy
 msgid "computed"
-msgstr "計算"
+msgstr ""
 
 #: forecast/models.py:1089
 msgid "hide"
@@ -4060,49 +3853,40 @@ msgid "currency"
 msgstr "通貨"
 
 #: forecast/models.py:1101
-#, fuzzy
 msgid "Label to be displayed in the user interface"
-msgstr "ユーザー インターフェイスに表示するラベル"
+msgstr ""
 
 #: forecast/models.py:1115 forecast/views.py:351
-#, fuzzy
 msgid "mode in future periods"
-msgstr "将来の期間のモード"
+msgstr ""
 
 #: forecast/models.py:1123 forecast/views.py:348
-#, fuzzy
 msgid "mode in past periods"
-msgstr "過去の期間のモード"
+msgstr ""
 
 #: forecast/models.py:1131 forecast/views.py:357
-#, fuzzy
 msgid "compute expression"
-msgstr "計算式"
+msgstr ""
 
 #: forecast/models.py:1135
-#, fuzzy
 msgid "Formula to compute values"
-msgstr "値を計算する数式"
+msgstr ""
 
 #: forecast/models.py:1138 forecast/views.py:358
-#, fuzzy
 msgid "update expression"
-msgstr "式の更新"
+msgstr ""
 
 #: forecast/models.py:1142
-#, fuzzy
 msgid "Formula executed when updating this field"
-msgstr "このフィールドの更新時に実行される式"
+msgstr ""
 
 #: forecast/models.py:1148
-#, fuzzy
 msgid "controls whether or not this measure is visible by default"
-msgstr "このメジャーが既定で表示されるかどうかを制御します"
+msgstr ""
 
 #: forecast/models.py:1151 forecast/views.py:354
-#, fuzzy
 msgid "format"
-msgstr "形式"
+msgstr ""
 
 #: forecast/models.py:1160 forecast/views.py:356 input/models.py:66
 #: input/views/manufacturing.py:654
@@ -4110,19 +3894,16 @@ msgid "default value"
 msgstr "デフォルト値"
 
 #: forecast/models.py:1168 forecast/views.py:359
-#, fuzzy
 msgid "override measure"
-msgstr "メジャーを上書きする"
+msgstr ""
 
 #: forecast/models.py:1197
-#, fuzzy
 msgid "measure"
-msgstr "測る"
+msgstr ""
 
 #: forecast/models.py:1198 forecast/views.py:331
-#, fuzzy
 msgid "measures"
-msgstr "措置"
+msgstr ""
 
 #: forecast/templates/forecast/forecast.html:264
 #: inventoryplanning/templates/inventoryplanning/drp.html:1700
@@ -4135,26 +3916,23 @@ msgstr "合計予測"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1717
 #: inventoryplanning/templates/inventoryplanning/drp.html:1753
 #: inventoryplanning/templates/inventoryplanning/drp.html:1830
-#, fuzzy
 msgid "past forecast"
-msgstr "過去の予測"
+msgstr ""
 
 #: forecast/templates/forecast/forecast.html:383
 #: inventoryplanning/templates/inventoryplanning/drp.html:1099
 #: inventoryplanning/templates/inventoryplanning/drp.html:1113
 #: inventoryplanning/templates/inventoryplanning/drp.html:1127
-#, fuzzy
 msgid "Demand outlier"
-msgstr "需要外れ値"
+msgstr ""
 
 #: forecast/views.py:124
 msgid "method"
 msgstr "メソッド"
 
 #: forecast/views.py:156
-#, fuzzy
 msgid "standard deviation of forecast error"
-msgstr "予測の誤差を見積もり"
+msgstr ""
 
 #: forecast/views.py:203 input/models.py:244 input/views/capacity.py:743
 #: input/views/inventory.py:205 input/views/inventory.py:438
@@ -4194,9 +3972,8 @@ msgstr "重量"
 #: inventoryplanning/views.py:624 output/views/buffer.py:173
 #: output/views/demand.py:69 output/views/operation.py:215
 #: output/views/operation.py:552 output/views/operation.py:1008
-#, fuzzy
 msgid "unit of measure"
-msgstr "測る"
+msgstr ""
 
 #: forecast/views.py:221 input/models.py:252 input/models.py:2339
 #: input/views/capacity.py:761 input/views/inventory.py:223
@@ -4275,14 +4052,12 @@ msgid "Show the evolution of the SMAPE forecast error"
 msgstr "SMAPE 予測誤差の変遷を表示する"
 
 #: forecast/widget.py:365
-#, fuzzy
 msgid "Demand history outliers"
-msgstr "需要履歴の外れ値"
+msgstr ""
 
 #: forecast/widget.py:366
-#, fuzzy
 msgid "Displays outliers detected in the demand history"
-msgstr "需要履歴で検出された外れ値を表示します"
+msgstr ""
 
 #: input/admin.py:46
 msgid "repeating pattern"
@@ -4294,14 +4069,12 @@ msgid "detail"
 msgstr "詳細"
 
 #: input/admin.py:138 input/views/inventory.py:718
-#, fuzzy
 msgid "inbound distribution"
-msgstr "インバウンド配信"
+msgstr ""
 
 #: input/admin.py:143 input/views/inventory.py:729
-#, fuzzy
 msgid "outbound distribution"
-msgstr "出荷配送"
+msgstr ""
 
 #: input/admin.py:148 input/admin.py:423 input/models.py:2962
 #: input/templates/admin/input/item/change_form.html:43
@@ -4339,9 +4112,8 @@ msgstr "在庫"
 
 #: input/admin.py:264 input/models.py:2373 input/models.py:2374
 #: input/views/inventory.py:1512
-#, fuzzy
 msgid "inventory detail"
-msgstr "在庫の詳細"
+msgstr ""
 
 #: input/admin.py:428 input/admin.py:488 input/admin.py:654
 #: output/views/constraint.py:86
@@ -4354,14 +4126,12 @@ msgid "plan detail"
 msgstr "計画の詳細"
 
 #: input/admin.py:534
-#, fuzzy
 msgid "matrix detail"
-msgstr "計画の詳細"
+msgstr ""
 
 #: input/admin.py:1010
-#, fuzzy
 msgid "computed fields"
-msgstr "計算フィールド"
+msgstr ""
 
 #: input/models.py:47
 msgid "minimum cost"
@@ -4385,9 +4155,8 @@ msgid "calendar"
 msgstr "カレンダー"
 
 #: input/models.py:81 input/views/manufacturing.py:615
-#, fuzzy
 msgid "calendars"
-msgstr "カレンダー"
+msgstr ""
 
 #: input/models.py:116 input/templates/input/calendardetail.html:72
 #: input/views/manufacturing.py:716 input/views/manufacturing.py:997
@@ -4405,9 +4174,8 @@ msgstr "カレンダーバケット"
 
 #: input/models.py:173 input/models.py:410 input/models.py:733
 #: input/models.py:1246
-#, fuzzy
 msgid "Calendar defining the working hours and holidays"
-msgstr "勤務時間と休日を定義するカレンダー"
+msgstr ""
 
 #: input/models.py:182 input/views/sales.py:49
 msgid "locations"
@@ -4418,34 +4186,28 @@ msgid "customers"
 msgstr "顧客"
 
 #: input/models.py:210
-#, fuzzy
 msgid "make to stock"
-msgstr "在庫を作る"
+msgstr ""
 
 #: input/models.py:211
-#, fuzzy
 msgid "make to order"
-msgstr "注文する"
+msgstr ""
 
 #: input/models.py:230
-#, fuzzy
 msgid "Cost of the item"
-msgstr "品目の原価"
+msgstr ""
 
 #: input/models.py:241
-#, fuzzy
 msgid "Weight of the item"
-msgstr "品目の重量"
+msgstr ""
 
 #: input/models.py:249
-#, fuzzy
 msgid "Volume of the item"
-msgstr "品目の数量"
+msgstr ""
 
 #: input/models.py:255
-#, fuzzy
 msgid "Period of cover in days"
-msgstr "カバー期間"
+msgstr ""
 
 #: input/models.py:265 input/views/sales.py:144
 msgid "items"
@@ -4472,14 +4234,12 @@ msgid "split"
 msgstr "分割"
 
 #: input/models.py:306
-#, fuzzy
 msgid "Item produced by this operation"
-msgstr "この工程によって生産された品目"
+msgstr ""
 
 #: input/models.py:319
-#, fuzzy
 msgid "Parent operation (which must be of type routing, alternate or split)"
-msgstr "親操作 (ルーティング、代替、または分割のタイプである必要があります)"
+msgstr ""
 
 #: input/models.py:327 input/models.py:1351 input/models.py:1539
 msgid "Priority among all alternates"
@@ -4568,9 +4328,8 @@ msgid "size minimum"
 msgstr "最小サイズ"
 
 #: input/models.py:358
-#, fuzzy
 msgid "Minimum production quantity"
-msgstr "最小生産数量"
+msgstr ""
 
 #: input/models.py:361 input/models.py:1314 input/models.py:1502
 #: input/views/capacity.py:567 input/views/inventory.py:377
@@ -4586,9 +4345,8 @@ msgid "size multiple"
 msgstr "サイズ倍数"
 
 #: input/models.py:366
-#, fuzzy
 msgid "Multiple production quantity"
-msgstr "複数の生産数量"
+msgstr ""
 
 #: input/models.py:369 input/models.py:1322 input/models.py:1510
 #: input/views/capacity.py:572 input/views/inventory.py:378
@@ -4602,19 +4360,16 @@ msgid "size maximum"
 msgstr "最大サイズ"
 
 #: input/models.py:374
-#, fuzzy
 msgid "Maximum production quantity"
-msgstr "最大生産数量"
+msgstr ""
 
 #: input/models.py:382
-#, fuzzy
 msgid "Cost per produced unit"
-msgstr "生産単位あたりの原価"
+msgstr ""
 
 #: input/models.py:388
-#, fuzzy
 msgid "Fixed production time for setup and overhead"
-msgstr "セットアップと間接費の固定生産時間"
+msgstr ""
 
 #: input/models.py:391 input/views/capacity.py:547
 #: input/views/inventory.py:1646 input/views/manufacturing.py:177
@@ -4626,9 +4381,8 @@ msgid "duration per unit"
 msgstr "単位ごとにかかる時間"
 
 #: input/models.py:394
-#, fuzzy
 msgid "Production time per produced piece"
-msgstr "生産された作品あたりの生産時間"
+msgstr ""
 
 #: input/models.py:397 input/models.py:1035 input/models.py:1179
 #: input/views/capacity.py:597 input/views/inventory.py:1696
@@ -4648,18 +4402,14 @@ msgstr "代わりを選択する方式"
 #: input/views/inventory.py:379 input/views/inventory.py:1300
 #: input/views/manufacturing.py:1244 input/views/purchasing.py:166
 #: input/views/purchasing.py:1003 output/views/operation.py:626
-#, fuzzy
 msgid "batching window"
-msgstr "バッチ処理ウィンドウ"
+msgstr ""
 
 #: input/models.py:417
-#, fuzzy
 msgid ""
 "The solver algorithm will scan for opportunities to create batches within "
 "this time window before and after the requirement date"
 msgstr ""
-"ソルバー アルゴリズムは、この時間枠内で、要件日の前後にバッチを作成する機会を"
-"スキャンします。"
 
 #: input/models.py:427 input/templates/admin/input/item/change_form.html:25
 #: input/templates/admin/input/location/change_form.html:37
@@ -4756,15 +4506,13 @@ msgstr "マトリックスをセットアップ"
 
 #: input/models.py:701 input/views/capacity.py:152 input/views/capacity.py:862
 #: output/views/resource.py:76
-#, fuzzy
 msgid "constrained"
-msgstr "制約あり計画を生成"
+msgstr ""
 
 #: input/models.py:705
-#, fuzzy
 msgid ""
 "controls whether or not this resource is planned in finite capacity mode"
-msgstr "このリソースが有限能力モードで計画されているかどうかを制御します"
+msgstr ""
 
 #: input/models.py:709 input/views/capacity.py:153 input/views/capacity.py:868
 #: input/views/manufacturing.py:283 output/views/resource.py:83
@@ -4815,25 +4563,23 @@ msgid "Setup of the resource at the start of the plan"
 msgstr "計画の最初にリソースをセットアップする"
 
 #: input/models.py:777 input/views/capacity.py:181
-#, fuzzy, no-python-format
+#, no-python-format
 msgid "efficiency %"
-msgstr "効率 %"
+msgstr ""
 
 #: input/models.py:782
-#, fuzzy
 msgid "Efficiency percentage of the resource"
-msgstr "リソースの効率の割合"
+msgstr ""
 
 #: input/models.py:787 input/views/capacity.py:185
-#, fuzzy, no-python-format
+#, no-python-format
 msgid "efficiency % calendar"
-msgstr "効率% cアレンダル"
+msgstr ""
 
 #: input/models.py:793
-#, fuzzy
 msgid ""
 "Calendar defining the efficiency percentage of the resource varying over time"
-msgstr "時間の経過に応じて変化するリソースの効率を定義するカレンダー"
+msgstr ""
 
 #: input/models.py:803 input/models.py:849 input/models.py:903
 #: input/models.py:1109 input/models.py:1369 input/models.py:1563
@@ -4891,9 +4637,8 @@ msgid "Cost of the conversion"
 msgstr "変換コスト"
 
 #: input/models.py:855
-#, fuzzy
 msgid "Extra resource used during this changeover"
-msgstr "この変更時に使用される追加リソース"
+msgstr ""
 
 #: input/models.py:877
 msgid "setup matrix rule"
@@ -4936,56 +4681,48 @@ msgid "End"
 msgstr "終了"
 
 #: input/models.py:955
-#, fuzzy
 msgid "Batch transfer"
-msgstr "バッチ転送"
+msgstr ""
 
 #: input/models.py:985
-#, fuzzy
 msgid "Quantity to consume or produce per piece"
-msgstr "1 個あたり消費または生産する数量"
+msgstr ""
 
 #: input/models.py:988 input/views/manufacturing.py:399
-#, fuzzy
 msgid "fixed quantity"
-msgstr "定量"
+msgstr ""
 
 #: input/models.py:993
-#, fuzzy
 msgid "Fixed quantity to consume or produce"
-msgstr "消費または生産する固定数量"
+msgstr ""
 
 #: input/models.py:1003
 msgid "Consume/produce material at the start or the end of the operationplan"
 msgstr "作業計画の最初または最後で材料を消費/生産する"
 
 #: input/models.py:1025
-#, fuzzy
 msgid "Name of this operation material to identify alternates"
-msgstr "代替を識別するこの作業材料の名前"
+msgstr ""
 
 #: input/models.py:1032
 msgid "Priority of this operation material in a group of alternates"
 msgstr "代替グループ内の作業材料優先度"
 
 #: input/models.py:1043 input/views/manufacturing.py:415
-#, fuzzy
 msgid "transfer batch quantity"
-msgstr "バッチ数量の転送"
+msgstr ""
 
 #: input/models.py:1048
-#, fuzzy
 msgid "Batch size by in which material is produced or consumed"
-msgstr "品目の生産または消費によるバッチ サイズ"
+msgstr ""
 
 #: input/models.py:1051 input/views/manufacturing.py:417
 msgid "offset"
 msgstr "オフセット"
 
 #: input/models.py:1054
-#, fuzzy
 msgid "Time offset from the start or end to consume or produce material"
-msgstr "材料を消費または生産するために、開始または終了からのタイムオフセット"
+msgstr ""
 
 #: input/models.py:1091
 msgid "operation material"
@@ -4998,34 +4735,28 @@ msgid "operation materials"
 msgstr "作業材料"
 
 #: input/models.py:1124
-#, fuzzy
 msgid "Required skill to perform the operation"
-msgstr "操作を実行するために必要なスキル"
+msgstr ""
 
 #: input/models.py:1131
-#, fuzzy
 msgid "Required quantity of the resource"
-msgstr "リソースの必要数量"
+msgstr ""
 
 #: input/models.py:1134 input/views/manufacturing.py:119
-#, fuzzy
 msgid "quantity fixed"
-msgstr "数量固定"
+msgstr ""
 
 #: input/models.py:1140
-#, fuzzy
 msgid "Constant part of the capacity consumption (bucketized resources only)"
-msgstr "容量消費の一部を一定にする (バケット化されたリソースのみ)"
+msgstr ""
 
 #: input/models.py:1162
-#, fuzzy
 msgid "Name of this operation resource to identify alternates"
-msgstr "代替を識別するこの作業リソースの名前"
+msgstr ""
 
 #: input/models.py:1169
-#, fuzzy
 msgid "Priority of this operation resource in a group of alternates"
-msgstr "代替グループ内のこの工程リソースの優先順位"
+msgstr ""
 
 #: input/models.py:1176
 msgid "Setup required on the resource for this operation"
@@ -5064,14 +4795,12 @@ msgid "Purchasing lead time"
 msgstr "購入リードタイム"
 
 #: input/models.py:1293 input/models.py:1296 input/views/purchasing.py:160
-#, fuzzy
 msgid "soft safety lead time"
-msgstr "リードタイムでの直接"
+msgstr ""
 
 #: input/models.py:1299 input/models.py:1302 input/views/purchasing.py:155
-#, fuzzy
 msgid "hard safety lead time"
-msgstr "リードタイムでの直接"
+msgstr ""
 
 #: input/models.py:1311
 msgid "A minimum purchasing quantity"
@@ -5082,9 +4811,8 @@ msgid "A multiple purchasing quantity"
 msgstr "購入倍数量"
 
 #: input/models.py:1327
-#, fuzzy
 msgid "A maximum purchasing quantity"
-msgstr "最大購買数量"
+msgstr ""
 
 #: input/models.py:1334
 msgid "Proposed purchase orders within this window will be grouped together"
@@ -5132,19 +4860,16 @@ msgid "item suppliers"
 msgstr "商品供給者"
 
 #: input/models.py:1479
-#, fuzzy
 msgid "Destination location to be replenished"
-msgstr "補充される仕入先の場所"
+msgstr ""
 
 #: input/models.py:1487
-#, fuzzy
 msgid "Source location shipping the item"
-msgstr "品目を出荷するソースの場所"
+msgstr ""
 
 #: input/models.py:1490
-#, fuzzy
 msgid "Transport lead time"
-msgstr "輸送リード タイム"
+msgstr ""
 
 #: input/models.py:1499
 msgid "A minimum shipping quantity"
@@ -5155,9 +4880,8 @@ msgid "A multiple shipping quantity"
 msgstr "複数出荷回数"
 
 #: input/models.py:1515
-#, fuzzy
 msgid "A maximum shipping quantity"
-msgstr "最大出荷数量"
+msgstr ""
 
 #: input/models.py:1522
 msgid ""
@@ -5169,14 +4893,12 @@ msgid "Shipping cost per unit"
 msgstr "単位当たりの出荷コスト"
 
 #: input/models.py:1542 input/views/inventory.py:383
-#, fuzzy
 msgid "push priority"
-msgstr "プッシュ優先順位"
+msgstr ""
 
 #: input/models.py:1545
-#, fuzzy
 msgid "Priority for the push mode"
-msgstr "プッシュ モードの優先順位"
+msgstr ""
 
 #: input/models.py:1569
 msgid "Resource to model the distribution capacity"
@@ -5225,29 +4947,24 @@ msgid "closed"
 msgstr "クローズ"
 
 #: input/models.py:1637
-#, fuzzy
 msgid "independent"
-msgstr "付属需要"
+msgstr ""
 
 #: input/models.py:1638
-#, fuzzy
 msgid "all together"
-msgstr "小さな整数"
+msgstr ""
 
 #: input/models.py:1639
-#, fuzzy
 msgid "in ratio"
-msgstr "正味期間"
+msgstr ""
 
 #: input/models.py:1672
-#, fuzzy
 msgid "Due date of the sales order"
-msgstr "販売注文の期日"
+msgstr ""
 
 #: input/models.py:1682
-#, fuzzy
 msgid "Status of the demand. Only \"open\" and \"quote\" demands are planned"
-msgstr "需要の状態。「オープン」要求のみが計画されます。"
+msgstr ""
 
 #: input/models.py:1719 input/views/sales.py:358
 msgid "policy"
@@ -5258,9 +4975,8 @@ msgid "Defines how sales orders are shipped together"
 msgstr ""
 
 #: input/models.py:1733 input/models.py:1867
-#, fuzzy
 msgid "MTO batch name"
-msgstr "MTO バッチ名"
+msgstr ""
 
 #: input/models.py:1735 input/models.py:1841 input/views/capacity.py:658
 #: input/views/inventory.py:1078 input/views/inventory.py:1780
@@ -5294,9 +5010,8 @@ msgid "distribution order"
 msgstr "配信順序"
 
 #: input/models.py:1777 input/models.py:3006
-#, fuzzy
 msgid "delivery order"
-msgstr "荷渡指図書"
+msgstr ""
 
 #: input/models.py:1782 input/models.py:2231 input/models.py:2302
 #: input/views/capacity.py:995 input/views/inventory.py:1321
@@ -5336,9 +5051,8 @@ msgid "Order type"
 msgstr "オーダータイプ"
 
 #: input/models.py:1817 input/views/manufacturing.py:1922
-#, fuzzy
 msgid "completed quantity"
-msgstr "消費済数量"
+msgstr ""
 
 #: input/models.py:1820 inventoryplanning/models.py:423
 msgid "color"
@@ -5365,40 +5079,33 @@ msgid "operationplans"
 msgstr "作業計画"
 
 #: input/models.py:2265
-#, fuzzy
 msgid "load status"
-msgstr "読み込み状態"
+msgstr ""
 
 #: input/models.py:2270
-#, fuzzy
 msgid "Status of the resource assignment"
-msgstr "リソース割り当ての状態"
+msgstr ""
 
 #: input/models.py:2295 input/models.py:2296 input/views/capacity.py:308
-#, fuzzy
 msgid "resource detail"
-msgstr "リソースの詳細"
+msgstr ""
 
 #: input/models.py:2342 input/views/inventory.py:1961
-#, fuzzy
 msgid "material status"
-msgstr "材料ステータス"
+msgstr ""
 
 #: input/models.py:2347
-#, fuzzy
 msgid "status of the material production or consumption"
-msgstr "材料生産または消費のステータス"
+msgstr ""
 
 #: input/models.py:2381 input/views/inventory.py:992
-#, fuzzy
 msgid "shipping date"
-msgstr "出荷日"
+msgstr ""
 
 #: input/models.py:2384 input/models.py:2426 input/views/inventory.py:998
 #: input/views/purchasing.py:872
-#, fuzzy
 msgid "receipt date"
-msgstr "入庫日"
+msgstr ""
 
 #: input/models.py:2417 input/templates/admin/input/item/change_form.html:55
 #: input/templates/admin/input/itemdistribution/change_form.html:13
@@ -5410,64 +5117,53 @@ msgid "distribution orders"
 msgstr "流通オーダー"
 
 #: input/models.py:2423 input/views/purchasing.py:866
-#, fuzzy
 msgid "ordering date"
-msgstr "発注日"
+msgstr ""
 
 #: input/models.py:3007 input/views/sales.py:583 input/views/sales.py:980
-#, fuzzy
 msgid "delivery orders"
-msgstr "出荷注文"
-
-#: input/templates/input/calendardetail.html:24
-#, fuzzy
-msgid "add"
-msgstr "と"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:40
 #, fuzzy
 msgid "monday"
-msgstr "月曜日"
+msgstr "月曜"
 
 #: input/templates/input/calendardetail.html:44
 #, fuzzy
 msgid "tuesday"
-msgstr "火曜日"
+msgstr "火曜"
 
 #: input/templates/input/calendardetail.html:48
 #, fuzzy
 msgid "wednesday"
-msgstr "水曜日"
+msgstr "水曜"
 
 #: input/templates/input/calendardetail.html:52
 #, fuzzy
 msgid "thursday"
-msgstr "木曜日"
+msgstr "木曜"
 
 #: input/templates/input/calendardetail.html:56
 #, fuzzy
 msgid "friday"
-msgstr "金曜日"
+msgstr "金曜"
 
 #: input/templates/input/calendardetail.html:60
-#, fuzzy
 msgid "saturday"
-msgstr "土曜日"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:64
-#, fuzzy
 msgid "sunday"
-msgstr "日曜日"
+msgstr ""
 
 #: input/templates/input/operationplanreport.html:303
-#, fuzzy
 msgid "display kanban cards"
-msgstr "かんばんカードの表示"
+msgstr ""
 
 #: input/templates/input/operationplanreport.html:307
-#, fuzzy
 msgid "display calendar"
-msgstr "カレンダーを表示する"
+msgstr ""
 
 #: input/views/capacity.py:78
 msgid "setup rules"
@@ -5479,14 +5175,12 @@ msgid "maxearly"
 msgstr "最速"
 
 #: input/views/capacity.py:630 input/views/manufacturing.py:1910
-#, fuzzy
 msgid "net duration"
-msgstr "正味期間"
+msgstr ""
 
 #: input/views/capacity.py:641
-#, fuzzy
 msgid "quantity completed"
-msgstr "未計画"
+msgstr ""
 
 #: input/views/capacity.py:664 input/views/inventory.py:1085
 #: input/views/inventory.py:1808 input/views/manufacturing.py:1972
@@ -5499,25 +5193,22 @@ msgid "load quantity"
 msgstr "負荷量"
 
 #: input/views/capacity.py:685 input/views/manufacturing.py:2136
-#, fuzzy
 msgid "setup end date"
-msgstr "セットアップ終了日"
+msgstr ""
 
 #: input/views/capacity.py:691 input/views/manufacturing.py:2129
 msgid "setup duration"
 msgstr "かかる時間"
 
 #: input/views/capacity.py:698 input/views/manufacturing.py:2143
-#, fuzzy
 msgid "setup duration override"
-msgstr "かかる時間"
+msgstr ""
 
 #: input/views/capacity.py:705 input/views/inventory.py:1112
 #: input/views/inventory.py:1817 input/views/manufacturing.py:2150
 #: input/views/purchasing.py:966
-#, fuzzy
 msgid "feasible"
-msgstr "可能"
+msgstr ""
 
 #: input/views/capacity.py:895 input/views/manufacturing.py:310
 #: output/views/resource.py:113
@@ -5525,9 +5216,8 @@ msgid "setupmatrix"
 msgstr "マトリックスをセットアップ"
 
 #: input/views/capacity.py:970 input/views/inventory.py:1799
-#, fuzzy
 msgid "inventory_item"
-msgstr "inventory_item"
+msgstr ""
 
 #: input/views/capacity.py:995 input/views/capacity.py:1002
 #: input/views/capacity.py:1009 input/views/capacity.py:1016
@@ -5549,84 +5239,75 @@ msgid "change status to {status}"
 msgstr "ステータスを {status} へ変更"
 
 #: input/views/inventory.py:664
-#, fuzzy, python-format
+#, python-format
 msgid "in transit in %(loc)s at %(date)s"
-msgstr "%(loc)s で %(日付)s で転送中"
+msgstr ""
 
 #: input/views/inventory.py:678
-#, fuzzy, python-format
+#, python-format
 msgid "received in %(loc)s between %(date1)s and %(date2)s"
-msgstr "%(日付1)sと%(日付2)sの間の%(loc)sで受け取りました"
+msgstr ""
 
 #: input/views/inventory.py:692
-#, fuzzy, python-format
+#, python-format
 msgid "shipped from %(loc)s between %(date1)s and %(date2)s"
-msgstr "%(loc)s から %(日付1)s と %(日付2)s の間に出荷されます。"
+msgstr ""
 
 #: input/views/inventory.py:1047 input/views/manufacturing.py:1928
 #: input/views/purchasing.py:896
-#, fuzzy
 msgid "total cost"
-msgstr "総コスト"
+msgstr ""
 
 #: input/views/inventory.py:1054 input/views/manufacturing.py:1936
 #: input/views/purchasing.py:903
-#, fuzzy
 msgid "total volume"
-msgstr "総量"
+msgstr ""
 
 #: input/views/inventory.py:1061 input/views/manufacturing.py:1944
 #: input/views/purchasing.py:910
-#, fuzzy
 msgid "total weight"
-msgstr "総重量"
+msgstr ""
 
 #: input/views/inventory.py:1094 input/views/manufacturing.py:2019
 #: input/views/purchasing.py:949
-#, fuzzy
 msgid "inventory item"
-msgstr "在庫品目"
+msgstr ""
 
 #: input/views/inventory.py:1102 input/views/manufacturing.py:2027
 #: input/views/purchasing.py:957
-#, fuzzy
 msgid "inventory location"
-msgstr "場所別在庫"
+msgstr ""
 
 #: input/views/inventory.py:1261 input/views/manufacturing.py:2280
 #: input/views/purchasing.py:1188
-#, fuzzy
 msgid "end items"
-msgstr "終了品目"
+msgstr ""
 
 #: input/views/inventory.py:1378
-#, fuzzy
 msgid "Inventory detail"
-msgstr "在庫の詳細"
+msgstr ""
 
 #: input/views/inventory.py:1740
-#, fuzzy
 msgid "expected onhand"
-msgstr "予定の予定"
+msgstr ""
 
 #: input/views/inventory.py:1786
 msgid "operationplan quantity"
 msgstr "生産計画の数量"
 
 #: input/views/inventory.py:1792
-#, fuzzy
 msgid "operationplan quantity completed"
-msgstr "生産計画の数量"
+msgstr ""
 
 #: input/views/manufacturing.py:1606
-#, fuzzy, python-format
+#, python-format
 msgid "work in progress in %(loc)s at %(date)s"
-msgstr "%(loc)s で %(日付)s で進行中の作業"
+msgstr ""
 
 #: input/views/manufacturing.py:1620
-#, fuzzy, python-format
+#, python-format
 msgid "produced in %(loc)s between %(date1)s and %(date2)s"
-msgstr "%(loc)s で生成され、%(日付1)s と %(日付2)s の間で生成されます。"
+msgstr ""
 
 #: input/views/manufacturing.py:1634
 #, python-format
@@ -5638,24 +5319,22 @@ msgid "materials"
 msgstr "材料"
 
 #: input/views/manufacturing.py:2001
-#, fuzzy
 msgid "setups"
-msgstr "セットアップ"
+msgstr ""
 
 #: input/views/purchasing.py:474
-#, fuzzy, python-format
+#, python-format
 msgid "on order in %(loc)s at %(date)s"
-msgstr "%(loc)s の %(日付)s の順序で"
+msgstr ""
 
 #: input/views/purchasing.py:488
-#, fuzzy, python-format
+#, python-format
 msgid "on order in %(loc)s between %(date1)s and %(date2)s"
-msgstr "%(日付1)s と %(日付2)s の間の %(loc)s の順序で"
+msgstr ""
 
 #: input/views/sales.py:334
-#, fuzzy
 msgid "quantity planned short"
-msgstr "予定数量不足"
+msgstr ""
 
 #: input/views/sales.py:631
 msgid "demand quantity"
@@ -5673,9 +5352,8 @@ msgid_plural "%(name)s - %(count)d matches"
 msgstr[0] "%(name)s - %(count)d が一致"
 
 #: input/views/utils.py:144 inventoryplanning/views.py:476
-#, fuzzy
 msgid "Inventory planning"
-msgstr "在庫計画"
+msgstr ""
 
 #: input/views/utils.py:491 output/views/pegging.py:42
 msgid "depth"
@@ -5695,18 +5373,16 @@ msgid "Safety stock quantity"
 msgstr "安全在庫数量"
 
 #: inventoryplanning/attributes.py:18
-#, fuzzy
 msgid "Successor part"
-msgstr "後任部品"
+msgstr ""
 
 #: inventoryplanning/commands.py:669
 msgid "Compute inventory parameters"
 msgstr "在庫パラメーターを計算"
 
 #: inventoryplanning/commands.py:1531
-#, fuzzy
 msgid "Generate inventory rebalancing requests"
-msgstr "在庫再調整要求の生成"
+msgstr ""
 
 #: inventoryplanning/models.py:24
 #: inventoryplanning/templates/inventoryplanning/drp.html:2700
@@ -5800,14 +5476,12 @@ msgstr "安全在庫を0に強制して1数量を再オーダーする"
 #: inventoryplanning/models.py:111 inventoryplanning/models.py:178
 #: inventoryplanning/models.py:317 inventoryplanning/views.py:277
 #: inventoryplanning/views.py:347
-#, fuzzy
 msgid "Push mode"
-msgstr "プッシュモード"
+msgstr ""
 
 #: inventoryplanning/models.py:114 inventoryplanning/models.py:181
-#, fuzzy
 msgid "Activate stock push mode which moves all inventory downstream"
-msgstr "すべての在庫を下流に移動する在庫プッシュモードを有効にします。"
+msgstr ""
 
 #: inventoryplanning/models.py:117 inventoryplanning/models.py:124
 #: inventoryplanning/models.py:131 inventoryplanning/models.py:136
@@ -5826,33 +5500,28 @@ msgid "segment"
 msgstr "セグメント"
 
 #: inventoryplanning/models.py:186
-#, fuzzy
 msgid "Overrides the decoupled lead time"
-msgstr "分離されたリード タイムを上書きします"
+msgstr ""
 
 #: inventoryplanning/models.py:201
-#, fuzzy
 msgid "inventory policy"
-msgstr "在庫ポリシー"
+msgstr ""
 
 #: inventoryplanning/models.py:202 inventoryplanning/views.py:206
-#, fuzzy
 msgid "inventory policies"
-msgstr "在庫ポリシー"
+msgstr ""
 
 #: inventoryplanning/models.py:219 inventoryplanning/views.py:151
 msgid "query"
 msgstr "問い合わせ"
 
 #: inventoryplanning/models.py:221
-#, fuzzy
 msgid "sku_count"
-msgstr "sku_count"
+msgstr ""
 
 #: inventoryplanning/models.py:224
-#, fuzzy
 msgid "Number of sku in the segment"
-msgstr "セグメント内の sku の数"
+msgstr ""
 
 #: inventoryplanning/models.py:307
 msgid "ROQ Minimum Quantity"
@@ -5863,14 +5532,12 @@ msgid "ROQ Maximum Quantity"
 msgstr "ROQ 最大量"
 
 #: inventoryplanning/models.py:309
-#, fuzzy
 msgid "ROQ Minimum Period of Cover (days)"
-msgstr "ROQ 最低カバー期間(日数)"
+msgstr ""
 
 #: inventoryplanning/models.py:310
-#, fuzzy
 msgid "ROQ Maximum Period of Cover (days)"
-msgstr "ROQ 最大カバー期間(日数)"
+msgstr ""
 
 #: inventoryplanning/models.py:311
 msgid "Service Level"
@@ -5885,19 +5552,16 @@ msgid "Safety Stock Maximum Quantity"
 msgstr "安全在庫の最大量"
 
 #: inventoryplanning/models.py:314
-#, fuzzy
 msgid "Safety Stock Minimum Period of Cover (days)"
-msgstr "安全在庫 最低カバー期間(日数)"
+msgstr ""
 
 #: inventoryplanning/models.py:315
-#, fuzzy
 msgid "Safety Stock Maximum Period of Cover (days)"
-msgstr "安全在庫最大カバー期間(日)"
+msgstr ""
 
 #: inventoryplanning/models.py:324
-#, fuzzy
 msgid "Business Rule"
-msgstr "ビジネスルール"
+msgstr ""
 
 #: inventoryplanning/models.py:394
 msgid "calculated reorder quantity"
@@ -5927,34 +5591,28 @@ msgid "open sales orders"
 msgstr "販売オーダーを開く"
 
 #: inventoryplanning/models.py:431 inventoryplanning/views.py:590
-#, fuzzy
 msgid "proposed purchase orders"
-msgstr "提案された発注書"
+msgstr ""
 
 #: inventoryplanning/models.py:434 inventoryplanning/views.py:595
-#, fuzzy
 msgid "proposed distribution orders"
-msgstr "提案された配送注文"
+msgstr ""
 
 #: inventoryplanning/models.py:437 inventoryplanning/views.py:580
-#, fuzzy
 msgid "open purchase orders"
-msgstr "オープン発注書"
+msgstr ""
 
 #: inventoryplanning/models.py:440 inventoryplanning/views.py:630
-#, fuzzy
 msgid "open purchase orders beyond lead time"
-msgstr "オープン発注書の値"
+msgstr ""
 
 #: inventoryplanning/models.py:446 inventoryplanning/views.py:585
-#, fuzzy
 msgid "open distribution orders"
-msgstr "オープン配送注文"
+msgstr ""
 
 #: inventoryplanning/models.py:449
-#, fuzzy
 msgid "open distribution orders beyond lead time"
-msgstr "オープンな配送注文値"
+msgstr ""
 
 #: inventoryplanning/models.py:455
 msgid "onhand value"
@@ -5969,34 +5627,28 @@ msgid "open sales orders value"
 msgstr "販売オーダー価格を開く"
 
 #: inventoryplanning/models.py:464
-#, fuzzy
 msgid "proposed purchase order value"
-msgstr "提案された発注書の値"
+msgstr ""
 
 #: inventoryplanning/models.py:467
-#, fuzzy
 msgid "proposed distribution order value"
-msgstr "提案された配賦注文値"
+msgstr ""
 
 #: inventoryplanning/models.py:473
-#, fuzzy
 msgid "open purchase order value"
-msgstr "オープン発注書の値"
+msgstr ""
 
 #: inventoryplanning/models.py:476
-#, fuzzy
-msgid "open purchase order beyond lead time value"
-msgstr "オープン発注書の値"
+msgid "open purchase orders beyond lead time value"
+msgstr ""
 
 #: inventoryplanning/models.py:482
-#, fuzzy
 msgid "open distribution order value"
-msgstr "オープンな配送注文値"
+msgstr ""
 
 #: inventoryplanning/models.py:485
-#, fuzzy
-msgid "open distribution order beyond lead time value"
-msgstr "オープンな配送注文値"
+msgid "open distribution orders beyond lead time value"
+msgstr ""
 
 #: inventoryplanning/models.py:491 inventoryplanning/views.py:545
 msgid "local forecast"
@@ -6039,9 +5691,8 @@ msgstr "棚卸の開始"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:239
 #: output/templates/output/buffer.html:263 output/views/buffer.py:265
-#, fuzzy
 msgid "start inventory days of cover"
-msgstr "在庫日数の開始"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:240
 #: inventoryplanning/templates/inventoryplanning/drp.html:1556
@@ -6084,16 +5735,15 @@ msgid "Archived"
 msgstr "アーカイブ"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2156
-#, fuzzy
 msgid "superseded"
-msgstr "置き換え"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2180
 #: inventoryplanning/templates/inventoryplanning/drp.html:2181
 #: inventoryplanning/templates/inventoryplanning/drp.html:2182
-#, fuzzy, python-format
+#, python-format
 msgid "Last %(x)s months"
-msgstr "過去 %(x)s 月"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2494
 #: inventoryplanning/templates/inventoryplanning/drp.html:2501
@@ -6160,14 +5810,12 @@ msgid "Item attributes"
 msgstr "商品の促成"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2621
-#, fuzzy
 msgid "Inventory status"
-msgstr "在庫ステータス"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2626
-#, fuzzy
 msgid "Top 5 customers"
-msgstr "上位 5 人のお客様"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2635
 msgid "Buffer attributes"
@@ -6178,9 +5826,8 @@ msgid "Location attributes"
 msgstr "ロケーション属性"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2652
-#, fuzzy
 msgid "Network status"
-msgstr "ネットワークの状態"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2658
 msgid "Supply information"
@@ -6232,9 +5879,8 @@ msgstr "リードタイム標準偏差"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2824
 #: inventoryplanning/templates/inventoryplanning/drp.html:2874
-#, fuzzy
 msgid "constrained by"
-msgstr "条件つき要求"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2827
 #: inventoryplanning/templates/inventoryplanning/drp.html:2842
@@ -6248,22 +5894,16 @@ msgid "computed economic reorder quantity"
 msgstr "計算された経済的に発注された数量"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2913
-#, fuzzy
 msgid "Stocking policy"
-msgstr "ストッキングポリシー"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2918
-#, fuzzy
 msgid ""
 "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
 "data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
 "<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
-"with the demand.\" >在庫しない</span>"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2928
 #: inventoryplanning/templates/inventoryplanning/drp.html:2947
@@ -6271,43 +5911,35 @@ msgid "true"
 msgstr "真"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2937
-#, fuzzy
 msgid ""
 "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
 "data-original-title=\"In push mode, any excess inventory will be distributed "
 "downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"In push mode, any excess inventory will be distributed "
-"downstream to child locations.\">プッシュモードを有効にします</span>"
 
 #: inventoryplanning/views.py:116
 msgid "segments"
 msgstr "セグメント"
 
 #: inventoryplanning/views.py:152
-#, fuzzy
 msgid "sku count"
-msgstr "スクカウント"
+msgstr ""
 
 #: inventoryplanning/views.py:164
-#, fuzzy
 msgid "business rules"
-msgstr "ビジネス ルール"
+msgstr ""
 
 #: inventoryplanning/views.py:187
-#, fuzzy
 msgid "business rule"
-msgstr "ビジネスルール"
+msgstr ""
 
 #: inventoryplanning/views.py:565
 msgid "on hand"
 msgstr "利用可能"
 
 #: inventoryplanning/views.py:636
-#, fuzzy
 msgid "open distribution order beyond lead time"
-msgstr "オープンな配送注文値"
+msgstr ""
 
 #: inventoryplanning/views.py:1607
 msgid "Buy"
@@ -6326,18 +5958,17 @@ msgid "Invalid number"
 msgstr "不正な入力フィールド"
 
 #: inventoryplanning/views.py:2501
-#, fuzzy, python-format
+#, python-format
 msgid "Changed %s."
-msgstr "%sを変更しました。"
+msgstr ""
 
 #: inventoryplanning/views.py:2528
 msgid "No forecast found"
 msgstr "予測がありません"
 
 #: inventoryplanning/widget.py:25
-#, fuzzy
 msgid "Display the current status of your current inventory"
-msgstr "現在の在庫の現在のステータスを表示します"
+msgstr ""
 
 #: inventoryplanning/widget.py:132
 msgid "green"
@@ -6384,59 +6015,48 @@ msgid "admin"
 msgstr "管理"
 
 #: metrics/attributes.py:19
-#, fuzzy
 msgid "count of late demands"
-msgstr "遅延要求の数"
+msgstr ""
 
 #: metrics/attributes.py:20 metrics/widget.py:59
-#, fuzzy
 msgid "quantity of late demands"
-msgstr "遅延需要の数量"
+msgstr ""
 
 #: metrics/attributes.py:21
-#, fuzzy
 msgid "value of late demand"
-msgstr "後期需要の価値"
+msgstr ""
 
 #: metrics/attributes.py:24
-#, fuzzy
 msgid "count of unplanned demands"
-msgstr "計画外要求の数"
+msgstr ""
 
 #: metrics/attributes.py:31
-#, fuzzy
 msgid "quantity of unplanned demands"
-msgstr "予定外の需要の数量"
+msgstr ""
 
 #: metrics/attributes.py:38
-#, fuzzy
 msgid "value of unplanned demands"
-msgstr "計画外需要の価値"
+msgstr ""
 
 #: metrics/attributes.py:51
-#, fuzzy
 msgid "count of capacity overload problems"
-msgstr "容量過負荷問題の数"
+msgstr ""
 
 #: metrics/widget.py:31
-#, fuzzy
 msgid "analyze late demands"
-msgstr "遅延需要を分析する"
+msgstr ""
 
 #: metrics/widget.py:32
-#, fuzzy
 msgid "Spot the top items with many late demands"
-msgstr "多くの後期要求を持つトップアイテムを見つける"
+msgstr ""
 
 #: metrics/widget.py:58
-#, fuzzy
 msgid "value of late demands"
-msgstr "後期要求の価値"
+msgstr ""
 
 #: metrics/widget.py:60
-#, fuzzy
 msgid "number of late demands"
-msgstr "遅延要求の数"
+msgstr ""
 
 #: odoo/views.py:48
 msgid "Invalid configuration parameters"
@@ -6455,11 +6075,9 @@ msgid "release"
 msgstr "解除"
 
 #: openbravo/management/commands/openbravo_import.py:3686
-#, fuzzy
 msgid ""
 "Import data changes in the last {{ delta }} days from the ERP into frePPLe."
 msgstr ""
-"ERP から最後の {{ デルタ }} 日のデータ変更を frePPLe にインポートします。"
 
 #: output/models.py:17 output/models.py:41 output/views/constraint.py:105
 #: output/views/problem.py:68
@@ -6494,86 +6112,70 @@ msgstr "負荷"
 
 #: output/templates/output/buffer.html:268
 #: output/templates/output/buffer.html:271 output/views/buffer.py:402
-#, fuzzy
 msgid "produced by PO confirmed"
-msgstr "プロデュース:発注書"
+msgstr ""
 
 #: output/templates/output/buffer.html:274 output/views/buffer.py:370
-#, fuzzy
 msgid "produced by MO confirmed"
-msgstr "MOによって生産される"
+msgstr ""
 
 #: output/templates/output/buffer.html:277 output/views/buffer.py:374
-#, fuzzy
 msgid "produced by MO proposed"
-msgstr "MOによって生産される"
+msgstr ""
 
 #: output/templates/output/buffer.html:280 output/views/buffer.py:386
-#, fuzzy
 msgid "produced by DO confirmed"
-msgstr "によって生産される DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:283 output/views/buffer.py:390
-#, fuzzy
 msgid "produced by DO proposed"
-msgstr "によって生産される DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:286 output/views/buffer.py:313
-#, fuzzy
 msgid "consumed by MO confirmed"
-msgstr "MO によって消費される"
+msgstr ""
 
 #: output/templates/output/buffer.html:289 output/views/buffer.py:317
-#, fuzzy
 msgid "consumed by MO proposed"
-msgstr "MO によって消費される"
+msgstr ""
 
 #: output/templates/output/buffer.html:292 output/views/buffer.py:335
-#, fuzzy
 msgid "consumed by SO"
-msgstr "SO によって消費される"
+msgstr ""
 
 #: output/templates/output/buffer.html:295 output/views/buffer.py:496
-#, fuzzy
 msgid "consumed by Fcst"
-msgstr "によって消費される Fcst"
+msgstr ""
 
 #: output/templates/output/buffer.html:298 output/views/buffer.py:329
-#, fuzzy
 msgid "consumed by DO confirmed"
-msgstr "DO によって消費される"
+msgstr ""
 
 #: output/templates/output/buffer.html:301 output/views/buffer.py:333
-#, fuzzy
 msgid "consumed by DO proposed"
-msgstr "DO によって消費される"
+msgstr ""
 
 #: output/templates/output/buffer.html:309 output/views/buffer.py:412
-#, fuzzy
 msgid "total in progress"
-msgstr "進行中の合計"
+msgstr ""
 
 #: output/templates/output/buffer.html:312 output/views/buffer.py:444
-#, fuzzy
 msgid "work in progress MO"
-msgstr "作業中の作業 MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:315 output/views/buffer.py:463
-#, fuzzy
 msgid "on order PO"
-msgstr "注文 PO で"
+msgstr ""
 
 #: output/templates/output/buffer.html:318 output/views/buffer.py:483
-#, fuzzy
 msgid "in transit DO"
-msgstr "輸送中に DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:324
 #: output/templates/output/buffer.html:435 output/views/buffer.py:515
 #: output/views/demand.py:317
-#, fuzzy
 msgid "total backlog"
-msgstr "バックログの合計"
+msgstr ""
 
 #: output/templates/output/buffer.html:432
 msgid "consumed"
@@ -6597,47 +6199,40 @@ msgid "net forecast"
 msgstr "総予測"
 
 #: output/templates/output/demand_forecast.html:152 output/views/demand.py:311
-#, fuzzy
 msgid "sales order backlog"
-msgstr "販売注文バックログ"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:215
 #: output/views/operation.py:1122
-#, fuzzy
 msgid "proposed shipping"
-msgstr "提案された出荷"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:217
 #: output/views/operation.py:1123
-#, fuzzy
 msgid "total shipping"
-msgstr "合計出荷"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:219
 #: output/templates/output/purchase_order_summary.html:219
 #: output/views/operation.py:678 output/views/operation.py:1124
-#, fuzzy
 msgid "proposed receiving"
-msgstr "提案された受取"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:221
 #: output/templates/output/purchase_order_summary.html:221
 #: output/views/operation.py:679 output/views/operation.py:1125
-#, fuzzy
 msgid "total receiving"
-msgstr "総入庫数"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:223
 #: output/views/operation.py:1128
-#, fuzzy
 msgid "proposed in transit"
-msgstr "輸送中に提案"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:225
 #: output/views/operation.py:1130
-#, fuzzy
 msgid "total in transit"
-msgstr "輸送中の合計"
+msgstr ""
 
 #: output/templates/output/operation.html:288
 #: output/templates/output/operation.html:339 output/views/operation.py:247
@@ -6659,14 +6254,12 @@ msgstr "全終了"
 
 #: output/templates/output/operation.html:296
 #: output/templates/output/operation.html:343 output/views/operation.py:253
-#, fuzzy
 msgid "proposed production"
-msgstr "提案された生産"
+msgstr ""
 
 #: output/templates/output/operation.html:298 output/views/operation.py:255
-#, fuzzy
 msgid "total production"
-msgstr "総生産"
+msgstr ""
 
 #: output/templates/output/operation.html:338
 msgid "approved and confirmed starts"
@@ -6677,9 +6270,8 @@ msgid "approved and confirmed ends"
 msgstr "承認済み・確認済みの終了"
 
 #: output/templates/output/operation.html:342
-#, fuzzy
 msgid "approved and confirmed production"
-msgstr "承認済みおよび確認済生産"
+msgstr ""
 
 #: output/templates/output/pegging.html:282
 msgid "zoom in"
@@ -6691,27 +6283,23 @@ msgstr "ズームアウト"
 
 #: output/templates/output/purchase_order_summary.html:215
 #: output/views/buffer.py:474 output/views/operation.py:676
-#, fuzzy
 msgid "proposed ordering"
-msgstr "提案された注文"
+msgstr ""
 
 #: output/templates/output/purchase_order_summary.html:217
 #: output/views/operation.py:677
-#, fuzzy
 msgid "total ordering"
-msgstr "合計発注"
+msgstr ""
 
 #: output/templates/output/purchase_order_summary.html:223
 #: output/views/operation.py:682
-#, fuzzy
 msgid "proposed on order"
-msgstr "注文に基づいて提案"
+msgstr ""
 
 #: output/templates/output/purchase_order_summary.html:225
 #: output/views/operation.py:684
-#, fuzzy
 msgid "total on order"
-msgstr "注文の合計"
+msgstr ""
 
 #: output/templates/output/resource.html:279 output/views/constraint.py:35
 msgid "overload"
@@ -6721,116 +6309,90 @@ msgstr "過負荷"
 msgid "Inventory report"
 msgstr "棚卸レポート"
 
-#: output/views/buffer.py:258
-#, fuzzy
-msgid "is_ip_buffer"
-msgstr "バッファ"
-
 #: output/views/buffer.py:271
-#, fuzzy
 msgid "total produced"
-msgstr "生産合計"
+msgstr ""
 
 #: output/views/buffer.py:278
-#, fuzzy
 msgid "total consumed"
-msgstr "合計消費量"
+msgstr ""
 
 #: output/views/buffer.py:285
-#, fuzzy
 msgid "total consumed confirmed"
-msgstr "合計消費量"
+msgstr ""
 
 #: output/views/buffer.py:293
-#, fuzzy
 msgid "total consumed proposed"
-msgstr "合計消費量"
+msgstr ""
 
 #: output/views/buffer.py:306
-#, fuzzy
 msgid "consumed by MO"
-msgstr "MO によって消費される"
+msgstr ""
 
 #: output/views/buffer.py:322
-#, fuzzy
 msgid "consumed by DO"
-msgstr "DO によって消費される"
+msgstr ""
 
 #: output/views/buffer.py:339
-#, fuzzy
 msgid "total produced confirmed"
-msgstr "生産合計"
+msgstr ""
 
 #: output/views/buffer.py:351
-#, fuzzy
 msgid "total produced proposed"
-msgstr "生産合計"
+msgstr ""
 
 #: output/views/buffer.py:363
-#, fuzzy
 msgid "produced by MO"
-msgstr "MOによって生産される"
+msgstr ""
 
 #: output/views/buffer.py:379
-#, fuzzy
 msgid "produced by DO"
-msgstr "によって生産される DO"
+msgstr ""
 
 #: output/views/buffer.py:395
-#, fuzzy
 msgid "produced by PO"
-msgstr "プロデュース:発注書"
+msgstr ""
 
 #: output/views/buffer.py:406
-#, fuzzy
 msgid "produced by PO proposed"
-msgstr "プロデュース:発注書"
+msgstr ""
 
 #: output/views/buffer.py:420
-#, fuzzy
 msgid "total in progress confirmed"
-msgstr "進行中の合計"
+msgstr ""
 
 #: output/views/buffer.py:432
-#, fuzzy
 msgid "total in progress proposed"
-msgstr "進行中の合計"
+msgstr ""
 
 #: output/views/buffer.py:454
-#, fuzzy
 msgid "work in progress MO confirmed"
-msgstr "作業中の作業 MO"
+msgstr ""
 
 #: output/views/buffer.py:458
-#, fuzzy
 msgid "work in progress MO proposed"
-msgstr "作業中の作業 MO"
+msgstr ""
 
 #: output/views/buffer.py:470
-#, fuzzy
 msgid "on order PO confirmed"
-msgstr "注文 PO で"
+msgstr ""
 
 #: output/views/buffer.py:478
-#, fuzzy
 msgid "on order PO proposed"
-msgstr "注文 PO で"
+msgstr ""
 
 #: output/views/buffer.py:490
-#, fuzzy
 msgid "in transit DO confirmed"
-msgstr "輸送中に DO"
+msgstr ""
 
 #: output/views/buffer.py:494
-#, fuzzy
 msgid "in transit DO proposed"
-msgstr "輸送中に DO"
+msgstr ""
 
 #: output/views/buffer.py:521 output/views/demand.py:80
 #: output/views/demand.py:318
-#, fuzzy
 msgid "reasons"
-msgstr "理由"
+msgstr ""
 
 #: output/views/constraint.py:29
 msgid "material"
@@ -6889,33 +6451,28 @@ msgid "Performance Indicators"
 msgstr "パフォーマンス指標"
 
 #: output/views/operation.py:41
-#, fuzzy
 msgid "Manufacturing order summary"
-msgstr "製造オーダー集計"
+msgstr ""
 
 #: output/views/operation.py:490
-#, fuzzy
 msgid "Purchase order summary"
-msgstr "発注書の概要"
+msgstr ""
 
 #: output/views/operation.py:946
-#, fuzzy
 msgid "Distribution order summary"
-msgstr "配送注文の集計"
+msgstr ""
 
 #: output/views/pegging.py:32
 msgid "Demand plan"
 msgstr "要求量の計画"
 
 #: output/views/pegging.py:66
-#, fuzzy
 msgid "item description"
-msgstr "品目説明"
+msgstr ""
 
 #: output/views/pegging.py:80
-#, fuzzy
 msgid "required quantity"
-msgstr "必要数量"
+msgstr ""
 
 #: output/views/problem.py:55
 msgid "Problem report"
@@ -6930,9 +6487,8 @@ msgid "utilization %"
 msgstr "稼働率 %"
 
 #: output/views/resource.py:172
-#, fuzzy
 msgid "available calendar"
-msgstr "使用可能なカレンダー"
+msgstr ""
 
 #: output/widget.py:35
 msgid "late orders"
@@ -7088,24 +6644,20 @@ msgstr "引用"
 #: reportmanager/models.py:22
 #: reportmanager/templates/reportmanager/reportmanager.html:210
 #: reportmanager/views.py:122
-#, fuzzy
 msgid "SQL query"
-msgstr "SQL クエリ"
+msgstr ""
 
 #: reportmanager/models.py:95 reportmanager/views.py:616
-#, fuzzy
 msgid "my report"
-msgstr "私のレポート"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:94
-#, fuzzy
 msgid "Saving the report failed"
-msgstr "レポートの保存に失敗しました"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:167
-#, fuzzy
 msgid "format SQL query"
-msgstr "SQL クエリ"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:197
 #: reportmanager/views.py:123
@@ -7113,18 +6665,16 @@ msgid "public"
 msgstr "公開"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:217
-#, fuzzy
 msgid "schema"
-msgstr "スキーマ"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/schema.html:8
 msgid "table"
 msgstr "テーブル"
 
 #: reportmanager/views.py:291
-#, fuzzy
 msgid "Add custom report"
-msgstr "カスタム レポートの追加"
+msgstr ""
 
 #: retail/management/commands/runpartitions.py:35
 msgid "Runs all the partitions"
@@ -7203,25 +6753,22 @@ msgid "web service"
 msgstr "webサービス"
 
 #: webservice/templates/commands/runwebservice.html:9
-#, fuzzy
 msgid "Start the web service."
-msgstr "Web サービスを開始します。"
+msgstr ""
 
 #: webservice/templates/commands/runwebservice.html:14
 msgid "Stop"
 msgstr "停止"
 
 #: webservice/templates/commands/runwebservice.html:17
-#, fuzzy
 msgid "Stop the web service."
-msgstr "Web サービスを停止します。"
+msgstr ""
 
 #: wizard/templates/wizard/features.html:6
 #: wizard/templates/wizard/features.html:11
 #: wizard/templates/wizard/index.html:12
-#, fuzzy
 msgid "explore features"
-msgstr "機能を調べる"
+msgstr ""
 
 #: wizard/templates/wizard/features.html:19
 #: wizard/templates/wizard/index.html:20
@@ -7235,97 +6782,80 @@ msgstr "Item"
 
 #: wizard/templates/wizard/quickstart_forecast.html:73
 #: wizard/templates/wizard/quickstart_production.html:408
-#, fuzzy
 msgid "location name"
-msgstr "場所名"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:85
 #: wizard/templates/wizard/quickstart_production.html:420
-#, fuzzy
 msgid "customer name"
-msgstr "顧客名"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:92
-#, fuzzy, python-format
+#, python-format
 msgid "Sales history in the last %(buckets)s"
-msgstr "最後の %(バケット)の販売履歴"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:97
-#, fuzzy
 msgid "a list of integers:eg 10  20  30"
-msgstr "整数のリスト:例えば10 20 30"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:130
-#, fuzzy
 msgid "supplier name"
-msgstr "サプライヤー名"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:142
-#, fuzzy
 msgid "lead time (in days)"
-msgstr "リード タイム (日数)"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:169
-#, fuzzy
 msgid "operation name"
-msgstr "操作名"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:181
-#, fuzzy
 msgid "fixed time"
-msgstr "固定時間"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:193
-#, fuzzy
 msgid "time per piece"
-msgstr "1 個あたりの時間"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:210
-#, fuzzy
 msgid "resource name"
-msgstr "リソース名"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:217
-#, fuzzy
 msgid "consumed items"
-msgstr "消費される品目"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:222
 #: wizard/templates/wizard/quickstart_production.html:303
-#, fuzzy
 msgid "component or subassembly item name"
-msgstr "コンポーネントまたはサブアセンブリのアイテム名"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:226
 #: wizard/templates/wizard/quickstart_production.html:307
-#, fuzzy
 msgid "consumed quantity"
-msgstr "消費済数量"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:258
-#, fuzzy
 msgid "source location"
-msgstr "ソースの場所"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:263
-#, fuzzy
 msgid "source location name"
-msgstr "ソースの場所の名前"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:270
-#, fuzzy
 msgid "transport time"
-msgstr "輸送時間"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:275
-#, fuzzy
 msgid "transport time (in days)"
-msgstr "配送時間 (日数)"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:384
-#, fuzzy
 msgid "unique sales order name"
-msgstr "一意の販売注文名"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:439
 #: wizard/templates/wizard/quickstart_production.html:444
@@ -7333,44 +6863,36 @@ msgid "due date"
 msgstr "期日"
 
 #: wizard/templates/wizard/quickstart_production.html:449
-#, fuzzy
 msgid "Create sales order"
-msgstr "販売注文の作成"
+msgstr ""
 
 #: wizard/views.py:2296
-#, fuzzy
 msgid "Data loading wizard for forecasting"
-msgstr "予測用のデータ読み込みウィザード"
+msgstr ""
 
 #: wizard/views.py:2298
-#, fuzzy
 msgid "Data loading wizard for inventory planning"
-msgstr "在庫計画用のデータ読み込みウィザード"
+msgstr ""
 
 #: wizard/views.py:2300
-#, fuzzy
 msgid "Data loading wizard for production planning"
-msgstr "生産計画用のデータローディングウィザード"
+msgstr ""
 
 #: wizard/views.py:2302
-#, fuzzy
 msgid "Get started - Data loading wizard"
-msgstr "はじめに - データロードウィザード"
+msgstr ""
 
 #: wizard/views.py:2433
-#, fuzzy
 msgid "Quickstart production planning"
-msgstr "クイックスタート生産計画"
+msgstr ""
 
 #: wizard/views.py:2685
-#, fuzzy
 msgid "Quickstart forecasting"
-msgstr "クイック スタート予測"
+msgstr ""
 
 #: wizard/views.py:2691
-#, fuzzy
 msgid "quarters"
-msgstr "四半期"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
@@ -7523,76 +7045,58 @@ msgstr "{{m.label}}"
 #: freppledb/planningboard/static/planningboard/planningboard.html:1343
 #: freppledb/planningboard/static/planningboard/planningboard.html:1372
 #: freppledb/planningboard/static/planningboard/planningboard.html:1398
-#, fuzzy
 msgid "Add to the graph"
-msgstr "グラフに追加"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1608
-#, fuzzy
 msgid ""
 "An operation gets the color of its category.<br>\n"
 "                        The operation categories should be filled in the "
 "operation table.\n"
 "                        <br><br>"
 msgstr ""
-"操作は、そのカテゴリの色を取得します。<br>操作のカテゴリは、操作テーブルに入"
-"力する必要があります。                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1643
-#, fuzzy
 msgid ""
 "An operation gets the color of its subcategory.<br>\n"
 "                        The operation subcategories should be filled in the "
 "operation table.\n"
 "                        <br><br>"
 msgstr ""
-"操作は、そのサブカテゴリの色を取得します。<br>操作のサブカテゴリは、操作テー"
-"ブルに入力する必要があります。                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1540
-#, fuzzy
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"操作は、生成される項目のカテゴリの色を取得します。<br>品目カテゴリは、品目"
-"テーブルに入力する必要があります。                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1574
-#, fuzzy
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"操作は、生成される項目のサブカテゴリの色を取得します。<br>品目のサブカテゴリ"
-"は、品目テーブルに入力する必要があります。                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1481
-#, fuzzy
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br>"
 msgstr ""
-"操作は、そのカテゴリの色を取得します。<br>操作のカテゴリは、操作テーブルに入"
-"力する必要があります。                        <br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:319
 msgid "Apply"
 msgstr "適用"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:65
-#, fuzzy
 msgid "Automatically resolve infeasiblities in the plan"
-msgstr "計画の実行不可能を自動的に解決する"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1346
-#, fuzzy
 msgid "Clear the plan of selected demands"
-msgstr "選択した要求の計画をクリアします"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:470
 #: freppledb/input/static/operationplandetail/operationplandetail.html:59
@@ -7602,23 +7106,20 @@ msgid "Continue"
 msgstr "続ける"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1420
-#, fuzzy
 msgid "Criticality color setup"
-msgstr "臨界色設定"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1448
-#, fuzzy
 msgid "Delay color setup"
-msgstr "遅延色の設定"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:46
 msgid "Delivery"
 msgstr "配信"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1475
-#, fuzzy
 msgid "Due date color setup"
-msgstr "遅延色の設定"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:283
 #: freppledb/planningboard/static/planningboard/planningboard.html:362
@@ -7637,49 +7138,39 @@ msgstr "名前を入力"
 #: freppledb/quoting/static/quoting/quoting.html:30
 #: freppledb/quoting/static/quoting/quoting.html:43
 #: freppledb/quoting/static/quoting/quoting.html:56
-#, fuzzy
 msgid "Enter your search terms"
-msgstr "検索語句を入力してください"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1534
-#, fuzzy
 msgid "Item category color setup"
-msgstr "品目カテゴリの色設定"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1568
-#, fuzzy
 msgid "Item subcategory color setup"
-msgstr "品目サブカテゴリの色設定"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:139
-#, fuzzy
 msgid "No plan yet"
-msgstr "まだ計画がありません"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1602
-#, fuzzy
 msgid "Operation category color setup"
-msgstr "作業カテゴリの色設定"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1637
-#, fuzzy
 msgid "Operation subcategory color setup"
-msgstr "作業サブカテゴリの色設定"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:54
 #: freppledb/planningboard/static/planningboard/planningboard.html:155
-#, fuzzy
 msgid "Please be patient, the chart may take some time to complete."
 msgstr ""
-"しばらくお待ちください、チャートが完了するまでに時間がかかる場合があります。"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1507
-#, fuzzy
 msgid "Priority color setup"
-msgstr "優先度の色の設定"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1512
-#, fuzzy
 msgid ""
 "Priority is a demand property, available in the demands table. The priority "
 "value will have effect in the plan results.<br>\n"
@@ -7687,53 +7178,39 @@ msgid ""
 "value the lower the priority.\n"
 "                        <br><br>"
 msgstr ""
-"優先度は需要プロパティで、需要テーブルで使用できます。優先順位の値は、計画結"
-"果に影響を与えます。<br>優先順位の最も高い値は 0 で、値が大きいほど優先順位が"
-"低くなります。                        <br><br>"
 
 #: freppledb/quoting/static/quoting/quoting.html:192
-#, fuzzy
 msgid "Quoting error"
-msgstr "引用エラー"
-
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:194
-msgid "Remark"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:163
-#, fuzzy
 msgid "Save changes to the database"
-msgstr "データベースへの変更を保存する"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:172
-#, fuzzy
 msgid "Save plan from memory to the database"
-msgstr "プランをメモリからデータベースに保存する"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:391
-#, fuzzy
 msgid ""
 "Select forecast method, only possible at single item/location/customer level"
-msgstr "予測方法を選択し、単一品目/場所/顧客レベルでのみ可能"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:49
-#, fuzzy
 msgid "Select panel measure"
-msgstr "パネルメジャーの選択"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:5
-#, fuzzy
 msgid "Select panel sequence"
-msgstr "パネルシーケンスの選択"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:289
 #: freppledb/planningboard/static/planningboard/planningboard.html:368
 #: freppledb/planningboard/static/planningboard/planningboard.html:552
 #: freppledb/planningboard/static/planningboard/planningboard.html:678
 #: freppledb/planningboard/static/planningboard/planningboard.html:804
-#, fuzzy
 msgid "Split in half"
-msgstr "半分に分割"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:45
 msgid "Stock"
@@ -7741,12 +7218,10 @@ msgstr "ストック"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:53
 #: freppledb/planningboard/static/planningboard/planningboard.html:154
-#, fuzzy
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
-msgstr "ガント チャートは{{rowlimit}}行に制限されています。"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1425
-#, fuzzy
 msgid ""
 "The criticality of an operationplan measures the slack time available till "
 "the delivery of the customer demand.<br>\n"
@@ -7756,13 +7231,8 @@ msgid ""
 "not immediately impact the delivery of any demand.\n"
 "                        <br><br>"
 msgstr ""
-"運用計画の重要度は、顧客の需要の納期まで利用可能な余裕期間を測定します。<br>"
-"クリティカル性が 0 の場合、注文は 1 つ以上の要求のクリティカル パス上にあるこ"
-"とを示します。<br>重要度の値が高いほど、遅延が需要の配信に直ちに影響を与えな"
-"いことを示します。                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1453
-#, fuzzy
 msgid ""
 "The delay of an operationplan compares its end date with the delivery due "
 "date of the customer demand(s) it feeds.<br>\n"
@@ -7770,180 +7240,147 @@ msgid ""
 "operations still required to produce the finished end item.\n"
 "                        <br><br>"
 msgstr ""
-"工程計画の遅延は、その終了日と、その計画が供給する顧客需要の納期日とを比較し"
-"ます。<br>また、完成品の生産に必要なフォローアップ作業の期間も考慮しま"
-"す。                        <br><br>"
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:78
-#, fuzzy
 msgid "View end events"
-msgstr "終了イベントの表示"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:80
-#, fuzzy
 msgid "View full duration"
-msgstr "全期間の表示"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:79
-#, fuzzy
 msgid "View start and end events"
-msgstr "開始イベントと終了イベントの表示"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:77
-#, fuzzy
 msgid "View start events"
-msgstr "開始イベントの表示"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:11
-#, fuzzy
 msgid "color by"
-msgstr "色"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:192
-#, fuzzy
 msgid "colors"
-msgstr "色"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:214
-#, fuzzy
 msgid "customer delivery"
-msgstr "顧客配送"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:462
 #: freppledb/input/static/operationplandetail/operationplandetail.html:47
 #: freppledb/planningboard/static/planningboard/planningboard.html:148
-#, fuzzy
 msgid "database transaction failed"
-msgstr "データベース トランザクションが失敗しました"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
 msgid "delivery"
 msgstr "delivery"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:145
-#, fuzzy
 msgid "delivery quantity"
-msgstr "配送数量"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:2
-#, fuzzy
 msgid "downstream operations"
-msgstr "ダウンストリーム操作"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:83
-#, fuzzy
 msgid "export as Excel file"
-msgstr "Excel ファイルとしてエクスポート"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:15
-#, fuzzy
 msgid "feasibility"
-msgstr "可能"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:46
 #: freppledb/planningboard/static/planningboard/planningboard.html:147
-#, fuzzy
 msgid "gantt chart rows limit"
-msgstr "ガント チャートの行数の制限"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:188
 #, fuzzy
 msgid "history"
-msgstr "履歴"
+msgstr "歴史"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:33
-#, fuzzy
 msgid "item category"
-msgstr "品目カテゴリ"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:36
-#, fuzzy
 msgid "item subcategory"
-msgstr "品目サブカテゴリ"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:85
-#, fuzzy
 msgid "maximum lateness (in days)"
-msgstr "最大遅延 (日数)"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:28
-#, fuzzy
 msgid "network status"
-msgstr "ネットワークの状態"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:260
-#, fuzzy
 msgid "new customer comment"
-msgstr "新しい顧客コメント"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:46
-#, fuzzy
 msgid "no demands"
-msgstr "需要"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:17
-#, fuzzy
 msgid "no downstream operationplans information"
-msgstr "ダウンストリームオペレーションプラン情報なし"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:44
-#, fuzzy
 msgid "no movements"
-msgstr "動きなし"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:52
-#, fuzzy
 msgid "no network information"
-msgstr "ネットワーク情報なし"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:40
-#, fuzzy
 msgid "no resources"
-msgstr "リソース"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:18
-#, fuzzy
 msgid "no selection"
-msgstr "選択なし"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:54
-#, fuzzy
 msgid "no supply information"
-msgstr "供給情報"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:17
-#, fuzzy
 msgid "no upstream operationplans information"
-msgstr "上流の操作計画情報がありません"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:39
-#, fuzzy
 msgid "operation category"
-msgstr "操作カテゴリ"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:42
-#, fuzzy
 msgid "operation subcategory"
-msgstr "操作サブカテゴリ"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:8
-#, fuzzy
 msgid "quote form"
-msgstr "見積書フォーム"
+msgstr ""
 
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:194
 #: freppledb/planningboard/static/planningboard/planningboard.html:527
 msgid "remark"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:80
-#, fuzzy
 msgid "remove all rows"
-msgstr "すべての行を削除する"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:77
-#, fuzzy
 msgid "remove row"
-msgstr "行の削除"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:19
 msgid "selected"
@@ -7952,38 +7389,48 @@ msgstr "選択済み"
 #: freppledb/planningboard/static/planningboard/planningboard.html:444
 #: freppledb/planningboard/static/planningboard/planningboard.html:596
 #: freppledb/planningboard/static/planningboard/planningboard.html:718
-#, fuzzy
 msgid "setup end"
-msgstr "セットアップ終了"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/calendar.html:24
 #: freppledb/input/static/operationplandetail/kanban.html:15
-#, fuzzy
 msgid "shown"
-msgstr "表示"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:33
 msgid "stock"
 msgstr "stock"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:28
-#, fuzzy
 msgid "supply information"
-msgstr "供給情報"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:33
 msgid "types"
 msgstr "タイプ"
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:2
-#, fuzzy
 msgid "upstream operations"
-msgstr "上流の操作"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/month.html:13
-#, fuzzy
 msgid "week number"
-msgstr "週番号"
+msgstr ""
+
+#, fuzzy
+#~ msgid "add"
+#~ msgstr "と"
+
+#, fuzzy
+#~ msgid "is_ip_buffer"
+#~ msgstr "バッファ"
+
+#~ msgid "cancel"
+#~ msgstr "キャンセル"
+
+#, fuzzy
+#~ msgid "delete"
+#~ msgstr "削除"
 
 #~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
 #~ msgstr "正しくない日付: 入力すべき形式 YYYY-MM-DD HH:MM:SS"
@@ -7996,6 +7443,17 @@ msgstr "週番号"
 
 #~ msgid "material excess"
 #~ msgstr "材料の過剰"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "                        Files in the old .XLS excel format can't be read."
+#~ "<br>\n"
+#~ "                        Please convert them to the new .XLSX format.\n"
+#~ "                        "
+#~ msgstr ""
+#~ "古いファイル.XLS Excel 形式を読み取ることができません。<br>それらを新しい"
+#~ "に変換してください.XLSX 形式。"
 
 #, fuzzy
 #~ msgid "Choose a what-if scenario"

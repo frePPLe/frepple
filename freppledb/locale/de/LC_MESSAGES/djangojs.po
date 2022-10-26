@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-25 13:05+0200\n"
+"POT-Creation-Date: 2022-10-26 16:33+0200\n"
 "PO-Revision-Date: 2021-05-06 17:07+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: klaus\n"
@@ -206,6 +206,7 @@ msgstr ""
 
 #: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
 #: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
+#: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
 #: common/static/js/frepple.min.js:11
 msgid "Export"
 msgstr "Exportieren"
@@ -276,11 +277,6 @@ msgstr "und"
 #: common/static/js/frepple.js:2103 common/static/js/frepple.min.js:11
 msgid "Click ok to confirm deleting the favorite"
 msgstr "Klicken Sie auf OK, um das Löschen des Favoriten zu bestätigen"
-
-#: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
-#: common/static/js/frepple.min.js:11
-msgid "export"
-msgstr "Exportieren"
 
 #: common/static/js/frepple.js:2278 common/static/js/frepple.min.js:11
 msgid "export selected records"
@@ -451,6 +447,10 @@ msgstr ""
 #: common/static/js/frepple.min.js:11
 msgid "OR"
 msgstr "ODER"
+
+#: common/static/js/frepple.min.js:11
+msgid "export"
+msgstr "Exportieren"
 
 #: forecast/static/forecast/src/forecast.js:941
 #: forecast/static/js/frepple-forecast.min.js:11

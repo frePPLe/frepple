@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-25 13:05+0200\n"
-"PO-Revision-Date: 2021-05-06 17:04+0200\n"
+"POT-Creation-Date: 2022-10-26 16:33+0200\n"
+"PO-Revision-Date: 2022-10-26 17:01+0200\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: uk\n"
@@ -160,9 +160,8 @@ msgstr "Формат експорту"
 
 #: common/static/js/frepple.js:1223 common/static/js/frepple.js:1273
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Scenarios to export"
-msgstr "Сценарії експорту"
+msgstr ""
 
 #: common/static/js/frepple.js:1230 common/static/js/frepple.js:1281
 #: common/static/js/frepple.js:1323 common/static/js/frepple.js:1356
@@ -179,18 +178,14 @@ msgstr "Список CSV"
 #: common/static/js/frepple.js:1233 common/static/js/frepple.js:1285
 #: common/static/js/frepple.js:1327 common/static/js/frepple.js:1361
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Data source URL"
-msgstr "URL-адреса джерела даних"
+msgstr ""
 
 #: common/static/js/frepple.js:1235 common/static/js/frepple.js:1287
 #: common/static/js/frepple.js:1329 common/static/js/frepple.js:1363
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Using this link external applications can pull data from frePPLe"
 msgstr ""
-"За допомогою цього посилання зовнішні програми можуть витягувати дані з "
-"frePPLe"
 
 #: common/static/js/frepple.js:1242 common/static/js/frepple.js:1294
 #: common/static/js/frepple.js:1336 common/static/js/frepple.js:1370
@@ -201,6 +196,7 @@ msgstr "Копіювати до буфера обміну"
 
 #: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
 #: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
+#: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
 #: common/static/js/frepple.min.js:11
 msgid "Export"
 msgstr "Експорт"
@@ -248,9 +244,8 @@ msgid "within"
 msgstr "всередині"
 
 #: common/static/js/frepple.js:1879 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "is child of"
-msgstr "є дитиною"
+msgstr ""
 
 #: common/static/js/frepple.js:1881 common/static/js/frepple.min.js:11
 msgid "is null"
@@ -272,11 +267,6 @@ msgstr "i"
 #: common/static/js/frepple.js:2103 common/static/js/frepple.min.js:11
 msgid "Click ok to confirm deleting the favorite"
 msgstr "Натисніть ОК, щоб підтвердити видалення вибраного"
-
-#: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
-#: common/static/js/frepple.min.js:11
-msgid "export"
-msgstr "експорт"
 
 #: common/static/js/frepple.js:2278 common/static/js/frepple.min.js:11
 msgid "export selected records"
@@ -350,14 +340,13 @@ msgid "Delete"
 msgstr "Видалити"
 
 #: common/static/js/frepple.js:2871 common/static/js/frepple.min.js:11
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%s unread messages"
-msgstr "%s непрочитаних повідомлень"
+msgstr ""
 
 #: common/static/js/frepple.js:2876 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "No unread messages"
-msgstr "Немає непрочитаних повідомлень"
+msgstr ""
 
 #: common/static/js/frepple.js:3008 common/static/js/frepple.min.js:11
 msgid "Installed apps"
@@ -416,9 +405,9 @@ msgid "Canceled"
 msgstr "Скасовано"
 
 #: common/static/js/frepple.js:3220 common/static/js/frepple.min.js:11
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%s records processed"
-msgstr "%s оброблені записи"
+msgstr ""
 
 #: common/static/js/frepple.js:3954 common/static/js/frepple.min.js:11
 #, fuzzy
@@ -431,9 +420,9 @@ msgid "Update"
 msgstr "Оновити"
 
 #: common/static/js/frepple.js:3973 common/static/js/frepple.min.js:11
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Manage notifications of %s"
-msgstr "Сповіщення"
+msgstr ""
 
 #: common/static/js/frepple.js:3981 common/static/js/frepple.min.js:11
 #, fuzzy
@@ -448,13 +437,16 @@ msgstr "Додати підписників"
 #: common/static/js/frepple.min.js:11
 #, fuzzy
 msgid "OR"
-msgstr "Або"
+msgstr "АБО"
+
+#: common/static/js/frepple.min.js:11
+msgid "export"
+msgstr "експорт"
 
 #: forecast/static/forecast/src/forecast.js:941
 #: forecast/static/js/frepple-forecast.min.js:11
-#, fuzzy
 msgid "Show descriptions"
-msgstr "опис"
+msgstr ""
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
@@ -480,7 +472,7 @@ msgstr "поточний запас"
 #: planningboard/static/planningboard/src/planningboard.js:885
 #, fuzzy
 msgid "minutes"
-msgstr "%d хвилина"
+msgstr "хвилин"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:65
@@ -489,7 +481,7 @@ msgstr "%d хвилина"
 #: planningboard/static/planningboard/src/planningboard.js:893
 #, fuzzy
 msgid "seconds"
-msgstr "%(count)s секунду тому"
+msgstr "секунд"
 
 #: output/views/resource.py:255
 msgid "hours"
@@ -500,21 +492,21 @@ msgstr "години"
 #: planningboard/static/planningboard/src/planningboard.js:881
 #, fuzzy
 msgid "hour"
-msgstr "години"
+msgstr "година"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:888
 #: planningboard/static/planningboard/src/planningboard.js:889
 #, fuzzy
 msgid "minute"
-msgstr "%d хвилина"
+msgstr "хвилина"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:895
 #: planningboard/static/planningboard/src/planningboard.js:896
 #, fuzzy
 msgid "second"
-msgstr "%(count)s секунду тому"
+msgstr "секунда"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
@@ -1105,14 +1097,12 @@ msgid "owner"
 msgstr "власник"
 
 #: archive/models.py:134
-#, fuzzy
 msgid "item cost"
-msgstr "вартість товару"
+msgstr ""
 
 #: archive/models.py:137
-#, fuzzy
 msgid "itemsupplier cost"
-msgstr "вартість товарів"
+msgstr ""
 
 #: archive/models.py:140 input/models.py:1483 input/models.py:1881
 #: input/views/inventory.py:369 input/views/inventory.py:531
@@ -1172,34 +1162,28 @@ msgid "demand"
 msgstr "попит"
 
 #: archive/widget.py:28
-#, fuzzy
 msgid "Inventory history"
-msgstr "Історія інвентаризації"
+msgstr ""
 
 #: archive/widget.py:29
-#, fuzzy
 msgid "Show the history of the on hand inventory"
-msgstr "Показати історію інвентаризації під рукою"
+msgstr ""
 
 #: archive/widget.py:172
-#, fuzzy
 msgid "Demand history"
-msgstr "Історія попиту"
+msgstr ""
 
 #: archive/widget.py:173
-#, fuzzy
 msgid "Show the evolution of the open sales orders"
-msgstr "Показати еволюцію відкритих замовлень на продаж"
+msgstr ""
 
 #: archive/widget.py:337
-#, fuzzy
 msgid "Purchase order history"
-msgstr "Історія замовлень на купівлю"
+msgstr ""
 
 #: archive/widget.py:338
-#, fuzzy
 msgid "Show the evolution of the open purchase orders"
-msgstr "Показати еволюцію відкритих замовлень на купівлю"
+msgstr ""
 
 #: common/admin.py:28 common/admin.py:39
 msgid "Personal info"
@@ -1306,9 +1290,8 @@ msgid "Cannot delete %(name)s"
 msgstr "Неможливо видалити %(name)s"
 
 #: common/adminforms.py:704
-#, fuzzy
 msgid "About to delete!"
-msgstr "Збирається видалити!"
+msgstr ""
 
 #: common/adminforms.py:705
 msgid "Are you sure?"
@@ -1355,9 +1338,8 @@ msgstr ""
 "Виберіть правильний вибір. Цей вибір не є одним із доступних варіантів."
 
 #: common/localization.py:38 common/localization.py:56
-#, fuzzy
 msgid "Invalid date format"
-msgstr "Недійсне число"
+msgstr ""
 
 #: common/menu.py:117
 msgid "Documentation"
@@ -1466,7 +1448,7 @@ msgstr "джерело"
 msgid "last modified"
 msgstr "остання змінена"
 
-#: common/models.py:289 common/report.py:2297 common/report.py:2432
+#: common/models.py:289 common/report.py:2295 common/report.py:2430
 #: common/views.py:475 execute/management/commands/importworkbook.py:202
 #: execute/views.py:1394 input/models.py:102
 #: input/templates/input/calendardetail.html:36
@@ -1560,8 +1542,8 @@ msgid "scenarios"
 msgstr "сценаріїв"
 
 #: common/models.py:366 common/report.py:1041 common/report.py:1122
-#: common/report.py:1138 common/report.py:1155 common/report.py:3270
-#: common/report.py:3661 execute/templates/commands/scenario_copy.html:15
+#: common/report.py:1138 common/report.py:1155 common/report.py:3268
+#: common/report.py:3659 execute/templates/commands/scenario_copy.html:15
 msgid "scenario"
 msgstr "сценарій"
 
@@ -1584,9 +1566,8 @@ msgstr "розмір сторінки"
 
 #: common/models.py:409 common/templates/common/preferences.html:118
 #: common/views.py:177
-#, fuzzy
 msgid "default scenario"
-msgstr "сценарій"
+msgstr ""
 
 #: common/models.py:558 common/models.py:645 common/models.py:706
 #: common/models.py:924 common/models.py:995 common/views.py:497
@@ -1601,6 +1582,7 @@ msgstr "користувачі"
 
 #: common/models.py:673 execute/templates/commands/scheduletasks.html:104
 #: execute/templates/commands/scheduletasks.html:169
+#: input/templates/input/calendardetail.html:24
 msgid "Add"
 msgstr "Додайте"
 
@@ -1616,7 +1598,7 @@ msgstr "коментар"
 #: common/models.py:677 common/models.py:981 common/models.py:1003
 #, fuzzy
 msgid "follower"
-msgstr "Послідовник"
+msgstr "послідовник"
 
 #: common/models.py:685
 msgid "content type"
@@ -1640,14 +1622,12 @@ msgid "comments"
 msgstr "коментарі"
 
 #: common/models.py:919 common/views.py:610
-#, fuzzy
 msgid "model name"
-msgstr "назва моделі"
+msgstr ""
 
 #: common/models.py:921 common/views.py:616
-#, fuzzy
 msgid "object name"
-msgstr "ім'я об'єкта"
+msgstr ""
 
 #: common/models.py:982
 #, fuzzy
@@ -1657,12 +1637,11 @@ msgstr "підписчики"
 #: common/models.py:1021
 #, fuzzy
 msgid "notification"
-msgstr "Повідомлення"
+msgstr "Сповіщення про масове завантаження"
 
 #: common/models.py:1022
-#, fuzzy
 msgid "notifications"
-msgstr "Сповіщення"
+msgstr ""
 
 #: common/models.py:1412 input/models.py:676
 #: input/templates/input/operationplanreport.html:317
@@ -1695,8 +1674,8 @@ msgstr "рівень"
 msgid "Higher values indicate more granular time buckets"
 msgstr "Більш високі значення вказують на більш детальні часові відрізки"
 
-#: common/models.py:1427 common/models.py:1438 common/report.py:3226
-#: common/report.py:3594 common/views.py:665 forecast/models.py:378
+#: common/models.py:1427 common/models.py:1438 common/report.py:3224
+#: common/report.py:3592 common/views.py:665 forecast/models.py:378
 #: forecast/models.py:514
 msgid "bucket"
 msgstr "період"
@@ -1718,20 +1697,20 @@ msgstr "дати періоду"
 #: common/models.py:1467
 #, fuzzy
 msgid "string"
-msgstr "Ламана"
+msgstr "рядок"
 
 #: common/models.py:1468
+#, fuzzy
 msgid "boolean"
-msgstr ""
+msgstr "логічне значення"
 
 #: common/models.py:1469 forecast/models.py:1090
 msgid "number"
 msgstr "число"
 
 #: common/models.py:1470
-#, fuzzy
 msgid "integer"
-msgstr "Ціле число"
+msgstr ""
 
 #: common/models.py:1471 forecast/widget.py:396 input/models.py:2331
 #: input/views/inventory.py:1727
@@ -1740,9 +1719,8 @@ msgid "date"
 msgstr "дата"
 
 #: common/models.py:1472
-#, fuzzy
 msgid "datetime"
-msgstr "Дата, час"
+msgstr ""
 
 #: common/models.py:1473 execute/views.py:151 input/models.py:385
 #: input/models.py:837 input/views/capacity.py:103 input/views/capacity.py:542
@@ -1758,7 +1736,7 @@ msgstr "тривалість"
 #: common/models.py:1474
 #, fuzzy
 msgid "time"
-msgstr "вчасно"
+msgstr "час"
 
 #: common/models.py:1475
 msgid "JSON"
@@ -1775,9 +1753,8 @@ msgid "label"
 msgstr "мiтка"
 
 #: common/models.py:1517 common/views.py:722
-#, fuzzy
 msgid "editable"
-msgstr "таблиця"
+msgstr ""
 
 #: common/models.py:1519 common/views.py:726 forecast/models.py:1145
 #: forecast/views.py:353
@@ -1785,14 +1762,13 @@ msgid "initially hidden"
 msgstr "спочатку приховано"
 
 #: common/models.py:1538 forecast/models.py:1193
-#, fuzzy
 msgid "Name can only be alphanumeric"
-msgstr "Назва заходу може бути лише буквено-цифровою"
+msgstr ""
 
 #: common/models.py:1580
 #, fuzzy
 msgid "attribute"
-msgstr "атрибути"
+msgstr "атрибут"
 
 #: common/models.py:1581 common/views.py:679
 #: inventoryplanning/templates/inventoryplanning/drp.html:2596
@@ -1809,8 +1785,8 @@ msgstr "Нi"
 msgid "Yes"
 msgstr "Так"
 
-#: common/report.py:834 common/report.py:1915 common/report.py:1918
-#: common/report.py:2193 common/report.py:2247 common/report.py:2370
+#: common/report.py:834 common/report.py:1913 common/report.py:1916
+#: common/report.py:2191 common/report.py:2245 common/report.py:2368
 #: common/templates/403.html:4 common/templates/403.html:7
 #: executesql/views.py:60 forecast/views.py:1076 forecast/views.py:1250
 #: forecast/views.py:1389 forecast/views.py:1522 forecast/views.py:1666
@@ -1826,107 +1802,103 @@ msgstr "Так"
 msgid "Permission denied"
 msgstr "У дозволі відмовлено"
 
-#: common/report.py:1019 common/report.py:3572 common/report.py:3601
+#: common/report.py:1019 common/report.py:3570 common/report.py:3599
 #: execute/views.py:1155 execute/views.py:1198
 #, python-format
 msgid "Values in this field must exist in the %s table"
 msgstr "Значення в цьому полі повинні існувати в таблиці %s"
 
-#: common/report.py:1027 common/report.py:3580 common/report.py:3609
+#: common/report.py:1027 common/report.py:3578 common/report.py:3607
 #: execute/views.py:1163 execute/views.py:1209
 #, python-format
 msgid "Accepted values are: %s"
 msgstr "Прийняті значення:% s"
 
-#: common/report.py:1036 common/report.py:3589 common/report.py:3618
-#: common/report.py:3647 execute/views.py:1172 execute/views.py:1218
+#: common/report.py:1036 common/report.py:3587 common/report.py:3616
+#: common/report.py:3645 execute/views.py:1172 execute/views.py:1218
 #: execute/views.py:1238
 msgid "Read only"
 msgstr "Лише для читання"
 
-#: common/report.py:1590
-#, fuzzy
+#: common/report.py:1590 execute/views.py:1320
 msgid ""
-"\n"
-"                        Files in the old .XLS excel format can't be read."
-"<br>\n"
-"                        Please convert them to the new .XLSX format.\n"
-"                        "
+"Files in the old .XLS excel format can't be read.<br>Please convert them to "
+"the new .XLSX format."
 msgstr ""
 "Файли у старому форматі .XLS excel не можна прочитати. <br> Перетворіть їх у "
 "новий .XLSX формат."
 
-#: common/report.py:1749
+#: common/report.py:1747
 #, python-format
 msgid "%(title)s for %(entity)s"
 msgstr "%(title)s для %(entity)s"
 
-#: common/report.py:1949 common/report.py:1997 common/report.py:2073
+#: common/report.py:1947 common/report.py:1995 common/report.py:2071
 #, python-format
 msgid "Can't find %s"
 msgstr "Не вдається знайти %s"
 
-#: common/report.py:1982
+#: common/report.py:1980
 #, python-format
 msgid "Can't copy %s"
 msgstr "Неможливо скопіювати %s"
 
-#: common/report.py:2222
+#: common/report.py:2220
 #, python-format
 msgid "Erasing data from %(model)s"
 msgstr "Видалення даних із %(model)s"
 
-#: common/report.py:2241 common/report.py:2364
+#: common/report.py:2239 common/report.py:2362
 msgid "Invalid upload request"
 msgstr "Недійсний запит на завантаження"
 
-#: common/report.py:2294 common/report.py:2429
+#: common/report.py:2292 common/report.py:2427
 #: execute/management/commands/importworkbook.py:199 execute/views.py:1371
 #: execute/views.py:1391
 msgid "worksheet"
 msgstr "робочий лист"
 
-#: common/report.py:2295 common/report.py:2430
+#: common/report.py:2293 common/report.py:2428
 #: execute/management/commands/importworkbook.py:200 execute/views.py:1392
 msgid "row"
 msgstr "ряд"
 
-#: common/report.py:2296 common/report.py:2431
+#: common/report.py:2294 common/report.py:2429
 #: execute/management/commands/importworkbook.py:201 execute/views.py:1393
 msgid "field"
 msgstr "поле данных"
 
-#: common/report.py:2298 common/report.py:2309 common/report.py:2433
-#: common/report.py:2446 execute/management/commands/importworkbook.py:203
+#: common/report.py:2296 common/report.py:2307 common/report.py:2431
+#: common/report.py:2444 execute/management/commands/importworkbook.py:203
 #: execute/management/commands/importworkbook.py:222 execute/views.py:1395
 #: execute/views.py:1406
 msgid "error"
 msgstr "помилка"
 
-#: common/report.py:2300 common/report.py:2319 common/report.py:2435
-#: common/report.py:2458 execute/management/commands/importworkbook.py:205
+#: common/report.py:2298 common/report.py:2317 common/report.py:2433
+#: common/report.py:2456 execute/management/commands/importworkbook.py:205
 #: execute/management/commands/importworkbook.py:243 execute/views.py:1397
 #: execute/views.py:1416
 msgid "warning"
 msgstr "попередження"
 
-#: common/report.py:2399
+#: common/report.py:2397
 #, fuzzy
 msgid "file"
-msgstr "лог-файл"
+msgstr "файл"
 
-#: common/report.py:2741
+#: common/report.py:2739
 #: inventoryplanning/templates/inventoryplanning/drp.html:2929
 #: inventoryplanning/templates/inventoryplanning/drp.html:2948
 msgid "false"
 msgstr "фальш"
 
-#: common/report.py:3241 common/report.py:3397 common/report.py:3453
-#: common/report.py:3633
+#: common/report.py:3239 common/report.py:3395 common/report.py:3451
+#: common/report.py:3631
 msgid "title"
 msgstr "назва"
 
-#: common/report.py:3256 common/report.py:3652 forecast/models.py:385
+#: common/report.py:3254 common/report.py:3650 forecast/models.py:385
 #: forecast/models.py:521
 msgid "data field"
 msgstr "поле даних"
@@ -1969,9 +1941,8 @@ msgstr "Відфільтрувати"
 
 #: common/templates/admin/base_site_grid.html:13
 #: common/templates/admin/base_site_gridpivot.html:13
-#, fuzzy
 msgid "Filter editor"
-msgstr "Редактор фільтрів"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:51
 #: common/templates/admin/base_site_gridpivot.html:79
@@ -2168,9 +2139,8 @@ msgstr "Виправте наведені нижче помилки."
 #: input/templates/admin/input/setupmatrix/change_form.html:8
 #: input/templates/admin/input/skill/change_form.html:8
 #: input/templates/admin/input/supplier/change_form.html:8
-#, fuzzy
 msgid "related"
-msgstr "Пов'язані"
+msgstr ""
 
 #: common/templates/admin/delete_confirmation.html:11
 #, python-format
@@ -2289,14 +2259,12 @@ msgid "from"
 msgstr "з"
 
 #: common/templates/admin/subtemplate_timebuckets.html:42
-#, fuzzy
 msgid "till"
-msgstr "До"
+msgstr ""
 
 #: common/templates/admin/subtemplate_timebuckets.html:58
-#, fuzzy
 msgid "before till"
-msgstr "до поточного"
+msgstr ""
 
 #: common/templates/admin/subtemplate_timebuckets.html:63
 #: common/templates/admin/subtemplate_timebuckets.html:69
@@ -2311,14 +2279,8 @@ msgid "months"
 msgstr "місяців"
 
 #: common/templates/admin/subtemplate_timebuckets.html:73
-#, fuzzy
 msgid "after current date"
-msgstr "після поточної дати плану"
-
-#: common/templates/admin/subtemplate_timebuckets.html:81
-#: executesql/templates/executesql/executesql.html:110
-msgid "cancel"
-msgstr "скасувати"
+msgstr ""
 
 #: common/templates/auth/change_password.html:21
 #, python-format
@@ -2331,16 +2293,14 @@ msgid "Change password"
 msgstr "Змінити пароль"
 
 #: common/templates/common/comments.html:31
-#, fuzzy
 msgid "Add an attachment"
-msgstr "Додавання вкладення"
+msgstr ""
 
 #: common/templates/common/follower.html:31
 #: common/templates/common/inbox.html:92 common/views.py:889
 #: common/widget.py:98
-#, fuzzy
 msgid "inbox"
-msgstr "Вхідні"
+msgstr ""
 
 #: common/templates/common/follower.html:34
 #: common/templates/common/inbox.html:95 common/views.py:535
@@ -2355,19 +2315,16 @@ msgid "Unread"
 msgstr "Непрочитані"
 
 #: common/templates/common/inbox.html:111
-#, fuzzy
 msgid "Select/unselect all messages"
-msgstr "Виділення або виділення всіх повідомлень"
+msgstr ""
 
 #: common/templates/common/inbox.html:141
-#, fuzzy
 msgid "Mark message unread"
-msgstr "Позначення повідомлення непрочитаним"
+msgstr ""
 
 #: common/templates/common/inbox.html:144
-#, fuzzy
 msgid "Mark message read"
-msgstr "Позначити повідомлення як прочитані"
+msgstr ""
 
 #: common/templates/common/preferences.html:90
 msgid "Number of records per page"
@@ -2379,13 +2336,10 @@ msgid "avatar"
 msgstr "аватар"
 
 #: common/templates/common/preferences.html:145
-#, fuzzy
 msgid ""
 "Upload a square picture of yourself.<br>Accepted formats are jpeg, png and "
 "gif.<br>Max file size is 100kB."
 msgstr ""
-"Завантажте квадратне зображення себе.<br>Допустимими форматами є jpeg, png і "
-"gif.<br>Максимальний розмір файлу 100 кБ."
 
 #: common/templates/common/preferences.html:154
 #: common/templates/registration/password_change_form.html:21
@@ -2403,14 +2357,12 @@ msgid "New password confirmation"
 msgstr "Підтвердження нового пароля"
 
 #: common/templates/common/snippet_follow.html:8
-#, fuzzy
 msgid "Manage notifications in your inbox"
-msgstr "Отримайте сповіщення в поштовій скриньці, коли є активність"
+msgstr ""
 
 #: common/templates/common/snippet_follow.html:14
-#, fuzzy
 msgid "Get a notification in your inbox when there is activity"
-msgstr "Отримайте сповіщення в поштовій скриньці, коли є активність"
+msgstr ""
 
 #: common/templates/index.html:97 execute/templates/execute/execute.html:39
 msgid "failed"
@@ -2774,9 +2726,8 @@ msgid "Show the latest news items from the frePPLe website"
 msgstr "Показуйте останні новини з веб-сайту frePPLe"
 
 #: common/widget.py:99
-#, fuzzy
 msgid "Unread messages from your inbox"
-msgstr "Непрочитані повідомлення з папки \"Вхідні\""
+msgstr ""
 
 #: demandhits/attributes.py:21 demandhits/attributes.py:42
 #, python-format
@@ -2820,27 +2771,24 @@ msgid "Generate buckets"
 msgstr "Сформувати періоди часу"
 
 #: execute/management/commands/emailreport.py:225
-#, fuzzy
 msgid "Publish reports by email"
-msgstr "Публікація звітів електронною поштою"
+msgstr ""
 
 #: execute/management/commands/empty.py:315
 msgid "Empty the database"
 msgstr "Очистіть базу даних"
 
 #: execute/management/commands/exporttofolder.py:516
-#, fuzzy
 msgid "Export plan result"
-msgstr "Результат плану експорту"
+msgstr ""
 
 #: execute/management/commands/exportworkbook.py:33
 msgid "Export a spreadsheet"
 msgstr "Експортуйте електронну таблицю"
 
 #: execute/management/commands/importfromfolder.py:546
-#, fuzzy
 msgid "Import data files"
-msgstr "Імпорт файлів даних"
+msgstr ""
 
 #: execute/management/commands/importworkbook.py:146 execute/views.py:1342
 #, python-format
@@ -2944,9 +2892,8 @@ msgid "Group and schedule tasks"
 msgstr "Групові та графікові завдання"
 
 #: execute/management/commands/uploadreport.py:278
-#, fuzzy
 msgid "Publish reports by FTP"
-msgstr "Публікація звітів за протоколом FTP"
+msgstr ""
 
 #: execute/menu.py:20 execute/widget.py:20
 msgid "Execute"
@@ -3001,14 +2948,12 @@ msgid "Dump the database contents to a file."
 msgstr "Експорт бази даних в файл."
 
 #: execute/templates/commands/createbuckets.html:10
-#, fuzzy
 msgid "create time buckets for reporting."
-msgstr "створити час відра для звітування."
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:24
-#, fuzzy
 msgid "week starts on"
-msgstr "тиждень починається"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:28
 #: execute/templates/commands/createbuckets.html:33 input/models.py:105
@@ -3047,29 +2992,24 @@ msgid "Saturday"
 msgstr "Субота"
 
 #: execute/templates/commands/createbuckets.html:44
-#, fuzzy
 msgid "day name"
-msgstr "ім'я дня"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:50
-#, fuzzy
 msgid "week name"
-msgstr "ім'я тижня"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:56
-#, fuzzy
 msgid "month name"
-msgstr "ім'я місяця"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:62
-#, fuzzy
 msgid "quarter name"
-msgstr "назва кварталу"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:68
-#, fuzzy
 msgid "year name"
-msgstr "ім'я року"
+msgstr ""
 
 #: execute/templates/commands/emailreport.html:6
 #: execute/templates/commands/uploadreport.html:6
@@ -3100,9 +3040,8 @@ msgid "size"
 msgstr "розмір"
 
 #: execute/templates/commands/emailreport.html:34
-#, fuzzy
 msgid "emails"
-msgstr "Електронної пошти"
+msgstr ""
 
 #: execute/templates/commands/emailreport.html:66
 msgid "please correct invalid email addresses"
@@ -3127,9 +3066,8 @@ msgid "admin tables"
 msgstr "служебні таблици"
 
 #: execute/templates/commands/empty.html:30
-#, fuzzy
 msgid "plan history"
-msgstr "історія плану"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:9
 msgid ""
@@ -3146,9 +3084,8 @@ msgstr "змінився"
 
 #: execute/templates/commands/exporttofolder.html:19
 #: execute/templates/commands/importfromfolder.html:25
-#, fuzzy
 msgid "Download all files"
-msgstr "Завантажити всі файли"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:25
 #: execute/templates/commands/importfromfolder.html:31
@@ -3162,9 +3099,9 @@ msgstr "Ви збираєтесь видалити всі файли"
 
 #: execute/templates/commands/exporttofolder.html:61
 #: execute/templates/commands/importfromfolder.html:110
-#, fuzzy, python-format
+#, python-format
 msgid "You are about to delete file %%s"
-msgstr "Ви маєте право видалити файл %%s"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:67
 #: execute/templates/commands/importfromfolder.html:49
@@ -3179,18 +3116,18 @@ msgstr "Усі файли даних були видалені"
 
 #: execute/templates/commands/exporttofolder.html:88
 #: execute/templates/commands/importfromfolder.html:137
-#, fuzzy, python-format
+#, python-format
 msgid "File %%s was deleted"
-msgstr "Файл %% видалено"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:102
 #: execute/templates/commands/exporttofolder.html:108
 #: execute/templates/commands/importfromfolder.html:152
 #: execute/templates/commands/importfromfolder.html:156
 #: execute/templates/commands/importfromfolder.html:158
-#, fuzzy, python-format
+#, python-format
 msgid "File %%s was not deleted"
-msgstr "Файл %% не видалено"
+msgstr ""
 
 #: execute/templates/commands/exportworkbook.html:11
 msgid ""
@@ -3207,13 +3144,10 @@ msgid "import"
 msgstr "імпорт"
 
 #: execute/templates/commands/importfromfolder.html:9
-#, fuzzy
 msgid ""
 "Import CSV or Excel files. The file names must match the names of data "
 "objects and the first line in the file must contain the field names."
 msgstr ""
-"Імпорт файлів CSV або Excel. Імена файлів мають збігатися з іменами об'єктів "
-"даних, а перший рядок у файлі має містити імена полів."
 
 #: execute/templates/commands/importfromfolder.html:18
 #: execute/templates/commands/importfromfolder.html:19
@@ -3223,7 +3157,7 @@ msgstr "Завантажте файли даних"
 #: execute/templates/commands/importfromfolder.html:19
 #, fuzzy
 msgid "Upload"
-msgstr "завантаження"
+msgstr "Завантажити"
 
 #: execute/templates/commands/importfromfolder.html:44
 msgid "Download file"
@@ -3251,7 +3185,6 @@ msgid "Sorry, You don't have any execute permissions..."
 msgstr "Вибачте, у вас немає дозволів на виконання ..."
 
 #: execute/templates/commands/scenario_copy.html:8
-#, fuzzy
 msgid ""
 "You have a number of available scenario databases available.<br>\n"
 "        You can copy data into a scenario database to create a isolated "
@@ -3260,10 +3193,6 @@ msgid ""
 "which scenario you're working in.\n"
 "        "
 msgstr ""
-"У вас є кілька доступних баз даних сценаріїв доступні.<br>Можна скопіювати "
-"дані до бази даних сценаріїв, щоб створити ізольовану пісочницю для аналізу "
-"\"what-if\".<br>Скористайтеся розкривним пунктом у верхньому правому куті "
-"екрана, щоб вибрати сценарій, у якому ви працюєте.        "
 
 #: execute/templates/commands/scenario_copy.html:16
 msgid "action"
@@ -3291,9 +3220,8 @@ msgid "manage"
 msgstr "керувати"
 
 #: execute/templates/commands/scenario_copy.html:50
-#, fuzzy
 msgid "Copy from"
-msgstr "Скопійовано з %s."
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:54
 msgid "Restore from backup"
@@ -3313,14 +3241,12 @@ msgid "Free"
 msgstr "Безкоштовно"
 
 #: execute/templates/commands/scheduletasks.html:3
-#, fuzzy
 msgid "Run a sequence of tasks, and schedule it to run automatically."
-msgstr "Запустіть послідовність завдань і заплануйте її автоматичний запуск."
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:8
-#, fuzzy
 msgid "next scheduled run"
-msgstr "наступний запланований запуск"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:26
 #, fuzzy
@@ -3340,12 +3266,13 @@ msgstr "аборт при невдачі"
 #: execute/templates/commands/scheduletasks.html:199
 #, fuzzy
 msgid "Move down"
-msgstr "видалити рядок"
+msgstr "Вниз"
 
 #: execute/templates/commands/scheduletasks.html:95
 #: execute/templates/commands/scheduletasks.html:203
+#, fuzzy
 msgid "Move up"
-msgstr ""
+msgstr "Нагору"
 
 #: execute/templates/commands/scheduletasks.html:111 input/models.py:113
 #: input/templates/input/calendardetail.html:68
@@ -3391,21 +3318,18 @@ msgstr "електронна пошта підтверджена успішно"
 
 #: execute/templates/commands/scheduletasks.html:148
 #: execute/templates/commands/scheduletasks.html:156
-#, fuzzy
 msgid "List of emails, separated by commas"
-msgstr "Список електронних листів, розділених комами"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:153
 msgid "email on failure"
 msgstr "повідомлення про помилку"
 
 #: execute/templates/commands/uploadreport.html:9
-#, fuzzy
 msgid ""
 "Select all reports that will be pushed to the configured FTP/FTPS/SFTP "
 "folder."
 msgstr ""
-"Виберіть усі звіти, які буде натиснута на налаштовану папку FTP/FTPS/SFTP."
 
 #: execute/templates/execute/execute.html:41
 msgid "waiting"
@@ -3424,11 +3348,6 @@ msgstr "скасовано"
 #, fuzzy
 msgid "download"
 msgstr "завантажити"
-
-#: execute/templates/execute/execute.html:68
-#, fuzzy
-msgid "delete"
-msgstr "Удалить"
 
 #: execute/templates/execute/execute.html:70 forecast/models.py:1089
 msgid "view"
@@ -3455,14 +3374,12 @@ msgid "finished"
 msgstr "закінчив"
 
 #: execute/views.py:346
-#, fuzzy
 msgid "Failure launching task"
-msgstr "Помилка запуску дії: %(msg)s"
+msgstr ""
 
 #: execute/views.py:719
-#, fuzzy
 msgid "Couldn't delete file"
-msgstr "Видалити файл"
+msgstr ""
 
 #: execute/views.py:745
 msgid "Displaying only the last 50K from the log file"
@@ -3489,14 +3406,6 @@ msgstr "Нічого не експортувати"
 msgid "Processing file"
 msgstr "Обробка файлу"
 
-#: execute/views.py:1320
-msgid ""
-"Files in the old .XLS excel format can't be read.<br>Please convert them to "
-"the new .XLSX format."
-msgstr ""
-"Файли у старому форматі .XLS excel не можна прочитати. <br> Перетворіть їх у "
-"новий .XLSX формат."
-
 #: execute/views.py:1327
 msgid "Unsupported file format."
 msgstr "Непідтримуваний формат файлу."
@@ -3518,9 +3427,8 @@ msgstr "Виконати SQL"
 #: input/admin.py:203 input/admin.py:240 input/admin.py:283 input/admin.py:327
 #: input/admin.py:383 input/admin.py:454 input/admin.py:574 input/admin.py:611
 #: input/admin.py:674 input/admin.py:715 input/admin.py:961
-#, fuzzy
 msgid "advanced"
-msgstr "Передові"
+msgstr ""
 
 #: forecast/admin.py:65 input/admin.py:255 input/admin.py:416
 #: input/admin.py:478 input/admin.py:642 input/admin.py:986
@@ -3815,9 +3723,8 @@ msgid "Bucket '%(name)s' not found"
 msgstr "Період часу '%(name)s' НЕ знайдений"
 
 #: forecast/models.py:528
-#, fuzzy
 msgid "multiplier"
-msgstr "розмір кратний"
+msgstr ""
 
 #: forecast/models.py:635
 msgid "No editable fields found"
@@ -4077,9 +3984,8 @@ msgid "method"
 msgstr "метод"
 
 #: forecast/views.py:156
-#, fuzzy
 msgid "standard deviation of forecast error"
-msgstr "передбачувана помилка прогнозу"
+msgstr ""
 
 #: forecast/views.py:203 input/models.py:244 input/views/capacity.py:743
 #: input/views/inventory.py:205 input/views/inventory.py:438
@@ -4091,9 +3997,8 @@ msgstr "передбачувана помилка прогнозу"
 #: inventoryplanning/views.py:612 output/views/buffer.py:161
 #: output/views/demand.py:67 output/views/operation.py:203
 #: output/views/operation.py:540 output/views/operation.py:996
-#, fuzzy
 msgid "volume"
-msgstr "Обсяг"
+msgstr ""
 
 #: forecast/views.py:209 input/models.py:236 input/views/capacity.py:749
 #: input/views/inventory.py:211 input/views/inventory.py:450
@@ -4120,9 +4025,8 @@ msgstr "вага"
 #: inventoryplanning/views.py:624 output/views/buffer.py:173
 #: output/views/demand.py:69 output/views/operation.py:215
 #: output/views/operation.py:552 output/views/operation.py:1008
-#, fuzzy
 msgid "unit of measure"
-msgstr "міра"
+msgstr ""
 
 #: forecast/views.py:221 input/models.py:252 input/models.py:2339
 #: input/views/capacity.py:761 input/views/inventory.py:223
@@ -4275,9 +4179,8 @@ msgid "plan detail"
 msgstr "подробиці плану"
 
 #: input/admin.py:534
-#, fuzzy
 msgid "matrix detail"
-msgstr "подробиці плану"
+msgstr ""
 
 #: input/admin.py:1010
 msgid "computed fields"
@@ -4348,19 +4251,16 @@ msgid "Cost of the item"
 msgstr "Вартість товару"
 
 #: input/models.py:241
-#, fuzzy
 msgid "Weight of the item"
-msgstr "Вартість товару"
+msgstr ""
 
 #: input/models.py:249
-#, fuzzy
 msgid "Volume of the item"
-msgstr "Вартість товару"
+msgstr ""
 
 #: input/models.py:255
-#, fuzzy
 msgid "Period of cover in days"
-msgstr "період покриття"
+msgstr ""
 
 #: input/models.py:265 input/views/sales.py:144
 msgid "items"
@@ -4387,16 +4287,12 @@ msgid "split"
 msgstr "split"
 
 #: input/models.py:306
-#, fuzzy
 msgid "Item produced by this operation"
-msgstr "Елемент, створений за допомогою цієї операції"
+msgstr ""
 
 #: input/models.py:319
-#, fuzzy
 msgid "Parent operation (which must be of type routing, alternate or split)"
 msgstr ""
-"Батьківська операція (яка має бути типу маршрутизації, чергування або "
-"розділення)"
 
 #: input/models.py:327 input/models.py:1351 input/models.py:1539
 msgid "Priority among all alternates"
@@ -4489,9 +4385,8 @@ msgid "size minimum"
 msgstr "розмір мінімум"
 
 #: input/models.py:358
-#, fuzzy
 msgid "Minimum production quantity"
-msgstr "Мінімальна кількість продукції"
+msgstr ""
 
 #: input/models.py:361 input/models.py:1314 input/models.py:1502
 #: input/views/capacity.py:567 input/views/inventory.py:377
@@ -4507,9 +4402,8 @@ msgid "size multiple"
 msgstr "розмір кратний"
 
 #: input/models.py:366
-#, fuzzy
 msgid "Multiple production quantity"
-msgstr "Кількість кількох виробництв"
+msgstr ""
 
 #: input/models.py:369 input/models.py:1322 input/models.py:1510
 #: input/views/capacity.py:572 input/views/inventory.py:378
@@ -4523,19 +4417,16 @@ msgid "size maximum"
 msgstr "розмір максимум"
 
 #: input/models.py:374
-#, fuzzy
 msgid "Maximum production quantity"
-msgstr "Максимальна кількість продукції"
+msgstr ""
 
 #: input/models.py:382
-#, fuzzy
 msgid "Cost per produced unit"
-msgstr "Вартість за вироблену одиницю"
+msgstr ""
 
 #: input/models.py:388
-#, fuzzy
 msgid "Fixed production time for setup and overhead"
-msgstr "Фіксований час виробництва для налаштування та накладних витрат"
+msgstr ""
 
 #: input/models.py:391 input/views/capacity.py:547
 #: input/views/inventory.py:1646 input/views/manufacturing.py:177
@@ -4547,9 +4438,8 @@ msgid "duration per unit"
 msgstr "тривалість на юнит"
 
 #: input/models.py:394
-#, fuzzy
 msgid "Production time per produced piece"
-msgstr "Час виробництва на один вироблений шматок"
+msgstr ""
 
 #: input/models.py:397 input/models.py:1035 input/models.py:1179
 #: input/views/capacity.py:597 input/views/inventory.py:1696
@@ -4743,9 +4633,9 @@ msgid "Efficiency percentage of the resource"
 msgstr "Відсоток ефективності ресурсу"
 
 #: input/models.py:787 input/views/capacity.py:185
-#, fuzzy, no-python-format
+#, no-python-format
 msgid "efficiency % calendar"
-msgstr "ефективність % cалендару"
+msgstr ""
 
 #: input/models.py:793
 msgid ""
@@ -4857,9 +4747,8 @@ msgid "Batch transfer"
 msgstr "партія передачі"
 
 #: input/models.py:985
-#, fuzzy
 msgid "Quantity to consume or produce per piece"
-msgstr "Кількість споживати або виробляти за штуку"
+msgstr ""
 
 #: input/models.py:988 input/views/manufacturing.py:399
 msgid "fixed quantity"
@@ -4874,9 +4763,8 @@ msgid "Consume/produce material at the start or the end of the operationplan"
 msgstr "Споживайте / виробляйте матеріал на початку або в кінці плану роботи"
 
 #: input/models.py:1025
-#, fuzzy
 msgid "Name of this operation material to identify alternates"
-msgstr "Назва цього матеріалу операції для визначення альтернативних"
+msgstr ""
 
 #: input/models.py:1032
 msgid "Priority of this operation material in a group of alternates"
@@ -4897,9 +4785,8 @@ msgid "offset"
 msgstr "抵消"
 
 #: input/models.py:1054
-#, fuzzy
 msgid "Time offset from the start or end to consume or produce material"
-msgstr "Зсув часу з початку або кінця, щоб споживати або виробляти матеріал"
+msgstr ""
 
 #: input/models.py:1091
 msgid "operation material"
@@ -4912,9 +4799,8 @@ msgid "operation materials"
 msgstr "матеріали операції"
 
 #: input/models.py:1124
-#, fuzzy
 msgid "Required skill to perform the operation"
-msgstr "Необхідні навички для виконання операції"
+msgstr ""
 
 #: input/models.py:1131
 msgid "Required quantity of the resource"
@@ -4925,19 +4811,16 @@ msgid "quantity fixed"
 msgstr "кількість фіксована"
 
 #: input/models.py:1140
-#, fuzzy
 msgid "Constant part of the capacity consumption (bucketized resources only)"
-msgstr "Постійна частина споживання потужності (лише відро ресурсів)"
+msgstr ""
 
 #: input/models.py:1162
-#, fuzzy
 msgid "Name of this operation resource to identify alternates"
-msgstr "Ім'я цього ресурсу операції для визначення альтернативних"
+msgstr ""
 
 #: input/models.py:1169
-#, fuzzy
 msgid "Priority of this operation resource in a group of alternates"
-msgstr "Пріоритет цього ресурсу операції у групі альтернативних"
+msgstr ""
 
 #: input/models.py:1176
 msgid "Setup required on the resource for this operation"
@@ -4976,14 +4859,12 @@ msgid "Purchasing lead time"
 msgstr "Придбання часу проведення"
 
 #: input/models.py:1293 input/models.py:1296 input/views/purchasing.py:160
-#, fuzzy
 msgid "soft safety lead time"
-msgstr "одразу під час проведення"
+msgstr ""
 
 #: input/models.py:1299 input/models.py:1302 input/views/purchasing.py:155
-#, fuzzy
 msgid "hard safety lead time"
-msgstr "одразу під час проведення"
+msgstr ""
 
 #: input/models.py:1311
 msgid "A minimum purchasing quantity"
@@ -5043,19 +4924,16 @@ msgid "item suppliers"
 msgstr "постачальники товарів"
 
 #: input/models.py:1479
-#, fuzzy
 msgid "Destination location to be replenished"
-msgstr "Місце призначення для поповнення"
+msgstr ""
 
 #: input/models.py:1487
-#, fuzzy
 msgid "Source location shipping the item"
-msgstr "Вихідне розташування, що відправляє товар"
+msgstr ""
 
 #: input/models.py:1490
-#, fuzzy
 msgid "Transport lead time"
-msgstr "Час на транспортування"
+msgstr ""
 
 #: input/models.py:1499
 msgid "A minimum shipping quantity"
@@ -5133,33 +5011,29 @@ msgid "closed"
 msgstr "зачинено"
 
 #: input/models.py:1637
-#, fuzzy
 msgid "independent"
-msgstr "залежний попит"
+msgstr ""
 
 #: input/models.py:1638
-#, fuzzy
 msgid "all together"
-msgstr "Мале ціле число"
+msgstr ""
 
 #: input/models.py:1639
-#, fuzzy
 msgid "in ratio"
-msgstr "чиста тривалість"
+msgstr ""
 
 #: input/models.py:1672
-#, fuzzy
 msgid "Due date of the sales order"
-msgstr "Термін замовлення на продаж"
+msgstr ""
 
 #: input/models.py:1682
-#, fuzzy
 msgid "Status of the demand. Only \"open\" and \"quote\" demands are planned"
-msgstr "Статус попиту. Плануються лише \"відкриті\" вимоги"
+msgstr ""
 
 #: input/models.py:1719 input/views/sales.py:358
+#, fuzzy
 msgid "policy"
-msgstr ""
+msgstr "політики"
 
 #: input/models.py:1725
 msgid "Defines how sales orders are shipped together"
@@ -5242,9 +5116,8 @@ msgid "Order type"
 msgstr "Тип замовлення"
 
 #: input/models.py:1817 input/views/manufacturing.py:1922
-#, fuzzy
 msgid "completed quantity"
-msgstr "споживана кількість"
+msgstr ""
 
 #: input/models.py:1820 inventoryplanning/models.py:423
 msgid "color"
@@ -5316,55 +5189,41 @@ msgstr "дата замовлення"
 msgid "delivery orders"
 msgstr "замовлення на доставку"
 
-#: input/templates/input/calendardetail.html:24
-#, fuzzy
-msgid "add"
-msgstr "и"
-
 #: input/templates/input/calendardetail.html:40
-#, fuzzy
 msgid "monday"
-msgstr "Понеділок"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:44
-#, fuzzy
 msgid "tuesday"
-msgstr "Вівторок"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:48
-#, fuzzy
 msgid "wednesday"
-msgstr "Середа"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:52
-#, fuzzy
 msgid "thursday"
-msgstr "Четвер"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:56
-#, fuzzy
 msgid "friday"
-msgstr "П’ятниця"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:60
-#, fuzzy
 msgid "saturday"
-msgstr "Субота"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:64
-#, fuzzy
 msgid "sunday"
-msgstr "Неділя"
+msgstr ""
 
 #: input/templates/input/operationplanreport.html:303
-#, fuzzy
 msgid "display kanban cards"
-msgstr "показувати картки канбану"
+msgstr ""
 
 #: input/templates/input/operationplanreport.html:307
-#, fuzzy
 msgid "display calendar"
-msgstr "відображення календаря"
+msgstr ""
 
 #: input/views/capacity.py:78
 msgid "setup rules"
@@ -5380,9 +5239,8 @@ msgid "net duration"
 msgstr "чиста тривалість"
 
 #: input/views/capacity.py:641
-#, fuzzy
 msgid "quantity completed"
-msgstr "кількість фіксована"
+msgstr ""
 
 #: input/views/capacity.py:664 input/views/inventory.py:1085
 #: input/views/inventory.py:1808 input/views/manufacturing.py:1972
@@ -5403,9 +5261,8 @@ msgid "setup duration"
 msgstr "тривалість установки"
 
 #: input/views/capacity.py:698 input/views/manufacturing.py:2143
-#, fuzzy
 msgid "setup duration override"
-msgstr "тривалість установки"
+msgstr ""
 
 #: input/views/capacity.py:705 input/views/inventory.py:1112
 #: input/views/inventory.py:1817 input/views/manufacturing.py:2150
@@ -5452,9 +5309,9 @@ msgid "received in %(loc)s between %(date1)s and %(date2)s"
 msgstr "отримано у %(loc)s мiж %(date1)s та %(date2)s"
 
 #: input/views/inventory.py:692
-#, fuzzy, python-format
+#, python-format
 msgid "shipped from %(loc)s between %(date1)s and %(date2)s"
-msgstr "доставлено з %(loc)s між %(date1)s і %(date2)s"
+msgstr ""
 
 #: input/views/inventory.py:1047 input/views/manufacturing.py:1928
 #: input/views/purchasing.py:896
@@ -5463,15 +5320,13 @@ msgstr "Загальна вартість"
 
 #: input/views/inventory.py:1054 input/views/manufacturing.py:1936
 #: input/views/purchasing.py:903
-#, fuzzy
 msgid "total volume"
-msgstr "всього спожитого"
+msgstr ""
 
 #: input/views/inventory.py:1061 input/views/manufacturing.py:1944
 #: input/views/purchasing.py:910
-#, fuzzy
 msgid "total weight"
-msgstr "загальне замовлення"
+msgstr ""
 
 #: input/views/inventory.py:1094 input/views/manufacturing.py:2019
 #: input/views/purchasing.py:949
@@ -5501,9 +5356,8 @@ msgid "operationplan quantity"
 msgstr "кількість в плані операцій"
 
 #: input/views/inventory.py:1792
-#, fuzzy
 msgid "operationplan quantity completed"
-msgstr "кількість в плані операцій"
+msgstr ""
 
 #: input/views/manufacturing.py:1606
 #, python-format
@@ -5539,9 +5393,8 @@ msgid "on order in %(loc)s between %(date1)s and %(date2)s"
 msgstr "на замовлення у %(loc)s між %(date1)s та %(date2)s"
 
 #: input/views/sales.py:334
-#, fuzzy
 msgid "quantity planned short"
-msgstr "кількість запланованих коротких"
+msgstr ""
 
 #: input/views/sales.py:631
 msgid "demand quantity"
@@ -5710,9 +5563,8 @@ msgid "segment"
 msgstr "сегмент"
 
 #: inventoryplanning/models.py:186
-#, fuzzy
 msgid "Overrides the decoupled lead time"
-msgstr "Перевизначає роз'їте час витримки"
+msgstr ""
 
 #: inventoryplanning/models.py:201
 msgid "inventory policy"
@@ -5802,34 +5654,28 @@ msgid "open sales orders"
 msgstr "відкриті замовлення на продаж"
 
 #: inventoryplanning/models.py:431 inventoryplanning/views.py:590
-#, fuzzy
 msgid "proposed purchase orders"
-msgstr "запропоновані замовлення на купівлю"
+msgstr ""
 
 #: inventoryplanning/models.py:434 inventoryplanning/views.py:595
-#, fuzzy
 msgid "proposed distribution orders"
-msgstr "запропонованих замовлень на розподіл"
+msgstr ""
 
 #: inventoryplanning/models.py:437 inventoryplanning/views.py:580
-#, fuzzy
 msgid "open purchase orders"
-msgstr "відкриті замовлення на купівлю"
+msgstr ""
 
 #: inventoryplanning/models.py:440 inventoryplanning/views.py:630
-#, fuzzy
 msgid "open purchase orders beyond lead time"
-msgstr "відкрита вартість замовлення на купівлю"
+msgstr ""
 
 #: inventoryplanning/models.py:446 inventoryplanning/views.py:585
-#, fuzzy
 msgid "open distribution orders"
-msgstr "відкриті замовлення на розповсюдження"
+msgstr ""
 
 #: inventoryplanning/models.py:449
-#, fuzzy
 msgid "open distribution orders beyond lead time"
-msgstr "відкрите значення замовлення на розповсюдження"
+msgstr ""
 
 #: inventoryplanning/models.py:455
 msgid "onhand value"
@@ -5844,34 +5690,28 @@ msgid "open sales orders value"
 msgstr "вартість відкритих замовлень на продаж"
 
 #: inventoryplanning/models.py:464
-#, fuzzy
 msgid "proposed purchase order value"
-msgstr "запропонована вартість замовлення на купівлю"
+msgstr ""
 
 #: inventoryplanning/models.py:467
-#, fuzzy
 msgid "proposed distribution order value"
-msgstr "запропонована вартість замовлення на розподіл"
+msgstr ""
 
 #: inventoryplanning/models.py:473
-#, fuzzy
 msgid "open purchase order value"
-msgstr "відкрита вартість замовлення на купівлю"
+msgstr ""
 
 #: inventoryplanning/models.py:476
-#, fuzzy
-msgid "open purchase order beyond lead time value"
-msgstr "відкрита вартість замовлення на купівлю"
+msgid "open purchase orders beyond lead time value"
+msgstr ""
 
 #: inventoryplanning/models.py:482
-#, fuzzy
 msgid "open distribution order value"
-msgstr "відкрите значення замовлення на розповсюдження"
+msgstr ""
 
 #: inventoryplanning/models.py:485
-#, fuzzy
-msgid "open distribution order beyond lead time value"
-msgstr "відкрите значення замовлення на розповсюдження"
+msgid "open distribution orders beyond lead time value"
+msgstr ""
 
 #: inventoryplanning/models.py:491 inventoryplanning/views.py:545
 msgid "local forecast"
@@ -6170,9 +6010,8 @@ msgid "on hand"
 msgstr "під рукою"
 
 #: inventoryplanning/views.py:636
-#, fuzzy
 msgid "open distribution order beyond lead time"
-msgstr "відкрите значення замовлення на розповсюдження"
+msgstr ""
 
 #: inventoryplanning/views.py:1607
 msgid "Buy"
@@ -6276,24 +6115,20 @@ msgid "count of capacity overload problems"
 msgstr "кількість проблем з перевантаженням потужності"
 
 #: metrics/widget.py:31
-#, fuzzy
 msgid "analyze late demands"
-msgstr "аналізувати пізні вимоги"
+msgstr ""
 
 #: metrics/widget.py:32
-#, fuzzy
 msgid "Spot the top items with many late demands"
-msgstr "Знайди найпопулярніші елементи з багатьма пізніми вимогами"
+msgstr ""
 
 #: metrics/widget.py:58
-#, fuzzy
 msgid "value of late demands"
-msgstr "вартість пізніх вимог"
+msgstr ""
 
 #: metrics/widget.py:60
-#, fuzzy
 msgid "number of late demands"
-msgstr "кількість пізніх вимог"
+msgstr ""
 
 #: odoo/views.py:48
 msgid "Invalid configuration parameters"
@@ -6349,39 +6184,32 @@ msgstr "завантаження"
 
 #: output/templates/output/buffer.html:268
 #: output/templates/output/buffer.html:271 output/views/buffer.py:402
-#, fuzzy
 msgid "produced by PO confirmed"
-msgstr "виробляється PO"
+msgstr ""
 
 #: output/templates/output/buffer.html:274 output/views/buffer.py:370
-#, fuzzy
 msgid "produced by MO confirmed"
-msgstr "виробляється MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:277 output/views/buffer.py:374
-#, fuzzy
 msgid "produced by MO proposed"
-msgstr "виробляється MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:280 output/views/buffer.py:386
-#, fuzzy
 msgid "produced by DO confirmed"
-msgstr "виробляється DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:283 output/views/buffer.py:390
-#, fuzzy
 msgid "produced by DO proposed"
-msgstr "виробляється DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:286 output/views/buffer.py:313
-#, fuzzy
 msgid "consumed by MO confirmed"
-msgstr "споживається MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:289 output/views/buffer.py:317
-#, fuzzy
 msgid "consumed by MO proposed"
-msgstr "споживається MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:292 output/views/buffer.py:335
 msgid "consumed by SO"
@@ -6392,14 +6220,12 @@ msgid "consumed by Fcst"
 msgstr "споживається за прогнозом"
 
 #: output/templates/output/buffer.html:298 output/views/buffer.py:329
-#, fuzzy
 msgid "consumed by DO confirmed"
-msgstr "споживається DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:301 output/views/buffer.py:333
-#, fuzzy
 msgid "consumed by DO proposed"
-msgstr "споживається DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:309 output/views/buffer.py:412
 msgid "total in progress"
@@ -6420,9 +6246,8 @@ msgstr "в дорозі DO"
 #: output/templates/output/buffer.html:324
 #: output/templates/output/buffer.html:435 output/views/buffer.py:515
 #: output/views/demand.py:317
-#, fuzzy
 msgid "total backlog"
-msgstr "загальний відставання"
+msgstr ""
 
 #: output/templates/output/buffer.html:432
 msgid "consumed"
@@ -6446,9 +6271,8 @@ msgid "net forecast"
 msgstr "чистий прогноз"
 
 #: output/templates/output/demand_forecast.html:152 output/views/demand.py:311
-#, fuzzy
 msgid "sales order backlog"
-msgstr "відставання замовлення на продаж"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:215
 #: output/views/operation.py:1122
@@ -6557,11 +6381,6 @@ msgstr "перевантаження"
 msgid "Inventory report"
 msgstr "план запасів"
 
-#: output/views/buffer.py:258
-#, fuzzy
-msgid "is_ip_buffer"
-msgstr "буфер"
-
 #: output/views/buffer.py:271
 msgid "total produced"
 msgstr "загальна кількість вироблених"
@@ -6571,14 +6390,12 @@ msgid "total consumed"
 msgstr "всього спожитого"
 
 #: output/views/buffer.py:285
-#, fuzzy
 msgid "total consumed confirmed"
-msgstr "всього спожитого"
+msgstr ""
 
 #: output/views/buffer.py:293
-#, fuzzy
 msgid "total consumed proposed"
-msgstr "всього спожитого"
+msgstr ""
 
 #: output/views/buffer.py:306
 msgid "consumed by MO"
@@ -6589,14 +6406,12 @@ msgid "consumed by DO"
 msgstr "споживається DO"
 
 #: output/views/buffer.py:339
-#, fuzzy
 msgid "total produced confirmed"
-msgstr "загальна кількість вироблених"
+msgstr ""
 
 #: output/views/buffer.py:351
-#, fuzzy
 msgid "total produced proposed"
-msgstr "загальна кількість вироблених"
+msgstr ""
 
 #: output/views/buffer.py:363
 msgid "produced by MO"
@@ -6611,55 +6426,45 @@ msgid "produced by PO"
 msgstr "виробляється PO"
 
 #: output/views/buffer.py:406
-#, fuzzy
 msgid "produced by PO proposed"
-msgstr "виробляється PO"
+msgstr ""
 
 #: output/views/buffer.py:420
-#, fuzzy
 msgid "total in progress confirmed"
-msgstr "загальний хід"
+msgstr ""
 
 #: output/views/buffer.py:432
-#, fuzzy
 msgid "total in progress proposed"
-msgstr "загальний хід"
+msgstr ""
 
 #: output/views/buffer.py:454
-#, fuzzy
 msgid "work in progress MO confirmed"
-msgstr "в роботі MO"
+msgstr ""
 
 #: output/views/buffer.py:458
-#, fuzzy
 msgid "work in progress MO proposed"
-msgstr "в роботі MO"
+msgstr ""
 
 #: output/views/buffer.py:470
-#, fuzzy
 msgid "on order PO confirmed"
-msgstr "на замовлення PO"
+msgstr ""
 
 #: output/views/buffer.py:478
-#, fuzzy
 msgid "on order PO proposed"
-msgstr "на замовлення PO"
+msgstr ""
 
 #: output/views/buffer.py:490
-#, fuzzy
 msgid "in transit DO confirmed"
-msgstr "в дорозі DO"
+msgstr ""
 
 #: output/views/buffer.py:494
-#, fuzzy
 msgid "in transit DO proposed"
-msgstr "в дорозі DO"
+msgstr ""
 
 #: output/views/buffer.py:521 output/views/demand.py:80
 #: output/views/demand.py:318
-#, fuzzy
 msgid "reasons"
-msgstr "Причин"
+msgstr ""
 
 #: output/views/constraint.py:29
 msgid "material"
@@ -6734,9 +6539,8 @@ msgid "Demand plan"
 msgstr "План попиту"
 
 #: output/views/pegging.py:66
-#, fuzzy
 msgid "item description"
-msgstr "опис елемента"
+msgstr ""
 
 #: output/views/pegging.py:80
 msgid "required quantity"
@@ -6920,14 +6724,12 @@ msgid "my report"
 msgstr "мій звіт"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:94
-#, fuzzy
 msgid "Saving the report failed"
-msgstr "Не вдалося зберегти звіт"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:167
-#, fuzzy
 msgid "format SQL query"
-msgstr "SQL запит"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:197
 #: reportmanager/views.py:123
@@ -6943,9 +6745,8 @@ msgid "table"
 msgstr "таблиця"
 
 #: reportmanager/views.py:291
-#, fuzzy
 msgid "Add custom report"
-msgstr "пользовательский отчет"
+msgstr ""
 
 #: retail/management/commands/runpartitions.py:35
 msgid "Runs all the partitions"
@@ -7024,9 +6825,8 @@ msgid "web service"
 msgstr "веб-сервіс"
 
 #: webservice/templates/commands/runwebservice.html:9
-#, fuzzy
 msgid "Start the web service."
-msgstr "Запустіть веб-службу."
+msgstr ""
 
 #: webservice/templates/commands/runwebservice.html:14
 #, fuzzy
@@ -7034,16 +6834,14 @@ msgid "Stop"
 msgstr "Зупинити"
 
 #: webservice/templates/commands/runwebservice.html:17
-#, fuzzy
 msgid "Stop the web service."
-msgstr "Зупиніть веб-службу."
+msgstr ""
 
 #: wizard/templates/wizard/features.html:6
 #: wizard/templates/wizard/features.html:11
 #: wizard/templates/wizard/index.html:12
-#, fuzzy
 msgid "explore features"
-msgstr "Видалити всі Features"
+msgstr ""
 
 #: wizard/templates/wizard/features.html:19
 #: wizard/templates/wizard/index.html:20
@@ -7052,144 +6850,118 @@ msgstr "панель приладів"
 
 #: wizard/templates/wizard/quickstart_forecast.html:61
 #: wizard/templates/wizard/quickstart_production.html:396
-#, fuzzy
 msgid "item name"
-msgstr "ім'я елемента"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:73
 #: wizard/templates/wizard/quickstart_production.html:408
-#, fuzzy
 msgid "location name"
-msgstr "ім'я розташування"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:85
 #: wizard/templates/wizard/quickstart_production.html:420
-#, fuzzy
 msgid "customer name"
-msgstr "ім'я клієнта"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:92
-#, fuzzy, python-format
+#, python-format
 msgid "Sales history in the last %(buckets)s"
-msgstr "Історія збуту в останніх %(сегментах)s"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:97
-#, fuzzy
 msgid "a list of integers:eg 10  20  30"
-msgstr "список цілих чита: наприклад, 10 20 30"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:130
-#, fuzzy
 msgid "supplier name"
-msgstr "ім'я постачальника"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:142
-#, fuzzy
 msgid "lead time (in days)"
-msgstr "час потенційного лідера (у днях)"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:169
-#, fuzzy
 msgid "operation name"
-msgstr "ім'я операції"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:181
-#, fuzzy
 msgid "fixed time"
-msgstr "фіксований час"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:193
-#, fuzzy
 msgid "time per piece"
-msgstr "час на штуку"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:210
-#, fuzzy
 msgid "resource name"
-msgstr "ім'я ресурсу"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:217
-#, fuzzy
 msgid "consumed items"
-msgstr "спожиті предмети"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:222
 #: wizard/templates/wizard/quickstart_production.html:303
-#, fuzzy
 msgid "component or subassembly item name"
-msgstr "ім'я елемента компонента або підсибці"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:226
 #: wizard/templates/wizard/quickstart_production.html:307
-#, fuzzy
 msgid "consumed quantity"
-msgstr "споживана кількість"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:258
-#, fuzzy
 msgid "source location"
-msgstr "вихідне розташування"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:263
-#, fuzzy
 msgid "source location name"
-msgstr "ім'я вихідного розташування"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:270
-#, fuzzy
 msgid "transport time"
-msgstr "час транспортування"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:275
-#, fuzzy
 msgid "transport time (in days)"
-msgstr "час транспортування (у днях)"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:384
-#, fuzzy
 msgid "unique sales order name"
-msgstr "унікальне ім'я замовлення на продаж"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:439
 #: wizard/templates/wizard/quickstart_production.html:444
-#, fuzzy
 msgid "due date"
-msgstr "термін дії"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:449
-#, fuzzy
 msgid "Create sales order"
-msgstr "Створення замовлення на продаж"
+msgstr ""
 
 #: wizard/views.py:2296
-#, fuzzy
 msgid "Data loading wizard for forecasting"
-msgstr "Майстер завантаження даних для прогнозування"
+msgstr ""
 
 #: wizard/views.py:2298
-#, fuzzy
 msgid "Data loading wizard for inventory planning"
-msgstr "Майстер завантаження даних для планування запасів"
+msgstr ""
 
 #: wizard/views.py:2300
-#, fuzzy
 msgid "Data loading wizard for production planning"
-msgstr "Майстер завантаження даних для планування виробництва"
+msgstr ""
 
 #: wizard/views.py:2302
-#, fuzzy
 msgid "Get started - Data loading wizard"
-msgstr "Початок роботи – майстер завантаження даних"
+msgstr ""
 
 #: wizard/views.py:2433
-#, fuzzy
 msgid "Quickstart production planning"
-msgstr "Планування виробництва quickstart"
+msgstr ""
 
 #: wizard/views.py:2685
-#, fuzzy
 msgid "Quickstart forecasting"
-msgstr "Швидке прогнозування"
+msgstr ""
 
 #: wizard/views.py:2691
 #, fuzzy
@@ -7202,19 +6974,16 @@ msgstr "{{m.label}}"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:523
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:557
-#, fuzzy
 msgid "%s allocated out of %s"
-msgstr "%s виділені з %s"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1343
 #: freppledb/planningboard/static/planningboard/planningboard.html:1372
 #: freppledb/planningboard/static/planningboard/planningboard.html:1398
-#, fuzzy
 msgid "Add to the graph"
-msgstr "Додати до графіка"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1608
-#, fuzzy
 msgid ""
 "An operation gets the color of its category.<br>\n"
 "                        The operation categories should be filled in the "
@@ -7225,7 +6994,6 @@ msgstr ""
 "в таблиці операції.                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1643
-#, fuzzy
 msgid ""
 "An operation gets the color of its subcategory.<br>\n"
 "                        The operation subcategories should be filled in the "
@@ -7236,7 +7004,6 @@ msgstr ""
 "в таблиці операцій.                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1540
-#, fuzzy
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
@@ -7247,7 +7014,6 @@ msgstr ""
 "елементів слід заповнити в таблиці елементів.                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1574
-#, fuzzy
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
@@ -7259,7 +7025,6 @@ msgstr ""
 "елементів.                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1481
-#, fuzzy
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br>"
@@ -7273,14 +7038,12 @@ msgid "Apply"
 msgstr "Застосувати"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:65
-#, fuzzy
 msgid "Automatically resolve infeasiblities in the plan"
-msgstr "Автоматичне усунення неузгодів у плані"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1346
-#, fuzzy
 msgid "Clear the plan of selected demands"
-msgstr "Очистити план вибраних вимог"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:403
 #, fuzzy
@@ -7296,14 +7059,12 @@ msgid "Continue"
 msgstr "Продовжити"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1420
-#, fuzzy
 msgid "Criticality color setup"
-msgstr "Налаштування кольору критичності"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1448
-#, fuzzy
 msgid "Delay color setup"
-msgstr "Затримка налаштування кольору"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:46
 #, fuzzy
@@ -7311,14 +7072,12 @@ msgid "Delivery"
 msgstr "Доставка"
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:44
-#, fuzzy
 msgid "Distribution Order"
-msgstr "Порядок розподілу"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1475
-#, fuzzy
 msgid "Due date color setup"
-msgstr "Затримка налаштування кольору"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:283
 #: freppledb/planningboard/static/planningboard/planningboard.html:362
@@ -7339,29 +7098,25 @@ msgstr "Введіть ім'я"
 #: freppledb/quoting/static/quoting/quoting.html:30
 #: freppledb/quoting/static/quoting/quoting.html:43
 #: freppledb/quoting/static/quoting/quoting.html:56
-#, fuzzy
 msgid "Enter your search terms"
-msgstr "Введіть пошукові терміни"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:441
-#, fuzzy
 msgid "Estimated forecast error"
-msgstr "Приблизна помилка прогнозу"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:415
 #, fuzzy
 msgid "Intermittent"
-msgstr "Періодично"
+msgstr "Переривчастий"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1534
-#, fuzzy
 msgid "Item category color setup"
-msgstr "Налаштування кольору категорії елементів"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1568
-#, fuzzy
 msgid "Item subcategory color setup"
-msgstr "Налаштування кольору підкатегорії елементів"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:42
 #, fuzzy
@@ -7371,7 +7126,7 @@ msgstr "Замовлення на виробництво"
 #: freppledb/forecast/static/forecast/forecast.html:419
 #, fuzzy
 msgid "Moving average"
-msgstr "Середній рух"
+msgstr "Ковзна середня"
 
 #: freppledb/forecast/static/forecast/forecast.html:262
 #, fuzzy
@@ -7379,53 +7134,43 @@ msgid "No comments yet"
 msgstr "Коментарів поки що немає"
 
 #: freppledb/quoting/static/quoting/quoting.html:139
-#, fuzzy
 msgid "No plan yet"
-msgstr "План ще немає"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1602
-#, fuzzy
 msgid "Operation category color setup"
-msgstr "Налаштування кольору категорії операції"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1637
-#, fuzzy
 msgid "Operation subcategory color setup"
-msgstr "Операція налаштування кольору підкатегорії"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:321
-#, fuzzy
 msgid "Operationplan"
-msgstr "Операційний план"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1337
 #: freppledb/planningboard/static/planningboard/planningboard.html:887
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:259
-#, fuzzy
 msgid "Plan selected demands backward from their due date"
-msgstr "План вибраних вимог назад від їх терміну"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1340
 #: freppledb/planningboard/static/planningboard/planningboard.html:890
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:260
-#, fuzzy
 msgid "Plan selected demands forward from the current date"
-msgstr "Планувати вибрані вимоги вперед з поточної дати"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:54
 #: freppledb/planningboard/static/planningboard/planningboard.html:155
-#, fuzzy
 msgid "Please be patient, the chart may take some time to complete."
 msgstr ""
-"Будь ласка, будьте терплячі, діаграма може зайняти деякий час, щоб завершити."
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1507
-#, fuzzy
 msgid "Priority color setup"
-msgstr "Налаштування кольору пріоритету"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1512
-#, fuzzy
 msgid ""
 "Priority is a demand property, available in the demands table. The priority "
 "value will have effect in the plan results.<br>\n"
@@ -7433,10 +7178,6 @@ msgid ""
 "value the lower the priority.\n"
 "                        <br><br>"
 msgstr ""
-"Пріоритетом є властивість попиту, доступна в таблиці вимог. Значення "
-"пріоритету матиме ефект у результатах плану.<br>Найвище значення пріоритету "
-"– 0, і тим більше значення, тим нижче пріоритет.                        "
-"<br><br>"
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:43
 #, fuzzy
@@ -7444,28 +7185,20 @@ msgid "Purchase Order"
 msgstr "Замовлення на закупівлю"
 
 #: freppledb/quoting/static/quoting/quoting.html:192
-#, fuzzy
 msgid "Quoting error"
-msgstr "Помилка цитування"
-
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:194
-msgid "Remark"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:884
-#, fuzzy
 msgid "Remove this demand from planning"
-msgstr "Усунути цей попит від планування"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:163
-#, fuzzy
 msgid "Save changes to the database"
-msgstr "Збереження змін у базі даних"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:172
-#, fuzzy
 msgid "Save plan from memory to the database"
-msgstr "Зберегти план із пам'яті до бази даних"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:411
 #, fuzzy
@@ -7473,41 +7206,33 @@ msgid "Seasonal"
 msgstr "Сезонні"
 
 #: freppledb/forecast/static/forecast/forecast.html:391
-#, fuzzy
 msgid ""
 "Select forecast method, only possible at single item/location/customer level"
 msgstr ""
-"Виберіть метод прогнозування, можливий лише на рівні одного елемента / "
-"місцезнаходження / клієнта"
 
 #: freppledb/forecast/static/forecast/forecast.html:49
-#, fuzzy
 msgid "Select panel measure"
-msgstr "Вибір вимірювання панелі"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:5
-#, fuzzy
 msgid "Select panel sequence"
-msgstr "Вибір послідовності панелі"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:432
-#, fuzzy
 msgid "Selected forecast method"
-msgstr "Вибраний метод прогнозування"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:171
-#, fuzzy
 msgid "Simulate changes without saving"
-msgstr "Імітація змін без збереження"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:289
 #: freppledb/planningboard/static/planningboard/planningboard.html:368
 #: freppledb/planningboard/static/planningboard/planningboard.html:552
 #: freppledb/planningboard/static/planningboard/planningboard.html:678
 #: freppledb/planningboard/static/planningboard/planningboard.html:804
-#, fuzzy
 msgid "Split in half"
-msgstr "Розділити навпіл"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:45
 #, fuzzy
@@ -7516,12 +7241,10 @@ msgstr "На складі"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:53
 #: freppledb/planningboard/static/planningboard/planningboard.html:154
-#, fuzzy
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
-msgstr "Діаграма Ганта обмежується {{rowlimit}} рядків."
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1425
-#, fuzzy
 msgid ""
 "The criticality of an operationplan measures the slack time available till "
 "the delivery of the customer demand.<br>\n"
@@ -7531,14 +7254,8 @@ msgid ""
 "not immediately impact the delivery of any demand.\n"
 "                        <br><br>"
 msgstr ""
-"Критичність операційного плану вимірює час розхитування, доступний до "
-"доставки попиту клієнта.<br>Критичність 0 вказує на те, що порядок "
-"знаходиться на критичному шляху однієї або їдки вимог.<br>Більш високі "
-"значення критичності свідчать про те, що затримка не відразу вплине на "
-"доставку будь-якого попиту.                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1453
-#, fuzzy
 msgid ""
 "The delay of an operationplan compares its end date with the delivery due "
 "date of the customer demand(s) it feeds.<br>\n"
@@ -7546,10 +7263,6 @@ msgid ""
 "operations still required to produce the finished end item.\n"
 "                        <br><br>"
 msgstr ""
-"Затримка операційного плану порівнює дату його завершення з датою доставки "
-"клієнта, який він подає.<br>Це також враховувати тривалість подальших "
-"операцій, як і раніше, необхідні для виробництва готового кінцевого "
-"елемента.                        <br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:407
 #, fuzzy
@@ -7557,76 +7270,62 @@ msgid "Trend"
 msgstr "Тенденція"
 
 #: freppledb/forecast/static/forecast/forecast.html:167
-#, fuzzy
 msgid "Undo changes"
-msgstr "Скасувати зміни"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:78
-#, fuzzy
 msgid "View end events"
-msgstr "Перегляд подій кінця"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:80
-#, fuzzy
 msgid "View full duration"
-msgstr "тривалість установки"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:79
-#, fuzzy
 msgid "View start and end events"
-msgstr "Перегляд подій початку та завершення"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:77
-#, fuzzy
 msgid "View start events"
-msgstr "початковий запас"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:254
-#, fuzzy
 msgid "approved: {{aggregatedoperationplans.status.approved }}"
-msgstr "затверджено: {{aggregatedoperationplans.status.approved }}"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:263
-#, fuzzy
 msgid "closed: {{aggregatedoperationplans.status.closed }}"
-msgstr "закрито: {{aggregatedoperationplans.status.closed }}"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:11
-#, fuzzy
 msgid "color by"
-msgstr "колір за"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:192
-#, fuzzy
 msgid "colors"
-msgstr "Кольори"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:260
-#, fuzzy
 msgid "completed: {{aggregatedoperationplans.status.completed }}"
-msgstr "завершено: {{aggregatedoperationplans.status.completed }}"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:100
-#, fuzzy
 msgid "confirm"
-msgstr "Підтвердити"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:257
-#, fuzzy
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
-msgstr "підтверджено: {{aggregatedoperationplans.status.confirmed }}"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:214
-#, fuzzy
 msgid "customer delivery"
-msgstr "доставка клієнтів"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:462
 #: freppledb/input/static/operationplandetail/operationplandetail.html:47
 #: freppledb/planningboard/static/planningboard/planningboard.html:148
-#, fuzzy
 msgid "database transaction failed"
-msgstr "не вдалося виконати операцію бази даних"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
 #, fuzzy
@@ -7634,14 +7333,12 @@ msgid "delivery"
 msgstr "доставка"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:145
-#, fuzzy
 msgid "delivery quantity"
-msgstr "кількість доставки"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:2
-#, fuzzy
 msgid "downstream operations"
-msgstr "операції за течією"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:35
 #: freppledb/planningboard/static/planningboard/planningboard.html:1058
@@ -7654,23 +7351,20 @@ msgstr "операції за течією"
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:1085
 #, fuzzy
 msgid "end"
-msgstr "Кінці"
+msgstr "кінець"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:83
-#, fuzzy
 msgid "export as Excel file"
-msgstr "експортувати як файл Excel"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:15
-#, fuzzy
 msgid "feasibility"
-msgstr "Доцільність"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:46
 #: freppledb/planningboard/static/planningboard/planningboard.html:147
-#, fuzzy
 msgid "gantt chart rows limit"
-msgstr "Обмеження рядків діаграми ганта"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:188
 #, fuzzy
@@ -7678,113 +7372,93 @@ msgid "history"
 msgstr "історія"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:33
-#, fuzzy
 msgid "item category"
-msgstr "категорія елемента"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:36
-#, fuzzy
 msgid "item subcategory"
-msgstr "підкатегорія елементів"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:85
-#, fuzzy
 msgid "maximum lateness (in days)"
-msgstr "максимальне запізнення (у днях)"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:28
-#, fuzzy
 msgid "network status"
-msgstr "стан мережі"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:260
-#, fuzzy
 msgid "new customer comment"
-msgstr "новий коментар клієнта"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:46
-#, fuzzy
 msgid "no demands"
-msgstr "немає вимог"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:17
-#, fuzzy
 msgid "no downstream operationplans information"
-msgstr "немає інформації про експлуатаційні плани нижнього рівня"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:44
-#, fuzzy
 msgid "no movements"
-msgstr "немає рухів"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:52
-#, fuzzy
 msgid "no network information"
-msgstr "немає відомостей про мережу"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:42
-#, fuzzy
 msgid "no problems"
-msgstr "немає проблем"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:40
-#, fuzzy
 msgid "no resources"
-msgstr "немає ресурсів"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:18
-#, fuzzy
 msgid "no selection"
-msgstr "без виділення"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:54
-#, fuzzy
 msgid "no supply information"
-msgstr "немає інформації про постачання"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:17
-#, fuzzy
 msgid "no upstream operationplans information"
-msgstr "немає інформації про експлуатаційні плани апстрім"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:39
-#, fuzzy
 msgid "operation category"
-msgstr "категорія операції"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:42
-#, fuzzy
 msgid "operation subcategory"
-msgstr "підкатегорія операції"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:251
-#, fuzzy
 msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
-msgstr "запропоновано: {{aggregatedoperationplans.status.proposed }}"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:8
-#, fuzzy
 msgid "quote form"
-msgstr "форма цінової пропозиції"
+msgstr ""
 
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:194
 #: freppledb/planningboard/static/planningboard/planningboard.html:527
 msgid "remark"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:80
-#, fuzzy
 msgid "remove all rows"
-msgstr "видалити всі рядки"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:77
-#, fuzzy
 msgid "remove row"
-msgstr "видалити рядок"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:258
-#, fuzzy
 msgid "remove this demand from planning"
-msgstr "усунути цей попит від планування"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:19
 #, fuzzy
@@ -7794,15 +7468,13 @@ msgstr "вибрано"
 #: freppledb/planningboard/static/planningboard/planningboard.html:444
 #: freppledb/planningboard/static/planningboard/planningboard.html:596
 #: freppledb/planningboard/static/planningboard/planningboard.html:718
-#, fuzzy
 msgid "setup end"
-msgstr "кінець налаштування"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/calendar.html:24
 #: freppledb/input/static/operationplandetail/kanban.html:15
-#, fuzzy
 msgid "shown"
-msgstr "Показано"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:33
 #: freppledb/planningboard/static/planningboard/planningboard.html:1055
@@ -7823,36 +7495,56 @@ msgid "stock"
 msgstr "склад"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:28
-#, fuzzy
 msgid "supply information"
-msgstr "інформація про постачання"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:33
-#, fuzzy
 msgid "types"
-msgstr "Типи"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:461
 #: freppledb/input/static/operationplandetail/operationplandetail.html:45
 #: freppledb/planningboard/static/planningboard/planningboard.html:146
-#, fuzzy
 msgid "unsaved changes"
-msgstr "незбережені зміни"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:2
-#, fuzzy
 msgid "upstream operations"
-msgstr "операції апстрім"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/month.html:13
-#, fuzzy
 msgid "week number"
-msgstr "ім'я тижня"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:215
-#, fuzzy
 msgid "{{ aggregatedoperationplans.count }} selected"
-msgstr "{{ Вибрано плани агрегованої сумісності.count }}"
+msgstr ""
+
+#, fuzzy
+#~ msgid "add"
+#~ msgstr "и"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "                        Files in the old .XLS excel format can't be read."
+#~ "<br>\n"
+#~ "                        Please convert them to the new .XLSX format.\n"
+#~ "                        "
+#~ msgstr ""
+#~ "Файли у старому форматі .XLS excel не можна прочитати. <br> Перетворіть "
+#~ "їх у новий .XLSX формат."
+
+#, fuzzy
+#~ msgid "is_ip_buffer"
+#~ msgstr "буфер"
+
+#~ msgid "cancel"
+#~ msgstr "скасувати"
+
+#, fuzzy
+#~ msgid "delete"
+#~ msgstr "Удалить"
 
 #~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
 #~ msgstr "Недійсна дата: очікується: YYYY-MM-DD HH: MM: SS"

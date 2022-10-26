@@ -1591,10 +1591,8 @@ class GridReport(View):
                 elif filename.endswith(".xls"):
                     return HttpResponseNotFound(
                         _(
-                            """
-                        Files in the old .XLS excel format can't be read.<br>
-                        Please convert them to the new .XLSX format.
-                        """
+                            "Files in the old .XLS excel format can't be read.<br>"
+                            "Please convert them to the new .XLSX format."
                         )
                     )
                 else:

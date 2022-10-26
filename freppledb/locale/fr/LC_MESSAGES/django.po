@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-25 13:05+0200\n"
+"POT-Creation-Date: 2022-10-26 16:33+0200\n"
 "PO-Revision-Date: 2021-12-29 14:20+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
@@ -946,7 +946,7 @@ msgstr "source"
 msgid "last modified"
 msgstr "dernière modification"
 
-#: common/models.py:289 common/report.py:2297 common/report.py:2432
+#: common/models.py:289 common/report.py:2295 common/report.py:2430
 #: common/views.py:475 execute/management/commands/importworkbook.py:202
 #: execute/views.py:1394 input/models.py:102
 #: input/templates/input/calendardetail.html:36
@@ -1040,8 +1040,8 @@ msgid "scenarios"
 msgstr "scénarios"
 
 #: common/models.py:366 common/report.py:1041 common/report.py:1122
-#: common/report.py:1138 common/report.py:1155 common/report.py:3270
-#: common/report.py:3661 execute/templates/commands/scenario_copy.html:15
+#: common/report.py:1138 common/report.py:1155 common/report.py:3268
+#: common/report.py:3659 execute/templates/commands/scenario_copy.html:15
 msgid "scenario"
 msgstr "scénario"
 
@@ -1082,6 +1082,7 @@ msgstr "utilisateurs"
 
 #: common/models.py:673 execute/templates/commands/scheduletasks.html:104
 #: execute/templates/commands/scheduletasks.html:169
+#: input/templates/input/calendardetail.html:24
 msgid "Add"
 msgstr "Ajouter"
 
@@ -1093,6 +1094,7 @@ msgstr "Modifier"
 #: execute/templates/commands/scheduletasks.html:41
 #: execute/templates/commands/scheduletasks.html:87
 #: execute/templates/commands/scheduletasks.html:195
+#: execute/templates/execute/execute.html:68
 #: reportmanager/templates/reportmanager/reportmanager.html:168
 msgid "Delete"
 msgstr "Effacer"
@@ -1178,8 +1180,8 @@ msgstr "niveau"
 msgid "Higher values indicate more granular time buckets"
 msgstr "De grandes valeurs indiquent plus de granularité dans les maillages temporels"
 
-#: common/models.py:1427 common/models.py:1438 common/report.py:3226
-#: common/report.py:3594 common/views.py:665 forecast/models.py:378
+#: common/models.py:1427 common/models.py:1438 common/report.py:3224
+#: common/report.py:3592 common/views.py:665 forecast/models.py:378
 #: forecast/models.py:514
 msgid "bucket"
 msgstr "maille temporelle"
@@ -1295,8 +1297,8 @@ msgstr "Non"
 msgid "Yes"
 msgstr "Oui"
 
-#: common/report.py:834 common/report.py:1915 common/report.py:1918
-#: common/report.py:2193 common/report.py:2247 common/report.py:2370
+#: common/report.py:834 common/report.py:1913 common/report.py:1916
+#: common/report.py:2191 common/report.py:2245 common/report.py:2368
 #: common/templates/403.html:4 common/templates/403.html:7
 #: executesql/views.py:60 forecast/views.py:1076 forecast/views.py:1250
 #: forecast/views.py:1389 forecast/views.py:1522 forecast/views.py:1666
@@ -1312,106 +1314,100 @@ msgstr "Oui"
 msgid "Permission denied"
 msgstr "Permission refusée"
 
-#: common/report.py:1019 common/report.py:3572 common/report.py:3601
+#: common/report.py:1019 common/report.py:3570 common/report.py:3599
 #: execute/views.py:1155 execute/views.py:1198
 #, python-format
 msgid "Values in this field must exist in the %s table"
 msgstr "Les valeurs dans ce champ doivent exister dans la table %s"
 
-#: common/report.py:1027 common/report.py:3580 common/report.py:3609
+#: common/report.py:1027 common/report.py:3578 common/report.py:3607
 #: execute/views.py:1163 execute/views.py:1209
 #, python-format
 msgid "Accepted values are: %s"
 msgstr "Les valeurs acceptées sont: %s"
 
-#: common/report.py:1036 common/report.py:3589 common/report.py:3618
-#: common/report.py:3647 execute/views.py:1172 execute/views.py:1218
+#: common/report.py:1036 common/report.py:3587 common/report.py:3616
+#: common/report.py:3645 execute/views.py:1172 execute/views.py:1218
 #: execute/views.py:1238
 msgid "Read only"
 msgstr "Lecture seule"
 
-#: common/report.py:1590
-#, fuzzy
-#| msgid "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
-msgid ""
-"\n"
-"                        Files in the old .XLS excel format can't be read.<br>\n"
-"                        Please convert them to the new .XLSX format.\n"
-"                        "
+#: common/report.py:1590 execute/views.py:1320
+msgid "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
 msgstr "Les fichiers dans l'ancien format Excel .XLS ne peuvent être lus.<br>Convertissez les svp au nouveau format .XLSX."
 
-#: common/report.py:1749
+#: common/report.py:1747
 #, python-format
 msgid "%(title)s for %(entity)s"
 msgstr "%(title)s pour %(entity)s"
 
-#: common/report.py:1949 common/report.py:1997 common/report.py:2073
+#: common/report.py:1947 common/report.py:1995 common/report.py:2071
 #, python-format
 msgid "Can't find %s"
 msgstr "Ne peut pas trouver %s"
 
-#: common/report.py:1982
+#: common/report.py:1980
 #, python-format
 msgid "Can't copy %s"
 msgstr "Ne peut pas copier %s"
 
-#: common/report.py:2222
+#: common/report.py:2220
 #, python-format
 msgid "Erasing data from %(model)s"
 msgstr "Effacement des données de %(model)s"
 
-#: common/report.py:2241 common/report.py:2364
+#: common/report.py:2239 common/report.py:2362
 msgid "Invalid upload request"
 msgstr "Requête d'import incorrecte"
 
-#: common/report.py:2294 common/report.py:2429
+#: common/report.py:2292 common/report.py:2427
 #: execute/management/commands/importworkbook.py:199 execute/views.py:1371
 #: execute/views.py:1391
 msgid "worksheet"
 msgstr "onglet"
 
-#: common/report.py:2295 common/report.py:2430
+#: common/report.py:2293 common/report.py:2428
 #: execute/management/commands/importworkbook.py:200 execute/views.py:1392
 msgid "row"
 msgstr "ligne"
 
-#: common/report.py:2296 common/report.py:2431
+#: common/report.py:2294 common/report.py:2429
 #: execute/management/commands/importworkbook.py:201 execute/views.py:1393
 msgid "field"
 msgstr "champ de donnée"
 
-#: common/report.py:2298 common/report.py:2309 common/report.py:2433
-#: common/report.py:2446 execute/management/commands/importworkbook.py:203
+#: common/report.py:2296 common/report.py:2307 common/report.py:2431
+#: common/report.py:2444 execute/management/commands/importworkbook.py:203
 #: execute/management/commands/importworkbook.py:222 execute/views.py:1395
 #: execute/views.py:1406
 msgid "error"
 msgstr "erreur"
 
-#: common/report.py:2300 common/report.py:2319 common/report.py:2435
-#: common/report.py:2458 execute/management/commands/importworkbook.py:205
+#: common/report.py:2298 common/report.py:2317 common/report.py:2433
+#: common/report.py:2456 execute/management/commands/importworkbook.py:205
 #: execute/management/commands/importworkbook.py:243 execute/views.py:1397
 #: execute/views.py:1416
 msgid "warning"
 msgstr "avertissement"
 
-#: common/report.py:2399
+#: common/report.py:2397
 #, fuzzy
 #| msgid "log file"
 msgid "file"
 msgstr "fichier journal"
 
-#: common/report.py:2741
+#: common/report.py:2739
 #: inventoryplanning/templates/inventoryplanning/drp.html:2929
 #: inventoryplanning/templates/inventoryplanning/drp.html:2948
 msgid "false"
 msgstr "faux"
 
-#: common/report.py:3241 common/report.py:3397 common/report.py:3453
-#: common/report.py:3633
+#: common/report.py:3239 common/report.py:3395 common/report.py:3451
+#: common/report.py:3631
 msgid "title"
 msgstr "titre"
 
-#: common/report.py:3256 common/report.py:3652 forecast/models.py:385
+#: common/report.py:3254 common/report.py:3650 forecast/models.py:385
 #: forecast/models.py:521
 msgid "data field"
 msgstr "champ de donnée"
@@ -1827,9 +1823,13 @@ msgid "OK"
 msgstr "OK"
 
 #: common/templates/admin/subtemplate_timebuckets.html:81
+#: execute/templates/commands/exporttofolder.html:74
+#: execute/templates/commands/importfromfolder.html:123
+#: execute/templates/execute/execute.html:41
+#: execute/templates/execute/execute.html:47
 #: executesql/templates/executesql/executesql.html:110
-msgid "cancel"
-msgstr "annuler"
+msgid "Cancel"
+msgstr "Annuler"
 
 #: common/templates/auth/change_password.html:21
 #, python-format
@@ -2579,13 +2579,6 @@ msgstr "Supprimer un fichier"
 msgid "Confirm"
 msgstr "Confirmer"
 
-#: execute/templates/commands/exporttofolder.html:74
-#: execute/templates/commands/importfromfolder.html:123
-#: execute/templates/execute/execute.html:41
-#: execute/templates/execute/execute.html:47
-msgid "Cancel"
-msgstr "Annuler"
-
 #: execute/templates/commands/exporttofolder.html:86
 #: execute/templates/commands/importfromfolder.html:135
 msgid "All data files were deleted"
@@ -2813,12 +2806,6 @@ msgstr "annulé"
 msgid "download"
 msgstr "télécharger"
 
-#: execute/templates/execute/execute.html:68
-#, fuzzy
-#| msgid "Delete"
-msgid "delete"
-msgstr "Effacer"
-
 #: execute/templates/execute/execute.html:70 forecast/models.py:1089
 msgid "view"
 msgstr "vue"
@@ -2879,10 +2866,6 @@ msgstr "Il n'y a rien à exporter"
 #: execute/views.py:1316
 msgid "Processing file"
 msgstr "Fichier en cours de traitement"
-
-#: execute/views.py:1320
-msgid "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
-msgstr "Les fichiers dans l'ancien format Excel .XLS ne peuvent être lus.<br>Convertissez les svp au nouveau format .XLSX."
 
 #: execute/views.py:1327
 msgid "Unsupported file format."
@@ -4671,12 +4654,6 @@ msgstr "date de commande"
 msgid "delivery orders"
 msgstr "ordres de livraison"
 
-#: input/templates/input/calendardetail.html:24
-#, fuzzy
-#| msgid "Add"
-msgid "add"
-msgstr "Ajouter"
-
 #: input/templates/input/calendardetail.html:40
 #, fuzzy
 #| msgid "Monday"
@@ -5223,7 +5200,7 @@ msgstr "valeur des ordres d’achat ouverts"
 #: inventoryplanning/models.py:476
 #, fuzzy
 #| msgid "open purchase order value"
-msgid "open purchase order beyond lead time value"
+msgid "open purchase orders beyond lead time value"
 msgstr "valeur des ordres d’achat ouverts"
 
 #: inventoryplanning/models.py:482
@@ -5233,7 +5210,7 @@ msgstr "valeur des ordres de distribution ouverts"
 #: inventoryplanning/models.py:485
 #, fuzzy
 #| msgid "open distribution order value"
-msgid "open distribution order beyond lead time value"
+msgid "open distribution orders beyond lead time value"
 msgstr "valeur des ordres de distribution ouverts"
 
 #: inventoryplanning/models.py:491 inventoryplanning/views.py:545
@@ -5915,12 +5892,6 @@ msgstr "sur-charge"
 msgid "Inventory report"
 msgstr "Rapport de stock"
 
-#: output/views/buffer.py:258
-#, fuzzy
-#| msgid "buffer"
-msgid "is_ip_buffer"
-msgstr "SKU"
-
 #: output/views/buffer.py:271
 msgid "total produced"
 msgstr "total produit"
@@ -6535,6 +6506,33 @@ msgstr "Démarrage rapide pour la prévision"
 #: wizard/views.py:2691
 msgid "quarters"
 msgstr "trimestres"
+
+#, fuzzy
+#~| msgid "Add"
+#~ msgid "add"
+#~ msgstr "Ajouter"
+
+#, fuzzy
+#~| msgid "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
+#~ msgid ""
+#~ "\n"
+#~ "                        Files in the old .XLS excel format can't be read.<br>\n"
+#~ "                        Please convert them to the new .XLSX format.\n"
+#~ "                        "
+#~ msgstr "Les fichiers dans l'ancien format Excel .XLS ne peuvent être lus.<br>Convertissez les svp au nouveau format .XLSX."
+
+#, fuzzy
+#~| msgid "buffer"
+#~ msgid "is_ip_buffer"
+#~ msgstr "SKU"
+
+#~ msgid "cancel"
+#~ msgstr "annuler"
+
+#, fuzzy
+#~| msgid "Delete"
+#~ msgid "delete"
+#~ msgstr "Effacer"
 
 #~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
 #~ msgstr "Date incorrecte : format AAAA-MM-JJ HH:MM:SS"

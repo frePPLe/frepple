@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-25 13:05+0200\n"
+"POT-Creation-Date: 2022-10-26 16:33+0200\n"
 "PO-Revision-Date: 2021-06-17 08:17+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
@@ -965,7 +965,7 @@ msgstr "sorgente"
 msgid "last modified"
 msgstr "ultima modifica"
 
-#: common/models.py:289 common/report.py:2297 common/report.py:2432
+#: common/models.py:289 common/report.py:2295 common/report.py:2430
 #: common/views.py:475 execute/management/commands/importworkbook.py:202
 #: execute/views.py:1394 input/models.py:102
 #: input/templates/input/calendardetail.html:36
@@ -1059,8 +1059,8 @@ msgid "scenarios"
 msgstr "scenari"
 
 #: common/models.py:366 common/report.py:1041 common/report.py:1122
-#: common/report.py:1138 common/report.py:1155 common/report.py:3270
-#: common/report.py:3661 execute/templates/commands/scenario_copy.html:15
+#: common/report.py:1138 common/report.py:1155 common/report.py:3268
+#: common/report.py:3659 execute/templates/commands/scenario_copy.html:15
 msgid "scenario"
 msgstr "scenario"
 
@@ -1101,6 +1101,7 @@ msgstr "utenti"
 
 #: common/models.py:673 execute/templates/commands/scheduletasks.html:104
 #: execute/templates/commands/scheduletasks.html:169
+#: input/templates/input/calendardetail.html:24
 msgid "Add"
 msgstr "Aggiungi"
 
@@ -1112,6 +1113,7 @@ msgstr "Cambia"
 #: execute/templates/commands/scheduletasks.html:41
 #: execute/templates/commands/scheduletasks.html:87
 #: execute/templates/commands/scheduletasks.html:195
+#: execute/templates/execute/execute.html:68
 #: reportmanager/templates/reportmanager/reportmanager.html:168
 msgid "Delete"
 msgstr "Cancella"
@@ -1203,8 +1205,8 @@ msgstr "livello"
 msgid "Higher values indicate more granular time buckets"
 msgstr "Valori più alti indicano una maggiore granularità dei periodi di pianificazione"
 
-#: common/models.py:1427 common/models.py:1438 common/report.py:3226
-#: common/report.py:3594 common/views.py:665 forecast/models.py:378
+#: common/models.py:1427 common/models.py:1438 common/report.py:3224
+#: common/report.py:3592 common/views.py:665 forecast/models.py:378
 #: forecast/models.py:514
 msgid "bucket"
 msgstr "passo di pianificazione"
@@ -1318,8 +1320,8 @@ msgstr "No"
 msgid "Yes"
 msgstr "Sì"
 
-#: common/report.py:834 common/report.py:1915 common/report.py:1918
-#: common/report.py:2193 common/report.py:2247 common/report.py:2370
+#: common/report.py:834 common/report.py:1913 common/report.py:1916
+#: common/report.py:2191 common/report.py:2245 common/report.py:2368
 #: common/templates/403.html:4 common/templates/403.html:7
 #: executesql/views.py:60 forecast/views.py:1076 forecast/views.py:1250
 #: forecast/views.py:1389 forecast/views.py:1522 forecast/views.py:1666
@@ -1335,104 +1337,100 @@ msgstr "Sì"
 msgid "Permission denied"
 msgstr "Permesso negato"
 
-#: common/report.py:1019 common/report.py:3572 common/report.py:3601
+#: common/report.py:1019 common/report.py:3570 common/report.py:3599
 #: execute/views.py:1155 execute/views.py:1198
 #, python-format
 msgid "Values in this field must exist in the %s table"
 msgstr ""
 
-#: common/report.py:1027 common/report.py:3580 common/report.py:3609
+#: common/report.py:1027 common/report.py:3578 common/report.py:3607
 #: execute/views.py:1163 execute/views.py:1209
 #, python-format
 msgid "Accepted values are: %s"
 msgstr ""
 
-#: common/report.py:1036 common/report.py:3589 common/report.py:3618
-#: common/report.py:3647 execute/views.py:1172 execute/views.py:1218
+#: common/report.py:1036 common/report.py:3587 common/report.py:3616
+#: common/report.py:3645 execute/views.py:1172 execute/views.py:1218
 #: execute/views.py:1238
 msgid "Read only"
 msgstr "Sola lettura"
 
-#: common/report.py:1590
-msgid ""
-"\n"
-"                        Files in the old .XLS excel format can't be read.<br>\n"
-"                        Please convert them to the new .XLSX format.\n"
-"                        "
+#: common/report.py:1590 execute/views.py:1320
+msgid "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
 msgstr ""
 
-#: common/report.py:1749
+#: common/report.py:1747
 #, python-format
 msgid "%(title)s for %(entity)s"
 msgstr "%(title)s per %(entity)s"
 
-#: common/report.py:1949 common/report.py:1997 common/report.py:2073
+#: common/report.py:1947 common/report.py:1995 common/report.py:2071
 #, python-format
 msgid "Can't find %s"
 msgstr "Non trovato %s"
 
-#: common/report.py:1982
+#: common/report.py:1980
 #, python-format
 msgid "Can't copy %s"
 msgstr "Non copiato %s"
 
-#: common/report.py:2222
+#: common/report.py:2220
 #, python-format
 msgid "Erasing data from %(model)s"
 msgstr "Cancellazione del dato da %(model)s"
 
-#: common/report.py:2241 common/report.py:2364
+#: common/report.py:2239 common/report.py:2362
 msgid "Invalid upload request"
 msgstr "Richiesta di upload non valida"
 
-#: common/report.py:2294 common/report.py:2429
+#: common/report.py:2292 common/report.py:2427
 #: execute/management/commands/importworkbook.py:199 execute/views.py:1371
 #: execute/views.py:1391
 msgid "worksheet"
 msgstr "foglio di lavorazione"
 
-#: common/report.py:2295 common/report.py:2430
+#: common/report.py:2293 common/report.py:2428
 #: execute/management/commands/importworkbook.py:200 execute/views.py:1392
 msgid "row"
 msgstr "riga"
 
-#: common/report.py:2296 common/report.py:2431
+#: common/report.py:2294 common/report.py:2429
 #: execute/management/commands/importworkbook.py:201 execute/views.py:1393
 msgid "field"
 msgstr "campo dati"
 
-#: common/report.py:2298 common/report.py:2309 common/report.py:2433
-#: common/report.py:2446 execute/management/commands/importworkbook.py:203
+#: common/report.py:2296 common/report.py:2307 common/report.py:2431
+#: common/report.py:2444 execute/management/commands/importworkbook.py:203
 #: execute/management/commands/importworkbook.py:222 execute/views.py:1395
 #: execute/views.py:1406
 msgid "error"
 msgstr "errore"
 
-#: common/report.py:2300 common/report.py:2319 common/report.py:2435
-#: common/report.py:2458 execute/management/commands/importworkbook.py:205
+#: common/report.py:2298 common/report.py:2317 common/report.py:2433
+#: common/report.py:2456 execute/management/commands/importworkbook.py:205
 #: execute/management/commands/importworkbook.py:243 execute/views.py:1397
 #: execute/views.py:1416
 msgid "warning"
 msgstr "attenzione"
 
-#: common/report.py:2399
+#: common/report.py:2397
 #, fuzzy
 #| msgid "file name"
 msgid "file"
 msgstr "nome del file"
 
-#: common/report.py:2741
+#: common/report.py:2739
 #: inventoryplanning/templates/inventoryplanning/drp.html:2929
 #: inventoryplanning/templates/inventoryplanning/drp.html:2948
 msgid "false"
 msgstr "falso"
 
-#: common/report.py:3241 common/report.py:3397 common/report.py:3453
-#: common/report.py:3633
+#: common/report.py:3239 common/report.py:3395 common/report.py:3451
+#: common/report.py:3631
 msgid "title"
 msgstr "titolo"
 
-#: common/report.py:3256 common/report.py:3652 forecast/models.py:385
+#: common/report.py:3254 common/report.py:3650 forecast/models.py:385
 #: forecast/models.py:521
 msgid "data field"
 msgstr "campo dati"
@@ -1859,9 +1857,13 @@ msgid "OK"
 msgstr "OK"
 
 #: common/templates/admin/subtemplate_timebuckets.html:81
+#: execute/templates/commands/exporttofolder.html:74
+#: execute/templates/commands/importfromfolder.html:123
+#: execute/templates/execute/execute.html:41
+#: execute/templates/execute/execute.html:47
 #: executesql/templates/executesql/executesql.html:110
-msgid "cancel"
-msgstr "cancellare"
+msgid "Cancel"
+msgstr "Cancella"
 
 #: common/templates/auth/change_password.html:21
 #, python-format
@@ -2617,13 +2619,6 @@ msgstr "Cancella file"
 msgid "Confirm"
 msgstr "Conferma"
 
-#: execute/templates/commands/exporttofolder.html:74
-#: execute/templates/commands/importfromfolder.html:123
-#: execute/templates/execute/execute.html:41
-#: execute/templates/execute/execute.html:47
-msgid "Cancel"
-msgstr "Cancella"
-
 #: execute/templates/commands/exporttofolder.html:86
 #: execute/templates/commands/importfromfolder.html:135
 msgid "All data files were deleted"
@@ -2859,12 +2854,6 @@ msgstr "cancellato"
 msgid "download"
 msgstr "scaricare"
 
-#: execute/templates/execute/execute.html:68
-#, fuzzy
-#| msgid "Delete"
-msgid "delete"
-msgstr "Cancella"
-
 #: execute/templates/execute/execute.html:70 forecast/models.py:1089
 msgid "view"
 msgstr "vedi"
@@ -2928,10 +2917,6 @@ msgstr "Niente da esportare"
 
 #: execute/views.py:1316
 msgid "Processing file"
-msgstr ""
-
-#: execute/views.py:1320
-msgid "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
 msgstr ""
 
 #: execute/views.py:1327
@@ -4847,12 +4832,6 @@ msgstr "data di fine"
 msgid "delivery orders"
 msgstr "operazione di consegna"
 
-#: input/templates/input/calendardetail.html:24
-#, fuzzy
-#| msgid "Add"
-msgid "add"
-msgstr "Aggiungi"
-
 #: input/templates/input/calendardetail.html:40
 #, fuzzy
 #| msgid "Monday"
@@ -5455,7 +5434,7 @@ msgstr "valore degli ordini di vendita aperti"
 #: inventoryplanning/models.py:476
 #, fuzzy
 #| msgid "Shows purchase orders by ordering date"
-msgid "open purchase order beyond lead time value"
+msgid "open purchase orders beyond lead time value"
 msgstr "Mostra gli ordini di acquisto per data di ordinazione"
 
 #: inventoryplanning/models.py:482
@@ -5467,7 +5446,7 @@ msgstr "ordine di distribuzione"
 #: inventoryplanning/models.py:485
 #, fuzzy
 #| msgid "Shows distribution orders by start date"
-msgid "open distribution order beyond lead time value"
+msgid "open distribution orders beyond lead time value"
 msgstr "Mostra gli ordini di distribuzione per data di inizio"
 
 #: inventoryplanning/models.py:491 inventoryplanning/views.py:545
@@ -6198,12 +6177,6 @@ msgstr "sovraccarico"
 msgid "Inventory report"
 msgstr "Rapporto sulle scorte"
 
-#: output/views/buffer.py:258
-#, fuzzy
-#| msgid "buffer"
-msgid "is_ip_buffer"
-msgstr "buffer"
-
 #: output/views/buffer.py:271
 #, fuzzy
 #| msgid "total production"
@@ -6864,6 +6837,24 @@ msgstr "previsione locali"
 #: wizard/views.py:2691
 msgid "quarters"
 msgstr "quarti"
+
+#, fuzzy
+#~| msgid "Add"
+#~ msgid "add"
+#~ msgstr "Aggiungi"
+
+#, fuzzy
+#~| msgid "buffer"
+#~ msgid "is_ip_buffer"
+#~ msgstr "buffer"
+
+#~ msgid "cancel"
+#~ msgstr "cancellare"
+
+#, fuzzy
+#~| msgid "Delete"
+#~ msgid "delete"
+#~ msgstr "Cancella"
 
 #~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
 #~ msgstr "Data non valida:  si attende YYYY-MM-DD HH:MM:SS"

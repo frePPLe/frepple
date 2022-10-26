@@ -262,7 +262,7 @@ class OverviewReport(GridPivot):
             editable=False,
             initially_hidden=True,
         ),
-        GridFieldNumber("is_ip_buffer", title=_("is_ip_buffer"), hidden=True),
+        GridFieldNumber("is_ip_buffer", title="is_ip_buffer", hidden=True),
     )
 
     crosses = (

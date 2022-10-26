@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-25 13:05+0200\n"
-"PO-Revision-Date: 2021-05-06 16:53+0200\n"
+"POT-Creation-Date: 2022-10-26 16:33+0200\n"
+"PO-Revision-Date: 2022-10-26 16:59+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: he\n"
@@ -168,9 +168,8 @@ msgstr "ייצוא פורמט"
 
 #: common/static/js/frepple.js:1223 common/static/js/frepple.js:1273
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Scenarios to export"
-msgstr "תרחישים לייצוא"
+msgstr ""
 
 #: common/static/js/frepple.js:1230 common/static/js/frepple.js:1281
 #: common/static/js/frepple.js:1323 common/static/js/frepple.js:1356
@@ -187,16 +186,14 @@ msgstr "CSV רשימת"
 #: common/static/js/frepple.js:1233 common/static/js/frepple.js:1285
 #: common/static/js/frepple.js:1327 common/static/js/frepple.js:1361
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Data source URL"
-msgstr "כתובת URL של מקור נתונים"
+msgstr ""
 
 #: common/static/js/frepple.js:1235 common/static/js/frepple.js:1287
 #: common/static/js/frepple.js:1329 common/static/js/frepple.js:1363
 #: common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Using this link external applications can pull data from frePPLe"
-msgstr "שימוש בקישור זה יישומים חיצוניים יכולים למשוך נתונים מ- frePPLe"
+msgstr ""
 
 #: common/static/js/frepple.js:1242 common/static/js/frepple.js:1294
 #: common/static/js/frepple.js:1336 common/static/js/frepple.js:1370
@@ -207,6 +204,7 @@ msgstr "העתק ללוח העריכה"
 
 #: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
 #: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
+#: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
 #: common/static/js/frepple.min.js:11
 msgid "Export"
 msgstr "ייצא"
@@ -250,14 +248,12 @@ msgid "Search"
 msgstr "חיפוש"
 
 #: common/static/js/frepple.js:1877 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "within"
-msgstr "בתוך"
+msgstr ""
 
 #: common/static/js/frepple.js:1879 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "is child of"
-msgstr "הוא צאצא של"
+msgstr ""
 
 #: common/static/js/frepple.js:1881 common/static/js/frepple.min.js:11
 msgid "is null"
@@ -277,14 +273,8 @@ msgid "and"
 msgstr "ו"
 
 #: common/static/js/frepple.js:2103 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Click ok to confirm deleting the favorite"
-msgstr "לחץ על אישור כדי לאשר את מחיקת המועדף"
-
-#: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
-#: common/static/js/frepple.min.js:11
-msgid "export"
-msgstr "ייצא"
+msgstr ""
 
 #: common/static/js/frepple.js:2278 common/static/js/frepple.min.js:11
 msgid "export selected records"
@@ -363,9 +353,8 @@ msgid "%s unread messages"
 msgstr "%s הודעות שלא נקראו"
 
 #: common/static/js/frepple.js:2876 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "No unread messages"
-msgstr "אין הודעות שלא נקראו"
+msgstr ""
 
 #: common/static/js/frepple.js:3008 common/static/js/frepple.min.js:11
 msgid "Installed apps"
@@ -439,9 +428,9 @@ msgid "Update"
 msgstr "עדכון"
 
 #: common/static/js/frepple.js:3973 common/static/js/frepple.min.js:11
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Manage notifications of %s"
-msgstr "ניהול הודעות על %s"
+msgstr ""
 
 #: common/static/js/frepple.js:3981 common/static/js/frepple.min.js:11
 #, fuzzy
@@ -449,20 +438,22 @@ msgid "Following"
 msgstr "עוקב/ת"
 
 #: common/static/js/frepple.js:4002 common/static/js/frepple.min.js:11
-#, fuzzy
 msgid "Add followers"
-msgstr "הוספת עוקבים"
+msgstr ""
 
 #: common/static/js/frepple.min.js:11
 #, fuzzy
 msgid "OR"
 msgstr "או"
 
+#: common/static/js/frepple.min.js:11
+msgid "export"
+msgstr "ייצא"
+
 #: forecast/static/forecast/src/forecast.js:941
 #: forecast/static/js/frepple-forecast.min.js:11
-#, fuzzy
 msgid "Show descriptions"
-msgstr "תיאור"
+msgstr ""
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
@@ -488,7 +479,7 @@ msgstr "מלאי נוכחי"
 #: planningboard/static/planningboard/src/planningboard.js:885
 #, fuzzy
 msgid "minutes"
-msgstr "דקה %d"
+msgstr "דקות"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:65
@@ -497,7 +488,7 @@ msgstr "דקה %d"
 #: planningboard/static/planningboard/src/planningboard.js:893
 #, fuzzy
 msgid "seconds"
-msgstr "לפני שניה"
+msgstr "שניות"
 
 #: output/views/resource.py:255
 msgid "hours"
@@ -508,21 +499,21 @@ msgstr "שעות"
 #: planningboard/static/planningboard/src/planningboard.js:881
 #, fuzzy
 msgid "hour"
-msgstr "שעות"
+msgstr "שעה"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:888
 #: planningboard/static/planningboard/src/planningboard.js:889
 #, fuzzy
 msgid "minute"
-msgstr "דקה %d"
+msgstr "דקה"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:895
 #: planningboard/static/planningboard/src/planningboard.js:896
 #, fuzzy
 msgid "second"
-msgstr "לפני שניה"
+msgstr "שניה"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
@@ -538,9 +529,8 @@ msgstr ""
 "גדולות/קטנות."
 
 #: admin.py:24
-#, fuzzy
 msgid "This user is inactive."
-msgstr "משתמש זה אינו פעיל."
+msgstr ""
 
 #: archive/models.py:44 common/models.py:642 common/models.py:679
 #: common/models.py:917 common/models.py:991 common/models.py:1436
@@ -788,9 +778,8 @@ msgstr "מיקום"
 #: input/views/inventory.py:1589 input/views/manufacturing.py:1855
 #: input/views/purchasing.py:916 input/views/sales.py:303
 #: input/views/sales.py:601 output/views/buffer.py:253
-#, fuzzy
 msgid "batch"
-msgstr "אצווה"
+msgstr ""
 
 #: archive/models.py:66 archive/models.py:91 forecast/views.py:197
 #: forecast/views.py:607 forecast/views.py:1982 input/models.py:225
@@ -1115,14 +1104,12 @@ msgid "owner"
 msgstr "בעלים"
 
 #: archive/models.py:134
-#, fuzzy
 msgid "item cost"
-msgstr "עלות פריט"
+msgstr ""
 
 #: archive/models.py:137
-#, fuzzy
 msgid "itemsupplier cost"
-msgstr "פריטיםעלות עודפת"
+msgstr ""
 
 #: archive/models.py:140 input/models.py:1483 input/models.py:1881
 #: input/views/inventory.py:369 input/views/inventory.py:531
@@ -1182,27 +1169,24 @@ msgid "demand"
 msgstr "verkooporder"
 
 #: archive/widget.py:28
-#, fuzzy
 msgid "Inventory history"
-msgstr "היסטוריית מלאי"
+msgstr ""
 
 #: archive/widget.py:29
 msgid "Show the history of the on hand inventory"
 msgstr "הצג את ההיסטוריה של המלאי בנמצא"
 
 #: archive/widget.py:172
-#, fuzzy
 msgid "Demand history"
-msgstr "היסטוריית ביקושים"
+msgstr ""
 
 #: archive/widget.py:173
 msgid "Show the evolution of the open sales orders"
 msgstr "הצג את האבולוציה של הזמנות המכירה הפתוחות"
 
 #: archive/widget.py:337
-#, fuzzy
 msgid "Purchase order history"
-msgstr "היסטוריית הזמנות רכש"
+msgstr ""
 
 #: archive/widget.py:338
 msgid "Show the evolution of the open purchase orders"
@@ -1217,9 +1201,8 @@ msgid "password"
 msgstr "סיסמה"
 
 #: common/admin.py:32
-#, fuzzy
 msgid "scenario access"
-msgstr "גישה לתרחיש"
+msgstr ""
 
 #: common/admin.py:43
 msgid "Permissions in this scenario"
@@ -1310,23 +1293,20 @@ msgid "Cannot delete %(name)s"
 msgstr "לא ניתן למחוק %(name)s"
 
 #: common/adminforms.py:704
-#, fuzzy
 msgid "About to delete!"
-msgstr "עומד למחוק!"
+msgstr ""
 
 #: common/adminforms.py:705
 msgid "Are you sure?"
 msgstr "האם את/ה בטוח/ה ?"
 
 #: common/adminforms.py:750
-#, fuzzy
 msgid "Required."
-msgstr "חובה."
+msgstr ""
 
 #: common/adminforms.py:752 common/adminforms.py:755
-#, fuzzy
 msgid "Required. Max 30 characters."
-msgstr "חובה. מקסימום 30 תווים."
+msgstr ""
 
 #: common/api/views.py:40
 msgid "REST API Help"
@@ -1360,9 +1340,8 @@ msgid "Select a valid choice. That choice is not one of the available choices."
 msgstr "יש לבחור אפשרות חוקית; אפשרות זו אינה אחת מהזמינות."
 
 #: common/localization.py:38 common/localization.py:56
-#, fuzzy
 msgid "Invalid date format"
-msgstr "מספר לא תקין"
+msgstr ""
 
 #: common/menu.py:117
 msgid "Documentation"
@@ -1471,7 +1450,7 @@ msgstr "מקור"
 msgid "last modified"
 msgstr "שונה לאחרונה"
 
-#: common/models.py:289 common/report.py:2297 common/report.py:2432
+#: common/models.py:289 common/report.py:2295 common/report.py:2430
 #: common/views.py:475 execute/management/commands/importworkbook.py:202
 #: execute/views.py:1394 input/models.py:102
 #: input/templates/input/calendardetail.html:36
@@ -1565,8 +1544,8 @@ msgid "scenarios"
 msgstr "תרחישים"
 
 #: common/models.py:366 common/report.py:1041 common/report.py:1122
-#: common/report.py:1138 common/report.py:1155 common/report.py:3270
-#: common/report.py:3661 execute/templates/commands/scenario_copy.html:15
+#: common/report.py:1138 common/report.py:1155 common/report.py:3268
+#: common/report.py:3659 execute/templates/commands/scenario_copy.html:15
 msgid "scenario"
 msgstr "תרחיש"
 
@@ -1589,9 +1568,8 @@ msgstr "גודל עמוד"
 
 #: common/models.py:409 common/templates/common/preferences.html:118
 #: common/views.py:177
-#, fuzzy
 msgid "default scenario"
-msgstr "תרחיש"
+msgstr ""
 
 #: common/models.py:558 common/models.py:645 common/models.py:706
 #: common/models.py:924 common/models.py:995 common/views.py:497
@@ -1606,6 +1584,7 @@ msgstr "משתמשים"
 
 #: common/models.py:673 execute/templates/commands/scheduletasks.html:104
 #: execute/templates/commands/scheduletasks.html:169
+#: input/templates/input/calendardetail.html:24
 msgid "Add"
 msgstr "הוספה"
 
@@ -1619,9 +1598,8 @@ msgid "comment"
 msgstr "תגובה"
 
 #: common/models.py:677 common/models.py:981 common/models.py:1003
-#, fuzzy
 msgid "follower"
-msgstr "חסיד"
+msgstr ""
 
 #: common/models.py:685
 msgid "content type"
@@ -1645,14 +1623,12 @@ msgid "comments"
 msgstr "תגובות"
 
 #: common/models.py:919 common/views.py:610
-#, fuzzy
 msgid "model name"
-msgstr "שם דגם"
+msgstr ""
 
 #: common/models.py:921 common/views.py:616
-#, fuzzy
 msgid "object name"
-msgstr "שם אובייקט"
+msgstr ""
 
 #: common/models.py:982
 #, fuzzy
@@ -1660,14 +1636,12 @@ msgid "followers"
 msgstr "עוקבים"
 
 #: common/models.py:1021
-#, fuzzy
 msgid "notification"
-msgstr "הודעה"
+msgstr ""
 
 #: common/models.py:1022
-#, fuzzy
 msgid "notifications"
-msgstr "הודעות"
+msgstr ""
 
 #: common/models.py:1412 input/models.py:676
 #: input/templates/input/operationplanreport.html:317
@@ -1700,8 +1674,8 @@ msgstr "שלב"
 msgid "Higher values indicate more granular time buckets"
 msgstr "ערכים גבוהים מצביעים על משכי זמן פרטניים יותר"
 
-#: common/models.py:1427 common/models.py:1438 common/report.py:3226
-#: common/report.py:3594 common/views.py:665 forecast/models.py:378
+#: common/models.py:1427 common/models.py:1438 common/report.py:3224
+#: common/report.py:3592 common/views.py:665 forecast/models.py:378
 #: forecast/models.py:514
 msgid "bucket"
 msgstr "משך זמן"
@@ -1721,9 +1695,8 @@ msgid "bucket dates"
 msgstr "תאריכים של משך זמן"
 
 #: common/models.py:1467
-#, fuzzy
 msgid "string"
-msgstr "מחרוזת קו"
+msgstr ""
 
 #: common/models.py:1468
 msgid "boolean"
@@ -1748,7 +1721,7 @@ msgstr "datum"
 #: common/models.py:1472
 #, fuzzy
 msgid "datetime"
-msgstr "תאריך/שעה"
+msgstr "תאריך וזמן"
 
 #: common/models.py:1473 execute/views.py:151 input/models.py:385
 #: input/models.py:837 input/views/capacity.py:103 input/views/capacity.py:542
@@ -1764,11 +1737,12 @@ msgstr "משך זמן"
 #: common/models.py:1474
 #, fuzzy
 msgid "time"
-msgstr "בזמן"
+msgstr "שעה"
 
 #: common/models.py:1475
+#, fuzzy
 msgid "JSON"
-msgstr ""
+msgstr "JSON"
 
 #: common/models.py:1508 common/views.py:506 common/views.py:707
 msgid "model"
@@ -1781,25 +1755,21 @@ msgid "label"
 msgstr "label"
 
 #: common/models.py:1517 common/views.py:722
-#, fuzzy
 msgid "editable"
-msgstr "טבלה"
+msgstr ""
 
 #: common/models.py:1519 common/views.py:726 forecast/models.py:1145
 #: forecast/views.py:353
-#, fuzzy
 msgid "initially hidden"
-msgstr "מוסתר בתחילה"
+msgstr ""
 
 #: common/models.py:1538 forecast/models.py:1193
-#, fuzzy
 msgid "Name can only be alphanumeric"
-msgstr "שם המדידה יכול להיות אלפאנומרי בלבד"
+msgstr ""
 
 #: common/models.py:1580
-#, fuzzy
 msgid "attribute"
-msgstr "תכונות"
+msgstr ""
 
 #: common/models.py:1581 common/views.py:679
 #: inventoryplanning/templates/inventoryplanning/drp.html:2596
@@ -1816,8 +1786,8 @@ msgstr "לא"
 msgid "Yes"
 msgstr "כן"
 
-#: common/report.py:834 common/report.py:1915 common/report.py:1918
-#: common/report.py:2193 common/report.py:2247 common/report.py:2370
+#: common/report.py:834 common/report.py:1913 common/report.py:1916
+#: common/report.py:2191 common/report.py:2245 common/report.py:2368
 #: common/templates/403.html:4 common/templates/403.html:7
 #: executesql/views.py:60 forecast/views.py:1076 forecast/views.py:1250
 #: forecast/views.py:1389 forecast/views.py:1522 forecast/views.py:1666
@@ -1834,108 +1804,102 @@ msgstr "כן"
 msgid "Permission denied"
 msgstr "גישה נדחתה"
 
-#: common/report.py:1019 common/report.py:3572 common/report.py:3601
+#: common/report.py:1019 common/report.py:3570 common/report.py:3599
 #: execute/views.py:1155 execute/views.py:1198
-#, fuzzy, python-format
+#, python-format
 msgid "Values in this field must exist in the %s table"
-msgstr "ערכים בשדה זה חייבים להתקיים בטבלה %s"
+msgstr ""
 
-#: common/report.py:1027 common/report.py:3580 common/report.py:3609
+#: common/report.py:1027 common/report.py:3578 common/report.py:3607
 #: execute/views.py:1163 execute/views.py:1209
-#, fuzzy, python-format
+#, python-format
 msgid "Accepted values are: %s"
-msgstr "הערכים המקובלים הם: %s"
+msgstr ""
 
-#: common/report.py:1036 common/report.py:3589 common/report.py:3618
-#: common/report.py:3647 execute/views.py:1172 execute/views.py:1218
+#: common/report.py:1036 common/report.py:3587 common/report.py:3616
+#: common/report.py:3645 execute/views.py:1172 execute/views.py:1218
 #: execute/views.py:1238
 #, fuzzy
 msgid "Read only"
 msgstr "לקריאה בלבד"
 
-#: common/report.py:1590
-#, fuzzy
+#: common/report.py:1590 execute/views.py:1320
 msgid ""
-"\n"
-"                        Files in the old .XLS excel format can't be read."
-"<br>\n"
-"                        Please convert them to the new .XLSX format.\n"
-"                        "
+"Files in the old .XLS excel format can't be read.<br>Please convert them to "
+"the new .XLSX format."
 msgstr ""
-"קבצים ב. אין אפשרות לקרוא את תבנית EXCEL של XLS.<br>נא המר אותם ל . תבנית "
-"XLSX."
 
-#: common/report.py:1749
+#: common/report.py:1747
 #, python-format
 msgid "%(title)s for %(entity)s"
 msgstr "%(entity)s עבור %(title)s"
 
-#: common/report.py:1949 common/report.py:1997 common/report.py:2073
+#: common/report.py:1947 common/report.py:1995 common/report.py:2071
 #, python-format
 msgid "Can't find %s"
 msgstr "%s לא מצליח למצוא"
 
-#: common/report.py:1982
+#: common/report.py:1980
 #, python-format
 msgid "Can't copy %s"
 msgstr "%s לא מצליח להעתיק"
 
-#: common/report.py:2222
+#: common/report.py:2220
 #, python-format
 msgid "Erasing data from %(model)s"
 msgstr "%(model)s- מחיקת נתונים מ"
 
-#: common/report.py:2241 common/report.py:2364
+#: common/report.py:2239 common/report.py:2362
 msgid "Invalid upload request"
 msgstr "דרישת העלאה לא חוקית"
 
-#: common/report.py:2294 common/report.py:2429
+#: common/report.py:2292 common/report.py:2427
 #: execute/management/commands/importworkbook.py:199 execute/views.py:1371
 #: execute/views.py:1391
 msgid "worksheet"
 msgstr "גיליון"
 
-#: common/report.py:2295 common/report.py:2430
+#: common/report.py:2293 common/report.py:2428
 #: execute/management/commands/importworkbook.py:200 execute/views.py:1392
 msgid "row"
 msgstr "שורה"
 
-#: common/report.py:2296 common/report.py:2431
+#: common/report.py:2294 common/report.py:2429
 #: execute/management/commands/importworkbook.py:201 execute/views.py:1393
 msgid "field"
 msgstr "שדה"
 
-#: common/report.py:2298 common/report.py:2309 common/report.py:2433
-#: common/report.py:2446 execute/management/commands/importworkbook.py:203
+#: common/report.py:2296 common/report.py:2307 common/report.py:2431
+#: common/report.py:2444 execute/management/commands/importworkbook.py:203
 #: execute/management/commands/importworkbook.py:222 execute/views.py:1395
 #: execute/views.py:1406
 msgid "error"
 msgstr "שגיאה"
 
-#: common/report.py:2300 common/report.py:2319 common/report.py:2435
-#: common/report.py:2458 execute/management/commands/importworkbook.py:205
+#: common/report.py:2298 common/report.py:2317 common/report.py:2433
+#: common/report.py:2456 execute/management/commands/importworkbook.py:205
 #: execute/management/commands/importworkbook.py:243 execute/views.py:1397
 #: execute/views.py:1416
 msgid "warning"
 msgstr "אזהרה"
 
-#: common/report.py:2399
+#: common/report.py:2397
 #, fuzzy
 msgid "file"
-msgstr "קובץ יומן"
+msgstr "קובץ"
 
-#: common/report.py:2741
+#: common/report.py:2739
 #: inventoryplanning/templates/inventoryplanning/drp.html:2929
 #: inventoryplanning/templates/inventoryplanning/drp.html:2948
 msgid "false"
 msgstr "שקר"
 
-#: common/report.py:3241 common/report.py:3397 common/report.py:3453
-#: common/report.py:3633
+#: common/report.py:3239 common/report.py:3395 common/report.py:3451
+#: common/report.py:3631
 msgid "title"
 msgstr "כותרת"
 
-#: common/report.py:3256 common/report.py:3652 forecast/models.py:385
+#: common/report.py:3254 common/report.py:3650 forecast/models.py:385
 #: forecast/models.py:521
 msgid "data field"
 msgstr "שדה נתונים"
@@ -1957,19 +1921,16 @@ msgid "Server Error <em>(500)</em>"
 msgstr "שגיאת שרת <em>(500)</em>"
 
 #: common/templates/500.html:8
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Oops, something went wrong.<br>\n"
 "Your administrator can find more information on the error in the log file "
 "%(logfile)s"
 msgstr ""
-"אופס, משהו השתבש.<br>למנהל המערכת שלך יש אפשרות למצוא מידע נוסף אודות השגיאה "
-"בקובץ יומן הרישום %(logfile)s"
 
 #: common/templates/admin/auth/user/add_form.html:4
-#, fuzzy
 msgid "Add user - required fields"
-msgstr "הוספת משתמש - שדות נדרשים"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:9
 #: common/templates/admin/base_site_gridpivot.html:9
@@ -1978,9 +1939,8 @@ msgstr "סינון"
 
 #: common/templates/admin/base_site_grid.html:13
 #: common/templates/admin/base_site_gridpivot.html:13
-#, fuzzy
 msgid "Filter editor"
-msgstr "עורך מסננים"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:51
 #: common/templates/admin/base_site_gridpivot.html:79
@@ -2117,19 +2077,18 @@ msgid "Help"
 msgstr "עזרה"
 
 #: common/templates/admin/base_site_nav.html:78
-#, fuzzy, python-format
+#, python-format
 msgid "Your license expired %(x)s days ago"
-msgstr "פג תוקפו של הרשיון שלך לפני %(x) ימים"
+msgstr ""
 
 #: common/templates/admin/base_site_nav.html:81
-#, fuzzy
 msgid "License expired"
-msgstr "פג תוקפו של הרשיון"
+msgstr ""
 
 #: common/templates/admin/base_site_nav.html:87
-#, fuzzy, python-format
+#, python-format
 msgid "Your license expires in %(x)s days"
-msgstr "תוקף הרשיון שלך יפוג בעוד %(x) ימים"
+msgstr ""
 
 #: common/templates/admin/base_site_nav.html:92
 #, fuzzy
@@ -2180,9 +2139,8 @@ msgstr "נא לתקן את השגיאות מתחת."
 #: input/templates/admin/input/setupmatrix/change_form.html:8
 #: input/templates/admin/input/skill/change_form.html:8
 #: input/templates/admin/input/supplier/change_form.html:8
-#, fuzzy
 msgid "related"
-msgstr "הקשורים"
+msgstr ""
 
 #: common/templates/admin/delete_confirmation.html:11
 #, python-format
@@ -2301,14 +2259,12 @@ msgid "from"
 msgstr "-מ"
 
 #: common/templates/admin/subtemplate_timebuckets.html:42
-#, fuzzy
 msgid "till"
-msgstr "עד"
+msgstr ""
 
 #: common/templates/admin/subtemplate_timebuckets.html:58
-#, fuzzy
 msgid "before till"
-msgstr "לפני עד"
+msgstr ""
 
 #: common/templates/admin/subtemplate_timebuckets.html:63
 #: common/templates/admin/subtemplate_timebuckets.html:69
@@ -2323,14 +2279,8 @@ msgid "months"
 msgstr "maanden"
 
 #: common/templates/admin/subtemplate_timebuckets.html:73
-#, fuzzy
 msgid "after current date"
-msgstr "לאחר התאריך הנוכחי"
-
-#: common/templates/admin/subtemplate_timebuckets.html:81
-#: executesql/templates/executesql/executesql.html:110
-msgid "cancel"
-msgstr "annuleer"
+msgstr ""
 
 #: common/templates/auth/change_password.html:21
 #, python-format
@@ -2343,9 +2293,8 @@ msgid "Change password"
 msgstr "שינוי סיסמה"
 
 #: common/templates/common/comments.html:31
-#, fuzzy
 msgid "Add an attachment"
-msgstr "הוספת קובץ מצורף"
+msgstr ""
 
 #: common/templates/common/follower.html:31
 #: common/templates/common/inbox.html:92 common/views.py:889
@@ -2366,19 +2315,16 @@ msgid "Unread"
 msgstr "לא נקרא"
 
 #: common/templates/common/inbox.html:111
-#, fuzzy
 msgid "Select/unselect all messages"
-msgstr "בחירה/ביטול בחירה של כל ההודעות"
+msgstr ""
 
 #: common/templates/common/inbox.html:141
-#, fuzzy
 msgid "Mark message unread"
-msgstr "סימון הודעה כהודעה שלא נקראה"
+msgstr ""
 
 #: common/templates/common/inbox.html:144
-#, fuzzy
 msgid "Mark message read"
-msgstr "סימון הודעה כהודעה שנקראה"
+msgstr ""
 
 #: common/templates/common/preferences.html:90
 msgid "Number of records per page"
@@ -2389,13 +2335,10 @@ msgid "avatar"
 msgstr "גלגול"
 
 #: common/templates/common/preferences.html:145
-#, fuzzy
 msgid ""
 "Upload a square picture of yourself.<br>Accepted formats are jpeg, png and "
 "gif.<br>Max file size is 100kB."
 msgstr ""
-"העלה תמונה מרובעת של עצמך.<br>התבניות המקובלות הן jpeg, png ו- gif.<br>גודל "
-"הקובץ המרבי הוא 100kB."
 
 #: common/templates/common/preferences.html:154
 #: common/templates/registration/password_change_form.html:21
@@ -2413,14 +2356,12 @@ msgid "New password confirmation"
 msgstr "אימות סיסמה חדשה"
 
 #: common/templates/common/snippet_follow.html:8
-#, fuzzy
 msgid "Manage notifications in your inbox"
-msgstr "ניהול הודעות בתיבת הדואר הנכנס שלך"
+msgstr ""
 
 #: common/templates/common/snippet_follow.html:14
-#, fuzzy
 msgid "Get a notification in your inbox when there is activity"
-msgstr "קבל הודעה בתיבת הדואר הנכנס שלך כאשר יש פעילות"
+msgstr ""
 
 #: common/templates/index.html:97 execute/templates/execute/execute.html:39
 msgid "failed"
@@ -2469,19 +2410,16 @@ msgid "Change my password"
 msgstr "שנה את סיסמתי"
 
 #: common/templates/rest_framework/api.html:27
-#, fuzzy
 msgid "HTTP request"
-msgstr "בקשת HTTP"
+msgstr ""
 
 #: common/templates/rest_framework/api.html:32
-#, fuzzy
 msgid "HTTP response headers"
-msgstr "כותרות תגובה של HTTP"
+msgstr ""
 
 #: common/templates/rest_framework/api.html:43
-#, fuzzy
 msgid "HTTP response content"
-msgstr "תוכן תגובת HTTP"
+msgstr ""
 
 #: common/templates/rest_framework/api.html:55
 #, python-format
@@ -2711,7 +2649,7 @@ msgid "Some links to get started"
 msgstr "מספר קישורים בכדי להתחיל"
 
 #: common/widget.py:54
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Welcome to the world's leading open source production planning tool!<br>\n"
 "Click one of images below to explore the main interactive planning screens:"
@@ -2741,32 +2679,6 @@ msgid ""
 "</a>\n"
 "</div>\n"
 msgstr ""
-"ברוכים הבאים לכלי תכנון ייצור הקוד הפתוח המוביל בעולם!<br>לחץ על אחת התמונות "
-"שלהלן כדי לחקור את מסכי התכנון האינטראקטיביים העיקריים:<br><br>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
-"align: center\">\n"
-"<a href=\"%(prefix)s/forecast/editor/\">\n"
-"  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: 100%%"
-"\" alt=\"Forecast Editor\"><br>\n"
-"  <b>עורך החיזוי</b>\n"
-"</a>\n"
-"</div>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
-"align: center\">\n"
-"<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
-"  <img src=\"/static/img/inventory-planning-thumbnail.png\" style=\"width: "
-"100%%\" alt=\"Inventory Planning\"><br>\n"
-"  <b>תכנון מלאי</b>\n"
-"</a>\n"
-"</div>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
-"align: center\">\n"
-"<a href=\"%(prefix)s/planningboard/\">\n"
-"  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%\" "
-"alt=\"Plan Editor\"><br>\n"
-"  <b>עורך התוכניות</b>\n"
-"</a>\n"
-"</div>\n"
 
 #: common/widget.py:85
 msgid "News"
@@ -2777,9 +2689,8 @@ msgid "Show the latest news items from the frePPLe website"
 msgstr "הצג את החדשות האחרונות מאתר frePPLe"
 
 #: common/widget.py:99
-#, fuzzy
 msgid "Unread messages from your inbox"
-msgstr "הודעות שלא נקראו מתיבת הדואר הנכנס שלך"
+msgstr ""
 
 #: demandhits/attributes.py:21 demandhits/attributes.py:42
 #, python-format
@@ -2823,27 +2734,24 @@ msgid "Generate buckets"
 msgstr "צור buckets"
 
 #: execute/management/commands/emailreport.py:225
-#, fuzzy
 msgid "Publish reports by email"
-msgstr "פרסום דוחות בדואר אלקטרוני"
+msgstr ""
 
 #: execute/management/commands/empty.py:315
 msgid "Empty the database"
 msgstr "רוקן את בסיס הנתונים"
 
 #: execute/management/commands/exporttofolder.py:516
-#, fuzzy
 msgid "Export plan result"
-msgstr "תוצאת תוכנית ייצוא"
+msgstr ""
 
 #: execute/management/commands/exportworkbook.py:33
 msgid "Export a spreadsheet"
 msgstr "ייצא גיליון אלקטרוני"
 
 #: execute/management/commands/importfromfolder.py:546
-#, fuzzy
 msgid "Import data files"
-msgstr "ייבוא קבצי נתונים"
+msgstr ""
 
 #: execute/management/commands/importworkbook.py:146 execute/views.py:1342
 #, python-format
@@ -2941,14 +2849,12 @@ msgid "scenario management"
 msgstr "ניהול תרחישים"
 
 #: execute/management/commands/scheduletasks.py:392
-#, fuzzy
 msgid "Group and schedule tasks"
-msgstr "קיבוץ ותזמון משימות"
+msgstr ""
 
 #: execute/management/commands/uploadreport.py:278
-#, fuzzy
 msgid "Publish reports by FTP"
-msgstr "פרסום דוחות על-ידי FTP"
+msgstr ""
 
 #: execute/menu.py:20 execute/widget.py:20
 msgid "Execute"
@@ -2980,14 +2886,12 @@ msgid "task"
 msgstr "משימה"
 
 #: execute/models.py:101
-#, fuzzy
 msgid "scheduled tasks"
-msgstr "משימות מתוזמנות"
+msgstr ""
 
 #: execute/models.py:102
-#, fuzzy
 msgid "scheduled task"
-msgstr "משימה מתוזמנת"
+msgstr ""
 
 #: execute/templates/commands/backup.html:5
 #: execute/templates/commands/createbuckets.html:7
@@ -3005,14 +2909,12 @@ msgid "Dump the database contents to a file."
 msgstr "רוקן את התוכן ממסד הנתונים לקובץ."
 
 #: execute/templates/commands/createbuckets.html:10
-#, fuzzy
 msgid "create time buckets for reporting."
-msgstr "צור מיכלי זמן לדיווח."
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:24
-#, fuzzy
 msgid "week starts on"
-msgstr "השבוע מתחיל ב-"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:28
 #: execute/templates/commands/createbuckets.html:33 input/models.py:105
@@ -3051,23 +2953,20 @@ msgid "Saturday"
 msgstr "שבת"
 
 #: execute/templates/commands/createbuckets.html:44
-#, fuzzy
 msgid "day name"
-msgstr "שם יום"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:50
 msgid "week name"
 msgstr "שם שבוע"
 
 #: execute/templates/commands/createbuckets.html:56
-#, fuzzy
 msgid "month name"
-msgstr "שם חודש"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:62
-#, fuzzy
 msgid "quarter name"
-msgstr "שם רבעון"
+msgstr ""
 
 #: execute/templates/commands/createbuckets.html:68
 msgid "year name"
@@ -3080,13 +2979,10 @@ msgid "publish"
 msgstr "פרסום"
 
 #: execute/templates/commands/emailreport.html:9
-#, fuzzy
 msgid ""
 "Emails the selected reports to a comma separated list of recipients. Files "
 "are zipped and attached to email."
 msgstr ""
-"שליחת הודעות דואר אלקטרוני בדוחות שנבחרו לרשימת נמענים מופרדת באמצעות "
-"פסיקים. הקבצים מכווצים ומצורפים לדואר אלקטרוני."
 
 #: execute/templates/commands/emailreport.html:16
 #: execute/templates/commands/exporttofolder.html:14
@@ -3108,14 +3004,12 @@ msgid "emails"
 msgstr "אימיילים"
 
 #: execute/templates/commands/emailreport.html:66
-#, fuzzy
 msgid "please correct invalid email addresses"
-msgstr "נא תקן כתובות דואר אלקטרוני לא חוקיות"
+msgstr ""
 
 #: execute/templates/commands/emailreport.html:70
-#, fuzzy
 msgid "please enter email addresses"
-msgstr "נא הזן כתובות דואר אלקטרוני"
+msgstr ""
 
 #: execute/templates/commands/empty.html:7
 msgid "Erase selected tables."
@@ -3132,9 +3026,8 @@ msgid "admin tables"
 msgstr "טבלאות מנהל"
 
 #: execute/templates/commands/empty.html:30
-#, fuzzy
 msgid "plan history"
-msgstr "היסטוריית תוכניות"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:9
 msgid ""
@@ -3150,9 +3043,8 @@ msgstr "השתנה"
 
 #: execute/templates/commands/exporttofolder.html:19
 #: execute/templates/commands/importfromfolder.html:25
-#, fuzzy
 msgid "Download all files"
-msgstr "הורד את כל הקבצים"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:25
 #: execute/templates/commands/importfromfolder.html:31
@@ -3166,9 +3058,9 @@ msgstr "אתה עומד למחוק את כל הקבצים"
 
 #: execute/templates/commands/exporttofolder.html:61
 #: execute/templates/commands/importfromfolder.html:110
-#, fuzzy, python-format
+#, python-format
 msgid "You are about to delete file %%s"
-msgstr "אתה עומד למחוק קבצים %%"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:67
 #: execute/templates/commands/importfromfolder.html:49
@@ -3183,18 +3075,18 @@ msgstr "כל קבצי הנתונים נמחקו"
 
 #: execute/templates/commands/exporttofolder.html:88
 #: execute/templates/commands/importfromfolder.html:137
-#, fuzzy, python-format
+#, python-format
 msgid "File %%s was deleted"
-msgstr "קובץ %% נמחק"
+msgstr ""
 
 #: execute/templates/commands/exporttofolder.html:102
 #: execute/templates/commands/exporttofolder.html:108
 #: execute/templates/commands/importfromfolder.html:152
 #: execute/templates/commands/importfromfolder.html:156
 #: execute/templates/commands/importfromfolder.html:158
-#, fuzzy, python-format
+#, python-format
 msgid "File %%s was not deleted"
-msgstr "קובץ %% לא נמחק"
+msgstr ""
 
 #: execute/templates/commands/exportworkbook.html:11
 msgid ""
@@ -3210,13 +3102,10 @@ msgid "import"
 msgstr "יבוא"
 
 #: execute/templates/commands/importfromfolder.html:9
-#, fuzzy
 msgid ""
 "Import CSV or Excel files. The file names must match the names of data "
 "objects and the first line in the file must contain the field names."
 msgstr ""
-"יבא קבצי CSV או Excel. שמות הקבצים חייבים להתאים לשמות אובייקטי הנתונים "
-"והשורה הראשונה בקובץ חייבת להכיל את שמות השדות."
 
 #: execute/templates/commands/importfromfolder.html:18
 #: execute/templates/commands/importfromfolder.html:19
@@ -3226,7 +3115,7 @@ msgstr "העלה קבצי נתונים"
 #: execute/templates/commands/importfromfolder.html:19
 #, fuzzy
 msgid "Upload"
-msgstr "טען"
+msgstr "העלאה"
 
 #: execute/templates/commands/importfromfolder.html:44
 msgid "Download file"
@@ -3254,7 +3143,6 @@ msgid "Sorry, You don't have any execute permissions..."
 msgstr "מצטערים, אין לך הרשאות לביצוע ..."
 
 #: execute/templates/commands/scenario_copy.html:8
-#, fuzzy
 msgid ""
 "You have a number of available scenario databases available.<br>\n"
 "        You can copy data into a scenario database to create a isolated "
@@ -3263,58 +3151,45 @@ msgid ""
 "which scenario you're working in.\n"
 "        "
 msgstr ""
-"לרשותך מספר מסדי נתונים זמינים של תרחישים.<br>באפשרותך להעתיק נתונים למסד "
-"נתונים של תרחישים כדי ליצור ארגז חול מבודד עבור ניתוח 'מה-אם'.<br>השתמש "
-"בפינה הנפתחת בפינה השמאלית העליונה של המסך כדי לבחור באיזה תרחיש אתה "
-"עובד.        "
 
 #: execute/templates/commands/scenario_copy.html:16
 msgid "action"
 msgstr "פעולה"
 
 #: execute/templates/commands/scenario_copy.html:19
-#, fuzzy
 msgid ""
 "<b>In use</b>: Contains data<br><b>Free</b>: Available to copy data "
 "into<br><b>Busy</b>: Data copy in progress"
 msgstr ""
-"<b>בשימוש</b>: מכיל נתונים<br><b>חינם</b>: זמין להעתקת נתונים לתוך<br><b>לא "
-"פנוי</b>: עותק נתונים מתבצע"
 
 #: execute/templates/commands/scenario_copy.html:25
-#, fuzzy
 msgid "Label shown in the scenario dropdown list"
-msgstr "תווית המוצגת ברשימה הנפתחת של התרחיש"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:30
-#, fuzzy
 msgid "Date of the last state change"
-msgstr "תאריך שינוי המצב האחרון"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:46
 #: execute/templates/commands/scenario_copy.html:68
-#, fuzzy
 msgid "manage"
-msgstr "לנהל"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:50
-#, fuzzy
 msgid "Copy from"
-msgstr ".%s הועתק מ."
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:54
 msgid "Restore from backup"
 msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:73
-#, fuzzy
 msgid "Release: You will lose ALL data in this scenario!"
-msgstr "הפצה: תאבד את כל הנתונים בתרחיש זה!"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:78
-#, fuzzy
 msgid "Promote: All data will be copied to Production"
-msgstr "קידום: כל הנתונים יועתקו לייצור"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:87
 #, fuzzy
@@ -3322,14 +3197,12 @@ msgid "Free"
 msgstr "חינם"
 
 #: execute/templates/commands/scheduletasks.html:3
-#, fuzzy
 msgid "Run a sequence of tasks, and schedule it to run automatically."
-msgstr "הפעל רצף משימות ותזמן אותו לפעול באופן אוטומטי."
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:8
-#, fuzzy
 msgid "next scheduled run"
-msgstr "ההפעלה המתוזמנת הבאה"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:26
 #, fuzzy
@@ -3349,12 +3222,13 @@ msgstr "ביטול על כשל"
 #: execute/templates/commands/scheduletasks.html:199
 #, fuzzy
 msgid "Move down"
-msgstr "הסר שורה"
+msgstr "העבר למטה"
 
 #: execute/templates/commands/scheduletasks.html:95
 #: execute/templates/commands/scheduletasks.html:203
+#, fuzzy
 msgid "Move up"
-msgstr ""
+msgstr "העבר למעלה"
 
 #: execute/templates/commands/scheduletasks.html:111 input/models.py:113
 #: input/templates/input/calendardetail.html:68
@@ -3363,9 +3237,8 @@ msgid "start time"
 msgstr "זמן התחלה"
 
 #: execute/templates/commands/scheduletasks.html:119
-#, fuzzy
 msgid "weekly schedule"
-msgstr "לוח זמנים שבועי"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:122
 msgid "Mon"
@@ -3396,32 +3269,27 @@ msgid "Sun"
 msgstr "ראשון"
 
 #: execute/templates/commands/scheduletasks.html:145
-#, fuzzy
 msgid "email on success"
-msgstr "דואר אלקטרוני על הצלחה"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:148
 #: execute/templates/commands/scheduletasks.html:156
-#, fuzzy
 msgid "List of emails, separated by commas"
-msgstr "רשימת הודעות דואר אלקטרוני, מופרדות באמצעות פסיקים"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:153
-#, fuzzy
 msgid "email on failure"
-msgstr "דואר אלקטרוני על כשל"
+msgstr ""
 
 #: execute/templates/commands/uploadreport.html:9
-#, fuzzy
 msgid ""
 "Select all reports that will be pushed to the configured FTP/FTPS/SFTP "
 "folder."
-msgstr "בחר את כל הדוחות שיודחפו לתיקיית FTP/FTPS/SFTP שתצורתה נקבעה."
+msgstr ""
 
 #: execute/templates/execute/execute.html:41
-#, fuzzy
 msgid "waiting"
-msgstr "מחכה"
+msgstr ""
 
 #: execute/templates/execute/execute.html:43
 msgid "done"
@@ -3437,11 +3305,6 @@ msgstr "בוטל"
 msgid "download"
 msgstr "הורדה"
 
-#: execute/templates/execute/execute.html:68
-#, fuzzy
-msgid "delete"
-msgstr "מחק"
-
 #: execute/templates/execute/execute.html:70 forecast/models.py:1089
 msgid "view"
 msgstr "view"
@@ -3451,9 +3314,8 @@ msgid "autorefresh"
 msgstr "ריענון אוטומטי"
 
 #: execute/templates/execute/execute.html:222
-#, fuzzy
 msgid "launch tasks"
-msgstr "משימות הפעלה"
+msgstr ""
 
 #: execute/templates/execute/logfrepple.html:5
 msgid "download complete log file"
@@ -3468,14 +3330,12 @@ msgid "finished"
 msgstr "גמור"
 
 #: execute/views.py:346
-#, fuzzy
 msgid "Failure launching task"
-msgstr "%(msg)s: פעולת אתחול נכשלה"
+msgstr ""
 
 #: execute/views.py:719
-#, fuzzy
 msgid "Couldn't delete file"
-msgstr "מחק קובץ"
+msgstr ""
 
 #: execute/views.py:745
 msgid "Displaying only the last 50K from the log file"
@@ -3499,23 +3359,12 @@ msgid "Nothing to export"
 msgstr "אין מה לייצא"
 
 #: execute/views.py:1316
-#, fuzzy
 msgid "Processing file"
-msgstr "מעבד קובץ"
-
-#: execute/views.py:1320
-#, fuzzy
-msgid ""
-"Files in the old .XLS excel format can't be read.<br>Please convert them to "
-"the new .XLSX format."
 msgstr ""
-"קבצים ב. אין אפשרות לקרוא את תבנית EXCEL של XLS.<br>נא המר אותם ל . תבנית "
-"XLSX."
 
 #: execute/views.py:1327
-#, fuzzy
 msgid "Unsupported file format."
-msgstr "תבנית קובץ שאינה נתמכת."
+msgstr ""
 
 #: execute/widget.py:22
 msgid "Generate a constrained plan"
@@ -3523,14 +3372,12 @@ msgstr "צור תכנון מאולץ"
 
 #: executesql/menu.py:16 reportmanager/menu.py:51 reportmanager/models.py:96
 #: reportmanager/views.py:98
-#, fuzzy
 msgid "my reports"
-msgstr "הדוחות שלי"
+msgstr ""
 
 #: executesql/menu.py:22 executesql/views.py:52
-#, fuzzy
 msgid "Execute SQL"
-msgstr "ביצוע SQL"
+msgstr ""
 
 #: forecast/admin.py:40 input/admin.py:85 input/admin.py:121 input/admin.py:172
 #: input/admin.py:203 input/admin.py:240 input/admin.py:283 input/admin.py:327
@@ -3591,19 +3438,16 @@ msgid "Generate forecast"
 msgstr "צור תחזית"
 
 #: forecast/management/commands/measure_copy.py:229
-#, fuzzy
 msgid "measure management"
-msgstr "ניהול מדידות"
+msgstr ""
 
 #: forecast/management/commands/measure_copy.py:288
-#, fuzzy
 msgid "Copy source measure"
-msgstr "העתק מדידת מקור"
+msgstr ""
 
 #: forecast/management/commands/measure_copy.py:288
-#, fuzzy
 msgid "to destination measure"
-msgstr "למדידת יעד"
+msgstr ""
 
 #: forecast/menu.py:32 forecast/templates/forecast.html:4
 #: forecast/views.py:2293 input/views/utils.py:107
@@ -3835,9 +3679,8 @@ msgid "Bucket '%(name)s' not found"
 msgstr "לא נמצא '%(name)s' משך זמן"
 
 #: forecast/models.py:528
-#, fuzzy
 msgid "multiplier"
-msgstr "גודל מרובה"
+msgstr ""
 
 #: forecast/models.py:635
 msgid "No editable fields found"
@@ -3852,14 +3695,12 @@ msgid "orders adjustment 3 years ago"
 msgstr "התאמת הזמנות 3 שנים אחורה"
 
 #: forecast/models.py:811
-#, fuzzy
 msgid "total orders value 3 years ago"
-msgstr "ערך הזמנות כולל לפני 3 שנים"
+msgstr ""
 
 #: forecast/models.py:821
-#, fuzzy
 msgid "orders adjustment value 3 years ago"
-msgstr "ערך התאמת הזמנות לפני 3 שנים"
+msgstr ""
 
 #: forecast/models.py:831
 msgid "total orders 2 years ago"
@@ -3870,14 +3711,12 @@ msgid "orders adjustment 2 years ago"
 msgstr "התאמת הזמנות 2 שנים אחורה"
 
 #: forecast/models.py:850
-#, fuzzy
 msgid "total orders value 2 years ago"
-msgstr "ערך הזמנות כולל לפני שנתיים"
+msgstr ""
 
 #: forecast/models.py:860
-#, fuzzy
 msgid "orders adjustment value 2 years ago"
-msgstr "ערך התאמת הזמנות לפני שנתיים"
+msgstr ""
 
 #: forecast/models.py:870
 msgid "total orders 1 years ago"
@@ -3888,14 +3727,12 @@ msgid "orders adjustment 1 years ago"
 msgstr "התאמת הזמנות שנה אחורה"
 
 #: forecast/models.py:888
-#, fuzzy
 msgid "total orders value 1 years ago"
-msgstr "ערך הזמנות כולל לפני שנה"
+msgstr ""
 
 #: forecast/models.py:898
-#, fuzzy
 msgid "orders adjustment value 1 years ago"
-msgstr "ערך התאמת הזמנות לפני שנה"
+msgstr ""
 
 #: forecast/models.py:909 forecast/templates/forecast/forecast.html:263
 #: inventoryplanning/templates/inventoryplanning/drp.html:1690
@@ -4014,9 +3851,8 @@ msgid "local"
 msgstr "מקומי"
 
 #: forecast/models.py:1087
-#, fuzzy
 msgid "computed"
-msgstr "שחושב"
+msgstr ""
 
 #: forecast/models.py:1089
 #, fuzzy
@@ -4029,49 +3865,40 @@ msgid "currency"
 msgstr "מטבע"
 
 #: forecast/models.py:1101
-#, fuzzy
 msgid "Label to be displayed in the user interface"
-msgstr "תווית שתוצג בממשק המשתמש"
+msgstr ""
 
 #: forecast/models.py:1115 forecast/views.py:351
-#, fuzzy
 msgid "mode in future periods"
-msgstr "במצב בתקופות עתידיות"
+msgstr ""
 
 #: forecast/models.py:1123 forecast/views.py:348
-#, fuzzy
 msgid "mode in past periods"
-msgstr "מצב בתקופות קודמות"
+msgstr ""
 
 #: forecast/models.py:1131 forecast/views.py:357
-#, fuzzy
 msgid "compute expression"
-msgstr "ביטוי מחשוב"
+msgstr ""
 
 #: forecast/models.py:1135
-#, fuzzy
 msgid "Formula to compute values"
-msgstr "נוסחה לחישוב ערכים"
+msgstr ""
 
 #: forecast/models.py:1138 forecast/views.py:358
-#, fuzzy
 msgid "update expression"
-msgstr "ביטוי עדכון"
+msgstr ""
 
 #: forecast/models.py:1142
-#, fuzzy
 msgid "Formula executed when updating this field"
-msgstr "נוסחה שבוצעה בעת עדכון שדה זה"
+msgstr ""
 
 #: forecast/models.py:1148
-#, fuzzy
 msgid "controls whether or not this measure is visible by default"
-msgstr "קביעה אם מידה זו גלויה כברירת מחדל"
+msgstr ""
 
 #: forecast/models.py:1151 forecast/views.py:354
-#, fuzzy
 msgid "format"
-msgstr "תבנית"
+msgstr ""
 
 #: forecast/models.py:1160 forecast/views.py:356 input/models.py:66
 #: input/views/manufacturing.py:654
@@ -4079,19 +3906,16 @@ msgid "default value"
 msgstr "ערך ברירת מחדל"
 
 #: forecast/models.py:1168 forecast/views.py:359
-#, fuzzy
 msgid "override measure"
-msgstr "עקוף מידה"
+msgstr ""
 
 #: forecast/models.py:1197
-#, fuzzy
 msgid "measure"
-msgstr "מידה"
+msgstr ""
 
 #: forecast/models.py:1198 forecast/views.py:331
-#, fuzzy
 msgid "measures"
-msgstr "אמצעי"
+msgstr ""
 
 #: forecast/templates/forecast/forecast.html:264
 #: inventoryplanning/templates/inventoryplanning/drp.html:1700
@@ -4104,9 +3928,8 @@ msgstr "סה\"כ תחזית"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1717
 #: inventoryplanning/templates/inventoryplanning/drp.html:1753
 #: inventoryplanning/templates/inventoryplanning/drp.html:1830
-#, fuzzy
 msgid "past forecast"
-msgstr "תחזית עבר"
+msgstr ""
 
 #: forecast/templates/forecast/forecast.html:383
 #: inventoryplanning/templates/inventoryplanning/drp.html:1099
@@ -4120,9 +3943,8 @@ msgid "method"
 msgstr "שיטה"
 
 #: forecast/views.py:156
-#, fuzzy
 msgid "standard deviation of forecast error"
-msgstr "שגיאת תחזית משוערת"
+msgstr ""
 
 #: forecast/views.py:203 input/models.py:244 input/views/capacity.py:743
 #: input/views/inventory.py:205 input/views/inventory.py:438
@@ -4134,9 +3956,8 @@ msgstr "שגיאת תחזית משוערת"
 #: inventoryplanning/views.py:612 output/views/buffer.py:161
 #: output/views/demand.py:67 output/views/operation.py:203
 #: output/views/operation.py:540 output/views/operation.py:996
-#, fuzzy
 msgid "volume"
-msgstr "אמצעי אחסון"
+msgstr ""
 
 #: forecast/views.py:209 input/models.py:236 input/views/capacity.py:749
 #: input/views/inventory.py:211 input/views/inventory.py:450
@@ -4163,9 +3984,8 @@ msgstr "סך יחידות"
 #: inventoryplanning/views.py:624 output/views/buffer.py:173
 #: output/views/demand.py:69 output/views/operation.py:215
 #: output/views/operation.py:552 output/views/operation.py:1008
-#, fuzzy
 msgid "unit of measure"
-msgstr "מידה"
+msgstr ""
 
 #: forecast/views.py:221 input/models.py:252 input/models.py:2339
 #: input/views/capacity.py:761 input/views/inventory.py:223
@@ -4304,9 +4124,8 @@ msgstr "מלאי"
 
 #: input/admin.py:264 input/models.py:2373 input/models.py:2374
 #: input/views/inventory.py:1512
-#, fuzzy
 msgid "inventory detail"
-msgstr "פרטי מלאי"
+msgstr ""
 
 #: input/admin.py:428 input/admin.py:488 input/admin.py:654
 #: output/views/constraint.py:86
@@ -4319,14 +4138,12 @@ msgid "plan detail"
 msgstr "תכנון פירוט"
 
 #: input/admin.py:534
-#, fuzzy
 msgid "matrix detail"
-msgstr "תכנון פירוט"
+msgstr ""
 
 #: input/admin.py:1010
-#, fuzzy
 msgid "computed fields"
-msgstr "שדות מחושבים"
+msgstr ""
 
 #: input/models.py:47
 msgid "minimum cost"
@@ -4381,33 +4198,28 @@ msgid "customers"
 msgstr "לקוחות"
 
 #: input/models.py:210
-#, fuzzy
 msgid "make to stock"
-msgstr "להפוך למלאי"
+msgstr ""
 
 #: input/models.py:211
-#, fuzzy
 msgid "make to order"
-msgstr "בצע לפי הזמנה"
+msgstr ""
 
 #: input/models.py:230
 msgid "Cost of the item"
 msgstr "עלות הפריט"
 
 #: input/models.py:241
-#, fuzzy
 msgid "Weight of the item"
-msgstr "משקל הפריט"
+msgstr ""
 
 #: input/models.py:249
-#, fuzzy
 msgid "Volume of the item"
-msgstr "נפח הפריט"
+msgstr ""
 
 #: input/models.py:255
-#, fuzzy
 msgid "Period of cover in days"
-msgstr "תקופת הכיסוי"
+msgstr ""
 
 #: input/models.py:265 input/views/sales.py:144
 msgid "items"
@@ -4434,14 +4246,12 @@ msgid "split"
 msgstr "מפוצל"
 
 #: input/models.py:306
-#, fuzzy
 msgid "Item produced by this operation"
-msgstr "פריט שהופק על-ידי פעולה זו"
+msgstr ""
 
 #: input/models.py:319
-#, fuzzy
 msgid "Parent operation (which must be of type routing, alternate or split)"
-msgstr "פעולת אב (שחייבת להיות מסוג ניתוב, חלופית או מפוצלת)"
+msgstr ""
 
 #: input/models.py:327 input/models.py:1351 input/models.py:1539
 msgid "Priority among all alternates"
@@ -4531,9 +4341,8 @@ msgid "size minimum"
 msgstr "גודל מינימלי"
 
 #: input/models.py:358
-#, fuzzy
 msgid "Minimum production quantity"
-msgstr "כמות ייצור מינימלית"
+msgstr ""
 
 #: input/models.py:361 input/models.py:1314 input/models.py:1502
 #: input/views/capacity.py:567 input/views/inventory.py:377
@@ -4549,9 +4358,8 @@ msgid "size multiple"
 msgstr "גודל מרובה"
 
 #: input/models.py:366
-#, fuzzy
 msgid "Multiple production quantity"
-msgstr "כמות ייצור מרובה"
+msgstr ""
 
 #: input/models.py:369 input/models.py:1322 input/models.py:1510
 #: input/views/capacity.py:572 input/views/inventory.py:378
@@ -4565,19 +4373,16 @@ msgid "size maximum"
 msgstr "גודל מקסימאלי"
 
 #: input/models.py:374
-#, fuzzy
 msgid "Maximum production quantity"
-msgstr "כמות ייצור מרבית"
+msgstr ""
 
 #: input/models.py:382
-#, fuzzy
 msgid "Cost per produced unit"
-msgstr "עלות ליחידה המיוצרת"
+msgstr ""
 
 #: input/models.py:388
-#, fuzzy
 msgid "Fixed production time for setup and overhead"
-msgstr "זמן ייצור קבוע עבור התקנה ותקורה"
+msgstr ""
 
 #: input/models.py:391 input/views/capacity.py:547
 #: input/views/inventory.py:1646 input/views/manufacturing.py:177
@@ -4589,9 +4394,8 @@ msgid "duration per unit"
 msgstr "משך זמן ליחידה"
 
 #: input/models.py:394
-#, fuzzy
 msgid "Production time per produced piece"
-msgstr "זמן ייצור לכל יצירה מיוצרת"
+msgstr ""
 
 #: input/models.py:397 input/models.py:1035 input/models.py:1179
 #: input/views/capacity.py:597 input/views/inventory.py:1696
@@ -4717,15 +4521,13 @@ msgstr "מטריצות התקנה"
 
 #: input/models.py:701 input/views/capacity.py:152 input/views/capacity.py:862
 #: output/views/resource.py:76
-#, fuzzy
 msgid "constrained"
-msgstr "מוגבל"
+msgstr ""
 
 #: input/models.py:705
-#, fuzzy
 msgid ""
 "controls whether or not this resource is planned in finite capacity mode"
-msgstr "קביעה אם משאב זה מתוכנן במצב קיבולת סופית"
+msgstr ""
 
 #: input/models.py:709 input/views/capacity.py:153 input/views/capacity.py:868
 #: input/views/manufacturing.py:283 output/views/resource.py:83
@@ -4785,9 +4587,9 @@ msgid "Efficiency percentage of the resource"
 msgstr "אחוז יעילות של המשאב"
 
 #: input/models.py:787 input/views/capacity.py:185
-#, fuzzy, no-python-format
+#, no-python-format
 msgid "efficiency % calendar"
-msgstr "יעילות % cאלנדר"
+msgstr ""
 
 #: input/models.py:793
 msgid ""
@@ -4850,9 +4652,8 @@ msgid "Cost of the conversion"
 msgstr "עלות ההמרה"
 
 #: input/models.py:855
-#, fuzzy
 msgid "Extra resource used during this changeover"
-msgstr "משאב נוסף המשמש במהלך שינוי זה"
+msgstr ""
 
 #: input/models.py:877
 msgid "setup matrix rule"
@@ -4899,9 +4700,8 @@ msgid "Batch transfer"
 msgstr "העברת אצווה"
 
 #: input/models.py:985
-#, fuzzy
 msgid "Quantity to consume or produce per piece"
-msgstr "כמות לצרוך או לייצר לכל חתיכה"
+msgstr ""
 
 #: input/models.py:988 input/views/manufacturing.py:399
 msgid "fixed quantity"
@@ -4916,9 +4716,8 @@ msgid "Consume/produce material at the start or the end of the operationplan"
 msgstr "לצרוך / לייצר חומר בתחילת או בסיום תוכנית הפעולה"
 
 #: input/models.py:1025
-#, fuzzy
 msgid "Name of this operation material to identify alternates"
-msgstr "שם חומר פעולה זה לזיהוי חלופות"
+msgstr ""
 
 #: input/models.py:1032
 msgid "Priority of this operation material in a group of alternates"
@@ -4933,14 +4732,12 @@ msgid "Batch size by in which material is produced or consumed"
 msgstr "גודל אצווה שלפיו מיוצר או נצרך חומר"
 
 #: input/models.py:1051 input/views/manufacturing.py:417
-#, fuzzy
 msgid "offset"
-msgstr "היסט"
+msgstr ""
 
 #: input/models.py:1054
-#, fuzzy
 msgid "Time offset from the start or end to consume or produce material"
-msgstr "היסט זמן מההתחלה או הסוף כדי לצרוך או לייצר חומר"
+msgstr ""
 
 #: input/models.py:1091
 msgid "operation material"
@@ -4953,9 +4750,8 @@ msgid "operation materials"
 msgstr "חומרים של הפעולה"
 
 #: input/models.py:1124
-#, fuzzy
 msgid "Required skill to perform the operation"
-msgstr "מיומנות נדרשת לביצוע הפעולה"
+msgstr ""
 
 #: input/models.py:1131
 msgid "Required quantity of the resource"
@@ -4966,19 +4762,16 @@ msgid "quantity fixed"
 msgstr "כמות קבועה"
 
 #: input/models.py:1140
-#, fuzzy
 msgid "Constant part of the capacity consumption (bucketized resources only)"
-msgstr "חלק קבוע מצריכת הקיבולת (משאבים עם מיכלים בלבד)"
+msgstr ""
 
 #: input/models.py:1162
-#, fuzzy
 msgid "Name of this operation resource to identify alternates"
-msgstr "שם משאב פעולה זה לזיהוי חלופות"
+msgstr ""
 
 #: input/models.py:1169
-#, fuzzy
 msgid "Priority of this operation resource in a group of alternates"
-msgstr "עדיפות של משאב פעולה זה בקבוצת חלופות"
+msgstr ""
 
 #: input/models.py:1176
 msgid "Setup required on the resource for this operation"
@@ -5017,14 +4810,12 @@ msgid "Purchasing lead time"
 msgstr "רכישת זמן ההובלה"
 
 #: input/models.py:1293 input/models.py:1296 input/views/purchasing.py:160
-#, fuzzy
 msgid "soft safety lead time"
-msgstr "במלאי בזמן האספקה"
+msgstr ""
 
 #: input/models.py:1299 input/models.py:1302 input/views/purchasing.py:155
-#, fuzzy
 msgid "hard safety lead time"
-msgstr "במלאי בזמן האספקה"
+msgstr ""
 
 #: input/models.py:1311
 msgid "A minimum purchasing quantity"
@@ -5035,9 +4826,8 @@ msgid "A multiple purchasing quantity"
 msgstr "כמות רכישה מרובה"
 
 #: input/models.py:1327
-#, fuzzy
 msgid "A maximum purchasing quantity"
-msgstr "כמות רכישה מקסימלית"
+msgstr ""
 
 #: input/models.py:1334
 msgid "Proposed purchase orders within this window will be grouped together"
@@ -5085,14 +4875,12 @@ msgid "item suppliers"
 msgstr "פריטי הספק"
 
 #: input/models.py:1479
-#, fuzzy
 msgid "Destination location to be replenished"
-msgstr "מיקום היעד שיש לחדש"
+msgstr ""
 
 #: input/models.py:1487
-#, fuzzy
 msgid "Source location shipping the item"
-msgstr "מיקום מקור במשלוח הפריט"
+msgstr ""
 
 #: input/models.py:1490
 msgid "Transport lead time"
@@ -5107,9 +4895,8 @@ msgid "A multiple shipping quantity"
 msgstr "כמות משלוח מרובה"
 
 #: input/models.py:1515
-#, fuzzy
 msgid "A maximum shipping quantity"
-msgstr "כמות משלוח מרבית"
+msgstr ""
 
 #: input/models.py:1522
 msgid ""
@@ -5175,29 +4962,24 @@ msgid "closed"
 msgstr "סגור"
 
 #: input/models.py:1637
-#, fuzzy
 msgid "independent"
-msgstr "ביקוש עצמאי"
+msgstr ""
 
 #: input/models.py:1638
-#, fuzzy
 msgid "all together"
-msgstr "מספר שלם קטן"
+msgstr ""
 
 #: input/models.py:1639
-#, fuzzy
 msgid "in ratio"
-msgstr "משך נטו"
+msgstr ""
 
 #: input/models.py:1672
-#, fuzzy
 msgid "Due date of the sales order"
-msgstr "תאריך יעד של הזמנת המכירה"
+msgstr ""
 
 #: input/models.py:1682
-#, fuzzy
 msgid "Status of the demand. Only \"open\" and \"quote\" demands are planned"
-msgstr "סטאטוס הביקוש, מתוכננות הזמנות \"פתוחות\" בלבד"
+msgstr ""
 
 #: input/models.py:1719 input/views/sales.py:358
 msgid "policy"
@@ -5208,9 +4990,8 @@ msgid "Defines how sales orders are shipped together"
 msgstr ""
 
 #: input/models.py:1733 input/models.py:1867
-#, fuzzy
 msgid "MTO batch name"
-msgstr "שם אצווה של MTO"
+msgstr ""
 
 #: input/models.py:1735 input/models.py:1841 input/views/capacity.py:658
 #: input/views/inventory.py:1078 input/views/inventory.py:1780
@@ -5286,9 +5067,8 @@ msgid "Order type"
 msgstr "סוג הזמנה"
 
 #: input/models.py:1817 input/views/manufacturing.py:1922
-#, fuzzy
 msgid "completed quantity"
-msgstr "כמות נצרכת"
+msgstr ""
 
 #: input/models.py:1820 inventoryplanning/models.py:423
 msgid "color"
@@ -5315,24 +5095,20 @@ msgid "operationplans"
 msgstr "תוכניות פעולה"
 
 #: input/models.py:2265
-#, fuzzy
 msgid "load status"
-msgstr "מצב טעינה"
+msgstr ""
 
 #: input/models.py:2270
-#, fuzzy
 msgid "Status of the resource assignment"
-msgstr "מצב הקצאת המשאב"
+msgstr ""
 
 #: input/models.py:2295 input/models.py:2296 input/views/capacity.py:308
-#, fuzzy
 msgid "resource detail"
-msgstr "פרטי משאב"
+msgstr ""
 
 #: input/models.py:2342 input/views/inventory.py:1961
-#, fuzzy
 msgid "material status"
-msgstr "מצב חומר"
+msgstr ""
 
 #: input/models.py:2347
 msgid "status of the material production or consumption"
@@ -5363,11 +5139,6 @@ msgstr "תאריך הזמנה"
 #: input/models.py:3007 input/views/sales.py:583 input/views/sales.py:980
 msgid "delivery orders"
 msgstr "הזמנות משלוח"
-
-#: input/templates/input/calendardetail.html:24
-#, fuzzy
-msgid "add"
-msgstr "ו"
 
 #: input/templates/input/calendardetail.html:40
 #, fuzzy
@@ -5405,14 +5176,12 @@ msgid "sunday"
 msgstr "ראשון"
 
 #: input/templates/input/operationplanreport.html:303
-#, fuzzy
 msgid "display kanban cards"
-msgstr "הצג כרטיסי קנבן"
+msgstr ""
 
 #: input/templates/input/operationplanreport.html:307
-#, fuzzy
 msgid "display calendar"
-msgstr "הצג לוח שנה"
+msgstr ""
 
 #: input/views/capacity.py:78
 msgid "setup rules"
@@ -5428,9 +5197,8 @@ msgid "net duration"
 msgstr "משך נטו"
 
 #: input/views/capacity.py:641
-#, fuzzy
 msgid "quantity completed"
-msgstr "כמות קבועה"
+msgstr ""
 
 #: input/views/capacity.py:664 input/views/inventory.py:1085
 #: input/views/inventory.py:1808 input/views/manufacturing.py:1972
@@ -5451,9 +5219,8 @@ msgid "setup duration"
 msgstr "הגדרת משך"
 
 #: input/views/capacity.py:698 input/views/manufacturing.py:2143
-#, fuzzy
 msgid "setup duration override"
-msgstr "הגדרת משך"
+msgstr ""
 
 #: input/views/capacity.py:705 input/views/inventory.py:1112
 #: input/views/inventory.py:1817 input/views/manufacturing.py:2150
@@ -5500,9 +5267,9 @@ msgid "received in %(loc)s between %(date1)s and %(date2)s"
 msgstr "%(date1)s ו %(date2)s בין %(loc)s יתקבל ב"
 
 #: input/views/inventory.py:692
-#, fuzzy, python-format
+#, python-format
 msgid "shipped from %(loc)s between %(date1)s and %(date2)s"
-msgstr "נשלח מ- %(loc)s בין %(date1)s ו- %(date2)s"
+msgstr ""
 
 #: input/views/inventory.py:1047 input/views/manufacturing.py:1928
 #: input/views/purchasing.py:896
@@ -5511,15 +5278,13 @@ msgstr "סהכ עלות"
 
 #: input/views/inventory.py:1054 input/views/manufacturing.py:1936
 #: input/views/purchasing.py:903
-#, fuzzy
 msgid "total volume"
-msgstr "נפח כולל"
+msgstr ""
 
 #: input/views/inventory.py:1061 input/views/manufacturing.py:1944
 #: input/views/purchasing.py:910
-#, fuzzy
 msgid "total weight"
-msgstr "משקל כולל"
+msgstr ""
 
 #: input/views/inventory.py:1094 input/views/manufacturing.py:2019
 #: input/views/purchasing.py:949
@@ -5537,9 +5302,8 @@ msgid "end items"
 msgstr "פריטי סיום"
 
 #: input/views/inventory.py:1378
-#, fuzzy
 msgid "Inventory detail"
-msgstr "פרטי מלאי"
+msgstr ""
 
 #: input/views/inventory.py:1740
 msgid "expected onhand"
@@ -5550,9 +5314,8 @@ msgid "operationplan quantity"
 msgstr "כמות תוכנית פעולה"
 
 #: input/views/inventory.py:1792
-#, fuzzy
 msgid "operationplan quantity completed"
-msgstr "כמות תוכנית פעולה"
+msgstr ""
 
 #: input/views/manufacturing.py:1606
 #, python-format
@@ -5574,9 +5337,8 @@ msgid "materials"
 msgstr "חומרים"
 
 #: input/views/manufacturing.py:2001
-#, fuzzy
 msgid "setups"
-msgstr "כיוונונים"
+msgstr ""
 
 #: input/views/purchasing.py:474
 #, python-format
@@ -5589,9 +5351,8 @@ msgid "on order in %(loc)s between %(date1)s and %(date2)s"
 msgstr "%(date1)s and %(date2)s בין %(loc)s בהזמנה מ"
 
 #: input/views/sales.py:334
-#, fuzzy
 msgid "quantity planned short"
-msgstr "כמות מתוכננת קצרה"
+msgstr ""
 
 #: input/views/sales.py:631
 msgid "demand quantity"
@@ -5758,19 +5519,16 @@ msgid "segment"
 msgstr "פלח"
 
 #: inventoryplanning/models.py:186
-#, fuzzy
 msgid "Overrides the decoupled lead time"
-msgstr "עקיפת זמן ההובלה המפורק"
+msgstr ""
 
 #: inventoryplanning/models.py:201
-#, fuzzy
 msgid "inventory policy"
-msgstr "מדיניות מלאי"
+msgstr ""
 
 #: inventoryplanning/models.py:202 inventoryplanning/views.py:206
-#, fuzzy
 msgid "inventory policies"
-msgstr "מדיניות מלאי"
+msgstr ""
 
 #: inventoryplanning/models.py:219 inventoryplanning/views.py:151
 msgid "query"
@@ -5852,34 +5610,28 @@ msgid "open sales orders"
 msgstr "הזמנות מכירה פתוחות"
 
 #: inventoryplanning/models.py:431 inventoryplanning/views.py:590
-#, fuzzy
 msgid "proposed purchase orders"
-msgstr "הזמנות רכש מוצעות"
+msgstr ""
 
 #: inventoryplanning/models.py:434 inventoryplanning/views.py:595
-#, fuzzy
 msgid "proposed distribution orders"
-msgstr "הזמנות הפצה מוצעות"
+msgstr ""
 
 #: inventoryplanning/models.py:437 inventoryplanning/views.py:580
-#, fuzzy
 msgid "open purchase orders"
-msgstr "פתח הזמנות רכש"
+msgstr ""
 
 #: inventoryplanning/models.py:440 inventoryplanning/views.py:630
-#, fuzzy
 msgid "open purchase orders beyond lead time"
-msgstr "פתח ערך הזמנת רכש"
+msgstr ""
 
 #: inventoryplanning/models.py:446 inventoryplanning/views.py:585
-#, fuzzy
 msgid "open distribution orders"
-msgstr "פתח הזמנות הפצה"
+msgstr ""
 
 #: inventoryplanning/models.py:449
-#, fuzzy
 msgid "open distribution orders beyond lead time"
-msgstr "פתח ערך הזמנת הפצה"
+msgstr ""
 
 #: inventoryplanning/models.py:455
 msgid "onhand value"
@@ -5894,34 +5646,28 @@ msgid "open sales orders value"
 msgstr "ערך הזמנות מכירה פתוחות"
 
 #: inventoryplanning/models.py:464
-#, fuzzy
 msgid "proposed purchase order value"
-msgstr "ערך הזמנת רכש מוצע"
+msgstr ""
 
 #: inventoryplanning/models.py:467
-#, fuzzy
 msgid "proposed distribution order value"
-msgstr "ערך הזמנת הפצה מוצע"
+msgstr ""
 
 #: inventoryplanning/models.py:473
-#, fuzzy
 msgid "open purchase order value"
-msgstr "פתח ערך הזמנת רכש"
+msgstr ""
 
 #: inventoryplanning/models.py:476
-#, fuzzy
-msgid "open purchase order beyond lead time value"
-msgstr "פתח ערך הזמנת רכש"
+msgid "open purchase orders beyond lead time value"
+msgstr ""
 
 #: inventoryplanning/models.py:482
-#, fuzzy
 msgid "open distribution order value"
-msgstr "פתח ערך הזמנת הפצה"
+msgstr ""
 
 #: inventoryplanning/models.py:485
-#, fuzzy
-msgid "open distribution order beyond lead time value"
-msgstr "פתח ערך הזמנת הפצה"
+msgid "open distribution orders beyond lead time value"
+msgstr ""
 
 #: inventoryplanning/models.py:491 inventoryplanning/views.py:545
 msgid "local forecast"
@@ -6006,7 +5752,7 @@ msgstr "שגיאה באחזור נתונים"
 #: output/templates/output/buffer.html:253
 #, fuzzy
 msgid "Archived"
-msgstr "הועברו לארכיון"
+msgstr "עבר לארכיון"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2156
 msgid "superseded"
@@ -6219,9 +5965,8 @@ msgid "on hand"
 msgstr "בהישג יד"
 
 #: inventoryplanning/views.py:636
-#, fuzzy
 msgid "open distribution order beyond lead time"
-msgstr "פתח ערך הזמנת הפצה"
+msgstr ""
 
 #: inventoryplanning/views.py:1607
 msgid "Buy"
@@ -6297,59 +6042,48 @@ msgid "admin"
 msgstr "מנהל"
 
 #: metrics/attributes.py:19
-#, fuzzy
 msgid "count of late demands"
-msgstr "ספירת דרישות מאוחרות"
+msgstr ""
 
 #: metrics/attributes.py:20 metrics/widget.py:59
-#, fuzzy
 msgid "quantity of late demands"
-msgstr "כמות של דרישות מאוחרות"
+msgstr ""
 
 #: metrics/attributes.py:21
-#, fuzzy
 msgid "value of late demand"
-msgstr "ערך של ביקוש מאוחר"
+msgstr ""
 
 #: metrics/attributes.py:24
-#, fuzzy
 msgid "count of unplanned demands"
-msgstr "ספירת דרישות לא מתוכננות"
+msgstr ""
 
 #: metrics/attributes.py:31
-#, fuzzy
 msgid "quantity of unplanned demands"
-msgstr "כמות דרישות לא מתוכננות"
+msgstr ""
 
 #: metrics/attributes.py:38
-#, fuzzy
 msgid "value of unplanned demands"
-msgstr "ערך של דרישות לא מתוכננות"
+msgstr ""
 
 #: metrics/attributes.py:51
-#, fuzzy
 msgid "count of capacity overload problems"
-msgstr "ספירת בעיות עומס יתר בקיבולת"
+msgstr ""
 
 #: metrics/widget.py:31
-#, fuzzy
 msgid "analyze late demands"
-msgstr "לנתח דרישות מאוחרות"
+msgstr ""
 
 #: metrics/widget.py:32
-#, fuzzy
 msgid "Spot the top items with many late demands"
-msgstr "ספוט את הפריטים העליונים עם דרישות מאוחרות רבות"
+msgstr ""
 
 #: metrics/widget.py:58
-#, fuzzy
 msgid "value of late demands"
-msgstr "ערך של דרישות מאוחרות"
+msgstr ""
 
 #: metrics/widget.py:60
-#, fuzzy
 msgid "number of late demands"
-msgstr "מספר דרישות מאוחרות"
+msgstr ""
 
 #: odoo/views.py:48
 msgid "Invalid configuration parameters"
@@ -6405,58 +6139,48 @@ msgstr "טען"
 
 #: output/templates/output/buffer.html:268
 #: output/templates/output/buffer.html:271 output/views/buffer.py:402
-#, fuzzy
 msgid "produced by PO confirmed"
-msgstr "יוצר על ידי PO"
+msgstr ""
 
 #: output/templates/output/buffer.html:274 output/views/buffer.py:370
-#, fuzzy
 msgid "produced by MO confirmed"
-msgstr "יוצר על ידי MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:277 output/views/buffer.py:374
-#, fuzzy
 msgid "produced by MO proposed"
-msgstr "יוצר על ידי MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:280 output/views/buffer.py:386
-#, fuzzy
 msgid "produced by DO confirmed"
-msgstr "יוצר על ידי DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:283 output/views/buffer.py:390
-#, fuzzy
 msgid "produced by DO proposed"
-msgstr "יוצר על ידי DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:286 output/views/buffer.py:313
-#, fuzzy
 msgid "consumed by MO confirmed"
-msgstr "נצרך על ידי MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:289 output/views/buffer.py:317
-#, fuzzy
 msgid "consumed by MO proposed"
-msgstr "נצרך על ידי MO"
+msgstr ""
 
 #: output/templates/output/buffer.html:292 output/views/buffer.py:335
 msgid "consumed by SO"
 msgstr "נצרך על ידי SO"
 
 #: output/templates/output/buffer.html:295 output/views/buffer.py:496
-#, fuzzy
 msgid "consumed by Fcst"
-msgstr "נצרך על-ידי Fcst"
+msgstr ""
 
 #: output/templates/output/buffer.html:298 output/views/buffer.py:329
-#, fuzzy
 msgid "consumed by DO confirmed"
-msgstr "נצרך על ידי DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:301 output/views/buffer.py:333
-#, fuzzy
 msgid "consumed by DO proposed"
-msgstr "נצרך על ידי DO"
+msgstr ""
 
 #: output/templates/output/buffer.html:309 output/views/buffer.py:412
 msgid "total in progress"
@@ -6477,9 +6201,8 @@ msgstr "בעסקה DO"
 #: output/templates/output/buffer.html:324
 #: output/templates/output/buffer.html:435 output/views/buffer.py:515
 #: output/views/demand.py:317
-#, fuzzy
 msgid "total backlog"
-msgstr "צבר הזמנות כולל"
+msgstr ""
 
 #: output/templates/output/buffer.html:432
 msgid "consumed"
@@ -6503,9 +6226,8 @@ msgid "net forecast"
 msgstr "תחזית נטו"
 
 #: output/templates/output/demand_forecast.html:152 output/views/demand.py:311
-#, fuzzy
 msgid "sales order backlog"
-msgstr "מצבור הזמנות מכירה"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:215
 #: output/views/operation.py:1122
@@ -6614,11 +6336,6 @@ msgstr "העמסת יתר"
 msgid "Inventory report"
 msgstr "דוח מלאי"
 
-#: output/views/buffer.py:258
-#, fuzzy
-msgid "is_ip_buffer"
-msgstr "buffer"
-
 #: output/views/buffer.py:271
 msgid "total produced"
 msgstr "סה\"כ ייוצר"
@@ -6628,14 +6345,12 @@ msgid "total consumed"
 msgstr "סה\"כ נצרך"
 
 #: output/views/buffer.py:285
-#, fuzzy
 msgid "total consumed confirmed"
-msgstr "סה\"כ נצרך"
+msgstr ""
 
 #: output/views/buffer.py:293
-#, fuzzy
 msgid "total consumed proposed"
-msgstr "סה\"כ נצרך"
+msgstr ""
 
 #: output/views/buffer.py:306
 msgid "consumed by MO"
@@ -6646,14 +6361,12 @@ msgid "consumed by DO"
 msgstr "נצרך על ידי DO"
 
 #: output/views/buffer.py:339
-#, fuzzy
 msgid "total produced confirmed"
-msgstr "סה\"כ ייוצר"
+msgstr ""
 
 #: output/views/buffer.py:351
-#, fuzzy
 msgid "total produced proposed"
-msgstr "סה\"כ ייוצר"
+msgstr ""
 
 #: output/views/buffer.py:363
 msgid "produced by MO"
@@ -6668,55 +6381,45 @@ msgid "produced by PO"
 msgstr "יוצר על ידי PO"
 
 #: output/views/buffer.py:406
-#, fuzzy
 msgid "produced by PO proposed"
-msgstr "יוצר על ידי PO"
+msgstr ""
 
 #: output/views/buffer.py:420
-#, fuzzy
 msgid "total in progress confirmed"
-msgstr "סה\"כ בתהליך"
+msgstr ""
 
 #: output/views/buffer.py:432
-#, fuzzy
 msgid "total in progress proposed"
-msgstr "סה\"כ בתהליך"
+msgstr ""
 
 #: output/views/buffer.py:454
-#, fuzzy
 msgid "work in progress MO confirmed"
-msgstr "עבודת התקדמות MO"
+msgstr ""
 
 #: output/views/buffer.py:458
-#, fuzzy
 msgid "work in progress MO proposed"
-msgstr "עבודת התקדמות MO"
+msgstr ""
 
 #: output/views/buffer.py:470
-#, fuzzy
 msgid "on order PO confirmed"
-msgstr "בהזמנת PO"
+msgstr ""
 
 #: output/views/buffer.py:478
-#, fuzzy
 msgid "on order PO proposed"
-msgstr "בהזמנת PO"
+msgstr ""
 
 #: output/views/buffer.py:490
-#, fuzzy
 msgid "in transit DO confirmed"
-msgstr "בעסקה DO"
+msgstr ""
 
 #: output/views/buffer.py:494
-#, fuzzy
 msgid "in transit DO proposed"
-msgstr "בעסקה DO"
+msgstr ""
 
 #: output/views/buffer.py:521 output/views/demand.py:80
 #: output/views/demand.py:318
-#, fuzzy
 msgid "reasons"
-msgstr "סיבות"
+msgstr ""
 
 #: output/views/constraint.py:29
 msgid "material"
@@ -6791,14 +6494,12 @@ msgid "Demand plan"
 msgstr "תוכנית ביקוש"
 
 #: output/views/pegging.py:66
-#, fuzzy
 msgid "item description"
-msgstr "תיאור פריט"
+msgstr ""
 
 #: output/views/pegging.py:80
-#, fuzzy
 msgid "required quantity"
-msgstr "כמות נדרשת"
+msgstr ""
 
 #: output/views/problem.py:55
 msgid "Problem report"
@@ -6970,30 +6671,25 @@ msgstr "הצעות מחיר"
 #: reportmanager/models.py:22
 #: reportmanager/templates/reportmanager/reportmanager.html:210
 #: reportmanager/views.py:122
-#, fuzzy
 msgid "SQL query"
-msgstr "שאילתת SQL"
+msgstr ""
 
 #: reportmanager/models.py:95 reportmanager/views.py:616
-#, fuzzy
 msgid "my report"
-msgstr "הדוח שלי"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:94
-#, fuzzy
 msgid "Saving the report failed"
-msgstr "שמירת הדוח נכשלה"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:167
-#, fuzzy
 msgid "format SQL query"
-msgstr "שאילתת SQL"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:197
 #: reportmanager/views.py:123
-#, fuzzy
 msgid "public"
-msgstr "ציבור"
+msgstr ""
 
 #: reportmanager/templates/reportmanager/reportmanager.html:217
 #, fuzzy
@@ -7006,9 +6702,8 @@ msgid "table"
 msgstr "טבלה"
 
 #: reportmanager/views.py:291
-#, fuzzy
 msgid "Add custom report"
-msgstr "הוספת דוח מותאם אישית"
+msgstr ""
 
 #: retail/management/commands/runpartitions.py:35
 msgid "Runs all the partitions"
@@ -7103,9 +6798,8 @@ msgstr "הפסק את שירות האינטרנט."
 #: wizard/templates/wizard/features.html:6
 #: wizard/templates/wizard/features.html:11
 #: wizard/templates/wizard/index.html:12
-#, fuzzy
 msgid "explore features"
-msgstr "סייר בתכונות"
+msgstr ""
 
 #: wizard/templates/wizard/features.html:19
 #: wizard/templates/wizard/index.html:20
@@ -7115,26 +6809,23 @@ msgstr "דשבורד"
 
 #: wizard/templates/wizard/quickstart_forecast.html:61
 #: wizard/templates/wizard/quickstart_production.html:396
-#, fuzzy
 msgid "item name"
-msgstr "שם פריט"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:73
 #: wizard/templates/wizard/quickstart_production.html:408
-#, fuzzy
 msgid "location name"
-msgstr "שם מיקום"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:85
 #: wizard/templates/wizard/quickstart_production.html:420
-#, fuzzy
 msgid "customer name"
-msgstr "שם לקוח"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:92
-#, fuzzy, python-format
+#, python-format
 msgid "Sales history in the last %(buckets)s"
-msgstr "היסטוריית מכירות ב- %(buckets) האחרונים"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:97
 msgid "a list of integers:eg 10  20  30"
@@ -7145,45 +6836,38 @@ msgid "supplier name"
 msgstr "שם הספק"
 
 #: wizard/templates/wizard/quickstart_production.html:142
-#, fuzzy
 msgid "lead time (in days)"
-msgstr "זמן אספקה (בימים)"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:169
-#, fuzzy
 msgid "operation name"
-msgstr "שם פעולה"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:181
-#, fuzzy
 msgid "fixed time"
-msgstr "זמן קבוע"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:193
 msgid "time per piece"
 msgstr "זמן לכל חתיכה"
 
 #: wizard/templates/wizard/quickstart_production.html:210
-#, fuzzy
 msgid "resource name"
-msgstr "שם משאב"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:217
-#, fuzzy
 msgid "consumed items"
-msgstr "פריטים נצרכים"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:222
 #: wizard/templates/wizard/quickstart_production.html:303
-#, fuzzy
 msgid "component or subassembly item name"
-msgstr "שם פריט רכיב או הרכבת משנה"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:226
 #: wizard/templates/wizard/quickstart_production.html:307
-#, fuzzy
 msgid "consumed quantity"
-msgstr "כמות נצרכת"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:258
 msgid "source location"
@@ -7198,9 +6882,8 @@ msgid "transport time"
 msgstr "זמן הובלה"
 
 #: wizard/templates/wizard/quickstart_production.html:275
-#, fuzzy
 msgid "transport time (in days)"
-msgstr "זמן הובלה (בימים)"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_production.html:384
 msgid "unique sales order name"
@@ -7212,44 +6895,36 @@ msgid "due date"
 msgstr "תאריך יעד"
 
 #: wizard/templates/wizard/quickstart_production.html:449
-#, fuzzy
 msgid "Create sales order"
-msgstr "צור הזמנת מכירה"
+msgstr ""
 
 #: wizard/views.py:2296
-#, fuzzy
 msgid "Data loading wizard for forecasting"
-msgstr "אשף טעינת הנתונים לחיזוי"
+msgstr ""
 
 #: wizard/views.py:2298
-#, fuzzy
 msgid "Data loading wizard for inventory planning"
-msgstr "אשף טעינת הנתונים עבור תכנון מלאי"
+msgstr ""
 
 #: wizard/views.py:2300
-#, fuzzy
 msgid "Data loading wizard for production planning"
-msgstr "אשף טעינת הנתונים לתכנון ייצור"
+msgstr ""
 
 #: wizard/views.py:2302
-#, fuzzy
 msgid "Get started - Data loading wizard"
-msgstr "תחילת העבודה - אשף טעינת הנתונים"
+msgstr ""
 
 #: wizard/views.py:2433
-#, fuzzy
 msgid "Quickstart production planning"
-msgstr "תכנון ייצור של התחלה מהירה"
+msgstr ""
 
 #: wizard/views.py:2685
-#, fuzzy
 msgid "Quickstart forecasting"
-msgstr "חיזוי התחלה מהירה"
+msgstr ""
 
 #: wizard/views.py:2691
-#, fuzzy
 msgid "quarters"
-msgstr "רבעונים"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
@@ -7681,7 +7356,6 @@ msgid "{{m.label}}"
 msgstr "{{m.label}}"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1540
-#, fuzzy
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
@@ -7693,7 +7367,6 @@ msgstr ""
 "<br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1574
-#, fuzzy
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
@@ -7705,7 +7378,6 @@ msgstr ""
 "<br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1481
-#, fuzzy
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br>"
@@ -7715,19 +7387,16 @@ msgstr ""
 "<br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:319
-#, fuzzy
 msgid "Apply"
-msgstr "החל"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:65
-#, fuzzy
 msgid "Automatically resolve infeasiblities in the plan"
-msgstr "פתרון אוטומטי של אי-שפיות בתוכנית"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1475
-#, fuzzy
 msgid "Due date color setup"
-msgstr "עיכוב הגדרת צבע"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1330
 #: freppledb/planningboard/static/planningboard/planningboard.html:1365
@@ -7736,98 +7405,78 @@ msgstr "עיכוב הגדרת צבע"
 msgid "Enter name"
 msgstr "הזן שם"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:194
-msgid "Remark"
+#: freppledb/forecast/static/forecast/forecast.html:49
+msgid "Select panel measure"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:49
-#, fuzzy
-msgid "Select panel measure"
-msgstr "בחירת מדידת חלונית"
-
 #: freppledb/input/static/operationplandetail/src/calendar.js:78
-#, fuzzy
 msgid "View end events"
-msgstr "הצגת אירועי סיום"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:80
-#, fuzzy
 msgid "View full duration"
-msgstr "הצג משך זמן מלא"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:79
-#, fuzzy
 msgid "View start and end events"
-msgstr "הצגת אירועי התחלה וסיום"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:77
-#, fuzzy
 msgid "View start events"
-msgstr "הצגת אירועי התחלה"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:254
-#, fuzzy
 msgid "approved: {{aggregatedoperationplans.status.approved }}"
-msgstr "מאושר: {{תוכניות ניתוח מצטברות.מצב.מאושר }}"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:263
-#, fuzzy
 msgid "closed: {{aggregatedoperationplans.status.closed }}"
-msgstr "סגור: {{תוכניות ניתוח מצטברות.מצב.סגור }}"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:260
-#, fuzzy
 msgid "completed: {{aggregatedoperationplans.status.completed }}"
-msgstr "הושלם: {{תוכניות ניתוח מצטברות.מצב הושלם }}"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:257
-#, fuzzy
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
-msgstr "מאושר: {{תוכניות ניתוח מצטברות.מצב.מאושר }}"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
-#, fuzzy
 msgid "delivery"
-msgstr "לידה"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:2
-#, fuzzy
 msgid "downstream operations"
-msgstr "פעולות במורד הזרם"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:83
-#, fuzzy
 msgid "export as Excel file"
-msgstr "ייצוא כקובץ Excel"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:17
-#, fuzzy
 msgid "no downstream operationplans information"
-msgstr "אין מידע על תוכניות פעולה במורד הזרם"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:18
-#, fuzzy
 msgid "no selection"
-msgstr "אין בחירה"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:17
-#, fuzzy
 msgid "no upstream operationplans information"
-msgstr "אין מידע על תוכניות פעולה במעלה הזרם"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:251
-#, fuzzy
 msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
-msgstr "מוצע: {{תוכניות ניתוח מצטברות.מצב.מוצע }}"
+msgstr ""
 
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:194
 #: freppledb/planningboard/static/planningboard/planningboard.html:527
 msgid "remark"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:80
-#, fuzzy
 msgid "remove all rows"
-msgstr "הסר את כל השורות"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:19
 #, fuzzy
@@ -7843,22 +7492,34 @@ msgstr "מוצג"
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:33
 #, fuzzy
 msgid "stock"
-msgstr "רכב במלאי"
+msgstr "ערמה"
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:2
-#, fuzzy
 msgid "upstream operations"
-msgstr "פעולות במעלה הזרם"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/month.html:13
-#, fuzzy
 msgid "week number"
-msgstr "מספר שבוע"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:215
-#, fuzzy
 msgid "{{ aggregatedoperationplans.count }} selected"
-msgstr "{{ נבחרה תוכנית פעולה מצטברת.ספירה }} נבחרה"
+msgstr ""
+
+#, fuzzy
+#~ msgid "add"
+#~ msgstr "ו"
+
+#, fuzzy
+#~ msgid "is_ip_buffer"
+#~ msgstr "buffer"
+
+#~ msgid "cancel"
+#~ msgstr "annuleer"
+
+#, fuzzy
+#~ msgid "delete"
+#~ msgstr "מחק"
 
 #~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
 #~ msgstr ""
@@ -7875,6 +7536,17 @@ msgstr "{{ נבחרה תוכנית פעולה מצטברת.ספירה }} נבח�
 
 #~ msgid "material excess"
 #~ msgstr "עודף חומר"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "                        Files in the old .XLS excel format can't be read."
+#~ "<br>\n"
+#~ "                        Please convert them to the new .XLSX format.\n"
+#~ "                        "
+#~ msgstr ""
+#~ "קבצים ב. אין אפשרות לקרוא את תבנית EXCEL של XLS.<br>נא המר אותם ל . תבנית "
+#~ "XLSX."
 
 #, fuzzy
 #~ msgid "favorites"

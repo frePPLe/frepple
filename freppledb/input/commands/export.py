@@ -119,6 +119,15 @@ class cleanStatic(PlanTask):
                         ).delete()
 
     @classmethod
+    def getSQLNoReferences(cls, table, field):
+        sql = " and ".join(
+            'not exists (select 1 from "%s" where "%s"."%s" = "%s"."%s")'
+            % (x[0], x[0], x[1], table, field)
+            for x in cls.fk_relations.get("%s.%s" % (table, field), [])
+        )
+        return sql if sql else "true"
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         # TODO since this is run BEFORE the export, the lastmodified field will
         # always be different from the timestamp of the current export.
@@ -127,16 +136,43 @@ class cleanStatic(PlanTask):
         with connections[database].cursor() as cursor:
 
             # detect if we have an item/location/customer name change
+            cls.fk_relations = {}
             if source:
                 cls.updateNames(Item, database, source)
                 cls.updateNames(Location, database, source)
                 cls.updateNames(Customer, database, source)
 
+                # Build a dictionary of all foreign key relations in our database
+                cursor.execute(
+                    """
+                    select
+                    u.table_name || '.' || u.column_name, r.table_name, r.column_name
+                    from information_schema.constraint_column_usage u
+                    inner join information_schema.referential_constraints fk
+                    on u.constraint_catalog = fk.unique_constraint_catalog
+                    and u.constraint_schema = fk.unique_constraint_schema
+                    and u.constraint_name = fk.unique_constraint_name
+                    and u.table_schema = 'public'
+                    inner join information_schema.key_column_usage r
+                    on r.constraint_catalog = fk.constraint_catalog
+                    and r.constraint_schema = fk.constraint_schema
+                    and r.constraint_name = fk.constraint_name
+                    and r.table_schema = 'public'
+                    order by u.table_name
+                    """
+                )
+                for fk in cursor.fetchall():
+                    if fk[0] in cls.fk_relations:
+                        cls.fk_relations[fk[0]].append((fk[1], fk[2]))
+                    else:
+                        cls.fk_relations[fk[0]] = [(fk[1], fk[2])]
+
             cursor.execute(
                 """
                 delete from operationmaterial
-                where source = %s and lastmodified <> %s
-                """,
+                where source = %%s and lastmodified <> %%s and %s
+                """
+                % cls.getSQLNoReferences("operationmaterial", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
@@ -144,13 +180,16 @@ class cleanStatic(PlanTask):
                 delete from operationmaterial
                 where operation_id in (
                     select name from operation
-                    where operation.source = %s and operation.lastmodified <> %s
+                    where operation.source = %%s and operation.lastmodified <> %%s
                     )
-                """,
+                and %s
+                """
+                % cls.getSQLNoReferences("operationmaterial", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
-                "delete from buffer where source = %s and lastmodified <> %s",
+                "delete from buffer where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("operationmaterial", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
@@ -162,20 +201,23 @@ class cleanStatic(PlanTask):
                 """
                 update operationplan set demand_id = null where demand_id in
                 (select name from demand where source = %s and lastmodified <> %s)
-            """,
+                """,
                 (source, cls.timestamp),
             )
 
             cursor.execute(
-                "delete from demand where source = %s and lastmodified <> %s",
+                "delete from demand where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("demand", "name"),
                 (source, cls.timestamp),
             )
             cursor.execute(
-                "delete from itemsupplier where source = %s and lastmodified <> %s",
+                "delete from itemsupplier where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("itemsupplier", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
-                "delete from itemdistribution where source = %s and lastmodified <> %s",
+                "delete from itemdistribution where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("itemdistribution", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
@@ -232,38 +274,47 @@ class cleanStatic(PlanTask):
             cursor.execute(
                 """
                 delete from operationresource
-                where (source = %s and lastmodified <> %s)
+                where ((source = %%s and lastmodified <> %%s)
                   or operation_id in (
                      select name from operation
-                     where operation.source = %s and operation.lastmodified <> %s
+                     where operation.source = %%s and operation.lastmodified <> %%s
                      )
-                  """,
+                  ) and %s
+                """
+                % cls.getSQLNoReferences("operationresource", "id"),
                 (source, cls.timestamp, source, cls.timestamp),
             )
             cursor.execute(
-                "delete from operation where source = %s and lastmodified <> %s",
+                "delete from operation where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("operation", "name"),
                 (source, cls.timestamp),
             )
             if "freppledb.forecast" in settings.INSTALLED_APPS:
                 cursor.execute(
                     """
                     delete from forecast where item_id in
-                    (select name from item where source = %s and lastmodified <> %s)
-                    """,
+                    (select name from item where source = %%s and lastmodified <> %%s)
+                    and %s
+                    """
+                    % cls.getSQLNoReferences("forecast", "name"),
                     (source, cls.timestamp),
                 )
                 cursor.execute(
                     """
                     delete from forecast where location_id in
-                    (select name from location where source = %s and lastmodified <> %s)
-                    """,
+                    (select name from location where source = %%s and lastmodified <> %%s)
+                    and %s
+                    """
+                    % cls.getSQLNoReferences("forecast", "name"),
                     (source, cls.timestamp),
                 )
                 cursor.execute(
                     """
                     delete from forecast where customer_id in
-                    (select name from customer where source = %s and lastmodified <> %s)
-                    """,
+                    (select name from customer where source = %%s and lastmodified <> %%s)
+                    and %s
+                    """
+                    % cls.getSQLNoReferences("forecast", "name"),
                     (source, cls.timestamp),
                 )
                 cursor.execute(
@@ -291,8 +342,10 @@ class cleanStatic(PlanTask):
                 cursor.execute(
                     """
                     delete from inventoryplanning where item_id in
-                    (select name from item where source = %s and lastmodified <> %s)
-                    """,
+                    (select name from item where source = %%s and lastmodified <> %%s)
+                    and %s
+                    """
+                    % cls.getSQLNoReferences("inventoryplanning", "id"),
                     (source, cls.timestamp),
                 )
                 cursor.execute(
@@ -305,8 +358,10 @@ class cleanStatic(PlanTask):
                 cursor.execute(
                     """
                     delete from inventoryplanning where location_id in
-                    (select name from location where source = %s and lastmodified <> %s)
-                    """,
+                    (select name from location where source = %%s and lastmodified <> %%s)
+                    and %s
+                    """
+                    % cls.getSQLNoReferences("inventoryplanning", "id"),
                     (source, cls.timestamp),
                 )
                 cursor.execute(
@@ -337,24 +392,30 @@ class cleanStatic(PlanTask):
             cursor.execute(
                 """
                 delete from itemsupplier where item_id in
-                (select name from item where source = %s and lastmodified <> %s)
-                """,
+                (select name from item where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("itemsupplier", "id"),
                 (source, cls.timestamp),
             )
 
             cursor.execute(
                 """
                 delete from itemdistribution where item_id in
-                (select name from item where source = %s and lastmodified <> %s)
-                """,
+                (select name from item where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("itemdistribution", "id"),
                 (source, cls.timestamp),
             )
 
             cursor.execute(
                 """
                 delete from buffer where item_id in
-                (select name from item where source = %s and lastmodified <> %s)
-                """,
+                (select name from item where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("buffer", "id"),
                 (source, cls.timestamp),
             )
 
@@ -370,8 +431,10 @@ class cleanStatic(PlanTask):
             cursor.execute(
                 """
                 delete from demand where item_id in
-                (select name from item where source = %s and lastmodified <> %s)
-                """,
+                (select name from item where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("demand", "name"),
                 (source, cls.timestamp),
             )
 
@@ -394,45 +457,56 @@ class cleanStatic(PlanTask):
             cursor.execute(
                 """
                 delete from itemsupplier where item_id in
-                (select name from item where source = %s and lastmodified <> %s)
-                """,
+                (select name from item where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("itemsupplier", "id"),
                 (source, cls.timestamp),
             )
 
             cursor.execute(
                 """
                 delete from itemdistribution where item_id in
-                (select name from item where source = %s and lastmodified <> %s)
-                """,
+                (select name from item where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("itemdistribution", "id"),
                 (source, cls.timestamp),
             )
 
             cursor.execute(
                 """
                 delete from buffer where item_id in
-                (select name from item where source = %s and lastmodified <> %s)
-                """,
+                (select name from item where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("buffer", "id"),
                 (source, cls.timestamp),
             )
 
             cursor.execute(
                 """
                 delete from demand where item_id in
-                (select name from item where source = %s and lastmodified <> %s)
-                """,
+                (select name from item where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("demand", "name"),
                 (source, cls.timestamp),
             )
 
             cursor.execute(
-                "delete from item where source = %s and lastmodified <> %s",
+                "delete from item where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("item", "name"),
                 (source, cls.timestamp),
             )
             cursor.execute(
-                "delete from resourceskill where source = %s and lastmodified <> %s",
+                "delete from resourceskill where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("resourceskill", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
-                "delete from operation where source = %s and lastmodified <> %s",
+                "delete from operation where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("operation", "name"),
                 (source, cls.timestamp),
             )
 
@@ -445,7 +519,8 @@ class cleanStatic(PlanTask):
             )
 
             cursor.execute(
-                "delete from resource where source = %s and lastmodified <> %s",
+                "delete from resource where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("resource", "name"),
                 (source, cls.timestamp),
             )
 
@@ -472,26 +547,31 @@ class cleanStatic(PlanTask):
             cursor.execute(
                 """
                 delete from itemsupplier where location_id in
-                (select name from location where source = %s and lastmodified <> %s)
-                """,
+                (select name from location where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("itemsupplier", "id"),
                 (source, cls.timestamp),
             )
 
             cursor.execute(
                 """
-                delete from itemdistribution where location_id in
-                (select name from location where source = %s and lastmodified <> %s)
-                or origin_id in
-                (select name from location where source = %s and lastmodified <> %s)
-                """,
-                (source, cls.timestamp) * 2,
+                delete from itemdistribution where (
+                  location_id in (select name from location where source = %%s and lastmodified <> %%s)
+                  or origin_id in (select name from location where source = %%s and lastmodified <> %%s)
+                ) and %s
+                """
+                % cls.getSQLNoReferences("itemdistribution", "id"),
+                (source, cls.timestamp, source, cls.timestamp),
             )
 
             cursor.execute(
                 """
                 delete from buffer where location_id in
-                (select name from location where source = %s and lastmodified <> %s)
-                """,
+                (select name from location where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("buffer", "id"),
                 (source, cls.timestamp),
             )
 
@@ -507,50 +587,62 @@ class cleanStatic(PlanTask):
             cursor.execute(
                 """
                 delete from demand where location_id in
-                (select name from location where source = %s and lastmodified <> %s)
-                """,
+                (select name from location where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("demand", "name"),
                 (source, cls.timestamp),
             )
             cursor.execute(
                 """
                 delete from resource where location_id in
-                (select name from location where source = %s and lastmodified <> %s)
-                """,
+                (select name from location where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("resource", "name"),
                 (source, cls.timestamp),
             )
 
             cursor.execute(
                 """
                 delete from operation where location_id in
-                (select name from location where source = %s and lastmodified <> %s)
-                """,
+                (select name from location where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("operation", "name"),
                 (source, cls.timestamp),
             )
 
             cursor.execute(
-                "delete from location where source = %s and lastmodified <> %s",
+                "delete from location where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("location", "name"),
                 (source, cls.timestamp),
             )
 
             # calendar deletion
             cursor.execute(
-                "delete from calendarbucket where source = %s and lastmodified <> %s",
+                "delete from calendarbucket where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("calendarbucket", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
-                "delete from calendar where source = %s and lastmodified <> %s",
+                "delete from calendar where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("calendar", "name"),
                 (source, cls.timestamp),
             )
             cursor.execute(
-                "delete from skill where source = %s and lastmodified <> %s",
+                "delete from skill where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("skill", "name"),
                 (source, cls.timestamp),
             )
             cursor.execute(
-                "delete from setuprule where source = %s and lastmodified <> %s",
+                "delete from setuprule where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("setuprule", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
-                "delete from setupmatrix where source = %s and lastmodified <> %s",
+                "delete from setupmatrix where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("setupmatrix", "name"),
                 (source, cls.timestamp),
             )
 
@@ -559,7 +651,7 @@ class cleanStatic(PlanTask):
                 update operationplan set demand_id = null where demand_id in
                 (select name from demand where customer_id in
                 (select name from customer where source = %s and lastmodified <> %s))
-            """,
+                """,
                 (source, cls.timestamp),
             )
 
@@ -567,12 +659,15 @@ class cleanStatic(PlanTask):
             cursor.execute(
                 """
                 delete from demand where customer_id in
-                (select name from customer where source = %s and lastmodified <> %s)
-                """,
+                (select name from customer where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("demand", "name"),
                 (source, cls.timestamp),
             )
             cursor.execute(
-                "delete from customer where source = %s and lastmodified <> %s",
+                "delete from customer where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("customer", "name"),
                 (source, cls.timestamp),
             )
 
@@ -580,8 +675,10 @@ class cleanStatic(PlanTask):
             cursor.execute(
                 """
                 delete from itemsupplier where supplier_id in
-                (select name from supplier where source = %s and lastmodified <> %s)
-                """,
+                (select name from supplier where source = %%s and lastmodified <> %%s)
+                and %s
+                """
+                % cls.getSQLNoReferences("itemsupplier", "id"),
                 (source, cls.timestamp),
             )
             cursor.execute(
@@ -592,7 +689,8 @@ class cleanStatic(PlanTask):
                 (source, cls.timestamp),
             )
             cursor.execute(
-                "delete from supplier where source = %s and lastmodified <> %s",
+                "delete from supplier where source = %%s and lastmodified <> %%s and %s"
+                % cls.getSQLNoReferences("supplier", "name"),
                 (source, cls.timestamp),
             )
 

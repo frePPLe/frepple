@@ -61,6 +61,11 @@ Release notes
     The connector will also automatically synchronize the list of authorised users
     between odoo and frepple.
 
+- | v14 & 15 & 16: Performance optimization by allowing gzip compression of the web
+    traffic between the odoo and frepple servers.
+  | This will only give an improvement when you have a proxy server in front of
+    odoo that does this compression.
+
 .. rubric:: System administration
 
 - | The installation process has been simplified. Except for the postgresql configuration,

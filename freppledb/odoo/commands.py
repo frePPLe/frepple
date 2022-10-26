@@ -16,6 +16,7 @@
 #
 from datetime import datetime
 import base64
+import gzip
 
 from html.parser import HTMLParser
 import os
@@ -180,12 +181,21 @@ class OdooReadData(PlanTask):
                 request.add_header(
                     "Authorization", "Basic %s" % encoded.decode("ascii")
                 )
+                request.add_header("Accept-Encoding", "gzip")
 
                 # Download and parse XML data
-                with urlopen(request) as f:
-                    frepple.readXMLdata(
-                        f.read().decode("utf-8"), False, False, loglevel
-                    )
+                with urlopen(request) as response:
+                    if response.info().get("Content-Encoding") == "gzip":
+                        frepple.readXMLdata(
+                            gzip.decompress(response.read()).decode("utf-8"),
+                            False,
+                            False,
+                            loglevel,
+                        )
+                    else:
+                        frepple.readXMLdata(
+                            response.read().decode("utf-8"), False, False, loglevel
+                        )
 
             except HTTPError as e:
                 print("Error connecting to odoo at %s" % url)

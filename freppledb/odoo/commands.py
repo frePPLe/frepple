@@ -199,7 +199,10 @@ class OdooReadData(PlanTask):
 
             except HTTPError as e:
                 print("Error connecting to odoo at %s" % url)
-                odoo_data = e.read()
+                if response.info().get("Content-Encoding") == "gzip":
+                    odoo_data = gzip.decompress(e.read())
+                else:
+                    odoo_data = e.read()
                 if odoo_data:
 
                     class OdooMsgParser(HTMLParser):

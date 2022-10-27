@@ -248,9 +248,17 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         opplan.quantity_completed = parseFloat(row.operationplan__quantity_completed);
       else if (row.quantity_completed !== undefined && row.quantity_completed !== '')
         opplan.quantity_completed = parseFloat(row.quantity_completed);
-      if (opplan.invstatus !== undefined) {
-        opplan.invstatus.pipeline = 0;
-      }
+      if (opplan.invstatus !== undefined) opplan.invstatus.pipeline = 0;
+
+      // Assure data type
+      if ($scope.operationplan.hasOwnProperty("start") && !($scope.operationplan.start instanceof Date))
+        $scope.operationplan.start = moment($scope.operationplan.start, datetimeformat).toDate();
+      if ($scope.operationplan.hasOwnProperty("end") && !($scope.operationplan.end instanceof Date))
+        $scope.operationplan.end = moment($scope.operationplan.end, datetimeformat).toDate();
+      if ($scope.operationplan.hasOwnProperty("operationplan__startdate") && !($scope.operationplan.operationplan__startdate instanceof Date))
+        $scope.operationplan.operationplan__startdate = moment($scope.operationplan.operationplan__startdate, datetimeformat).toDate();
+      if ($scope.operationplan.hasOwnProperty("operationplan__enddate") && !($scope.operationplan.operationplan__enddate instanceof Date))
+        $scope.operationplan.operationplan__enddate = moment($scope.operationplan.operationplan__enddate, datetimeformat).toDate();
     }
 
     if (typeof $scope.operationplan.id === 'undefined')
@@ -270,19 +278,20 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   function setMode(m) {
     function innerFunction() {
       PreferenceSvc.save("mode", m);
-      $scope.$apply(function () { $scope.mode = m; });
+      $scope.$apply(function () {
+        $scope.operationplan = null;
+        $scope.mode = m;
+      });
       angular.element('#controller').scope().$broadcast('changeMode', m);
       if (m == 'kanban') {
         $("#gridmode, #calendarmode").removeClass("active");
         $("#kanbanmode").addClass("active");
-        angular.element(document).find("#customize").hide();
         mode = "kanban";
         $scope.loadKanbanData();
       }
       else if (m.startsWith('calendar')) {
         $("#kanbanmode, #gridmode").removeClass("active");
         $("#calendarmode").addClass("active");
-        angular.element(document).find("#customize").hide();
         mode = m;
         // No need to call loadCalendarData since it's triggered automatically with the above $apply
       }
@@ -296,7 +305,6 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         // We could deallocate the kanban cards, but that can be slow.
         // $scope.kanbanoperationplans = {};
         initialfilter = thefilter;
-        angular.element(document).find("#customize").show();
         displayGrid(true);
       }
       setHeights();

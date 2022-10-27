@@ -322,7 +322,7 @@ class Command(BaseCommand):
         ).stdout
         if container:
             if options["verbosity"]:
-                print("STOPPING ANOTHER ODOO CONTAINER %s")
+                print("STOPPING ANOTHER ODOO CONTAINER")
             subprocess.run(["docker", "stop", container.strip()])
 
         if options["verbosity"]:

@@ -239,6 +239,7 @@ var upload = {
     $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
     $('#save, #undo').addClass("btn-primary").removeClass("btn-danger").prop('disabled', true);
     $('#actions1').prop('disabled', true);
+    $(".ng-dirty").removeClass('ng-dirty');
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
 
@@ -284,6 +285,7 @@ var upload = {
         success: function () {
           upload.undo();
           $("#save i").addClass('hidden');
+          $(".ng-dirty").removeClass('ng-dirty');
           if (typeof ok_callback !== 'undefined') ok_callback();
         },
         error: ajaxerror

@@ -19,7 +19,7 @@
               <tr data-ng-repeat="cat in categories track by cat" data-row="{{cat}}">
               <td data-ng-if="grouping">{{cat}}</td>
               <td data-ng-repeat="dt in dates track by dt.date" class="datecell" data-date="{{dt.date| date: 'yyyy-MM-dd'}}">
-                  <div data-ng-repeat="opplan in dt.events" class="card-month" data-ng-click="selectCard(opplan)"        
+                  <div data-ng-repeat="opplan in dt.events track by $index" class="card-month" data-ng-click="selectCard(opplan)"
                      data-ng-if="(!grouping || (opplan[grouping] || '') == (cat || '')) && displayEvent(opplan, dt)">
                      <ng-include src="'/input/card.html'"/>
                   </div>

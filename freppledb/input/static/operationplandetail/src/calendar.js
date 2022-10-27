@@ -111,7 +111,11 @@ angular.module('calendar', [])
         }
 
         $scope.getHeight = function (headerheight) {
-          if (preferences && preferences['height'])
+          if (preferences && preferences.details && preferences.details != "bottom") {
+            var el = angular.element(document).find("#content-main");
+            return Math.max(150, $(window).height() - el.offset().top - headerheight - 40);
+          }
+          else if (preferences && preferences['height'])
             return preferences['height'] - headerheight;
           else
             return 220 - headerheight;
@@ -321,7 +325,9 @@ angular.module('calendar', [])
 
         scope.selectCard = function (opplan) {
           if (scope.curselected) {
-            if (scope.curselected.reference == opplan.reference && opplan.selected)
+            if (scope.curselected.reference && scope.curselected.reference == opplan.reference && opplan.selected)
+              return;
+            if (scope.curselected.operationplan__reference && scope.curselected.operationplan__reference == opplan.reference && opplan.selected)
               return;
             delete scope.curselected.selected;
           }
@@ -599,7 +605,6 @@ angular.module('calendar', [])
 
         ctrl._onDataLoaded = function () {
           var eventSource = ctrl.eventSource,
-            len = eventSource ? eventSource.length : 0,
             rows = scope.rows,
             row,
             date,
@@ -609,8 +614,7 @@ angular.module('calendar', [])
             for (date = 0; date < 7; date += 1)
               rows[row][date].events = null;
 
-          for (var i = 0; i < len; i += 1) {
-            var event = eventSource[i];
+          for (var event of eventSource) {
             if (processCard(event, false) && scope.grouping && !keys.includes(event[scope.grouping]))
               keys.push(event[scope.grouping]);
           }
@@ -836,18 +840,14 @@ angular.module('calendar', [])
         };
 
         ctrl._onDataLoaded = function () {
-          var eventSource = ctrl.eventSource,
-            len = eventSource ? eventSource.length : 0,
-            dates = scope.dates,
-            day,
-            keys = [];
+          var eventSource = ctrl.eventSource;
+          var keys = [];
 
-          for (day = 0; day < 7; day += 1) {
-            if (dates[day].events) dates[day].events = null;
+          for (var day = 0; day < 7; day += 1) {
+            if (scope.dates[day].events) scope.dates[day].events = null;
           }
 
-          for (var i = 0; i < len; i += 1) {
-            var event = eventSource[i];
+          for (var event of eventSource) {
             if (processCard(event, false) && scope.grouping && !keys.includes(event[scope.grouping]))
               keys.push(event[scope.grouping]);
           }
@@ -1062,15 +1062,13 @@ angular.module('calendar', [])
 
         ctrl._onDataLoaded = function () {
           var eventSource = ctrl.eventSource,
-            len = eventSource ? eventSource.length : 0,
             startdate = ctrl.range.startdate,
             enddate = ctrl.range.enddate,
             keys = [];
 
           scope.events = null;
 
-          for (var i = 0; i < len; i += 1) {
-            var event = eventSource[i];
+          for (var event of eventSource) {
             var eventStartTime = event.startdate ? new Date(event.startdate) : null;
             var eventEndTime = event.enddate ? new Date(event.enddate) : null;
             if ((eventEndTime ? eventEndTime : eventStartTime) <= startdate ||

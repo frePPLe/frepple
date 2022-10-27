@@ -116,7 +116,9 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     // Handler for selecting a card
     function selectCard(opplan) {
       if ($scope.curselected) {
-        if ($scope.curselected.reference == opplan.reference && opplan.selected)
+        if ($scope.curselected.reference && $scope.curselected.reference == opplan.reference && opplan.selected)
+          return;
+        if ($scope.curselected.operationplan__reference && $scope.curselected.operationplan__reference == opplan.reference && opplan.selected)
           return;
         delete $scope.curselected.selected;
       }

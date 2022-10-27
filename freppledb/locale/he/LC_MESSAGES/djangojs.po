@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2021-05-06 16:53+0200\n"
+"PO-Revision-Date: 2022-10-26 16:59+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: he\n"
@@ -23,10 +23,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.3\n"
-
-#: common/static/js/frepple.js:195 common/static/js/frepple.min.js:11
-msgid "Connection failed"
-msgstr ""
 
 #: common/static/js/frepple.js:208 common/static/js/frepple.js:1641
 #: common/static/js/frepple.js:1690 common/static/js/frepple.js:2323
@@ -69,12 +65,6 @@ msgstr "שמור"
 msgid "Return to page"
 msgstr ""
 
-#: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "files selected"
-msgid "select"
-msgstr "קבצים שנבחרו"
-
 #: common/static/js/frepple.js:562 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:406
@@ -94,12 +84,6 @@ msgstr "בזמן"
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:413
 msgid "days late"
 msgstr "איחור בימים"
-
-#: common/static/js/frepple.js:709 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Selected options"
-msgid "Select action"
-msgstr "אפשרויות שנבחרו"
 
 #: common/static/js/frepple.js:765 common/static/js/frepple.min.js:11
 msgid "Selected options"
@@ -195,14 +179,6 @@ msgstr ""
 #: common/static/js/frepple.min.js:11
 msgid "Using this link external applications can pull data from frePPLe"
 msgstr ""
-
-#: common/static/js/frepple.js:1242 common/static/js/frepple.js:1294
-#: common/static/js/frepple.js:1336 common/static/js/frepple.js:1370
-#: common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Copy to Clipboard"
-msgid "Copy to clipboard"
-msgstr "העתק ללוח"
 
 #: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
 #: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
@@ -355,10 +331,8 @@ msgid "%s unread messages"
 msgstr "%s הודעות שלא נקראו"
 
 #: common/static/js/frepple.js:2876 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "%s unread messages"
 msgid "No unread messages"
-msgstr "%s הודעות שלא נקראו"
+msgstr ""
 
 #: common/static/js/frepple.js:3008 common/static/js/frepple.min.js:11
 msgid "Installed apps"
@@ -421,29 +395,13 @@ msgstr "מבוטל"
 msgid "%s records processed"
 msgstr "%s רשומות מעובדות"
 
-#: common/static/js/frepple.js:3954 common/static/js/frepple.min.js:11
-msgid "Follow"
-msgstr ""
-
-#: common/static/js/frepple.js:3967 common/static/js/frepple.min.js:11
-msgid "Update"
-msgstr ""
-
 #: common/static/js/frepple.js:3973 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "Manage notifications of %s"
 msgstr ""
 
-#: common/static/js/frepple.js:3981 common/static/js/frepple.min.js:11
-msgid "Following"
-msgstr ""
-
 #: common/static/js/frepple.js:4002 common/static/js/frepple.min.js:11
 msgid "Add followers"
-msgstr ""
-
-#: common/static/js/frepple.min.js:11
-msgid "OR"
 msgstr ""
 
 #: common/static/js/frepple.min.js:11
@@ -471,45 +429,9 @@ msgid "current inventory"
 msgstr "מלאי נוכחי"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:63
-#: planningboard/static/planningboard/src/module.js:67
-#: planningboard/static/planningboard/src/planningboard.js:859
-#: planningboard/static/planningboard/src/planningboard.js:863
-#: planningboard/static/planningboard/src/planningboard.js:884
-#: planningboard/static/planningboard/src/planningboard.js:885
-msgid "minutes"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:65
-#: planningboard/static/planningboard/src/planningboard.js:861
-#: planningboard/static/planningboard/src/planningboard.js:892
-#: planningboard/static/planningboard/src/planningboard.js:893
-msgid "seconds"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:69
 #: planningboard/static/planningboard/src/planningboard.js:865
 #: planningboard/static/planningboard/src/planningboard.js:876
 #: planningboard/static/planningboard/src/planningboard.js:877
 msgid "hours"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:880
-#: planningboard/static/planningboard/src/planningboard.js:881
-msgid "hour"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:888
-#: planningboard/static/planningboard/src/planningboard.js:889
-msgid "minute"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:895
-#: planningboard/static/planningboard/src/planningboard.js:896
-msgid "second"
-msgstr ""
+msgstr "שעות"

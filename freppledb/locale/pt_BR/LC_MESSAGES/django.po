@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2022-01-03 21:07-0300\n"
+"PO-Revision-Date: 2022-10-26 17:00+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt_BR\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 2.4.3\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: abc_classification/attributes.py:19
@@ -31,12 +31,16 @@ msgstr ""
 
 #: admin.py:22
 #, python-format
-msgid "Please enter a correct %(username)s and password. Note that both fields may be case-sensitive."
-msgstr "Por favor, entre com um %(username)s  e senha corretos. Note que ambos os campos diferenciam maiúsculas e minúsculas."
+msgid ""
+"Please enter a correct %(username)s and password. Note that both fields may "
+"be case-sensitive."
+msgstr ""
+"Por favor, entre com um %(username)s  e senha corretos. Note que ambos os "
+"campos diferenciam maiúsculas e minúsculas."
 
 #: admin.py:24
 msgid "This user is inactive."
-msgstr ""
+msgstr "Este usuário está inativo."
 
 #: archive/models.py:44 common/models.py:642 common/models.py:679
 #: common/models.py:917 common/models.py:991 common/models.py:1436
@@ -285,7 +289,7 @@ msgstr "localização"
 #: input/views/purchasing.py:916 input/views/sales.py:303
 #: input/views/sales.py:601 output/views/buffer.py:253
 msgid "batch"
-msgstr ""
+msgstr "lote"
 
 #: archive/models.py:66 archive/models.py:91 forecast/views.py:197
 #: forecast/views.py:607 forecast/views.py:1982 input/models.py:225
@@ -610,16 +614,12 @@ msgid "owner"
 msgstr "dono"
 
 #: archive/models.py:134
-#, fuzzy
-#| msgid "items"
 msgid "item cost"
-msgstr "artigos"
+msgstr "custo do item"
 
 #: archive/models.py:137
-#, fuzzy
-#| msgid "item suppliers"
 msgid "itemsupplier cost"
-msgstr "artigo fornecedores"
+msgstr "custo do fornecedor de itens"
 
 #: archive/models.py:140 input/models.py:1483 input/models.py:1881
 #: input/views/inventory.py:369 input/views/inventory.py:531
@@ -679,38 +679,28 @@ msgid "demand"
 msgstr "ordem de venda"
 
 #: archive/widget.py:28
-#, fuzzy
-#| msgid "Inventory status"
 msgid "Inventory history"
-msgstr "Estado do inventário"
+msgstr "Histórico do inventário"
 
 #: archive/widget.py:29
 msgid "Show the history of the on hand inventory"
-msgstr ""
+msgstr "Mostre o histórico do inventário em mãos"
 
 #: archive/widget.py:172
-#, fuzzy
-#| msgid "Demand history outliers"
 msgid "Demand history"
-msgstr "Valores atípicos do historial da demanda"
+msgstr "Histórico da demanda"
 
 #: archive/widget.py:173
-#, fuzzy
-#| msgid "Show the evolution of the SMAPE forecast error"
 msgid "Show the evolution of the open sales orders"
-msgstr "Mostrar evolução do erro da previsão SMAPE"
+msgstr "Mostra a evolução das ordens de vendas abertas"
 
 #: archive/widget.py:337
-#, fuzzy
-#| msgid "Purchase order summary"
 msgid "Purchase order history"
-msgstr "Resumo de ordens de compra"
+msgstr "Histórico de pedidos de compra"
 
 #: archive/widget.py:338
-#, fuzzy
-#| msgid "Show the evolution of the SMAPE forecast error"
 msgid "Show the evolution of the open purchase orders"
-msgstr "Mostrar evolução do erro da previsão SMAPE"
+msgstr "Mostre a evolução das ordens de compra abertas"
 
 #: common/admin.py:28 common/admin.py:39
 msgid "Personal info"
@@ -721,10 +711,8 @@ msgid "password"
 msgstr "senha"
 
 #: common/admin.py:32
-#, fuzzy
-#| msgid "scenarios"
 msgid "scenario access"
-msgstr "cenários"
+msgstr "acesso ao cenário"
 
 #: common/admin.py:43
 msgid "Permissions in this scenario"
@@ -748,7 +736,7 @@ msgstr "Datas importantes"
 #: reportmanager/admin.py:39
 #: reportmanager/templates/reportmanager/reportmanager.html:154
 msgid "edit"
-msgstr ""
+msgstr "editar"
 
 #: common/admin.py:58 common/admin.py:92 common/admin.py:112
 #: common/admin.py:145 common/admin.py:165 common/admin.py:185
@@ -774,23 +762,37 @@ msgstr "Você pode editá-lo novamente abaixo."
 
 #: common/adminforms.py:327
 #, python-brace-format
-msgid "The {name} \"{obj}\" was added successfully. You may add another {name} below."
-msgstr "O {name} \"{obj}\" foi adicionado com sucesso. Você pode adicionar outro {name} abaixo."
+msgid ""
+"The {name} \"{obj}\" was added successfully. You may add another {name} "
+"below."
+msgstr ""
+"O {name} \"{obj}\" foi adicionado com sucesso. Você pode adicionar outro "
+"{name} abaixo."
 
 #: common/adminforms.py:445
 #, python-brace-format
-msgid "The {name} \"{obj}\" was changed successfully. You may edit it again below."
-msgstr "O {name} \"{obj}\" foi alterado com sucesso. Você pode modificar ele novamente abaixo."
+msgid ""
+"The {name} \"{obj}\" was changed successfully. You may edit it again below."
+msgstr ""
+"O {name} \"{obj}\" foi alterado com sucesso. Você pode modificar ele "
+"novamente abaixo."
 
 #: common/adminforms.py:460
 #, python-brace-format
-msgid "The {name} \"{obj}\" was added successfully. You may edit it again below."
-msgstr "O {name} \"{obj}\" foi adicionado com sucesso. Você pode editar ele novamente abaixo."
+msgid ""
+"The {name} \"{obj}\" was added successfully. You may edit it again below."
+msgstr ""
+"O {name} \"{obj}\" foi adicionado com sucesso. Você pode editar ele "
+"novamente abaixo."
 
 #: common/adminforms.py:479
 #, python-brace-format
-msgid "The {name} \"{obj}\" was changed successfully. You may add another {name} below."
-msgstr "O {name} \"{obj}\" foi alterado com sucesso. Você pode adicionar outro {name} abaixo."
+msgid ""
+"The {name} \"{obj}\" was changed successfully. You may add another {name} "
+"below."
+msgstr ""
+"O {name} \"{obj}\" foi alterado com sucesso. Você pode adicionar outro "
+"{name} abaixo."
 
 #: common/adminforms.py:496
 #, python-brace-format
@@ -821,7 +823,7 @@ msgstr "Necessário."
 
 #: common/adminforms.py:752 common/adminforms.py:755
 msgid "Required. Max 30 characters."
-msgstr ""
+msgstr "Necessário. Max 30 caracteres."
 
 #: common/api/views.py:40
 msgid "REST API Help"
@@ -843,18 +845,16 @@ msgstr "Campos chave não únicos"
 
 #: common/dataload.py:574 forecast/models.py:745 input/models.py:2776
 #, python-format
-msgid "%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings"
-msgstr "%(rows)d linhas de registros, alterados %(changed)d e adicionados %(added)d registros, %(errors)d erros, %(warnings)d avisos"
+msgid ""
+"%(rows)d data rows, changed %(changed)d and added %(added)d records, "
+"%(errors)d errors, %(warnings)d warnings"
+msgstr ""
+"%(rows)d linhas de registros, alterados %(changed)d e adicionados %(added)d "
+"registros, %(errors)d erros, %(warnings)d avisos"
 
 #: common/dataload.py:630 common/dataload.py:639
 msgid "Select a valid choice. That choice is not one of the available choices."
 msgstr "Faça uma escolha válida. Sua escolha não é uma das disponíveis."
-
-#: common/localization.py:38 common/localization.py:56
-#, fuzzy
-#| msgid "Invalid number"
-msgid "Invalid date format"
-msgstr "Número inválido"
 
 #: common/menu.py:117
 msgid "Documentation"
@@ -1081,10 +1081,8 @@ msgstr "tamanho de página"
 
 #: common/models.py:409 common/templates/common/preferences.html:118
 #: common/views.py:177
-#, fuzzy
-#| msgid "scenario"
 msgid "default scenario"
-msgstr "cenário"
+msgstr ""
 
 #: common/models.py:558 common/models.py:645 common/models.py:706
 #: common/models.py:924 common/models.py:995 common/views.py:497
@@ -1147,32 +1145,24 @@ msgid "comments"
 msgstr "comentários"
 
 #: common/models.py:919 common/views.py:610
-#, fuzzy
-#| msgid "object name"
 msgid "model name"
-msgstr "nome do objeto"
+msgstr "nome do modelo"
 
 #: common/models.py:921 common/views.py:616
 msgid "object name"
 msgstr "nome do objeto"
 
 #: common/models.py:982
-#, fuzzy
-#| msgid "follower"
 msgid "followers"
-msgstr "seguidor"
+msgstr "seguidores"
 
 #: common/models.py:1021
-#, fuzzy
-#| msgid "location"
 msgid "notification"
-msgstr "localização"
+msgstr "notificação"
 
 #: common/models.py:1022
-#, fuzzy
-#| msgid "locations"
 msgid "notifications"
-msgstr "localizações"
+msgstr "notificações"
 
 #: common/models.py:1412 input/models.py:676
 #: input/templates/input/operationplanreport.html:317
@@ -1225,35 +1215,15 @@ msgstr "data do intervalo"
 msgid "bucket dates"
 msgstr "datas do intervalo"
 
-#: common/models.py:1467
-msgid "string"
-msgstr ""
-
-#: common/models.py:1468
-msgid "boolean"
-msgstr ""
-
 #: common/models.py:1469 forecast/models.py:1090
-#, fuzzy
-#| msgid "Invalid number"
 msgid "number"
-msgstr "Número inválido"
-
-#: common/models.py:1470
-msgid "integer"
-msgstr ""
+msgstr "número"
 
 #: common/models.py:1471 forecast/widget.py:396 input/models.py:2331
 #: input/views/inventory.py:1727
 #: inventoryplanning/templates/inventoryplanning/drp.html:166
 msgid "date"
 msgstr "data"
-
-#: common/models.py:1472
-#, fuzzy
-#| msgid "start time"
-msgid "datetime"
-msgstr "hora de início"
 
 #: common/models.py:1473 execute/views.py:151 input/models.py:385
 #: input/models.py:837 input/views/capacity.py:103 input/views/capacity.py:542
@@ -1266,16 +1236,6 @@ msgstr "hora de início"
 msgid "duration"
 msgstr "duração"
 
-#: common/models.py:1474
-#, fuzzy
-#| msgid "end time"
-msgid "time"
-msgstr "hora de fim"
-
-#: common/models.py:1475
-msgid "JSON"
-msgstr ""
-
 #: common/models.py:1508 common/views.py:506 common/views.py:707
 msgid "model"
 msgstr "modelo"
@@ -1287,25 +1247,17 @@ msgid "label"
 msgstr "etiqueta"
 
 #: common/models.py:1517 common/views.py:722
-#, fuzzy
-#| msgid "admin tables"
 msgid "editable"
-msgstr "tabelas administração"
+msgstr ""
 
 #: common/models.py:1519 common/views.py:726 forecast/models.py:1145
 #: forecast/views.py:353
 msgid "initially hidden"
-msgstr ""
+msgstr "inicialmente escondido"
 
 #: common/models.py:1538 forecast/models.py:1193
 msgid "Name can only be alphanumeric"
 msgstr ""
-
-#: common/models.py:1580
-#, fuzzy
-#| msgid "attributes"
-msgid "attribute"
-msgstr "atributos"
 
 #: common/models.py:1581 common/views.py:679
 #: inventoryplanning/templates/inventoryplanning/drp.html:2596
@@ -1336,32 +1288,34 @@ msgstr "Sim"
 #: planningboard/views.py:175 reportmanager/views.py:541
 #: reportmanager/views.py:566 retail/views.py:30 retail/views.py:122
 #: retail/views.py:210
-#, fuzzy
-#| msgid "Permissions in this scenario"
 msgid "Permission denied"
-msgstr "Permissões neste cenário"
+msgstr "Permissão negada"
 
 #: common/report.py:1019 common/report.py:3570 common/report.py:3599
 #: execute/views.py:1155 execute/views.py:1198
 #, python-format
 msgid "Values in this field must exist in the %s table"
-msgstr ""
+msgstr "Valores neste campo devem existir na tabela %s"
 
 #: common/report.py:1027 common/report.py:3578 common/report.py:3607
 #: execute/views.py:1163 execute/views.py:1209
 #, python-format
 msgid "Accepted values are: %s"
-msgstr ""
+msgstr "Os valores aceitos são: %s"
 
 #: common/report.py:1036 common/report.py:3587 common/report.py:3616
 #: common/report.py:3645 execute/views.py:1172 execute/views.py:1218
 #: execute/views.py:1238
 msgid "Read only"
-msgstr ""
+msgstr "Somente leitura"
 
 #: common/report.py:1590 execute/views.py:1320
-msgid "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
+msgid ""
+"Files in the old .XLS excel format can't be read.<br>Please convert them to "
+"the new .XLSX format."
 msgstr ""
+"Arquivos no velho formato .XLS excel não pode ser lido.<br>Por favor, "
+"converta-os para o novo. Formato .XLSX."
 
 #: common/report.py:1747
 #, python-format
@@ -1417,12 +1371,6 @@ msgstr "erro"
 msgid "warning"
 msgstr "aviso"
 
-#: common/report.py:2397
-#, fuzzy
-#| msgid "log file"
-msgid "file"
-msgstr "ficheiro de Log"
-
 #: common/report.py:2739
 #: inventoryplanning/templates/inventoryplanning/drp.html:2929
 #: inventoryplanning/templates/inventoryplanning/drp.html:2948
@@ -1459,12 +1407,15 @@ msgstr "Erro no Servidor <em>(500)</em>"
 #, python-format
 msgid ""
 "Oops, something went wrong.<br>\n"
-"Your administrator can find more information on the error in the log file %(logfile)s"
+"Your administrator can find more information on the error in the log file "
+"%(logfile)s"
 msgstr ""
+"Opa, algo deu errado.<br>O administrador pode encontrar mais informações "
+"sobre o erro no arquivo de log  %(logfile)s"
 
 #: common/templates/admin/auth/user/add_form.html:4
 msgid "Add user - required fields"
-msgstr ""
+msgstr "Adicionar usuário - campos necessários"
 
 #: common/templates/admin/base_site_grid.html:9
 #: common/templates/admin/base_site_gridpivot.html:9
@@ -1473,10 +1424,8 @@ msgstr "Filtro"
 
 #: common/templates/admin/base_site_grid.html:13
 #: common/templates/admin/base_site_gridpivot.html:13
-#, fuzzy
-#| msgid "Plan editor"
 msgid "Filter editor"
-msgstr "Editor de planos"
+msgstr "Editor de filtros"
 
 #: common/templates/admin/base_site_grid.html:51
 #: common/templates/admin/base_site_gridpivot.html:79
@@ -1558,7 +1507,7 @@ msgstr ""
 #: output/templates/output/pegging.html:277
 #: reportmanager/templates/reportmanager/reportmanager.html:166
 msgid "save"
-msgstr ""
+msgstr "salvar"
 
 #: common/templates/admin/base_site_grid.html:378
 #: input/templates/input/operationplanreport.html:339
@@ -1639,30 +1588,26 @@ msgid "Search"
 msgstr "Procurar"
 
 #: common/templates/admin/base_site_nav.html:69
-#, fuzzy
-#| msgid "messages"
 msgid "No unread messages"
-msgstr "mensagens"
+msgstr "Não existem mensagens não lidas"
 
 #: common/templates/admin/base_site_nav.html:78
 #, python-format
 msgid "Your license expired %(x)s days ago"
-msgstr ""
+msgstr "Sua licença expirou %(x)s dias atrás"
 
 #: common/templates/admin/base_site_nav.html:81
 msgid "License expired"
-msgstr ""
+msgstr "Licença expirada"
 
 #: common/templates/admin/base_site_nav.html:87
 #, python-format
 msgid "Your license expires in %(x)s days"
-msgstr ""
+msgstr "Sua licença expira em %(x)s dias"
 
 #: common/templates/admin/base_site_nav.html:92
-#, fuzzy
-#| msgid "days"
 msgid "days left"
-msgstr "dias"
+msgstr "dias restantes"
 
 #: common/templates/admin/base_site_nav.html:105
 msgid "preferences"
@@ -1675,10 +1620,12 @@ msgstr "Encerrar sessão"
 #: common/templates/admin/base_site_nav.html:116 common/templatetags.py:94
 #: common/views.py:119 wizard/views.py:91
 msgid "home"
-msgstr ""
+msgstr "página principal"
 
 #: common/templates/admin/base_site_nav.html:126
-msgid "Select a what-if scenario.<br>Click <a class='underline' href='/execute/#scenario_copy'>here</a> to manage scenarios."
+msgid ""
+"Select a what-if scenario.<br>Click <a class='underline' href='/execute/"
+"#scenario_copy'>here</a> to manage scenarios."
 msgstr ""
 
 #: common/templates/admin/change_form.html:91
@@ -1705,25 +1652,37 @@ msgstr "Por favor, corrija os erros abaixo."
 #: input/templates/admin/input/setupmatrix/change_form.html:8
 #: input/templates/admin/input/skill/change_form.html:8
 #: input/templates/admin/input/supplier/change_form.html:8
-#, fuzzy
-#| msgid "late"
 msgid "related"
-msgstr "tarde"
+msgstr "relacionado"
 
 #: common/templates/admin/delete_confirmation.html:11
 #, python-format
-msgid "Deleting the %(object_name)s '%(escaped_object)s' would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:"
-msgstr "A remoção de '%(object_name)s' %(escaped_object)s pode resultar na remoção de objetos relacionados, mas sua conta não tem a permissão para remoção dos seguintes tipos de objetos:"
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would result in deleting "
+"related objects, but your account doesn't have permission to delete the "
+"following types of objects:"
+msgstr ""
+"A remoção de '%(object_name)s' %(escaped_object)s pode resultar na remoção "
+"de objetos relacionados, mas sua conta não tem a permissão para remoção dos "
+"seguintes tipos de objetos:"
 
 #: common/templates/admin/delete_confirmation.html:18
 #, python-format
-msgid "Deleting the %(object_name)s '%(escaped_object)s' would require deleting the following protected related objects:"
-msgstr "Excluir o %(object_name)s  ' %(escaped_object)s ' exigiria excluir os seguintes objetos protegidos relacionados:"
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would require deleting the "
+"following protected related objects:"
+msgstr ""
+"Excluir o %(object_name)s  ' %(escaped_object)s ' exigiria excluir os "
+"seguintes objetos protegidos relacionados:"
 
 #: common/templates/admin/delete_confirmation.html:25
 #, python-format
-msgid "Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? All of the following related items will be deleted:"
-msgstr "Você tem certeza que quer remover %(object_name)s \"%(escaped_object)s\"? Todos os seguintes itens relacionados serão removidos:"
+msgid ""
+"Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? "
+"All of the following related items will be deleted:"
+msgstr ""
+"Você tem certeza que quer remover %(object_name)s \"%(escaped_object)s\"? "
+"Todos os seguintes itens relacionados serão removidos:"
 
 #: common/templates/admin/delete_confirmation.html:27
 msgid "Objects"
@@ -1769,7 +1728,7 @@ msgstr "Acessar"
 
 #: common/templates/admin/login.html:98
 msgid "Remember Me"
-msgstr ""
+msgstr "Lembrar-me"
 
 #: common/templates/admin/login.html:102
 msgid "Forgot your password?"
@@ -1819,13 +1778,11 @@ msgstr "de"
 
 #: common/templates/admin/subtemplate_timebuckets.html:42
 msgid "till"
-msgstr ""
+msgstr "até"
 
 #: common/templates/admin/subtemplate_timebuckets.html:58
-#, fuzzy
-#| msgid "before current"
 msgid "before till"
-msgstr "antes do corrente"
+msgstr "antes de"
 
 #: common/templates/admin/subtemplate_timebuckets.html:62
 #: common/templates/admin/subtemplate_timebuckets.html:68
@@ -1850,10 +1807,8 @@ msgid "months"
 msgstr "meses"
 
 #: common/templates/admin/subtemplate_timebuckets.html:73
-#, fuzzy
-#| msgid "before current"
 msgid "after current date"
-msgstr "antes do corrente"
+msgstr "depois da data atual"
 
 #: common/templates/admin/subtemplate_timebuckets.html:80 execute/views.py:885
 msgid "OK"
@@ -1880,7 +1835,7 @@ msgstr "Alterar senha"
 
 #: common/templates/common/comments.html:31
 msgid "Add an attachment"
-msgstr ""
+msgstr "Adicionar um anexo"
 
 #: common/templates/common/follower.html:31
 #: common/templates/common/inbox.html:92 common/views.py:889
@@ -1891,26 +1846,24 @@ msgstr "inbox"
 #: common/templates/common/follower.html:34
 #: common/templates/common/inbox.html:95 common/views.py:535
 #: common/views.py:620
-#, fuzzy
-#| msgid "Following"
 msgid "following"
-msgstr "Seguindo"
+msgstr "seguindo"
 
 #: common/templates/common/inbox.html:85
 msgid "Unread"
-msgstr ""
+msgstr "Não lida"
 
 #: common/templates/common/inbox.html:111
 msgid "Select/unselect all messages"
-msgstr ""
+msgstr "Marque/desmarque todas as mensagens"
 
 #: common/templates/common/inbox.html:141
 msgid "Mark message unread"
-msgstr ""
+msgstr "Marcar mensagem não lida"
 
 #: common/templates/common/inbox.html:144
 msgid "Mark message read"
-msgstr ""
+msgstr "Marcar mensagem lida"
 
 #: common/templates/common/preferences.html:90
 msgid "Number of records per page"
@@ -1918,11 +1871,15 @@ msgstr "Número de registos por página"
 
 #: common/templates/common/preferences.html:138 common/views.py:417
 msgid "avatar"
-msgstr ""
+msgstr "avatar"
 
 #: common/templates/common/preferences.html:145
-msgid "Upload a square picture of yourself.<br>Accepted formats are jpeg, png and gif.<br>Max file size is 100kB."
+msgid ""
+"Upload a square picture of yourself.<br>Accepted formats are jpeg, png and "
+"gif.<br>Max file size is 100kB."
 msgstr ""
+"Faça upload de uma foto quadrada de si mesmo.<br>Os formatos aceitos são "
+"jpeg, png e gif.<br>O tamanho máximo do arquivo precisa ser 100kB."
 
 #: common/templates/common/preferences.html:154
 #: common/templates/registration/password_change_form.html:21
@@ -1941,7 +1898,7 @@ msgstr "Confirmação da nova senha"
 
 #: common/templates/common/snippet_follow.html:8
 msgid "Manage notifications in your inbox"
-msgstr ""
+msgstr "Gerencie notificações em sua caixa de entrada"
 
 #: common/templates/common/snippet_follow.html:9
 msgid "Following"
@@ -1949,23 +1906,19 @@ msgstr "Seguindo"
 
 #: common/templates/common/snippet_follow.html:14
 msgid "Get a notification in your inbox when there is activity"
-msgstr ""
+msgstr "Receba uma notificação em sua caixa de entrada quando houver atividade"
 
 #: common/templates/common/snippet_follow.html:15
-#, fuzzy
-#| msgid "Following"
 msgid "Follow"
-msgstr "Seguindo"
+msgstr "Seguir"
 
 #: common/templates/index.html:97 execute/templates/execute/execute.html:39
 msgid "failed"
 msgstr "falhado"
 
 #: common/templates/registration/forgotpassword_form.html:90
-#, fuzzy
-#| msgid "submitted"
 msgid "Submit"
-msgstr "submetido"
+msgstr "Enviar"
 
 #: common/templates/registration/password_change_done.html:8
 #: common/templates/registration/password_change_form.html:9
@@ -1989,8 +1942,12 @@ msgid "Your password was changed."
 msgstr "Sua senha foi alterada."
 
 #: common/templates/registration/password_change_form.html:17
-msgid "Please enter your old password, for security's sake, and then enter your new password twice so we can verify you typed it in correctly."
-msgstr "Por favor, informe sua senha antiga, por segurança, e então informe sua nova senha duas vezes para que possamos verificar se você digitou corretamente."
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+"Por favor, informe sua senha antiga, por segurança, e então informe sua nova "
+"senha duas vezes para que possamos verificar se você digitou corretamente."
 
 #: common/templates/registration/password_change_form.html:25
 msgid "Confirm password:"
@@ -2002,15 +1959,15 @@ msgstr "Alterar minha senha"
 
 #: common/templates/rest_framework/api.html:27
 msgid "HTTP request"
-msgstr ""
+msgstr "Solicitação HTTP"
 
 #: common/templates/rest_framework/api.html:32
 msgid "HTTP response headers"
-msgstr ""
+msgstr "Cabeçalhos de resposta HTTP"
 
 #: common/templates/rest_framework/api.html:43
 msgid "HTTP response content"
-msgstr ""
+msgstr "Conteúdo de resposta HTTP"
 
 #: common/templates/rest_framework/api.html:55
 #, python-format
@@ -2046,7 +2003,9 @@ msgstr "Fazer um pedido OPTIONS para ver todos os campos do objeto %(model)s"
 #: common/templates/rest_framework/api.html:108
 #, python-format
 msgid "Make a POST request using a HTML form to create a new %(model)s object"
-msgstr "Fazer um pedido POST usando um formulário HTML para criar um novo objeto %(model)s"
+msgstr ""
+"Fazer um pedido POST usando um formulário HTML para criar um novo objeto "
+"%(model)s"
 
 #: common/templates/rest_framework/api.html:135
 #, python-format
@@ -2056,66 +2015,106 @@ msgstr "Fazer um pedido POSTno formato RAW para criar um novo objeto %(model)s"
 #: common/templates/rest_framework/api.html:161
 #, python-format
 msgid "Make a PUT request using a HTML form to update one %(model)s object"
-msgstr "Fazer um pedido PUT usando um formulário HTML para atualizar um objeto %(model)s"
+msgstr ""
+"Fazer um pedido PUT usando um formulário HTML para atualizar um objeto "
+"%(model)s"
 
 #: common/templates/rest_framework/api.html:185
 #, python-format
-msgid "Make a PUT or PATCH request in raw format to update one or more existing %(model)s objects"
-msgstr "Fazer um pedido PUT ou PATCH no formato RAW atualizar um ou mais objetos %(model)s existentes"
+msgid ""
+"Make a PUT or PATCH request in raw format to update one or more existing "
+"%(model)s objects"
+msgstr ""
+"Fazer um pedido PUT ou PATCH no formato RAW atualizar um ou mais objetos "
+"%(model)s existentes"
 
 #: common/templates/rest_framework/api.html:220
 #, python-format
-msgid "Make a DELETE request to delete one or more existing %(model)s objects (requires filtering)"
-msgstr "Fazer um pedido DELETE para apagar um ou mais objeto %(model)s existentes (necessita filtro)"
+msgid ""
+"Make a DELETE request to delete one or more existing %(model)s objects "
+"(requires filtering)"
+msgstr ""
+"Fazer um pedido DELETE para apagar um ou mais objeto %(model)s existentes "
+"(necessita filtro)"
 
 #: common/templates/rest_framework/index.html:23
 #, python-format
 msgid ""
 "This page helps developers to learn and experiment with the\n"
-"<a style=\"text-decoration:underline\" target=\"_blank\" rel=\"noopener\" href=\"https://en.wikipedia.org/wiki/Representational_state_transfer\">REST</a>\n"
+"<a style=\"text-decoration:underline\" target=\"_blank\" rel=\"noopener\" "
+"href=\"https://en.wikipedia.org/wiki/Representational_state_transfer\">REST</"
+"a>\n"
 "API of frePPLe.<br>\n"
 "This API allows your application to exchange information with frePPLe.<br>\n"
 "<br>\n"
 "The \"list API\" link takes you to the object list page.<br>\n"
-"And the \"detail API\" link takes you to a specific object when you enter the object's primary key.<br>\n"
-"In these pages you will be able to perform HTTP requests with methods GET, POST, OPTIONS, PUT, PATCH and DELETE.<br>\n"
+"And the \"detail API\" link takes you to a specific object when you enter "
+"the object's primary key.<br>\n"
+"In these pages you will be able to perform HTTP requests with methods GET, "
+"POST, OPTIONS, PUT, PATCH and DELETE.<br>\n"
 "The results can be shown in JSON format or as HTML in your browser.<br>\n"
 "<br>\n"
-"Using tools like 'wget' or 'curl' you can access the API from the command line.<br>\n"
-"For instance, to return the list of all sales orders in JSON format:<br><br>\n"
+"Using tools like 'wget' or 'curl' you can access the API from the command "
+"line.<br>\n"
+"For instance, to return the list of all sales orders in JSON format:"
+"<br><br>\n"
 "<div style=\"margin-left:20px\">\n"
-"Using <a style=\"text-decoration:underline\" href=\"https://en.wikipedia.org/wiki/Basic_access_authentication\" target=\"_blank\">basic authentication</a>:<br>\n"
+"Using <a style=\"text-decoration:underline\" href=\"https://en.wikipedia.org/"
+"wiki/Basic_access_authentication\" target=\"_blank\">basic authentication</"
+"a>:<br>\n"
 "<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --http-user=%(username)s --http-password=PASSWORD http://127.0.0.1:8000/api/input/demand/<br><br>\n"
+"wget --http-user=%(username)s --http-password=PASSWORD http://127.0.0.1:8000/"
+"api/input/demand/<br><br>\n"
 "curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
 "</div>\n"
-"Using <a style=\"text-decoration:underline\" href=\"https://jwt.io/\" target=\"_blank\">JSON Web Token authentication</a> valid for the next <input id=\"jwt\" type=\"number\" value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em\"/>  days:<br>\n"
+"Using <a style=\"text-decoration:underline\" href=\"https://jwt.io/\" target="
+"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
+"\"jwt\" type=\"number\" value=\"%(exp)s\" min=\"0\" step=\"1\" style="
+"\"width:4em\"/>  days:<br>\n"
 "<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/input/demand/<br><br>\n"
-"curl -H 'Accept: application/json' --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/input/demand/\n"
+"wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
+"input/demand/<br><br>\n"
+"curl -H 'Accept: application/json' --header 'Authorization: Bearer "
+"%(token)s' http://127.0.0.1:8000/api/input/demand/\n"
 "</div>\n"
 "</div>\n"
 msgstr ""
-"Nesta página os programadores podem desenvolver e testar com a API <a style=\"text-decoration:underline\" target=\"_blank\" href=\"https://en.wikipedia.org/wiki/Representational_state_transfer\">REST</a> do frePPLe.<br>\n"
-"Com esta API permite um intercâmbio facil e direto de informação com outras aplicações.<br>\n"
+"Nesta página os programadores podem desenvolver e testar com a API <a style="
+"\"text-decoration:underline\" target=\"_blank\" href=\"https://en.wikipedia."
+"org/wiki/Representational_state_transfer\">REST</a> do frePPLe.<br>\n"
+"Com esta API permite um intercâmbio facil e direto de informação com outras "
+"aplicações.<br>\n"
 "<br>\n"
 "O item \"Lista API\" leva você a página da lista de objetos.<br>\n"
-"E em \"Detalhe API\" leva voçê a um objeto específico ao digitar o nome da chave primária de um objeto.<br>\n"
-"Nestas páginas poderá realizar pedidos HTTP com os métodos GET,POST,OPTIONS,PUT,PATCH e DELETE.<br>\n"
-"Os resultados poderão ser vistos no formato JSON ou como HTML em seu navegador.<br>\n"
+"E em \"Detalhe API\" leva voçê a um objeto específico ao digitar o nome da "
+"chave primária de um objeto.<br>\n"
+"Nestas páginas poderá realizar pedidos HTTP com os métodos GET,POST,OPTIONS,"
+"PUT,PATCH e DELETE.<br>\n"
+"Os resultados poderão ser vistos no formato JSON ou como HTML em seu "
+"navegador.<br>\n"
 "<br>\n"
-"Usando ferramentas como 'wget' ou 'curl' pode acessar a API a partir da linha de comando.<br>\n"
-"Por exemplo, para obter uma lista de todas as vendas em formato JSON:<br><br>\n"
+"Usando ferramentas como 'wget' ou 'curl' pode acessar a API a partir da "
+"linha de comando.<br>\n"
+"Por exemplo, para obter uma lista de todas as vendas em formato JSON:"
+"<br><br>\n"
 "<div style=\"margin-left:20px\">\n"
-"Using <a style=\"text-decoration:underline\" href=\"https://en.wikipedia.org/wiki/Basic_access_authentication\" target=\"_blank\">basic authentication</a>:<br>\n"
+"Using <a style=\"text-decoration:underline\" href=\"https://en.wikipedia.org/"
+"wiki/Basic_access_authentication\" target=\"_blank\">basic authentication</"
+"a>:<br>\n"
 "<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --http-user=%(username)s --http-password=PASSWORD http://127.0.0.1:8000/api/input/demand/<br><br>\n"
+"wget --http-user=%(username)s --http-password=PASSWORD http://127.0.0.1:8000/"
+"api/input/demand/<br><br>\n"
 "curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
 "</div>\n"
-"Using <a style=\"text-decoration:underline\" href=\"https://jwt.io/\" target=\"_blank\">JSON Web Token authentication</a> valid for the next <input id=\"jwt\" type=\"number\" value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em\"/>  days:<br>\n"
+"Using <a style=\"text-decoration:underline\" href=\"https://jwt.io/\" target="
+"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
+"\"jwt\" type=\"number\" value=\"%(exp)s\" min=\"0\" step=\"1\" style="
+"\"width:4em\"/>  days:<br>\n"
 "<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/input/demand/<br><br>\n"
-"curl -H 'Accept: application/json' --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/input/demand/\n"
+"wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
+"input/demand/<br><br>\n"
+"curl -H 'Accept: application/json' --header 'Authorization: Bearer "
+"%(token)s' http://127.0.0.1:8000/api/input/demand/\n"
 "</div>\n"
 "</div>\n"
 
@@ -2137,7 +2136,8 @@ msgstr "Tema"
 
 #: common/views.py:221
 msgid "Your old password was entered incorrectly. Please enter it again."
-msgstr "A senha antiga foi digitada incorretamente. Por favor, informe-a novamente."
+msgstr ""
+"A senha antiga foi digitada incorretamente. Por favor, informe-a novamente."
 
 #: common/views.py:274
 msgid "Successfully updated preferences"
@@ -2153,7 +2153,7 @@ msgstr "Minhas preferências"
 
 #: common/views.py:407 output/views/constraint.py:89 output/views/problem.py:66
 msgid "id"
-msgstr ""
+msgstr "id"
 
 #: common/views.py:420
 msgid "username"
@@ -2193,7 +2193,7 @@ msgstr "último login"
 
 #: common/views.py:521
 msgid "attachment"
-msgstr ""
+msgstr "anexo"
 
 #: common/widget.py:27 settings.py:404
 msgid "Welcome"
@@ -2207,26 +2207,60 @@ msgstr "Algumas ligações para começar"
 #, python-format
 msgid ""
 "Welcome to the world's leading open source production planning tool!<br>\n"
-"Click one of images below to explore the main interactive planning screens:<br><br>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-align: center\">\n"
+"Click one of images below to explore the main interactive planning screens:"
+"<br><br>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
 "<a href=\"%(prefix)s/forecast/editor/\">\n"
-"  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: 100%%\" alt=\"Forecast Editor\"><br>\n"
+"  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: 100%%"
+"\" alt=\"Forecast Editor\"><br>\n"
 "  <b>Forecast Editor</b>\n"
 "</a>\n"
 "</div>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-align: center\">\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
 "<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
-"  <img src=\"/static/img/inventory-planning-thumbnail.png\" style=\"width: 100%%\" alt=\"Inventory Planning\"><br>\n"
+"  <img src=\"/static/img/inventory-planning-thumbnail.png\" style=\"width: "
+"100%%\" alt=\"Inventory Planning\"><br>\n"
 "  <b>Inventory Planning</b>\n"
 "</a>\n"
 "</div>\n"
-"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-align: center\">\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
 "<a href=\"%(prefix)s/planningboard/\">\n"
-"  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%\" alt=\"Plan Editor\"><br>\n"
+"  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%\" "
+"alt=\"Plan Editor\"><br>\n"
 "  <b>Plan Editor</b>\n"
 "</a>\n"
 "</div>\n"
 msgstr ""
+"Bem-vindo à principal ferramenta de planejamento de produção de código "
+"aberto do mundo!<br>Clique em uma das imagens abaixo para explorar as "
+"principais telas de planejamento interativo:<br><br>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
+"<a href=\"%(prefix)s/forecast/editor/\">\n"
+"  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: 100%%"
+"\" alt=\"Forecast Editor\"><br>\n"
+"  <b>Editor de Previsão</b>\n"
+"</a>\n"
+"</div>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
+"<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
+"  <img src=\"/static/img/inventory-planning-thumbnail.png\" style=\"width: "
+"100%%\" alt=\"Inventory Planning\"><br>\n"
+"  <b>Planejamento de Inventário</b>\n"
+"</a>\n"
+"</div>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
+"<a href=\"%(prefix)s/planningboard/\">\n"
+"  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%\" "
+"alt=\"Plan Editor\"><br>\n"
+"  <b>Editor de Planos</b>\n"
+"</a>\n"
+"</div>\n"
 
 #: common/widget.py:85
 msgid "News"
@@ -2238,7 +2272,7 @@ msgstr "Ver as últimas notícias do frePPLe"
 
 #: common/widget.py:99
 msgid "Unread messages from your inbox"
-msgstr ""
+msgstr "Mensagens não lidas da sua caixa de entrada"
 
 #: demandhits/attributes.py:21 demandhits/attributes.py:42
 #, python-format
@@ -2283,27 +2317,23 @@ msgstr "Gerar intervalos"
 
 #: execute/management/commands/emailreport.py:225
 msgid "Publish reports by email"
-msgstr ""
+msgstr "Enviar relatórios por e-mail"
 
 #: execute/management/commands/empty.py:315
 msgid "Empty the database"
 msgstr "Limpar a base de dados"
 
 #: execute/management/commands/exporttofolder.py:516
-#, fuzzy
-#| msgid "Export a spreadsheet"
 msgid "Export plan result"
-msgstr "Exportar folha de cálculo"
+msgstr "Exportar resultados do plano"
 
 #: execute/management/commands/exportworkbook.py:33
 msgid "Export a spreadsheet"
 msgstr "Exportar folha de cálculo"
 
 #: execute/management/commands/importfromfolder.py:546
-#, fuzzy
-#| msgid "Upload data files"
 msgid "Import data files"
-msgstr "Carregar ficheiros de dados"
+msgstr "Importar ficheiros de dados"
 
 #: execute/management/commands/importworkbook.py:146 execute/views.py:1342
 #, python-format
@@ -2339,8 +2369,11 @@ msgid "Create a plan"
 msgstr "Criar um plano"
 
 #: execute/management/commands/runplan.py:446
-msgid "Load all input data, run the planning algorithm, and export the results."
+msgid ""
+"Load all input data, run the planning algorithm, and export the results."
 msgstr ""
+"Carregue todos os dados de entrada, execute o algoritmo de planejamento e "
+"exporte os resultados."
 
 #: execute/management/commands/runplan.py:449
 msgid "optional planning steps"
@@ -2351,12 +2384,30 @@ msgid "Plan type"
 msgstr "Tipo plan"
 
 #: execute/management/commands/runplan.py:453
-msgid "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.\">Constrained plan</span>"
-msgstr "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Gerar um plano de fornecimento que respeita todas as restrições.<br>Em caso de carência a venda é planeada com atrasado ou insuficiente.\">Plano com restrições</span>"
+msgid ""
+"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
+"original-title=\"Generate a supply plan that respects all constraints.<br>In "
+"case of shortages the demand is planned late or short.\">Constrained plan</"
+"span>"
+msgstr ""
+"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
+"original-title=\"Gerar um plano de fornecimento que respeita todas as "
+"restrições.<br>Em caso de carência a venda é planeada com atrasado ou "
+"insuficiente.\">Plano com restrições</span>"
 
 #: execute/management/commands/runplan.py:458
-msgid "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Generate a supply plan that shows material, capacity and operation problems that prevent the demand from being planned in time.<br>The demand is always met completely and on time.\">Unconstrained plan</span>"
-msgstr "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Gerar um plano de fornecimento que mostra os problemas de materiais, capacidade e operações que impedem que a venda seja entregue a tempo.<br>A venda é sempre satisfeita na quantidade e no tempo.\">Plano sem restrições</span>"
+msgid ""
+"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
+"original-title=\"Generate a supply plan that shows material, capacity and "
+"operation problems that prevent the demand from being planned in time."
+"<br>The demand is always met completely and on time.\">Unconstrained plan</"
+"span>"
+msgstr ""
+"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
+"original-title=\"Gerar um plano de fornecimento que mostra os problemas de "
+"materiais, capacidade e operações que impedem que a venda seja entregue a "
+"tempo.<br>A venda é sempre satisfeita na quantidade e no tempo.\">Plano sem "
+"restrições</span>"
 
 #: execute/management/commands/runplan.py:461 output/models.py:56
 #: output/templates/output/buffer.html:331
@@ -2383,11 +2434,11 @@ msgstr "gerenciamento de cenários"
 
 #: execute/management/commands/scheduletasks.py:392
 msgid "Group and schedule tasks"
-msgstr ""
+msgstr "Tarefas de grupo e agendamento"
 
 #: execute/management/commands/uploadreport.py:278
 msgid "Publish reports by FTP"
-msgstr ""
+msgstr "Publicar relatórios por FTP"
 
 #: execute/menu.py:20 execute/widget.py:20
 msgid "Execute"
@@ -2420,11 +2471,11 @@ msgstr "tarefa"
 
 #: execute/models.py:101
 msgid "scheduled tasks"
-msgstr ""
+msgstr "tarefas programadas"
 
 #: execute/models.py:102
 msgid "scheduled task"
-msgstr ""
+msgstr "tarefa programada"
 
 #: execute/templates/commands/backup.html:5
 #: execute/templates/commands/createbuckets.html:7
@@ -2443,11 +2494,11 @@ msgstr "Dump do conteúdo da base de dados."
 
 #: execute/templates/commands/createbuckets.html:10
 msgid "create time buckets for reporting."
-msgstr ""
+msgstr "criar períodos de tempo para relatar."
 
 #: execute/templates/commands/createbuckets.html:24
 msgid "week starts on"
-msgstr ""
+msgstr "semana começa em"
 
 #: execute/templates/commands/createbuckets.html:28
 #: execute/templates/commands/createbuckets.html:33 input/models.py:105
@@ -2486,43 +2537,37 @@ msgid "Saturday"
 msgstr "Sábado"
 
 #: execute/templates/commands/createbuckets.html:44
-#, fuzzy
-#| msgid "last name"
 msgid "day name"
-msgstr "último nome"
+msgstr "nome do dia"
 
 #: execute/templates/commands/createbuckets.html:50
-#, fuzzy
-#| msgid "file name"
 msgid "week name"
-msgstr "nome do ficheiro"
+msgstr "nome da semana"
 
 #: execute/templates/commands/createbuckets.html:56
-#, fuzzy
-#| msgid "object name"
 msgid "month name"
-msgstr "nome do objeto"
+msgstr "nome do mês"
 
 #: execute/templates/commands/createbuckets.html:62
-#, fuzzy
-#| msgid "quarter"
 msgid "quarter name"
-msgstr "trimestre"
+msgstr "nome do trimestre"
 
 #: execute/templates/commands/createbuckets.html:68
-#, fuzzy
-#| msgid "username"
 msgid "year name"
-msgstr "usuário"
+msgstr "nome do ano"
 
 #: execute/templates/commands/emailreport.html:6
 #: execute/templates/commands/uploadreport.html:6
 msgid "publish"
-msgstr ""
+msgstr "publicar"
 
 #: execute/templates/commands/emailreport.html:9
-msgid "Emails the selected reports to a comma separated list of recipients. Files are zipped and attached to email."
+msgid ""
+"Emails the selected reports to a comma separated list of recipients. Files "
+"are zipped and attached to email."
 msgstr ""
+"E-mails os relatórios selecionados para uma lista de destinatários separados "
+"por vírgula. Os arquivos são compactados e anexados ao e-mail."
 
 #: execute/templates/commands/emailreport.html:16
 #: execute/templates/commands/exporttofolder.html:14
@@ -2539,20 +2584,16 @@ msgid "size"
 msgstr "tamanho"
 
 #: execute/templates/commands/emailreport.html:34
-#, fuzzy
-#| msgid "email address"
 msgid "emails"
-msgstr "endereço de email"
+msgstr "e-mails"
 
 #: execute/templates/commands/emailreport.html:66
 msgid "please correct invalid email addresses"
-msgstr ""
+msgstr "por favor, corrija os endereços de e-mail inválidos"
 
 #: execute/templates/commands/emailreport.html:70
-#, fuzzy
-#| msgid "email address"
 msgid "please enter email addresses"
-msgstr "endereço de email"
+msgstr "por favor, digite os endereços de e-mail"
 
 #: execute/templates/commands/empty.html:7
 msgid "Erase selected tables."
@@ -2569,10 +2610,8 @@ msgid "admin tables"
 msgstr "tabelas administração"
 
 #: execute/templates/commands/empty.html:30
-#, fuzzy
-#| msgid "Plan editor"
 msgid "plan history"
-msgstr "Editor de planos"
+msgstr "histórico do plano"
 
 #: execute/templates/commands/exporttofolder.html:6
 #: execute/templates/commands/exportworkbook.html:7
@@ -2580,8 +2619,12 @@ msgid "export"
 msgstr "exportar"
 
 #: execute/templates/commands/exporttofolder.html:9
-msgid "Exports the plan (purchase orders, distribution orders and manufacturing orders) as a set of CSV files."
-msgstr "Exportar o plano (ordens de compra, ordens de distribuição e ordens de produção) como um conjunto de arquivos CSV."
+msgid ""
+"Exports the plan (purchase orders, distribution orders and manufacturing "
+"orders) as a set of CSV files."
+msgstr ""
+"Exportar o plano (ordens de compra, ordens de distribuição e ordens de "
+"produção) como um conjunto de arquivos CSV."
 
 #: execute/templates/commands/exporttofolder.html:16
 #: execute/templates/commands/importfromfolder.html:16
@@ -2590,10 +2633,8 @@ msgstr "modificado"
 
 #: execute/templates/commands/exporttofolder.html:19
 #: execute/templates/commands/importfromfolder.html:25
-#, fuzzy
-#| msgid "Download file"
 msgid "Download all files"
-msgstr "Descarregar ficheiro"
+msgstr "Baixar todos os arquivos"
 
 #: execute/templates/commands/exporttofolder.html:25
 #: execute/templates/commands/importfromfolder.html:31
@@ -2607,10 +2648,9 @@ msgstr "Está prestes a apagar todos os ficheiros"
 
 #: execute/templates/commands/exporttofolder.html:61
 #: execute/templates/commands/importfromfolder.html:110
-#, fuzzy, python-format
-#| msgid "You are about to delete all files"
+#, python-format
 msgid "You are about to delete file %%s"
-msgstr "Está prestes a apagar todos os ficheiros"
+msgstr "Você está prestes a apagar o arquivo %%s"
 
 #: execute/templates/commands/exporttofolder.html:67
 #: execute/templates/commands/importfromfolder.html:49
@@ -2632,7 +2672,7 @@ msgstr "Todos os ficheiros de dados foram apagados"
 #: execute/templates/commands/importfromfolder.html:137
 #, python-format
 msgid "File %%s was deleted"
-msgstr ""
+msgstr "Arquivo %%s foi apagado"
 
 #: execute/templates/commands/exporttofolder.html:91
 #: execute/templates/commands/exporttofolder.html:114
@@ -2649,11 +2689,16 @@ msgstr "Fechar"
 #: execute/templates/commands/importfromfolder.html:158
 #, python-format
 msgid "File %%s was not deleted"
-msgstr ""
+msgstr "Arquivo %%s não foi apagado"
 
 #: execute/templates/commands/exportworkbook.html:11
-msgid "Download all input data in a single spreadsheet.<br>Optionally, you can make the data anonymous during the export to hide sensitive company data."
+msgid ""
+"Download all input data in a single spreadsheet.<br>Optionally, you can make "
+"the data anonymous during the export to hide sensitive company data."
 msgstr ""
+"Baixe todos os dados de entrada em uma única planilha.<br>Opcionalmente, "
+"você pode tornar os dados anônimos durante a exportação para ocultar dados "
+"confidenciais da empresa."
 
 #: execute/templates/commands/importfromfolder.html:6
 #: execute/templates/commands/importworkbook.html:5
@@ -2661,27 +2706,30 @@ msgid "import"
 msgstr "importar"
 
 #: execute/templates/commands/importfromfolder.html:9
-msgid "Import CSV or Excel files. The file names must match the names of data objects and the first line in the file must contain the field names."
+msgid ""
+"Import CSV or Excel files. The file names must match the names of data "
+"objects and the first line in the file must contain the field names."
 msgstr ""
+"Importar arquivos CSV ou Excel. Os nomes dos arquivos devem coincidir com os "
+"nomes dos objetos de dados e a primeira linha no arquivo deve conter os "
+"nomes dos campos."
 
 #: execute/templates/commands/importfromfolder.html:18
 #: execute/templates/commands/importfromfolder.html:19
 msgid "Upload data files"
 msgstr "Carregar ficheiros de dados"
 
-#: execute/templates/commands/importfromfolder.html:19
-#, fuzzy
-#| msgid "load"
-msgid "Upload"
-msgstr "carga"
-
 #: execute/templates/commands/importfromfolder.html:44
 msgid "Download file"
 msgstr "Descarregar ficheiro"
 
 #: execute/templates/commands/importworkbook.html:8
-msgid "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above."
-msgstr "Importar folha de cálculo.</p><p>A estrutura da folha de cálculo deve ser semelhante à que é requerida."
+msgid ""
+"Import input data from a spreadsheet.</p><p>The spreadsheet must match the "
+"structure exported with the task above."
+msgstr ""
+"Importar folha de cálculo.</p><p>A estrutura da folha de cálculo deve ser "
+"semelhante à que é requerida."
 
 #: execute/templates/commands/loaddata.html:15
 msgid "Load one of the available datasets."
@@ -2689,7 +2737,7 @@ msgstr "Carregar conjunto de dados para."
 
 #: execute/templates/commands/loaddata.html:28
 msgid "Execute plan after loading is done"
-msgstr ""
+msgstr "Executar plano após o carregamento for feito"
 
 #: execute/templates/commands/loaddata.html:49
 #: execute/templates/execute/execute.html:249
@@ -2699,88 +2747,76 @@ msgstr "Desculpe, não tem nenhumas permissões de execução..."
 #: execute/templates/commands/scenario_copy.html:8
 msgid ""
 "You have a number of available scenario databases available.<br>\n"
-"        You can copy data into a scenario database to create a isolated sandbox for what-if analysis.<br>\n"
-"        Use the dropdown in the upper right corner of the screen to select which scenario you're working in.\n"
+"        You can copy data into a scenario database to create a isolated "
+"sandbox for what-if analysis.<br>\n"
+"        Use the dropdown in the upper right corner of the screen to select "
+"which scenario you're working in.\n"
 "        "
 msgstr ""
+"Você tem uma série de bancos de dados de cenários disponíveis.<br>Você pode "
+"copiar dados em um banco de dados de cenários para criar uma caixa de areia "
+"isolada para análise do what-se.<br>Use o dropdown no canto superior direito "
+"da tela para selecionar em qual cenário você está trabalhando.        "
 
 #: execute/templates/commands/scenario_copy.html:16
 msgid "action"
 msgstr "ação"
 
 #: execute/templates/commands/scenario_copy.html:19
-msgid "<b>In use</b>: Contains data<br><b>Free</b>: Available to copy data into<br><b>Busy</b>: Data copy in progress"
+msgid ""
+"<b>In use</b>: Contains data<br><b>Free</b>: Available to copy data "
+"into<br><b>Busy</b>: Data copy in progress"
 msgstr ""
+"<b>Em uso</b>: Contém dados<br><b>Grátis</b>: Disponível para copiar dados "
+"em<br><b>Ocupado</b>: Cópia de dados em andamento"
 
 #: execute/templates/commands/scenario_copy.html:25
 msgid "Label shown in the scenario dropdown list"
-msgstr ""
+msgstr "Rótulo mostrado na lista de dropdown do cenário"
 
 #: execute/templates/commands/scenario_copy.html:30
-#, fuzzy
-#| msgid "Duration of the changeover"
 msgid "Date of the last state change"
-msgstr "Duração da transição"
+msgstr "Data da última mudança de estado"
 
 #: execute/templates/commands/scenario_copy.html:46
 #: execute/templates/commands/scenario_copy.html:68
 msgid "manage"
-msgstr ""
-
-#: execute/templates/commands/scenario_copy.html:50
-#, fuzzy
-#| msgid "from"
-msgid "Copy from"
-msgstr "de"
-
-#: execute/templates/commands/scenario_copy.html:54
-msgid "Restore from backup"
-msgstr ""
+msgstr "gerenciar"
 
 #: execute/templates/commands/scenario_copy.html:73
 msgid "Release: You will lose ALL data in this scenario!"
-msgstr ""
+msgstr "Lançamento: Você perderá TODOS os dados neste cenário!"
 
 #: execute/templates/commands/scenario_copy.html:78
 msgid "Promote: All data will be copied to Production"
-msgstr ""
+msgstr "Promover: Todos os dados serão copiados para Produção"
 
 #: execute/templates/commands/scenario_copy.html:87
 msgid "Free"
-msgstr ""
+msgstr "Grátis"
 
 #: execute/templates/commands/scheduletasks.html:3
 msgid "Run a sequence of tasks, and schedule it to run automatically."
 msgstr ""
+"Execute uma sequência de tarefas e agende-a para ser executada "
+"automaticamente."
 
 #: execute/templates/commands/scheduletasks.html:8
 msgid "next scheduled run"
-msgstr ""
+msgstr "próxima corrida programada"
 
 #: execute/templates/commands/scheduletasks.html:26
 msgid "Edit"
-msgstr ""
+msgstr "Editar"
 
 #: execute/templates/commands/scheduletasks.html:58
-#, fuzzy
-#| msgid "file name"
 msgid "unique name"
-msgstr "nome do ficheiro"
+msgstr "nome único"
 
 #: execute/templates/commands/scheduletasks.html:84
 #: execute/templates/commands/scheduletasks.html:192
 msgid "abort on failure"
-msgstr ""
-
-#: execute/templates/commands/scheduletasks.html:91
-#: execute/templates/commands/scheduletasks.html:199
-msgid "Move down"
-msgstr ""
-
-#: execute/templates/commands/scheduletasks.html:95
-#: execute/templates/commands/scheduletasks.html:203
-msgid "Move up"
-msgstr ""
+msgstr "abortar em falha"
 
 #: execute/templates/commands/scheduletasks.html:111 input/models.py:113
 #: input/templates/input/calendardetail.html:68
@@ -2790,7 +2826,7 @@ msgstr "hora de início"
 
 #: execute/templates/commands/scheduletasks.html:119
 msgid "weekly schedule"
-msgstr ""
+msgstr "programação semanal"
 
 #: execute/templates/commands/scheduletasks.html:122
 msgid "Mon"
@@ -2821,29 +2857,29 @@ msgid "Sun"
 msgstr "Dom"
 
 #: execute/templates/commands/scheduletasks.html:145
-#, fuzzy
-#| msgid "email address"
 msgid "email on success"
-msgstr "endereço de email"
+msgstr "e-mail em caso de sucesso"
 
 #: execute/templates/commands/scheduletasks.html:148
 #: execute/templates/commands/scheduletasks.html:156
 msgid "List of emails, separated by commas"
-msgstr ""
+msgstr "Lista de e-mails, separados por vírgulas"
 
 #: execute/templates/commands/scheduletasks.html:153
-#, fuzzy
-#| msgid "email address"
 msgid "email on failure"
-msgstr "endereço de email"
+msgstr "e-mail em caso de falha"
 
 #: execute/templates/commands/uploadreport.html:9
-msgid "Select all reports that will be pushed to the configured FTP/FTPS/SFTP folder."
+msgid ""
+"Select all reports that will be pushed to the configured FTP/FTPS/SFTP "
+"folder."
 msgstr ""
+"Selecione todos os relatórios que serão empurrados para a pasta FTP/FTPS/"
+"SFTP configurada."
 
 #: execute/templates/execute/execute.html:41
 msgid "waiting"
-msgstr ""
+msgstr "esperando"
 
 #: execute/templates/execute/execute.html:43
 msgid "done"
@@ -2855,10 +2891,8 @@ msgid "canceled"
 msgstr "cancelado"
 
 #: execute/templates/execute/execute.html:66
-#, fuzzy
-#| msgid "Download file"
 msgid "download"
-msgstr "Descarregar ficheiro"
+msgstr "download"
 
 #: execute/templates/execute/execute.html:70 forecast/models.py:1089
 msgid "view"
@@ -2885,16 +2919,12 @@ msgid "finished"
 msgstr "terminado"
 
 #: execute/views.py:346
-#, fuzzy
-#| msgid "Failure launching action: %(msg)s"
 msgid "Failure launching task"
-msgstr "Falha a executar acção: %(msg)s"
+msgstr ""
 
 #: execute/views.py:719
-#, fuzzy
-#| msgid "Delete file"
 msgid "Couldn't delete file"
-msgstr "Apagar ficheiro"
+msgstr ""
 
 #: execute/views.py:745
 msgid "Displaying only the last 50K from the log file"
@@ -2918,14 +2948,12 @@ msgid "Nothing to export"
 msgstr "Nada para exportar"
 
 #: execute/views.py:1316
-#, fuzzy
-#| msgid "Error deleting file"
 msgid "Processing file"
-msgstr "Erro ao apagar ficheiro"
+msgstr "Processando arquivo"
 
 #: execute/views.py:1327
 msgid "Unsupported file format."
-msgstr ""
+msgstr "Formato de arquivo não suportado."
 
 #: execute/widget.py:22
 msgid "Generate a constrained plan"
@@ -2933,25 +2961,19 @@ msgstr "Gerar plano de produção restringido"
 
 #: executesql/menu.py:16 reportmanager/menu.py:51 reportmanager/models.py:96
 #: reportmanager/views.py:98
-#, fuzzy
-#| msgid "Demand report"
 msgid "my reports"
-msgstr "Relatório da demanda"
+msgstr "meus relatórios"
 
 #: executesql/menu.py:22 executesql/views.py:52
-#, fuzzy
-#| msgid "Execute"
 msgid "Execute SQL"
-msgstr "Executar"
+msgstr "Executar SQL"
 
 #: forecast/admin.py:40 input/admin.py:85 input/admin.py:121 input/admin.py:172
 #: input/admin.py:203 input/admin.py:240 input/admin.py:283 input/admin.py:327
 #: input/admin.py:383 input/admin.py:454 input/admin.py:574 input/admin.py:611
 #: input/admin.py:674 input/admin.py:715 input/admin.py:961
-#, fuzzy
-#| msgid "canceled"
 msgid "advanced"
-msgstr "cancelado"
+msgstr "avançado"
 
 #: forecast/admin.py:65 input/admin.py:255 input/admin.py:416
 #: input/admin.py:478 input/admin.py:642 input/admin.py:986
@@ -3005,22 +3027,16 @@ msgid "Generate forecast"
 msgstr "Gerar previsão"
 
 #: forecast/management/commands/measure_copy.py:229
-#, fuzzy
-#| msgid "scenario management"
 msgid "measure management"
-msgstr "gerenciamento de cenários"
+msgstr "gestão de medidas"
 
 #: forecast/management/commands/measure_copy.py:288
-#, fuzzy
-#| msgid "resource queue"
 msgid "Copy source measure"
-msgstr "fila de recursos"
+msgstr "Copiar medida de origem"
 
 #: forecast/management/commands/measure_copy.py:288
-#, fuzzy
-#| msgid "destination"
 msgid "to destination measure"
-msgstr "destino"
+msgstr "para a medida de destino"
 
 #: forecast/menu.py:32 forecast/templates/forecast.html:4
 #: forecast/views.py:2293 input/views/utils.py:107
@@ -3175,7 +3191,9 @@ msgstr "Método usado para gerar previsão base"
 
 #: forecast/models.py:83 input/models.py:1701
 msgid "Priority of the demand (lower numbers indicate more important demands)"
-msgstr "Prioridade da necessidade (números mais baixos indicam necessidades mais importantes)"
+msgstr ""
+"Prioridade da necessidade (números mais baixos indicam necessidades mais "
+"importantes)"
 
 #: forecast/models.py:87 forecast/views.py:130 input/models.py:1705
 #: input/views/sales.py:366 quoting/views.py:99
@@ -3251,12 +3269,6 @@ msgstr "planos da previsão"
 msgid "Bucket '%(name)s' not found"
 msgstr "Intervalo '%(name)s' não encontrado"
 
-#: forecast/models.py:528
-#, fuzzy
-#| msgid "size multiple"
-msgid "multiplier"
-msgstr "tamanho múltiplo"
-
 #: forecast/models.py:635
 msgid "No editable fields found"
 msgstr "Ficheiros editáveis não encontrados"
@@ -3270,16 +3282,12 @@ msgid "orders adjustment 3 years ago"
 msgstr "ajuste de ordens há 3 anos"
 
 #: forecast/models.py:811
-#, fuzzy
-#| msgid "total orders 3 years ago"
 msgid "total orders value 3 years ago"
-msgstr "total de ordens há 3 anos"
+msgstr "valor total de pedidos 3 anos atrás"
 
 #: forecast/models.py:821
-#, fuzzy
-#| msgid "orders adjustment 3 years ago"
 msgid "orders adjustment value 3 years ago"
-msgstr "ajuste de ordens há 3 anos"
+msgstr "valor de ajuste de pedidos 3 anos atrás"
 
 #: forecast/models.py:831
 msgid "total orders 2 years ago"
@@ -3290,16 +3298,12 @@ msgid "orders adjustment 2 years ago"
 msgstr "ajuste de ordens há 2 anos"
 
 #: forecast/models.py:850
-#, fuzzy
-#| msgid "total orders 2 years ago"
 msgid "total orders value 2 years ago"
-msgstr "total de ordens há 2 anos"
+msgstr "valor total de pedidos 2 anos atrás"
 
 #: forecast/models.py:860
-#, fuzzy
-#| msgid "orders adjustment 2 years ago"
 msgid "orders adjustment value 2 years ago"
-msgstr "ajuste de ordens há 2 anos"
+msgstr "valor de ajuste de pedidos 2 anos atrás"
 
 #: forecast/models.py:870
 msgid "total orders 1 years ago"
@@ -3310,16 +3314,12 @@ msgid "orders adjustment 1 years ago"
 msgstr "ajuste de ordens há 1 ano"
 
 #: forecast/models.py:888
-#, fuzzy
-#| msgid "total orders 1 years ago"
 msgid "total orders value 1 years ago"
-msgstr "total de ordens há 1 ano"
+msgstr "valor total de pedidos 1 anos atrás"
 
 #: forecast/models.py:898
-#, fuzzy
-#| msgid "orders adjustment 1 years ago"
 msgid "orders adjustment value 1 years ago"
-msgstr "ajuste de ordens há 1 ano"
+msgstr "valor de ajuste de pedidos 1 anos atrás"
 
 #: forecast/models.py:909 forecast/templates/forecast/forecast.html:263
 #: inventoryplanning/templates/inventoryplanning/drp.html:1690
@@ -3425,71 +3425,64 @@ msgid "total demand value"
 msgstr "valor da demanda total"
 
 #: forecast/models.py:1073
-#, fuzzy
-#| msgid "total supply"
 msgid "total supply value"
-msgstr "compras totais"
+msgstr "valor total de fornecimento"
 
 #: forecast/models.py:1085
 msgid "aggregate"
 msgstr "agregada"
 
 #: forecast/models.py:1086
-#, fuzzy
-#| msgid "location"
 msgid "local"
-msgstr "localização"
+msgstr "local"
 
 #: forecast/models.py:1087
 msgid "computed"
-msgstr ""
+msgstr "calculado"
 
 #: forecast/models.py:1089
 msgid "hide"
-msgstr ""
+msgstr "ocultar"
 
 #: forecast/models.py:1090
 msgid "currency"
-msgstr ""
+msgstr "moeda"
 
 #: forecast/models.py:1101
 msgid "Label to be displayed in the user interface"
-msgstr ""
+msgstr "Rótulo a ser exibido na interface do usuário"
 
 #: forecast/models.py:1115 forecast/views.py:351
 msgid "mode in future periods"
-msgstr ""
+msgstr "modo em períodos futuros"
 
 #: forecast/models.py:1123 forecast/views.py:348
 msgid "mode in past periods"
-msgstr ""
+msgstr "modo em períodos passados"
 
 #: forecast/models.py:1131 forecast/views.py:357
 msgid "compute expression"
-msgstr ""
+msgstr "expressão de calculo"
 
 #: forecast/models.py:1135
 msgid "Formula to compute values"
-msgstr ""
+msgstr "Fórmula para calcular valores"
 
 #: forecast/models.py:1138 forecast/views.py:358
 msgid "update expression"
-msgstr ""
+msgstr "atualização expressão"
 
 #: forecast/models.py:1142
 msgid "Formula executed when updating this field"
-msgstr ""
+msgstr "Fórmula executada ao atualizar este campo"
 
 #: forecast/models.py:1148
 msgid "controls whether or not this measure is visible by default"
-msgstr ""
+msgstr "controla se essa medida é visível ou não por padrão"
 
 #: forecast/models.py:1151 forecast/views.py:354
-#, fuzzy
-#| msgctxt "forecast method"
-#| msgid "Normal"
 msgid "format"
-msgstr "Normal"
+msgstr "formato"
 
 #: forecast/models.py:1160 forecast/views.py:356 input/models.py:66
 #: input/views/manufacturing.py:654
@@ -3497,18 +3490,16 @@ msgid "default value"
 msgstr "valor por defeito"
 
 #: forecast/models.py:1168 forecast/views.py:359
-#, fuzzy
-#| msgid "overdue sales orders"
 msgid "override measure"
-msgstr "ordens de venda atrasadas"
+msgstr "medida de substituição"
 
 #: forecast/models.py:1197
 msgid "measure"
-msgstr ""
+msgstr "medida"
 
 #: forecast/models.py:1198 forecast/views.py:331
 msgid "measures"
-msgstr ""
+msgstr "medidas"
 
 #: forecast/templates/forecast/forecast.html:264
 #: inventoryplanning/templates/inventoryplanning/drp.html:1700
@@ -3521,10 +3512,8 @@ msgstr "total de previsões"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1717
 #: inventoryplanning/templates/inventoryplanning/drp.html:1753
 #: inventoryplanning/templates/inventoryplanning/drp.html:1830
-#, fuzzy
-#| msgid "net forecast"
 msgid "past forecast"
-msgstr "previsão líquida"
+msgstr "previsão passada"
 
 #: forecast/templates/forecast/forecast.html:383
 #: inventoryplanning/templates/inventoryplanning/drp.html:1099
@@ -3538,10 +3527,8 @@ msgid "method"
 msgstr "método"
 
 #: forecast/views.py:156
-#, fuzzy
-#| msgid "estimated forecast error"
 msgid "standard deviation of forecast error"
-msgstr "erro estimado da previsão"
+msgstr ""
 
 #: forecast/views.py:203 input/models.py:244 input/views/capacity.py:743
 #: input/views/inventory.py:205 input/views/inventory.py:438
@@ -3554,7 +3541,7 @@ msgstr "erro estimado da previsão"
 #: output/views/demand.py:67 output/views/operation.py:203
 #: output/views/operation.py:540 output/views/operation.py:996
 msgid "volume"
-msgstr ""
+msgstr "volume"
 
 #: forecast/views.py:209 input/models.py:236 input/views/capacity.py:749
 #: input/views/inventory.py:211 input/views/inventory.py:450
@@ -3721,10 +3708,8 @@ msgstr "inventário"
 
 #: input/admin.py:264 input/models.py:2373 input/models.py:2374
 #: input/views/inventory.py:1512
-#, fuzzy
-#| msgid "inventory status"
 msgid "inventory detail"
-msgstr "estado do inventário"
+msgstr "detalhes de inventário"
 
 #: input/admin.py:428 input/admin.py:488 input/admin.py:654
 #: output/views/constraint.py:86
@@ -3737,16 +3722,12 @@ msgid "plan detail"
 msgstr "detalhe do plano"
 
 #: input/admin.py:534
-#, fuzzy
-#| msgid "plan detail"
 msgid "matrix detail"
-msgstr "detalhe do plano"
+msgstr ""
 
 #: input/admin.py:1010
-#, fuzzy
-#| msgid "computed safety stock"
 msgid "computed fields"
-msgstr "estoque de segurança calculado"
+msgstr "campos computados"
 
 #: input/models.py:47
 msgid "minimum cost"
@@ -3801,38 +3782,28 @@ msgid "customers"
 msgstr "clientes"
 
 #: input/models.py:210
-#, fuzzy
-#| msgid "safety stock"
 msgid "make to stock"
-msgstr "estoque de segurança"
+msgstr "fazer para o estoque"
 
 #: input/models.py:211
-#, fuzzy
-#| msgid "sales order"
 msgid "make to order"
-msgstr "ordem de venda"
+msgstr "fazer a ordem"
 
 #: input/models.py:230
 msgid "Cost of the item"
 msgstr "Custo do artigo"
 
 #: input/models.py:241
-#, fuzzy
-#| msgid "Cost of the item"
 msgid "Weight of the item"
-msgstr "Custo do artigo"
+msgstr "Peso do item"
 
 #: input/models.py:249
-#, fuzzy
-#| msgid "Cost of the item"
 msgid "Volume of the item"
-msgstr "Custo do artigo"
+msgstr "Volume do item"
 
 #: input/models.py:255
-#, fuzzy
-#| msgid "period of cover"
 msgid "Period of cover in days"
-msgstr "período de cobertura"
+msgstr ""
 
 #: input/models.py:265 input/views/sales.py:144
 msgid "items"
@@ -3859,14 +3830,13 @@ msgid "split"
 msgstr "dividir"
 
 #: input/models.py:306
-#, fuzzy
-#| msgid "Setup required on the resource for this operation"
 msgid "Item produced by this operation"
-msgstr "Configuração do recurso necessária para esta operação"
+msgstr "Item produzido por esta operação"
 
 #: input/models.py:319
 msgid "Parent operation (which must be of type routing, alternate or split)"
 msgstr ""
+"Operação dos pais (que deve ser de tipo roteamento, alternada ou dividida)"
 
 #: input/models.py:327 input/models.py:1351 input/models.py:1539
 msgid "Priority among all alternates"
@@ -3923,8 +3893,12 @@ msgid "release fence"
 msgstr "restrição remporal"
 
 #: input/models.py:340
-msgid "Operationplans within this time window from the current day are expected to be released to production ERP"
-msgstr "Planos de operação dentro desta janela temporal do dia corrente espera-se que sejan lançados para o ERP de produção"
+msgid ""
+"Operationplans within this time window from the current day are expected to "
+"be released to production ERP"
+msgstr ""
+"Planos de operação dentro desta janela temporal do dia corrente espera-se "
+"que sejan lançados para o ERP de produção"
 
 #: input/models.py:344 input/views/capacity.py:557
 #: input/views/inventory.py:1656 input/views/manufacturing.py:189
@@ -3935,7 +3909,8 @@ msgid "post-op time"
 msgstr "tempo pós operação"
 
 #: input/models.py:348
-msgid "A delay time to be respected as a soft constraint after ending the operation"
+msgid ""
+"A delay time to be respected as a soft constraint after ending the operation"
 msgstr "Atraso a ser respeitado como restrição suave após término da operação"
 
 #: input/models.py:352 input/models.py:1305 input/models.py:1493
@@ -3952,10 +3927,8 @@ msgid "size minimum"
 msgstr "tamanho mínimo"
 
 #: input/models.py:358
-#, fuzzy
-#| msgid "A minimum purchasing quantity"
 msgid "Minimum production quantity"
-msgstr "Uma quantidade mínima de compra"
+msgstr "Quantidade mínima de produção"
 
 #: input/models.py:361 input/models.py:1314 input/models.py:1502
 #: input/views/capacity.py:567 input/views/inventory.py:377
@@ -3971,10 +3944,8 @@ msgid "size multiple"
 msgstr "tamanho múltiplo"
 
 #: input/models.py:366
-#, fuzzy
-#| msgid "A multiple purchasing quantity"
 msgid "Multiple production quantity"
-msgstr "Uma quantidade de compra múltipla"
+msgstr "Quantidade de produção múltipla"
 
 #: input/models.py:369 input/models.py:1322 input/models.py:1510
 #: input/views/capacity.py:572 input/views/inventory.py:378
@@ -3988,18 +3959,16 @@ msgid "size maximum"
 msgstr "tamanho máximo"
 
 #: input/models.py:374
-#, fuzzy
-#| msgid "A minimum purchasing quantity"
 msgid "Maximum production quantity"
-msgstr "Uma quantidade mínima de compra"
+msgstr "Quantidade máxima de produção"
 
 #: input/models.py:382
 msgid "Cost per produced unit"
-msgstr ""
+msgstr "Custo por unidade produzida"
 
 #: input/models.py:388
 msgid "Fixed production time for setup and overhead"
-msgstr ""
+msgstr "Tempo de produção fixo para configuração e sobrecarga"
 
 #: input/models.py:391 input/views/capacity.py:547
 #: input/views/inventory.py:1646 input/views/manufacturing.py:177
@@ -4012,7 +3981,7 @@ msgstr "duração por unidade"
 
 #: input/models.py:394
 msgid "Production time per produced piece"
-msgstr ""
+msgstr "Tempo de produção por peça produzida"
 
 #: input/models.py:397 input/models.py:1035 input/models.py:1179
 #: input/views/capacity.py:597 input/views/inventory.py:1696
@@ -4036,8 +4005,12 @@ msgid "batching window"
 msgstr "janela de lotes"
 
 #: input/models.py:417
-msgid "The solver algorithm will scan for opportunities to create batches within this time window before and after the requirement date"
-msgstr "O algoritmo de resolução vai procurar oportunidades de criação lotes nesta janela temporal antes e depois da data requerida"
+msgid ""
+"The solver algorithm will scan for opportunities to create batches within "
+"this time window before and after the requirement date"
+msgstr ""
+"O algoritmo de resolução vai procurar oportunidades de criação lotes nesta "
+"janela temporal antes e depois da data requerida"
 
 #: input/models.py:427 input/templates/admin/input/item/change_form.html:25
 #: input/templates/admin/input/location/change_form.html:37
@@ -4050,8 +4023,11 @@ msgid "Parent operation"
 msgstr "Operação pai"
 
 #: input/models.py:471
-msgid "Sequence of this operation among the suboperations. Negative values are ignored."
-msgstr "Sequência desta operação entre suboperações. Valores negativos são ignorados."
+msgid ""
+"Sequence of this operation among the suboperations. Negative values are "
+"ignored."
+msgstr ""
+"Sequência desta operação entre suboperações. Valores negativos são ignorados."
 
 #: input/models.py:476 input/models.py:528 input/views/manufacturing.py:1275
 #: input/views/manufacturing.py:1403 input/views/manufacturing.py:1409
@@ -4136,14 +4112,14 @@ msgstr "matrizes de configuração"
 
 #: input/models.py:701 input/views/capacity.py:152 input/views/capacity.py:862
 #: output/views/resource.py:76
-#, fuzzy
-#| msgid "constrained by"
 msgid "constrained"
 msgstr "restringida por"
 
 #: input/models.py:705
-msgid "controls whether or not this resource is planned in finite capacity mode"
+msgid ""
+"controls whether or not this resource is planned in finite capacity mode"
 msgstr ""
+"controla se esse recurso é ou não planejado no modo de capacidade finita"
 
 #: input/models.py:709 input/views/capacity.py:153 input/views/capacity.py:868
 #: input/views/manufacturing.py:283 output/views/resource.py:83
@@ -4173,7 +4149,9 @@ msgstr "máximo cedo"
 
 #: input/models.py:756
 msgid "Time window before the ask date where we look for available capacity"
-msgstr "Janela de tempo antes da data da questão para a demanda de capacidade disponível"
+msgstr ""
+"Janela de tempo antes da data da questão para a demanda de capacidade "
+"disponível"
 
 #: input/models.py:766
 msgid "Setup matrix defining the conversion time and cost"
@@ -4196,24 +4174,23 @@ msgstr "Configuração do recurso no início do plano"
 #: input/models.py:777 input/views/capacity.py:181
 #, no-python-format
 msgid "efficiency %"
-msgstr ""
+msgstr "eficiência %"
 
 #: input/models.py:782
-#, fuzzy
-#| msgid "Size of the resource"
 msgid "Efficiency percentage of the resource"
-msgstr "Tamanho do recurso"
+msgstr "Percentual de eficiência do recurso"
 
 #: input/models.py:787 input/views/capacity.py:185
 #, no-python-format
 msgid "efficiency % calendar"
-msgstr ""
+msgstr "eficiência % calendário"
 
 #: input/models.py:793
-#, fuzzy
-#| msgid "Calendar defining the resource size varying over time"
-msgid "Calendar defining the efficiency percentage of the resource varying over time"
-msgstr "Calendário a definir variação do tamanho do recurso com o tempo"
+msgid ""
+"Calendar defining the efficiency percentage of the resource varying over time"
+msgstr ""
+"Calendário definindo o percentual de eficiência do recurso variando ao longo "
+"do tempo"
 
 #: input/models.py:803 input/models.py:849 input/models.py:903
 #: input/models.py:1109 input/models.py:1369 input/models.py:1563
@@ -4272,7 +4249,7 @@ msgstr "Custo da conversão"
 
 #: input/models.py:855
 msgid "Extra resource used during this changeover"
-msgstr ""
+msgstr "Recurso extra usado durante essa mudança"
 
 #: input/models.py:877
 msgid "setup matrix rule"
@@ -4320,27 +4297,23 @@ msgstr "Transferência de lote"
 
 #: input/models.py:985
 msgid "Quantity to consume or produce per piece"
-msgstr ""
+msgstr "Quantidade para consumir ou produzir por peça"
 
 #: input/models.py:988 input/views/manufacturing.py:399
-#, fuzzy
-#| msgid "demand quantity"
 msgid "fixed quantity"
-msgstr "quantidade da necessidade"
+msgstr "quantidade fixa"
 
 #: input/models.py:993
 msgid "Fixed quantity to consume or produce"
-msgstr ""
+msgstr "Quantidade fixa para consumir ou produzir"
 
 #: input/models.py:1003
 msgid "Consume/produce material at the start or the end of the operationplan"
 msgstr "Consumo/Produção de material no início ou fim do plano de operação"
 
 #: input/models.py:1025
-#, fuzzy
-#| msgid "Priority of this operation material in a group of alternates"
 msgid "Name of this operation material to identify alternates"
-msgstr "Prioriade deste material de operação num grupo de alternativos"
+msgstr "Nome deste material de operação para identificar alternativas"
 
 #: input/models.py:1032
 msgid "Priority of this operation material in a group of alternates"
@@ -4356,11 +4329,12 @@ msgstr "Quantidade de lote a produzir ou consumir"
 
 #: input/models.py:1051 input/views/manufacturing.py:417
 msgid "offset"
-msgstr ""
+msgstr "deslocamento"
 
 #: input/models.py:1054
 msgid "Time offset from the start or end to consume or produce material"
 msgstr ""
+"Tempo compensado desde o início ou fim para consumir ou produzir material"
 
 #: input/models.py:1091
 msgid "operation material"
@@ -4373,38 +4347,29 @@ msgid "operation materials"
 msgstr "materiais de operação"
 
 #: input/models.py:1124
-#, fuzzy
-#| msgid "Setup required on the resource for this operation"
 msgid "Required skill to perform the operation"
-msgstr "Configuração do recurso necessária para esta operação"
+msgstr "Habilidade necessária para realizar a operação"
 
 #: input/models.py:1131
-#, fuzzy
-#| msgid "Size of the resource"
 msgid "Required quantity of the resource"
-msgstr "Tamanho do recurso"
+msgstr "Quantidade necessária do recurso"
 
 #: input/models.py:1134 input/views/manufacturing.py:119
-#, fuzzy
-#| msgid "quantity"
 msgid "quantity fixed"
-msgstr "quantidade"
+msgstr "quantidade fixa"
 
 #: input/models.py:1140
 msgid "Constant part of the capacity consumption (bucketized resources only)"
 msgstr ""
+"Parte constante do consumo de capacidade (somente recursos bucketizados)"
 
 #: input/models.py:1162
-#, fuzzy
-#| msgid "Priority of this operation material in a group of alternates"
 msgid "Name of this operation resource to identify alternates"
-msgstr "Prioriade deste material de operação num grupo de alternativos"
+msgstr "Nome deste recurso de operação para identificar alternativas"
 
 #: input/models.py:1169
-#, fuzzy
-#| msgid "Priority of this operation material in a group of alternates"
 msgid "Priority of this operation resource in a group of alternates"
-msgstr "Prioriade deste material de operação num grupo de alternativos"
+msgstr "Prioridade deste recurso de operação em um grupo de alternados"
 
 #: input/models.py:1176
 msgid "Setup required on the resource for this operation"
@@ -4443,16 +4408,12 @@ msgid "Purchasing lead time"
 msgstr "Tempo de espera da compra"
 
 #: input/models.py:1293 input/models.py:1296 input/views/purchasing.py:160
-#, fuzzy
-#| msgid "onhand at lead time"
 msgid "soft safety lead time"
-msgstr "em mãos no tempo de espera"
+msgstr ""
 
 #: input/models.py:1299 input/models.py:1302 input/views/purchasing.py:155
-#, fuzzy
-#| msgid "onhand at lead time"
 msgid "hard safety lead time"
-msgstr "em mãos no tempo de espera"
+msgstr ""
 
 #: input/models.py:1311
 msgid "A minimum purchasing quantity"
@@ -4463,10 +4424,8 @@ msgid "A multiple purchasing quantity"
 msgstr "Uma quantidade de compra múltipla"
 
 #: input/models.py:1327
-#, fuzzy
-#| msgid "A minimum purchasing quantity"
 msgid "A maximum purchasing quantity"
-msgstr "Uma quantidade mínima de compra"
+msgstr "Uma quantidade máxima de compra"
 
 #: input/models.py:1334
 msgid "Proposed purchase orders within this window will be grouped together"
@@ -4515,17 +4474,15 @@ msgstr "artigo fornecedores"
 
 #: input/models.py:1479
 msgid "Destination location to be replenished"
-msgstr ""
+msgstr "Local de destino a ser reabastecido"
 
 #: input/models.py:1487
 msgid "Source location shipping the item"
-msgstr ""
+msgstr "Localização de origem do item enviado"
 
 #: input/models.py:1490
-#, fuzzy
-#| msgid "onhand at lead time"
 msgid "Transport lead time"
-msgstr "em mãos no tempo de espera"
+msgstr "Tempo de espera de transporte"
 
 #: input/models.py:1499
 msgid "A minimum shipping quantity"
@@ -4536,13 +4493,12 @@ msgid "A multiple shipping quantity"
 msgstr "Uma quantidade de envio múltipla"
 
 #: input/models.py:1515
-#, fuzzy
-#| msgid "A minimum shipping quantity"
 msgid "A maximum shipping quantity"
-msgstr "Uma quantidade mínima de envio"
+msgstr "Uma quantidade máxima de envio"
 
 #: input/models.py:1522
-msgid "Proposed distribution orders within this window will be grouped together"
+msgid ""
+"Proposed distribution orders within this window will be grouped together"
 msgstr ""
 
 #: input/models.py:1532
@@ -4550,14 +4506,12 @@ msgid "Shipping cost per unit"
 msgstr "Custo de envio por unidade"
 
 #: input/models.py:1542 input/views/inventory.py:383
-#, fuzzy
-#| msgid "priority"
 msgid "push priority"
-msgstr "prioridade"
+msgstr "empurrar prioridade"
 
 #: input/models.py:1545
 msgid "Priority for the push mode"
-msgstr ""
+msgstr "Prioridade para o modo push"
 
 #: input/models.py:1569
 msgid "Resource to model the distribution capacity"
@@ -4605,36 +4559,20 @@ msgstr "aberto"
 msgid "closed"
 msgstr "fechada"
 
-#: input/models.py:1637
-#, fuzzy
-#| msgid "dependent demand"
-msgid "independent"
-msgstr "demanda dependente"
-
 #: input/models.py:1638
 msgid "all together"
 msgstr ""
 
 #: input/models.py:1639
-#, fuzzy
-#| msgid "destination"
 msgid "in ratio"
-msgstr "destino"
+msgstr ""
 
 #: input/models.py:1672
-#, fuzzy
-#| msgid "Due date of the demand/forecast"
 msgid "Due date of the sales order"
-msgstr "Data de vencimento da venda/previsão"
+msgstr "Data de vencimento da ordem de vendas"
 
 #: input/models.py:1682
-#, fuzzy
-#| msgid "Status of the demand. Only \"open\" demands are planned"
 msgid "Status of the demand. Only \"open\" and \"quote\" demands are planned"
-msgstr "Estado da necessidade. Apenas necessidades em \"aberto\" são planejadas"
-
-#: input/models.py:1719 input/views/sales.py:358
-msgid "policy"
 msgstr ""
 
 #: input/models.py:1725
@@ -4642,10 +4580,8 @@ msgid "Defines how sales orders are shipped together"
 msgstr ""
 
 #: input/models.py:1733 input/models.py:1867
-#, fuzzy
-#| msgid "last name"
 msgid "MTO batch name"
-msgstr "último nome"
+msgstr "Nome do lote MTO"
 
 #: input/models.py:1735 input/models.py:1841 input/views/capacity.py:658
 #: input/views/inventory.py:1078 input/views/inventory.py:1780
@@ -4679,10 +4615,8 @@ msgid "distribution order"
 msgstr "ordem de distribuição"
 
 #: input/models.py:1777 input/models.py:3006
-#, fuzzy
-#| msgid "delivery date"
 msgid "delivery order"
-msgstr "data de entrega"
+msgstr "ordem de entrega"
 
 #: input/models.py:1782 input/models.py:2231 input/models.py:2302
 #: input/views/capacity.py:995 input/views/inventory.py:1321
@@ -4711,7 +4645,7 @@ msgstr "confirmado"
 #: input/views/inventory.py:1342 input/views/inventory.py:2001
 #: input/views/manufacturing.py:2324 input/views/purchasing.py:1232
 msgid "completed"
-msgstr ""
+msgstr "concluído"
 
 #: input/models.py:1803
 msgid "Status of the order"
@@ -4722,10 +4656,8 @@ msgid "Order type"
 msgstr "Tipo de ordem"
 
 #: input/models.py:1817 input/views/manufacturing.py:1922
-#, fuzzy
-#| msgid "planned quantity"
 msgid "completed quantity"
-msgstr "quantidade planejada"
+msgstr ""
 
 #: input/models.py:1820 inventoryplanning/models.py:423
 msgid "color"
@@ -4752,47 +4684,33 @@ msgid "operationplans"
 msgstr "planooperações"
 
 #: input/models.py:2265
-#, fuzzy
-#| msgid "Task status"
 msgid "load status"
-msgstr "Estado da tarefa"
+msgstr "situação de carregamento"
 
 #: input/models.py:2270
-#, fuzzy
-#| msgid "Status of the order"
 msgid "Status of the resource assignment"
-msgstr "Estado da ordem"
+msgstr "Situação da atribuição de recursos"
 
 #: input/models.py:2295 input/models.py:2296 input/views/capacity.py:308
-#, fuzzy
-#| msgid "resource skill"
 msgid "resource detail"
-msgstr "recurso habilidade"
+msgstr "detalhe de recurso"
 
 #: input/models.py:2342 input/views/inventory.py:1961
-#, fuzzy
-#| msgid "material alerts"
 msgid "material status"
-msgstr "alertas de material"
+msgstr "situação do material"
 
 #: input/models.py:2347
-#, fuzzy
-#| msgid "Batch size by in which material is produced or consumed"
 msgid "status of the material production or consumption"
-msgstr "Quantidade de lote a produzir ou consumir"
+msgstr "situação do material de produção ou consumo"
 
 #: input/models.py:2381 input/views/inventory.py:992
-#, fuzzy
-#| msgid "shipping queue"
 msgid "shipping date"
-msgstr "fila de envios"
+msgstr "data de envio"
 
 #: input/models.py:2384 input/models.py:2426 input/views/inventory.py:998
 #: input/views/purchasing.py:872
-#, fuzzy
-#| msgid "bucket date"
 msgid "receipt date"
-msgstr "data do intervalo"
+msgstr "data de recebimento"
 
 #: input/models.py:2417 input/templates/admin/input/item/change_form.html:55
 #: input/templates/admin/input/itemdistribution/change_form.html:13
@@ -4804,70 +4722,20 @@ msgid "distribution orders"
 msgstr "ordens de distribuição"
 
 #: input/models.py:2423 input/views/purchasing.py:866
-#, fuzzy
-#| msgid "end date"
 msgid "ordering date"
-msgstr "data de fim"
+msgstr "data de encomenda"
 
 #: input/models.py:3007 input/views/sales.py:583 input/views/sales.py:980
-#, fuzzy
-#| msgid "delivery date"
 msgid "delivery orders"
-msgstr "data de entrega"
-
-#: input/templates/input/calendardetail.html:40
-#, fuzzy
-#| msgid "Monday"
-msgid "monday"
-msgstr "Segunda-feira"
-
-#: input/templates/input/calendardetail.html:44
-#, fuzzy
-#| msgid "Tuesday"
-msgid "tuesday"
-msgstr "Terça-feira"
-
-#: input/templates/input/calendardetail.html:48
-#, fuzzy
-#| msgid "Wednesday"
-msgid "wednesday"
-msgstr "Quarta-feira"
-
-#: input/templates/input/calendardetail.html:52
-#, fuzzy
-#| msgid "Thursday"
-msgid "thursday"
-msgstr "Quinta-feira"
-
-#: input/templates/input/calendardetail.html:56
-#, fuzzy
-#| msgid "Friday"
-msgid "friday"
-msgstr "Sexta-feira"
-
-#: input/templates/input/calendardetail.html:60
-#, fuzzy
-#| msgid "Saturday"
-msgid "saturday"
-msgstr "Sábado"
-
-#: input/templates/input/calendardetail.html:64
-#, fuzzy
-#| msgid "Sunday"
-msgid "sunday"
-msgstr "Domingo"
+msgstr "pedidos de entrega"
 
 #: input/templates/input/operationplanreport.html:303
-#, fuzzy
-#| msgid "display table"
 msgid "display kanban cards"
-msgstr "mostrar tabela"
+msgstr "exibir cartões kanban"
 
 #: input/templates/input/operationplanreport.html:307
-#, fuzzy
-#| msgid "display table"
 msgid "display calendar"
-msgstr "mostrar tabela"
+msgstr "exibir calendário"
 
 #: input/views/capacity.py:78
 msgid "setup rules"
@@ -4888,16 +4756,12 @@ msgid "inventory status"
 msgstr "estado do inventário"
 
 #: input/views/capacity.py:630 input/views/manufacturing.py:1910
-#, fuzzy
-#| msgid "setup duration"
 msgid "net duration"
-msgstr "duração de setup"
+msgstr "duração líquida"
 
 #: input/views/capacity.py:641
-#, fuzzy
-#| msgid "quantity"
 msgid "quantity completed"
-msgstr "quantidade"
+msgstr ""
 
 #: input/views/capacity.py:664 input/views/inventory.py:1085
 #: input/views/inventory.py:1808 input/views/manufacturing.py:1972
@@ -4918,16 +4782,14 @@ msgid "setup duration"
 msgstr "duração de setup"
 
 #: input/views/capacity.py:698 input/views/manufacturing.py:2143
-#, fuzzy
-#| msgid "setup duration"
 msgid "setup duration override"
-msgstr "duração de setup"
+msgstr ""
 
 #: input/views/capacity.py:705 input/views/inventory.py:1112
 #: input/views/inventory.py:1817 input/views/manufacturing.py:2150
 #: input/views/purchasing.py:966
 msgid "feasible"
-msgstr ""
+msgstr "viável"
 
 #: input/views/capacity.py:895 input/views/manufacturing.py:310
 #: output/views/resource.py:113
@@ -4960,17 +4822,17 @@ msgstr "mudar estado para {status}"
 #: input/views/inventory.py:664
 #, python-format
 msgid "in transit in %(loc)s at %(date)s"
-msgstr ""
+msgstr "em trânsito em %(loc)s em %(date)s"
 
 #: input/views/inventory.py:678
 #, python-format
 msgid "received in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "recebido em %(loc)s entre %(date1)s e %(date2)s"
 
 #: input/views/inventory.py:692
 #, python-format
 msgid "shipped from %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "enviados de %(loc)s entre %(date1)s e %(date2)s"
 
 #: input/views/inventory.py:1047 input/views/manufacturing.py:1928
 #: input/views/purchasing.py:896
@@ -4979,17 +4841,13 @@ msgstr "custo total"
 
 #: input/views/inventory.py:1054 input/views/manufacturing.py:1936
 #: input/views/purchasing.py:903
-#, fuzzy
-#| msgid "total orders"
 msgid "total volume"
-msgstr "total de ordens"
+msgstr "volume total"
 
 #: input/views/inventory.py:1061 input/views/manufacturing.py:1944
 #: input/views/purchasing.py:910
-#, fuzzy
-#| msgid "total ordering"
 msgid "total weight"
-msgstr "tatal das ordens"
+msgstr "peso total"
 
 #: input/views/inventory.py:1094 input/views/manufacturing.py:2019
 #: input/views/purchasing.py:949
@@ -5007,10 +4865,8 @@ msgid "end items"
 msgstr "artigos finais"
 
 #: input/views/inventory.py:1378
-#, fuzzy
-#| msgid "Inventory status"
 msgid "Inventory detail"
-msgstr "Estado do inventário"
+msgstr "Detalhes do inventário"
 
 #: input/views/inventory.py:1740
 msgid "expected onhand"
@@ -5021,51 +4877,45 @@ msgid "operationplan quantity"
 msgstr "planooperações quantidade"
 
 #: input/views/inventory.py:1792
-#, fuzzy
-#| msgid "operationplan quantity"
 msgid "operationplan quantity completed"
-msgstr "planooperações quantidade"
+msgstr ""
 
 #: input/views/manufacturing.py:1606
 #, python-format
 msgid "work in progress in %(loc)s at %(date)s"
-msgstr ""
+msgstr "trabalho em progresso em %(loc)s em %(date)s"
 
 #: input/views/manufacturing.py:1620
 #, python-format
 msgid "produced in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "produzidos em %(loc)s entre %(date1)s e %(date2)s"
 
 #: input/views/manufacturing.py:1634
 #, python-format
 msgid "consumed in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "consumidos em %(loc)s entre %(date1)s e %(date2)s"
 
 #: input/views/manufacturing.py:1981
 msgid "materials"
 msgstr "materials"
 
 #: input/views/manufacturing.py:2001
-#, fuzzy
-#| msgid "setup"
 msgid "setups"
-msgstr "configuração"
+msgstr "configurações"
 
 #: input/views/purchasing.py:474
 #, python-format
 msgid "on order in %(loc)s at %(date)s"
-msgstr ""
+msgstr "por encomenda em %(loc)s em %(date)s"
 
 #: input/views/purchasing.py:488
 #, python-format
 msgid "on order in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "por encomenda em %(loc)s entre %(date1)s e %(date2)s"
 
 #: input/views/sales.py:334
-#, fuzzy
-#| msgid "Quantity planned for delivery"
 msgid "quantity planned short"
-msgstr "Quantidade planejada para entrega"
+msgstr "curta quantidade planejada"
 
 #: input/views/sales.py:631
 msgid "demand quantity"
@@ -5074,7 +4924,7 @@ msgstr "quantidade da necessidade"
 #: input/views/sales.py:972
 #, python-format
 msgid "delivered from %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "entregue a partir de %(loc)s entre %(date1)s e %(date2)s"
 
 #: input/views/utils.py:103 input/views/utils.py:140 input/views/utils.py:189
 #, python-format
@@ -5208,14 +5058,13 @@ msgstr "Impõe um estoque de segurança de 0 e uma quantidade de nova ordem de 1
 #: inventoryplanning/models.py:111 inventoryplanning/models.py:178
 #: inventoryplanning/models.py:317 inventoryplanning/views.py:277
 #: inventoryplanning/views.py:347
-#, fuzzy
-#| msgid "search mode"
 msgid "Push mode"
-msgstr "modo de pesquisa"
+msgstr "Modo push"
 
 #: inventoryplanning/models.py:114 inventoryplanning/models.py:181
 msgid "Activate stock push mode which moves all inventory downstream"
 msgstr ""
+"Ativar o modo de impulso de estoque que move todo o inventário a jusante"
 
 #: inventoryplanning/models.py:117 inventoryplanning/models.py:124
 #: inventoryplanning/models.py:131 inventoryplanning/models.py:136
@@ -5235,19 +5084,15 @@ msgstr "segmento"
 
 #: inventoryplanning/models.py:186
 msgid "Overrides the decoupled lead time"
-msgstr ""
+msgstr "Substitui o tempo de espera desacoplado"
 
 #: inventoryplanning/models.py:201
-#, fuzzy
-#| msgid "inventory item"
 msgid "inventory policy"
-msgstr "artigo de inventário"
+msgstr "política de inventário"
 
 #: inventoryplanning/models.py:202 inventoryplanning/views.py:206
-#, fuzzy
-#| msgid "inventory item"
 msgid "inventory policies"
-msgstr "artigo de inventário"
+msgstr "políticas de inventário"
 
 #: inventoryplanning/models.py:219 inventoryplanning/views.py:151
 msgid "query"
@@ -5329,40 +5174,28 @@ msgid "open sales orders"
 msgstr "ordens de venda abertas"
 
 #: inventoryplanning/models.py:431 inventoryplanning/views.py:590
-#, fuzzy
-#| msgid "purchase orders"
 msgid "proposed purchase orders"
-msgstr "ordens de compra"
+msgstr "ordens de compra propostas"
 
 #: inventoryplanning/models.py:434 inventoryplanning/views.py:595
-#, fuzzy
-#| msgid "distribution orders"
 msgid "proposed distribution orders"
-msgstr "ordens de distribuição"
+msgstr "ordens de distribuição propostas"
 
 #: inventoryplanning/models.py:437 inventoryplanning/views.py:580
-#, fuzzy
-#| msgid "purchase orders"
 msgid "open purchase orders"
-msgstr "ordens de compra"
+msgstr "ordens de compra abertas"
 
 #: inventoryplanning/models.py:440 inventoryplanning/views.py:630
-#, fuzzy
-#| msgid "Shows purchase orders by ordering date"
 msgid "open purchase orders beyond lead time"
-msgstr "Mostra ordens de compra por data de encomenda"
+msgstr ""
 
 #: inventoryplanning/models.py:446 inventoryplanning/views.py:585
-#, fuzzy
-#| msgid "distribution orders"
 msgid "open distribution orders"
-msgstr "ordens de distribuição"
+msgstr "ordens de distribuição abertas"
 
 #: inventoryplanning/models.py:449
-#, fuzzy
-#| msgid "Shows distribution orders by start date"
 msgid "open distribution orders beyond lead time"
-msgstr "Mostra ordens de distribuição por data de início"
+msgstr ""
 
 #: inventoryplanning/models.py:455
 msgid "onhand value"
@@ -5377,40 +5210,28 @@ msgid "open sales orders value"
 msgstr "valor das ordens de venda abertas"
 
 #: inventoryplanning/models.py:464
-#, fuzzy
-#| msgid "open sales orders value"
 msgid "proposed purchase order value"
-msgstr "valor das ordens de venda abertas"
+msgstr "valor da ordem de compra proposta"
 
 #: inventoryplanning/models.py:467
-#, fuzzy
-#| msgid "distribution order"
 msgid "proposed distribution order value"
-msgstr "ordem de distribuição"
+msgstr "valor da ordem de distribuição proposto"
 
 #: inventoryplanning/models.py:473
-#, fuzzy
-#| msgid "open sales orders value"
 msgid "open purchase order value"
-msgstr "valor das ordens de venda abertas"
+msgstr "valor da ordem de compra aberta"
 
 #: inventoryplanning/models.py:476
-#, fuzzy
-#| msgid "Shows purchase orders by ordering date"
 msgid "open purchase orders beyond lead time value"
-msgstr "Mostra ordens de compra por data de encomenda"
+msgstr ""
 
 #: inventoryplanning/models.py:482
-#, fuzzy
-#| msgid "distribution order"
 msgid "open distribution order value"
-msgstr "ordem de distribuição"
+msgstr "valor da ordem de distribuição aberta"
 
 #: inventoryplanning/models.py:485
-#, fuzzy
-#| msgid "Shows distribution orders by start date"
 msgid "open distribution orders beyond lead time value"
-msgstr "Mostra ordens de distribuição por data de início"
+msgstr ""
 
 #: inventoryplanning/models.py:491 inventoryplanning/views.py:545
 msgid "local forecast"
@@ -5453,10 +5274,8 @@ msgstr "inventário inicial"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:239
 #: output/templates/output/buffer.html:263 output/views/buffer.py:265
-#, fuzzy
-#| msgid "start inventory"
 msgid "start inventory days of cover"
-msgstr "inventário inicial"
+msgstr "iniciar dias do inventário de cobertura"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:240
 #: inventoryplanning/templates/inventoryplanning/drp.html:1556
@@ -5496,7 +5315,7 @@ msgstr "Erro ao extrair dados"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1463
 #: output/templates/output/buffer.html:253
 msgid "Archived"
-msgstr ""
+msgstr "Arquivado"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2156
 msgid "superseded"
@@ -5667,13 +5486,19 @@ msgstr "quantidade económica de ordem calculada"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2913
 msgid "Stocking policy"
-msgstr ""
+msgstr "Política de armazenamento"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2918
-#, fuzzy
-#| msgid "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.\">Constrained plan</span>"
-msgid "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" data-original-title=\"Sets safety stock to 0 and reorder quantity to 1.<br>This item-location will be planned with replenishments matching 1-to-1 with the demand.\" >Do not stock</span>"
-msgstr "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Gerar um plano de fornecimento que respeita todas as restrições.<br>Em caso de carência a venda é planeada com atrasado ou insuficiente.\">Plano com restrições</span>"
+msgid ""
+"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
+"data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
+"<br>This item-location will be planned with replenishments matching 1-to-1 "
+"with the demand.\" >Do not stock</span>"
+msgstr ""
+"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
+"data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
+"<br>This item-location will be planned with replenishments matching 1-to-1 "
+"with the demand.\" >Não estocar</span>"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2928
 #: inventoryplanning/templates/inventoryplanning/drp.html:2947
@@ -5681,10 +5506,14 @@ msgid "true"
 msgstr "verdadeiro"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2937
-#, fuzzy
-#| msgid "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.\">Constrained plan</span>"
-msgid "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" data-original-title=\"In push mode, any excess inventory will be distributed downstream to child locations.\">Activates push mode</span>"
-msgstr "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Gerar um plano de fornecimento que respeita todas as restrições.<br>Em caso de carência a venda é planeada com atrasado ou insuficiente.\">Plano com restrições</span>"
+msgid ""
+"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
+"data-original-title=\"In push mode, any excess inventory will be distributed "
+"downstream to child locations.\">Activates push mode</span>"
+msgstr ""
+"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
+"data-original-title=\"In push mode, any excess inventory will be distributed "
+"downstream to child locations.\">Ativa o modo push</span>"
 
 #: inventoryplanning/views.py:116
 msgid "segments"
@@ -5707,10 +5536,8 @@ msgid "on hand"
 msgstr "em mãos"
 
 #: inventoryplanning/views.py:636
-#, fuzzy
-#| msgid "Shows distribution orders by start date"
 msgid "open distribution order beyond lead time"
-msgstr "Mostra ordens de distribuição por data de início"
+msgstr ""
 
 #: inventoryplanning/views.py:1607
 msgid "Buy"
@@ -5729,10 +5556,9 @@ msgid "Invalid number"
 msgstr "Número inválido"
 
 #: inventoryplanning/views.py:2501
-#, fuzzy, python-format
-#| msgid "Change"
+#, python-format
 msgid "Changed %s."
-msgstr "Modificar"
+msgstr "Mudei de %s."
 
 #: inventoryplanning/views.py:2528
 msgid "No forecast found"
@@ -5787,62 +5613,48 @@ msgid "admin"
 msgstr "admin"
 
 #: metrics/attributes.py:19
-#, fuzzy
-#| msgid "constrained demand"
 msgid "count of late demands"
-msgstr "demanda restringida"
+msgstr "contagem de demandas atrasadas"
 
 #: metrics/attributes.py:20 metrics/widget.py:59
-#, fuzzy
-#| msgid "Due date of the demand/forecast"
 msgid "quantity of late demands"
-msgstr "Data de vencimento da venda/previsão"
+msgstr "quantidade de demandas atrasadas"
 
 #: metrics/attributes.py:21
-#, fuzzy
-#| msgid "Delivery date of the demand"
 msgid "value of late demand"
-msgstr "Data de entrega da demanda"
+msgstr "valor da demanda atrasada"
 
 #: metrics/attributes.py:24
-#, fuzzy
-#| msgid "constrained demand"
 msgid "count of unplanned demands"
-msgstr "demanda restringida"
+msgstr "contagem de demandas não planejadas"
 
 #: metrics/attributes.py:31
-#, fuzzy
-#| msgid "Quantity planned for delivery"
 msgid "quantity of unplanned demands"
-msgstr "Quantidade planejada para entrega"
+msgstr "quantidade de demandas não planejadas"
 
 #: metrics/attributes.py:38
 msgid "value of unplanned demands"
-msgstr ""
+msgstr "valor de demandas não planejadas"
 
 #: metrics/attributes.py:51
 msgid "count of capacity overload problems"
-msgstr ""
+msgstr "contagem de problemas de sobrecarga de capacidade"
 
 #: metrics/widget.py:31
 msgid "analyze late demands"
-msgstr ""
+msgstr "analisar demandas atrasadas"
 
 #: metrics/widget.py:32
 msgid "Spot the top items with many late demands"
-msgstr ""
+msgstr "Detectar os primeiros itens com muitas demandas atrasadas"
 
 #: metrics/widget.py:58
-#, fuzzy
-#| msgid "Delivery date of the demand"
 msgid "value of late demands"
-msgstr "Data de entrega da demanda"
+msgstr "valor de demandas atrasadas"
 
 #: metrics/widget.py:60
-#, fuzzy
-#| msgid "Delivery date of the demand"
 msgid "number of late demands"
-msgstr "Data de entrega da demanda"
+msgstr "número de demandas atrasadas"
 
 #: odoo/views.py:48
 msgid "Invalid configuration parameters"
@@ -5861,8 +5673,10 @@ msgid "release"
 msgstr "libertar"
 
 #: openbravo/management/commands/openbravo_import.py:3686
-msgid "Import data changes in the last {{ delta }} days from the ERP into frePPLe."
-msgstr "Importar alterações dos últimos {{ delta }} dias do ERP para o frePPLe."
+msgid ""
+"Import data changes in the last {{ delta }} days from the ERP into frePPLe."
+msgstr ""
+"Importar alterações dos últimos {{ delta }} dias do ERP para o frePPLe."
 
 #: output/models.py:17 output/models.py:41 output/views/constraint.py:105
 #: output/views/problem.py:68
@@ -5897,26 +5711,20 @@ msgstr "carga"
 
 #: output/templates/output/buffer.html:268
 #: output/templates/output/buffer.html:271 output/views/buffer.py:402
-#, fuzzy
-#| msgid "approved and confirmed ends"
 msgid "produced by PO confirmed"
-msgstr "fins aprovados e confirmados"
+msgstr ""
 
 #: output/templates/output/buffer.html:274 output/views/buffer.py:370
-#, fuzzy
-#| msgid "approved and confirmed ends"
 msgid "produced by MO confirmed"
-msgstr "fins aprovados e confirmados"
+msgstr ""
 
 #: output/templates/output/buffer.html:277 output/views/buffer.py:374
 msgid "produced by MO proposed"
 msgstr ""
 
 #: output/templates/output/buffer.html:280 output/views/buffer.py:386
-#, fuzzy
-#| msgid "approved and confirmed ends"
 msgid "produced by DO confirmed"
-msgstr "fins aprovados e confirmados"
+msgstr ""
 
 #: output/templates/output/buffer.html:283 output/views/buffer.py:390
 msgid "produced by DO proposed"
@@ -5931,16 +5739,12 @@ msgid "consumed by MO proposed"
 msgstr ""
 
 #: output/templates/output/buffer.html:292 output/views/buffer.py:335
-#, fuzzy
-#| msgid "consumed"
 msgid "consumed by SO"
-msgstr "consumido"
+msgstr "consumido por SO"
 
 #: output/templates/output/buffer.html:295 output/views/buffer.py:496
-#, fuzzy
-#| msgid "consumed"
 msgid "consumed by Fcst"
-msgstr "consumido"
+msgstr "consumido por Fcst"
 
 #: output/templates/output/buffer.html:298 output/views/buffer.py:329
 msgid "consumed by DO confirmed"
@@ -5951,32 +5755,26 @@ msgid "consumed by DO proposed"
 msgstr ""
 
 #: output/templates/output/buffer.html:309 output/views/buffer.py:412
-#, fuzzy
-#| msgid "total orders"
 msgid "total in progress"
-msgstr "total de ordens"
+msgstr "total em andamento"
 
 #: output/templates/output/buffer.html:312 output/views/buffer.py:444
 msgid "work in progress MO"
-msgstr ""
+msgstr "trabalho em progresso MO"
 
 #: output/templates/output/buffer.html:315 output/views/buffer.py:463
-#, fuzzy
-#| msgid "open orders"
 msgid "on order PO"
-msgstr "ordens abertas"
+msgstr "na ordem PO"
 
 #: output/templates/output/buffer.html:318 output/views/buffer.py:483
 msgid "in transit DO"
-msgstr ""
+msgstr "em trânsito DO"
 
 #: output/templates/output/buffer.html:324
 #: output/templates/output/buffer.html:435 output/views/buffer.py:515
 #: output/views/demand.py:317
-#, fuzzy
-#| msgid "backlog"
 msgid "total backlog"
-msgstr "existências"
+msgstr "backlog total"
 
 #: output/templates/output/buffer.html:432
 msgid "consumed"
@@ -6000,10 +5798,8 @@ msgid "net forecast"
 msgstr "previsão líquida"
 
 #: output/templates/output/demand_forecast.html:152 output/views/demand.py:311
-#, fuzzy
-#| msgid "order backlog"
 msgid "sales order backlog"
-msgstr "ordens atrasadas"
+msgstr "backlog ordem de vendas"
 
 #: output/templates/output/distribution_order_summary.html:215
 #: output/views/operation.py:1122
@@ -6029,17 +5825,13 @@ msgstr "total de recepção"
 
 #: output/templates/output/distribution_order_summary.html:223
 #: output/views/operation.py:1128
-#, fuzzy
-#| msgid "proposed starts"
 msgid "proposed in transit"
-msgstr "inícios propostos"
+msgstr "proposto em trânsito"
 
 #: output/templates/output/distribution_order_summary.html:225
 #: output/views/operation.py:1130
-#, fuzzy
-#| msgid "total starts"
 msgid "total in transit"
-msgstr "total de inícios"
+msgstr "total em trânsito"
 
 #: output/templates/output/operation.html:288
 #: output/templates/output/operation.html:339 output/views/operation.py:247
@@ -6100,17 +5892,13 @@ msgstr "tatal das ordens"
 
 #: output/templates/output/purchase_order_summary.html:223
 #: output/views/operation.py:682
-#, fuzzy
-#| msgid "proposed ordering"
 msgid "proposed on order"
-msgstr "ordens propostas"
+msgstr "proposto em ordem"
 
 #: output/templates/output/purchase_order_summary.html:225
 #: output/views/operation.py:684
-#, fuzzy
-#| msgid "total orders"
 msgid "total on order"
-msgstr "total de ordens"
+msgstr "total em ordem"
 
 #: output/templates/output/resource.html:279 output/views/constraint.py:35
 msgid "overload"
@@ -6121,16 +5909,12 @@ msgid "Inventory report"
 msgstr "Relatório de inventário"
 
 #: output/views/buffer.py:271
-#, fuzzy
-#| msgid "total production"
 msgid "total produced"
-msgstr "total de produção"
+msgstr "total produzido"
 
 #: output/views/buffer.py:278
-#, fuzzy
-#| msgid "total cost"
 msgid "total consumed"
-msgstr "custo total"
+msgstr "total consumido"
 
 #: output/views/buffer.py:285
 msgid "total consumed confirmed"
@@ -6141,46 +5925,32 @@ msgid "total consumed proposed"
 msgstr ""
 
 #: output/views/buffer.py:306
-#, fuzzy
-#| msgid "consumed"
 msgid "consumed by MO"
-msgstr "consumido"
+msgstr "consumido por MO"
 
 #: output/views/buffer.py:322
-#, fuzzy
-#| msgid "consumed"
 msgid "consumed by DO"
-msgstr "consumido"
+msgstr "consumido pelo DO"
 
 #: output/views/buffer.py:339
-#, fuzzy
-#| msgid "total production"
 msgid "total produced confirmed"
-msgstr "total de produção"
+msgstr ""
 
 #: output/views/buffer.py:351
-#, fuzzy
-#| msgid "total production"
 msgid "total produced proposed"
-msgstr "total de produção"
+msgstr ""
 
 #: output/views/buffer.py:363
-#, fuzzy
-#| msgid "produced"
 msgid "produced by MO"
-msgstr "produzido"
+msgstr "produzido por MO"
 
 #: output/views/buffer.py:379
-#, fuzzy
-#| msgid "produced"
 msgid "produced by DO"
-msgstr "produzido"
+msgstr "produzido por DO"
 
 #: output/views/buffer.py:395
-#, fuzzy
-#| msgid "produced"
 msgid "produced by PO"
-msgstr "produzido"
+msgstr "produzido por PO"
 
 #: output/views/buffer.py:406
 msgid "produced by PO proposed"
@@ -6203,10 +5973,8 @@ msgid "work in progress MO proposed"
 msgstr ""
 
 #: output/views/buffer.py:470
-#, fuzzy
-#| msgid "confirmed"
 msgid "on order PO confirmed"
-msgstr "confirmado"
+msgstr ""
 
 #: output/views/buffer.py:478
 msgid "on order PO proposed"
@@ -6222,11 +5990,8 @@ msgstr ""
 
 #: output/views/buffer.py:521 output/views/demand.py:80
 #: output/views/demand.py:318
-#, fuzzy
-#| msgctxt "forecast method"
-#| msgid "Seasonal"
 msgid "reasons"
-msgstr "Sazonal"
+msgstr "razões"
 
 #: output/views/constraint.py:29
 msgid "material"
@@ -6301,16 +6066,12 @@ msgid "Demand plan"
 msgstr "Plano de demanda"
 
 #: output/views/pegging.py:66
-#, fuzzy
-#| msgid "description"
 msgid "item description"
-msgstr "descrição"
+msgstr "descrição do item"
 
 #: output/views/pegging.py:80
-#, fuzzy
-#| msgid "resource quantity"
 msgid "required quantity"
-msgstr "quantidade do recurso"
+msgstr "quantidade necessária"
 
 #: output/views/problem.py:55
 msgid "Problem report"
@@ -6325,10 +6086,8 @@ msgid "utilization %"
 msgstr "utilização %"
 
 #: output/views/resource.py:172
-#, fuzzy
-#| msgid "available"
 msgid "available calendar"
-msgstr "disponível"
+msgstr "calendário disponível"
 
 #: output/views/resource.py:255
 msgid "hours"
@@ -6468,7 +6227,9 @@ msgid "delivery performance"
 msgstr "performance nas entregas"
 
 #: output/widget.py:1868
-msgid "Shows the percentage of demands that are planned to be shipped completely on time"
+msgid ""
+"Shows the percentage of demands that are planned to be shipped completely on "
+"time"
 msgstr "Percentagem de necessidades planejadas que vão ser expedidas a tempo"
 
 #: output/widget.py:1914
@@ -6486,20 +6247,16 @@ msgstr "cotações"
 #: reportmanager/models.py:22
 #: reportmanager/templates/reportmanager/reportmanager.html:210
 #: reportmanager/views.py:122
-#, fuzzy
-#| msgid "query"
 msgid "SQL query"
-msgstr "consulta"
+msgstr "Consulta SQL"
 
 #: reportmanager/models.py:95 reportmanager/views.py:616
-#, fuzzy
-#| msgid "Demand report"
 msgid "my report"
-msgstr "Relatório da demanda"
+msgstr "meu relatório"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:94
 msgid "Saving the report failed"
-msgstr ""
+msgstr "Falha ao salvar o relatório"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:167
 msgid "format SQL query"
@@ -6508,23 +6265,19 @@ msgstr ""
 #: reportmanager/templates/reportmanager/reportmanager.html:197
 #: reportmanager/views.py:123
 msgid "public"
-msgstr ""
+msgstr "público"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:217
 msgid "schema"
-msgstr ""
+msgstr "esquema"
 
 #: reportmanager/templates/reportmanager/schema.html:8
-#, fuzzy
-#| msgid "data tables"
 msgid "table"
-msgstr "tabelas de dados"
+msgstr "mesa"
 
 #: reportmanager/views.py:291
-#, fuzzy
-#| msgid "customer"
 msgid "Add custom report"
-msgstr "cliente"
+msgstr "Adicionar relatório personalizado"
 
 #: retail/management/commands/runpartitions.py:35
 msgid "Runs all the partitions"
@@ -6595,153 +6348,117 @@ msgid "Ukrainian"
 msgstr "Ucraniano"
 
 #: settings.py:496
-#, fuzzy
-#| msgid "active"
 msgid "activity"
-msgstr "ativo"
+msgstr "atividade"
 
 #: webservice/management/commands/runwebservice.py:196
 msgid "web service"
 msgstr "serviço web"
 
 #: webservice/templates/commands/runwebservice.html:9
-#, fuzzy
-#| msgid "web service"
 msgid "Start the web service."
-msgstr "serviço web"
+msgstr "Inicie o serviço web."
 
 #: webservice/templates/commands/runwebservice.html:14
 msgid "Stop"
-msgstr ""
+msgstr "Parar"
 
 #: webservice/templates/commands/runwebservice.html:17
-#, fuzzy
-#| msgid "web service"
 msgid "Stop the web service."
-msgstr "serviço web"
+msgstr "Parar o serviço web."
 
 #: wizard/templates/wizard/features.html:6
 #: wizard/templates/wizard/features.html:11
 #: wizard/templates/wizard/index.html:12
 msgid "explore features"
-msgstr ""
+msgstr "explorar funcionalidades"
 
 #: wizard/templates/wizard/features.html:19
 #: wizard/templates/wizard/index.html:20
 msgid "dashboard"
-msgstr ""
+msgstr "painel de controle"
 
 #: wizard/templates/wizard/quickstart_forecast.html:61
 #: wizard/templates/wizard/quickstart_production.html:396
-#, fuzzy
-#| msgid "file name"
 msgid "item name"
-msgstr "nome do ficheiro"
+msgstr "nome do item"
 
 #: wizard/templates/wizard/quickstart_forecast.html:73
 #: wizard/templates/wizard/quickstart_production.html:408
-#, fuzzy
-#| msgid "location"
 msgid "location name"
-msgstr "localização"
+msgstr "nome do local"
 
 #: wizard/templates/wizard/quickstart_forecast.html:85
 #: wizard/templates/wizard/quickstart_production.html:420
-#, fuzzy
-#| msgid "customer"
 msgid "customer name"
-msgstr "cliente"
+msgstr "nome do cliente"
 
 #: wizard/templates/wizard/quickstart_forecast.html:92
 #, python-format
 msgid "Sales history in the last %(buckets)s"
-msgstr ""
+msgstr "Histórico de vendas nos últimos %(buckets)s"
 
 #: wizard/templates/wizard/quickstart_forecast.html:97
 msgid "a list of integers:eg 10  20  30"
-msgstr ""
+msgstr "uma lista de inteiros:eg 10 20 30"
 
 #: wizard/templates/wizard/quickstart_production.html:130
-#, fuzzy
-#| msgid "supplier"
 msgid "supplier name"
-msgstr "fornecedor"
+msgstr "nome do fornecedor"
 
 #: wizard/templates/wizard/quickstart_production.html:142
-#, fuzzy
-#| msgid "lead time"
 msgid "lead time (in days)"
-msgstr "tempo de espera"
+msgstr "tempo de espera (em dias)"
 
 #: wizard/templates/wizard/quickstart_production.html:169
-#, fuzzy
-#| msgid "operation"
 msgid "operation name"
-msgstr "operação"
+msgstr "nome da operação"
 
 #: wizard/templates/wizard/quickstart_production.html:181
-#, fuzzy
-#| msgid "fixed_time"
 msgid "fixed time"
-msgstr "tempo_fixo"
+msgstr "tempo fixo"
 
 #: wizard/templates/wizard/quickstart_production.html:193
-#, fuzzy
-#| msgid "time_per"
 msgid "time per piece"
-msgstr "tempo_por"
+msgstr "tempo por peça"
 
 #: wizard/templates/wizard/quickstart_production.html:210
-#, fuzzy
-#| msgid "resource"
 msgid "resource name"
-msgstr "recurso"
+msgstr "nome do recurso"
 
 #: wizard/templates/wizard/quickstart_production.html:217
-#, fuzzy
-#| msgid "consumed"
 msgid "consumed items"
-msgstr "consumido"
+msgstr "itens consumidos"
 
 #: wizard/templates/wizard/quickstart_production.html:222
 #: wizard/templates/wizard/quickstart_production.html:303
 msgid "component or subassembly item name"
-msgstr ""
+msgstr "nome do item componente ou submontagem"
 
 #: wizard/templates/wizard/quickstart_production.html:226
 #: wizard/templates/wizard/quickstart_production.html:307
-#, fuzzy
-#| msgid "load quantity"
 msgid "consumed quantity"
-msgstr "quantidade de carga"
+msgstr "quantidade consumida"
 
 #: wizard/templates/wizard/quickstart_production.html:258
-#, fuzzy
-#| msgid "resource utilization"
 msgid "source location"
-msgstr "utilização de recursos"
+msgstr "localização da fonte"
 
 #: wizard/templates/wizard/quickstart_production.html:263
-#, fuzzy
-#| msgid "new location comment"
 msgid "source location name"
-msgstr "novo comentário de localização"
+msgstr "nome da localização da fonte"
 
 #: wizard/templates/wizard/quickstart_production.html:270
-#, fuzzy
-#| msgid "start time"
 msgid "transport time"
-msgstr "hora de início"
+msgstr "tempo de transporte"
 
 #: wizard/templates/wizard/quickstart_production.html:275
 msgid "transport time (in days)"
-msgstr ""
+msgstr "tempo de transporte (em dias)"
 
 #: wizard/templates/wizard/quickstart_production.html:384
-#, fuzzy
-#| msgid "open sales orders value"
 msgid "unique sales order name"
-msgstr "valor das ordens de venda abertas"
+msgstr "nome único de pedido de vendas"
 
 #: wizard/templates/wizard/quickstart_production.html:439
 #: wizard/templates/wizard/quickstart_production.html:444
@@ -6749,69 +6466,33 @@ msgid "due date"
 msgstr "data de vencimento"
 
 #: wizard/templates/wizard/quickstart_production.html:449
-#, fuzzy
-#| msgid "sales order"
 msgid "Create sales order"
-msgstr "ordem de venda"
+msgstr "Criar ordens de venda"
 
 #: wizard/views.py:2296
 msgid "Data loading wizard for forecasting"
-msgstr ""
+msgstr "Assistente de carregamento de dados para previsão"
 
 #: wizard/views.py:2298
 msgid "Data loading wizard for inventory planning"
-msgstr ""
+msgstr "Assistente de carregamento de dados para planejamento de inventário"
 
 #: wizard/views.py:2300
 msgid "Data loading wizard for production planning"
-msgstr ""
+msgstr "Assistente de carregamento de dados para planejamento de produção"
 
 #: wizard/views.py:2302
 msgid "Get started - Data loading wizard"
-msgstr ""
+msgstr "Comece - Assistente de carregamento de dados"
 
 #: wizard/views.py:2433
 msgid "Quickstart production planning"
-msgstr ""
+msgstr "Início rápido planejamento de produção"
 
 #: wizard/views.py:2685
-#, fuzzy
-#| msgid "local forecast"
 msgid "Quickstart forecasting"
-msgstr "previsão local"
+msgstr "Previsão rápida"
 
 #: wizard/views.py:2691
-#, fuzzy
-#| msgid "quarter"
 msgid "quarters"
-msgstr "trimestre"
-
-#, fuzzy
-#~| msgid "Add"
-#~ msgid "add"
-#~ msgstr "Adicionar"
-
-#, fuzzy
-#~| msgid "buffer"
-#~ msgid "is_ip_buffer"
-#~ msgstr "reserva"
-
-#~ msgid "cancel"
-#~ msgstr "cancelar"
-
-#, fuzzy
-#~| msgid "Delete"
-#~ msgid "delete"
-#~ msgstr "Apagar"
-
-#~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
-#~ msgstr "Data inválida: espera-se YYYY-MM-DD HH:MM:SS"
-
-#~ msgid "Too many objects to display"
-#~ msgstr "Demasiados objectos para mostrar"
-
-#~ msgid "setup time"
-#~ msgstr "tempo de setup"
-
-#~ msgid "material excess"
-#~ msgstr "excesso de material"
+msgstr "alojamentos"

@@ -8,14 +8,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2021-05-06 17:04+0200\n"
+"PO-Revision-Date: 2022-10-26 17:01+0200\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 2.4.3\n"
 
 #: common/static/js/frepple.js:195 common/static/js/frepple.min.js:11
@@ -185,14 +186,6 @@ msgstr ""
 #: common/static/js/frepple.min.js:11
 msgid "Using this link external applications can pull data from frePPLe"
 msgstr ""
-
-#: common/static/js/frepple.js:1242 common/static/js/frepple.js:1294
-#: common/static/js/frepple.js:1336 common/static/js/frepple.js:1370
-#: common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Copy to Clipboard"
-msgid "Copy to clipboard"
-msgstr "Копіювати в буфер обміну"
 
 #: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
 #: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
@@ -409,29 +402,9 @@ msgstr "Скасовано"
 msgid "%s records processed"
 msgstr ""
 
-#: common/static/js/frepple.js:3954 common/static/js/frepple.min.js:11
-msgid "Follow"
-msgstr ""
-
-#: common/static/js/frepple.js:3967 common/static/js/frepple.min.js:11
-msgid "Update"
-msgstr ""
-
 #: common/static/js/frepple.js:3973 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "Manage notifications of %s"
-msgstr ""
-
-#: common/static/js/frepple.js:3981 common/static/js/frepple.min.js:11
-msgid "Following"
-msgstr ""
-
-#: common/static/js/frepple.js:4002 common/static/js/frepple.min.js:11
-msgid "Add followers"
-msgstr ""
-
-#: common/static/js/frepple.min.js:11
-msgid "OR"
 msgstr ""
 
 #: common/static/js/frepple.min.js:11
@@ -459,45 +432,9 @@ msgid "current inventory"
 msgstr "поточний запас"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:63
-#: planningboard/static/planningboard/src/module.js:67
-#: planningboard/static/planningboard/src/planningboard.js:859
-#: planningboard/static/planningboard/src/planningboard.js:863
-#: planningboard/static/planningboard/src/planningboard.js:884
-#: planningboard/static/planningboard/src/planningboard.js:885
-msgid "minutes"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:65
-#: planningboard/static/planningboard/src/planningboard.js:861
-#: planningboard/static/planningboard/src/planningboard.js:892
-#: planningboard/static/planningboard/src/planningboard.js:893
-msgid "seconds"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:69
 #: planningboard/static/planningboard/src/planningboard.js:865
 #: planningboard/static/planningboard/src/planningboard.js:876
 #: planningboard/static/planningboard/src/planningboard.js:877
 msgid "hours"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:880
-#: planningboard/static/planningboard/src/planningboard.js:881
-msgid "hour"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:888
-#: planningboard/static/planningboard/src/planningboard.js:889
-msgid "minute"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:895
-#: planningboard/static/planningboard/src/planningboard.js:896
-msgid "second"
-msgstr ""
+msgstr "години"

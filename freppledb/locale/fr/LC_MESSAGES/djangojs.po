@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2021-12-29 14:20+0100\n"
+"PO-Revision-Date: 2022-10-26 18:16+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.2\n"
 
 #: common/static/js/frepple.js:195 common/static/js/frepple.min.js:11
 msgid "Connection failed"
@@ -67,7 +67,7 @@ msgstr "Enregistrer"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:338
 msgid "Return to page"
-msgstr ""
+msgstr "Retourner à la page"
 
 #: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
 msgid "select"
@@ -190,7 +190,9 @@ msgstr "URL source de données"
 #: common/static/js/frepple.js:1329 common/static/js/frepple.js:1363
 #: common/static/js/frepple.min.js:11
 msgid "Using this link external applications can pull data from frePPLe"
-msgstr "L’utilisation de ce lien permet à des applications externes d'importer des données de frePPLe"
+msgstr ""
+"L’utilisation de ce lien permet à des applications externes d'importer des "
+"données de frePPLe"
 
 #: common/static/js/frepple.js:1242 common/static/js/frepple.js:1294
 #: common/static/js/frepple.js:1336 common/static/js/frepple.js:1370
@@ -253,7 +255,7 @@ msgstr "est l’enfant de"
 
 #: common/static/js/frepple.js:1881 common/static/js/frepple.min.js:11
 msgid "is null"
-msgstr ""
+msgstr "est nul"
 
 #: common/static/js/frepple.js:1913 common/static/js/frepple.min.js:11
 msgid "days"
@@ -445,7 +447,7 @@ msgstr "exporter"
 #: forecast/static/forecast/src/forecast.js:941
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Show descriptions"
-msgstr ""
+msgstr "Monter les descriptions"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
@@ -470,7 +472,7 @@ msgstr "stock courant"
 #: planningboard/static/planningboard/src/planningboard.js:884
 #: planningboard/static/planningboard/src/planningboard.js:885
 msgid "minutes"
-msgstr ""
+msgstr "minutes"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:65
@@ -478,7 +480,7 @@ msgstr ""
 #: planningboard/static/planningboard/src/planningboard.js:892
 #: planningboard/static/planningboard/src/planningboard.js:893
 msgid "seconds"
-msgstr ""
+msgstr "secondes"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:69
@@ -486,22 +488,22 @@ msgstr ""
 #: planningboard/static/planningboard/src/planningboard.js:876
 #: planningboard/static/planningboard/src/planningboard.js:877
 msgid "hours"
-msgstr ""
+msgstr "heures"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:880
 #: planningboard/static/planningboard/src/planningboard.js:881
 msgid "hour"
-msgstr ""
+msgstr "heure"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:888
 #: planningboard/static/planningboard/src/planningboard.js:889
 msgid "minute"
-msgstr ""
+msgstr "minute"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:895
 #: planningboard/static/planningboard/src/planningboard.js:896
 msgid "second"
-msgstr ""
+msgstr "seconde"

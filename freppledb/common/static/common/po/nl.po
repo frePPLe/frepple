@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-05-06 16:46+0200\n"
+"PO-Revision-Date: 2022-10-26 16:32+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -171,9 +171,7 @@ msgstr "Geef zoektermen in"
 
 #: freppledb/forecast/static/forecast/forecast.html:426
 msgid "Estimated forecast error"
-msgstr ""
-"G\n"
-"eschatte forecast error"
+msgstr "Geschatte forecast error"
 
 #: freppledb/forecast/static/forecast/forecast.html:372
 msgid "Forecast method"

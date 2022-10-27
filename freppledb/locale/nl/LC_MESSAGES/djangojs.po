@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2021-05-06 16:46+0200\n"
+"PO-Revision-Date: 2022-10-26 16:32+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -67,7 +67,7 @@ msgstr "Bewaar"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:338
 msgid "Return to page"
-msgstr ""
+msgstr "Terug naar pagina"
 
 #: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
 msgid "select"
@@ -190,7 +190,9 @@ msgstr "URL van gegevensbron"
 #: common/static/js/frepple.js:1329 common/static/js/frepple.js:1363
 #: common/static/js/frepple.min.js:11
 msgid "Using this link external applications can pull data from frePPLe"
-msgstr "Met behulp van deze link kunnen externe toepassingen gegevens halen uit frePPLe"
+msgstr ""
+"Met behulp van deze link kunnen externe toepassingen gegevens halen uit "
+"frePPLe"
 
 #: common/static/js/frepple.js:1242 common/static/js/frepple.js:1294
 #: common/static/js/frepple.js:1336 common/static/js/frepple.js:1370
@@ -222,7 +224,8 @@ msgstr "Verwijder gegevens"
 #: common/static/js/frepple.js:1614 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr "U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
+msgstr ""
+"U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
 
 #: common/static/js/frepple.js:1617 common/static/js/frepple.js:1666
 #: common/static/js/frepple.js:2281 common/static/js/frepple.js:2371
@@ -253,7 +256,7 @@ msgstr "is kind van"
 
 #: common/static/js/frepple.js:1881 common/static/js/frepple.min.js:11
 msgid "is null"
-msgstr ""
+msgstr "is blanco"
 
 #: common/static/js/frepple.js:1913 common/static/js/frepple.min.js:11
 msgid "days"
@@ -445,7 +448,7 @@ msgstr "exporteer"
 #: forecast/static/forecast/src/forecast.js:941
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Show descriptions"
-msgstr ""
+msgstr "Toon omschrijvingen"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
@@ -470,7 +473,7 @@ msgstr "huidige voorraad"
 #: planningboard/static/planningboard/src/planningboard.js:884
 #: planningboard/static/planningboard/src/planningboard.js:885
 msgid "minutes"
-msgstr ""
+msgstr "minuten"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:65
@@ -478,7 +481,7 @@ msgstr ""
 #: planningboard/static/planningboard/src/planningboard.js:892
 #: planningboard/static/planningboard/src/planningboard.js:893
 msgid "seconds"
-msgstr ""
+msgstr "seconden"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:69
@@ -486,22 +489,22 @@ msgstr ""
 #: planningboard/static/planningboard/src/planningboard.js:876
 #: planningboard/static/planningboard/src/planningboard.js:877
 msgid "hours"
-msgstr ""
+msgstr "uren"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:880
 #: planningboard/static/planningboard/src/planningboard.js:881
 msgid "hour"
-msgstr ""
+msgstr "uur"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:888
 #: planningboard/static/planningboard/src/planningboard.js:889
 msgid "minute"
-msgstr ""
+msgstr "minuten"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/planningboard.js:895
 #: planningboard/static/planningboard/src/planningboard.js:896
 msgid "second"
-msgstr ""
+msgstr "seconde"

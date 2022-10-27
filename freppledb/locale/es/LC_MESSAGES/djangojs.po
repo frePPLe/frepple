@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2021-05-25 08:18+0200\n"
+"PO-Revision-Date: 2022-10-26 16:58+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: es\n"
@@ -32,7 +32,7 @@ msgstr "La conexión falló"
 #: common/static/js/frepple.js:1690 common/static/js/frepple.js:2323
 #: common/static/js/frepple.js:2519 common/static/js/frepple.min.js:11
 msgid "Error"
-msgstr ""
+msgstr "Eror"
 
 #: common/static/js/frepple.js:214 common/static/js/frepple.js:861
 #: common/static/js/frepple.js:2298 common/static/js/frepple.js:2467
@@ -77,23 +77,21 @@ msgstr "seleccionar"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:406
 msgid "days early"
-msgstr ""
+msgstr "dias temprano"
 
 #: common/static/js/frepple.js:564 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:408
 msgid "on time"
-msgstr ""
+msgstr "tiempo"
 
 #: common/static/js/frepple.js:567 common/static/js/frepple.js:569
 #: common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:411
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:413
-#, fuzzy
-#| msgid "days"
 msgid "days late"
-msgstr "días"
+msgstr "dias tardes"
 
 #: common/static/js/frepple.js:709 common/static/js/frepple.min.js:11
 msgid "Select action"
@@ -168,7 +166,7 @@ msgstr "Exportar formato"
 #: common/static/js/frepple.js:1223 common/static/js/frepple.js:1273
 #: common/static/js/frepple.min.js:11
 msgid "Scenarios to export"
-msgstr ""
+msgstr "Escenarios para exportar"
 
 #: common/static/js/frepple.js:1230 common/static/js/frepple.js:1281
 #: common/static/js/frepple.js:1323 common/static/js/frepple.js:1356
@@ -186,19 +184,21 @@ msgstr "Lista de CSV"
 #: common/static/js/frepple.js:1327 common/static/js/frepple.js:1361
 #: common/static/js/frepple.min.js:11
 msgid "Data source URL"
-msgstr ""
+msgstr "URL del origen de datos"
 
 #: common/static/js/frepple.js:1235 common/static/js/frepple.js:1287
 #: common/static/js/frepple.js:1329 common/static/js/frepple.js:1363
 #: common/static/js/frepple.min.js:11
 msgid "Using this link external applications can pull data from frePPLe"
 msgstr ""
+"El uso de este enlace las aplicaciones externas pueden extraer datos de "
+"frePPLe"
 
 #: common/static/js/frepple.js:1242 common/static/js/frepple.js:1294
 #: common/static/js/frepple.js:1336 common/static/js/frepple.js:1370
 #: common/static/js/frepple.min.js:11
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Copiar al portapapeles"
 
 #: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
 #: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
@@ -224,7 +224,8 @@ msgstr "Eliminar datos"
 #: common/static/js/frepple.js:1614 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr "Está a punto de eliminar objetos %s Y TODOS LOS REGISTROS RELACIONADOS!"
+msgstr ""
+"Está a punto de eliminar objetos %s Y TODOS LOS REGISTROS RELACIONADOS!"
 
 #: common/static/js/frepple.js:1617 common/static/js/frepple.js:1666
 #: common/static/js/frepple.js:2281 common/static/js/frepple.js:2371
@@ -247,7 +248,7 @@ msgstr "Búsqueda"
 
 #: common/static/js/frepple.js:1877 common/static/js/frepple.min.js:11
 msgid "within"
-msgstr ""
+msgstr "dentro"
 
 #: common/static/js/frepple.js:1879 common/static/js/frepple.min.js:11
 msgid "is child of"
@@ -272,7 +273,7 @@ msgstr "y"
 
 #: common/static/js/frepple.js:2103 common/static/js/frepple.min.js:11
 msgid "Click ok to confirm deleting the favorite"
-msgstr ""
+msgstr "Haga clic en Aceptar para confirmar la eliminación del favorito"
 
 #: common/static/js/frepple.js:2278 common/static/js/frepple.min.js:11
 msgid "export selected records"
@@ -372,13 +373,13 @@ msgstr "La primera fila debe contener los nombres de los campos."
 
 #: common/static/js/frepple.js:3045 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr "En primer lugar, elimine todos los registros existentes Y TODAS LAS TABLAS RELACIONADAS"
+msgstr ""
+"En primer lugar, elimine todos los registros existentes Y TODAS LAS TABLAS "
+"RELACIONADAS"
 
 #: common/static/js/frepple.js:3052 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "select"
 msgid "files selected"
-msgstr "seleccionar"
+msgstr "archivos seleccionados"
 
 #: common/static/js/frepple.js:3055 common/static/js/frepple.min.js:11
 msgid "Select files"
@@ -402,28 +403,24 @@ msgstr "Cancelar Import"
 
 #: common/static/js/frepple.js:3079 common/static/js/frepple.min.js:11
 msgid "Copy to Clipboard"
-msgstr ""
+msgstr "Copiar al portapapeles"
 
 #: common/static/js/frepple.js:3146 common/static/js/frepple.min.js:11
 msgid "Importing..."
 msgstr "Importar..."
 
 #: common/static/js/frepple.js:3165 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Cancel"
 msgid "Canceled"
-msgstr "Cancelar"
+msgstr "Cancelado"
 
 #: common/static/js/frepple.js:3220 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "%s records processed"
-msgstr ""
+msgstr "%s registros procesados"
 
 #: common/static/js/frepple.js:3954 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Following"
 msgid "Follow"
-msgstr "Siguiendo"
+msgstr "Seguir"
 
 #: common/static/js/frepple.js:3967 common/static/js/frepple.min.js:11
 msgid "Update"
@@ -450,11 +447,6 @@ msgstr "O"
 msgid "export"
 msgstr "exportar"
 
-#: forecast/static/forecast/src/forecast.js:941
-#: forecast/static/js/frepple-forecast.min.js:11
-msgid "Show descriptions"
-msgstr ""
-
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
 msgid "inventory status"
@@ -471,45 +463,9 @@ msgid "current inventory"
 msgstr "inventario actual"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:63
-#: planningboard/static/planningboard/src/module.js:67
-#: planningboard/static/planningboard/src/planningboard.js:859
-#: planningboard/static/planningboard/src/planningboard.js:863
-#: planningboard/static/planningboard/src/planningboard.js:884
-#: planningboard/static/planningboard/src/planningboard.js:885
-msgid "minutes"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:65
-#: planningboard/static/planningboard/src/planningboard.js:861
-#: planningboard/static/planningboard/src/planningboard.js:892
-#: planningboard/static/planningboard/src/planningboard.js:893
-msgid "seconds"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:69
 #: planningboard/static/planningboard/src/planningboard.js:865
 #: planningboard/static/planningboard/src/planningboard.js:876
 #: planningboard/static/planningboard/src/planningboard.js:877
 msgid "hours"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:880
-#: planningboard/static/planningboard/src/planningboard.js:881
-msgid "hour"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:888
-#: planningboard/static/planningboard/src/planningboard.js:889
-msgid "minute"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:895
-#: planningboard/static/planningboard/src/planningboard.js:896
-msgid "second"
-msgstr ""
+msgstr "horas"

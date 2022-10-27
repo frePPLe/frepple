@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2021-05-06 17:07+0200\n"
+"PO-Revision-Date: 2022-10-26 16:58+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: klaus\n"
 "Language: de\n"
@@ -71,12 +71,6 @@ msgstr "Speichern"
 msgid "Return to page"
 msgstr ""
 
-#: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "files selected"
-msgid "select"
-msgstr "Ausgewählte Dateien"
-
 #: common/static/js/frepple.js:562 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:406
@@ -96,12 +90,6 @@ msgstr "pünktlich"
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:413
 msgid "days late"
 msgstr "Tage zu spät"
-
-#: common/static/js/frepple.js:709 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Selected options"
-msgid "Select action"
-msgstr "Ausgewählte Optionen"
 
 #: common/static/js/frepple.js:765 common/static/js/frepple.min.js:11
 msgid "Selected options"
@@ -192,18 +180,6 @@ msgstr "CSV Liste"
 msgid "Data source URL"
 msgstr "Datenquellen-URL"
 
-#: common/static/js/frepple.js:1235 common/static/js/frepple.js:1287
-#: common/static/js/frepple.js:1329 common/static/js/frepple.js:1363
-#: common/static/js/frepple.min.js:11
-msgid "Using this link external applications can pull data from frePPLe"
-msgstr ""
-
-#: common/static/js/frepple.js:1242 common/static/js/frepple.js:1294
-#: common/static/js/frepple.js:1336 common/static/js/frepple.js:1370
-#: common/static/js/frepple.min.js:11
-msgid "Copy to clipboard"
-msgstr ""
-
 #: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
 #: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
 #: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
@@ -256,10 +232,6 @@ msgstr "innerhalb von"
 #: common/static/js/frepple.js:1879 common/static/js/frepple.min.js:11
 msgid "is child of"
 msgstr "ist Kind von"
-
-#: common/static/js/frepple.js:1881 common/static/js/frepple.min.js:11
-msgid "is null"
-msgstr ""
 
 #: common/static/js/frepple.js:1913 common/static/js/frepple.min.js:11
 msgid "days"
@@ -382,16 +354,6 @@ msgstr "Löschen Sie zuerst alle vorhandenen Datensätze UND ALLE RELATED TABLES
 msgid "files selected"
 msgstr "Ausgewählte Dateien"
 
-#: common/static/js/frepple.js:3055 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Selected options"
-msgid "Select files"
-msgstr "Ausgewählte Optionen"
-
-#: common/static/js/frepple.js:3058 common/static/js/frepple.min.js:11
-msgid "or drop them here"
-msgstr ""
-
 #: common/static/js/frepple.js:3067 common/static/js/frepple.min.js:11
 msgid "Data file"
 msgstr "Daten File"
@@ -403,10 +365,6 @@ msgstr "Importiere"
 #: common/static/js/frepple.js:3077 common/static/js/frepple.min.js:11
 msgid "Cancel Import"
 msgstr "Abbruch Importieren"
-
-#: common/static/js/frepple.js:3079 common/static/js/frepple.min.js:11
-msgid "Copy to Clipboard"
-msgstr ""
 
 #: common/static/js/frepple.js:3146 common/static/js/frepple.min.js:11
 msgid "Importing..."
@@ -429,17 +387,6 @@ msgstr "Folgen"
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: common/static/js/frepple.js:3973 common/static/js/frepple.min.js:11
-#, javascript-format
-msgid "Manage notifications of %s"
-msgstr ""
-
-#: common/static/js/frepple.js:3981 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Follow"
-msgid "Following"
-msgstr "Folgen"
-
 #: common/static/js/frepple.js:4002 common/static/js/frepple.min.js:11
 msgid "Add followers"
 msgstr ""
@@ -451,11 +398,6 @@ msgstr "ODER"
 #: common/static/js/frepple.min.js:11
 msgid "export"
 msgstr "Exportieren"
-
-#: forecast/static/forecast/src/forecast.js:941
-#: forecast/static/js/frepple-forecast.min.js:11
-msgid "Show descriptions"
-msgstr ""
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
@@ -473,45 +415,9 @@ msgid "current inventory"
 msgstr "Aktueller Bestand"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:63
-#: planningboard/static/planningboard/src/module.js:67
-#: planningboard/static/planningboard/src/planningboard.js:859
-#: planningboard/static/planningboard/src/planningboard.js:863
-#: planningboard/static/planningboard/src/planningboard.js:884
-#: planningboard/static/planningboard/src/planningboard.js:885
-msgid "minutes"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:65
-#: planningboard/static/planningboard/src/planningboard.js:861
-#: planningboard/static/planningboard/src/planningboard.js:892
-#: planningboard/static/planningboard/src/planningboard.js:893
-msgid "seconds"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:69
 #: planningboard/static/planningboard/src/planningboard.js:865
 #: planningboard/static/planningboard/src/planningboard.js:876
 #: planningboard/static/planningboard/src/planningboard.js:877
 msgid "hours"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:880
-#: planningboard/static/planningboard/src/planningboard.js:881
-msgid "hour"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:888
-#: planningboard/static/planningboard/src/planningboard.js:889
-msgid "minute"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:895
-#: planningboard/static/planningboard/src/planningboard.js:896
-msgid "second"
-msgstr ""
+msgstr "Std"

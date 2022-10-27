@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2021-05-06 16:35+0200\n"
+"PO-Revision-Date: 2022-10-26 17:00+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: ja\n"
@@ -63,12 +63,6 @@ msgstr "変更を保存またはキャンセルしてください"
 msgid "Save"
 msgstr "保存"
 
-#: common/static/js/frepple.js:312 common/static/js/frepple.min.js:11
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:338
-msgid "Return to page"
-msgstr ""
-
 #: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
 msgid "select"
 msgstr "選択"
@@ -90,10 +84,8 @@ msgstr ""
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:411
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:413
-#, fuzzy
-#| msgid "days"
 msgid "days late"
-msgstr "日"
+msgstr ""
 
 #: common/static/js/frepple.js:709 common/static/js/frepple.min.js:11
 msgid "Select action"
@@ -346,10 +338,9 @@ msgid "Delete"
 msgstr "削除"
 
 #: common/static/js/frepple.js:2871 common/static/js/frepple.min.js:11
-#, fuzzy, javascript-format
-#| msgid "No unread messages"
+#, javascript-format
 msgid "%s unread messages"
-msgstr "未読メッセージはありません"
+msgstr ""
 
 #: common/static/js/frepple.js:2876 common/static/js/frepple.min.js:11
 msgid "No unread messages"
@@ -445,11 +436,6 @@ msgstr "または"
 msgid "export"
 msgstr "エクスポート"
 
-#: forecast/static/forecast/src/forecast.js:941
-#: forecast/static/js/frepple-forecast.min.js:11
-msgid "Show descriptions"
-msgstr ""
-
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
 msgid "inventory status"
@@ -466,45 +452,9 @@ msgid "current inventory"
 msgstr "現在の在庫"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:63
-#: planningboard/static/planningboard/src/module.js:67
-#: planningboard/static/planningboard/src/planningboard.js:859
-#: planningboard/static/planningboard/src/planningboard.js:863
-#: planningboard/static/planningboard/src/planningboard.js:884
-#: planningboard/static/planningboard/src/planningboard.js:885
-msgid "minutes"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:65
-#: planningboard/static/planningboard/src/planningboard.js:861
-#: planningboard/static/planningboard/src/planningboard.js:892
-#: planningboard/static/planningboard/src/planningboard.js:893
-msgid "seconds"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:69
 #: planningboard/static/planningboard/src/planningboard.js:865
 #: planningboard/static/planningboard/src/planningboard.js:876
 #: planningboard/static/planningboard/src/planningboard.js:877
 msgid "hours"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:880
-#: planningboard/static/planningboard/src/planningboard.js:881
-msgid "hour"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:888
-#: planningboard/static/planningboard/src/planningboard.js:889
-msgid "minute"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:895
-#: planningboard/static/planningboard/src/planningboard.js:896
-msgid "second"
-msgstr ""
+msgstr "時"

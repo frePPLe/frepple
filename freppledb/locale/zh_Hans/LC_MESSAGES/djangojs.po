@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2021-05-06 17:05+0200\n"
+"PO-Revision-Date: 2022-10-26 17:01+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -29,10 +29,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 2.4.3\n"
-
-#: common/static/js/frepple.js:195 common/static/js/frepple.min.js:11
-msgid "Connection failed"
-msgstr ""
 
 #: common/static/js/frepple.js:208 common/static/js/frepple.js:1641
 #: common/static/js/frepple.js:1690 common/static/js/frepple.js:2323
@@ -75,10 +71,6 @@ msgstr "保存"
 msgid "Return to page"
 msgstr ""
 
-#: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
-msgid "select"
-msgstr ""
-
 #: common/static/js/frepple.js:562 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:406
@@ -98,12 +90,6 @@ msgstr "准时"
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:413
 msgid "days late"
 msgstr "延迟的天数"
-
-#: common/static/js/frepple.js:709 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Selected options"
-msgid "Select action"
-msgstr "选定的选项"
 
 #: common/static/js/frepple.js:765 common/static/js/frepple.min.js:11
 msgid "Selected options"
@@ -200,14 +186,6 @@ msgstr ""
 msgid "Using this link external applications can pull data from frePPLe"
 msgstr ""
 
-#: common/static/js/frepple.js:1242 common/static/js/frepple.js:1294
-#: common/static/js/frepple.js:1336 common/static/js/frepple.js:1370
-#: common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Copy to Clipboard"
-msgid "Copy to clipboard"
-msgstr "复制到剪贴板"
-
 #: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
 #: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
 #: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
@@ -252,10 +230,6 @@ msgstr "你将会复制% s对象"
 #: common/static/js/frepple.js:1814 common/static/js/frepple.min.js:11
 msgid "Search"
 msgstr "搜索"
-
-#: common/static/js/frepple.js:1877 common/static/js/frepple.min.js:11
-msgid "within"
-msgstr ""
 
 #: common/static/js/frepple.js:1879 common/static/js/frepple.min.js:11
 msgid "is child of"
@@ -353,15 +327,6 @@ msgstr "在上面添加新记录"
 msgid "Delete"
 msgstr "删除"
 
-#: common/static/js/frepple.js:2871 common/static/js/frepple.min.js:11
-#, javascript-format
-msgid "%s unread messages"
-msgstr ""
-
-#: common/static/js/frepple.js:2876 common/static/js/frepple.min.js:11
-msgid "No unread messages"
-msgstr ""
-
 #: common/static/js/frepple.js:3008 common/static/js/frepple.min.js:11
 msgid "Installed apps"
 msgstr "已安装的应用程序"
@@ -381,20 +346,6 @@ msgstr "第一行包含了字段名。"
 #: common/static/js/frepple.js:3045 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "首先删除所有存在的记录和所有相关的表"
-
-#: common/static/js/frepple.js:3052 common/static/js/frepple.min.js:11
-msgid "files selected"
-msgstr ""
-
-#: common/static/js/frepple.js:3055 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Selected options"
-msgid "Select files"
-msgstr "选定的选项"
-
-#: common/static/js/frepple.js:3058 common/static/js/frepple.min.js:11
-msgid "or drop them here"
-msgstr ""
 
 #: common/static/js/frepple.js:3067 common/static/js/frepple.min.js:11
 msgid "Data file"
@@ -425,21 +376,9 @@ msgstr "已取消"
 msgid "%s records processed"
 msgstr ""
 
-#: common/static/js/frepple.js:3954 common/static/js/frepple.min.js:11
-msgid "Follow"
-msgstr ""
-
-#: common/static/js/frepple.js:3967 common/static/js/frepple.min.js:11
-msgid "Update"
-msgstr ""
-
 #: common/static/js/frepple.js:3973 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "Manage notifications of %s"
-msgstr ""
-
-#: common/static/js/frepple.js:3981 common/static/js/frepple.min.js:11
-msgid "Following"
 msgstr ""
 
 #: common/static/js/frepple.js:4002 common/static/js/frepple.min.js:11
@@ -447,17 +386,8 @@ msgid "Add followers"
 msgstr ""
 
 #: common/static/js/frepple.min.js:11
-msgid "OR"
-msgstr ""
-
-#: common/static/js/frepple.min.js:11
 msgid "export"
 msgstr "导出"
-
-#: forecast/static/forecast/src/forecast.js:941
-#: forecast/static/js/frepple-forecast.min.js:11
-msgid "Show descriptions"
-msgstr ""
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
@@ -475,45 +405,9 @@ msgid "current inventory"
 msgstr "目前存货"
 
 #: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:63
-#: planningboard/static/planningboard/src/module.js:67
-#: planningboard/static/planningboard/src/planningboard.js:859
-#: planningboard/static/planningboard/src/planningboard.js:863
-#: planningboard/static/planningboard/src/planningboard.js:884
-#: planningboard/static/planningboard/src/planningboard.js:885
-msgid "minutes"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/module.js:65
-#: planningboard/static/planningboard/src/planningboard.js:861
-#: planningboard/static/planningboard/src/planningboard.js:892
-#: planningboard/static/planningboard/src/planningboard.js:893
-msgid "seconds"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:69
 #: planningboard/static/planningboard/src/planningboard.js:865
 #: planningboard/static/planningboard/src/planningboard.js:876
 #: planningboard/static/planningboard/src/planningboard.js:877
 msgid "hours"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:880
-#: planningboard/static/planningboard/src/planningboard.js:881
-msgid "hour"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:888
-#: planningboard/static/planningboard/src/planningboard.js:889
-msgid "minute"
-msgstr ""
-
-#: planningboard/static/js/frepple-planningboard.min.js:11
-#: planningboard/static/planningboard/src/planningboard.js:895
-#: planningboard/static/planningboard/src/planningboard.js:896
-msgid "second"
-msgstr ""
+msgstr "小时"

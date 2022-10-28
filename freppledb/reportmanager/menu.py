@@ -66,5 +66,4 @@ menu.addItem(
     model=SQLReport,
     index=1100,
     admin=True,
-    excludeFromBulkOperations=True,
 )

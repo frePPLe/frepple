@@ -6,6 +6,9 @@
 			<name>prod</name>
 		</location>
 		<location>
+			<name>prod2</name>
+		</location>
+		<location>
 			<name>store</name>
 		</location>
 	</locations>
@@ -39,6 +42,18 @@
 	</resources>
 	<items>
 		<item>
+			<name>comp A</name>
+		</item>
+		<item>
+			<name>comp B</name>
+		</item>
+		<item>
+			<name>comp C</name>
+		</item>
+		<item>
+			<name>complex product</name>
+		</item>
+		<item>
 			<name>consumed item</name>
 			<itemsuppliers>
 				<itemsupplier>
@@ -68,6 +83,45 @@
 		</item>
 	</items>
 	<buffers>
+		<buffer>
+			<name>comp A @ prod2</name>
+			<item>
+				<name>comp A</name>
+			</item>
+			<location>
+				<name>prod2</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>comp B @ prod2</name>
+			<item>
+				<name>comp B</name>
+			</item>
+			<location>
+				<name>prod2</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>comp C @ prod2</name>
+			<item>
+				<name>comp C</name>
+			</item>
+			<location>
+				<name>prod2</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>complex product @ prod2</name>
+			<producing xsi:type="operation_routing">
+				<name>complex product routing</name>
+			</producing>
+			<item>
+				<name>complex product</name>
+			</item>
+			<location>
+				<name>prod2</name>
+			</location>
+		</buffer>
 		<buffer>
 			<name>consumed item @ prod</name>
 			<item>
@@ -100,6 +154,88 @@
 		</buffer>
 	</buffers>
 	<operations>
+		<operation xsi:type="operation_routing">
+			<name>complex product routing</name>
+			<item>
+				<name>complex product</name>
+			</item>
+			<location>
+				<name>prod2</name>
+			</location>
+			<suboperations>
+				<suboperation>
+					<operation xsi:type="operation_time_per">
+						<name>complex product step A</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation xsi:type="operation_time_per">
+						<name>complex product step B</name>
+					</operation>
+					<priority>2</priority>
+				</suboperation>
+				<suboperation>
+					<operation xsi:type="operation_time_per">
+						<name>complex product step C</name>
+					</operation>
+					<priority>3</priority>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>complex product step A</name>
+			<location>
+				<name>prod2</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>comp A</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+			<duration_per>P1D</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>complex product step B</name>
+			<location>
+				<name>prod2</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>comp B</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+			<duration_per>P1D</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>complex product step C</name>
+			<location>
+				<name>prod2</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>comp C</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>complex product</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+			<duration_per>P1D</duration_per>
+		</operation>
 		<operation>
 			<name>prod</name>
 			<item>
@@ -190,6 +326,59 @@
 			<origin>
 				<name>store</name>
 			</origin>
+		</operationplan>
+		<operationplan>
+			<reference>MO#1</reference>
+			<operation xsi:type="operation_routing">
+				<name>complex product routing</name>
+			</operation>
+			<start>2022-01-01T00:00:00</start>
+			<end>2022-01-10T00:00:00</end>
+			<quantity>2</quantity>
+			<status>confirmed</status>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>3</reference>
+			<operation xsi:type="operation_time_per">
+				<name>complex product step A</name>
+			</operation>
+			<start>2022-01-01T00:00:00</start>
+			<end>2022-01-04T00:00:00</end>
+			<quantity>2</quantity>
+			<status>confirmed</status>
+			<feasible>false</feasible>
+			<owner>
+				<reference>MO#1</reference>
+			</owner>
+		</operationplan>
+		<operationplan>
+			<reference>4</reference>
+			<operation xsi:type="operation_time_per">
+				<name>complex product step B</name>
+			</operation>
+			<start>2022-01-04T00:00:00</start>
+			<end>2022-01-07T00:00:00</end>
+			<quantity>2</quantity>
+			<status>confirmed</status>
+			<feasible>false</feasible>
+			<owner>
+				<reference>MO#1</reference>
+			</owner>
+		</operationplan>
+		<operationplan>
+			<reference>5</reference>
+			<operation xsi:type="operation_time_per">
+				<name>complex product step C</name>
+			</operation>
+			<start>2022-01-07T00:00:00</start>
+			<end>2022-01-10T00:00:00</end>
+			<quantity>2</quantity>
+			<status>confirmed</status>
+			<feasible>false</feasible>
+			<owner>
+				<reference>MO#1</reference>
+			</owner>
 		</operationplan>
 		<operationplan>
 			<reference>MO 1</reference>

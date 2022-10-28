@@ -72,7 +72,69 @@
       </loadplans>
     </operationplan>
   </operationplans>
-
+  
+  <operations>
+    <operation name="complex product routing" xsi:type="operation_routing">
+        <item name="complex product"/>
+        <location name="prod2"/>
+        <suboperations>
+            <suboperation>
+                <operation name="complex product step A" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
+                    <location name="prod2"/>
+                    <flows>
+                        <flow xsi:type="flow_start">
+                            <item name="comp A"/>
+                            <quantity>-1</quantity>
+                        </flow>
+                    </flows>
+                </operation>
+                <priority>1</priority>
+            </suboperation>
+            <suboperation>
+                <operation name="complex product step B" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
+                    <location name="prod2"/>
+                    <flows>
+                        <flow xsi:type="flow_start">
+                            <item name="comp B"/>
+                            <quantity>-1</quantity>
+                        </flow>
+                    </flows>
+                </operation>
+                <priority>2</priority>
+            </suboperation>
+            <suboperation>
+                <operation name="complex product step C" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
+                    <location name="prod2"/>
+                    <flows>
+                        <flow xsi:type="flow_start">
+                            <item name="comp C"/>
+                            <quantity>-1</quantity>
+                        </flow>
+                        <flow xsi:type="flow_end">
+                            <item name="complex product"/>
+                            <quantity>1</quantity>
+                        </flow>
+                    </flows>
+                </operation>
+                <priority>3</priority>
+            </suboperation>
+        </suboperations>
+    </operation>
+</operations>
+<operationplans>
+    <operationplan reference="MO#1" start="2022-01-01T00:00:00" quantity="2" status="confirmed">
+        <operation name="complex product routing"/>
+        <flowplans>
+            <flowplan status="confirmed" quantity="-3">
+                <item name="comp A"/>
+            </flowplan>
+            <flowplan status="confirmed" quantity="-4">
+                <item name="comp B"/>
+            </flowplan>
+        </flowplans>
+    </operationplan>
+</operationplans>
+      
 <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()

@@ -181,8 +181,6 @@ def getAttributeFields(
         if related_name_prefix:
             field_name = "%s__%s" % (related_name_prefix, field_name)
             label = "%s - %s" % (related_name_prefix.split("__")[-1], label)
-        else:
-            label = "%s - %s" % (model.__name__, label)
         if fieldtype == "string":
             result.append(
                 GridFieldText(

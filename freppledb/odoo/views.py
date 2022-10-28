@@ -17,6 +17,7 @@
 
 import base64
 import email
+from html.parser import HTMLParser
 import json
 import jwt
 import time
@@ -251,9 +252,20 @@ def Upload(request):
         return HttpResponse("OK")
 
     except HTTPError as e:
-        msg = "Internal server error %s on odoo side" % e.code
-        logger.error(msg)
-        return HttpResponseServerError(msg)
+        odoo_data = e.read()
+        if odoo_data:
+
+            class OdooMsgParser(HTMLParser):
+                def handle_data(self, data):
+                    if "Error processing data" in data:
+                        self.echo = True
+                        logger.error("Odoo stack trace:")
+                    elif hasattr(self, "echo"):
+                        logger.error("Odoo: %s" % data)
+
+            odoo_msg = OdooMsgParser()
+            odoo_msg.feed(odoo_data.decode("utf-8"))
+        return HttpResponseServerError("Internal server error %s on odoo side" % e.code)
 
     except URLError:
         logger.error("Can't connect to the Odoo server")

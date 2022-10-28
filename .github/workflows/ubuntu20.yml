@@ -64,6 +64,7 @@ jobs:
       - name: Odoo integration test
         if: github.event.client_payload.message.branch
         run: |
+          git -C freppledb/odoo/odoo_addon branch -a
           git -C freppledb/odoo/odoo_addon checkout "remotes/origin/${{ github.event.client_payload.message.branch }}"
           sed -i "s/#'freppledb.odoo'/'freppledb.odoo'/g" djangosettings.py
           ./frepplectl.py test freppledb.odoo

@@ -350,6 +350,84 @@
     </demand>
   </demands>
 
+  <!--
+    Case 10: WIP
+  -->
+  <operations>
+    <operation name="WIP routing" xsi:type="operation_routing">
+    	<item name="WIP product"/>
+    	<location name="factory"/>
+        <suboperations>
+          <suboperation>
+          <operation name="WIP product step A" xsi:type="operation_fixed_time" duration="P1D">
+          	<location name="factory"/>
+            <flows>
+              <flow xsi:type="flow_start">
+                <item name="WIP component A" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+          </operation>
+          <priority>1</priority>
+          </suboperation>
+          <suboperation>
+          <operation name="WIP product step B" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
+          	<location name="factory"/>
+            <flows>
+              <flow xsi:type="flow_start">
+                <item name="WIP component B1" />
+                <quantity>-1</quantity>
+              </flow>
+              <flow xsi:type="flow_start">
+                <item name="WIP component B2" />
+                <quantity>-1</quantity>
+              </flow>
+            </flows>
+          </operation>
+          <priority>2</priority>
+          </suboperation>
+          <suboperation>
+          <operation name="WIP product step C" xsi:type="operation_time_per" duration="P1D" duration_per="PT2H">
+          	<location name="factory"/>
+            <flows>
+              <flow xsi:type="flow_start">
+                <item name="WIP component C" />
+                <quantity>-1</quantity>
+              </flow>
+              <flow xsi:type="flow_end">
+                <item name="WIP product"/>
+                <quantity>1</quantity>
+              </flow>
+            </flows>
+          </operation>
+          <priority>3</priority>
+          </suboperation>
+        </suboperations>
+      </operation>
+  </operations>
+  <operationplans>
+	<operationplan>
+      <reference>MO WIP routing</reference>
+      <operation name="WIP routing"/>
+      <start>2009-02-09T00:00:00</start>
+      <start>2009-02-10T00:00:00</start>
+      <quantity>100</quantity>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan>
+      <reference>MO WIP product step C</reference>
+      <operation name="WIP product step C"/>
+      <start>2009-02-01T00:00:00</start>
+      <end>2009-02-03T00:00:00</end>
+      <quantity>100</quantity>
+	  <status>confirmed</status>
+    </operationplan>
+	<operationplan>
+      <reference>MO WIP product step C</reference>
+	  <owner reference="MO WIP routing"/>
+	</operationplan>
+  </operationplans>
+
 <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()

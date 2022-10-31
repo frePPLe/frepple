@@ -110,7 +110,7 @@ jobs:
             **docker container**\: Pull ghcr.io/frepple/frepple:${{ steps.get_version.outputs.tag }}
             **Source code**\: Source code in code zip or gzip format
 
-            Release notes are available on https://frepple.org/docs/current/release-notes.html
+            Release notes are available on https://frepple.com/docs/current/release-notes.html
           files: |
             ${{github.workspace}}/build/contrib/docker/*.deb
             ${{github.workspace}}/build/frepple-doc-*.tgz

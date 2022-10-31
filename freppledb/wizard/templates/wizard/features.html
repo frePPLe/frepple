@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-<div class="row">	
+<div class="row">
     <div class="col-md-12">
         <h1>{% trans "explore features"|capfirst %}
         <div id="toolicons" style="float: right; line-height: 1em">
@@ -20,12 +20,12 @@
               id="dashboardmode" value="dashboard" data-original-title="{% trans "dashboard"|capfirst %}"
               {% if features %}
               onclick="savePreference('freppledb.wizard', {'mode':'dashboard'}, function() {window.location.href = window.location.href;})"
-              {% endif %}>          
+              {% endif %}>
               <span class="fa fa-tachometer"/>
             </button>
           </div>
         </div>
-        </h1> 
+        </h1>
     </div>
 </div>
 <div class="row">
@@ -39,7 +39,7 @@
       <div class="panel-collapse" role="tabpanel">
         <div class="panel-body">
         <div class="pull-right">
-        <iframe width="150px" src="https://www.youtube.com/embed/GVr27OmDP7w" frameborder="0" 
+        <iframe width="150px" src="https://www.youtube.com/embed/GVr27OmDP7w" frameborder="0"
           allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
         <p>FrePPLe is an advanced planning and scheduling tool for your supply chain.</p>
@@ -50,7 +50,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="col-md-4 col-sm-12">
     <div class="panel panel-default" id="explore-4">
       <div class="panel-heading" role="tab" data-toggle="collapse">
@@ -65,17 +65,17 @@
           <p>Create and manage productions plans</p>
           <p>
           <ul>
-          <li class="disc"><p>Finite material and capacity plans created by an <a class="underline" target="_blank" rel="noopener" href="https://frepple.org/docs/current/developer-guide/planning-algorithm.html">intelligent planning algorithm <i class="fa fa-external-link"></i></a></p></li>
+          <li class="disc"><p>Finite material and capacity plans created by an <a class="underline" target="_blank" rel="noopener" href="https://frepple.com/docs/current/developer-guide/planning-algorithm.html">intelligent planning algorithm <i class="fa fa-external-link"></i></a></p></li>
           <li class="disc"><p>Review <a class="underline" href="{{request.prefix}}/resource/">resource loading</a></p></li>
           <li class="disc"><p>Review <a class="underline" href="{{request.prefix}}/data/input/manufacturingorder/">manufacturing orders</a> and track their status</p></li>
-          <li class="disc"><p>Check out the <a class="underline" target="_blank" rel="noopener" href="https://frepple.org/docs/current/videos/production-planning/index.html">you-tube use case videos <i class="fa fa-youtube-play"></i></a></p></li>
+          <li class="disc"><p>Check out the <a class="underline" target="_blank" rel="noopener" href="https://frepple.com/docs/current/videos/production-planning/index.html">you-tube use case videos <i class="fa fa-youtube-play"></i></a></p></li>
           </ul>
           </p>
         </div>
       </div>
     </div>
   </div>
-  
+
   <div class="col-md-4 col-sm-12">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" data-toggle="collapse">
@@ -83,7 +83,7 @@
         <h4 class="panel-title">Explore collaboration</h4>
       </div>
       <div class="panel-collapse" role="tabpanel">
-        <div class="panel-body">     
+        <div class="panel-body">
           <div class="pull-right">
             <a href="{{request.prefix}}/inbox/">
               <img src="/static/img/collaboration-thumbnail.png" style="width:100px" alt="Inbox">
@@ -92,8 +92,8 @@
           <p>Share the plan and track progress<p>
           <ul>
           <li class="disc"><p>
-             <button class="btn btn-xs btn-primary" style="text-transform:capitalize; cursor: default">Follow</button> 
-             items, resources, sales orders, purchase orders, suppliers, ...</p></li>        
+             <button class="btn btn-xs btn-primary" style="text-transform:capitalize; cursor: default">Follow</button>
+             items, resources, sales orders, purchase orders, suppliers, ...</p></li>
           <li class="disc"><p>Get notification emails or <a class="underline" href="{{request.prefix}}/inbox/">messages in your inbox</a>
           upon activity</p></li>
           <li class="disc"><p>Evaluate what-if plans by <a class="underline" href="{{request.prefix}}/execute/#scenario_copy">copying scenarios</a></p></li>
@@ -102,7 +102,7 @@
       </div>
     </div>
   </div>
-  
+
 </div>
 
 <div class="row">
@@ -114,19 +114,19 @@
         <h4 class="panel-title">Explore integration</h4>
       </div>
       <div class="panel-collapse" role="tabpanel">
-        <div class="panel-body">     
+        <div class="panel-body">
           <p>Integrate frepple with your IT systems<p>
           <ul>
           <li class="disc"><p><a class="underline" href="{{request.prefix}}/execute/#importfromfolder">Import data files</a> in CSV or Excel format</p></li>
           <li class="disc"><p><a class="underline" href="{{request.prefix}}/execute/#exporttofolder">Export plan results</a> as CSV and Excel files</p></li>
           <li class="disc"><p>Explore the <a class="underline" href="{{request.prefix}}/api/">REST API</a></p></li>
-          <li class="disc"><p>Learn about the <a rel="noopener" class="underline" target="_blank" href="https://frepple.org/docs/current/integration-guide/odoo-connector.php">odoo connector <i class="fa fa-external-link"></i></a></p></li>
+          <li class="disc"><p>Learn about the <a rel="noopener" class="underline" target="_blank" href="https://frepple.com/docs/current/integration-guide/odoo-connector.php">odoo connector <i class="fa fa-external-link"></i></a></p></li>
           </ul>
         </div>
       </div>
     </div>
   </div>
-  
+
   <div class="col-md-4 col-sm-12">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" data-toggle="collapse">
@@ -143,8 +143,8 @@
               <button class="btn btn-xs btn-primary" style="cursor: default"><span class="fa fa-star"></span></button>
               for each screen</p></li>
           <li class="disc"><p>Add <a class="underline" href="{{request.prefix}}/data/reportmanager/sqlreport/">custom reports</a> with an SQL query</p></li>
-          <li class="disc"><p>Learn how to <a rel="noopener" class="underline" target="_blank" href="https://frepple.org/docs/current/developer-guide/creating-an-extension-app.php">create extension apps <i class="fa fa-external-link"></i></a> in Python</p></li>
-          </ul>        
+          <li class="disc"><p>Learn how to <a rel="noopener" class="underline" target="_blank" href="https://frepple.com/docs/current/developer-guide/creating-an-extension-app.php">create extension apps <i class="fa fa-external-link"></i></a> in Python</p></li>
+          </ul>
         </div>
       </div>
     </div>
@@ -160,14 +160,14 @@
         <div class="panel-body">
         <p>There is a lot more information out there!<p>
         <ul>
-        <li class="disc"><p>Complete <a class="underline" href="https://frepple.org/docs/current" rel="noopener" target="_blank">documentation <i class="fa fa-external-link"></i></li></a></p></li>
-        <li class="disc"><p>Visit the <a class="underline" href="https://groups.google.com/g/frepple-users" rel="noopener" target="_blank">user forum <i class="fa fa-external-link"></i></li></a></p></li>
+        <li class="disc"><p>Complete <a class="underline" href="https://frepple.com/docs/current" rel="noopener" target="_blank">documentation <i class="fa fa-external-link"></i></li></a></p></li>
+        <li class="disc"><p>Visit the <a class="underline" href="https://github.com/frePPLe/frepple/discussions" rel="noopener" target="_blank">user discussion forum <i class="fa fa-external-link"></i></li></a></p></li>
         <li class="disc"><p>Follow us on <a class="underline" href="https://www.linkedin.com/company/frepple/" rel="noopener" target="_blank">linkedin <i class="fa fa-linkedin-square"></i></a></p></li>
         </ul>
         </div>
       </div>
     </div>
   </div>
-  
+
 </div>
 {% endblock %}

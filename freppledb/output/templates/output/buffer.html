@@ -359,7 +359,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['endinv']); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#7B5E08")
+        .attr("stroke","#8BBA00")
         .attr("d", line(data));
     }
     if (fields.has('safetystock'))
@@ -422,42 +422,39 @@ function drawGraphs(jsondata)
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
 
+    // Define legend
+    var code_legend = [];
+    if (cross_idx.includes(parseInt(id_by_field["startoh"])))
+       code_legend.push(['{{_('start inventory')|capfirst}}',"#8BBA00"]);
+    else if (cross_idx.includes(parseInt(id_by_field["endoh"])))
+       code_legend.push(['{{_('end inventory')|capfirst}}',"#8BBA00"]);
+    if (cross_idx.includes(parseInt(id_by_field["safetystock"])))
+       code_legend.push(['{{_('safety stock')|capfirst}}',"#FF0000"]);
+    code_legend.push(['{{_('consumed')|capfirst}}',"#F6BD0F"]);
+    code_legend.push(['{{_('consumed confirmed')|capfirst}}',"#7B5E08"]);
+    code_legend.push(['{{_('produced')|capfirst}}',"#2B95EC"]);
+    code_legend.push(['{{_('produced confirmed')|capfirst}}',"#113C5E"]);
+    if (cross_idx.includes(parseInt(id_by_field["total_backlog"])))
+      code_legend.push(['{{_('total backlog')|capfirst}}',"#000000"]);
+
     // Display legend
     var legend = svg.append("g");
     var cnt = 0;
-
-    var code_dict = {}
-    code_dict["startoh"] = ['{{_('start inventory')|capfirst}}',"#8BBA00"];
-    code_dict["safetystock"] = ['{{_('safety stock')|capfirst}}',"#FF0000"];
-    code_dict["consumed"] = ['{{_('consumed')|capfirst}}',"#F6BD0F"];
-    code_dict["produced"] = ['{{_('produced')|capfirst}}',"#2B95EC"];
-    code_dict["endoh"] = ['{{_('end inventory')|capfirst}}',"#7B5E08"];
-    code_dict["total_backlog"] = ['{{_('total backlog')|capfirst}}',"#000000"];
-
-
-    for (var i in cross_idx)
-    {
-      if (field_by_id[cross_idx[i]] == 'startoh'
-            || field_by_id[cross_idx[i]] == 'safetystock'
-            || field_by_id[cross_idx[i]] == 'consumed'
-            || field_by_id[cross_idx[i]] == 'produced'
-            || field_by_id[cross_idx[i]] == 'endoh'
-            || field_by_id[cross_idx[i]] == 'total_backlog') {
-              legend.append("rect")
-          .attr("x", width + 82)
-          .attr("width", 18)
-          .attr("height", 18)
-          .style("fill", (code_dict[field_by_id[cross_idx[i]]])[1])
-          .attr("transform", "translate(0," + (cnt*20+10) + ")");
-        legend.append("text")
-          .attr("x", width + 76)
-          .attr("y", 9)
-          .attr("dy", ".35em")
-          .style("text-anchor", "end")
-          .text((code_dict[field_by_id[cross_idx[i]]])[0])
-          .attr("transform", "translate(0," + (cnt*20+10) + ")");
-        ++cnt;
-        }
+    for (var i of code_legend) {
+      legend.append("rect")
+        .attr("x", width + 82)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", i[1])
+        .attr("transform", "translate(0," + (cnt*20+10) + ")");
+      legend.append("text")
+        .attr("x", width + 76)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(i[0])
+        .attr("transform", "translate(0," + (cnt*20+10) + ")");
+      ++cnt;
     }{% endif %}
     });
 }

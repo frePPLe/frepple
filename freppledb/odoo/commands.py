@@ -173,6 +173,7 @@ class OdooReadData(PlanTask):
                     }
                 ),
             )
+            response = None
             try:
                 request = Request(url)
                 encoded = base64.encodebytes(
@@ -199,6 +200,8 @@ class OdooReadData(PlanTask):
 
             except HTTPError as e:
                 print("Error connecting to odoo at %s" % url)
+                if not response:
+                    raise e
                 if response.info().get("Content-Encoding") == "gzip":
                     odoo_data = gzip.decompress(e.read())
                 else:

@@ -227,24 +227,24 @@ else:
     # Option 3: International style, default
     DATE_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
-        "Y_m_d"
+        "Y-m-d"
     )
     DATETIME_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
-        "Y_m_d H:i:s"
+        "Y-m-d H:i:s"
     )
     DATE_FORMAT_JS = (
         # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
-        "YYYY_MM_DD"
+        "YYYY-MM-DD"
     )
     DATETIME_FORMAT_JS = (
         # see https://momentjs.com/docs/#/displaying/
-        "YYYY_MM_DD HH:mm:ss"
+        "YYYY-MM-DD HH:mm:ss"
     )
     DATE_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
-        "%Y_%m_%d",
-        "%y_%m_%d",
+        "%Y-%m-%d",
+        "%y-%m-%d",
         "%Y/%m/%d",
         "%y/%m/%d",
         "%b %d %Y",
@@ -258,10 +258,10 @@ else:
     ]
     DATETIME_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATETIME_FORMAT
-        "%Y_%m_%d %H:%M:%S",
-        "%Y_%m_%d %H:%M",
-        "%y_%m_%d %H:%M:%S",
-        "%y_%m_%d %H:%M",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d %H:%M",
+        "%y-%m-%d %H:%M:%S",
+        "%y-%m-%d %H:%M",
         "%Y/%m/%d %H:%M:%S",
         "%Y/%m/%d %H:%M",
         "%y/%m/%d %H:%M:%S",

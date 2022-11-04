@@ -189,7 +189,8 @@ class TruncatePlan(PlanTask):
             for i in frepple.operations():
                 if i.cluster in cluster:
                     cursor.execute(
-                        "insert into cluster_keys (name) values (%s)", (i.name,)
+                        "insert into cluster_keys (name) select substring(%s from 1 for 300)",
+                        (i.name,),
                     )
             cursor.execute(
                 """

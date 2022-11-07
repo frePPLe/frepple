@@ -55,13 +55,16 @@ class OdooTest(TransactionTestCase):
 
         # Check input data
         self.assertEqual(Item.objects.all().exclude(name__contains="[").count(), 7)
-        self.assertEqual(
+        po_list = (
             PurchaseOrder.objects.all()
             .exclude(item__name__contains="[")
             .filter(status="confirmed")
-            .count(),
-            0,  # TODO add draft and confirmed MO (with reservations & consumptions in demo dataset)
         )
+        self.assertEqual(po_list.count(), 1)
+        po = po_list[0]
+        self.assertEqual(po.quantity, 15)
+        # TODO receipt date changes between runs, making it difficult to compare here
+        # self.assertEqual(po.receipt_date, datetime.today() + timedelta)
         self.assertEqual(
             ManufacturingOrder.objects.all()
             .exclude(item__name__contains="[")

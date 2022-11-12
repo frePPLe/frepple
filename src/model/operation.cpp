@@ -316,6 +316,22 @@ DateRange Operation::calculateOperationTime(
         else
           available = true;
       }
+      if (!duration) {
+        // A special case for 0-time operations.
+        if (available && forward) {
+          result.setEnd(curdate);
+          result.setStart(curdate);
+          return result;
+        } else if (!available) {
+          available =
+              (cals[0].getCalendar()->getValue(selected, !forward) != 0);
+          if (available) {
+            result.setEnd(curdate);
+            result.setStart(curdate);
+            return result;
+          }
+        }
+      }
       curdate = selected;
 
       if (available && !status) {

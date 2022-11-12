@@ -27,7 +27,7 @@ RUN apt-get -y -q update && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install \
   cmake g++ git python3 python3-pip python3-dev python3-venv \
   psmisc libxerces-c3.2 libxerces-c-dev openssl libssl-dev \
-  libpq5 libpq-dev locales && \
+  postgresql-client libpq5 libpq-dev locales && \
   rm -rf /var/lib/apt/lists/*
 
 # An alternative to the copy is to clone from git:

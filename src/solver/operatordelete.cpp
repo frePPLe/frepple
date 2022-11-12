@@ -352,7 +352,10 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
 
       double newsize_opplan;
       double newsize_flowplan;
-      if (cur_excess >= fp->getQuantity() - ROUNDING_ERROR) {
+      if (cur_excess < fp->getOperation()->getSizeMultiple())
+        // This excess is unavoidable...
+        continue;
+      else if (cur_excess >= fp->getQuantity() - ROUNDING_ERROR) {
         // Completely delete the producer
         newsize_opplan = newsize_flowplan = 0.0;
       } else {

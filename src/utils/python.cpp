@@ -788,11 +788,7 @@ PyObject* Object::toXML(PyObject* self, PyObject* args) {
         &x, *(static_cast<Object*>(self)->getType().category->typetag));
     // Write the output...
     if (filearg) {
-      static _Py_Identifier PyId_write;
-      PyId_write.next = NULL;
-      PyId_write.string = "write";
-      PyId_write.object = NULL;
-      PyObject* writer = _PyObject_GetAttrId(filearg, &PyId_write);
+      PyObject* writer = PyObject_GetAttrString(filearg, "write");
       if (writer) {
         // ... to a file
         Py_DECREF(writer);

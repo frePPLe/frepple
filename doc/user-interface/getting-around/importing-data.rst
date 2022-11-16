@@ -2,9 +2,9 @@
 Importing data
 ==============
 
-You can upload data files in a) **native Excel format** or 
+You can upload data files in a) **native Excel format** or
 b) **CSV format**. Clicking on the import arrow in the upper
-right corner allows you to select the file to upload. 
+right corner allows you to select the file to upload.
 Note that you can also drag and drop a file into the dialog box.
 FrePPLe automatically detects which of the two data formats you're using.
 
@@ -20,13 +20,13 @@ sensitive).
 
 The first line of an Excel data file should contain the field names (not case
 sensitive). Alternatively, you can define an autofilter data table on the worksheet.
-If it's present frePPLe reads only the data from that data table and ignores all other 
-cells.
+If it's present frePPLe skips all data rows above the row where the autofilter
+data table starts.
 
 The dialog screen shows a checkbox *First delete all existing records AND ALL RELATED TABLES*
 meaning that you can choose to delete the existing contents of the table before uploading
 the new data. When the option is selected, dependent tables are also erased:
-e.g. if you select this option when uploading the *resource* table, also the *operationresource* 
+e.g. if you select this option when uploading the *resource* table, also the *operationresource*
 table will be erased since the second table references the first one.
 
 .. Caution::

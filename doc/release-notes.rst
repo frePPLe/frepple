@@ -18,6 +18,11 @@ Release notes
   | The setting DATE_STYLE in the djangosettings.py configuration file now controls
     how dates are formatted in the user interface.
 
+- | Minor improvement when loading data Excel files with autofilter tables.
+  | Since quite often excel spreadsheet contain real data outside of the table,
+    we somehwat relaxed our logic to strictly read only the data from the
+    autofilter table.
+
 .. rubric:: Production planning
 
 - | The default value of parameter allowsplits is changed from true to false.

@@ -343,8 +343,6 @@ def _parseData(model, data, rowmapper, user, database, ping):
             # Only process data in the excel auto-filter range
             if rownumber < bounds[1]:
                 continue
-            elif rownumber > bounds[3]:
-                break
             else:
                 rowWrapper.setData(row)
         else:

@@ -21,9 +21,7 @@ $(function() {
 <div id="site-title" role="banner"><a href="https://frepple.com/" title="frePPLe" rel="home">
 <img src="{{ pathto('_static/frepple.svg', 1) }}" height="40" alt="frePPLe"></a>
 </div>
-<div style="position:relative; float:right; font-weight:bold">
-Community Edition<br>
-Documentation {{ release }}</div>
+<div id="site-name">Community Edition {{ release }}</div>
 </div>
 <div id="header-end"><hr/></div>
 {% endblock %}
@@ -33,8 +31,6 @@ Documentation {{ release }}</div>
 
    <!-- Sidebar with search field and table of contents -->
     <div class="sphinxsidebar">
-    Help us improve this page:<br>
-    &nbsp;&nbsp;<a href="https://github.com/frePPLe/frepple/tree/master/doc/{{ pagename }}.rst" target="_blank">Edit on github</a><br><br>
     <form action="{{ pathto("search") }}" method="get" role="search">
     <input id="search" type="search" placeholder="Search" name="q" value="" />
     <span id="search-progress" style="padding-left: 10px"></span>
@@ -45,17 +41,28 @@ Documentation {{ release }}</div>
   {%- block document %}
     <div class="documentwrapper">
 
+    <!-- Edit on github -->
+    <div style="float:right; text-align:center">
+    <a href="https://github.com/frePPLe/frepple/tree/master/doc/{{ pagename }}.rst" target="_blank">
+      <img style="vertical-align:middle; border:0; height:1em" src="{{ pathto('_static/github.png', 1) }}">
+      <span style="vertical-align:middle">Edit on github</span>
+    </a>
+    </div>
+
     <!-- Breadcrumbs -->
+    <div>
     <ul class="breadcrumbs">
     <li class="menu-item menu-item-type-post_type menu-item-object-page page_item"><a href="{{ pathto(master_doc) }}">Home</a></li>{% for doc in parents %}
     <li class="menu-item menu-item-type-post_type menu-item-object-page page_item">&nbsp;&raquo;&nbsp;<a href="{{ doc.link|e }}">{{ doc.title }}</a></li>{% endfor %}
     {% if pagename != master_doc %}<li class="menu-item menu-item-type-post_type menu-item-object-page page_item">&nbsp;&raquo;&nbsp;{{ title }}</li>
-    {% endif %}</ul><br>
+    {% endif %}</ul>
+    </div>
 
     <!-- Main content -->
+    <div class="clearer"></div>
         <div class="bodywrapper">
           <div class="body">
-            {% block body %} {% endblock %}
+            {%- block body %} eeee{% endblock %}
           </div>
       </div>
   {%- endblock %}

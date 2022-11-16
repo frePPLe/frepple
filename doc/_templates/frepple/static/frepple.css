@@ -1,26 +1,25 @@
-
 @import url("basic.css");
 
-th > p:first-child,
-td > p:first-child {
-    margin-top: 10px;
+th>p:first-child,
+td>p:first-child {
+  margin-top: 10px;
 }
 
-th > p:last-child,
-td > p:last-child {
-    margin-bottom: 10px;
+th>p:last-child,
+td>p:last-child {
+  margin-bottom: 10px;
 }
 
 .body table {
-    width: 100%;
+  width: 100%;
 }
 
 div.body {
-	margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 div.sphinxrow {
-  display: flex;  
+  display: flex;
 }
 
 div.sphinxcolumn {
@@ -28,7 +27,7 @@ div.sphinxcolumn {
   padding-bottom: 0.5em;
   padding-top: 0.5em;
 }
-   
+
 div.sphinxsidebar ul li.toctree-l1 {
   display: none;
 }
@@ -93,7 +92,8 @@ div.sphinxsidebar ul li.toctree-l1.current {
   src: url(OpenSans-BoldItalic.ttf) format('truetype');
 }
 
-body, tt {
+body,
+tt {
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -108,17 +108,24 @@ a {
 }
 
 .document {
-	display: flex;
+  display: flex;
 }
 
 div.body {
-    max-width: 995px;
+  max-width: 995px;
 }
 
 #site-title {
   font-size: small;
   float: left;
-  padding: 5px 0px 10px 5px;
+  padding: 5px 25px 10px 25px;
+}
+
+#site-name {
+  float: right;
+  font-weight: bold;
+  line-height: 40px;
+  padding: 5px 25px 10px 25px;
 }
 
 #primary-menu {
@@ -144,7 +151,10 @@ div.body {
   display: block;
 }
 
-#primary-menu li a, #primary-menu li a:visited, #site-title a, #site-title a:visited {
+#primary-menu li a,
+#primary-menu li a:visited,
+#site-title a,
+#site-title a:visited {
   color: #333;
   text-decoration: none;
 }
@@ -163,22 +173,27 @@ div.sphinxsidebar {
   height: 100%;
   margin: 0 25px 0 25px;
   text-align: left;
-  min-width: 220px;    
+  min-width: 220px;
 }
-  
+
 @media (min-width: 1250px) {
-  #banner, .document {
+
+  #banner,
+  .document {
     margin: 0px auto;
     max-width: 1250px;
   }
 }
 
 @media (max-width: 1249px) {
-  #banner, .document {
+
+  #banner,
+  .document {
     max-width: 995px;
-    margin-right:25px;
+    margin-right: 25px;
     min-width: 300px;
   }
+
   .bodywrapper .body {
     min-width: 300px;
   }
@@ -208,7 +223,8 @@ div.sphinxsidebar ul ul ul {
   border: 1px solid #86989B;
 }
 
-div.admonition, div.warning {
+div.admonition,
+div.warning {
   font-size: 0.9em;
   margin: 1em 0 1em 0;
   border: 1px solid #86989B;
@@ -216,16 +232,19 @@ div.admonition, div.warning {
   padding: 0;
 }
 
-div.admonition p, div.warning p {
+div.admonition p,
+div.warning p {
   margin: 0.5em 1em 0.5em 1em;
   padding: 0;
 }
 
-div.admonition pre, div.warning pre {
+div.admonition pre,
+div.warning pre {
   margin: 0.4em 1em 0.4em 1em;
 }
 
-div.admonition p.admonition-title, div.warning p.admonition-title {
+div.admonition p.admonition-title,
+div.warning p.admonition-title {
   margin: 0;
   padding: 0.1em 0 0.1em 0.5em;
   color: white;
@@ -234,18 +253,19 @@ div.admonition p.admonition-title, div.warning p.admonition-title {
   background-color: #AFC1C4;
 }
 
-div.warning  {
+div.warning {
   border: 1px solid #940000;
 }
 
-div.warning p.admonition-title
-{
+div.warning p.admonition-title {
   background-color: #CF0000;
   border-bottom-color: #940000;
 }
 
-div.admonition ul, div.admonition ol, div.warning ul, div.warning ol
-{
+div.admonition ul,
+div.admonition ol,
+div.warning ul,
+div.warning ol {
   margin: 0.1em 0.5em 0.5em 3em;
   padding: 0;
 }
@@ -292,22 +312,24 @@ div.sphinxsidebar .toctree-l1 {
   padding-top: 5px;
 }
 
-div.sphinxsidebar .toctree-l2, div.sphinxsidebar  .toctree-l3, div.sphinxsidebar  .toctree-l4 {
+div.sphinxsidebar .toctree-l2,
+div.sphinxsidebar .toctree-l3,
+div.sphinxsidebar .toctree-l4 {
   font-weight: normal;
   padding-top: 5px;
 }
 
 a.download.internal code {
-	font-family: inherit;
-	font-weight: normal;
+  font-family: inherit;
+  font-weight: normal;
 }
 
 code.samp span.pre {
-    width: 1.2em;
-    height: 1.2em;
-    border-radius: .6em;
-    color: #fff;
-    text-align: center;
-    background: #337ab7;
-    display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  border-radius: .6em;
+  color: #fff;
+  text-align: center;
+  background: #337ab7;
+  display: inline-block;
 }

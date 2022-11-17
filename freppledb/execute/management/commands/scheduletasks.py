@@ -329,70 +329,33 @@ class Command(BaseCommand):
             .aggregate(Min("next_run"))
         )["next_run__min"]
         if earliest_next:
-            retcode = 0
             if os.name == "nt":
-                # TODO For multi-tenancy possible we would also need to set the
-                # FREPPLE_CONFIGDIR environment variable. It seems that isn't
-                # possible with the Windows task scheduler.
-                # TODO The task scheduler has a more powerful XML interface that
-                # allows to define eg wake up of computer, run when not logged on,
-                # priviliges, etc
-                if "python" in sys.executable:
-                    # Development layout
-                    cmd = "%s %s scheduletasks --database=%s" % (
-                        sys.executable.replace("python.exe", "pythonw.exe"),
-                        os.path.abspath(sys.argv[0]),
-                        database,
+                raise CommandError("Task scheduler is only supported on Linux")
+            my_env = os.environ.copy()
+            my_env["FREPPLE_CONFIGDIR"] = settings.FREPPLE_CONFIGDIR
+            try:
+                if which("frepplectl"):
+                    retcode = call(
+                        "echo frepplectl scheduletasks --database=%s | at %s"
+                        % (database, earliest_next.strftime("%H:%M %y-%m-%d")),
+                        env=my_env,
+                        shell=True,
                     )
                 else:
-                    # Windows installer
-                    cmd = '"%s" scheduletasks --database=%s' % (
-                        sys.executable.replace("freppleserver.exe", "frepplectl.exe"),
-                        database,
+                    retcode = call(
+                        "echo %s scheduletasks --database=%s | at %s"
+                        % (
+                            os.path.abspath(sys.argv[0]),
+                            database,
+                            earliest_next.strftime("%H:%M %y-%m-%d"),
+                        ),
+                        env=my_env,
+                        shell=True,
                     )
-                retcode = call(
-                    [
-                        "schtasks",
-                        "/create",
-                        "/tn",
-                        "frePPLe scheduler on %s" % database,
-                        "/sc",
-                        "once",
-                        "/st",
-                        earliest_next.strftime("%H:%M"),
-                        "/sd",
-                        earliest_next.strftime("%m/%d/%Y"),
-                        "/f",
-                        "/tr",
-                        cmd,
-                    ]
-                )
-            else:
-                my_env = os.environ.copy()
-                my_env["FREPPLE_CONFIGDIR"] = settings.FREPPLE_CONFIGDIR
-                try:
-                    if which("frepplectl"):
-                        retcode = call(
-                            "echo frepplectl scheduletasks --database=%s | at %s"
-                            % (database, earliest_next.strftime("%H:%M %y-%m-%d")),
-                            env=my_env,
-                            shell=True,
-                        )
-                    else:
-                        retcode = call(
-                            "echo %s scheduletasks --database=%s | at %s"
-                            % (
-                                os.path.abspath(sys.argv[0]),
-                                database,
-                                earliest_next.strftime("%H:%M %y-%m-%d"),
-                            ),
-                            env=my_env,
-                            shell=True,
-                        )
-                except OSError as e:
-                    raise CommandError("Can't schedule the task: %s" % e)
-            if retcode < 0:
-                raise CommandError("Non-zero exit code when scheduling the task")
+                if retcode < 0:
+                    raise CommandError("Non-zero exit code when scheduling the task")
+            except OSError as e:
+                raise CommandError("Can't schedule the task: %s" % e)
 
     # accordion template
     title = _("Group and schedule tasks")

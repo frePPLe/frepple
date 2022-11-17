@@ -73,7 +73,7 @@ class execute_with_commands(TransactionTestCase):
         # across different version and platforms, we can only do a rough
         # check on the output.
         management.call_command("runplan", plantype=1, constraint=15, env="supply")
-        self.assertGreater(output.models.Problem.objects.count(), 10)
+        self.assertGreater(output.models.Problem.objects.count(), 8)
         self.assertGreater(input.models.OperationPlanMaterial.objects.count(), 400)
         self.assertGreater(input.models.OperationPlanResource.objects.count(), 20)
         self.assertGreater(input.models.OperationPlan.objects.count(), 300)

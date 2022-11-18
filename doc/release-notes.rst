@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-7.0 (Upcoming)
-==============
+7.0.0 (2022/09/16)
+==================
 
 .. rubric:: Software stack
 
@@ -84,8 +84,8 @@ Release notes
 
     - A number of apache configurations are now done by the installer.
 
-6.25 (2022/09/16)
-=================
+6.25.0 (2022/09/16)
+===================
 
 .. rubric:: Production planning
 

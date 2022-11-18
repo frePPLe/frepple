@@ -106,8 +106,8 @@ jobs:
           name: "${{ env.frepple_version }} Community Edition"
           body: |
             **frepple-${{ env.frepple_version }}-doc.tgz**\: Documentation
-            **ubuntu20-frepple-${{ steps.get_version.outputs.tag }}.deb**\: Installer for Ubuntu 20.04 LTS
-            **docker container**\: Pull ghcr.io/frepple/frepple:${{ steps.get_version.outputs.tag }}
+            **ubuntu20-frepple-${{ env.frepple_version }}.deb**\: Installer for Ubuntu 20.04 LTS
+            **docker container**\: Docker pull ghcr.io/frepple/frepple:${{ env.frepple_version }}
             **Source code**\: Source code in code zip or gzip format
 
             Release notes are available on https://frepple.com/docs/current/release-notes.html

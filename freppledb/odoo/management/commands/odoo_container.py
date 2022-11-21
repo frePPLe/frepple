@@ -316,7 +316,14 @@ class Command(BaseCommand):
 
         # Stop other odoo container already running on port 8069
         container = subprocess.run(
-            ["docker", "ps", "--filter", "expose=8069", "--format", "{{.ID}}"],
+            [
+                "docker",
+                "ps",
+                "--filter",
+                "publish=%s" % options["container_port"],
+                "--format",
+                "{{.ID}}",
+            ],
             capture_output=True,
             text=True,
         ).stdout

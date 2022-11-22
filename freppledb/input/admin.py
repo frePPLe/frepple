@@ -762,6 +762,7 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
                     "enddate",
                     "owner",
                     "status",
+                    "batch",
                 ]
                 + [a[0] for a in getAttributes(ManufacturingOrder) if a[3]]
             },

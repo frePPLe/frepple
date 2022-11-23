@@ -128,9 +128,6 @@ class OdooReadData(PlanTask):
         if not odoo_password and not debugFile:
             logger.error("Missing or invalid parameter odoo.password")
             ok = False
-        if not odoo_db and not debugFile:
-            logger.error("Missing or invalid parameter odoo.db")
-            ok = False
         if not odoo_url and not debugFile:
             logger.error("Missing or invalid parameter odoo.url")
             ok = False
@@ -160,19 +157,16 @@ class OdooReadData(PlanTask):
             frepple.settings.id = d[0] + 1
 
         if not debugFile:
-            url = "%sfrepple/xml?%s" % (
-                odoo_url,
-                urlencode(
-                    {
-                        "database": odoo_db,
-                        "language": odoo_language,
-                        "company": odoo_company,
-                        "mode": cls.mode,
-                        "singlecompany": singlecompany,
-                        "version": frepple.version,
-                    }
-                ),
-            )
+            args = {
+                "language": odoo_language,
+                "company": odoo_company,
+                "mode": cls.mode,
+                "singlecompany": singlecompany,
+                "version": frepple.version,
+            }
+            if odoo_db:
+                args["database"] = odoo_db
+            url = "%sfrepple/xml?%s" % (odoo_url, urlencode(args))
             response = None
             try:
                 request = Request(url)

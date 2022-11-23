@@ -275,22 +275,29 @@ The section below describes the installation and configuration of these.
 
   * **Configure parameters**
 
-    * | odoo.url: URL of the Odoo server
+    * | odoo.url:
+      | URL of the Odoo server.
 
-    * | odoo.db: Odoo database to connect to
+    * | odoo.db:
+      | Odoo database to connect to.
+      | The parameter can be left blank for odoo setups with a single database.
 
-    * | odoo.user: Odoo user for the connection
+    * | odoo.user:
+      | Odoo user for the connection.
 
-    * | odoo.password: Password for the connection
+    * | odoo.password:
+      | Password for the connection.
       | For improved security it is recommended to specify this password in the
         setting ODOO_PASSWORDS in the djangosettings.py file rather then this
         parameter.
 
-    * | odoo.language: Language for the connection.
+    * | odoo.language:
+      | Language for the connection.
       | If translated names of products, items, locations, etc they will be used.
       | The default value is en_US.
 
-    * | odoo.company: Company name for which to create purchase quotation and
+    * | odoo.company:
+      | Company name for which to create purchase quotation and
         manufacturing orders.
 
     * | odoo.singlecompany:

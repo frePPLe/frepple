@@ -15,7 +15,9 @@
 #
 
 import os
+from unittest import skipUnless
 
+from django.conf import settings
 from django.core import management
 from django.test import TransactionTestCase
 from django.contrib.auth.models import Group
@@ -24,6 +26,7 @@ from freppledb.common.models import User
 from freppledb.input.models import Item, PurchaseOrder, ManufacturingOrder
 
 
+@skipUnless("freppledb.odoo" in settings.INSTALLED_APPS, "App not activated")
 class OdooTest(TransactionTestCase):
     def setUp(self):
         os.environ["FREPPLE_TEST"] = "YES"

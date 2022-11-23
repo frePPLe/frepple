@@ -15,16 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.apps import apps
-from os.path import dirname, abspath
-
 # Mark this app as an ERP integration module.
 # Only one such app can be active on a frePPle instance.
 ERP_module = True
-
-
-def load_tests(loader, tests, pattern):
-    from django.conf import settings
-
-    if apps.is_installed("freppledb.odoo"):
-        return loader.discover(start_dir=dirname(abspath(__file__)), pattern=pattern)

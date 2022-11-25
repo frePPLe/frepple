@@ -65,8 +65,8 @@ jobs:
         if: github.event.client_payload.message.branch
         run: |
           # First make the checkout unshallow
-          git remote set-branches origin '*'
-          git fetch --all
+          git -C freppledb/odoo/odoo_addon remote set-branches origin '*'
+          git -C freppledb/odoo/odoo_addon fetch --all
           git -C freppledb/odoo/odoo_addon checkout "remotes/origin/${{ github.event.client_payload.message.branch }}"
           sed -i 's/# "freppledb.odoo"/"freppledb.odoo"/g' djangosettings.py
           ./frepplectl.py test freppledb.odoo

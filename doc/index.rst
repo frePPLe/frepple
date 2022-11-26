@@ -12,7 +12,7 @@ frePPLe |release| documentation
     Browse through all key functionalities
     </div>
     <div class="sphinxcolumn">
-    <a class="reference internal" href="videos/index.html"><span class="doc">Use case videos</span></a><br> 
+    <a class="reference internal" href="videos/index.html"><span class="doc">Use case videos</span></a><br>
     Browse through our collection of youtube videos
     </div>
     </div>
@@ -27,7 +27,7 @@ frePPLe |release| documentation
     Guided path to load your first data
     </div>
     <div class="sphinxcolumn">
-    <a class="reference internal" href="examples/index.html"><span class="doc">Examples</span></a><br> 
+    <a class="reference internal" href="examples/index.html"><span class="doc">Examples</span></a><br>
     Browse through our collection of sample models
     </div>
     </div>
@@ -38,7 +38,7 @@ frePPLe |release| documentation
 
     <div class="sphinxrow">
     <div class="sphinxcolumn">
-    <a class="reference internal" href="model-reference/index.html"><span class="doc">Table description</span></a><br> 
+    <a class="reference internal" href="model-reference/index.html"><span class="doc">Table description</span></a><br>
     Description all tables and fields
     </div>
     <div class="sphinxcolumn">
@@ -52,7 +52,7 @@ frePPLe |release| documentation
     Description of all commands
     </div>
     <div class="sphinxcolumn">
-    <a class="reference internal" href="installation-guide/index.html"><span class="doc">Installation guide</span></a><br> 
+    <a class="reference internal" href="installation-guide/index.html"><span class="doc">Installation guide</span></a><br>
     Installation instructions
     </div>
     </div>
@@ -62,7 +62,7 @@ frePPLe |release| documentation
     How to integrate with your business applications
     </div>
     <div class="sphinxcolumn">
-    <a class="reference internal" href="developer-guide/index.html"><span class="doc">Developer guide</span></a><br> 
+    <a class="reference internal" href="developer-guide/index.html"><span class="doc">Developer guide</span></a><br>
     How to customize and extend
     </div>
     </div>
@@ -72,7 +72,7 @@ frePPLe |release| documentation
     Software license info
     </div>
     <div class="sphinxcolumn">
-    <a class="reference internal" href="release-notes.html"><span class="doc">Release notes</span></a><br> 
+    <a class="reference internal" href="release-notes.html"><span class="doc">Release notes</span></a><br>
     What's new and exciting?
     </div>
     </div>
@@ -82,7 +82,7 @@ frePPLe |release| documentation
    :hidden:
 
    features
-   videos/index   
+   videos/index
    modeling-wizard/index
    examples/index
    user-interface/index

@@ -28,12 +28,13 @@ div.sphinxcolumn {
   padding-top: 0.5em;
 }
 
-div.sphinxsidebar ul li.toctree-l1 {
-  display: none;
-}
-
 div.sphinxsidebar ul li.toctree-l1.current {
   display: list-item;
+}
+
+div.sphinxsidebar ul .toctree-l1.current,
+div.sphinxsidebar ul .toctree-l2.current {
+  font-weight: bold;
 }
 
 @font-face {
@@ -282,23 +283,6 @@ pre {
 pre a {
   color: inherit;
   text-decoration: underline;
-}
-
-.breadcrumbs {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-}
-
-.breadcrumbs li {
-  color: #333;
-  font-size: small;
-  list-style: none;
-  display: block;
-  padding: 0;
-  margin: 0;
-  position: relative;
-  float: left;
 }
 
 #search {

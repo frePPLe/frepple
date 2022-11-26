@@ -35,7 +35,8 @@ $(function() {
     <input id="search" type="search" placeholder="Search" name="q" value="" />
     <span id="search-progress" style="padding-left: 10px"></span>
     </form>
-    {{ toc }}
+    <h3><a href="{{ pathto(master_doc) }}">frePPLe {{ release }}</a></h3>
+    {{ toctree() }}
     </div>
 
   {%- block document %}
@@ -49,17 +50,7 @@ $(function() {
     </a>
     </div>
 
-    <!-- Breadcrumbs -->
-    <div>
-    <ul class="breadcrumbs">
-    <li class="menu-item menu-item-type-post_type menu-item-object-page page_item"><a href="{{ pathto(master_doc) }}">Home</a></li>{% for doc in parents %}
-    <li class="menu-item menu-item-type-post_type menu-item-object-page page_item">&nbsp;&raquo;&nbsp;<a href="{{ doc.link|e }}">{{ doc.title }}</a></li>{% endfor %}
-    {% if pagename != master_doc %}<li class="menu-item menu-item-type-post_type menu-item-object-page page_item">&nbsp;&raquo;&nbsp;{{ title }}</li>
-    {% endif %}</ul>
-    </div>
-
     <!-- Main content -->
-    <div class="clearer"></div>
     <div class="bodywrapper">
       <div class="body">
         {%- block body %} {% endblock %}

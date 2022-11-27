@@ -7,6 +7,7 @@ tzlocal
 # Extra packages for development environments
 black >= 19.3b0
 Sphinx
+sphinx-tabs
 selenium
 selenium_firefox
 msedge-selenium-tools

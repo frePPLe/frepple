@@ -33,7 +33,9 @@ div.sphinxsidebar ul li.toctree-l1.current {
 }
 
 div.sphinxsidebar ul .toctree-l1.current,
-div.sphinxsidebar ul .toctree-l2.current {
+div.sphinxsidebar ul .toctree-l2.current,
+div.sphinxsidebar ul .toctree-l3.current,
+div.sphinxsidebar ul .toctree-l4.current {
   font-weight: bold;
 }
 
@@ -316,4 +318,57 @@ code.samp span.pre {
   text-align: center;
   background: #337ab7;
   display: inline-block;
+}
+
+/* Sphinx tabs: See https: //sphinx-tabs.readthedocs.io/en/latest/ */
+
+.sphinx-tabs {
+  margin-bottom: 1rem;
+}
+
+[role="tablist"] {
+  border-bottom: 1px solid #252525;
+}
+
+.sphinx-tabs-tab {
+  position: relative;
+  color: #252525;
+  line-height: 24px;
+  margin: 0;
+  font-size: 80%;
+  background-color: rgba(255, 255, 255, 0);
+  border-radius: 5px 5px 0 0;
+  border: 0;
+  padding: 5px 15px 5px 15px;
+  margin-bottom: 0;
+}
+
+.sphinx-tabs-tab[aria-selected="true"] {
+  border: 1px solid #252525;
+  border-bottom: 1px solid white;
+  margin: -1px;
+  background-color: white;
+}
+
+.sphinx-tabs-tab:focus {
+  z-index: 1;
+  outline-offset: 1px;
+}
+
+.sphinx-tabs-panel {
+  position: relative;
+  padding: 1rem;
+  border: None;
+  margin: 0px -1px -1px -1px;
+  border-radius: 0 0 5px 5px;
+  border-top: 0;
+  background: white;
+}
+
+.sphinx-tabs-panel.code-tab {
+  padding: 0.4rem;
+}
+
+.sphinx-tab img {
+  margin-bottom: 24 px;
 }

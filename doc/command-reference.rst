@@ -82,20 +82,24 @@ are considered during plan creation.
 
 A separate page provides more details on the :doc:`/developer-guide/planning-algorithm`.
 
-This command is available in the user interface, the command line and the web API:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-plan.png
-     :alt: Execution screen - Plan generation
+      .. image:: /user-interface/_images/execution-plan.png
+         :alt: Execution screen - Plan generation
 
-* Command line::
+   .. tab:: Command line
 
-    frepplectl runplan --constraints=15 --plantype=1 --env=fcst,invplan,balancing,supply
+      .. code-block:: bash
 
-* Web API::
+        frepplectl runplan --constraints=15 --plantype=1 --env=fcst,invplan,balancing,supply
 
-    POST /execute/api/runplan/?constraint=15&plantype=1&env=fcst,invplan,balancing,supply
+   .. tab:: Web API
+
+      .. code-block:: bash
+
+        POST /execute/api/runplan/?constraint=15&plantype=1&env=fcst,invplan,balancing,supply
 
 .. _scheduletasks:
 
@@ -115,18 +119,24 @@ the web server has access to use it. On Linux this task is a front-end for the a
 and you need to edit the /etc/at.allow or /etc/at.deny file to grant access for the user
 running the apache web server.
 
-* Execution screen:
+.. tabs::
 
-  .. image:: /user-interface/_images/execution-scheduletasks.png
-     :alt: Execution screen - Group and schedule tasks
+   .. tab:: Execution screen
 
-* Command line::
+      .. image:: /user-interface/_images/execution-scheduletasks.png
+         :alt: Execution screen - Group and schedule tasks
 
-    frepplectl scheduletasks --schedule=my_task_sequence
+   .. tab:: Command line
 
-* Web API::
+      .. code-block:: bash
 
-    POST /execute/api/scheduletasks/?schedule=my_task_sequence
+        frepplectl scheduletasks --schedule=my_task_sequence
+
+   .. tab:: Web API
+
+      .. code-block:: bash
+
+        POST /execute/api/scheduletasks/?schedule=my_task_sequence
 
 .. _exportworkbook:
 
@@ -146,12 +156,12 @@ ABSOLUTELY NECESSARY to carefully review the generated spreadsheet and to remove
 any sensitive data that is still left, such as descriptions, categories, custom
 attributes, cost information.
 
-This command is available only in the user interface:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-export.png
-     :alt: Execution screen - Spreadsheet export
+      .. image:: /user-interface/_images/execution-export.png
+         :alt: Execution screen - Spreadsheet export
 
 .. _importworkbook:
 
@@ -165,12 +175,12 @@ A separate sheet in the workbook is used for each selected entity.
 The sheet must have the right names - in English or your language. The first row
 in each sheet must contain the column names.
 
-This command is available only in the user interface:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-import.png
-     :alt: Execution screen - Spreadsheet import
+      .. image:: /user-interface/_images/execution-import.png
+         :alt: Execution screen - Spreadsheet import
 
 .. _exporttofolder:
 
@@ -188,24 +198,28 @@ per scenario with the UPLOADFILEFOLDER value in the djangosettings.py file.
 The exported files can be accessed from the user interface, or through over a
 HTTP(S) web interface.
 
-This command is available in the user interface, the command line and the web API:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-exportplantofolder.png
-     :alt: Execution screen - Export plan result
+      .. image:: /user-interface/_images/execution-exportplantofolder.png
+         :alt: Execution screen - Export plan result
 
-* Command line::
+   .. tab:: Command line
 
-    frepplectl exporttofolder
+      .. code-block:: bash
 
-* Web API::
+        frepplectl exporttofolder
 
-    Export the planning result files:
-    POST /execute/api/exporttofolder/
+   .. tab:: Web API
 
-    Retrieve one of the exported files:
-    GET /execute/downloadfromfolder/1/<filename>/
+      .. code-block:: bash
+
+        # Export the planning result files:
+        POST /execute/api/exporttofolder/
+
+        # Retrieve one of the exported files:
+        GET /execute/downloadfromfolder/1/<filename>/
 
 .. _emailreport:
 
@@ -222,22 +236,24 @@ Selected reports are zipped into a *reports.zip* file that is attached to the em
 In order to have this command working, the EMAIL parameters in the djangosettings.py
 file must be properly configured.
 
-This command is available in the user interface, the command line and the web API:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-emailreport.png
-     :alt: Execution screen - Publish reports by email
+      .. image:: /user-interface/_images/execution-emailreport.png
+         :alt: Execution screen - Publish reports by email
 
-* Command line::
+   .. tab:: Command line
 
-    frepplectl emailreport [--sender] --recipient --report
+      .. code-block:: bash
 
+        frepplectl emailreport [--sender] --recipient --report
 
-* Web API::
+   .. tab:: Web API
 
-    Publish reports by email:
-    POST /execute/api/emailreport/?recipient=recipient1,recipient2...&report=report1,report2,report3...
+      .. code-block:: bash
+
+        POST /execute/api/emailreport/?recipient=recipient1,recipient2...&report=report1,report2,report3...
 
 .. _uploadreport:
 
@@ -247,28 +263,29 @@ Publish reports by FTP
 Reports that have been exported using *Export plan result* command can be
 pushed to a server using a ftp, ftps or sftp connection.
 
-
 In order to have this command working, the FTP parameters in the djangosettings.py
 file must be properly configured.
 Note that, if you are using the SFTP protocol, the destination server needs to be added
 to the known_hosts file.
 
-This command is available in the user interface, the command line and the web API:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-uploadreport.png
-     :alt: Execution screen - Publish reports by FTP
+      .. image:: /user-interface/_images/execution-uploadreport.png
+         :alt: Execution screen - Publish reports by FTP
 
-* Command line::
+   .. tab:: Command line
 
-    frepplectl uploadreport --report
-    where report option is a comma-separated list of files to export.
+      .. code-block:: bash
 
-* Web API::
+        frepplectl uploadreport --report=report1,report2,report3
 
-    Publish reports by ftp:
-    POST /execute/api/uploadreport/?report=report1,report2,report3...
+   .. tab:: Web API
+
+      .. code-block:: bash
+
+        POST /execute/api/uploadreport/?report=report1,report2,report3...
 
 
 .. _importfromfolder:
@@ -333,24 +350,28 @@ red button.
 The arrow up button will give the user the possibility of selecting multiple files
 to upload to that folder.
 
-This command is available in the user interface, the command line and the web API:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-importfilesfromfolder.png
-     :alt: Execution screen - Import data files
+      .. image:: /user-interface/_images/execution-importfilesfromfolder.png
+         :alt: Execution screen - Import data files
 
-* Command line::
+   .. tab:: Command line
 
-    frepplectl importfromfolder
+      .. code-block:: bash
 
-* Web API::
+        frepplectl importfromfolder
 
-    Upload a data file:
-    POST /execute/uploadtofolder/0/ with data files in multipart/form-data format
+   .. tab:: Web API
 
-    Import the data files:
-    POST /execute/api/importfromfolder/
+      .. code-block:: bash
+
+        # Upload a data file:
+        POST /execute/uploadtofolder/0/ with data files in multipart/form-data format
+
+        # Import the data files:
+        POST /execute/api/importfromfolder/
 
 .. _runwebservice:
 
@@ -360,8 +381,12 @@ Web service
 In the Enterprise Edition users have the option to start and stop the web service
 which keeps the plan in memory.
 
-.. image:: /user-interface/_images/execution-webservice.png
-   :alt: Execution screen - Web service
+.. tabs::
+
+   .. tab:: Execution screen
+
+      .. image:: /user-interface/_images/execution-webservice.png
+         :alt: Execution screen - Web service
 
 .. _scenario_copy:
 
@@ -384,37 +409,41 @@ actions can only be performed from current scenario to destination scenario.
 The label of a scenario, which is displayed in the dropdown list in the
 upper right hand corner, can also be updated here.
 
-This command is available in the user interface, the command line and the web API:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-scenarios.png
-     :alt: Execution screen - what-if scenarios
+      .. image:: /user-interface/_images/execution-scenarios.png
+         :alt: Execution screen - what-if scenarios
 
-* Command line::
+   .. tab:: Command line
 
-    To copy scenario scenario1 into scenario scenario2:
-    frepplectl scenario_copy [--force --promote] scenario1 scenario2
+      .. code-block:: bash
 
-    To create scenario1 from a backup file:
-    frepplectl scenario_copy --dumpfile=\path_to_my_file\scenario_backup.dump default scenario1
+        # To copy scenario scenario1 into scenario scenario2:
+        frepplectl scenario_copy [--force --promote] scenario1 scenario2
 
-    To release scenario scenario1:
-    frepplectl scenario_release --database=scenario1
+        # To create scenario1 from a backup file:
+        frepplectl scenario_copy --dumpfile=\path_to_my_file\scenario_backup.dump default scenario1
 
-* Web API::
+        # To release scenario scenario1:
+        frepplectl scenario_release --database=scenario1
 
-    To copy a scenario (including Production) into another scenario:
-    * POST /execute/api/scenario_copy/?copy=1&source=scenario1&destination=scenario2&force=1
+   .. tab:: Web API
 
-    To create scenario1 from a backup file:
-    * POST /execute/api/scenario_copy/?copy=1&source=default&destination=scenario2&dumpfile=\path_to_my_file\scenario_backup.dump
+      .. code-block:: bash
 
-    To release a scenario named scenario1:
-    * POST /scenario1/execute/api/scenario_copy/?release=1
+        # To copy a scenario (including Production) into another scenario:
+        POST /execute/api/scenario_copy/?copy=1&source=scenario1&destination=scenario2&force=1
 
-    To promote a scenario named scenario1 into Production (where "default" is the Production name):
-    * POST /execute/api/scenario_copy/?promote=1&source=scenario1&destination=default
+        # To create scenario1 from a backup file:
+        POST /execute/api/scenario_copy/?copy=1&source=default&destination=scenario2&dumpfile=\path_to_my_file\scenario_backup.dump
+
+        # To release a scenario named scenario1:
+        POST /scenario1/execute/api/scenario_copy/?release=1
+
+        # To promote a scenario named scenario1 into Production (where "default" is the Production name):
+        POST /execute/api/scenario_copy/?promote=1&source=scenario1&destination=default
 
 .. _backup:
 
@@ -432,24 +461,28 @@ The command also removes dumps older than a month to limit the disk space usage.
 If you want to keep dumps for a longer period of time, you'll need to copy the backup files
 to a different location.
 
-This command is available in the user interface, the command line and the web API:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-backup.png
-     :alt: Execution screen - backup
+      .. image:: /user-interface/_images/execution-backup.png
+         :alt: Execution screen - backup
 
-* Command line::
+   .. tab:: Command line
 
-    frepplectl backup
+      .. code-block:: bash
 
-* Web API::
+        frepplectl backup
 
-    Create a backup:
-    POST /execute/api/backup/
+   .. tab:: Web API
 
-    Download the backup file:
-    GET /execute/logdownload/<task identifier>/
+      .. code-block:: bash
+
+        # Create a backup:
+        POST /execute/api/backup/
+
+        # Download the backup file:
+        GET /execute/logdownload/<task identifier>/
 
 .. _empty:
 
@@ -459,20 +492,24 @@ Empty the database
 This will delete all data from the current scenario (except for some internal
 tables for users, permissions, task log, etc...).
 
-This command is available in the user interface, the command line and the web API:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-erase.png
-     :alt: Execution screen - erase
+      .. image:: /user-interface/_images/execution-erase.png
+         :alt: Execution screen - erase
 
-* Command line::
+   .. tab:: Command line
 
-    frepplectl empty --models=input.demand,input.operationplan
+      .. code-block:: bash
 
-* Web API::
+        frepplectl empty --models=input.demand,input.operationplan
 
-    POST /execute/api/empty/?models=input.demand,input.operationplan
+   .. tab:: Web API
+
+      .. code-block:: bash
+
+        POST /execute/api/empty/?models=input.demand,input.operationplan
 
 Administrator commands
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -492,20 +529,24 @@ of these datasets.
 You can use the dumpdata command to export a model to the appropriate format
 and create your own predefined datasets.
 
-This command is available in the user interface, the command line and the web API:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-fixture.png
-     :alt: Execution screen - load a dataset
+      .. image:: /user-interface/_images/execution-fixture.png
+         :alt: Execution screen - load a dataset
 
-* Command line::
+   .. tab:: Command line
 
-    frepplectl loaddata manufacturing_demo
+      .. code-block:: bash
 
-* Web API::
+        frepplectl loaddata manufacturing_demo
 
-    POST /execute/api/loaddata/?fixture=manufacturing_demo
+   .. tab:: Web API
+
+      .. code-block:: bash
+
+        POST /execute/api/loaddata/?fixture=manufacturing_demo
 
 .. _createbuckets:
 
@@ -559,20 +600,24 @@ The following arguments are used:
 
   - %%: A literal '%' character.
 
-This command is available in the user interface, the command line and the web API:
+.. tabs::
 
-* Execution screen:
+   .. tab:: Execution screen
 
-  .. image:: /user-interface/_images/execution-buckets.png
-     :alt: Execution screen - generate time buckets
+      .. image:: /user-interface/_images/execution-buckets.png
+         :alt: Execution screen - generate time buckets
 
-* Command line::
+   .. tab:: Command line
 
-    frepplectl createbuckets --start=2012-01-01 --end=2020-01-01 --weekstart=1
+      .. code-block:: bash
 
-* Web API::
+        frepplectl createbuckets --start=2012-01-01 --end=2020-01-01 --weekstart=1
 
-    POST /execute/api/createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
+   .. tab:: Web API
+
+      .. code-block:: bash
+
+        POST /execute/api/createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
 
 
 .. _createdatabase:
@@ -586,15 +631,17 @@ If the database already exists you will be prompted to confirm whether you
 really to loose all data in the existing database. When confirmed that database
 will dropped and recreated.
 
-This command is available on the command line only:
+.. tabs::
 
-::
+   .. tab:: Command line
 
-    # Create all scenario databases
-    frepplectl createdatabase
+      .. code-block:: bash
 
-    # Recreate only a single database
-    frepplectl createdatabase --database=scenario3
+        # Create all scenario databases
+        frepplectl createdatabase
+
+        # Recreate only a single database
+        frepplectl createdatabase --database=scenario3
 
 .. _migrate:
 
@@ -603,30 +650,39 @@ Create or migrate the database schema
 
 Update the database structure to the latest release.
 
-This command is available on the command line only:
+.. tabs::
 
-::
+   .. tab:: Command line
 
-    # Migrate all scenarios that are currently in use
-    frepplectl migrate
+      .. code-block:: bash
 
-    # Migrate a specific scenario database
-    frepplectl migrate --database=default
-    frepplectl migrate --database=scenario1
+        # Migrate all scenarios that are currently in use
+        frepplectl migrate
+
+        # Migrate a specific scenario database
+        frepplectl migrate --database=default
+        frepplectl migrate --database=scenario1
 
 .. _restore:
 
 Restore a database backup
 -------------------------
 
-This command is available on the command line only.
+This command erases the existing content of a database and restores
+the contents of a postgresql database dump file.
 
-However, the scenario management command provides a comparable functionality
-whereby a user can restore a backup in a specific scenario database.
+.. tabs::
 
-::
+   .. tab:: Execution screen
 
-    frepplectl restore database_dump_file
+     The scenario management command allows a user to restore a backup
+     in a specific scenario database
+
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl restore database_dump_file
 
 .. _createsuperuser:
 
@@ -635,15 +691,17 @@ Create a new superuser
 
 This command creates a new user with full access rights.
 
-This action is possible in the user interface and the command line:
+.. tabs::
 
-* User interface:
+   .. tab:: User interface
 
-  See :doc:`/user-interface/getting-around/user-permissions-and-roles`
+      See :doc:`/user-interface/getting-around/user-permissions-and-roles`
 
-* Command line::
+   .. tab:: Command line
 
-    frepplectl createsuperuser new_user_name
+      .. code-block:: bash
+
+        frepplectl createsuperuser new_user_name
 
 
 .. _changepassword:
@@ -653,16 +711,18 @@ Change a user's password
 
 This command changes the password of a certain user.
 
-This action is possible in the user interface and the command line:
+.. tabs::
 
-* User interface:
+   .. tab:: User interface
 
-  See :doc:`/user-interface/getting-around/changing-password` and
-  :doc:`/user-interface/getting-around/user-permissions-and-roles`.
+      See :doc:`/user-interface/getting-around/changing-password` and
+      :doc:`/user-interface/getting-around/user-permissions-and-roles`.
 
-* Command line::
+   .. tab:: Command line
 
-    frepplectl changepassword user_name
+      .. code-block:: bash
+
+        frepplectl changepassword user_name
 
 
 .. _flush:
@@ -677,11 +737,13 @@ A complete reset of the database is not very common. In most situations the comm
 described above to empty the database is sufficient. It empties the data tables,
 but leaves the important configuration information intact.
 
-This command is available on the command line only:
+.. tabs::
 
-::
+   .. tab:: Command line
 
-    frepplectl flush
+      .. code-block:: bash
+
+        frepplectl flush
 
 
 .. _generatetoken:
@@ -691,11 +753,13 @@ Generate an API token
 
 This command generates a JWT authentication token that can be used for API calls.
 
-This command is available on the command line only:
+.. tabs::
 
-::
+   .. tab:: Command line
 
-    frepplectl generatetoken user_name --expiry=365
+      .. code-block:: bash
+
+        frepplectl generatetoken user_name --expiry=365
 
 
 Developer commands
@@ -708,9 +772,13 @@ Database shell prompt
 
 This command runs an interactive SQL session on the PostgreSQL database.
 
-::
+.. tabs::
 
-    frepplectl dbshell --database=default
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl dbshell --database=default
 
 
 .. _shell:
@@ -720,9 +788,13 @@ Python command prompt
 
 This command runs an interactive Python interpreter session.
 
-::
+.. tabs::
 
-    frepplectl shell
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl shell
 
 
 .. _dumpdata:
@@ -737,9 +809,13 @@ it can be used by the loaddata command described above. We recommend you
 review and cleanse the output carefully, to avoid that the frozen dataset
 contains unnecessary data.
 
-::
+.. tabs::
 
-    frepplectl dumpdata --database=scenario1
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl dumpdata --database=scenario1
 
 
 .. _test:
@@ -749,9 +825,13 @@ Run the test suite
 
 Run the test suite for the user interface.
 
-::
+.. tabs::
 
-    frepplectl test freppledb
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl test freppledb
 
 
 .. _runwebserver:
@@ -762,9 +842,13 @@ Run the Python web server
 Runs a production web server for environments with very few users.
 For a more scalable solution, deploying frePPLe on Apache with mod_wsgi is required.
 
-::
+.. tabs::
 
-    frepplectl runwebserver
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl runwebserver
 
 
 .. _runserver:
@@ -776,9 +860,13 @@ Run a development web server, which automatically reloads when code is changed.
 
 For production use this web server doesn't scale enough.
 
-::
+.. tabs::
 
-    frepplectl runserver
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl runserver
 
 
 .. _createmodel:
@@ -796,9 +884,13 @@ scalability with varying size and complexity.
 This command is intended for academic and research purposes. The script can
 easily be updated to create sample models in the structure you wish.
 
-::
+.. tabs::
 
-    frepplectl createmodel --level=3 --cluster=100 --demand=10
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl createmodel --level=3 --cluster=100 --demand=10
 
 
 .. _forecast_simulation:
@@ -817,9 +909,13 @@ bucket to follow.
 This command is intended for academic and research purposes. The script can
 easily be updated to perform more advanced forecast accuracy studies.
 
-::
+.. tabs::
 
-    frepplectl forecast_simulation
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl forecast_simulation
 
 
 .. _simulation:
@@ -861,6 +957,10 @@ This command is intended for academic and research purposes. The script needs to
 be tailored carefully to model a realistic level of disturbances in your model
 and collect the performance metrics that are relevant.
 
-::
+.. tabs::
 
-    frepplectl simulation
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl simulation

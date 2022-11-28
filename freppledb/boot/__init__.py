@@ -41,7 +41,14 @@ _register_kwargs = {}
 
 
 def add_extra_model_fields(sender, **kwargs):
-    model_path = "%s.%s" % (sender.__module__, sender.__name__)
+    model_path = sender.__module__.split(".")
+    while model_path[-1] != "models":
+        # Ignore submodules of a models folder
+        model_path.pop()
+        if not model_path:
+            return
+    model_path.append(sender.__name__)
+    model_path = ".".join(model_path)
     for field_name, label, fieldtype, editable, initially_hidden in chain(
         _register.get(model_path, []), _register.get(sender._meta.db_table, [])
     ):

@@ -404,6 +404,48 @@ class OperationPlan(AuditModel):
         # Call the real save() method
         super().save(*args, **kwargs)
 
+    def calculateOperationTime(self, date, duration, forward=True):
+        # Replicate Operation::calculateOperationTime:
+        #    collect all calendars
+        #    call calendar.getEvents() and cache them temporarily on the operationplan
+        #    step forward or backwards from the date
+        if forward:
+            return date + duration
+        else:
+            return date - duration
+
+    def update(self, delete=False, change=True, create=False, **fields):
+        if delete:
+            print("deleting ", self.quantity)
+        elif create:
+            print("creating", self)
+        else:
+            print("changing", self, fields)
+
+        # TODO replicate logic from Operation::setOperationPlanParameters and setOperationPlanQuantity
+        # cases (based on input fields and mode):
+        #   change qty
+        #   change start or quantity
+        #   change end or quantity
+        #   change start and end
+        #   change resource
+        # Will need to call calculateOperationTime to convert net duration to calendar time
+        # Outcome is new start date, end date, quantity
+
+        # TODO propagate to following and preceding operationplans in a routing
+
+        # TODO Update operationplanmaterial records
+        #    existing records will still have the old dates and quantity
+        #    compute new quantity
+        #    compure new dates (handle start/end and offset (in operation time))
+        #    update onhands for other operationplans from the old date onwards
+
+        # TODO Update operationplanresource record pairs
+        #    existing records have old dates and quantity
+        #    compute new quantity  (eg bucketized resources)
+        #    handle case of resource change
+        #    update resourceplan table with summarized data to reflect the changes
+
     @classmethod
     def getDeleteStatements(cls):
         stmts = []

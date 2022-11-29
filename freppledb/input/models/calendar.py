@@ -54,6 +54,11 @@ class Calendar(AuditModel):
         verbose_name_plural = _("calendars")
         ordering = ["name"]
 
+    def getEvents(self, startdate, enddate):
+        # TODO make code from freppledb.input.views.manufacturing.CalendarDetail.getEvents() reusable
+        # It's already used in the "calendar editor" screen.
+        return
+
 
 class CalendarBucket(AuditModel):
 

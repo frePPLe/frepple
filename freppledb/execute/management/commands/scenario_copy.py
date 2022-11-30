@@ -276,25 +276,30 @@ class Command(BaseCommand):
                     task.processid = p.pid
                     task.save(using=source)
                     p.wait()
-                    # Successful copy can still leave warnings and errors
-                    # To confirm copy is ok, let's check that the scenario copy task exists
-                    # in the destination database
-                    t = Task.objects.using(destination).filter(id=task.id).first()
-                    if not t or t.name != task.name or t.submitted != task.submitted:
-                        destinationscenario.status = "Free"
-                        destinationscenario.lastrefresh = datetime.today()
-                        destinationscenario.save(
-                            update_fields=["status", "lastrefresh"],
-                            using=DEFAULT_DB_ALIAS,
+                    if not options["dumpfile"]:
+                        # Successful copy can still leave warnings and errors
+                        # To confirm copy is ok, let's check that the scenario copy task exists
+                        # in the destination database
+                        t = Task.objects.using(destination).filter(id=task.id).first()
+                        if (
+                            not t
+                            or t.name != task.name
+                            or t.submitted != task.submitted
+                        ):
+                            destinationscenario.status = "Free"
+                            destinationscenario.lastrefresh = datetime.today()
+                            destinationscenario.save(
+                                update_fields=["status", "lastrefresh"],
+                                using=DEFAULT_DB_ALIAS,
+                            )
+                            raise Exception("Database copy failed")
+                        t.status = "Done"
+                        t.finished = datetime.now()
+                        t.message = "Scenario copied from %s" % source
+                        t.save(
+                            using=destination,
+                            update_fields=["status", "finished", "message"],
                         )
-                        raise Exception("Database copy failed")
-                    t.status = "Done"
-                    t.finished = datetime.now()
-                    t.message = "Scenario copied from %s" % source
-                    t.save(
-                        using=destination,
-                        update_fields=["status", "finished", "message"],
-                    )
 
                 except Exception:
                     p.kill()

@@ -1,6 +1,13 @@
 Release notes
 -------------
 
+7.1.0 (Upcoming release)
+========================
+
+.. rubric:: System administration
+
+- | Bug fix: restoring a database backuo in a scenario was broken.
+
 7.0.0 (2022/11/18)
 ==================
 

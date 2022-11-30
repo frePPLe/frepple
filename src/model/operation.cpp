@@ -2041,8 +2041,8 @@ double Operation::setOperationPlanQuantity(OperationPlan* oplan, double f,
   if (f < 0)
     throw DataException("Operationplans can't have negative quantities");
 
-  // Confirmed and approved operationplans don't respect sizing constraints
-  if (!oplan->getProposed()) {
+  // Only proposed and approved operationplans respect sizing constraints
+  if (!oplan->getProposed() && !oplan->getApproved()) {
     if (execute) {
       oplan->quantity = f;
       if (upd) oplan->update();

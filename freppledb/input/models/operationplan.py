@@ -20,6 +20,7 @@ from datetime import datetime
 from decimal import Decimal
 from dateutil.parser import parse
 from logging import INFO, ERROR, WARNING, DEBUG
+import math
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.worksheet.worksheet import Worksheet
 
@@ -421,6 +422,47 @@ class OperationPlan(AuditModel):
             print("creating", self)
         else:
             print("changing", self, fields)
+
+        # Process quantity changes
+        if (create or (change and "quantity" in fields)) and (
+            self.status
+            in (
+                "approved",
+                "proposed",
+            )
+            or not self.status
+        ):
+            if self.quantity < 0:
+                self.quantity = 0
+            if self.quantity < (self.operation.sizeminimum or 1):
+                if self.operation.sizemultiple and self.operation.sizemultiple > 0:
+                    # Round up from minimum
+                    self.quantity = self.operation.sizemultiple * math.ceil(
+                        self.operation.sizeminimum / self.operation.sizemultiple
+                    )
+                else:
+                    self.quantity = self.operation.sizeminimum or 1
+            if (
+                self.operation.sizemaximum is not None
+                and self.operation.sizemaximum > 0
+                and self.operation.sizemaximum >= self.quantity
+            ):
+                if self.operation.sizemultiple and self.operation.sizemultiple > 0:
+                    # Round down from maximim
+                    self.quantity = self.operation.sizemultiple * math.floor(
+                        self.operation.sizemaximum / self.operation.sizemultiple
+                    )
+                    if self.quantity < (self.operation.sizeminimum or 1):
+                        # No multiple found between min and max.
+                        # Use the multiple to break out of this.
+                        self.quantity = self.operation.sizemultiple
+                else:
+                    self.quantity = self.operation.sizemaximum
+            elif self.operation.sizemultiple and self.operation.sizemultiple > 0:
+                # Round up to a multiple
+                self.quantity = self.operation.sizemultiple * math.ceil(
+                    self.quantity / self.operation.sizemultiple
+                )
 
         # TODO replicate logic from Operation::setOperationPlanParameters and setOperationPlanQuantity
         # cases (based on input fields and mode):

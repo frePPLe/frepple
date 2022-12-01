@@ -27,6 +27,7 @@ from django.db import DEFAULT_DB_ALIAS, transaction
 from django.db.models import Sum, Count, Q
 from django.test import TransactionTestCase
 
+from freppledb.execute.models import Task
 import freppledb.output as output
 import freppledb.input as input
 import freppledb.common as common
@@ -180,6 +181,17 @@ class execute_multidb(TransactionTestCase):
         self.assertEqual(count1new, count1)
         self.assertNotEqual(count2, 0)
         self.assertNotEqual(count2, count1new)
+
+        # Populate db2 with a backup of db1
+        management.call_command("backup", database=db1)
+        dumpfile = Task.objects.filter(name="backup").first().logfile
+        self.assertTrue(dumpfile)
+        management.call_command("scenario_release", database=db2)
+        management.call_command("scenario_copy", "--dumpfile=%s" % dumpfile, db1, db2)
+        self.assertEqual(
+            input.models.PurchaseOrder.objects.all().using(db1).count(),
+            input.models.PurchaseOrder.objects.all().using(db2).count(),
+        )
 
 
 class FixtureTest(TransactionTestCase):

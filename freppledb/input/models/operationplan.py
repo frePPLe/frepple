@@ -16,7 +16,7 @@
 #
 
 import ast
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from dateutil.parser import parse
 from logging import INFO, ERROR, WARNING, DEBUG
@@ -415,67 +415,31 @@ class OperationPlan(AuditModel):
         else:
             return date - duration
 
+    def getEfficiency(self, when):
+        # TODO replicate Operationplan::getEfficiency() logic
+        return 1.0
+
     def update(self, delete=False, change=True, create=False, **fields):
-        if delete:
-            print("deleting ", self.quantity)
-        elif create:
-            print("creating", self)
-        else:
-            print("changing", self, fields)
-
-        # Process quantity changes
-        if (create or (change and "quantity" in fields)) and (
-            self.status
-            in (
-                "approved",
-                "proposed",
+        if self.type == "PO":
+            PurchaseOrder.update(
+                self, delete=delete, change=change, create=create, **fields
             )
-            or not self.status
-        ):
-            if self.quantity < 0:
-                self.quantity = 0
-            if self.quantity < (self.operation.sizeminimum or 1):
-                if self.operation.sizemultiple and self.operation.sizemultiple > 0:
-                    # Round up from minimum
-                    self.quantity = self.operation.sizemultiple * math.ceil(
-                        self.operation.sizeminimum / self.operation.sizemultiple
-                    )
-                else:
-                    self.quantity = self.operation.sizeminimum or 1
-            if (
-                self.operation.sizemaximum is not None
-                and self.operation.sizemaximum > 0
-                and self.operation.sizemaximum >= self.quantity
-            ):
-                if self.operation.sizemultiple and self.operation.sizemultiple > 0:
-                    # Round down from maximim
-                    self.quantity = self.operation.sizemultiple * math.floor(
-                        self.operation.sizemaximum / self.operation.sizemultiple
-                    )
-                    if self.quantity < (self.operation.sizeminimum or 1):
-                        # No multiple found between min and max.
-                        # Use the multiple to break out of this.
-                        self.quantity = self.operation.sizemultiple
-                else:
-                    self.quantity = self.operation.sizemaximum
-            elif self.operation.sizemultiple and self.operation.sizemultiple > 0:
-                # Round up to a multiple
-                self.quantity = self.operation.sizemultiple * math.ceil(
-                    self.quantity / self.operation.sizemultiple
-                )
+        elif self.type == "DO":
+            DistributionOrder.update(
+                self, delete=delete, change=change, create=create, **fields
+            )
+        elif self.type == "DLVR":
+            DeliveryOrder.update(
+                self, delete=delete, change=change, create=create, **fields
+            )
+        else:
+            ManufacturingOrder.update(
+                self, delete=delete, change=change, create=create, **fields
+            )
 
-        # TODO replicate logic from Operation::setOperationPlanParameters and setOperationPlanQuantity
-        # cases (based on input fields and mode):
-        #   change qty
-        #   change start or quantity
-        #   change end or quantity
-        #   change start and end
-        #   change resource
-        # Will need to call calculateOperationTime to convert net duration to calendar time
-        # Outcome is new start date, end date, quantity
-
-        # TODO propagate to following and preceding operationplans in a routing
-
+    def _updateInventoryAndResources(
+        self, delete=False, change=True, create=False, **fields
+    ):
         # TODO Update operationplanmaterial records
         #    existing records will still have the old dates and quantity
         #    compute new quantity
@@ -487,14 +451,15 @@ class OperationPlan(AuditModel):
         #    compute new quantity  (eg bucketized resources)
         #    handle case of resource change
         #    update resourceplan table with summarized data to reflect the changes
+        return
 
     @classmethod
     def getDeleteStatements(cls):
         stmts = []
         stmts.append(
             """
-      delete from operationplan where type = '%s'
-      """
+            delete from operationplan where type = '%s'
+            """
             % cls.getType()
         )
         return stmts
@@ -769,6 +734,28 @@ class DeliveryOrder(OperationPlan):
         verbose_name = _("delivery order")
         verbose_name_plural = _("delivery orders")
 
+    def update(self, delete=False, change=True, create=False, **fields):
+        # Assure the start date, end date and quantity are consistent
+        if change or create:
+            if "enddate" in fields:
+                # Mode 1: End date (optionally also quantity) given -> compute start date
+                self.startdate = self.calculateOperationTime(
+                    self.enddate,
+                    timedelta(0),
+                    False,
+                )
+            else:
+                # Mode 2: Start date (optionally also quantity) given -> compute end date
+                self.enddate = self.calculateOperationTime(
+                    self.startdate,
+                    timedelta(0),
+                    True,
+                )
+
+        self._updateInventoryAndResources(
+            delete=delete, change=change, create=create, **fields
+        )
+
 
 class DistributionOrder(OperationPlan):
 
@@ -810,6 +797,96 @@ class DistributionOrder(OperationPlan):
         proxy = True
         verbose_name = _("distribution order")
         verbose_name_plural = _("distribution orders")
+
+    @property
+    def itemdistribution(self):
+        if hasattr(self, "_itemdistribution"):
+            return self._itemdistribution
+        item = self.item
+        while item:
+            for i in item.distributions.all():
+                if self.location == i.location and (
+                    self.origin == i.origin or not self.origin
+                ):
+                    self._itemdistribution = i
+                    return self._itemdistribution
+            item = item.owner
+        self._itemdistribution = None
+        return self._itemdistribution
+
+    def update(self, delete=False, change=True, create=False, **fields):
+        itemdistribution = self.itemdistribution
+
+        # Process quantity changes
+        if (
+            (create or (change and "quantity" in fields))
+            and itemdistribution
+            and (
+                self.status
+                in (
+                    "approved",
+                    "proposed",
+                )
+                or not self.status
+            )
+        ):
+            if self.quantity < 0:
+                self.quantity = 0
+            sizemin = Decimal(
+                itemdistribution.sizeminimum
+                if itemdistribution.sizeminimum is not None
+                else Decimal(1)
+            )
+            if self.quantity < sizemin:
+                if itemdistribution.sizemultiple and itemdistribution.sizemultiple > 0:
+                    # Round up from minimum
+                    self.quantity = itemdistribution.sizemultiple * math.ceil(
+                        sizemin / itemdistribution.sizemultiple
+                    )
+                else:
+                    self.quantity = sizemin
+            if (
+                itemdistribution.sizemaximum is not None
+                and itemdistribution.sizemaximum > 0
+                and itemdistribution.sizemaximum >= self.quantity
+            ):
+                if itemdistribution.sizemultiple and itemdistribution.sizemultiple > 0:
+                    # Round down from maximim
+                    self.quantity = itemdistribution.sizemultiple * math.floor(
+                        itemdistribution.sizemaximum / itemdistribution.sizemultiple
+                    )
+                    if self.quantity < sizemin:
+                        # No multiple found between min and max.
+                        # Use the multiple to break out of this.
+                        self.quantity = itemdistribution.sizemultiple
+                else:
+                    self.quantity = itemdistribution.sizemaximum
+            elif itemdistribution.sizemultiple and itemdistribution.sizemultiple > 0:
+                # Round up to a multiple
+                self.quantity = itemdistribution.sizemultiple * math.ceil(
+                    self.quantity / itemdistribution.sizemultiple
+                )
+
+        # Assure the start date, end date and quantity are consistent
+        if change or create:
+            if "enddate" in fields:
+                # Mode 1: End date (optionally also quantity) given -> compute start date
+                self.startdate = self.calculateOperationTime(
+                    self.enddate,
+                    itemdistribution.leadtime if itemdistribution else timedelta(0),
+                    False,
+                )
+            else:
+                # Mode 2: Start date (optionally also quantity) given -> compute end date
+                self.enddate = self.calculateOperationTime(
+                    self.startdate,
+                    itemdistribution.leadtime if itemdistribution else timedelta(0),
+                    True,
+                )
+
+        self._updateInventoryAndResources(
+            delete=delete, change=change, create=create, **fields
+        )
 
 
 class PurchaseOrder(OperationPlan):
@@ -853,6 +930,96 @@ class PurchaseOrder(OperationPlan):
         proxy = True
         verbose_name = _("purchase order")
         verbose_name_plural = _("purchase orders")
+
+    @property
+    def itemsupplier(self):
+        if hasattr(self, "_itemsupplier"):
+            return self._itemsupplier
+        item = self.item
+        while item:
+            for i in item.itemsuppliers.all():
+                if self.supplier == i.supplier and (
+                    self.location == i.location or not i.location
+                ):
+                    self._itemsupplier = i
+                    return self._itemsupplier
+            item = item.owner
+        self._itemsupplier = None
+        return self._itemsupplier
+
+    def update(self, delete=False, change=True, create=False, **fields):
+        itemsupplier = self.itemsupplier
+
+        # Process quantity changes
+        if (
+            (create or (change and "quantity" in fields))
+            and itemsupplier
+            and (
+                self.status
+                in (
+                    "approved",
+                    "proposed",
+                )
+                or not self.status
+            )
+        ):
+            if self.quantity < 0:
+                self.quantity = 0
+            sizemin = Decimal(
+                itemsupplier.sizeminimum
+                if itemsupplier.sizeminimum is not None
+                else Decimal(1)
+            )
+            if self.quantity < sizemin:
+                if itemsupplier.sizemultiple and itemsupplier.sizemultiple > 0:
+                    # Round up from minimum
+                    self.quantity = itemsupplier.sizemultiple * math.ceil(
+                        sizemin / itemsupplier.sizemultiple
+                    )
+                else:
+                    self.quantity = sizemin
+            if (
+                itemsupplier.sizemaximum is not None
+                and itemsupplier.sizemaximum > 0
+                and itemsupplier.sizemaximum >= self.quantity
+            ):
+                if itemsupplier.sizemultiple and itemsupplier.sizemultiple > 0:
+                    # Round down from maximim
+                    self.quantity = itemsupplier.sizemultiple * math.floor(
+                        itemsupplier.sizemaximum / itemsupplier.sizemultiple
+                    )
+                    if self.quantity < sizemin:
+                        # No multiple found between min and max.
+                        # Use the multiple to break out of this.
+                        self.quantity = itemsupplier.sizemultiple
+                else:
+                    self.quantity = itemsupplier.sizemaximum
+            elif itemsupplier.sizemultiple and itemsupplier.sizemultiple > 0:
+                # Round up to a multiple
+                self.quantity = itemsupplier.sizemultiple * math.ceil(
+                    self.quantity / itemsupplier.sizemultiple
+                )
+
+        # Assure the start date, end date and quantity are consistent
+        if change or create:
+            if "enddate" in fields:
+                # Mode 1: End date (optionally also quantity) given -> compute start date
+                self.startdate = self.calculateOperationTime(
+                    self.enddate,
+                    itemsupplier.leadtime if itemsupplier else timedelta(0),
+                    False,
+                )
+            else:
+                # Mode 2: Start date (optionally also quantity) given -> compute end date
+                self.enddate = self.calculateOperationTime(
+                    self.startdate,
+                    itemsupplier.leadtime if itemsupplier else timedelta(0),
+                    True,
+                )
+
+        self._updateInventoryAndResources(
+            delete=delete, change=change, create=create, **fields
+        )
 
 
 class ManufacturingOrder(OperationPlan):
@@ -1355,3 +1522,95 @@ class ManufacturingOrder(OperationPlan):
         proxy = True
         verbose_name = _("manufacturing order")
         verbose_name_plural = _("manufacturing orders")
+
+    def update(self, delete=False, change=True, create=False, **fields):
+        # Process quantity changes
+        if (
+            (create or (change and "quantity" in fields))
+            and self.operation
+            and (
+                self.status
+                in (
+                    "approved",
+                    "proposed",
+                )
+                or not self.status
+            )
+        ):
+            if self.quantity < 0:
+                self.quantity = 0
+            sizemin = Decimal(
+                self.operation.sizeminimum
+                if self.operation.sizeminimum is not None
+                else Decimal(1)
+            )
+            if self.quantity < sizemin:
+                if self.operation.sizemultiple and self.operation.sizemultiple > 0:
+                    # Round up from minimum
+                    self.quantity = self.operation.sizemultiple * math.ceil(
+                        sizemin / self.operation.sizemultiple
+                    )
+                else:
+                    self.quantity = sizemin
+            if (
+                self.operation.sizemaximum is not None
+                and self.operation.sizemaximum > 0
+                and self.operation.sizemaximum >= self.quantity
+            ):
+                if self.operation.sizemultiple and self.operation.sizemultiple > 0:
+                    # Round down from maximim
+                    self.quantity = self.operation.sizemultiple * math.floor(
+                        self.operation.sizemaximum / self.operation.sizemultiple
+                    )
+                    if self.quantity < sizemin:
+                        # No multiple found between min and max.
+                        # Use the multiple to break out of this.
+                        self.quantity = self.operation.sizemultiple
+                else:
+                    self.quantity = self.operation.sizemaximum
+            elif self.operation.sizemultiple and self.operation.sizemultiple > 0:
+                # Round up to a multiple
+                self.quantity = self.operation.sizemultiple * math.ceil(
+                    self.quantity / self.operation.sizemultiple
+                )
+
+        # Assure the start date, end date and quantity are consistent
+        if change or create:
+            if "startdate" in fields:
+                efficiency = self.getEfficiency(self.startdate)
+            elif "enddate" in fields:
+                efficiency = self.getEfficiency(self.enddate)
+            else:
+                efficiency = self.getEfficiency(self.startdate)
+
+            if self.operation.type == "time_per" or not self.operation.type:
+                duration = (
+                    (self.operation.duration or timedelta(0))
+                    + (self.operation.duration_per or timedelta(0))
+                    * float(self.quantity)
+                ) / efficiency
+            elif self.operation.type == "time_fixed":
+                duration = (self.operation.duration or timedelta(0)) / efficiency
+            elif not self.operation:
+                duration = timedelta(0)
+            else:
+                # TODO handle updates on routing operationplans
+                raise Exception(
+                    "Can change manufacturing orders of type %s yet"
+                    % self.operation.type
+                )
+
+            if "enddate" in fields:
+                # Mode 1: End date (optionally also quantity) given -> compute start date
+                self.startdate = self.calculateOperationTime(
+                    self.enddate, duration, False
+                )
+            else:
+                # Mode 2: Start date (optionally also quantity) given -> compute end date
+                self.enddate = self.calculateOperationTime(
+                    self.startdate, duration, True
+                )
+
+        self._updateInventoryAndResources(
+            delete=delete, change=change, create=create, **fields
+        )

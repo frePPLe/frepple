@@ -158,8 +158,14 @@ def getAttributes(model):
       fieldname, label, fieldtype, editable (default=True), initially_hidden (default=False)
     """
     if not model._meta.proxy:
+        model_path = model.__module__.split(".")
+        while model_path[-1] != "models":
+            # Ignore submodules of a models folder
+            model_path.pop()
+        model_path.append(model.__name__)
+        model_path = ".".join(model_path)
         for attr in chain(
-            _register.get("%s.%s" % (model.__module__, model.__name__), []),
+            _register.get(model_path, []),
             _register.get(model._meta.db_table, []),
         ):
             yield attr

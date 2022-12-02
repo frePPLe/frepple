@@ -122,9 +122,17 @@ class ReportList(GridReport):
     frozenColumns = 1
     rows = (
         GridFieldInteger(
-            "id", title=_("identifier"), key=True, extra="formatter:reportlink"
+            "id",
+            title=_("identifier"),
+            key=True,
+            extra="formatter:reportlink",
+            hidden=True,
         ),
-        GridFieldText("name", title=_("name")),
+        GridFieldText(
+            "name",
+            title=_("name"),
+            extra="formatter:reportlink",
+        ),
         GridFieldText("description", title=_("description")),
         GridFieldText("sql", title=_("SQL query")),
         GridFieldBoolNullable("public", title=_("public")),

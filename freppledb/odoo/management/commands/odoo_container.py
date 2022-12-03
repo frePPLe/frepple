@@ -227,6 +227,7 @@ class Command(BaseCommand):
                     % (
                         "host.docker.internal"
                         if not options["odoo_db_host"]
+                        or options["odoo_db_host"] == "localhost"
                         else options["odoo_db_host"]
                     ),
                     "-e",
@@ -352,6 +353,7 @@ class Command(BaseCommand):
                 % (
                     "host.docker.internal"
                     if not options["odoo_db_host"]
+                    or options["odoo_db_host"] == "localhost"
                     else options["odoo_db_host"]
                 ),
                 "-e",

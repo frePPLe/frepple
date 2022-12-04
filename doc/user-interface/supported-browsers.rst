@@ -2,19 +2,17 @@
 Supported browsers
 ==================
 
-The frePPLe user interface is browser based. 
+The frePPLe user interface is browser based.
 
-The following web browsers are supported:
+Recent versions of the following web browsers are supported:
 
-* **Google Chrome** 48 and higher.
+* **Google Chrome**.
 
-* **Firefox** 45 and higher.
+* **Firefox**.
 
-* **Microsoft Edge** 25 and higher.
+* **Microsoft Edge**.
 
-* **Safari** 10.9 and higher.
-
-Internet Explorer is NOT supported any longer.
+* **Safari**.
 
 For best results we recommend a high-resolution and wide screen. The
 user interface isn't optimized for mobile devices (yet).

@@ -6,7 +6,7 @@ Release notes
 
 .. rubric:: System administration
 
-- | Bug fix: restoring a database backuo in a scenario was broken.
+- | Bug fix: restoring a database backup in a scenario was broken.
 
 7.0.0 (2022/11/18)
 ==================

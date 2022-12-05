@@ -32,6 +32,7 @@ a high level overview of the model objects and their relationships.
    operations
    operation-materials
    operation-resources
+   operation-dependencies
    operationplan-materials
    operationplan-resources
    parameters
@@ -40,7 +41,7 @@ a high level overview of the model objects and their relationships.
    suboperations
    resources
    resource-skills
-   sales-orders   
+   sales-orders
    setup-matrices
    skills
    suppliers

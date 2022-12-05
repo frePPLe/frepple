@@ -31,9 +31,10 @@ from django.utils.text import format_lazy
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import (
     Resource,
-    Operation,
     Location,
     Item,
+    Operation,
+    OperationDependency,
     OperationResource,
     OperationMaterial,
     Calendar,
@@ -1506,6 +1507,289 @@ class SubOperationList(GridReport):
         GridFieldLastModified(
             "suboperation__lastmodified",
             title=format_lazy("{} - {}", _("suboperation"), _("last modified")),
+            initially_hidden=True,
+            editable=False,
+        ),
+    )
+
+
+class OperationDependencyList(GridReport):
+    title = _("operation dependencies")
+    basequeryset = OperationDependency.objects.all()
+    model = OperationDependency
+    frozenColumns = 1
+    help_url = "model-reference/operation-dependencies.html"
+    message_when_empty = Template(
+        """
+        <h3>Define operation dependencies</h3>
+        <br>
+        This table defines relations between operations.<br>
+        Use this table for:<br>
+        <ul>
+        <li>
+        <br>1.<br>
+        Define which <b>steps in a routing operation can be executed in parallel</b>.<br>
+        You use the dependencies to define which operation(s) is a prerequisite for another.<br>
+        </li>
+        <li>
+        <br>2.<br>
+        Define relations between <b>different steps in a project-oriented business</b>.<br>
+        In most manufacturing oriented business, a bill-of-material is used to define
+        different levels in the product structure.<br>
+        In a project-oriented business you can directly link subprojects without
+        defining intermediate items.<br>
+        </li>
+        </ul>
+        <br>
+        <br>
+        """
+    )
+    rows = (
+        GridFieldInteger("id", title=_("identifier"), key=True, initially_hidden=True),
+        GridFieldText(
+            "operation",
+            title=_("operation"),
+            field_name="operation__name",
+            formatter="detail",
+            extra='"role":"input/operation"',
+        ),
+        GridFieldText(
+            "blockedby",
+            title=_("blocked by operation"),
+            field_name="blockedby__name",
+            formatter="detail",
+            extra='"role":"input/operation"',
+        ),
+        GridFieldNumber("quantity", title=_("quantity")),
+        GridFieldDuration(
+            "safety_leadtime", title=_("soft safety lead time"), initially_hidden=True
+        ),
+        GridFieldDuration(
+            "hard_safety_leadtime",
+            title=_("hard safety lead time"),
+            initially_hidden=True,
+        ),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
+        GridFieldLastModified("lastmodified"),
+        # Operation fields
+        GridFieldText(
+            "operation__description",
+            title=format_lazy("{} - {}", _("operation"), _("description")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "operation__category",
+            title=format_lazy("{} - {}", _("operation"), _("category")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "operation__subcategory",
+            title=format_lazy("{} - {}", _("operation"), _("subcategory")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldChoice(
+            "operation__type",
+            title=format_lazy("{} - {}", _("operation"), _("type")),
+            choices=Operation.types,
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDuration(
+            "operation__duration",
+            title=format_lazy("{} - {}", _("operation"), _("duration")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDuration(
+            "operation__duration_per",
+            title=format_lazy("{} - {}", _("operation"), _("duration per unit")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDuration(
+            "operation__fence",
+            title=format_lazy("{} - {}", _("operation"), _("release fence")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDuration(
+            "operation__posttime",
+            title=format_lazy("{} - {}", _("operation"), _("post-op time")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "operation__sizeminimum",
+            title=format_lazy("{} - {}", _("operation"), _("size minimum")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "operation__sizemultiple",
+            title=format_lazy("{} - {}", _("operation"), _("size multiple")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "operation__sizemaximum",
+            title=format_lazy("{} - {}", _("operation"), _("size maximum")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldInteger(
+            "operation__priority",
+            title=format_lazy("{} - {}", _("operation"), _("priority")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDateTime(
+            "operation__effective_start",
+            title=format_lazy("{} - {}", _("operation"), _("effective start")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDateTime(
+            "operation__effective_end",
+            title=format_lazy("{} - {}", _("operation"), _("effective end")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldCurrency(
+            "operation__cost",
+            title=format_lazy("{} - {}", _("operation"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldChoice(
+            "operation__search",
+            title=format_lazy("{} - {}", _("operation"), _("search mode")),
+            choices=searchmode,
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "operation__source",
+            title=format_lazy("{} - {}", _("operation"), _("source")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldLastModified(
+            "operation__lastmodified",
+            title=format_lazy("{} - {}", _("operation"), _("last modified")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        # blockedby fields
+        GridFieldText(
+            "blockedby__description",
+            title=format_lazy("{} - {}", _("blockedby"), _("description")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "blockedby__category",
+            title=format_lazy("{} - {}", _("blockedby"), _("category")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "blockedby__subcategory",
+            title=format_lazy("{} - {}", _("blockedby"), _("subcategory")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldChoice(
+            "blockedby__type",
+            title=format_lazy("{} - {}", _("blockedby"), _("type")),
+            choices=Operation.types,
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDuration(
+            "blockedby__duration",
+            title=format_lazy("{} - {}", _("blockedby"), _("duration")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDuration(
+            "blockedby__duration_per",
+            title=format_lazy("{} - {}", _("blockedby"), _("duration per unit")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDuration(
+            "blockedby__fence",
+            title=format_lazy("{} - {}", _("blockedby"), _("release fence")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDuration(
+            "blockedby__posttime",
+            title=format_lazy("{} - {}", _("blockedby"), _("post-op time")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "blockedby__sizeminimum",
+            title=format_lazy("{} - {}", _("blockedby"), _("size minimum")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "blockedby__sizemultiple",
+            title=format_lazy("{} - {}", _("blockedby"), _("size multiple")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "blockedby__sizemaximum",
+            title=format_lazy("{} - {}", _("blockedby"), _("size maximum")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldInteger(
+            "blockedby__priority",
+            title=format_lazy("{} - {}", _("blockedby"), _("priority")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDateTime(
+            "blockedby__effective_start",
+            title=format_lazy("{} - {}", _("blockedby"), _("effective start")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldDateTime(
+            "blockedby__effective_end",
+            title=format_lazy("{} - {}", _("blockedby"), _("effective end")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldCurrency(
+            "blockedby__cost",
+            title=format_lazy("{} - {}", _("blockedby"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldChoice(
+            "blockedby__search",
+            title=format_lazy("{} - {}", _("blockedby"), _("search mode")),
+            choices=searchmode,
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "blockedby__source",
+            title=format_lazy("{} - {}", _("blockedby"), _("source")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldLastModified(
+            "blockedby__lastmodified",
+            title=format_lazy("{} - {}", _("blockedby"), _("last modified")),
             initially_hidden=True,
             editable=False,
         ),

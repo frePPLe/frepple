@@ -106,6 +106,11 @@ urlpatterns = [
         name="input_suboperation_changelist",
     ),
     re_path(
+        r"^data/input/operationdependency/$",
+        freppledb.input.views.OperationDependencyList.as_view(),
+        name="input_operationdepency_changelist",
+    ),
+    re_path(
         r"^data/input/manufacturingorder/$",
         freppledb.input.views.ManufacturingOrderList.as_view(),
         name="input_manufacturingorder_changelist",
@@ -378,6 +383,10 @@ urlpatterns = [
         freppledb.input.serializers.SubOperationAPI.as_view(),
     ),
     re_path(
+        r"^api/input/operationdependency/$",
+        freppledb.input.serializers.OperationDependencyAPI.as_view(),
+    ),
+    re_path(
         r"^api/input/manufacturingorder/$",
         freppledb.input.serializers.ManufacturingOrderAPI.as_view(),
     ),
@@ -472,6 +481,10 @@ urlpatterns = [
     re_path(
         r"^api/input/suboperation/(?P<pk>(.+))/$",
         freppledb.input.serializers.SubOperationdetailAPI.as_view(),
+    ),
+    re_path(
+        r"^api/input/operationdependency/(?P<pk>(.+))/$",
+        freppledb.input.serializers.OperationDependencydetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/manufacturingorder/(?P<pk>(.+))/$",

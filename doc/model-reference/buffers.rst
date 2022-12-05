@@ -28,7 +28,7 @@ location         location          | Location of the buffer.
 batch            string            | Blank, unused for make-to-stock items.
                                    | Batch identification for make-to-order items.
                                    | The combination item+location+batch is the unique primary
-                                     key of this table.                                                              
+                                     key of this table.
 description      string            Free format description.
 category         string            Free format category.
 subcategory      string            | Free format subcategory.

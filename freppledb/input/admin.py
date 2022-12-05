@@ -18,18 +18,34 @@
 from django.utils.translation import gettext_lazy as _
 from django.contrib import admin
 
-from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule
-from freppledb.input.models import Buffer, Customer, Demand, Item, OperationResource
-from freppledb.input.models import OperationMaterial, Skill, ResourceSkill, Supplier
 from freppledb.input.models import (
+    Buffer,
     Calendar,
     CalendarBucket,
+    Customer,
+    DeliveryOrder,
+    Demand,
+    DistributionOrder,
+    Item,
+    ItemDistribution,
+    ItemSupplier,
+    Location,
     ManufacturingOrder,
+    Operation,
+    OperationDependency,
+    OperationMaterial,
+    OperationPlanMaterial,
+    OperationPlanResource,
+    OperationResource,
+    PurchaseOrder,
+    Resource,
+    ResourceSkill,
+    SetupMatrix,
+    SetupRule,
+    Skill,
     SubOperation,
+    Supplier,
 )
-from freppledb.input.models import ItemSupplier, ItemDistribution, DistributionOrder
-from freppledb.input.models import PurchaseOrder, DeliveryOrder, OperationPlanResource
-from freppledb.input.models import OperationPlanMaterial
 from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 
 from freppledb.admin import data_site
@@ -446,6 +462,14 @@ class Operation_admin(MultiDBModelAdmin):
 class SubOperation_admin(MultiDBModelAdmin):
     model = SubOperation
     raw_id_fields = ("operation", "suboperation")
+    save_on_top = True
+    exclude = ("source", "id")
+
+
+@admin.register(OperationDependency, site=data_site)
+class OperationDependency_admin(MultiDBModelAdmin):
+    model = OperationDependency
+    raw_id_fields = ("operation", "blockedby")
     save_on_top = True
     exclude = ("source", "id")
 

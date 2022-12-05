@@ -4,6 +4,16 @@ Release notes
 7.1.0 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- | A new `operation dependencies <model-reference/operation-dependencies.html>`_
+    table allows to define relations between operations.
+  | This is useful to model the following situations:
+  | - Define which steps in a routing operation can be executed in parallel
+      rather than sequential.
+  | - Define relations between different subprojects and tasks in a
+      project-oriented business.
+
 .. rubric:: System administration
 
 - | Bug fix: restoring a database backup in a scenario was broken.

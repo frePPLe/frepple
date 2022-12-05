@@ -590,3 +590,65 @@ class SubOperation(AuditModel):
                 "item",
             ]
         )
+
+
+class OperationDependency(AuditModel):
+    # Database fields
+    id = models.AutoField(_("identifier"), primary_key=True)
+    operation = models.ForeignKey(
+        Operation,
+        verbose_name=_("operation"),
+        related_name="dependencies",
+        help_text=_("Operation"),
+        on_delete=models.CASCADE,
+    )
+    blockedby = models.ForeignKey(
+        Operation,
+        verbose_name=_("blocked by operation"),
+        related_name="dependents",
+        help_text=_("Blocked-by operation"),
+        on_delete=models.CASCADE,
+    )
+    quantity = models.DecimalField(
+        _("quantity"),
+        max_digits=20,
+        decimal_places=8,
+        null=True,
+        blank=True,
+        default="1.0",
+        help_text=_("Quantity relation between the operations"),
+    )
+    safety_leadtime = models.DurationField(
+        _("soft safety lead time"),
+        null=True,
+        blank=True,
+        help_text=_("soft safety lead time"),
+    )
+    hard_safety_leadtime = models.DurationField(
+        _("hard safety lead time"),
+        null=True,
+        blank=True,
+        help_text=_("hard safety lead time"),
+    )
+
+    class Manager(MultiDBManager):
+        def get_by_natural_key(self, operation, blockedby):
+            return self.get(operation=operation, blockedby=blockedby)
+
+    def natural_key(self):
+        return (self.operation, self.blockedby)
+
+    objects = Manager()
+
+    def __str__(self):
+        return "%s   %s" % (
+            self.operation.name if self.operation else None,
+            self.blockedby.name if self.blockedby else None,
+        )
+
+    class Meta(AuditModel.Meta):
+        db_table = "operation_dependency"
+        ordering = ["operation", "blockedby"]
+        verbose_name = _("operation dependency")
+        verbose_name_plural = _("operation dependencies")
+        unique_together = (("operation", "blockedby"),)

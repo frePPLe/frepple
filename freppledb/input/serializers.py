@@ -650,6 +650,57 @@ class SubOperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = SubOperationSerializer
 
 
+class OperationDependencyFilter(filters.FilterSet):
+    class Meta:
+        model = models.OperationDependency
+        fields = dict(
+            {
+                "id": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "operation": ["exact", "in"],
+                "blockedby": ["exact", "in"],
+                "quantity": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "safety_leadtime": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "hard_safety_leadtime": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "source": ["exact", "in"],
+                "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
+            },
+            **getAttributeAPIFilterDefinition(models.OperationDependency)
+        )
+        filter_fields = fields.keys()
+
+
+class OperationDependencySerializer(BulkSerializerMixin, ModelSerializer):
+    class Meta:
+        model = models.OperationDependency
+        fields = (
+            "id",
+            "operation",
+            "blockedby",
+            "quantity",
+            "safety_leadtime",
+            "hard_safety_leadtime",
+            "source",
+            "lastmodified",
+        ) + getAttributeAPIFields(models.OperationDependency)
+        read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
+            models.OperationDependency
+        )
+        list_serializer_class = BulkListSerializer
+        update_lookup_field = "id"
+        partial = True
+
+
+class OperationDependencyAPI(frePPleListCreateAPIView):
+    queryset = models.OperationDependency.objects.all()
+    serializer_class = OperationDependencySerializer
+    filter_class = OperationDependencyFilter
+
+
+class OperationDependencydetailAPI(frePPleRetrieveUpdateDestroyAPIView):
+    queryset = models.OperationDependency.objects.all()
+    serializer_class = OperationDependencySerializer
+
+
 class BufferFilter(filters.FilterSet):
     class Meta:
         model = models.Buffer

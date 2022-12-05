@@ -50,6 +50,7 @@ from .capacity import (
 from .purchasing import SupplierList, ItemSupplierList, PurchaseOrderList
 from .manufacturing import (
     OperationList,
+    OperationDependencyList,
     OperationMaterialList,
     OperationResourceList,
     CalendarList,

@@ -17,18 +17,34 @@
 from freppledb.menu import menu
 
 import freppledb.input.views
-from freppledb.input.models import Buffer, Item, Customer, Location, Demand
-from freppledb.input.models import DistributionOrder, ManufacturingOrder, CalendarBucket
 from freppledb.input.models import (
-    PurchaseOrder,
-    Supplier,
+    Buffer,
+    Calendar,
+    CalendarBucket,
+    Customer,
+    DeliveryOrder,
+    Demand,
+    DistributionOrder,
+    Item,
+    ItemDistribution,
     ItemSupplier,
+    Location,
+    ManufacturingOrder,
+    Operation,
+    OperationDependency,
     OperationMaterial,
+    OperationPlanMaterial,
+    OperationPlanResource,
+    OperationResource,
+    PurchaseOrder,
+    Resource,
+    ResourceSkill,
+    SetupMatrix,
+    SetupRule,
+    Skill,
+    SubOperation,
+    Supplier,
 )
-from freppledb.input.models import ItemDistribution, Skill, Resource, OperationResource
-from freppledb.input.models import ResourceSkill, SetupMatrix, SetupRule, SubOperation
-from freppledb.input.models import Calendar, Operation, DeliveryOrder
-from freppledb.input.models import OperationPlanMaterial, OperationPlanResource
 
 
 menu.addItem(
@@ -240,6 +256,15 @@ menu.addItem(
     index=1600,
     model=OperationResource,
     dependencies=[Operation, Resource],
+)
+menu.addItem(
+    "manufacturing",
+    "operationdependencies",
+    url="/data/input/operationdependency/",
+    report=freppledb.input.views.OperationDependencyList,
+    index=16500,
+    model=OperationDependency,
+    dependencies=[Operation],
 )
 menu.addItem(
     "manufacturing",

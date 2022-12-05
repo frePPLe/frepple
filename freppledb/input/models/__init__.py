@@ -24,6 +24,7 @@ from .itemdistribution import ItemDistribution
 from .location import Location
 from .operation import (
     Operation,
+    OperationDependency,
     OperationMaterial,
     OperationResource,
     searchmode,

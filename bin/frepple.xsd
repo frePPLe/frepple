@@ -225,6 +225,13 @@
       <xsd:element name="available" type="calendar" />
       <xsd:element name="search" type="search" />
       <xsd:element name="nolocationcalendar" type="xsd:boolean" />
+      <xsd:element name="dependencies">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="dependency" type="operationdependency" minOccurs="0" maxOccurs="unbounded" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="duration" type="xsd:duration" />
@@ -333,6 +340,27 @@
         <xsd:element name="priority" type="xsd:integer" />
         <xsd:element name="effective_start" type="xsd:dateTime" />
         <xsd:element name="effective_end" type="xsd:dateTime" />
+      </xsd:choice>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="operationdependency">
+    <xsd:annotation>
+      <xsd:documentation>
+        A blocked-by dependency between two operations.
+</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence minOccurs="1">
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="quantity" type="xsd:double" />
+        <xsd:element name="safety_leadtime" type="xsd:duration" />
+        <xsd:element name="hard_safety_leadtime" type="xsd:duration" />
+      </xsd:choice>
+      <xsd:element name="blockedby" type="operation" />
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="quantity" type="xsd:double" />
+        <xsd:element name="safety_leadtime" type="xsd:duration" />
+        <xsd:element name="hard_safety_leadtime" type="xsd:duration" />
       </xsd:choice>
     </xsd:sequence>
   </xsd:complexType>
@@ -929,7 +957,7 @@
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
-  
+
   <xsd:complexType name="demandlist">
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="demand" type="demand" />
@@ -1167,7 +1195,7 @@
         <xsd:element name="booleanproperty" type="booleanproperty" />
         <xsd:element name="stringproperty" type="stringproperty" />
         <xsd:element name="doubleproperty" type="doubleproperty" />
-        <xsd:element name="dateproperty" type="dateproperty" />		
+        <xsd:element name="dateproperty" type="dateproperty" />
       </xsd:choice>
       <xsd:attribute name="name" type="xsd:normalizedString" />
       <xsd:attribute name="source" type="xsd:normalizedString" />

@@ -39,6 +39,7 @@ add_library(model STATIC
   "model/loadplan.cpp"
   "model/location.cpp"
   "model/operation.cpp"
+  "model/operationdependency.cpp"
   "model/operationplan.cpp"
   "model/pegging.cpp"
   "model/plan.cpp"

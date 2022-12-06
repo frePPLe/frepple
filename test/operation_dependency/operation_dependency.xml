@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Test model for dependencies between operations</name>
+	<current>2023-01-01T00:00:00</current>
+	<operations>
+		<operation name="my routing" xsi:type="operation_routing">
+			<item name="my project"/>
+			<location name="factory"/>
+			<suboperations>
+				<suboperation>
+					<operation name="routing step A" xsi:type="operation_fixed_time" duration="P1D">
+						<location name="factory"/>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation name="routing step B" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
+						<location name="factory"/>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation name="routing step C" xsi:type="operation_fixed_time" duration="P1D">
+						<location name="factory"/>
+						<dependencies>
+							<dependency>
+								<blockedby name="routing step A"/>
+								<safety_leadtime>P5D</safety_leadtime>
+							</dependency>
+							<dependency>
+								<blockedby name="routing step B"/>
+								<hard_safety_leadtime>P5D</hard_safety_leadtime>
+							</dependency>							
+						</dependencies>
+					</operation>
+					<priority>3</priority>
+				</suboperation>
+			</suboperations>
+		</operation>
+	</operations>
+	<demands>
+		<demand name="order 1">
+			<quantity>5</quantity>
+			<minshipment>5</minshipment>
+			<due>2023-05-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="my project"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+
+<?python 
+print("CREATING CONSTRAINED PLAN")
+frepple.saveXMLfile("output.1.xml")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+?>
+</plan>

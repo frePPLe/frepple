@@ -37,6 +37,7 @@ class Tags {
   static const Keyword available;
   static const Keyword batch;
   static const Keyword batchwindow;
+  static const Keyword blockedby;
   static const Keyword booleanproperty;
   static const Keyword bucket;
   static const Keyword buckets;
@@ -75,6 +76,8 @@ class Tags {
   static const Keyword deliveryduration;
   static const Keyword demand;
   static const Keyword demands;
+  static const Keyword dependencies;
+  static const Keyword dependency;
   static const Keyword description;
   static const Keyword destination;
   static const Keyword detectproblems;
@@ -185,6 +188,7 @@ class Tags {
   static const Keyword root;
   static const Keyword rule;
   static const Keyword rules;
+  static const Keyword safety_leadtime;
   static const Keyword search;
   static const Keyword setup;
   static const Keyword setupend;

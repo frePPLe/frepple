@@ -147,6 +147,9 @@ Operation::~Operation() {
   // through it.
   while (!getSuperOperations().empty())
     removeSuperOperation(*getSuperOperations().begin());
+
+  // Clear dependencies
+  while (!dependencies.empty()) delete dependencies.front();
 }
 
 OperationRouting::~OperationRouting() {

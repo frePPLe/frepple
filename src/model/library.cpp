@@ -67,6 +67,7 @@ void LibraryModel::initialize() {
   nok += Flow::initialize();
   nok += FlowPlanIterator::initialize();
   nok += SubOperation::initialize();
+  nok += OperationDependency::initialize();
   nok += Operation::initialize();
   nok += OperationAlternate::initialize();
   nok += OperationSplit::initialize();

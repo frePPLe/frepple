@@ -1447,6 +1447,81 @@ class SubOperation : public Object, public HasSource {
   };
 };
 
+class OperationDependency : public Object, public HasSource {
+ private:
+  Operation* oper = nullptr;
+
+  Operation* blockedby = nullptr;
+
+  double quantity = 1.0;
+
+  Duration safety_leadtime;
+
+  Duration hard_safety_leadtime;
+
+  static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
+
+ public:
+  typedef forward_list<OperationDependency*> operationdependencylist;
+
+  explicit OperationDependency() { initType(metadata); }
+
+  ~OperationDependency();
+
+  Operation* getOperation() const { return oper; }
+
+  void setOperation(Operation*);
+
+  Operation* getBlockedBy() const { return blockedby; }
+
+  void setBlockedBy(Operation*);
+
+  double getQuantity() const { return quantity; }
+
+  void setQuantity(double q) {
+    if (q < 0.0)
+      throw DataException("Dependency quantity must be greater than 1");
+    quantity = q;
+  }
+
+  Duration getSafetyLeadtime() const { return safety_leadtime; }
+
+  Duration getHardSafetyLeadtime() const { return hard_safety_leadtime; }
+
+  void setSafetyLeadtime(Duration d) {
+    if (d < Duration(0L))
+      throw DataException("No negative safety lead time allowed");
+    safety_leadtime = d;
+  }
+
+  void setHardSafetyLeadtime(Duration d) {
+    if (d < Duration(0L))
+      throw DataException("No negative hard safety lead time allowed");
+    hard_safety_leadtime = d;
+  }
+
+  virtual const MetaClass& getType() const { return *metadata; }
+  static const MetaCategory* metacategory;
+  static const MetaClass* metadata;
+  static int initialize();
+
+  template <class Cls>
+  static inline void registerFields(MetaClass* m) {
+    m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation,
+                                       &Cls::setOperation, MANDATORY + PARENT);
+    m->addPointerField<Cls, Operation>(Tags::blockedby, &Cls::getBlockedBy,
+                                       &Cls::setBlockedBy, MANDATORY);
+    m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity,
+                           1);
+    m->addDurationField<Cls>(Tags::safety_leadtime, &Cls::getSafetyLeadtime,
+                             &Cls::setSafetyLeadtime);
+    m->addDurationField<Cls>(Tags::hard_safety_leadtime,
+                             &Cls::getHardSafetyLeadtime,
+                             &Cls::setHardSafetyLeadtime);
+    HasSource::registerFields<Cls>(m);
+  }
+};
+
 #include "frepple/timeline.h"
 
 /* A timeline event representing a setup change.
@@ -2766,6 +2841,7 @@ class Operation : public HasName<Operation>,
 
   typedef Association<Operation, Buffer, Flow>::ListA flowlist;
   typedef Association<Operation, Resource, Load>::ListA loadlist;
+  typedef forward_list<OperationDependency*> dependencylist;
 
   /* This is the factory method which creates all operationplans of the
    * operation. */
@@ -2935,6 +3011,28 @@ class Operation : public HasName<Operation>,
   /* Returns an reference to the list of loads. */
   loadlist::const_iterator getLoadIterator() const { return loaddata.begin(); }
 
+  class dependencyIterator {
+   private:
+    dependencylist::const_iterator cur;
+    dependencylist::const_iterator nd;
+
+   public:
+    /* Constructor. */
+    dependencyIterator(const dependencylist& l) : cur(l.begin()), nd(l.end()) {}
+
+    /* Return current value and advance the iterator. */
+    OperationDependency* next() {
+      if (cur == nd) return nullptr;
+      auto tmp = *cur;
+      ++cur;
+      return tmp;
+    }
+  };
+
+  dependencyIterator getDependencyIterator() const {
+    return dependencyIterator(dependencies);
+  }
+
   OperationPlan::iterator getOperationPlans() const;
 
   /* Return the flow that is associates a given buffer with this
@@ -3049,6 +3147,14 @@ class Operation : public HasName<Operation>,
    * using the current Operation as a sub-Operation.
    */
   bool hasSuperOperations() const { return !superoplist.empty(); }
+
+  const forward_list<OperationDependency*>& getDependencies() const {
+    return dependencies;
+  }
+
+  void removeDependency(OperationDependency* d) { dependencies.remove(d); };
+
+  void addDependency(OperationDependency*);
 
   Operation* getOwner() const {
     if (superoplist.empty())
@@ -3169,6 +3275,9 @@ class Operation : public HasName<Operation>,
                                      &Cls::setSearch, SearchMode::PRIORITY);
     m->addPointerField<Cls, Operation>(Tags::owner, &Cls::getOwner, nullptr,
                                        DONT_SERIALIZE);
+    m->addIteratorField<Cls, dependencyIterator, OperationDependency>(
+        Tags::dependencies, Tags::dependency, &Cls::getDependencyIterator,
+        BASE + WRITE_OBJECT);
     HasLevel::registerFields<Cls>(m);
   }
 
@@ -3203,6 +3312,9 @@ class Operation : public HasName<Operation>,
    * some memory.
    */
   list<Operation*> superoplist;
+
+  /* A list operations that are blocking this one. */
+  forward_list<OperationDependency*> dependencies;
 
   /* Item produced by the operation. */
   Item* item = nullptr;

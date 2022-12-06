@@ -3013,24 +3013,38 @@ class Operation : public HasName<Operation>,
 
   class dependencyIterator {
    private:
+    const Operation* oper;
     dependencylist::const_iterator cur;
-    dependencylist::const_iterator nd;
+    bool blckby = false;
 
    public:
     /* Constructor. */
-    dependencyIterator(const dependencylist& l) : cur(l.begin()), nd(l.end()) {}
+    dependencyIterator(const Operation* o, bool d = false)
+        : oper(o), blckby(d) {
+      if (o) cur = o->getDependencies().begin();
+    }
 
     /* Return current value and advance the iterator. */
     OperationDependency* next() {
-      if (cur == nd) return nullptr;
-      auto tmp = *cur;
-      ++cur;
-      return tmp;
+      if (!oper) return nullptr;
+      OperationDependency* tmp = nullptr;
+      while (cur != oper->getDependencies().end()) {
+        tmp = *cur;
+        ++cur;
+        if ((tmp->getOperation() == oper && blckby) ||
+            (tmp->getBlockedBy() == oper && !blckby))
+          return tmp;
+      }
+      return nullptr;
     }
   };
 
-  dependencyIterator getDependencyIterator() const {
-    return dependencyIterator(dependencies);
+  dependencyIterator getBlockingIterator() const {
+    return dependencyIterator(this, false);
+  }
+
+  dependencyIterator getBlockedbyIterator() const {
+    return dependencyIterator(this, true);
   }
 
   OperationPlan::iterator getOperationPlans() const;
@@ -3276,8 +3290,14 @@ class Operation : public HasName<Operation>,
     m->addPointerField<Cls, Operation>(Tags::owner, &Cls::getOwner, nullptr,
                                        DONT_SERIALIZE);
     m->addIteratorField<Cls, dependencyIterator, OperationDependency>(
-        Tags::dependencies, Tags::dependency, &Cls::getDependencyIterator,
+        Tags::dependencies, Tags::dependency, &Cls::getBlockedbyIterator,
         BASE + WRITE_OBJECT);
+    m->addIteratorField<Cls, dependencyIterator, OperationDependency>(
+        Tags::blockedby, Tags::dependency, &Cls::getBlockedbyIterator,
+        DONT_SERIALIZE);
+    m->addIteratorField<Cls, dependencyIterator, OperationDependency>(
+        Tags::blocking, Tags::dependency, &Cls::getBlockingIterator,
+        DONT_SERIALIZE);
     HasLevel::registerFields<Cls>(m);
   }
 

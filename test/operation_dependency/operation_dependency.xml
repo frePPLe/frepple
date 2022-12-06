@@ -48,12 +48,30 @@
 	</demands>
 
 <?python 
+
+with open("output.1.xml", "wt", encoding='utf-8') as output:
+  for oper in frepple.operations():
+   for dpd in oper.blockedby:
+      print("%s is blocked by:\t%s\t%s\t%s\t%s" % (
+	     oper.name, dpd.blockedby.name, 
+		 dpd.quantity, dpd.safety_leadtime, dpd.hard_safety_leadtime
+		 ), file=output) 
+   for dpd in oper.blocking:
+      print("%s is blocking:\t%s\t%s\t%s\t%s" % (
+	     oper.name, dpd.operation.name, 
+		 dpd.quantity, dpd.safety_leadtime, dpd.hard_safety_leadtime
+		 ), file=output) 
+	  
 print("CREATING CONSTRAINED PLAN")
-frepple.saveXMLfile("output.1.xml")
+frepple.saveXMLfile("output.2.xml")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
-frepple.saveplan("output.2.xml")
+frepple.saveplan("output.3.xml")
 print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
-frepple.saveplan("output.3.xml")
+frepple.saveplan("output.4.xml")
+
+
+	  
+	  
 ?>
 </plan>

@@ -38,6 +38,7 @@ class Tags {
   static const Keyword batch;
   static const Keyword batchwindow;
   static const Keyword blockedby;
+  static const Keyword blocking;
   static const Keyword booleanproperty;
   static const Keyword bucket;
   static const Keyword buckets;

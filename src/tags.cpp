@@ -37,6 +37,7 @@ const Keyword Tags::available("available");
 const Keyword Tags::batch("batch");
 const Keyword Tags::batchwindow("batchwindow");
 const Keyword Tags::blockedby("blockedby");
+const Keyword Tags::blocking("blocking");
 const Keyword Tags::booleanproperty("booleanproperty");
 const Keyword Tags::bucket("bucket");
 const Keyword Tags::buckets("buckets");

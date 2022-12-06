@@ -57,20 +57,28 @@ OperationDependency::~OperationDependency() {
 void OperationDependency::setOperation(Operation* o) {
   if (o == oper) return;
   if (oper && blockedby) oper->removeDependency(this);
-  oper = o;
-  if (oper && blockedby)
+  if (!oper && o) {
+    oper = o;
     oper->addDependency(this);
-  else if (blockedby)
+    blockedby->addDependency(this);
+  } else if (o && blockedby) {
+    oper = o;
+    oper->addDependency(this);
+  } else if (blockedby)
     blockedby->removeDependency(this);
 }
 
 void OperationDependency::setBlockedBy(Operation* o) {
   if (o == blockedby) return;
-  if (oper && blockedby) blockedby->removeDependency(this);
-  blockedby = o;
-  if (oper && blockedby)
+  if (blockedby && oper) blockedby->removeDependency(this);
+  if (!blockedby && o) {
+    blockedby = o;
     blockedby->addDependency(this);
-  else if (oper)
+    oper->addDependency(this);
+  } else if (o && oper) {
+    blockedby = o;
+    blockedby->addDependency(this);
+  } else if (oper)
     oper->removeDependency(this);
 }
 

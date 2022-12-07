@@ -2935,6 +2935,17 @@ function sameOrigin(url) {
 //Display About dialog
 //----------------------------------------------------------------------------
 
+function containsObject(obj, list) {
+  var i;
+  for (i = 0; i < list.length; i++) {
+    if (list[i] === obj) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function about_show() {
 
   $.ajax({
@@ -2960,6 +2971,8 @@ function about_show() {
         '<p><a target="_blank" href="' + website + '"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
         '<p><a target="_blank" href="' + website + '/docs/' + version[0] + '.' + version[1] + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
         '<p><a target="_blank" href="' + website + '/docs/' + version[0] + '.' + version[1] + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +
+        ((containsObject("freppledb.debugreport", data.apps)) ?
+          '<br><p><a target="_blank" href="/debugreport/logapache/"><strong>Debug report &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' : '') +
         '</div>' +
         '<div class="col-sm-7"><strong>' + gettext("Installed apps") + ":</strong>";
       for (var i in data.apps)

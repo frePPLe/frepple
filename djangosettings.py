@@ -448,6 +448,7 @@ INSTALLED_APPS = (
     # the database, using the SQL_ROLE configured above.
     "freppledb.reportmanager",
     "freppledb.executesql",
+    "freppledb.debugreport",
 )
 
 # Custom attribute fields in the database

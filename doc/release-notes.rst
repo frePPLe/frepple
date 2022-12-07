@@ -18,6 +18,13 @@ Release notes
 
 - | Bug fix: restoring a database backup in a scenario was broken.
 
+.. rubric:: User interface
+
+- | Addition of a *debug report* link in the *Help/About FrePPLe* window.
+    This report will display the exceptions found in the apache log files
+    and can help understand the root cause of an error. Any sensitive information
+    is hidden, only the traceback exception is displayed.
+
 7.0.0 (2022/11/18)
 ==================
 

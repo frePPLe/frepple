@@ -3825,6 +3825,11 @@ class OperationRouting : public Operation {
 
   void setHardPostTime(bool b) { hardposttime = b; }
 
+  // Check whether to plan based on dependencies or priority.
+  // If we find a single step-to-step dependency in the routing, we will
+  // plan the complete routing using the dependencies.
+  bool useDependencies() const;
+
   /* A operation of this type enforces the following rules on its
    * operationplans:
    *  - If an end date is given, sequentially use this method on the

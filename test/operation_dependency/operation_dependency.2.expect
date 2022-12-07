@@ -4,6 +4,9 @@
 	<current>2023-01-01T00:00:00</current>
 	<locations>
 		<location>
+			<name>X</name>
+		</location>
+		<location>
 			<name>factory</name>
 		</location>
 	</locations>
@@ -33,12 +36,36 @@
 					</operation>
 				</suboperation>
 				<suboperation>
+					<operation xsi:type="operation_time_per">
+						<name>routing step D</name>
+					</operation>
+				</suboperation>
+				<suboperation>
 					<operation>
 						<name>routing step C</name>
 					</operation>
 					<priority>3</priority>
 				</suboperation>
 			</suboperations>
+		</operation>
+		<operation>
+			<name>project X</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>task X1</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>task X2 step 3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P10D</duration>
 		</operation>
 		<operation>
 			<name>routing step A</name>
@@ -52,8 +79,7 @@
 			<location>
 				<name>factory</name>
 			</location>
-			<duration>P1D</duration>
-			<duration_per>P1D</duration_per>
+			<duration>P300D</duration>
 		</operation>
 		<operation>
 			<name>routing step C</name>
@@ -76,6 +102,55 @@
 			</dependencies>
 			<duration>P1D</duration>
 		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>routing step D</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<duration>P200D</duration>
+		</operation>
+		<operation>
+			<name>task X1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>task X1 step 1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>task X2 step 2</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>task X1 step 1</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>task X2 step 3</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>task X2 step 2</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
 	</operations>
 	<demands>
 		<demand>
@@ -90,6 +165,21 @@
 			<due>2023-05-01T00:00:00</due>
 			<priority>1</priority>
 			<minshipment>5</minshipment>
+		</demand>
+		<demand>
+			<name>project</name>
+			<quantity>1</quantity>
+			<item>
+				<name>my project</name>
+			</item>
+			<location>
+				<name>X</name>
+			</location>
+			<operation>
+				<name>project X</name>
+			</operation>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
 		</demand>
 	</demands>
 </plan>

@@ -4,36 +4,70 @@
 	<current>2023-01-01T00:00:00</current>
 	<operations>
 		<operation name="my routing" xsi:type="operation_routing">
-			<item name="my project"/>
-			<location name="factory"/>
+			<item name="my project" />
+			<location name="factory" />
 			<suboperations>
 				<suboperation>
 					<operation name="routing step A" xsi:type="operation_fixed_time" duration="P1D">
-						<location name="factory"/>
+						<location name="factory" />
 					</operation>
 				</suboperation>
 				<suboperation>
-					<operation name="routing step B" xsi:type="operation_time_per" duration="P1D" duration_per="P1D">
-						<location name="factory"/>
+					<operation name="routing step B" xsi:type="operation_time_per" duration="P300D">
+						<location name="factory" />
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation name="routing step D" xsi:type="operation_time_per" duration="P200D">
+						<location name="factory" />
 					</operation>
 				</suboperation>
 				<suboperation>
 					<operation name="routing step C" xsi:type="operation_fixed_time" duration="P1D">
-						<location name="factory"/>
+						<location name="factory" />
 						<dependencies>
 							<dependency>
-								<blockedby name="routing step A"/>
+								<blockedby name="routing step A" />
 								<safety_leadtime>P5D</safety_leadtime>
 							</dependency>
 							<dependency>
-								<blockedby name="routing step B"/>
+								<blockedby name="routing step B" />
 								<hard_safety_leadtime>P5D</hard_safety_leadtime>
-							</dependency>							
+							</dependency>
 						</dependencies>
 					</operation>
 					<priority>3</priority>
 				</suboperation>
 			</suboperations>
+		</operation>
+		<operation name="project X" xsi:type="operation_fixed_time" duration="P10D">
+			<location name="X" />
+			<dependencies>
+				<dependency>
+					<blockedby name="task X1" xsi:type="operation_fixed_time" duration="P5D">
+						<location name="X" />
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby name="task X2 step 3" xsi:type="operation_fixed_time" duration="P7D">
+						<location name="X" />
+						<dependencies>
+							<dependency>
+								<blockedby name="task X2 step 2" xsi:type="operation_fixed_time" duration="P7D">
+									<location name="X" />
+									<dependencies>
+										<dependency>
+											<blockedby name="task X1 step 1" xsi:type="operation_fixed_time" duration="P5D">
+												<location name="X" />
+											</blockedby>
+										</dependency>
+									</dependencies>
+								</blockedby>
+							</dependency>
+						</dependencies>
+					</blockedby>
+				</dependency>
+			</dependencies>
 		</operation>
 	</operations>
 	<demands>
@@ -42,26 +76,34 @@
 			<minshipment>5</minshipment>
 			<due>2023-05-01T00:00:00</due>
 			<priority>1</priority>
-			<item name="my project"/>
-			<location name="factory"/>
+			<item name="my project" />
+			<location name="factory" />
+		</demand>
+		<demand name="project">
+			<operation name="project X" />
+			<quantity>1</quantity>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="my project" />
+			<location name="X" />
 		</demand>
 	</demands>
 
-<?python 
+<?python
 
 with open("output.1.xml", "wt", encoding='utf-8') as output:
   for oper in frepple.operations():
    for dpd in oper.blockedby:
       print("%s is blocked by:\t%s\t%s\t%s\t%s" % (
-	     oper.name, dpd.blockedby.name, 
+	     oper.name, dpd.blockedby.name,
 		 dpd.quantity, dpd.safety_leadtime, dpd.hard_safety_leadtime
-		 ), file=output) 
+		 ), file=output)
    for dpd in oper.blocking:
       print("%s is blocking:\t%s\t%s\t%s\t%s" % (
-	     oper.name, dpd.operation.name, 
+	     oper.name, dpd.operation.name,
 		 dpd.quantity, dpd.safety_leadtime, dpd.hard_safety_leadtime
-		 ), file=output) 
-	  
+		 ), file=output)
+
 print("CREATING CONSTRAINED PLAN")
 frepple.saveXMLfile("output.2.xml")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
@@ -69,9 +111,5 @@ frepple.saveplan("output.3.xml")
 print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.4.xml")
-
-
-	  
-	  
 ?>
 </plan>

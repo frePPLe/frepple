@@ -159,6 +159,19 @@ OperationRouting::~OperationRouting() {
   while (!getSubOperations().empty()) delete *getSubOperations().begin();
 }
 
+bool OperationRouting::useDependencies() const {
+  for (auto step : getSubOperations()) {
+    for (auto& dpd : step->getOperation()->getDependencies()) {
+      if ((dpd->getBlockedBy() == step->getOperation() &&
+           dpd->getOperation()->getOwner() == this) ||
+          (dpd->getOperation() == step->getOperation() &&
+           dpd->getBlockedBy()->getOwner() == this))
+        return true;
+    }
+  }
+  return false;
+}
+
 OperationSplit::~OperationSplit() {
   // Note that we are not using a for-loop since our function is actually
   // updating the list of super-operations at the same time as we move

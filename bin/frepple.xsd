@@ -348,7 +348,7 @@
     <xsd:annotation>
       <xsd:documentation>
         A blocked-by dependency between two operations.
-</xsd:documentation>
+      </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence minOccurs="1">
       <xsd:choice minOccurs="0" maxOccurs="unbounded">

@@ -30,16 +30,23 @@ def logapache(request):
     """
     This view shows the apache log file.
     """
-    TRACEBACK_RE = r"""
+    TRACEBACK_RE1 = r"""
     Traceback               # Traceback first line.
     [\s\S]+?                # Content.
     ([a-zA-Z]\w*):\ (.*)    # Exception and message.
+    """
+    TRACEBACK_RE2 = r"""
+    Traceback               # Traceback first line.
+    [\s\S]+?                # Content.
+    ([a-zA-Z]\w*):\ (.*)    # Exception and message.
+    [\s\S]+?
+    ([a-zA-Z]\w*):\ (.*)    # Error or detail
     """
     TRACEBACK_ABOVE = r"""
     The\sabove\sexception\swas\sthe\sdirect\scause\sof\sthe\sfollowing\sexception:  # Only that sentence
     """
     TRACEBACK_PATTERN = re.compile(
-        "%s|%s" % (TRACEBACK_RE, TRACEBACK_ABOVE), re.M | re.X
+        "%s|%s|%s" % (TRACEBACK_RE2, TRACEBACK_RE1, TRACEBACK_ABOVE), re.M | re.X
     )
     logdata = ""
     try:

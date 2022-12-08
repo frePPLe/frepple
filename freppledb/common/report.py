@@ -1933,7 +1933,7 @@ class GridReport(View):
                         try:
                             obj = cls.model.objects.using(request.database).get(pk=key)
                             if hasattr(cls.model, "update"):
-                                obj.update(delete=True)
+                                obj.update(request.database, delete=True)
                             Comment(
                                 user_id=request.user.id,
                                 content_type_id=content_type_id,
@@ -1983,7 +1983,7 @@ class GridReport(View):
                                     _("Can't copy %s") % cls.model._meta.app_label
                                 )
                             if hasattr(cls.model, "update"):
-                                obj.update(create=True)
+                                obj.update(request.database, create=True)
                             obj.save(using=request.database, force_insert=True)
                             Comment(
                                 user_id=request.user.pk,
@@ -2059,7 +2059,9 @@ class GridReport(View):
                             raise ValueError
                         elif form.has_changed():
                             if hasattr(cls.model, "update"):
-                                obj.update(change=True, **form.cleaned_data)
+                                obj.update(
+                                    request.database, change=True, **form.cleaned_data
+                                )
                             obj = form.save(commit=False)
                             obj.save(using=request.database)
                             Comment(

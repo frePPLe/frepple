@@ -419,22 +419,22 @@ class OperationPlan(AuditModel):
         # TODO replicate Operationplan::getEfficiency() logic
         return 1.0
 
-    def update(self, delete=False, change=True, create=False, **fields):
+    def update(self, database, delete=False, change=True, create=False, **fields):
         if self.type == "PO":
             PurchaseOrder.update(
-                self, delete=delete, change=change, create=create, **fields
+                self, database, delete=delete, change=change, create=create, **fields
             )
         elif self.type == "DO":
             DistributionOrder.update(
-                self, delete=delete, change=change, create=create, **fields
+                self, database, delete=delete, change=change, create=create, **fields
             )
         elif self.type == "DLVR":
             DeliveryOrder.update(
-                self, delete=delete, change=change, create=create, **fields
+                self, database, delete=delete, change=change, create=create, **fields
             )
         else:
             ManufacturingOrder.update(
-                self, delete=delete, change=change, create=create, **fields
+                self, database, delete=delete, change=change, create=create, **fields
             )
 
     def _updateInventoryAndResources(
@@ -734,7 +734,7 @@ class DeliveryOrder(OperationPlan):
         verbose_name = _("delivery order")
         verbose_name_plural = _("delivery orders")
 
-    def update(self, delete=False, change=True, create=False, **fields):
+    def update(self, database, delete=False, change=True, create=False, **fields):
         # Assure the start date, end date and quantity are consistent
         if change or create:
             if "enddate" in fields:
@@ -752,9 +752,34 @@ class DeliveryOrder(OperationPlan):
                     True,
                 )
 
-        self._updateInventoryAndResources(
-            delete=delete, change=change, create=create, **fields
-        )
+        # Create or update operationplanmaterial records
+        if (
+            delete
+            or not self.item
+            or not self.location
+            or not self.enddate
+            or not self.quantity
+        ):
+            self.materials.using(database).delete()
+        else:
+            recs = 0
+            if change:
+                recs = self.materials.using(database).update(
+                    quantity=self.quantity,
+                    flowdate=self.enddate,
+                    item=self.item,
+                    location=self.location,
+                )
+                if recs > 1:
+                    self.materials.using(database).delete()
+            if create or (change and recs != 1):
+                OperationPlanMaterial(
+                    operationplan=self,
+                    quantity=self.quantity,
+                    flowdate=self.enddate,
+                    item=self.demand.item,
+                    location=self.demand.location,
+                ).save(using=database)
 
 
 class DistributionOrder(OperationPlan):
@@ -798,14 +823,13 @@ class DistributionOrder(OperationPlan):
         verbose_name = _("distribution order")
         verbose_name_plural = _("distribution orders")
 
-    @property
-    def itemdistribution(self):
+    def itemdistribution(self, database=DEFAULT_DB_ALIAS):
         if hasattr(self, "_itemdistribution"):
             return self._itemdistribution
         item = self.item
         while item:
-            for i in item.distributions.all():
-                if self.location == i.location and (
+            for i in item.distributions.all().using(database):
+                if self.destination == i.location and (
                     self.origin == i.origin or not self.origin
                 ):
                     self._itemdistribution = i
@@ -814,8 +838,8 @@ class DistributionOrder(OperationPlan):
         self._itemdistribution = None
         return self._itemdistribution
 
-    def update(self, delete=False, change=True, create=False, **fields):
-        itemdistribution = self.itemdistribution
+    def update(self, database, delete=False, change=True, create=False, **fields):
+        itemdistribution = self.itemdistribution(database)
 
         # Process quantity changes
         if (
@@ -884,9 +908,64 @@ class DistributionOrder(OperationPlan):
                     True,
                 )
 
-        self._updateInventoryAndResources(
-            delete=delete, change=change, create=create, **fields
-        )
+        # Create or update operationplanmaterial records
+        if not self.item:
+            self.materials.all().using(database).delete()
+        else:
+            if self.origin and self.startdate:
+                recs = 0
+                if change:
+                    recs = (
+                        self.materials.using(database)
+                        .filter(quantity__lt=0)
+                        .update(
+                            quantity=-self.quantity,
+                            flowdate=self.startdate,
+                            item=self.item,
+                            location=self.origin,
+                        )
+                    )
+                    if recs > 1:
+                        self.materials.all().using(database).filter(
+                            quantity__lt=0
+                        ).delete()
+                if create or (change and recs != 1):
+                    OperationPlanMaterial(
+                        operationplan=self,
+                        quantity=-self.quantity,
+                        flowdate=self.startdate,
+                        item=self.item,
+                        location=self.origin,
+                    ).save(using=database)
+            else:
+                self.materials.all().using(database).filter(quantity__lt=0).delete()
+            if self.destination and self.enddate:
+                recs = 0
+                if change:
+                    recs = (
+                        self.materials.using(database)
+                        .filter(quantity__gt=0)
+                        .update(
+                            quantity=self.quantity,
+                            flowdate=self.enddate,
+                            item=self.item,
+                            location=self.destination,
+                        )
+                    )
+                    if recs > 1:
+                        self.materials.all().using(database).filter(
+                            quantity__gt=0
+                        ).delete()
+                if create or (change and recs != 1):
+                    OperationPlanMaterial(
+                        operationplan=self,
+                        quantity=self.quantity,
+                        flowdate=self.enddate,
+                        item=self.item,
+                        location=self.destination,
+                    ).save(using=database)
+            else:
+                self.materials.all().using(database).filter(quantity__gt=0).delete()
 
 
 class PurchaseOrder(OperationPlan):
@@ -931,13 +1010,12 @@ class PurchaseOrder(OperationPlan):
         verbose_name = _("purchase order")
         verbose_name_plural = _("purchase orders")
 
-    @property
-    def itemsupplier(self):
+    def itemsupplier(self, database=DEFAULT_DB_ALIAS):
         if hasattr(self, "_itemsupplier"):
             return self._itemsupplier
         item = self.item
         while item:
-            for i in item.itemsuppliers.all():
+            for i in item.itemsuppliers.all().using(database):
                 if self.supplier == i.supplier and (
                     self.location == i.location or not i.location
                 ):
@@ -947,8 +1025,12 @@ class PurchaseOrder(OperationPlan):
         self._itemsupplier = None
         return self._itemsupplier
 
-    def update(self, delete=False, change=True, create=False, **fields):
-        itemsupplier = self.itemsupplier
+    def update(self, database, delete=False, change=True, create=False, **fields):
+        itemsupplier = self.itemsupplier(database)
+
+        # if create and not self.reference:
+        #     # TODO generate a unique reference
+        #     self.reference = ...
 
         # Process quantity changes
         if (
@@ -1017,9 +1099,34 @@ class PurchaseOrder(OperationPlan):
                     True,
                 )
 
-        self._updateInventoryAndResources(
-            delete=delete, change=change, create=create, **fields
-        )
+        # Create or update operationplanmaterial records
+        if (
+            delete
+            or not self.item
+            or not self.location
+            or not self.enddate
+            or not self.quantity
+        ):
+            self.materials.using(database).delete()
+        else:
+            recs = 0
+            if change:
+                recs = self.materials.using(database).update(
+                    quantity=self.quantity,
+                    flowdate=self.enddate,
+                    item=self.item,
+                    location=self.location,
+                )
+                if recs > 1:
+                    self.materials.using(database).delete()
+            if create or (change and recs != 1):
+                OperationPlanMaterial(
+                    operationplan=self,
+                    quantity=self.quantity,
+                    flowdate=self.enddate,
+                    item=self.item,
+                    location=self.location,
+                ).save(using=database)
 
 
 class ManufacturingOrder(OperationPlan):
@@ -1523,7 +1630,7 @@ class ManufacturingOrder(OperationPlan):
         verbose_name = _("manufacturing order")
         verbose_name_plural = _("manufacturing orders")
 
-    def update(self, delete=False, change=True, create=False, **fields):
+    def update(self, database, delete=False, change=True, create=False, **fields):
         # Process quantity changes
         if (
             (create or (change and "quantity" in fields))
@@ -1611,6 +1718,3 @@ class ManufacturingOrder(OperationPlan):
                     self.startdate, duration, True
                 )
 
-        self._updateInventoryAndResources(
-            delete=delete, change=change, create=create, **fields
-        )

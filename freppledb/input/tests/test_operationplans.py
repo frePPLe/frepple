@@ -23,7 +23,10 @@ from django.test import TestCase
 from freppledb.input.models import (
     Calendar,
     CalendarBucket,
+    DistributionOrder,
     Item,
+    ItemDistribution,
+    ItemSupplier,
     Location,
     Operation,
     OperationMaterial,
@@ -31,7 +34,9 @@ from freppledb.input.models import (
     OperationPlanMaterial,
     OperationPlanResource,
     OperationResource,
+    PurchaseOrder,
     Resource,
+    Supplier,
 )
 
 
@@ -56,7 +61,7 @@ class OperationplanTest(TestCase):
             expected,
         )
 
-    def test_operationplan_create(self):
+    def test_manufacturing_orders(self):
 
         cal = Calendar(name="working hours", defaultvalue=0)
         cal.save()
@@ -160,6 +165,182 @@ class OperationplanTest(TestCase):
         self.assertEqual(
             OperationPlanResource.objects.filter(
                 operationplan__reference="MO #1"
+            ).count(),
+            0,
+        )
+
+    def test_purchase_orders(self):
+
+        cal = Calendar(name="working hours", defaultvalue=0)
+        cal.save()
+        CalendarBucket(
+            calendar=cal,
+            value=1,
+            monday=True,
+            tuesday=True,
+            wednesday=True,
+            friday=True,
+            saturday=True,
+            sunday=True,
+            starttime=time(9, 0, 0),
+            endtime=time(17, 0, 0),
+        ).save()
+
+        loc = Location(name="factory", available=cal)
+        loc.save()
+        supplier = Supplier(name="My supplier")
+        supplier.save()
+
+        item = Item(name="item1")
+        item.save()
+        ItemSupplier(item=item, location=loc, sizemultiple=10).save()
+
+        # Test creation of an operationplan
+        opplan = PurchaseOrder(
+            reference="PO #1",
+            item=item,
+            location=loc,
+            supplier=supplier,
+            startdate=datetime(2023, 1, 1),
+            quantity=4,
+            status="approved",
+        )
+        opplan.update(create=True)
+        opplan.save()
+        self.assertOperationplan(
+            opplan.reference,
+            {
+                "quantity": 20,
+                "startdate": datetime(2023, 1, 1),
+                "enddate": datetime(2023, 1, 1, 21),
+                "status": "approved",
+                "materials": [
+                    (20, datetime(2023, 1, 1, 21), "item"),
+                ],
+                "resources": [],
+            },
+        )
+
+        # Test changing the start date
+        opplan.startdate = datetime(2023, 2, 1)
+        opplan.update(startdate=datetime(2023, 2, 1))
+        opplan.save()
+        self.assertOperationplan(
+            opplan,
+            {
+                "quantity": 20,
+                "startdate": datetime(2023, 2, 1),
+                "enddate": datetime(2023, 2, 1, 21),
+                "status": "approved",
+                "materials": [
+                    (20, datetime(2023, 2, 1, 21), "item"),
+                ],
+                "resources": [],
+            },
+        )
+
+        # Test deletion of the operationplan
+        opplan.update(delete=True)
+        opplan.delete()
+        self.assertEqual(OperationPlan.objects.filter(reference="PO #1").count(), 0)
+        self.assertEqual(
+            OperationPlanMaterial.objects.filter(
+                operationplan__reference="PO #1"
+            ).count(),
+            0,
+        )
+        self.assertEqual(
+            OperationPlanResource.objects.filter(
+                operationplan__reference="PO #1"
+            ).count(),
+            0,
+        )
+
+    def test_distribution_orders(self):
+
+        cal = Calendar(name="working hours", defaultvalue=0)
+        cal.save()
+        CalendarBucket(
+            calendar=cal,
+            value=1,
+            monday=True,
+            tuesday=True,
+            wednesday=True,
+            friday=True,
+            saturday=True,
+            sunday=True,
+            starttime=time(9, 0, 0),
+            endtime=time(17, 0, 0),
+        ).save()
+
+        loc1 = Location(name="factory", available=cal)
+        loc1.save()
+        loc2 = Location(name="warehouse", available=cal)
+        loc2.save()
+
+        item = Item(name="item1")
+        item.save()
+        ItemDistribution(location=loc2, origin=loc1, item=item).save()
+
+        # Test creation of an operationplan
+        opplan = DistributionOrder(
+            reference="DO #1",
+            location=loc2,
+            origin=loc2,
+            item=item,
+            startdate=datetime(2023, 1, 1),
+            quantity=4,
+            status="approved",
+        )
+        opplan.update(create=True)
+        opplan.save()
+        self.assertOperationplan(
+            opplan.reference,
+            {
+                "quantity": 20,
+                "startdate": datetime(2023, 1, 1),
+                "enddate": datetime(2023, 1, 1, 21),
+                "status": "approved",
+                "materials": [
+                    (40, datetime(2023, 1, 1, 21), "item1"),
+                    (-20, datetime(2023, 1, 1), "item2"),
+                ],
+                "resources": [],
+            },
+        )
+
+        # Test changing the start date
+        opplan.startdate = datetime(2023, 2, 1)
+        opplan.update(startdate=datetime(2023, 2, 1))
+        opplan.save()
+        self.assertOperationplan(
+            opplan,
+            {
+                "quantity": 20,
+                "startdate": datetime(2023, 2, 1),
+                "enddate": datetime(2023, 2, 1, 21),
+                "status": "approved",
+                "materials": [
+                    (40, datetime(2023, 2, 1, 21), "item1"),
+                    (-20, datetime(2023, 2, 1), "item2"),
+                ],
+                "resources": [],
+            },
+        )
+
+        # Test deletion of the operationplan
+        opplan.update(delete=True)
+        opplan.delete()
+        self.assertEqual(OperationPlan.objects.filter(reference="DO #1").count(), 0)
+        self.assertEqual(
+            OperationPlanMaterial.objects.filter(
+                operationplan__reference="DO #1"
+            ).count(),
+            0,
+        )
+        self.assertEqual(
+            OperationPlanResource.objects.filter(
+                operationplan__reference="DO #1"
             ).count(),
             0,
         )

@@ -17,11 +17,17 @@ fi
 if [ -n "$POSTGRES_PASSWORD" ]; then
   sed -i "s/\"PASSWORD\": \"frepple\"/\"PASSWORD\": \"${POSTGRES_PASSWORD}\"/g" /etc/frepple/djangosettings.py
 fi
+if [ -n "$POSTGRES_DBNAME" ]; then
+  sed -i "s/\"NAME\": \"frepple\"/\"NAME\": \"${POSTGRES_DBNAME}0\"/g" /etc/frepple/djangosettings.py
+  sed -i "s/\"NAME\": \"test_frepple\"/\"NAME\": \"test_${POSTGRES_DBNAME}0\"/g" /etc/frepple/djangosettings.py
+  sed -i "s/\"NAME\": \"scenario\(.*\)\"/\"NAME\": \"${POSTGRES_DBNAME}\1\"/g" /etc/frepple/djangosettings.py
+  sed -i "s/\"NAME\": \"test_scenario\(.*\)\"/\"NAME\": \"test_${POSTGRES_DBNAME}\1\"/g" /etc/frepple/djangosettings.py
+fi
 
 echo "Waiting for the database to be ready"
 retries=10
 until pg_isready --timeout=1 "${params[@]}" >/dev/null 2>&1
-do 
+do
   sleep 1
   ((retries=retries-1))
   if [ $retries -eq 0 ]

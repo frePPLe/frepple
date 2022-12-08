@@ -52,6 +52,8 @@ spec:
               value: "5432"
             - name: POSTGRES_USER
               value: frepple
+            - name: POSTGRES_DBNAME
+              value: freppledb
           image: ghcr.io/frepple/frepple-community:latest
           name: frepple-webserver
           ports:

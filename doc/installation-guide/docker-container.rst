@@ -46,6 +46,11 @@ The image can be extended and customized using the following:
     * | POSTGRES_PASSWORD:
       | Password for the database role or user. Defaults to "frepple".
 
+    * | POSTGRES_DBNAME:
+      | Prefix to use for the database name.
+      | The default database names are "freppe", "scenario1", "scenario2", "scenario3".
+      | If this argument is passed as "X", the database names will be "X0", "X1", "X2" and "X3".
+
 * The following **volumes** let you access all logs, configuration and license files:
 
     * | /etc/frepple:
@@ -80,6 +85,7 @@ on the URL http://localhost:9000/
      -e POSTGRES_PORT=5432 \
      -e POSTGRES_USER=frepple \
      -e POSTGRES_PASSWORD=frepple \
+     -e POSTGRES_DBNAME=freppledb \
      --name frepple-community-local \
      --publish 9000:80 \
      --detach \
@@ -123,7 +129,7 @@ the max_connections setting is moved from the default 100 to eg 400).
         POSTGRES_HOST: frepple-community-postgres
         POSTGRES_PORT: 5432
         POSTGRES_USER: frepple
-        POSTGRES_PASSWORD: frepple
+        POSTGRES_PASSWORD: freppledb
 
     frepple-community-postgres:
       image: "postgres:13"
@@ -134,6 +140,7 @@ the max_connections setting is moved from the default 100 to eg 400).
         POSTGRES_PASSWORD: frepple
         POSTGRES_DB: frepple
         POSTGRES_USER: frepple
+        POSTGRES_DBNAME: frepple
 
   volumes:
     log-apache-community:

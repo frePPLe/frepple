@@ -14,8 +14,8 @@ item            item              | Reference to the item.
                                   | The item can point to a parent level in the item
                                     hierarchy. All child items can then be distributed using
                                     this definition.
-origin          location          Origin location from where we can ship the item.                               
-destination     location          | Destination location to where we can ship the item.                                  
+origin          location          Origin location from where we can ship the item.
+destination     location          | Destination location to where we can ship the item.
                                   | The default value of this field is empty. In such case
                                     any location can be used as destination.
 cost            positive double   Shipment cost.
@@ -25,7 +25,7 @@ size_minimum    positive double   | Minimum size for shipments.
 size_multiple   positive double   | All shipments must be a multiple of this quantity.
                                   | The default is 0, i.e. no multiple to be considered.
 size_maximum    positive double   | Maximum size for shipments.
-                                  | The default is infinite, i.e. no maximum to be considered.     
+                                  | The default is infinite, i.e. no maximum to be considered.
 batchwindow     duration          | Allows to group proposed distribution orders within this window
                                     together into a single one.
                                   | The default is 7 days, i.e. the algorithm will not propose
@@ -38,7 +38,8 @@ priority        integer           | Priority of this shipment among all other me
                                     when the item is required. This field is used when the
                                     search policy is PRIORITIY.
                                   | When the priority is 0, the item distribution is not
-                                    actively used during planning. 
+                                    automatically used during planning. Only a planner can
+                                    manually create distribtion orders on it.
 resource        resource          | Optionally, it refers to a resource that represents the
                                     distribution capacity.
                                   | The referenced resource will typically be of type

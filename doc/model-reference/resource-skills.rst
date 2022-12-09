@@ -20,4 +20,7 @@ priority        integer           | Priority of this resource among all resource
                                   | A lower number indicates that this resource is preferred
                                     when the skill is required. This field is used when the
                                     search policy of the load is PRIORITIY.
+                                  | When the priority is 0, the resource is not automatically
+                                    assigned to use the skill. Only a planner can manually
+                                    assign manufacturing orders to the resource.
 =============== ================= ===========================================================

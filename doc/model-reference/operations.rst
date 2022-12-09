@@ -102,8 +102,9 @@ priority               integer           Priority of this operation to produce t
                                          populated on the operation. Only then is the operation registered
                                          as a replenishment method for the item at this location.
 
-                                         When the priority is 0, the operation is not actively used
-                                         during planning.
+                                         When the priority is 0, the operation is not automatically used
+                                         during planning. Only a planner can manually create manufacturing
+                                         orders on it.
 
 description            string            Free format description.
 

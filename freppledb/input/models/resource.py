@@ -21,8 +21,8 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import HierarchyModel, AuditModel, MultiDBManager
 
-from .calendar import Calendar
-from .location import Location
+from ..models.calendar import Calendar
+from ..models.location import Location
 
 
 class SetupMatrix(AuditModel):

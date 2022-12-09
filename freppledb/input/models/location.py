@@ -20,7 +20,7 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import HierarchyModel, AuditModel
 
-from .calendar import Calendar
+from ..models.calendar import Calendar
 
 
 class Location(AuditModel, HierarchyModel):

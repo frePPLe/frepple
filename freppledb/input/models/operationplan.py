@@ -967,6 +967,31 @@ class DistributionOrder(OperationPlan):
             else:
                 self.materials.all().using(database).filter(quantity__gt=0).delete()
 
+        # Create or update operationplanresource records
+        if delete or not itemdistribution or not itemdistribution.resource:
+            self.resources.using(database).delete()
+        else:
+            recs = 0
+            if change:
+                recs = self.resources.using(database).update(
+                    quantity=(self.quantity or Decimal(0))
+                    * (itemdistribution.resource_qty or Decimal(1)),
+                    startdate=self.startdate,
+                    enddate=self.enddate,
+                    resource=itemdistribution.resource,
+                )
+                if recs > 1:
+                    self.materials.using(database).delete()
+            if create or (change and recs != 1):
+                OperationPlanResource(
+                    operationplan=self,
+                    quantity=(self.quantity or Decimal(0))
+                    * (itemdistribution.resource_qty or Decimal(1)),
+                    startdate=self.startdate,
+                    enddate=self.enddate,
+                    resource=itemdistribution.resource,
+                ).save(using=database)
+
 
 class PurchaseOrder(OperationPlan):
 
@@ -1110,10 +1135,20 @@ class PurchaseOrder(OperationPlan):
             self.materials.using(database).delete()
         else:
             recs = 0
+            if (
+                itemsupplier
+                and itemsupplier.hard_safety_leadtime
+                and itemsupplier.hard_safety_leadtime > timedelta(0)
+            ):
+                d = self.calculateOperationTime(
+                    self.enddate, itemsupplier.hard_safety_leadtime, forward=True
+                )
+            else:
+                d = self.enddate
             if change:
                 recs = self.materials.using(database).update(
                     quantity=self.quantity,
-                    flowdate=self.enddate,
+                    flowdate=d,
                     item=self.item,
                     location=self.location,
                 )
@@ -1123,9 +1158,34 @@ class PurchaseOrder(OperationPlan):
                 OperationPlanMaterial(
                     operationplan=self,
                     quantity=self.quantity,
-                    flowdate=self.enddate,
+                    flowdate=d,
                     item=self.item,
                     location=self.location,
+                ).save(using=database)
+
+        # Create or update operationplanresource records
+        if delete or not itemsupplier or not itemsupplier.resource:
+            self.resources.using(database).delete()
+        else:
+            recs = 0
+            if change:
+                recs = self.resources.using(database).update(
+                    quantity=(self.quantity or Decimal(0))
+                    * (itemsupplier.resource_qty or Decimal(1)),
+                    startdate=self.startdate,
+                    enddate=self.enddate,
+                    resource=itemsupplier.resource,
+                )
+                if recs > 1:
+                    self.materials.using(database).delete()
+            if create or (change and recs != 1):
+                OperationPlanResource(
+                    operationplan=self,
+                    quantity=(self.quantity or Decimal(0))
+                    * (itemsupplier.resource_qty or Decimal(1)),
+                    startdate=self.startdate,
+                    enddate=self.enddate,
+                    resource=itemsupplier.resource,
                 ).save(using=database)
 
 
@@ -1681,6 +1741,33 @@ class ManufacturingOrder(OperationPlan):
                     self.quantity / self.operation.sizemultiple
                 )
 
+        # Create or update operationplanresource records.
+        # We need to do this before computing the efficiency and duration.
+        if delete or not self.operation:
+            self.resources.using(database).delete()
+            self._resources = []
+        else:
+            self._resources = [r for r in self.resources.all()]
+            if not self._resources:
+                # Create new opplanres records
+                for r in self.operation.operationresources.using(database).all():
+                    rsrc = r.getPreferredResource()
+                    if "bucket" in rsrc.type:
+                        qty = (self.quantity or Decimal(0)) * (
+                            r.quantity or Decimal(0)
+                        ) + (r.quantity_fixed or Decimal(0))
+                    else:
+                        qty = r.quantity or Decimal(1)
+                    self._resources.append(
+                        OperationPlanResource(
+                            operationplan=self,
+                            resource=rsrc,
+                            quantity=qty,
+                            startdate=self.startdate,
+                            enddate=self.enddate,
+                        )
+                    )
+
         # Assure the start date, end date and quantity are consistent
         if change or create:
             if "startdate" in fields:
@@ -1718,3 +1805,61 @@ class ManufacturingOrder(OperationPlan):
                     self.startdate, duration, True
                 )
 
+        # Create or update operationplanmaterial records
+        if delete or not self.operation or not self.quantity:
+            self.materials.using(database).delete()
+        else:
+            has_opplanmat_records = False
+            if self.status == "confirmed":
+                # Update existing operationplanmaterial records, even if they
+                # are not in sync with the operationmaterial definition.
+                for fl in self.materials.all():
+                    fl.update(
+                        flowdate=self.enddate
+                        if fl.quantity > Decimal(0)
+                        else self.startdate
+                    )
+                    has_opplanmat_records = True
+            else:
+                self.materials.using(database).all().delete()
+            if not has_opplanmat_records:
+                # Create new opplanmat records
+                produced = False
+                for fl in self.operation.operationmaterials.using(database).all():
+                    if fl.type == "transfer_batch":
+                        continue
+                    if fl.offset:
+                        d = self.calculateOperationTime(
+                            self.enddate if fl.type == "end" else self.startdate,
+                            fl.offset,
+                            forward=True,
+                        )
+                    else:
+                        d = self.enddate if fl.type == "end" else self.startdate
+                    if (fl.quantity and fl.quantity > Decimal(0)) or (
+                        fl.quantity_fixed and fl.quantity_fixed > Decimal(0)
+                    ):
+                        produced = True
+                    OperationPlanMaterial(
+                        operationplan=self,
+                        quantity=self.quantity * (fl.quantity or Decimal(0))
+                        + (fl.quantity_fixed or Decimal(0)),
+                        flowdate=d,
+                        item=fl.item,
+                        location=self.operation.location,
+                    ).save(using=database)
+                if not produced and self.operation.item:
+                    # Automatic produce material if not explicitly specified
+                    OperationPlanMaterial(
+                        operationplan=self,
+                        quantity=self.quantity,
+                        flowdate=self.enddate,
+                        item=self.operation.item,
+                        location=self.operation.location,
+                    ).save(using=database)
+
+            # Save or create operationplanresource records
+            for r in self._resources:
+                r.startdate = self.startdate
+                r.enddate = self.enddate
+                r.save(using=database)

@@ -23,10 +23,10 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import AuditModel, MultiDBManager
 
-from .calendar import Calendar
-from .item import Item
-from .location import Location
-from .resource import Resource, Skill
+from ..models.calendar import Calendar
+from ..models.item import Item
+from ..models.location import Location
+from ..models.resource import Resource, Skill
 
 
 searchmode = (
@@ -494,6 +494,27 @@ class OperationResource(AuditModel):
         unique_together = (("operation", "resource", "effective_start"),)
         verbose_name = _("operation resource")
         verbose_name_plural = _("operation resources")
+
+    def getPreferredResource(self):
+        Resource.rebuildHierarchy()
+        if not self.resource or self.resource.rght == self.resource.lft + 1:
+            # Not an aggregate resource
+            return self.resource
+
+        # Find the most efficient child resource that has the required skill
+        q = Resource.objects.using(self._state.db).filter(
+            rght=models.F("lft") + 1,
+            lft__gt=self.resource.lft,
+            rght__lt=self.resource.rght,
+        )
+        if self.skill:
+            return (
+                q.filter(skills__skill=self.skill)
+                .order_by("skills__priority", "-efficiency", "name")
+                .first()
+            )
+        else:
+            return q.order_by("-efficiency", "name").first()
 
 
 class SubOperation(AuditModel):

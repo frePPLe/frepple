@@ -411,9 +411,9 @@ class OperationPlan(AuditModel):
         #    call calendar.getEvents() and cache them temporarily on the operationplan
         #    step forward or backwards from the date
         if forward:
-            return date + duration
+            return date + (duration or timedelta(0))
         else:
-            return date - duration
+            return date - (duration or timedelta(0))
 
     def getEfficiency(self, when):
         # TODO replicate Operationplan::getEfficiency() logic
@@ -1752,6 +1752,9 @@ class ManufacturingOrder(OperationPlan):
                 # Create new opplanres records
                 for r in self.operation.operationresources.using(database).all():
                     rsrc = r.getPreferredResource()
+                    if not rsrc:
+                        # We may not find a resource that has the required skill
+                        continue
                     if "bucket" in rsrc.type:
                         qty = (self.quantity or Decimal(0)) * (
                             r.quantity or Decimal(0)

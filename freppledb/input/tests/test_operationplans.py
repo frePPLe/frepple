@@ -17,6 +17,7 @@
 
 from datetime import datetime, time, timedelta
 
+from django.db import DEFAULT_DB_ALIAS
 from django.test import TestCase
 
 
@@ -51,10 +52,11 @@ class OperationplanTest(TestCase):
                 "enddate": obj.enddate,
                 "status": obj.status,
                 "materials": [
-                    (i.quantity, i.date, i.item.name) for i in obj.materials.all()
+                    (float(i.quantity), i.flowdate, i.item.name)
+                    for i in obj.materials.all()
                 ],
                 "resources": [
-                    (i.quantity, i.startdate, i.enddate, i.resource.name)
+                    (float(i.quantity), i.startdate, i.enddate, i.resource.name)
                     for i in obj.resources.all()
                 ],
             },
@@ -112,7 +114,7 @@ class OperationplanTest(TestCase):
             quantity=4,
             status="approved",
         )
-        opplan.update(create=True)
+        opplan.update(DEFAULT_DB_ALIAS, create=True)
         opplan.save()
         self.assertOperationplan(
             opplan.reference,
@@ -133,7 +135,7 @@ class OperationplanTest(TestCase):
 
         # Test changing the start date
         opplan.startdate = datetime(2023, 2, 1)
-        opplan.update(startdate=datetime(2023, 2, 1))
+        opplan.update(DEFAULT_DB_ALIAS, startdate=datetime(2023, 2, 1))
         opplan.save()
         self.assertOperationplan(
             opplan,
@@ -153,7 +155,7 @@ class OperationplanTest(TestCase):
         )
 
         # Test deletion of the operationplan
-        opplan.update(delete=True)
+        opplan.update(DEFAULT_DB_ALIAS, delete=True)
         opplan.delete()
         self.assertEqual(OperationPlan.objects.filter(reference="MO #1").count(), 0)
         self.assertEqual(
@@ -193,7 +195,13 @@ class OperationplanTest(TestCase):
 
         item = Item(name="item1")
         item.save()
-        ItemSupplier(item=item, location=loc, sizemultiple=10).save()
+        ItemSupplier(
+            item=item,
+            supplier=supplier,
+            location=loc,
+            sizemultiple=10,
+            leadtime=timedelta(days=7),
+        ).save()
 
         # Test creation of an operationplan
         opplan = PurchaseOrder(
@@ -205,17 +213,17 @@ class OperationplanTest(TestCase):
             quantity=4,
             status="approved",
         )
-        opplan.update(create=True)
+        opplan.update(DEFAULT_DB_ALIAS, create=True)
         opplan.save()
         self.assertOperationplan(
             opplan.reference,
             {
-                "quantity": 20,
+                "quantity": 10,
                 "startdate": datetime(2023, 1, 1),
-                "enddate": datetime(2023, 1, 1, 21),
+                "enddate": datetime(2023, 1, 8),
                 "status": "approved",
                 "materials": [
-                    (20, datetime(2023, 1, 1, 21), "item"),
+                    (10, datetime(2023, 1, 8), "item1"),
                 ],
                 "resources": [],
             },
@@ -223,24 +231,24 @@ class OperationplanTest(TestCase):
 
         # Test changing the start date
         opplan.startdate = datetime(2023, 2, 1)
-        opplan.update(startdate=datetime(2023, 2, 1))
+        opplan.update(DEFAULT_DB_ALIAS, startdate=datetime(2023, 2, 1))
         opplan.save()
         self.assertOperationplan(
             opplan,
             {
-                "quantity": 20,
+                "quantity": 10,
                 "startdate": datetime(2023, 2, 1),
-                "enddate": datetime(2023, 2, 1, 21),
+                "enddate": datetime(2023, 2, 8),
                 "status": "approved",
                 "materials": [
-                    (20, datetime(2023, 2, 1, 21), "item"),
+                    (10, datetime(2023, 2, 8), "item1"),
                 ],
                 "resources": [],
             },
         )
 
         # Test deletion of the operationplan
-        opplan.update(delete=True)
+        opplan.update(DEFAULT_DB_ALIAS, delete=True)
         opplan.delete()
         self.assertEqual(OperationPlan.objects.filter(reference="PO #1").count(), 0)
         self.assertEqual(
@@ -280,30 +288,32 @@ class OperationplanTest(TestCase):
 
         item = Item(name="item1")
         item.save()
-        ItemDistribution(location=loc2, origin=loc1, item=item).save()
+        ItemDistribution(
+            location=loc2, origin=loc1, item=item, leadtime=timedelta(days=7)
+        ).save()
 
         # Test creation of an operationplan
         opplan = DistributionOrder(
             reference="DO #1",
-            location=loc2,
-            origin=loc2,
+            destination=loc2,
+            origin=loc1,
             item=item,
             startdate=datetime(2023, 1, 1),
             quantity=4,
             status="approved",
         )
-        opplan.update(create=True)
+        opplan.update(DEFAULT_DB_ALIAS, create=True)
         opplan.save()
         self.assertOperationplan(
             opplan.reference,
             {
-                "quantity": 20,
+                "quantity": 4,
                 "startdate": datetime(2023, 1, 1),
-                "enddate": datetime(2023, 1, 1, 21),
+                "enddate": datetime(2023, 1, 8),
                 "status": "approved",
                 "materials": [
-                    (40, datetime(2023, 1, 1, 21), "item1"),
-                    (-20, datetime(2023, 1, 1), "item2"),
+                    (-4, datetime(2023, 1, 1), "item1"),
+                    (4, datetime(2023, 1, 8), "item1"),
                 ],
                 "resources": [],
             },
@@ -311,25 +321,25 @@ class OperationplanTest(TestCase):
 
         # Test changing the start date
         opplan.startdate = datetime(2023, 2, 1)
-        opplan.update(startdate=datetime(2023, 2, 1))
+        opplan.update(DEFAULT_DB_ALIAS, startdate=datetime(2023, 2, 1))
         opplan.save()
         self.assertOperationplan(
             opplan,
             {
-                "quantity": 20,
+                "quantity": 4,
                 "startdate": datetime(2023, 2, 1),
-                "enddate": datetime(2023, 2, 1, 21),
+                "enddate": datetime(2023, 2, 8),
                 "status": "approved",
                 "materials": [
-                    (40, datetime(2023, 2, 1, 21), "item1"),
-                    (-20, datetime(2023, 2, 1), "item2"),
+                    (-4, datetime(2023, 2, 1), "item1"),
+                    (4, datetime(2023, 2, 8), "item1"),
                 ],
                 "resources": [],
             },
         )
 
         # Test deletion of the operationplan
-        opplan.update(delete=True)
+        opplan.update(DEFAULT_DB_ALIAS, delete=True)
         opplan.delete()
         self.assertEqual(OperationPlan.objects.filter(reference="DO #1").count(), 0)
         self.assertEqual(

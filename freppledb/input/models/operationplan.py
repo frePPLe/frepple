@@ -40,12 +40,12 @@ from freppledb.common.dataload import BulkForeignKeyFormField
 from freppledb.common.fields import AliasDateTimeField
 from freppledb.common.models import AuditModel, MultiDBManager, Parameter, Comment
 
-from .demand import Demand
-from .item import Item
-from .location import Location
-from .operation import Operation, OperationResource
-from .resource import Resource
-from .supplier import Supplier
+from ..models.demand import Demand
+from ..models.item import Item
+from ..models.location import Location
+from ..models.operation import Operation, OperationResource
+from ..models.resource import Resource
+from ..models.supplier import Supplier
 
 
 class OperationPlan(AuditModel):

@@ -109,7 +109,6 @@ class Tags {
   static const Keyword fromsetup;
   static const Keyword hard_safety_leadtime;
   static const Keyword hard_posttime;
-  static const Keyword hasSuperOperations;
   static const Keyword headeratts;
   static const Keyword headerstart;
   static const Keyword hidden;

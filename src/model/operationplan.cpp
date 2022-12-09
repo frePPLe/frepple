@@ -2163,16 +2163,6 @@ OperationPlan::AlternateIterator::AlternateIterator(const OperationPlan* o)
       if (sub->getOperation() != o->getOperation())
         opers.push_back(sub->getOperation());
     }
-  } else {
-    for (auto super = o->getOperation()->getSuperOperations().begin();
-         super != o->getOperation()->getSuperOperations().end(); ++super) {
-      if (!(*super)->hasType<OperationAlternate>()) return;
-      auto subs = (*super)->getSubOperationIterator();
-      while (SubOperation* sub = subs.next()) {
-        if (sub->getOperation() != opplan->getOperation())
-          opers.push_back(sub->getOperation());
-      }
-    }
   }
   operIter = opers.begin();
 }

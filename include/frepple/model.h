@@ -3152,16 +3152,6 @@ class Operation : public HasName<Operation>,
     return SubOperation::iterator(getSubOperations());
   }
 
-  /* Returns a reference to the list of super-operations, i.e. operations
-   * using the current Operation as a sub-Operation.
-   */
-  const list<Operation*>& getSuperOperations() const { return superoplist; }
-
-  /* Returns a reference to the list of super-operations, i.e. operations
-   * using the current Operation as a sub-Operation.
-   */
-  bool hasSuperOperations() const { return !superoplist.empty(); }
-
   const forward_list<OperationDependency*>& getDependencies() const {
     return dependencies;
   }
@@ -3170,19 +3160,7 @@ class Operation : public HasName<Operation>,
 
   void addDependency(OperationDependency*);
 
-  Operation* getOwner() const {
-    if (superoplist.empty())
-      return nullptr;
-    else
-      return *superoplist.begin();
-  }
-
-  /* Register a super-operation, i.e. an operation having this one as a
-   * sub-operation. */
-  void addSuperOperation(Operation* o) { superoplist.push_front(o); }
-
-  /* Removes a super-operation from the list. */
-  void removeSuperOperation(Operation*);
+  Operation* getOwner() const { return owner; }
 
   /* Return the release fence, expressed in calendar days, of this operation. */
   Duration getFence() const { return fence; }
@@ -3283,8 +3261,6 @@ class Operation : public HasName<Operation>,
                          BOOL_FALSE, DONT_SERIALIZE);
     m->addBoolField<Cls>(Tags::nolocationcalendar, &Cls::getNoLocationCalendar,
                          &Cls::setNoLocationCalendar, BOOL_FALSE, BASE);
-    m->addBoolField<Cls>(Tags::hasSuperOperations, &Cls::hasSuperOperations,
-                         nullptr, BOOL_FALSE, DONT_SERIALIZE);
     m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch,
                                      &Cls::setSearch, SearchMode::PRIORITY);
     m->addPointerField<Cls, Operation>(Tags::owner, &Cls::getOwner, nullptr,
@@ -3299,14 +3275,6 @@ class Operation : public HasName<Operation>,
         Tags::blocking, Tags::dependency, &Cls::getBlockingIterator,
         DONT_SERIALIZE);
     HasLevel::registerFields<Cls>(m);
-  }
-
-  /* Return the memory size. */
-  virtual size_t getSize() const {
-    size_t tmp = Object::getSize();
-    // Add the memory for the superoperation list: 3 pointers per superoperation
-    tmp += superoplist.size() * 3 * sizeof(Operation*);
-    return tmp;
   }
 
   /* Empty list of operations.
@@ -3326,12 +3294,8 @@ class Operation : public HasName<Operation>,
                            SetupEvent** = nullptr) const;
 
  private:
-  /* List of operations using this operation as a sub-operation.
-   * TODO When the suboperation table will be removed, an operation can have
-   * only a single owner. The type of this field should then be changed to save
-   * some memory.
-   */
-  list<Operation*> superoplist;
+  /* Parent operation. */
+  Operation* owner = nullptr;
 
   /* A list operations that are blocking this one. */
   forward_list<OperationDependency*> dependencies;

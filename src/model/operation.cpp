@@ -95,21 +95,6 @@ int OperationRouting::initialize() {
   return FreppleClass<OperationRouting, Operation>::initialize();
 }
 
-void Operation::removeSuperOperation(Operation* o) {
-  if (!o) return;
-  superoplist.remove(o);
-  Operationlist::iterator i = o->getSubOperations().begin();
-  while (i != o->getSubOperations().end()) {
-    if ((*i)->getOperation() == this) {
-      SubOperation* tmp = *i;
-      // note: erase also advances the iterator
-      i = o->getSubOperations().erase(i);
-      delete tmp;
-    } else
-      ++i;
-  }
-}
-
 Operation::~Operation() {
   // Delete all existing operationplans (even locked ones)
   deleteOperationPlans(true);
@@ -142,11 +127,19 @@ Operation::~Operation() {
     if (m.getProducingOperation() == this) m.setProducingOperation(nullptr);
 
   // Remove the operation from its super-operations and sub-operations
-  // Note that we are not using a for-loop since our function is actually
-  // updating the list of super-operations at the same time as we move
-  // through it.
-  while (!getSuperOperations().empty())
-    removeSuperOperation(*getSuperOperations().begin());
+  if (getOwner()) {
+    auto subops = getOwner()->getSubOperations();
+    Operationlist::iterator i = subops.begin();
+    while (i != subops.end()) {
+      if ((*i)->getOperation() == this) {
+        SubOperation* tmp = *i;
+        // note: erase also advances the iterator
+        i = subops.erase(i);
+        delete tmp;
+      } else
+        ++i;
+    }
+  }
 
   // Clear dependencies
   while (!dependencies.empty()) delete dependencies.front();

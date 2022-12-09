@@ -25,7 +25,7 @@
 
 // Uncomment the following line to create debugging statements during the
 // clustering and leveling algorithm.
-//#define CLUSTERDEBUG
+// #define CLUSTERDEBUG
 
 namespace frepple {
 
@@ -112,8 +112,8 @@ void HasLevel::computeLevels() {
         cur_cluster = g.cluster;
       else {
         // Detect hanging operations
-        if (g.getFlows().empty() && g.getLoads().empty() &&
-            g.getSuperOperations().empty() && g.getSubOperations().empty()) {
+        if (g.getFlows().empty() && g.getLoads().empty() && !g.getOwner() &&
+            g.getSubOperations().empty()) {
           // Cluster 0 keeps all dangling operations
           g.lvl = 0;
           continue;
@@ -134,7 +134,7 @@ void HasLevel::computeLevels() {
       //   - Have a producing flow on the operation itself
       //     or on any of its sub operations
       search_level = false;
-      if (g.getSuperOperations().empty()) {
+      if (!g.getOwner()) {
         search_level = true;
         // Does the operation itself have producing flows?
         for (auto fl = g.getFlows().begin();
@@ -203,17 +203,16 @@ void HasLevel::computeLevels() {
         }
 
         // Push super operations on the stack
-        for (auto j = cur_oper->getSuperOperations().rbegin();
-             j != cur_oper->getSuperOperations().rend(); ++j) {
-          if ((*j)->lvl < cur_level) {
+        if (cur_oper->getOwner()) {
+          if (cur_oper->getOwner()->lvl < cur_level) {
             // Search level and cluster
-            opstack.push(make_pair(*j, cur_level));
-            (*j)->lvl = cur_level;
-            (*j)->cluster = cur_cluster;
-          } else if (!(*j)->cluster) {
+            opstack.push(make_pair(cur_oper->getOwner(), cur_level));
+            cur_oper->getOwner()->lvl = cur_level;
+            cur_oper->getOwner()->cluster = cur_cluster;
+          } else if (!cur_oper->getOwner()->cluster) {
             // Search for clusters information only
-            opstack.push(make_pair(*j, -1));
-            (*j)->cluster = cur_cluster;
+            opstack.push(make_pair(cur_oper->getOwner(), -1));
+            cur_oper->getOwner()->cluster = cur_cluster;
           }
           // else: no search required
         }

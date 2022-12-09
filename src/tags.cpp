@@ -108,7 +108,6 @@ const Keyword Tags::flows("flows");
 const Keyword Tags::fromsetup("fromsetup");
 const Keyword Tags::hard_safety_leadtime("hard_safety_leadtime");
 const Keyword Tags::hard_posttime("hard_posttime");
-const Keyword Tags::hasSuperOperations("hasSuperOperations");
 const Keyword Tags::headeratts("headeratts");
 const Keyword Tags::headerstart("headerstart");
 const Keyword Tags::hidden("hidden");

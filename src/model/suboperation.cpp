@@ -51,7 +51,7 @@ int SubOperation::initialize() {
 
 SubOperation::~SubOperation() {
   if (owner) owner->getSubOperations().remove(this);
-  if (oper) oper->superoplist.remove(owner);
+  if (oper) oper->owner = nullptr;
 }
 
 void SubOperation::setOwner(Operation* o) {
@@ -65,14 +65,14 @@ void SubOperation::setOwner(Operation* o) {
                         "' can't have suboperations");
 
   // Remove from previous owner
-  if (oper && owner) oper->removeSuperOperation(owner);
+  if (oper && owner) oper->owner = nullptr;
   if (owner) owner->getSubOperations().remove(this);
 
   // Update
   owner = o;
 
   // Insert at new owner
-  if (oper && owner) oper->addSuperOperation(owner);
+  if (oper && owner) oper->owner = owner;
   if (owner) {
     Operation::Operationlist::iterator iter = owner->getSubOperations().begin();
     while (iter != owner->getSubOperations().end() &&
@@ -86,13 +86,13 @@ void SubOperation::setOperation(Operation* o) {
   if (o == oper) return;
 
   // Remove from previous oper
-  if (oper && owner) oper->removeSuperOperation(owner);
+  if (oper && owner) oper->owner = nullptr;
 
   // Update
   oper = o;
 
   // Insert at new oper
-  if (owner) oper->addSuperOperation(owner);
+  if (owner) oper->owner = owner;
 }
 
 void SubOperation::setPriority(int pr) {

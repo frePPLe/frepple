@@ -26,7 +26,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
-from django.db import models, DEFAULT_DB_ALIAS
+from django.db import models, DEFAULT_DB_ALIAS, connections
 from django.db.models.fields import AutoField, NOT_PROVIDED
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
@@ -699,6 +699,36 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
         verbose_name_plural = _("inventory detail")
         indexes = [models.Index(fields=["item", "location"], name="opplanmat_itemloc")]
 
+    @staticmethod
+    def updateOnhand(item_name, location_name, database):
+        with connections[database].cursor() as cursor:
+            cursor.execute(
+                """
+                with cte as (
+                    select
+                        id, onhand,
+                        sum(operationplanmaterial.quantity)
+                        over (
+                            partition by operationplanmaterial.item_id,
+                              operationplanmaterial.location_id,
+                              operationplan.batch
+                            order by flowdate, operationplanmaterial.quantity desc, id
+                            ) as cumul
+                    from operationplanmaterial
+                    inner join operationplan
+                      on operationplanmaterial.operationplan_id = operationplan.reference
+                    where operationplanmaterial.item_id = %s
+                      and operationplanmaterial.location_id = %s
+                    )
+                update operationplanmaterial
+                  set onhand = cte.cumul
+                from cte
+                where cte.id = operationplanmaterial.id
+                  and cte.onhand is distinct from cte.cumul
+                """,
+                (item_name, location_name),
+            )
+
 
 class DeliveryOrder(OperationPlan):
     class DeliveryOrderManager(OperationPlan.Manager):
@@ -755,27 +785,34 @@ class DeliveryOrder(OperationPlan):
             or not self.location
             or not self.enddate
             or not self.quantity
+            or not self.demand
         ):
+            recs = [
+                (i.item.name, i.location.name, database)
+                for i in self.materials.using(database).all()
+            ]
             self.materials.using(database).delete()
+            for i in recs:
+                OperationPlanMaterial.updateOnhand(*i)
         else:
-            recs = 0
-            if change:
-                recs = self.materials.using(database).update(
-                    quantity=self.quantity,
-                    flowdate=self.enddate,
-                    item=self.item,
-                    location=self.location,
-                )
-                if recs > 1:
-                    self.materials.using(database).delete()
-            if create or (change and recs != 1):
-                OperationPlanMaterial(
-                    operationplan=self,
-                    quantity=self.quantity,
-                    flowdate=self.enddate,
-                    item=self.demand.item,
-                    location=self.demand.location,
-                ).save(using=database)
+            recs = [
+                (i.item.name, i.location.name, database)
+                for i in self.materials.using(database).all()
+                if i.item != self.demand.item or i.location != self.demand.location
+            ]
+            self.materials.using(database).delete()
+            for i in recs:
+                OperationPlanMaterial.updateOnhand(*i)
+            OperationPlanMaterial(
+                operationplan=self,
+                quantity=self.quantity,
+                flowdate=self.enddate,
+                item=self.demand.item,
+                location=self.demand.location,
+            ).save(using=database)
+            OperationPlanMaterial.updateOnhand(
+                self.demand.item.name, self.demand.location, database
+            )
 
 
 class DistributionOrder(OperationPlan):
@@ -906,62 +943,73 @@ class DistributionOrder(OperationPlan):
 
         # Create or update operationplanmaterial records
         if not self.item:
+            recs = [
+                (i.item.name, i.location.name, database)
+                for i in self.materials.using(database).all()
+            ]
             self.materials.all().using(database).delete()
+            for i in recs:
+                OperationPlanMaterial.updateOnhand(*i)
         else:
             if self.origin and self.startdate:
-                recs = 0
-                if change:
-                    recs = (
-                        self.materials.using(database)
-                        .filter(quantity__lt=0)
-                        .update(
-                            quantity=-self.quantity,
-                            flowdate=self.startdate,
-                            item=self.item,
-                            location=self.origin,
-                        )
-                    )
-                    if recs > 1:
-                        self.materials.all().using(database).filter(
-                            quantity__lt=0
-                        ).delete()
-                if create or (change and recs != 1):
-                    OperationPlanMaterial(
-                        operationplan=self,
-                        quantity=-self.quantity,
-                        flowdate=self.startdate,
-                        item=self.item,
-                        location=self.origin,
-                    ).save(using=database)
-            else:
+                recs = [
+                    (i.item.name, i.location.name, database)
+                    for i in self.materials.using(database).all()
+                    if i.quantity < 0
+                    and (i.item != self.item or i.location != self.origin)
+                ]
                 self.materials.all().using(database).filter(quantity__lt=0).delete()
-            if self.destination and self.enddate:
-                recs = 0
-                if change:
-                    recs = (
-                        self.materials.using(database)
-                        .filter(quantity__gt=0)
-                        .update(
-                            quantity=self.quantity,
-                            flowdate=self.enddate,
-                            item=self.item,
-                            location=self.destination,
-                        )
-                    )
-                    if recs > 1:
-                        self.materials.all().using(database).filter(
-                            quantity__gt=0
-                        ).delete()
-                if create or (change and recs != 1):
-                    OperationPlanMaterial(
-                        operationplan=self,
-                        quantity=self.quantity,
-                        flowdate=self.enddate,
-                        item=self.item,
-                        location=self.destination,
-                    ).save(using=database)
+                for i in recs:
+                    OperationPlanMaterial.updateOnhand(*i)
+                OperationPlanMaterial(
+                    operationplan=self,
+                    quantity=-self.quantity,
+                    flowdate=self.startdate,
+                    item=self.item,
+                    location=self.origin,
+                ).save(using=database)
+                OperationPlanMaterial.updateOnhand(
+                    self.item.name, self.origin.name, database
+                )
             else:
+                recs = [
+                    (i.item.name, i.location.name, database)
+                    for i in self.materials.using(database).all()
+                    if i.quantity < 0
+                ]
+                self.materials.all().using(database).filter(quantity__lt=0).delete()
+                for i in recs:
+                    OperationPlanMaterial.updateOnhand(*i)
+            if self.destination and self.enddate:
+                recs = [
+                    (i.item.name, i.location.name, database)
+                    for i in self.materials.using(database).all()
+                    if i.quantity < 0
+                    and (i.item != self.item or i.location != self.destination)
+                ]
                 self.materials.all().using(database).filter(quantity__gt=0).delete()
+                for i in recs:
+                    OperationPlanMaterial.updateOnhand(*i)
+                self.materials.all().using(database).filter(quantity__gt=0).delete()
+                OperationPlanMaterial(
+                    operationplan=self,
+                    quantity=self.quantity,
+                    flowdate=self.enddate,
+                    item=self.item,
+                    location=self.destination,
+                ).save(using=database)
+                OperationPlanMaterial.updateOnhand(
+                    self.item.name, self.destination.name, database
+                )
+            else:
+                recs = [
+                    (i.item.name, i.location.name, database)
+                    for i in self.materials.using(database).all()
+                    if i.quantity > 0
+                ]
+                self.materials.all().using(database).filter(quantity__gt=0).delete()
+                for i in recs:
+                    OperationPlanMaterial.updateOnhand(*i)
 
         # Create or update operationplanresource records
         if delete or not itemdistribution or not itemdistribution.resource:
@@ -1124,7 +1172,13 @@ class PurchaseOrder(OperationPlan):
             or not self.enddate
             or not self.quantity
         ):
+            recs = [
+                (i.item.name, i.location.name, database)
+                for i in self.materials.using(database).all()
+            ]
             self.materials.using(database).delete()
+            for i in recs:
+                OperationPlanMaterial.updateOnhand(*i)
         else:
             recs = 0
             if (
@@ -1137,23 +1191,26 @@ class PurchaseOrder(OperationPlan):
                 )
             else:
                 d = self.enddate
-            if change:
-                recs = self.materials.using(database).update(
-                    quantity=self.quantity,
-                    flowdate=d,
-                    item=self.item,
-                    location=self.location,
-                )
-                if recs > 1:
-                    self.materials.using(database).delete()
-            if create or (change and recs != 1):
-                OperationPlanMaterial(
-                    operationplan=self,
-                    quantity=self.quantity,
-                    flowdate=d,
-                    item=self.item,
-                    location=self.location,
-                ).save(using=database)
+            recs = [
+                (i.item.name, i.location.name, database)
+                for i in self.materials.using(database).all()
+                if i.item != self.item or i.location != self.location
+            ]
+            self.materials.using(database).delete()
+            for i in recs:
+                OperationPlanMaterial.updateOnhand(*i)
+            OperationPlanMaterial(
+                operationplan=self,
+                quantity=self.quantity,
+                flowdate=d,
+                item=self.item,
+                location=self.location,
+            ).save(using=database)
+            OperationPlanMaterial.updateOnhand(
+                self.item.name,
+                self.location.name,
+                database,
+            )
 
         # Create or update operationplanresource records
         if delete or not itemsupplier or not itemsupplier.resource:
@@ -1797,18 +1854,27 @@ class ManufacturingOrder(OperationPlan):
             self.materials.using(database).delete()
         else:
             has_opplanmat_records = False
-            if self.status == "confirmed":
+            if self.status in ("confirmed", "approved"):
                 # Update existing operationplanmaterial records, even if they
                 # are not in sync with the operationmaterial definition.
                 for fl in self.materials.all():
-                    fl.update(
-                        flowdate=self.enddate
-                        if fl.quantity > Decimal(0)
-                        else self.startdate
-                    )
+                    if fl.quantity > Decimal(0):
+                        fl.flowdate = self.enddate
+                    else:
+                        fl.flowdate = self.startdate
+                    fl.save(update_fields=["flowdate"], using=database)
                     has_opplanmat_records = True
+                    OperationPlanMaterial.updateOnhand(
+                        fl.item.name, fl.location.name, database
+                    )
             else:
+                recs = [
+                    (i.item.name, i.location.name, database)
+                    for i in self.materials.using(database).all()
+                ]
                 self.materials.using(database).all().delete()
+                for i in recs:
+                    OperationPlanMaterial.updateOnhand(*i)
             if not has_opplanmat_records:
                 # Create new opplanmat records
                 produced = False
@@ -1835,6 +1901,9 @@ class ManufacturingOrder(OperationPlan):
                         item=fl.item,
                         location=self.operation.location,
                     ).save(using=database)
+                    OperationPlanMaterial.updateOnhand(
+                        fl.item.name, self.operation.location.name, database
+                    )
                 if not produced and self.operation.item:
                     # Automatic produce material if not explicitly specified
                     OperationPlanMaterial(
@@ -1844,6 +1913,9 @@ class ManufacturingOrder(OperationPlan):
                         item=self.operation.item,
                         location=self.operation.location,
                     ).save(using=database)
+                    OperationPlanMaterial.updateOnhand(
+                        self.operation.item.name, self.operation.location.name, database
+                    )
 
             # Save or create operationplanresource records
             for r in self._resources:

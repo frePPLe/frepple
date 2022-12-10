@@ -1620,7 +1620,7 @@ class loadOperationMaterials(LoadTask):
                 cnt = 0
                 logger.info("Auto-update operation items...")
                 for oper in frepple.operations():
-                    if oper.hidden or oper.item or oper.hasSuperOperations:
+                    if oper.hidden or oper.item or oper.owner:
                         continue
                     item = None
                     for fl in oper.flows:

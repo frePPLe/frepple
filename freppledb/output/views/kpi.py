@@ -91,8 +91,9 @@ class Report(GridReport):
       select 301, 'Operation', 'Quantity', coalesce(round(sum(quantity)),0)
       from operationplan
       union all
-      select 302, 'Resource', 'Usage', coalesce(round(sum(quantity * extract(epoch from enddate - startdate)) / 86400),0)
+      select 302, 'Resource', 'Usage', coalesce(round(sum(operationplanresource.quantity * extract(epoch from operationplan.enddate - operationplan.startdate)) / 86400),0)
       from operationplanresource
+      inner join operationplan on operationplanresource.operationplan_id = operationplan.reference
       union all
       select 401, 'Material', 'Produced', coalesce(round(sum(quantity)),0)
       from operationplanmaterial

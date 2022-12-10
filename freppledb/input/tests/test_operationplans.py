@@ -56,8 +56,7 @@ class OperationplanTest(TestCase):
                     for i in obj.materials.all()
                 ],
                 "resources": [
-                    (float(i.quantity), i.startdate, i.enddate, i.resource.name)
-                    for i in obj.resources.all()
+                    (float(i.quantity), i.resource.name) for i in obj.resources.all()
                 ],
             },
             expected,
@@ -127,9 +126,7 @@ class OperationplanTest(TestCase):
                     (40, datetime(2023, 1, 1, 21), "item1"),
                     (-20, datetime(2023, 1, 1), "item2"),
                 ],
-                "resources": [
-                    (1, datetime(2023, 1, 1), datetime(2023, 1, 1, 21), "machine")
-                ],
+                "resources": [(1, "machine")],
             },
         )
 
@@ -148,9 +145,7 @@ class OperationplanTest(TestCase):
                     (40, datetime(2023, 2, 1, 21), "item1"),
                     (-20, datetime(2023, 2, 1), "item2"),
                 ],
-                "resources": [
-                    (1, datetime(2023, 2, 1), datetime(2023, 2, 1, 21), "machine")
-                ],
+                "resources": [(1, "machine")],
             },
         )
 

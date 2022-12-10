@@ -1601,7 +1601,12 @@ class OperationPlanDetail(View):
                 for x in OperationPlanResource.objects.all()
                 .using(request.database)
                 .filter(operationplan__reference__in=ids)
-                .values("operationplan_id", "quantity", "resource_id", "startdate")
+                .values(
+                    "operationplan_id",
+                    "quantity",
+                    "resource_id",
+                    "operationplan__startdate",
+                )
             ]
         except Exception as e:
             logger.error("Error retrieving operationplan data: %s" % e)
@@ -1783,7 +1788,9 @@ class OperationPlanDetail(View):
                             firstres = False
                             res["loadplans"] = []
                         ldplan = {
-                            "date": m["startdate"].strftime("%Y-%m-%dT%H:%M:%S"),
+                            "date": m["operationplan__startdate"].strftime(
+                                "%Y-%m-%dT%H:%M:%S"
+                            ),
                             "quantity": float(m["quantity"]),
                             "resource": {"name": m["resource_id"]},
                         }

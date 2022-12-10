@@ -16,6 +16,7 @@
 #
 
 from django_filters import rest_framework as filters
+from rest_framework.serializers import SerializerMethodField
 from rest_framework_bulk.drf3.serializers import BulkListSerializer, BulkSerializerMixin
 
 from freppledb.common.api.views import (
@@ -1204,8 +1205,6 @@ class OperationPlanResourceFilter(filters.FilterSet):
                 "operationplan": ["exact", "in"],
                 "resource": ["exact", "in"],
                 "quantity": ["exact", "in", "gt", "gte", "lt", "lte"],
-                "startdate": ["exact", "in", "gt", "gte", "lt", "lte"],
-                "enddate": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "status": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "setup": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "source": ["exact", "in"],
@@ -1217,6 +1216,15 @@ class OperationPlanResourceFilter(filters.FilterSet):
 
 
 class OperationPlanResourceSerializer(BulkSerializerMixin, ModelSerializer):
+    startdate = SerializerMethodField()
+    enddate = SerializerMethodField()
+
+    def get_startdate(self, obj):
+        return obj.operationplan.startdate if obj.operationplan else None
+
+    def get_enddate(self, obj):
+        return obj.operationplan.enddate if obj.operationplan else None
+
     class Meta:
         model = models.OperationPlanResource
         fields = (

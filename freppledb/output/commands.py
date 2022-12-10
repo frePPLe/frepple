@@ -1134,12 +1134,10 @@ class ExportOperationPlanResources(PlanTask):
                         )
                     )
                 else:
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(j.operationplan.reference),
                         clean_value(j.resource.name),
                         round(-j.quantity, 8),
-                        str(j.startdate),
-                        str(j.enddate),
                         clean_value(j.setup),
                         j.status,
                         timestamp,
@@ -1169,8 +1167,6 @@ class ExportOperationPlanResources(PlanTask):
                 "operationplan_id",
                 "resource_id",
                 "quantity",
-                "startdate",
-                "enddate",
                 "setup",
                 "status",
                 "lastmodified",

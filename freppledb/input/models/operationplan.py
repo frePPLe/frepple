@@ -585,10 +585,6 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
         blank=True,
         null=True,
     )
-    startdate = models.DateTimeField(
-        _("start date"), db_index=True, null=True, blank=True
-    )
-    enddate = models.DateTimeField(_("end date"), db_index=True, null=True, blank=True)
     setup = models.CharField(_("setup"), max_length=300, null=True, blank=True)
     status = models.CharField(
         _("load status"),
@@ -620,7 +616,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
     class Meta:
         db_table = "operationplanresource"
         unique_together = (("resource", "operationplan"),)
-        ordering = ["resource", "startdate"]
+        ordering = ["resource", "operationplan"]
         verbose_name = _("resource detail")
         verbose_name_plural = _("resource detail")
 
@@ -976,8 +972,6 @@ class DistributionOrder(OperationPlan):
                 recs = self.resources.using(database).update(
                     quantity=(self.quantity or Decimal(0))
                     * (itemdistribution.resource_qty or Decimal(1)),
-                    startdate=self.startdate,
-                    enddate=self.enddate,
                     resource=itemdistribution.resource,
                 )
                 if recs > 1:
@@ -987,8 +981,6 @@ class DistributionOrder(OperationPlan):
                     operationplan=self,
                     quantity=(self.quantity or Decimal(0))
                     * (itemdistribution.resource_qty or Decimal(1)),
-                    startdate=self.startdate,
-                    enddate=self.enddate,
                     resource=itemdistribution.resource,
                 ).save(using=database)
 
@@ -1172,8 +1164,6 @@ class PurchaseOrder(OperationPlan):
                 recs = self.resources.using(database).update(
                     quantity=(self.quantity or Decimal(0))
                     * (itemsupplier.resource_qty or Decimal(1)),
-                    startdate=self.startdate,
-                    enddate=self.enddate,
                     resource=itemsupplier.resource,
                 )
                 if recs > 1:
@@ -1183,8 +1173,6 @@ class PurchaseOrder(OperationPlan):
                     operationplan=self,
                     quantity=(self.quantity or Decimal(0))
                     * (itemsupplier.resource_qty or Decimal(1)),
-                    startdate=self.startdate,
-                    enddate=self.enddate,
                     resource=itemsupplier.resource,
                 ).save(using=database)
 
@@ -1763,11 +1751,7 @@ class ManufacturingOrder(OperationPlan):
                         qty = r.quantity or Decimal(1)
                     self._resources.append(
                         OperationPlanResource(
-                            operationplan=self,
-                            resource=rsrc,
-                            quantity=qty,
-                            startdate=self.startdate,
-                            enddate=self.enddate,
+                            operationplan=self, resource=rsrc, quantity=qty
                         )
                     )
 
@@ -1863,6 +1847,4 @@ class ManufacturingOrder(OperationPlan):
 
             # Save or create operationplanresource records
             for r in self._resources:
-                r.startdate = self.startdate
-                r.enddate = self.enddate
                 r.save(using=database)

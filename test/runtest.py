@@ -123,9 +123,8 @@ def runTestSuite():
                 "scalability_1",
                 "scalability_2",
                 "scalability_3",
-                "load_bucketized",
+                "operation_dependency",
                 "jobshop",
-                "multithreading",
             ]
             break
     for o, a in opts:

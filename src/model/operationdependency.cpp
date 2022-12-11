@@ -50,8 +50,18 @@ int OperationDependency::initialize() {
 }
 
 OperationDependency::~OperationDependency() {
-  if (blockedby) blockedby->removeDependency(this);
-  if (oper) oper->removeDependency(this);
+  if (blockedby) {
+    blockedby->removeDependency(this);
+    for (auto o = oper->getOperationPlans(); o != OperationPlan::end(); ++o) {
+      for (auto d : o->dependencies) d->dpdcy = nullptr;
+    }
+  }
+  if (oper) {
+    oper->removeDependency(this);
+    for (auto o = oper->getOperationPlans(); o != OperationPlan::end(); ++o) {
+      for (auto d : o->dependencies) d->dpdcy = nullptr;
+    }
+  }
 }
 
 void OperationDependency::setOperation(Operation* o) {
@@ -150,6 +160,19 @@ void Operation::addDependency(OperationDependency* dpd) {
   auto before_end = dependencies.before_begin();
   for (auto& _ : dependencies) ++before_end;
   dependencies.insert_after(before_end, dpd);
+}
+
+OperationPlanDependency::OperationPlanDependency(OperationPlan* blckby,
+                                                 OperationPlan* blckng,
+                                                 OperationDependency* d)
+    : blockedby(blckby), blocking(blckng), dpdcy(d) {
+  if (blockedby) blockedby->dependencies.push_front(this);
+  if (blocking) blocking->dependencies.push_front(this);
+}
+
+OperationPlanDependency::~OperationPlanDependency() {
+  if (blockedby) blockedby->dependencies.remove(this);
+  if (blocking) blocking->dependencies.remove(this);
 }
 
 }  // namespace frepple

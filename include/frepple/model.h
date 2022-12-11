@@ -1667,6 +1667,21 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
   }
 };
 
+class OperationPlanDependency {
+  friend class OperationDependency;
+  friend class Operation;
+
+ public:
+  OperationPlanDependency(OperationPlan* blckby, OperationPlan* blckng,
+                          OperationDependency* d);
+  ~OperationPlanDependency();
+
+ private:
+  OperationPlan* blockedby = nullptr;
+  OperationPlan* blocking = nullptr;
+  OperationDependency* dpdcy = nullptr;
+};
+
 /* An operationplan is the key dynamic element of a plan. It
  * represents a certain quantity being planned along a certain operation
  * during a certain date range.
@@ -1698,6 +1713,8 @@ class OperationPlan : public Object,
   friend class OperationAlternate;
   friend class OperationRouting;
   friend class FlowTransferBatch;
+  friend class OperationPlanDependency;
+  friend class OperationDependency;
 
  public:
   // Forward declarations
@@ -2656,6 +2673,8 @@ class OperationPlan : public Object,
 
   /* Serial number, batch or sales order for MTO production. */
   PooledString batch;
+
+  forward_list<OperationPlanDependency*> dependencies;
 
   /* Quantity. */
   double quantity = 0.0;

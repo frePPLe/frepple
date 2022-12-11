@@ -1108,6 +1108,9 @@ OperationPlan::~OperationPlan() {
 
   // Delete from the operationplan list
   removeFromOperationplanList();
+
+  // Delete dependencies
+  while (!dependencies.empty()) delete dependencies.front();
 }
 
 void OperationPlan::setOwner(OperationPlan* o, bool fast) {

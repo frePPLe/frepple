@@ -9,6 +9,7 @@ Browse the documentation by functional areas, and dig into the topics you are in
   * :ref:`routing_and_bom`
   * :ref:`user_interface`
   * :ref:`integration`
+  * :ref:`odoo_integration`
   * :ref:`deployment`
   * :ref:`technology`
   * :ref:`pricing`
@@ -17,9 +18,9 @@ Browse the documentation by functional areas, and dig into the topics you are in
 
 .. _production_planning:
 
-Production planning & scheduling                                                                                                                                               
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                                                                                                               
-                                                                                                                                                                                               
+Production planning & scheduling
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
@@ -105,34 +106,34 @@ Production planning & scheduling
 
 |
 
-.. _shop_floor:
+.. _odoo_integration:
 
-Shop floor control                                                                                                                                                                             
-~~~~~~~~~~~~~~~~~~                                                                                                                                                                             
-                                                                                                                                                                                               
+Odoo integration
+~~~~~~~~~~~~~~~~
+
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
-| **Monitor progress                      | In integration with Odoo.                                                  |                                                                               |
-| on the shop floor**                     |                                                                            |                                                                               |
-|                                         | Transfer the planned manufacturing orders to Odoo where operators can      |                                                                               |
-|                                         | record the actual progress, time spent, quality issues, materials          |                                                                               |
-|                                         | consumed, produced, etc.                                                   |                                                                               |
+| **Maintain all data in odoo**           | All master data and transactions are managed by Odoo.                      | - Doc :doc:`integration-guide/odoo-connector`                                 |
+|                                         | The frepple connector is an odoo addon that synchronizes all planning      |                                                                               |
+|                                         | to frePPLe.                                                                |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Track inventory                       | In integration with Odoo.                                                  |                                                                               |
-| and purchase orders**                   |                                                                            |                                                                               |
-|                                         | Transfer the planned purchase orders to Odoo and follow them up to the     |                                                                               |
-|                                         | supplier. Record reception of materials in the warehouse as well as        |                                                                               |
-|                                         | consumption of materials by sales orders and manufacturing orders.         |                                                                               |
+| **Publish manufacturing orders          | Publish planning results back to odoo.                                     | - Doc :doc:`integration-guide/odoo-connector`                                 |
+| and purchase orders**                   | With a simple click the planners can create manufacturing orders and       |                                                                               |
+|                                         | purchase orders in odoo.                                                   |                                                                               |
++-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| **Integrated user interface**           | The frepple user interface is integrated in odoo. Users log in odoo and    | - `Live demo odoo 14 <https://odoo14.frepple.com/>`_                          |
+|                                         | can navigate from odoo to all frepple screens.                             | - `Live demo odoo 15 <https://odoo15.frepple.com/>`_                          |
+|                                         |                                                                            | - `Live demo odoo 16 <https://odoo16.frepple.com/>`_                          |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 
 |
-        
+
 .. _capacity_modeling:
 
-Capacity modeling                                                                                                                                                                              
-~~~~~~~~~~~~~~~~~                                                                                                                                                                              
-                                                                                                                                                                                               
+Capacity modeling
+~~~~~~~~~~~~~~~~~
+
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
@@ -165,10 +166,10 @@ Capacity modeling
 |
 
 .. _routing_and_bom:
-                                                                                                                                                                                               
-Routing and bill of materials                                                                                                                                                  
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                                                                                                                               
-                                                                                                                                                                                               
+
+Routing and bill of materials
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
@@ -225,9 +226,9 @@ Routing and bill of materials
 
 .. _user_interface:
 
-User interface                                                                                                                                                                                 
-~~~~~~~~~~~~~~                                                                                                                                                                                 
-                                                                                                                                                                                               
+User interface
+~~~~~~~~~~~~~~
+
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
@@ -243,14 +244,14 @@ User interface
 |                                         | The language is detected automatically from the user's browser, and can be |                                                                               |
 |                                         | overriden as a user preference.                                            |                                                                               |
 |                                         |                                                                            |                                                                               |
-|                                         | Our user community often contribute translations for other languages.      |                                                                               |                  
+|                                         | Our user community often contribute translations for other languages.      |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Collaborative workflows**             | Integrates efficient and intuitive collaboration capabilities.             | - Doc :doc:`user-interface/getting-around/inbox`                              |
-|                                         |                                                                            | - Doc :doc:`user-interface/getting-around/messages`                           | 
+|                                         |                                                                            | - Doc :doc:`user-interface/getting-around/messages`                           |
 |                                         | The user interface allows users to get notifications on changes in the     |                                                                               |
 |                                         | plan. Notifications can be inline in the application, or through emails.   |                                                                               |
-|                                         |                                                                            |                                                                               | 
-|                                         | Users can comment on the plan and attach documents.                        |                                                                               | 
+|                                         |                                                                            |                                                                               |
+|                                         | Users can comment on the plan and attach documents.                        |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Excel import and  export**            | You can easily export the contents of all reports in Excel or CSV.         | - Doc :doc:`user-interface/getting-around/exporting-data`                     |
 |                                         |                                                                            | - Doc :doc:`user-interface/getting-around/importing-data`                     |
@@ -287,9 +288,9 @@ User interface
 
 .. _integration:
 
-Integration                                                                                                                                                                                    
-~~~~~~~~~~~                                                                                                                                                                                    
-                                                                                                                                                                                               
+Integration
+~~~~~~~~~~~
+
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
@@ -303,7 +304,7 @@ Integration
 |                                         | other applications.                                                        |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Packaged connectors                   | Generic standard connectors for Odoo and Openbravo are available.          |                                                                               |
-| with ERP systems**                      | See https://frepple.com/integrations.                                      |                                                                               |
+| with ERP systems**                      |                                                                            |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Remote automation**                   | All administrative tasks can be remotely managed through a web-based API.  |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
@@ -312,9 +313,9 @@ Integration
 
 .. _deployment:
 
-Deployment                                                                                                                                                                                     
-~~~~~~~~~~                                                                                                                                                                                     
-                                                                                                                                                                                               
+Deployment
+~~~~~~~~~~
+
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
@@ -332,12 +333,12 @@ Deployment
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 
 |
-    
+
 .. _technology:
 
-Technology                                                                                                                                                                                     
-~~~~~~~~~~                                                                                                                                                                                     
-                                                                                                                                                                                               
+Technology
+~~~~~~~~~~
+
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
@@ -356,10 +357,10 @@ Technology
 |
 
 .. _pricing:
-            
-Pricing                                                                                                                                                                                        
-~~~~~~~                                                                                                                                                                                        
-                                                                                                                                                                                               
+
+Pricing
+~~~~~~~
+
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+

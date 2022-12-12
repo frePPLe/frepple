@@ -24,6 +24,7 @@ import math
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.worksheet.worksheet import Worksheet
 
+from django.conf import settings
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, DEFAULT_DB_ALIAS, connections
@@ -612,6 +613,94 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
             self.enddate,
             self.status,
         )
+
+    @staticmethod
+    def updateResourcePlan(resource_name, database):
+
+        # default value of parameter is hours
+        time_unit = 3600
+        try:
+            p = Parameter.objects.using(database).get(name="loading_time_units").value
+            if p == "days":
+                time_unit = 3600 / 24
+            elif p == "weeks":
+                time_unit = 3600 / 24 / 7
+        except:
+            pass
+
+        with connections[database].cursor() as cursor:
+            cursor.execute(
+                """
+                with resource_hierachy as (
+                    with recursive cte as (
+                    select name as child, owner_id as parent from resource
+                    where not exists (select 1 from resource res where owner_id = resource.name)
+                    union all
+                    select cte.child, resource.owner_id from resource
+                    inner join cte on resource.name = cte.parent)
+                    select * from cte
+                ),
+                cte as (
+                    select
+                    operationplanresource.resource_id,
+                    out_resourceplan.startdate,
+
+                    -- working time
+                    sum(operationresource.quantity * case when tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
+                    * tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]') =
+                    tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]')
+                    then upper(tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]'))
+                    - lower(tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]'))
+                    else upper(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
+                            * tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]'))
+                            - lower(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
+                                    * tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]')) end
+
+                    -- minus interruptions
+                    - coalesce(
+                    operationresource.quantity * case when tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day') * interruption_range = interruption_range
+                    then upper(interruption_range) - lower(interruption_range)
+                    else upper(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day') * interruption_range)
+                    -lower(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day') * interruption_range) end
+                    , interval '0 second')) as load
+                    from operationplanresource
+
+                    inner join operationplan on operationplan.reference = operationplanresource.operationplan_id
+
+                    inner join resource_hierachy on resource_hierachy.child = operationplanresource.resource_id
+
+                    inner join operationresource on
+                        operationplan.operation_id = operationresource.operation_id
+                        and (operationresource.resource_id = resource_hierachy.child or
+                            operationresource.resource_id = resource_hierachy.parent)
+
+                    inner join out_resourceplan on out_resourceplan.resource = operationplanresource.resource_id
+
+
+                    left join lateral (select tstzrange((t->>0)::timestamp at time zone %s, (t->>1)::timestamp at time zone %s) as interruption_range from jsonb_array_elements(plan->'interruptions') t) t on true
+
+                    where operationplanresource.resource_id = %s
+
+                    group by operationplanresource.resource_id,
+                    out_resourceplan.startdate
+                )
+                update out_resourceplan
+                set load = coalesce(EXTRACT(epoch FROM cte.load)/%s,0),
+                free = available - coalesce(EXTRACT(epoch FROM cte.load)/%s,0)
+                from cte
+                where cte.resource_id = out_resourceplan.resource
+                and cte.startdate = out_resourceplan.startdate
+                and out_resourceplan.load != coalesce(EXTRACT(epoch FROM cte.load)/%s,0)
+                """,
+                (
+                    resource_name,
+                    settings.TIME_ZONE,
+                    settings.TIME_ZONE,
+                    time_unit,
+                    time_unit,
+                    time_unit,
+                ),
+            )
 
     class Meta:
         db_table = "operationplanresource"

@@ -62,6 +62,6 @@ priority              integer           | Priority of this supplier among all su
                                           when the item is required. This field is used when the
                                           search policy is PRIORITIY.
                                         | When the priority is 0, the item supplier is not
-                                          autoamtically used during planning. Only a planner can
+                                          automatically used during planning. Only a planner can
                                           manually create purchase orders on it.
 ===================== ================= ===========================================================

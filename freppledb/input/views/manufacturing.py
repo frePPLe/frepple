@@ -16,7 +16,6 @@
 #
 
 from collections import OrderedDict
-from datetime import datetime, time, timedelta
 from sys import maxsize
 
 from django.conf import settings
@@ -680,13 +679,30 @@ class CalendarDetail(GridReport):
         if not args:
             raise Exception("Expecting calendar argument")
         request.session["lasttab"] = "plan"
-        events, minpriority = reportclass.getEvents(request, *args, **kwargs)
+        cal = Calendar.objects.all().using(request.database).get(name=args[0])
+        events = cal.getEvents(request.report_startdate, request.report_enddate)
+        minpriority = maxsize
+        for b in cal.getBuckets():
+            if b.priority < minpriority:
+                minpriority = b.priority
+        if minpriority == maxsize:
+            minpriority = 0
         return {
             "active_tab": "plan",
             "title": force_str(Calendar._meta.verbose_name) + " " + args[0],
             "post_title": _("detail"),
             "model": CalendarBucket,
-            "events": events,
+            "events": [
+                (
+                    x[0].strftime("%Y-%m-%d %H:%M:%S"),
+                    x[1].strftime("%Y-%m-%d %H:%M:%S"),
+                    x[2],
+                    x[3],
+                    x[4],
+                    x[5],
+                )
+                for x in events
+            ],
             "minpriority": minpriority - 1,
             "calendar": args[0],
         }
@@ -724,232 +740,6 @@ class CalendarDetail(GridReport):
         ),  # Not really right, since the engine doesn't read or store it
         GridFieldLastModified("lastmodified"),
     )
-
-    @classmethod
-    def findBucket(reportclass, curDate, buckets):
-        """
-        This code needs to 100% in sync with the C++ Calendar::findbucket method.
-        """
-        curBucket = None
-        for b in buckets:
-            if (
-                (not curBucket or b.priority < curBucket.priority)
-                and curDate >= b.startdate
-                and curDate < b.enddate
-                and curDate.time() >= b.starttime
-                and curDate.time() < b.endtime
-                and curDate.weekday() in b.weekdays
-            ):
-                curBucket = b
-        return curBucket
-
-    @classmethod
-    def getEvents(reportclass, request, *args, **kwargs):
-        """
-        This code needs to 100% in sync with the C++ Calendar::buildEventList method
-        """
-        calendar = Calendar.objects.all().using(request.database).get(name=args[0])
-        buckets = []
-        minpriority = maxsize
-        for b in (
-            CalendarBucket.objects.all()
-            .using(request.database)
-            .filter(calendar__name=args[0])
-            .order_by("startdate", "priority")
-        ):
-            b.weekdays = []
-            if b.priority < minpriority:
-                minpriority = b.priority
-            if b.monday:
-                b.weekdays.append(0)
-            if b.tuesday:
-                b.weekdays.append(1)
-            if b.wednesday:
-                b.weekdays.append(2)
-            if b.thursday:
-                b.weekdays.append(3)
-            if b.friday:
-                b.weekdays.append(4)
-            if b.saturday:
-                b.weekdays.append(5)
-            if b.sunday:
-                b.weekdays.append(6)
-            buckets.append(b)
-            if not b.starttime:
-                b.starttime = time.min
-            if not b.endtime:
-                b.endtime = time.max
-            elif b.endtime.second < 59:
-                b.endtime = b.endtime.replace(second=b.endtime.second + 1)
-            elif b.endtime.minute < 59:
-                b.endtime = b.endtime.replace(minute=b.endtime.minute + 1, second=0)
-            elif b.endtime.hour < 23:
-                b.endtime = b.endtime.replace(
-                    hour=b.endtime.hour + 1, minute=0, second=0
-                )
-            else:
-                # Special case for 23:59:59
-                b.endtime = time.max
-            b.continuous = (
-                len(b.weekdays) == 7
-                and b.starttime == time.min
-                and b.endtime == time.max
-            )
-        if minpriority == maxsize:
-            minpriority = 0
-
-        # Build up event list
-        events = []
-        curDate = request.report_startdate
-        curBucket = reportclass.findBucket(curDate, buckets)
-        curPriority = curBucket.priority if curBucket else maxsize
-        lastPriority = curPriority
-        lastBucket = curBucket
-        while True:
-            if curDate >= request.report_enddate:
-                break
-            prevDate = curDate
-
-            # Go over all entries and evaluate if they qualify for the next event
-            refDate = curDate
-            curDate = datetime.max
-            for b in buckets:
-                if b.startdate >= b.enddate:
-                    continue
-                elif b.continuous:
-                    # FIRST CASE: Bucket that is continuously effective
-                    # Evaluate the start date of the bucket
-                    if (
-                        refDate < b.startdate
-                        and b.priority <= lastPriority
-                        and (
-                            b.startdate < curDate
-                            or (b.startdate == curDate and b.priority <= curPriority)
-                        )
-                    ):
-                        curDate = b.startdate
-                        curBucket = b
-                        curPriority = b.priority
-                        continue
-
-                    #  Evaluate the end date of the bucket
-                    if refDate < b.enddate and b.enddate <= curDate and lastBucket == b:
-                        curDate = b.enddate
-                        curBucket = reportclass.findBucket(b.enddate, buckets)
-                        curPriority = curBucket.priority if curBucket else maxsize
-                        continue
-                else:
-                    # SECOND CASE: Interruptions in effectivity
-                    effectiveAtStart = False
-                    tmp = max(b.startdate, refDate)
-                    ref_weekday = tmp.weekday()
-                    ref_time = tmp.time()
-                    if (
-                        refDate < b.startdate
-                        and ref_time >= b.starttime
-                        and ref_time < b.endtime
-                        and ref_weekday in b.weekdays
-                    ):
-                        effectiveAtStart = True
-
-                    if (
-                        ref_time >= b.starttime
-                        and not effectiveAtStart
-                        and ref_time < b.endtime
-                        and ref_weekday in b.weekdays
-                    ):
-                        # Entry is currently effective.
-                        if (
-                            b.starttime == time(hour=0, minute=0, second=0)
-                            and b.endtime == time.max
-                        ):
-                            # The next event is the start of the next ineffective day
-                            tmp = tmp.replace(hour=0, minute=0, second=0)
-                            while (
-                                ref_weekday in b.weekdays
-                                and tmp <= request.report_enddate
-                            ):
-                                ref_weekday += 1
-                                if ref_weekday > 6:
-                                    ref_weekday = 0
-                                tmp += timedelta(days=1)
-                        else:
-                            # The next event is the end date on the current day
-                            tmp = tmp.replace(
-                                hour=b.endtime.hour,
-                                minute=b.endtime.minute,
-                                second=b.endtime.second,
-                            )
-                        if tmp > b.enddate:
-                            tmp = b.enddate
-
-                        # Evaluate the result
-                        if refDate < tmp and tmp <= curDate and lastBucket == b:
-                            curDate = tmp
-                            curBucket = reportclass.findBucket(tmp, buckets)
-                            curPriority = curBucket.priority if curBucket else maxsize
-
-                    else:
-                        # Reference date is before the start time on an effective date
-                        # or it is after the end time of an effective date
-                        # or it is on an ineffective day.
-
-                        # The next event is the start date, either today or on the next
-                        # effective day.
-                        tmp = tmp.replace(
-                            hour=b.starttime.hour,
-                            minute=b.starttime.minute,
-                            second=b.starttime.second,
-                        )
-                        if ref_time >= b.endtime and ref_weekday in b.weekdays:
-                            ref_weekday += 1
-                            if ref_weekday > 6:
-                                ref_weekday = 0
-                            tmp += timedelta(days=1)
-                        while (
-                            ref_weekday not in b.weekdays
-                            and tmp <= request.report_enddate
-                            and tmp <= b.enddate
-                        ):
-                            ref_weekday += 1
-                            if ref_weekday > 6:
-                                ref_weekday = 0
-                            tmp += timedelta(days=1)
-                        if tmp < b.startdate:
-                            tmp = b.startdate
-                        if tmp >= b.enddate:
-                            continue
-
-                        # Evaluate the result
-                        if (
-                            refDate < tmp
-                            and b.priority <= lastPriority
-                            and (
-                                tmp < curDate
-                                or (tmp == curDate and b.priority <= curPriority)
-                            )
-                        ):
-                            curDate = tmp
-                            curBucket = b
-                            curPriority = b.priority
-
-            events.append(
-                (
-                    min(prevDate, request.report_enddate).strftime("%Y-%m-%d %H:%M:%S"),
-                    min(curDate, request.report_enddate).strftime("%Y-%m-%d %H:%M:%S"),
-                    curBucket.id if curBucket else None,
-                    float(curBucket.value if curBucket else calendar.defaultvalue),
-                    lastBucket.id if lastBucket else None,
-                    float(lastBucket.value if lastBucket else calendar.defaultvalue),
-                )
-            )
-
-            # Remember the bucket that won the evaluation
-            lastBucket = curBucket
-            lastPriority = curPriority
-
-        # Final result
-        return (events, minpriority)
 
 
 class CalendarBucketList(GridReport):

@@ -15,9 +15,10 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
+from sys import maxsize
 
-from django.db import models
+from django.db import models, DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import AuditModel, MultiDBManager
@@ -54,10 +55,220 @@ class Calendar(AuditModel):
         verbose_name_plural = _("calendars")
         ordering = ["name"]
 
-    def getEvents(self, startdate, enddate):
-        # TODO make code from freppledb.input.views.manufacturing.CalendarDetail.getEvents() reusable
-        # It's already used in the "calendar editor" screen.
-        return
+    def findBucket(self, curDate):
+        """
+        This code needs to 100% in sync with the C++ Calendar::findbucket method.
+        """
+        curBucket = None
+        for b in self.getBuckets():
+            if (
+                (not curBucket or b.priority < curBucket.priority)
+                and curDate >= b.startdate
+                and curDate < b.enddate
+                and curDate.time() >= b.starttime
+                and curDate.time() < b.endtime
+                and curDate.weekday() in b.weekdays
+            ):
+                curBucket = b
+        return curBucket
+
+    def getBuckets(self):
+        if hasattr(self, "_buckets"):
+            return self._buckets
+        database = self._state.db or DEFAULT_DB_ALIAS
+        self._buckets = []
+        for b in self.buckets.all().using(database).order_by("startdate", "priority"):
+            b.weekdays = []
+            if b.monday:
+                b.weekdays.append(0)
+            if b.tuesday:
+                b.weekdays.append(1)
+            if b.wednesday:
+                b.weekdays.append(2)
+            if b.thursday:
+                b.weekdays.append(3)
+            if b.friday:
+                b.weekdays.append(4)
+            if b.saturday:
+                b.weekdays.append(5)
+            if b.sunday:
+                b.weekdays.append(6)
+            self._buckets.append(b)
+            if not b.starttime:
+                b.starttime = time.min
+            if not b.endtime:
+                b.endtime = time.max
+            elif b.endtime.second < 59:
+                b.endtime = b.endtime.replace(second=b.endtime.second + 1)
+            elif b.endtime.minute < 59:
+                b.endtime = b.endtime.replace(minute=b.endtime.minute + 1, second=0)
+            elif b.endtime.hour < 23:
+                b.endtime = b.endtime.replace(
+                    hour=b.endtime.hour + 1, minute=0, second=0
+                )
+            else:
+                # Special case for 23:59:59
+                b.endtime = time.max
+            b.continuous = (
+                len(b.weekdays) == 7
+                and b.starttime == time.min
+                and b.endtime == time.max
+            )
+        return self._buckets
+
+    def getEvents(self, from_date, to_date):
+        """
+        This code needs to 100% in sync with the C++ Calendar::buildEventList method
+        """
+        # Build up event list
+        events = []
+        curDate = from_date
+        curBucket = self.findBucket(curDate)
+        curPriority = curBucket.priority if curBucket else maxsize
+        lastPriority = curPriority
+        lastBucket = curBucket
+        while True:
+            if curDate >= to_date:
+                break
+            prevDate = curDate
+
+            # Go over all entries and evaluate if they qualify for the next event
+            refDate = curDate
+            curDate = datetime.max
+            for b in self.getBuckets():
+                if b.startdate >= b.enddate:
+                    continue
+                elif b.continuous:
+                    # FIRST CASE: Bucket that is continuously effective
+                    # Evaluate the start date of the bucket
+                    if (
+                        refDate < b.startdate
+                        and b.priority <= lastPriority
+                        and (
+                            b.startdate < curDate
+                            or (b.startdate == curDate and b.priority <= curPriority)
+                        )
+                    ):
+                        curDate = b.startdate
+                        curBucket = b
+                        curPriority = b.priority
+                        continue
+
+                    #  Evaluate the end date of the bucket
+                    if refDate < b.enddate and b.enddate <= curDate and lastBucket == b:
+                        curDate = b.enddate
+                        curBucket = self.findBucket(b.enddate)
+                        curPriority = curBucket.priority if curBucket else maxsize
+                        continue
+                else:
+                    # SECOND CASE: Interruptions in effectivity
+                    effectiveAtStart = False
+                    tmp = max(b.startdate, refDate)
+                    ref_weekday = tmp.weekday()
+                    ref_time = tmp.time()
+                    if (
+                        refDate < b.startdate
+                        and ref_time >= b.starttime
+                        and ref_time < b.endtime
+                        and ref_weekday in b.weekdays
+                    ):
+                        effectiveAtStart = True
+
+                    if (
+                        ref_time >= b.starttime
+                        and not effectiveAtStart
+                        and ref_time < b.endtime
+                        and ref_weekday in b.weekdays
+                    ):
+                        # Entry is currently effective.
+                        if (
+                            b.starttime == time(hour=0, minute=0, second=0)
+                            and b.endtime == time.max
+                        ):
+                            # The next event is the start of the next ineffective day
+                            tmp = tmp.replace(hour=0, minute=0, second=0)
+                            while ref_weekday in b.weekdays and tmp <= to_date:
+                                ref_weekday += 1
+                                if ref_weekday > 6:
+                                    ref_weekday = 0
+                                tmp += timedelta(days=1)
+                        else:
+                            # The next event is the end date on the current day
+                            tmp = tmp.replace(
+                                hour=b.endtime.hour,
+                                minute=b.endtime.minute,
+                                second=b.endtime.second,
+                            )
+                        if tmp > b.enddate:
+                            tmp = b.enddate
+
+                        # Evaluate the result
+                        if refDate < tmp and tmp <= curDate and lastBucket == b:
+                            curDate = tmp
+                            curBucket = self.findBucket(tmp)
+                            curPriority = curBucket.priority if curBucket else maxsize
+
+                    else:
+                        # Reference date is before the start time on an effective date
+                        # or it is after the end time of an effective date
+                        # or it is on an ineffective day.
+
+                        # The next event is the start date, either today or on the next
+                        # effective day.
+                        tmp = tmp.replace(
+                            hour=b.starttime.hour,
+                            minute=b.starttime.minute,
+                            second=b.starttime.second,
+                        )
+                        if ref_time >= b.endtime and ref_weekday in b.weekdays:
+                            ref_weekday += 1
+                            if ref_weekday > 6:
+                                ref_weekday = 0
+                            tmp += timedelta(days=1)
+                        while (
+                            ref_weekday not in b.weekdays
+                            and tmp <= to_date
+                            and tmp <= b.enddate
+                        ):
+                            ref_weekday += 1
+                            if ref_weekday > 6:
+                                ref_weekday = 0
+                            tmp += timedelta(days=1)
+                        if tmp < b.startdate:
+                            tmp = b.startdate
+                        if tmp >= b.enddate:
+                            continue
+
+                        # Evaluate the result
+                        if (
+                            refDate < tmp
+                            and b.priority <= lastPriority
+                            and (
+                                tmp < curDate
+                                or (tmp == curDate and b.priority <= curPriority)
+                            )
+                        ):
+                            curDate = tmp
+                            curBucket = b
+                            curPriority = b.priority
+
+            events.append(
+                (
+                    min(prevDate, to_date),
+                    min(curDate, to_date),
+                    curBucket.id if curBucket else None,
+                    float(curBucket.value if curBucket else self.defaultvalue),
+                    lastBucket.id if lastBucket else None,
+                    float(lastBucket.value if lastBucket else self.defaultvalue),
+                )
+            )
+
+            # Remember the bucket that won the evaluation
+            lastBucket = curBucket
+            lastPriority = curPriority
+
+        # Final result
+        return events
 
 
 class CalendarBucket(AuditModel):

@@ -1,0 +1,19 @@
+BUFFER	1. my routing @ factory	2023-05-01T00:00:00	5	5
+BUFFER	1. my routing @ factory	2023-05-01T00:00:00	-5	0
+DEMAND	1. order	2023-05-01T00:00:00	5
+DEMAND	2. project	2023-01-01T00:00:00	1
+OPERATION	1. my routing	2023-04-11T00:00:00	2023-05-01T00:00:00	5
+OPERATION	1. routing step A	2023-04-29T00:00:00	2023-04-30T00:00:00	5
+OPERATION	1. routing step B	2023-04-20T00:00:00	2023-04-30T00:00:00	5
+OPERATION	1. routing step C	2023-04-30T00:00:00	2023-05-01T00:00:00	5
+OPERATION	1. routing step D	2023-04-11T00:00:00	2023-05-01T00:00:00	5
+OPERATION	2. project X	2022-12-22T00:00:00	2023-01-01T00:00:00	1
+OPERATION	2. task X1	2022-12-17T00:00:00	2022-12-22T00:00:00	1
+OPERATION	2. task X2 step 1	2022-12-03T00:00:00	2022-12-08T00:00:00	1
+OPERATION	2. task X2 step 2	2022-12-08T00:00:00	2022-12-15T00:00:00	1
+OPERATION	2. task X2 step 3	2022-12-15T00:00:00	2022-12-22T00:00:00	1
+PROBLEM	before current	Operation '2. project X' planned in the past	2022-12-22T00:00:00 / 2023-01-01T00:00:00
+PROBLEM	before current	Operation '2. task X1' planned in the past	2022-12-17T00:00:00 / 2022-12-22T00:00:00
+PROBLEM	before current	Operation '2. task X2 step 1' planned in the past	2022-12-03T00:00:00 / 2022-12-08T00:00:00
+PROBLEM	before current	Operation '2. task X2 step 2' planned in the past	2022-12-08T00:00:00 / 2022-12-15T00:00:00
+PROBLEM	before current	Operation '2. task X2 step 3' planned in the past	2022-12-15T00:00:00 / 2022-12-22T00:00:00

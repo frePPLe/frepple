@@ -3,36 +3,42 @@
 	<name>Test model for dependencies between operations</name>
 	<current>2023-01-01T00:00:00</current>
 	<operations>
-		<operation name="my routing" xsi:type="operation_routing">
-			<item name="my project" />
-			<location name="factory" />
+		<operation name="1. my routing" xsi:type="operation_routing">
+			<item name="1. my routing"/>
+			<location name="factory"/>
 			<suboperations>
 				<suboperation>
-					<operation name="routing step A" xsi:type="operation_fixed_time" duration="P1D">
-						<location name="factory" />
+					<operation name="1. routing step A" xsi:type="operation_fixed_time" duration="P1D">
+						<location name="factory"/>
 					</operation>
 				</suboperation>
 				<suboperation>
-					<operation name="routing step B" xsi:type="operation_time_per" duration="P300D">
-						<location name="factory" />
+					<operation name="1. routing step B" xsi:type="operation_time_per" duration="P10D">
+						<location name="factory"/>
 					</operation>
 				</suboperation>
 				<suboperation>
-					<operation name="routing step D" xsi:type="operation_time_per" duration="P200D">
-						<location name="factory" />
+					<operation name="1. routing step D" xsi:type="operation_time_per" duration="P20D">
+						<location name="factory"/>
+						<flows>
+							<flow xsi:type="flow_end">
+								<item name="1. my routing"/>
+								<quantity>1</quantity>
+							</flow>
+						</flows>
 					</operation>
 				</suboperation>
 				<suboperation>
-					<operation name="routing step C" xsi:type="operation_fixed_time" duration="P1D">
-						<location name="factory" />
+					<operation name="1. routing step C" xsi:type="operation_fixed_time" duration="P1D">
+						<location name="factory"/>
 						<dependencies>
 							<dependency>
-								<blockedby name="routing step A" />
-								<safety_leadtime>P5D</safety_leadtime>
+								<blockedby name="1. routing step A"/>
+								<!-- safety_leadtime>P5D</safety_leadtime -->
 							</dependency>
 							<dependency>
-								<blockedby name="routing step B" />
-								<hard_safety_leadtime>P5D</hard_safety_leadtime>
+								<blockedby name="1. routing step B"/>
+								<!-- hard_safety_leadtime>P5D</hard_safety_leadtime -->
 							</dependency>
 						</dependencies>
 					</operation>
@@ -40,29 +46,30 @@
 				</suboperation>
 			</suboperations>
 		</operation>
-		<operation name="project X" xsi:type="operation_fixed_time" duration="P10D">
-			<location name="X" />
+		<operation name="2. project X" xsi:type="operation_fixed_time" duration="P10D">
+			<location name="X"/>
 			<dependencies>
 				<dependency>
-					<blockedby name="task X1" xsi:type="operation_fixed_time" duration="P5D">
-						<location name="X" />
+					<blockedby name="2. task X1" xsi:type="operation_fixed_time" duration="P5D">
+						<location name="X"/>
 					</blockedby>
 				</dependency>
 				<dependency>
-					<blockedby name="task X2 step 3" xsi:type="operation_fixed_time" duration="P7D">
-						<location name="X" />
+					<blockedby name="2. task X2 step 3" xsi:type="operation_fixed_time" duration="P7D">
+						<location name="X"/>
 						<dependencies>
 							<dependency>
-								<blockedby name="task X2 step 2" xsi:type="operation_fixed_time" duration="P7D">
-									<location name="X" />
+								<blockedby name="2. task X2 step 2" xsi:type="operation_fixed_time" duration="P7D">
+									<location name="X"/>
 									<dependencies>
 										<dependency>
-											<blockedby name="task X1 step 1" xsi:type="operation_fixed_time" duration="P5D">
-												<location name="X" />
+											<blockedby name="2. task X2 step 1" xsi:type="operation_fixed_time" duration="P5D">
+												<location name="X"/>
 											</blockedby>
 										</dependency>
 									</dependencies>
 								</blockedby>
+								<!-- quantity>2</quantity -->
 							</dependency>
 						</dependencies>
 					</blockedby>
@@ -71,25 +78,27 @@
 		</operation>
 	</operations>
 	<demands>
-		<demand name="order 1">
+		<demand name="1. order">
 			<quantity>5</quantity>
 			<minshipment>5</minshipment>
 			<due>2023-05-01T00:00:00</due>
 			<priority>1</priority>
-			<item name="my project" />
-			<location name="factory" />
+			<item name="1. my routing"/>
+			<location name="factory"/>
 		</demand>
-		<demand name="project">
-			<operation name="project X" />
+		<demand name="2. project">
+			<operation name="2. project X"/>
 			<quantity>1</quantity>
 			<due>2023-01-01T00:00:00</due>
 			<priority>1</priority>
-			<item name="my project" />
-			<location name="X" />
+			<item name="2. my project"/>
+			<location name="X"/>
 		</demand>
 	</demands>
 
 <?python
+
+from datetime import timedelta
 
 with open("output.1.xml", "wt", encoding='utf-8') as output:
   for oper in frepple.operations():
@@ -106,10 +115,18 @@ with open("output.1.xml", "wt", encoding='utf-8') as output:
 
 print("CREATING CONSTRAINED PLAN")
 frepple.saveXMLfile("output.2.xml")
-frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=99).solve()
 frepple.saveplan("output.3.xml")
+
+for i in frepple.operationplans():
+  if i.operation.name == "2. task X2 step 2":
+     i.start = i.start + timedelta(10)
+i = None
+frepple.saveplan("output.4.xml")
+
 print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
-frepple.saveplan("output.4.xml")
+frepple.saveplan("output.5.xml")
 ?>
 </plan>

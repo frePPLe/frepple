@@ -123,7 +123,6 @@ def runTestSuite():
                 "scalability_1",
                 "scalability_2",
                 "scalability_3",
-                "operation_dependency",
                 "jobshop",
             ]
             break

@@ -64,6 +64,8 @@ int OperationPlan::initialize() {
               "add or subtract a duration of operation hours from a date");
   x.addMethod("updateFeasible", &updateFeasiblePython, METH_NOARGS,
               "updates the flag whether this operationplan is feasible or not");
+  x.addMethod("setDependencies", &setDependenciesPython, METH_VARARGS,
+              "Set or compute the dependencies");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
@@ -103,11 +105,52 @@ PyObject* OperationPlan::calculateOperationTimePython(PyObject* self,
 }
 
 void OperationPlan::setChanged(bool b) {
+  // Opplan itself
   if (owner)
     owner->setChanged(b);
   else {
     oper->setChanged(b);
     if (dmd) dmd->setChanged();
+  }
+
+  // Next routing step
+  if (nextsubopplan) {
+    if (nextsubopplan->owner)
+      nextsubopplan->owner->setChanged(b);
+    else {
+      nextsubopplan->oper->setChanged(b);
+      if (nextsubopplan->dmd) nextsubopplan->dmd->setChanged();
+    }
+  }
+
+  // Previous step
+  if (prevsubopplan) {
+    if (prevsubopplan->owner)
+      prevsubopplan->owner->setChanged(b);
+    else {
+      prevsubopplan->oper->setChanged(b);
+      if (prevsubopplan->dmd) prevsubopplan->dmd->setChanged();
+    }
+  }
+
+  // All dependencies
+  for (auto i : dependencies) {
+    if (i->getFirst() == this && i->getSecond()) {
+      if (i->getSecond()->owner)
+        i->getSecond()->owner->setChanged(b);
+      else {
+        i->getSecond()->oper->setChanged(b);
+        if (i->getSecond()->dmd) i->getSecond()->dmd->setChanged();
+      }
+    }
+    if (i->getSecond() == this && i->getFirst()) {
+      if (i->getFirst()->owner)
+        i->getFirst()->owner->setChanged(b);
+      else {
+        i->getFirst()->oper->setChanged(b);
+        if (i->getFirst()->dmd) i->getFirst()->dmd->setChanged();
+      }
+    }
   }
 }
 
@@ -1496,8 +1539,8 @@ void OperationPlan::deleteOperationPlans(Operation* o,
 }
 
 double OperationPlan::isExcess(bool use_zero) const {
-  // Delivery operationplans aren't excess
-  if (getDemand()) return 0.0;
+  // Delivery operationplans or operationplans with dependencies aren't excess
+  if (getDemand() || !dependencies.empty()) return 0.0;
 
   // Recursive call for suboperationplans
   double opplan_excess_qty = getQuantity();

@@ -809,6 +809,10 @@ class SolverCreate : public Solver {
      * operations are nested. */
     OperationPlan* curOwnerOpplan;
 
+    OperationPlan* blockedOpplan;
+
+    OperationDependency* dependency;
+
     /* Points to the current buffer. */
     Buffer* curBuffer;
 

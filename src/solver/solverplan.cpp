@@ -164,6 +164,8 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
     state->q_flowplan = prevstate->q_flowplan;
     state->q_operationplan = prevstate->q_operationplan;
     state->curOwnerOpplan = prevstate->curOwnerOpplan;
+    state->blockedOpplan = prevstate->blockedOpplan;
+    state->dependency = prevstate->dependency;
     state->curDemand = prevstate->curDemand;
     state->curBuffer = prevstate->curBuffer;
     state->q_qty_min = prevstate->q_qty_min;
@@ -176,6 +178,8 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
     state->q_flowplan = nullptr;
     state->q_operationplan = nullptr;
     state->curOwnerOpplan = nullptr;
+    state->blockedOpplan = nullptr;
+    state->dependency = nullptr;
     state->curDemand = nullptr;
     state->curBuffer = nullptr;
     state->q_qty_min = 1.0;
@@ -348,6 +352,8 @@ void SolverCreate::SolverData::commit() {
           state->a_penalty = 0.0;
           state->curDemand = nullptr;
           state->curOwnerOpplan = nullptr;
+          state->blockedOpplan = nullptr;
+          state->dependency = nullptr;
           state->a_qty = 0;
           try {
             b.solve(*solver, this);
@@ -449,6 +455,8 @@ void SolverCreate::SolverData::commit() {
           state->a_penalty = 0.0;
           state->curDemand = nullptr;
           state->curOwnerOpplan = nullptr;
+          state->blockedOpplan = nullptr;
+          state->dependency = nullptr;
           state->a_qty = 0;
           state->curBatch = o->getBatch();
           o->solve(*solver, this);
@@ -532,6 +540,8 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
         constraints = nullptr;
         state->curDemand = nullptr;
         state->curOwnerOpplan = nullptr;
+        state->blockedOpplan = nullptr;
+        state->dependency = nullptr;
         buffer_solve_shortages_only = false;
         state->curBatch = (*b).getBatch();
         // Call the buffer safety stock solver
@@ -696,6 +706,8 @@ PyObject* SolverCreate::solve(PyObject* self, PyObject* args) {
         state->a_penalty = 0.0;
         state->curDemand = nullptr;
         state->curOwnerOpplan = nullptr;
+        state->blockedOpplan = nullptr;
+        state->dependency = nullptr;
         state->curBatch = state->curBuffer->getBatch();
         state->curBuffer->solve(*sol, &(sol->getCommands()));
       }

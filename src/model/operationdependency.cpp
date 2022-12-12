@@ -162,17 +162,53 @@ void Operation::addDependency(OperationDependency* dpd) {
   dependencies.insert_after(before_end, dpd);
 }
 
-OperationPlanDependency::OperationPlanDependency(OperationPlan* blckby,
-                                                 OperationPlan* blckng,
+OperationPlanDependency::OperationPlanDependency(OperationPlan* op1,
+                                                 OperationPlan* op2,
                                                  OperationDependency* d)
-    : blockedby(blckby), blocking(blckng), dpdcy(d) {
-  if (blockedby) blockedby->dependencies.push_front(this);
-  if (blocking) blocking->dependencies.push_front(this);
+    : first(op1), second(op2), dpdcy(d) {
+  if (first) first->dependencies.push_front(this);
+  if (second) second->dependencies.push_front(this);
 }
 
 OperationPlanDependency::~OperationPlanDependency() {
-  if (blockedby) blockedby->dependencies.remove(this);
-  if (blocking) blocking->dependencies.remove(this);
+  if (first) first->dependencies.remove(this);
+  if (second) second->dependencies.remove(this);
+}
+
+void OperationPlan::setDependencies() {
+  // TODO
+  return;
+}
+
+void OperationPlan::setDependencies(vector<string>& refs) {
+  bool ok = false;
+  for (auto& r : refs) {
+    auto o = OperationPlan::findReference(r);
+    if (getOperation() && o && o->getOperation()) {
+      for (auto dpd : getOperation()->dependencies)
+        if (dpd->getOperation() == getOperation() &&
+            dpd->getBlockedBy() == o->getOperation()) {
+          new OperationPlanDependency(this, o, dpd);
+          ok = true;
+        }
+      if (!ok) {
+        new OperationPlanDependency(this, o);
+        ok = true;
+      }
+    }
+  }
+  if (!ok)
+    // Not a single dependency was explicitly set.
+    // We will compute them
+    setDependencies();
+}
+
+PyObject* OperationPlan::setDependenciesPython(PyObject* self, PyObject* args) {
+  vector<string> refs;
+  // TODO
+  static_cast<OperationPlan*>(self)->setDependencies(refs);
+  Py_INCREF(Py_None);
+  return Py_None;
 }
 
 }  // namespace frepple

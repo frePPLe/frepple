@@ -259,6 +259,8 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
         if (dpd->getOperation() != opplan->getOperation()) continue;
         data.state->q_date = opplan->getStart();
         data.state->q_qty = opplan->getQuantity() * dpd->getQuantity();
+        data.state->blockedOpplan = opplan;
+        data.state->dependency = dpd;
         dpd->getBlockedBy()->solve(*this, &data);
         a_qty = data.state->a_qty;
         if (a_qty < ROUNDING_ERROR) {
@@ -271,6 +273,8 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
       }
       setAllowSplits(prev_allowsplits);
     }
+    data.state->blockedOpplan = nullptr;
+    data.state->dependency = nullptr;
 
     // Loop through all flowplans and dependencies, if needed
     // @todo need some kind of coordination run here!!! see test
@@ -901,6 +905,12 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
       data->getCommandManager()->add(a);
     }
   }
+  if (data->state->blockedOpplan) {
+    new OperationPlanDependency(z, data->state->blockedOpplan,
+                                data->state->dependency);
+    data->state->blockedOpplan = nullptr;
+    data->state->dependency = nullptr;
+  }
   assert(z);
   double orig_q_qty = z->getQuantity();
 
@@ -1164,6 +1174,8 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
         break;
       }
     }
+    // Add to the list (even if zero-quantity!)
+    if (!prev_owner_opplan) data->getCommandManager()->add(a);
   } else {
     // Loop through the steps in sequence
     for (auto e = oper->getSubOperations().rbegin();

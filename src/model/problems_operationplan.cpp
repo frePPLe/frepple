@@ -52,12 +52,32 @@ void OperationPlan::updateProblems() {
         needsBeforeFence = true;
     }
   }
-  // Note: 1 second grace period for precedence problems to avoid rounding
-  // issues
-  if (nextsubopplan && getEnd() > nextsubopplan->getStart() + Duration(1L) &&
-      !nextsubopplan->getConfirmed() && owner &&
-      !owner->getOperation()->hasType<OperationSplit>())
-    needsPrecedence = true;
+
+  if (dependencies.empty()) {
+    // Note: 1 second grace period to avoid rounding issues
+    // TODO hard safety time not considered for the precedence problem
+    if (nextsubopplan && getEnd() > nextsubopplan->getStart() + Duration(1L) &&
+        !nextsubopplan->getConfirmed() && owner &&
+        !owner->getOperation()->hasType<OperationSplit>())
+      needsPrecedence = true;
+  } else {
+    for (auto d : dependencies) {
+      if (this != d->getSecond()) continue;
+      Date nd = d->getFirst()->getEnd();
+      if (d->getOperationDependency() &&
+          d->getOperationDependency()->getHardSafetyLeadtime())
+        nd = d->getFirst()
+                 ->getOperation()
+                 ->calculateOperationTime(
+                     d->getFirst(), nd,
+                     d->getOperationDependency()->getHardSafetyLeadtime(), true)
+                 .getEnd();
+      if (nd > getStart() + Duration(1L)) {
+        needsPrecedence = true;
+        break;
+      }
+    }
+  }
 
   // Loop through the existing problems
   for (auto j = Problem::begin(this, false); j != Problem::end();) {

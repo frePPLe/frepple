@@ -1,12 +1,12 @@
-project X is blocked by:	task X1	1.0	0	0
-project X is blocked by:	task X2 step 3	1.0	0	0
-routing step A is blocking:	routing step C	1.0	432000	0
-routing step B is blocking:	routing step C	1.0	0	432000
-routing step C is blocked by:	routing step A	1.0	432000	0
-routing step C is blocked by:	routing step B	1.0	0	432000
-task X1 is blocking:	project X	1.0	0	0
-task X1 step 1 is blocking:	task X2 step 2	1.0	0	0
-task X2 step 2 is blocked by:	task X1 step 1	1.0	0	0
-task X2 step 2 is blocking:	task X2 step 3	1.0	0	0
-task X2 step 3 is blocked by:	task X2 step 2	1.0	0	0
-task X2 step 3 is blocking:	project X	1.0	0	0
+1. routing step A is blocking:	1. routing step C	1.0	0	0
+1. routing step B is blocking:	1. routing step C	1.0	0	0
+1. routing step C is blocked by:	1. routing step A	1.0	0	0
+1. routing step C is blocked by:	1. routing step B	1.0	0	0
+2. project X is blocked by:	2. task X1	1.0	0	0
+2. project X is blocked by:	2. task X2 step 3	1.0	0	0
+2. task X1 is blocking:	2. project X	1.0	0	0
+2. task X2 step 1 is blocking:	2. task X2 step 2	1.0	0	0
+2. task X2 step 2 is blocked by:	2. task X2 step 1	1.0	0	0
+2. task X2 step 2 is blocking:	2. task X2 step 3	1.0	0	0
+2. task X2 step 3 is blocked by:	2. task X2 step 2	1.0	0	0
+2. task X2 step 3 is blocking:	2. project X	1.0	0	0

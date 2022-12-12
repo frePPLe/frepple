@@ -1672,13 +1672,20 @@ class OperationPlanDependency {
   friend class Operation;
 
  public:
-  OperationPlanDependency(OperationPlan* blckby, OperationPlan* blckng,
-                          OperationDependency* d);
+  OperationPlanDependency(OperationPlan* first, OperationPlan* second,
+                          OperationDependency* d = nullptr);
+
   ~OperationPlanDependency();
 
+  OperationPlan* getFirst() const { return first; }
+
+  OperationPlan* getSecond() const { return second; }
+
+  OperationDependency* getOperationDependency() const { return dpdcy; }
+
  private:
-  OperationPlan* blockedby = nullptr;
-  OperationPlan* blocking = nullptr;
+  OperationPlan* first = nullptr;
+  OperationPlan* second = nullptr;
   OperationDependency* dpdcy = nullptr;
 };
 
@@ -2328,6 +2335,13 @@ class OperationPlan : public Object,
 
   /* Python API for the above method. */
   static PyObject* updateFeasiblePython(PyObject*, PyObject*);
+
+  /* Set or compute dependencies. */
+  void setDependencies();
+  void setDependencies(vector<string>& dependencies);
+
+  /* Python API for the above method. */
+  static PyObject* setDependenciesPython(PyObject*, PyObject*);
 
   /* This function is used to delete the loadplans, flowplans and
    * setup operationplans.
@@ -8922,13 +8936,8 @@ class ProblemPrecedence : public Problem {
  public:
   string getDescription() const {
     OperationPlan* o = static_cast<OperationPlan*>(getOwner());
-    if (!o->getNextSubOpplan())
-      return string("Bogus precedence problem on '") +
-             o->getOperation()->getName() + "'";
-    else
-      return string("Operation '") + o->getOperation()->getName() +
-             "' starts before operation '" +
-             o->getNextSubOpplan()->getOperation()->getName() + "' ends";
+    return string("Operation '") + o->getOperation()->getName() +
+           "' starts before preceding operation ends";
   }
 
   bool isFeasible() const { return false; }
@@ -8949,8 +8958,11 @@ class ProblemPrecedence : public Problem {
   Object* getOwner() const { return static_cast<OperationPlan*>(owner); }
 
   const DateRange getDates() const {
-    OperationPlan* o = static_cast<OperationPlan*>(getOwner());
-    return DateRange(o->getNextSubOpplan()->getStart(), o->getEnd());
+    auto o = static_cast<OperationPlan*>(getOwner());
+    if (o->getNextSubOpplan())
+      return DateRange(o->getNextSubOpplan()->getStart(), o->getEnd());
+    else
+      return DateRange(o->getEnd(), o->getEnd());
   }
 
   /* Return a reference to the metadata structure. */

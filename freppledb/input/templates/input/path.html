@@ -54,6 +54,7 @@ var force;
 var nodes = [];
 var links = [];
 var operations = {};
+var operindices = {};
 var buffers = {};
 var resources = {};
 var width = 800;
@@ -184,6 +185,23 @@ function drawGraph(jsondata)
        charge: parentoper>-1 ? 0 : -200,
        }) - 1;
     operations[jsondata['rows'][oper]['operation']] = count;
+
+    // Check if a blocking/blockedby operation exists
+
+    if (jsondata['rows'][oper]['blockedby'] != null)
+      for (var i = 0; i < jsondata['rows'][oper]['blockedby'].length; i++) {
+          if (jsondata['rows'][oper]['blockedby'][i] in operations) {
+            links.push({source: nodes[operations[jsondata['rows'][oper]['blockedby'][i]]], target: nodes[operindex], type: 'flow'});
+          }
+      }
+    if (jsondata['rows'][oper]['blocking'] != null)
+    for (var i = 0; i < jsondata['rows'][oper]['blocking'].length; i++) {
+        if (jsondata['rows'][oper]['blocking'][i] in operations) {
+          links.push({source: nodes[operindex], target: nodes[operations[jsondata['rows'][oper]['blocking'][i]]], type: 'flow'});
+        }
+    }
+
+
 
     // Add nodes for the resources and load links
     for (var res in jsondata['rows'][oper]['resources'])

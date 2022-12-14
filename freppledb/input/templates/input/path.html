@@ -17,7 +17,7 @@ path.flow {
   fill: none;
   stroke: #000;
   cursor: default;
-  marker-mid: url(#arrow); // IE can't display links if this line is active...
+  marker-mid: url(#arrow);
 }
 
 path.load {
@@ -25,6 +25,13 @@ path.load {
   stroke: #000;
   cursor: default;
   stroke-dasharray: 5,5;
+}
+
+path.depends {
+  fill: none;
+  stroke: #000;
+  cursor: default;
+  marker-mid: url(#dependsmarker);
 }
 
 text {
@@ -191,13 +198,13 @@ function drawGraph(jsondata)
     if (jsondata['rows'][oper]['blockedby'] != null)
       for (var i = 0; i < jsondata['rows'][oper]['blockedby'].length; i++) {
           if (jsondata['rows'][oper]['blockedby'][i] in operations) {
-            links.push({source: nodes[operations[jsondata['rows'][oper]['blockedby'][i]]], target: nodes[operindex], type: 'flow'});
+            links.push({source: nodes[operations[jsondata['rows'][oper]['blockedby'][i]]], target: nodes[operindex], type: 'depends'});
           }
       }
     if (jsondata['rows'][oper]['blocking'] != null)
     for (var i = 0; i < jsondata['rows'][oper]['blocking'].length; i++) {
         if (jsondata['rows'][oper]['blocking'][i] in operations) {
-          links.push({source: nodes[operindex], target: nodes[operations[jsondata['rows'][oper]['blocking'][i]]], type: 'flow'});
+          links.push({source: nodes[operindex], target: nodes[operations[jsondata['rows'][oper]['blocking'][i]]], type: 'depends'});
         }
     }
 
@@ -412,6 +419,10 @@ ExpandColClick: true,
 <defs>
   <marker id="arrow" viewBox="0 -5 10 10" refX="6" markerWidth="5" markerHeight="5" orient="auto">
     <polygon points="0,-5 10,0 0,5" style="fill: #000;">
+    </polygon>
+  </marker>
+  <marker id="dependsmarker" viewBox="0 -5 10 10" refX="6" markerWidth="10" markerHeight="10" orient="auto">
+    <polygon points="0,-5 10,0 0,5" style="fill: black">
     </polygon>
   </marker>
   <rect id="operation" class="operation" width="100" height="25" x="-50" y="-9" rx="2" ry="2"

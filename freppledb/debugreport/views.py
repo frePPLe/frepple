@@ -56,7 +56,7 @@ def logapache(request):
         folder = "/var/log/apache2"
         f = open(os.path.join(folder, filename), "r")
     except Exception:
-        logdata = "File not found"
+        logdata = "File /var/log/apache2/error.log cannot be accessed."
     else:
         try:
             file_content = f.read()

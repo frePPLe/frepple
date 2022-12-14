@@ -197,14 +197,14 @@ function drawGraph(jsondata)
 
     if (jsondata['rows'][oper]['blockedby'] != null)
       for (var i = 0; i < jsondata['rows'][oper]['blockedby'].length; i++) {
-          if (jsondata['rows'][oper]['blockedby'][i] in operations) {
-            links.push({source: nodes[operations[jsondata['rows'][oper]['blockedby'][i]]], target: nodes[operindex], type: 'depends'});
+          if (jsondata['rows'][oper]['blockedby'][i][0] in operations) {
+            links.push({source: nodes[operations[jsondata['rows'][oper]['blockedby'][i][0]]], target: nodes[operindex], type: 'depends'});
           }
       }
     if (jsondata['rows'][oper]['blocking'] != null)
     for (var i = 0; i < jsondata['rows'][oper]['blocking'].length; i++) {
-        if (jsondata['rows'][oper]['blocking'][i] in operations) {
-          links.push({source: nodes[operindex], target: nodes[operations[jsondata['rows'][oper]['blocking'][i]]], type: 'depends'});
+        if (jsondata['rows'][oper]['blocking'][i][0] in operations) {
+          links.push({source: nodes[operindex], target: nodes[operations[jsondata['rows'][oper]['blocking'][i][0]]], type: 'depends'});
         }
     }
 

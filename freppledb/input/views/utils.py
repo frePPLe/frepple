@@ -407,7 +407,9 @@ class PathReport(GridReport):
       item_name,
       grandparentitem_description,
       parentitem_description,
-      item_description
+      item_description,
+      blockedby,
+      blocking
        from
       (
       select operation.name as operation,
@@ -823,7 +825,9 @@ class PathReport(GridReport):
                 yield j
 
     @classmethod
-    def getOperationFromName(reportclass, request, operation_name, downstream, depth):
+    def getOperationFromName(
+        reportclass, request, operation_name, downstream, depth, previousOperation=None
+    ):
         cursor = connections[request.database].cursor()
         query = """
       -- MANUFACTURING OPERATIONS
@@ -927,7 +931,9 @@ class PathReport(GridReport):
         cursor.execute(query, (operation_name,) * 3)
 
         for i in cursor.fetchall():
-            for j in reportclass.processRecord(i, request, depth, downstream, None, 1):
+            for j in reportclass.processRecord(
+                i, request, depth, downstream, previousOperation, 1
+            ):
                 yield j
 
     @classmethod
@@ -1378,13 +1384,13 @@ class PathReport(GridReport):
         if i[21] and not downstream:
             for blockedby in tuple(json.loads(i[21])):
                 yield from reportclass.getOperationFromName(
-                    request, blockedby, downstream, depth + 1
+                    request, blockedby, downstream, depth + 1, i[0]
                 )
 
         if i[22] and downstream:
             for blocking in tuple(json.loads(i[22])):
                 yield from reportclass.getOperationFromName(
-                    request, blocking, downstream, depth + 1
+                    request, blocking, downstream, depth + 1, i[0]
                 )
 
     @classmethod

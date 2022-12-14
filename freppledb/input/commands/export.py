@@ -34,6 +34,7 @@ from freppledb.input.models import (
     ItemDistribution,
     Location,
     Operation,
+    OperationDependency,
     OperationMaterial,
     OperationResource,
     Resource,
@@ -166,6 +167,29 @@ class cleanStatic(PlanTask):
                         cls.fk_relations[fk[0]].append((fk[1], fk[2]))
                     else:
                         cls.fk_relations[fk[0]] = [(fk[1], fk[2])]
+
+            cursor.execute(
+                """
+                delete from operation_dependency
+                where source = %%s and lastmodified <> %%s and %s
+                """
+                % cls.getSQLNoReferences("operation_dependency", "id"),
+                (source, cls.timestamp),
+            )
+            cursor.execute(
+                """
+                with cte as (
+                    select name from operation
+                    where operation.source = %%s and operation.lastmodified <> %%s
+                    )
+                delete from operation_dependency
+                where ( operation_id in (select name from cte)
+                  or blockedby_id in (select name from cte))
+                and %s
+                """
+                % cls.getSQLNoReferences("operation_dependency", "id"),
+                (source, cls.timestamp),
+            )
 
             cursor.execute(
                 """
@@ -1772,6 +1796,66 @@ class exportOperationMaterials(PlanTask):
                   source=excluded.source,
                   transferbatch=excluded.transferbatch,
                   "offset"=excluded."offset",
+                  lastmodified=excluded.lastmodified
+                  %s
+                """
+                % SQL4attributes(attrs),
+                getData(),
+            )
+
+
+@PlanTaskRegistry.register
+class exportOperationDependencies(PlanTask):
+
+    description = ("Export static data", "Export operation dependency")
+    sequence = (305, "exportstatic4", 2.5)
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        return 1 if kwargs.get("exportstatic", False) else -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        source = kwargs.get("source", None)
+        attrs = [f[0] for f in getAttributes(OperationDependency)]
+
+        def getData():
+            for o in frepple.operations():
+                if o.hidden:
+                    continue
+                for i in o.dependencies:
+                    if (
+                        (source and source != i.source)
+                        or not i.operation
+                        or not i.blockedby
+                    ):
+                        continue
+                    r = [
+                        i.operation.name,
+                        i.blockedby.name,
+                        round(i.quantity, 8),
+                        i.safety_leadtime,
+                        i.hard_safety_leadtime,
+                        cls.timestamp,
+                    ]
+                    for a in attrs:
+                        r.append(getattr(i, a, None))
+                    yield r
+
+        with connections[database].cursor() as cursor:
+            execute_batch(
+                cursor,
+                """
+                insert into operation_dependency
+                (operation_id,blockedby_id,quantity,safety_leadtime,hard_safety_leadtime,lastmodified%s)
+                values(%%s,%%s,%%s,%%s * interval '1 second',%%s * interval '1 second',%%s%s)
+                on conflict (operation_id, blockedby_id)
+                do update set
+                  quantity=excluded.quantity,
+                  safety_leadtime=excluded.safety_leadtime,
+                  hard_safety_leadtime=excluded.hard_safety_leadtime,
                   lastmodified=excluded.lastmodified
                   %s
                 """

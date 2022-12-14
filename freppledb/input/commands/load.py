@@ -923,6 +923,60 @@ class loadSuboperations(LoadTask):
 
 
 @PlanTaskRegistry.register
+class loadOperationDependencies(LoadTask):
+
+    description = "Importing operation dependencies"
+    sequence = 97.5
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        if cls.filter:
+            filter_where = "where %s " % cls.filter
+        else:
+            filter_where = ""
+
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
+                    select
+                      operation_id, blockedby_id, quantity, safety_leadtime, hard_safety_leadtime
+                    from operation_dependency
+                    %s
+                    order by operation_id, blockedby_id
+                    """
+                    % filter_where
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        op1 = frepple.operation(name=i[0], action="C")
+                        op2 = frepple.operation(name=i[1], action="C")
+                        if op1 and op2:
+                            frepple.operationdependency(
+                                operation=op1,
+                                blockedby=op2,
+                                quantity=i[2] if i[2] is not None else 1,
+                                safety_leadtime=i[3] or 0,
+                                hard_safety_leadtime=i[4] or 0,
+                            )
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d operation dependencies in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
+
+
+@PlanTaskRegistry.register
 class loadItems(LoadTask):
 
     description = "Importing items"

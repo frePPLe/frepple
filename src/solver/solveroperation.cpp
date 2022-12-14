@@ -258,17 +258,55 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
       for (auto dpd : opplan->getOperation()->getDependencies()) {
         if (dpd->getOperation() != opplan->getOperation()) continue;
         data.state->q_date = opplan->getStart();
+
+        // Net available quantities from the required quantity
+        // The netting ignores the dates.
         data.state->q_qty = opplan->getQuantity() * dpd->getQuantity();
-        data.state->blockedOpplan = opplan;
-        data.state->dependency = dpd;
-        dpd->getBlockedBy()->solve(*this, &data);
-        a_qty = data.state->a_qty;
-        if (a_qty < ROUNDING_ERROR) {
-          a_qty = 0.0;
-          matnext = DateRange(data.state->a_date, data.state->a_date);
-          incomplete = true;
-          setAllowSplits(prev_allowsplits);
-          break;
+        auto o = dpd->getBlockedBy()->getOperationPlans();
+        auto allocated = 0.0;
+        while (o != OperationPlan::end()) {
+          if (opplan->getBatch() && o->getBatch() != opplan->getBatch())
+            // No match
+            continue;
+          auto unpegged = o->getQuantity();
+          for (auto d : o->getDependencies()) {
+            if (d->getFirst() != &*o) continue;
+            if (d->getOperationDependency())
+              unpegged -= d->getSecond()->getQuantity() *
+                          d->getOperationDependency()->getQuantity();
+            else
+              unpegged -= d->getSecond()->getQuantity();
+          }
+          if (unpegged > ROUNDING_ERROR) {
+            // Note: we count on the rollback to undo this allocation if needed
+            if (getLogLevel() > 1) {
+              logger << indentlevel << "Allocating from available supply on "
+                     << &*o << endl;
+            }
+            new OperationPlanDependency(&*o, opplan, dpd);
+            allocated += unpegged;
+            if (data.state->q_qty < allocated + ROUNDING_ERROR) {
+              allocated = data.state->q_qty;
+              break;
+            }
+          }
+          ++o;
+        }
+
+        if (data.state->q_qty > allocated - ROUNDING_ERROR) {
+          // Plan net required quantity
+          data.state->q_qty -= allocated;
+          data.state->blockedOpplan = opplan;
+          data.state->dependency = dpd;
+          dpd->getBlockedBy()->solve(*this, &data);
+          a_qty = data.state->a_qty + allocated;
+          if (data.state->a_qty < ROUNDING_ERROR) {
+            a_qty = 0.0;
+            matnext = DateRange(data.state->a_date, data.state->a_date);
+            incomplete = true;
+            setAllowSplits(prev_allowsplits);
+            break;
+          }
         }
       }
       setAllowSplits(prev_allowsplits);
@@ -276,7 +314,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
     data.state->blockedOpplan = nullptr;
     data.state->dependency = nullptr;
 
-    // Loop through all flowplans and dependencies, if needed
+    // Loop through all flowplans, if needed
     // @todo need some kind of coordination run here!!! see test
     // alternate_flow_1
     if (getPropagate() && a_qty) {
@@ -717,7 +755,9 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   double flow_qty_fixed = 0.0;
   bool transferbatch_flow = false;
   Flow* producing_flow = nullptr;
-  if (data->state->curBuffer) {
+  if (data->state->dependency) {
+    flow_qty_per = 1.0;
+  } else if (data->state->curBuffer) {
     producing_flow =
         oper->findFlow(data->state->curBuffer, data->state->q_date);
     if (producing_flow && producing_flow->isProducer()) {

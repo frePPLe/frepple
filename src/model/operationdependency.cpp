@@ -175,40 +175,4 @@ OperationPlanDependency::~OperationPlanDependency() {
   if (second) second->dependencies.remove(this);
 }
 
-void OperationPlan::setDependencies() {
-  // TODO
-  return;
-}
-
-void OperationPlan::setDependencies(vector<string>& refs) {
-  bool ok = false;
-  for (auto& r : refs) {
-    auto o = OperationPlan::findReference(r);
-    if (getOperation() && o && o->getOperation()) {
-      for (auto dpd : getOperation()->dependencies)
-        if (dpd->getOperation() == getOperation() &&
-            dpd->getBlockedBy() == o->getOperation()) {
-          new OperationPlanDependency(this, o, dpd);
-          ok = true;
-        }
-      if (!ok) {
-        new OperationPlanDependency(this, o);
-        ok = true;
-      }
-    }
-  }
-  if (!ok)
-    // Not a single dependency was explicitly set.
-    // We will compute them
-    setDependencies();
-}
-
-PyObject* OperationPlan::setDependenciesPython(PyObject* self, PyObject* args) {
-  vector<string> refs;
-  // TODO
-  static_cast<OperationPlan*>(self)->setDependencies(refs);
-  Py_INCREF(Py_None);
-  return Py_None;
-}
-
 }  // namespace frepple

@@ -1795,6 +1795,10 @@ class OperationPlan : public Object,
    */
   Duration getDelay() const;
 
+  const forward_list<OperationPlanDependency*>& getDependencies() const {
+    return dependencies;
+  }
+
   /* Merge this operationplan with another one if possible.
    * The return value is true when a merge was done.
    * Careful: When a merge is done this pointer object is deleted!
@@ -2335,13 +2339,6 @@ class OperationPlan : public Object,
 
   /* Python API for the above method. */
   static PyObject* updateFeasiblePython(PyObject*, PyObject*);
-
-  /* Set or compute dependencies. */
-  void setDependencies();
-  void setDependencies(vector<string>& dependencies);
-
-  /* Python API for the above method. */
-  static PyObject* setDependenciesPython(PyObject*, PyObject*);
 
   /* This function is used to delete the loadplans, flowplans and
    * setup operationplans.

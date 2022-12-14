@@ -235,6 +235,20 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
   for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j)
     updateStack(&*j, qty * j->getQuantity() / op->getQuantity(),
                 offset * j->getQuantity() / op->getQuantity(), lvl + 1, 0L);
+
+  // Push dependencies on the stack.
+  for (auto d : op->getDependencies()) {
+    if (downstream && d->getFirst() == op)
+      updateStack(d->getSecond(),
+                  qty * d->getSecond()->getQuantity() / op->getQuantity(),
+                  offset * d->getSecond()->getQuantity() / op->getQuantity(),
+                  lvl + 1, 0L);
+    else if (!downstream && d->getSecond() == op)
+      updateStack(d->getFirst(),
+                  qty * d->getFirst()->getQuantity() / op->getQuantity(),
+                  offset * d->getFirst()->getQuantity() / op->getQuantity(),
+                  lvl + 1, 0L);
+  }
 }
 
 PeggingIterator* PeggingIterator::next() {

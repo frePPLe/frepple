@@ -64,8 +64,6 @@ int OperationPlan::initialize() {
               "add or subtract a duration of operation hours from a date");
   x.addMethod("updateFeasible", &updateFeasiblePython, METH_NOARGS,
               "updates the flag whether this operationplan is feasible or not");
-  x.addMethod("setDependencies", &setDependenciesPython, METH_VARARGS,
-              "Set or compute the dependencies");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }

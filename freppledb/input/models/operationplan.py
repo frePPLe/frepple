@@ -1916,14 +1916,14 @@ class ManufacturingOrder(OperationPlan):
                     + (self.operation.duration_per or timedelta(0))
                     * float(self.quantity)
                 ) / efficiency
-            elif self.operation.type == "time_fixed":
+            elif self.operation.type == "fixed_time":
                 duration = (self.operation.duration or timedelta(0)) / efficiency
             elif not self.operation:
                 duration = timedelta(0)
             else:
                 # TODO handle updates on routing operationplans
                 raise Exception(
-                    "Can change manufacturing orders of type %s yet"
+                    "Can't change manufacturing orders of type %s yet"
                     % self.operation.type
                 )
 

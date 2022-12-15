@@ -220,6 +220,7 @@ void SolverCreate::SolverData::commit() {
       // Special case to use a single sweep for truely unconstrained plans
 
       // Step 1: Create a delivery operationplan for all demands
+      solver->setPropagate(false);
       if (solver->getCreateDeliveries()) {
         for (auto i = demands->begin(); i != demands->end(); ++i) {
           if (solver->userexit_demand)
@@ -236,32 +237,41 @@ void SolverCreate::SolverData::commit() {
           Operation* deliveryoper = (*i)->getDeliveryOperation();
           if (!deliveryoper) continue;
 
+          auto isGroupMember =
+              (*i)->getOwner() && (*i)->getOwner()->hasType<DemandGroup>() &&
+              static_cast<DemandGroup*>((*i)->getOwner())->getPolicy() !=
+                  Demand::POLICY_INDEPENDENT;
           while (plan_qty > ROUNDING_ERROR) {
             // Respect minimum shipment quantities
             if (plan_qty < (*i)->getMinShipment())
               plan_qty = (*i)->getMinShipment();
-
-            // Create a delivery operationplan for the remaining quantity
-            auto isGroupMember =
-                (*i)->getOwner() && (*i)->getOwner()->hasType<DemandGroup>() &&
-                static_cast<DemandGroup*>((*i)->getOwner())->getPolicy() !=
-                    Demand::POLICY_INDEPENDENT;
-            OperationPlan* deli = deliveryoper->createOperationPlan(
-                plan_qty, Date::infinitePast,
-                isGroupMember ? (*i)->getOwner()->getDue() : (*i)->getDue(),
-                (*i)->getBatch(), *i, nullptr, 0, false);
-
-            // Prepare for next loop
-            if (deli->activate())
-              plan_qty -= deli->getQuantity();
-            else
+            state->curBuffer = nullptr;
+            state->q_qty = plan_qty;
+            state->q_date =
+                isGroupMember ? (*i)->getOwner()->getDue() : (*i)->getDue();
+            state->a_cost = 0.0;
+            state->a_penalty = 0.0;
+            state->curDemand = *i;
+            state->curOwnerOpplan = nullptr;
+            state->blockedOpplan = nullptr;
+            state->dependency = nullptr;
+            state->curBatch = (*i)->getBatch();
+            state->a_qty = 0;
+            try {
+              deliveryoper->solve(*solver, this);
+              getCommandManager()->commit();
+              plan_qty -= state->a_qty;
+            } catch (const exception& e) {
+              logger << "Error creating delivery for '" << *i
+                     << "': " << e.what() << endl;
+              getCommandManager()->rollback();
               break;
+            }
           }
         }
       }
 
-      // Step 2: Solve buffer by buffer, ordered by level
-      solver->setPropagate(false);
+      // Step 3: Solve buffer by buffer, ordered by level
       buffer_solve_shortages_only = false;
       for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl) {
         // Step 1: Allocate from generic-MTO buffers to MTO-batch buffers

@@ -252,7 +252,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
     matnext.setStartAndEnd(Date::infinitePast, Date::infiniteFuture);
 
     // Loop through all dependencies, if needed
-    if (getPropagate() && a_qty) {
+    if (a_qty) {
       bool prev_allowsplits = getAllowSplits();
       setAllowSplits(false);
       for (auto dpd : opplan->getOperation()->getDependencies()) {
@@ -956,8 +956,6 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   assert(z);
   double orig_q_qty = z->getQuantity();
 
-  if (!propagate) return z;
-
   // Adjust the min quantity we expect the reply to cover
   double orig_q_qty_min = data->state->q_qty_min;
   if (!flow_qty_per || data->state->q_qty_min < flow_qty_fixed + ROUNDING_ERROR)
@@ -968,6 +966,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
 
   // Check the constraints
   checkOperation(z, *data);
+  if (!propagate) return z;
   data->state->q_qty_min = orig_q_qty_min;
 
   // Multiply the operation reply with the flow quantity to get a final reply

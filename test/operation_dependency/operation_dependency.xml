@@ -128,5 +128,10 @@ frepple.saveplan("output.4.xml")
 print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.5.xml")
+
+print("CREATING FULLY UNCONSTRAINED PLAN")
+frepple.erase(False)
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.6.xml")
 ?>
 </plan>

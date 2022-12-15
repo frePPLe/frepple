@@ -1345,7 +1345,11 @@ class PathReport(GridReport):
                 "duration": i[6],
                 "duration_per": i[7],
                 "quantity": bom_quantity,
-                "buffers": tuple(json.loads(i[4]).items()) if i[4] else None,
+                "buffers": tuple(json.loads(i[4]).items())
+                if i[4]
+                else tuple([("%s @ %s" % (i[17], i[1]), 1)])
+                if i[17]
+                else None,
                 "parent": reportclass.operation_dict[i[8]]
                 if i[8]
                 else (

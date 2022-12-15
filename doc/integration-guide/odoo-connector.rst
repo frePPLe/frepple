@@ -313,14 +313,12 @@ The section below describes the installation and configuration of these.
 
 * **Configuring access rights**
 
-  Out of the box, the integrated solution will grant all odoo users access to all
-  frepple functionality. With the information below you can tailor this towards
-  a more restricted access.
+  Out of the box, the integrated solution will grant only the root and admin users
+  access to all frepple functionality. Others users need to be explicitly granted access.
 
   * | In odoo, you allow people to access frepple by granting the "frepple user" access
       right.
-    | By default, all users are granted this permission. You can change the default
-      access right.
+    | The access is not granted by default.
 
   * | All odoo users with the "frepple user" permission are automatically synchronised
       with frepple.

@@ -265,9 +265,11 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
         auto o = dpd->getBlockedBy()->getOperationPlans();
         auto allocated = 0.0;
         while (o != OperationPlan::end()) {
-          if (opplan->getBatch() && o->getBatch() != opplan->getBatch())
+          if (opplan->getBatch() && o->getBatch() != opplan->getBatch()) {
             // No match
+            ++o;
             continue;
+          }
           auto unpegged = o->getQuantity();
           for (auto d : o->getDependencies()) {
             if (d->getFirst() != &*o) continue;

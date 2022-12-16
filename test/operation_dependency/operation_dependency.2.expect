@@ -23,6 +23,9 @@
 		<item>
 			<name>4. my project</name>
 		</item>
+		<item>
+			<name>5. my project</name>
+		</item>
 	</items>
 	<operations>
 		<operation xsi:type="operation_routing">
@@ -264,7 +267,7 @@
 					</blockedby>
 				</dependency>
 			</dependencies>
-			<duration>P5D</duration>
+			<duration>P15D</duration>
 		</operation>
 		<operation>
 			<name>4. task X2</name>
@@ -285,7 +288,61 @@
 			<location>
 				<name>X</name>
 			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>5. project X</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>5. task X1</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>5. task X2</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P10D</duration>
+		</operation>
+		<operation>
+			<name>5. task X1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>5. task X3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
 			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>5. task X2</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>5. task X3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P15D</duration>
+		</operation>
+		<operation>
+			<name>5. task X3</name>
+			<location>
+				<name>X</name>
+			</location>
+			<duration>P5D</duration>
 		</operation>
 	</operations>
 	<demands>
@@ -363,7 +420,21 @@
 			</operation>
 			<due>2023-12-01T00:00:00</due>
 			<priority>1</priority>
-			<batch>3. unconstrained project</batch>
+		</demand>
+		<demand>
+			<name>5. converging</name>
+			<quantity>1</quantity>
+			<item>
+				<name>5. my project</name>
+			</item>
+			<location>
+				<name>X</name>
+			</location>
+			<operation>
+				<name>5. project X</name>
+			</operation>
+			<due>2023-12-01T00:00:00</due>
+			<priority>1</priority>
 		</demand>
 	</demands>
 </plan>

@@ -109,20 +109,20 @@
 					</blockedby>
 				</dependency>
 			</dependencies>
-		</operation>	
+		</operation>
 		<operation name="4. project X" xsi:type="operation_fixed_time" duration="P10D">
 			<location name="X"/>
 			<dependencies>
 				<dependency>
-					<blockedby name="4. task X1" xsi:type="operation_fixed_time" duration="P5D">
+					<blockedby name="4. task X1" xsi:type="operation_fixed_time" duration="P15D">
 						<location name="X"/>
 						<dependencies>
 							<dependency>
-								<blockedby name="4. task X3" xsi:type="operation_fixed_time" duration="P7D">
+								<blockedby name="4. task X3" xsi:type="operation_fixed_time" duration="P5D">
 									<location name="X"/>
 								</blockedby>
-							</dependency>							
-						</dependencies>	
+							</dependency>
+						</dependencies>
 					</blockedby>
 				</dependency>
 				<dependency>
@@ -136,7 +136,34 @@
 					</blockedby>
 				</dependency>
 			</dependencies>
-		</operation>		
+		</operation>
+		<operation name="5. project X" xsi:type="operation_fixed_time" duration="P10D">
+			<location name="X"/>
+			<dependencies>
+				<dependency>
+					<blockedby name="5. task X1" xsi:type="operation_fixed_time" duration="P7D">
+						<location name="X"/>
+						<dependencies>
+							<dependency>
+								<blockedby name="5. task X3" xsi:type="operation_fixed_time" duration="P5D">
+									<location name="X"/>
+								</blockedby>
+							</dependency>
+						</dependencies>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby name="5. task X2" xsi:type="operation_fixed_time" duration="P15D">
+						<location name="X"/>
+						<dependencies>
+							<dependency>
+								<blockedby name="5. task X3"/>
+							</dependency>
+						</dependencies>
+					</blockedby>
+				</dependency>
+			</dependencies>
+		</operation>
 	</operations>
 	<demands>
 		<demand name="1. order">
@@ -163,7 +190,7 @@
 			<priority>1</priority>
 			<item name="3. my project"/>
 			<location name="X"/>
-		</demand>		
+		</demand>
 		<demand name="3. unconstrained project">
 			<operation name="3. project X"/>
 			<batch>3. unconstrained project</batch>
@@ -172,16 +199,23 @@
 			<priority>1</priority>
 			<item name="3. my project"/>
 			<location name="X"/>
-		</demand>	
+		</demand>
 		<demand name="4. converging">
 			<operation name="4. project X"/>
-			<batch>3. unconstrained project</batch>
 			<quantity>1</quantity>
 			<due>2023-12-01T00:00:00</due>
 			<priority>1</priority>
 			<item name="4. my project"/>
 			<location name="X"/>
-		</demand>			
+		</demand>
+		<demand name="5. converging">
+			<operation name="5. project X"/>
+			<quantity>1</quantity>
+			<due>2023-12-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="5. my project"/>
+			<location name="X"/>
+		</demand>
 	</demands>
 
 <?python

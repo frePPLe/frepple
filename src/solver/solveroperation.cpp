@@ -255,12 +255,45 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
     if (a_qty) {
       bool prev_allowsplits = getAllowSplits();
       setAllowSplits(false);
+
+      if (!opplan->getOperation()->getDependencies().empty() &&
+          data.dependency_list.empty()) {
+        // Starting a new dependency list.
+        data.populateDependencies(opplan->getOperation());
+      }
+
       for (auto dpd : opplan->getOperation()->getDependencies()) {
         if (dpd->getOperation() != opplan->getOperation()) continue;
-        data.state->q_date = opplan->getStart();
 
-        // Net available quantities from the required quantity
-        // The netting ignores the dates.
+        // Compute ask date
+        data.state->q_date = opplan->getStart();
+        if (dpd->getSafetyLeadtime() &&
+            dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime())
+          data.state->q_date -= dpd->getSafetyLeadtime();
+        if (dpd->getHardSafetyLeadtime() &&
+            dpd->getSafetyLeadtime() <= dpd->getHardSafetyLeadtime())
+          data.state->q_date -= dpd->getHardSafetyLeadtime();
+
+        // Check if this is the last time it appears in the dependency list
+        auto occurences = data.dependency_list.find(dpd->getBlockedBy());
+        if (occurences != data.dependency_list.end()) {
+          if (occurences->second.first > 1) {
+            // Not ready to explore this dependency yet.
+            // We just record the requirement date.
+            --occurences->second.first;
+            if (occurences->second.second > data.state->q_date)
+              occurences->second.second = data.state->q_date;
+            continue;
+          } else {
+            // OK to to explore this dependency
+            if (occurences->second.second < data.state->q_date)
+              data.state->q_date = occurences->second.second;
+            data.dependency_list.erase(occurences);
+          }
+        }
+
+        // Net available quantities from the required
+        // quantity The netting ignores the dates.
         data.state->q_qty = opplan->getQuantity() * dpd->getQuantity();
         auto o = dpd->getBlockedBy()->getOperationPlans();
         auto allocated = 0.0;
@@ -298,17 +331,37 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
         if (data.state->q_qty > allocated - ROUNDING_ERROR) {
           // Plan net required quantity
           data.state->q_qty -= allocated;
-          data.state->blockedOpplan = opplan;
-          data.state->dependency = dpd;
-          dpd->getBlockedBy()->solve(*this, &data);
-          a_qty = data.state->a_qty + allocated;
-          if (data.state->a_qty < ROUNDING_ERROR) {
-            a_qty = 0.0;
-            matnext = DateRange(data.state->a_date, data.state->a_date);
-            incomplete = true;
-            setAllowSplits(prev_allowsplits);
-            break;
-          }
+          auto orig_q_qty = data.state->q_qty;
+          bool repeat = false;
+          auto bm = data.getCommandManager()->setBookmark();
+          do {
+            repeat = false;
+            data.state->q_qty = orig_q_qty;
+            data.state->blockedOpplan = opplan;
+            data.state->dependency = dpd;
+            dpd->getBlockedBy()->solve(*this, &data);
+            a_qty = data.state->a_qty + allocated;
+            if (data.state->a_qty < ROUNDING_ERROR) {
+              if (dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime() &&
+                  data.state->a_date >
+                      opplan->getStart() - dpd->getSafetyLeadtime() &&
+                  orig_q_qty) {
+                // We can retry and compress the soft safety lead time
+                data.state->q_date = data.state->a_date;
+                bm->rollback();
+                repeat = true;
+              } else {
+                a_qty = 0.0;
+                if (dpd->getHardSafetyLeadtime())
+                  data.state->a_date += dpd->getHardSafetyLeadtime();
+                matnext = DateRange(data.state->a_date, data.state->a_date);
+                incomplete = true;
+                data.dependency_list.clear();
+                setAllowSplits(prev_allowsplits);
+                break;
+              }
+            }
+          } while (repeat);
         }
       }
       setAllowSplits(prev_allowsplits);
@@ -2196,6 +2249,20 @@ void SolverCreate::createsBatches(Operation* oper, void* v) {
       if (added > 0.0) opplan->setQuantity(opplan->getQuantity() + added);
     }
     ++opplan;
+  }
+}
+
+void SolverCreate::SolverData::populateDependencies(const Operation* o) {
+  for (auto dpd : o->getDependencies()) {
+    if (dpd->getOperation() != o) continue;
+    auto l = dependency_list.find(dpd->getBlockedBy());
+    if (l == dependency_list.end())
+      dependency_list[dpd->getBlockedBy()] =
+          pair<unsigned short, Date>(1, Date::infiniteFuture);
+    else
+      ++l->second.first;
+    // Recursive call
+    populateDependencies(dpd->getBlockedBy());
   }
 }
 

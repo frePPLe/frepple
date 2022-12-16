@@ -1013,6 +1013,12 @@ class SolverCreate : public Solver {
     };
     set<const Buffer*, order_buffers> purchase_buffers;
 
+    // Structure to maintain dependency tree.
+    map<const Operation*, pair<unsigned short, Date> > dependency_list;
+
+    // Recursively collect all dependencies.
+    void populateDependencies(const Operation*);
+
    public:
     /* Pointer to the current solver status. */
     State* state;

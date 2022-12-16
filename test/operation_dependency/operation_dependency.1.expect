@@ -26,3 +26,11 @@
 4. task X2 is blocking:	4. project X	1.0	0	0
 4. task X3 is blocking:	4. task X1	1.0	0	0
 4. task X3 is blocking:	4. task X2	1.0	0	0
+5. project X is blocked by:	5. task X1	1.0	0	0
+5. project X is blocked by:	5. task X2	1.0	0	0
+5. task X1 is blocked by:	5. task X3	1.0	0	0
+5. task X1 is blocking:	5. project X	1.0	0	0
+5. task X2 is blocked by:	5. task X3	1.0	0	0
+5. task X2 is blocking:	5. project X	1.0	0	0
+5. task X3 is blocking:	5. task X1	1.0	0	0
+5. task X3 is blocking:	5. task X2	1.0	0	0

@@ -113,7 +113,7 @@ void HasLevel::computeLevels() {
       else {
         // Detect hanging operations
         if (g.getFlows().empty() && g.getLoads().empty() && !g.getOwner() &&
-            g.getSubOperations().empty()) {
+            g.getSubOperations().empty() && g.getDependencies().empty()) {
           // Cluster 0 keeps all dangling operations
           g.lvl = 0;
           continue;
@@ -124,8 +124,8 @@ void HasLevel::computeLevels() {
       }
 
 #ifdef CLUSTERDEBUG
-      logger << "Investigating operation '" << &*g << "' - current cluster "
-             << g->cluster << endl;
+      logger << "Investigating operation '" << g << "' - current cluster "
+             << g.cluster << endl;
 #endif
 
       // Do we need to activate the level search?
@@ -213,6 +213,23 @@ void HasLevel::computeLevels() {
             // Search for clusters information only
             opstack.push(make_pair(cur_oper->getOwner(), -1));
             cur_oper->getOwner()->cluster = cur_cluster;
+          }
+          // else: no search required
+        }
+
+        // Push dependencies on the stack
+        for (auto dpd : cur_oper->getDependencies()) {
+          auto new_oper = dpd->getOperation();
+          if (new_oper == cur_oper) new_oper = dpd->getBlockedBy();
+          if (new_oper->lvl < cur_level) {
+            // Search level and cluster
+            opstack.push(make_pair(new_oper, cur_level));
+            new_oper->lvl = cur_level;
+            new_oper->cluster = cur_cluster;
+          } else if (!new_oper->cluster) {
+            // Search for clusters information only
+            opstack.push(make_pair(new_oper, -1));
+            new_oper->cluster = cur_cluster;
           }
           // else: no search required
         }

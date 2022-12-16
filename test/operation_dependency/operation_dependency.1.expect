@@ -10,3 +10,19 @@
 2. task X2 step 2 is blocking:	2. task X2 step 3	1.0	0	0
 2. task X2 step 3 is blocked by:	2. task X2 step 2	1.0	0	0
 2. task X2 step 3 is blocking:	2. project X	1.0	0	0
+3. project X is blocked by:	3. task X1	1.0	864000	432000
+3. project X is blocked by:	3. task X2 step 3	1.0	0	0
+3. task X1 is blocking:	3. project X	1.0	864000	432000
+3. task X2 step 1 is blocking:	3. task X2 step 2	1.0	864000	432000
+3. task X2 step 2 is blocked by:	3. task X2 step 1	1.0	864000	432000
+3. task X2 step 2 is blocking:	3. task X2 step 3	1.0	864000	432000
+3. task X2 step 3 is blocked by:	3. task X2 step 2	1.0	864000	432000
+3. task X2 step 3 is blocking:	3. project X	1.0	0	0
+4. project X is blocked by:	4. task X1	1.0	0	0
+4. project X is blocked by:	4. task X2	1.0	0	0
+4. task X1 is blocked by:	4. task X3	1.0	0	0
+4. task X1 is blocking:	4. project X	1.0	0	0
+4. task X2 is blocked by:	4. task X3	1.0	0	0
+4. task X2 is blocking:	4. project X	1.0	0	0
+4. task X3 is blocking:	4. task X1	1.0	0	0
+4. task X3 is blocking:	4. task X2	1.0	0	0

@@ -17,6 +17,12 @@
 		<item>
 			<name>2. my project</name>
 		</item>
+		<item>
+			<name>3. my project</name>
+		</item>
+		<item>
+			<name>4. my project</name>
+		</item>
 	</items>
 	<operations>
 		<operation xsi:type="operation_routing">
@@ -79,7 +85,7 @@
 				<dependency>
 					<blockedby xsi:type="operation_time_per">
 						<name>1. routing step B</name>
-					</blockedby>					
+					</blockedby>
 				</dependency>
 			</dependencies>
 			<duration>P1D</duration>
@@ -160,6 +166,127 @@
 			</dependencies>
 			<duration>P7D</duration>
 		</operation>
+		<operation>
+			<name>3. project X</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>3. task X1</name>
+					</blockedby>
+					<safety_leadtime>P10D</safety_leadtime>
+					<hard_safety_leadtime>P5D</hard_safety_leadtime>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>3. task X2 step 3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P10D</duration>
+		</operation>
+		<operation>
+			<name>3. task X1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>3. task X2 step 1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>3. task X2 step 2</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>3. task X2 step 1</name>
+					</blockedby>
+					<safety_leadtime>P10D</safety_leadtime>
+					<hard_safety_leadtime>P5D</hard_safety_leadtime>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>3. task X2 step 3</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>3. task X2 step 2</name>
+					</blockedby>
+					<safety_leadtime>P10D</safety_leadtime>
+					<hard_safety_leadtime>P5D</hard_safety_leadtime>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>4. project X</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>4. task X1</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>4. task X2</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P10D</duration>
+		</operation>
+		<operation>
+			<name>4. task X1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>4. task X3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>4. task X2</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>4. task X3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>4. task X3</name>
+			<location>
+				<name>X</name>
+			</location>
+			<duration>P7D</duration>
+		</operation>
 	</operations>
 	<demands>
 		<demand>
@@ -189,6 +316,54 @@
 			</operation>
 			<due>2023-01-01T00:00:00</due>
 			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>3. constrained project</name>
+			<quantity>1</quantity>
+			<item>
+				<name>3. my project</name>
+			</item>
+			<location>
+				<name>X</name>
+			</location>
+			<operation>
+				<name>3. project X</name>
+			</operation>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
+			<batch>3. constrained project</batch>
+		</demand>
+		<demand>
+			<name>3. unconstrained project</name>
+			<quantity>1</quantity>
+			<item>
+				<name>3. my project</name>
+			</item>
+			<location>
+				<name>X</name>
+			</location>
+			<operation>
+				<name>3. project X</name>
+			</operation>
+			<due>2023-12-01T00:00:00</due>
+			<priority>1</priority>
+			<batch>3. unconstrained project</batch>
+		</demand>
+		<demand>
+			<name>4. converging</name>
+			<quantity>1</quantity>
+			<item>
+				<name>4. my project</name>
+			</item>
+			<location>
+				<name>X</name>
+			</location>
+			<operation>
+				<name>4. project X</name>
+			</operation>
+			<due>2023-12-01T00:00:00</due>
+			<priority>1</priority>
+			<batch>3. unconstrained project</batch>
 		</demand>
 	</demands>
 </plan>

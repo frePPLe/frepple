@@ -69,13 +69,74 @@
 										</dependency>
 									</dependencies>
 								</blockedby>
-								<!-- quantity>2</quantity -->
 							</dependency>
 						</dependencies>
 					</blockedby>
 				</dependency>
 			</dependencies>
 		</operation>
+		<operation name="3. project X" xsi:type="operation_fixed_time" duration="P10D">
+			<location name="X"/>
+			<dependencies>
+				<dependency>
+					<blockedby name="3. task X1" xsi:type="operation_fixed_time" duration="P5D">
+						<location name="X"/>
+					</blockedby>
+					<safety_leadtime>P10D</safety_leadtime>
+					<hard_safety_leadtime>P5D</hard_safety_leadtime>
+				</dependency>
+				<dependency>
+					<blockedby name="3. task X2 step 3" xsi:type="operation_fixed_time" duration="P7D">
+						<location name="X"/>
+						<dependencies>
+							<dependency>
+								<blockedby name="3. task X2 step 2" xsi:type="operation_fixed_time" duration="P7D">
+									<location name="X"/>
+									<dependencies>
+										<dependency>
+											<blockedby name="3. task X2 step 1" xsi:type="operation_fixed_time" duration="P5D">
+												<location name="X"/>
+											</blockedby>
+											<safety_leadtime>P10D</safety_leadtime>
+											<hard_safety_leadtime>P5D</hard_safety_leadtime>
+										</dependency>
+									</dependencies>
+								</blockedby>
+								<safety_leadtime>P10D</safety_leadtime>
+								<hard_safety_leadtime>P5D</hard_safety_leadtime>
+							</dependency>
+						</dependencies>
+					</blockedby>
+				</dependency>
+			</dependencies>
+		</operation>	
+		<operation name="4. project X" xsi:type="operation_fixed_time" duration="P10D">
+			<location name="X"/>
+			<dependencies>
+				<dependency>
+					<blockedby name="4. task X1" xsi:type="operation_fixed_time" duration="P5D">
+						<location name="X"/>
+						<dependencies>
+							<dependency>
+								<blockedby name="4. task X3" xsi:type="operation_fixed_time" duration="P7D">
+									<location name="X"/>
+								</blockedby>
+							</dependency>							
+						</dependencies>	
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby name="4. task X2" xsi:type="operation_fixed_time" duration="P7D">
+						<location name="X"/>
+						<dependencies>
+							<dependency>
+								<blockedby name="4. task X3"/>
+							</dependency>
+						</dependencies>
+					</blockedby>
+				</dependency>
+			</dependencies>
+		</operation>		
 	</operations>
 	<demands>
 		<demand name="1. order">
@@ -94,6 +155,33 @@
 			<item name="2. my project"/>
 			<location name="X"/>
 		</demand>
+		<demand name="3. constrained project">
+			<operation name="3. project X"/>
+			<batch>3. constrained project</batch>
+			<quantity>1</quantity>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="3. my project"/>
+			<location name="X"/>
+		</demand>		
+		<demand name="3. unconstrained project">
+			<operation name="3. project X"/>
+			<batch>3. unconstrained project</batch>
+			<quantity>1</quantity>
+			<due>2023-12-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="3. my project"/>
+			<location name="X"/>
+		</demand>	
+		<demand name="4. converging">
+			<operation name="4. project X"/>
+			<batch>3. unconstrained project</batch>
+			<quantity>1</quantity>
+			<due>2023-12-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="4. my project"/>
+			<location name="X"/>
+		</demand>			
 	</demands>
 
 <?python
@@ -130,7 +218,6 @@ frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.5.xml")
 
 print("CREATING FULLY UNCONSTRAINED PLAN")
-frepple.erase(False)
 frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
 frepple.saveplan("output.6.xml")
 ?>

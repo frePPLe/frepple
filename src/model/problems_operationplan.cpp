@@ -64,14 +64,8 @@ void OperationPlan::updateProblems() {
     for (auto d : dependencies) {
       if (this != d->getSecond()) continue;
       Date nd = d->getFirst()->getEnd();
-      if (d->getOperationDependency() &&
-          d->getOperationDependency()->getHardSafetyLeadtime())
-        nd = d->getFirst()
-                 ->getOperation()
-                 ->calculateOperationTime(
-                     d->getFirst(), nd,
-                     d->getOperationDependency()->getHardSafetyLeadtime(), true)
-                 .getEnd();
+      if (d->getOperationDependency())
+        nd += d->getOperationDependency()->getHardSafetyLeadtime();
       if (nd > getStart() + Duration(1L)) {
         needsPrecedence = true;
         break;

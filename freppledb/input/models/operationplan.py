@@ -406,11 +406,17 @@ class OperationPlan(AuditModel):
         # Call the real save() method
         super().save(*args, **kwargs)
 
+    def collectCalendars(self):
+        if hasattr(self, "_calendars"):
+            return self._calendars
+        raise Exception("Abstract method collectCalendars called.")
+
     def calculateOperationTime(self, date, duration, forward=True):
         # Replicate Operation::calculateOperationTime:
         #    collect all calendars
         #    call calendar.getEvents() and cache them temporarily on the operationplan
         #    step forward or backwards from the date
+        cals = self.collectCalendars()
         if forward:
             return date + (duration or timedelta(0))
         else:
@@ -849,6 +855,14 @@ class DeliveryOrder(OperationPlan):
         verbose_name = _("delivery order")
         verbose_name_plural = _("delivery orders")
 
+    def collectCalendars(self):
+        if hasattr(self, "_calendars"):
+            return self._calendars
+        self._calendars = []
+        if self.location and self.location.available:
+            self._calendars.append(self.location.available)
+        return self._calendars
+
     def update(self, database, delete=False, change=True, create=False, **fields):
         # Assure the start date, end date and quantity are consistent
         if change or create:
@@ -944,6 +958,32 @@ class DistributionOrder(OperationPlan):
         proxy = True
         verbose_name = _("distribution order")
         verbose_name_plural = _("distribution orders")
+
+    def collectCalendars(self):
+        state = getattr(self, "_state", None)
+        db = state.db if state else DEFAULT_DB_ALIAS
+        if hasattr(self, "_calendars"):
+            return self._calendars
+        self._calendars = []
+        if self.destination and self.destination.available:
+            # 1. Destination calendar
+            self._calendars.append(self.destination.available)
+        itemdist = self.itemdistribution(db)
+        if itemdist and itemdist.resource:
+            if (
+                itemdist.resource.available
+                and itemdist.resource.available not in self._calendars
+            ):
+                # 2. resource calendar
+                self._calendars.append(itemdist.resource.available)
+            if (
+                itemdist.resource.location
+                and itemdist.resource.location.available
+                and itemdist.resource.location.available not in self._calendars
+            ):
+                # 3. resource location calendar
+                self._calendars.append(itemdist.resource.location.available)
+        return self._calendars
 
     def itemdistribution(self, database=DEFAULT_DB_ALIAS):
         if hasattr(self, "_itemdistribution"):
@@ -1163,6 +1203,32 @@ class PurchaseOrder(OperationPlan):
         proxy = True
         verbose_name = _("purchase order")
         verbose_name_plural = _("purchase orders")
+
+    def collectCalendars(self):
+        state = getattr(self, "_state", None)
+        db = state.db if state else DEFAULT_DB_ALIAS
+        if hasattr(self, "_calendars"):
+            return self._calendars
+        self._calendars = []
+        if self.supplier and self.supplier.available:
+            # 1. Supplier calendar
+            self._calendars.append(self.supplier.available)
+        itemsup = self.itemsupplier(db)
+        if itemsup and itemsup.resource:
+            if (
+                itemsup.resource.available
+                and itemsup.resource.available not in self._calendars
+            ):
+                # 2. resource calendar
+                self._calendars.append(itemsup.resource.available)
+            if (
+                itemsup.resource.location
+                and itemsup.resource.location.available
+                and itemsup.resource.location.available not in self._calendars
+            ):
+                # 3. resource location calendar
+                self._calendars.append(itemsup.resource.location.available)
+        return self._calendars
 
     def itemsupplier(self, database=DEFAULT_DB_ALIAS):
         if hasattr(self, "_itemsupplier"):
@@ -1823,6 +1889,50 @@ class ManufacturingOrder(OperationPlan):
         proxy = True
         verbose_name = _("manufacturing order")
         verbose_name_plural = _("manufacturing orders")
+
+    def collectCalendars(self):
+        state = getattr(self, "_state", None)
+        db = state.db if state else DEFAULT_DB_ALIAS
+        if hasattr(self, "_calendars"):
+            return self._calendars
+        self._calendars = []
+        if self.operation:
+            if self.operation.available:
+                # 1. Operation calendar
+                self._calendars.append(self.operation.available)
+            if (
+                self.operation.location
+                and self.operation.location.available
+                and self.operation.location.available not in self._calendars
+            ):
+                # 2. Operation location calendar
+                self._calendars.append(self.operation.location.available)
+        ldplns_exist = False
+        for r in self.resources.using(db).all():
+            if r.resource.available and r.resource.available not in self._calendars:
+                # 3. resource calendar
+                self._calendars.append(r.resource.available)
+            if (
+                r.resource.location
+                and r.resource.location.available
+                and r.resource.location.available not in self._calendars
+            ):
+                # 4. resource location calendar
+                self._calendars.append(r.resource.location.available)
+            ldplns_exist = True
+        if not ldplns_exist:
+            for r in self.operation.resources:
+                if r.resource.available and r.resource.available not in self._calendars:
+                    # 3. resource calendar
+                    self._calendars.append(r.resource.available)
+                if (
+                    r.resource.location
+                    and r.resource.location.available
+                    and r.resource.location.available not in self._calendars
+                ):
+                    # 4. resource location calendar
+                    self._calendars.append(r.resource.location.available)
+        return self._calendars
 
     def update(self, database, delete=False, change=True, create=False, **fields):
         # Process quantity changes

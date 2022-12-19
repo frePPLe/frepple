@@ -176,6 +176,11 @@ function drawContextGraph() {
     var last_y = null;
     var last_x = 0;
     for (var d of events) {
+      if (last_y === null) {
+        linedata.push([x(viewstart), y(0)]);
+        last_y = y(d[5]);
+        linedata.push([x(viewstart), last_y]);
+      }
       var tmp_x = x(d[1]);
       linedata.push([tmp_x, (last_y !== null) ? last_y : y(min_y)]);
       last_y = y(d[3]);
@@ -259,6 +264,11 @@ function drawFocusGraph() {
     var last_x = 0;
     for (var d of events) {
       var tmp_x = x(d[1]);
+      if (last_y === null) {
+        linedata.push([x(viewstart), y(0)]);
+        last_y = y(d[5]);
+        linedata.push([x(viewstart), last_y]);
+      }
       linedata.push([tmp_x, (last_y !== null) ? last_y : y(min_y)]);
       last_y = y(d[3]);
       linedata.push([tmp_x, last_y]);

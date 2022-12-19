@@ -653,14 +653,14 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
 
                     -- working time
                     sum(operationresource.quantity * case when tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
-                    * tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]') =
-                    tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]')
-                    then upper(tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]'))
-                    - lower(tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]'))
+                    * tstzrange(operationplan.startdate, operationplan.enddate, '[]') =
+                    tstzrange(operationplan.startdate, operationplan.enddate, '[]')
+                    then upper(tstzrange(operationplan.startdate, operationplan.enddate, '[]'))
+                    - lower(tstzrange(operationplan.startdate, operationplan.enddate, '[]'))
                     else upper(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
-                            * tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]'))
+                            * tstzrange(operationplan.startdate, operationplan.enddate, '[]'))
                             - lower(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
-                                    * tstzrange(operationplanresource.startdate, operationplanresource.enddate, '[]')) end
+                                    * tstzrange(operationplan.startdate, operationplan.enddate, '[]')) end
 
                     -- minus interruptions
                     - coalesce(
@@ -692,7 +692,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                 )
                 update out_resourceplan
                 set load = coalesce(EXTRACT(epoch FROM cte.load)/%s,0),
-                free = available - coalesce(EXTRACT(epoch FROM cte.load)/%s,0)
+                free = greatest(available - coalesce(EXTRACT(epoch FROM cte.load)/%s,0),0)
                 from cte
                 where cte.resource_id = out_resourceplan.resource
                 and cte.startdate = out_resourceplan.startdate
@@ -2119,3 +2119,6 @@ class ManufacturingOrder(OperationPlan):
             # Save or create operationplanresource records
             for r in self._resources:
                 r.save(using=database)
+
+            for r in set(i.resource.name for i in self._resources):
+                OperationPlanResource.updateResourcePlan(r, database)

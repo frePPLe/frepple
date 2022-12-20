@@ -62,7 +62,9 @@ class ResetPasswordRequestView(FormView):
             """
             If the input is an valid email address, then the following code will lookup for users associated with that email address. If found then an email will be sent to the address, else an error message will be printed on the screen.
             """
-            associated_users = User.objects.filter(Q(email=data) | Q(username=data))
+            associated_users = User.objects.filter(
+                Q(email__iexact=data) | Q(username__iexact=data)
+            )
             if associated_users.exists():
                 for user in associated_users:
                     c = {

@@ -281,13 +281,27 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
             // Not ready to explore this dependency yet.
             // We just record the requirement date.
             --occurences->second.first;
+            if (getLogLevel() > 1) {
+              logger << indentlevel << "  Delay following dependency '"
+                     << dpd->getBlockedBy();
+              if (occurences->second.second > data.state->q_date)
+                logger << "' - setting requirement date to "
+                       << data.state->q_date;
+              logger << endl;
+            }
             if (occurences->second.second > data.state->q_date)
               occurences->second.second = data.state->q_date;
             continue;
           } else {
             // OK to to explore this dependency
-            if (occurences->second.second < data.state->q_date)
+            if (occurences->second.second < data.state->q_date) {
+              if (getLogLevel() > 1) {
+                logger << indentlevel
+                       << "  Dependency updates requirement date to "
+                       << occurences->second.second << endl;
+              }
               data.state->q_date = occurences->second.second;
+            }
             data.dependency_list.erase(occurences);
           }
         }
@@ -362,6 +376,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
               }
             }
           } while (repeat);
+          if (incomplete) break;
         }
       }
       setAllowSplits(prev_allowsplits);

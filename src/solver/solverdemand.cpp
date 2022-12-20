@@ -235,6 +235,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             data->state->blockedOpplan = nullptr;
             data->coordination_run = false;
             data->recent_buffers.clear();
+            data->dependency_list.clear();
             deliveryoper->solve(*this, v);
             Date next_date = data->state->a_date;
             bool broken_path = data->broken_path;
@@ -260,6 +261,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                 data->state->dependency = nullptr;
                 data->state->blockedOpplan = nullptr;
                 data->recent_buffers.clear();
+                data->dependency_list.clear();
                 deliveryoper->solve(*this, v);
                 if (data->state->a_date < next_date)
                   next_date = data->state->a_date;
@@ -293,6 +295,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                     data->state->dependency = nullptr;
                     data->state->blockedOpplan = nullptr;
                     data->recent_buffers.clear();
+                    data->dependency_list.clear();
                     deliveryoper->solve(*this, v);
                     if (data->state->a_date < next_date)
                       next_date = data->state->a_date;
@@ -321,6 +324,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                     data->state->dependency = nullptr;
                     data->state->blockedOpplan = nullptr;
                     data->recent_buffers.clear();
+                    data->dependency_list.clear();
                     deliveryoper->solve(*this, v);
                   }
                 }
@@ -452,6 +456,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                     data->state->blockedOpplan = nullptr;
                     data->coordination_run = true;
                     data->recent_buffers.clear();
+                    data->dependency_list.clear();
                     deliveryoper->solve(*this, v);
                     if (data->state->a_qty < ROUNDING_ERROR) {
                       logger << indentlevel << "Warning: Demand '" << l
@@ -546,6 +551,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
               data->state->blockedOpplan = nullptr;
               data->coordination_run = true;
               data->recent_buffers.clear();
+              data->dependency_list.clear();
               deliveryoper->solve(*this, v);
               if (data->state->a_qty < ROUNDING_ERROR) {
                 logger << indentlevel << "Warning: Demand '" << l

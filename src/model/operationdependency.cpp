@@ -76,6 +76,15 @@ void OperationDependency::setOperation(Operation* o) {
     oper->addDependency(this);
   } else if (blockedby)
     blockedby->removeDependency(this);
+  if (oper && blockedby) {
+    vector<const Operation*> path;
+    if (!checkLoops(oper, path)) {
+      blockedby->removeDependency(this);
+      oper->removeDependency(this);
+      oper = nullptr;
+      blockedby = nullptr;
+    }
+  }
 }
 
 void OperationDependency::setBlockedBy(Operation* o) {
@@ -90,6 +99,15 @@ void OperationDependency::setBlockedBy(Operation* o) {
     blockedby->addDependency(this);
   } else if (oper)
     oper->removeDependency(this);
+  if (oper && blockedby) {
+    vector<const Operation*> path;
+    if (!checkLoops(oper, path)) {
+      blockedby->removeDependency(this);
+      oper->removeDependency(this);
+      oper = nullptr;
+      blockedby = nullptr;
+    }
+  }
 }
 
 PyObject* OperationDependency::create(PyTypeObject* pytype, PyObject* args,
@@ -173,6 +191,30 @@ OperationPlanDependency::OperationPlanDependency(OperationPlan* op1,
 OperationPlanDependency::~OperationPlanDependency() {
   if (first) first->dependencies.remove(this);
   if (second) second->dependencies.remove(this);
+}
+
+bool OperationDependency::checkLoops(const Operation* o,
+                                     vector<const Operation*>& path) {
+  auto found = find(path.begin(), path.end(), o);
+  if (found != path.end()) {
+    logger << "Data error: Ignoring looping blocked-by dependencies among:"
+           << endl;
+    while (found != path.end()) {
+      logger << "    " << *found << endl;
+      ++found;
+    }
+    logger << "    " << o << endl;
+    return false;
+  }
+  path.push_back(o);
+  for (auto dpd : o->getDependencies()) {
+    if (dpd->getOperation() != o) continue;
+    // Recursive call
+    if (!checkLoops(dpd->getBlockedBy(), path)) return false;
+  }
+  if (path.back() != o) throw LogicException("Corrupt dependency loop check");
+  path.pop_back();
+  return true;
 }
 
 }  // namespace frepple

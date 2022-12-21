@@ -1461,6 +1461,8 @@ class OperationDependency : public Object, public HasSource {
 
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
+  static bool checkLoops(const Operation*, vector<const Operation*>&);
+
  public:
   typedef forward_list<OperationDependency*> operationdependencylist;
 

@@ -368,7 +368,9 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
                 a_qty = 0.0;
                 if (dpd->getHardSafetyLeadtime())
                   data.state->a_date += dpd->getHardSafetyLeadtime();
-                matnext = DateRange(data.state->a_date, data.state->a_date);
+                // Compute my end date if the blocked-by operation is delayed
+                opplan->setStart(data.state->a_date);
+                matnext = DateRange(opplan->getEnd(), opplan->getEnd());
                 incomplete = true;
                 data.dependency_list.clear();
                 setAllowSplits(prev_allowsplits);

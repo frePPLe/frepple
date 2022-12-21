@@ -26,6 +26,9 @@
 		<item>
 			<name>5. my project</name>
 		</item>
+		<item>
+			<name>6. bad project</name>
+		</item>
 	</items>
 	<operations>
 		<operation xsi:type="operation_routing">
@@ -344,6 +347,96 @@
 			</location>
 			<duration>P5D</duration>
 		</operation>
+		<operation>
+			<name>6. bad project</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>6. task X1</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>6. task X2</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>6. task X3</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>6. task X4</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>6. task X5</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>6. task X1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>6. task X2</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>6. task X2</name>
+			<location>
+				<name>X</name>
+			</location>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>6. task X3</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>6. task X4</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>6. task X4</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>6. task X5</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>6. task X5</name>
+			<location>
+				<name>X</name>
+			</location>
+			<duration>P1D</duration>
+		</operation>
 	</operations>
 	<demands>
 		<demand>
@@ -432,6 +525,21 @@
 			</location>
 			<operation>
 				<name>5. project X</name>
+			</operation>
+			<due>2023-01-10T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>6. bad project</name>
+			<quantity>1</quantity>
+			<item>
+				<name>6. bad project</name>
+			</item>
+			<location>
+				<name>X</name>
+			</location>
+			<operation>
+				<name>6. bad project</name>
 			</operation>
 			<due>2023-01-10T00:00:00</due>
 			<priority>1</priority>

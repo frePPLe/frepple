@@ -68,7 +68,7 @@ function buildcolor(rowdata) {
           return 'rgb(' + 255 + ',' + Math.round(thenumber/100*255) + ',' + 0 + ')';
       }
     }
-  return 'rgb(111,111,255)';  
+  return 'rgb(111,111,255)';
 }
 
 function escapeAttribute(val) {
@@ -91,7 +91,7 @@ function ganttcell(cellvalue, options, rowdata)
   map["PO"] = "purchaseorder";
   map["DO"] = "distributionorder";
   map["DLVR"] = "deliveryorder";
-  
+
   for (data of rowdata["operationplans"])
   {
      var row = 0;
@@ -105,8 +105,8 @@ function ganttcell(cellvalue, options, rowdata)
      };
      if (row >= layer.length) layer.push(data["enddate"]);
      var rect = '<a href="' + url_prefix + '/data/input/' + map[data["type"]] +'/?reference='+ admin_escape(data["reference"]) + '">'
-       + '<rect class="opplan" x="' + data["x"] + '" y="' + (-row*gantt.rowsize) 
-       + '" fill="' + buildcolor(data) + '" width="' + Math.max(data["w"],1) 
+       + '<rect class="opplan" x="' + data["x"] + '" y="' + (-row*gantt.rowsize)
+       + '" fill="' + buildcolor(data) + '" width="' + Math.max(data["w"],1)
        + '" height="' + (gantt.rowsize-3) + '"';
      if (data["status"] == "proposed")
     	 rect += ' fill-opacity="0.5"';
@@ -219,7 +219,7 @@ function reslistfmt(cellvalue, options, row)
   result = '';
   for (var i in cellvalue)
     result += cellvalue[i]
-      + "<a href='" + url_prefix + "/detail/input/resource/" + admin_escape(cellvalue[i]) 
+      + "<a href='" + url_prefix + "/detail/input/resource/" + admin_escape(cellvalue[i])
       + "/' onclick='event.stopPropagation()'>"
       + "<span class='leftpadding fa fa-caret-right'></span>"
       + "</a><br>";

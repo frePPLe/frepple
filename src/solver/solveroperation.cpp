@@ -357,10 +357,15 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
             a_qty = data.state->a_qty + allocated;
             if (data.state->a_qty < ROUNDING_ERROR) {
               if (dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime() &&
-                  data.state->a_date >
-                      opplan->getStart() - dpd->getSafetyLeadtime() &&
+                  data.state->a_date <=
+                      opplan->getStart() - dpd->getHardSafetyLeadtime() &&
                   orig_q_qty) {
-                // We can retry and compress the soft safety lead time
+                if (getLogLevel() > 1) {
+                  logger << indentlevel
+                         << "  Compressing safety lead time between '"
+                         << dpd->getOperation() << "' and '"
+                         << dpd->getBlockedBy() << "'" << endl;
+                }
                 data.state->q_date = data.state->a_date;
                 bm->rollback();
                 repeat = true;
@@ -368,7 +373,9 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
                 a_qty = 0.0;
                 if (dpd->getHardSafetyLeadtime())
                   data.state->a_date += dpd->getHardSafetyLeadtime();
-                // Compute my end date if the blocked-by operation is delayed
+                // Compute my end date if the blocked-by operation is delayed.
+                // In case the case this operation isn't the critical dependency
+                // path, this code isn't enough and we'll get a lazy delay loop.
                 opplan->setStart(data.state->a_date);
                 matnext = DateRange(opplan->getEnd(), opplan->getEnd());
                 incomplete = true;

@@ -43,6 +43,9 @@ from freppledb.input.models import (
 
 
 class OperationplanTest(TestCase):
+
+    maxDiff = None
+
     def assertOperationplan(self, reference, expected):
         # Compare the operationplan as stored in the database
         obj = OperationPlan.objects.get(pk=reference)
@@ -77,7 +80,7 @@ class OperationplanTest(TestCase):
             saturday=True,
             sunday=True,
             starttime=time(9, 0, 0),
-            endtime=time(17, 0, 0),
+            endtime=time(16, 59, 59),
         ).save()
 
         loc = Location(name="factory", available=cal)
@@ -121,10 +124,10 @@ class OperationplanTest(TestCase):
             {
                 "quantity": 20,
                 "startdate": datetime(2023, 1, 1),
-                "enddate": datetime(2023, 1, 1, 21),
+                "enddate": datetime(2023, 1, 3, 14),
                 "status": "approved",
                 "materials": [
-                    (40, datetime(2023, 1, 1, 21), "item1"),
+                    (40, datetime(2023, 1, 3, 14), "item1"),
                     (-20, datetime(2023, 1, 1), "item2"),
                 ],
                 "resources": [(1, "machine")],
@@ -140,11 +143,49 @@ class OperationplanTest(TestCase):
             {
                 "quantity": 20,
                 "startdate": datetime(2023, 2, 1),
-                "enddate": datetime(2023, 2, 1, 21),
+                "enddate": datetime(2023, 2, 3, 14),
                 "status": "approved",
                 "materials": [
-                    (40, datetime(2023, 2, 1, 21), "item1"),
+                    (40, datetime(2023, 2, 3, 14), "item1"),
                     (-20, datetime(2023, 2, 1), "item2"),
+                ],
+                "resources": [(1, "machine")],
+            },
+        )
+
+        # Test changing the end date
+        opplan.enddate = datetime(2023, 2, 5)
+        opplan.update(DEFAULT_DB_ALIAS, enddate=datetime(2023, 2, 5))
+        opplan.save()
+        self.assertOperationplan(
+            opplan,
+            {
+                "quantity": 20,
+                "startdate": datetime(2023, 2, 2, 12),
+                "enddate": datetime(2023, 2, 5),
+                "status": "approved",
+                "materials": [
+                    (40, datetime(2023, 2, 5), "item1"),
+                    (-20, datetime(2023, 2, 2, 12), "item2"),
+                ],
+                "resources": [(1, "machine")],
+            },
+        )
+
+        # Test changing quantity
+        opplan.quantity = 30
+        opplan.update(DEFAULT_DB_ALIAS, quantity=30)
+        opplan.save()
+        self.assertOperationplan(
+            opplan,
+            {
+                "quantity": 40,
+                "startdate": datetime(2023, 2, 2, 12),
+                "enddate": datetime(2023, 2, 7, 13),
+                "status": "approved",
+                "materials": [
+                    (80, datetime(2023, 2, 7, 13), "item1"),
+                    (-40, datetime(2023, 2, 2, 12), "item2"),
                 ],
                 "resources": [(1, "machine")],
             },
@@ -181,7 +222,7 @@ class OperationplanTest(TestCase):
             saturday=True,
             sunday=True,
             starttime=time(9, 0, 0),
-            endtime=time(17, 0, 0),
+            endtime=time(16, 59, 59),
         ).save()
 
         loc = Location(name="factory", available=cal)
@@ -243,6 +284,42 @@ class OperationplanTest(TestCase):
             },
         )
 
+        # Test changing the end date
+        opplan.enddate = datetime(2023, 2, 5)
+        opplan.update(DEFAULT_DB_ALIAS, enddate=datetime(2023, 2, 5))
+        opplan.save()
+        self.assertOperationplan(
+            opplan,
+            {
+                "quantity": 10,
+                "startdate": datetime(2023, 1, 29),
+                "enddate": datetime(2023, 2, 5),
+                "status": "approved",
+                "materials": [
+                    (10, datetime(2023, 2, 5), "item1"),
+                ],
+                "resources": [],
+            },
+        )
+
+        # Test changing quantity
+        opplan.quantity = 20
+        opplan.update(DEFAULT_DB_ALIAS, quantity=20)
+        opplan.save()
+        self.assertOperationplan(
+            opplan,
+            {
+                "quantity": 20,
+                "startdate": datetime(2023, 1, 29),
+                "enddate": datetime(2023, 2, 5),
+                "status": "approved",
+                "materials": [
+                    (20, datetime(2023, 2, 5), "item1"),
+                ],
+                "resources": [],
+            },
+        )
+
         # Test deletion of the operationplan
         opplan.update(DEFAULT_DB_ALIAS, delete=True)
         opplan.delete()
@@ -274,7 +351,7 @@ class OperationplanTest(TestCase):
             saturday=True,
             sunday=True,
             starttime=time(9, 0, 0),
-            endtime=time(17, 0, 0),
+            endtime=time(16, 59, 59),
         ).save()
 
         loc1 = Location(name="factory", available=cal)
@@ -285,7 +362,7 @@ class OperationplanTest(TestCase):
         item = Item(name="item1")
         item.save()
         ItemDistribution(
-            location=loc2, origin=loc1, item=item, leadtime=timedelta(days=7)
+            location=loc2, origin=loc1, item=item, leadtime=timedelta(days=1)
         ).save()
 
         # Test creation of an operationplan
@@ -305,11 +382,11 @@ class OperationplanTest(TestCase):
             {
                 "quantity": 4,
                 "startdate": datetime(2023, 1, 1),
-                "enddate": datetime(2023, 1, 8),
+                "enddate": datetime(2023, 1, 3, 17),
                 "status": "approved",
                 "materials": [
                     (-4, datetime(2023, 1, 1), "item1"),
-                    (4, datetime(2023, 1, 8), "item1"),
+                    (4, datetime(2023, 1, 3, 17), "item1"),
                 ],
                 "resources": [],
             },
@@ -324,11 +401,49 @@ class OperationplanTest(TestCase):
             {
                 "quantity": 4,
                 "startdate": datetime(2023, 2, 1),
-                "enddate": datetime(2023, 2, 8),
+                "enddate": datetime(2023, 2, 3, 17),
                 "status": "approved",
                 "materials": [
                     (-4, datetime(2023, 2, 1), "item1"),
-                    (4, datetime(2023, 2, 8), "item1"),
+                    (4, datetime(2023, 2, 3, 17), "item1"),
+                ],
+                "resources": [],
+            },
+        )
+
+        # Test changing the end date
+        opplan.enddate = datetime(2023, 2, 5)
+        opplan.update(DEFAULT_DB_ALIAS, enddate=datetime(2023, 2, 5))
+        opplan.save()
+        self.assertOperationplan(
+            opplan,
+            {
+                "quantity": 4,
+                "startdate": datetime(2023, 2, 2, 9),
+                "enddate": datetime(2023, 2, 5),
+                "status": "approved",
+                "materials": [
+                    (-4, datetime(2023, 2, 2, 9), "item1"),
+                    (4, datetime(2023, 2, 5), "item1"),
+                ],
+                "resources": [],
+            },
+        )
+
+        # Test changing quantity
+        opplan.quantity = 6
+        opplan.update(DEFAULT_DB_ALIAS, quantity=6)
+        opplan.save()
+        self.assertOperationplan(
+            opplan,
+            {
+                "quantity": 6,
+                "startdate": datetime(2023, 2, 2, 9),
+                "enddate": datetime(2023, 2, 4, 17),
+                "status": "approved",
+                "materials": [
+                    (-6, datetime(2023, 2, 2, 9), "item1"),
+                    (6, datetime(2023, 2, 4, 17), "item1"),
                 ],
                 "resources": [],
             },

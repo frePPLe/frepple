@@ -19,10 +19,11 @@ import ast
 from datetime import datetime, timedelta
 from decimal import Decimal
 from dateutil.parser import parse
-from logging import INFO, ERROR, WARNING, DEBUG
+from logging import INFO, ERROR, WARNING, DEBUG, getLogger
 import math
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.worksheet.worksheet import Worksheet
+from typing import List
 
 from django.conf import settings
 from django.core.cache import cache
@@ -41,12 +42,15 @@ from freppledb.common.dataload import BulkForeignKeyFormField
 from freppledb.common.fields import AliasDateTimeField
 from freppledb.common.models import AuditModel, MultiDBManager, Parameter, Comment
 
+from ..models.calendar import Calendar
 from ..models.demand import Demand
 from ..models.item import Item
 from ..models.location import Location
 from ..models.operation import Operation, OperationResource
 from ..models.resource import Resource
 from ..models.supplier import Supplier
+
+logger = getLogger(__name__)
 
 
 class OperationPlan(AuditModel):
@@ -406,7 +410,7 @@ class OperationPlan(AuditModel):
         # Call the real save() method
         super().save(*args, **kwargs)
 
-    def collectCalendars(self):
+    def collectCalendars(self) -> List[Calendar]:
         if self.type == "PO":
             return PurchaseOrder.collectCalendars(self)
         elif self.type == "DO":
@@ -416,16 +420,45 @@ class OperationPlan(AuditModel):
         else:
             ManufacturingOrder.update(self)
 
-    def calculateOperationTime(self, date, duration, forward=True):
+    def calculateOperationTime(self, refdate, duration, forward=True) -> datetime:
         # Replicate Operation::calculateOperationTime:
-        #    collect all calendars
-        #    call calendar.getEvents() and cache them temporarily on the operationplan
-        #    step forward or backwards from the date
+        if not duration:
+            return refdate
         cals = self.collectCalendars()
-        if forward:
-            return date + (duration or timedelta(0))
+        if not cals:
+            if forward:
+                return refdate + (duration or timedelta(0))
+            else:
+                return refdate - (duration or timedelta(0))
         else:
-            return date - (duration or timedelta(0))
+            if len(cals) > 1:
+                logger.warning("Only a single calendar is supported right now")
+            timecounter = duration
+            st = refdate
+            if forward:
+                while st.year <= 2030:
+                    nd = st + duration * 2
+                    for event in cals[0].getEvents(st, nd):
+                        if event[5]:
+                            delta = event[1] - event[0]
+                            if delta >= timecounter:
+                                return event[0] + timecounter
+                            else:
+                                timecounter -= delta
+                    st = nd
+                return datetime(2030, 12, 31)
+            else:
+                while st.year >= 1971:
+                    nd = st - duration * 2
+                    for event in reversed(cals[0].getEvents(nd, st)):
+                        if event[5]:
+                            delta = event[1] - event[0]
+                            if delta >= timecounter:
+                                return event[1] - timecounter
+                            else:
+                                timecounter -= delta
+                    st = nd
+                return datetime(1971, 1, 1)
 
     def getEfficiency(self, when):
         # TODO replicate Operationplan::getEfficiency() logic
@@ -2058,7 +2091,7 @@ class ManufacturingOrder(OperationPlan):
             self.materials.using(database).delete()
         else:
             has_opplanmat_records = False
-            if self.status in ("confirmed", "approved"):
+            if self.status in ("confirmed"):
                 # Update existing operationplanmaterial records, even if they
                 # are not in sync with the operationmaterial definition.
                 for fl in self.materials.all():

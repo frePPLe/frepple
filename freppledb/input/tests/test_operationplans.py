@@ -29,6 +29,7 @@ from freppledb.input.models import (
     ItemDistribution,
     ItemSupplier,
     Location,
+    ManufacturingOrder,
     Operation,
     OperationMaterial,
     OperationPlan,
@@ -106,7 +107,7 @@ class OperationplanTest(TestCase):
         OperationResource(operation=oper, resource=res, quantity=1).save()
 
         # Test creation of an operationplan
-        opplan = OperationPlan(
+        opplan = ManufacturingOrder(
             reference="MO #1",
             operation=oper,
             startdate=datetime(2023, 1, 1),

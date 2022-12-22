@@ -407,9 +407,14 @@ class OperationPlan(AuditModel):
         super().save(*args, **kwargs)
 
     def collectCalendars(self):
-        if hasattr(self, "_calendars"):
-            return self._calendars
-        raise Exception("Abstract method collectCalendars called.")
+        if self.type == "PO":
+            return PurchaseOrder.collectCalendars(self)
+        elif self.type == "DO":
+            DistributionOrder.collectCalendars(self)
+        elif self.type == "DLVR":
+            DeliveryOrder.collectCalendars(self)
+        else:
+            ManufacturingOrder.update(self)
 
     def calculateOperationTime(self, date, duration, forward=True):
         # Replicate Operation::calculateOperationTime:
@@ -1921,7 +1926,7 @@ class ManufacturingOrder(OperationPlan):
                 self._calendars.append(r.resource.location.available)
             ldplns_exist = True
         if not ldplns_exist:
-            for r in self.operation.resources:
+            for r in self.operation.operationresources.using(db).all():
                 if r.resource.available and r.resource.available not in self._calendars:
                     # 3. resource calendar
                     self._calendars.append(r.resource.available)

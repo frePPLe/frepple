@@ -232,7 +232,10 @@ void Problem::clearProblems(HasProblems& p, bool setchanged,
   p.firstProblem = keepfirst;
 
   // Mark as changed
-  if (setchanged) p.getEntity()->setChanged();  // lgtm[cpp/unsafe-use-of-this]
+  if (setchanged) {
+    auto tmp = p.getEntity();
+    if (tmp) tmp->setChanged();
+  }
 }
 
 Problem::iterator Plannable::getProblems() const {

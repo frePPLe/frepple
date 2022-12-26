@@ -711,7 +711,10 @@ class HasProblems {
   virtual ~HasProblems() { Problem::clearProblems(*this, false); }
 
   /* Returns the plannable entity relating to this problem container. */
-  virtual Plannable* getEntity() const = 0;
+  virtual Plannable* getEntity() const {
+    // This method is implemented in all subclasses.
+    return nullptr;
+  }
 
   /* Called to update the list of problems. The function will only be
    * called when:

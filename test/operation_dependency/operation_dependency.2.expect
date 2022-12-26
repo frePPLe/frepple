@@ -381,6 +381,33 @@
 			</dependencies>
 			<duration>P1D</duration>
 		</operation>
+		<operation xsi:type="operation_routing">
+			<name>6. task 6</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<suboperations>
+				<suboperation>
+					<operation>
+						<name>6. task 7</name>
+					</operation>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation>
+			<name>6. task 7</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>6. bad project</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
 		<operation>
 			<name>6. task X1</name>
 			<location>

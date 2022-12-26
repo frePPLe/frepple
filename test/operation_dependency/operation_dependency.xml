@@ -221,7 +221,26 @@
 							</dependency>
 						</dependencies>
 					</blockedby>
-				</dependency>					
+				</dependency>
+				<dependency>
+					<blockedby name="6. task 6" xsi:type="operation_routing">
+						<location name="factory"/>
+						<suboperations>
+							<suboperation>
+								<operation name="6. task 7" xsi:type="operation_fixed_time" duration="P1D">
+									<location name="factory"/>
+									<dependencies>
+										<dependency>
+											<blockedby name="6. bad project">
+												<location name="X"/>
+											</blockedby>
+										</dependency>
+									</dependencies>						
+								</operation>
+							</suboperation>
+						</suboperations>
+					</blockedby>
+				</dependency>
 			</dependencies>
 		</operation>		
 	</operations>

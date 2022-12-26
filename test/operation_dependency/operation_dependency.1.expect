@@ -39,6 +39,8 @@
 6. bad project is blocked by:	6. task X3	1.0	0	0
 6. bad project is blocked by:	6. task X4	1.0	0	0
 6. bad project is blocked by:	6. task X5	1.0	0	0
+6. bad project is blocking:	6. task 7	1.0	0	0
+6. task 7 is blocked by:	6. bad project	1.0	0	0
 6. task X1 is blocked by:	6. task X2	1.0	0	0
 6. task X1 is blocking:	6. bad project	1.0	0	0
 6. task X2 is blocking:	6. task X1	1.0	0	0

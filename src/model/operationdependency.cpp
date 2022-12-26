@@ -212,6 +212,9 @@ bool OperationDependency::checkLoops(const Operation* o,
     // Recursive call
     if (!checkLoops(dpd->getBlockedBy(), path)) return false;
   }
+  for (auto sub : o->getSubOperations()) {
+    if (!checkLoops(sub->getOperation(), path)) return false;
+  }
   if (path.back() != o) throw LogicException("Corrupt dependency loop check");
   path.pop_back();
   return true;

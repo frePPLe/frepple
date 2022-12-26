@@ -1033,6 +1033,8 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   assert(z);
   double orig_q_qty = z->getQuantity();
 
+  if (!propagate) return z;
+
   // Adjust the min quantity we expect the reply to cover
   double orig_q_qty_min = data->state->q_qty_min;
   if (!flow_qty_per || data->state->q_qty_min < flow_qty_fixed + ROUNDING_ERROR)

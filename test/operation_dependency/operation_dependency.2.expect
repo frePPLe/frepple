@@ -29,6 +29,9 @@
 		<item>
 			<name>6. bad project</name>
 		</item>
+		<item>
+			<name>7. routing</name>
+		</item>
 	</items>
 	<operations>
 		<operation xsi:type="operation_routing">
@@ -464,6 +467,142 @@
 			</location>
 			<duration>P1D</duration>
 		</operation>
+		<operation>
+			<name>7. routing</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>7. task 1</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>7. task 1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>7. task 2</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>7. task 3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>7. task 2</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby xsi:type="operation_routing">
+						<name>7. task 4</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>7. task 3</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>7. task 5</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>7. task 4a</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation xsi:type="operation_routing">
+			<name>7. task 4</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>7. task 5</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<suboperations>
+				<suboperation>
+					<operation>
+						<name>7. task 4a</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>7. task 4b</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>7. task 4c</name>
+					</operation>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation>
+			<name>7. task 4a</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>7. task 4b</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>7. task 4c</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>7. task 4a</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>7. task 4b</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>7. task 5</name>
+			<location>
+				<name>X</name>
+			</location>
+			<duration>P1D</duration>
+		</operation>
 	</operations>
 	<demands>
 		<demand>
@@ -569,6 +708,21 @@
 				<name>6. bad project</name>
 			</operation>
 			<due>2023-01-10T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>7. routing</name>
+			<quantity>1</quantity>
+			<item>
+				<name>7. routing</name>
+			</item>
+			<location>
+				<name>X</name>
+			</location>
+			<operation>
+				<name>7. task 1</name>
+			</operation>
+			<due>2023-01-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
 	</demands>

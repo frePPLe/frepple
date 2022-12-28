@@ -7,6 +7,7 @@ DEMAND	3. unconstrained project	2023-12-01T00:00:00	1
 DEMAND	4. converging	2023-01-31T00:00:00	1
 DEMAND	5. converging	2023-01-31T00:00:00	1
 DEMAND	6. bad project	2023-01-10T00:00:00	1
+DEMAND	7. routing	2023-01-06T00:00:00	1
 OPERATION	1. my routing	2023-04-11T00:00:00	2023-05-01T00:00:00	5
 OPERATION	1. routing step A	2023-04-29T00:00:00	2023-04-30T00:00:00	5
 OPERATION	1. routing step B	2023-04-20T00:00:00	2023-04-30T00:00:00	5
@@ -40,10 +41,19 @@ OPERATION	6. task X1	2023-01-08T00:00:00	2023-01-09T00:00:00	1
 OPERATION	6. task X2	2023-01-07T00:00:00	2023-01-08T00:00:00	1
 OPERATION	6. task X3	2023-01-08T00:00:00	2023-01-09T00:00:00	1
 OPERATION	6. task X4	2023-01-07T00:00:00	2023-01-08T00:00:00	1
+OPERATION	7. task 1	2023-01-05T00:00:00	2023-01-06T00:00:00	1
+OPERATION	7. task 2	2023-01-04T00:00:00	2023-01-05T00:00:00	1
+OPERATION	7. task 3	2023-01-04T00:00:00	2023-01-05T00:00:00	1
+OPERATION	7. task 4	2023-01-02T00:00:00	2023-01-04T00:00:00	1
+OPERATION	7. task 4a	2023-01-02T00:00:00	2023-01-03T00:00:00	1
+OPERATION	7. task 4b	2023-01-02T00:00:00	2023-01-03T00:00:00	1
+OPERATION	7. task 4c	2023-01-03T00:00:00	2023-01-04T00:00:00	1
+OPERATION	7. task 5	2023-01-01T00:00:00	2023-01-02T00:00:00	1
 PROBLEM	late	1 units of demand '2. project' planned up to 29.0 days after its due date	2023-01-01T00:00:00 / 2023-01-30T00:00:00
 PROBLEM	late	1 units of demand '3. constrained project' planned up to 39.0 days after its due date	2023-01-01T00:00:00 / 2023-02-09T00:00:00
 PROBLEM	late	1 units of demand '4. converging' planned up to 21.0 days after its due date	2023-01-10T00:00:00 / 2023-01-31T00:00:00
 PROBLEM	late	1 units of demand '5. converging' planned up to 21.0 days after its due date	2023-01-10T00:00:00 / 2023-01-31T00:00:00
+PROBLEM	late	1 units of demand '7. routing' planned up to 5.0 days after its due date	2023-01-01T00:00:00 / 2023-01-06T00:00:00
 DEMAND CONSTRAINT	2. project	Operation '2. project X' planned in the past	2023-01-01T00:00:00 / 2023-01-11T00:00:00	
 DEMAND CONSTRAINT	2. project	Operation '2. task X1' planned in the past	2023-01-01T00:00:00 / 2023-01-06T00:00:00	
 DEMAND CONSTRAINT	2. project	Operation '2. task X2 step 3' planned in the past	2023-01-06T00:00:00 / 2023-01-08T00:00:00	
@@ -60,3 +70,8 @@ DEMAND CONSTRAINT	5. converging	Operation '5. project X' planned in the past	202
 DEMAND CONSTRAINT	5. converging	Operation '5. task X1' planned in the past	2023-01-01T00:00:00 / 2023-01-08T00:00:00	
 DEMAND CONSTRAINT	5. converging	Operation '5. task X2' planned in the past	2023-01-08T00:00:00 / 2023-01-16T00:00:00	
 DEMAND CONSTRAINT	5. converging	Operation '5. task X3' planned in the past	2023-01-01T00:00:00 / 2023-01-06T00:00:00	
+DEMAND CONSTRAINT	7. routing	Operation '7. task 1' planned in the past	2023-01-01T00:00:00 / 2023-01-02T00:00:00	
+DEMAND CONSTRAINT	7. routing	Operation '7. task 2' planned in the past	2023-01-01T00:00:00 / 2023-01-02T00:00:00	
+DEMAND CONSTRAINT	7. routing	Operation '7. task 4c' planned in the past	2023-01-01T00:00:00 / 2023-01-02T00:00:00	
+DEMAND CONSTRAINT	7. routing	Operation '7. task 4b' planned in the past	2023-01-01T00:00:00 / 2023-01-02T00:00:00	
+DEMAND CONSTRAINT	7. routing	Operation '7. task 5' planned in the past	2023-01-01T00:00:00 / 2023-01-02T00:00:00	

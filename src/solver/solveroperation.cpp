@@ -243,7 +243,6 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
                                     ? opplan->getStart()
                                     : Date::infinitePast;
 
-    // Check material
     data.state->q_qty = opplan->getQuantity();
     data.state->q_date = opplan->getEnd();
     a_qty = opplan->getQuantity();
@@ -252,144 +251,8 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
     matnext.setStartAndEnd(Date::infinitePast, Date::infiniteFuture);
 
     // Loop through all dependencies, if needed
-    if (a_qty) {
-      bool prev_allowsplits = getAllowSplits();
-      setAllowSplits(false);
-
-      if (!opplan->getOperation()->getDependencies().empty() &&
-          data.dependency_list.empty()) {
-        // Starting a new dependency list.
-        data.populateDependencies(opplan->getOperation());
-      }
-
-      for (auto dpd : opplan->getOperation()->getDependencies()) {
-        if (dpd->getOperation() != opplan->getOperation()) continue;
-
-        // Compute ask date
-        data.state->q_date = opplan->getStart();
-        if (dpd->getSafetyLeadtime() &&
-            dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime())
-          data.state->q_date -= dpd->getSafetyLeadtime();
-        if (dpd->getHardSafetyLeadtime() &&
-            dpd->getSafetyLeadtime() <= dpd->getHardSafetyLeadtime())
-          data.state->q_date -= dpd->getHardSafetyLeadtime();
-
-        // Check if this is the last time it appears in the dependency list
-        auto occurences = data.dependency_list.find(dpd->getBlockedBy());
-        if (occurences != data.dependency_list.end()) {
-          if (occurences->second.first > 1) {
-            // Not ready to explore this dependency yet.
-            // We just record the requirement date.
-            --occurences->second.first;
-            if (getLogLevel() > 1) {
-              logger << indentlevel << "  Delay following dependency '"
-                     << dpd->getBlockedBy();
-              if (occurences->second.second > data.state->q_date)
-                logger << "' - setting requirement date to "
-                       << data.state->q_date;
-              logger << endl;
-            }
-            if (occurences->second.second > data.state->q_date)
-              occurences->second.second = data.state->q_date;
-            continue;
-          } else {
-            // OK to to explore this dependency
-            if (occurences->second.second < data.state->q_date) {
-              if (getLogLevel() > 1) {
-                logger << indentlevel
-                       << "  Dependency updates requirement date to "
-                       << occurences->second.second << endl;
-              }
-              data.state->q_date = occurences->second.second;
-            }
-            data.dependency_list.erase(occurences);
-          }
-        }
-
-        // Net available quantities from the required
-        // quantity The netting ignores the dates.
-        data.state->q_qty = opplan->getQuantity() * dpd->getQuantity();
-        auto o = dpd->getBlockedBy()->getOperationPlans();
-        auto allocated = 0.0;
-        while (o != OperationPlan::end()) {
-          if (opplan->getBatch() && o->getBatch() != opplan->getBatch()) {
-            // No match
-            ++o;
-            continue;
-          }
-          auto unpegged = o->getQuantity();
-          for (auto d : o->getDependencies()) {
-            if (d->getFirst() != &*o) continue;
-            if (d->getOperationDependency())
-              unpegged -= d->getSecond()->getQuantity() *
-                          d->getOperationDependency()->getQuantity();
-            else
-              unpegged -= d->getSecond()->getQuantity();
-          }
-          if (unpegged > ROUNDING_ERROR) {
-            // Note: we count on the rollback to undo this allocation if needed
-            if (getLogLevel() > 1) {
-              logger << indentlevel << "Allocating from available supply on "
-                     << &*o << endl;
-            }
-            new OperationPlanDependency(&*o, opplan, dpd);
-            allocated += unpegged;
-            if (data.state->q_qty < allocated + ROUNDING_ERROR) {
-              allocated = data.state->q_qty;
-              break;
-            }
-          }
-          ++o;
-        }
-
-        if (data.state->q_qty > allocated - ROUNDING_ERROR) {
-          // Plan net required quantity
-          data.state->q_qty -= allocated;
-          auto orig_q_qty = data.state->q_qty;
-          bool repeat = false;
-          auto bm = data.getCommandManager()->setBookmark();
-          do {
-            repeat = false;
-            data.state->q_qty = orig_q_qty;
-            data.state->blockedOpplan = opplan;
-            data.state->dependency = dpd;
-            dpd->getBlockedBy()->solve(*this, &data);
-            a_qty = data.state->a_qty + allocated;
-            if (data.state->a_qty < ROUNDING_ERROR) {
-              if (dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime() &&
-                  data.state->a_date <=
-                      opplan->getStart() - dpd->getHardSafetyLeadtime() &&
-                  orig_q_qty) {
-                if (getLogLevel() > 1) {
-                  logger << indentlevel
-                         << "  Compressing safety lead time between '"
-                         << dpd->getOperation() << "' and '"
-                         << dpd->getBlockedBy() << "'" << endl;
-                }
-                data.state->q_date = data.state->a_date;
-                bm->rollback();
-                repeat = true;
-              } else {
-                a_qty = 0.0;
-                if (dpd->getHardSafetyLeadtime())
-                  data.state->a_date += dpd->getHardSafetyLeadtime();
-                // Compute my end date if the blocked-by operation is delayed.
-                // In case the case this operation isn't the critical dependency
-                // path, this code isn't enough and we'll get a lazy delay loop.
-                opplan->setStart(data.state->a_date);
-                matnext = DateRange(opplan->getEnd(), opplan->getEnd());
-                incomplete = true;
-                data.dependency_list.clear();
-                setAllowSplits(prev_allowsplits);
-                break;
-              }
-            }
-          } while (repeat);
-          if (incomplete) break;
-        }
-      }
-      setAllowSplits(prev_allowsplits);
-    }
+    if (a_qty && !opplan->getOperation()->getDependencies().empty())
+      checkDependencies(opplan, data, incomplete, a_qty, matnext);
     data.state->blockedOpplan = nullptr;
     data.state->dependency = nullptr;
 
@@ -1269,6 +1132,14 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   Date top_q_date(data->state->q_date);
   Date q_date;
   if (useDependencies) {
+    if (data->dependency_list.empty()) {
+      // Starting a new dependency list.
+      data->populateDependencies(oper);
+      for (auto d : data->dependency_list)
+        logger << "   " << d.first << "  " << d.second.first << "  "
+               << d.second.second << endl;
+    }
+
     // Plan all final steps (i.e. steps without blockedby dependency)
     // It will recursively plan into the preceding steps.
     for (auto& e : oper->getSubOperations()) {
@@ -1282,8 +1153,41 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
       if (isblocked)
         // Not a final step
         continue;
-      data->state->q_qty = a_qty;
+
+      // Check if this is the last time it appears in the dependency list
       data->state->q_date = top_q_date;
+      auto occurences = data->dependency_list.find(e->getOperation());
+      if (occurences != data->dependency_list.end()) {
+        if (occurences->second.first > 1) {
+          // Not ready to explore this dependency yet.
+          // We just record the requirement date.
+          --occurences->second.first;
+          if (getLogLevel() > 1) {
+            logger << indentlevel << "  Delay following dependency '"
+                   << e->getOperation();
+            if (occurences->second.second > data->state->q_date)
+              logger << "' - setting requirement date to "
+                     << data->state->q_date;
+            logger << endl;
+          }
+          if (occurences->second.second > data->state->q_date)
+            occurences->second.second = data->state->q_date;
+          continue;
+        } else {
+          // OK to to explore this dependency
+          if (occurences->second.second < data->state->q_date) {
+            if (getLogLevel() > 1) {
+              logger << indentlevel
+                     << "  Dependency updates requirement date to "
+                     << occurences->second.second << endl;
+            }
+            data->state->q_date = occurences->second.second;
+          }
+          data->dependency_list.erase(occurences);
+        }
+      }
+
+      data->state->q_qty = a_qty;
       data->state->curOwnerOpplan = a->getOperationPlan();
       Buffer* tmpBuf = data->state->curBuffer;
       q_date = data->state->q_date;
@@ -1294,8 +1198,6 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
         break;
       }
     }
-    // Add to the list (even if zero-quantity!)
-    if (!prev_owner_opplan) data->getCommandManager()->add(a);
   } else {
     // Loop through the steps in sequence
     for (auto e = oper->getSubOperations().rbegin();
@@ -1360,10 +1262,18 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
       data->state->a_qty = flow_qty_fixed + a_qty * flow_qty_per;
     else
       data->state->a_qty = 0.0;
-
-    // Add to the list (even if zero-quantity!)
-    if (!prev_owner_opplan) data->getCommandManager()->add(a);
   }
+
+  // Loop through the top level dependencies
+  if (data->state->a_qty > 0.0 && !oper->getDependencies().empty()) {
+    bool tmp1;
+    double tmp2;
+    DateRange tmp3;
+    checkDependencies(data->state->curOwnerOpplan, *data, tmp1, tmp2, tmp3);
+  }
+
+  // Add to the list (even if zero-quantity!)
+  if (!prev_owner_opplan) data->getCommandManager()->add(a);
 
   // Increment the cost
   if (data->state->a_qty > 0.0) {
@@ -2290,6 +2200,147 @@ void SolverCreate::SolverData::populateDependencies(const Operation* o) {
     // Recursive call
     populateDependencies(dpd->getBlockedBy());
   }
+  for (auto sub : o->getSubOperations())
+    // Recursive call
+    populateDependencies(sub->getOperation());
+}
+
+void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
+                                     bool& incomplete, double& a_qty,
+                                     DateRange& matnext) {
+  bool prev_allowsplits = getAllowSplits();
+  setAllowSplits(false);
+
+  if (!opplan->getOperation()->getDependencies().empty() &&
+      data.dependency_list.empty())
+    // Starting a new dependency list.
+    data.populateDependencies(opplan->getOperation());
+
+  for (auto dpd : opplan->getOperation()->getDependencies()) {
+    if (dpd->getOperation() != opplan->getOperation()) continue;
+
+    // Compute ask date
+    data.state->q_date = opplan->getStart();
+    if (dpd->getSafetyLeadtime() &&
+        dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime())
+      data.state->q_date -= dpd->getSafetyLeadtime();
+    if (dpd->getHardSafetyLeadtime() &&
+        dpd->getSafetyLeadtime() <= dpd->getHardSafetyLeadtime())
+      data.state->q_date -= dpd->getHardSafetyLeadtime();
+
+    // Check if this is the last time it appears in the dependency list
+    auto occurences = data.dependency_list.find(dpd->getBlockedBy());
+    if (occurences != data.dependency_list.end()) {
+      if (occurences->second.first > 1) {
+        // Not ready to explore this dependency yet.
+        // We just record the requirement date.
+        --occurences->second.first;
+        if (getLogLevel() > 1) {
+          logger << indentlevel << "  Delay following dependency '"
+                 << dpd->getBlockedBy();
+          if (occurences->second.second > data.state->q_date)
+            logger << "' - setting requirement date to " << data.state->q_date;
+          logger << endl;
+        }
+        if (occurences->second.second > data.state->q_date)
+          occurences->second.second = data.state->q_date;
+        continue;
+      } else {
+        // OK to to explore this dependency
+        if (occurences->second.second < data.state->q_date) {
+          if (getLogLevel() > 1) {
+            logger << indentlevel << "  Dependency updates requirement date to "
+                   << occurences->second.second << endl;
+          }
+          data.state->q_date = occurences->second.second;
+        }
+        data.dependency_list.erase(occurences);
+      }
+    }
+
+    // Net available quantities from the required
+    // quantity The netting ignores the dates.
+    data.state->q_qty = opplan->getQuantity() * dpd->getQuantity();
+    auto o = dpd->getBlockedBy()->getOperationPlans();
+    auto allocated = 0.0;
+    while (o != OperationPlan::end()) {
+      if (opplan->getBatch() && o->getBatch() != opplan->getBatch()) {
+        // No match
+        ++o;
+        continue;
+      }
+      auto unpegged = o->getQuantity();
+      for (auto d : o->getDependencies()) {
+        if (d->getFirst() != &*o) continue;
+        if (d->getOperationDependency())
+          unpegged -= d->getSecond()->getQuantity() *
+                      d->getOperationDependency()->getQuantity();
+        else
+          unpegged -= d->getSecond()->getQuantity();
+      }
+      if (unpegged > ROUNDING_ERROR) {
+        // Note: we count on the rollback to undo this allocation if needed
+        if (getLogLevel() > 1) {
+          logger << indentlevel << "Allocating from available supply on " << &*o
+                 << endl;
+        }
+        new OperationPlanDependency(&*o, opplan, dpd);
+        allocated += unpegged;
+        if (data.state->q_qty < allocated + ROUNDING_ERROR) {
+          allocated = data.state->q_qty;
+          break;
+        }
+      }
+      ++o;
+    }
+
+    if (data.state->q_qty > allocated - ROUNDING_ERROR) {
+      // Plan net required quantity
+      data.state->q_qty -= allocated;
+      auto orig_q_qty = data.state->q_qty;
+      bool repeat = false;
+      auto bm = data.getCommandManager()->setBookmark();
+      do {
+        repeat = false;
+        data.state->q_qty = orig_q_qty;
+        data.state->blockedOpplan = opplan;
+        data.state->dependency = dpd;
+        dpd->getBlockedBy()->solve(*this, &data);
+        a_qty = data.state->a_qty + allocated;
+        if (data.state->a_qty < ROUNDING_ERROR) {
+          if (dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime() &&
+              data.state->a_date <=
+                  opplan->getStart() - dpd->getHardSafetyLeadtime() &&
+              orig_q_qty) {
+            if (getLogLevel() > 1) {
+              logger << indentlevel
+                     << "  Compressing safety lead time between '"
+                     << dpd->getOperation() << "' and '" << dpd->getBlockedBy()
+                     << "'" << endl;
+            }
+            data.state->q_date = data.state->a_date;
+            bm->rollback();
+            repeat = true;
+          } else {
+            a_qty = 0.0;
+            if (dpd->getHardSafetyLeadtime())
+              data.state->a_date += dpd->getHardSafetyLeadtime();
+            // Compute my end date if the blocked-by operation is delayed.
+            // In case the case this operation isn't the critical dependency
+            // path, this code isn't enough and we'll get a lazy delay loop.
+            opplan->setStart(data.state->a_date);
+            matnext = DateRange(opplan->getEnd(), opplan->getEnd());
+            incomplete = true;
+            data.dependency_list.clear();
+            setAllowSplits(prev_allowsplits);
+            break;
+          }
+        }
+      } while (repeat);
+      if (incomplete) break;
+    }
+  }
+  setAllowSplits(prev_allowsplits);
 }
 
 }  // namespace frepple

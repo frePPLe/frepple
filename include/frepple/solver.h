@@ -1066,6 +1066,9 @@ class SolverCreate : public Solver {
    */
   bool checkOperation(OperationPlan*, SolverData&, bool = true);
 
+  void checkDependencies(OperationPlan*, SolverData&, bool&, double&,
+                         DateRange&);
+
   /* Scan the operationplans that are about to be committed to verify that
    * they are not creating any excess.
    */

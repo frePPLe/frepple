@@ -165,7 +165,7 @@
 			</dependencies>
 		</operation>
 		<operation name="6. bad project" xsi:type="operation_fixed_time" duration="P1D">
-		    <!-- Loops X1 -> X2 -> X1 and X3 -> X4 -> X5 -> X3 -->
+			<!-- Loops X1 -> X2 -> X1 and X3 -> X4 -> X5 -> X3 -->
 			<location name="X"/>
 			<dependencies>
 				<dependency>
@@ -211,7 +211,7 @@
 							</dependency>
 						</dependencies>
 					</blockedby>
-				</dependency>	
+				</dependency>
 				<dependency>
 					<blockedby name="6. task X5">
 						<location name="X"/>
@@ -235,14 +235,83 @@
 												<location name="X"/>
 											</blockedby>
 										</dependency>
-									</dependencies>						
+									</dependencies>
 								</operation>
 							</suboperation>
 						</suboperations>
 					</blockedby>
 				</dependency>
 			</dependencies>
-		</operation>		
+		</operation>
+		<operation name="7. routing" xsi:type="operation_fixed_time" duration="P1D">
+			<location name="X"/>
+			<dependencies>
+				<dependency>
+					<blockedby name="7. task 1" xsi:type="operation_fixed_time" duration="P1D">
+						<location name="X"/>
+						<dependencies>
+							<dependency>
+								<blockedby name="7. task 2" xsi:type="operation_fixed_time" duration="P1D">
+									<location name="X"/>
+									<dependencies>
+										<dependency>
+											<blockedby name="7. task 4" xsi:type="operation_routing">
+												<location name="X"/>
+												<dependencies>
+													<dependency>
+														<blockedby name="7. task 5" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="X"/>
+														</blockedby>
+													</dependency>
+												</dependencies>
+												<suboperations>
+													<suboperation>
+														<operation name="7. task 4a" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="factory"/>
+														</operation>
+													</suboperation>
+													<suboperation>
+														<operation name="7. task 4b" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="factory"/>
+														</operation>
+													</suboperation>
+													<suboperation>
+														<operation name="7. task 4c" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="factory"/>
+															<dependencies>
+																<dependency>
+																	<blockedby name="7. task 4a"/>
+																</dependency>
+																<dependency>
+																	<blockedby name="7. task 4b"/>
+																</dependency>
+															</dependencies>
+														</operation>
+													</suboperation>
+												</suboperations>
+											</blockedby>
+										</dependency>
+									</dependencies>
+								</blockedby>
+							</dependency>
+							<dependency>
+								<blockedby name="7. task 3" xsi:type="operation_fixed_time" duration="P1D">
+									<location name="X"/>
+									<dependencies>
+										<dependency>
+											<blockedby name="7. task 5"/>
+										</dependency>
+										<dependency>
+											<blockedby name="7. task 4a"/>
+										</dependency>
+									</dependencies>
+								</blockedby>
+							</dependency>
+						</dependencies>
+					</blockedby>
+				</dependency>
+			</dependencies>
+		</operation>
 	</operations>
 	<demands>
 		<demand name="1. order">
@@ -260,7 +329,7 @@
 			<priority>1</priority>
 			<item name="2. my project"/>
 			<location name="X"/>
-		</demand> 
+		</demand>
 		<demand name="3. constrained project">
 			<operation name="3. project X"/>
 			<batch>3. constrained project</batch>
@@ -278,7 +347,7 @@
 			<priority>1</priority>
 			<item name="3. my project"/>
 			<location name="X"/>
-		</demand> 
+		</demand>
 		<demand name="4. converging">
 			<operation name="4. project X"/>
 			<quantity>1</quantity>
@@ -302,7 +371,15 @@
 			<priority>1</priority>
 			<item name="6. bad project"/>
 			<location name="X"/>
-		</demand>	
+		</demand>
+		<demand name="7. routing">
+			<operation name="7. task 1"/>
+			<quantity>1</quantity>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="7. routing"/>
+			<location name="X"/>
+		</demand>
 	</demands>
 
 <?python

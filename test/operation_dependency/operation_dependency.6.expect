@@ -7,6 +7,7 @@ DEMAND	3. unconstrained project	2023-12-01T00:00:00	1
 DEMAND	4. converging	2023-01-10T00:00:00	1
 DEMAND	5. converging	2023-01-10T00:00:00	1
 DEMAND	6. bad project	2023-01-10T00:00:00	1
+DEMAND	7. routing	2023-01-01T00:00:00	1
 OPERATION	1. my routing	2023-04-11T00:00:00	2023-05-01T00:00:00	5
 OPERATION	1. routing step A	2023-04-29T00:00:00	2023-04-30T00:00:00	5
 OPERATION	1. routing step B	2023-04-20T00:00:00	2023-04-30T00:00:00	5
@@ -40,6 +41,16 @@ OPERATION	6. task X1	2023-01-08T00:00:00	2023-01-09T00:00:00	1
 OPERATION	6. task X2	2023-01-07T00:00:00	2023-01-08T00:00:00	1
 OPERATION	6. task X3	2023-01-08T00:00:00	2023-01-09T00:00:00	1
 OPERATION	6. task X4	2023-01-07T00:00:00	2023-01-08T00:00:00	1
+OPERATION	7. task 1	2022-12-31T00:00:00	2023-01-01T00:00:00	1
+OPERATION	7. task 2	2022-12-30T00:00:00	2022-12-31T00:00:00	1
+OPERATION	7. task 3	2022-12-30T00:00:00	2022-12-31T00:00:00	1
+OPERATION	7. task 4	2022-12-27T00:00:00	2022-12-30T00:00:00	1
+OPERATION	7. task 4a	2022-12-28T00:00:00	2022-12-29T00:00:00	1
+OPERATION	7. task 4a	2022-12-29T00:00:00	2022-12-30T00:00:00	1
+OPERATION	7. task 4b	2022-12-28T00:00:00	2022-12-29T00:00:00	1
+OPERATION	7. task 4c	2022-12-29T00:00:00	2022-12-30T00:00:00	1
+OPERATION	7. task 5	2022-12-27T00:00:00	2022-12-28T00:00:00	1
+OPERATION	7. task 5	2022-12-29T00:00:00	2022-12-30T00:00:00	1
 PROBLEM	before current	Operation '2. project X' planned in the past	2022-12-22T00:00:00 / 2023-01-01T00:00:00
 PROBLEM	before current	Operation '2. task X1' planned in the past	2022-12-17T00:00:00 / 2022-12-22T00:00:00
 PROBLEM	before current	Operation '2. task X2 step 1' planned in the past	2022-12-03T00:00:00 / 2022-12-08T00:00:00
@@ -58,3 +69,13 @@ PROBLEM	before current	Operation '5. project X' planned in the past	2022-12-31T0
 PROBLEM	before current	Operation '5. task X1' planned in the past	2022-12-24T00:00:00 / 2022-12-31T00:00:00
 PROBLEM	before current	Operation '5. task X2' planned in the past	2022-12-16T00:00:00 / 2022-12-31T00:00:00
 PROBLEM	before current	Operation '5. task X3' planned in the past	2022-12-11T00:00:00 / 2022-12-16T00:00:00
+PROBLEM	before current	Operation '7. task 1' planned in the past	2022-12-31T00:00:00 / 2023-01-01T00:00:00
+PROBLEM	before current	Operation '7. task 2' planned in the past	2022-12-30T00:00:00 / 2022-12-31T00:00:00
+PROBLEM	before current	Operation '7. task 3' planned in the past	2022-12-30T00:00:00 / 2022-12-31T00:00:00
+PROBLEM	precedence	Operation '7. task 4' starts before preceding operation ends	2022-12-30T00:00:00 / 2022-12-30T00:00:00
+PROBLEM	before current	Operation '7. task 4a' planned in the past	2022-12-28T00:00:00 / 2022-12-29T00:00:00
+PROBLEM	before current	Operation '7. task 4a' planned in the past	2022-12-29T00:00:00 / 2022-12-30T00:00:00
+PROBLEM	before current	Operation '7. task 4b' planned in the past	2022-12-28T00:00:00 / 2022-12-29T00:00:00
+PROBLEM	before current	Operation '7. task 4c' planned in the past	2022-12-29T00:00:00 / 2022-12-30T00:00:00
+PROBLEM	before current	Operation '7. task 5' planned in the past	2022-12-27T00:00:00 / 2022-12-28T00:00:00
+PROBLEM	before current	Operation '7. task 5' planned in the past	2022-12-29T00:00:00 / 2022-12-30T00:00:00

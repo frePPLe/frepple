@@ -220,6 +220,13 @@ class Command(BaseCommand):
                     "docker",
                     "run",
                     "--rm",
+                ]
+                + (
+                    ["--add-host", "host.docker.internal:host-gateway"]
+                    if os.name != "nt"
+                    else []
+                )
+                + [
                     "-v",
                     "%s:/var/lib/odoo" % name,
                     "-e",
@@ -348,6 +355,13 @@ class Command(BaseCommand):
                 "%s:8072" % (options["container_port"] + 3,),
                 "-v",
                 "%s:/var/lib/odoo" % name,
+            ]
+            + (
+                ["--add-host", "host.docker.internal:host-gateway"]
+                if os.name != "nt"
+                else []
+            )
+            + [
                 "-e",
                 "HOST=%s"
                 % (

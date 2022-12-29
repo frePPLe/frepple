@@ -420,7 +420,9 @@ class OperationPlan(AuditModel):
         else:
             ManufacturingOrder.update(self)
 
-    def calculateOperationTime(self, refdate, duration, forward=True) -> datetime:
+    def calculateOperationTime(
+        self, refdate, duration, forward=True, interruptions=None
+    ) -> datetime:
         # Replicate Operation::calculateOperationTime:
         if not duration:
             return refdate
@@ -445,6 +447,11 @@ class OperationPlan(AuditModel):
                                 return event[0] + timecounter
                             else:
                                 timecounter -= delta
+                        elif interruptions is not None:
+                            if interruptions and interruptions[-1][1] == event[0]:
+                                interruptions[-1][1] = event[1]
+                            else:
+                                interruptions.append([event[0], event[1]])
                     st = nd
                 return datetime(2030, 12, 31)
             else:
@@ -457,6 +464,11 @@ class OperationPlan(AuditModel):
                                 return event[1] - timecounter
                             else:
                                 timecounter -= delta
+                        elif interruptions is not None:
+                            if interruptions and interruptions[-1][1] == event[0]:
+                                interruptions[-1][1] = event[1]
+                            else:
+                                interruptions.append([event[0], event[1]])
                     st = nd
                 return datetime(1971, 1, 1)
 
@@ -671,7 +683,6 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                 time_unit = 3600 / 24 / 7
         except:
             pass
-
         with connections[database].cursor() as cursor:
             cursor.execute(
                 """
@@ -904,20 +915,27 @@ class DeliveryOrder(OperationPlan):
     def update(self, database, delete=False, change=True, create=False, **fields):
         # Assure the start date, end date and quantity are consistent
         if change or create:
+            interruptions = []
             if "enddate" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
                 self.startdate = self.calculateOperationTime(
-                    self.enddate,
-                    timedelta(0),
-                    False,
+                    self.enddate, timedelta(0), False, interruptions
                 )
             else:
                 # Mode 2: Start date (optionally also quantity) given -> compute end date
                 self.enddate = self.calculateOperationTime(
-                    self.startdate,
-                    timedelta(0),
-                    True,
+                    self.startdate, timedelta(0), True, interruptions
                 )
+            if interruptions:
+                self.plan["interruptions"] = [
+                    (
+                        i[0].strftime("%Y-%m-%d %H:%M:%S"),
+                        i[1].strftime("%Y-%m-%d %H:%M:%S"),
+                    )
+                    for i in interruptions
+                ]
+            else:
+                self.plan.pop("interruptions", None)
 
         # Create or update operationplanmaterial records
         if (
@@ -1093,12 +1111,14 @@ class DistributionOrder(OperationPlan):
 
         # Assure the start date, end date and quantity are consistent
         if change or create:
+            interruptions = []
             if "enddate" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
                 self.startdate = self.calculateOperationTime(
                     self.enddate,
                     itemdistribution.leadtime if itemdistribution else timedelta(0),
                     False,
+                    interruptions,
                 )
             else:
                 # Mode 2: Start date (optionally also quantity) given -> compute end date
@@ -1106,7 +1126,18 @@ class DistributionOrder(OperationPlan):
                     self.startdate,
                     itemdistribution.leadtime if itemdistribution else timedelta(0),
                     True,
+                    interruptions,
                 )
+            if interruptions:
+                self.plan["interruptions"] = [
+                    (
+                        i[0].strftime("%Y-%m-%d %H:%M:%S"),
+                        i[1].strftime("%Y-%m-%d %H:%M:%S"),
+                    )
+                    for i in interruptions
+                ]
+            else:
+                self.plan.pop("interruptions", None)
 
         # Create or update operationplanmaterial records
         if not self.item:
@@ -1342,12 +1373,14 @@ class PurchaseOrder(OperationPlan):
 
         # Assure the start date, end date and quantity are consistent
         if change or create:
+            interruptions = []
             if "enddate" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
                 self.startdate = self.calculateOperationTime(
                     self.enddate,
                     itemsupplier.leadtime if itemsupplier else timedelta(0),
                     False,
+                    interruptions,
                 )
             else:
                 # Mode 2: Start date (optionally also quantity) given -> compute end date
@@ -1355,7 +1388,18 @@ class PurchaseOrder(OperationPlan):
                     self.startdate,
                     itemsupplier.leadtime if itemsupplier else timedelta(0),
                     True,
+                    interruptions,
                 )
+            if interruptions:
+                self.plan["interruptions"] = [
+                    (
+                        i[0].strftime("%Y-%m-%d %H:%M:%S"),
+                        i[1].strftime("%Y-%m-%d %H:%M:%S"),
+                    )
+                    for i in interruptions
+                ]
+            else:
+                self.plan.pop("interruptions", None)
 
         # Create or update operationplanmaterial records
         if (
@@ -2075,16 +2119,27 @@ class ManufacturingOrder(OperationPlan):
                     % self.operation.type
                 )
 
+            interruptions = []
             if "enddate" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
                 self.startdate = self.calculateOperationTime(
-                    self.enddate, duration, False
+                    self.enddate, duration, False, interruptions
                 )
             else:
                 # Mode 2: Start date (optionally also quantity) given -> compute end date
                 self.enddate = self.calculateOperationTime(
-                    self.startdate, duration, True
+                    self.startdate, duration, True, interruptions
                 )
+            if interruptions:
+                self.plan["interruptions"] = [
+                    (
+                        i[0].strftime("%Y-%m-%d %H:%M:%S"),
+                        i[1].strftime("%Y-%m-%d %H:%M:%S"),
+                    )
+                    for i in interruptions
+                ]
+            else:
+                self.plan.pop("interruptions", None)
 
         # Create or update operationplanmaterial records
         if delete or not self.operation or not self.quantity:

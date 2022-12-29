@@ -15,12 +15,13 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import os
 from datetime import datetime, time, timedelta
 
 from django.db import DEFAULT_DB_ALIAS
 from django.test import TestCase
 
-
+from freppledb.common.models import Parameter, Notification
 from freppledb.input.models import (
     Calendar,
     CalendarBucket,
@@ -40,11 +41,21 @@ from freppledb.input.models import (
     Resource,
     Supplier,
 )
+from freppledb.output.models import ResourceSummary
 
 
 class OperationplanTest(TestCase):
 
     maxDiff = None
+
+    def setUp(self):
+        os.environ["FREPPLE_TEST"] = "YES"
+        super().setUp()
+
+    def tearDown(self):
+        Notification.wait()
+        del os.environ["FREPPLE_TEST"]
+        super().tearDown()
 
     def assertOperationplan(self, reference, expected):
         # Compare the operationplan as stored in the database
@@ -62,6 +73,7 @@ class OperationplanTest(TestCase):
                 "resources": [
                     (float(i.quantity), i.resource.name) for i in obj.resources.all()
                 ],
+                "interruptions": obj.plan.get("interruptions", []),
             },
             expected,
         )
@@ -109,6 +121,17 @@ class OperationplanTest(TestCase):
         res.save()
         OperationResource(operation=oper, resource=res, quantity=1).save()
 
+        # Simulate output of a planning run
+        ResourceSummary.objects.bulk_create(
+            [
+                ResourceSummary(
+                    resource=res, startdate=datetime(2022, 12, 1) + timedelta(n), load=0
+                )
+                for n in range(300)
+            ]
+        )
+        print("count", ResourceSummary.objects.count())
+
         # Test creation of an operationplan
         opplan = ManufacturingOrder(
             reference="MO #1",
@@ -131,8 +154,16 @@ class OperationplanTest(TestCase):
                     (-20, datetime(2023, 1, 1), "item2"),
                 ],
                 "resources": [(1, "machine")],
+                "interruptions": [
+                    ["2023-01-01 00:00:00", "2023-01-01 09:00:00"],
+                    ["2023-01-01 17:00:00", "2023-01-02 09:00:00"],
+                    ["2023-01-02 17:00:00", "2023-01-03 09:00:00"],
+                ],
             },
         )
+
+        for i in ResourceSummary.objects.filter(load__gt=0).order_by("startdate"):
+            print(i.resource_id, i.startdate, i.load)
 
         # Test changing the start date
         opplan.startdate = datetime(2023, 2, 1)
@@ -150,6 +181,11 @@ class OperationplanTest(TestCase):
                     (-20, datetime(2023, 2, 1), "item2"),
                 ],
                 "resources": [(1, "machine")],
+                "interruptions": [
+                    ["2023-02-01 00:00:00", "2023-02-01 09:00:00"],
+                    ["2023-02-01 17:00:00", "2023-02-02 09:00:00"],
+                    ["2023-02-02 17:00:00", "2023-02-03 09:00:00"],
+                ],
             },
         )
 
@@ -169,6 +205,12 @@ class OperationplanTest(TestCase):
                     (-20, datetime(2023, 2, 2, 12), "item2"),
                 ],
                 "resources": [(1, "machine")],
+                "interruptions": [
+                    ["2023-02-04 17:00:00", "2023-02-05 00:00:00"],
+                    ["2023-02-03 17:00:00", "2023-02-04 09:00:00"],
+                    ["2023-02-03 06:00:00", "2023-02-03 09:00:00"],
+                    ["2023-02-02 17:00:00", "2023-02-03 06:00:00"],
+                ],
             },
         )
 
@@ -188,6 +230,13 @@ class OperationplanTest(TestCase):
                     (-40, datetime(2023, 2, 2, 12), "item2"),
                 ],
                 "resources": [(1, "machine")],
+                "interruptions": [
+                    ["2023-02-02 17:00:00", "2023-02-03 09:00:00"],
+                    ["2023-02-03 17:00:00", "2023-02-04 09:00:00"],
+                    ["2023-02-04 17:00:00", "2023-02-05 09:00:00"],
+                    ["2023-02-05 17:00:00", "2023-02-06 09:00:00"],
+                    ["2023-02-06 17:00:00", "2023-02-07 09:00:00"],
+                ],
             },
         )
 
@@ -263,6 +312,7 @@ class OperationplanTest(TestCase):
                     (10, datetime(2023, 1, 8), "item1"),
                 ],
                 "resources": [],
+                "interruptions": [],
             },
         )
 
@@ -281,6 +331,7 @@ class OperationplanTest(TestCase):
                     (10, datetime(2023, 2, 8), "item1"),
                 ],
                 "resources": [],
+                "interruptions": [],
             },
         )
 
@@ -299,6 +350,7 @@ class OperationplanTest(TestCase):
                     (10, datetime(2023, 2, 5), "item1"),
                 ],
                 "resources": [],
+                "interruptions": [],
             },
         )
 
@@ -317,6 +369,7 @@ class OperationplanTest(TestCase):
                     (20, datetime(2023, 2, 5), "item1"),
                 ],
                 "resources": [],
+                "interruptions": [],
             },
         )
 
@@ -389,6 +442,11 @@ class OperationplanTest(TestCase):
                     (4, datetime(2023, 1, 3, 17), "item1"),
                 ],
                 "resources": [],
+                "interruptions": [
+                    ["2023-01-01 00:00:00", "2023-01-01 09:00:00"],
+                    ["2023-01-01 17:00:00", "2023-01-02 09:00:00"],
+                    ["2023-01-02 17:00:00", "2023-01-03 09:00:00"],
+                ],
             },
         )
 
@@ -408,6 +466,11 @@ class OperationplanTest(TestCase):
                     (4, datetime(2023, 2, 3, 17), "item1"),
                 ],
                 "resources": [],
+                "interruptions": [
+                    ["2023-02-01 00:00:00", "2023-02-01 09:00:00"],
+                    ["2023-02-01 17:00:00", "2023-02-02 09:00:00"],
+                    ["2023-02-02 17:00:00", "2023-02-03 09:00:00"],
+                ],
             },
         )
 
@@ -427,6 +490,12 @@ class OperationplanTest(TestCase):
                     (4, datetime(2023, 2, 5), "item1"),
                 ],
                 "resources": [],
+                "interruptions": [
+                    ["2023-02-04 17:00:00", "2023-02-05 00:00:00"],
+                    ["2023-02-03 17:00:00", "2023-02-04 09:00:00"],
+                    ["2023-02-03 00:00:00", "2023-02-03 09:00:00"],
+                    ["2023-02-02 17:00:00", "2023-02-03 00:00:00"],
+                ],
             },
         )
 
@@ -446,6 +515,10 @@ class OperationplanTest(TestCase):
                     (6, datetime(2023, 2, 4, 17), "item1"),
                 ],
                 "resources": [],
+                "interruptions": [
+                    ["2023-02-02 17:00:00", "2023-02-03 09:00:00"],
+                    ["2023-02-03 17:00:00", "2023-02-04 09:00:00"],
+                ],
             },
         )
 

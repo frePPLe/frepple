@@ -424,7 +424,7 @@ class OperationPlan(AuditModel):
         self, refdate, duration, forward=True, interruptions=None
     ) -> datetime:
         # Replicate Operation::calculateOperationTime:
-        if not duration:
+        if not duration or not refdate:
             return refdate
         cals = self.collectCalendars()
         if not cals:
@@ -953,7 +953,7 @@ class DeliveryOrder(OperationPlan):
             self.materials.using(database).delete()
             for i in recs:
                 OperationPlanMaterial.updateOnhand(*i)
-        else:
+        elif self.enddate:
             recs = [
                 (i.item.name, i.location.name, database)
                 for i in self.materials.using(database).all()
@@ -1416,7 +1416,7 @@ class PurchaseOrder(OperationPlan):
             self.materials.using(database).delete()
             for i in recs:
                 OperationPlanMaterial.updateOnhand(*i)
-        else:
+        elif self.enddate:
             recs = 0
             if (
                 itemsupplier
@@ -2173,6 +2173,10 @@ class ManufacturingOrder(OperationPlan):
                 for fl in self.operation.operationmaterials.using(database).all():
                     if fl.type == "transfer_batch":
                         continue
+                    if fl.type == "start" and not self.startdate:
+                        continue
+                    if fl.type == "end" and not self.enddate:
+                        continue
                     if fl.offset:
                         d = self.calculateOperationTime(
                             self.enddate if fl.type == "end" else self.startdate,
@@ -2196,7 +2200,7 @@ class ManufacturingOrder(OperationPlan):
                     OperationPlanMaterial.updateOnhand(
                         fl.item.name, self.operation.location.name, database
                     )
-                if not produced and self.operation.item:
+                if not produced and self.operation.item and self.enddate:
                     # Automatic produce material if not explicitly specified
                     OperationPlanMaterial(
                         operationplan=self,

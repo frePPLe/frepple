@@ -348,10 +348,14 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
     angular.element(document.getElementById($scope.operationplan.id)).removeClass("edited").addClass("edited");
     if (typeof $scope.operationplan.id !== 'undefined' && rowid === $scope.operationplan.id.toString()) {
       if (columnid === "startdate" || columnid === "operationplan__startdate") {
-        $scope.$apply(function () { $scope.operationplan.start = value; });
+        $scope.$apply(function () {
+          $scope.operationplan.start = value instanceof Date ? value : new Date(value);
+        });
       }
       if (columnid === "enddate" || columnid === "operationplan__enddate") {
-        $scope.$apply(function () { $scope.operationplan.end = value; });
+        $scope.$apply(function () {
+          $scope.operationplan.end = value instanceof Date ? value : new Date(value);
+        });
       }
       if (columnid === "quantity") {
         $scope.$apply(function () { $scope.operationplan.quantity = parseFloat(value); });

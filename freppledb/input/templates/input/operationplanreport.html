@@ -384,6 +384,17 @@ loadComplete: function(data) {
       $(".invStatus").each( function(value) {
         $(this).parent().css('background',$(this).css('background-color'));
       });
+      if (upload.selectedRows.length === 1) {
+        angular.element('#controller').scope().displayInfo(
+          jQuery("#grid").getRowData(upload.selectedRows[0])
+        );
+      }
+      else if (upload.selectedRows.length > 1) {
+        var selectiondata = [];
+        for (var x of upload.selectedRows)
+          selectiondata.push(jQuery("#grid").getRowData(x));
+        angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+      }
       upload.restoreSelection();
     },
 {% endblock %}

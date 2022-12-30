@@ -813,7 +813,12 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
             "label": _("edit"),
             "view": "admin:input_manufacturingorder_change",
             "permissions": "input.change_manufacturingorder",
-        }
+        },
+        {
+            "name": "messages",
+            "label": _("messages"),
+            "view": "admin:input_manufacturingorder_comment",
+        },
     ]
 
 
@@ -863,7 +868,12 @@ class DistributionOrder_admin(MultiDBModelAdmin):
             "label": _("edit"),
             "view": "admin:input_distributionorder_change",
             "permissions": "input.change_distributionorder",
-        }
+        },
+        {
+            "name": "messages",
+            "label": _("messages"),
+            "view": "admin:input_distributionorder_comment",
+        },
     ]
 
 
@@ -913,7 +923,12 @@ class PurchaseOrder_admin(MultiDBModelAdmin):
             "label": _("edit"),
             "view": "admin:input_purchaseorder_change",
             "permissions": "input.change_purchaseorder",
-        }
+        },
+        {
+            "name": "messages",
+            "label": _("messages"),
+            "view": "admin:input_purchaseorder_comment",
+        },
     ]
 
 
@@ -957,7 +972,12 @@ class DeliveryOrder_admin(MultiDBModelAdmin):
             "label": _("edit"),
             "view": "admin:input_deliveryorder_change",
             "permissions": "input.change_deliveryorder",
-        }
+        },
+        {
+            "name": "messages",
+            "label": _("messages"),
+            "view": "admin:input_deliveryorder_comment",
+        },
     ]
 
 

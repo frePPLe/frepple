@@ -695,7 +695,9 @@ class Comment(models.Model):
     )
     object_repr = models.CharField(_("object repr"), max_length=200)
     object_pk = models.TextField(_("object id"))
-    content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
+    content_object = GenericForeignKey(
+        ct_field="content_type", fk_field="object_pk", for_concrete_model=False
+    )
     comment = models.TextField(_("message"), max_length=3000)
     attachment = models.FileField(
         null=True,

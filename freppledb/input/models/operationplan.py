@@ -414,11 +414,11 @@ class OperationPlan(AuditModel):
         if self.type == "PO":
             return PurchaseOrder.collectCalendars(self)
         elif self.type == "DO":
-            DistributionOrder.collectCalendars(self)
+            return DistributionOrder.collectCalendars(self)
         elif self.type == "DLVR":
-            DeliveryOrder.collectCalendars(self)
+            return DeliveryOrder.collectCalendars(self)
         else:
-            ManufacturingOrder.update(self)
+            return ManufacturingOrder.collectCalendars(self)
 
     def calculateOperationTime(
         self, refdate, duration, forward=True, interruptions=None
@@ -2102,7 +2102,9 @@ class ManufacturingOrder(OperationPlan):
             else:
                 efficiency = self.getEfficiency(self.startdate)
 
-            if self.operation.type == "time_per" or not self.operation.type:
+            if not self.operation:
+                duration = timedelta(0)
+            elif self.operation.type == "time_per" or not self.operation.type:
                 duration = (
                     (self.operation.duration or timedelta(0))
                     + (self.operation.duration_per or timedelta(0))
@@ -2110,8 +2112,6 @@ class ManufacturingOrder(OperationPlan):
                 ) / efficiency
             elif self.operation.type == "fixed_time":
                 duration = (self.operation.duration or timedelta(0)) / efficiency
-            elif not self.operation:
-                duration = timedelta(0)
             else:
                 # TODO handle updates on routing operationplans
                 raise Exception(
@@ -2146,7 +2146,7 @@ class ManufacturingOrder(OperationPlan):
             self.materials.using(database).delete()
         else:
             has_opplanmat_records = False
-            if self.status in ("confirmed"):
+            if self.status and self.status in ("confirmed"):
                 # Update existing operationplanmaterial records, even if they
                 # are not in sync with the operationmaterial definition.
                 for fl in self.materials.all():

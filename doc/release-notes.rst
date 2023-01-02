@@ -14,7 +14,7 @@ Release notes
   | - Define relations between different subprojects and tasks in a
       project-oriented business.
 
-- Bug fix: Resolved infinite loop corner case when using a sales order owner
+- Bug fix: Resolved infinite loop corner case when planning a sales order owner
   with delivery policy "all together" and one of the lines has a broken supply
   path.
 

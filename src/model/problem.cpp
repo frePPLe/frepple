@@ -540,7 +540,10 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
       auto owner = const_cast<Operation*>(dynamic_cast<const Operation*>(o));
       if (owner) p = new ProblemAwaitSupply(owner, st, nd, w);
     }
-  } else
+  } else if (m == ProblemSyncDemand::metadata)
+    p = new ProblemSyncDemand(
+        const_cast<Demand*>(dynamic_cast<const Demand*>(o)), st, nd, w);
+  else
     throw LogicException("Problem factory can't create this type of problem");
 
   // Link the problem in the list

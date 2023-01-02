@@ -8919,6 +8919,9 @@ class ProblemSyncDemand : public Problem {
 
   double getWeight() const { return 1; }
 
+  explicit ProblemSyncDemand(Demand* b, Date st, Date nd, double q)
+      : synced_with(b), dates(st, nd) {}
+
   explicit ProblemSyncDemand(Demand* b, Demand* s)
       : Problem(b), synced_with(s) {
     if (b) dates.setStartAndEnd(b->getDue(), b->getDeliveryDate());

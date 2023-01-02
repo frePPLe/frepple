@@ -670,8 +670,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
             self.status,
         )
 
-    @staticmethod
-    def updateResourcePlan(resource_name, database):
+    def updateResourcePlan(self, database):
 
         # default value of parameter is hours
         time_unit = 3600
@@ -683,6 +682,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                 time_unit = 3600 / 24 / 7
         except:
             pass
+
         with connections[database].cursor() as cursor:
             cursor.execute(
                 """
@@ -719,8 +719,12 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     -lower(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day') * interruption_range) end
                     , interval '0 second')) as load
                     from operationplanresource
-
-                    inner join operationplan on operationplan.reference = operationplanresource.operationplan_id
+                    inner join (select  reference,
+                                        case when reference = %s then %s else startdate end startdate,
+                                        case when reference = %s then %s else enddate end enddate,
+                                        plan,
+                                        operation_id from operationplan
+                                        ) operationplan on operationplan.reference = operationplanresource.operationplan_id
 
                     inner join resource_hierachy on resource_hierachy.child = operationplanresource.resource_id
 
@@ -748,9 +752,13 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                 and out_resourceplan.load != coalesce(EXTRACT(epoch FROM cte.load)/%s,0)
                 """,
                 (
+                    self.operationplan.reference,
+                    self.operationplan.startdate,
+                    self.operationplan.reference,
+                    self.operationplan.enddate,
                     settings.TIME_ZONE,
                     settings.TIME_ZONE,
-                    resource_name,
+                    self.resource.name,
                     time_unit,
                     time_unit,
                     time_unit,
@@ -2216,6 +2224,4 @@ class ManufacturingOrder(OperationPlan):
             # Save or create operationplanresource records
             for r in self._resources:
                 r.save(using=database)
-
-            for r in set(i.resource.name for i in self._resources):
-                OperationPlanResource.updateResourcePlan(r, database)
+                r.updateResourcePlan(database)

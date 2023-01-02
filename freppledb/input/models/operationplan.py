@@ -19,6 +19,7 @@ import ast
 from datetime import datetime, timedelta
 from decimal import Decimal
 from dateutil.parser import parse
+import json
 from logging import INFO, ERROR, WARNING, DEBUG, getLogger
 import math
 from openpyxl.worksheet.cell_range import CellRange
@@ -704,8 +705,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     sum(operationresource.quantity * case when tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
                     * tstzrange(operationplan.startdate, operationplan.enddate, '[]') =
                     tstzrange(operationplan.startdate, operationplan.enddate, '[]')
-                    then upper(tstzrange(operationplan.startdate, operationplan.enddate, '[]'))
-                    - lower(tstzrange(operationplan.startdate, operationplan.enddate, '[]'))
+                    then operationplan.enddate - operationplan.startdate
                     else upper(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
                             * tstzrange(operationplan.startdate, operationplan.enddate, '[]'))
                             - lower(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
@@ -713,7 +713,9 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
 
                     -- minus interruptions
                     - coalesce(
-                    operationresource.quantity * case when tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day') * interruption_range = interruption_range
+                    operationresource.quantity *
+                    case when tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
+                    * interruption_range = interruption_range
                     then upper(interruption_range) - lower(interruption_range)
                     else upper(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day') * interruption_range)
                     -lower(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day') * interruption_range) end
@@ -722,7 +724,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     inner join (select  reference,
                                         case when reference = %s then %s else startdate end startdate,
                                         case when reference = %s then %s else enddate end enddate,
-                                        plan,
+                                        case when reference = %s then %s else plan end plan,
                                         operation_id from operationplan
                                         ) operationplan on operationplan.reference = operationplanresource.operationplan_id
 
@@ -735,8 +737,9 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
 
                     inner join out_resourceplan on out_resourceplan.resource = operationplanresource.resource_id
 
-
-                    left join lateral (select tstzrange((t->>0)::timestamp at time zone %s, (t->>1)::timestamp at time zone %s) as interruption_range from jsonb_array_elements(plan->'interruptions') t) t on t.interruption_range @> out_resourceplan.startdate
+                    left join lateral
+                    (select tstzrange((t->>0)::timestamp at time zone %s, (t->>1)::timestamp at time zone %s) as interruption_range
+                    from jsonb_array_elements(plan->'interruptions') t) t on t.interruption_range @> out_resourceplan.startdate
 
                     where operationplanresource.resource_id = %s
 
@@ -756,6 +759,8 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     self.operationplan.startdate,
                     self.operationplan.reference,
                     self.operationplan.enddate,
+                    self.operationplan.reference,
+                    json.dumps(self.operationplan.plan),
                     settings.TIME_ZONE,
                     settings.TIME_ZONE,
                     self.resource.name,

@@ -732,7 +732,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     inner join out_resourceplan on out_resourceplan.resource = operationplanresource.resource_id
 
 
-                    left join lateral (select tstzrange((t->>0)::timestamp at time zone %s, (t->>1)::timestamp at time zone %s) as interruption_range from jsonb_array_elements(plan->'interruptions') t) t on true
+                    left join lateral (select tstzrange((t->>0)::timestamp at time zone %s, (t->>1)::timestamp at time zone %s) as interruption_range from jsonb_array_elements(plan->'interruptions') t) t on t.interruption_range @> out_resourceplan.startdate
 
                     where operationplanresource.resource_id = %s
 
@@ -740,7 +740,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     out_resourceplan.startdate
                 )
                 update out_resourceplan
-                set load = coalesce(EXTRACT(epoch FROM cte.load)/%s,0),
+                set load = case when available = 0 then 0 else coalesce(EXTRACT(epoch FROM cte.load)/%s,0) end,
                 free = greatest(available - coalesce(EXTRACT(epoch FROM cte.load)/%s,0),0)
                 from cte
                 where cte.resource_id = out_resourceplan.resource
@@ -748,9 +748,9 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                 and out_resourceplan.load != coalesce(EXTRACT(epoch FROM cte.load)/%s,0)
                 """,
                 (
+                    settings.TIME_ZONE,
+                    settings.TIME_ZONE,
                     resource_name,
-                    settings.TIME_ZONE,
-                    settings.TIME_ZONE,
                     time_unit,
                     time_unit,
                     time_unit,

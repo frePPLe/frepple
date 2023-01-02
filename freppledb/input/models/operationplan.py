@@ -665,8 +665,8 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
     def __str__(self):
         return "%s %s %s %s" % (
             self.resource,
-            self.startdate,
-            self.enddate,
+            self.operationplan.startdate,
+            self.operationplan.enddate,
             self.status,
         )
 

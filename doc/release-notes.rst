@@ -14,6 +14,10 @@ Release notes
   | - Define relations between different subprojects and tasks in a
       project-oriented business.
 
+- Bug fix: Resolved infinite loop corner case when using a sales order owner
+  with delivery policy "all together" and one of the lines has a broken supply
+  path.
+
 .. rubric:: System administration
 
 - | The database name is now configurable in the docker container.

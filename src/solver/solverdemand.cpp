@@ -592,6 +592,12 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
               }
           }
           break;
+        } else if (next_delivery_date == Date::infiniteFuture) {
+          // Give it up
+          if (loglevel > 1)
+            logger << indentlevel << "Warning: Demand group '" << salesorder
+                   << "' can't be planned." << endl;
+          break;
         } else {
           // Repeat at a new date
           delivery_date = next_delivery_date;

@@ -312,7 +312,42 @@
 				</dependency>
 			</dependencies>
 		</operation>
+		<operation name="8. project X" xsi:type="operation_fixed_time" duration="P10D">
+			<location name="X"/>
+			<dependencies>
+				<dependency>
+					<blockedby name="8. task X1" xsi:type="operation_fixed_time" duration="P5D">
+						<location name="X"/>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby name="8. task X2 step 3" xsi:type="operation_fixed_time" duration="P7D">
+						<location name="X"/>
+						<dependencies>
+							<dependency>
+								<blockedby name="8. task X2 step 2" xsi:type="operation_fixed_time" duration="P7D">
+									<location name="X"/>
+									<dependencies>
+										<dependency>
+											<blockedby name="8. task X2 step 1" xsi:type="operation_fixed_time" duration="P5D">
+												<location name="X"/>
+											</blockedby>
+											<hard_safety_leadtime>P2D</hard_safety_leadtime>
+										</dependency>
+									</dependencies>
+								</blockedby>
+							</dependency>
+						</dependencies>
+					</blockedby>
+				</dependency>
+			</dependencies>
+		</operation>		
 	</operations>
+	<operationplans>
+		<operationplan reference="MO #1" quantity="1" status="approved" end="2023-03-05T00:00:00">
+		   <operation name="8. task X2 step 1"/> 
+		</operationplan>
+	</operationplans>	
 	<demands>
 		<demand name="1. order">
 			<quantity>5</quantity>
@@ -380,6 +415,14 @@
 			<item name="7. routing"/>
 			<location name="X"/>
 		</demand>
+		<demand name="8. with wip">
+			<operation name="8. project X"/>
+			<quantity>1</quantity>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="8. with wip"/>
+			<location name="X"/>
+		</demand>		
 	</demands>
 
 <?python

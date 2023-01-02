@@ -2279,6 +2279,24 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
           unpegged -= d->getSecond()->getQuantity();
       }
       if (unpegged > ROUNDING_ERROR) {
+        if (o->getEnd() > data.state->q_date && getConstraints() &&
+            data.constrainedPlanning) {
+          a_qty = 0.0;
+          incomplete = true;
+          if (data.logConstraints && data.constraints)
+            data.constraints->push(ProblemAwaitSupply::metadata,
+                                   o->getOperation(), opplan->getStart(),
+                                   o->getEnd(), o->getQuantity());
+          opplan->setStart(o->getEnd());
+          data.state->a_date = opplan->getEnd();
+          data.state->a_date += dpd->getHardSafetyLeadtime();
+          matnext = DateRange(data.state->a_date, data.state->a_date);
+          if (getLogLevel() > 1) {
+            logger << indentlevel << "Waiting for available supply on " << &*o
+                   << endl;
+          }
+          return;
+        }
         // Note: we count on the rollback to undo this allocation if needed
         if (getLogLevel() > 1) {
           logger << indentlevel << "Allocating from available supply on " << &*o
@@ -2294,7 +2312,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
       ++o;
     }
 
-    if (data.state->q_qty > allocated - ROUNDING_ERROR) {
+    if (data.state->q_qty > allocated + ROUNDING_ERROR) {
       // Plan net required quantity
       data.state->q_qty -= allocated;
       auto orig_q_qty = data.state->q_qty;

@@ -32,6 +32,9 @@
 		<item>
 			<name>7. routing</name>
 		</item>
+		<item>
+			<name>8. with wip</name>
+		</item>
 	</items>
 	<operations>
 		<operation xsi:type="operation_routing">
@@ -603,6 +606,68 @@
 			</location>
 			<duration>P1D</duration>
 		</operation>
+		<operation>
+			<name>8. project X</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>8. task X1</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>8. task X2 step 3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P10D</duration>
+		</operation>
+		<operation>
+			<name>8. task X1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>8. task X2 step 1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<duration>P5D</duration>
+		</operation>
+		<operation>
+			<name>8. task X2 step 2</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>8. task X2 step 1</name>
+					</blockedby>
+					<hard_safety_leadtime>P2D</hard_safety_leadtime>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
+		<operation>
+			<name>8. task X2 step 3</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>8. task X2 step 2</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P7D</duration>
+		</operation>
 	</operations>
 	<demands>
 		<demand>
@@ -725,5 +790,32 @@
 			<due>2023-01-01T00:00:00</due>
 			<priority>1</priority>
 		</demand>
+		<demand>
+			<name>8. with wip</name>
+			<quantity>1</quantity>
+			<item>
+				<name>8. with wip</name>
+			</item>
+			<location>
+				<name>X</name>
+			</location>
+			<operation>
+				<name>8. project X</name>
+			</operation>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
 	</demands>
+	<operationplans>
+		<operationplan>
+			<reference>MO #1</reference>
+			<operation>
+				<name>8. task X2 step 1</name>
+			</operation>
+			<start>2023-02-28T00:00:00</start>
+			<end>2023-03-05T00:00:00</end>
+			<quantity>1</quantity>
+			<status>approved</status>
+		</operationplan>
+	</operationplans>
 </plan>

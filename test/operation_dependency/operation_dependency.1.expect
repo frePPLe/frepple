@@ -70,3 +70,11 @@
 7. task 4c is blocked by:	7. task 4b	1.0	0	0
 7. task 5 is blocking:	7. task 4	1.0	0	0
 7. task 5 is blocking:	7. task 3	1.0	0	0
+8. project X is blocked by:	8. task X1	1.0	0	0
+8. project X is blocked by:	8. task X2 step 3	1.0	0	0
+8. task X1 is blocking:	8. project X	1.0	0	0
+8. task X2 step 1 is blocking:	8. task X2 step 2	1.0	0	172800
+8. task X2 step 2 is blocked by:	8. task X2 step 1	1.0	0	172800
+8. task X2 step 2 is blocking:	8. task X2 step 3	1.0	0	0
+8. task X2 step 3 is blocked by:	8. task X2 step 2	1.0	0	0
+8. task X2 step 3 is blocking:	8. project X	1.0	0	0

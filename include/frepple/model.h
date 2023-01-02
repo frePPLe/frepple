@@ -8859,8 +8859,11 @@ class ProblemAwaitSupply : public Problem {
  public:
   string getDescription() const {
     ostringstream ch;
-    ch << "Buffer '" << static_cast<Buffer*>(getOwner())
-       << "' awaits confirmed supply";
+    if (for_buffer)
+      ch << "Buffer '" << static_cast<Buffer*>(getOwner());
+    else
+      ch << "Operation  '" << static_cast<Operation*>(getOwner());
+    ch << "' awaits confirmed supply";
     return ch.str();
   }
 
@@ -8869,13 +8872,21 @@ class ProblemAwaitSupply : public Problem {
   double getWeight() const { return qty; }
 
   explicit ProblemAwaitSupply(Buffer* b, Date st, Date nd, double q)
-      : Problem(b), dates(st, nd), qty(q) {}
+      : Problem(b), dates(st, nd), qty(q), for_buffer(true) {}
+
+  explicit ProblemAwaitSupply(Operation* b, Date st, Date nd, double q)
+      : Problem(b), dates(st, nd), qty(q), for_buffer(false) {}
 
   ~ProblemAwaitSupply() { removeProblem(); }
 
   string getEntity() const { return "material"; }
 
-  Object* getOwner() const { return static_cast<Buffer*>(owner); }
+  Object* getOwner() const {
+    if (for_buffer)
+      return static_cast<Buffer*>(owner);
+    else
+      return static_cast<Operation*>(owner);
+  }
 
   const DateRange getDates() const { return dates; }
 
@@ -8888,6 +8899,7 @@ class ProblemAwaitSupply : public Problem {
  private:
   DateRange dates;
   double qty = 0.0;
+  bool for_buffer;
 };
 
 /* An instance of this class is used to flag constraints where a

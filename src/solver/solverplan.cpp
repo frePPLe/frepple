@@ -256,6 +256,7 @@ void SolverCreate::SolverData::commit() {
             state->blockedOpplan = nullptr;
             state->dependency = nullptr;
             state->curBatch = (*i)->getBatch();
+            dependency_list.clear();
             state->a_qty = 0;
             try {
               deliveryoper->solve(*solver, this);

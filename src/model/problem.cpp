@@ -532,10 +532,15 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
   else if (m == ProblemBeforeFence::metadata)
     p = new ProblemBeforeFence(
         const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd, w);
-  else if (m == ProblemAwaitSupply::metadata)
-    p = new ProblemAwaitSupply(
-        const_cast<Buffer*>(dynamic_cast<const Buffer*>(o)), st, nd, w);
-  else
+  else if (m == ProblemAwaitSupply::metadata) {
+    auto owner = const_cast<Buffer*>(dynamic_cast<const Buffer*>(o));
+    if (owner)
+      p = new ProblemAwaitSupply(owner, st, nd, w);
+    else {
+      auto owner = const_cast<Operation*>(dynamic_cast<const Operation*>(o));
+      if (owner) p = new ProblemAwaitSupply(owner, st, nd, w);
+    }
+  } else
     throw LogicException("Problem factory can't create this type of problem");
 
   // Link the problem in the list

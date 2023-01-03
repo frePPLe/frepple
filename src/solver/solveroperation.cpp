@@ -2258,8 +2258,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
       }
     }
 
-    // Net available quantities from the required
-    // quantity The netting ignores the dates.
+    // Net available quantities from the required quantity.
     data.state->q_qty = opplan->getQuantity() * dpd->getQuantity();
     auto o = dpd->getBlockedBy()->getOperationPlans();
     auto allocated = 0.0;
@@ -2299,8 +2298,8 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
         }
         // Note: we count on the rollback to undo this allocation if needed
         if (getLogLevel() > 1) {
-          logger << indentlevel << "Allocating from available supply on " << &*o
-                 << endl;
+          logger << indentlevel << "  Allocating from available supply on "
+                 << &*o << endl;
         }
         new OperationPlanDependency(&*o, opplan, dpd);
         allocated += unpegged;
@@ -2324,7 +2323,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
         data.state->blockedOpplan = opplan;
         data.state->dependency = dpd;
         dpd->getBlockedBy()->solve(*this, &data);
-        a_qty = data.state->a_qty + allocated;
+        a_qty = (data.state->a_qty + allocated) / dpd->getQuantity();
         if (data.state->a_qty < ROUNDING_ERROR) {
           if (dpd->getSafetyLeadtime() > dpd->getHardSafetyLeadtime() &&
               data.state->a_date <=

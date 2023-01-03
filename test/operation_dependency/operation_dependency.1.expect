@@ -78,3 +78,11 @@
 8. task X2 step 2 is blocking:	8. task X2 step 3	1.0	0	0
 8. task X2 step 3 is blocked by:	8. task X2 step 2	1.0	0	0
 8. task X2 step 3 is blocking:	8. project X	1.0	0	0
+9. project X is blocked by:	9. task X1	1.0	0	0
+9. project X is blocked by:	9. task X2 step 3	1.0	0	0
+9. task X1 is blocking:	9. project X	1.0	0	0
+9. task X2 step 1 is blocking:	9. task X2 step 2	1.0	0	0
+9. task X2 step 2 is blocked by:	9. task X2 step 1	1.0	0	0
+9. task X2 step 2 is blocking:	9. task X2 step 3	3.0	0	0
+9. task X2 step 3 is blocked by:	9. task X2 step 2	3.0	0	0
+9. task X2 step 3 is blocking:	9. project X	1.0	0	0

@@ -318,10 +318,6 @@ class Command(BaseCommand):
                 schedule.save(using=database)
                 created = True
 
-        # Launch the worker process
-        if created:
-            launchWorker(database)
-
         # Reschedule to run this task again at the next date
         earliest_next = (
             ScheduledTask.objects.using(database)
@@ -358,6 +354,10 @@ class Command(BaseCommand):
                     raise CommandError("Non-zero exit code when scheduling the task")
             except OSError as e:
                 raise CommandError("Can't schedule the task: %s" % e)
+
+        # Synchronously run the worker process
+        if created:
+            launchWorker(database)
 
     # accordion template
     with_scheduler = os.name != "nt" and which("at") is not None

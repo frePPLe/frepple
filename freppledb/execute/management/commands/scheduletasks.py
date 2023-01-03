@@ -26,7 +26,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.core.management import get_commands
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction, DEFAULT_DB_ALIAS
+from django.db import transaction, DEFAULT_DB_ALIAS, connection
 from django.db.models import Min
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
@@ -300,6 +300,8 @@ class Command(BaseCommand):
         now = datetime.now()
         created = False
         with transaction.atomic(using=database):
+            cursor = connection.cursor()
+            cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
             for schedule in (
                 ScheduledTask.objects.all()
                 .using(database)
@@ -318,42 +320,44 @@ class Command(BaseCommand):
                 schedule.save(using=database)
                 created = True
 
-        # Reschedule to run this task again at the next date
-        earliest_next = (
-            ScheduledTask.objects.using(database)
-            .filter(next_run__isnull=False, next_run__gt=now)
-            .aggregate(Min("next_run"))
-        )["next_run__min"]
-        if earliest_next:
-            if not self.with_scheduler:
-                raise CommandError(
-                    "Task scheduler is only supported on Linux and needs the 'at'-command"
-                )
-            my_env = os.environ.copy()
-            my_env["FREPPLE_CONFIGDIR"] = settings.FREPPLE_CONFIGDIR
-            try:
-                if which("frepplectl"):
-                    retcode = call(
-                        "echo frepplectl scheduletasks --database=%s | at %s"
-                        % (database, earliest_next.strftime("%H:%M %y-%m-%d")),
-                        env=my_env,
-                        shell=True,
+            # Reschedule to run this task again at the next date
+            earliest_next = (
+                ScheduledTask.objects.using(database)
+                .filter(next_run__isnull=False, next_run__gt=now)
+                .aggregate(Min("next_run"))
+            )["next_run__min"]
+            if earliest_next:
+                if not self.with_scheduler:
+                    raise CommandError(
+                        "Task scheduler is only supported on Linux and needs the 'at'-command"
                     )
-                else:
-                    retcode = call(
-                        "echo %s scheduletasks --database=%s | at %s"
-                        % (
-                            os.path.abspath(sys.argv[0]),
-                            database,
-                            earliest_next.strftime("%H:%M %y-%m-%d"),
-                        ),
-                        env=my_env,
-                        shell=True,
-                    )
-                if retcode < 0:
-                    raise CommandError("Non-zero exit code when scheduling the task")
-            except OSError as e:
-                raise CommandError("Can't schedule the task: %s" % e)
+                my_env = os.environ.copy()
+                my_env["FREPPLE_CONFIGDIR"] = settings.FREPPLE_CONFIGDIR
+                try:
+                    if which("frepplectl"):
+                        retcode = call(
+                            "echo frepplectl scheduletasks --database=%s | at %s"
+                            % (database, earliest_next.strftime("%H:%M %y-%m-%d")),
+                            env=my_env,
+                            shell=True,
+                        )
+                    else:
+                        retcode = call(
+                            "echo %s scheduletasks --database=%s | at %s"
+                            % (
+                                os.path.abspath(sys.argv[0]),
+                                database,
+                                earliest_next.strftime("%H:%M %y-%m-%d"),
+                            ),
+                            env=my_env,
+                            shell=True,
+                        )
+                    if retcode < 0:
+                        raise CommandError(
+                            "Non-zero exit code when scheduling the task"
+                        )
+                except OSError as e:
+                    raise CommandError("Can't schedule the task: %s" % e)
 
         # Synchronously run the worker process
         if created:

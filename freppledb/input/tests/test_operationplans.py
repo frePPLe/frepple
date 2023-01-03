@@ -78,6 +78,15 @@ class OperationplanTest(TestCase):
             expected,
         )
 
+    def assertResourcePlan(self, resource, expected):
+        d = {}
+        for i in ResourceSummary.objects.filter(resource=resource).filter(load__gt=0):
+            d[i.startdate.strftime("%Y-%m-%d %H:%M:%S")] = float(i.load)
+        self.assertDictEqual(
+            d,
+            expected,
+        )
+
     def test_manufacturing_orders(self):
 
         cal = Calendar(name="working hours", defaultvalue=0)
@@ -130,7 +139,6 @@ class OperationplanTest(TestCase):
                 for n in range(300)
             ]
         )
-        print("count", ResourceSummary.objects.count())
 
         # Test creation of an operationplan
         opplan = ManufacturingOrder(
@@ -162,8 +170,14 @@ class OperationplanTest(TestCase):
             },
         )
 
-        for i in ResourceSummary.objects.filter(load__gt=0).order_by("startdate"):
-            print(i.resource_id, i.startdate, i.load)
+        self.assertResourcePlan(
+            "machine",
+            {
+                "2023-01-01 00:00:00": 8,
+                "2023-01-02 00:00:00": 8,
+                "2023-01-03 00:00:00": 5,
+            },
+        )
 
         # Test changing the start date
         opplan.startdate = datetime(2023, 2, 1)
@@ -189,6 +203,15 @@ class OperationplanTest(TestCase):
             },
         )
 
+        self.assertResourcePlan(
+            "machine",
+            {
+                "2023-02-01 00:00:00": 8,
+                "2023-02-02 00:00:00": 8,
+                "2023-02-03 00:00:00": 5,
+            },
+        )
+
         # Test changing the end date
         opplan.enddate = datetime(2023, 2, 5)
         opplan.update(DEFAULT_DB_ALIAS, enddate=datetime(2023, 2, 5))
@@ -211,6 +234,15 @@ class OperationplanTest(TestCase):
                     ["2023-02-03 06:00:00", "2023-02-03 09:00:00"],
                     ["2023-02-02 17:00:00", "2023-02-03 06:00:00"],
                 ],
+            },
+        )
+
+        self.assertResourcePlan(
+            "machine",
+            {
+                "2023-02-02 00:00:00": 5,
+                "2023-02-03 00:00:00": 8,
+                "2023-02-04 00:00:00": 8,
             },
         )
 
@@ -240,6 +272,18 @@ class OperationplanTest(TestCase):
             },
         )
 
+        self.assertResourcePlan(
+            "machine",
+            {
+                "2023-02-02 00:00:00": 5,
+                "2023-02-03 00:00:00": 8,
+                "2023-02-04 00:00:00": 8,
+                "2023-02-05 00:00:00": 8,
+                "2023-02-06 00:00:00": 8,
+                "2023-02-07 00:00:00": 4,
+            },
+        )
+
         # Test deletion of the operationplan
         opplan.update(DEFAULT_DB_ALIAS, delete=True)
         opplan.delete()
@@ -255,6 +299,10 @@ class OperationplanTest(TestCase):
                 operationplan__reference="MO #1"
             ).count(),
             0,
+        )
+        self.assertResourcePlan(
+            "machine",
+            {},
         )
 
     def test_purchase_orders(self):

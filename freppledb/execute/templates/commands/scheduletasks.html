@@ -1,11 +1,21 @@
 {% load i18n %}
 <div class="row">
-<div class="col-sm-offset-2 col-sm-9"><p>{% trans "Run a sequence of tasks, and schedule it to run automatically." %}</p></div>
+<div class="col-sm-offset-2 col-sm-9"><p>
+{% if with_scheduler %}
+{% trans "Run a sequence of tasks, and schedule it to run automatically." %}
+{% else %}
+{% trans "Run a sequence of tasks." %}
+{% endif %}
+</p></div>
 </div>
 <div class="row">
 <div class="col-sm-2"></div>
+{% if with_scheduler %}
 <div class="col-sm-6"><p><strong>{% trans "name"|capfirst %}</strong></p></div>
 <div class="col-sm-3"><p><strong>{% trans "next scheduled run"|capfirst %}</strong></p></div>
+{% else %}
+<div class="col-sm-9"><p><strong>{% trans "name"|capfirst %}</strong></p></div>
+{% endif %}
 </div>
 {% for schedule in schedules %}
 <div class="row{% if not schedule.name %} hidden" id="scheduledtask_headertemplate{% endif %}" data-schedule-name="{{ schedule.name }}" style="padding-top:5px; padding-bottom:5px">
@@ -15,10 +25,14 @@
     <input type="hidden" name="schedule" value="{{schedule.name}}">
     </form>
   </div>
+  {% if with_scheduler %}
   <div class="col-sm-6" data-field="name" style="padding-top:6px; padding-bottom:6px">{{ schedule.name }}</div>
   <div class="col-sm-3" data-field="next-run" style="padding-top:6px; padding-bottom:6px">
   {% if schedule.next_run %}{{ schedule.next_run|date:"DATETIME_FORMAT" }}{% endif %}
   </div>
+  {% else %}
+  <div class="col-sm-9" data-field="name" style="padding-top:6px; padding-bottom:6px">{{ schedule.name }}</div>
+  {% endif %}
   {% if perms.execute.change_scheduledtask %}
   <div class="col-sm-1 text-center" style="padding-top:6px; padding-bottom:6px">
   <button class="btn btn-xs btn-primary" onclick="editScheduledTask(this, event)">
@@ -107,6 +121,7 @@
          </div>
          </div>
        </div>
+       {% if with_scheduler %}
  		   <div class="form-group">
          <label for="schedule-{{forloop.counter}}-start" class="col-sm-3 control-label">{% trans "start time"|capfirst %}</label>
          <div class="col-sm-9">
@@ -141,6 +156,7 @@
            </label>
 		     </div>
 		   </div>
+       {% endif %}
        <div class="form-group">
          <label for="schedule-{{forloop.counter}}-email-success" class="col-sm-3 control-label">{% trans "email on success"|capfirst %}</label>
          <div class="col-sm-9">

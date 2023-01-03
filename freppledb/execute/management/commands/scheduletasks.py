@@ -329,8 +329,10 @@ class Command(BaseCommand):
             .aggregate(Min("next_run"))
         )["next_run__min"]
         if earliest_next:
-            if os.name == "nt":
-                raise CommandError("Task scheduler is only supported on Linux")
+            if not self.with_scheduler:
+                raise CommandError(
+                    "Task scheduler is only supported on Linux and needs the 'at'-command"
+                )
             my_env = os.environ.copy()
             my_env["FREPPLE_CONFIGDIR"] = settings.FREPPLE_CONFIGDIR
             try:
@@ -358,13 +360,14 @@ class Command(BaseCommand):
                 raise CommandError("Can't schedule the task: %s" % e)
 
     # accordion template
-    title = _("Group and schedule tasks")
+    with_scheduler = os.name != "nt" and which("at") is not None
+    title = _("Group and schedule tasks") if with_scheduler else _("Group tasks")
     index = 500
 
     help_url = "command-reference.html#scheduletasks"
 
-    @staticmethod
-    def getHTML(request):
+    @classmethod
+    def getHTML(cls, request):
         commands = []
         for commandname, appname in get_commands().items():
             if commandname != "scheduletasks":
@@ -389,6 +392,10 @@ class Command(BaseCommand):
         schedules.append(ScheduledTask())  # Add an empty template
         return render_to_string(
             "commands/scheduletasks.html",
-            {"schedules": schedules, "commands": commands},
+            {
+                "schedules": schedules,
+                "commands": commands,
+                "with_scheduler": cls.with_scheduler,
+            },
             request=request,
         )

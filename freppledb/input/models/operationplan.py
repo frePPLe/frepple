@@ -671,7 +671,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
             self.status,
         )
 
-    def updateResourcePlan(self, database):
+    def updateResourcePlan(self, database, delete=False):
 
         # default value of parameter is hours
         time_unit = 3600
@@ -685,8 +685,8 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
             pass
 
         with connections[database].cursor() as cursor:
-            cursor.execute(
-                """
+
+            sql = """
                 with resource_hierachy as (
                     with recursive cte as (
                     select name as child, owner_id as parent from resource
@@ -696,11 +696,10 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     inner join cte on resource.name = cte.parent)
                     select * from cte
                 ),
-                cte as (
+                working_time as (
                     select
                     operationplanresource.resource_id,
                     out_resourceplan.startdate,
-
                     -- working time
                     sum(operationresource.quantity * case when tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
                     * tstzrange(operationplan.startdate, operationplan.enddate, '[]') =
@@ -709,23 +708,50 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     else upper(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
                             * tstzrange(operationplan.startdate, operationplan.enddate, '[]'))
                             - lower(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
-                                    * tstzrange(operationplan.startdate, operationplan.enddate, '[]')) end
+                                    * tstzrange(operationplan.startdate, operationplan.enddate, '[]')) end) working_time
+                    from operationplanresource
+                    inner join (select  reference,
+                                        startdate,
+                                        enddate,
+                                        plan,
+                                        operation_id from operationplan
+                                        where reference != %%s
+                                %s
+                                        ) operationplan on operationplan.reference = operationplanresource.operationplan_id
 
-                    -- minus interruptions
-                    - coalesce(
+                    inner join resource_hierachy on resource_hierachy.child = operationplanresource.resource_id
+
+                    inner join operationresource on
+                        operationplan.operation_id = operationresource.operation_id
+                        and (operationresource.resource_id = resource_hierachy.child or
+                            operationresource.resource_id = resource_hierachy.parent)
+
+                    inner join out_resourceplan on out_resourceplan.resource = operationplanresource.resource_id
+
+                    where operationplanresource.resource_id = %%s
+
+                    group by operationplanresource.resource_id,
+                    out_resourceplan.startdate),
+                interruptions as (
+                    select
+                    operationplanresource.resource_id,
+                    out_resourceplan.startdate,
+                    sum(coalesce(
                     operationresource.quantity *
                     case when tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
                     * interruption_range = interruption_range
                     then upper(interruption_range) - lower(interruption_range)
                     else upper(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day') * interruption_range)
                     -lower(tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day') * interruption_range) end
-                    , interval '0 second')) as load
+                    , interval '0 second')) as interruptions
                     from operationplanresource
                     inner join (select  reference,
-                                        case when reference = %s then %s else startdate end startdate,
-                                        case when reference = %s then %s else enddate end enddate,
-                                        case when reference = %s then %s else plan end plan,
+                                        startdate,
+                                        enddate,
+                                        plan,
                                         operation_id from operationplan
+                                        where reference != %%s
+                                %s
                                         ) operationplan on operationplan.reference = operationplanresource.operationplan_id
 
                     inner join resource_hierachy on resource_hierachy.child = operationplanresource.resource_id
@@ -738,32 +764,90 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     inner join out_resourceplan on out_resourceplan.resource = operationplanresource.resource_id
 
                     left join lateral
-                    (select tstzrange((t->>0)::timestamp at time zone %s, (t->>1)::timestamp at time zone %s) as interruption_range
-                    from jsonb_array_elements(plan->'interruptions') t) t on t.interruption_range @> out_resourceplan.startdate
+                    (select tstzrange((t->>0)::timestamp at time zone %%s, (t->>1)::timestamp at time zone %%s) as interruption_range
+                    from jsonb_array_elements(plan->'interruptions') t) t on t.interruption_range
+                                                && tstzrange(out_resourceplan.startdate, out_resourceplan.startdate + interval '1 day')
 
-                    where operationplanresource.resource_id = %s
-
+                    where operationplanresource.resource_id = %%s
                     group by operationplanresource.resource_id,
                     out_resourceplan.startdate
                 )
                 update out_resourceplan
-                set load = case when available = 0 then 0 else coalesce(EXTRACT(epoch FROM cte.load)/%s,0) end,
-                free = greatest(available - coalesce(EXTRACT(epoch FROM cte.load)/%s,0),0)
-                from cte
-                where cte.resource_id = out_resourceplan.resource
-                and cte.startdate = out_resourceplan.startdate
-                and out_resourceplan.load != coalesce(EXTRACT(epoch FROM cte.load)/%s,0)
-                """,
+                set load = case when available = 0 then 0 else
+                coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
+                - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0) end,
+                free = greatest(available - (coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
+                - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)),0)
+                where resource = %%s
+                and (load != case when available = 0 then 0 else
+                coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
+                - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0) end
+                or free != greatest(available - (coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
+                - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)),0))
+                """ % (
                 (
+                    """union all
+                                select %s reference,
+                                        %s startdate,
+                                        %s enddate,
+                                        %s plan,
+                                        %s operation_id
+                                        """
+                )
+                if not delete
+                else "",
+                (
+                    """union all
+                                select %s reference,
+                                        %s startdate,
+                                        %s enddate,
+                                        %s plan,
+                                        %s operation_id
+                                        """
+                )
+                if not delete
+                else "",
+            )
+
+            cursor.execute(
+                sql,
+                (self.operationplan.reference,)
+                + (
+                    (
+                        self.operationplan.reference,
+                        self.operationplan.startdate,
+                        self.operationplan.enddate,
+                        json.dumps(self.operationplan.plan),
+                        self.operationplan.operation.name,
+                    )
+                    if not delete
+                    else tuple()
+                )
+                + (
+                    self.resource.name,
                     self.operationplan.reference,
-                    self.operationplan.startdate,
-                    self.operationplan.reference,
-                    self.operationplan.enddate,
-                    self.operationplan.reference,
-                    json.dumps(self.operationplan.plan),
+                )
+                + (
+                    (
+                        self.operationplan.reference,
+                        self.operationplan.startdate,
+                        self.operationplan.enddate,
+                        json.dumps(self.operationplan.plan),
+                        self.operationplan.operation.name,
+                    )
+                    if not delete
+                    else tuple()
+                )
+                + (
                     settings.TIME_ZONE,
                     settings.TIME_ZONE,
                     self.resource.name,
+                    time_unit,
+                    time_unit,
+                    time_unit,
+                    time_unit,
+                    self.resource.name,
+                    time_unit,
                     time_unit,
                     time_unit,
                     time_unit,
@@ -2083,7 +2167,9 @@ class ManufacturingOrder(OperationPlan):
         # Create or update operationplanresource records.
         # We need to do this before computing the efficiency and duration.
         if delete or not self.operation:
-            self.resources.using(database).delete()
+            for i in self.resources.using(database).all():
+                i.updateResourcePlan(database, True)
+                i.delete()
             self._resources = []
         else:
             self._resources = [r for r in self.resources.all()]

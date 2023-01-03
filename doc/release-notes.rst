@@ -34,6 +34,11 @@ Release notes
     and can help understand the root cause of an error. Any sensitive information
     is hidden, only the traceback exception is displayed.
 
+.. rubric:: Odoo integration
+
+- | 14 & 15 & 16: Support for odoo's 2-week working hour calendars, which has
+    different working hours in alternative weeks.
+
 7.0.0 (2022/11/18)
 ==================
 

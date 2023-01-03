@@ -518,8 +518,18 @@ def _parseData(model, data, rowmapper, user, database, ping):
                 # Step 3: Validate the form and model, and save to the database
                 if form.has_changed():
                     if form.is_valid():
-                        # Save the form
+                        # Call the update method before saving the model
                         obj = form.save(commit=False)
+                        if hasattr(model, "update"):
+                            if it:
+                                model.update(
+                                    obj, database, change=True, **form.cleaned_data
+                                )
+                            else:
+                                model.update(
+                                    obj, database, create=True, **form.cleaned_data
+                                )
+                        # Save the form
                         if it:
                             changed += 1
                             obj.save(using=database, force_update=True)

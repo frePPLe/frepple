@@ -10,9 +10,175 @@
 			<name>factory</name>
 		</location>
 	</locations>
+	<suppliers>
+		<supplier>
+			<name>10. supplier</name>
+		</supplier>
+		<supplier>
+			<name>11. supplier</name>
+		</supplier>
+	</suppliers>
+	<calendars>
+		<calendar>
+			<name>10. resource working hours</name>
+			<default>1</default>
+			<buckets>
+				<bucket>
+					<end>2023-02-20T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2023-02-20T00:00:00</start>
+					<days>65</days>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>11. resource working hours</name>
+			<default>1</default>
+			<buckets>
+				<bucket>
+					<end>2023-02-20T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2023-02-20T00:00:00</start>
+					<days>65</days>
+				</bucket>
+			</buckets>
+		</calendar>
+	</calendars>
+	<resources>
+		<resource>
+			<name>10. Resource</name>
+			<available>
+				<name>10. resource working hours</name>
+			</available>
+		</resource>
+		<resource>
+			<name>11. Resource</name>
+			<maximum_calendar>
+				<name>11. resource working hours</name>
+			</maximum_calendar>
+		</resource>
+	</resources>
 	<items>
 		<item>
 			<name>1. my routing</name>
+		</item>
+		<item>
+			<name>10. constrained material and capacity</name>
+		</item>
+		<item>
+			<name>10. material 1</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>10. supplier</name>
+					</supplier>
+					<leadtime>P10D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>10. material 2</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>10. supplier</name>
+					</supplier>
+					<leadtime>P20D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>10. material 3</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>10. supplier</name>
+					</supplier>
+					<leadtime>P30D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>10. material 4</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>10. supplier</name>
+					</supplier>
+					<leadtime>P40D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>10. material 5</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>10. supplier</name>
+					</supplier>
+					<leadtime>P50D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>11. constrained material and capacity</name>
+		</item>
+		<item>
+			<name>11. material 1</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>11. supplier</name>
+					</supplier>
+					<leadtime>P10D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>11. material 2</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>11. supplier</name>
+					</supplier>
+					<leadtime>P20D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>11. material 3</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>11. supplier</name>
+					</supplier>
+					<leadtime>P30D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>11. material 4</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>11. supplier</name>
+					</supplier>
+					<leadtime>P40D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+		<item>
+			<name>11. material 5</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>10. supplier</name>
+					</supplier>
+					<leadtime>P50D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>2. my project</name>
@@ -119,6 +285,374 @@
 				</flow>
 			</flows>
 			<duration>P20D</duration>
+		</operation>
+		<operation>
+			<name>10. constrained material and capacity</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>10. task 1</name>
+					</blockedby>
+					<quantity>2</quantity>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>10. task 1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>10. material 1</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>10. task 2</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>10. task 3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>10. task 2</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby xsi:type="operation_routing">
+						<name>10. task 4</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>10. task 3</name>
+			<location>
+				<name>X</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>10. Resource</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>10. material 5</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>10. task 5</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>10. task 4a</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation xsi:type="operation_routing">
+			<name>10. task 4</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>10. task 5</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<suboperations>
+				<suboperation>
+					<operation>
+						<name>10. task 4a</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>10. task 4b</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>10. task 4c</name>
+					</operation>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation>
+			<name>10. task 4a</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>10. task 4b</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>10. material 3</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>10. task 4c</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>10. material 4</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>10. task 4a</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>10. task 4b</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>10. task 5</name>
+			<location>
+				<name>X</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>10. material 2</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>11. constrained material and capacity</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>11. task 1</name>
+					</blockedby>
+					<quantity>2</quantity>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>11. task 1</name>
+			<location>
+				<name>X</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>11. material 1</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>11. task 2</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>11. task 3</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>11. task 2</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby xsi:type="operation_routing">
+						<name>11. task 4</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>11. task 3</name>
+			<location>
+				<name>X</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>11. Resource</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>11. material 5</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>11. task 5</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>11. task 4a</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation xsi:type="operation_routing">
+			<name>11. task 4</name>
+			<location>
+				<name>X</name>
+			</location>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>11. task 5</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<suboperations>
+				<suboperation>
+					<operation>
+						<name>11. task 4a</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>11. task 4b</name>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation>
+						<name>11. task 4c</name>
+					</operation>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation>
+			<name>11. task 4a</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>11. task 4b</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>11. material 3</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>11. task 4c</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>11. material 4</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<dependencies>
+				<dependency>
+					<blockedby>
+						<name>11. task 4a</name>
+					</blockedby>
+				</dependency>
+				<dependency>
+					<blockedby>
+						<name>11. task 4b</name>
+					</blockedby>
+				</dependency>
+			</dependencies>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>11. task 5</name>
+			<location>
+				<name>X</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>11. material 2</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
 		</operation>
 		<operation>
 			<name>2. project X</name>
@@ -752,6 +1286,36 @@
 			<due>2023-05-01T00:00:00</due>
 			<priority>1</priority>
 			<minshipment>5</minshipment>
+		</demand>
+		<demand>
+			<name>10. constrained material and capacity</name>
+			<quantity>1</quantity>
+			<item>
+				<name>10. constrained material and capacity</name>
+			</item>
+			<location>
+				<name>X</name>
+			</location>
+			<operation>
+				<name>10. constrained material and capacity</name>
+			</operation>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>11. constrained material and capacity</name>
+			<quantity>1</quantity>
+			<item>
+				<name>11. constrained material and capacity</name>
+			</item>
+			<location>
+				<name>X</name>
+			</location>
+			<operation>
+				<name>11. constrained material and capacity</name>
+			</operation>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
 		</demand>
 		<demand>
 			<name>2. project</name>

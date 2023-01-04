@@ -1414,6 +1414,8 @@ class PurchaseOrder(OperationPlan):
     def update(self, database, delete=False, change=True, create=False, **fields):
         itemsupplier = self.itemsupplier(database)
 
+        print("awel", database, delete, change, create, fields)
+
         # if create and not self.reference:
         #     # TODO generate a unique reference
         #     self.reference = ...

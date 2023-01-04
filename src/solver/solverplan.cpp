@@ -241,14 +241,15 @@ void SolverCreate::SolverData::commit() {
               (*i)->getOwner() && (*i)->getOwner()->hasType<DemandGroup>() &&
               static_cast<DemandGroup*>((*i)->getOwner())->getPolicy() !=
                   Demand::POLICY_INDEPENDENT;
+          auto due =
+              isGroupMember ? (*i)->getOwner()->getDue() : (*i)->getDue();
           while (plan_qty > ROUNDING_ERROR) {
             // Respect minimum shipment quantities
             if (plan_qty < (*i)->getMinShipment())
               plan_qty = (*i)->getMinShipment();
             state->curBuffer = nullptr;
             state->q_qty = plan_qty;
-            state->q_date =
-                isGroupMember ? (*i)->getOwner()->getDue() : (*i)->getDue();
+            state->q_date = due;
             state->a_cost = 0.0;
             state->a_penalty = 0.0;
             state->curDemand = *i;
@@ -262,6 +263,15 @@ void SolverCreate::SolverData::commit() {
               deliveryoper->solve(*solver, this);
               getCommandManager()->commit();
               plan_qty -= state->a_qty;
+              if (!state->a_qty)
+                if (state->a_date == Date::infiniteFuture ||
+                    state->a_date <= due)
+                  break;
+                else
+                  // Also unconstrained plan may need to repeat the loop.
+                  // Can be caused with complete lack of any availability
+                  // before the requirement date.
+                  due = state->a_date;
             } catch (const exception& e) {
               logger << "Error creating delivery for '" << *i
                      << "': " << e.what() << endl;

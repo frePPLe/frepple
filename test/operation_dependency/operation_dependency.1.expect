@@ -2,6 +2,42 @@
 1. routing step B is blocking:	1. routing step C	1.0	0	0
 1. routing step C is blocked by:	1. routing step A	1.0	0	0
 1. routing step C is blocked by:	1. routing step B	1.0	0	0
+10. constrained material and capacity is blocked by:	10. task 1	2.0	0	0
+10. task 1 is blocked by:	10. task 2	1.0	0	0
+10. task 1 is blocked by:	10. task 3	1.0	0	0
+10. task 1 is blocking:	10. constrained material and capacity	2.0	0	0
+10. task 2 is blocked by:	10. task 4	1.0	0	0
+10. task 2 is blocking:	10. task 1	1.0	0	0
+10. task 3 is blocked by:	10. task 5	1.0	0	0
+10. task 3 is blocked by:	10. task 4a	1.0	0	0
+10. task 3 is blocking:	10. task 1	1.0	0	0
+10. task 4 is blocked by:	10. task 5	1.0	0	0
+10. task 4 is blocking:	10. task 2	1.0	0	0
+10. task 4a is blocking:	10. task 4c	1.0	0	0
+10. task 4a is blocking:	10. task 3	1.0	0	0
+10. task 4b is blocking:	10. task 4c	1.0	0	0
+10. task 4c is blocked by:	10. task 4a	1.0	0	0
+10. task 4c is blocked by:	10. task 4b	1.0	0	0
+10. task 5 is blocking:	10. task 4	1.0	0	0
+10. task 5 is blocking:	10. task 3	1.0	0	0
+11. constrained material and capacity is blocked by:	11. task 1	2.0	0	0
+11. task 1 is blocked by:	11. task 2	1.0	0	0
+11. task 1 is blocked by:	11. task 3	1.0	0	0
+11. task 1 is blocking:	11. constrained material and capacity	2.0	0	0
+11. task 2 is blocked by:	11. task 4	1.0	0	0
+11. task 2 is blocking:	11. task 1	1.0	0	0
+11. task 3 is blocked by:	11. task 5	1.0	0	0
+11. task 3 is blocked by:	11. task 4a	1.0	0	0
+11. task 3 is blocking:	11. task 1	1.0	0	0
+11. task 4 is blocked by:	11. task 5	1.0	0	0
+11. task 4 is blocking:	11. task 2	1.0	0	0
+11. task 4a is blocking:	11. task 4c	1.0	0	0
+11. task 4a is blocking:	11. task 3	1.0	0	0
+11. task 4b is blocking:	11. task 4c	1.0	0	0
+11. task 4c is blocked by:	11. task 4a	1.0	0	0
+11. task 4c is blocked by:	11. task 4b	1.0	0	0
+11. task 5 is blocking:	11. task 4	1.0	0	0
+11. task 5 is blocking:	11. task 3	1.0	0	0
 2. project X is blocked by:	2. task X1	1.0	0	0
 2. project X is blocked by:	2. task X2 step 3	1.0	0	0
 2. task X1 is blocking:	2. project X	1.0	0	0

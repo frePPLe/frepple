@@ -372,6 +372,318 @@
 				</dependency>
 			</dependencies>
 		</operation>
+		<operation name="10. constrained material and capacity" xsi:type="operation_fixed_time" duration="P1D">
+			<location name="X"/>
+			<dependencies>
+				<dependency>
+					<quantity>2</quantity>
+					<blockedby name="10. task 1" xsi:type="operation_fixed_time" duration="P1D">
+						<location name="X"/>
+						<flows>
+							<flow xsi:type="flow_start">
+								<item name="10. material 1">
+									<itemsuppliers>
+										<itemsupplier>
+											<supplier name="10. supplier"/>
+											<leadtime>P10D</leadtime>
+											<priority>1</priority>
+										</itemsupplier>
+									</itemsuppliers>
+								</item>
+								<quantity>-1</quantity>
+							</flow>
+						</flows>
+						<dependencies>
+							<dependency>
+								<blockedby name="10. task 2" xsi:type="operation_fixed_time" duration="P1D">
+									<location name="X"/>
+									<dependencies>
+										<dependency>
+											<blockedby name="10. task 4" xsi:type="operation_routing">
+												<location name="X"/>
+												<dependencies>
+													<dependency>
+														<blockedby name="10. task 5" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="X"/>
+															<flows>
+																<flow xsi:type="flow_start">
+																	<item name="10. material 2">
+																		<itemsuppliers>
+																			<itemsupplier>
+																				<supplier name="10. supplier"/>
+																				<leadtime>P20D</leadtime>
+																				<priority>1</priority>
+																			</itemsupplier>
+																		</itemsuppliers>
+																	</item>
+																	<quantity>-1</quantity>
+																</flow>
+															</flows>
+														</blockedby>
+													</dependency>
+												</dependencies>
+												<suboperations>
+													<suboperation>
+														<operation name="10. task 4a" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="factory"/>
+														</operation>
+													</suboperation>
+													<suboperation>
+														<operation name="10. task 4b" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="factory"/>
+															<flows>
+																<flow xsi:type="flow_start">
+																	<item name="10. material 3">
+																		<itemsuppliers>
+																			<itemsupplier>
+																				<supplier name="10. supplier"/>
+																				<leadtime>P30D</leadtime>
+																				<priority>1</priority>
+																			</itemsupplier>
+																		</itemsuppliers>
+																	</item>
+																	<quantity>-1</quantity>
+																</flow>
+															</flows>
+														</operation>
+													</suboperation>
+													<suboperation>
+														<operation name="10. task 4c" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="factory"/>
+															<dependencies>
+																<dependency>
+																	<blockedby name="10. task 4a"/>
+																</dependency>
+																<dependency>
+																	<blockedby name="10. task 4b"/>
+																</dependency>
+															</dependencies>
+															<flows>
+																<flow xsi:type="flow_start">
+																	<item name="10. material 4">
+																		<itemsuppliers>
+																			<itemsupplier>
+																				<supplier name="10. supplier"/>
+																				<leadtime>P40D</leadtime>
+																				<priority>1</priority>
+																			</itemsupplier>
+																		</itemsuppliers>
+																	</item>
+																	<quantity>-1</quantity>
+																</flow>
+															</flows>
+														</operation>
+													</suboperation>
+												</suboperations>
+											</blockedby>
+										</dependency>
+									</dependencies>
+								</blockedby>
+							</dependency>
+							<dependency>
+								<blockedby name="10. task 3" xsi:type="operation_fixed_time" duration="P1D">
+									<location name="X"/>
+									<dependencies>
+										<dependency>
+											<blockedby name="10. task 5"/>
+										</dependency>
+										<dependency>
+											<blockedby name="10. task 4a"/>
+										</dependency>
+									</dependencies>
+									<loads>
+										<load>
+											<resource name="10. Resource">
+												<maximum>1</maximum>
+												<available name="10. resource working hours">
+													<default>1</default>
+													<buckets>
+														<!-- 64 + 1 = 65 = saturday and sunday -->
+														<bucket start="2023-02-20T00:00:00" days="65" value="0"/>
+														<bucket end="2023-02-20T00:00:00" value="0"/>
+													</buckets>
+												</available>
+											</resource>
+											<quantity>1</quantity>
+										</load>
+									</loads>
+									<flows>
+										<flow xsi:type="flow_start">
+											<item name="10. material 5">
+												<itemsuppliers>
+													<itemsupplier>
+														<supplier name="10. supplier"/>
+														<leadtime>P50D</leadtime>
+														<priority>1</priority>
+													</itemsupplier>
+												</itemsuppliers>
+											</item>
+											<quantity>-1</quantity>
+										</flow>
+									</flows>
+								</blockedby>
+							</dependency>
+						</dependencies>
+					</blockedby>
+				</dependency>
+			</dependencies>
+		</operation>
+		<!-- Same as 10, but with a resource maximum calendar instead. -->
+		<operation name="11. constrained material and capacity" xsi:type="operation_fixed_time" duration="P1D">
+			<location name="X"/>
+			<dependencies>
+				<dependency>
+					<quantity>2</quantity>
+					<blockedby name="11. task 1" xsi:type="operation_fixed_time" duration="P1D">
+						<location name="X"/>
+						<flows>
+							<flow xsi:type="flow_start">
+								<item name="11. material 1">
+									<itemsuppliers>
+										<itemsupplier>
+											<supplier name="11. supplier"/>
+											<leadtime>P10D</leadtime>
+											<priority>1</priority>
+										</itemsupplier>
+									</itemsuppliers>
+								</item>
+								<quantity>-1</quantity>
+							</flow>
+						</flows>
+						<dependencies>
+							<dependency>
+								<blockedby name="11. task 2" xsi:type="operation_fixed_time" duration="P1D">
+									<location name="X"/>
+									<dependencies>
+										<dependency>
+											<blockedby name="11. task 4" xsi:type="operation_routing">
+												<location name="X"/>
+												<dependencies>
+													<dependency>
+														<blockedby name="11. task 5" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="X"/>
+															<flows>
+																<flow xsi:type="flow_start">
+																	<item name="11. material 2">
+																		<itemsuppliers>
+																			<itemsupplier>
+																				<supplier name="11. supplier"/>
+																				<leadtime>P20D</leadtime>
+																				<priority>1</priority>
+																			</itemsupplier>
+																		</itemsuppliers>
+																	</item>
+																	<quantity>-1</quantity>
+																</flow>
+															</flows>
+														</blockedby>
+													</dependency>
+												</dependencies>
+												<suboperations>
+													<suboperation>
+														<operation name="11. task 4a" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="factory"/>
+														</operation>
+													</suboperation>
+													<suboperation>
+														<operation name="11. task 4b" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="factory"/>
+															<flows>
+																<flow xsi:type="flow_start">
+																	<item name="11. material 3">
+																		<itemsuppliers>
+																			<itemsupplier>
+																				<supplier name="11. supplier"/>
+																				<leadtime>P30D</leadtime>
+																				<priority>1</priority>
+																			</itemsupplier>
+																		</itemsuppliers>
+																	</item>
+																	<quantity>-1</quantity>
+																</flow>
+															</flows>
+														</operation>
+													</suboperation>
+													<suboperation>
+														<operation name="11. task 4c" xsi:type="operation_fixed_time" duration="P1D">
+															<location name="factory"/>
+															<dependencies>
+																<dependency>
+																	<blockedby name="11. task 4a"/>
+																</dependency>
+																<dependency>
+																	<blockedby name="11. task 4b"/>
+																</dependency>
+															</dependencies>
+															<flows>
+																<flow xsi:type="flow_start">
+																	<item name="11. material 4">
+																		<itemsuppliers>
+																			<itemsupplier>
+																				<supplier name="11. supplier"/>
+																				<leadtime>P40D</leadtime>
+																				<priority>1</priority>
+																			</itemsupplier>
+																		</itemsuppliers>
+																	</item>
+																	<quantity>-1</quantity>
+																</flow>
+															</flows>
+														</operation>
+													</suboperation>
+												</suboperations>
+											</blockedby>
+										</dependency>
+									</dependencies>
+								</blockedby>
+							</dependency>
+							<dependency>
+								<blockedby name="11. task 3" xsi:type="operation_fixed_time" duration="P1D">
+									<location name="X"/>
+									<dependencies>
+										<dependency>
+											<blockedby name="11. task 5"/>
+										</dependency>
+										<dependency>
+											<blockedby name="11. task 4a"/>
+										</dependency>
+									</dependencies>
+									<loads>
+										<load>
+											<resource name="11. Resource">
+												<maximum_calendar name="11. resource working hours">
+													<default>1</default>
+													<buckets>
+														<!-- 64 + 1 = 65 = saturday and sunday -->
+														<bucket start="2023-02-20T00:00:00" days="65" value="0"/>
+														<bucket end="2023-02-20T00:00:00" value="0"/>
+													</buckets>
+												</maximum_calendar>
+											</resource>
+											<quantity>1</quantity>
+										</load>
+									</loads>
+									<flows>
+										<flow xsi:type="flow_start">
+											<item name="11. material 5">
+												<itemsuppliers>
+													<itemsupplier>
+														<supplier name="10. supplier"/>
+														<leadtime>P50D</leadtime>
+														<priority>1</priority>
+													</itemsupplier>
+												</itemsuppliers>
+											</item>
+											<quantity>-1</quantity>
+										</flow>
+									</flows>
+								</blockedby>
+							</dependency>
+						</dependencies>
+					</blockedby>
+				</dependency>
+			</dependencies>
+		</operation>		
 	</operations>
 	<operationplans>
 		<operationplan reference="MO #1" quantity="1" status="approved" end="2023-03-05T00:00:00">
@@ -379,7 +691,7 @@
 		</operationplan>
 		<operationplan reference="MO #2" quantity="1" status="confirmed" end="2022-12-29T00:00:00">
 			<operation name="9. task X2 step 2"/>
-		</operationplan>		
+		</operationplan>
 	</operationplans>
 	<demands>
 		<demand name="1. order">
@@ -464,6 +776,22 @@
 			<item name="9. with quantity-per and wip"/>
 			<location name="X"/>
 		</demand>
+		<demand name="10. constrained material and capacity">
+			<operation name="10. constrained material and capacity"/>
+			<quantity>1</quantity>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="10. constrained material and capacity"/>
+			<location name="X"/>
+		</demand>
+		<demand name="11. constrained material and capacity">
+			<operation name="11. constrained material and capacity"/>
+			<quantity>1</quantity>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="11. constrained material and capacity"/>
+			<location name="X"/>
+		</demand>		
 	</demands>
 
 <?python

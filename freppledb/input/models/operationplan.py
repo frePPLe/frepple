@@ -1209,7 +1209,7 @@ class DistributionOrder(OperationPlan):
         # Assure the start date, end date and quantity are consistent
         if change or create:
             interruptions = []
-            if "enddate" in fields:
+            if "enddate" in fields or "receipt_date" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
                 self.startdate = self.calculateOperationTime(
                     self.enddate,
@@ -1471,7 +1471,7 @@ class PurchaseOrder(OperationPlan):
         # Assure the start date, end date and quantity are consistent
         if change or create:
             interruptions = []
-            if "enddate" in fields:
+            if "enddate" in fields or "receipt_date" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
                 self.startdate = self.calculateOperationTime(
                     self.enddate,

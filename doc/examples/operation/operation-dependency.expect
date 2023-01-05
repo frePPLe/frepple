@@ -1,40 +1,48 @@
-Assemble guidance system,2023-05-01 00:00:00,2023-05-31 00:00:00,1.0,rocket for 2023 Q2
-Assemble guidance system,2023-08-02 00:00:00,2023-09-01 00:00:00,1.0,rocket for 2023 Q3
-Assemble propulsion system,2023-05-18 00:00:00,2023-05-31 00:00:00,1.0,rocket for 2023 Q2
-Assemble propulsion system,2023-08-19 00:00:00,2023-09-01 00:00:00,1.0,rocket for 2023 Q3
-Assemble rocket,2023-05-31 00:00:00,2023-06-30 00:00:00,1.0,rocket for 2023 Q2
-Assemble rocket,2023-09-01 00:00:00,2023-10-01 00:00:00,1.0,rocket for 2023 Q3
-Assemble structural system,2023-05-08 00:00:00,2023-05-18 00:00:00,1.0,rocket for 2023 Q2
-Assemble structural system,2023-08-09 00:00:00,2023-08-19 00:00:00,1.0,rocket for 2023 Q3
-design communication equipment,2023-04-17 00:00:00,2023-05-01 00:00:00,1.0,rocket for 2023 Q2
-design communication equipment,2023-07-19 00:00:00,2023-08-02 00:00:00,1.0,rocket for 2023 Q3
-design power head,2023-05-04 00:00:00,2023-05-18 00:00:00,1.0,rocket for 2023 Q2
-design power head,2023-08-05 00:00:00,2023-08-19 00:00:00,1.0,rocket for 2023 Q3
-design radars,2023-04-28 00:00:00,2023-05-01 00:00:00,1.0,rocket for 2023 Q2
-design radars,2023-07-30 00:00:00,2023-08-02 00:00:00,1.0,rocket for 2023 Q3
-design rocket engine,2023-04-07 00:00:00,2023-04-28 00:00:00,1.0,rocket for 2023 Q2
-design rocket engine,2023-07-09 00:00:00,2023-07-30 00:00:00,1.0,rocket for 2023 Q3
-design rocket nozzle,2023-05-04 00:00:00,2023-05-18 00:00:00,1.0,rocket for 2023 Q2
-design rocket nozzle,2023-08-05 00:00:00,2023-08-19 00:00:00,1.0,rocket for 2023 Q3
-design sensors,2023-04-18 00:00:00,2023-05-01 00:00:00,1.0,rocket for 2023 Q2
-design sensors,2023-07-20 00:00:00,2023-08-02 00:00:00,1.0,rocket for 2023 Q3
-design tank pumps,2023-04-28 00:00:00,2023-05-18 00:00:00,1.0,rocket for 2023 Q2
-design tank pumps,2023-07-30 00:00:00,2023-08-19 00:00:00,1.0,rocket for 2023 Q3
-determine propellants,2023-04-04 00:00:00,2023-04-07 00:00:00,1.0,rocket for 2023 Q2
-determine propellants,2023-07-06 00:00:00,2023-07-09 00:00:00,1.0,rocket for 2023 Q3
-make control fins,2023-03-24 00:00:00,2023-04-18 00:00:00,1.0,rocket for 2023 Q2
-make control fins,2023-06-25 00:00:00,2023-07-20 00:00:00,1.0,rocket for 2023 Q3
-make cylindrical body,2023-03-18 00:00:00,2023-04-17 00:00:00,1.0,rocket for 2023 Q2
-make cylindrical body,2023-06-19 00:00:00,2023-07-19 00:00:00,1.0,rocket for 2023 Q3
-make fairings,2023-03-31 00:00:00,2023-04-10 00:00:00,1.0,rocket for 2023 Q2
-make fairings,2023-07-02 00:00:00,2023-07-12 00:00:00,1.0,rocket for 2023 Q3
-program on-board computers,2023-04-10 00:00:00,2023-05-01 00:00:00,1.0,rocket for 2023 Q2
-program on-board computers,2023-07-12 00:00:00,2023-08-02 00:00:00,1.0,rocket for 2023 Q3
-Purchase guidance @ factory from External suppliers,2023-01-01 00:00:00,2023-05-01 00:00:00,1.0
-Purchase guidance @ factory from External suppliers,2023-04-04 00:00:00,2023-08-02 00:00:00,1.0
-Purchase propellant @ factory from External suppliers,2023-04-18 00:00:00,2023-05-18 00:00:00,100.0
-Purchase propellant @ factory from External suppliers,2023-07-20 00:00:00,2023-08-19 00:00:00,100.0
-Purchase steel @ factory from External suppliers,2023-04-18 00:00:00,2023-05-08 00:00:00,300.0
-Purchase steel @ factory from External suppliers,2023-07-20 00:00:00,2023-08-09 00:00:00,300.0
-Purchase titanium @ factory from External suppliers,2023-01-28 00:00:00,2023-05-08 00:00:00,200.0
-Purchase titanium @ factory from External suppliers,2023-05-01 00:00:00,2023-08-09 00:00:00,200.0
+Assemble guidance system,2023-04-30 23:00:00,2023-05-30 23:00:00,1.0,rocket for 2023 Q2
+Assemble guidance system,2023-08-17 00:00:00,2023-09-16 00:00:00,1.0,rocket for 2023 Q3
+Assemble propulsion system,2023-05-17 23:00:00,2023-05-30 23:00:00,1.0,rocket for 2023 Q2
+Assemble propulsion system,2023-09-03 00:00:00,2023-09-16 00:00:00,1.0,rocket for 2023 Q3
+Assemble rocket - step 1,2023-05-30 23:00:00,2023-06-04 23:00:00,1.0,rocket for 2023 Q2
+Assemble rocket - step 1,2023-09-16 00:00:00,2023-09-21 00:00:00,1.0,rocket for 2023 Q3
+Assemble rocket - step 2,2023-06-04 23:00:00,2023-06-09 23:00:00,1.0,rocket for 2023 Q2
+Assemble rocket - step 2,2023-09-21 00:00:00,2023-09-26 00:00:00,1.0,rocket for 2023 Q3
+Assemble rocket - step 3,2023-06-04 23:00:00,2023-06-09 23:00:00,1.0,rocket for 2023 Q2
+Assemble rocket - step 3,2023-09-21 00:00:00,2023-09-26 00:00:00,1.0,rocket for 2023 Q3
+Assemble rocket - step 4,2023-06-09 23:00:00,2023-06-14 23:00:00,1.0,rocket for 2023 Q2
+Assemble rocket - step 4,2023-09-26 00:00:00,2023-10-01 00:00:00,1.0,rocket for 2023 Q3
+Assemble rocket,2023-03-17 23:00:00,2023-06-14 23:00:00,1.0,rocket for 2023 Q2
+Assemble rocket,2023-07-04 00:00:00,2023-10-01 00:00:00,1.0,rocket for 2023 Q3
+Assemble structural system,2023-05-07 23:00:00,2023-05-17 23:00:00,1.0,rocket for 2023 Q2
+Assemble structural system,2023-08-24 00:00:00,2023-09-03 00:00:00,1.0,rocket for 2023 Q3
+design communication equipment,2023-04-16 23:00:00,2023-04-30 23:00:00,1.0,rocket for 2023 Q2
+design communication equipment,2023-08-03 00:00:00,2023-08-17 00:00:00,1.0,rocket for 2023 Q3
+design power head,2023-05-03 23:00:00,2023-05-17 23:00:00,1.0,rocket for 2023 Q2
+design power head,2023-08-20 00:00:00,2023-09-03 00:00:00,1.0,rocket for 2023 Q3
+design radars,2023-04-27 23:00:00,2023-04-30 23:00:00,1.0,rocket for 2023 Q2
+design radars,2023-08-14 00:00:00,2023-08-17 00:00:00,1.0,rocket for 2023 Q3
+design rocket engine,2023-04-06 23:00:00,2023-04-27 23:00:00,1.0,rocket for 2023 Q2
+design rocket engine,2023-07-24 00:00:00,2023-08-14 00:00:00,1.0,rocket for 2023 Q3
+design rocket nozzle,2023-05-03 23:00:00,2023-05-17 23:00:00,1.0,rocket for 2023 Q2
+design rocket nozzle,2023-08-20 00:00:00,2023-09-03 00:00:00,1.0,rocket for 2023 Q3
+design sensors,2023-04-17 23:00:00,2023-04-30 23:00:00,1.0,rocket for 2023 Q2
+design sensors,2023-08-04 00:00:00,2023-08-17 00:00:00,1.0,rocket for 2023 Q3
+design tank pumps,2023-04-27 23:00:00,2023-05-17 23:00:00,1.0,rocket for 2023 Q2
+design tank pumps,2023-08-14 00:00:00,2023-09-03 00:00:00,1.0,rocket for 2023 Q3
+determine propellants,2023-04-03 23:00:00,2023-04-06 23:00:00,1.0,rocket for 2023 Q2
+determine propellants,2023-07-21 00:00:00,2023-07-24 00:00:00,1.0,rocket for 2023 Q3
+make control fins,2023-03-23 23:00:00,2023-04-17 23:00:00,1.0,rocket for 2023 Q2
+make control fins,2023-07-10 00:00:00,2023-08-04 00:00:00,1.0,rocket for 2023 Q3
+make cylindrical body,2023-03-17 23:00:00,2023-04-16 23:00:00,1.0,rocket for 2023 Q2
+make cylindrical body,2023-07-04 00:00:00,2023-08-03 00:00:00,1.0,rocket for 2023 Q3
+make fairings,2023-03-30 23:00:00,2023-04-09 23:00:00,1.0,rocket for 2023 Q2
+make fairings,2023-07-17 00:00:00,2023-07-27 00:00:00,1.0,rocket for 2023 Q3
+program on-board computers,2023-04-09 23:00:00,2023-04-30 23:00:00,1.0,rocket for 2023 Q2
+program on-board computers,2023-07-27 00:00:00,2023-08-17 00:00:00,1.0,rocket for 2023 Q3
+Purchase guidance @ factory from External suppliers,2022-12-31 23:00:00,2023-04-30 23:00:00,1.0
+Purchase guidance @ factory from External suppliers,2023-04-19 00:00:00,2023-08-17 00:00:00,1.0
+Purchase propellant @ factory from External suppliers,2023-04-17 23:00:00,2023-05-17 23:00:00,100.0
+Purchase propellant @ factory from External suppliers,2023-08-04 00:00:00,2023-09-03 00:00:00,100.0
+Purchase steel @ factory from External suppliers,2023-04-17 23:00:00,2023-05-07 23:00:00,300.0
+Purchase steel @ factory from External suppliers,2023-08-04 00:00:00,2023-08-24 00:00:00,300.0
+Purchase titanium @ factory from External suppliers,2023-01-27 23:00:00,2023-05-07 23:00:00,200.0
+Purchase titanium @ factory from External suppliers,2023-05-16 00:00:00,2023-08-24 00:00:00,200.0

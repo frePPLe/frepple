@@ -134,7 +134,8 @@ void OperationPlan::setChanged(bool b) {
   // All dependencies
   for (auto i : dependencies) {
     if (i->getFirst() == this && i->getSecond()) {
-      if (i->getSecond()->owner)
+      if (i->getSecond()->owner && i->getSecond()->owner != getOwner() &&
+          i->getSecond()->owner != this)
         i->getSecond()->owner->setChanged(b);
       else {
         i->getSecond()->oper->setChanged(b);
@@ -142,7 +143,8 @@ void OperationPlan::setChanged(bool b) {
       }
     }
     if (i->getSecond() == this && i->getFirst()) {
-      if (i->getFirst()->owner)
+      if (i->getFirst()->owner && i->getFirst()->owner != getOwner() &&
+          i->getFirst()->owner != this)
         i->getFirst()->owner->setChanged(b);
       else {
         i->getFirst()->oper->setChanged(b);

@@ -1132,13 +1132,9 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   Date top_q_date(data->state->q_date);
   Date q_date;
   if (useDependencies) {
-    if (data->dependency_list.empty()) {
+    if (data->dependency_list.empty())
       // Starting a new dependency list.
       data->populateDependencies(oper);
-      for (auto d : data->dependency_list)
-        logger << "   " << d.first << "  " << d.second.first << "  "
-               << d.second.second << endl;
-    }
 
     // Plan all final steps (i.e. steps without blockedby dependency)
     // It will recursively plan into the preceding steps.
@@ -2192,17 +2188,31 @@ void SolverCreate::SolverData::populateDependencies(const Operation* o) {
   for (auto dpd : o->getDependencies()) {
     if (dpd->getOperation() != o) continue;
     auto l = dependency_list.find(dpd->getBlockedBy());
-    if (l == dependency_list.end())
+    if (l == dependency_list.end()) {
       dependency_list[dpd->getBlockedBy()] =
           pair<unsigned short, Date>(1, Date::infiniteFuture);
-    else
+      // Recursive call
+      populateDependencies(dpd->getBlockedBy());
+    } else
       ++l->second.first;
-    // Recursive call
-    populateDependencies(dpd->getBlockedBy());
   }
-  for (auto sub : o->getSubOperations())
-    // Recursive call
-    populateDependencies(sub->getOperation());
+  if (o->hasType<OperationRouting>()) {
+    for (auto sub : o->getSubOperations()) {
+      // Recursive call for end-of-chain suboperations
+      bool isblocked = false;
+      for (auto& dpd : sub->getOperation()->getDependencies()) {
+        if (dpd->getBlockedBy() == sub->getOperation()) {
+          isblocked = true;
+          break;
+        }
+      }
+      if (!isblocked) populateDependencies(sub->getOperation());
+    }
+  } else if (!o->getSubOperations().empty()) {
+    for (auto sub : o->getSubOperations())
+      // Recursive call
+      populateDependencies(sub->getOperation());
+  }
 }
 
 void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,

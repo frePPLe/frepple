@@ -410,18 +410,6 @@ class PathReport(GridReport):
       item_description,
       (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
       filter (where operation_dependency.blockedby_id is not null)
-      from operation_dependency where operation_id = grandparentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-      filter (where operation_dependency.operation_id is not null)
-      from operation_dependency where blockedby_id = grandparentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-      filter (where operation_dependency.blockedby_id is not null)
-      from operation_dependency where operation_id = parentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-      filter (where operation_dependency.operation_id is not null)
-      from operation_dependency where blockedby_id = parentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-      filter (where operation_dependency.blockedby_id is not null)
       from operation_dependency where operation_id = (case when parentoperation is null then operation else sibling end)),
       (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
       filter (where operation_dependency.operation_id is not null)
@@ -521,10 +509,6 @@ class PathReport(GridReport):
       null,
       item.description,
       null, -- blockedby
-      null, --blocking
-      null, -- blockedby
-      null, --blocking
-      null, -- blockedby
       null --blocking
       from itemdistribution
       inner join item parent on parent.name = itemdistribution.item_id
@@ -577,10 +561,6 @@ class PathReport(GridReport):
       null,
       item.description,
       null, -- blockedby
-      null, --blocking
-      null, -- blockedby
-      null, --blocking
-      null, -- blockedby
       null --blocking
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
@@ -611,10 +591,6 @@ class PathReport(GridReport):
       null,
       null,
       item.description,
-      null, -- blockedby
-      null, --blocking
-      null, -- blockedby
-      null, --blocking
       null, -- blockedby
       null --blocking
       from itemsupplier
@@ -667,18 +643,6 @@ class PathReport(GridReport):
       grandparentitem_description,
       parentitem_description,
       item_description,
-      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-      filter (where operation_dependency.blockedby_id is not null)
-      from operation_dependency where operation_id = grandparentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-      filter (where operation_dependency.operation_id is not null)
-      from operation_dependency where blockedby_id = grandparentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-      filter (where operation_dependency.blockedby_id is not null)
-      from operation_dependency where operation_id = parentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-      filter (where operation_dependency.operation_id is not null)
-      from operation_dependency where blockedby_id = parentoperation),
       (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
       filter (where operation_dependency.blockedby_id is not null)
       from operation_dependency where operation_id = (case when parentoperation is null then operation else sibling end)),
@@ -780,10 +744,6 @@ class PathReport(GridReport):
       null,
       item.description,
       null, -- blockedby
-      null, --blocking
-      null, -- blockedby
-      null, --blocking
-      null, -- blockedby
       null --blocking
       from itemdistribution
       inner join item parent on parent.name = itemdistribution.item_id
@@ -814,10 +774,6 @@ class PathReport(GridReport):
       null,
       null,
       item.description,
-      null, -- blockedby
-      null, --blocking
-      null, -- blockedby
-      null, --blocking
       null, -- blockedby
       null --blocking
       from itemsupplier
@@ -850,10 +806,6 @@ class PathReport(GridReport):
       null,
       null,
       item.description,
-      null, -- blockedby
-      null, --blocking
-      null, -- blockedby
-      null, --blocking
       null, -- blockedby
       null --blocking
       from itemsupplier
@@ -909,18 +861,6 @@ class PathReport(GridReport):
       grandparentitem_description,
       parentitem_description,
       item_description,
-      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-      filter (where operation_dependency.blockedby_id is not null)
-      from operation_dependency where operation_id = grandparentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-      filter (where operation_dependency.operation_id is not null)
-      from operation_dependency where blockedby_id = grandparentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-      filter (where operation_dependency.blockedby_id is not null)
-      from operation_dependency where operation_id = parentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-      filter (where operation_dependency.operation_id is not null)
-      from operation_dependency where blockedby_id = parentoperation),
       (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
       filter (where operation_dependency.blockedby_id is not null)
       from operation_dependency where operation_id = (case when parentoperation is null then operation else sibling end)),
@@ -1043,18 +983,6 @@ class PathReport(GridReport):
       item_description,
       (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
       filter (where operation_dependency.blockedby_id is not null)
-      from operation_dependency where operation_id = grandparentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-      filter (where operation_dependency.operation_id is not null)
-      from operation_dependency where blockedby_id = grandparentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-      filter (where operation_dependency.blockedby_id is not null)
-      from operation_dependency where operation_id = parentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
-      filter (where operation_dependency.operation_id is not null)
-      from operation_dependency where blockedby_id = parentoperation),
-      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
-      filter (where operation_dependency.blockedby_id is not null)
       from operation_dependency where operation_id = (case when parentoperation is null then operation else sibling end)),
       (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
       filter (where operation_dependency.operation_id is not null)
@@ -1155,10 +1083,6 @@ class PathReport(GridReport):
       null,
       item.description,
       null, -- blockedby
-      null, --blocking
-      null, -- blockedby
-      null, --blocking
-      null, -- blockedby
       null --blocking
       from itemdistribution
       inner join item parent on parent.name = itemdistribution.item_id
@@ -1214,10 +1138,6 @@ class PathReport(GridReport):
       null,
       item.description,
       null, -- blockedby
-      null, --blocking
-      null, -- blockedby
-      null, --blocking
-      null, -- blockedby
       null --blocking
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
@@ -1248,10 +1168,6 @@ class PathReport(GridReport):
       null,
       null,
       item.description,
-      null, -- blockedby
-      null, --blocking
-      null, -- blockedby
-      null, --blocking
       null, -- blockedby
       null --blocking
       from itemsupplier
@@ -1339,8 +1255,8 @@ class PathReport(GridReport):
                 "sizemaximum": opdetail["grandparentoperation_max"],
                 "sizemultiple": opdetail["grandparentoperation_multiple"],
                 "alternate": "false",
-                "blockedby": tuple(json.loads(i[21]).items()) if i[21] else None,
-                "blocking": tuple(json.loads(i[22]).items()) if i[22] else None,
+                "blockedby": None,
+                "blocking": None,
             }
             reportclass.node_count.add(i[11])
             yield grandparentoperation
@@ -1391,8 +1307,8 @@ class PathReport(GridReport):
                 "sizemaximum": opdetail["parentoperation_max"],
                 "sizemultiple": opdetail["parentoperation_multiple"],
                 "alternate": "false",
-                "blockedby": tuple(json.loads(i[23]).items()) if i[23] else None,
-                "blocking": tuple(json.loads(i[24]).items()) if i[24] else None,
+                "blockedby": None,
+                "blocking": None,
             }
             reportclass.node_count.add(i[8])
             yield parentoperation
@@ -1451,8 +1367,8 @@ class PathReport(GridReport):
                 "alternate": "false",
                 "alternate_priority": (i[13] or i[10] or i[3] or 999),
                 "alternate_operation": (i[11] or i[8] or i[0]),
-                "blockedby": tuple(json.loads(i[25]).items()) if i[25] else None,
-                "blocking": tuple(json.loads(i[26]).items()) if i[26] else None,
+                "blockedby": tuple(json.loads(i[21]).items()) if i[21] else None,
+                "blocking": tuple(json.loads(i[22]).items()) if i[22] else None,
             }
             reportclass.node_count.add(i[0])
             yield operation
@@ -1477,23 +1393,15 @@ class PathReport(GridReport):
                         request, buffer, downstream, depth + 1, i[0], float(quantity)
                     )
 
-        if (i[21] or i[23] or i[25]) and not downstream:
-            for blockedby in (
-                (tuple(json.loads(i[21]).items()) if i[21] else tuple())
-                + (tuple(json.loads(i[23]).items()) if i[23] else tuple())
-                + (tuple(json.loads(i[25]).items()) if i[25] else tuple())
-            ):
+        if i[21] and not downstream:
+            for blockedby in tuple(json.loads(i[21]).items()):
                 if not blockedby[0] in reportclass.operation_dict:
                     yield from reportclass.getOperationFromName(
                         request, blockedby[0], downstream, depth + 1, i[0], blockedby[1]
                     )
 
-        if (i[22] or i[24] or i[26]) and downstream:
-            for blocking in (
-                (tuple(json.loads(i[22]).items()) if i[22] else tuple())
-                + (tuple(json.loads(i[24]).items()) if i[24] else tuple())
-                + (tuple(json.loads(i[26]).items()) if i[26] else tuple())
-            ):
+        if i[22] and downstream:
+            for blocking in tuple(json.loads(i[22]).items()):
                 if not blocking[0] in reportclass.operation_dict:
                     yield from reportclass.getOperationFromName(
                         request, blocking[0], downstream, depth + 1, i[0], blocking[1]

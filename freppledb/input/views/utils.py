@@ -408,8 +408,12 @@ class PathReport(GridReport):
       grandparentitem_description,
       parentitem_description,
       item_description,
-      blockedby,
-      blocking
+      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
+      filter (where operation_dependency.blockedby_id is not null)
+      from operation_dependency where operation_id = (case when parentoperation is null then operation else sibling end)),
+      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
+      filter (where operation_dependency.operation_id is not null)
+      from operation_dependency where blockedby_id = (case when parentoperation is null then operation else sibling end))
        from
       (
       select operation.name as operation,
@@ -458,12 +462,8 @@ class PathReport(GridReport):
            item.name as item_name,
            grandparentitem.description as grandparentitem_description,
            parentitem.description as parentitem_description,
-           item.description as item_description,
-           jsonb_object_agg(distinct operation_dependency1.blockedby_id, operation_dependency1.quantity) filter (where operation_dependency1.blockedby_id is not null) as blockedby,
-           jsonb_object_agg(distinct operation_dependency2.operation_id, operation_dependency2.quantity) filter (where operation_dependency2.operation_id is not null) as blocking
+           item.description as item_description
       from operation
-      left outer join operation_dependency operation_dependency1 on operation_dependency1.operation_id = operation.name
-      left outer join operation_dependency operation_dependency2 on operation_dependency2.blockedby_id = operation.name
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
       left outer join operation parentoperation on parentoperation.name = operation.owner_id
@@ -643,8 +643,12 @@ class PathReport(GridReport):
       grandparentitem_description,
       parentitem_description,
       item_description,
-      blockedby,
-      blocking
+      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
+      filter (where operation_dependency.blockedby_id is not null)
+      from operation_dependency where operation_id = (case when parentoperation is null then operation else sibling end)),
+      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
+      filter (where operation_dependency.operation_id is not null)
+      from operation_dependency where blockedby_id = (case when parentoperation is null then operation else sibling end))
        from
       (
       select operation.name as operation,
@@ -693,12 +697,8 @@ class PathReport(GridReport):
            item.name as item_name,
            grandparentitem.description as grandparentitem_description,
            parentitem.description as parentitem_description,
-           item.description as item_description,
-           jsonb_object_agg(distinct operation_dependency1.blockedby_id, operation_dependency1.quantity) filter (where operation_dependency1.blockedby_id is not null) as blockedby,
-           jsonb_object_agg(distinct operation_dependency2.operation_id, operation_dependency2.quantity) filter (where operation_dependency2.operation_id is not null) as blocking
+           item.description as item_description
       from operation
-      left outer join operation_dependency operation_dependency1 on operation_dependency1.operation_id = operation.name
-      left outer join operation_dependency operation_dependency2 on operation_dependency2.blockedby_id = operation.name
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
       left outer join operation parentoperation on parentoperation.name = operation.owner_id
@@ -861,8 +861,12 @@ class PathReport(GridReport):
       grandparentitem_description,
       parentitem_description,
       item_description,
-      blockedby,
-      blocking
+      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
+      filter (where operation_dependency.blockedby_id is not null)
+      from operation_dependency where operation_id = (case when parentoperation is null then operation else sibling end)),
+      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
+      filter (where operation_dependency.operation_id is not null)
+      from operation_dependency where blockedby_id = (case when parentoperation is null then operation else sibling end))
        from
       (
       select operation.name as operation,
@@ -911,12 +915,8 @@ class PathReport(GridReport):
            item.name as item_name,
            grandparentitem.description as grandparentitem_description,
            parentitem.description as parentitem_description,
-           item.description as item_description,
-           jsonb_object_agg(distinct operation_dependency1.blockedby_id, operation_dependency1.quantity) filter (where operation_dependency1.blockedby_id is not null) as blockedby,
-           jsonb_object_agg(distinct operation_dependency2.operation_id, operation_dependency2.quantity) filter (where operation_dependency2.operation_id is not null) as blocking
+           item.description as item_description
       from operation
-      left outer join operation_dependency operation_dependency1 on operation_dependency1.operation_id = operation.name
-      left outer join operation_dependency operation_dependency2 on operation_dependency2.blockedby_id = operation.name
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
       left outer join operation parentoperation on parentoperation.name = operation.owner_id
@@ -981,8 +981,12 @@ class PathReport(GridReport):
       grandparentitem_description,
       parentitem_description,
       item_description,
-      blockedby,
-      blocking
+      (select jsonb_object_agg(distinct operation_dependency.blockedby_id, operation_dependency.quantity)
+      filter (where operation_dependency.blockedby_id is not null)
+      from operation_dependency where operation_id = (case when parentoperation is null then operation else sibling end)),
+      (select jsonb_object_agg(distinct operation_dependency.operation_id, operation_dependency.quantity)
+      filter (where operation_dependency.operation_id is not null)
+      from operation_dependency where blockedby_id = (case when parentoperation is null then operation else sibling end))
       from
       (
       select operation.name as operation,
@@ -1031,12 +1035,8 @@ class PathReport(GridReport):
            item.name as item_name,
            grandparentitem.description as grandparentitem_description,
            parentitem.description as parentitem_description,
-           item.description as item_description,
-           jsonb_object_agg(distinct operation_dependency1.blockedby_id, operation_dependency1.quantity) filter (where operation_dependency1.blockedby_id is not null) as blockedby,
-           jsonb_object_agg(distinct operation_dependency2.operation_id, operation_dependency2.quantity) filter (where operation_dependency2.operation_id is not null) as blocking
+           item.description as item_description
       from operation
-      left outer join operation_dependency operation_dependency1 on operation_dependency1.operation_id = operation.name
-      left outer join operation_dependency operation_dependency2 on operation_dependency2.blockedby_id = operation.name
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
       left outer join operation parentoperation on parentoperation.name = operation.owner_id
@@ -1255,8 +1255,8 @@ class PathReport(GridReport):
                 "sizemaximum": opdetail["grandparentoperation_max"],
                 "sizemultiple": opdetail["grandparentoperation_multiple"],
                 "alternate": "false",
-                "blockedby": tuple(json.loads(i[21]).items()) if i[21] else None,
-                "blocking": tuple(json.loads(i[22]).items()) if i[22] else None,
+                "blockedby": None,
+                "blocking": None,
             }
             reportclass.node_count.add(i[11])
             yield grandparentoperation
@@ -1307,8 +1307,8 @@ class PathReport(GridReport):
                 "sizemaximum": opdetail["parentoperation_max"],
                 "sizemultiple": opdetail["parentoperation_multiple"],
                 "alternate": "false",
-                "blockedby": tuple(json.loads(i[21]).items()) if i[21] else None,
-                "blocking": tuple(json.loads(i[22]).items()) if i[22] else None,
+                "blockedby": None,
+                "blocking": None,
             }
             reportclass.node_count.add(i[8])
             yield parentoperation
@@ -1395,15 +1395,17 @@ class PathReport(GridReport):
 
         if i[21] and not downstream:
             for blockedby in tuple(json.loads(i[21]).items()):
-                yield from reportclass.getOperationFromName(
-                    request, blockedby[0], downstream, depth + 1, i[0], blockedby[1]
-                )
+                if not blockedby[0] in reportclass.operation_dict:
+                    yield from reportclass.getOperationFromName(
+                        request, blockedby[0], downstream, depth + 1, i[0], blockedby[1]
+                    )
 
         if i[22] and downstream:
             for blocking in tuple(json.loads(i[22]).items()):
-                yield from reportclass.getOperationFromName(
-                    request, blocking[0], downstream, depth + 1, i[0], blocking[1]
-                )
+                if not blocking[0] in reportclass.operation_dict:
+                    yield from reportclass.getOperationFromName(
+                        request, blocking[0], downstream, depth + 1, i[0], blocking[1]
+                    )
 
     @classmethod
     def query(reportclass, request, basequery):

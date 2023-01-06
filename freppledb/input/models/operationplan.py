@@ -47,7 +47,7 @@ from ..models.calendar import Calendar
 from ..models.demand import Demand
 from ..models.item import Item
 from ..models.location import Location
-from ..models.operation import Operation, OperationResource
+from ..models.operation import Operation, OperationResource, OperationDependency
 from ..models.resource import Resource
 from ..models.supplier import Supplier
 
@@ -494,22 +494,6 @@ class OperationPlan(AuditModel):
             ManufacturingOrder.update(
                 self, database, delete=delete, change=change, create=create, **fields
             )
-
-    def _updateInventoryAndResources(
-        self, delete=False, change=True, create=False, **fields
-    ):
-        # TODO Update operationplanmaterial records
-        #    existing records will still have the old dates and quantity
-        #    compute new quantity
-        #    compure new dates (handle start/end and offset (in operation time))
-        #    update onhands for other operationplans from the old date onwards
-
-        # TODO Update operationplanresource record pairs
-        #    existing records have old dates and quantity
-        #    compute new quantity  (eg bucketized resources)
-        #    handle case of resource change
-        #    update resourceplan table with summarized data to reflect the changes
-        return
 
     @classmethod
     def getDeleteStatements(cls):
@@ -1143,7 +1127,7 @@ class DistributionOrder(OperationPlan):
             return self._itemdistribution
         item = self.item
         while item:
-            for i in item.distributions.all().using(database):
+            for i in item.distributions.all().using(database).order_by("priority"):
                 if self.destination == i.location and (
                     self.origin == i.origin or not self.origin
                 ):
@@ -1401,7 +1385,7 @@ class PurchaseOrder(OperationPlan):
             return self._itemsupplier
         item = self.item
         while item:
-            for i in item.itemsuppliers.all().using(database):
+            for i in item.itemsuppliers.all().using(database).order_by("priority"):
                 if self.supplier == i.supplier and (
                     self.location == i.location or not i.location
                 ):
@@ -2172,7 +2156,7 @@ class ManufacturingOrder(OperationPlan):
                 i.delete()
             self._resources = []
         else:
-            self._resources = [r for r in self.resources.all()]
+            self._resources = [r for r in self.resources.using(database).all()]
             if not self._resources:
                 # Create new opplanres records
                 for r in self.operation.operationresources.using(database).all():

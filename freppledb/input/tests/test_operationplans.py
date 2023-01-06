@@ -18,6 +18,7 @@
 import os
 from datetime import datetime, time, timedelta
 
+from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.test import TestCase
 
@@ -48,6 +49,12 @@ class OperationplanTest(TestCase):
 
     maxDiff = None
 
+    if "scenario1" in settings.DATABASES:
+        databases = [DEFAULT_DB_ALIAS, "scenario1"]
+        database = "scenario1"
+    else:
+        database = DEFAULT_DB_ALIAS
+
     def setUp(self):
         os.environ["FREPPLE_TEST"] = "YES"
         super().setUp()
@@ -59,7 +66,7 @@ class OperationplanTest(TestCase):
 
     def assertOperationplan(self, reference, expected):
         # Compare the operationplan as stored in the database
-        obj = OperationPlan.objects.get(pk=reference)
+        obj = OperationPlan.objects.using(self.database).get(pk=reference)
         self.assertDictEqual(
             {
                 "quantity": float(obj.quantity),
@@ -68,10 +75,11 @@ class OperationplanTest(TestCase):
                 "status": obj.status,
                 "materials": [
                     (float(i.quantity), i.flowdate, i.item.name)
-                    for i in obj.materials.all()
+                    for i in obj.materials.using(self.database).all()
                 ],
                 "resources": [
-                    (float(i.quantity), i.resource.name) for i in obj.resources.all()
+                    (float(i.quantity), i.resource.name)
+                    for i in obj.resources.using(self.database).all()
                 ],
                 "interruptions": obj.plan.get("interruptions", []),
             },
@@ -80,7 +88,11 @@ class OperationplanTest(TestCase):
 
     def assertResourcePlan(self, resource, expected):
         d = {}
-        for i in ResourceSummary.objects.filter(resource=resource).filter(load__gt=0):
+        for i in (
+            ResourceSummary.objects.using(self.database)
+            .filter(resource=resource)
+            .filter(load__gt=0)
+        ):
             d[i.startdate.strftime("%Y-%m-%d %H:%M:%S")] = float(i.load)
         self.assertDictEqual(
             d,
@@ -90,7 +102,7 @@ class OperationplanTest(TestCase):
     def test_manufacturing_orders(self):
 
         cal = Calendar(name="working hours", defaultvalue=0)
-        cal.save()
+        cal.save(using=self.database)
         CalendarBucket(
             calendar=cal,
             value=1,
@@ -105,7 +117,7 @@ class OperationplanTest(TestCase):
         ).save()
 
         loc = Location(name="factory", available=cal)
-        loc.save()
+        loc.save(using=self.database)
         oper = Operation(
             name="test1",
             type="time_per",
@@ -119,19 +131,25 @@ class OperationplanTest(TestCase):
         oper.save()
 
         item1 = Item(name="item1")
-        item1.save()
-        OperationMaterial(operation=oper, type="end", item=item1, quantity=2).save()
+        item1.save(using=self.database)
+        OperationMaterial(operation=oper, type="end", item=item1, quantity=2).save(
+            using=self.database
+        )
 
         item2 = Item(name="item2")
-        item2.save()
-        OperationMaterial(operation=oper, type="start", item=item2, quantity=-1).save()
+        item2.save(using=self.database)
+        OperationMaterial(operation=oper, type="start", item=item2, quantity=-1).save(
+            using=self.database
+        )
 
         res = Resource(name="machine", location=loc, type="default", maximum=1)
-        res.save()
-        OperationResource(operation=oper, resource=res, quantity=1).save()
+        res.save(using=self.database)
+        OperationResource(operation=oper, resource=res, quantity=1).save(
+            using=self.database
+        )
 
         # Simulate output of a planning run
-        ResourceSummary.objects.bulk_create(
+        ResourceSummary.objects.using(self.database).bulk_create(
             [
                 ResourceSummary(
                     resource=res, startdate=datetime(2022, 12, 1) + timedelta(n), load=0
@@ -148,8 +166,16 @@ class OperationplanTest(TestCase):
             quantity=4,
             status="approved",
         )
-        opplan.update(DEFAULT_DB_ALIAS, create=True)
-        opplan.save()
+        opplan.update(
+            self.database,
+            create=True,
+            reference=opplan.reference,
+            operation=opplan.operation,
+            startdate=opplan.startdate,
+            quantity=opplan.quantity,
+            status=opplan.status,
+        )
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan.reference,
             {
@@ -181,8 +207,8 @@ class OperationplanTest(TestCase):
 
         # Test changing the start date
         opplan.startdate = datetime(2023, 2, 1)
-        opplan.update(DEFAULT_DB_ALIAS, startdate=datetime(2023, 2, 1))
-        opplan.save()
+        opplan.update(self.database, startdate=datetime(2023, 2, 1))
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan,
             {
@@ -214,8 +240,8 @@ class OperationplanTest(TestCase):
 
         # Test changing the end date
         opplan.enddate = datetime(2023, 2, 5)
-        opplan.update(DEFAULT_DB_ALIAS, enddate=datetime(2023, 2, 5))
-        opplan.save()
+        opplan.update(self.database, enddate=datetime(2023, 2, 5))
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan,
             {
@@ -248,8 +274,8 @@ class OperationplanTest(TestCase):
 
         # Test changing quantity
         opplan.quantity = 30
-        opplan.update(DEFAULT_DB_ALIAS, quantity=30)
-        opplan.save()
+        opplan.update(self.database, quantity=30)
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan,
             {
@@ -285,19 +311,24 @@ class OperationplanTest(TestCase):
         )
 
         # Test deletion of the operationplan
-        opplan.update(DEFAULT_DB_ALIAS, delete=True)
-        opplan.delete()
-        self.assertEqual(OperationPlan.objects.filter(reference="MO #1").count(), 0)
+        opplan.update(self.database, delete=True)
+        opplan.delete(using=self.database)
         self.assertEqual(
-            OperationPlanMaterial.objects.filter(
-                operationplan__reference="MO #1"
-            ).count(),
+            OperationPlan.objects.using(self.database)
+            .filter(reference="MO #1")
+            .count(),
             0,
         )
         self.assertEqual(
-            OperationPlanResource.objects.filter(
-                operationplan__reference="MO #1"
-            ).count(),
+            OperationPlanMaterial.objects.using(self.database)
+            .filter(operationplan__reference="MO #1")
+            .count(),
+            0,
+        )
+        self.assertEqual(
+            OperationPlanResource.objects.using(self.database)
+            .filter(operationplan__reference="MO #1")
+            .count(),
             0,
         )
         self.assertResourcePlan(
@@ -308,7 +339,7 @@ class OperationplanTest(TestCase):
     def test_purchase_orders(self):
 
         cal = Calendar(name="working hours", defaultvalue=0)
-        cal.save()
+        cal.save(using=self.database)
         CalendarBucket(
             calendar=cal,
             value=1,
@@ -320,22 +351,22 @@ class OperationplanTest(TestCase):
             sunday=True,
             starttime=time(9, 0, 0),
             endtime=time(16, 59, 59),
-        ).save()
+        ).save(using=self.database)
 
         loc = Location(name="factory", available=cal)
-        loc.save()
+        loc.save(using=self.database)
         supplier = Supplier(name="My supplier")
-        supplier.save()
+        supplier.save(using=self.database)
 
         item = Item(name="item1")
-        item.save()
+        item.save(using=self.database)
         ItemSupplier(
             item=item,
             supplier=supplier,
             location=loc,
             sizemultiple=10,
             leadtime=timedelta(days=7),
-        ).save()
+        ).save(using=self.database)
 
         # Test creation of an operationplan
         opplan = PurchaseOrder(
@@ -347,8 +378,18 @@ class OperationplanTest(TestCase):
             quantity=4,
             status="approved",
         )
-        opplan.update(DEFAULT_DB_ALIAS, create=True)
-        opplan.save()
+        opplan.update(
+            self.database,
+            create=True,
+            reference=opplan.reference,
+            item=opplan.item,
+            location=opplan.location,
+            supplier=opplan.supplier,
+            startdate=opplan.startdate,
+            quantity=opplan.quantity,
+            status=opplan.status,
+        )
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan.reference,
             {
@@ -366,8 +407,8 @@ class OperationplanTest(TestCase):
 
         # Test changing the start date
         opplan.startdate = datetime(2023, 2, 1)
-        opplan.update(DEFAULT_DB_ALIAS, startdate=datetime(2023, 2, 1))
-        opplan.save()
+        opplan.update(self.database, startdate=datetime(2023, 2, 1))
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan,
             {
@@ -385,8 +426,8 @@ class OperationplanTest(TestCase):
 
         # Test changing the end date
         opplan.enddate = datetime(2023, 2, 5)
-        opplan.update(DEFAULT_DB_ALIAS, enddate=datetime(2023, 2, 5))
-        opplan.save()
+        opplan.update(self.database, enddate=datetime(2023, 2, 5))
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan,
             {
@@ -404,8 +445,8 @@ class OperationplanTest(TestCase):
 
         # Test changing quantity
         opplan.quantity = 20
-        opplan.update(DEFAULT_DB_ALIAS, quantity=20)
-        opplan.save()
+        opplan.update(self.database, quantity=20)
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan,
             {
@@ -422,26 +463,31 @@ class OperationplanTest(TestCase):
         )
 
         # Test deletion of the operationplan
-        opplan.update(DEFAULT_DB_ALIAS, delete=True)
-        opplan.delete()
-        self.assertEqual(OperationPlan.objects.filter(reference="PO #1").count(), 0)
+        opplan.update(self.database, delete=True)
+        opplan.delete(using=self.database)
         self.assertEqual(
-            OperationPlanMaterial.objects.filter(
-                operationplan__reference="PO #1"
-            ).count(),
+            OperationPlan.objects.using(self.database)
+            .filter(reference="PO #1")
+            .count(),
             0,
         )
         self.assertEqual(
-            OperationPlanResource.objects.filter(
-                operationplan__reference="PO #1"
-            ).count(),
+            OperationPlanMaterial.objects.using(self.database)
+            .filter(operationplan__reference="PO #1")
+            .count(),
+            0,
+        )
+        self.assertEqual(
+            OperationPlanResource.objects.using(self.database)
+            .filter(operationplan__reference="PO #1")
+            .count(),
             0,
         )
 
     def test_distribution_orders(self):
 
         cal = Calendar(name="working hours", defaultvalue=0)
-        cal.save()
+        cal.save(using=self.database)
         CalendarBucket(
             calendar=cal,
             value=1,
@@ -453,18 +499,18 @@ class OperationplanTest(TestCase):
             sunday=True,
             starttime=time(9, 0, 0),
             endtime=time(16, 59, 59),
-        ).save()
+        ).save(using=self.database)
 
         loc1 = Location(name="factory", available=cal)
-        loc1.save()
+        loc1.save(using=self.database)
         loc2 = Location(name="warehouse", available=cal)
-        loc2.save()
+        loc2.save(using=self.database)
 
         item = Item(name="item1")
-        item.save()
+        item.save(using=self.database)
         ItemDistribution(
             location=loc2, origin=loc1, item=item, leadtime=timedelta(days=1)
-        ).save()
+        ).save(using=self.database)
 
         # Test creation of an operationplan
         opplan = DistributionOrder(
@@ -476,8 +522,18 @@ class OperationplanTest(TestCase):
             quantity=4,
             status="approved",
         )
-        opplan.update(DEFAULT_DB_ALIAS, create=True)
-        opplan.save()
+        opplan.update(
+            self.database,
+            create=True,
+            reference=opplan.reference,
+            destination=opplan.destination,
+            origin=opplan.origin,
+            item=opplan.item,
+            startdate=opplan.startdate,
+            quantity=opplan.quantity,
+            status=opplan.status,
+        )
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan.reference,
             {
@@ -500,8 +556,8 @@ class OperationplanTest(TestCase):
 
         # Test changing the start date
         opplan.startdate = datetime(2023, 2, 1)
-        opplan.update(DEFAULT_DB_ALIAS, startdate=datetime(2023, 2, 1))
-        opplan.save()
+        opplan.update(self.database, startdate=datetime(2023, 2, 1))
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan,
             {
@@ -524,8 +580,8 @@ class OperationplanTest(TestCase):
 
         # Test changing the end date
         opplan.enddate = datetime(2023, 2, 5)
-        opplan.update(DEFAULT_DB_ALIAS, enddate=datetime(2023, 2, 5))
-        opplan.save()
+        opplan.update(self.database, enddate=datetime(2023, 2, 5))
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan,
             {
@@ -549,8 +605,8 @@ class OperationplanTest(TestCase):
 
         # Test changing quantity
         opplan.quantity = 6
-        opplan.update(DEFAULT_DB_ALIAS, quantity=6)
-        opplan.save()
+        opplan.update(self.database, quantity=6)
+        opplan.save(using=self.database)
         self.assertOperationplan(
             opplan,
             {
@@ -571,18 +627,23 @@ class OperationplanTest(TestCase):
         )
 
         # Test deletion of the operationplan
-        opplan.update(DEFAULT_DB_ALIAS, delete=True)
-        opplan.delete()
-        self.assertEqual(OperationPlan.objects.filter(reference="DO #1").count(), 0)
+        opplan.update(self.database, delete=True)
+        opplan.delete(using=self.database)
         self.assertEqual(
-            OperationPlanMaterial.objects.filter(
-                operationplan__reference="DO #1"
-            ).count(),
+            OperationPlan.objects.using(self.database)
+            .filter(reference="DO #1")
+            .count(),
             0,
         )
         self.assertEqual(
-            OperationPlanResource.objects.filter(
-                operationplan__reference="DO #1"
-            ).count(),
+            OperationPlanMaterial.objects.using(self.database)
+            .filter(operationplan__reference="DO #1")
+            .count(),
+            0,
+        )
+        self.assertEqual(
+            OperationPlanResource.objects.using(self.database)
+            .filter(operationplan__reference="DO #1")
+            .count(),
             0,
         )

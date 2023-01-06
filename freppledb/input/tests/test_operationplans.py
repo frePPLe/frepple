@@ -114,7 +114,7 @@ class OperationplanTest(TestCase):
             sunday=True,
             starttime=time(9, 0, 0),
             endtime=time(16, 59, 59),
-        ).save()
+        ).save(using=self.database)
 
         loc = Location(name="factory", available=cal)
         loc.save(using=self.database)
@@ -128,7 +128,7 @@ class OperationplanTest(TestCase):
             sizemultiple=20,
             # sizemaximum=14,
         )
-        oper.save()
+        oper.save(using=self.database)
 
         item1 = Item(name="item1")
         item1.save(using=self.database)
@@ -646,4 +646,274 @@ class OperationplanTest(TestCase):
             .filter(operationplan__reference="DO #1")
             .count(),
             0,
+        )
+
+    def test_routing_manufacturing_orders(self):
+
+        cal = Calendar(name="working hours", defaultvalue=0)
+        cal.save(using=self.database)
+        CalendarBucket(
+            calendar=cal,
+            value=1,
+            monday=True,
+            tuesday=True,
+            wednesday=True,
+            friday=True,
+            saturday=True,
+            sunday=True,
+            starttime=time(9, 0, 0),
+            endtime=time(16, 59, 59),
+        ).save()
+
+        loc = Location(name="factory", available=cal)
+        loc.save(using=self.database)
+        oper = Operation(
+            name="routing",
+            type="routing",
+            location=loc,
+        )
+        oper.save(using=self.database)
+        oper1 = Operation(
+            name="routing step 1",
+            type="time_per",
+            location=loc,
+            duration=timedelta(hours=1),
+            duration_per=timedelta(hours=1),
+            owner=oper,
+            priority=1,
+        )
+        oper1.save(using=self.database)
+        oper2 = Operation(
+            name="routing step 2",
+            type="time_per",
+            location=loc,
+            duration=timedelta(hours=1),
+            duration_per=timedelta(hours=1),
+            owner=oper,
+            priority=1,
+        )
+        oper2.save(using=self.database)
+        oper3 = Operation(
+            name="routing step 3",
+            type="time_per",
+            location=loc,
+            duration=timedelta(hours=1),
+            duration_per=timedelta(hours=1),
+            owner=oper,
+            priority=3,
+        )
+        oper3.save(using=self.database)
+
+        item1 = Item(name="item1")
+        item1.save(using=self.database)
+        OperationMaterial(operation=oper3, type="end", item=item1, quantity=2).save(
+            using=self.database
+        )
+
+        item2 = Item(name="item2")
+        item2.save(using=self.database)
+        OperationMaterial(operation=oper1, type="start", item=item2, quantity=-1).save(
+            using=self.database
+        )
+
+        res = Resource(name="machine", location=loc, type="default", maximum=1)
+        res.save(using=self.database)
+        OperationResource(operation=oper1, resource=res, quantity=1).save(
+            using=self.database
+        )
+        OperationResource(operation=oper2, resource=res, quantity=1).save(
+            using=self.database
+        )
+        OperationResource(operation=oper3, resource=res, quantity=1).save(
+            using=self.database
+        )
+
+        # Simulate output of a planning run
+        ResourceSummary.objects.using(self.database).bulk_create(
+            [
+                ResourceSummary(
+                    resource=res, startdate=datetime(2022, 12, 1) + timedelta(n), load=0
+                )
+                for n in range(300)
+            ]
+        )
+
+        # Test creation of an operationplan
+        opplan = ManufacturingOrder(
+            reference="MO1",
+            operation=oper,
+            startdate=datetime(2023, 1, 1),
+            quantity=4,
+            status="approved",
+        )
+        opplan.update(
+            self.database,
+            create=True,
+            reference=opplan.reference,
+            operation=opplan.operation,
+            startdate=opplan.startdate,
+            quantity=opplan.quantity,
+            status=opplan.status,
+        )
+        opplan.save(using=self.database)
+        opplan1 = ManufacturingOrder(
+            reference="MO1 #1",
+            operation=oper1,
+            startdate=opplan.startdate,
+            quantity=4,
+            status="approved",
+            owner=opplan,
+        )
+        opplan1.update(
+            self.database,
+            create=True,
+            reference=opplan1.reference,
+            operation=opplan1.operation,
+            startdate=opplan1.startdate,
+            quantity=opplan1.quantity,
+            status=opplan1.status,
+        )
+        opplan1.save(using=self.database)
+        opplan2 = ManufacturingOrder(
+            reference="MO1 #2",
+            operation=oper2,
+            startdate=opplan1.enddate,
+            quantity=4,
+            status="approved",
+            owner=opplan,
+        )
+        opplan2.update(
+            self.database,
+            create=True,
+            reference=opplan2.reference,
+            operation=opplan2.operation,
+            startdate=opplan2.startdate,
+            quantity=opplan2.quantity,
+            status=opplan2.status,
+        )
+        opplan2.save(using=self.database)
+        opplan3 = ManufacturingOrder(
+            reference="MO1 #3",
+            operation=oper3,
+            startdate=opplan2.enddate,
+            quantity=4,
+            status="approved",
+            owner=opplan,
+        )
+        opplan3.update(
+            self.database,
+            create=True,
+            reference=opplan3.reference,
+            operation=opplan3.operation,
+            startdate=opplan3.startdate,
+            quantity=opplan3.quantity,
+            status=opplan3.status,
+        )
+        opplan3.save(using=self.database)
+
+        self.assertOperationplan(
+            opplan3.reference,
+            {
+                "quantity": 4.0,
+                "startdate": datetime(2023, 1, 2, 11),
+                "enddate": datetime(2023, 1, 2, 16),
+                "status": "approved",
+                "materials": [(8.0, datetime(2023, 1, 2, 16, 0), "item1")],
+                "resources": [(1.0, "machine")],
+                "interruptions": [],
+            },
+        )
+        self.assertResourcePlan(
+            "machine",
+            {"2023-01-01 00:00:00": 8, "2023-01-02 00:00:00": 7},
+        )
+
+        # Test changing the start date of the parent
+        opplan.startdate = datetime(2023, 2, 1)
+        opplan.update(self.database, startdate=datetime(2023, 2, 1))
+        opplan.save(using=self.database)
+        self.assertOperationplan(
+            opplan,
+            {
+                "quantity": 4,
+                "startdate": datetime(2023, 2, 1),
+                "enddate": datetime(2023, 2, 2, 16),
+                "status": "approved",
+                "materials": [],
+                "resources": [],
+                "interruptions": [],
+            },
+        )
+        self.assertResourcePlan(
+            "machine",
+            {"2023-02-01 00:00:00": 8, "2023-02-02 00:00:00": 7},
+        )
+
+        # Test changing the end date of the parent
+        opplan.enddate = datetime(2023, 2, 5)
+        opplan.update(self.database, enddate=datetime(2023, 2, 5))
+        opplan.save(using=self.database)
+        self.assertOperationplan(
+            opplan,
+            {
+                "quantity": 4,
+                "startdate": datetime(2023, 2, 3, 10),
+                "enddate": datetime(2023, 2, 5),
+                "status": "approved",
+                "materials": [],
+                "resources": [],
+                "interruptions": [],
+            },
+        )
+        self.assertResourcePlan(
+            "machine",
+            {"2023-02-03 00:00:00": 7, "2023-02-04 00:00:00": 8},
+        )
+
+        # Test changing quantity of the parent
+        opplan.quantity = 3
+        opplan.update(self.database, quantity=10)
+        opplan.save(using=self.database)
+        self.assertOperationplan(
+            opplan,
+            {
+                "quantity": 3,
+                "startdate": datetime(2023, 2, 3, 10),
+                "enddate": datetime(2023, 2, 4, 14),
+                "status": "approved",
+                "materials": [],
+                "resources": [],
+                "interruptions": [],
+            },
+        )
+        self.assertResourcePlan(
+            "machine",
+            {
+                "2023-02-03 00:00:00": 7,
+                "2023-02-04 00:00:00": 5,
+            },
+        )
+
+        # Test deletion of the operationplan
+        opplan.update(self.database, delete=True)
+        opplan.delete(using=self.database)
+        self.assertEqual(
+            OperationPlan.objects.using(self.database).count(),
+            0,
+        )
+        self.assertEqual(
+            OperationPlanMaterial.objects.using(self.database).count(),
+            0,
+        )
+        self.assertEqual(
+            OperationPlanResource.objects.using(self.database).count(),
+            0,
+        )
+        self.assertEqual(
+            OperationPlanMaterial.objects.using(self.database).count(),
+            0,
+        )
+        self.assertResourcePlan(
+            "machine",
+            {},
         )

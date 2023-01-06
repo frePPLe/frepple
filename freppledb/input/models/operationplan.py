@@ -2195,34 +2195,97 @@ class ManufacturingOrder(OperationPlan):
                 ) / efficiency
             elif self.operation.type == "fixed_time":
                 duration = (self.operation.duration or timedelta(0)) / efficiency
+            elif self.operation.type == "routing":
+                if create:
+                    # Create the child operationplans
+                    # Can be tricky when we do this in a bulk upload that already has child MOs
+                    pass
+                else:
+                    # Pass updates from parent to child operationplan
+                    delta = {}
+                    if "quantity" in fields:
+                        delta["quantity"] = self.quantity
+                    if "status" in fields:
+                        delta["status"] = self.status
+                    if "enddate" in fields:
+                        delta["enddate"] = self.enddate
+                        for ch in (
+                            self.xchildren.all()
+                            .using(database)
+                            .order_by("-operation__priority")
+                        ):
+                            ch.quantity = self.quantity
+                            if ch.status in ("approved", "proposed"):
+                                ch.enddate = delta["enddate"]
+                            else:
+                                del delta["enddate"]
+                            if "status" in delta:
+                                ch.status = delta["status"]
+                            ch.update(database, **delta)
+                            delta["enddate"] = ch.startdate
+                            ch.save(using=database)
+                        if ch:
+                            self.startdate = ch.startdate
+                    elif "startdate" in fields or "quantity" in fields:
+                        delta["startdate"] = self.startdate
+                        for ch in (
+                            self.xchildren.all()
+                            .using(database)
+                            .order_by("operation__priority")
+                        ):
+                            if "quantity" in delta:
+                                ch.quantity = self.quantity
+                            if ch.status in ("approved", "proposed"):
+                                ch.startdate = delta["startdate"]
+                            else:
+                                del delta["startdate"]
+                            if "status" in delta:
+                                ch.status = delta["status"]
+                            ch.update(database, **delta)
+                            ch.save(using=database)
+                            delta["startdate"] = ch.enddate
+                        if ch:
+                            self.enddate = ch.enddate
+                    elif delta:
+                        for ch in self.xchildren.all().using(database):
+                            ch.quantity = self.quantity
+                            if "status" in delta:
+                                ch.status = delta["status"]
+                            ch.update(database, **delta)
+                            ch.save(using=database)
             else:
-                # TODO handle updates on routing operationplans
                 raise Exception(
                     "Can't change manufacturing orders of type %s yet"
                     % self.operation.type
                 )
 
-            interruptions = []
-            if "enddate" in fields:
-                # Mode 1: End date (optionally also quantity) given -> compute start date
-                self.startdate = self.calculateOperationTime(
-                    self.enddate, duration, False, interruptions
-                )
-            else:
-                # Mode 2: Start date (optionally also quantity) given -> compute end date
-                self.enddate = self.calculateOperationTime(
-                    self.startdate, duration, True, interruptions
-                )
-            if interruptions:
-                self.plan["interruptions"] = [
-                    (
-                        i[0].strftime("%Y-%m-%d %H:%M:%S"),
-                        i[1].strftime("%Y-%m-%d %H:%M:%S"),
+            if self.operation.type != "routing":
+                interruptions = []
+                if "enddate" in fields:
+                    # Mode 1: End date (optionally also quantity) given -> compute start date
+                    self.startdate = self.calculateOperationTime(
+                        self.enddate, duration, False, interruptions
                     )
-                    for i in interruptions
-                ]
-            else:
-                self.plan.pop("interruptions", None)
+                else:
+                    # Mode 2: Start date (optionally also quantity) given -> compute end date
+                    self.enddate = self.calculateOperationTime(
+                        self.startdate, duration, True, interruptions
+                    )
+                if interruptions:
+                    self.plan["interruptions"] = [
+                        (
+                            i[0].strftime("%Y-%m-%d %H:%M:%S"),
+                            i[1].strftime("%Y-%m-%d %H:%M:%S"),
+                        )
+                        for i in interruptions
+                    ]
+                else:
+                    self.plan.pop("interruptions", None)
+
+        # Propagate the deletion of child operationplans
+        if delete and self.operation.type == "routing":
+            for ch in self.xchildren.all().using(database):
+                ch.update(database, delete=True)
 
         # Create or update operationplanmaterial records
         if delete or not self.operation or not self.quantity:

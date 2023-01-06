@@ -336,7 +336,7 @@ beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
       selectiondata.push(rowdata);
     }
   });
-
+  upload.select();
   if (selection.length > 1)
     angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
   else

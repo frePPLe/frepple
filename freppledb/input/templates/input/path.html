@@ -105,8 +105,14 @@ function tick(e)
         else
         {
           // Suboperation of a routing
-          d.y = nodes[d.parent].y;
-          d.x = nodes[d.parent].x - 52.5 + (d.suboperindex-0.5) * 105 / nodes[d.parent].numsuboperations;
+          if (d.rownb > 0) {
+          	d.y = nodes[d.parent].y - 40 + (d.rownb-0.5) * 80 / nodes[d.parent].rownb;
+          	d.x = nodes[d.parent].x - 52.5 + (d.colnb-0.5) * 105 / nodes[d.parent].colnb;
+    	  }
+    	  else {
+    	  	d.y = nodes[d.parent].y;
+          	d.x = nodes[d.parent].x - 52.5 + (d.suboperindex-0.5) * 105 / nodes[d.parent].numsuboperations;
+    	 }
         }
       }
       else
@@ -116,9 +122,13 @@ function tick(e)
            d.y += (1000 - d.y) * k / 10;
       }
     }
-    if (d.parent >= 0 && d.suboperindex >= 0)
+    if (d.parent >= 0 && d.suboperindex >= 0) {
       // Suboperation of a routing
-      return 'translate(' + d.x + ' ' + d.y + ') scale(' + (1.0/nodes[d.parent].numsuboperations) + ' 1)';
+      if (d.rownb > 0)
+      	return 'translate(' + d.x + ' ' + d.y + ') scale(' + (1.0/nodes[d.parent].colnb) + ' 1)';
+      else
+      	return 'translate(' + d.x + ' ' + d.y + ') scale(' + (1.0/nodes[d.parent].numsuboperations) + ' 1)';
+	}
     else
       return 'translate(' + d.x + ' ' + d.y + ')';
     });
@@ -190,6 +200,8 @@ function drawGraph(jsondata)
        numsuboperations: numsuboperations,
        y: 1000 + count,
        charge: parentoper>-1 ? 0 : -200,
+       rownb: parseInt(jsondata['rows'][oper]['rownb']),
+       colnb: parseInt(jsondata['rows'][oper]['colnb']),
        }) - 1;
     operations[jsondata['rows'][oper]['operation']] = count;
 
@@ -327,7 +339,10 @@ function drawGraph(jsondata)
            return "scale(1,"+ (2+d.numsuboperations) +")";
          else
            // Top routing operation
-           return "scale(1,1.4)";
+           if (d.rownb > 0)
+           	return "translate(0 -8) scale(1,"+ (1+d.rownb) +")";
+           else
+           	return "scale(1,1.4)";
        }
        else
          return '';

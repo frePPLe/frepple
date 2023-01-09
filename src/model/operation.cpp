@@ -1591,7 +1591,7 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
   {
     // No step operationplans to work with. Just apply the requested quantity
     // and dates.
-    q = opplan->setQuantity(q, roundDown, false, execute);
+    q = opplan->setQuantity(q, roundDown, false, execute, e);
     if (!s && e) s = e;
     if (s && !e) e = s;
     if (!execute) return OperationPlanState(s, e, q);

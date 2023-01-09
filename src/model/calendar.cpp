@@ -269,6 +269,8 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const {
       break;
     else if (curPriority > b->getPriority() &&
              ((fwd && d >= b->getStart() && d < b->getEnd()) ||
+              (fwd && d == Date::infiniteFuture &&
+               b->getEnd() == Date::infiniteFuture) ||
               (!fwd && d > b->getStart() && d <= b->getEnd()))) {
       if (b->isContinuouslyEffective()) {
         // Continuously effective

@@ -86,6 +86,22 @@ class OperationplanTest(TestCase):
             expected,
         )
 
+    def assertOperationPlans(self, expected):
+        self.assertListEqual(
+            [
+                [
+                    o.name,
+                    o.startdate.strftime("%Y-%m-%d %H:%M:%S"),
+                    o.enddate.strftime("%Y-%m-%d %H:%M:%S"),
+                    float(o.quantity),
+                ]
+                for o in OperationPlan.objects.using(self.database).order_by(
+                    "name", "item_id", "startdate", "reference"
+                )
+            ],
+            expected,
+        )
+
     def assertResourcePlan(self, resource, expected):
         d = {}
         for i in (
@@ -690,7 +706,7 @@ class OperationplanTest(TestCase):
             duration=timedelta(hours=1),
             duration_per=timedelta(hours=1),
             owner=oper,
-            priority=1,
+            priority=2,
         )
         oper2.save(using=self.database)
         oper3 = Operation(
@@ -853,6 +869,14 @@ class OperationplanTest(TestCase):
         opplan.enddate = datetime(2023, 2, 5)
         opplan.update(self.database, enddate=datetime(2023, 2, 5))
         opplan.save(using=self.database)
+        self.assertOperationPlans(
+            [
+                ["routing", "2023-02-03 10:00:00", "2023-02-05 00:00:00", 4.0],
+                ["routing step 1", "2023-02-03 10:00:00", "2023-02-03 15:00:00", 4.0],
+                ["routing step 2", "2023-02-03 15:00:00", "2023-02-04 12:00:00", 4.0],
+                ["routing step 3", "2023-02-04 12:00:00", "2023-02-05 00:00:00", 4.0],
+            ]
+        )
         self.assertOperationplan(
             opplan,
             {

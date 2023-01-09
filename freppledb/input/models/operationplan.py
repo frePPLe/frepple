@@ -1140,6 +1140,14 @@ class DistributionOrder(OperationPlan):
     def update(self, database, delete=False, change=True, create=False, **fields):
         itemdistribution = self.itemdistribution(database)
 
+        # Computed fields
+        self.name = "Ship %s%s%s to %s" % (
+            self.item.name if self.item else "no-item",
+            " @ %s" % self.batch if self.batch else "",
+            " from %s " % self.origin.name if self.origin else "",
+            self.destination.name if self.destination else "no-destination",
+        )
+
         # Process quantity changes
         if (
             (create or (change and "quantity" in fields))
@@ -1398,9 +1406,13 @@ class PurchaseOrder(OperationPlan):
     def update(self, database, delete=False, change=True, create=False, **fields):
         itemsupplier = self.itemsupplier(database)
 
-        # if create and not self.reference:
-        #     # TODO generate a unique reference
-        #     self.reference = ...
+        # Computed fields
+        self.name = "Purchase %s%s @ %s%s" % (
+            self.item.name if self.item else "no-item",
+            " @ %s" % self.batch if self.batch else "",
+            self.location.name if self.location else "no-location",
+            " from %s" % self.supplier.name if self.supplier else "",
+        )
 
         # Process quantity changes
         if (
@@ -2098,6 +2110,10 @@ class ManufacturingOrder(OperationPlan):
         return self._calendars
 
     def update(self, database, delete=False, change=True, create=False, **fields):
+
+        # Computed fields
+        self.name = self.operation.name if self.operation else "no-operation"
+
         # Process quantity changes
         if (
             (create or (change and "quantity" in fields))
@@ -2209,6 +2225,7 @@ class ManufacturingOrder(OperationPlan):
                         delta["status"] = self.status
                     if "enddate" in fields:
                         delta["enddate"] = self.enddate
+                        delta["noparentupdate"] = True
                         for ch in (
                             self.xchildren.all()
                             .using(database)
@@ -2228,6 +2245,7 @@ class ManufacturingOrder(OperationPlan):
                             self.startdate = ch.startdate
                     elif "startdate" in fields or "quantity" in fields:
                         delta["startdate"] = self.startdate
+                        delta["noparentupdate"] = True
                         for ch in (
                             self.xchildren.all()
                             .using(database)
@@ -2253,6 +2271,17 @@ class ManufacturingOrder(OperationPlan):
                                 ch.status = delta["status"]
                             ch.update(database, **delta)
                             ch.save(using=database)
+                    parentdates = (
+                        self.xchildren.all()
+                        .using(database)
+                        .aggregate(models.Max("enddate"), models.Min("startdate"))
+                    )
+                    self.startdate = parentdates["startdate__min"]
+                    self.enddate = parentdates["enddate__max"]
+                    self.save(
+                        using=database,
+                        update_fields=("startdate", "enddate"),
+                    )
             else:
                 raise Exception(
                     "Can't change manufacturing orders of type %s yet"
@@ -2299,9 +2328,7 @@ class ManufacturingOrder(OperationPlan):
             )
             if not use_dependencies and "noparentupdate" not in fields:
                 found = False
-                self.save(
-                    using=database, update_fields=("startdate", "enddate", "quantity")
-                )
+                self.save(using=database)
                 # Backward propagation before the current step
                 prevstep = None
                 for x in (
@@ -2316,7 +2343,8 @@ class ManufacturingOrder(OperationPlan):
                         and prevstep
                         and (x.enddate > prevstep.startdate or "quantity" in fields)
                     ):
-                        x.enddate = prevstep.startdate
+                        if x.enddate > prevstep.startdate:
+                            x.enddate = prevstep.startdate
                         x.quantity = prevstep.quantity
                         x.update(
                             database,
@@ -2342,7 +2370,8 @@ class ManufacturingOrder(OperationPlan):
                         and prevstep
                         and (x.startdate < prevstep.enddate or "quantity" in fields)
                     ):
-                        x.startdate = prevstep.enddate
+                        if x.startdate < prevstep.enddate:
+                            x.startdate = prevstep.enddate
                         x.quantity = prevstep.quantity
                         x.update(
                             database,

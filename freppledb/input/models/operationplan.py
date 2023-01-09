@@ -2282,6 +2282,93 @@ class ManufacturingOrder(OperationPlan):
                 else:
                     self.plan.pop("interruptions", None)
 
+        if (
+            change
+            and self.owner
+            and self.operation.owner
+            and self.operation.owner.type == "routing"
+        ):
+            # Keep the timing of a following routing step consistent
+            use_dependencies = (
+                OperationDependency.objects.using(database)
+                .filter(
+                    models.Q(operation__owner=self.operation.owner)
+                    | models.Q(blockedby__owner=self.operation.owner)
+                )
+                .exists()
+            )
+            if not use_dependencies and "noparentupdate" not in fields:
+                found = False
+                self.save(
+                    using=database, update_fields=("startdate", "enddate", "quantity")
+                )
+                # Backward propagation before the current step
+                prevstep = None
+                for x in (
+                    self.owner.xchildren.all()
+                    .using(database)
+                    .order_by("-operation__sequence")
+                ):
+                    if x.reference == self.reference:
+                        found = True
+                    elif (
+                        found
+                        and prevstep
+                        and (x.enddate > prevstep.startdate or "quantity" in fields)
+                    ):
+                        x.enddate = prevstep.startdate
+                        x.quantity = prevstep.quantity
+                        x.update(
+                            database,
+                            change=True,
+                            enddate=x.enddate,
+                            quantity=self.quantity,
+                            noparentupdate=True,
+                        )
+                        x.save(using=database)
+                    prevstep = x
+
+                # Forward propagation after the current step
+                prevstep = None
+                for x in (
+                    self.owner.xchildren.all()
+                    .using(database)
+                    .order_by("operation__sequence")
+                ):
+                    if x.reference == self.reference:
+                        found = True
+                    elif (
+                        found
+                        and prevstep
+                        and (x.startdate < prevstep.enddate or "quantity" in fields)
+                    ):
+                        x.startdate = prevstep.enddate
+                        x.quantity = prevstep.quantity
+                        x.update(
+                            database,
+                            change=True,
+                            startdate=x.startdate,
+                            quantity=x.quantity,
+                            noparentupdate=True,
+                        )
+                        x.save(using=database)
+                    prevstep = x
+
+                # Update parent
+                parentdates = (
+                    self.owner.xchildren.all()
+                    .using(database)
+                    .aggregate(models.Max("enddate"), models.Min("startdate"))
+                )
+                self.owner.startdate = parentdates["startdate__min"]
+                self.owner.enddate = parentdates["enddate__max"]
+                if "quantity" in fields:
+                    self.owner.quantity = self.quantity
+                self.owner.save(
+                    using=database,
+                    update_fields=("quantity", "startdate", "enddate"),
+                )
+
         # Propagate the deletion of child operationplans
         if delete and self.operation.type == "routing":
             for ch in self.xchildren.all().using(database):

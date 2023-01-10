@@ -1609,6 +1609,10 @@ class ManufacturingOrder(OperationPlan):
         has_pk_field = False
         processed_header = False
         rowWrapper = rowmapper()
+        newstyle = (
+            Parameter.getValue("NewStyleOrderEditing", database, "false").lower()
+            == "true"
+        )
 
         # Detect excel autofilter data tables
         if isinstance(data, Worksheet) and data.auto_filter.ref:
@@ -1819,6 +1823,17 @@ class ManufacturingOrder(OperationPlan):
                     # Step 3: Validate the form and model, and save to the database
                     if form.has_changed():
                         if form.is_valid():
+                            # Call the update method before saving the model
+                            obj = form.save(commit=False)
+                            if newstyle and hasattr(ManufacturingOrder, "update"):
+                                if it:
+                                    ManufacturingOrder.update(
+                                        obj, database, change=True, **form.cleaned_data
+                                    )
+                                else:
+                                    ManufacturingOrder.update(
+                                        obj, database, create=True, **form.cleaned_data
+                                    )
                             # Save the form
                             obj = form.save(commit=False)
                             if it:

@@ -14,6 +14,15 @@ Release notes
   | - Define relations between different subprojects and tasks in a
       project-oriented business.
 
+- | When uploading or editing purchase orders, manufacturing orders or
+    distribution orders the inventory plans and resource plans are
+    immediately updated.
+  | In previous releases this update was only done after rerunning the plan.
+    The new functionality thus greatly improves the capabilities to make
+    interactive changes to the plan.
+  | Users of the Enterprise Edition already had this functionality through the
+    planning engine web service.
+
 - Bug fix: Resolved infinite loop corner case when planning a sales order owner
   with delivery policy "all together" and one of the lines has a broken supply
   path.

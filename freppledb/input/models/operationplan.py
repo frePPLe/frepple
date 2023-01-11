@@ -699,7 +699,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                                         enddate,
                                         plan,
                                         operation_id from operationplan
-                                        where reference != %%s
+                                        where startdate <= enddate and reference != %%s
                                 %s
                                         ) operationplan on operationplan.reference = operationplanresource.operationplan_id
 
@@ -734,7 +734,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                                         enddate,
                                         plan,
                                         operation_id from operationplan
-                                        where reference != %%s
+                                        where startdate <= enddate and reference != %%s
                                 %s
                                         ) operationplan on operationplan.reference = operationplanresource.operationplan_id
 

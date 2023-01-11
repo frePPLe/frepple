@@ -1099,6 +1099,15 @@ class OperationPlanResource_admin(MultiDBModelAdmin):
         }
     ]
 
+    def save_model(self, request, obj: ManufacturingOrder, form, change):
+        if form.has_changed():
+            fields = {f: form.cleaned_data[f] for f in form.changed_data}
+            if change:
+                obj.update(request.database, change=True, **fields)
+            else:
+                obj.update(request.database, create=True, **fields)
+        super().save_model(request, obj, form, change)
+
 
 @admin.register(OperationPlanMaterial, site=data_site)
 class OperationPlanMaterial_admin(MultiDBModelAdmin):
@@ -1131,3 +1140,12 @@ class OperationPlanMaterial_admin(MultiDBModelAdmin):
             "permissions": "input.change_operationplanmaterial",
         }
     ]
+
+    def save_model(self, request, obj: ManufacturingOrder, form, change):
+        if form.has_changed():
+            fields = {f: form.cleaned_data[f] for f in form.changed_data}
+            if change:
+                obj.update(request.database, change=True, **fields)
+            else:
+                obj.update(request.database, create=True, **fields)
+        super().save_model(request, obj, form, change)

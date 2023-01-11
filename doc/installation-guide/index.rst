@@ -12,5 +12,4 @@ This part of the manual covers all topics related to installation and deployment
    upgrading
    linux-compiling
    docker-container
-   development-environment
    multi-model

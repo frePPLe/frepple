@@ -10,6 +10,5 @@ This part of the manual covers all topics related to installation and deployment
    hardware-requirements
    linux-binaries
    upgrading
-   linux-compiling
    docker-container
    multi-model

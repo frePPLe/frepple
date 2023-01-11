@@ -863,6 +863,51 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     time_unit,
                 ),
             )
+            # we need to update the parent resources in the hierarchy
+            # a first query to get recursively the owners
+            cursor.execute(
+                """
+            with recursive cte as (
+            select 1 as lvl, %s::varchar as name
+            union all
+            select cte.lvl+1, owner_id
+                from resource
+                inner join cte on cte.name = resource.name)
+            select name from cte where cte.name is not null
+            and cte.lvl > 1
+            order by lvl
+            """,
+                (self.resource.name,),
+            )
+            # A second query to update the resource plan of the owner
+            owners = []
+            for i in cursor:
+                owners.append(i[0])
+            for i in owners:
+                cursor.execute(
+                    """
+                with cte as (
+                    select  out_resourceplan.startdate,
+                            sum(available) available,
+                            sum(unavailable) unavailable,
+                            sum(setup) setup,
+                            sum(load) load,
+                            sum(free) free
+                    from out_resourceplan
+                    where resource in (select name from resource where owner_id = %s)
+                    group by startdate)
+                update out_resourceplan
+                set available = cte.available,
+                unavailable = cte.unavailable,
+                setup = cte.setup,
+                load = cte.load,
+                free = cte.free
+                from cte
+                where out_resourceplan.startdate = cte.startdate
+                and out_resourceplan.resource = %s
+                    """,
+                    (i, i),
+                )
 
     class Meta:
         db_table = "operationplanresource"

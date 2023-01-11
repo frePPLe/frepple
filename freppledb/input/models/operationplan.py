@@ -494,6 +494,7 @@ class OperationPlan(AuditModel):
             ManufacturingOrder.update(
                 self, database, delete=delete, change=change, create=create, **fields
             )
+        # TODO handle change of STCK operationplan with an update of the buffer
 
     @classmethod
     def getDeleteStatements(cls):
@@ -655,8 +656,33 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
             self.status,
         )
 
-    def updateResourcePlan(self, database, delete=False):
+    def update(self, database, delete=False, change=True, create=False, **fields):
+        if not self.operationplan:
+            return
+        delta = {}
+        if "operationplan__startdate" in fields:
+            delta["startdate"] = datetime.strptime(
+                fields["operationplan__startdate"], "%Y-%m-%d %H:%M:%S"
+            )
+            self.operationplan.startdate = delta["startdate"]
+        if "operationplan__enddate" in fields:
+            delta["enddate"] = datetime.strptime(
+                fields["operationplan__enddate"], "%Y-%m-%d %H:%M:%S"
+            )
+            self.operationplan.enddate = delta["enddate"]
+        if "operationplan__status" in fields:
+            delta["status"] = fields["operationplan__status"]
+            self.operationplan.status = delta["status"]
+        if "operationplan__quantity" in fields:
+            delta["quantity"] = fields["operationplan__quantity"]
+            self.operationplan.quantity = delta["quantity"]
+        if delta:
+            self.operationplan.update(
+                database=database, delete=delete, change=change, create=create, **delta
+            )
+            self.operationplan.save(using=database)
 
+    def updateResourcePlan(self, database, delete=False):
         # default value of parameter is hours
         time_unit = 3600
         try:
@@ -924,6 +950,32 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
         verbose_name_plural = _("inventory detail")
         indexes = [models.Index(fields=["item", "location"], name="opplanmat_itemloc")]
 
+    def update(self, database, delete=False, change=True, create=False, **fields):
+        if not self.operationplan:
+            return
+        delta = {}
+        if "operationplan__startdate" in fields:
+            delta["startdate"] = datetime.strptime(
+                fields["operationplan__startdate"], "%Y-%m-%d %H:%M:%S"
+            )
+            self.operationplan.startdate = delta["startdate"]
+        if "operationplan__enddate" in fields:
+            delta["enddate"] = datetime.strptime(
+                fields["operationplan__enddate"], "%Y-%m-%d %H:%M:%S"
+            )
+            self.operationplan.enddate = delta["enddate"]
+        if "operationplan__status" in fields:
+            delta["status"] = fields["operationplan__status"]
+            self.operationplan.status = delta["status"]
+        if "operationplan__quantity" in fields:
+            delta["quantity"] = fields["operationplan__quantity"]
+            self.operationplan.quantity = delta["quantity"]
+        if delta:
+            self.operationplan.update(
+                database=database, delete=delete, change=change, create=create, **delta
+            )
+            self.operationplan.save(using=database)
+
     @staticmethod
     def updateOnhand(item_name, location_name, database):
         with connections[database].cursor() as cursor:
@@ -1051,7 +1103,7 @@ class DeliveryOrder(OperationPlan):
                 location=self.demand.location,
             ).save(using=database)
             OperationPlanMaterial.updateOnhand(
-                self.demand.item.name, self.demand.location, database
+                self.demand.item.name, self.demand.location.name, database
             )
 
 

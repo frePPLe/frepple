@@ -13,7 +13,7 @@ to be tailored to match your ERP data model.
 .. toctree::
    :maxdepth: 1
 
-   odoo-connector
+   odoo-connector/index
    openbravo-connector
    erpnext-connector
    uzerp-connector

@@ -2406,6 +2406,7 @@ class ManufacturingOrder(OperationPlan):
 
             if self.operation.type != "routing":
                 interruptions = []
+                unavailable = timedelta(0)
                 if "enddate" in fields:
                     # Mode 1: End date (optionally also quantity) given -> compute start date
                     self.startdate = self.calculateOperationTime(
@@ -2424,8 +2425,12 @@ class ManufacturingOrder(OperationPlan):
                         )
                         for i in interruptions
                     ]
+                    for i in interruptions:
+                        unavailable += i[1] - i[0]
+                    self.plan["unavailable"] = int(unavailable.total_seconds())
                 else:
                     self.plan.pop("interruptions", None)
+                    self.plan.pop("unavailable", None)
 
         if (
             change

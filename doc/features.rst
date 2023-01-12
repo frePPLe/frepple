@@ -114,11 +114,11 @@ Odoo integration
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
-| **Maintain all data in odoo**           | All master data and transactions are managed by Odoo.                      | - Doc :doc:`integration-guide/odoo-connector`                                 |
+| **Maintain all data in odoo**           | All master data and transactions are managed by Odoo.                      | - Doc :doc:`erp-integration/odoo-connector/overview`                          |
 |                                         | The frepple connector is an odoo addon that synchronizes all planning      |                                                                               |
 |                                         | to frePPLe.                                                                |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Publish manufacturing orders          | Publish planning results back to odoo.                                     | - Doc :doc:`integration-guide/odoo-connector`                                 |
+| **Publish manufacturing orders          | Publish planning results back to odoo.                                     | - Doc :doc:`erp-integration/odoo-connector/overview`                          |
 | and purchase orders**                   | With a simple click the planners can create manufacturing orders and       |                                                                               |
 |                                         | purchase orders in odoo.                                                   |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+

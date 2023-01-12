@@ -477,22 +477,18 @@ class OperationPlan(AuditModel):
         # TODO replicate Operationplan::getEfficiency() logic
         return 1.0
 
-    def update(self, database, delete=False, change=True, create=False, **fields):
+    def update(self, database, delete=False, create=False, **fields):
         if self.type == "PO":
-            PurchaseOrder.update(
-                self, database, delete=delete, change=change, create=create, **fields
-            )
+            PurchaseOrder.update(self, database, delete=delete, create=create, **fields)
         elif self.type == "DO":
             DistributionOrder.update(
-                self, database, delete=delete, change=change, create=create, **fields
+                self, database, delete=delete, create=create, **fields
             )
         elif self.type == "DLVR":
-            DeliveryOrder.update(
-                self, database, delete=delete, change=change, create=create, **fields
-            )
+            DeliveryOrder.update(self, database, delete=delete, create=create, **fields)
         else:
             ManufacturingOrder.update(
-                self, database, delete=delete, change=change, create=create, **fields
+                self, database, delete=delete, create=create, **fields
             )
         # TODO handle change of STCK operationplan with an update of the buffer
 
@@ -656,7 +652,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
             self.status,
         )
 
-    def update(self, database, delete=False, change=True, create=False, **fields):
+    def update(self, database, delete=False, create=False, **fields):
         if not self.operationplan:
             return
         delta = {}
@@ -678,7 +674,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
             self.operationplan.quantity = delta["quantity"]
         if delta:
             self.operationplan.update(
-                database=database, delete=delete, change=change, create=create, **delta
+                database=database, delete=delete, create=create, **delta
             )
             self.operationplan.save(using=database)
 
@@ -1000,7 +996,7 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
         verbose_name_plural = _("inventory detail")
         indexes = [models.Index(fields=["item", "location"], name="opplanmat_itemloc")]
 
-    def update(self, database, delete=False, change=True, create=False, **fields):
+    def update(self, database, delete=False, create=False, **fields):
         if not self.operationplan:
             return
         delta = {}
@@ -1022,7 +1018,7 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
             self.operationplan.quantity = delta["quantity"]
         if delta:
             self.operationplan.update(
-                database=database, delete=delete, change=change, create=create, **delta
+                database=database, delete=delete, create=create, **delta
             )
             self.operationplan.save(using=database)
 
@@ -1095,9 +1091,9 @@ class DeliveryOrder(OperationPlan):
             self._calendars.append(self.location.available)
         return self._calendars
 
-    def update(self, database, delete=False, change=True, create=False, **fields):
+    def update(self, database, delete=False, create=False, **fields):
         # Assure the start date, end date and quantity are consistent
-        if change or create:
+        if not delete:
             interruptions = []
             if "enddate" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
@@ -1239,10 +1235,11 @@ class DistributionOrder(OperationPlan):
         self._itemdistribution = None
         return self._itemdistribution
 
-    def update(self, database, delete=False, change=True, create=False, **fields):
+    def update(self, database, delete=False, create=False, **fields):
         itemdistribution = self.itemdistribution(database)
 
         # Computed fields
+        change = not delete and not create
         self.name = "Ship %s%s%s to %s" % (
             self.item.name if self.item else "no-item",
             " @ %s" % self.batch if self.batch else "",
@@ -1301,7 +1298,7 @@ class DistributionOrder(OperationPlan):
                 )
 
         # Assure the start date, end date and quantity are consistent
-        if change or create:
+        if not delete:
             interruptions = []
             if "enddate" in fields or "receipt_date" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
@@ -1505,10 +1502,11 @@ class PurchaseOrder(OperationPlan):
         self._itemsupplier = None
         return self._itemsupplier
 
-    def update(self, database, delete=False, change=True, create=False, **fields):
+    def update(self, database, delete=False, create=False, **fields):
         itemsupplier = self.itemsupplier(database)
 
         # Computed fields
+        change = not delete and not create
         self.name = "Purchase %s%s @ %s%s" % (
             self.item.name if self.item else "no-item",
             " @ %s" % self.batch if self.batch else "",
@@ -1567,7 +1565,7 @@ class PurchaseOrder(OperationPlan):
                 )
 
         # Assure the start date, end date and quantity are consistent
-        if change or create:
+        if not delete:
             interruptions = []
             if "enddate" in fields or "receipt_date" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
@@ -1930,7 +1928,7 @@ class ManufacturingOrder(OperationPlan):
                             if newstyle and hasattr(ManufacturingOrder, "update"):
                                 if it:
                                     ManufacturingOrder.update(
-                                        obj, database, change=True, **form.cleaned_data
+                                        obj, database, **form.cleaned_data
                                     )
                                 else:
                                     ManufacturingOrder.update(
@@ -2226,9 +2224,10 @@ class ManufacturingOrder(OperationPlan):
                     self._calendars.append(r.resource.location.available)
         return self._calendars
 
-    def update(self, database, delete=False, change=True, create=False, **fields):
+    def update(self, database, delete=False, create=False, **fields):
 
         # Computed fields
+        change = not delete and not create
         self.name = self.operation.name if self.operation else "no-operation"
 
         # Process quantity changes
@@ -2310,7 +2309,7 @@ class ManufacturingOrder(OperationPlan):
                     )
 
         # Assure the start date, end date and quantity are consistent
-        if change or create:
+        if not delete:
             if "startdate" in fields:
                 efficiency = self.getEfficiency(self.startdate)
             elif "enddate" in fields:
@@ -2433,6 +2432,7 @@ class ManufacturingOrder(OperationPlan):
             and self.owner
             and self.operation.owner
             and self.operation.owner.type == "routing"
+            and "noparentupdate" not in fields
         ):
             # Keep the timing of a following routing step consistent
             use_dependencies = (
@@ -2443,7 +2443,7 @@ class ManufacturingOrder(OperationPlan):
                 )
                 .exists()
             )
-            if not use_dependencies and "noparentupdate" not in fields:
+            if not use_dependencies:
                 found = False
                 self.save(using=database)
                 # Backward propagation before the current step
@@ -2465,7 +2465,6 @@ class ManufacturingOrder(OperationPlan):
                         x.quantity = prevstep.quantity
                         x.update(
                             database,
-                            change=True,
                             enddate=x.enddate,
                             quantity=self.quantity,
                             noparentupdate=True,
@@ -2492,7 +2491,6 @@ class ManufacturingOrder(OperationPlan):
                         x.quantity = prevstep.quantity
                         x.update(
                             database,
-                            change=True,
                             startdate=x.startdate,
                             quantity=x.quantity,
                             noparentupdate=True,

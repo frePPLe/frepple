@@ -825,7 +825,7 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
         if form.has_changed():
             fields = {f: form.cleaned_data[f] for f in form.changed_data}
             if change:
-                obj.update(request.database, change=True, **fields)
+                obj.update(request.database, **fields)
             else:
                 obj.update(request.database, create=True, **fields)
         super().save_model(request, obj, form, change)
@@ -889,7 +889,7 @@ class DistributionOrder_admin(MultiDBModelAdmin):
         if form.has_changed():
             fields = {f: form.cleaned_data[f] for f in form.changed_data}
             if change:
-                obj.update(request.database, change=True, **fields)
+                obj.update(request.database, **fields)
             else:
                 obj.update(request.database, create=True, **fields)
         super().save_model(request, obj, form, change)
@@ -953,7 +953,7 @@ class PurchaseOrder_admin(MultiDBModelAdmin):
         if form.has_changed():
             fields = {f: form.cleaned_data[f] for f in form.changed_data}
             if change:
-                obj.update(request.database, change=True, **fields)
+                obj.update(request.database, **fields)
             else:
                 obj.update(request.database, create=True, **fields)
         super().save_model(request, obj, form, change)
@@ -1011,7 +1011,7 @@ class DeliveryOrder_admin(MultiDBModelAdmin):
         if form.has_changed():
             fields = {f: form.cleaned_data[f] for f in form.changed_data}
             if change:
-                obj.update(request.database, change=True, **fields)
+                obj.update(request.database, **fields)
             else:
                 obj.update(request.database, create=True, **fields)
         super().save_model(request, obj, form, change)
@@ -1103,7 +1103,7 @@ class OperationPlanResource_admin(MultiDBModelAdmin):
         if form.has_changed():
             fields = {f: form.cleaned_data[f] for f in form.changed_data}
             if change:
-                obj.update(request.database, change=True, **fields)
+                obj.update(request.database, **fields)
             else:
                 obj.update(request.database, create=True, **fields)
         super().save_model(request, obj, form, change)
@@ -1145,7 +1145,7 @@ class OperationPlanMaterial_admin(MultiDBModelAdmin):
         if form.has_changed():
             fields = {f: form.cleaned_data[f] for f in form.changed_data}
             if change:
-                obj.update(request.database, change=True, **fields)
+                obj.update(request.database, **fields)
             else:
                 obj.update(request.database, create=True, **fields)
         super().save_model(request, obj, form, change)

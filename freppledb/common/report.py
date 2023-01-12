@@ -2083,9 +2083,7 @@ class GridReport(View):
                                 elif form.has_changed():
                                     if with_update:
                                         obj.update(
-                                            request.database,
-                                            change=True,
-                                            **form.cleaned_data
+                                            request.database, **form.cleaned_data
                                         )
                                     obj = form.save(commit=False)
                                     obj.save(using=request.database)

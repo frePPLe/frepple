@@ -526,9 +526,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
                         obj = form.save(commit=False)
                         if with_update:
                             if it:
-                                model.update(
-                                    obj, database, change=True, **form.cleaned_data
-                                )
+                                model.update(obj, database, **form.cleaned_data)
                             else:
                                 model.update(
                                     obj, database, create=True, **form.cleaned_data

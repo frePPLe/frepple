@@ -90,6 +90,7 @@ frePPLe |release| documentation
    command-reference
    installation-guide/index
    integration-guide/index
+   erp-integration/index
    developer-guide/index
    license
    release-notes

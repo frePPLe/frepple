@@ -24,8 +24,3 @@ interaction with the frePPLe planning engine.
    batch-commands
    remote-commands
    low-level-integration/index
-   odoo-connector
-   openbravo-connector
-   generic-erp-connector
-   erpnext-connector
-   uzerp-connector

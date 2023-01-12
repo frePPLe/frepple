@@ -905,6 +905,11 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                 from cte
                 where out_resourceplan.startdate = cte.startdate
                 and out_resourceplan.resource = %s
+                and (out_resourceplan.available != cte.available
+                    or out_resourceplan.unavailable != cte.unavailable
+                    or out_resourceplan.setup != cte.setup
+                    or out_resourceplan.load != cte.load
+                    or out_resourceplan.free != cte.free)
                     """,
                     (i, i),
                 )

@@ -2327,11 +2327,17 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
       auto orig_q_qty = data.state->q_qty;
       bool repeat = false;
       auto bm = data.getCommandManager()->setBookmark();
+      auto prevOwnerOpplan = data.state->curOwnerOpplan;
       do {
         repeat = false;
         data.state->q_qty = orig_q_qty;
         data.state->blockedOpplan = opplan;
         data.state->dependency = dpd;
+        data.state->curOwnerOpplan =
+            (dpd->getBlockedBy()->getOwner() &&
+             dpd->getBlockedBy()->getOwner() == dpd->getOperation()->getOwner())
+                ? prevOwnerOpplan
+                : nullptr;
         dpd->getBlockedBy()->solve(*this, &data);
         a_qty = (data.state->a_qty + allocated) / dpd->getQuantity();
         if (data.state->a_qty < ROUNDING_ERROR) {
@@ -2364,6 +2370,7 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
           }
         }
       } while (repeat);
+      data.state->curOwnerOpplan = prevOwnerOpplan;
       if (incomplete) break;
     }
   }

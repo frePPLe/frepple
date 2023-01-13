@@ -765,7 +765,9 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                 time_unit = 3600 / 24
             elif p == "weeks":
                 time_unit = 3600 / 24 / 7
-        except:
+            else:
+                time_unit = 3600
+        except Exception:
             time_unit = 3600
 
         with connections[database].cursor() as cursor:

@@ -493,6 +493,81 @@ class OperationPlan(AuditModel):
         # TODO handle change of STCK operationplan with an update of the buffer
 
     @classmethod
+    def _propagateDependencies(
+        cls,
+        database,
+        ref: str,
+    ):
+        with connections[database].cursor() as cursor:
+            cursor.execute(
+                """
+                with cte as (
+                  select
+                    operationplan.reference,
+                    operationplan.operation_id,
+                    operationplan.startdate,
+                    operationplan.enddate,
+                    jsonb_array_elements(operationplan.plan->'downstream_opplans') as dwnstrm,
+                    jsonb_array_elements(operationplan.plan->'upstream_opplans') as upstrm
+                  from operationplan
+                  where reference = %s
+                  )
+                select
+                   1, operationplan.reference,
+                   coalesce(cte.enddate + operation_dependency.hard_safety_leadtime, cte.enddate)
+                from cte
+                inner join operationplan
+                  on operationplan.reference = cte.dwnstrm->>1
+                inner join operation_dependency
+                  on cte.operation_id = operation_dependency.blockedby_id
+                  and operationplan.operation_id = operation_dependency.operation_id
+                where dwnstrm->>0 = '1'
+                and operationplan.startdate < coalesce(cte.enddate + operation_dependency.hard_safety_leadtime, cte.enddate)
+                union all
+                select
+                   2, operationplan.reference,
+                   coalesce(cte.startdate - operation_dependency.hard_safety_leadtime, cte.startdate)
+                from cte
+                inner join operationplan
+                  on operationplan.reference = cte.upstrm->>1
+                inner join operation_dependency
+                  on cte.operation_id = operation_dependency.operation_id
+                  and operationplan.operation_id = operation_dependency.blockedby_id
+                where upstrm->>0 = '1'
+                and operationplan.enddate > coalesce(cte.startdate - operation_dependency.hard_safety_leadtime, cte.startdate)
+                """,
+                (ref,),
+            )
+            for rec in cursor.fetchall():
+                try:
+                    opplan = OperationPlan.objects.using(database).get(reference=rec[1])
+                    if rec[0] == 1:
+                        # Move successor step later
+                        opplan.startdate = rec[2]
+                        opplan.update(database, startdate=rec[2])
+                    else:
+                        # Move predecessor step early
+                        opplan.enddate = rec[2]
+                        opplan.update(database, enddate=rec[2])
+                    opplan.save(using=database)
+                    cls._propagateDependencies(database, opplan.reference)
+
+                    # Update parent
+                    if opplan.owner:
+                        parentdates = (
+                            opplan.owner.xchildren.all()
+                            .using(database)
+                            .aggregate(models.Max("enddate"), models.Min("startdate"))
+                        )
+                        opplan.owner.startdate = parentdates["startdate__min"]
+                        opplan.owner.enddate = parentdates["enddate__max"]
+                        opplan.owner.save(
+                            using=database, update_fields=("startdate", "enddate")
+                        )
+                except OperationPlan.DoesNotExist:
+                    pass
+
+    @classmethod
     def getDeleteStatements(cls):
         stmts = []
         stmts.append(
@@ -680,7 +755,6 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
 
     def updateResourcePlan(self, database, delete=False):
         # default value of parameter is hours
-        time_unit = 3600
         try:
             p = Parameter.objects.using(database).get(name="loading_time_units").value
             if p == "days":
@@ -688,7 +762,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
             elif p == "weeks":
                 time_unit = 3600 / 24 / 7
         except:
-            pass
+            time_unit = 3600
 
         with connections[database].cursor() as cursor:
 
@@ -2432,7 +2506,19 @@ class ManufacturingOrder(OperationPlan):
                     self.plan.pop("interruptions", None)
                     self.plan.pop("unavailable", None)
 
-        if (
+        # Propagate dependencies
+        dependencies = (
+            OperationDependency.objects.using(database)
+            .filter(
+                models.Q(operation__owner=self.operation.owner)
+                | models.Q(blockedby__owner=self.operation.owner)
+            )
+            .exists()
+        )
+        if dependencies and change:
+            self.save(using=database)  # Unfortunately, saving twice
+            OperationPlan._propagateDependencies(database, self.reference)
+        elif (
             change
             and self.owner
             and self.operation.owner
@@ -2440,83 +2526,74 @@ class ManufacturingOrder(OperationPlan):
             and "noparentupdate" not in fields
         ):
             # Keep the timing of a following routing step consistent
-            use_dependencies = (
-                OperationDependency.objects.using(database)
-                .filter(
-                    models.Q(operation__owner=self.operation.owner)
-                    | models.Q(blockedby__owner=self.operation.owner)
-                )
-                .exists()
+            found = False
+            self.save(using=database)  # Unfortunately, saving twice
+            # Backward propagation before the current step
+            prevstep = None
+            for x in (
+                self.owner.xchildren.all()
+                .using(database)
+                .order_by("-operation__sequence")
+            ):
+                if x.reference == self.reference:
+                    found = True
+                elif (
+                    found
+                    and prevstep
+                    and (x.enddate > prevstep.startdate or "quantity" in fields)
+                ):
+                    if x.enddate > prevstep.startdate:
+                        x.enddate = prevstep.startdate
+                    x.quantity = prevstep.quantity
+                    x.update(
+                        database,
+                        enddate=x.enddate,
+                        quantity=self.quantity,
+                        noparentupdate=True,
+                    )
+                    x.save(using=database)
+                prevstep = x
+
+            # Forward propagation after the current step
+            prevstep = None
+            for x in (
+                self.owner.xchildren.all()
+                .using(database)
+                .order_by("operation__sequence")
+            ):
+                if x.reference == self.reference:
+                    found = True
+                elif (
+                    found
+                    and prevstep
+                    and (x.startdate < prevstep.enddate or "quantity" in fields)
+                ):
+                    if x.startdate < prevstep.enddate:
+                        x.startdate = prevstep.enddate
+                    x.quantity = prevstep.quantity
+                    x.update(
+                        database,
+                        startdate=x.startdate,
+                        quantity=x.quantity,
+                        noparentupdate=True,
+                    )
+                    x.save(using=database)
+                prevstep = x
+
+            # Update parent
+            parentdates = (
+                self.owner.xchildren.all()
+                .using(database)
+                .aggregate(models.Max("enddate"), models.Min("startdate"))
             )
-            if not use_dependencies:
-                found = False
-                self.save(using=database)
-                # Backward propagation before the current step
-                prevstep = None
-                for x in (
-                    self.owner.xchildren.all()
-                    .using(database)
-                    .order_by("-operation__sequence")
-                ):
-                    if x.reference == self.reference:
-                        found = True
-                    elif (
-                        found
-                        and prevstep
-                        and (x.enddate > prevstep.startdate or "quantity" in fields)
-                    ):
-                        if x.enddate > prevstep.startdate:
-                            x.enddate = prevstep.startdate
-                        x.quantity = prevstep.quantity
-                        x.update(
-                            database,
-                            enddate=x.enddate,
-                            quantity=self.quantity,
-                            noparentupdate=True,
-                        )
-                        x.save(using=database)
-                    prevstep = x
-
-                # Forward propagation after the current step
-                prevstep = None
-                for x in (
-                    self.owner.xchildren.all()
-                    .using(database)
-                    .order_by("operation__sequence")
-                ):
-                    if x.reference == self.reference:
-                        found = True
-                    elif (
-                        found
-                        and prevstep
-                        and (x.startdate < prevstep.enddate or "quantity" in fields)
-                    ):
-                        if x.startdate < prevstep.enddate:
-                            x.startdate = prevstep.enddate
-                        x.quantity = prevstep.quantity
-                        x.update(
-                            database,
-                            startdate=x.startdate,
-                            quantity=x.quantity,
-                            noparentupdate=True,
-                        )
-                        x.save(using=database)
-                    prevstep = x
-
-                # Update parent
-                parentdates = (
-                    self.owner.xchildren.all()
-                    .using(database)
-                    .aggregate(models.Max("enddate"), models.Min("startdate"))
-                )
-                self.owner.startdate = parentdates["startdate__min"]
-                self.owner.enddate = parentdates["enddate__max"]
-                if "quantity" in fields:
-                    self.owner.quantity = self.quantity
-                self.owner.save(
-                    using=database,
-                    update_fields=("quantity", "startdate", "enddate"),
-                )
+            self.owner.startdate = parentdates["startdate__min"]
+            self.owner.enddate = parentdates["enddate__max"]
+            if "quantity" in fields:
+                self.owner.quantity = self.quantity
+            self.owner.save(
+                using=database,
+                update_fields=("quantity", "startdate", "enddate"),
+            )
 
         # Propagate the deletion of child operationplans
         if delete and self.operation.type == "routing":

@@ -492,12 +492,7 @@ class OperationPlan(AuditModel):
             )
         # TODO handle change of STCK operationplan with an update of the buffer
 
-    @classmethod
-    def _propagateDependencies(
-        cls,
-        database,
-        ref: str,
-    ):
+    def _propagateDependencies(self, database, updateParent=True):
         with connections[database].cursor() as cursor:
             cursor.execute(
                 """
@@ -510,7 +505,7 @@ class OperationPlan(AuditModel):
                     jsonb_array_elements(operationplan.plan->'downstream_opplans') as dwnstrm,
                     jsonb_array_elements(operationplan.plan->'upstream_opplans') as upstrm
                   from operationplan
-                  where reference = %s
+                  where reference = %%s
                   )
                 select
                    1, operationplan.reference,
@@ -521,8 +516,9 @@ class OperationPlan(AuditModel):
                 inner join operation_dependency
                   on cte.operation_id = operation_dependency.blockedby_id
                   and operationplan.operation_id = operation_dependency.operation_id
-                where dwnstrm->>0 = '1'
+                where dwnstrm->>0 in ('1' %s)
                 and operationplan.startdate < coalesce(cte.enddate + operation_dependency.hard_safety_leadtime, cte.enddate)
+                and (operationplan.status is null or operationplan.status in ('approved', 'proposed'))
                 union all
                 select
                    2, operationplan.reference,
@@ -533,39 +529,47 @@ class OperationPlan(AuditModel):
                 inner join operation_dependency
                   on cte.operation_id = operation_dependency.operation_id
                   and operationplan.operation_id = operation_dependency.blockedby_id
-                where upstrm->>0 = '1'
+                where upstrm->>0 in ('1' %s)
                 and operationplan.enddate > coalesce(cte.startdate - operation_dependency.hard_safety_leadtime, cte.startdate)
-                """,
-                (ref,),
+                and (operationplan.status is null or operationplan.status in ('approved', 'proposed'))
+                """
+                % ((",'2'", ",'2'") if self.owner else ("", "")),
+                (self.reference,),
             )
             for rec in cursor.fetchall():
                 try:
-                    opplan = OperationPlan.objects.using(database).get(reference=rec[1])
+                    depopplan = OperationPlan.objects.using(database).get(
+                        reference=rec[1]
+                    )
                     if rec[0] == 1:
                         # Move successor step later
-                        opplan.startdate = rec[2]
-                        opplan.update(database, startdate=rec[2])
+                        depopplan.startdate = rec[2]
+                        depopplan.update(database, startdate=rec[2])
                     else:
                         # Move predecessor step early
-                        opplan.enddate = rec[2]
-                        opplan.update(database, enddate=rec[2])
-                    opplan.save(using=database)
-                    cls._propagateDependencies(database, opplan.reference)
-
-                    # Update parent
-                    if opplan.owner:
-                        parentdates = (
-                            opplan.owner.xchildren.all()
-                            .using(database)
-                            .aggregate(models.Max("enddate"), models.Min("startdate"))
-                        )
-                        opplan.owner.startdate = parentdates["startdate__min"]
-                        opplan.owner.enddate = parentdates["enddate__max"]
-                        opplan.owner.save(
-                            using=database, update_fields=("startdate", "enddate")
-                        )
+                        depopplan.enddate = rec[2]
+                        depopplan.update(database, enddate=rec[2])
+                    depopplan.save(using=database)
+                    depopplan._propagateDependencies(database)
                 except OperationPlan.DoesNotExist:
                     pass
+
+            if self.operation.type == "routing":
+                # Update children
+                for ch in self.xchildren.all().using(database):
+                    ch._propagateDependencies(database, updateParent=False)
+            if self.owner:
+                # Update parent
+                parentdates = (
+                    self.owner.xchildren.all()
+                    .using(database)
+                    .aggregate(models.Max("enddate"), models.Min("startdate"))
+                )
+                self.owner.startdate = parentdates["startdate__min"]
+                self.owner.enddate = parentdates["enddate__max"]
+                self.owner.save(using=database, update_fields=("startdate", "enddate"))
+                if updateParent:
+                    self.owner._propagateDependencies(database)
 
     @classmethod
     def getDeleteStatements(cls):
@@ -2382,6 +2386,16 @@ class ManufacturingOrder(OperationPlan):
                         )
                     )
 
+        dependencies = (
+            not delete
+            and OperationDependency.objects.using(database)
+            .filter(
+                models.Q(operation__owner=self.operation.owner)
+                | models.Q(blockedby__owner=self.operation.owner)
+            )
+            .exists()
+        )
+
         # Assure the start date, end date and quantity are consistent
         if not delete:
             if "startdate" in fields:
@@ -2416,44 +2430,84 @@ class ManufacturingOrder(OperationPlan):
                     if "enddate" in fields:
                         delta["enddate"] = self.enddate
                         delta["noparentupdate"] = True
-                        for ch in (
-                            self.xchildren.all()
-                            .using(database)
-                            .order_by("-operation__priority")
-                        ):
-                            ch.quantity = self.quantity
-                            if ch.status in ("approved", "proposed"):
-                                ch.enddate = delta["enddate"]
-                            else:
-                                del delta["enddate"]
-                            if "status" in delta:
-                                ch.status = delta["status"]
-                            ch.update(database, **delta)
-                            delta["enddate"] = ch.startdate
-                            ch.save(using=database)
-                        if ch:
-                            self.startdate = ch.startdate
+                        if dependencies:
+                            # Update the final dependencies in the routing
+                            for ch in self.xchildren.all().using(database):
+                                if (
+                                    ch.status not in ("approved", "proposed")
+                                    or ch.operation.dependents.all()
+                                    .using(database)
+                                    .filter(operation__owner=self.operation)
+                                    .exists()
+                                ):
+                                    continue
+                                if "quantity" in delta:
+                                    ch.quantity = self.quantity
+                                if "status" in delta:
+                                    ch.status = delta["status"]
+                                ch.enddate = fields["enddate"]
+                                ch.update(database, **delta)
+                                ch.save(using=database)
+                        else:
+                            # Update the sequence of steps, starting from the last one
+                            for ch in (
+                                self.xchildren.all()
+                                .using(database)
+                                .order_by("-operation__priority")
+                            ):
+                                ch.quantity = self.quantity
+                                if ch.status in ("approved", "proposed"):
+                                    ch.enddate = delta["enddate"]
+                                else:
+                                    del delta["enddate"]
+                                if "status" in delta:
+                                    ch.status = delta["status"]
+                                ch.update(database, **delta)
+                                delta["enddate"] = ch.startdate
+                                ch.save(using=database)
+                            if ch:
+                                self.startdate = ch.startdate
                     elif "startdate" in fields or "quantity" in fields:
                         delta["startdate"] = self.startdate
                         delta["noparentupdate"] = True
-                        for ch in (
-                            self.xchildren.all()
-                            .using(database)
-                            .order_by("operation__priority")
-                        ):
-                            if "quantity" in delta:
-                                ch.quantity = self.quantity
-                            if ch.status in ("approved", "proposed"):
+                        if dependencies:
+                            # Update the initial dependencies in the routing
+                            for ch in self.xchildren.all().using(database):
+                                if (
+                                    ch.status not in ("approved", "proposed")
+                                    or ch.operation.dependencies.all()
+                                    .using(database)
+                                    .filter(blockedby__owner=self.operation)
+                                    .exists()
+                                ):
+                                    continue
+                                if "quantity" in delta:
+                                    ch.quantity = self.quantity
+                                if "status" in delta:
+                                    ch.status = delta["status"]
                                 ch.startdate = delta["startdate"]
-                            else:
-                                del delta["startdate"]
-                            if "status" in delta:
-                                ch.status = delta["status"]
-                            ch.update(database, **delta)
-                            ch.save(using=database)
-                            delta["startdate"] = ch.enddate
-                        if ch:
-                            self.enddate = ch.enddate
+                                ch.update(database, **delta)
+                                ch.save(using=database)
+                        else:
+                            # Update the sequence of steps, starting from the last one
+                            for ch in (
+                                self.xchildren.all()
+                                .using(database)
+                                .order_by("operation__priority")
+                            ):
+                                if "quantity" in delta:
+                                    ch.quantity = self.quantity
+                                if ch.status in ("approved", "proposed"):
+                                    ch.startdate = delta["startdate"]
+                                else:
+                                    del delta["startdate"]
+                                if "status" in delta:
+                                    ch.status = delta["status"]
+                                ch.update(database, **delta)
+                                ch.save(using=database)
+                                delta["startdate"] = ch.enddate
+                            if ch:
+                                self.enddate = ch.enddate
                     elif delta:
                         for ch in self.xchildren.all().using(database):
                             ch.quantity = self.quantity
@@ -2507,17 +2561,9 @@ class ManufacturingOrder(OperationPlan):
                     self.plan.pop("unavailable", None)
 
         # Propagate dependencies
-        dependencies = (
-            OperationDependency.objects.using(database)
-            .filter(
-                models.Q(operation__owner=self.operation.owner)
-                | models.Q(blockedby__owner=self.operation.owner)
-            )
-            .exists()
-        )
         if dependencies and change:
             self.save(using=database)  # Unfortunately, saving twice
-            OperationPlan._propagateDependencies(database, self.reference)
+            self._propagateDependencies(database)
         elif (
             change
             and self.owner

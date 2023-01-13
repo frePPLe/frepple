@@ -30,7 +30,7 @@ Release notes
 .. rubric:: System administration
 
 - | The database name is now configurable in the docker container.
-  | The default database names are "freppe", "scenario1", "scenario2", "scenario3".
+  | The default database names are "frepple", "scenario1", "scenario2", "scenario3".
   | If the POSTGRES_DBNAME argument is passed as "X", the database names will be
     "X0", "X1", "X2" and "X3".
 

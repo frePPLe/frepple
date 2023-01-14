@@ -2178,7 +2178,21 @@ void SolverCreate::createsBatches(Operation* oper, void* v) {
         added += tmp->getQuantity();
         delete tmp;
       }
-      if (added > 0.0) opplan->setQuantity(opplan->getQuantity() + added);
+      if (added > 0.0) {
+        opplan->setQuantity(opplan->getQuantity() + added);
+        // we found some operationplans to aggregate
+        // but did we generate some excess, typically by summing some
+        // unnecessary sizeminimum quantities ?
+        double excess = 0;
+        Buffer* buffer = opplan->getFlowPlans()->getBuffer();
+        if (buffer) {
+          excess = buffer->getOnHand(opplan->getEnd(), Date::infiniteFuture,
+                                     true, true);
+          // some security
+          if (excess > 0 && excess < opplan->getQuantity())
+            opplan->setQuantity(opplan->getQuantity() - excess);
+        }
+      }
     }
     ++opplan;
   }

@@ -294,7 +294,8 @@ double Buffer::getOnHand(Date d, bool after) const {
   return tmp;
 }
 
-double Buffer::getOnHand(Date d1, Date d2, bool min) const {
+double Buffer::getOnHand(Date d1, Date d2, bool min,
+                         bool use_safetystock) const {
   // Swap parameters if required
   if (d2 < d1) swap(d1, d2);
 
@@ -321,7 +322,17 @@ double Buffer::getOnHand(Date d1, Date d2, bool min) const {
       if (prev_Date > d2 || oo == flowplans.end()) return record;
       d = oo->getDate();
     }
-    tmp = oo->getOnhand();
+    double safetystock = 0;
+    if (use_safetystock) {
+      safetystock = getMinimum();
+      Calendar* ss_calendar = getMinimumCalendar();
+      if (ss_calendar) {
+        CalendarBucket* calendarBucket =
+            ss_calendar->findBucket(oo->getDate(), true);
+        if (calendarBucket) safetystock = calendarBucket->getValue();
+      }
+    }
+    tmp = oo->getOnhand() - safetystock;
     prev_Date = oo->getDate();
   }
   // The above for-loop controls the exit. This line of code is never reached.

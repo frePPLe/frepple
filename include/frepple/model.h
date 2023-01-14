@@ -5103,9 +5103,12 @@ class Buffer : public HasHierarchy<Buffer>,
   /* Returns minimum or maximum available material on hand in the given
    * daterange. The third parameter specifies whether we return the
    * minimum (which is the default) or the maximum value.
+   * The fourth parameter specifies if we need to compare against 0
+   * or against the safety stock
    * The computation is INclusive the start and end dates.
    */
-  double getOnHand(Date, Date, bool min = true) const;
+  double getOnHand(Date, Date, bool min = true,
+                   bool use_safetystock = false) const;
 
   /* Returns a reference to the list of all flows of this buffer. */
   const flowlist& getFlows() const { return flows; }

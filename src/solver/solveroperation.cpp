@@ -2189,8 +2189,28 @@ void SolverCreate::createsBatches(Operation* oper, void* v) {
           excess = buffer->getOnHand(opplan->getEnd(), Date::infiniteFuture,
                                      true, true);
           // some security
-          if (excess > 0 && excess < opplan->getQuantity())
+          if (excess > 0 && excess < opplan->getQuantity()) {
+            // handle operation size minimum that might slightly decrease the
+            // excess
+            if (opplan->getQuantity() - excess <
+                opplan->getOperation()->getSizeMinimum()) {
+              excess = max(opplan->getOperation()->getSizeMinimum() -
+                               opplan->getQuantity(),
+                           double(0));
+            }
+
+            // handle operation size multiple that might also slightly decrease
+            // the onhand
+            if (opplan->getOperation()->getSizeMultiple() > 0.0) {
+              double mult = floor((opplan->getQuantity() - excess) /
+                                  opplan->getOperation()->getSizeMultiple());
+              double q = (mult + 1) * opplan->getOperation()->getSizeMultiple();
+              excess = max(opplan->getQuantity() - q, double(0));
+            }
+
+            // Apply the excess we found
             opplan->setQuantity(opplan->getQuantity() - excess);
+          }
         }
       }
     }

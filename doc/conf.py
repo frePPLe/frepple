@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.abspath("."))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["frepple", "sphinx_tabs.tabs"]
+extensions = ["frepple", "sphinx_tabs.tabs", "sphinx_sitemap"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -236,7 +236,6 @@ man_pages = [("index", "frepple", "frePPLe Documentation", ["frePPLe bv"], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
-
 
 # -- Options for Texinfo output -------------------------------------------
 

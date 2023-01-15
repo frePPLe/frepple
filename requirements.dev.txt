@@ -8,6 +8,7 @@ tzlocal
 black >= 19.3b0
 Sphinx
 sphinx-tabs
+sphinx-sitemap
 selenium
 selenium_firefox
 msedge-selenium-tools

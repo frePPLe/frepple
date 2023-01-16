@@ -341,8 +341,10 @@ The following file formats are accepted:
 
   * | **SQL**:
     | The file name must end with .sql (or .sql.gz when compressed with gzip).
-    | For security reasons a database role with a minimal set of permissions must be
-      define. The setting DATABASES / SQL_ROLE needs to refer to this role.
+    | For security reasons these statements are executed as a database role
+      with a minimal set of database permissions.
+    | The setting DATABASES / SQL_ROLE refers to this role, and your database
+      administrator needs to grant appropriate access rights to that role.
 
 In this option you can see a list of files present in the specified folder, and download
 each file by clicking on the arrow down button, or delete a file by clicking on the

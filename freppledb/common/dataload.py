@@ -625,7 +625,7 @@ class BulkForeignKeyFormField(forms.fields.Field):
         field.remote_field.parent_link = (
             True  # A trick to disable the model validation on foreign keys!
         )
-        if field.remote_field.model._default_manager.all().using(using).count() > 20000:
+        if field.remote_field.model._default_manager.all().using(using).count() > 30000:
             self.queryset = field.remote_field.model._default_manager.all().using(using)
             self.cache = None
         else:

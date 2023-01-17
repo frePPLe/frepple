@@ -96,7 +96,7 @@ class TaskReport(GridReport):
         Task.objects.all()
         .extra(
             select={
-                "duration": "case when status in ('Done', '100%%') then finished::timestamp(0) - started::timestamp(0) end"
+                "duration": "case when finished is not null and started is not null then finished::timestamp(0) - started::timestamp(0) end"
             }
         )
         .select_related("user")

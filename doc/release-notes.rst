@@ -1,6 +1,14 @@
 Release notes
 -------------
 
+7.2.0 (Upcoming release)
+==================
+
+.. rubric:: Odoo integration
+
+- | 16: Support for operations requiring multiple workcenters at the same time.
+    An extra field name *secondary workcenters* has been added to the operation model.
+
 7.1.0 (2023/01/13)
 ==================
 

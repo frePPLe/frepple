@@ -2,7 +2,7 @@ Release notes
 -------------
 
 7.2.0 (Upcoming release)
-==================
+========================
 
 .. rubric:: Odoo integration
 

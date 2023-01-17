@@ -525,14 +525,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumedMO']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumedMO']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/consumed/" +
-              admin_escape(rowdata['item']) + "/" +
-              admin_escape(rowdata['location']) + "/" +
-              options['colModel']['startdate'] + "/" +
-              options['colModel']['enddate'] + "/" +
-              "?noautofilter" +
-              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += grid.formatNumber(cellvalue[id_by_field['consumedMO']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+           admin_escape(rowdata['buffer']) +
+           "/?flowdate__gte=" + options['colModel']['startdate'] +
+           "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+           "&amp;quantity__lt=0&amp;operationplan__type=MO&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -540,14 +537,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumedMO_confirmed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumedMO_confirmed']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/consumed/" +
-              admin_escape(rowdata['item']) + "/" +
-              admin_escape(rowdata['location']) + "/" +
-              options['colModel']['startdate'] + "/" +
-              options['colModel']['enddate'] + "/" +
-              "?status__in=confirmed,approved,completed&amp;noautofilter" +
-              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += grid.formatNumber(cellvalue[id_by_field['consumedMO_confirmed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
+              "/?flowdate__gte=" + options['colModel']['startdate'] +
+              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+              "&amp;quantity__lt=0&amp;operationplan__status__in=confirmed,approved,completed&amp;operationplan__type=MO&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -555,14 +549,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumedMO_proposed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumedMO_proposed']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/consumed/" +
-              admin_escape(rowdata['item']) + "/" +
-              admin_escape(rowdata['location']) + "/" +
-              options['colModel']['startdate'] + "/" +
-              options['colModel']['enddate'] + "/" +
-              "?status=proposed&amp;noautofilter" +
-              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += grid.formatNumber(cellvalue[id_by_field['consumedMO_proposed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
+              "/?flowdate__gte=" + options['colModel']['startdate'] +
+              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
+              "&amp;quantity__lt=0&amp;operationplan__status=proposed&amp;operationplan__type=MO&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;

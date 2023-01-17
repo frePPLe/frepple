@@ -15,3 +15,5 @@ extending, customizing or maintaining frePPLe.
    translating-the-user-interface
    planning-algorithm
    security
+   python
+   xml

@@ -15,8 +15,8 @@ Here's a simple annotated example of a data file in frePPLe's format:
           <item name="item X">
         </items>
         <demands>
-          <!-- Find or create an order. It also implicitly defines items, locations and 
-               customers that are referenced. --> 
+          <!-- Find or create an order. It also implicitly defines items, locations and
+               customers that are referenced. -->
           <demand name="order A">
             <item name="item X"/>
             <location name="depot Y"/>
@@ -25,15 +25,15 @@ Here's a simple annotated example of a data file in frePPLe's format:
             <due>2016-01-10T00:00:00</due>
             <priority>1</priority>
           </demand>
-          <!-- Similar to previous element, but using attributes for all simple data types. -->            
+          <!-- Similar to previous element, but using attributes for all simple data types. -->
           <demand name="order B" quantity="2" due="2016-03-11T00:00:00" priority="1">
             <item name="item X"/>
             <location name="depot Y"/>
             <customer name="client Z"/>
-          </demand>          
+          </demand>
         </demands>
-        <!-- Define an operation, including all materials it produces or consumes, and 
-          all resources it uses. --> 
+        <!-- Define an operation, including all materials it produces or consumes, and
+          all resources it uses. -->
         <operations>
           <operation name="make item X" xsi:type="operation_time_per">
             <flows>
@@ -56,7 +56,7 @@ Here's a simple annotated example of a data file in frePPLe's format:
             <duration_per>PT5M</duration_per>  <!-- 5 minutes in XML format -->
           </operation>
         </operations>
-        <!-- Material consumption definitions as above, but not structured inside 
+        <!-- Material consumption definitions as above, but not structured inside
            an operation element. Because of the flexible way that elements are allowed
            to be nested you can choose a layout of the XML document that best suits
            your data source and taste. -->
@@ -69,21 +69,21 @@ Here's a simple annotated example of a data file in frePPLe's format:
         </flows>
       </plan>
 
-The XML format is defined in `XML schema`_ format in
-the file https://raw.githubusercontent.com/frePPLe/frePPLe/master/bin/frepple.xsd
-(use master to see the development version, or replace it with the version number you're using).
+The XML format is defined in `XML schema`_ format in https://raw.githubusercontent.com/frePPLe/frePPLe/master/bin/frepple.xsd
+(use master to see the development version, or replace it with the version number you're using)
+or the file /usr/share/frepple/frepple.xsd in a local install.
 The engine can optionally validate the incoming documents against this schema and reject
-invalid data files. 
+invalid data files.
 
 The following encodings are supported for XML data: ASCII, UTF-8, UTF-16 (Big/Small Endian),
-UTF-32(Big/Small Endian), EBCDIC code pages IBM037, IBM1047 and IBM1140, ISO-8859-1 (aka Latin1) 
+UTF-32(Big/Small Endian), EBCDIC code pages IBM037, IBM1047 and IBM1140, ISO-8859-1 (aka Latin1)
 and Windows-1252. UTF-8 will be the best choice in most situations.
 
 There are plenty of sample XML-files available:
 
 - | The planning engine has a lot of its unit tests written as XML files.
   | See the .xml files in the folders under https://github.com/frePPLe/frePPLe/tree/master/test
-  
+
 - | The connector with the Odoo ERP system is implemented as a web service that collects all
     ERP in frePPLe's XML format. The frePPLe planning engine connects to this URL, retrieves
     the XML data and parses it in-memory to construct the planning model.
@@ -92,4 +92,4 @@ There are plenty of sample XML-files available:
 
 .. _`XML schema`: https://en.wikipedia.org/wiki/XML_schema
 
-.. _`that code`: https://github.com/frePPLe/odoo/blob/13.0/frepple/controllers/outbound.py
+.. _`that code`: https://github.com/frePPLe/odoo/blob/16.0/frepple/controllers/outbound.py

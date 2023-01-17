@@ -23,4 +23,4 @@ interaction with the frePPLe planning engine.
    rest-api/index
    batch-commands
    remote-commands
-   low-level-integration/index
+   embedding

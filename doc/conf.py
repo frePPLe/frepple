@@ -254,6 +254,8 @@ texinfo_documents = [
     )
 ]
 
+html_baseurl = "https://your-site.com/docs/"
+
 # Documents to append as an appendix to all manuals.
 # texinfo_appendices = []
 

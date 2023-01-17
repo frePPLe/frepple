@@ -9,6 +9,11 @@ Release notes
 - | 16: Support for operations requiring multiple workcenters at the same time.
     An extra field name *secondary workcenters* has been added to the operation model.
 
+.. rubric:: Documentation
+
+- The chapters are restructured and some new pages are added. We hope this
+  makes it easier to find the info you're looking for.
+
 7.1.0 (2023/01/13)
 ==================
 

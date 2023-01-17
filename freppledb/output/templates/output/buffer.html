@@ -30,10 +30,10 @@ $(function(){
     available = 200;
   $("#graph").width($(window).width()-60).height(available);
 {% endif %}
-  for (var i in cross_idx)
-    field_by_id[cross_idx[i]] = cross[cross_idx[i]]["key"];
-  for (var i in cross)
+  for (var i in cross) {
+    field_by_id[i] = cross[i]["key"];
     id_by_field[cross[i]["key"]] = i;
+  }
 });
 
 {% if args.0 or mode == "graph" %}

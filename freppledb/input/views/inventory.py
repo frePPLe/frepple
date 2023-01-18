@@ -1682,6 +1682,13 @@ class InventoryDetail(OperationPlanMixin):
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
+        GridFieldNumber(
+            "minimum",
+            title=_("safety stock"),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
+        ),
         GridFieldDuration(
             "periodofcover",
             title=_("period of cover"),

@@ -1167,7 +1167,7 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
                 from cte
                 where cte.id = operationplanmaterial.id
                   and (
-                    cte.onhand is distinct from cte.cumul
+                    cte.cumul is distinct from operationplanmaterial.onhand
                     or cte.minimum is distinct from operationplanmaterial.minimum
                   )
                 """,

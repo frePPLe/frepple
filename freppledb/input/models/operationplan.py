@@ -1109,25 +1109,67 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
                 """
                 with cte as (
                     select
-                        id, onhand,
+                        operationplanmaterial.id,
                         sum(operationplanmaterial.quantity)
                         over (
                             partition by operationplanmaterial.item_id,
                               operationplanmaterial.location_id,
                               operationplan.batch
-                            order by flowdate, operationplanmaterial.quantity desc, id
-                            ) as cumul
+                            order by flowdate, operationplanmaterial.quantity desc, operationplanmaterial.id
+                            ) as cumul,
+                        (
+                        select safetystock from (
+                            select 1 as priority, coalesce(
+                            (select calendarbucket.value
+                                from calendarbucket
+                                where calendar_id = 'SS for '||operationplanmaterial.item_id||' @ '||operationplanmaterial.location_id
+                                and operationplanmaterial.flowdate >= startdate
+                                and operationplanmaterial.flowdate < enddate
+                                order by priority limit 1),
+                            (select defaultvalue
+                                from calendar
+                                where name = 'SS for '||operationplanmaterial.item_id||' @ '||operationplanmaterial.location_id)
+                            ) as safetystock
+                            union all
+                            select 2 as priority, coalesce(
+                            (select calendarbucket.value
+                                from calendarbucket
+                                where calendarbucket.calendar_id = buffer.minimum_calendar_id
+                                and operationplanmaterial.flowdate >= calendarbucket.startdate
+                                and operationplanmaterial.flowdate < calendarbucket.enddate
+                                order by priority limit 1),
+                            (select defaultvalue
+                                from calendar
+                                where name = buffer.minimum_calendar_id)
+                            ) as safetystock
+                            union all
+                            select 3 as priority, coalesce(buffer.minimum, 0)
+                            ) t
+                            where t.safetystock is not null
+                            order by priority
+                            limit 1
+                        ) as minimum
                     from operationplanmaterial
                     inner join operationplan
                       on operationplanmaterial.operationplan_id = operationplan.reference
+                    left outer join buffer on buffer.item_id = operationplanmaterial.item_id
+                      and buffer.location_id = operationplanmaterial.location_id
+                      and (
+                        buffer.batch = ''
+                        or buffer.batch is null
+                        or buffer.batch = operationplan.batch
+                        )
                     where operationplanmaterial.item_id = %s
                       and operationplanmaterial.location_id = %s
                     )
                 update operationplanmaterial
-                  set onhand = cte.cumul
+                  set onhand = cte.cumul, minimum = cte.minimum
                 from cte
                 where cte.id = operationplanmaterial.id
-                  and cte.onhand is distinct from cte.cumul
+                  and (
+                    cte.onhand is distinct from cte.cumul
+                    or cte.minimum is distinct from operationplanmaterial.minimum
+                  )
                 """,
                 (item_name, location_name),
             )

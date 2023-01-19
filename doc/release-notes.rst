@@ -9,6 +9,10 @@ Release notes
 - | 16: Support for operations requiring multiple workcenters at the same time.
     An extra field name *secondary workcenters* has been added to the operation model.
 
+.. rubric:: User interface
+
+- | Updated Spanish translations have been contributed by Zipus. Gracias!
+
 .. rubric:: Documentation
 
 - The chapters are restructured and some new pages are added. We hope this

@@ -251,6 +251,45 @@ class Command(BaseCommand):
                     "--stop-after-init",
                 ]
             )
+        else:
+            if options["verbosity"]:
+                print("UPGRADE FREPPLE ADDON")
+            subprocess.run(
+                [
+                    "docker",
+                    "run",
+                    "--rm",
+                ]
+                + (
+                    ["--add-host", "host.docker.internal:host-gateway"]
+                    if os.name != "nt"
+                    else []
+                )
+                + [
+                    "-v",
+                    "%s:/var/lib/odoo" % name,
+                    "-e",
+                    "HOST=%s"
+                    % (
+                        "host.docker.internal"
+                        if not options["odoo_db_host"]
+                        or options["odoo_db_host"] == "localhost"
+                        else options["odoo_db_host"]
+                    ),
+                    "-e",
+                    "USER=%s" % options["odoo_db_user"],
+                    "-e",
+                    "PASSWORD=%s" % options["odoo_db_password"],
+                    "--name",
+                    name,
+                    name,
+                    "odoo",
+                    "--upgrade",
+                    "frepple",
+                    "--database=%s" % name,
+                    "--stop-after-init",
+                ]
+            )
 
         if options["verbosity"]:
             print("CONFIGURE ODOO DATABASE")

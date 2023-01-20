@@ -9,6 +9,9 @@ Release notes
 - | 16: Support for operations requiring multiple workcenters at the same time.
     An extra field name *secondary workcenters* has been added to the operation model.
 
+- | 14 & 15 & 16: Bug fix to handle bill of materials that produce more than 1 unit
+    of the product.
+
 .. rubric:: User interface
 
 - | Updated Spanish translations have been contributed by Zipus. Gracias!

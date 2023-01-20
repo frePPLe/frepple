@@ -245,7 +245,7 @@ class Command(BaseCommand):
                     name,
                     name,
                     "odoo",
-                    "--init=base,frepple,freppledata,autologin",
+                    "--init=base,frepple,freppledata,autologin,sale_management",
                     "--load=web,autologin",
                     "--database=%s" % name,
                     "--stop-after-init",

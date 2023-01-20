@@ -284,7 +284,7 @@ class Command(BaseCommand):
                     name,
                     name,
                     "odoo",
-                    "--upgrade",
+                    "--update",
                     "frepple",
                     "--database=%s" % name,
                     "--stop-after-init",

@@ -300,7 +300,7 @@ double Buffer::getOnHand(Date d1, Date d2, bool min,
   if (d2 < d1) swap(d1, d2);
 
   // Loop through all flowplans
-  double tmp(0.0), record(0.0);
+  double tmp(0.0), record(0.0), safetystock(0.0);
   Date d, prev_Date;
   for (auto oo = flowplans.begin(); true; ++oo) {
     if (oo == flowplans.end() || oo->getDate() > d) {
@@ -322,17 +322,10 @@ double Buffer::getOnHand(Date d1, Date d2, bool min,
       if (prev_Date > d2 || oo == flowplans.end()) return record;
       d = oo->getDate();
     }
-    double safetystock = 0;
-    if (use_safetystock) {
-      safetystock = getMinimum();
-      Calendar* ss_calendar = getMinimumCalendar();
-      if (ss_calendar) {
-        CalendarBucket* calendarBucket =
-            ss_calendar->findBucket(oo->getDate(), true);
-        if (calendarBucket) safetystock = calendarBucket->getValue();
-      }
-    }
-    tmp = oo->getOnhand() - safetystock;
+    // new safety stock value
+    if (use_safetystock && oo->getEventType() == 3) safetystock = oo->getMin();
+
+    tmp = oo->getOnhand() - (use_safetystock ? safetystock : 0);
     prev_Date = oo->getDate();
   }
   // The above for-loop controls the exit. This line of code is never reached.

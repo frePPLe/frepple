@@ -474,8 +474,19 @@ class OperationPlan(AuditModel):
                 return datetime(1971, 1, 1)
 
     def getEfficiency(self, when):
-        # TODO replicate Operationplan::getEfficiency() logic
-        return 1.0
+        eff = 100.0
+        for r in self.resources.all().using(self._state.db or DEFAULT_DB_ALIAS):
+            if r.resource.efficiency_calendar:
+                t = r.resource.efficiency_calendar.findBucket(when)
+                if t:
+                    v = t.value
+                else:
+                    v = r.resource.efficiency_calendar.defaultvalue
+            else:
+                v = r.resource.efficiency
+            if v and v > 0.0 and v < eff:
+                eff = float(v)
+        return eff / 100.0
 
     def update(self, database, delete=False, create=False, **fields):
         if self.type == "PO":

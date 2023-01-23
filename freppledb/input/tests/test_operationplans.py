@@ -158,7 +158,26 @@ class OperationplanTest(TestCase):
             using=self.database
         )
 
-        res = Resource(name="machine", location=loc, type="default", maximum=1)
+        # effcal = Calendar(name="varying efficiency", defaultvalue=90)
+        # effcal.save(using=self.database)
+        # CalendarBucket(
+        #     calendar=effcal,
+        #     value=80,
+        #     monday=True,
+        #     tuesday=True,
+        #     wednesday=True,
+        #     friday=True,
+        #     saturday=True,
+        #     sunday=True,
+        #     startdate=datetime(2020, 1, 1),
+        # ).save(using=self.database)
+        res = Resource(
+            name="machine",
+            location=loc,
+            type="default",
+            maximum=1,
+            # efficiency_calendar=effcal,
+        )
         res.save(using=self.database)
         OperationResource(operation=oper, resource=res, quantity=1).save(
             using=self.database

@@ -2183,47 +2183,40 @@ void SolverCreate::createsBatches(Operation* oper, void* v) {
         // we found some operationplans to aggregate
         // but did we generate some excess, typically by summing some
         // unnecessary sizeminimum quantities ?
-        double excess = 0;
-        // look for the buffer where this opplan is producing into
         auto flplniter = opplan->getFlowPlans();
         FlowPlan* flpln;
-        Buffer* buffer;
+        double excess = DBL_MAX;
         while ((flpln = flplniter.next())) {
-          if (flpln->getQuantity() > -ROUNDING_ERROR) {
-            buffer = flpln->getBuffer();
-            break;
-          }
+          if (flpln->getQuantity() < ROUNDING_ERROR) continue;
+          auto tmp = flpln->getBuffer()->getOnHand(
+              opplan->getEnd(), Date::infiniteFuture, true, true);
+          if (tmp >= 0 && tmp < excess) excess = tmp;
         }
-        if (buffer) {
-          excess = buffer->getOnHand(opplan->getEnd(), Date::infiniteFuture,
-                                     true, true);
-          // some security
-          if (excess > 0) {
-            if (excess > opplan->getQuantity()) excess = opplan->getQuantity();
 
-            // handle operation size minimum that might slightly decrease the
-            // excess
-            if (opplan->getQuantity() - excess <
-                opplan->getOperation()->getSizeMinimum()) {
-              excess = max(opplan->getOperation()->getSizeMinimum() -
-                               opplan->getQuantity(),
-                           double(0));
-            }
-            // handle operation size multiple that might also slightly decrease
-            // the onhand
-            if (excess > 0 && opplan->getOperation()->getSizeMultiple() > 0.0) {
-              double oldvalue = opplan->getQuantity() - excess;
-              double newvalue =
-                  ceil(oldvalue / opplan->getOperation()->getSizeMultiple()) *
-                  opplan->getOperation()->getSizeMultiple();
-              excess = max(excess - (newvalue - oldvalue), double(0));
-            }
+        // some security
+        if (excess > 0) {
+          if (excess > opplan->getQuantity()) excess = opplan->getQuantity();
 
-            // Apply the excess we found
-            if (excess > 0) {
-              opplan->setQuantity(opplan->getQuantity() - excess);
-            }
+          // handle operation size minimum that might slightly decrease the
+          // excess
+          if (opplan->getQuantity() - excess <
+              opplan->getOperation()->getSizeMinimum()) {
+            excess = max(opplan->getOperation()->getSizeMinimum() -
+                             opplan->getQuantity(),
+                         0.0);
           }
+          // handle operation size multiple that might also slightly
+          // decrease the onhand
+          if (excess > 0 && opplan->getOperation()->getSizeMultiple() > 0.0) {
+            auto oldvalue = opplan->getQuantity() - excess;
+            auto newvalue =
+                ceil(oldvalue / opplan->getOperation()->getSizeMultiple()) *
+                opplan->getOperation()->getSizeMultiple();
+            excess = max(excess - (newvalue - oldvalue), 0.0);
+          }
+
+          // Apply the excess we found
+          if (excess > 0) opplan->setQuantity(opplan->getQuantity() - excess);
         }
       }
     }

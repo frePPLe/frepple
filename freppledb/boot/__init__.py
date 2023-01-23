@@ -159,9 +159,10 @@ def getAttributes(model):
     """
     if not model._meta.proxy:
         model_path = model.__module__.split(".")
-        while model_path[-1] != "models":
-            # Ignore submodules of a models folder
-            model_path.pop()
+        if "models" in model_path:
+            while model_path[-1] != "models":
+                # Ignore submodules of a models folder
+                model_path.pop()
         model_path.append(model.__name__)
         model_path = ".".join(model_path)
         for attr in chain(

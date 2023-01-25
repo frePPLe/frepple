@@ -6,7 +6,7 @@ Release notes
 
 .. rubric:: Odoo integration
 
-- | 16: Support for operations requiring multiple workcenters at the same time.
+- | 15 & 16: Support for operations requiring multiple workcenters at the same time.
     An extra field name *secondary workcenters* has been added to the operation model.
 
 - | 14 & 15 & 16: Bug fix to handle bill of materials that produce more than 1 unit

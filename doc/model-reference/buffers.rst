@@ -65,4 +65,7 @@ tool             boolean           | A flag to mark buffers that are actually re
                                    | Default is false.
                                    | The impact on the planning results is visible in the
                                      pegging and criticality calculations.
+                                   | This field is only visible in the planning engine. In the
+                                     user interface you use the subcategory field to set this
+                                     field to true.
 ================ ================= ===========================================================

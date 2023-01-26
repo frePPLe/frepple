@@ -6616,6 +6616,10 @@ class Resource : public HasHierarchy<Resource>,
     }
   }
 
+  bool getTool() const { return tool; }
+
+  void setTool(bool b);
+
   /* Return the setup of the resource on a specific date.
    * To avoid any ambiguity about the current setup of a resource
    * the calculation is based only on the latest *setup end* event
@@ -6663,6 +6667,7 @@ class Resource : public HasHierarchy<Resource>,
     m->addIteratorField<Cls, OperationPlanIterator, OperationPlan>(
         Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans,
         PLAN + WRITE_OBJECT + WRITE_HIDDEN);
+    m->addBoolField<Cls>(Tags::tool, &Cls::getTool, &Cls::setTool, BOOL_FALSE);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
     HasLevel::registerFields<Cls>(m);
@@ -6720,6 +6725,9 @@ class Resource : public HasHierarchy<Resource>,
 
   /* When set the setup rule of existing operationplans isn't recalculated. */
   bool frozen_setups = false;
+
+  /* Tools stay with an operationplan during steps in a routing. */
+  bool tool = false;
 
   /* Python method that returns an iterator over the resource plan. */
   static PyObject* plan(PyObject*, PyObject*);

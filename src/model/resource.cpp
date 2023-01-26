@@ -137,6 +137,12 @@ PyObject* Resource::inspectPython(PyObject* self, PyObject* args) {
   }
 }
 
+void Resource::setTool(bool b) {
+  // All resources in a hierarchy must have the same value of this field.
+  auto resiter = getTop()->getAllMembers();
+  while (Resource* res = resiter.next()) res->tool = b;
+}
+
 void Resource::setMaximum(double m) {
   if (m < 0)
     throw DataException("Maximum capacity for resource '" + getName() +

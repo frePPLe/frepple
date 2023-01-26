@@ -1508,6 +1508,8 @@ class loadResources(LoadTask):
                             convert2cal = i[5][8:]
                         else:
                             raise ValueError("Resource type '%s' not recognized" % i[5])
+                        if i[11] == "tool":
+                            x.tool = True
                         if i[7] is not None:
                             x.maxearly = i[7].total_seconds()
                         if i[2] is not None:

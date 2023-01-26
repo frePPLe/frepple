@@ -62,6 +62,16 @@ frePPLe |release| documentation
     How to integrate with your business applications
     </div>
     <div class="sphinxcolumn">
+    <a class="reference internal" href="erp-integration/index.html"><span class="doc">ERP integration</span></a><br>
+    Info on the packaged connectors to ERP systems
+    </div>
+    </div>
+    <div class="sphinxrow">
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="integration-guide/odoo-connector/index.html"><span class="doc">Odoo connector</span></a><br>
+    Documentation of the Odoo connector
+    </div>
+    <div class="sphinxcolumn">
     <a class="reference internal" href="developer-guide/index.html"><span class="doc">Developer guide</span></a><br>
     How to customize and extend
     </div>

@@ -2547,7 +2547,7 @@ class ManufacturingOrder(OperationPlan):
                             if rsrc == opr.resource:
                                 opr.quantity = (self.quantity or Decimal(0)) * (
                                     r.quantity or Decimal(0)
-                                )
+                                ) + (r.quantity_fixed or Decimal(0))
 
         dependencies = (
             not delete

@@ -31,6 +31,16 @@ frePPLe |release| documentation
     Browse through our collection of sample models
     </div>
     </div>
+    <div class="sphinxrow">
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="installation-guide/index.html"><span class="doc">Installation guide</span></a><br>
+    Installation instructions
+    </div>
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="integration-guide/odoo-connector/index.html"><span class="doc">Odoo connector</span></a><br>
+    Documentation of the Odoo connector
+    </div>
+    </div>
 
 **Reference**
 
@@ -52,24 +62,14 @@ frePPLe |release| documentation
     Description of all commands
     </div>
     <div class="sphinxcolumn">
-    <a class="reference internal" href="installation-guide/index.html"><span class="doc">Installation guide</span></a><br>
-    Installation instructions
-    </div>
-    </div>
-    <div class="sphinxrow">
-    <div class="sphinxcolumn">
     <a class="reference internal" href="integration-guide/index.html"><span class="doc">Integration guide</span></a><br>
     How to integrate with your business applications
     </div>
-    <div class="sphinxcolumn">
-    <a class="reference internal" href="erp-integration/index.html"><span class="doc">ERP integration</span></a><br>
-    Info on the packaged connectors to ERP systems
-    </div>
     </div>
     <div class="sphinxrow">
     <div class="sphinxcolumn">
-    <a class="reference internal" href="integration-guide/odoo-connector/index.html"><span class="doc">Odoo connector</span></a><br>
-    Documentation of the Odoo connector
+    <a class="reference internal" href="erp-integration/index.html"><span class="doc">ERP integration</span></a><br>
+    Info on the packaged connectors to ERP systems
     </div>
     <div class="sphinxcolumn">
     <a class="reference internal" href="developer-guide/index.html"><span class="doc">Developer guide</span></a><br>

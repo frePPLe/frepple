@@ -238,6 +238,33 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
 
   // Change the resource
   newres->setChanged();
+
+  // Switch also other steps in a routing if the use the same tool
+  if (newres->getTool() && getOperationPlan()->getOwner() &&
+      getResource()->getOwner() && getLoad() &&
+      getOperationPlan()
+          ->getOwner()
+          ->getOperation()
+          ->hasType<OperationRouting>()) {
+    // Scan for other steps that use the same tool and same skill
+    auto routingopplan = getOperationPlan()->getOwner();
+    auto subopplans = routingopplan->getSubOperationPlans();
+    while (auto subopplan = subopplans.next()) {
+      if (subopplan == getOperationPlan()) continue;
+      auto subldplniter = subopplan->getLoadPlans();
+      while (auto subldpln = subldplniter.next()) {
+        if (subldpln->getLoad()->getResource() == getLoad()->getResource() &&
+            subldpln->getLoad()->getSkill() == getLoad()->getSkill() &&
+            subldpln->getResource() != getResource()) {
+          // Switch another step to this resource
+          // Note that we switch only a single loadplan. The call below continue
+          // to deeper levels
+          subldpln->setResource(newres, false, use_start);
+          return;
+        }
+      }
+    }
+  }
 }
 
 string LoadPlan::getStatus() const {

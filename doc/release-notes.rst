@@ -4,6 +4,15 @@ Release notes
 7.2.0 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- | Support for tool resources.
+  | In some industries a mould, fixture or holder is attached to a manufacturing order,
+    and the same tool accompanies it during multiple steps of routing.
+  | The tools are modelled as resources in frepple, with the subcategory field set to true.
+    The planning algorithm will assure that the same tool resource is selected for all steps
+    in a routing.
+
 .. rubric:: Odoo integration
 
 - | 15 & 16: Support for operations requiring multiple workcenters at the same time.
@@ -11,6 +20,8 @@ Release notes
 
 - | 14 & 15 & 16: Bug fix to handle bill of materials that produce more than 1 unit
     of the product.
+
+- | 15 & 16: Added a flag on workcenters to indicate tools (see above).
 
 .. rubric:: User interface
 

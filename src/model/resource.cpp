@@ -140,6 +140,7 @@ PyObject* Resource::inspectPython(PyObject* self, PyObject* args) {
 void Resource::setTool(bool b) {
   // All resources in a hierarchy must have the same value of this field.
   auto resiter = getTop()->getAllMembers();
+  if (!resiter.empty()) resiter->tool = b;
   while (Resource* res = resiter.next()) res->tool = b;
 }
 

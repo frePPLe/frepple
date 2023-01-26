@@ -45,11 +45,41 @@ bool sortResource(const Resource* lhs, const Resource* rhs) {
 void SolverCreate::chooseResource(
     const Load* l, void* v)  // @todo handle unconstrained plan!!!!
 {
-  SolverData* data = static_cast<SolverData*>(v);
+  auto data = static_cast<SolverData*>(v);
+  auto lplan = data->state->q_loadplan;
+  if (l->getResource()->getTool() && lplan->getOperationPlan()->getOwner() &&
+      lplan->getResource()->getOwner() &&
+      lplan->getOperationPlan()
+          ->getOwner()
+          ->getOperation()
+          ->hasType<OperationRouting>()) {
+    // Scan for other steps that use the same tool and same skill
+    auto routingopplan = lplan->getOperationPlan()->getOwner();
+    auto subopplans = routingopplan->getSubOperationPlans();
+    while (auto subopplan = subopplans.next()) {
+      if (subopplan == lplan->getOperationPlan()) continue;
+      auto subldplniter = subopplan->getLoadPlans();
+      while (auto subldpln = subldplniter.next()) {
+        if (subldpln->getLoad()->getResource() == l->getResource() &&
+            subldpln->getLoad()->getSkill() == l->getSkill()) {
+          // CASE 0: forced to use the same tool as other steps in this routing
+          // Switch to this resource and call the resource solver
+          auto originalend = lplan->getOperationPlan()->getEnd();
+          lplan->setResource(subldpln->getResource(), false, false);
+          lplan->getOperationPlan()->setEnd(originalend);
+          data->state->q_qty = lplan->getQuantity();
+          data->state->q_date = lplan->getDate();
+          lplan->getResource()->solve(*this, v);
+          return;
+        }
+      }
+    }
+  }
+
   if ((!l->getSkill() && !l->getResource()->isGroup()) ||
-      data->state->q_loadplan->getConfirmed()) {
+      lplan->getConfirmed()) {
     // CASE 1: No skill involved, and no aggregate resource either
-    data->state->q_loadplan->getResource()->solve(*this, v);
+    lplan->getResource()->solve(*this, v);
     return;
   }
 
@@ -66,7 +96,6 @@ void SolverCreate::chooseResource(
 
   // Initialize
   Date min_next_date(Date::infiniteFuture);
-  LoadPlan* lplan = data->state->q_loadplan;
   Resource* bestAlternateSelection = nullptr;
   OperationPlanState bestAlternateState, firstAlternateState;
   Resource* firstAlternate = nullptr;

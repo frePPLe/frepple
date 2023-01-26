@@ -631,6 +631,9 @@ class GridReport(View):
     # Define a list of actions
     actions = None
 
+    # display the duplication icon
+    canDuplicate = True
+
     _attributes_added = False
 
     @classmethod
@@ -1697,6 +1700,14 @@ class GridReport(View):
         request.prefs = request.user.getPreference(reportkey, database=request.database)
         if request.prefs:
             kwargs["preferences"] = request.prefs
+
+        # check if duplicate icon should be hidden
+        if hasattr(cls, "model") and cls.model:
+            if (
+                hasattr(cls.model._meta, "unique_together")
+                and len(cls.model._meta.unique_together) > 0
+            ):
+                cls.canDuplicate = False
 
         # scenario_permissions is used to display multiple scenarios in the export dialog
         if not hasattr(request.user, "scenarios"):

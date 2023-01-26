@@ -76,6 +76,9 @@ Release notes
 
 .. rubric:: Odoo integration
 
+- | The frepple connector is now available from the odoo app store.
+  | You can downloaded and instal from https://apps.odoo.com/apps/modules/16.0/frepple/
+
 - | 14 & 15 & 16: Support for odoo's 2-week working hour calendars, which has
     different working hours in alternative weeks.
 

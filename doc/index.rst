@@ -37,7 +37,7 @@ frePPLe |release| documentation
     Installation instructions
     </div>
     <div class="sphinxcolumn">
-    <a class="reference internal" href="integration-guide/odoo-connector/index.html"><span class="doc">Odoo connector</span></a><br>
+    <a class="reference internal" href="erp-integration/odoo-connector/index.html"><span class="doc">Odoo connector</span></a><br>
     Documentation of the Odoo connector
     </div>
     </div>

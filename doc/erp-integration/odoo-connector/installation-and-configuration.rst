@@ -20,7 +20,8 @@ The section below describes the installation and configuration of these.
 
   * | **Install the Odoo addon**
     | The addon code is found in the github repository https://github.com/frePPLe/odoo.
-    | Use the branch from the subfolder matching your Odoo version.
+      Use the branch from the subfolder matching your Odoo version.
+    | The addon is also available from the `odoo app store <https://apps.odoo.com/apps/modules/16.0/frepple/>`_
 
   * | **Configure the Odoo server**
     | FrePPLe needs to be loaded as a server wide module. This is achieved

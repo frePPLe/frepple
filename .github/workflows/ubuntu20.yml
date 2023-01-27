@@ -15,7 +15,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-20.04
-    container: ubuntu:20.04
+    container: node:10.18-jessie
     services:
       postgres:
         image: postgres:13
@@ -34,8 +34,8 @@ jobs:
     steps:
       - name: Checking out source code
         uses: actions/checkout@v3
-        run: |
-          git submodule update --init --recursive
+        with:
+          submodules: recursive
 
       - name: Set up Nodes
         uses: actions/setup-node@v3

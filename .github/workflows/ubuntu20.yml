@@ -22,6 +22,8 @@ jobs:
           POSTGRES_USER: frepple
           POSTGRES_PASSWORD: frepple
           POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -39,7 +41,8 @@ jobs:
 
       - name: Test postgres
         run: |
-          PGPASSWORD=frepple psql -h postgres -p 5432 -U frepple -d postdb -c "select 1"
+          PGPASSWORD=frepple psql -h localhost -p 5432 -U frepple -d postgres -c "select 1"
+          PGPASSWORD=frepple psql -h postgres -p 5432 -U frepple -d postgres -c "select 1"
 
       - name: Install packages
         run: |

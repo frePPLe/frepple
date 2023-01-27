@@ -22,8 +22,6 @@ jobs:
           POSTGRES_USER: frepple
           POSTGRES_PASSWORD: frepple
           POSTGRES_DB: postgres
-        ports:
-          - 5432/tcp
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
@@ -55,8 +53,7 @@ jobs:
         working-directory: ${{github.workspace}}
         run: |
           cp djangosettings.py djangosettings.original.py
-          sed -i "s/\"HOST\":.\"\"/\"HOST\":\"localhost\"/g" djangosettings.py
-          sed -i "s/\"PORT\":.\"\"/\"PORT\":\"${{ job.services.postgres.ports[5432] }}\"/g" djangosettings.py
+          sed -i "s/\"HOST\":.\"\"/\"HOST\":\"postgres\"/g" djangosettings.py
           sed -i "s/DATE_STYLE = \"year-month-date\"/DATE_STYLE = \"day-month-year\"/g" djangosettings.py
           ./test/runtest.py --regression
           ./frepplectl.py test freppledb --verbosity=2

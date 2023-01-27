@@ -411,6 +411,12 @@ class OperationPlan(AuditModel):
         # Call the real save() method
         super().save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        state = getattr(self, "_state", None)
+        db = state.db if state else DEFAULT_DB_ALIAS
+        self.update(db, delete=True)
+        super().delete(*args, **kwargs)
+
     def collectCalendars(self) -> List[Calendar]:
         if self.type == "PO":
             return PurchaseOrder.collectCalendars(self)

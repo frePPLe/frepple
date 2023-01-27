@@ -15,6 +15,10 @@ Release notes
 
 .. rubric:: Odoo integration
 
+- | The frepple connector is now available from the odoo app store.
+  | You can downloaded and install from https://apps.odoo.com/apps/modules/16.0/frepple/
+  | Hint: Feel free to give us some stars and leave some feedback there :-)
+
 - | 15 & 16: Support for operations requiring multiple workcenters at the same time.
     An extra field name *secondary workcenters* has been added to the operation model.
 
@@ -75,9 +79,6 @@ Release notes
     is hidden, only the traceback exception is displayed.
 
 .. rubric:: Odoo integration
-
-- | The frepple connector is now available from the odoo app store.
-  | You can downloaded and instal from https://apps.odoo.com/apps/modules/16.0/frepple/
 
 - | 14 & 15 & 16: Support for odoo's 2-week working hour calendars, which has
     different working hours in alternative weeks.

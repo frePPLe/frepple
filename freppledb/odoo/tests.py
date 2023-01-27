@@ -32,7 +32,9 @@ class OdooTest(TransactionTestCase):
         os.environ["FREPPLE_TEST"] = "YES"
         if not User.objects.filter(username="admin").count():
             User.objects.create_superuser("admin", "your@company.com", "admin")
-        management.call_command("odoo_container", "--full", "--verbosity", "0")
+        management.call_command(
+            "odoo_container", "--full", "--nolog", "--verbosity", "2"
+        )
         # Use the next line to avoid full rebuild
         # management.call_command("odoo_container",  "--verbosity", "0")
         super().setUp()

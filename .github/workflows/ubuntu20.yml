@@ -34,8 +34,8 @@ jobs:
     steps:
       - name: Checking out source code
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
+        run: |
+          git submodule update --init --recursive
 
       - name: Set up Nodes
         uses: actions/setup-node@v3

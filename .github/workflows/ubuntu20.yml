@@ -15,7 +15,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-20.04
-    container: node:10.18-jessie
     services:
       postgres:
         image: postgres:13
@@ -40,11 +39,6 @@ jobs:
       - name: Set up Nodes
         uses: actions/setup-node@v3
 
-      - name: Test postgres
-        run: |
-          PGPASSWORD=frepple psql -h localhost -p 5432 -U frepple -d postgres -c "select 1"
-          PGPASSWORD=frepple psql -h postgres -p 5432 -U frepple -d postgres -c "select 1"
-
       - name: Install packages
         run: |
           sudo apt update
@@ -65,7 +59,8 @@ jobs:
         working-directory: ${{github.workspace}}
         run: |
           cp djangosettings.py djangosettings.original.py
-          sed -i "s/\"HOST\":.\"\"/\"HOST\":\"postgres\"/g" djangosettings.py
+          sed -i "s/\"HOST\":.\"\"/\"HOST\":\"localhost\"/g" djangosettings.py
+          sed -i "s/\"PORT\":.\"\"/\"PORT\":\"5432\"/g" djangosettings.py
           sed -i "s/DATE_STYLE = \"year-month-date\"/DATE_STYLE = \"day-month-year\"/g" djangosettings.py
           ./test/runtest.py --regression
           ./frepplectl.py test freppledb --verbosity=2

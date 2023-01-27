@@ -298,10 +298,7 @@ class Command(BaseCommand):
             "user": options["odoo_db_user"],
             "password": options["odoo_db_password"],
         }
-        if (
-            options["odoo_db_host"]
-            and options["odoo_db_host"] != "host.docker.internal"
-        ):
+        if options["odoo_db_host"]:
             conn_params["host"] = options["odoo_db_host"]
         if options["odoo_db_port"]:
             conn_params["port"] = options["odoo_db_port"]

@@ -33,7 +33,7 @@ class OdooTest(TransactionTestCase):
         if not User.objects.filter(username="admin").count():
             User.objects.create_superuser("admin", "your@company.com", "admin")
         management.call_command(
-            "odoo_container", "--full", "--nolog", "--verbosity", "2"
+            "odoo_container", "--full", "--nolog", "--verbosity", "0"
         )
         # Use the next line to avoid full rebuild
         # management.call_command("odoo_container",  "--verbosity", "0")

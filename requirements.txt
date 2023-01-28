@@ -5,7 +5,7 @@ djangorestframework-bulk == 0.2.1
 djangorestframework-filters == 0.10.2
 django-bootstrap3 == 15.0.0
 django-filter == 2.4.0
-html5lib == 1.0.1
+html5lib == 1.1
 jdcal == 1.4.1
 Markdown == 3.1.1
 openpyxl == 3.0.9
@@ -15,7 +15,7 @@ requests == 2.27.0
 python-dateutil == 2.8.1
 pillow >= 8.4.0
 psutil == 5.7.3
-psycopg2-binary == 2.8.6
+psycopg2-binary == 2.9.5
 # Python packaging is broken on ubuntu 20 for higher versions of setuptools
 setuptools <= 46.1
 setuptools-rust == 0.12.1

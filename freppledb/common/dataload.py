@@ -106,11 +106,12 @@ def parseExcelWorksheet(
             elif isinstance(field, DurationField):
                 if isinstance(data, timedelta):
                     return data
-                if isinstance(data, float):
+                if isinstance(data, (float, int)):
                     # data is in days, convert it to seconds
                     if days_unit:
-                        data = round(data * 86400, 3)
-                    data = "%.6f" % data
+                        return round(data * 86400, 3)
+                    else:
+                        return "%.6f" % data
                 elif data is not None:
                     data = str(data)
                     day_split = data.split("d", 1)
@@ -126,7 +127,7 @@ def parseExcelWorksheet(
                             else:
                                 return "%s 00:00:00" % days
                         else:
-                            return day_split[1]
+                            return day_split[1].strip()
                     else:
                         return data
                 else:
@@ -190,7 +191,7 @@ def parseExcelWorksheet(
 
     if hasattr(model, "parseData"):
         # Some models have their own special uploading logic
-        return model.parseData(data, MappedRow, user, database, ping)
+        return model.parseData(data, MappedRow, user, database, ping, days_unit)
     else:
         return _parseData(model, data, MappedRow, user, database, ping, days_unit)
 
@@ -267,10 +268,12 @@ def parseCSVdata(
                     val = self.data[idx[0]]
                     if isinstance(val, timedelta):
                         return val
-                    if isinstance(val, float):
+                    if isinstance(val, (float, int)):
                         # data is in days, convert it to seconds
                         if days_unit:
-                            val = round(val * 86400, 6)
+                            return round(val * 86400, 3)
+                        else:
+                            return "%.6f" % val
                     elif val is not None:
                         val = str(val)
                         day_split = val.split("d", 1)
@@ -286,7 +289,7 @@ def parseCSVdata(
                                 else:
                                     return "%s 00:00:00" % days
                             else:
-                                return day_split[1]
+                                return day_split[1].strip()
                         else:
                             return val
                 else:

@@ -34,6 +34,12 @@ Release notes
 - Bug fix: The empty-database task didn't work if only the resource-detail or
   inventory-detail tables were selected by the user.
 
+- Addition of parameter days_unit. When set to true, exported duration fields in csv or Excel
+  will display a numeric value corresponding to the number of days if the duration is greater
+  or equal than a day. If the duration is less than a day, the format remains the same hh:mm:ss.
+  If set to false, the current export format remains the same.
+  This new format is very convenient for sorting in spreadsheets.
+
 .. rubric:: Documentation
 
 - The chapters are restructured and some new pages are added. We hope this

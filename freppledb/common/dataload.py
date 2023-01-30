@@ -50,7 +50,9 @@ from django.utils.text import get_text_list
 from .models import Comment
 
 
-def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
+def parseExcelWorksheet(
+    model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False, days_unit=False
+):
     class MappedRow:
         """
         A row of data is made to behave as a dictionary.
@@ -102,7 +104,12 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
                 if isinstance(data, (Decimal, float)):
                     data = round(data, 8)
             elif isinstance(field, DurationField):
+                if isinstance(data, timedelta):
+                    return data
                 if isinstance(data, float):
+                    # data is in days, convert it to seconds
+                    if days_unit:
+                        data = round(data * 86400, 3)
                     data = "%.6f" % data
                 elif data is not None:
                     data = str(data)
@@ -115,7 +122,7 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
                             pass
                         if days:
                             if day_split[1].strip():
-                                return "%s %s" % (days, day_split[1])
+                                return "%s %s" % (days, day_split[1].strip())
                             else:
                                 return "%s 00:00:00" % days
                         else:
@@ -185,10 +192,12 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
         # Some models have their own special uploading logic
         return model.parseData(data, MappedRow, user, database, ping)
     else:
-        return _parseData(model, data, MappedRow, user, database, ping)
+        return _parseData(model, data, MappedRow, user, database, ping, days_unit)
 
 
-def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
+def parseCSVdata(
+    model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False, days_unit=False
+):
     """
     This method:
       - reads CSV data from an input iterator
@@ -253,6 +262,33 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
                 elif isinstance(idx[1], DecimalField):
                     # Automatically round to 8 digits rather than giving an error message
                     return round(float(val), 8) if val != "" else None
+
+                elif isinstance(idx[1], DurationField):
+                    val = self.data[idx[0]]
+                    if isinstance(val, timedelta):
+                        return val
+                    if isinstance(val, float):
+                        # data is in days, convert it to seconds
+                        if days_unit:
+                            val = round(val * 86400, 6)
+                    elif val is not None:
+                        val = str(val)
+                        day_split = val.split("d", 1)
+                        days = 0
+                        if len(day_split) > 1:
+                            try:
+                                days = int(day_split[0])
+                            except Exception:
+                                pass
+                            if days:
+                                if day_split[1].strip():
+                                    return "%s %s" % (days, day_split[1].strip())
+                                else:
+                                    return "%s 00:00:00" % days
+                            else:
+                                return day_split[1]
+                        else:
+                            return val
                 else:
                     return val if val != "" else None
             except KeyError as e:
@@ -289,12 +325,12 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
 
     if hasattr(model, "parseData"):
         # Some models have their own special uploading logic
-        return model.parseData(data, MappedRow, user, database, ping)
+        return model.parseData(data, MappedRow, user, database, ping, days_unit)
     else:
-        return _parseData(model, data, MappedRow, user, database, ping)
+        return _parseData(model, data, MappedRow, user, database, ping, days_unit)
 
 
-def _parseData(model, data, rowmapper, user, database, ping):
+def _parseData(model, data, rowmapper, user, database, ping, days_unit=False):
 
     selfReferencing = []
 

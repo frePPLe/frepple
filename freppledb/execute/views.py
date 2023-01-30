@@ -63,7 +63,7 @@ from django.core.management import get_commands, call_command
 from freppledb.admin import data_site
 from freppledb.common.auth import basicauthentication
 from freppledb.common.dataload import parseExcelWorksheet
-from freppledb.common.models import Scenario, HierarchyModel
+from freppledb.common.models import Scenario, HierarchyModel, Parameter
 from freppledb.common.report import (
     GridFieldDuration,
     GridFieldBool,
@@ -1244,6 +1244,12 @@ def importWorkbook(request):
         for ct in ContentType.objects.all()
         if ct.model_class()
     ]
+
+    # retrive value of parameter days_unit
+    days_unit = (
+        Parameter.getValue("days_unit", request.database, "false").lower() == "true"
+    )
+
     try:
         # Find all models in the workbook
         for filename, file in request.FILES.items():
@@ -1316,6 +1322,7 @@ def importWorkbook(request):
                         user=request.user,
                         database=request.database,
                         ping=True,
+                        days_unit=days_unit,
                     ):
                         if error[0] == logging.DEBUG:
                             # Yield some result so we can detect disconnect clients and interrupt the upload

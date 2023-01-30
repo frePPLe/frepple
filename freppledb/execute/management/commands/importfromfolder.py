@@ -39,7 +39,7 @@ from freppledb.common.middleware import _thread_locals
 from freppledb.common.report import GridReport, matchesModelName
 from freppledb import __version__
 from freppledb.common.dataload import parseCSVdata, parseExcelWorksheet
-from freppledb.common.models import User, NotificationFactory
+from freppledb.common.models import User, NotificationFactory, Parameter
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS, create_connection
 
 logger = logging.getLogger(__name__)
@@ -496,13 +496,23 @@ class Command(BaseCommand):
     def loadExcelfile(self, model, file):
         errorcount = 0
         warningcount = 0
+
+        # retrive value of parameter days_unit
+        days_unit = (
+            Parameter.getValue("days_unit", self.database, "false").lower() == "true"
+        )
+
         try:
             with transaction.atomic(using=self.database):
                 wb = load_workbook(filename=file, data_only=True)
                 for ws_name in wb.sheetnames:
                     ws = wb[ws_name]
                     for error in parseExcelWorksheet(
-                        model, ws, user=self.user, database=self.database
+                        model,
+                        ws,
+                        user=self.user,
+                        database=self.database,
+                        days_unit=days_unit,
                     ):
                         if error[0] == logging.ERROR:
                             logger.error(

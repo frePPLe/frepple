@@ -33,7 +33,7 @@ from django.template.loader import render_to_string
 
 from freppledb import __version__
 from freppledb.common.middleware import _thread_locals
-from freppledb.common.models import User, Comment
+from freppledb.common.models import User, Comment, Parameter
 from freppledb.common.report import GridReport, matchesModelName
 from freppledb.common.dataload import parseExcelWorksheet
 from freppledb.execute.models import Task
@@ -92,6 +92,11 @@ class Command(BaseCommand):
             logfile = "importworkbook-%s.log" % timestamp
         else:
             logfile = "importworkbook_%s-%s.log" % (self.database, timestamp)
+
+        # retrive value of parameter days_unit
+        days_unit = (
+            Parameter.getValue("days_unit", self.database, "false").lower() == "true"
+        )
 
         task = None
         old_thread_locals = getattr(_thread_locals, "database", None)
@@ -193,6 +198,7 @@ class Command(BaseCommand):
                                 user=self.user,
                                 database=self.database,
                                 ping=True,
+                                days_unit=days_unit,
                             ):
                                 if error[0] == logging.DEBUG:
                                     continue

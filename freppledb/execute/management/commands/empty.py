@@ -150,12 +150,6 @@ class Command(BaseCommand):
                             (key,),
                         )
 
-                    if not (hasPO and hasDO and hasMO and hasDeO):
-                        if "input.operationplanmaterial" in models:
-                            models.remove("input.operationplanmaterial")
-                        if "input.operationplanresource" in models:
-                            models.remove("input.operationplanresource")
-
                     if hasPO and not (hasDO and hasMO and hasDeO):
                         models.remove("input.purchaseorder")
                         cursor.execute("delete from operationplan where type = 'PO'")

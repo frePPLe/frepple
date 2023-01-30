@@ -31,6 +31,9 @@ Release notes
 
 - | Updated Spanish translations have been contributed by Zipus. Gracias!
 
+- Bug fix: The empty-database task didn't work if only the resource-detail or
+  inventory-detail tables were selected by the user.
+
 .. rubric:: Documentation
 
 - The chapters are restructured and some new pages are added. We hope this

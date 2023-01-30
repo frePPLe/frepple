@@ -95,65 +95,65 @@ class Command(BaseCommand):
             if not database_name:
                 raise CommandError("No database name specified")
 
-            with psycopg2.connect(**conn_params) as connection:
-                connection.set_isolation_level(0)  # autocommit false
-                with connection.cursor() as cursor:
-                    # Check if the database exists
-                    cursor.execute(
-                        "SELECT count(*) AS result FROM pg_database where datname = '%s'"
-                        % database_name
-                    )
-                    database_exists = cursor.fetchone()[0]
+            connection = psycopg2.connect(**conn_params)
+            connection.set_isolation_level(0)  # enforce autocommit
+            with connection.cursor() as cursor:
+                # Check if the database exists
+                cursor.execute(
+                    "SELECT count(*) AS result FROM pg_database where datname = '%s'"
+                    % database_name
+                )
+                database_exists = cursor.fetchone()[0]
 
-                    if database_exists:
-                        if options["skip_if_exists"]:
-                            print("Database %s already exists" % database_name.upper())
-                            continue
+                if database_exists:
+                    if options["skip_if_exists"]:
+                        print("Database %s already exists" % database_name.upper())
+                        continue
 
-                        # Confirm the destruction of the database
-                        if options["interactive"]:
-                            confirm = input(
-                                "\nThe database %s is about to be IRREVERSIBLY destroyed and recreated.\n"
-                                "ALL data currently in the database will be lost.\n"
-                                "Are you sure you want to do this?\n"
-                                "\n"
-                                "Type 'yes' to continue, or 'no' to cancel: "
+                    # Confirm the destruction of the database
+                    if options["interactive"]:
+                        confirm = input(
+                            "\nThe database %s is about to be IRREVERSIBLY destroyed and recreated.\n"
+                            "ALL data currently in the database will be lost.\n"
+                            "Are you sure you want to do this?\n"
+                            "\n"
+                            "Type 'yes' to continue, or 'no' to cancel: "
+                            % database_name.upper()
+                        )
+                        if confirm != "yes":
+                            print(
+                                "Skipping drop and create of database %s"
                                 % database_name.upper()
                             )
-                            if confirm != "yes":
-                                print(
-                                    "Skipping drop and create of database %s"
-                                    % database_name.upper()
-                                )
-                                continue
+                            continue
 
-                        # Close current connections
-                        try:
-                            cursor.execute(
-                                """
+                    # Close current connections
+                    try:
+                        cursor.execute(
+                            """
                                 SELECT pg_terminate_backend(pg_stat_activity.pid)
                                 FROM pg_stat_activity
                                 WHERE pg_stat_activity.datname = '%s'
                                 """
-                                % database_name
-                            )
-                        except psycopg2.ProgrammingError as e:
-                            raise CommandError(str(e))
+                            % database_name
+                        )
+                    except psycopg2.ProgrammingError as e:
+                        raise CommandError(str(e))
 
-                        # Drop the database
-                        try:
-                            sql = 'drop database "%s"' % database_name
-                            print("Executing SQL statement:", sql)
-                            cursor.execute(sql)
-                        except psycopg2.ProgrammingError as e:
-                            raise CommandError(str(e))
-
-                    # Create the database
+                    # Drop the database
                     try:
-                        sql = "create database \"%s\" encoding = 'UTF8'" % database_name
-                        if settings.DEFAULT_TABLESPACE:
-                            sql += " TABLESPACE = %s" % settings.DEFAULT_TABLESPACE
+                        sql = 'drop database "%s"' % database_name
                         print("Executing SQL statement:", sql)
                         cursor.execute(sql)
                     except psycopg2.ProgrammingError as e:
                         raise CommandError(str(e))
+
+                # Create the database
+                try:
+                    sql = "create database \"%s\" encoding = 'UTF8'" % database_name
+                    if settings.DEFAULT_TABLESPACE:
+                        sql += " TABLESPACE = %s" % settings.DEFAULT_TABLESPACE
+                    print("Executing SQL statement:", sql)
+                    cursor.execute(sql)
+                except psycopg2.ProgrammingError as e:
+                    raise CommandError(str(e))

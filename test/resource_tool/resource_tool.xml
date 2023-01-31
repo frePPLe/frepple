@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <current>2023-01-01T00:00:00</current>
+  <!--
+  Case 1: A different operator can be used for each step, but the
+  same tool must be used for all routing steps.
+ -->
+  <resources>
+    <resource name="1.operator pool">
+      <location name="factory"/>
+    </resource>
+    <resource name="1.operator A">
+      <owner name="1.operator pool"/>
+      <location name="factory"/>
+    </resource>
+    <resource name="1.operator B">
+      <owner name="1.operator pool"/>
+      <location name="factory"/>
+    </resource>
+    <resource name="1.operator C">
+      <owner name="1.operator pool"/>
+      <location name="factory"/>
+    </resource>
+    <resource name="1.operator D">
+      <owner name="1.operator pool"/>
+      <location name="factory"/>
+    </resource>
+    <resource name="1.operator E">
+      <owner name="1.operator pool"/>
+      <location name="factory"/>
+    </resource>	
+    <resource name="1.holders">
+      <location name="factory"/>
+      <tool>true</tool>
+    </resource>
+    <resource name="1.holder 1">
+      <location name="factory"/>
+      <owner name="1.holders"/>
+      <tool>true</tool>
+    </resource>
+    <resource name="1.holder 2">
+      <location name="factory"/>
+      <owner name="1.holders"/>
+      <tool>true</tool>
+    </resource>
+    <resource name="1.holder 3">
+      <location name="factory"/>
+      <owner name="1.holders"/>
+      <tool>true</tool>
+    </resource>
+  </resources>
+  <operations>
+    <operation name="1.make item" xsi:type="operation_routing">
+      <item name="1.item 1"/>
+      <location name="factory"/>
+      <suboperations>
+        <suboperation>
+          <operation name="1.step 1" xsi:type="operation_time_per">
+            <location name="factory"/>
+            <loads>
+              <load>
+                <resource name="1.operator pool"/>
+                <quantity>1</quantity>
+              </load>
+              <load>
+                <resource name="1.holders"/>
+                <quantity>1</quantity>
+				<search>MINPENALTY</search>
+              </load>
+            </loads>
+            <duration>P1D</duration>
+            <duration_per>P1D</duration_per>
+          </operation>
+          <priority>1</priority>
+        </suboperation>
+        <suboperation>
+          <operation name="1.step 2" xsi:type="operation_time_per">
+            <location name="factory"/>
+            <loads>
+              <load>
+                <resource name="1.operator pool"/>
+                <quantity>1</quantity>
+              </load>
+              <load>
+                <resource name="1.holders"/>
+                <quantity>1</quantity>
+				<search>MINPENALTY</search>
+              </load>
+            </loads>
+            <duration>P1D</duration>
+            <duration_per>P1D</duration_per>
+          </operation>
+          <priority>2</priority>
+        </suboperation>
+        <suboperation>
+          <operation name="1.step 3" xsi:type="operation_time_per">
+            <location name="factory"/>
+            <loads>
+              <load>
+                <resource name="1.operator pool"/>
+                <quantity>1</quantity>
+              </load>
+              <load>
+                <resource name="1.holders"/>
+                <quantity>1</quantity>
+				<search>MINPENALTY</search>
+              </load>
+            </loads>
+            <duration>P1D</duration>
+            <duration_per>P1D</duration_per>
+          </operation>
+          <priority>3</priority>
+        </suboperation>
+        <suboperation>
+          <operation name="1.step 4" xsi:type="operation_time_per">
+            <location name="factory"/>
+            <loads>
+              <load>
+                <resource name="1.operator pool"/>
+                <quantity>1</quantity>
+              </load>
+              <load>
+                <resource name="1.holders"/>
+                <quantity>1</quantity>
+				<search>MINPENALTY</search>
+              </load>
+            </loads>
+            <duration>P1D</duration>
+            <duration_per>P1D</duration_per>
+          </operation>
+          <priority>4</priority>
+        </suboperation>
+        <suboperation>
+          <operation name="1.step 5" xsi:type="operation_time_per">
+            <location name="factory"/>
+            <loads>
+              <load>
+                <resource name="1.operator pool"/>
+                <quantity>1</quantity>
+              </load>
+              <load>
+                <resource name="1.holders"/>
+                <quantity>1</quantity>
+				<search>MINPENALTY</search>
+              </load>
+            </loads>
+            <duration>P1D</duration>
+            <duration_per>P1D</duration_per>
+          </operation>
+          <priority>5</priority>
+        </suboperation>
+      </suboperations>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="1.order 1">
+      <quantity>1</quantity>
+	  <minshipment>1</minshipment>
+      <due>2023-01-01T00:00:00</due>
+      <item name="1.item 1"/>
+      <location name="factory"/>
+    </demand>
+    <demand name="1.order 2">
+      <quantity>2</quantity>
+	  <minshipment>2</minshipment>
+      <due>2023-01-01T00:00:00</due>
+      <item name="1.item 1"/>
+      <location name="factory"/>
+    </demand>
+    <demand name="1.order 3">
+      <quantity>3</quantity>
+	  <minshipment>3</minshipment>
+      <due>2023-02-01T00:00:00</due>
+      <item name="1.item 1"/>
+      <location name="factory"/>
+    </demand>
+    <demand name="1.order 4">
+      <quantity>4</quantity>
+	  <minshipment>4</minshipment>
+      <due>2023-02-01T00:00:00</due>
+      <item name="1.item 1"/>
+      <location name="factory"/>
+    </demand>
+    <demand name="1.order 5">
+      <quantity>5</quantity>
+	  <minshipment>5</minshipment>
+      <due>2023-02-02T00:00:00</due>
+      <item name="1.item 1"/>
+      <location name="factory"/>
+    </demand>
+  </demands>
+ 
+<?python
+
+def checkRoutings(filename):
+    with open(filename,"wt") as output:
+       opplans = [ o for o in frepple.operationplans() if isinstance(o.operation, frepple.operation_routing)]
+       opplans.sort(key=lambda x: (x.start, x.end, x.quantity))
+       for opplan in opplans:
+         print(" ", opplan.operation.name, opplan.start, opplan.end, opplan.quantity, file=output)
+         for subopplan in opplan.operationplans:
+            print("   ", subopplan.operation.name, "using resources",
+              ','.join([l.resource.name for l in subopplan.loadplans if l.quantity > 0]), 
+              file=output)
+      
+print ("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+checkRoutings("output.2.xml")
+print ("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+checkRoutings("output.4.xml")
+print("CREATING SIMPLE UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.5.xml")
+checkRoutings("output.6.xml")
+
+print("SWITCHING A STEP TO ANOTHER TOOL")
+for subopplan in frepple.operation(name="1.step 2").operationplans:
+  for ldplan in subopplan.loadplans:
+    if ldplan.resource.owner.name == "1.holders":
+      ldplan.resource = frepple.resource(name="1.holder 2")
+      break
+frepple.saveplan("output.7.xml")
+checkRoutings("output.8.xml")
+?>
+</plan>

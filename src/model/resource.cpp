@@ -306,6 +306,12 @@ void Resource::setOwner(Resource* o) {
     }
   }
   HasHierarchy<Resource>::setOwner(o);
+  if (getTool() != o->getTool()) {
+    if (getTool())
+      o->setTool(true);
+    else
+      setTool(true);
+  }
 }
 
 extern "C" PyObject* Resource::plan(PyObject* self, PyObject* args) {

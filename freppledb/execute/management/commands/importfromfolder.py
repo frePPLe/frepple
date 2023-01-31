@@ -497,9 +497,10 @@ class Command(BaseCommand):
         errorcount = 0
         warningcount = 0
 
-        # retrive value of parameter days_unit
-        days_unit = (
-            Parameter.getValue("days_unit", self.database, "false").lower() == "true"
+        # retrieve value of parameter excel_duration_in_days
+        excel_duration_in_days = (
+            Parameter.getValue("excel_duration_in_days", self.database, "false").lower()
+            == "true"
         )
 
         try:
@@ -512,7 +513,7 @@ class Command(BaseCommand):
                         ws,
                         user=self.user,
                         database=self.database,
-                        days_unit=days_unit,
+                        excel_duration_in_days=excel_duration_in_days,
                     ):
                         if error[0] == logging.ERROR:
                             logger.error(

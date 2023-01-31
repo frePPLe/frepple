@@ -93,9 +93,10 @@ class Command(BaseCommand):
         else:
             logfile = "importworkbook_%s-%s.log" % (self.database, timestamp)
 
-        # retrive value of parameter days_unit
-        days_unit = (
-            Parameter.getValue("days_unit", self.database, "false").lower() == "true"
+        # retrieve value of parameter excel_duration_in_days
+        excel_duration_in_days = (
+            Parameter.getValue("excel_duration_in_days", self.database, "false").lower()
+            == "true"
         )
 
         task = None
@@ -198,7 +199,7 @@ class Command(BaseCommand):
                                 user=self.user,
                                 database=self.database,
                                 ping=True,
-                                days_unit=days_unit,
+                                excel_duration_in_days=excel_duration_in_days,
                             ):
                                 if error[0] == logging.DEBUG:
                                     continue

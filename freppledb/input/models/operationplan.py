@@ -1914,7 +1914,7 @@ class ManufacturingOrder(OperationPlan):
     objects = ManufacturingOrderManager()
 
     @staticmethod
-    def parseData(data, rowmapper, user, database, ping, days_unit=False):
+    def parseData(data, rowmapper, user, database, ping, excel_duration_in_days=False):
 
         selfReferencing = []
 

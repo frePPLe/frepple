@@ -34,11 +34,13 @@ Release notes
 - Bug fix: The empty-database task didn't work if only the resource-detail or
   inventory-detail tables were selected by the user.
 
-- Addition of parameter days_unit. When set to true, exported duration fields in csv or Excel
-  will display a numeric value corresponding to the number of days if the duration is greater
-  or equal than a day. If the duration is less than a day, the format remains the same hh:mm:ss.
-  If set to false, the current export format remains the same.
-  This new format is very convenient for sorting in spreadsheets.
+- | Excel exports for fields of type duration is improved and more intuitive with
+    the default behavior of Excel.
+  | Durations less than a day are exported in the format hh:mm:ss. Longer
+    durations are exported by default as a number of days.
+  | A new parameter excel_duration_in_days is added to maintain backward compatibility for
+    customers that rely on the old format. The new format is the default,
+    but if set to false we stick with the old format.
 
 .. rubric:: Documentation
 

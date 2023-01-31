@@ -641,7 +641,7 @@ class GridReport(View):
         return "%s.%s" % (cls.__module__, cls.__name__)
 
     @classmethod
-    def _localize(cls, value, decimal_separator, days_unit=False):
+    def _localize(cls, value, decimal_separator, excel_duration_in_days=False):
         if callable(value):
             value = value()
         if isinstance(value, numericTypes):
@@ -653,7 +653,7 @@ class GridReport(View):
         elif isinstance(value, date):
             return date_format(value, format="DATE_FORMAT", use_l10n=False)
         elif isinstance(value, timedelta):
-            return _parseSeconds(value, days_unit)
+            return _parseSeconds(value, excel_duration_in_dayst)
         elif isinstance(value, (list, tuple)):
             return "|".join([str(cls._localize(i, decimal_separator)) for i in value])
         else:
@@ -720,7 +720,12 @@ class GridReport(View):
 
     @classmethod
     def _getCSVValue(
-        cls, data, field=None, request=None, decimal_separator="", days_unit=False
+        cls,
+        data,
+        field=None,
+        request=None,
+        decimal_separator="",
+        excel_duration_in_days=False,
     ):
         if data is None:
             return ""
@@ -734,7 +739,7 @@ class GridReport(View):
                     request.tzoffset = GridReport.getTimezoneOffset(request)
                 data += request.tzoffset
             return force_str(
-                cls._localize(data, decimal_separator, days_unit),
+                cls._localize(data, decimal_separator, excel_duration_in_days),
                 encoding=settings.CSV_CHARSET,
                 errors="ignore",
             )
@@ -960,9 +965,12 @@ class GridReport(View):
         cls, request, scenario_list, output, *args, **kwargs
     ):
 
-        # retrive value of parameter days_unit
-        days_unit = (
-            Parameter.getValue("days_unit", request.database, "false").lower() == "true"
+        # retrieve value of parameter excel_duration_in_days
+        excel_duration_in_days = (
+            Parameter.getValue(
+                "excel_duration_in_days", request.database, "false"
+            ).lower()
+            == "true"
         )
 
         # Create a workbook
@@ -1082,7 +1090,7 @@ class GridReport(View):
                                     row[f.field_name],
                                     field=f,
                                     request=request,
-                                    days_unit=days_unit,
+                                    excel_duration_in_days=excel_duration_in_days,
                                 ),
                             )
                             if f.background_cell:
@@ -1096,7 +1104,7 @@ class GridReport(View):
                                     getattr(row, f.field_name),
                                     field=f,
                                     request=request,
-                                    days_unit=days_unit,
+                                    excel_duration_in_days=excel_duration_in_days,
                                 ),
                             )
                             if f.background_cell:
@@ -1114,9 +1122,12 @@ class GridReport(View):
     @classmethod
     def _generate_csv_data(cls, request, scenario_list, *args, **kwargs):
 
-        # retrive value of parameter days_unit
-        days_unit = (
-            Parameter.getValue("days_unit", request.database, "false").lower() == "true"
+        # retrieve value of parameter excel_duration_in_days
+        excel_duration_in_days = (
+            Parameter.getValue(
+                "excel_duration_in_days", request.database, "false"
+            ).lower()
+            == "true"
         )
 
         sf = StringIO()
@@ -1211,7 +1222,7 @@ class GridReport(View):
                                 field=f,
                                 request=request,
                                 decimal_separator=decimal_separator,
-                                days_unit=days_unit,
+                                excel_duration_in_days=excel_duration_in_days,
                             )
                             for f in fields
                         ]
@@ -1222,7 +1233,7 @@ class GridReport(View):
                                 field=f,
                                 request=request,
                                 decimal_separator=decimal_separator,
-                                days_unit=days_unit,
+                                excel_duration_in_days=excel_duration_in_days,
                             )
                             for f in fields
                         ]
@@ -2449,9 +2460,12 @@ class GridReport(View):
         if translation.get_language() != request.LANGUAGE_CODE:
             translation.activate(request.LANGUAGE_CODE)
 
-        # retrive value of parameter days_unit
-        days_unit = (
-            Parameter.getValue("days_unit", request.database, "false").lower() == "true"
+        # retrieve value of parameter excel_duration_in_days
+        excel_duration_in_days = (
+            Parameter.getValue(
+                "excel_duration_in_days", request.database, "false"
+            ).lower()
+            == "true"
         )
 
         # Handle the complete upload as a single database transaction
@@ -2496,7 +2510,7 @@ class GridReport(View):
                             user=request.user,
                             database=request.database,
                             ping=True,
-                            days_unit=days_unit,
+                            excel_duration_in_days=excel_duration_in_days,
                         ):
                             if error[0] == logging.DEBUG:
                                 # Yield some result so we can detect disconnect clients and interrupt the upload
@@ -3256,9 +3270,12 @@ class GridPivot(GridReport):
     @classmethod
     def _generate_csv_data(cls, request, scenario_list, *args, **kwargs):
 
-        # retrive value of parameter days_unit
-        days_unit = (
-            Parameter.getValue("days_unit", request.database, "false").lower() == "true"
+        # retrieve value of parameter excel_duration_in_days
+        excel_duration_in_days = (
+            Parameter.getValue(
+                "excel_duration_in_days", request.database, "false"
+            ).lower()
+            == "true"
         )
 
         sf = StringIO()
@@ -3380,7 +3397,7 @@ class GridPivot(GridReport):
                                     field=f,
                                     request=request,
                                     decimal_separator=decimal_separator,
-                                    days_unit=days_unit,
+                                    excel_duration_in_days=excel_duration_in_days,
                                 )
                                 for f in myrows
                                 if f.name
@@ -3413,7 +3430,7 @@ class GridPivot(GridReport):
                                     field=f,
                                     request=request,
                                     decimal_separator=decimal_separator,
-                                    days_unit=days_unit,
+                                    excel_duration_in_days=excel_duration_in_days,
                                 )
                                 for f in myrows
                                 if f.name
@@ -3468,7 +3485,7 @@ class GridPivot(GridReport):
                                         field=s,
                                         request=request,
                                         decimal_separator=decimal_separator,
-                                        days_unit=days_unit,
+                                        excel_duration_in_days=excel_duration_in_days,
                                     )
                                     for s in myrows
                                     if s.name
@@ -3525,7 +3542,7 @@ class GridPivot(GridReport):
                                     field=s,
                                     request=request,
                                     decimal_separator=decimal_separator,
-                                    days_unit=days_unit,
+                                    excel_duration_in_days=excel_duration_in_days,
                                 )
                                 for s in myrows
                                 if s.name
@@ -3574,9 +3591,12 @@ class GridPivot(GridReport):
         cls, request, scenario_list, output, *args, **kwargs
     ):
 
-        # retrive value of parameter days_unit
-        days_unit = (
-            Parameter.getValue("days_unit", request.database, "false").lower() == "true"
+        # retrieve value of parameter excel_duration_in_days
+        excel_duration_in_days = (
+            Parameter.getValue(
+                "excel_duration_in_days", request.database, "false"
+            ).lower()
+            == "true"
         )
 
         # Create a workbook
@@ -3786,7 +3806,7 @@ class GridPivot(GridReport):
                                             row[f.name],
                                             field=f,
                                             request=request,
-                                            days_unit=days_unit,
+                                            excel_duration_in_days=excel_duration_in_days,
                                         ),
                                     )
                                     if f.background_cell:
@@ -3807,7 +3827,7 @@ class GridPivot(GridReport):
                                             getattr(row, f.name),
                                             field=f,
                                             request=request,
-                                            days_unit=days_unit,
+                                            excel_duration_in_days=excel_duration_in_days,
                                         ),
                                     )
                                     if f.background_cell:
@@ -3848,7 +3868,7 @@ class GridPivot(GridReport):
                                                 row_of_buckets[0][s.name],
                                                 field=s,
                                                 request=request,
-                                                days_unit=days_unit,
+                                                excel_duration_in_days=excel_duration_in_days,
                                             ),
                                         )
                                         if s.background_cell:
@@ -3866,7 +3886,7 @@ class GridPivot(GridReport):
                                         )
                                         if "title" in cross[1]
                                         else capfirst(cross[0]),
-                                        days_unit=days_unit,
+                                        excel_duration_in_days=excel_duration_in_days,
                                     ),
                                 )
                                 if cross[1].get("background_header"):
@@ -3898,7 +3918,7 @@ class GridPivot(GridReport):
                                             row_of_buckets[0][s.name],
                                             field=s,
                                             request=request,
-                                            days_unit=days_unit,
+                                            excel_duration_in_days=excel_duration_in_days,
                                         ),
                                     )
                                     if s.background_cell:
@@ -3961,10 +3981,10 @@ def _buildMaskedNames(model, exportConfig):
         idx += 1
 
 
-def _parseSeconds(data, days_unit=False):
+def _parseSeconds(data, excel_duration_in_days=False):
     """
     Formats a number of seconds into format [D d] HH:MM:SS.XXXX
-    if days_unit is true:
+    if excel_duration_in_days is true:
         - duration that are less than a day will be returned in hh:mm:ss format
         - duration that are more than a day will be returned in float.
           E.g: 3.25 is 3 days and 6 hours
@@ -3972,7 +3992,7 @@ def _parseSeconds(data, days_unit=False):
     total_seconds = data.total_seconds()
     hours = math.floor(total_seconds / 3600)
     if hours >= 24:
-        if not days_unit:
+        if not excel_duration_in_days:
             days = math.floor(hours / 24)
             total_seconds -= days * 86400
             hours = hours - days * 24
@@ -3987,7 +4007,7 @@ def _parseSeconds(data, days_unit=False):
     else:
         days = 0
 
-    if days_unit:
+    if excel_duration_in_days:
         return data
 
     minutes = math.floor((total_seconds - hours * 3600) / 60)
@@ -4002,7 +4022,9 @@ def _parseSeconds(data, days_unit=False):
     )
 
 
-def _getCellValue(data, field=None, exportConfig=None, request=None, days_unit=False):
+def _getCellValue(
+    data, field=None, exportConfig=None, request=None, excel_duration_in_days=False
+):
     if data is None:
         return ""
     elif isinstance(data, datetime):
@@ -4019,7 +4041,7 @@ def _getCellValue(data, field=None, exportConfig=None, request=None, days_unit=F
     elif isinstance(data, numericTypes) or isinstance(data, date):
         return data
     elif isinstance(data, timedelta):
-        return _parseSeconds(data, days_unit)
+        return _parseSeconds(data, excel_duration_in_days)
     elif isinstance(data, time):
         return data.isoformat()
     elif not exportConfig or not exportConfig.get("anonymous", False):

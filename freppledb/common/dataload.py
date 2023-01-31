@@ -51,7 +51,12 @@ from .models import Comment
 
 
 def parseExcelWorksheet(
-    model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False, days_unit=False
+    model,
+    data,
+    user=None,
+    database=DEFAULT_DB_ALIAS,
+    ping=False,
+    excel_duration_in_days=False,
 ):
     class MappedRow:
         """
@@ -108,7 +113,7 @@ def parseExcelWorksheet(
                     return data
                 if isinstance(data, (float, int)):
                     # data is in days, convert it to seconds
-                    if days_unit:
+                    if excel_duration_in_days:
                         return round(data * 86400, 3)
                     else:
                         return "%.6f" % data
@@ -191,13 +196,22 @@ def parseExcelWorksheet(
 
     if hasattr(model, "parseData"):
         # Some models have their own special uploading logic
-        return model.parseData(data, MappedRow, user, database, ping, days_unit)
+        return model.parseData(
+            data, MappedRow, user, database, ping, excel_duration_in_days
+        )
     else:
-        return _parseData(model, data, MappedRow, user, database, ping, days_unit)
+        return _parseData(
+            model, data, MappedRow, user, database, ping, excel_duration_in_days
+        )
 
 
 def parseCSVdata(
-    model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False, days_unit=False
+    model,
+    data,
+    user=None,
+    database=DEFAULT_DB_ALIAS,
+    ping=False,
+    excel_duration_in_days=False,
 ):
     """
     This method:
@@ -270,7 +284,7 @@ def parseCSVdata(
                         return val
                     if isinstance(val, (float, int)):
                         # data is in days, convert it to seconds
-                        if days_unit:
+                        if excel_duration_in_days:
                             return round(val * 86400, 3)
                         else:
                             return "%.6f" % val
@@ -328,12 +342,18 @@ def parseCSVdata(
 
     if hasattr(model, "parseData"):
         # Some models have their own special uploading logic
-        return model.parseData(data, MappedRow, user, database, ping, days_unit)
+        return model.parseData(
+            data, MappedRow, user, database, ping, excel_duration_in_days
+        )
     else:
-        return _parseData(model, data, MappedRow, user, database, ping, days_unit)
+        return _parseData(
+            model, data, MappedRow, user, database, ping, excel_duration_in_days
+        )
 
 
-def _parseData(model, data, rowmapper, user, database, ping, days_unit=False):
+def _parseData(
+    model, data, rowmapper, user, database, ping, excel_duration_in_days=False
+):
 
     selfReferencing = []
 

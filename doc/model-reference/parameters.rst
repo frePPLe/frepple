@@ -39,6 +39,9 @@ currency                     | Currency symbol.
                               symbol, i.e. **$,**, resulting in **$ 123**.
 loading_time_units           | Time units to be used for the resource report.
                              | Accepted values are: hours, days, weeks.
+excel_duration_in_days       | Determines whether numbers in spreadsheets are considered
+                               as days or seconds. Default is true for days.
+                             | This parameter is only useful for backward compability.
 plan.administrativeLeadtime  | Specifies an administrative lead time in days.
                              | FrePPLe will plan the sales orders this amount of time ahead of their
                                due date. This creates extra safety in the delivery schedule and also

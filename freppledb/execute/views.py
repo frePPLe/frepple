@@ -1245,9 +1245,10 @@ def importWorkbook(request):
         if ct.model_class()
     ]
 
-    # retrive value of parameter days_unit
-    days_unit = (
-        Parameter.getValue("days_unit", request.database, "false").lower() == "true"
+    # retrieve value of parameter excel_duration_in_days
+    excel_duration_in_days = (
+        Parameter.getValue("excel_duration_in_days", request.database, "false").lower()
+        == "true"
     )
 
     try:
@@ -1322,7 +1323,7 @@ def importWorkbook(request):
                         user=request.user,
                         database=request.database,
                         ping=True,
-                        days_unit=days_unit,
+                        excel_duration_in_days=excel_duration_in_days,
                     ):
                         if error[0] == logging.DEBUG:
                             # Yield some result so we can detect disconnect clients and interrupt the upload

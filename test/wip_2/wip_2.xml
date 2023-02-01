@@ -71,6 +71,20 @@
         </loadplan>
       </loadplans>
     </operationplan>
+    <operationplan>
+      <reference>MO 2</reference>
+      <operation name="prod"/>
+      <start>2023-01-01T00:00:00</start>
+      <quantity>1</quantity>
+      <status>confirmed</status>
+    </operationplan>
+	<operationplan>
+      <reference>MO 3</reference>
+      <operation name="prod"/>
+      <start>2023-01-01T00:00:00</start>
+      <quantity>1</quantity>
+      <status>confirmed</status>
+    </operationplan>	
   </operationplans>
   
   <operations>

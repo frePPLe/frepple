@@ -392,11 +392,17 @@ Date LoadBucketizedPercentage::getOperationPlanDate(const LoadPlan* lp,
 Resource* Load::findPreferredResource(Date d, OperationPlan* opplan) const {
   if (!getResource()->isGroup()) return getResource();
 
-  // Choose the most efficient resource from the group, regardless of its cost.
-  // Also avoid assigning the same resource twice.
+  // The preferred resource uses the following criteria in order:
+  // - For approved and confirmed operationplans we choose the resource
+  //   with the lowest resource load to level-load the pool.
+  //   For proposed operationplans, we don't use the utlization.
+  // - Choose the most efficient resource from the group regardless of its cost.
+  // - Choose the resource with the lowest skill priority.
+  // We avoid assigning the same resource twice.
   // TODO We ignore date effectivity.
   Resource* best_res = nullptr;
   Resource* backup_res = getResource();
+  double best_utilization = DBL_MAX;
   double best_eff = 0.0;
   double best_priority = DBL_MAX;
   for (Resource::memberRecursiveIterator mmbr(getResource()); !mmbr.empty();
@@ -421,17 +427,29 @@ Resource* Load::findPreferredResource(Date d, OperationPlan* opplan) const {
         }
       }
 
+      double my_utilization = DBL_MAX;
+      if (opplan->getConfirmed() || opplan->getApproved()) {
+        // Include utilization comparison for approved & confirmed
+        auto l = mmbr->getLoadPlans().getEvent(opplan->getStart());
+        if (l && l->getMax()) my_utilization = l->getOnhand() / l->getMax();
+      }
+
+      // Check if better a) utilization, b) efficiency and c) priority
       auto my_eff = mmbr->getEfficiencyCalendar()
                         ? mmbr->getEfficiencyCalendar()->getValue(d)
                         : mmbr->getEfficiency();
-      if (my_eff > best_eff) {
+      if (my_utilization < best_utilization ||
+          (my_utilization == best_utilization && my_eff > best_eff)) {
         best_res = &*mmbr;
         best_eff = my_eff;
+        best_utilization = my_utilization;
         best_priority = tmpRsrcSkill ? tmpRsrcSkill->getPriority() : DBL_MAX;
-      } else if (fabs(my_eff - best_eff) < ROUNDING_ERROR && tmpRsrcSkill &&
+      } else if (my_utilization == best_utilization &&
+                 fabs(my_eff - best_eff) < ROUNDING_ERROR && tmpRsrcSkill &&
                  tmpRsrcSkill->getPriority() < best_priority) {
         best_res = &*mmbr;
         best_eff = my_eff;
+        best_utilization = my_utilization;
         best_priority = tmpRsrcSkill->getPriority();
       }
     }

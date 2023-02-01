@@ -17,6 +17,15 @@ Release notes
     where the effective data of item-suppliers, item-distributions or operations has expired.
   | See the doc on the `parameter fixBrokenSupplyPath <model-reference/parameters.html>`_.
 
+- | Improved level-loading logic for assigning resources to approved and
+    confirmed manufacturing orders.
+  | When approved and confirmed manufacturing orders are loaded from your
+    ERP without any assigned resources, frePPLe automatically assign resources.
+    In previous releases we always assigned the most efficient resource from a pool of
+    possible resources. With this enhancement we consider also the loading of each
+    resource to come up with a level-loaded utlization of the resources
+    in the pool.
+
 .. rubric:: Odoo integration
 
 - | The frepple connector is now available from the odoo app store.
@@ -45,6 +54,8 @@ Release notes
   | A new parameter excel_duration_in_days is added to maintain backward compatibility for
     customers that rely on the old format. The new format is the default,
     but if set to false we stick with the old format.
+
+- Bug fix: Occassionally the user screen didn't open and showed an error.
 
 .. rubric:: Documentation
 

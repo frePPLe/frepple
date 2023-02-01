@@ -409,6 +409,16 @@ class TimeLine {
    */
   void update(Event*, const Date&);
 
+  Event* getEvent(Date d, bool inclusive = true) {
+    Event* prev = nullptr;
+    for (iterator i = begin(); i != end(); ++i) {
+      if ((inclusive && i->getDate() > d) || (!inclusive && i->getDate() >= d))
+        break;
+      prev = &*i;
+    }
+    return prev;
+  }
+
   /* This functions returns the mimimum valid at a certain date. */
   virtual double getMin(Date d, bool inclusive = true) const {
     EventMinQuantity* m = this->lastMin;

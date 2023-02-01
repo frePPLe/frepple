@@ -13,6 +13,10 @@ Release notes
     The planning algorithm will assure that the same tool resource is selected for all steps
     in a routing.
 
+- | The logic for automatically fixing broken supply path is enhanced to cover situations
+    where the effective data of item-suppliers, item-distributions or operations has expired.
+  | See the doc on the `parameter fixBrokenSupplyPath <model-reference/parameters.html>`_.
+
 .. rubric:: Odoo integration
 
 - | The frepple connector is now available from the odoo app store.

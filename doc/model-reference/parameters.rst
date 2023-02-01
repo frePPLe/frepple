@@ -75,6 +75,18 @@ plan.minimumdelay            | Specifies a minimum delay the algorithm applies w
                                date for each iteration is advancing only in tiny increments.
 plan.planSafetyStockFirst    | Controls whether safety stock is planned before or after the demand.
                              | Accepted values are false (default) and true.
+plan.fixBrokenSupplyPath     | When set to true (which is the default), frepple will scan for
+                               items that can't be replenished any longer with purchase orders,
+                               distribution orders or manufacturing orders.
+
+                             | FrePPLe automatically creates a dummy/fake supplier for such items.
+                               In this way broken supply paths are automatically fixed. Planners
+                               will need to review such dummy purchase orders and update the
+                               master data to replace them with the correct replenishment method.
+
+                             | When this parameter is set to false, broken supply paths will result
+                               in unplanned demand. Analysing the unplanned demand is in most cases
+                               more complex than reviewing the dummy purchase orders.
 plan.rotateResources         | When set to true, the algorithm will better distribute
                                the demand across alternate suboperations instead of using
                                the preferred operation.

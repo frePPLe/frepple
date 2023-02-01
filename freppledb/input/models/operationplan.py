@@ -1499,6 +1499,19 @@ class DistributionOrder(OperationPlan):
             interruptions = []
             if "enddate" in fields or "receipt_date" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
+                # if enddate is outside item supplier effectivity dates, move it
+                if itemdistribution:
+                    if (
+                        itemdistribution.effective_start
+                        and self.enddate < itemdistribution.effective_start
+                    ):
+                        self.enddate = itemdistribution.effective_start
+                    if (
+                        itemdistribution.effective_end
+                        and self.enddate > itemdistribution.effective_end
+                    ):
+                        self.enddate = itemdistribution.effective_end
+
                 self.startdate = self.calculateOperationTime(
                     self.enddate,
                     itemdistribution.leadtime if itemdistribution else timedelta(0),
@@ -1513,6 +1526,32 @@ class DistributionOrder(OperationPlan):
                     True,
                     interruptions,
                 )
+                # Make sure enddate is in itemdistribution effectivity range
+                if itemdistribution:
+                    enddate_modified = False
+                    if (
+                        itemdistribution.effective_start
+                        and self.enddate < itemdistribution.effective_start
+                    ):
+                        self.enddate = itemdistribution.effective_start
+                        enddate_modified = True
+                    if (
+                        itemdistribution.effective_end
+                        and self.enddate > itemdistribution.effective_end
+                    ):
+                        self.enddate = itemdistribution.effective_end
+                        enddate_modified = True
+
+                    if enddate_modified:
+                        # We need to recalculate the start date from the end date
+                        self.startdate = self.calculateOperationTime(
+                            self.enddate,
+                            itemdistribution.leadtime
+                            if itemdistribution
+                            else timedelta(0),
+                            False,
+                            interruptions,
+                        )
             if interruptions:
                 self.plan["interruptions"] = [
                     (
@@ -1786,6 +1825,19 @@ class PurchaseOrder(OperationPlan):
             interruptions = []
             if "enddate" in fields or "receipt_date" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
+                # if enddate is outside item supplier effectivity dates, move it
+                if itemsupplier:
+                    if (
+                        itemsupplier.effective_start
+                        and self.enddate < itemsupplier.effective_start
+                    ):
+                        self.enddate = itemsupplier.effective_start
+                    if (
+                        itemsupplier.effective_end
+                        and self.enddate > itemsupplier.effective_end
+                    ):
+                        self.enddate = itemsupplier.effective_end
+
                 self.startdate = self.calculateOperationTime(
                     self.enddate,
                     itemsupplier.leadtime if itemsupplier else timedelta(0),
@@ -1800,6 +1852,31 @@ class PurchaseOrder(OperationPlan):
                     True,
                     interruptions,
                 )
+                # Make sure enddate is in supplier effectivity range
+                if itemsupplier:
+                    enddate_modified = False
+                    if (
+                        itemsupplier.effective_start
+                        and self.enddate < itemsupplier.effective_start
+                    ):
+                        self.enddate = itemsupplier.effective_start
+                        enddate_modified = True
+                    if (
+                        itemsupplier.effective_end
+                        and self.enddate > itemsupplier.effective_end
+                    ):
+                        self.enddate = itemsupplier.effective_end
+                        enddate_modified = True
+
+                    if enddate_modified:
+                        # We need to recalculate the start date from the end date
+                        self.startdate = self.calculateOperationTime(
+                            self.enddate,
+                            itemsupplier.leadtime if itemsupplier else timedelta(0),
+                            False,
+                            interruptions,
+                        )
+
             if interruptions:
                 self.plan["interruptions"] = [
                     (
@@ -2658,7 +2735,7 @@ class ManufacturingOrder(OperationPlan):
                                 ch.update(database, **delta)
                                 ch.save(using=database)
                         else:
-                            # Update the sequence of steps, starting from the last one
+                            # Update the sequence of steps, starting from the first one
                             for ch in (
                                 self.xchildren.all()
                                 .using(database)
@@ -2706,14 +2783,47 @@ class ManufacturingOrder(OperationPlan):
                 unavailable = timedelta(0)
                 if "enddate" in fields:
                     # Mode 1: End date (optionally also quantity) given -> compute start date
-                    self.startdate = self.calculateOperationTime(
-                        self.enddate, duration, False, interruptions
-                    )
+                    # if enddate is outside item supplier effectivity dates, move it
+                    if self.operation:
+                        if (
+                            self.operation.effective_start
+                            and self.enddate < self.operation.effective_start
+                        ):
+                            self.enddate = self.operation.effective_start
+                        if (
+                            self.operation.effective_end
+                            and self.enddate > self.operation.effective_end
+                        ):
+                            self.enddate = self.operation.effective_end
+                        self.startdate = self.calculateOperationTime(
+                            self.enddate, duration, False, interruptions
+                        )
                 else:
                     # Mode 2: Start date (optionally also quantity) given -> compute end date
                     self.enddate = self.calculateOperationTime(
                         self.startdate, duration, True, interruptions
                     )
+                    # Make sure enddate is in supplier effectivity range
+                    if self.operation:
+                        enddate_modified = False
+                        if (
+                            self.operation.effective_start
+                            and self.enddate < self.operation.effective_start
+                        ):
+                            self.enddate = self.operation.effective_start
+                            enddate_modified = True
+                        if (
+                            self.operation.effective_end
+                            and self.enddate > self.operation.effective_end
+                        ):
+                            self.enddate = self.operation.effective_end
+                            enddate_modified = True
+
+                        if enddate_modified:
+                            # We need to recalculate the start date from the end date
+                            self.startdate = self.calculateOperationTime(
+                                self.enddate, duration, False, interruptions
+                            )
                 if interruptions:
                     self.plan["interruptions"] = [
                         (
@@ -2845,6 +2955,12 @@ class ManufacturingOrder(OperationPlan):
                 # Create new opplanmat records
                 produced = False
                 for fl in self.operation.operationmaterials.using(database).all():
+                    # respect effective dates of operation material record
+                    if self.enddate:
+                        if fl.effective_start and self.enddate < fl.effective_start:
+                            continue
+                        if fl.effective_end and self.enddate > fl.effective_end:
+                            continue
                     if fl.type == "transfer_batch":
                         continue
                     if fl.type == "start" and not self.startdate:

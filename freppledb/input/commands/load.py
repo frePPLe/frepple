@@ -179,6 +179,16 @@ class checkBrokenSupplyPath(CheckTask):
         Location.rebuildHierarchy(database)
         with_fcst_module = "freppledb.forecast" in settings.INSTALLED_APPS
         param = True
+        currentdate = Parameter.getValue("currentdate", database=database)
+        try:
+            currentdate = parse(currentdate)
+        except Exception:
+            n = datetime.now()
+            currentdate = (
+                datetime(n.year, n.month, n.day)
+                if currentdate and currentdate.lower() == "today"
+                else n.replace(microsecond=0)
+            )
         try:
             p = Parameter.objects.using(database).get(name="plan.fixBrokenSupplyPath")
             param = p.value.strip().lower() == "true"
@@ -219,23 +229,26 @@ class checkBrokenSupplyPath(CheckTask):
                 inner join item parentitem on itemdistribution.item_id = parentitem.name
                 inner join item on item.lft between parentitem.lft and parentitem.rght
                 inner join location on itemdistribution.location_id = location.name
+                where coalesce(itemdistribution.effective_end, %%s) >= %%s
                 union
                 select 'Unknown supplier', item.name, location_id from itemsupplier
                 inner join item parentitem on itemsupplier.item_id = parentitem.name
                 inner join item on item.lft between parentitem.lft and parentitem.rght
                 inner join location on itemsupplier.location_id = location.name
+                where coalesce(itemsupplier.effective_end, %%s) >= %%s
                 union
                 select 'Unknown supplier', item.name, location.name from itemsupplier
                 inner join item parentitem on itemsupplier.item_id = parentitem.name
                 inner join item on item.lft between parentitem.lft and parentitem.rght
                 cross join location
-                where itemsupplier.location_id is null
+                where itemsupplier.location_id is null and coalesce(itemsupplier.effective_end, %%s) >= %%s
                 union
                 select 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
                 inner join operation on operation.name = operationmaterial.operation_id
-                where operationmaterial.quantity > 0
+                where operationmaterial.quantity > 0 and coalesce(operation.effective_end, %%s) >= %%s
                 union
                 select 'Unknown supplier', item_id, location_id from operation
+                where coalesce(operation.effective_end, %%s) >= %%s
                 )
                 """
                 % (
@@ -245,7 +258,8 @@ class checkBrokenSupplyPath(CheckTask):
                     """
                     if with_fcst_module
                     else "",
-                )
+                ),
+                ((currentdate,) * 10),
             )
 
             # removing unknown supplier if no invalid record has been found

@@ -221,10 +221,10 @@ void HasLevel::computeLevels() {
         for (auto dpd : cur_oper->getDependencies()) {
           auto new_oper = dpd->getOperation();
           if (new_oper == cur_oper) new_oper = dpd->getBlockedBy();
-          if (new_oper->lvl < cur_level) {
+          if (new_oper->lvl < cur_level + 1) {
             // Search level and cluster
-            opstack.push(make_pair(new_oper, cur_level));
-            new_oper->lvl = cur_level;
+            opstack.push(make_pair(new_oper, cur_level + 1));
+            new_oper->lvl = cur_level + 1;
             new_oper->cluster = cur_cluster;
           } else if (!new_oper->cluster) {
             // Search for clusters information only

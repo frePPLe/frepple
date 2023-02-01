@@ -26,6 +26,9 @@ Release notes
     resource to come up with a level-loaded utlization of the resources
     in the pool.
 
+- Bug fix: Incorrect level calculation in models with operation dependencies
+  and without buffers.
+
 .. rubric:: Odoo integration
 
 - | The frepple connector is now available from the odoo app store.

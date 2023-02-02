@@ -14,7 +14,7 @@
       <input type="hidden" name="horizonunit" id="horizonunit" value="{{request.user.horizonunit}}">
       <input id="horizonoriginal" type="hidden" value="{{request.user.horizonbuckets}}|{{request.user.horizonstart|date:"DATE_FORMAT"}}|{{request.user.horizonend|date:"DATE_FORMAT"}}|{{request.user.horizontype}}|{{request.user.horizonbefore}}|{{request.user.horizonlength}}|{{request.user.horizonunit}}"/>
           <div class="row" style="padding-bottom: 15px">
-            <div class="col-12">
+            <div class="col">
               {% trans 'bucket size'|capfirst %}&nbsp;&nbsp;
               <div class="dropdown" style="display:inline">
                   <button class="btn btn-default dropdown-toggle" type="button" name="horizonbuckets1" id="horizonbuckets1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -30,7 +30,7 @@
           </div>
 
           <div class="row" style="padding-bottom: 15px">
-            <div class="col-12 form-inline">
+            <div class="col form-inline">
               <input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>
               &nbsp;&nbsp;{% trans 'from'|capfirst %}&nbsp;
               <div class="input-group date">
@@ -51,7 +51,7 @@
           </div>
 
           <div class="row">
-            <div class="col-12 form-inline">
+            <div class="col form-inline">
               <input type="radio" id="horizontype" name="horizontype" value="1"{% if request.user.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
               {% trans 'from'|capfirst %}
               <input id="horizonbefore" style="width:4em; padding-left: 6px; padding-right:6px" name="horizonbefore" type="number" class="form-control arrows" min="0" max="99" value="{{request.user.horizonbefore}}"/>&nbsp;

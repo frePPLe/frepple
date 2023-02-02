@@ -44,7 +44,7 @@ function markMessageRead(el, status) {
          msg.find(".msg-status .btn.fa")
            .removeClass("fa-envelope-o")
            .addClass("fa-envelope-open-o")
-           .attr("data-original-title", gettext("Mark message unread"));
+           .attr("data-bs-title", gettext("Mark message unread"));
        }
        else if (status == "D") {
          msg.remove();
@@ -54,7 +54,7 @@ function markMessageRead(el, status) {
          msg.find(".msg-status .btn.fa")
            .removeClass("fa-envelope-open-o")
            .addClass("fa-envelope-o")
-           .attr("data-original-title", gettext("Mark message read"));
+           .attr("data-bs-title", gettext("Mark message read"));
        }
        getUnreadMessages();
      }

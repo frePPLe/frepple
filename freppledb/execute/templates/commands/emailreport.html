@@ -63,11 +63,11 @@ function validateEmailButton() {
     var testEmail = /^([\w+-.%]+@[\w-.]+\.[A-Za-z]{2,},?)+$/;
     emails_ok = $("#emails").val() != '' && testEmail.test($("#emails").val());
     if (!emails_ok) {
-       $("#emails").attr('data-original-title', '{% trans 'please correct invalid email addresses'|capfirst %}');
+       $("#emails").attr('data-bs-title', '{% trans 'please correct invalid email addresses'|capfirst %}');
        $('#emails').tooltip('show');
     }
     else {
-       $("#emails").tooltip('hide').attr('data-original-title', '{% trans 'please enter email addresses'|capfirst %}');
+       $("#emails").tooltip('hide').attr('data-bs-title', '{% trans 'please enter email addresses'|capfirst %}');
     }
     $('#emailreport').prop('disabled', !(oneChecked && emails_ok));
 

@@ -2636,12 +2636,12 @@ function getUnreadMessages() {
       if (json.unread) {
         msg.removeClass("fa-envelope-open-o").addClass("fa-envelope-o");
         msg.next().text(json.unread);
-        msg.parent().parent().attr("data-original-title", interpolate(gettext("%s unread messages"), [json.unread]));
+        msg.parent().parent().attr("data-bs-title", interpolate(gettext("%s unread messages"), [json.unread]));
       }
       else {
         msg.removeClass("fa-envelope-o").addClass("fa-envelope-open-o");
         msg.next().text("");
-        msg.parent().parent().attr("data-original-title", gettext("No unread messages"));
+        msg.parent().parent().attr("data-bs-title", gettext("No unread messages"));
       }
     }
   });

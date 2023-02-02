@@ -45,6 +45,11 @@ Release notes
 
 .. rubric:: User interface
 
+- | The styling and layout has been refreshed in a number of places. In
+    upcoming release you can expect more of those.
+  | For the techies: we've upgraded from Bootstrap 3 to Bootstrap 5 for the CSS and
+    HTML styling framework.
+
 - | Updated Spanish translations have been contributed by Zipus. Gracias!
 
 - Bug fix: The empty-database task didn't work if only the resource-detail or

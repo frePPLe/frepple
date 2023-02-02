@@ -1422,12 +1422,24 @@ class DistributionOrder(OperationPlan):
             return self._itemdistribution
         item = self.item
         while item:
+            firstItemDistribution = None
             for i in item.distributions.all().using(database).order_by("priority"):
                 if self.destination == i.location and (
                     self.origin == i.origin or not self.origin
                 ):
+                    if not firstItemDistribution:
+                        firstItemDistribution = i
+                    if (
+                        not i.effective_start or self.enddate >= i.effective_start
+                    ) and (not i.effective_end or self.enddate <= i.effective_end):
+                        self._itemsupplier = i
+                        return self._itemsupplier
                     self._itemdistribution = i
                     return self._itemdistribution
+            # No itemdistribution was found considering the effectivity dates. Ignore these and return the first one.
+            if firstItemDistribution:
+                self._itemdistribution = i
+                return self._itemdistribution
             item = item.owner
         self._itemdistribution = None
         return self._itemdistribution
@@ -1500,17 +1512,17 @@ class DistributionOrder(OperationPlan):
             if "enddate" in fields or "receipt_date" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
                 # if enddate is outside item supplier effectivity dates, move it
-                if itemdistribution:
-                    if (
-                        itemdistribution.effective_start
-                        and self.enddate < itemdistribution.effective_start
-                    ):
-                        self.enddate = itemdistribution.effective_start
-                    if (
-                        itemdistribution.effective_end
-                        and self.enddate > itemdistribution.effective_end
-                    ):
-                        self.enddate = itemdistribution.effective_end
+                """if itemdistribution:
+                if (
+                    itemdistribution.effective_start
+                    and self.enddate < itemdistribution.effective_start
+                ):
+                    self.enddate = itemdistribution.effective_start
+                if (
+                    itemdistribution.effective_end
+                    and self.enddate > itemdistribution.effective_end
+                ):
+                    self.enddate = itemdistribution.effective_end"""
 
                 self.startdate = self.calculateOperationTime(
                     self.enddate,
@@ -1527,7 +1539,7 @@ class DistributionOrder(OperationPlan):
                     interruptions,
                 )
                 # Make sure enddate is in itemdistribution effectivity range
-                if itemdistribution:
+                """ if itemdistribution:
                     enddate_modified = False
                     if (
                         itemdistribution.effective_start
@@ -1551,7 +1563,7 @@ class DistributionOrder(OperationPlan):
                             else timedelta(0),
                             False,
                             interruptions,
-                        )
+                        ) """
             if interruptions:
                 self.plan["interruptions"] = [
                     (
@@ -1748,12 +1760,22 @@ class PurchaseOrder(OperationPlan):
             return self._itemsupplier
         item = self.item
         while item:
+            firstSupplier = None
             for i in item.itemsuppliers.all().using(database).order_by("priority"):
                 if self.supplier == i.supplier and (
                     self.location == i.location or not i.location
                 ):
-                    self._itemsupplier = i
-                    return self._itemsupplier
+                    if not firstSupplier:
+                        firstSupplier = i
+                    if (
+                        not i.effective_start or self.enddate >= i.effective_start
+                    ) and (not i.effective_end or self.enddate <= i.effective_end):
+                        self._itemsupplier = i
+                        return self._itemsupplier
+            # No supplier was found considering the effectivity dates. Ignore these and return the first one.
+            if firstSupplier:
+                self._itemsupplier = firstSupplier
+                return self._itemsupplier
             item = item.owner
         self._itemsupplier = None
         return self._itemsupplier
@@ -1825,18 +1847,19 @@ class PurchaseOrder(OperationPlan):
             interruptions = []
             if "enddate" in fields or "receipt_date" in fields:
                 # Mode 1: End date (optionally also quantity) given -> compute start date
+
                 # if enddate is outside item supplier effectivity dates, move it
-                if itemsupplier:
-                    if (
-                        itemsupplier.effective_start
-                        and self.enddate < itemsupplier.effective_start
-                    ):
-                        self.enddate = itemsupplier.effective_start
-                    if (
-                        itemsupplier.effective_end
-                        and self.enddate > itemsupplier.effective_end
-                    ):
-                        self.enddate = itemsupplier.effective_end
+                """if itemsupplier:
+                if (
+                    itemsupplier.effective_start
+                    and self.enddate < itemsupplier.effective_start
+                ):
+                    self.enddate = itemsupplier.effective_start
+                if (
+                    itemsupplier.effective_end
+                    and self.enddate > itemsupplier.effective_end
+                ):
+                    self.enddate = itemsupplier.effective_end"""
 
                 self.startdate = self.calculateOperationTime(
                     self.enddate,
@@ -1852,8 +1875,9 @@ class PurchaseOrder(OperationPlan):
                     True,
                     interruptions,
                 )
+
                 # Make sure enddate is in supplier effectivity range
-                if itemsupplier:
+                """ if itemsupplier:
                     enddate_modified = False
                     if (
                         itemsupplier.effective_start
@@ -1875,7 +1899,7 @@ class PurchaseOrder(OperationPlan):
                             itemsupplier.leadtime if itemsupplier else timedelta(0),
                             False,
                             interruptions,
-                        )
+                        ) """
 
             if interruptions:
                 self.plan["interruptions"] = [
@@ -2423,8 +2447,6 @@ class ManufacturingOrder(OperationPlan):
                                     quantity=quantity,
                                     status=instance.status,
                                     operationplan=instance,
-                                    startdate=instance.startdate,
-                                    enddate=instance.enddate,
                                 )
                                 new_opr.append(opr)
 
@@ -2606,6 +2628,10 @@ class ManufacturingOrder(OperationPlan):
             if not self._resources:
                 # Create new opplanres records
                 for r in self.operation.operationresources.using(database).all():
+                    if r.effective_start and self.enddate < r.effective_start:
+                        continue
+                    if r.effective_end and self.enddate > r.effective_end:
+                        continue
                     rsrc = r.getPreferredResource()
                     if not rsrc:
                         # We may not find a resource that has the required skill
@@ -2620,6 +2646,42 @@ class ManufacturingOrder(OperationPlan):
                         )
                     )
             else:
+                # check if this is a resource update
+                if "resource" in fields:
+                    self._oldresources = [
+                        i
+                        for i in self._resources
+                        if i.resource not in [i[0] for i in fields["resource"]]
+                    ]
+                    # remove these records from self._resources
+                    for i in self._oldresources:
+                        self._resources.remove(i)
+                    # and create new opr records
+                    for i in fields["resource"]:
+                        # check if the resource has changed
+                        if i[0] in [opr.resource for opr in self._resources]:
+                            continue
+
+                        r = None
+                        for opres in self.operation.operationresources.using(
+                            database
+                        ).all():
+                            if opres.resource == i[0] or opres.resource == i[0].owner:
+                                r = opres
+                                break
+                        if r:
+                            if "bucket" in i[0].type:
+                                qty = (self.quantity or Decimal(0)) * (
+                                    r.quantity or Decimal(0)
+                                )
+                            else:
+                                qty = r.quantity or Decimal(1)
+                            self._resources.append(
+                                OperationPlanResource(
+                                    operationplan=self, resource=i[0], quantity=qty
+                                )
+                            )
+
                 # update quantity for opr records of bucketized resources
                 for opr in self._resources:
                     if "bucket" in opr.resource.type:
@@ -2783,28 +2845,29 @@ class ManufacturingOrder(OperationPlan):
                 unavailable = timedelta(0)
                 if "enddate" in fields:
                     # Mode 1: End date (optionally also quantity) given -> compute start date
-                    # if enddate is outside item supplier effectivity dates, move it
-                    if self.operation:
-                        if (
-                            self.operation.effective_start
-                            and self.enddate < self.operation.effective_start
-                        ):
-                            self.enddate = self.operation.effective_start
-                        if (
-                            self.operation.effective_end
-                            and self.enddate > self.operation.effective_end
-                        ):
-                            self.enddate = self.operation.effective_end
-                        self.startdate = self.calculateOperationTime(
-                            self.enddate, duration, False, interruptions
-                        )
+
+                    # if enddate is outside operation effectivity dates, move it
+                    """if self.operation:
+                    if (
+                        self.operation.effective_start
+                        and self.enddate < self.operation.effective_start
+                    ):
+                        self.enddate = self.operation.effective_start
+                    if (
+                        self.operation.effective_end
+                        and self.enddate > self.operation.effective_end
+                    ):
+                        self.enddate = self.operation.effective_end"""
+                    self.startdate = self.calculateOperationTime(
+                        self.enddate, duration, False, interruptions
+                    )
                 else:
                     # Mode 2: Start date (optionally also quantity) given -> compute end date
                     self.enddate = self.calculateOperationTime(
                         self.startdate, duration, True, interruptions
                     )
-                    # Make sure enddate is in supplier effectivity range
-                    if self.operation:
+                    # Make sure enddate is in operation effectivity range
+                    """ if self.operation:
                         enddate_modified = False
                         if (
                             self.operation.effective_start
@@ -2823,7 +2886,7 @@ class ManufacturingOrder(OperationPlan):
                             # We need to recalculate the start date from the end date
                             self.startdate = self.calculateOperationTime(
                                 self.enddate, duration, False, interruptions
-                            )
+                            ) """
                 if interruptions:
                     self.plan["interruptions"] = [
                         (
@@ -3007,3 +3070,8 @@ class ManufacturingOrder(OperationPlan):
             for r in self._resources:
                 r.save(using=database)
                 r.updateResourcePlan(database)
+            # Update resource plan for old resources
+            if hasattr(self, "_oldresources"):
+                for r in self._oldresources:
+                    r.updateResourcePlan(database, delete=True)
+                    r.delete()

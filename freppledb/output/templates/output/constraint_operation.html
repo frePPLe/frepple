@@ -1,6 +1,8 @@
 {% extends "admin/base_site_grid.html" %}
 
-{% block tools %}{% include "common/snippet_follow.html" %}{% tabs model %}{{block.super}}{% endblock %}
+{% block tools %}{% include "common/snippet_follow.html" %}{{block.super}}{% endblock %}
+
+{% block tabs %}{% tabs model %}{{block.super}}{% endblock %}
 
 {% block extrahead %}{{block.super}}
 <script>
@@ -18,7 +20,7 @@ function probfmt(cellvalue, options, row)
   else
     var role = 'input/operation';
   return $.jgrid.htmlEncode(cellvalue) + "<a href='" + url_prefix + "/detail/" + role
-     + "/" + admin_escape("cellvalue") + "/'><span class='leftpadding context fa fa-caret-right' role='" + role + "'></span></a>";
+     + "/" + admin_escape("cellvalue") + "/'><span class='ps-2 context fa fa-caret-right' role='" + role + "'></span></a>";
 }
 
 </script>

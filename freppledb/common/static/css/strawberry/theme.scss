@@ -1,0 +1,45 @@
+$primary: darken(#428bca, 6.5%);
+$secondary: #FFAEAE;
+$success: #8bc34a;
+$info: #03a9f4;
+$warning: #ffeb3b;
+$danger: #ff5252;
+
+$light: #FFAEAE;
+$dark: #FFAEAE;
+
+// Body background
+$body-bg: #ECECEC;
+
+// Logo height
+$navbar-brand-height: 3rem;
+
+// Fonts
+$font-size-base: 0.8rem;
+$font-family-sans-serif: 'FontAwesome', 'Open sans', Helvetica, Verdana, Arial, sans-serif;
+$font-family-monospace: 'FontAwesome', Menlo, Monaco, Consolas, "Courier New", monospace;
+$body-color: #333333;
+
+// You probably don't need to update the variables below this line.
+// These updates are normally generic for all frepple themes.
+$spacer: 1rem;
+$h1-font-size: $font-size-base * 1.5;
+$h2-font-size: $font-size-base * 1.25;
+$h3-font-size: $font-size-base * 1.25;
+$h4-font-size: $font-size-base * 1.25;
+$h5-font-size: $font-size-base * 1.25;
+$link-color: $body-color;
+$link-hover-color: $body-color;
+$link-hover-decoration: none;
+$link-decoration: none;
+$accordion-button-bg: $secondary;
+$accordion-button-color: $body-color;
+$accordion-button-active-bg: $secondary;
+$accordion-button-active-color: $body-color;
+$accordion-btn-focus-border-color: $secondary;
+$accordion-bg: white;
+$accordion-button-padding-y: 0.5rem;
+$input-bg: white;
+$input-btn-focus-width: 2px;
+$nav-tabs-border-color: $light;
+$nav-tabs-border-radius: 0;

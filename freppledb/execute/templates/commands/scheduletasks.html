@@ -35,9 +35,9 @@
   {% endif %}
   {% if perms.execute.change_scheduledtask %}
   <div class="col-sm-1 text-center" style="padding-top:6px; padding-bottom:6px">
-  <button class="btn btn-xs btn-primary" onclick="editScheduledTask(this, event)">
-  <span class="fa fa-edit" data-toggle="tooltip"
-    data-placement="top" data-original-title="{% trans "Edit" %}"></span>
+  <button class="btn btn-sm btn-primary" onclick="editScheduledTask(this, event)">
+  <span class="fa fa-edit" data-bs-toggle="tooltip"
+    data-bs-placement="top" data-bs-title="{% trans "Edit" %}"></span>
   </button>
   </div>
   {% endif %}
@@ -47,18 +47,18 @@
   style="display:none; padding:10px; border-style:solid; border-radius:10px; border-width:1px; margin:10px 0 10px 0">
   <div class="col-sm-2 text-center">
     <div>
-      <button class="btn btn-primary btn-block" style="margin-bottom:20px; margin-top: 15px" onclick="saveScheduledTask(this, event)">
+      <button class="btn btn-primary w-100" style="margin-bottom:20px; margin-top: 15px" onclick="saveScheduledTask(this, event)">
       {% trans "Save" %}</button>
     </div>
     <div>
-      <button class="btn btn-primary btn-block" onclick="deleteScheduledTask(this, event)">
+      <button class="btn btn-primary w-100" onclick="deleteScheduledTask(this, event)">
       {% trans "Delete" %}
       </button>
     </div>
   </div>
   <div class="col-sm-10">
     <div class="row" style="padding-bottom:10px">
-       <div style="float:right">
+       <div class="">
          <button type="button" class="close" onclick="closeScheduledTask(this, event)">
          <span aria-hidden="true" class="fa fa-times"></span>
          </button>
@@ -77,45 +77,45 @@
          <div class="col-sm-9">
          {% for t in schedule.data.tasks %}
          <div class="form-group data-task">
-         <div class="col-xs-4">
+         <div class="col-4">
             <div class="btn-group btn-block">
             <button data-field="task-name" data-name="{{ t.name }}" type="button"
-              class="btn btn-block btn-primary dropdown-toggle" data-toggle="dropdown">
+              class="btn btn-block btn-primary dropdown-toggle" data-bs-toggle="dropdown">
               {{ t.name }}&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
               {% for c in commands %}
-              <li><a href="#" onclick="setTaskType(this, event)">{{c}}</a></li>
+              <li><a class="dropdown-item" href="#" onclick="setTaskType(this, event)">{{c}}</a></li>
               {% endfor %}
             </ul>
             </div>
          </div>
-         <div class="col-xs-5">
+         <div class="col-5">
          <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "arguments"|capfirst %}" value="{{ t.arguments }}">
          </div>
-         <div class="col-xs-3">
+         <div class="col-3">
          <input data-field="task-abort-on-failure" type="checkbox" value="1" {% if t.abort_on_failure %}checked{% endif %}
-           class="form-check-input" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "abort on failure"|capfirst %}">
-         <button class="btn btn-xs btn-primary" onclick="deleteTask(this, event)">
-         <span class="fa fa-trash-o" data-toggle="tooltip" data-placement="top"
-           data-original-title="{% trans "Delete" %}"></span>
+           class="form-check-input" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "abort on failure"|capfirst %}">
+         <button class="btn btn-sm btn-primary" onclick="deleteTask(this, event)">
+         <span class="fa fa-trash-o" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-title="{% trans "Delete" %}"></span>
          </button>
-         <button class="btn btn-xs btn-primary" onclick="moveTaskDown(this, event)">
-         <span class="fa fa-chevron-down" data-toggle="tooltip" data-placement="top"
-           data-original-title="{% trans "Move down" %}"></span>
+         <button class="btn btn-sm btn-primary" onclick="moveTaskDown(this, event)">
+         <span class="fa fa-chevron-down" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-title="{% trans "Move down" %}"></span>
          </button>
-         <button class="btn btn-xs btn-primary" onclick="moveTaskUp(this, event)">
-         <span class="fa fa-chevron-up" data-toggle="tooltip" data-placement="top"
-           data-original-title="{% trans "Move up" %}"></span>
+         <button class="btn btn-sm btn-primary" onclick="moveTaskUp(this, event)">
+         <span class="fa fa-chevron-up" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-title="{% trans "Move up" %}"></span>
          </button>
          </div>
          </div>
          {% endfor %}
          <!-- extra empty row for new tasks -->
          <div id="addScheduledTask" class="form-group">
-         <div class="col-sm-1 pull-right">
-         <button class="btn btn-xs btn-primary" onclick="addTask(this, event)">
-         <span class="fa fa-plus" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Add" %}"></span>
+         <div class="col-sm-1 float-end">
+         <button class="btn btn-sm btn-primary" onclick="addTask(this, event)">
+         <span class="fa fa-plus" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Add" %}"></span>
          </button>
          </div>
          </div>
@@ -181,42 +181,42 @@
 {% if perms.execute.add_scheduledtask %}
 <div class="row">
 <div class="col-sm-offset-11 col-sm-1 text-center">
-<button class="btn btn-xs btn-primary" onclick="addScheduledTask(this, event)">
-<span class="fa fa-plus" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Add" %}"></span>
+<button class="btn btn-sm btn-primary" onclick="addScheduledTask(this, event)">
+<span class="fa fa-plus" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Add" %}"></span>
 </button>
 </div>
 </div>
 <div id="scheduledtask_tasktemplate" class="hidden form-group data-task">
-         <div class="col-xs-4">
+         <div class="col-4">
             <div class="btn-group btn-block">
             <button data-field="task-name" type="button"
-              class="btn btn-block btn-primary dropdown-toggle" data-toggle="dropdown">
+              class="btn btn-block btn-primary dropdown-toggle" data-bs-toggle="dropdown">
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
               {% for c in commands %}
-              <li><a href="#" onclick="setTaskType(this, event)">{{c}}</a></li>
+              <li><a class="dropdown-item" href="#" onclick="setTaskType(this, event)">{{c}}</a></li>
               {% endfor %}
             </ul>
             </div>
          </div>
-         <div class="col-xs-5">
+         <div class="col-5">
          <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "arguments"|capfirst %}">
          </div>
-         <div class="col-xs-3">
+         <div class="col-3">
          <input data-field="task-abort-on-failure" type="checkbox" value="1" data-delay="500"
-           data-toggle="tooltip" data-placement="top" data-original-title="{% trans "abort on failure"|capfirst %}">
-         <button class="btn btn-xs btn-primary" onclick="deleteTask(this, event)">
-         <span class="fa fa-trash-o" data-toggle="tooltip" data-placement="top"
-           data-original-title="{% trans "Delete" %}"></span>
+           data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "abort on failure"|capfirst %}">
+         <button class="btn btn-sm btn-primary" onclick="deleteTask(this, event)">
+         <span class="fa fa-trash-o" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-title="{% trans "Delete" %}"></span>
          </button>
-         <button class="btn btn-xs btn-primary" onclick="moveTaskDown(this, event)">
-         <span class="fa fa-chevron-down" data-toggle="tooltip" data-placement="top"
-           data-original-title="{% trans "Move down" %}"></span>
+         <button class="btn btn-sm btn-primary" onclick="moveTaskDown(this, event)">
+         <span class="fa fa-chevron-down" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-title="{% trans "Move down" %}"></span>
          </button>
-         <button class="btn btn-xs btn-primary" onclick="moveTaskUp(this, event)">
-         <span class="fa fa-chevron-up" data-toggle="tooltip" data-placement="top"
-           data-original-title="{% trans "Move up" %}"></span>
+         <button class="btn btn-sm btn-primary" onclick="moveTaskUp(this, event)">
+         <span class="fa fa-chevron-up" data-bs-toggle="tooltip" data-bs-placement="top"
+           data-bs-title="{% trans "Move up" %}"></span>
          </button>
          </div>
 </div>
@@ -256,7 +256,7 @@ function addTask(el, event) {
   newrow.removeAttr("id");
 	newrow.insertBefore($(el).closest(".form-group"));
   newrow.toggleClass("hidden");
-  newrow.find('[data-toggle="tooltip"]').tooltip();
+  newrow.find('[data-bs-toggle="tooltip"]').tooltip();
   event.preventDefault();
 }
 
@@ -343,18 +343,18 @@ function saveScheduledTask(el, event) {
       $('#popup').html('<div class="modal-dialog">'+
           '<div class="modal-content">'+
             '<div class="modal-header bg-danger">'+
-              '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-              '<h4 class="modal-title">'+ gettext("Error")+'</h4>'+
+              '<button type="button" class="btn-close" data-bs-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+              '<h5 class="modal-title">'+ gettext("Error")+'</h5>'+
             '</div>'+
             '<div class="modal-body">'+
               '<p>'+jqXHR.responseText+'</p>'+
             '</div>'+
             '<div class="modal-footer">'+
-              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
+              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="'+gettext('Close')+'">'+
             '</div>'+
           '</div>'+
-      '</div>' )
-      .modal('show');
+      '</div>' );
+      showModal('popup');
     }
     });
   event.preventDefault();
@@ -379,18 +379,18 @@ function deleteScheduledTask(el, event) {
     	$('#popup').html('<div class="modal-dialog">'+
           '<div class="modal-content">'+
             '<div class="modal-header bg-danger">'+
-              '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-              '<h4 class="modal-title">'+ gettext("Error")+'</h4>'+
+              '<h5 class="modal-title">'+ gettext("Error")+'</h5>'+
+              '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>'+
             '</div>'+
             '<div class="modal-body">'+
               '<p>'+jqXHR.responseText+'</p>'+
             '</div>'+
             '<div class="modal-footer">'+
-              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
+              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="'+gettext('Close')+'">'+
             '</div>'+
           '</div>'+
-      '</div>' )
-      .modal('show');
+      '</div>' );
+      showModal('popup');
     }
     });
 }

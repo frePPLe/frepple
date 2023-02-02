@@ -14,50 +14,57 @@ $(function() {
 {% endblock %}
 
 {% block tools %}
-<h1 class="pull-right">
-<button class="btn btn-xs btn-primary" onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/integration-guide/rest-api/detail-api-from-your-browser.html');" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}"><span class="fa fa-question"></span></button>
+<h1>
+<button class="btn btn-sm btn-primary me-2" onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/integration-guide/rest-api/detail-api-from-your-browser.html');" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"><span class="fa fa-question"></span></button>
 </h1>
 {% endblock %}
 
 {% block content %}
 <div id="content-main">
 
-<div id="request-info">
-<br>
-{% trans "HTTP request" %}:<b><br>
-&nbsp;&nbsp;{{ request.method }}</b> {{request.prefix}}{{ request.get_full_path }}<br><br>
+<div class="row gy-3 mb-3">
+
+  <div class="col-md-6 col-sm-12">
+  <h3>{% trans "HTTP request" %}</h3>
+  <div class="col">
+  <b>{{ request.method }}</b> {{request.prefix}}{{ request.get_full_path }}
+  </div>
+  </div>
+
+  <div class="col-md-6 col-sm-12">
+  <h3>{% trans "HTTP response headers" %}</h3>
+  <div class="col">
+  <b>HTTP {{ response.status_code }} {{ response.status_text }}</b><br>
+  {% autoescape off %}
+  {% for key, val in response_headers.items %}<b>{{ key }}:&nbsp;&nbsp;</b>
+  {{ val|break_long_headers|urlize }}<br>
+  {% endfor %}
+  </div>
+  </div>
+
 </div>
 
-<div class="response-info">
-{% trans "HTTP response headers" %}:<br>
-&nbsp;&nbsp;<b>HTTP {{ response.status_code }} {{ response.status_text }}</b>
-<br>
-{% autoescape off %}
-{% for key, val in response_headers.items %}<b>&nbsp;&nbsp;{{ key }}:&nbsp;&nbsp;</b>
-{{ val|break_long_headers|urlize }}<br>
-{% endfor %}
-</div>
+<div class="row"><div class="col">
+<h3>{% trans "HTTP response content" %}</h3>
+</div></div>
 
-<div class="response-info" style="margin-top: 20px; margin-bottom: 20px">
-
-{% trans "HTTP response content" %}:<br>
-<textarea class='form-control' id="records" rows="20" style="width:100%">{{ content|urlize }}</textarea>
+<div class="row mb-3"><div class="col">
+<textarea class="form-control w-100" id="records" rows="20">{{ content|urlize }}</textarea>
 {% endautoescape %}
-</div>
+</div></div>
 
-<div id="APIaccordion" class="panel-group" role="tablist" aria-multiselectable="true" style="max-width:100%">
+<div class="row"><div class="col">
+<div id="APIaccordion" class="accordion">
 
 {% if 'GET' in allowed_methods %}
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="eersteHeading">
-      <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#APIaccordion" href="#html_raw" aria-expanded="true" aria-controls="html_raw">
-              {% blocktrans with model=name %}Make a GET request to read {{ model }} object(s){% endblocktrans %}
-        </a>
-      </h4>
-    </div>
-      <div id="html_raw" class="panel-collapse collapse" role="tabpanel" aria-labelledby="eersteHeading">
-        <div class="panel-body">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="eersteHeading">
+      <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#html_raw" aria-expanded="false" aria-controls="html_raw">
+            {% blocktrans with model=name %}Make a GET request to read {{ model }} object(s){% endblocktrans %}
+      </button>
+    </h2>
+      <div id="html_raw" class="accordion-collapse collapse" data-bs-parent="#APIaccordion" aria-labelledby="eersteHeading">
+        <div class="accordion-body">
   {% if api_settings.URL_FORMAT_OVERRIDE %}
     {% for format in available_formats %}
 							  <button  class="btn btn-primary" role="button" type="submit"
@@ -76,18 +83,16 @@ $(function() {
 {% endif %}
 
 {% if options_form %}
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="twedeHeading">
-      <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#APIaccordion" href="#options_get" aria-expanded="true" aria-controls="options_get">
-              {% blocktrans with model=name %}Make an OPTIONS request to see all fields on the {{ model }} object{% endblocktrans %}
-        </a>
-      </h4>
-    </div>
-    <div id="options_get" class="panel-collapse collapse" role="tabpanel" aria-labelledby="twedeHeading">
-      <div class="panel-body">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="twedeHeading">
+      <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#options_get" aria-expanded="false" aria-controls="options_get">
+            {% blocktrans with model=name %}Make an OPTIONS request to see all fields on the {{ model }} object{% endblocktrans %}
+      </button>
+    </h2>
+    <div id="options_get" class="accordion-collapse collapse" data-bs-parent="#APIaccordion" aria-labelledby="twedeHeading">
+      <div class="accordion-body">
 		  <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="OPTIONS">
-		    <button  class="btn btn-primary" role="button" type="submit"
+		    <button  class="btn btn-primary" class="accordion-button" type="submit"
 		      value="{% blocktrans with http_method='OPTIONS' %}{{ http_method }} request{% endblocktrans %}">
 		      {% blocktrans with http_method='OPTIONS' %}{{ http_method }} request{% endblocktrans %}
 		    </button>
@@ -101,16 +106,14 @@ $(function() {
 {% if display_edit_forms %}
 {% if post_form or raw_data_post_form %}
 {% if post_form %}
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="derdeHeading">
-      <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#APIaccordion" href="#post_form" aria-expanded="true" aria-controls="post_form">
-              {% blocktrans with model=name %}Make a POST request using a HTML form to create a new {{ model }} object{% endblocktrans %}
-        </a>
-      </h4>
-    </div>
-    <div id="post_form" class="panel-collapse collapse" role="tabpanel" aria-labelledby="derdeHeading">
-      <div class="panel-body">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="derdeHeading">
+      <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#post_form" aria-expanded="false" aria-controls="post_form">
+            {% blocktrans with model=name %}Make a POST request using a HTML form to create a new {{ model }} object{% endblocktrans %}
+      </button>
+    </h2>
+    <div id="post_form" class="accordion-collapse collapse" data-bs-parent="#APIaccordion" aria-labelledby="derdeHeading">
+      <div class="accordion-body">
         {% with form=post_form %}
         <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" enctype="multipart/form-data" novalidate>
 	        {% csrf_token %}
@@ -128,16 +131,14 @@ $(function() {
    </div>
 {% endif %}
 
-    <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="zevendeHeading">
-      <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#APIaccordion" href="#post_form_raw" aria-expanded="true" aria-controls="post_form_raw">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="zevendeHeading">
+        <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#post_form_raw" aria-expanded="false" aria-controls="post_form_raw">
               {% blocktrans with model=name %}Make a POST request in raw format to create a new {{ model }} object{% endblocktrans %}
-        </a>
-      </h4>
-    </div>
-    <div id="post_form_raw" class="panel-collapse collapse" role="tabpanel" aria-labelledby="zevendeHeading">
-      <div class="panel-body">
+        </button>
+      </h2>
+    <div id="post_form_raw" class="accordion-collapse collapse" data-bs-parent="#APIaccordion" aria-labelledby="zevendeHeading">
+      <div class="accordion-body">
         {% with form=raw_data_post_form %}
        <form action="{{request.prefix}}{{ request.get_full_path }}" method="POST" class="form-horizontal">
         {% include "rest_framework/raw_data_form.html" %}
@@ -154,16 +155,14 @@ $(function() {
    </div>
  {% endif %}
 
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="vierdeHeading">
-      <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#APIaccordion" href="#put_form" aria-expanded="true" aria-controls="put_form">
-              {% blocktrans with model=name %}Make a PUT request using a HTML form to update one {{ model }} object{% endblocktrans %}
-        </a>
-      </h4>
-    </div>
-    <div id="put_form" class="panel-collapse collapse" role="tabpanel" aria-labelledby="vierdeHeading">
-      <div class="panel-body">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="vierdeHeading">
+      <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#put_form" aria-expanded="false" aria-controls="put_form">
+            {% blocktrans with model=name %}Make a PUT request using a HTML form to update one {{ model }} object{% endblocktrans %}
+      </button>
+    </h2>
+    <div id="put_form" class="accordion-collapse collapse" data-bs-parent="#APIaccordion" aria-labelledby="vierdeHeading">
+      <div class="accordion-body">
 	      <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" enctype="multipart/form-data" class="form-horizontal" novalidate>
           {{ put_form }}
 	        <div class="form-actions">
@@ -178,16 +177,14 @@ $(function() {
   </div>
 
   {% if put_form or raw_data_put_form or raw_data_patch_form %}
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="vijfdeHeading">
-      <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#APIaccordion" href="#put_patch_form" aria-expanded="true" aria-controls="put_patch_form">
-              {% blocktrans with model=name %}Make a PUT or PATCH request in raw format to update one or more existing {{ model }} objects{% endblocktrans %}
-        </a>
-      </h4>
-    </div>
-    <div id="put_patch_form" class="panel-collapse collapse" role="tabpanel" aria-labelledby="vijfdeHeading">
-      <div class="panel-body">
+  <div class="accordion-item mb-2">
+    <h2 class="accordion-header" id="vijfdeHeading">
+      <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#put_patch_form" aria-expanded="false" aria-controls="put_patch_form">
+            {% blocktrans with model=name %}Make a PUT or PATCH request in raw format to update one or more existing {{ model }} objects{% endblocktrans %}
+      </button>
+    </h2>
+    <div id="put_patch_form" class="accordion-collapse collapse" data-bs-parent="#APIaccordion" aria-labelledby="vijfdeHeading">
+      <div class="accordion-body">
     {% with form=raw_data_put_or_patch_form %}
 	      <form action="{{request.prefix}}{{ request.get_full_path }}" data-method="PUT" class="form-horizontal">
 	    {% include "rest_framework/raw_data_form.html" %}
@@ -213,16 +210,14 @@ $(function() {
   {% endif %}
 
   {% if delete_form %}
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="zesdeHeading">
-      <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#APIaccordion" href="#delete_form" aria-expanded="true" aria-controls="delete_form">
-              {% blocktrans with model=name %}Make a DELETE request to delete one or more existing {{ model }} objects (requires filtering){% endblocktrans %}
-        </a>
-      </h4>
-    </div>
-    <div id="delete_form" class="panel-collapse collapse" role="tabpanel" aria-labelledby="zesdeHeading">
-      <div class="panel-body">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="zesdeHeading">
+      <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#delete_form" aria-expanded="false" aria-controls="delete_form">
+            {% blocktrans with model=name %}Make a DELETE request to delete one or more existing {{ model }} objects (requires filtering){% endblocktrans %}
+      </button>
+    </h2>
+    <div id="delete_form" class="accordion-collapse collapse" data-bs-parent="#APIaccordion" aria-labelledby="zesdeHeading">
+      <div class="accordion-body">
           <form class="button-form" action="{{request.prefix}}{{ request.get_full_path }}" data-method="DELETE">
             <button  class="btn btn-primary" role="button" type="submit" data-method="DELETE"
                 value="{% blocktrans with http_method='DELETE' %}{{ http_method }} request{% endblocktrans %}">
@@ -235,7 +230,7 @@ $(function() {
   {% endif %}
 
 {% endif %}
-</div>
+</div></div></div>
 {% endblock %}
 
 

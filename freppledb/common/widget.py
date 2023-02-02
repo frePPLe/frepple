@@ -61,9 +61,9 @@ class WelcomeWidget(Widget):
                 """Welcome to the world's leading open source production planning tool!<br><br>
 How to get started?
 <ol>
-<li>Check out the <span class="underline"><a href="%(docurl)s" target="_blank" rel="noopener">documentation</a></span></li>
-<li>Visit and join the <span class="underline"><a href="http://groups.google.com/group/frepple-users" target="_blank" rel="noopener">user community</a></span></li>
-<li><span class="underline"><a href="https://frepple.com/company/#contact" target="_blank" rel="noopener">Contact us</a></span></li>
+<li>Check out the <span class="text-decoration-underline"><a href="%(docurl)s" target="_blank" rel="noopener">documentation</a></span></li>
+<li>Visit and join the <span class="text-decoration-underline"><a href="http://groups.google.com/group/frepple-users" target="_blank" rel="noopener">user community</a></span></li>
+<li><span class="text-decoration-underline"><a href="https://frepple.com/company/#contact" target="_blank" rel="noopener">Contact us</a></span></li>
 </ol>
 """
             )
@@ -121,7 +121,7 @@ class InboxWidget(Widget):
         for notif in notifs:
             result.append(
                 """<tr><td>
-                <a class="underline" href="%s%s">%s</a>&nbsp;<span class="small">%s</span>
+                <a class="text-decoration-underline" href="%s%s">%s</a>&nbsp;<span class="small">%s</span>
                 <div class="small pull-right" data-toggle="tooltip" data-original-title="%s %s">%s%s&nbsp;&nbsp;%s</div>
                 <br><p style="padding-left: 10px; display: inline-block">%s</p>"""
                 % (

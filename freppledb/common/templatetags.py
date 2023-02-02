@@ -242,7 +242,7 @@ class ModelTabs(Node):
 
             # Render the admin class
             result = [
-                '<div class="row"><div id="tabs" class="col-md-12 form-inline hor-align-right"><ul class="nav nav-tabs">'
+                '<div class="row"><div id="tabs" class="col-auto form-inline ms-auto mb-1"><ul class="nav nav-tabs">'
             ]
             obj = context["object_id"]
             active_tab = context.get("active_tab", "edit")
@@ -263,9 +263,9 @@ class ModelTabs(Node):
                             continue
                 # Append to the results
                 result.append(
-                    '<li %srole="presentation"><a class="ui-tabs-anchor" href="%s%s?noautofilter" target="_self">%s</a></li>'
+                    '<li class="nav-item"><a class="nav-link%s" href="%s%s?noautofilter" target="_self">%s</a></li>'
                     % (
-                        'class="active" ' if active_tab == tab["name"] else "",
+                        " active" if active_tab == tab["name"] else "",
                         context["request"].prefix,
                         reverse(tab["view"], args=(obj,)),
                         force_str(tab["label"]).capitalize(),

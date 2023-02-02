@@ -26,37 +26,37 @@ function showproblemspanelDrv($window, gettextCatalog) {
 
   var directive = {
     restrict: 'EA',
-    scope: {operationplan: '=data'},
+    scope: { operationplan: '=data' },
     link: linkfunc
   };
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template =  '<div class="panel-heading"><h4 class="panel-title" style="text-transform: capitalize">'+
-                      gettextCatalog.getString("problems")+
-                    '</h4></div>'+
-                    '<table class="table table-condensed table-hover"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("name")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("start")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("end")+'</b>' +
-                    '</td></tr></thead>' +
-                    '<tbody></tbody>' +
-                  '</table>';
+    var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
+      gettextCatalog.getString("problems") +
+      '</h5></div>' +
+      '<table class="table table-condensed table-hover"><thead><tr><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("name") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("start") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("end") + '</b>' +
+      '</td></tr></thead>' +
+      '<tbody></tbody>' +
+      '</table>';
 
-    scope.$watchGroup(['operationplan.id','operationplan.problems.length'], function (newValue,oldValue) {
+    scope.$watchGroup(['operationplan.id', 'operationplan.problems.length'], function (newValue, oldValue) {
       angular.element(document).find('#attributes-operationproblems').empty().append(template);
-      var rows = '<tr><td colspan="3">'+gettextCatalog.getString('no problems')+'</td></tr>';
+      var rows = '<tr><td colspan="3">' + gettextCatalog.getString('no problems') + '</td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('problems')) {
-          rows='';
-          angular.forEach(scope.operationplan.problems, function(theproblem) {
-            rows += '<tr><td>'+
-            theproblem.description+'</td><td>'+
-            theproblem.start+'</td><td>'+
-            theproblem.end+'</td></tr>';
+          rows = '';
+          angular.forEach(scope.operationplan.problems, function (theproblem) {
+            rows += '<tr><td>' +
+              theproblem.description + '</td><td>' +
+              theproblem.start + '</td><td>' +
+              theproblem.end + '</td></tr>';
           });
         }
       }

@@ -65,18 +65,18 @@ function markMessageRead(el, status) {
 {% endblock %}
 
 {% block tools %}
-<h1 class="pull-right">
-<button class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="top"
+<h1>
+<button class="btn btn-sm btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top"
   onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/inbox.html')"
-  data-original-title="{% trans 'help'|capfirst|force_escape %}">
+  data-bs-title="{% trans 'help'|capfirst|force_escape %}">
   <span class="fa fa-question"></span>
 </button>
 </h1>
 {% endblock %}
 
 {% block content %}
-<div class="row">
-<div class="col-md-4">
+<div class="row mb-3">
+<div class="col-auto">
   <div class="btn-group" role="group" aria-label="Basic example">
     <button type="button" class="btn btn-primary{% if not unread %} active{% else %}" onclick="window.location = '?unread=false'{% endif %}">
       {% trans "All" %}
@@ -86,13 +86,13 @@ function markMessageRead(el, status) {
     </button>
   </div>
 </div>
-<div id="tabs" class="col-md-8 form-inline hor-align-right">
+<div id="tabs" class="col-auto form-inline ms-auto mb-1">
 <ul class="nav nav-tabs">
-<li class="active" role="presentation">
-  <a class="ui-tabs-anchor" href="{{ request.prefix }}/inbox/" target="_self">{% trans "inbox"|capfirst %}</a>
+<li class="nav-item" role="presentation">
+  <a class="nav-link active" href="{{ request.prefix }}/inbox/" target="_self">{% trans "inbox"|capfirst %}</a>
 </li>
-<li role="presentation">
-  <a class="ui-tabs-anchor" href="{{ request.prefix }}/data/common/follower/" target="_self">{% trans "following"|capfirst %}</a>
+<li role="nav-item">
+  <a class="nav-link" href="{{ request.prefix }}/data/common/follower/" target="_self">{% trans "following"|capfirst %}</a>
 </li>
 </ul>
 </div>
@@ -101,26 +101,26 @@ function markMessageRead(el, status) {
 <div id="content-main">
 <div class="row">
 <div class="col-md-12">
-<div class="panel panel-default">
+<div class="card">
 {% if inbox %}
 <table class="table table-condensed table-hover">
 <thead style="display: table-header-group;">
 <tr>
 <td>
-  <input id="markMessages" type="checkbox" onclick="selectAll(this)" data-toggle="tooltip"
-    data-original="{% trans "Select/unselect all messages" %}" data-placement="bottom">
+  <input id="markMessages" type="checkbox" onclick="selectAll(this)" data-bs-toggle="tooltip"
+    data-original="{% trans "Select/unselect all messages" %}" data-bs-placement="bottom">
 </td>
 <td class="aligncenter">
-  <button class="btn btn-xs btn-primary" data-toggle="tooltip" onclick="markMessageRead(null, 'R')"
-    data-original-title="Mark selected messages read" data-placement="bottom">
+  <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" onclick="markMessageRead(null, 'R')"
+    data-bs-title="Mark selected messages read" data-bs-placement="bottom">
     <i class="fa fa-envelope-open-o"></i>
   </button>&nbsp;
-  <button class="btn btn-xs btn-primary" data-toggle="tooltip" onclick="markMessageRead(null, 'U')"
-    data-original-title="Mark selected messages unread" data-placement="bottom">
+  <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" onclick="markMessageRead(null, 'U')"
+    data-bs-title="Mark selected messages unread" data-bs-placement="bottom">
     <i class="msg-status fa fa-envelope-o"></i>
   </button>&nbsp;
-  <button class="btn btn-xs btn-primary" data-toggle="tooltip" onclick="markMessageRead(null, 'D')"
-    data-original-title="Delete selected messages" data-placement="bottom">
+  <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" onclick="markMessageRead(null, 'D')"
+    data-bs-title="Delete selected messages" data-bs-placement="bottom">
     <i class="msg-status fa fa-trash"></i>
   </button>
 </td>
@@ -137,11 +137,11 @@ function markMessageRead(el, status) {
 <td><input type="checkbox" onclick="selectMessage(event, this)"></label></td>
 <td class="aligncenter msg-status">
   {% if notif.status == "R" %}
-  <span class="btn btn-xs fa fa-envelope-open-o" onclick="markMessageRead(this)" data-toggle="tooltip"
-    data-original-title="{% trans "Mark message unread" %}" data-placement="bottom"></span>
+  <span class="btn btn-sm fa fa-envelope-open-o" onclick="markMessageRead(this)" data-bs-toggle="tooltip"
+    data-bs-title="{% trans "Mark message unread" %}" data-bs-placement="bottom"></span>
   {% else %}
-  <span class="btn btn-xs fa fa-envelope-o" onclick="markMessageRead(this)" data-toggle="tooltip"
-    data-original-title="{% trans "Mark message read" %}" data-placement="bottom"></span>
+  <span class="btn btn-sm fa fa-envelope-o" onclick="markMessageRead(this)" data-bs-toggle="tooltip"
+    data-bs-title="{% trans "Mark message read" %}" data-bs-placement="bottom"></span>
   {% endif %}
 </td>
 <td><i class="fa {% if notif.comment.type == "add" %}fa-plus
@@ -151,24 +151,24 @@ function markMessageRead(el, status) {
 {% elif notif.comment.type == "follower" %}fa-users
 {% endif %}"></i>&nbsp;
 <span class="small">{{ notif.comment.content_type.name | capfirst}}</span>&nbsp;
-<a class="underline" href="{{ request.prefix }}{{ notif.comment.getURL }}">{{ notif.comment.object_repr }}</a></td>
+<a class="text-decoration-underline" href="{{ request.prefix }}{{ notif.comment.getURL }}">{{ notif.comment.object_repr }}</a></td>
 <td>{% if notif.comment.safe %}{{notif.comment.comment|safe}}{% else %}{{notif.comment.comment}}{% endif %}</td>
 <td>{% if notif.comment.attachment %}
-  <a style="text-decoration: underline" href="{{ notif.comment.attachment.url }}" target="_blank">{{ notif.comment.attachment.name | extension }}&nbsp;<i class="fa fa-paperclip"></i></a>
+  <a class="text-decoration-underline" href="{{ notif.comment.attachment.url }}" target="_blank">{{ notif.comment.attachment.name | extension }}&nbsp;<i class="fa fa-paperclip"></i></a>
   {% endif %}</td>
 <td>
-  <span data-toggle="tooltip" data-original-title="{{ notif.comment.user.get_full_name }}">
+  <span data-bs-toggle="tooltip" data-bs-title="{{ notif.comment.user.get_full_name }}">
   {% if notif.comment.user.avatar %}<img class="avatar-sm" src="/uploads/{{ notif.comment.user.avatar }}">{% endif %}
   {{ notif.comment.user.username }}
   </span>
 </td>
-<td><span data-toggle="tooltip" data-original-title="{{ notif.comment.lastmodified|date:"DATETIME_FORMAT" }}">{{ notif.comment.lastmodified | timesince }}</span></td>
+<td><span data-bs-toggle="tooltip" data-bs-title="{{ notif.comment.lastmodified|date:"DATETIME_FORMAT" }}">{{ notif.comment.lastmodified | timesince }}</span></td>
 </tr>
 {% endfor %}
 </tbody>
 </table>
 {% elif empty %}
-<div class="panel-body">
+<div class="card-body">
 <h2>Your inbox is empty</h2>
 <br>
 All reports where you edit or review an object have a follow button in the upper right corner.<br>
@@ -179,7 +179,7 @@ You will get messages in your inbox when there is any activity on objects you fo
 <br>
 </div>
 {% else %}
-<div class="panel-body">
+<div class="card-body">
 <div class="pull-left"><i class="fa fa-5x fa-trophy" style="color: gold"></i>&nbsp;&nbsp;</div>
 <h2>Congrats!</h2>
 You read all messages.

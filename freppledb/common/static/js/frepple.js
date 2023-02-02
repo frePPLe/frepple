@@ -197,25 +197,26 @@ function ajaxerror(result, stat, errorThrown) {
     msg = "<strong>" + errorThrown + "</strong><br>" + result.responseText;
   else
     msg = result.responseText;
-  $('#timebuckets').modal('hide');
+  hideModal('timebuckets');
   $("#save i").addClass('hidden');
   $.jgrid.hideModal("#searchmodfbox_grid");
   $('#popup').html(
     '<div class="modal-dialog">' +
     '<div class="modal-content">' +
     '<div class="modal-header bg-danger">' +
-    '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-    '<h4 class="modal-title">' + gettext("Error") + '</h4>' +
+    '<h5 class="modal-title">' + gettext("Error") + '</h5>' +
+    '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
     '</div>' +
     '<div class="modal-body">' +
     '<p>' + msg + '</p>' +
     '</div>' +
     '<div class="modal-footer">' +
-    '<input type="submit" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="' + gettext('Close') + '">' +
+    '<input type="submit" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Close') + '">' +
     '</div>' +
     '</div>' +
     '</div>'
-  ).modal('show');
+  );
+  showModal('popup');
 }
 
 //----------------------------------------------------------------------------
@@ -299,30 +300,30 @@ var upload = {
     if ($('#save').hasClass("btn-primary"))
       jQuery("#grid").jqGrid('resetSelection');
     else {
-      $('#timebuckets').modal('hide');
+      hideModal('timebuckets');
       $.jgrid.hideModal("#searchmodfbox_grid");
       $('#popup').html('<div class="modal-dialog">' +
         '<div class="modal-content">' +
         '<div class="modal-header alert-warning" style="border-top-left-radius: inherit; border-top-right-radius: inherit">' +
-        '<h4 class="modal-title">' + gettext("Save or cancel your changes first") + '</h4>' +
+        '<h5 class="modal-title">' + gettext("Save or cancel your changes first") + '</h5>' +
         '</div>' +
         '<div class="modal-body">' +
         gettext("There are unsaved changes on this page.") +
         '</div>' +
-        '<div class="modal-footer">' +
-        '<input type="submit" id="savebutton" role="button" class="btn btn-danger pull-left" value="' + gettext('Save') + '">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Return to page') + '">' +
+        '<div class="modal-footer justify-content-between">' +
+        '<input type="submit" id="savebutton" role="button" class="btn btn-danger" value="' + gettext('Save') + '">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" value="' + gettext('Return to page') + '">' +
         '</div>' +
         '</div>' +
-        '</div>')
-        .modal('show');
+        '</div>');
+      showModal('popup');
       $('#savebutton').on('click', function () {
         upload.save();
-        $('#popup').modal('hide');
+        hideModal('popup');
       });
       $('#cancelbutton').on('click', function () {
         upload.undo();
-        $('#popup').modal('hide');
+        hideModal('popup');
       });
       event.stopPropagation();
     }
@@ -433,7 +434,7 @@ jQuery.extend($.fn.fmatter, {
       return $.jgrid.htmlEncode(cellvalue);
     return $.jgrid.htmlEncode(cellvalue)
       + "<a href='" + url_prefix + "/data/" + options.colModel.role + "/" + admin_escape(cellvalue)
-      + "/change/' onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>";
+      + "/change/' onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>";
   },
 
   detail: function (cellvalue, options, rowdata) {
@@ -452,7 +453,7 @@ jQuery.extend($.fn.fmatter, {
     }
     return $.jgrid.htmlEncode(cellvalue)
       + "<a href=\"" + url_prefix + "/detail/" + options.colModel.role + "/" + admin_escape(cellvalue)
-      + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>";
+      + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>";
   },
 
   demanddetail: function (cellvalue, options, rowdata) {
@@ -467,7 +468,7 @@ jQuery.extend($.fn.fmatter, {
         result += ', ';
       result += cellvalue[i][0] + " : " + $.jgrid.htmlEncode(cellvalue[i][1])
         + "<a href=\"" + url_prefix + "/detail/input/demand/" + admin_escape(cellvalue[i][1])
-        + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='input/demand'></span></a>";
+        + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right' role='input/demand'></span></a>";
     }
     return result;
   },
@@ -485,7 +486,7 @@ jQuery.extend($.fn.fmatter, {
       result += '<span><span class="listdetailkey">' + $.jgrid.htmlEncode(cellvalue[i][0])
         + "</span><a href=\"" + url_prefix + "/detail/" + options.colModel.role
         + "/" + admin_escape(cellvalue[i][0])
-        + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='"
+        + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right' role='"
         + options.colModel.role + "'></span></a></span>&nbsp;<span>" + cellvalue[i][1] + "</span>";
     }
     return result;
@@ -498,12 +499,12 @@ jQuery.extend($.fn.fmatter, {
   longstring: function (cellvalue, options, rowdata) {
     if (typeof cellvalue !== 'string') return "";
     var tipcontent = $.jgrid.htmlEncode(cellvalue);
-    return '<span data-toggle="tooltip" data-placement="left" data-original-title="' + tipcontent + '">' + tipcontent + '</span>';
+    return '<span data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="' + tipcontent + '">' + tipcontent + '</span>';
   },
 
   selectbutton: function (cellvalue, options, rowdata) {
     if (cellvalue)
-      return '<button onClick="opener.dismissRelatedLookupPopup(window, grid.selected)" class="btn btn-primary btn-xs">'
+      return '<button onClick="opener.dismissRelatedLookupPopup(window, grid.selected)" class="btn btn-primary btn-sm">'
         + gettext('select')
         + '</button>';
     else
@@ -705,7 +706,7 @@ var grid = {
 
   // Render the customization popup window
   showCustomize: function (pivot, gridid, cross_arg, cross_idx_arg, cross_only_arg, ok_callback, reset_callback) {
-    $('#timebuckets').modal('hide');
+    hideModal('timebuckets');
     $.jgrid.hideModal("#searchmodfbox_grid");
     var thegrid = $((typeof gridid !== 'undefined') ? gridid : "#grid");
     var colModel = thegrid.jqGrid('getGridParam', 'colModel');
@@ -716,17 +717,17 @@ var grid = {
 
     var row0 = cross_only ?
       '' :
-      '<div class="row">' +
-      '<div class="col-xs-6">' +
-      '<div class="panel panel-default"><div class="panel-heading">' + gettext("Selected options") + '</div>' +
-      '<div class="panel-body">' +
+      '<div class="row mb-3">' +
+      '<div class="col">' +
+      '<div class="card"><div class="card-header">' + gettext("Selected options") + '</div>' +
+      '<div class="card-body">' +
       '<ul class="list-group" id="Rows" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
       '</div>' +
       '</div>' +
       '</div>' +
-      '<div class="col-xs-6">' +
-      '<div class="panel panel-default"><div class="panel-heading">' + gettext("Available options") + '</div>' +
-      '<div class="panel-body">' +
+      '<div class="col">' +
+      '<div class="card"><div class="card-header">' + gettext("Available options") + '</div>' +
+      '<div class="card-body">' +
       '<ul class="list-group" id="DroppointRows" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
       '</div>' +
       '</div>' +
@@ -760,22 +761,22 @@ var grid = {
       var my_cross_idx = (typeof cross_idx_arg !== 'undefined') ? cross_idx_arg : cross_idx;
       // Add list of crosses
       var row1 = '<div class="row">' +
-        '<div class="col-xs-6">' +
-        '<div class="panel panel-default">' +
-        '<div class="panel-heading">' +
+        '<div class="col">' +
+        '<div class="card">' +
+        '<div class="card-header">' +
         gettext('Selected Cross') +
         '</div>' +
-        '<div class="panel-body">' +
+        '<div class="card-body">' +
         '<ul class="list-group" id="Crosses" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
         '</div>' +
         '</div>' +
         '</div>' +
-        '<div class="col-xs-6">' +
-        '<div class="panel panel-default">' +
-        '<div class="panel-heading">' +
+        '<div class="col">' +
+        '<div class="card">' +
+        '<div class="card-header">' +
         gettext('Available Cross') +
         '</div>' +
-        '<div class="panel-body">' +
+        '<div class="card-body">' +
         '<ul class="list-group" id="DroppointCrosses" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
         '</div>' +
         '</div>' +
@@ -794,7 +795,7 @@ var grid = {
     }
     else {
       // Add selection of number of frozen columns
-      row2 = '<div class="row"><div class="col-xs-12">' +
+      row2 = '<div class="row mt-3"><div class="col">' +
         gettext("Frozen columns") +
         '&nbsp;&nbsp;<input type="number" id="frozen" style="text-align: center; max-width: 50px" size="4" min="0" max="4" step="1" value="' + maxfrozen + '">' +
         '</div></div>';
@@ -811,13 +812,11 @@ var grid = {
     }
 
     $('#popup').html('' +
-      '<div class="modal-dialog">' +
+      '<div class="modal-dialog modal-lg">' +
       '<div class="modal-content">' +
       '<div class="modal-header">' +
-      '<button type="button" class="close" data-dismiss="modal" aria-label=' + gettext("Close") + '>' +
-      '<span aria-hidden="true" class="fa fa-times"></span>' +
-      '</button>' +
-      '<h4 class="modal-title">' + gettext("Customize") + '</h4>' +
+      '<h5 class="modal-title">' + gettext("Customize") + '</h5>' +
+      '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label=' + gettext("Close") + '></button>' +
       '</div>' +
       '<div class="modal-body">' +
       row0 +
@@ -826,13 +825,13 @@ var grid = {
       (typeof extra_customize_html !== 'undefined' ? extra_customize_html : '') +  // Not very clean to use a global variable here
       '</div>' +
       '<div class="modal-footer">' +
-      '<input type="submit" id="okCustbutton" role="button" class="btn btn-primary pull-right" value="' + gettext("OK") + '">' +
-      '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
-      '<input type="submit" id="resetCustbutton" role="button" class="btn btn-primary pull-left" value="' + gettext('Reset') + '">' +
+      '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<input type="submit" id="resetCustbutton" role="button" class="btn btn-primary me-auto" value="' + gettext('Reset') + '">' +
+      '<input type="submit" id="okCustbutton" role="button" class="btn btn-primary" value="' + gettext("OK") + '">' +
       '</div>' +
       '</div>' +
-      '</div>')
-      .modal('show');
+      '</div>');
+    showModal('popup');
 
     if (!cross_only) {
       var Rows = document.getElementById("Rows");
@@ -955,7 +954,7 @@ var grid = {
         grid.saveColumnConfiguration(function () {
           if (reload) window.location.href = window.location.href;
         });
-        $('#popup').modal("hide");
+        hideModal('popup');
 
       });
   },
@@ -1133,7 +1132,7 @@ var grid = {
   },
 
   showExport: function (only_list, scenario_permissions) {
-    $('#timebuckets').modal('hide');
+    hideModal('timebuckets');
     $.jgrid.hideModal("#searchmodfbox_grid");
 
     // Prepare upfront the html for the scenarios to export
@@ -1164,12 +1163,14 @@ var grid = {
 
     // The only_list argument is true when we show a "list" report.
     // It is false for "table" reports.
+    var showit = true;
     if (only_list && scenario_permissions.length > 1)
-      $('#popup').html('<div class="modal-dialog" style="width: 400px;">' +
+      $('#popup').html('<div class="modal" tabindex="-1">' +
+        '<div class="modal-dialog" style ="width: 400px;">' +
         '<div class="modal-content">' +
         '<div class="modal-header">' +
-        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-        '<h4 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h4>' +
+        '<h5 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h5>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' + gettext("Close") + '"></button>' +
         '</div>' +
         '<div class="modal-body">' +
         '<table class="table table-borderless">' +
@@ -1187,14 +1188,14 @@ var grid = {
         '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
         '</div>' +
         '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' +
-        '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="' +
+        '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Using this link external applications can pull data from frePPLe") + '">' +
         '<span class="fa fa-question-circle"></span>' +
         '</a><br>' +
         '<div class="input-group">' +
         '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
         '<span class="input-group-btn">' +
-        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' +
+        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Copy to clipboard") + '"/></span>' +
         '</div>' +
         '</td>' +
@@ -1207,19 +1208,19 @@ var grid = {
         '</tbody>' +
         '</table>' +
         '</div>' +
-        '<div class="modal-footer">' +
-        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Export') + '">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<div class="modal-footer justify-content-between">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary" value="' + gettext('Export') + '">' +
         '</div>' +
         '</div>' +
-        '</div>')
-        .modal('show');
+        '</div>' +
+        '</div>');
     else if (!only_list && scenario_permissions.length > 1)
       $('#popup').html('<div class="modal-dialog" style="width: 400px;">' +
         '<div class="modal-content">' +
         '<div class="modal-header">' +
-        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-        '<h4 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h4>' +
+        '<h5 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h5>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' + gettext("Close") + '"></button>' +
         '</div>' +
         '<div class="modal-body">' +
         '<table class="table table-borderless">' +
@@ -1239,14 +1240,14 @@ var grid = {
         '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
         '</div>' +
         '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' +
-        '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="' +
+        '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Using this link external applications can pull data from frePPLe") + '">' +
         '<span class="fa fa-question-circle"></span>' +
         '</a><br>' +
         '<div class="input-group">' +
         '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
         '<span class="input-group-btn">' +
-        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' +
+        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Copy to clipboard") + '"/></span>' +
         '</div>' +
         '</td>' +
@@ -1259,19 +1260,18 @@ var grid = {
         '</tbody>' +
         '</table>' +
         '</div>' +
-        '<div class="modal-footer">' +
-        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Export') + '">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<div class="modal-footer justify-content-between">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary" value="' + gettext('Export') + '">' +
         '</div>' +
         '</div>' +
-        '</div>')
-        .modal('show');
+        '</div>');
     else if (only_list && scenario_permissions.length <= 1)
       $('#popup').html('<div class="modal-dialog" style="width: 400px;">' +
         '<div class="modal-content">' +
         '<div class="modal-header">' +
-        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-        '<h4 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h4>' +
+        '<h5 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h5>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' + gettext("Close") + '"></button>' +
         '</div>' +
         '<div class="modal-body">' +
         '<label class="control-label"><b>' + gettext("Export format") +
@@ -1281,29 +1281,29 @@ var grid = {
         '</div>' +
         '</label><br>' +
         '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' +
-        '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="' +
+        '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Using this link external applications can pull data from frePPLe") + '">' +
         '<span class="fa fa-question-circle"></span>' +
         '</a><br>' +
         '<div class="input-group">' +
         '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
         '<span class="input-group-btn">' +
-        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' +
+        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Copy to clipboard") + '"/></span>' +
         '</div>' +
         '</label><br>' +
-        '<div class="modal-footer">' +
-        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Export') + '">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<div class="modal-footer justify-content-between">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary" value="' + gettext('Export') + '">' +
         '</div>' +
         '</div>' +
-        '</div>')
-        .modal('show');
+        '</div>');
     else if (!only_list && scenario_permissions.length <= 1)
       $('#popup').html('<div class="modal-dialog" style="width: 400px;">' +
         '<div class="modal-content">' +
         '<div class="modal-header">' +
-        '<h4 class="modal-title">' + gettext("Export CSV or Excel file") + '</h4>' +
+        '<h5 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h5>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' + gettext("Close") + '"></button>' +
         '</div>' +
         '<div class="modal-body">' +
         '<label class="control-label"><b>' + gettext("Export format") +
@@ -1315,23 +1315,25 @@ var grid = {
         '</div>' +
         '</label>' + '<br>' +
         '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' +
-        '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="' +
+        '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Using this link external applications can pull data from frePPLe") + '">' +
         '<span class="fa fa-question-circle"></span>' +
         '</a><br>' +
         '<div class="input-group">' +
         '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
         '<span class="input-group-btn">' +
-        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' +
+        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Copy to clipboard") + '"/></span>' +
         '</div>' +
-        '<div class="modal-footer">' +
-        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Export') + '">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<div class="modal-footer justify-content-between">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary" value="' + gettext('Export') + '">' +
         '</div>' +
         '</div>' +
-        '</div>')
-        .modal('show');
+        '</div>');
+    else
+      showit = false;
+    if (showit) showModal('popup');
 
     // initialize the data source url
     update_datasource_url();
@@ -1344,7 +1346,7 @@ var grid = {
         });
     }
 
-    $('[data-toggle="tooltip"]').tooltip({ delay: { "show": 500, "hide": 100 } });
+    $('[data-bs-toggle="tooltip"]').tooltip({ delay: { "show": 500, "hide": 100 } });
 
     $('#copybutton').on('click', function () {
       // should be up to date but let's recompute it.
@@ -1475,7 +1477,7 @@ var grid = {
       url += "&" + jQuery.param(postdata);
       // Open the window
       window.open(url, '_blank');
-      $('#popup').modal('hide');
+      hideModal('popup');
     });
   },
 
@@ -1483,7 +1485,7 @@ var grid = {
   // Display time bucket selection dialog
   showBucket: function () {
     // Show popup
-    $('#popup').modal('hide');
+    hideModal('popup');
     $.jgrid.hideModal("#searchmodfbox_grid");
     var iconslist = {
       time: 'fa fa-clock-o',
@@ -1523,7 +1525,7 @@ var grid = {
 
       if (params == $('#horizonoriginal').val())
         // No changes to the settings. Close the popup.
-        $("#timebuckets").modal('hide');
+        hideModal('timebuckets');
       else {
         // Ajax request to update the horizon preferences
         $.ajax({
@@ -1547,7 +1549,7 @@ var grid = {
         window.location.href = window.location.href;
       }
     });
-    $('#timebuckets').modal('show');
+    showModal('timebuckets', false);
   },
 
   //Display dialog for copying or deleting records
@@ -1558,24 +1560,24 @@ var grid = {
       // Redirect to a page for deleting a single entity
       location.href = url + admin_escape(sel[0]) + '/delete/';
     else if (sel.length > 0) {
-      $('#timebuckets').modal('hide');
+      hideModal('timebuckets');
       $.jgrid.hideModal("#searchmodfbox_grid");
       $('#popup').html('<div class="modal-dialog">' +
         '<div class="modal-content">' +
         '<div class="modal-header">' +
-        '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-        '<h4 class="modal-title text-capitalize-first">' + gettext('Delete data') + '</h4>' +
+        '<h5 class="modal-title text-capitalize-first">' + gettext('Delete data') + '</h5>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal"></span></button>' +
         '</div>' +
         '<div class="modal-body">' +
         '<p>' + interpolate(gettext('You are about to delete %s objects AND ALL RELATED RECORDS!'), [sel.length], false) + '</p>' +
         '</div>' +
-        '<div class="modal-footer">' +
+        '<div class="modal-footer justify-content-between">' +
         '<input type="submit" id="delbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Confirm') + '">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
         '</div>' +
         '</div>' +
-        '</div>')
-        .modal('show');
+        '</div>');
+      showModal('popup');
       $('#delbutton').on('click', function () {
         $.ajax({
           url: url,
@@ -1588,7 +1590,7 @@ var grid = {
             $('.cbox').prop("checked", false);
             $('#cb_grid.cbox').prop("checked", false);
             $("#grid").trigger("reloadGrid");
-            $('#popup').modal('hide');
+            hideModal('popup');
           },
           error: function (result, stat, errorThrown) {
             if (result.status == 401) {
@@ -1609,24 +1611,24 @@ var grid = {
     if ($('#copy_selected').hasClass("disabled")) return;
     var sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow');
     if (sel.length > 0) {
-      $('#timebuckets').modal('hide');
+      hideModal('timebuckets');
       $.jgrid.hideModal("#searchmodfbox_grid");
       $('#popup').html('<div class="modal-dialog">' +
         '<div class="modal-content">' +
         '<div class="modal-header">' +
-        '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-        '<h4 class="modal-title text-capitalize-first">' + gettext("Copy data") + '</h4>' +
+        '<h5 class="modal-title text-capitalize-first">' + gettext("Copy data") + '</h5>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
         '</div>' +
         '<div class="modal-body">' +
         '<p>' + interpolate(gettext('You are about to duplicate %s objects'), [sel.length], false) + '</p>' +
         '</div>' +
-        '<div class="modal-footer">' +
-        '<input type="submit" id="copybutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Confirm') + '">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<div class="modal-footer justify-content-between">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="copybutton" role="button" class="btn btn-primary" value="' + gettext('Confirm') + '">' +
         '</div>' +
         '</div>' +
-        '</div>')
-        .modal('show');
+        '</div>');
+      showModal('popup');
       $('#copybutton').on('click', function () {
         $.ajax({
           url: location.pathname,
@@ -1639,7 +1641,7 @@ var grid = {
             $('.cbox').prop("checked", false);
             $('#cb_grid.cbox').prop("checked", false);
             $("#grid").trigger("reloadGrid");
-            $('#popup').modal('hide');
+            hideModal('popup');
           },
           error: function (result, stat, errorThrown) {
             if (result.status == 401) {
@@ -1661,12 +1663,13 @@ var grid = {
     $("#addsearch").val("");
     $("#filterfield").remove();
     grid.handlerinstalled = false;
-    $('#popup').modal("hide");
-    $('#timebuckets').modal('hide');
+    hideModal('popup');
+    hideModal('timebuckets');
     var thegridid = (typeof gridid !== 'undefined') ? gridid : "grid";
     var thegrid = $("#" + thegridid);
     var curfilter = $((typeof curfilterid !== 'undefined') ? curfilterid : "#curfilter");
-    $('.modal').modal('hide');
+    hideModal('timebuckets');
+    hideModal('popup');
     thegrid.jqGrid('searchGrid', {
       closeOnEscape: true,
       multipleSearch: true,
@@ -1852,8 +1855,8 @@ var grid = {
     }
 
     // Final result
-    var newexpression = $('<span class="label label-default">' + col.label + '&nbsp;' + oper + '&nbsp;</span>');
-    var newelement = $('<input size="10">');
+    var newexpression = $('<span class="badge">' + col.label + '&nbsp;' + oper + '&nbsp;</span>');
+    var newelement = $('<input class="form-control p-1 d-inline w-auto" size="10">');
     rule["filtercount"] = grid.countFilters++;  // Mark position in the expression
     newelement.val(rule.data);
     newelement.on('change', function (event) {
@@ -2225,25 +2228,24 @@ var ERPconnection = {
       return;
 
     // Send to the server for upload to the ERP
-    $('#timebuckets').modal('hide');
+    hideModal('timebuckets');
     $.jgrid.hideModal("#searchmodfbox_grid");
-    $('#popup').html('' +
-      '<div class="modal-dialog">' +
+    $('#popup').html('<div class="modal-dialog">' +
       '<div class="modal-content">' +
       '<div class="modal-header">' +
-      '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-      '<h4 class="modal-title text-capitalize-first">' + gettext("Export") + '</h4>' +
+      '<h5 class="modal-title text-capitalize-first">' + gettext("Export") + '</h5>' +
+      '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
       '</div>' +
       '<div class="modal-body">' +
       '<p class="text-capitalize-first">' + gettext("export selected records") + '</p>' +
       '</div>' +
-      '<div class="modal-footer">' +
-      '<input type="submit" id="button_export" role="button" class="btn btn-primary pull-right" value="' + gettext('Confirm') + '">' +
-      '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<div class="modal-footer justify-content-between">' +
+      '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<input type="submit" id="button_export" role="button" class="btn btn-primary" value="' + gettext('Confirm') + '">' +
       '</div>' +
       '</div>' +
-      '</div>').modal('show');
-
+      '</div>');
+    showModal('popup');
     $('#button_export').on('click', function () {
       $('#popup .modal-body p').html(gettext('connecting') + '...');
       $.ajax({
@@ -2291,197 +2293,6 @@ var ERPconnection = {
       $("#actions1 span").text($("#actionsul").children().first().text());
   },
 
-
-  //  ----------------------------------------------------------------------------
-  //  Sales Orders dependencies export
-  //  ----------------------------------------------------------------------------
-
-
-  SODepExport: function (grid, transactiontype) {
-    // Collect all selected rows in the status 'proposed'
-    var sel = grid.jqGrid('getGridParam', 'selarrrow');
-    if (sel === null || sel.length == 0)
-      return;
-    var data = [];
-
-    for (var i in sel) {
-      var r = grid.jqGrid('getRowData', sel[i]);
-      if (r.type === undefined)
-        r.type = transactiontype;
-      data.push(r);
-    }
-    if (data == [])
-      return;
-
-    $('#timebuckets').modal('hide');
-    $.jgrid.hideModal("#searchmodfbox_grid");
-    $('#popup').html('' +
-      '<div class="modal-dialog" style="max-height: 80%; width: 90%; visibility: hidden">' +
-      '<div class="modal-content">' +
-      '<div class="modal-header">' +
-      '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-      '<h4 class="modal-title text-capitalize-first">' + gettext("Export") + '</h4>' +
-      '</div>' +
-      '<div class="modal-body">' +
-
-      '</div>' +
-      '<div class="modal-footer">' +
-      '<input type="submit" id="button_export" role="button" class="btn btn-primary pull-right" disabled value="' + gettext('Confirm') + '">' +
-      '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
-      '</div>' +
-      '</div>' +
-      '</div>');
-
-    // compose url
-    var components = '?demand=';
-    for (i = 0; i < sel.length; i++) {
-      var r = grid.jqGrid('getRowData', sel[i]);
-      if (r.type === undefined)
-        r.type = transactiontype;
-      if (r.status == 'open' || r.status == 'proposed') {
-        if (i == 0) components += encodeURIComponent(sel[i]);
-        else components += '&demand=' + encodeURIComponent(sel[i]);
-      };
-    };
-
-    //get demandplans
-    $.ajax({
-      url: url_prefix + "/demand/operationplans/" + components,
-      type: "GET",
-      contentType: "application/json",
-      success: function (data) {
-        $('#popup .modal-body').html('<div class="table-responsive">' +
-          '<table class="table-condensed table-hover" id="forecastexporttable">' +
-          '<thead class="thead-default">' +
-          '</thead>' +
-          '</table>' +
-          '</div>');
-
-        var labels = ["reference", "type", "item", "value", "quantity", "location", "origin", "startdate", "enddate", "criticality"];
-
-        if (transactiontype == 'SO') {
-          var tableheadercontent = $('<tr/>');
-
-          tableheadercontent.append($('<th/>').html(
-            '<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'
-          ));
-          for (i = 0; i < labels.length; i++)
-            tableheadercontent.append($('<th/>').addClass('text-capitalize').text(gettext(labels[i])));
-
-          var tablebodycontent = $('<tbody/>');
-          for (i = 0; i < data.length; i++) {
-            var row = $('<tr/>');
-            var td = $('<td/>');
-
-            td.append($('<input/>').attr({ 'id': "cb_modaltable-" + i, 'class': "cbox", 'type': "checkbox", 'aria-checked': "false" }));
-            row.append(td);
-            for (var j = 0; j < labels.length; j++)
-              row.append($('<td/>').text(data[i][labels[j]]));
-            tablebodycontent.append(row);
-          };
-
-        };
-
-        $('#popup table').append(tablebodycontent);
-        $('#popup thead').append(tableheadercontent);
-
-        $('#popup').modal({ backdrop: 'static', keyboard: false }).on('shown.bs.modal', function () {
-          $(this).find('.modal-dialog').css({
-            'max-width': 50 + $('#forecastexporttable').width() + 'px',
-            'visibility': 'visible'
-          });
-        }).modal('show');
-
-        $('#button_export').on('click', function () {
-          //get selected row data
-          data = [];
-          var row1 = [];
-          var row1data = {};
-          var rows = $('#forecastexporttable tr.selected');
-
-          $.each(rows, function (key, value) {
-            row1 = value.children;
-            row1data['reference'] = row1[1].textContent;
-            row1data['type'] = row1[2].textContent;
-            row1data['item'] = row1[3].textContent;
-            row1data['value'] = row1[4].textContent;
-            row1data['quantity'] = row1[5].textContent;
-            row1data['location'] = row1[6].textContent;
-            row1data['origin'] = row1[7].textContent;
-            row1data['startdate'] = row1[8].textContent;
-            row1data['enddate'] = row1[9].textContent;
-            row1data['criticality'] = row1[10].textContent;
-            data.push(row1data);
-          });
-
-          $('#popup .modal-body').html(gettext('connecting') + '...');
-          $.ajax({
-            url: url_prefix + "/erp/upload/",
-            data: JSON.stringify(data),
-            type: "POST",
-            contentType: "application/json",
-            success: function () {
-              $('#popup .modal-body').html(gettext("Export successful"));
-              $('#cancelbutton').val(gettext('Close'));
-              $('#button_export').toggleClass("btn-primary").prop('disabled', true);
-              // Mark selected rows as "approved" if the original status was "proposed".
-              for (var i in sel) {
-                var cur = grid.jqGrid('getCell', sel[i], 'status');
-                if (cur == 'proposed')
-                  grid.jqGrid('setCell', sel[i], 'status', 'approved');
-              };
-            },
-            error: function (result, stat, errorThrown) {
-              if (result.status == 401) {
-                location.reload();
-                return;
-              }
-              $('#popup .modal-title').html(gettext("Error during export"));
-              $('#popup .modal-header').addClass('bg-danger');
-              $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
-              $('#button_export').val(gettext('Retry'));
-              $('#popup .modal-dialog').css({ 'visibility': 'visible' })
-              $('#popup').modal('show');
-            }
-          });
-        });
-
-        $("#cb_modaltableall").click(function () {
-          $("#forecastexporttable input[type=checkbox]").prop("checked", $(this).prop("checked"));
-          $("#forecastexporttable tbody tr").toggleClass('selected');
-          if ($("#forecastexporttable tbody input[type=checkbox]:checked").length > 0) {
-            $('#button_export').removeClass("active").addClass("active").prop('disabled', false);;
-          } else {
-            $('#button_export').removeClass("active").prop('disabled', true);
-          };
-        });
-        $("#forecastexporttable tbody input[type=checkbox]").click(function () {
-          $(this).parent().parent().toggleClass('selected');
-          $("#cb_modaltableall").prop("checked", $("#forecastexporttable tbody input[type=checkbox]:not(:checked)").length == 0);
-          if ($("#forecastexporttable tbody input[type=checkbox]:checked").length > 0) {
-            $('#button_export').removeClass("active").addClass("active").prop('disabled', false);;
-          } else {
-            $('#button_export').removeClass("active").prop('disabled', true);
-          };
-        });
-        if ($("#actions").length)
-          $("#actions1 span").text($("#actionsul").children().first().text());
-      },
-      error: function (result, stat, errorThrown) {
-        if (result.status == 401) {
-          location.reload();
-          return;
-        }
-        $('#popup .modal-title').html(gettext("Error"));
-        $('#popup .modal-header').addClass('bg-danger');
-        $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
-        $('#button_export').val(gettext('Retry'));
-        $('#popup .modal-dialog').css({ 'visibility': 'visible' })
-        $('#popup').modal('show');
-      }
-    });
-
-  }
 } //end Code for ERP integration
 
 //----------------------------------------------------------------------------
@@ -2494,7 +2305,7 @@ var dashboard = {
     $(".cockpitcolumn").each(function () {
       Sortable.create($(this)[0], {
         group: "widgets",
-        handle: ".panel-heading",
+        handle: ".card-header",
         animation: 100,
         onEnd: function (e) { dashboard.save(); }
       });
@@ -2512,7 +2323,7 @@ var dashboard = {
     $(".panel-toggle").click(function () {
       var icon = $(this);
       icon.toggleClass("fa-minus fa-plus");
-      icon.closest(".panel").find(".panel-body").toggle();
+      icon.closest(".panel").find(".card-body").toggle();
     });
     $(".panel-close").click(function () {
       $(this).closest(".panel").remove();
@@ -2613,55 +2424,55 @@ var dashboard = {
     var txt = '<div class="modal-dialog">' +
       '<div class="modal-content">' +
       '<div class="modal-header">' +
-      '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-      '<h4 class="modal-title">' + gettext("Customize a dashboard row") + '</h4>' +
+      '<h5 class="modal-title">' + gettext("Customize a dashboard row") + '</h5>' +
+      '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
       '</div>' +
       '<div class="modal-body">' +
       '<form class="form-horizontal">' +
 
-      '<div class="form-group">' +
-      '<label class="col-md-3 control-label" for="id_name">' + gettext("Name") + ':</label>' +
-      '<div class="col-md-9">' +
+      '<div class="row mb-3">' +
+      '<label class="col-3 control-label" for="id_name" class="col-form-label">' + gettext("Name") + ':</label>' +
+      '<div class="col-9">' +
       '<input id="id_name" class="form-control" type="text" value="' + rowname + '">' +
       '</div></div>' +
 
-      '<div class="form-group">' +
-      '<label class="col-md-3 control-label" for="id_layout2">' + gettext("Layout") + ':</label>' +
-      '<div class="col-md-9 dropdown dropdown-submit-input">' +
-      '<button class="btn btn-default dropdown-toggle" id="id_layout2" name="layout" type="button" data-toggle="dropdown" aria-haspopup="true">' +
+      '<div class="row mb-3">' +
+      '<label class="col-3 control-label" for="id_layout2" class="col-form-label">' + gettext("Layout") + ':</label>' +
+      '<div class="col-9 dropdown">' +
+      '<button class="btn btn-default dropdown-toggle w-100" id="id_layout2" name="layout" type="button" data-bs-toggle="dropdown" aria-haspopup="true">' +
       '<span id="id_layout">' + layout + '</span>&nbsp;<span class="caret"></span>' +
       '</button>' +
       '<ul class="dropdown-menu" aria-labelledby="id_layout" id="id_layoutul">' +
       '<li class="dropdown-header">' + gettext("Single column") + '</li>' +
-      '<li><a onclick="dashboard.setlayout(this)">100%</a></li>' +
+      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">100%</a></li>' +
       '<li class="divider"></li>' +
       '<li class="dropdown-header">' + gettext("Two columns") + '</li>' +
-      '<li><a onclick="dashboard.setlayout(this)">75% - 25%</a></li>' +
-      '<li><a onclick="dashboard.setlayout(this)">67% - 33%</a></li>' +
-      '<li><a onclick="dashboard.setlayout(this)">50% - 50%</a></li>' +
-      '<li><a onclick="dashboard.setlayout(this)">33% - 67%</a></li>' +
-      '<li><a onclick="dashboard.setlayout(this)">25% - 75%</a></li>' +
+      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">75% - 25%</a></li>' +
+      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">67% - 33%</a></li>' +
+      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">50% - 50%</a></li>' +
+      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">33% - 67%</a></li>' +
+      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">25% - 75%</a></li>' +
       '<li class="divider"></li>' +
       '<li class="dropdown-header">' + gettext("Three columns") + '</li>' +
-      '<li><a onclick="dashboard.setlayout(this)">50% - 25% - 25%</a></li>' +
-      '<li><a onclick="dashboard.setlayout(this)">33% - 33% - 33%</a></li>' +
+      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">50% - 25% - 25%</a></li>' +
+      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">33% - 33% - 33%</a></li>' +
       '<li class="divider"></li>' +
       '<li class="dropdown-header">' + gettext("Four columns") + '</li>' +
-      '<li><a onclick="dashboard.setlayout(this)">25% - 25% - 25% - 25%</a></li>' +
+      '<li><a class="dropdown-item" onclick="dashboard.setlayout(this)">25% - 25% - 25% - 25%</a></li>' +
       '</ul></div>' +
       '</div>' +
 
-      '<div class="form-group">' +
-      '<label class="col-md-3 control-label" for="id_widget2">' + gettext("Add widget") + ':</label>' +
-      '<div class="col-md-9 dropdown dropdown-submit-input">' +
-      '<button class="btn btn-default dropdown-toggle" id="id_widget2" type="button" data-toggle="dropdown">' +
+      '<div class="row mb-3">' +
+      '<label class="col-3 control-label" for="id_widget2" class="col-form-label">' + gettext("Add widget") + ':</label>' +
+      '<div class="col-9 dropdown">' +
+      '<button class="btn btn-default dropdown-toggle w-100" id="id_widget2" type="button" data-bs-toggle="dropdown">' +
       '<span id="id_widget">-</span>&nbsp;<span class="caret"></span>' +
       '</button>' +
-      '<ul class="dropdown-menu col-sm-9" aria-labelledby="id_widget2" id="id_widgetul">';
+      '<ul class="dropdown-menu col-9" aria-labelledby="id_widget2" id="id_widgetul">';
 
     var numwidgets = hiddenwidgets.length;
     for (var i = 0; i < numwidgets; i++)
-      txt += '<li><a onclick="dashboard.setwidget(' + i + ')">' + hiddenwidgets[i][1] + '</a></li>';
+      txt += '<li><a class="dropdown-item" onclick="dashboard.setwidget(' + i + ')">' + hiddenwidgets[i][1] + '</a></li>';
 
     txt +=
       '</ul></div><span id="newwidgetname" style="display:none"></span>' +
@@ -2669,7 +2480,7 @@ var dashboard = {
 
       '</form></div>' +
       '<div class="modal-footer">' +
-      '<input type="submit" role="button" onclick=\'$("#popup").modal("hide")\' class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<input type="submit" role="button" onclick=\'hideModal("popup")\' class="btn btn-primary pull-left" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
       '<input type="submit" role="button" onclick=\'dashboard.saveCustomization("' + rowname + '")\' class="btn btn-primary pull-right" value="' + gettext('Save') + '">' +
       '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", false)\' class="btn btn-primary pull-right" value="' + gettext('Add new below') + '">' +
       '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", true)\' class="btn btn-primary pull-right" value="' + gettext('Add new above') + '">' +
@@ -2678,7 +2489,8 @@ var dashboard = {
 
       '</div></div></div>';
 
-    $('#popup').html(txt).modal('show');
+    $('#popup').html(txt);
+    showModal('popup');
   },
 
   setlayout: function (elem) {
@@ -2734,7 +2546,7 @@ var dashboard = {
     // Adding new widget
     var newwidget = $("#newwidgetname").text();
     if (newwidget != '') {
-      $('<div class="panel panel-default"></div>').attr("data-cockpit-widget", newwidget).appendTo(lastcol);
+      $('<div class="card"></div>').attr("data-cockpit-widget", newwidget).appendTo(lastcol);
       dashboard.save("true"); // Force reload of the page
     }
     else
@@ -2742,13 +2554,13 @@ var dashboard = {
 
     // Almost done
     dashboard.dragAndDrop();
-    $('#popup').modal('hide');
+    hideModal('popup');
   },
 
   deleteRow: function (rowname) {
     $("[data-cockpit-row='" + rowname + "']").remove();
     dashboard.save();
-    $('#popup').modal('hide');
+    hideModal('popup');
   },
 
   addRow: function (rowname, position_above) {
@@ -2762,7 +2574,7 @@ var dashboard = {
     var newelements = '<div class="row" data-cockpit-row="' + newname + '">' +
       '<div class="col-md-11"><h1 style="float: left">' + newname + '</h1></div>' +
       '<div class="col-md-1"><h1 class="pull-right">' +
-      '<button class="btn btn-xs btn-primary" onclick="dashboard.customize(\'' + newname + '\')" data-toggle="tooltip" data-placement="top" data-original-title="' + gettext("Customize") + '"><span class="fa fa-wrench"></span></button>' +
+      '<button class="btn btn-sm btn-primary" onclick="dashboard.customize(\'' + newname + '\')" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' + gettext("Customize") + '"><span class="fa fa-wrench"></span></button>' +
       '</h1></div>' +
 
       '<div class="horizontal-form" id="' + newname + '">';
@@ -2771,7 +2583,7 @@ var dashboard = {
     for (var i = 0; i < newlayout.length; i++) {
       newelements += '<div class="cockpitcolumn col-md-' + Math.round(0.12 * parseInt(newlayout[i])) + ' col-sm-12">';
       if (i == 0 && newwidget != '')
-        newelements += '<div class="panel panel-default" data-cockpit-widget="' + newwidget + '"></div>';
+        newelements += '<div class="card" data-cockpit-widget="' + newwidget + '"></div>';
       newelements += '</div>';
     }
     newelements += '</div></div></div>';
@@ -2789,7 +2601,7 @@ var dashboard = {
     else
       dashboard.save();
     dashboard.dragAndDrop();
-    $('#popup').modal('hide');
+    hideModal('popup');
   }
 
 }
@@ -2953,16 +2765,15 @@ function about_show() {
     type: "GET",
     contentType: "application/json",
     success: function (data) {
-      $('#timebuckets').modal('hide');
+      hideModal('timebuckets');
       $.jgrid.hideModal("#searchmodfbox_grid");
-      $('#popup').modal({ keyboard: false, backdrop: 'static' });
       var version = data.version.split(".");
       var website = data.website;
-      var content = '<div class="modal-dialog" style="width: 450px;">' +
+      var content = '<div class="modal-dialog modal-dialog-centered" style="width: 450px">' +
         '<div class="modal-content">' +
         '<div class="modal-header">' +
-        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-        '<h4 class="modal-title">About frePPLe ' + data.version + ' Community Edition</h4>' +
+        '<h5 class="modal-title">About frePPLe ' + data.version + ' Community Edition</h5>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
         '</div>' +
         '<div class="modal-body">' +
         '<div class="row">';
@@ -2982,11 +2793,29 @@ function about_show() {
         '</div>' +
         '</div>' +
         '</div>';
-      $('#popup').html(content).modal('show');
+      $('#popup').html(content);
+      showModal('popup');
     },
     error: ajaxerror
   });
 }
+
+function showModal(id, dispose = true) {
+  var el = document.getElementById(id);
+  if (dispose) {
+    var p = bootstrap.Modal.getInstance(el);
+    if (p) p.dispose();
+  }
+  var p = bootstrap.Modal.getOrCreateInstance(el);
+  p.show();
+}
+
+function hideModal(id) {
+  var el = document.getElementById(id);
+  var p = bootstrap.Modal.getInstance(el);
+  if (p) p.hide();
+}
+
 //----------------------------------------------------------------------------
 // Display import dialog for CSV-files
 //----------------------------------------------------------------------------
@@ -2994,17 +2823,16 @@ function about_show() {
 function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlabel) {
   var xhr = { abort: function () { } };
 
-  $('#timebuckets').modal('hide');
+  hideModal('timebuckets');
   $.jgrid.hideModal("#searchmodfbox_grid");
-  $('#popup').modal({ keyboard: false, backdrop: 'static' });
   var modalcontent = '<div class="modal-dialog">' +
     '<div class="modal-content">' +
     '<div class="modal-header">' +
-    '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-    '<h4 class="modal-title">' +
+    '<h5 class="modal-title">' +
     '<span id="modal_title">' + gettext("Import CSV or Excel file") + '</span>' + '&nbsp;' +
     '<span id="animatedcog" class="fa fa-cog fa-spin fa-2x fa-fw" style="visibility: hidden;"></span>' +
-    '</h4>' +
+    '</h5>' +
+    '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
     '</div>' +
     '<div class="modal-body">' +
     '<form id="uploadform">' +
@@ -3015,21 +2843,21 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     '</p>';
   if (isDragnDropUploadCapable()) {
     modalcontent += '' +
-      '<div class="box" style="outline: 2px dashed black; outline-offset: -10px">' +
-      '<div class="box__input" style="text-align: center; padding: 20px;">' +
-      '<i class="fa fa-sign-in fa-5x fa-rotate-90"></i>' +
-      '<input class="box__file invisible" type="file" id="csv_file" name="csv_file" data-multiple-caption="{count} ' + gettext("files selected") + '" multiple/>' +
-      '<label id="uploadlabel" for="csv_file">' +
+      '<div class="box" style="outline: 2px dashed black; outline-offset: -1em">' +
+      '<div class=text-center box__input" style="text-align: center; padding: 20px;">' +
+      '<i class="d-block fa fa-sign-in fa-5x fa-rotate-90"></i>' +
+      '<input class="box__file d-none" type="file" id="csv_file" name="csv_file" data-multiple-caption="{count} ' + gettext("files selected") + '" multiple/>' +
+      '<label class="d-block" id="uploadlabel" for="csv_file">' +
       '<kbd>' +
       gettext('Select files') +
       '</kbd>&nbsp;' +
       '<span class="box__dragndrop" style="display: inline;">' +
       gettext('or drop them here') +
-      '</span>.' +
+      '</span>' +
       '</label>' +
       '</div>' +
-      '<div class="box__uploading" style="display: none;">Uploading&hellip;</div>' +
-      '<div class="box__success" style="display: none;">Done!</div>' +
+      '<div class="d-none box__uploading" style="display: none;">Uploading&hellip;</div>' +
+      '<div class="d-none box__success" style="display: none;">Done!</div>' +
       '<div class="box__error" style="display: none;">Error!<span></span>.</div>' +
       '</div>';
   } else {
@@ -3041,15 +2869,16 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     '<div id="uploadResponse" style="height: 50vh; resize: vertical; display: none; background-color: inherit; border: none; overflow: auto;"></div>' +
     '</div>' +
     '</div>' +
-    '<div class="modal-footer">' +
+    '<div class="modal-footer justify-content-between">' +
+    '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-bs-dismiss="modal" value="' + gettext('Close') + '">' +
+    '<input type="submit" id="copytoclipboard" role="button" class="btn btn-primary pull-left" value="' + gettext('Copy to Clipboard') + '" style="display: none;">' +
     '<input type="submit" id="importbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Import') + '">' +
     '<input type="submit" id="cancelimportbutton" role="button" class="btn btn-primary pull-left" value="' + gettext('Cancel Import') + '" style="display: none;">' +
-    '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Close') + '">' +
-    '<input type="submit" id="copytoclipboard" role="button" class="btn btn-primary pull-left" value="' + gettext('Copy to Clipboard') + '" style="display: none;">' +
     '</div>' +
     '</div>' +
     '</div>';
-  $('#popup').html(modalcontent).modal('show');
+  $('#popup').html(modalcontent);
+  showModal('popup');
 
   if (!multiple) {
     $("#selected_files").removeAttr(multiple);
@@ -3233,9 +3062,9 @@ function getURLparameters() {
 // Dropdown list to select the model.
 //----------------------------------------------------------------------------
 
-function selectDatabase() {
+function selectDatabase(el) {
   // Find new database and current database
-  var db = $(this).attr("data-database");
+  var db = el.getAttribute("data-database");
 
   // Change the location
   if (database == db)
@@ -3832,8 +3661,8 @@ function showModalImage(event, title) {
     '<div class="modal-dialog modal-lg" style="margin-top: 20px; width:90%; margin-left: auto; margin-right: auto">'
     + '<div class="modal-content">'
     + '<div class="modal-header" style="border-top-left-radius: inherit; border-top-right-radius: inherit">'
-    + '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'
-    + '<h4 class="modal-title"></h4>'
+    + '<button type="button" class="btn-close" data-bs-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'
+    + '<h5 class="modal-title"></h5>'
     + '</div>'
     + '<div class="modal-body">'
     + '<img src="" style="width:100%">'
@@ -3842,7 +3671,7 @@ function showModalImage(event, title) {
     + '</div>');
   popup.find("h4").text(title);
   popup.find("img").attr("src", $(event.target).attr("src"));
-  popup.modal('show');
+  showModal('popup');
   event.preventDefault();
 }
 
@@ -3910,19 +3739,19 @@ var follow = {
       contentType: "application/json; charset=utf-8",
       success: function (data) {
         // Show dialog with detailed follower info
-        $('#timebuckets').modal('hide');
+        hideModal('timebuckets');
         $.jgrid.hideModal("#searchmodfbox_grid");
         var dlg = $(
           '<div class="modal-dialog"><div class="modal-content">' +
           '<div class="modal-header">' +
-          '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>' +
-          '<h4 class="modal-title"></h4>' +
+          '<h5 class="modal-title"></h5>' +
+          '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
           '</div>' +
           '<div class="modal-body">' +
           '<table id="follower_key" style="width:100%">' +
           '<tr><th>' + gettext("Follow") + ' ' +
           '<span class="dropdown">' +
-          '<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
+          '<button class="btn btn-default dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
           '<span class="followerspan"></span>&nbsp;<span class="caret">' +
           '</button>' +
           '<ul class="dropdown-menu">' +
@@ -3932,9 +3761,9 @@ var follow = {
           '</th></tr><tr><td id="follower_models" style="vertical-align:top"></td></tr>' +
           '</table>' +
           '</div>' +
-          '<div class="modal-footer">' +
-          '<input type="submit" role="button" class="btn btn-primary pull-right" onclick="follow.post(event, this)" value="' + gettext('Update') + '">' +
-          '<input type="submit" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Close') + '">' +
+          '<div class="modal-footer justify-content-between">' +
+          '<input type="submit" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Close') + '">' +
+          '<input type="submit" role="button" class="btn btn-primary" onclick="follow.post(event, this)" value="' + gettext('Update') + '">' +
           '</div>' +
           '</div></div>'
         );
@@ -3947,7 +3776,7 @@ var follow = {
         if (data.parents) {
           // You're already following it through another object
           for (var p of data.parents) {
-            var e = $("<div style='margin-top:10px; margin-bottom:10px'>" + gettext("Following") + " " + p.model + " <a class='underline' target='_blank'></a></div>");
+            var e = $("<div style='margin-top:10px; margin-bottom:10px'>" + gettext("Following") + " " + p.model + " <a class='text-decoration-underline' target='_blank'></a></div>");
             e.find("a").attr("href", p.url).text(p.object_pk);
             e.find("a").append($("<i style='text-indent:0.5em' class='fa fa-external-link'></i>"));
             dlg.find("td").first().append(e);
@@ -3976,7 +3805,7 @@ var follow = {
               + "<input type='checkbox'/><span class='followername'></span>"
               + "</label>&nbsp;&nbsp;"
               + '<span class="dropdown">'
-              + '<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">'
+              + '<button class="btn btn-default dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">'
               + '<span class="followerspan"></span>&nbsp;<span class="caret">'
               + '</button>'
               + '<ul class="dropdown-menu">'
@@ -3997,7 +3826,8 @@ var follow = {
           }
           dlg.find("td").after(e);
         }
-        $('#popup').html(dlg).modal('show');
+        $('#popup').html(dlg);
+        showModal('popup');
       },
       error: ajaxerror
     });
@@ -4026,7 +3856,7 @@ var follow = {
       type: "POST",
       contentType: "application/json",
       success: function () {
-        $('#popup').modal("hide");
+        hideModal('popup');
       },
       error: ajaxerror
     });

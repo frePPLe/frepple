@@ -15,20 +15,20 @@
       <td><strong>{% trans 'size'|capfirst %}</strong></td>
       <td><strong>{% trans 'changed'|capfirst %}</strong></td>
       <td>
-        <span class="btn btn-xs btn-primary" style="margin-bottom:5px" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Upload data files' %}"
+        <span class="btn btn-sm btn-primary" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Upload data files' %}"
           onclick="import_show('{% trans 'Upload data files' %}',null,true,uploadfilesajax,null,'{% trans 'Upload' %}')">
           <span class="fa fa-arrow-up"></span>
         </span>
       </td>
       <td>
-        <span class="btn btn-xs btn-primary" style="margin-bottom:5px" data-toggle="tooltip"
-           data-placement="top" data-original-title="{% trans "Download all files" %}"
+        <span class="btn btn-sm btn-primary" style="margin-bottom:5px" data-bs-toggle="tooltip"
+           data-bs-placement="top" data-bs-title="{% trans "Download all files" %}"
            onClick="downloadImportFile(0)">
           <span class="fa fa-arrow-down"></span>
         </span>
       </td>
       <td>
-        <div class="btn btn-xs btn-danger deletefile" style="margin-bottom:5px" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Delete all files' %}" onClick="deleteImportFile(0, {{filestoupload}})">
+        <div class="btn btn-sm btn-danger deletefile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Delete all files' %}" onClick="deleteImportFile(0, {{filestoupload}})">
           <span class="fa fa-close"></span>
         </div>
       </td>
@@ -41,12 +41,12 @@
       <td>{{j.1}}</td>
       <td></td>
       <td>
-        <div class="btn btn-xs btn-primary downloadfile" style="margin-bottom:5px" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Download file" %}" onClick="downloadImportFile(0, '{{j.0}}')">
+        <div class="btn btn-sm btn-primary downloadfile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Download file" %}" onClick="downloadImportFile(0, '{{j.0}}')">
           <span class="fa fa-arrow-down"></span>
         </div>
       </td>
       <td>
-        <div class="btn btn-xs btn-danger deletefile" style="margin-bottom:5px" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Delete file" %}" onClick="deleteImportFile(0, '{{j.0}}')">
+        <div class="btn btn-sm btn-danger deletefile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Delete file" %}" onClick="deleteImportFile(0, '{{j.0}}')">
           <span class="fa fa-close"></span>
         </div>
       </td>
@@ -113,18 +113,18 @@ function deleteImportFile(folder, filename) {
   $("#popup").html('<div class="modal-dialog">'+
     '<div class="modal-content">'+
       '<div class="modal-header">'+
-        '<h4 class="modal-title">{% trans 'Delete file' %}</h4>'+
+        '<h5 class="modal-title">{% trans 'Delete file' %}</h5>'+
       '</div>'+
       '<div class="modal-body"><p>'+
       dialogcontent +
       '</p></div>'+
-      '<div class="modal-footer">'+
-        '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-right" value="{% trans 'Confirm' %}">'+
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="{% trans 'Cancel' %}">'+
+      '<div class="modal-footer justify-content-between">'+
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="{% trans 'Cancel' %}">'+
+        '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger" value="{% trans 'Confirm' %}">'+
       '</div>'+
     '</div>'+
-  '</div>' )
-  .modal('show');
+  '</div>' );
+  showModal("popup");
 
   $('#confirmbutton').on('click', function() {
     $.ajax({

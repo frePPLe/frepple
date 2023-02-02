@@ -11,7 +11,7 @@ function getFormData(el) {
     }, {});
 }
 
-$(function() {	
+$(function() {
 	// Submit sales order to go from step 1 to step 2
   $("#submitsalesorder").on("submit", function() {
   	$("#inputstep2, #inputstep1").toggleClass("hidden");
@@ -25,16 +25,16 @@ $(function() {
   				else
   				  addItemLocation($("#wizarditem").val(), $("#wizardlocation").val());
   				}
-  			); 	
+  			);
   	return false;
   });
-	
+
 	// Returning from step 2 to step 1
   $("#backtosalesorder").on("click", function() {
     $("#inputstep2, #inputstep1").toggleClass("hidden");
     return false;
   });
-	
+
 	// Creating supply path to go from step 2 to step 3
   $(".createsupplypath").on("click", function() {
     var ok = $('#submitsalesorder')[0].checkValidity();
@@ -43,7 +43,7 @@ $(function() {
       data["supply"] = [];
       $("#supply .supply").each(function(i, group) {
       	var ok2 = false;
-	      $(group).find("form").each(function(i, el) {    	
+	      $(group).find("form").each(function(i, el) {
 	      	if (ok && $(el).closest(".collapse").hasClass("in")) {
 	      	  ok = el.checkValidity();
 	      	  ok2 = true;
@@ -68,8 +68,8 @@ $(function() {
           $('#popup').html('<div class="modal-dialog">' +
               '<div class="modal-content">' +
               '<div class="modal-header">' +
-                '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-                '<h4 class="modal-title">' + gettext("Error") + '</h4>' +
+                '<h5 class="modal-title">' + gettext("Error") + '</h5>' +
+                '<button type="button" class="btn-close" data-bs-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
               '</div>' +
               '<div class="modal-body">' +
                 '<p>' + result.responseText + "<br>" + errorThrown + '</p>' +
@@ -77,8 +77,9 @@ $(function() {
               '<div class="modal-footer">' +
               '</div>' +
             '</div>' +
-            '</div>').modal('show');
-          }        
+            '</div>');
+          showModal('popup');
+          }
       });
 	  }
   });
@@ -86,7 +87,7 @@ $(function() {
 
 function checkItemLocation(item, location, callback) {
 	$.ajax({
-		url: url_prefix + "/wizard/supplypath/?item=" + encodeURIComponent(item) 
+		url: url_prefix + "/wizard/supplypath/?item=" + encodeURIComponent(item)
 				+ "&location=" + encodeURIComponent(location),
 		type: "GET",
 		contentType: "application/json",
@@ -102,17 +103,17 @@ function addItemLocation(item, location) {
       How do you replenish item "<span class="item"></span>" in location "<span class="location"></span>"?
   		</h2>
 			<div class="panel-group" id="accordion${index}" role="tablist" aria-multiselectable="true" data-index="${index}">
-			  <div class="panel panel-default">
-			    <div class="panel-heading collapsed" data-toggle="collapse" data-target="#collapse${index}-buy" 
+			  <div class="card">
+			    <div class="card-header collapsed" data-bs-toggle="collapse" data-target="#collapse${index}-buy"
             data-parent="#accordion${index}" style="cursor: pointer">
-			      <h4 class="panel-title">
+			      <h5 class="card-title">
 			        <a class="accordion-toggle">
 			        Choice 1: I buy this item
 			        </a>
-			      </h4>
+			      </h5>
 			    </div>
-			    <div id="collapse${index}-buy" class="panel-collapse collapse">
-			      <div class="panel-body">
+			    <div id="collapse${index}-buy" class="collapse">
+			      <div class="card-body">
 			        <p>Define the supplier and lead time for purchasing this item.</p>
 			        <form class="form-horizontal">
 			          <div class="form-group">
@@ -120,8 +121,8 @@ function addItemLocation(item, location) {
 			            <input type="hidden" name="item" class="itemvalue">
 			            <input type="hidden" name="location" class="locationvalue">
 			            <label class="col-sm-3 control-label" for="wizardsupplier${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                    data-original-title="Supplier you purchase the item from.">
+                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                    data-bs-title="Supplier you purchase the item from.">
 			            {% trans "supplier"|capfirst %}
                   <i class="fa fa-question-circle"></i>
 			            </label>
@@ -132,8 +133,8 @@ function addItemLocation(item, location) {
 			          </div>
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardleadtime${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                    data-original-title="Purchasing lead time<br>between placing the order and receiving the ordered items.">
+                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                    data-bs-title="Purchasing lead time<br>between placing the order and receiving the ordered items.">
 			            {% trans "lead time"|capfirst %}
                   <i class="fa fa-question-circle"></i>
 			            </label>
@@ -142,21 +143,21 @@ function addItemLocation(item, location) {
 			                required min="0" placeholder="{% trans "lead time (in days)"|capfirst %}">
 			            </div>
 			          </div>
-			        </form>      
+			        </form>
 			      </div>
 			    </div>
 			  </div>
-			  <div class="panel panel-default">
-			    <div class="panel-heading collapsed" data-toggle="collapse" data-target="#collapse${index}-produce"
+			  <div class="card">
+			    <div class="card-header collapsed" data-bs-toggle="collapse" data-target="#collapse${index}-produce"
             data-parent="#accordion${index}" style="cursor: pointer">
-			      <h4 class="panel-title">
+			      <h5 class="card-title">
 			        <a class="accordion-toggle">
               Choice 2: I produce this item
 			        </a>
-			      </h4>
+			      </h5>
 			    </div>
-			    <div id="collapse${index}-produce" class="panel-collapse collapse">
-			      <div class="panel-body">
+			    <div id="collapse${index}-produce" class="collapse">
+			      <div class="card-body">
 			        <p>Define the time, resource and materials to produce this item.</p>
 			        <form class="form-horizontal">
 			          <input type="hidden" name="type" value="MO">
@@ -164,8 +165,8 @@ function addItemLocation(item, location) {
                 <input type="hidden" name="location" class="locationvalue">
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardoperation${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                    data-original-title="A unique name for the operation that produces this item.">
+                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                    data-bs-title="A unique name for the operation that produces this item.">
 			            {% trans "operation name"|capfirst %}
                   <i class="fa fa-question-circle"></i>
 			            </label>
@@ -176,8 +177,8 @@ function addItemLocation(item, location) {
 			          </div>
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardduration${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                    data-original-title="The total operation time is the sum of:<br>- A fixed time for setup and overhead time<br>- A time per produced piece">
+                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                    data-bs-title="The total operation time is the sum of:<br>- A fixed time for setup and overhead time<br>- A time per produced piece">
 			            {% trans "fixed time"|capfirst %}
                   <i class="fa fa-question-circle"></i>
 			            </label>
@@ -188,8 +189,8 @@ function addItemLocation(item, location) {
 			          </div>
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizarddurationper${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                    data-original-title="The total operation time is the sum of:<br>- A fixed time for setup and overhead time<br>- A time per produced piece">
+                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                    data-bs-title="The total operation time is the sum of:<br>- A fixed time for setup and overhead time<br>- A time per produced piece">
 			            {% trans "time per piece"|capfirst %}
                   <i class="fa fa-question-circle"></i>
 			            </label>
@@ -200,8 +201,8 @@ function addItemLocation(item, location) {
 			          </div>
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardresource${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                    data-original-title="The machine or operator needed to perform the operation.">
+                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                    data-bs-title="The machine or operator needed to perform the operation.">
 			            {% trans "resource"|capfirst %}
                   <i class="fa fa-question-circle"></i>
 			            </label>
@@ -212,8 +213,8 @@ function addItemLocation(item, location) {
 			          </div>
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardconsumeditem${index}0"
-                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                    data-original-title="The subassemblies or raw materials<br>consumed by this operation per produced item.">
+                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                    data-bs-title="The subassemblies or raw materials<br>consumed by this operation per produced item.">
 			              {% trans "consumed items"|capfirst %}
                     <i class="fa fa-question-circle"></i>
 			            </label>
@@ -227,25 +228,25 @@ function addItemLocation(item, location) {
 			            </div>
 			          </div>
 			          <div class="col-sm-offset-11 col-sm-1 text-center" data-index="0">
-			             <button class="btn btn-xs btn-primary" type="button" onclick="addConsumeditem(event)">
-			               <i class="fa fa-plus" data-toggle="tooltip" data-placement="top" data-original-title="Add more consumed items"></i>
+			             <button class="btn btn-sm btn-primary" type="button" onclick="addConsumeditem(event)">
+			               <i class="fa fa-plus" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Add more consumed items"></i>
 			             </button>
 			          </div>
 			        </form>
 			      </div>
 			    </div>
 			  </div>
-			  <div class="panel panel-default">
-			    <div class="panel-heading collapsed" data-target="#collapse${index}-ship"
-            data-toggle="collapse" data-parent="#accordion${index}" style="cursor:pointer">
-			      <h4 class="panel-title">
+			  <div class="card">
+			    <div class="card-header collapsed" data-target="#collapse${index}-ship"
+            data-bs-toggle="collapse" data-parent="#accordion${index}" style="cursor:pointer">
+			      <h5 class="card-title">
               <a class="accordion-toggle">
 			        Choice 3: I ship this item from another location
 			        </a>
-			      </h4>
+			      </h5>
 			    </div>
-			    <div id="collapse${index}-ship" class="panel-collapse collapse">
-			      <div class="panel-body">
+			    <div id="collapse${index}-ship" class="collapse">
+			      <div class="card-body">
 			        <p>Define the origin location that can ship material to this location.</p>
 			        <form class="form-horizontal">
 			          <input type="hidden" name="type" value="DO">
@@ -253,8 +254,8 @@ function addItemLocation(item, location) {
                 <input type="hidden" name="location" class="locationvalue">
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardorigin${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                    data-original-title="The warehouse or distribution center<br>from which we can source this item.">
+                    data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                    data-bs-title="The warehouse or distribution center<br>from which we can source this item.">
 			              {% trans "source location"|capfirst %}
                     <i class="fa fa-question-circle"></i>
 			            </label>
@@ -265,8 +266,8 @@ function addItemLocation(item, location) {
 			          </div>
                 <div class="form-group">
                 <label class="col-sm-3 control-label" for="wizardtransporttime${index}"
-                  data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                  data-original-title="The shipping lead time to transport items<br>from the origin to the destination location.">
+                  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                  data-bs-title="The shipping lead time to transport items<br>from the origin to the destination location.">
                   {% trans "transport time"|capfirst %}
                   <i class="fa fa-question-circle"></i>
                 </label>
@@ -274,7 +275,7 @@ function addItemLocation(item, location) {
                   <input type="number" class="form-control" id="wizardtransporttime${index}" name="leadtime"
                     required min="0" placeholder="{% trans "transport time (in days)"|capfirst %}">
                 </div>
-              </div>			          
+              </div>
 			        </form>
 			      </div>
 			    </div>
@@ -289,7 +290,7 @@ function addItemLocation(item, location) {
   newelement.find(".locationvalue").val(location);
   newelement.find(".itemlocationvalue").val("make " + item + " @ " + location);
   $("#supply").append(newelement);
-  newelement.find('[data-toggle="tooltip"]').tooltip();
+  newelement.find('[data-bs-toggle="tooltip"]').tooltip();
   return index;
 }
 
@@ -337,18 +338,18 @@ function changeDOorigin(ev) {
 {% block content %}
 <div class="row">
   <div class="panel-group col-md-12" style="max-width: 900px" role="tablist">
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <div class="pull-right">
+    <div class="card">
+      <div class="card-body">
+        <div class="float-end">
           <img src="/static/wizard/img/plan_editor_thumbnail.png" style="width: 150px" alt="Plan editor">
         </div>
         <p>The production planning module plans sales orders and forecast. It generates manufacturing
-        orders, distribution orders and purchase orders for all steps in the bill of material. 
+        orders, distribution orders and purchase orders for all steps in the bill of material.
         </p>
         <p>You can review the resource loading, identify bottlenecks causing late deliveries and
         manually adjust the plan. You can monitor the progress of the manufacturing orders, distribution orders
         and purchase orders, or export them to your ERP for execution.</p>
-        <p>Let's start simple by inputting a single sales order and its bill of material.</p>  
+        <p>Let's start simple by inputting a single sales order and its bill of material.</p>
       </div>
     </div>
   </div>
@@ -356,50 +357,49 @@ function changeDOorigin(ev) {
 {% if not post %}
 <div class="row" id="inputstep1">
 	<div class="panel-group col-md-12" style="max-width:900px" role="tablist" aria-multiselectable="true">
-		<div class="panel panel-default">
-      <div class="panel-heading wizard-1-of-3" role="tab">
+		<div class="card">
+      <div class="card-header wizard-1-of-3" role="tab">
         <table style="width:100%">
           <tr>
             <td style="width:33%">Step 1: Create a sales order</td>
             <td style="width:33%">Step 2: Define supply path</td>
             <td style="width:33%">Step 3: Results</td>
           </tr>
-        </table>     
-      </div>  
-			<div class="panel-collapse" role="tabpanel">
-				<div class="panel-body">
+        </table>
+      </div>
+      <div class="card-body">
 				  <h2 style="margin-top: 0; margin-bottom:10px">
 				  Create a sales order
 				  </h2>
           <form class="form-horizontal" id="submitsalesorder">
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizardsalesorder"
-                data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                data-original-title="Unique name for the sales order.">
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                data-bs-title="Unique name for the sales order.">
                 {% trans "name"|capfirst %}
                 <i class="fa fa-question-circle"></i>
               </label>
-              <div class="col-sm-9">              
-                <input type="text" class="form-control" id="wizardsalesorder" name="name" 
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="wizardsalesorder" name="name"
                   maxlength="300" required placeholder="{% trans "unique sales order name"|capfirst %}">
               </div>
             </div>
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizarditem"
-                data-toggle="data-html="true" data-delay="500"" data-placement="right" data-html="true"
-                data-original-title="Item sold to the customer.">
+                data-bs-toggle="data-bs-html="true" data-delay="500"" data-bs-placement="right" data-bs-html="true"
+                data-bs-title="Item sold to the customer.">
                 {% trans "item"|capfirst %}
                 <i class="fa fa-question-circle"></i>
               </label>
-              <div class="col-sm-9">              
-                <input type="text" class="form-control" id="wizarditem" name="item" 
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="wizarditem" name="item"
                   maxlength="300" required placeholder="{% trans "item name"|capfirst %}">
               </div>
             </div>
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizardlocation"
-                data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                data-original-title="Location from which the sales order is shipped.">
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                data-bs-title="Location from which the sales order is shipped.">
                 {% trans "location"|capfirst %}
                 <i class="fa fa-question-circle"></i>
               </label>
@@ -410,8 +410,8 @@ function changeDOorigin(ev) {
             </div>
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizardcustomer"
-                data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                data-original-title="Customer placing the order.">
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                data-bs-title="Customer placing the order.">
                 {% trans "customer"|capfirst %}
                 <i class="fa fa-question-circle"></i>
               </label>
@@ -422,8 +422,8 @@ function changeDOorigin(ev) {
             </div>
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizardquantity"
-                data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                data-original-title="Quantity to be shipped.">
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                data-bs-title="Quantity to be shipped.">
                 {% trans "quantity"|capfirst %}
                 <i class="fa fa-question-circle"></i>
               </label>
@@ -434,8 +434,8 @@ function changeDOorigin(ev) {
             </div>
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizarddue"
-                data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
-                data-original-title="Delivery date requested by the customer.">
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
+                data-bs-title="Delivery date requested by the customer.">
                 {% trans "due date"|capfirst %}
                 <i class="fa fa-question-circle"></i>
               </label>
@@ -444,114 +444,110 @@ function changeDOorigin(ev) {
                   required placeholder="{% trans "due date"|capfirst %}" value="{% now "Y-m-d" %}">
               </div>
             </div>
-            <div class="center-block">
-              <button id="createsalesorder" type="submit" class="btn btn-primary center-block">
+            <div class="mx-auto">
+              <button id="createsalesorder" type="submit" class="btn btn-primary mx-auto">
               {% trans "Create sales order"|capfirst %}
               </button>
             </div>
           </form>
-        </div>
       </div>
     </div>
   </div>
 </div>
 <div class="row hidden" id="inputstep2">
 	<div class="panel-group col-md-12" style="max-width:900px" role="tablist" aria-multiselectable="true">
-		<div class="panel panel-default">
-      <div class="panel-heading wizard-2-of-3" role="tab">
+		<div class="card">
+      <div class="card-header wizard-2-of-3" role="tab">
         <table style="width:100%">
           <tr>
-            <td style="width:33%"><a href="#" class="underline" id="backtosalesorder">Step 1: Create a sales order</a></td>
+            <td style="width:33%"><a href="#" class="text-decoration-underline" id="backtosalesorder">Step 1: Create a sales order</a></td>
             <td style="width:33%">Step 2: Define supply path</td>
             <td style="width:33%">Step 3: Results</td>
           </tr>
         </table>
-      </div>		
-			<div class="panel-collapse" role="tabpanel">
-				<div class="panel-body">
+      </div>
+      <div class="card-body">
 				  <div id="supply_path_unknown">
 				  <h2>
-          The supply path defines all activities to deliver this sales order.          
+          The supply path defines all activities to deliver this sales order.
           </h2>
           <p>It can contain multiple levels in the bill of material and bill of distribution.</p>
           <div id="supply"></div>
-          <div class="center-block">
-            <button type="submit" class="btn btn-primary center-block createsupplypath">
+          <div class="mx-auto">
+            <button type="submit" class="btn btn-primary mx-auto createsupplypath">
             Create supply path
             </button>
-          </div>          
+          </div>
           </div>
           <div id="supply_path_known" class="hidden">
           <h2>
-          The supply path for this sales order is already defined.          
+          The supply path for this sales order is already defined.
           </h2>
-          <p>You can skip this step and move on to the results.</p>     
-          <div class="center-block">
-            <button type="submit" class="btn btn-primary center-block createsupplypath">
+          <p>You can skip this step and move on to the results.</p>
+          <div class="mx-auto">
+            <button type="submit" class="btn btn-primary mx-auto createsupplypath">
             Go to results
             </button>
-          </div> 
           </div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>	
+</div>
 {% else %}
 <div class="row">
   <div class="panel-group col-md-12" style="max-width:900px" role="tablist" aria-multiselectable="true">
-    <div class="panel panel-default" id="wizard-2">
-      <div class="panel-heading wizard-3-of-3" role="tab">
-        <h4 class="panel-title">
+    <div class="card" id="wizard-2">
+      <div class="card-header wizard-3-of-3" role="tab">
+        <h5 class="card-title">
         <table style="width:100%">
         <tr>
         <td style="width:33%">
-          <a class="underline" href="{{request.prefix}}/wizard/quickstart/production/">Step 1: Create a sales order</a>
+          <a class="text-decoration-underline" href="{{request.prefix}}/wizard/quickstart/production/">Step 1: Create a sales order</a>
         </td>
         <td style="width:33%">Step 2: Define supply path</td>
         <td style="width:33%">Step 3: Results</td>
         </tr>
         </table>
-        </h4>     
+        </h5>
       </div>
-      <div class="panel-collapse" role="tabpanel">
-        <div class="panel-body">
+      <div class="card-body">
           <div>
           <p>Here is the production plan for your sales order {{post.salesorder}}:</p>
-          </div>        
+          </div>
           <div class="clearfix">
           <div style="float: left; margin-left:10px; width:30%; max-width:130px; text-align:center"
-            data-toggle="tooltip" data-placement="bottom"
-            data-original-title="Review all activities planned for this sales order">
+            data-bs-toggle="tooltip" data-bs-placement="bottom"
+            data-bs-title="Review all activities planned for this sales order">
             <p><a target="_blank" rel="noopener" href="{{request.prefix}}/demandpegging/{{post.salesorder|admin_quote}}/?noautofilter">
-              <img src="/static/wizard/img/delivery_plan_thumbnail.png" style="width: 100%" alt="Sales order delivery plan"><br> 
-              <b>Sales order delivery plan</b> 
+              <img src="/static/wizard/img/delivery_plan_thumbnail.png" style="width: 100%" alt="Sales order delivery plan"><br>
+              <b>Sales order delivery plan</b>
             </a></p>
           </div>
           <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
-            data-toggle="tooltip" data-placement="bottom"
-            data-original-title="A visual representation of the supply path">
+            data-bs-toggle="tooltip" data-bs-placement="bottom"
+            data-bs-title="A visual representation of the supply path">
             <p><a target="_blank" rel="noopener" href="{{request.prefix}}/supplypath/demand/{{post.salesorder|admin_quote}}/?noautofilter">
-              <img src="/static/wizard/img/supply_path_thumbnail.png" style="width: 100%" alt="Sales order supply path"><br> 
+              <img src="/static/wizard/img/supply_path_thumbnail.png" style="width: 100%" alt="Sales order supply path"><br>
               <b>Sales order supply path</b>
             </a></p>
           </div>
           <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
-            data-toggle="tooltip" data-placement="bottom"
-            data-original-title="Shows the inventory profile of all materials">
+            data-bs-toggle="tooltip" data-bs-placement="bottom"
+            data-bs-title="Shows the inventory profile of all materials">
             <a target="_blank" rel="noopener" href="{{request.prefix}}/buffer/?noautofilter">
-              <img src="/static/wizard/img/inventory_report_thumbnail.png" style="width: 100%" alt="Inventory report"><br> 
+              <img src="/static/wizard/img/inventory_report_thumbnail.png" style="width: 100%" alt="Inventory report"><br>
               <b>Inventory report</b>
             </a>
           </div>
           <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
-            data-toggle="tooltip" data-placement="bottom"
-            data-original-title="Shows the loading of all resources">
+            data-bs-toggle="tooltip" data-bs-placement="bottom"
+            data-bs-title="Shows the loading of all resources">
             <p><a target="_blank" rel="noopener" href="{{request.prefix}}/resource/?noautofilter">
-              <img src="/static/wizard/img/resource_report_thumbnail.png" style="width: 100%" alt="Resource report"><br> 
+              <img src="/static/wizard/img/resource_report_thumbnail.png" style="width: 100%" alt="Resource report"><br>
               <b>Resource report</b>
             </a></p>
-          </div>                           
+          </div>
           </div>
           <div class="clearfix">
           <p>Check out what we did with your input data:</p>
@@ -564,14 +560,13 @@ function changeDOorigin(ev) {
           <div class="clearfix">
           <p>Next actions:</p>
             <ul>
-            <li class="disc"><p><a class="underline" href="{{request.prefix}}/wizard/quickstart/production/">Repeat these steps</a> for another sales order.</p></li>
-            <li class="disc"><p><a rel="noopener" class="underline" href="{{request.prefix}}/wizard/load/production/" target="_blank">
+            <li class="disc"><p><a class="text-decoration-underline" href="{{request.prefix}}/wizard/quickstart/production/">Repeat these steps</a> for another sales order.</p></li>
+            <li class="disc"><p><a rel="noopener" class="text-decoration-underline" href="{{request.prefix}}/wizard/load/production/" target="_blank">
           Learn how to load Excel spreadsheets</a> to repeat this calculation for many sales orders.</p></li>
             </ul>
           </div>
         </div>
-        </div>
-      
+
        </div>
     </div>
   </div>

@@ -4,8 +4,8 @@
   <div class="modal-dialog">
     <div class="modal-content" style="width: 500px;">
       <div class="modal-header">
-       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>
-       <h4 class="modal-title">{% trans 'time buckets'|capfirst %}</h4>
+       <h5 class="modal-title">{% trans 'time buckets'|capfirst %}</h5>
+       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
 
@@ -14,15 +14,15 @@
       <input type="hidden" name="horizonunit" id="horizonunit" value="{{request.user.horizonunit}}">
       <input id="horizonoriginal" type="hidden" value="{{request.user.horizonbuckets}}|{{request.user.horizonstart|date:"DATE_FORMAT"}}|{{request.user.horizonend|date:"DATE_FORMAT"}}|{{request.user.horizontype}}|{{request.user.horizonbefore}}|{{request.user.horizonlength}}|{{request.user.horizonunit}}"/>
           <div class="row" style="padding-bottom: 15px">
-            <div class="col-xs-12">
+            <div class="col-12">
               {% trans 'bucket size'|capfirst %}&nbsp;&nbsp;
-              <div class="dropdown dropdown-submit-input" style="display:inline">
-                  <button class="btn btn-default dropdown-toggle" type="button" name="horizonbuckets1" id="horizonbuckets1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <div class="dropdown" style="display:inline">
+                  <button class="btn btn-default dropdown-toggle" type="button" name="horizonbuckets1" id="horizonbuckets1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     {% if request.user.horizonbuckets %}{% trans request.user.horizonbuckets %}{% endif %}&nbsp;&nbsp;<span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" aria-labelledby="horizonbuckets1" id="horizonbucketsul" style="top: auto;">
                   {% for i in bucketnames %}
-                    <li><a onclick="" name="{{ i }}">{% trans i %}</a></li>
+                    <li><a class="dropdown-item" onclick="" name="{{ i }}">{% trans i %}</a></li>
                   {% endfor %}
                   </ul>
               </div>
@@ -30,7 +30,7 @@
           </div>
 
           <div class="row" style="padding-bottom: 15px">
-            <div class="col-xs-12 form-inline">
+            <div class="col-12 form-inline">
               <input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>
               &nbsp;&nbsp;{% trans 'from'|capfirst %}&nbsp;
               <div class="input-group date">
@@ -51,23 +51,22 @@
           </div>
 
           <div class="row">
-            <div class="col-xs-12 form-inline">
+            <div class="col-12 form-inline">
               <input type="radio" id="horizontype" name="horizontype" value="1"{% if request.user.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
               {% trans 'from'|capfirst %}
               <input id="horizonbefore" style="width:4em; padding-left: 6px; padding-right:6px" name="horizonbefore" type="number" class="form-control arrows" min="0" max="99" value="{{request.user.horizonbefore}}"/>&nbsp;
               {% trans 'before till' %}
               <input id="horizonlength" style="width:4em; padding-left: 6px; padding-right:6px" name="horizonlength" type="number" class="form-control arrows" min="1" max="99" value="{{request.user.horizonlength}}"/>&nbsp;
-              <div class="dropdown dropdown-submit-input" style="display:inline">
-                <button style="padding-left: 6px; padding-right:6px" class="btn btn-default dropdown-toggle form-control" type="button" name="horizonunit1" id="horizonunit1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <div class="dropdown" style="display:inline">
+                <button style="padding-left: 6px; padding-right:6px" class="btn btn-default dropdown-toggle" type="button" name="horizonunit1" id="horizonunit1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   {% if request.user.horizonunit == "day" %}{% trans 'days' %}{% endif %}
                   {% if request.user.horizonunit == "week" %}{% trans 'weeks' %}{% endif %}
                   {% if request.user.horizonunit == "month" %}{% trans 'months' %}{% endif %}
-                  &nbsp;&nbsp;<span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="horizonunit1" id="horizonunitul" style="top: auto;">
-                  <li><a name="day">{% trans 'days' %}</a></li>
-                  <li><a name="week">{% trans 'weeks' %}</a></li>
-                  <li><a name="month">{% trans 'months' %}</a></li>
+                  <li><a class="dropdown-item" name="day">{% trans 'days' %}</a></li>
+                  <li><a class="dropdown-item" name="week">{% trans 'weeks' %}</a></li>
+                  <li><a class="dropdown-item" name="month">{% trans 'months' %}</a></li>
                 </ul>
               </div>
               &nbsp;{% trans 'after current date' %}
@@ -76,9 +75,9 @@
 
       </form>
       </div>
-      <div class="modal-footer">
-        <input type="submit" id="okbutton" role="button" class="btn btn-primary pull-right" value="{% trans 'OK' %}">
-        <input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="{% trans 'Cancel'|capfirst %}">
+      <div class="modal-footer justify-content-between">
+        <input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="{% trans 'Cancel'|capfirst %}">
+        <input type="submit" id="okbutton" role="button" class="btn btn-primary" value="{% trans 'OK' %}">
       </div>
 
     </div>

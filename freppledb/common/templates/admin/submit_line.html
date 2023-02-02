@@ -6,7 +6,7 @@
 {% if show_save_and_add_another %}<input type="submit" value="{% trans 'Save and add another' %}" class="btn btn-default" name="_addanother" {{ onclick_attrib }} />{% endif %}
 {% if show_save_and_continue %}<input type="submit" value="{% trans 'Save and continue editing' %}" class="btn btn-default" name="_continue" {{ onclick_attrib }}/>{% endif %}
 </div></div>
-<div class="col-md-6"><div class="pull-right">
+<div class="col-md-6"><div class="float-end">
     {% if show_delete_link %}
         {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
         <a class="btn btn-danger deletelink" href="{{request.prefix}}{% add_preserved_filters delete_url %}">{% trans "Delete" %}</a>

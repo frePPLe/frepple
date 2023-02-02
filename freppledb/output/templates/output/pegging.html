@@ -221,7 +221,7 @@ function reslistfmt(cellvalue, options, row)
     result += cellvalue[i]
       + "<a href='" + url_prefix + "/detail/input/resource/" + admin_escape(cellvalue[i])
       + "/' onclick='event.stopPropagation()'>"
-      + "<span class='leftpadding fa fa-caret-right'></span>"
+      + "<span class='ps-2 fa fa-caret-right'></span>"
       + "</a><br>";
   return result;
 }
@@ -262,26 +262,28 @@ loadComplete: function(data) {
 {% endblock %}
 
 {% block actions %}
-<div class="btn-group" data-toggle="tooltip" data-placement="top" data-html="true"
-     data-original-title="{% trans 'Bookmark your favorite report configurations'|capfirst|force_escape %}">
-  <button class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<div class="btn-group" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+     data-bs-title="{% trans 'Bookmark your favorite report configurations'|capfirst|force_escape %}">
+  <button class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <span class="fa fa-star"></span>
   </button>
   <ul class="dropdown-menu dropdown-menu-right" id="favoritelist">
     {% if preferences.favorites %}
     {% for fav in preferences.favorites %}
-    <li><a onclick="favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
+    <li><a class="dropdown-item" onclick="favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
     {% endfor %}
     <li role="separator" class="divider"></li>
     {% endif %}
-    <li><a><button id="favoritesave" onclick="favorite.save()" type="button" class="btn btn-primary btn-xs disabled">{% trans "save"|capfirst %}</button>
+    <li><a class="dropdown-item"><button id="favoritesave" onclick="favorite.save()" type="button" class="btn btn-primary btn-sm disabled">{% trans "save"|capfirst %}</button>
     <input id="favoritename" oninput="favorite.check()" type="text" size="15"></a>
     </li>
   </ul>
 </div>
-<button class="btn btn-xs btn-primary" onclick="gantt.zoom(0.5)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'zoom in'|capfirst|force_escape %}" ><span class="fa fa-search-plus"></span></button>
-<button class="btn btn-xs btn-primary" onclick="gantt.zoom(2.0)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'zoom out'|capfirst|force_escape %}" ><span class="fa fa-search-minus"></span></button>
-<button class="btn btn-xs btn-primary" onclick="grid.showCustomize(false);" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>
+<button class="btn btn-sm btn-primary" onclick="gantt.zoom(0.5)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'zoom in'|capfirst|force_escape %}" ><span class="fa fa-search-plus"></span></button>
+<button class="btn btn-sm btn-primary" onclick="gantt.zoom(2.0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'zoom out'|capfirst|force_escape %}" ><span class="fa fa-search-minus"></span></button>
+<button class="btn btn-sm btn-primary" onclick="grid.showCustomize(false);" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>
 {% endblock %}
 
-{% block tools %}{% include "common/snippet_follow.html" %}{% tabs model %}{% endblock %}
+{% block tools %}{% include "common/snippet_follow.html" %}{% endblock %}
+
+{% block tabs %}{% tabs model %}{% endblock %}

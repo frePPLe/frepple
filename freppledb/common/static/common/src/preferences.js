@@ -57,7 +57,7 @@ function PreferenceSvc($http) {
         },
         function(response) {
           angular.element(document).find('.modal-body').html('<div style="width: 100%; overflow: auto;">' + response.data + '</div>');
-          angular.element(document).find('#popup2').modal('show');
+          showModal('popup2');
         }
       );
   };

@@ -23,19 +23,19 @@
          <div class="form-group">
          <label class="col-sm-3 control-label" for="weekstart1">{% trans "week starts on"|capfirst %}</label>
          <div class="col-sm-9">
-         <div class="dropdown dropdown-submit-input">
-           <button class="btn btn-default dropdown-toggle form-control"  id="weekstart1" value="1" type="button" data-toggle="dropdown">
+         <div class="dropdown">
+           <button class="btn btn-default dropdown-toggle form-control"  id="weekstart1" value="1" type="button" data-bs-toggle="dropdown">
              <span>{% trans "Monday" %}</span>&nbsp;&nbsp;
              <i class="caret"></i>
            </button>
-           <ul class="dropdown-menu col-xs-12" aria-labelledby="weekstart1" id="weekstartul">
-             <li><a>{% trans "Sunday" %}</a></li>
-             <li><a>{% trans "Monday" %}</a></li>
-             <li><a>{% trans "Tuesday" %}</a></li>
-             <li><a>{% trans "Wednesday" %}</a></li>
-             <li><a>{% trans "Thursday" %}</a></li>
-             <li><a>{% trans "Friday" %}</a></li>
-             <li><a>{% trans "Saturday" %}</a></li>
+           <ul class="dropdown-menu col-12" aria-labelledby="weekstart1" id="weekstartul">
+             <li><a class="dropdown-item">{% trans "Sunday" %}</a></li>
+             <li><a class="dropdown-item">{% trans "Monday" %}</a></li>
+             <li><a class="dropdown-item">{% trans "Tuesday" %}</a></li>
+             <li><a class="dropdown-item">{% trans "Wednesday" %}</a></li>
+             <li><a class="dropdown-item">{% trans "Thursday" %}</a></li>
+             <li><a class="dropdown-item">{% trans "Friday" %}</a></li>
+             <li><a class="dropdown-item">{% trans "Saturday" %}</a></li>
            </ul>
          </div>
          </div>

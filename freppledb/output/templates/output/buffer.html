@@ -2,10 +2,17 @@
 {% load i18n %}
 
 {% block tools %}
+{% if args.0 or active_tab == "inventory" %}
+  {% include "common/snippet_follow.html" %}
+{% endif %}
+{{block.super}}
+{% endblock %}
+
+{% block tabs %}
 {% if active_tab == "inventory" %}
-  {% include "common/snippet_follow.html" %}{% tabs "input.item" %}
+  {% tabs "input.item" %}
 {% elif args.0 %}
-  {% include "common/snippet_follow.html" %}{% tabs "input.buffer" %}
+  {% tabs "input.buffer" %}
 {% endif %}
 {{block.super}}
 {% endblock %}
@@ -250,7 +257,7 @@ function drawGraphs(jsondata)
 	        })
 	      .on("mouseenter", function(d) {
           if (timebuckets[d['bucket']]['history']) {
-	          var tiptext = '<div class="panel-heading" style="text-align:center; font-style:italic">{{_('Archived')}} '
+	          var tiptext = '<div class="card-header" style="text-align:center; font-style:italic">{{_('Archived')}} '
 	            + timebuckets[d['bucket']]['name'] + '</div>'
               + '<table><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
               + grid.formatNumber(d['startinv'])
@@ -258,7 +265,7 @@ function drawGraphs(jsondata)
               + grid.formatNumber(d['safetystock']);
           }
           else {
-            var tiptext = '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+            var tiptext = '<div class="card-header" style="text-align:center; font-weight:bold">'
               + timebuckets[d['bucket']]['name'] + '</div>'
 	            + '<table><tr><td>{{_('start inventory days of cover')|capfirst}}</td><td style="text-align:right">'
 	            + d['startohdoc'] + " {{_('days')}}"
@@ -327,7 +334,7 @@ function drawGraphs(jsondata)
             tiptext += '</td></tr></table>';
 
             if (d['reasons']) {
-              tiptext += '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+              tiptext += '<div class="card-header" style="text-align:center; font-weight:bold">'
                 + '{{_('constraints')|capfirst}}</div><table style="white-space:nowrap">';
               for (var r of d['reasons'])
                 tiptext += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>';

@@ -5,13 +5,13 @@
 &nbsp;<span id="filterform">
 <span id="curfilter"></span>
 &nbsp;
-<div class="input-group">
+<div class="input-group d-inline-flex w-auto">
 <input id="addsearch" class="form-control" placeholder="{% trans 'Filter' %}" role="searchbox"
   type="text" size="15" oninput="grid.showFilterList(this)" onkeydown="grid.keyDownSearch(event)">
-<span class="input-group-btn">
-<button class="btn btn-default fa fa-search" onclick="event.stopPropagation(); grid.showFilter()"
-  data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Filter editor" %}"/>
-</span>
+<button class="input-group-text" onclick="event.stopPropagation(); grid.showFilter()"
+  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Filter editor" %}">
+  <i class="fa fa-search"></i>
+</button>
 </div>
 </span>
 {% endif %}{% endblock %}
@@ -82,7 +82,7 @@ $(function() {
     viewrecords: true,
     sortorder: "asc",
     iconSet: "fontAwesome",
-    guiStyle: "bootstrapPrimary",
+    guiStyle: "bootstrap4",
     hidegrid: false,
     gridComplete: function() { $("#tooltip").css("display", "none");},
     resizeStop: grid.saveColumnConfiguration,
@@ -188,62 +188,62 @@ $(function() {
 
 <div class="row">
 
-<div id="save_undo" class="col-xs-5 form-inline">
+<div id="save_undo" class="col-5 form-inline">
 {% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
-<button class="btn btn-primary" disabled id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}"><i class="fa fa-spinner fa-spin hidden"></i>{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}</button>
+<button class="btn btn-primary" disabled id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}"><i class="fa fa-spinner fa-spin d-none"></i>{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}</button>
 <button class="btn btn-primary" disabled id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}</button>
 {% endif %}
 {% endblock save_undo_buttons %}
 </div>
 
-<div id="toolicons" class="col-xs-4 hor-align-right ver-align-middle pull-right">{% block extra_toolicons %}{% endblock %}{% if reportclass.hasTimeBuckets and not args.0 %}
+<div id="toolicons" class="col-auto ver-align-middle ms-auto">{% block extra_toolicons %}{% endblock %}{% if reportclass.hasTimeBuckets and not args.0 %}
 	<div class="btn-group" role="group">
-		<button data-toggle="tooltip" data-placement="top" title="{% trans "display table"|capfirst|force_escape %}" class="btn btn-xs btn-primary{% if mode == 'table' %} active{% endif %}" type="button" id="gridmode" name="mode">
+		<button data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display table"|capfirst|force_escape %}" class="btn btn-sm btn-primary{% if mode == 'table' %} active{% endif %}" type="button" id="gridmode" name="mode">
 		  <span class="fa fa-table fa-lg" style="margin: 2px 0 3px 0;"></span>
 		</button>
-		<button data-toggle="tooltip" data-placement="top" title="{% trans "display graph"|capfirst|force_escape %}" class="btn btn-xs btn-primary{% if mode == 'graph' %} active{% endif %}" type="button" id="graphmode" name="mode">
+		<button data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display graph"|capfirst|force_escape %}" class="btn btn-sm btn-primary{% if mode == 'graph' %} active{% endif %}" type="button" id="graphmode" name="mode">
 		  <span class="fa fa-picture-o fa-lg fa-lg" style="margin: 2px 0 3px 0;"></span>
 		</button>
 	</div>
 	{% endif %}
 	{% if reportclass.filterable and not args.0 %}
-	  <div class="btn-group" data-toggle="tooltip" data-placement="top"  data-html="true"
-     data-original-title="{% trans 'Bookmark your favorite report configurations'|capfirst|force_escape %}">
-    <button class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	  <div class="btn-group" data-bs-toggle="tooltip" data-bs-placement="top"  data-bs-html="true"
+     data-bs-title="{% trans 'Bookmark your favorite report configurations'|capfirst|force_escape %}">
+    <button class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <span class="fa fa-star"></span>
     </button>
     <ul class="dropdown-menu dropdown-menu-right" id="favoritelist">
       {% if preferences.favorites %}
       {% for fav in preferences.favorites %}
-      <li><a onclick="favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
+      <li><a class="dropdown-item" onclick="favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
       {% endfor %}
       <li role="separator" class="divider"></li>
       {% endif %}
-      <li><a><button id="favoritesave" onclick="favorite.save()" type="button" class="btn btn-primary btn-xs disabled">{% trans "save"|capfirst %}</button>
+      <li><a class="dropdown-item" ><button id="favoritesave" onclick="favorite.save()" type="button" class="btn btn-primary btn-sm disabled">{% trans "save"|capfirst %}</button>
       <input id="favoritename" oninput="favorite.check()" type="text" size="15"></a>
       </li>
     </ul>
     </div>
 	{% endif %}
 	{% if reportclass.hasTimeBuckets %}
-	  <button class="btn btn-xs btn-primary" onclick="grid.showBucket()">
-	    <span data-toggle="tooltip" data-placement="top" title="{% trans 'configure time buckets'|capfirst|force_escape %}" class="fa fa-clock-o"></span>
+	  <button class="btn btn-sm btn-primary" onclick="grid.showBucket()">
+	    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'configure time buckets'|capfirst|force_escape %}" class="fa fa-clock-o"></span>
 	  </button>
   {% endif %}
   {% if reportclass.editable and haschangeperm %}
-	    <button class="btn btn-xs btn-primary" onclick="import_show('', undefined, true)" >
-        <span id="csvimport" data-toggle="tooltip" data-placement="top" title="{% trans 'Import CSV or Excel file'|force_escape %}" class="fa fa-arrow-up"></span>
+	    <button class="btn btn-sm btn-primary" onclick="import_show('', undefined, true)" >
+        <span id="csvimport" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'Import CSV or Excel file'|force_escape %}" class="fa fa-arrow-up"></span>
 	    </button>
   {% endif %}
-		  <button class="btn btn-xs btn-primary" onclick="grid.showExport(false,{{ scenario_permissions }})" >
-		    <span data-toggle="tooltip" data-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down"></span>
+		  <button class="btn btn-sm btn-primary" onclick="grid.showExport(false,{{ scenario_permissions }})" >
+		    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down"></span>
 		  </button>
-      <button class="btn btn-xs btn-primary" onclick="grid.showCustomize(true);">
-        <span data-toggle="tooltip" data-placement="top" title="{% trans 'customize'|capfirst|force_escape %}" class="fa fa-wrench"></span>
+      <button class="btn btn-sm btn-primary" onclick="grid.showCustomize(true);">
+        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'customize'|capfirst|force_escape %}" class="fa fa-wrench"></span>
       </button>
   {% if reportclass.help_url %}
-  <button class="btn btn-xs btn-primary" onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{reportclass.help_url}}');" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Help'|capfirst|force_escape %}">
+  <button class="btn btn-sm btn-primary" onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{reportclass.help_url}}');" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Help'|capfirst|force_escape %}">
   <span class="fa fa-question"></span>
   </button>{% endif %}
 	</div>

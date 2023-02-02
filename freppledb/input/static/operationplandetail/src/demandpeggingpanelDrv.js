@@ -32,10 +32,10 @@ function showoperationpeggingpanelDrv($window, gettextCatalog, $filter) {
   return directive;
 
   function linkfunc(scope, elem, attrs, transclude) {
-    var template = '<div class="panel-heading"><h4 class="panel-title" style="text-transform: capitalize">' +
+    var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
       gettextCatalog.getString("demand") +
-      '</h4></div>' +
-      '<div class="panel-body table-responsive" style="max-height:15em; overflow:auto; padding:0">' +
+      '</h5></div>' +
+      '<div class="card-body table-responsive" style="max-height:15em; overflow:auto; padding:0">' +
       '<table class="table table-condensed table-hover"><thead><tr><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("name") + '</b>' +
       '</td><td>' +
@@ -61,7 +61,7 @@ function showoperationpeggingpanelDrv($window, gettextCatalog, $filter) {
               + "<a href=\"" + url_prefix
               + (thedemand.demand.forecast ? "/detail/forecast/forecast/" : "/detail/input/demand/")
               + admin_escape(thedemand.demand.name)
-              + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
+              + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>"
               + '</td><td>';
             if (thedemand.demand.item.description)
               rows += '<span onmouseenter="$(this).tooltip(\'show\')" title="'
@@ -71,7 +71,7 @@ function showoperationpeggingpanelDrv($window, gettextCatalog, $filter) {
             else
               rows += $.jgrid.htmlEncode(thedemand.demand.item.name);
             rows += "<a href=\"" + url_prefix + "/detail/input/item/" + admin_escape(thedemand.demand.item.name)
-              + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
+              + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>"
               + '</td><td>' + $filter('formatdate')(thedemand.demand.due)
               + '</td><td>' + grid.formatNumber(thedemand.quantity) + '</td></tr>';
           });

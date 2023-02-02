@@ -19,7 +19,7 @@
      {% for field in inline_admin_formset.fields %}
        {% if not field.widget.is_hidden %}
          <th{% if forloop.first %} colspan="2"{% endif %}{% if field.required %} class="required"{% endif %}>{{ field.label|capfirst }}
-         {% if field.help_text %}<i data-toggle="tooltip" data-placement="top" class="fa fa-question-circle help help-tooltip" style="margin-left: 4px;" alt="({{ field.help_text|striptags }})" title="{{ field.help_text|striptags }}"></i>{% endif %}
+         {% if field.help_text %}<i data-bs-toggle="tooltip" data-bs-placement="top" class="fa fa-question-circle help help-tooltip" style="margin-left: 4px;" alt="({{ field.help_text|striptags }})" title="{{ field.help_text|striptags }}"></i>{% endif %}
          </th>
        {% endif %}
      {% endfor %}

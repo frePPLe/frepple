@@ -6,15 +6,6 @@
 $(function() {
   breadcrumbs_reflow();
   $(window).resize(breadcrumbs_reflow);
-
-  $(".selectdb li a").click(selectDatabase);
-
-  $("#nav-menu li.dropdown").mouseenter(
-      function() { if ( !$(this).hasClass("open") && window.innerWidth >= 768) $('.dropdown-toggle', this).dropdown('toggle');}
-  );
-  $("#nav-menu li.dropdown").mouseleave(
-      function() { if ($(this).hasClass("open") && window.innerWidth >= 768) $('.dropdown-toggle', this).dropdown('toggle');}
-  );
 });
 
 </script>
@@ -22,33 +13,29 @@ $(function() {
 
 {% block nav-global %}{% if not 'navbar' in request.session or request.session.navbar %}
 {% getMenu as menu %}
-<nav id="nav-menu-header" class="navbar navbar-static-top navbar-default">
+<nav id="nav-menu-header" class="navbar navbar-expand-lg navbar-light bg-light">
 	<div class="container-fluid">
-	  <div class="navbar-header">
-	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-menu" aria-expanded="false">
-	        <span class="sr-only">Toggle navigation</span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	      </button>
 
           {% if not request.session.navbar %}
-	      <a href="{{request.prefix}}/" class="navbar-brand" style="padding-top:5px; padding-bottom: 5px">
+	      <a href="{{request.prefix}}/" class="navbar-brand">
           {% block branding %}{{ block.super }}{% endblock %}
           </a>
           {% endif %}
-	  </div>
+
+		  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav-menu" aria-controls="nav-menu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
 
 		<div id="nav-menu" class="collapse navbar-collapse">
-			<ul class="nav navbar-nav">
+			<ul class="navbar-nav">
 			  {% for group in menu %}{% if group.2 %}
-			  <li class="dropdown">
-			    <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ group.0 }}</a>
-			    <ul class="dropdown-menu">
+			  <li class="nav-item dropdown">
+			    <a class="nav-link" id="nav-{{ group.0 }}" data-bs-toggle="dropdown" role="button" aria-expanded="false">{{ group.0 }}</a>
+			    <ul class="dropdown-menu" aria-labelledby="nav-{{ group.0 }}">
 			      {% for item in group.1 %}
 			        {% if item.4 %}
-			        {% if item.1.separator %}<li role="separator" class="divider"></li>
-			        {% else %}<li><a {% if item.1.identifier %}id="{{item.1.identifier}}" {% endif %}{% if item.1.window %}target="_blank" rel="noopener" {% endif %}{% if item.1.javascript %}href="javascript:void(0);" onclick="{{ item.1.javascript }}; return false;"{% else %}href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}"{% endif %} data-populated="{{ item.3 }}">{{ item.0 }}</a></li>
+			        {% if item.1.separator %}<li role="separator" class="dropdown-divider"></li>
+			        {% else %}<li><a class="dropdown-item" {% if item.1.identifier %}id="{{item.1.identifier}}" {% endif %}{% if item.1.window %}target="_blank" rel="noopener" {% endif %}{% if item.1.javascript %}href="javascript:void(0);" onclick="{{ item.1.javascript }}; return false;"{% else %}href="{% if item.1.prefix %}{{request.prefix}}{% endif %}{{ item.1.url }}"{% endif %} data-populated="{{ item.3 }}">{{ item.0 }}</a></li>
 			        {% endif %}
 			        {% endif %}
 			      {% endfor %}
@@ -57,68 +44,78 @@ $(function() {
 			  {% endfor %}
 			</ul>
 
-			<form class="navbar-form navbar-left" role="search">
+			<form class="navbar-form me-start" role="search">
 				<div class="form-group">
 				  <input id="search" class="form-control typeahead" type="text" placeholder="&#xf002; {% trans 'Search' %}">
 				</div>
 			</form>
 
       {% if not request.session.navbar and user.is_authenticated and user.is_staff %}
-      <ul class="nav navbar-nav navbar-right">
-        <div class="navbar-text" data-toggle="tooltip" data-html="true" data-placement="auto bottom"
-          style="position:relative" data-original-title="{% trans "No unread messages" %}">
+	  <div id="nav-menu" class="collapse navbar-collapse">
+      <ul class="nav navbar-nav ms-auto">
+        <li class="navbar-item" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="auto bottom"
+          style="position:relative" data-bs-title="{% trans "No unread messages" %}">
           <a href="{{request.prefix}}/inbox/">
             <span id="messages" style="font-size: 1.5em" class="fa fa-envelope-open-o" aria-hidden="true"></span>
             <span style="font-size: 60%; position: absolute; top: -5px; left:7px" class="badge progress-bar-danger" aria-hidden="true"></span>
+			&nbsp;&nbsp;
           </a>
-        </div>
-		    <li class="dropdown">
-		    <a href="#" class="dropdown-toggle" style="padding-right: 20px" data-toggle="dropdown"
+        </li>
+		<li class="navbar-item dropdown">
+		    <a href="#" class="dropdown-toggle pe-3" data-bs-toggle="dropdown"
           role="button" aria-haspopup="true" aria-expanded="false">
           {% if user.avatar %}<img src="{{ user.avatar.url }}" class="avatar-sm">
           {% else %}<i style="font-size: 1.5em" class="fa fa-user-circle-o"></i>
           {% endif %}
           {% firstof user.first_name user.username %}
         </a>
-				<ul class="dropdown-menu">
-				  <li><a href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</a></li>
-				  <li><a href="/data/logout/?next=/">{% trans 'Log out'|capfirst %}</a></li>
+				<ul class="dropdown-menu dropdown-menu-end">
+				  <li><a class="dropdown-item" href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</a></li>
+				  <li><a class="dropdown-item" href="/data/logout/?next=/">{% trans 'Log out'|capfirst %}</a></li>
 				</ul>
 			  </li>
       </ul>
+	</div>
           {% endif %}
 		</div>
+  </div>
+</nav>
 
-	  <div class="row breadcrumbrow">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	<div class="container-fluid">
+	  <div class="breadcrumbrow d-inline-block" aria-label="breadcrumb">
 		  <div class="col-sm-10">
 		     <ol class="breadcrumb" id="breadcrumbs">
 		       <li><a id="cockpitcrumb" href="{{request.prefix}}/">{% trans 'home'|capfirst %}</a></li>
 		       {% crumbs %}
 		     </ol>
 		  </div>
+		</div>
 
-			<div class="col-sm-2 pull-right">
-			  <div class="selectdb ">
+			<ul class="nav navbar-nav ms-auto" class="selectdb">
 				{% if user.scenarios|length > 1 %}
-					<button class="form-control btn btn-default dropdown-toggle" type="button" id="database"
-					   data-delay="2000" data-placement="left"
-					   data-original-title="{% trans "Select a what-if scenario.<br>Click <a class='underline' href='/execute/#scenario_copy'>here</a> to manage scenarios." %}"
-                       data-toggle="dropdown" aria-haspopup="true" data-html="true" aria-expanded="true" name="{{ request.scenario.name }}">
-					{{ request.scenario.description }}&nbsp;<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu" aria-labelledby="database">
+				   <li class="navbar-item dropdown">
+					<a href="#" class="dropdown-toggle pe-3" data-bs-toggle="dropdown"
+          			   role="button" aria-haspopup="true" aria-expanded="false" id="database">
+					<span data-bs-toggle="tooltip" data-bs-delay="2000" data-bs-placement="left"
+					  data-bs-title="{% trans "Select a what-if scenario.<br>Click <a class='text-decoration-underline' href='/execute/#scenario_copy'>here</a> to manage scenarios." %}"
+					  data-bs-html="true">
+						{{ request.scenario.name }}
+					</span>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-end">
 					{% for sc in user.scenarios|sortList %}<li>
-					  <a data-database="{{ sc.name }}">{{ sc.description }}
+					  <a class="dropdown-item" data-database="{{ sc.name }}" onclick="selectDatabase(event.target)">{{ sc.description }}
 					  {% if sc.help_url %}
 					  <span onclick="window.open('{{sc.help_url|safe}}'); event.stopPropagation()" style="float:right" class="fa fa-question-circle"></span>
 					  {% endif %}</a>
 					  </li>{% endfor %}
 					</ul>
+				    </li>
 				{% endif %}
-				</div>
-			</div>
+				</ul>
 	  </div>
-  </div> <!--  end of container -->
+
 </nav>
 
 {% endif %}{% endblock %}

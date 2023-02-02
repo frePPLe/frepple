@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block extrastyle %}
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/forms.css" />
+<link rel="stylesheet" href="{{STATIC_URL}}admin/css/forms.css" />
 <style>
 
 li, dt, dd {
@@ -75,7 +75,7 @@ fieldset th {
 </style>
 {{block.super}}{% endblock %}
 
-{% block content_title %}{{ block.super }}{% if object_id %}{% tabs opts %}{% endif %}{% endblock %}
+{% block tabs %}{% if object_id %}{% tabs opts %}{% endif %}{% endblock %}
 
 {% block tools %}
 {% include "common/snippet_follow.html" %}

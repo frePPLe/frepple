@@ -12,12 +12,12 @@
   border-bottom-color: #bbb;
 }
 </style>
-<div class="panel-heading">
-  <h4 class="panel-title">
+<div class="card-header">
+  <h5 class="card-title">
   <span data-ng-if="operationplan.type" style="text-transform: capitalize">{{ opptype[operationplan.type] }}</span>
   <span data-ng-if="!operationplan.id" style="text-transform: capitalize">{{ 'no selection'|translate }}</span>
   <span data-ng-if="operationplan.id == -1" style="text-transform: capitalize">{{ 'selected' | translate }}&nbsp;{{ operationplan.count }}</span>
-  </h4>
+  </h5>
 </div>
 <table style="table-layout:fixed" class="table table-condensed table-hover" id="opplan-attributes-drvtable">
   <thead data-ng-if="operationplan.operation.name || operationplan.name">
@@ -181,11 +181,11 @@
       <td>
         <span data-ng-if="actions.hasOwnProperty('erp_incr_export') && operationplan.status != 'proposed'" style="text-transform: capitalize">{{operationplan.status|translate}}</span>
         <div class="btn-group" role="group">
-          <button id="proposedBtn" data-ng-if="actions.hasOwnProperty('proposed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize" disabled="disabled" data-toggle="tooltip" title="{{'proposed'|translate}}"> <i class="fa fa-unlock"></i></button>
-          <button id="approvedBtn" data-ng-if="actions.hasOwnProperty('approved')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize" disabled="disabled" data-toggle="tooltip" title="{{'approved'|translate}}"><i class="fa fa-unlock-alt"></i></button>
-          <button id="confirmedBtn" data-ng-if="actions.hasOwnProperty('confirmed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'confirmed'" style="text-transform: capitalize" disabled="disabled" data-toggle="tooltip" title="{{'confirmed'|translate}}"><i class="fa fa-lock"></i></button>
-          <button id="completedBtn" data-ng-if="actions.hasOwnProperty('completed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'completed'" style="text-transform: capitalize" disabled="disabled" data-toggle="tooltip" title="{{'completed'|translate}}"><i class="fa fa-check"></i></button>
-          <button id="closedBtn" data-ng-if="actions.hasOwnProperty('closed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'closed'" style="text-transform: capitalize" disabled="disabled" data-toggle="tooltip" title="{{'closed'|translate}}"><i class="fa fa-times"></i></button>
+          <button id="proposedBtn" data-ng-if="actions.hasOwnProperty('proposed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'proposed'|translate}}"> <i class="fa fa-unlock"></i></button>
+          <button id="approvedBtn" data-ng-if="actions.hasOwnProperty('approved')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'approved'|translate}}"><i class="fa fa-unlock-alt"></i></button>
+          <button id="confirmedBtn" data-ng-if="actions.hasOwnProperty('confirmed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'confirmed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'confirmed'|translate}}"><i class="fa fa-lock"></i></button>
+          <button id="completedBtn" data-ng-if="actions.hasOwnProperty('completed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'completed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'completed'|translate}}"><i class="fa fa-check"></i></button>
+          <button id="closedBtn" data-ng-if="actions.hasOwnProperty('closed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'closed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'closed'|translate}}"><i class="fa fa-times"></i></button>
           <button id="erp_incr_exportBtn" data-ng-if="actions.hasOwnProperty('erp_incr_export') && operationplan.status == 'proposed'" type="button" class="btn btn-primary" ng-click="actions['erp_incr_export']()" style="text-transform: capitalize">{{'export'|translate}}</button>
         </div>
       </td>

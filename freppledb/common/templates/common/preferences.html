@@ -14,27 +14,10 @@
   }
 </style>
 
-<script>
-  $(function() {
-    $("#id_languageul li a").click(function() {
-      $("#id_language span").text($(this).text());
-      $("#language").val($(this).prop('name'));
-    });
-    $("#id_themeul li a").click(function() {
-      $("#id_theme span").text($(this).text());
-      $("#theme").val($(this).prop('name'));
-    });
-    $("#id_default_scenarioul li a").click(function() {
-      $("#id_default_scenario span").text($(this).text());
-      $("#default_scenario").val($(this).prop('name'));
-    });
-  });
-</script>
-
 {% endblock %} {% block content_title %}
   <form action="." method="post" class="form" enctype="multipart/form-data">
-<div class="row">
-  <div class="col-xs-12">
+<div class="row mt-3">
+  <div class="col">
     {% if title %}
     <h1>{{ title }}&nbsp;&nbsp;
     <input type="submit" value="{% trans "Save" %}" class="btn btn-primary">
@@ -55,37 +38,31 @@
     {% endif %}
 
     <div class="row" style="padding-bottom: 20px;">
-      <div class="col-xs-3" style="max-width:150px; text-align: right">
+      <div class="col-3" style="max-width:150px; text-align: right">
 
       </div>
     </div>
 
     {% if request.user.languageList|length > 2 %}
     <div class="row" style="padding-bottom: 20px;">
-      <div class="col-xs-3" style="max-width:150px; text-align: right">
+      <div class="col-3" style="max-width:150px; text-align: right">
         <label class="control-label" for="id_language">{% trans 'language'|capfirst%}:</label>
       </div>
-      <div class="col-xs-9" style="max-width:260px">
-        <div class="dropdown dropdown-submit-input">
-          <button class="btn btn-default dropdown-toggle form-control" id="id_language" name="language" value="" type="button" data-toggle="dropdown">
-            <span>{{ LANGUAGE }}</span>&nbsp;&nbsp;
-            <i class="caret"></i>
-          </button>
-          <ul class="dropdown-menu col-xs-12" aria-labelledby="id_language" id="id_languageul">
+      <div class="col-9" style="max-width:260px">
+        <select name="language" class="form-select">
             {% for i,j in request.user.languageList %}
-            <li><a name="{{ i }}">{{ j }}</a></li>
+            <option value="{{ i }}"{% if j == LANGUAGE %} selected{% endif %}>{{ j }}</option>
             {% endfor %}
-          </ul>
-        </div>
+        </select>
       </div>
     </div>
     {% endif %}
 
     <div class="row" style="padding-bottom: 20px;">
-      <div class="col-xs-3" style="max-width:150px; text-align: right">
+      <div class="col-3" style="max-width:150px; text-align: right">
         <label class="control-label" for="id_pagesize">{% trans 'page size'|capfirst%}:</label>
       </div>
-      <div class="col-xs-9" style="max-width:260px">
+      <div class="col-9" style="max-width:260px">
         <input class="form-control" id="id_pagesize" min="-7" max="10009999" name="pagesize" type="number" value="{{ request.user.pagesize }}">
         <span class="text-muted">{% trans "Number of records per page" %}</span>
       </div>
@@ -93,69 +70,60 @@
 
     {% if THEMES|length > 1 %}
     <div class="row" style="padding-bottom: 20px;">
-      <div class="col-xs-3" style="max-width:150px; text-align: right">
+      <div class="col-3" style="max-width:150px; text-align: right">
         <label class="control-label" for="id_theme">{% trans 'theme'|capfirst%}:</label>
       </div>
-      <div class="col-xs-9" style="max-width:260px">
-        <div class="dropdown dropdown-submit-input">
-          <button class="btn btn-default dropdown-toggle form-control" id="id_theme" name="theme" value="" type="button" data-toggle="dropdown">
-            <span>{% filter capfirst %}{{ request.user.theme }}{%endfilter%}</span>&nbsp;&nbsp;
-            <i class="caret"></i>
-          </button>
-          <ul class="dropdown-menu col-xs-12" aria-labelledby="id_theme" id="id_themeul">
-            {% for j in THEMES %}
-            <li><a name="{{j}}">{% filter capfirst %}{{j}}{%endfilter%}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
+      <div class="col-9" style="max-width:260px">
+        <select name="theme" class="form-select">
+          {% for j in THEMES %}
+          <option value="{{j}}"{% if j == request.user.theme %} selected{% endif%}>{% filter capfirst %}{{j}}{%endfilter%}</option>
+          {% endfor %}
+        </select>
       </div>
     </div>
     {% endif %}
 
     {% if SCENARIOS|length > 1 %}
     <div class="row" style="padding-bottom: 20px;">
-      <div class="col-xs-3" style="max-width:150px; text-align: right">
+      <div class="col-3" style="max-width:150px; text-align: right">
         <label class="control-label" for="id_default_scenario">{% trans 'default scenario'|capfirst%}:</label>
       </div>
-      <div class="col-xs-9" style="max-width:260px">
-        <div class="dropdown dropdown-submit-input">
-          <button class="btn btn-default dropdown-toggle form-control" id="id_default_scenario" name="default_scenario" value="" type="button" data-toggle="dropdown">
-            <span>{% filter capfirst %}{{ request.user.default_scenario }}{%endfilter%}</span>&nbsp;&nbsp;
-            <i class="caret"></i>
-          </button>
-          <ul class="dropdown-menu col-xs-12" aria-labelledby="id_default_scenario" id="id_default_scenarioul">
-            {% for j in SCENARIOS %}
-            <li><a name="{{j.name}}">{% filter capfirst %}{%if j.description %}{{j.description}}{% else %}{{j.name}}{% endif %}{%endfilter%}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
+      <div class="col-9" style="max-width:260px">
+        <select name="default_scenario" class="form-select">
+          {% for j in SCENARIOS %}
+          <option value="{{j.name}}"{% if j.name == request.user.default_scenario %} selected{% endif%}>{% filter capfirst %}{%if j.description %}{{j.description}}{% else %}{{j.name}}{% endif %}{%endfilter%}</option>
+          {% endfor %}
+        </select>
       </div>
     </div>
     {% endif %}
 
     <div class="row" style="padding-bottom: 20px;">
-      <div class="col-xs-3" style="max-width:150px; text-align: right">
+      <div class="col-3" style="max-width:150px; text-align: right">
         <label class="control-label" for="id_avatar">{% trans 'avatar'|capfirst%}:</label>
       </div>
-      <div class="col-xs-9" style="max-width:260px">
-        {% if request.user.avatar %}<img style="border-radius: 50%; width:100px; height:100px" src="{{request.user.avatar.url}}">
+      <div class="col-9" style="max-width:260px">
+        <div class="text-center">
+        {% if request.user.avatar %}
+        <img style="margin-bottom: 1rem; border-radius: 50%; width:100px; height:100px" src="{{request.user.avatar.url}}">
         {% else %}<i style="font-size: 8em" class="fa fa-user-circle-o"></i>
         {% endif %}
-        <input data-toggle="tooltip" data-html="true" type="file" name="avatar" accept="image/*" id="id_avatar"
-          data-original-title="{% trans "Upload a square picture of yourself.<br>Accepted formats are jpeg, png and gif.<br>Max file size is 100kB." %}">
+        </div>
+        <input data-bs-toggle="tooltip" data-bs-html="true" class="form-control" type="file" name="avatar" accept="image/*" id="id_avatar"
+          data-bs-title="{% trans "Upload a square picture of yourself.<br>Accepted formats are jpeg, png and gif.<br>Max file size is 100kB." %}">
       </div>
     </div>
 
     <div class="row" style="padding-bottom: 20px;">
-      <div class="col-xs-3" style="max-width:150px; text-align: right">
+      <div class="col-3" style="max-width:150px; text-align: right">
         <label class="control-label" for="id_cur_password">{% trans 'Change password'|capfirst%}:</label>
       </div>
-      <div class="col-xs-9" style="max-width:260px">
+      <div class="col-9" style="max-width:260px">
         <input class="form-control" id="id_cur_password" name="cur_password" type="password" autocomplete="off" placeholder=" {% trans "Old password"|escape %} " style="margin-bottom: 10px">
         <input class="form-control" id="id_new_password1" name="new_password1" type="password" autocomplete="off" placeholder=" {% trans "New password"|escape %} " style="margin-bottom: 10px">
         <input class="form-control" id="id_new_password2" name="new_password2" type="password" autocomplete="off" placeholder=" {% trans "New password confirmation"|escape %} " style="margin-bottom: 10px">
       </div>
-      <div class="col-xs-12">
+      <div class="col-3 col">
         {% if form.new_password1.help_text %}
         <div>
           {% autoescape off %}{{ form.new_password1.help_text }}{% endautoescape %}

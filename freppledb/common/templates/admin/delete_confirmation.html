@@ -2,11 +2,24 @@
 {% load i18n %}
 
 {% block extrastyle %}
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}admin/css/base.css" />
-{{block.super}}{% endblock %}
+{{block.super}}
+<style type="text/css">
+#objectlist li {
+    list-style-type: none;
+}
+#objectlist li a {
+    color: var(--bs-primary);
+}
+</style>
+{% endblock %}
 
-{% block tools %}{% include "common/snippet_follow.html" %}{% tabs model %}{% endblock %}
+{% block tools %}{% include "common/snippet_follow.html" %}{% endblock %}
+
+{% block tabs %}{% tabs model %}{% endblock %}
+
 {% block content %}
+<div class="row">
+<div class="col" id="objectlist">
 {% if perms_lacking %}
     <p style="padding-top:7px">{% blocktrans with escaped_object=object %}Deleting the {{ object_name }} '{{ escaped_object }}' would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:{% endblocktrans %}</p>
     <ul>
@@ -31,9 +44,11 @@
     <input type="hidden" name="post" value="yes" />
     {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
     {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}" />{% endif %}
-    <input type="submit" class="btn btn-danger" value="{% trans "Yes, I'm sure" %}" />
-    <a href="#" onclick="window.history.back(); return false;" class="btn btn-info">{% trans "No, take me back" %}</a>
+    <input type="submit" class="btn btn-primary" value="{% trans "Yes, I'm sure" %}" />
+    <a href="#" onclick="window.history.back(); return false;" class="btn btn-primary">{% trans "No, take me back" %}</a>
     </div>
     </form>
 {% endif %}
+</div>
+</div>
 {% endblock %}

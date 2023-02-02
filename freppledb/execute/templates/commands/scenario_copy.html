@@ -15,19 +15,19 @@
     <th style="padding:5px 10px 5px 10px; text-align: center">{% trans 'scenario'|capfirst %}</th>
     <th style="padding:5px 10px 5px 10px; text-align: center">{% trans 'action'|capfirst %}</th>
     <th style="padding:5px 10px 5px 10px; text-align: center">
-      <span data-toggle="tooltip" data-placement="top" data-html="true"
-        data-original-title="{% trans "<b>In use</b>: Contains data<br><b>Free</b>: Available to copy data into<br><b>Busy</b>: Data copy in progress" %}">
+      <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+        data-bs-title="{% trans "<b>In use</b>: Contains data<br><b>Free</b>: Available to copy data into<br><b>Busy</b>: Data copy in progress" %}">
       {% trans 'status'|capfirst %}
       <span class="fa fa-question-circle"></span>
       </span>
     </th>
     <th style="padding:5px 10px 5px 10px; text-align: center">
-      <span data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Label shown in the scenario dropdown list" %}">
+      <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Label shown in the scenario dropdown list" %}">
       {% trans 'label'|capfirst %}
       <span class="fa fa-question-circle"></span>
       </span></th>
     <th style="padding:5px 10px 5px 10px; text-align: center">
-      <span data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Date of the last state change" %}">
+      <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Date of the last state change" %}">
       {% trans 'last modified'|capfirst %}
       <span class="fa fa-question-circle"></span>
       </span>
@@ -42,7 +42,7 @@
     <td style="padding:5px 10px 5px 10px">
        {% if j.name != DEFAULT_DB_ALIAS and j.name in free_scenarios and perms.common.copy_scenario %}
        <div class="btn-group btn-block">
-       <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+       <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
          {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
        </button>
        <ul class="dropdown-menu" role="menu">
@@ -51,10 +51,10 @@
          </a></li>
          {% if dumps %}
          <li class="menu-item dropdown dropdown-submenu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans "Restore from backup" %}</a>
+            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">{% trans "Restore from backup" %}</a>
             <ul class="dropdown-menu">
                 {% for dump in dumps %}
-                <li><a class="scenariocopy" href="#" dumpfile="{{ dump }}" data-source="{{ current_database }}" data-target="{{ j.name }}">{{ dump }}</a></li>
+                <li><a class="dropdown-item scenariocopy" href="#" dumpfile="{{ dump }}" data-source="{{ current_database }}" data-target="{{ j.name }}">{{ dump }}</a></li>
                 {% endfor%}
             </ul>
         </li>
@@ -64,17 +64,17 @@
        {% elif j.name != DEFAULT_DB_ALIAS and j.status == 'In use'%}
        {% if j.name in release_perm or j.name in promote_perm  %}
        <div class="btn-group btn-block">
-       <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+       <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
          {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
        </button>
        <ul class="dropdown-menu" role="menu">
          {% if j.name in release_perm %}
-         <li><a class="scenariorelease" href="#" data-target="{{ j.name }}">
+         <li><a class="dropdown-item scenariorelease" href="#" data-target="{{ j.name }}">
          {% trans "Release: You will lose ALL data in this scenario!" %}
          </a></li>
          {% endif %}
          {% if j.name in promote_perm and current_database == j.name %}
-         <li><a class="scenariopromote" href="#" data-source="{{ j.name }}" data-target="{{ DEFAULT_DB_ALIAS }}" >
+         <li><a class="dropdown-item scenariopromote" href="#" data-source="{{ j.name }}" data-target="{{ DEFAULT_DB_ALIAS }}" >
          {% trans "Promote: All data will be copied to Production" %}
          </a></li>
          {% endif %}

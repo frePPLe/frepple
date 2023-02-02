@@ -10,19 +10,9 @@ The changes are:
 
 {% block extrastyle %}{{block.super}}
 <style>
-  #headerbar {
-    background-color: transparent;
-  }
-  #login-form, #content {
-    margin-top: 0px;
-  }
   body.login {
     background: white;
   }
-  .login #container {
-    border: none;
-  }
-
 </style>
 {% endblock %}
 
@@ -32,31 +22,12 @@ The changes are:
 <script src="{{STATIC_URL}}js/jquery-3.6.0.min.js"></script>
 <script>
 $(function() {
-  if (!!window.MSInputMethodContext && !!document.documentMode) {
-    // You are using internet explorer.
-    // See http://stackoverflow.com/questions/21825157/internet-explorer-11-detection
-  	$("#row1").html(
-  	  '<br>Internet Explorer is no longer supported.<br>'
-      + 'Microsoft doesn\'t keep this browser up to date with the modern '
-      + 'web technologies used by frePPLe.<br><br>'
-      + 'Please Google <strong>Chrome<\/strong>, Mozilla <strong>Firefox<\/strong>, '
-      + 'Microsoft <strong>Edge<\/strong>, Apple <strong>Safari<\/strong> '
-      + 'or another modern browser.'
-      );
-  	$('#row2').hide();
-  }
-  else
-    $('#id_username').focus();
-
   $("#login-form").on('submit', function() {
     $("#id_password").val($.trim($("#id_password").val()));
   });
-
 });
 </script>
-
 {% endblock %}
-
 
 
 {% block bodyclass %}login{% endblock %}
@@ -68,37 +39,37 @@ $(function() {
 {% block breadcrumbs %}{% endblock %}
 
 {% block content %}
-<div class="row" style="padding-bottom: 30px; padding-top: 50px;">
-	<div class="col-xs-4 center-block" style="min-width: 200px; max-width:300px; float:none;">
+<div class="row" style="padding-bottom:2rem; padding-top:3rem">
+	<div class="col-4 mx-auto" style="min-width:13rem; max-width:20rem; float:none;">
 	 {% block branding %}{{ block.super }}{% endblock %}
 	</div>
 </div>
 
 <div class="row" id="content-main" >
-  <div id="row1" class="col-xs-4 center-block" style="min-width: 200px; max-width:300px; float:none; text-align:left;">
+  <div id="row1" class="col-4 mx-auto" style="min-width:13rem; max-width:20rem">
 		<form role="form" action="{{request.prefix}}{{app_path}}" method="post" id="login-form" >{% csrf_token %}
-		  <div class="form-group">
+		  <div class="mb-3">
 		    {{ form.username.errors }}
-		    <label for="id_username" class="required">{{ form.username.label }}:</label>
-		    <input id="id_username" class="form-control" maxlength="254" name="username" type="text">
+		    <label for="id_username" class="required mb-1">{{ form.username.label }}:</label>
+		    <input id="id_username" autofocus="autofocus" class="form-control" maxlength="254" name="username" type="text">
 		  </div>
-		  <div class="form-group">
+		  <div class="mb-3">
 		    {{ form.password.errors }}
-		    <label for="id_password" class="required">{% trans 'Password'|capfirst %}:</label>
+		    <label for="id_password" class="required mb-1">{% trans 'Password'|capfirst %}:</label>
 		    <input id="id_password" class="form-control" name="password" type="password">
 		    <input type="hidden" name="next" value="{{ request.prefix }}{{ next }}" />
 		  </div>
-		  <div class="form-group text-center">
+		  <div class="mb-3 text-center">
 		    <input type="submit" class="btn btn-lg btn-primary" value="{% trans 'Log in' %}"/>
 		  </div>
 	  {% setting "SESSION_COOKIE_AGE" as persistent_cookie %}
 	  {% if persistent_cookie %}
-      <div style="text-align: center; margin-bottom: 10px">
+      <div class="mb-3 text-center">
 		  <input type="checkbox" id="remember_me" name="remember_me" value="false">&nbsp;
 		  <label for="remember_me">{% trans "Remember Me" %}</label>
       </div>
       {% endif %}
-      <div style="text-align: center; margin-bottom: 10px">
+      <div class="mb-3 text-center">
         <a href="/reset_password/"><u>{% trans "Forgot your password?" %}</u></a>
       </div>
 		</form>
@@ -107,7 +78,7 @@ $(function() {
 
 {% if form.errors and not form.non_field_errors %}
 <div class="row">
-<div class="col-xs-4 center-block alert alert-danger" role="alert" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
+<div class="col-4 mx-auto alert alert-danger" role="alert" style="min-width:13rem; max-width:20rem">
 {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}
 {% trans "Please correct the errors below." %}{% endif %}
 </div></div>
@@ -115,24 +86,24 @@ $(function() {
 
 {% if form.non_field_errors %}
 {% for error in form.non_field_errors %}
-<div class="row">
-<div class="col-xs-4 center-block alert alert-danger" role="alert" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
+<div class="row gy-3">
+<div class="col-4 mx-auto text-center alert alert-danger" role="alert" style="min-width:13rem; max-width:20rem">
     {{ error }}
 </div></div>
 {% endfor %}
 {% endif %}
 
-{% if messages %}<div class="row">
-<div class="col-xs-4 center-block" style="min-width: 200px; max-width:300px; float:none; text-align:center">{% for message in messages %}
-<ul class="alert {{message.tags}}"><li>{{message}}</li></ul>
-{% endfor %}</div>
+{% if messages %}<div class="row gy-3">
+{% for message in messages %}
+<div class="col-4 mx-auto text-center alert {{message.tags}}" style="min-width:13rem; max-width:20rem">{{message}}</div>
+{% endfor %}
 </div>
 {% endif %}
 
 {% checkPassword "admin" "admin" as recommend_reset %}
 {% if recommend_reset %}
-<div class="row" id="row2">
-<div class="col-xs-4 center-block alert alert-danger" role="alert" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
+<div class="row gy-3" id="row2">
+<div class="col-4 mx-auto text-center alert alert-danger" role="alert" style="min-width:13rem; max-width:20rem">
 {% blocktrans %}The user "admin" has password "admin".<br>
 We suggest changing this password.{% endblocktrans %}
 </div>

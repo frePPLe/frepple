@@ -1,44 +1,44 @@
 <div data-ng-switch="mode">
   <div class="row calendar-navbar">
-    <div class="col-xs-4 ver-align-middle alignleft">
+    <div class="col-4 ver-align-middle alignleft">
       <span data-ng-if="groupingcfg">
-      <button class="btn btn-default dropdown-toggle form-control" style="width:auto" type="button" name="grouping" data-toggle="dropdown">
+      <button class="btn btn-default dropdown-toggle form-control" style="width:auto" type="button" name="grouping" data-bs-toggle="dropdown">
         {{ grouping ? "Group by " + groupingcfg[grouping] : "No grouping" }}&nbsp;&nbsp;<i class="caret"></i>
       </button>
       <ul class="dropdown-menu" aria-labelledby="grouping">
-        <li><a data-ng-click="setGrouping(null)">No grouping</a></li>
+        <li><a class="dropdown-item" data-ng-click="setGrouping(null)">No grouping</a></li>
         <li data-ng-repeat="(name, label) in groupingcfg">
-          <a data-ng-click="setGrouping(name)">Group by {{label}}</a>
+          <a class="dropdown-item" data-ng-click="setGrouping(name)">Group by {{label}}</a>
         </li>
       </ul>
       </span>
-    </div>  
-    <div class="col-xs-1 hor-align-right ver-align-middle">
+    </div>
+    <div class="col-1 hor-align-right ver-align-middle">
       <button type="button" class="btn btn-primary btn-sm" ng-click="move(-1)">
         <i class="fa fa-chevron-left"></i>
       </button>
     </div>
-    <div class="calendar-header col-xs-2">
+    <div class="calendar-header col-2">
       {{title}}
       <span class="badge">{{ $parent.totalevents }}
         <span style="font-size: 65%" data-ng-if="$parent.totalevents > $parent.calendarevents.length">{{ $parent.$parent.calendarevents.length }} {{ "shown"|translate }}</span>
       </span>
     </div>
-    <div class="col-xs-1 alignleft ver-align-middle">
+    <div class="col-1 alignleft ver-align-middle">
       <button type="button" class="btn btn-primary btn-sm" ng-click="move(1)">
         <i class="fa fa-chevron-right"></i>
       </button>
     </div>
-    <div class="col-xs-4 ver-align-middle ">
-      <div class="pull-right">
-      <button class="btn btn-default dropdown-toggle form-control" style="width: auto" type="button" name="calmode" data-toggle="dropdown">
+    <div class="col-4 ver-align-middle ">
+      <div class="float-end">
+      <button class="btn btn-default dropdown-toggle form-control" style="width: auto" type="button" name="calmode" data-bs-toggle="dropdown">
         {{ calendarmodes[calendarmode] }}&nbsp;&nbsp;<i class="caret"></i>
       </button>
       <ul class="dropdown-menu" aria-labelledby="calmode">
-        <li><a data-ng-click="setCalendarMode('start')">{{ calendarmodes['start'] }}</a></li>
-        <li><a data-ng-click="setCalendarMode('end')">{{ calendarmodes['end'] }}</a></li>
-        <li><a data-ng-click="setCalendarMode('start_end')">{{ calendarmodes['start_end'] }}</a></li>
-        <li><a data-ng-click="setCalendarMode('duration')">{{ calendarmodes['duration'] }}</a></li>
+        <li><a class="dropdown-item" data-ng-click="setCalendarMode('start')">{{ calendarmodes['start'] }}</a></li>
+        <li><a class="dropdown-item" data-ng-click="setCalendarMode('end')">{{ calendarmodes['end'] }}</a></li>
+        <li><a class="dropdown-item" data-ng-click="setCalendarMode('start_end')">{{ calendarmodes['start_end'] }}</a></li>
+        <li><a class="dropdown-item" data-ng-click="setCalendarMode('duration')">{{ calendarmodes['duration'] }}</a></li>
       </ul>
       </div>
     </div>

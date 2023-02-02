@@ -457,12 +457,12 @@ class Command(BaseCommand):
                     force_str(_("Plan type")),
                     force_str(
                         _(
-                            '<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.">Constrained plan</span>'
+                            '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.">Constrained plan</span>'
                         )
                     ),
                     force_str(
                         _(
-                            '<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="Generate a supply plan that shows material, capacity and operation problems that prevent the demand from being planned in time.<br>The demand is always met completely and on time.">Unconstrained plan</span>'
+                            '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Generate a supply plan that shows material, capacity and operation problems that prevent the demand from being planned in time.<br>The demand is always met completely and on time.">Unconstrained plan</span>'
                         )
                     ),
                     force_str(_("constraints")),

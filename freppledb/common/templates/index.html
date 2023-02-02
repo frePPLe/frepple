@@ -6,9 +6,9 @@
 {% block extrahead %}{{block.super}}
 <script src="/static/js/d3.min.js"></script>
 <script>
-	var currency = {{currency|json}};
+    var currency = {{currency|json}};
   $(function() {
-	  dashboard.dragAndDrop();
+      dashboard.dragAndDrop();
 
     $("#horizonbucketsul li a").click(function(){
       $("#horizonbuckets1").html($(this).text() + '  <span class="caret"></span>');
@@ -29,82 +29,88 @@
 {% getDashboard as dashboard hiddenwidgets %}
 <div id="dashboard">
 {% for row in dashboard %}
-    <div class="row" data-cockpit-row="{{ row.rowname }}">
-      <div class="col-md-10">
+    <div class="row mt-3">
+      <div class="col-auto">
          <h1 style="float: left; cursor: move; text-transform: capitalize">{{ row.rowname }}</h1>
       </div>
-		  <div class="col-md-2">
-		    <h1 class="pull-right">
-	      {% if forloop.first %}
-        {% block actions %}{% endblock %}
-	      <button class="btn btn-xs btn-primary" onclick="grid.showBucket()" data-toggle="tooltip" 
-	           data-placement="top" data-original-title="{% trans 'Configure time buckets'|capfirst|force_escape %}">
-	         <span class="fa fa-clock-o"></span>
-	      </button>
-        {% endif %}
-	      <button class="btn btn-xs btn-primary" onclick="dashboard.customize('{{ row.rowname }}')" 
-	        data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'customize'|capfirst|force_escape %}">
-	        <span class="fa fa-wrench"></span>
-	      </button>
+
+      <div class="col-auto ms-auto">
+        <h1>
         {% if forloop.first %}
-        <button class="btn btn-xs btn-primary"
-          onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/cockpit.html');"
-          data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}">
-          <span class="fa fa-question"></span>
-        </button>
+          {% block actions %}{% endblock %}
+          <button class="btn btn-sm btn-primary" onclick="grid.showBucket()" data-bs-toggle="tooltip"
+               data-bs-placement="top" data-bs-title="{% trans 'Configure time buckets'|capfirst|force_escape %}">
+             <span class="fa fa-clock-o"></span>
+          </button>
         {% endif %}
-	     </h1>
+          <button class="btn btn-sm btn-primary" onclick="dashboard.customize('{{ row.rowname }}')"
+            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'customize'|capfirst|force_escape %}">
+            <span class="fa fa-wrench"></span>
+          </button>
+        {% if forloop.first %}
+          <button class="btn btn-sm btn-primary"
+            onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/cockpit.html');"
+            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}">
+            <span class="fa fa-question"></span>
+          </button>
+        {% endif %}
+        </h1>
       </div>
+    </div>
 
-	    <div class="horizontal-form"  id="{{ row.rowname }}">
-					{% for cols in row.cols %}
-					<div class="cockpitcolumn col-md-{{cols.width}} col-sm-12">
-						  {% for widget in cols.widgets %}
-						  <div class="panel panel-default" data-cockpit-widget="{{widget.name}}">
-							  <div class="panel-heading" data-toggle="tooltip" data-placement="top" title="{{widget.tooltip|escape}}">
-							        <span class='fa fa-times pull-right panel-close'></span>
-							        <span class='fa fa-minus pull-right panel-toggle'></span>
-							        {% if widget.exporturl %}<a href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"><span class='fa fa-arrow-down pull-right portlet-export'></span></a>
-						            {% endif %}
-						            {% if widget.url %}<a class="underline" href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}&nbsp;<span class="fa fa-caret-right"></span></a>
-								    {% else %}<span style="cursor: default">{{widget.title|upper}}</span>
-								    {% endif %}
-							  </div>
-							  <div class="panel-body">
-							    {% if widget.asynchronous %}
-							    <div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading">
-							    </div>
-							    {% else %}{{widget.render|safe}}{% endif %}
-						    </div>
-						  </div>
-						  {% endfor %}
-					</div>
-			    {% endfor %}
-	    </div>
-      </div>
-
-		{% for col in row.cols %}
-		  {% if forloop.first %}<script>{% endif %}
-				{% for widget in col.widgets %}
-			     {% if widget.asynchronous %}$.ajax({
-				      url: "{{request.prefix}}/widget/{{widget.name}}/{{widget.args}}",
-				      type: "GET",
-				      success: function (data) {
-				        $("#widget_{{widget.name}}").parent().html(data);
-				        {{widget.javascript|safe}}
-				        },
-				      error: function (result, stat, errorThrown) {
-				        $("#widget_{{widget.name}}").parent().html("{% trans "failed"|capfirst %}");
-				        }
-				    });
-				  {% else %}{{widget.javascript|safe}}
-				  {% endif %}
-			  {% endfor %}
-				{% if forloop.last %}</script>{% endif %}
-		  {% endfor %}
-		{% endfor %}
+    <div class="row" id="{{ row.rowname }}" data-cockpit-row="{{ row.rowname }}">
+        {% for cols in row.cols %}
+        <div class="cockpitcolumn col-md-{{cols.width}} col-sm-12">
+            {% for widget in cols.widgets %}
+            <div class="card mb-3" data-cockpit-widget="{{widget.name}}">
+                <div class="card-header" data-bs-toggle="tooltip" data-bs-placement="top" title="{{widget.tooltip|escape}}">
+                    <span class='fa fa-times float-end panel-close'></span>
+                    <span class='fa fa-minus float-end panel-toggle'></span>
+                    {% if widget.exporturl %}<a href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"><span class='fa fa-arrow-down float-end portlet-export'></span></a>
+					{% endif %}
+                    {% if widget.url %}<a class="text-decoration-underline" href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}&nbsp;<span class="fa fa-caret-right"></span></a>
+                    {% else %}<span style="cursor: default">{{widget.title|upper}}</span>
+					{% endif %}
+                </div>
+				<div class="card-body">
+					{% if widget.asynchronous %}
+					<div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading"></div>
+					{% else %}
+					{{widget.render|safe}}
+					{% endif %}
+                </div>
+			</div>
+			{% endfor %}
 		</div>
-		{% include "admin/subtemplate_timebuckets.html" %}
+        {% endfor %}
+	</div>
+
+	{% for col in row.cols %}
+		{% if forloop.first %}<script>{% endif %}
+		{% for widget in col.widgets %}
+			{% if widget.asynchronous %}$.ajax({
+					url: "{{request.prefix}}/widget/{{widget.name}}/{{widget.args}}",
+					type: "GET",
+					success: function (data) {
+					$("#widget_{{widget.name}}").parent().html(data);
+					{{widget.javascript|safe}}
+					},
+					error: function (result, stat, errorThrown) {
+					$("#widget_{{widget.name}}").parent().html("{% trans "failed"|capfirst %}");
+					}
+				});
+			{% else %}
+			{{widget.javascript|safe}}
+			{% endif %}
+		{% endfor %}
+		{% if forloop.last %}</script>{% endif %}
+	{% endfor %}
+
+{% endfor %}
+</div>
+
+{% include "admin/subtemplate_timebuckets.html" %}
+
 <script>
 var hiddenwidgets = [
 {% for key, value in hiddenwidgets.items%}{% if not forloop.first %},

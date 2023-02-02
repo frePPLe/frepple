@@ -281,14 +281,14 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     function enableDragDrop() {
       $elem.on('dragover', '.column, .card', HandlerDragOver);
       $elem.on('drop', '.column', HandlerDrop);
-      $elem.on('dragstart', '.column .panel .panel-heading, .card', HandlerDragStart);
+      $elem.on('dragstart', '.column .panel .card-header, .card', HandlerDragStart);
     }
     $scope.enableDragDrop = enableDragDrop;
 
     function disableDragDrop() {
       $elem.off('dragover', '.column, .card', HandlerDragOver);
       $elem.off('drop', '.column', HandlerDrop);
-      $elem.off('dragstart', '.column .panel .panel-heading, .card', HandlerDragStart);
+      $elem.off('dragstart', '.column .panel .card-header, .card', HandlerDragStart);
     }
     $scope.disableDragDrop = disableDragDrop;
 

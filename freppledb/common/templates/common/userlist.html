@@ -16,7 +16,7 @@ function grouplistformatter(cellvalue, options, rowdata) {
         result += '&nbsp;&nbsp;';
       result += '<span><span class="listdetailkey">' + $.jgrid.htmlEncode(cellvalue[i][1])
         + "</span><a href=\"" + url_prefix + "/detail/auth/group/" + cellvalue[i][0]
-        + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='auth/group'>"
+        + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right' role='auth/group'>"
         + "</span></a></span>&nbsp;";
     }
     return result;

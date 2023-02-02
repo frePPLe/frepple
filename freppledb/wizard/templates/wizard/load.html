@@ -6,15 +6,15 @@
 <div class="row">
   <div id="tasks" class="panel-group col-md-6 col-lg-8" role="tablist" aria-multiselectable="true">
   {% for step in wizard.steps %}
-    <div class="panel panel-default" id="wizard-{{ step.index }}">
-       <div id="wizardhead-{{ step.index }}" data-target="#wizardcontent-{{ step.index }}" class="panel-heading" role="tab"
-       {% if step.locked %}data-toggle="tooltip" data-placement="top" title="Complete the previous step to earn access!"{% else %}data-toggle="collapse"{% endif %}>
-        {% if step.icon %}<span style="font-size:1.5em" class="fa {{ step.icon }} pull-right"></span>{% endif %}
-        <h4 class="panel-title">{{ step.title }}&nbsp;&nbsp;<small><span class="fa fa-plus fa-xs"></span></small></h4>
+    <div class="card" id="wizard-{{ step.index }}">
+       <div id="wizardhead-{{ step.index }}" data-target="#wizardcontent-{{ step.index }}" class="card-header" role="tab"
+       {% if step.locked %}data-bs-toggle="tooltip" data-bs-placement="top" title="Complete the previous step to earn access!"{% else %}data-bs-toggle="collapse"{% endif %}>
+        {% if step.icon %}<span style="font-size:1.5em" class="fa {{ step.icon }} float-end"></span>{% endif %}
+        <h5 class="card-title">{{ step.title }}&nbsp;&nbsp;<small><span class="fa fa-plus fa-xs"></span></small></h5>
       </div>
       {% if step.content and not step.locked %}
-      <div id="wizardcontent-{{ step.index }}" aria-labelledby="wizardhead-{{ step.index }}" class="panel-collapse {% if step.index != currentstep %}collapse{% endif %}" role="tabpanel">
-        <div class="panel-body">{{ step.content|safe }}</div>       
+      <div id="wizardcontent-{{ step.index }}" aria-labelledby="wizardhead-{{ step.index }}" class="{% if step.index != currentstep %}collapse{% endif %}" role="tabpanel">
+        <div class="card-body">{{ step.content|safe }}</div>
       </div>
       {% endif %}
     </div>
@@ -22,19 +22,19 @@
   </div>
   {% if mode %}
    <div id="tasks" class="panel-group col-md-6 col-lg-4">
-     <div class="panel panel-default">
-     <div class="panel-heading">Your progress</div>
-     <div class="panel-body">
+     <div class="card">
+     <div class="card-header">Your progress</div>
+     <div class="card-body">
      {% if wizard.mode == "forecast" %}{% include 'wizard/progress_forecasting.svg' %}
      {% elif wizard.mode == "inventory" %}{% include 'wizard/progress_inventoryplanning.svg' %}
      {% else %}{% include 'wizard/progress_productionplanning.svg' %}{% endif %}
      </div>
-   
+
    </div>
   {% endif %}
   {% if wizard.script %}
   <script>
-  $(function() {  
+  $(function() {
   	{{ wizard.script|safe }}
   });
   </script>

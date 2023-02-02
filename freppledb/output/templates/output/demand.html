@@ -3,6 +3,11 @@
 
 {% block tools %}{% if args.0 %}
 {% include "common/snippet_follow.html" %}
+{% endif %}
+{{block.super}}
+{% endblock %}
+
+{% block tabs %}{% if args.0 %}
 {% tabs "input.item" %}
 {% endif %}
 {{block.super}}
@@ -141,7 +146,7 @@ function drawGraphs(jsondata)
 	          d3.event.stopPropagation();
 	        })
          .on("mouseenter", function(d) {
-           var txt = '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+           var txt = '<div class="card-header" style="text-align:center; font-weight:bold">'
              + timebuckets[d['bucket']]['name'] + '</div>'
              + '<table><tr><td>{{_('sales orders')|capfirst}}</td><td style="text-align:center">'
              + grid.formatNumber(d['demand'])
@@ -151,7 +156,7 @@ function drawGraphs(jsondata)
              + grid.formatNumber(d['backlog'])
              + '</td></tr></table>';
            if (d['reasons']) {
-             txt += '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+             txt += '<div class="card-header" style="text-align:center; font-weight:bold">'
                + '{{_('constraints')|capfirst}}</div><table style="white-space:nowrap">';
              for (var r of d['reasons'])
                txt += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>';

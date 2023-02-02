@@ -4,6 +4,12 @@
 {% block tools %}
 {% if args.0 %}
   {% include "common/snippet_follow.html" %}
+{% endif %}
+{{block.super}}
+{% endblock %}
+
+{% block tabs %}
+{% if args.0 %}
   {% tabs model %}
 {% endif %}
 {{block.super}}
@@ -283,7 +289,7 @@ function drawGraphs(jsondata)
 	        })
 	      .on("mouseenter", function(d) {
 	        graph.showTooltip(
-	          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+	          '<div class="card-header" style="text-align:center; font-weight:bold">'
 	          + timebuckets[d['bucket']]['name'] + '</div>'
 	          + '<table><tr><td>{{_('proposed starts')|capfirst}}</td><td style="text-align:center">'
 	          + grid.formatNumber(d['proposed_start'])

@@ -99,7 +99,7 @@ class AnalysisDemandProblems(Widget):
         alt = False
         for rec in topitems:
             result.append(
-                '<tr%s><td class="underline"><a href="%s/buffer/item/%s/">%s</a></td>'
+                '<tr%s><td class="text-decoration-underline"><a href="%s/buffer/item/%s/">%s</a></td>'
                 '<td class="aligncenter">%s%s%s</td><td class="aligncenter">%s</td>'
                 '<td class="aligncenter">%s</td></tr>'
                 % (

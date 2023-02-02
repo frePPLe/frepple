@@ -210,7 +210,7 @@ function drawGraphs(jsondata)
 	        })
 	      .on("mouseenter", function(d) {
 	        graph.showTooltip(
-	          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+	          '<div class="card-header" style="text-align:center; font-weight:bold">'
 	          + timebuckets[d['bucket']]['name'] + '</div>'
 	          + '<table><tr><td>{{_('proposed ordering')|capfirst}}</td><td style="text-align:center">'
 	          + grid.formatNumber(d['proposed_start'])

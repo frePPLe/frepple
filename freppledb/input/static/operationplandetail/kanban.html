@@ -1,22 +1,22 @@
-<div data-ng-repeat="col in kanbancolumns" data-column="{{col}}" 
+<div data-ng-repeat="col in kanbancolumns" data-column="{{col}}"
   data-ng-class="['column', colstyle, {'longcol': colsum > 12}]">
-<div class="panel panel-default">
-  <div draggable="true" class="panel-heading">
-    <div class="dropdown pull-right">
-    <a class="dropdown-toggle" style="cursor: pointer" data-toggle="dropdown"
+<div class="card">
+  <div draggable="true" class="card-header">
+    <div class="dropdown float-end">
+    <a class="dropdown-toggle" style="cursor: pointer" data-bs-toggle="dropdown"
       aria-haspopup="true" aria-expanded="true"><i class="fa fa-ellipsis-h"></i></a>
     <ul class="dropdown-menu dropdown-menu-right" style="min-width:0">
-    <li><a href="#" data-ng-click="hideColumn(col)" style="text-transform:capitalize">{{ "hide"|translate }}</a></li>
+    <li><a class="dropdown-item" href="#" data-ng-click="hideColumn(col)" style="text-transform:capitalize">{{ "hide"|translate }}</a></li>
     </ul>
     </div>
-    <h3 style="text-transform: capitalize" class="panel-title">
+    <h3 style="text-transform: capitalize" class="card-title">
       {{col}}&nbsp;&nbsp;
       <span class="badge">{{ kanbanoperationplans[col].records}}
          <span style="font-size: 65%" data-ng-if="kanbanoperationplans[col].records > kanbanoperationplans[col].rows.length">{{kanbanoperationplans[col].rows.length}} {{ "shown"|translate }}</span>
       </span>
-    </h3>    
+    </h3>
   </div>
-  <div class="panel-body column-body" data-ng-style="{'overflow-y': 'auto', 'height': getHeight(25)}">
+  <div class="card-body column-body" data-ng-style="{'overflow-y': 'auto', 'height': getHeight(25)}">
     <div data-ng-if="kanbanoperationplans[col]" class="card-kanban" data-ng-repeat="opplan in kanbanoperationplans[col].rows"  data-index="{{$index}}" data-ng-click="selectCard(opplan)">
       <ng-include src="'/input/card.html'"/>
     </div>

@@ -760,7 +760,7 @@ class Comment(models.Model):
     def attachmentlink(self):
         if self.attachment:
             return mark_safe(
-                '<a href="%s" style="text-decoration:underline">.%s&nbsp;<i class="fa fa-2x fa-paperclip"></i></a>'
+                '<a href="%s" class="text-decoration-underline">.%s&nbsp;<i class="fa fa-2x fa-paperclip"></i></a>'
                 % (self.attachment.url, self.attachment.url.split(".")[-1].lower())
             )
         else:

@@ -11,13 +11,13 @@
       </button>
     </td>
     <td style="padding:15px">
-      <div class="dropdown dropdown-submit-input">
+      <div class="dropdown">
         <p>{% trans "Load one of the available datasets." %}</p>
-        <button class="btn btn-default dropdown-toggle form-control" id="entity" type="button" data-toggle="dropdown">
+        <button class="btn btn-default dropdown-toggle form-control" id="entity" type="button" data-bs-toggle="dropdown">
           <span>-</span>&nbsp;&nbsp;<i class="caret"></i>
         </button>
-        <ul class="dropdown-menu col-xs-12" aria-labelledby="entity" id="entityul">
-          {% for i in fixtures %}<li><a>{{i}}</a></li>{% endfor %}
+        <ul class="dropdown-menu col-12" aria-labelledby="entity" id="entityul">
+          {% for i in fixtures %}<li><a class="dropdown-item">{{i}}</a></li>{% endfor %}
         </ul>
       </div>
     </td>

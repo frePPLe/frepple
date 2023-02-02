@@ -12,14 +12,13 @@ function enableSave() {
 {% endblock %}
 
 {% block tools %}
-<h1 class="pull-right">
-&nbsp;
-<button class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}"
+{% include "common/snippet_follow.html" %}
+<h1>
+<button class="btn btn-sm btn-primary ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
   onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/messages.html');">
   <span class="fa fa-question"></span>
 </button>
 </h1>
-{% include "common/snippet_follow.html" %}
 {% endblock %}
 
 {% block content %}
@@ -36,11 +35,11 @@ function enableSave() {
 
 {% for c in comments %}
       <h3>
-      <span data-toggle="tooltip" data-original-title="{{ c.user.get_full_name }}">
+      <span data-bs-toggle="tooltip" data-bs-title="{{ c.user.get_full_name }}">
         {% if c.user.avatar %}<img class="avatar-sm" src="/uploads/{{ c.user.avatar }}">{% endif %}
         {{ c.user.username }}
       </span>
-      &nbsp;&nbsp;<small data-toggle="tooltip" data-original-title="{{ c.lastmodified|date:"DATETIME_FORMAT" }}">{{ c.lastmodified | timesince }}</small>
+      &nbsp;&nbsp;<small data-bs-toggle="tooltip" data-bs-title="{{ c.lastmodified|date:"DATETIME_FORMAT" }}">{{ c.lastmodified | timesince }}</small>
       </h3>
       <div class="clearfix">
       {% if c.attachment %}

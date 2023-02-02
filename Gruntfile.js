@@ -14,39 +14,35 @@
  * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+const sass = require('node-sass');
+
 function themeconfig(themefolder, themename) {
   // Auxilary function to generate the task configuration for a single theme.
   var cfg = {
     options: {
-      paths: [
+      implementation: sass,
+      includePaths: [
         themefolder + '/static/css/' + themename, // frePPLe theme folder
-        'freppledb/common/static/css', // frePPLe folder
-        'node_modules/bootstrap/less' // bootstrap folder
-        ],
-      strictMath: true,
-      compress: true,
-      relativeUrls: true,
-      plugins: [
-        new(require('less-plugin-autoprefix'))({
-          browsers: ["last 2 versions"]
-        })
-      ]
+        'freppledb/common/static/css'//, // frePPLe folder
+      ],
+      outputStyle: 'compressed'
     },
     files: {}
   }
   cfg.files[themefolder + '/static/css/' + themename + '/bootstrap.min.css'] = [
-    'freppledb/common/static/css/frepple.less', // Generic frePPLe styles
-    themefolder + '/static/css/' + themename + '/frepple.less' // Theme specific styles
-    ]
+    'freppledb/common/static/css/frepple.scss', // Generic frePPLe styles
+    themefolder + '/static/css/' + themename + '/frepple.scss' // Theme specific styles
+  ]
   return cfg;
 }
 
 // Grunt configuration
 module.exports = function (grunt) {
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    // Less compilation
-    less: {
+    // SASS compilation
+    sass: {
       odoo: themeconfig('freppledb/common', 'odoo'),
       grass: themeconfig('freppledb/common', 'grass'),
       earth: themeconfig('freppledb/common', 'earth'),
@@ -57,10 +53,10 @@ module.exports = function (grunt) {
       orange: themeconfig('freppledb/common', 'orange'),
       openbravo: themeconfig('freppledb/common', 'openbravo'),
     },
-    // When any .less file changes we automatically run the "less"-task.
+    // When any .scss file changes we automatically run the "sass"-task.
     watch: {
-      files: ["**/*.less"],
-      tasks: ["less"]
+      files: ["**/*.scss"],
+      tasks: ["sass"]
     },
 
     // Extract translations
@@ -73,7 +69,7 @@ module.exports = function (grunt) {
           'freppledb/common/static/common/po/template.pot': [
             'freppledb/input/static/operationplandetail/*.html',
             'freppledb/input/static/operationplandetail/src/*.js'
-            ]
+          ]
         }
       },
     },
@@ -93,42 +89,42 @@ module.exports = function (grunt) {
     concat: {
       common: {
         src: [
-              'freppledb/common/static/common/src/module.js',
-              'freppledb/common/static/common/src/webfactory.js',
-              'freppledb/common/static/common/src/preferences.js'
-              ],
+          'freppledb/common/static/common/src/module.js',
+          'freppledb/common/static/common/src/webfactory.js',
+          'freppledb/common/static/common/src/preferences.js'
+        ],
         dest: 'freppledb/common/static/js/frepple-common.js'
       },
       input: {
         src: [
-              'freppledb/input/static/input/src/module.js',
-              'freppledb/input/static/input/src/buffer.js',
-              'freppledb/input/static/input/src/demand.js',
-              'freppledb/input/static/input/src/customer.js',
-              'freppledb/input/static/input/src/item.js',
-              'freppledb/input/static/input/src/location.js',
-              'freppledb/input/static/input/src/operation.js',
-              'freppledb/input/static/input/src/operationplan.js',
-              'freppledb/input/static/input/src/resource.js',
-              'freppledb/input/static/input/src/model.js',
-              ],
+          'freppledb/input/static/input/src/module.js',
+          'freppledb/input/static/input/src/buffer.js',
+          'freppledb/input/static/input/src/demand.js',
+          'freppledb/input/static/input/src/customer.js',
+          'freppledb/input/static/input/src/item.js',
+          'freppledb/input/static/input/src/location.js',
+          'freppledb/input/static/input/src/operation.js',
+          'freppledb/input/static/input/src/operationplan.js',
+          'freppledb/input/static/input/src/resource.js',
+          'freppledb/input/static/input/src/model.js',
+        ],
         dest: 'freppledb/input/static/js/frepple-input.js'
       },
       operationplandetail: {
         src: [
-              'freppledb/input/static/operationplandetail/src/calendar.js',          
-              'freppledb/input/static/operationplandetail/src/module.js',
-              'freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js',
-              'freppledb/input/static/operationplandetail/src/problemspanelDrv.js',
-              'freppledb/input/static/operationplandetail/src/resourcespanelDrv.js',
-              'freppledb/input/static/operationplandetail/src/bufferspanelDrv.js',
-              'freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js',
-              'freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js',
-              'freppledb/input/static/operationplandetail/src/supplyinformationDrv.js',
-              'freppledb/input/static/operationplandetail/src/downstreamoperationplansDrv.js',
-              'freppledb/input/static/operationplandetail/src/upstreamoperationplansDrv.js',
-              'freppledb/input/static/operationplandetail/src/kanbanDrv.js'
-              ],
+          'freppledb/input/static/operationplandetail/src/calendar.js',
+          'freppledb/input/static/operationplandetail/src/module.js',
+          'freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js',
+          'freppledb/input/static/operationplandetail/src/problemspanelDrv.js',
+          'freppledb/input/static/operationplandetail/src/resourcespanelDrv.js',
+          'freppledb/input/static/operationplandetail/src/bufferspanelDrv.js',
+          'freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js',
+          'freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js',
+          'freppledb/input/static/operationplandetail/src/supplyinformationDrv.js',
+          'freppledb/input/static/operationplandetail/src/downstreamoperationplansDrv.js',
+          'freppledb/input/static/operationplandetail/src/upstreamoperationplansDrv.js',
+          'freppledb/input/static/operationplandetail/src/kanbanDrv.js'
+        ],
         dest: 'freppledb/input/static/js/frepple-operationplandetail.js'
       }
     },
@@ -174,11 +170,11 @@ module.exports = function (grunt) {
       'freppledb/common/static/js/frepple-common.js',
       'freppledb/input/static/js/frepple-input.js',
       'freppledb/input/static/js/frepple-operationplandetail.js'
-      ]
+    ]
   });
 
   // Load tasks
-  grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-angular-gettext');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -188,6 +184,6 @@ module.exports = function (grunt) {
 
   // Register our tasks
   grunt.registerTask('minify', ['concat', 'uglify', 'clean']);
-  grunt.registerTask('default', ['less', 'concat', 'uglify', 'clean']);
+  grunt.registerTask('default', ['sass', 'concat', 'uglify', 'clean']);
 
 };

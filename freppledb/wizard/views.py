@@ -189,7 +189,7 @@ def getWizardSteps(request, mode):
            1<br>{label_data}
            </td>
            <td>
-           <p><b><a href="{prefix}/data/input/item/" class="underline" target="_blank">Load item data</a></b>
+           <p><b><a href="{prefix}/data/input/item/" class="text-decoration-underline" target="_blank">Load item data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/master-data/items.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -217,7 +217,7 @@ def getWizardSteps(request, mode):
            <tr><td>
            2<br>{label_data}
            </td>
-           <td><p><b><a href="{prefix}/data/input/location/" class="underline" target="_blank">Load location data</a></b>
+           <td><p><b><a href="{prefix}/data/input/location/" class="text-decoration-underline" target="_blank">Load location data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/master-data/locations.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -236,7 +236,7 @@ def getWizardSteps(request, mode):
            <tr><td>
            3<br>{label_data}
            </td>
-           <td><p><b><a href="{prefix}/data/input/customer/" class="underline" target="_blank">Load customer data</a></b>
+           <td><p><b><a href="{prefix}/data/input/customer/" class="text-decoration-underline" target="_blank">Load customer data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/master-data/customers.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -283,7 +283,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">1<br>{label_data}</td>
          <td>
-           <p><b><a href="{prefix}/data/input/demand/" class="underline" target"_blank">Load sales order data</a></b>
+           <p><b><a href="{prefix}/data/input/demand/" class="text-decoration-underline" target"_blank">Load sales order data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/master-data/sales-orders.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -323,7 +323,7 @@ def getWizardSteps(request, mode):
                 "locked": locked,
                 "content": """
          <p>Before moving on please read
-         <a href="{docroot}/modeling-wizard/concepts.html" class="underline" target="_blank">this page</a>.
+         <a href="{docroot}/modeling-wizard/concepts.html" class="text-decoration-underline" target="_blank">this page</a>.
          You'll learn how the supply chain network is built up with operations
          that are connecting buffers.<p>
 
@@ -354,7 +354,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">1<br>{label_data}</td>
          <td>
-           <p><b><a href="{prefix}/data/input/operation/" class="underline" target="_blank">Load operation data</a></b>
+           <p><b><a href="{prefix}/data/input/operation/" class="text-decoration-underline" target="_blank">Load operation data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/manufacturing-bom/operations.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -375,7 +375,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">2<br>{label_data}</td>
          <td>
-           <p><b><a href="{prefix}/data/input/operationmaterial/" class="underline" target="_blank">Load operation material data</a></b>
+           <p><b><a href="{prefix}/data/input/operationmaterial/" class="text-decoration-underline" target="_blank">Load operation material data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/manufacturing-bom/operation-materials.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -424,7 +424,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">1<br>{label_data}</td>
          <td>
-           <p><b><a href="{prefix}/data/input/supplier/" class="underline" target="_blank">Load supplier data</a></b>
+           <p><b><a href="{prefix}/data/input/supplier/" class="text-decoration-underline" target="_blank">Load supplier data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/purchasing/suppliers.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -442,7 +442,7 @@ def getWizardSteps(request, mode):
            <tr>
            <td style="text-align: center">2<br>{label_data}</td>
            <td>
-           <p><b><a href="{prefix}/data/input/itemsupplier/" class="underline" target="_blank">Load item supplier data</a></b>
+           <p><b><a href="{prefix}/data/input/itemsupplier/" class="text-decoration-underline" target="_blank">Load item supplier data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/purchasing/item-suppliers.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -494,7 +494,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">1<br>{label_check}</td>
          <td><p><b>Review the supply path of some sales orders</b></p>
-         <p>Go to the <a href="{prefix}/data/input/demand/" class="underline" target="_blank">sales order list</a>
+         <p>Go to the <a href="{prefix}/data/input/demand/" class="text-decoration-underline" target="_blank">sales order list</a>
          and click the triangle icon <span class="circle">A</span> to investigate some example sales orders.</p>
          <p>Select the "supply path" tab <span class="circle">B</span>, and study the graph.</p>
          <p>On the far right you find the end items, and moving towards the left we move to operations
@@ -544,7 +544,7 @@ def getWizardSteps(request, mode):
          <tbody>
 
          <tr><td style="text-align: center">1<br>{label_config}</td>
-         <td><p><b><a href="{prefix}/data/common/parameter/?name=forecast.populateForecastTable" class="underline" target="_blank">Enable or disable the use of forecast</a></b>:</p>
+         <td><p><b><a href="{prefix}/data/common/parameter/?name=forecast.populateForecastTable" class="text-decoration-underline" target="_blank">Enable or disable the use of forecast</a></b>:</p>
          <div style="padding-left: 10px" class="radio">
            <label>
            <input type="radio" name="fcstbckt" data-parameter="forecast.populateForecastTable" data-parameter-value="true"
@@ -557,7 +557,7 @@ def getWizardSteps(request, mode):
                     else ""
                 )
                 + """>
-           Automatically populate the <a href="{prefix}/data/forecast/forecast/" class="underline" target="_blank">forecast table</a>.<br>
+           Automatically populate the <a href="{prefix}/data/forecast/forecast/" class="text-decoration-underline" target="_blank">forecast table</a>.<br>
            Use this option if you want to plan forecast.
            </label>
          </div>
@@ -573,19 +573,19 @@ def getWizardSteps(request, mode):
                     else ""
                 )
                 + """>
-           Do NOT populate the <a href="{prefix}/data/forecast/forecast/" class="underline" target="_blank">forecast table</a> automatically.<br>
+           Do NOT populate the <a href="{prefix}/data/forecast/forecast/" class="text-decoration-underline" target="_blank">forecast table</a> automatically.<br>
            Use this option if you do NOT want to plan forecast.
            </label>
          </div>
          <p>You can always update your choice later with the parameter "forecast.populateForecastTable"
-         in the <a href="{prefix}/data/common/parameter/" class="underline" target="_blank">parameter table</a> (available in the "admin" menu).</p>
+         in the <a href="{prefix}/data/common/parameter/" class="text-decoration-underline" target="_blank">parameter table</a> (available in the "admin" menu).</p>
          </td>
          <td></td>
          </tr>
 
          <tr>
          <td style="text-align: center">2<br>{label_action}</td>
-         <td><p><b><a href="{prefix}/execute/" class="underline" target="_blank">Generate an unconstrained plan</a></b></p>
+         <td><p><b><a href="{prefix}/execute/" class="text-decoration-underline" target="_blank">Generate an unconstrained plan</a></b></p>
          <p>You can now compute the first plan.</p>
          <p>Open the <a href="{prefix}/execute/">execution screen</a> (available in the "admin" menu) and select
          the "generate plan" task. Make sure the "generate supply plan" option <span class="circle">A</span>
@@ -601,8 +601,8 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">3<br>{label_analysis}</td>
          <td>
-         <p><b><a href="{prefix}/data/input/manufacturingorder/" class="underline" target="_blank">Load Manufacturing order data</a></b></p>
-         <p>The <a href="{prefix}/data/input/manufacturingorder/" class="underline" target="_blank">manufacturing order</a> screen
+         <p><b><a href="{prefix}/data/input/manufacturingorder/" class="text-decoration-underline" target="_blank">Load Manufacturing order data</a></b></p>
+         <p>The <a href="{prefix}/data/input/manufacturingorder/" class="text-decoration-underline" target="_blank">manufacturing order</a> screen
          (available in the "Manufacturing" menu) gives an overview of all manufacturing orders.
          The plan generated in the previous step created a set of proposed manufacturing
          orders to deliver your sales orders.</p>
@@ -610,7 +610,7 @@ def getWizardSteps(request, mode):
          previous steps. You should review the supply path of the sales orders again.</p>
          <p>If the list isn't empty, you can review that the timing, duration and quantity
          of the proposed manufacturing orders is matching your expectations. The result will
-         match a textbook <a href="https://en.wikipedia.org/wiki/Material_requirements_planning" class="underline" target="_blank">MRP explosion</a>.</p>
+         match a textbook <a href="https://en.wikipedia.org/wiki/Material_requirements_planning" class="text-decoration-underline" target="_blank">MRP explosion</a>.</p>
          </td>
          <td>
          <a href="#" onclick="showModalImage(event, 'Manufacturing orders')"><img src="/static/wizard/img/manufacturingorder.png" style="width: 200px"></a><br>
@@ -620,7 +620,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">4<br>{label_analysis}</td>
          <td>
-         <p><b><a href="{prefix}/data/input/purchaseorder/" class="underline" target="_blank">Load purchase order data</a></b></p>
+         <p><b><a href="{prefix}/data/input/purchaseorder/" class="text-decoration-underline" target="_blank">Load purchase order data</a></b></p>
          <p>The purchase order report (available in the "purchasing" menu) gives an overview of all
          purchase orders. The plan generated in the previous step created a set of
          proposed purchase orders to meet your sales orders.</p>
@@ -628,7 +628,7 @@ def getWizardSteps(request, mode):
          previous steps. You should review the supply path of the sales orders again.</p>
          <p>If the list isn't empty, you can review that the timing, duration and quantity
          of the proposed purchase orders is matching your expectations. The result will
-         match a classic textbook <a href="https://en.wikipedia.org/wiki/Material_requirements_planning" class="underline" target="_blank">MRP explosion</a>.</p>
+         match a classic textbook <a href="https://en.wikipedia.org/wiki/Material_requirements_planning" class="text-decoration-underline" target="_blank">MRP explosion</a>.</p>
          </td>
          <td>
          <a href="#" onclick="showModalImage(event, 'Purchase orders')"><img src="/static/wizard/img/purchaseorder.png" style="width: 200px"></a><br>
@@ -681,7 +681,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">1<br>{label_data}</td>
          <td>
-           <p><b><a href="{prefix}/data/input/buffer/" class="underline" target="_blank">Load inventory data</a></b>
+           <p><b><a href="{prefix}/data/input/buffer/" class="text-decoration-underline" target="_blank">Load inventory data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/master-data/buffers.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -699,7 +699,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">2<br>{label_data}</td>
          <td>
-           <p><b><a href="{prefix}/data/input/purchaseorder/" class="underline" target="_blank">Load purchase order data</a></b>
+           <p><b><a href="{prefix}/data/input/purchaseorder/" class="text-decoration-underline" target="_blank">Load purchase order data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/purchasing/purchase-orders.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -720,7 +720,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">3<br>{label_data}</td>
          <td>
-           <p><b><a href="{prefix}/data/input/manufacturingorder/" class="underline" target="_blank">Load manufacturing order data</a></b>
+           <p><b><a href="{prefix}/data/input/manufacturingorder/" class="text-decoration-underline" target="_blank">Load manufacturing order data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/manufacturing-bom/manufacturing-orders.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -758,7 +758,7 @@ def getWizardSteps(request, mode):
                 "content": """
          <p>Let's add some capacity constraints.</p>
          <p>FrePPLe has different resource types (see
-         <a class="underline" href="{docroot}/examples/resource/resource-type.html" target="_blank">here</a>
+         <a class="text-decoration-underline" href="{docroot}/examples/resource/resource-type.html" target="_blank">here</a>
          for more detail). The most common types are:</p>
          <ul>
          <li style="list-style: disc">
@@ -786,7 +786,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">1<br>{label_data}</td>
          <td>
-           <p><b><a href="{prefix}/data/input/resource/" class="underline" target="_blank">Load resource data</a></b>
+           <p><b><a href="{prefix}/data/input/resource/" class="text-decoration-underline" target="_blank">Load resource data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/manufacturing-capacity/resources.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
@@ -806,7 +806,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">2<br>{label_data}</td>
          <td>
-           <p><b><a href="{prefix}/data/input/operationresource/" class="underline" target="_blank">Load operation resource data</a></b>
+           <p><b><a href="{prefix}/data/input/operationresource/" class="text-decoration-underline" target="_blank">Load operation resource data</a></b>
              <a href="{docroot}/modeling-wizard/manufacturing-capacity/operation-resources.html" target="_blank">
              <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
              </a>
@@ -866,8 +866,8 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">1<br>{label_action}</td>
          <td>
-         <p><b><a href="{prefix}/execute/" class="underline" target="_blank">Generate constrained plan</a></b></p>
-         <p>Navigate to the <a href="{prefix}/execute/" class="underline">execution screen</a> (available in the "admin"
+         <p><b><a href="{prefix}/execute/" class="text-decoration-underline" target="_blank">Generate constrained plan</a></b></p>
+         <p>Navigate to the <a href="{prefix}/execute/" class="text-decoration-underline">execution screen</a> (available in the "admin"
          menu) and select the "generate plan" task <span class="circle">A</span>. Make sure the options "generate supply
          plan" and "constrained plan" <span class="circle">B</span> are both checked.</p>
          <p><span class="circle">C</span> Launch the task and wait for it to complete. <span class="circle">D</span></p>
@@ -905,7 +905,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">1<br>{label_analysis}</td>
          <td>
-         <p><b><a href="{prefix}/resource/" class="underline" target="_blank">Capacity report</a></b></p>
+         <p><b><a href="{prefix}/resource/" class="text-decoration-underline" target="_blank">Capacity report</a></b></p>
          <p>This report visualizes the utilization of all resources per time bucket.</p>
          <p><span class="circle">A</span> The results can be displayed as a graph or as a table. You can click on
          cells in the table or buckets in the graph to get more detailed information.</p>
@@ -919,12 +919,12 @@ def getWizardSteps(request, mode):
          </td></tr>
          <tr>
          <td style="text-align: center">2<br>{label_analysis}</td>
-         <td><p><b><a href="{prefix}/data/input/demand/" class="underline" target="_blank">Sales order</a></b></p>
+         <td><p><b><a href="{prefix}/data/input/demand/" class="text-decoration-underline" target="_blank">Sales order</a></b></p>
          <p>At the start of the planning run, you loaded the sales orders in frePPLe. The constrained
          planning run you have just completed has 1) computed the planned delivery date for all sales
          orders and 2) collected the reasons why a certain demand was planned short or late.</p>
          <p><span class="circle">A</span> Review the list of
-         <a href="{prefix}/data/input/demand/" class="underline" target="_blank">sales orders</a> and
+         <a href="{prefix}/data/input/demand/" class="text-decoration-underline" target="_blank">sales orders</a> and
          sort on the delay field to find some sales orders that can't be delivered on time.<p>
          <p><span class="circle">B</span> Click on the triangle icon next to a demand to drill into its details.<p>
          <p><span class="circle">C</span> The "plan" tab shows all operations planned to deliver the order.<p>
@@ -939,7 +939,7 @@ def getWizardSteps(request, mode):
          <tr>
          <td style="text-align: center">3<br>{label_analysis}</td>
          <td>
-         <p><b><a href="{prefix}/buffer/" class="underline" target="_blank">Inventory report</a></b></p>
+         <p><b><a href="{prefix}/buffer/" class="text-decoration-underline" target="_blank">Inventory report</a></b></p>
          <p>This report visualizes the planned inventory for all item-locations per time bucket.</p>
          </td>
          <td style="text-align: center">
@@ -974,58 +974,58 @@ def getWizardSteps(request, mode):
          </thead>
          <tbody>
          <tr>
-         <td><a href="{docroot}/modeling-wizard/common-modeling-mistakes.html" class="underline" target="_blank">Common mistakes</a></td>
+         <td><a href="{docroot}/modeling-wizard/common-modeling-mistakes.html" class="text-decoration-underline" target="_blank">Common mistakes</a></td>
          <td>Learn about the most common gotchas and mistakes made by first-time users.</td>
          </tr>
          <tr>
-         <td><a href="{docroot}/examples/calendar/working-hours.html" class="underline" target="_blank">Working&nbsp;hours</a></td>
+         <td><a href="{docroot}/examples/calendar/working-hours.html" class="text-decoration-underline" target="_blank">Working&nbsp;hours</a></td>
          <td>Modeling working hours, shifts and holidays is required to get a realistic plan.</td>
          </tr>
          <tr>
-         <td><a href="{docroot}/examples/operation/operation-type.html" class="underline" target="_blank">Operation&nbsp;types</a></td>
+         <td><a href="{docroot}/examples/operation/operation-type.html" class="text-decoration-underline" target="_blank">Operation&nbsp;types</a></td>
          <td>This example model demonstrates the different operation types.</td>
          </tr>
          <tr>
-         <td><a href="{docroot}/examples/resource/resource-type.html" class="underline" target="_blank">Resource&nbsp;types</a></td>
+         <td><a href="{docroot}/examples/resource/resource-type.html" class="text-decoration-underline" target="_blank">Resource&nbsp;types</a></td>
          <td>This example model demonstrates the different resource types.</td>
          </tr>
          <tr>
-         <td><a href="{docroot}/examples/resource/resource-skills.html" class="underline" target="_blank">Resource&nbsp;skills</a></td>
+         <td><a href="{docroot}/examples/resource/resource-skills.html" class="text-decoration-underline" target="_blank">Resource&nbsp;skills</a></td>
          <td>Resources can be assigned skills, which represent certain qualifications.<br>
          You can specify a required skill for an operation.</td>
          </tr>
          <tr>
-         <td><a href={docroot}/examples/resource/resource-setup-matrices.html" class="underline" target="_blank">Setup&nbsp;matrices</a></td>
+         <td><a href={docroot}/examples/resource/resource-setup-matrices.html" class="text-decoration-underline" target="_blank">Setup&nbsp;matrices</a></td>
          <td>Resources can require a setup time to change the configuration between different setups/configurations.
          This models the time required for cleaning, installation of new tooling, re-calibration, feeding new
          raw materials, etc.</td>
          </tr>
          <tr>
-         <td><a href="{docroot}/examples/demand/demand-priorities.html" class="underline" target="_blank">Demand&nbsp;priorities</a></td>
+         <td><a href="{docroot}/examples/demand/demand-priorities.html" class="text-decoration-underline" target="_blank">Demand&nbsp;priorities</a></td>
          <td>Demand priorities give you control over the allocation of constrained supply.
          Top priority orders will be the first to get the required material and capacity.
          Less prioritized orders are planned with the remaining availability and have
          a higher chance of being planned late or short.</td>
          </tr>
          <tr>
-         <td><a href="{docroot}/examples/demand/demand-policies.html" class="underline" target="_blank">Demand&nbsp;policies</a></td>
+         <td><a href="{docroot}/examples/demand/demand-policies.html" class="text-decoration-underline" target="_blank">Demand&nbsp;policies</a></td>
          <td>This model describes how to model demand policies like "ship all in full", "allow
          partial deliveries", "don't plan late shipments", etc.</td>
          </tr>
          <tr>
-         <td><a href="{docroot}/examples/operation/operation-autofence.html" class="underline" target="_blank">Release&nbsp;fence</a></td>
+         <td><a href="{docroot}/examples/operation/operation-autofence.html" class="text-decoration-underline" target="_blank">Release&nbsp;fence</a></td>
          <td>A release fence can be set to specify a frozen zone in the planning horizon in which
          the planning algorithm cannot propose any new manufacturing orders, purchase orders or distribution
          orders. The fence represents a period during which the plan is already being executed and can no
          longer be changed.</td>
          </tr>
          <tr>
-         <td><a href="{docroot}/examples/buffer/transfer-batch.html" class="underline" target="_blank">Transfer&nbsp;batching</a></td>
+         <td><a href="{docroot}/examples/buffer/transfer-batch.html" class="text-decoration-underline" target="_blank">Transfer&nbsp;batching</a></td>
          <td>Transfer batching refers to operations that are planned with some overlap. The subsequent
          operation can already start when the previous one hasn't completely finished yet.</td>
          </tr>
          <tr>
-         <td><a href="{docroot}/examples/buffer/alternate-materials.html" class="underline" target="_blank">Alternate&nbsp;materials</a></td>
+         <td><a href="{docroot}/examples/buffer/alternate-materials.html" class="text-decoration-underline" target="_blank">Alternate&nbsp;materials</a></td>
          <td>In many industries the bill of materials can contain alternate materials: the same product
          can be produced using different components.</td>
          </tr>
@@ -1445,57 +1445,57 @@ class QuickStartProduction(View):
             # Compile the messages
             if items > 0:
                 post["messages"].append(
-                    "Created %s new <a target='_blank' class='underline' href='%s/data/input/item/?noautofilter&sidx=lastmodified&amp;sord=desc'>item</a>"
+                    "Created %s new <a target='_blank' class='text-decoration-underline' href='%s/data/input/item/?noautofilter&sidx=lastmodified&amp;sord=desc'>item</a>"
                     % (items, request.prefix)
                 )
             if locations > 0:
                 post["messages"].append(
-                    "Created %s new <a target='_blank' class='underline' href='%s/data/input/location/?noautofilter&sidx=lastmodified&amp;sord=desc'>location</a>"
+                    "Created %s new <a target='_blank' class='text-decoration-underline' href='%s/data/input/location/?noautofilter&sidx=lastmodified&amp;sord=desc'>location</a>"
                     % (locations, request.prefix)
                 )
             if customers > 0:
                 post["messages"].append(
-                    "Created %d new <a target='_blank' class='underline' href='%s/data/input/customer/?noautofilter&sidx=lastmodified&amp;sord=desc'>customer</a>"
+                    "Created %d new <a target='_blank' class='text-decoration-underline' href='%s/data/input/customer/?noautofilter&sidx=lastmodified&amp;sord=desc'>customer</a>"
                     % (customers, request.prefix)
                 )
             if demands > 0:
                 post["messages"].append(
-                    "Created %d new <a target='_blank' class='underline' href='%s/data/input/demand/?noautofilter&sidx=lastmodified&amp;sord=desc'>sales order</a>"
+                    "Created %d new <a target='_blank' class='text-decoration-underline' href='%s/data/input/demand/?noautofilter&sidx=lastmodified&amp;sord=desc'>sales order</a>"
                     % (demands, request.prefix)
                 )
             if suppliers > 0:
                 post["messages"].append(
-                    "Created %d new <a target='_blank' class='underline' href='%s/data/input/supplier/?noautofilter&sidx=lastmodified&amp;sord=desc'>supplier</a>"
+                    "Created %d new <a target='_blank' class='text-decoration-underline' href='%s/data/input/supplier/?noautofilter&sidx=lastmodified&amp;sord=desc'>supplier</a>"
                     % (suppliers, request.prefix)
                 )
             if itemsuppliers > 0:
                 post["messages"].append(
-                    "Created %d new <a target='_blank' class='underline' href='%s/data/input/itemsupplier/?noautofilter&sidx=lastmodified&amp;sord=desc'>item supplier</a>"
+                    "Created %d new <a target='_blank' class='text-decoration-underline' href='%s/data/input/itemsupplier/?noautofilter&sidx=lastmodified&amp;sord=desc'>item supplier</a>"
                     % (itemsuppliers, request.prefix)
                 )
             if itemdistributions > 0:
                 post["messages"].append(
-                    "Created %d new <a target='_blank' class='underline' href='%s/data/input/itemdistribution/?noautofilter&sidx=lastmodified&amp;sord=desc'>item distribution</a>"
+                    "Created %d new <a target='_blank' class='text-decoration-underline' href='%s/data/input/itemdistribution/?noautofilter&sidx=lastmodified&amp;sord=desc'>item distribution</a>"
                     % (itemdistributions, request.prefix)
                 )
             if resources > 0:
                 post["messages"].append(
-                    "Created %d new <a target='_blank' class='underline' href='%s/data/input/resource/?noautofilter&sidx=lastmodified&amp;sord=desc'>resource</a>"
+                    "Created %d new <a target='_blank' class='text-decoration-underline' href='%s/data/input/resource/?noautofilter&sidx=lastmodified&amp;sord=desc'>resource</a>"
                     % (resources, request.prefix)
                 )
             if operations > 0:
                 post["messages"].append(
-                    "Created %d new <a target='_blank' class='underline' href='%s/data/input/operation/?noautofilter&sidx=lastmodified&amp;sord=desc'>operation</a>"
+                    "Created %d new <a target='_blank' class='text-decoration-underline' href='%s/data/input/operation/?noautofilter&sidx=lastmodified&amp;sord=desc'>operation</a>"
                     % (operations, request.prefix)
                 )
             if operationresources > 0:
                 post["messages"].append(
-                    "Created %d new <a target='_blank' class='underline' href='%s/data/input/operationresource/?noautofilter&sidx=lastmodified&amp;sord=desc'>operation resource</a>"
+                    "Created %d new <a target='_blank' class='text-decoration-underline' href='%s/data/input/operationresource/?noautofilter&sidx=lastmodified&amp;sord=desc'>operation resource</a>"
                     % (operationresources, request.prefix)
                 )
             if operationmaterials > 0:
                 post["messages"].append(
-                    "Created %d new <a target='_blank' class='underline' href='%s/data/input/operationmaterial/?noautofilter&sidx=lastmodified&amp;sord=desc'>operation material</a>"
+                    "Created %d new <a target='_blank' class='text-decoration-underline' href='%s/data/input/operationmaterial/?noautofilter&sidx=lastmodified&amp;sord=desc'>operation material</a>"
                     % (operationmaterials, request.prefix)
                 )
 
@@ -1508,7 +1508,7 @@ class QuickStartProduction(View):
                 background=True,
             )
             post["messages"].append(
-                "<a target='_blank' class='underline' href='%s/execute/'>Generated the plan</a>"
+                "<a target='_blank' class='text-decoration-underline' href='%s/execute/'>Generated the plan</a>"
                 % request.prefix
             )
 

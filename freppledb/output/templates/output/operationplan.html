@@ -1,6 +1,6 @@
 {% extends "admin/base_site_grid.html" %}
 
-{% block before_table %}{% if args.0 %}{% tabs "input.operation" %}{% endif %}{{block.super}}{% endblock %}
+{% block tabs %}{% if args.0 %}{% tabs "input.operation" %}{% endif %}{{block.super}}{% endblock %}
 
 {% comment %} TODO
 {% for i in objectlist1 %}

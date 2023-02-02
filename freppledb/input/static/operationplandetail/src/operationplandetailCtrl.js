@@ -315,25 +315,26 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
       $('#popup').html('<div class="modal-dialog">' +
         '<div class="modal-content">' +
         '<div class="modal-header alert-warning" style="border-top-left-radius: inherit; border-top-right-radius: inherit">' +
-        '<h4 class="modal-title">' + gettext("Save or cancel your changes first") + '</h4>' +
+        '<h5 class="modal-title">' + gettext("Save or cancel your changes first") + '</h5>' +
         '</div>' +
         '<div class="modal-body">' +
         gettext("There are unsaved changes on this page.") +
         '</div>' +
-        '<div class="modal-footer">' +
-        '<input type="submit" id="savebutton" role="button" class="btn btn-danger pull-left" value="' + gettext('Save') + '">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Return to page') + '">' +
+        '<div class="modal-footer justify-content-between">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" value="' + gettext('Return to page') + '">' +
+        '<input type="submit" id="savebutton" role="button" class="btn btn-danger" value="' + gettext('Save') + '">' +
         '</div>' +
         '</div>' +
         '</div>'
-      ).modal('show');
+      );
+      showModal('popup');
       $('#savebutton').on('click', function () {
         save_button.trigger('click');
         innerFunction();
-        $('#popup').modal('hide');
+        hideModal('popup');
       });
       $('#cancelbutton').on('click', function () {
-        $('#popup').modal('hide');
+        hideModal('popup');
       });
       return false;
     }

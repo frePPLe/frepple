@@ -26,45 +26,45 @@ function showsupplyinformationDrv($window, gettextCatalog) {
 
   var directive = {
     restrict: 'EA',
-    scope: {operationplan: '=data'},
+    scope: { operationplan: '=data' },
     link: linkfunc
   };
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template =  '<div class="panel-heading"><h4 class="panel-title" style="text-transform: capitalize">'+
-                      gettextCatalog.getString("supply information")+
-                    '</h4></div>'+
-                    '<div class="table-responsive"><table class="table table-hover table-condensed"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("priority")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("types")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("origin")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("lead time")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("cost")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("size minimum")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("size multiple")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("effective start")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("effective end")+'</b>' +
-                    '</td></tr></thead>' +
-                    '<tbody></tbody>' +
-                  '</table></div>';
+    var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
+      gettextCatalog.getString("supply information") +
+      '</h5></div>' +
+      '<div class="table-responsive"><table class="table table-hover table-condensed"><thead><tr><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("priority") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("types") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("origin") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("lead time") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("cost") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("size minimum") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("size multiple") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("effective start") + '</b>' +
+      '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("effective end") + '</b>' +
+      '</td></tr></thead>' +
+      '<tbody></tbody>' +
+      '</table></div>';
 
-    scope.$watchGroup(['operationplan.id','operationplan.attributes.supply.length'], function (newValue,oldValue) {
+    scope.$watchGroup(['operationplan.id', 'operationplan.attributes.supply.length'], function (newValue, oldValue) {
       angular.element(document).find('#attributes-supplyinformation').empty().append(template);
-      var rows = '<tr><td colspan="9">'+gettextCatalog.getString('no supply information')+'</td></tr>';
+      var rows = '<tr><td colspan="9">' + gettextCatalog.getString('no supply information') + '</td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.attributes.hasOwnProperty('supply')) {
-          rows='';
-          angular.forEach(scope.operationplan.attributes.supply, function(thesupply) {
+          rows = '';
+          angular.forEach(scope.operationplan.attributes.supply, function (thesupply) {
             rows += '<tr>'
             for (var i in thesupply) {
               rows += '<td>';

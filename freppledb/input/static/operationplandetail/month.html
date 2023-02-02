@@ -9,8 +9,8 @@
           <th data-ng-if="grouping && groupingdir === 'desc'" class="calendar-sort-column" data-ng-click="setGroupingDir('asc')">
             {{groupingcfg[grouping]}}&nbsp;<i class="fa fa-sort-desc"></i>
           </th>
-          <th ng-show="showWeeks" class="calendar-week-column text-center" data-placement="auto right"
-            data-toggle="tooltip" data-original-title="{{ 'week number' | translate }}">#</th>
+          <th ng-show="showWeeks" class="calendar-week-column text-center" data-bs-placement="auto right"
+            data-bs-toggle="tooltip" data-bs-title="{{ 'week number' | translate }}">#</th>
           <th ng-repeat="label in labels track by $index" class="text-center">
             <small>{{label}}</small>
           </th>

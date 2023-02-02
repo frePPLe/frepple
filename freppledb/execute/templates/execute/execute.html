@@ -26,7 +26,7 @@
     {
       // Enable the refresh which is currently inactive
       refresh = setInterval(function() {
-        $('#grid [data-toggle="tooltip"]').tooltip('hide');
+        $('#grid [data-bs-toggle="tooltip"]').tooltip('hide');
         $("#grid").trigger("reloadGrid",[{current:true}]);
         }, 5000);
       $('#autorefresh span').removeClass("fa-refresh").addClass("fa-pause");
@@ -78,25 +78,25 @@
     $("#popup").html('<div class="modal-dialog">'+
         '<div class="modal-content">'+
           '<div class="modal-header" style="border-top-left-radius: inherit; border-top-right-radius: inherit">'+
-            '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-            '<h4 class="modal-title">'+gettext('Cancel task')+'</h4>'+
+            '<h5 class="modal-title">'+gettext('Cancel task')+'</h5>'+
+            '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>'+
           '</div>'+
           '<div class="modal-body"><p>'+
           interpolate(gettext('You are about to cancel task %s'), [id]) +
           '</p></div>'+
-          '<div class="modal-footer">'+
-            '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-right" value="'+gettext('Cancel task')+'">'+
-            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('close')+'">'+
+          '<div class="modal-footer justify-content-between">'+
+            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="'+gettext('close')+'">'+
+            '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger" value="'+gettext('Cancel task')+'">'+
           '</div>'+
         '</div>'+
-    '</div>' )
-    .modal('show');
+    '</div>' );
+    showModal('popup');
     $('#confirmbutton').on('click', function() {
         $.ajax({
           url: "{{request.prefix}}/execute/cancel/" + id + "/",
           type: "POST",
           success: function () {
-            $('#popup').modal('hide');
+            hideModal('popup');
           },
           error: function (result, stat, errorThrown) {
             if (result.status == 401) {
@@ -129,7 +129,8 @@
     {% if not "refresh" in preferences or preferences.refresh %}
     // Refresh the grid every 5 seconds
     refresh = setInterval(function() {
-      $('#grid [data-toggle="tooltip"]').tooltip('hide');
+      var tips = bootstrap.Tooltip.getInstance('#grid [data-bs-toggle="tooltip"]');
+      if (tips) tips.hide();
       $("#grid").trigger("reloadGrid",[{current:true}]);
       }, 5000);{% endif %}
 
@@ -211,34 +212,32 @@ loadComplete : function(data) {
 {% endblock %}
 
 {% block actions %}
-	<button class="btn btn-xs btn-primary" id="autorefresh" onclick="updateRefresh()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'autorefresh'|capfirst|force_escape %}" >
+	<button class="btn btn-sm btn-primary" id="autorefresh" onclick="updateRefresh()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'autorefresh'|capfirst|force_escape %}" >
 	   <span class="fa {% if "refresh" in preferences and not preferences.refresh %} fa-refresh{% else %} fa-pause{% endif %}"></span>
 	</button>
 {{block.super}}
 {% endblock %}
 {% block after_table %}
 <div class="row" id="accordion">
-<div class="col-md-12">
+<div class="col">
   <h1>{% trans "launch tasks"|capfirst %}</h1>
 </div></div>
 <div class="row">
-	<div id="tasks" class="panel-group col-md-12" role="tablist" aria-multiselectable="true" style="max-width:900px; min-width: 600px">
+	<div id="tasks" class="accordion col" role="tablist" aria-multiselectable="true" style="max-width:900px; min-width: 600px">
 	{% if perms.auth.generate_plan or perms.auth.copy_scenario or perms.auth.release_scenario or perms.auth.promote_scenario or perms.auth.run_db %}
 	<!--User has some permissions -->
     {% for command in commandlist %}
       {% call_method command "getHTML" request as HTMLcode %}
       {% if HTMLcode %}
-      <div class="panel panel-default">
-        <div class="panel-heading" data-parent="#tasks" role="tab" id="{{ forloop.counter }}Heading" data-toggle="collapse" data-target="#{{ forloop.counter }}Accord">
-          {% if command.help_url %}<span class='fa fa-question pull-right' onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{ command.help_url }}')"></span>{% endif %}
-          <h4 class="panel-title">
-            <a role="button">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="{{ forloop.counter }}Heading">
+          <button class="accordion-button fs-4" data-bs-toggle="collapse" data-bs-target="#Accord{{ forloop.counter }}" aria-expanded="true" aria-controls="Accord{{ forloop.counter }}">
               {{ command.title|capfirst }}
-            </a>
-          </h4>
-        </div>
-        <div id="{{ forloop.counter }}Accord" data-task="#{{ command.name }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}" role="tabpanel" aria-labelledby="{{ forloop.counter }}Heading">
-          <div class="panel-body">
+            {% if command.help_url %}<div class='ms-3 fa fa-question float-end' onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{ command.help_url }}')"></div>{% endif %}
+          </button>
+        </h2>
+        <div id="Accord{{ forloop.counter }}" data-task="#{{ command.name }}" data-bs-parent="#tasks" class="accordion-collapse collapse{% if forloop.counter == 1 %} show{% endif %}" aria-labelledby="{{ forloop.counter }}Heading">
+          <div class="accordion-body">
             {{ HTMLcode }}
           </div>
         </div>

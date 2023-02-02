@@ -32,9 +32,9 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template = '<div class="panel-heading"><h4 class="panel-title" style="text-transform: capitalize">' +
+    var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
       gettextCatalog.getString("material") +
-      '</h4></div>' +
+      '</h5></div>' +
       '<table class="table table-condensed table-hover"><thead><tr><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("item") + '</b>' +
       '</td><td>' +
@@ -62,20 +62,20 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
                 rows += ' onmouseenter="$(this).tooltip(\'show\')" title="' + $.jgrid.htmlEncode(theflow.buffer.description) + '"';
               rows += '>' + $.jgrid.htmlEncode(theflow.buffer.item)
                 + "<a href=\"" + url_prefix + "/detail/input/item/" + admin_escape(theflow.buffer.item)
-                + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
+                + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>"
                 + '</span></td>'
             }
             else {
-              rows += '<td style="white-space: nowrap"><div class="dropdown dropdown-submit-input">'
-                + '<button class="btn btn-default" data-toggle="dropdown" type="button" style="text-transform: capitalize; min-width: 150px">'
+              rows += '<td style="white-space: nowrap"><div class="dropdown">'
+                + '<button class="btn btn-default" data-bs-toggle="dropdown" type="button" style="text-transform: capitalize; min-width: 150px">'
                 + $.jgrid.htmlEncode(theflow.buffer.item)
                 + '</button>'
                 + '<ul class="dropdown-menu">'
-                + '<li><a role="menuitem" class="alternateitem" style="text-transform: capitalize">'
+                + '<li><a role="menuitem" class="dropdown-item alternateitem" style="text-transform: capitalize">'
                 + $.jgrid.htmlEncode(theflow.buffer.item)
                 + '</a></li>';
               angular.forEach(theflow.alternates, function (thealternate) {
-                rows += '<li><a role="menuitem" class="alternateitem" style="text-transform: capitalize">'
+                rows += '<li><a role="menuitem" class="dropdown-item alternateitem" style="text-transform: capitalize">'
                   + $.jgrid.htmlEncode(thealternate)
                   + '</a></li>';
               });

@@ -1,0 +1,946 @@
+/*!
+ * FrePPLe theme (https://frepple.com)
+ *
+ * Bootstrap v5.2.3 (https://getbootstrap.com/)
+ * Copyright 2011-2022 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "../../../../node_modules/bootstrap/scss/functions";
+
+// 2. Include frePPLe theme-specific definitions
+@import "theme";
+
+// 3. Include remainder of required parts
+@import "../../../../node_modules/bootstrap/scss/variables";
+@import "../../../../node_modules/bootstrap/scss/maps";
+@import "../../../../node_modules/bootstrap/scss/mixins";
+@import "../../../../node_modules/bootstrap/scss/root";
+
+// 4. Include any optional Bootstrap components
+@import "../../../../node_modules/bootstrap/scss/utilities";
+@import "../../../../node_modules/bootstrap/scss/root";
+@import "../../../../node_modules/bootstrap/scss/reboot";
+@import "../../../../node_modules/bootstrap/scss/type";
+@import "../../../../node_modules/bootstrap/scss/images";
+@import "../../../../node_modules/bootstrap/scss/containers";
+@import "../../../../node_modules/bootstrap/scss/grid";
+@import "../../../../node_modules/bootstrap/scss/tables";
+@import "../../../../node_modules/bootstrap/scss/forms";
+@import "../../../../node_modules/bootstrap/scss/buttons";
+@import "../../../../node_modules/bootstrap/scss/transitions";
+@import "../../../../node_modules/bootstrap/scss/dropdown";
+@import "../../../../node_modules/bootstrap/scss/button-group";
+@import "../../../../node_modules/bootstrap/scss/nav";
+@import "../../../../node_modules/bootstrap/scss/navbar";
+@import "../../../../node_modules/bootstrap/scss/card";
+@import "../../../../node_modules/bootstrap/scss/accordion";
+@import "../../../../node_modules/bootstrap/scss/breadcrumb";
+@import "../../../../node_modules/bootstrap/scss/pagination";
+@import "../../../../node_modules/bootstrap/scss/badge";
+@import "../../../../node_modules/bootstrap/scss/alert";
+@import "../../../../node_modules/bootstrap/scss/progress";
+@import "../../../../node_modules/bootstrap/scss/list-group";
+@import "../../../../node_modules/bootstrap/scss/close";
+@import "../../../../node_modules/bootstrap/scss/toasts";
+@import "../../../../node_modules/bootstrap/scss/modal";
+@import "../../../../node_modules/bootstrap/scss/tooltip";
+@import "../../../../node_modules/bootstrap/scss/popover";
+@import "../../../../node_modules/bootstrap/scss/carousel";
+@import "../../../../node_modules/bootstrap/scss/spinners";
+@import "../../../../node_modules/bootstrap/scss/offcanvas";
+@import "../../../../node_modules/bootstrap/scss/placeholders";
+
+@import "../../../../node_modules/bootstrap/scss/utilities/api";
+
+// 5. frepple generic definitions
+
+// Tabs
+.nav-tabs {
+    .nav-item .nav-link.active {
+        border-color: $light;
+        border-top-width: 2px;
+        border-left: none;
+        border-right: none;
+    }
+}
+
+
+#nav-menu-header {
+    .navbar-brand img {
+        height: $navbar-brand-height;
+    }
+
+    a.dropdown-item,
+    a.nav-link {
+        text-transform: capitalize;
+    }
+
+    @include media-breakpoint-up(lg) {
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-menu.show {
+            display: inherit !important;
+        }
+    }
+
+    .nav-item {
+        user-select: none;
+    }
+}
+
+.card-header {
+    background: $secondary;
+}
+
+legend {
+    text-transform: capitalize;
+}
+
+.red {
+    color: red;
+}
+
+/* Gantt charts */
+
+.time {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 1px;
+    stroke: rgb(0, 0, 0);
+}
+
+.axis path,
+.axis line,
+.miniaxis path {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.graphline {
+    stroke-width: 2;
+    fill: none;
+}
+
+.svgheadertext {
+    text-anchor: middle;
+}
+
+.svgheaderhistory {
+    text-anchor: middle;
+    font-style: italic;
+    font-weight: normal;
+}
+
+/* Raw id fields are too small by default. */
+
+.vForeignKeyRawIdAdminField {
+    width: 20em;
+}
+
+/* Marking of edited and selected items. */
+
+.dirty-cell,
+input.ng-dirty {
+    background: $danger !important;
+}
+
+.edit-cell {
+    background: yellow !important;
+}
+
+tr.ui-state-highlight {
+    border: 1px solid $danger !important;
+    background: lighten($danger, 15%) !important;
+}
+
+// Avatar
+img.avatar-sm {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    border: 1px solid $gray-500;
+    vertical-align: top;
+}
+
+// Hide arrows from number input
+input:not(.arrows)::-webkit-outer-spin-button,
+input:not(.arrows)::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number]:not(.arrows) {
+    -moz-appearance: textfield;
+}
+
+// Accordion - we want them to look like a series of panels, instead of a big continuous pile
+
+.accordion-item {
+    border-radius: $accordion-border-radius !important;
+    margin-bottom: ($spacer * .25) !important;
+}
+
+.accordion-button {
+    border-radius: $accordion-border-radius !important;
+}
+
+// Search box
+div.tt-menu.tt-open {
+    width: 150%;
+}
+
+.tt-menu {
+    @extend .dropdown-menu;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+div.tt-dataset.tt-dataset-search {
+    background-color: $dropdown-bg;
+
+    li.tt-suggestion.tt-selectable {
+        padding-bottom: 2px;
+        padding-top: 2px;
+        background-color: $dropdown-bg;
+        line-height: $line-height-base;
+        display: block;
+        list-style-type: none;
+
+        a:link,
+        a:visited {
+            background-color: inherit;
+            color: $dropdown-link-color;
+            font-size: $font-size-base;
+            /* fix django admin form problems */
+            padding-left: 16px;
+            text-align: left;
+        }
+    }
+
+    li.tt-suggestion.tt-selectable a {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    li.tt-suggestion.tt-selectable div {
+        position: relative;
+        top: -1em;
+        margin-top: -4px;
+        margin-right: 5px;
+        float: right;
+    }
+
+    li.tt-suggestion.tt-selectable:hover {
+        background-color: $dropdown-link-hover-bg;
+
+        a:link:hover {
+            background-color: inherit;
+            color: $dropdown-link-hover-color;
+            padding-left: 16px;
+            text-align: left;
+        }
+    }
+
+    span.tt-suggestion.tt-selectable {
+        p {
+            margin-top: 5px;
+            margin-bottom: 1px;
+            text-align: center;
+            background-color: $input-bg;
+        }
+
+        li.divider {
+            height: 1px;
+            margin-bottom: 2px;
+            margin-top: 1px;
+            overflow: hidden;
+            background-color: $dropdown-divider-bg;
+        }
+    }
+}
+
+/* Graph cell in pivot grid */
+
+.graphcell {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+
+/* Jqgrid */
+
+.ui-jqdialog {
+    font-size: $font-size-base;
+    // TODO padding: $padding-base-vertical $padding-base-horizontal;
+
+    .custom-dlg-header {
+        background-color: $table-bg;
+        background-color: $modal-content-bg;
+        border-top-left-radius: $border-radius-lg;
+        border-top-right-radius: $border-radius-lg;
+    }
+
+    .ui-jqdialog-titlebar {
+        padding: $modal-inner-padding;
+        position: relative;
+        font-size: $font-size-base;
+        border-left: 0 none;
+        border-right: 0 none;
+        border-top: 0 none;
+    }
+
+    .custom-dlg-header {
+        background-color: $modal-content-bg;
+        border-top-left-radius: $border-radius-lg;
+        border-top-right-radius: $border-radius-lg;
+    }
+}
+
+.ui-jqdialog.ui-jqgrid-bootstrap .ui-jqdialog-titlebar {
+    font-size: $h4-font-size;
+    font-family: inherit;
+    font-weight: 500;
+    color: inherit;
+}
+
+.ui-jqdialog-content {
+    border: 0;
+    background: $modal-content-bg;
+    height: auto;
+
+    .CaptionTD {
+        padding: $modal-inner-padding;
+    }
+}
+
+.ui-jqgrid {
+    .ui-separator {
+        height: 12px;
+        border-left: 1px solid $table-border-color;
+        border-right: 1px solid $table-border-color;
+        margin: -1px;
+        float: right;
+    }
+
+    >.ui-jqgrid-view {
+        font-size: $font-size-base;
+    }
+
+    tr.jqgrow,
+    tr.jqgroup,
+    tr.jqfoot,
+    tr.ui-subgrid {
+        >td {
+            overflow: hidden;
+            white-space: nowrap;
+            height: $input-height-sm;
+            border-top: 0 none;
+            border-bottom-width: 1px;
+            border-bottom-style: solid;
+        }
+    }
+
+    .ui-jqgrid-btable td.jqgrid-rownum {
+        padding: $table-cell-padding-y-sm $table-cell-padding-x-sm;
+    }
+}
+
+.ui-jqgrid.ui-jqgrid-bootstrap {
+    border: 1px solid $table-border-color;
+    border-radius: $border-radius-lg;
+
+    tr.jqgfirstrow {
+        >td {
+            padding: 0 $table-cell-padding-x;
+        }
+    }
+
+    tr.jqgrow,
+    tr.jqgroup,
+    tr.jqfoot {
+        >td {
+            padding: $table-cell-padding-y-sm $table-cell-padding-x-sm;
+        }
+    }
+
+    .custom-title-div {
+        background-color: $table-bg;
+    }
+
+    // TODO .custom-hdiv {
+    //     background-color: $gray-light;
+    // }
+
+    .ui-jqgrid-titlebar,
+    ui-jqgrid-errorbar {
+        font-size: $h4-font-size;
+        font-family: inherit;
+        font-weight: 500;
+        color: inherit;
+    }
+
+    >.ui-jqgrid-view {
+        font-size: $font-size-base;
+    }
+
+    /* TODO sgbutton-div {
+
+        .sgbutton.btn:focus,
+        .sgbutton.btn:hover {
+            border: 1px solid darken($btn-default-border, 20%);
+        }
+    }*/
+
+    >.ui-jqgrid-pager {
+        font-size: $font-size-base;
+    }
+}
+
+// Link to password change form on the user edit screen
+
+span.help-block a {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+// Search filter
+
+h1 small {
+    display: inline-block;
+    line-height: 3;
+}
+
+#filterform {
+
+    padding-left: ($spacer * 0.5);
+    border-radius: $border-radius-sm;
+
+    .badge {
+        background: $gray-600;
+        font-weight: $font-weight-normal;
+    }
+
+    .list-group {
+        width: auto;
+        position: absolute;
+        top: 52px;
+        z-index: 4999;
+        white-space: nowrap;
+    }
+
+    .list-group-item {
+        border: none;
+        line-height: 2em;
+        padding-bottom: 1px;
+        padding-top: 1px;
+    }
+
+    .input-group {
+        display: inline-table;
+        vertical-align: middle;
+
+        .input-group-addon,
+        .input-group-btn,
+        .form-control {
+            width: auto !important;
+        }
+    }
+
+    #addsearch {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .badge input {
+        color: $gray-600;
+    }
+
+    .fa-times {
+        cursor: pointer;
+    }
+}
+
+// Circle for the wizard
+
+.circle {
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: 0.6em;
+    color: #fff;
+    text-align: center;
+    background: $primary;
+    display: inline-block;
+}
+
+
+// Kanban styles
+
+#kanban {
+
+    .longline {
+        overflow-x: auto;
+        display: table-row;
+    }
+
+    .longcol {
+        display: table-cell;
+        float: none;
+    }
+
+    white-space: nowrap;
+    user-select: none;
+
+    .badge {
+        color: $badge-color;
+        background-color: $primary;
+    }
+
+    .panel-body {
+        overflow-y: auto;
+    }
+
+    .column {
+        cursor: pointer;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+}
+
+// Calendar
+
+#calendar {
+
+    .scrollable {
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+
+    .table-fixed {
+        table-layout: fixed;
+    }
+
+    .no-event-label {
+        font-weight: bold;
+        color: darkgrey;
+        text-align: center;
+    }
+
+    .event-detail-container {
+        border-top: 2px darkgrey solid;
+    }
+
+    .event-detail {
+        cursor: pointer;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .calendar-header {
+        text-align: center;
+        padding-top: 5px;
+        font-weight: bold;
+    }
+
+    .calendar-hour-column,
+    .calendar-week-column {
+        width: 50px;
+    }
+
+    .calendar-sort-column {
+        cursor: pointer;
+        text-transform: capitalize;
+    }
+
+    .calendar-navbar {
+        margin-bottom: 5px;
+    }
+
+    .calendar-event-wrap {
+        position: relative;
+        height: 100%;
+    }
+
+    .calendar-event {
+        position: absolute;
+        padding: 2px;
+        cursor: pointer;
+        z-index: 900;
+    }
+
+    .calendar-event-inner {
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+        padding: 5px;
+        line-height: 15px;
+        border-radius: 4px;
+        margin-bottom: 8px;
+    }
+
+    .calendar-event-inner p {
+        margin: 0 0 2px !important;
+    }
+
+    .calendar-cell {
+        padding: 0 !important;
+        height: 37px;
+    }
+
+    .weekview-allday-label,
+    .dayview-allday-label {
+        float: left;
+        height: 100%;
+        line-height: 50px;
+        text-align: center;
+        width: 50px;
+        border: 1px solid #ddd;
+        border-right-width: 0;
+    }
+
+    .weekview-allday-content-wrapper,
+    .dayview-allday-content-wrapper {
+        margin-left: 50px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        height: 100%;
+    }
+
+    .weekview-header,
+    .monthview-datetable {
+        margin-bottom: 0;
+    }
+
+    .weekview-header th {
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .weekview-allday-table,
+    .dayview-allday-table {
+        height: 52px;
+    }
+
+    .weekview-allday-content-table,
+    .dayview-allday-content-table {
+        min-height: 100%;
+        margin-bottom: 0;
+    }
+
+    .gutter-column {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    @media (max-width: 750px) {
+
+        .weekview-allday-label,
+        .dayview-allday-label,
+        .calendar-hour-column,
+        .calendar-week-column {
+            width: 32px;
+        }
+
+        .weekview-allday-label,
+        .dayview-allday-label {
+            padding-top: 4px;
+        }
+
+        .table>tbody>tr>td.calendar-hour-column,
+        .table>thead>tr>th.weekview-header-label {
+            padding-left: 0;
+            padding-right: 0;
+            font-size: 12px;
+            line-height: 12px;
+            vertical-align: middle;
+        }
+
+        .weekview-allday-label,
+        .dayview-allday-label {
+            line-height: inherit;
+        }
+
+        .weekview-allday-content-wrapper,
+        .dayview-allday-content-wrapper {
+            margin-left: 32px;
+        }
+
+        .calendar-event-inner {
+            font-size: 12px;
+        }
+    }
+}
+
+// Cards in calendar and kanban views
+
+#kanban,
+#calendar {
+
+    .card {
+        user-select: text;
+        cursor: pointer;
+        text-align: left;
+        padding: 5px;
+        margin-bottom: 0;
+    }
+
+    .card-kanban {
+        margin-bottom: 8px;
+    }
+
+    .card-month {
+        padding: 2px;
+        margin-bottom: 8px;
+    }
+
+    .card-week {
+        overflow-y: hidden;
+    }
+
+    .card-day {
+        overflow-y: hidden;
+    }
+
+    .card p {
+        margin: 0 0 2px !important;
+    }
+
+    .card .form-control {
+        padding: 1px 6px;
+        line-height: normal;
+        height: auto;
+    }
+
+    .card table {
+        background-color: transparent;
+    }
+
+    .card table td.dirty {
+        background: $danger;
+    }
+
+    .card.active {
+        background-color: $table-hover-bg;
+    }
+
+    .card-label {
+        text-transform: capitalize;
+        text-align: right;
+        padding-right: 5px;
+    }
+}
+
+// Wizard styles
+
+#wizard {
+    background-color: #fafafc !important;
+
+    .wrapper {
+        margin: 20px 0;
+    }
+
+    .heading {
+        margin-top: 10px;
+    }
+
+    #quickstart-wrapper {
+        overflow: hidden;
+        text-align: center;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        position: relative;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: #0066cc;
+    }
+
+    #quickstart {
+        overflow: hidden;
+        text-align: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        position: relative;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: #0066cc;
+    }
+
+    #quickstart:hover {
+        background-color: #cc6600;
+    }
+
+    #quickstart-wrapper:hover,
+    #quickstart-wrapper.hovered {
+        background-color: #cc6600;
+    }
+
+    #quickstart-wrapper+div>.quickstart-option-reveal {
+        display: block;
+        background-color: #0066cc;
+    }
+
+    #quickstart-wrapper+div>.quickstart-option-reveal:hover {
+        display: block;
+        background-color: #cc6600;
+    }
+
+    #quickstart-group {
+        margin-top: 0px;
+    }
+
+    #quickstart-wrapper+#quickstart-group>.quickstart-option-reveal {
+        opacity: 0;
+    }
+
+
+    /** section for uploading data in welcome page */
+
+    #upload-wrapper {
+        overflow: hidden;
+        text-align: center;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        position: relative;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: #0066cc;
+    }
+
+    #upload {
+        overflow: hidden;
+        text-align: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        position: relative;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: #0066cc;
+    }
+
+    #upload:hover {
+        background-color: #cc6600;
+    }
+
+    #upload-wrapper:hover,
+    #upload-wrapper.hovered {
+        background-color: #cc6600;
+    }
+
+    #upload-wrapper+div>.upload-option-reveal {
+        display: block;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: #0066cc;
+    }
+
+    #upload-wrapper+div>.upload-option-reveal:hover {
+        background-color: #cc6600;
+
+    }
+
+    #upload-group {
+        margin-top: 0px;
+    }
+
+    #upload-wrapper+#upload-group>.upload-option-reveal {
+        opacity: 0;
+    }
+
+    /** wizard title styling */
+
+    .wizard-heading {
+        font-size: 30px;
+        color: #353740;
+    }
+}
+
+/*end of wizard style*/
+
+.fill-primary {
+    fill: $secondary;
+}
+
+.fill-primary-light {
+    fill: lighten($secondary, 20%);
+}
+
+@mixin getBackground2Steps($color1, $color2, $color3) {
+    $r1: ceil(red($color1));
+    $g1: ceil(green($color1));
+    $b1: ceil(blue($color1));
+    $r2: ceil(red($color2));
+    $g2: ceil(green($color2));
+    $b2: ceil(blue($color2));
+    $r3: ceil(red($color3));
+    $g3: ceil(green($color3));
+    $b3: ceil(blue($color3));
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' width='500' height='10' viewBox='0 0 500 100'><path fill='rgb(${r1},${g1},${b1})' stroke-width='2' stroke='rgb(${r3},${g3},${b3})' d='m0,0 h225 l25,50 l-25,50 h-225 z'/><path fill='rgb(${r2},${g2},${b2})' stroke-width='2' stroke='rgb(${r3},${g3},${b3})' d='m225,0 h275 v100 h-275 l25,-50 z'/></svg>");
+    background-size: 100% 100%;
+    background-color: transparent;
+}
+
+@mixin getBackground3Steps($color1, $color2, $color3, $color4) {
+    $r1: ceil(red($color1));
+    $g1: ceil(green($color1));
+    $b1: ceil(blue($color1));
+    $r2: ceil(red($color2));
+    $g2: ceil(green($color2));
+    $b2: ceil(blue($color2));
+    $r3: ceil(red($color3));
+    $g3: ceil(green($color3));
+    $b3: ceil(blue($color3));
+    $r4: ceil(red($color4));
+    $g4: ceil(green($color4));
+    $b4: ceil(blue($color4));
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' width='500' height='10' viewBox='0 0 500 100'><path fill='rgb(${r1},${g1},${b1})' stroke-width='2' stroke='rgb(${r4},${g4},${b4})' d='m0,0 h141 l25,50 l-25,50 h-141 z'/><path fill='rgb(${r2},${g2},${b2})' stroke-width='2' stroke='rgb(${r4},${g4},${b4})' d='m141,0 h166 l25,50 l-25,50 h-166 l25,-50 z'/><path fill='rgb(${r3},${g3},${b3})' stroke-width='2' stroke='rgb(${r4},${g4},${b4})' d='m307,0 h194 v100 h-194 l25,-50 z'/></svg>");
+    background-size: 100% 100%;
+    background-color: transparent;
+}
+
+.wizard-1-of-2 table,
+.wizard-2-of-2 table,
+.wizard-1-of-3 table,
+.wizard-2-of-3 table,
+.wizard-3-of-3 table {
+    background-color: transparent;
+}
+
+.wizard-1-of-2 {
+    @include getBackground2Steps($secondary, lighten($secondary, 30%), $secondary);
+}
+
+.wizard-2-of-2 {
+    @include getBackground2Steps(lighten($secondary, 30%), $secondary, $secondary);
+}
+
+.wizard-1-of-3 {
+    @include getBackground3Steps($secondary, lighten($secondary, 30%), lighten($secondary, 30%), $secondary);
+}
+
+.wizard-2-of-3 {
+    @include getBackground3Steps(lighten($secondary, 30%), $secondary, lighten($secondary, 30%), $secondary);
+}
+
+.wizard-3-of-3 {
+    @include getBackground3Steps(lighten($secondary, 30%), lighten($secondary, 30%), $secondary, $secondary);
+}
+
+.supply .panel-heading.collapsed {
+    opacity: 0.8;
+}

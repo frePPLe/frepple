@@ -7,31 +7,31 @@ function objectfmt(cellvalue, options, row)
 {
   var role = row['app'] + "/" + row['model']
   return cellvalue + "<a href='" + url_prefix + "/detail/" + role
-    + "/" + admin_escape(cellvalue) + "/' onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='"
+    + "/" + admin_escape(cellvalue) + "/' onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right' role='"
     + role + "'></span></a>";
 }
 </script>
 {% endblock %}
 
 {% block tools %}
-<h1 class="pull-right">
-<button class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="top"
+<h1>
+<button class="btn btn-sm btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top"
   onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/inbox.html')"
-  data-original-title="{% trans 'help'|capfirst|force_escape %}">
+  data-bs-title="{% trans 'help'|capfirst|force_escape %}">
   <span class="fa fa-question"></span>
 </button>
 </h1>
 {% endblock %}
 
 {% block content %}
-<div class="row">
-<div id="tabs" class="col-md-12 form-inline hor-align-right">
+<div class="row mb-3">
+<div id="tabs" class="col-auto form-inline ms-auto mb-1">
 <ul class="nav nav-tabs">
-<li role="presentation">
-  <a class="ui-tabs-anchor" href="{{ request.prefix }}/inbox/" target="_self">{% trans "inbox"|capfirst %}</a>
+<li role="">
+  <a class="nav-link" href="{{ request.prefix }}/inbox/" target="_self">{% trans "inbox"|capfirst %}</a>
 </li>
-<li class="active" role="presentation">
-  <a class="ui-tabs-anchor" href="{{ request.prefix }}/data/common/follower/" target="_self">{% trans "following"|capfirst %}</a>
+<li class="nav-item" role="presentation">
+  <a class="nav-link active" href="{{ request.prefix }}/data/common/follower/" target="_self">{% trans "following"|capfirst %}</a>
 </li>
 </ul>
 </div>

@@ -57,8 +57,7 @@ function webfactory($rootScope, $websocket, $interval, $http, $window) {
         themodal.find('.modal-body').html('<div style="width: 100%; overflow: auto;">'+ message + '</div>');
       }
     });
-
-    angular.element(document).find('#popup2').modal('show');
+    showModal('popup2');
   }
 
   var webservice = $websocket(service_url, {

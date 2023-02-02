@@ -104,22 +104,22 @@ $(function() {
 {% endblock %}
 
 {% block content %}
-<div class="row form-group">
-<div class="col-md-5">
+<div class="row mb-3 form-group">
+<div class="col">
 <button id="executesql_launch" class="btn btn-primary">{% trans "launch"|capfirst %}</button>
 <button id="executesql_cancel" class="btn btn-primary" disabled>{% trans "Cancel"|capfirst %}</button>
 </div>
-<div id="toolicons" class="col-xs-4 hor-align-right ver-align-middle pull-right">
-<button class="btn btn-xs btn-primary"
+<div id="toolicons" class="col-auto ver-align-middle ms-auto">
+<button class="btn btn-sm btn-primary"
   onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/executesql.html');"
-  data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}">
+  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}">
   <span class="fa fa-question"></span>
 </button>
 </div>
 </div>
 
-<div class="row formgroup" style="text-align: center">
-<div class="col-md-12">
+<div class="row mb-3 formgroup" style="text-align: center">
+<div class="col">
 <textarea id="executesql_statements" rows="10"
  style="width:100%; {% if request.prefs.height %}height:{{ request.prefs.height}}px; {% endif %}resize: none; font-size:1.25em; font-family:courier">
 {{ request.prefs.sql }}
@@ -128,8 +128,8 @@ $(function() {
 <span id="resize-handle" class="fa fa-bars handle" style="display: inline-block; touch-action: none"></span>
 </div>
 
-<div class="row form-group">
-<div class="col-xs-12">
+<div class="row mb-3 form-group">
+<div class="col">
 <div id="error"></div>
 <div style="padding-right: 10px; width:100%">
 <table id="executesql_results" class="table table-striped" style="background-color: white"></table>

@@ -90,7 +90,7 @@ class LateOrdersWidget(Widget):
         cursor.execute(cls.query, (limit,))
         for rec in cursor.fetchall():
             result.append(
-                '<tr%s><td class="underline"><a href="%s/demandpegging/%s/">%s</a></td>'
+                '<tr%s><td class="text-decoration-underline"><a href="%s/demandpegging/%s/">%s</a></td>'
                 '<td class="alignleft">%s</td><td class="alignleft">%s</td>'
                 '<td class="alignleft">%s</td><td class="alignleft">%s</td>'
                 '<td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
@@ -172,7 +172,7 @@ class ShortOrdersWidget(Widget):
         cursor.execute(cls.query, (limit,))
         for rec in cursor.fetchall():
             result.append(
-                '<tr%s><td class="underline alignleft"><a href="%s/demandpegging/%s/">%s</a></td><td class="alignleft">%s</td>'
+                '<tr%s><td class="text-decoration-underline alignleft"><a href="%s/demandpegging/%s/">%s</a></td><td class="alignleft">%s</td>'
                 '<td class="alignleft">%s</td><td class="alignleft">%s</td><td class="aligncenter">%s</td>'
                 '<td class="aligncenter">%s</td></tr>'
                 % (
@@ -406,7 +406,7 @@ class ManufacturingOrderWidget(Widget):
                 )
             elif rec[0] == 1:
                 result.append(
-                    '</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" role="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -422,7 +422,7 @@ class ManufacturingOrderWidget(Widget):
             elif rec[0] == 2 and fence1:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -442,7 +442,7 @@ class ManufacturingOrderWidget(Widget):
             elif fence2:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -672,7 +672,7 @@ class DistributionOrderWidget(Widget):
                 )
             elif rec[0] == 1:
                 result.append(
-                    '</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -688,7 +688,7 @@ class DistributionOrderWidget(Widget):
             elif rec[0] == 2 and fence1:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -708,7 +708,7 @@ class DistributionOrderWidget(Widget):
             elif fence2:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -990,7 +990,7 @@ class PurchaseOrderWidget(Widget):
                 )
             elif rec[0] == 1:
                 result.append(
-                    '</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -1006,7 +1006,7 @@ class PurchaseOrderWidget(Widget):
             elif rec[0] == 2 and fence1:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -1026,7 +1026,7 @@ class PurchaseOrderWidget(Widget):
             elif fence2:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -1271,7 +1271,7 @@ class ResourceQueueWidget(Widget):
             .order_by("startdate")[:limit]
         ):
             result.append(
-                '<tr%s><td class="underline"><a href="%s/data/input/operationplanresource/?noautofilter&resource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
+                '<tr%s><td class="text-decoration-underline"><a href="%s/data/input/operationplanresource/?noautofilter&resource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     request.prefix,
@@ -1389,7 +1389,7 @@ class AlertsWidget(Widget):
         alt = False
         for res in cursor.fetchall():
             result.append(
-                '<tr%s><td class="underline"><a href="%s/problem/?noautofilter&name=%s">%s</a></td><td class="aligncenter">%d</td><td class="aligncenter">%d</td></tr>'
+                '<tr%s><td class="text-decoration-underline"><a href="%s/problem/?noautofilter&name=%s">%s</a></td><td class="aligncenter">%d</td><td class="aligncenter">%d</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     request.prefix,

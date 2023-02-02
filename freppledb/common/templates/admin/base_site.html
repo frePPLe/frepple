@@ -2,26 +2,26 @@
 {% load i18n %}
 
 {% block title %}{% if title %}{{title|capfirst}} - {% endif %}{% setting 'BRANDING' %}{% endblock %}
-{% block branding %}<img src="{{STATIC_URL}}img/frepple.svg" alt="frePPLe&nbsp;{% version %}">{% endblock %}
+{% block branding %}<img class="img-fluid" src="{{STATIC_URL}}img/frepple.svg" alt="frePPLe&nbsp;{% version %}">{% endblock %}
 {% block extrastyle %}{{block.super}}
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/font-awesome.min.css" />
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/{{request.theme}}/fonts.css" />
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/ui.jqgrid.min.css" />
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/{{request.theme}}/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/bootstrap-datetimepicker.css" />
+<link rel="stylesheet" href="{{STATIC_URL}}css/font-awesome.min.css" />
+<link rel="stylesheet" href="{{STATIC_URL}}css/{{request.theme}}/fonts.css" />
+<link rel="stylesheet" href="{{STATIC_URL}}css/ui.jqgrid.min.css" />
+<link rel="stylesheet" href="{{STATIC_URL}}css/{{request.theme}}/bootstrap.min.css" />
+<link rel="stylesheet" href="{{STATIC_URL}}css/bootstrap-datetimepicker.css" />
 
 <link rel="shortcut icon" href="{{STATIC_URL}}favicon.ico"/>
 {% endblock %}
 {% block extrahead %}{{block.super}}
 <script src="/data/jsi18n/"></script>
 <script src="{{STATIC_URL}}js/jquery-3.6.0.min.js"></script>
-<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 <script src="{{STATIC_URL}}js/moment-with-locales.min.js"></script>
 <script src="{{STATIC_URL}}js/bootstrap-datetimepicker.min.js"></script>
 <script src="{{STATIC_URL}}js/typeahead.bundle.min.js"></script>
 <script src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js"></script>
 <script src="{{STATIC_URL}}js/jquery.jqgrid.min.js"></script>
 <script src="{{STATIC_URL}}js/frepple{% if not debug_js %}.min{% endif %}.js"></script>
+
 <script src="{{STATIC_URL}}js/Sortable.min.js"></script>
 <script>
   var url_prefix = '{{request.prefix}}';
@@ -31,8 +31,6 @@
   var datetimeformat = '{% setting "DATETIME_FORMAT_JS" %}';
 
 $(function() {
-    $('[data-toggle="popover"]').popover();
-    $('[data-toggle="tooltip"],#database').tooltip({delay: { "show": 500, "hide": 100 }});
     {% if tzoffset is None %}
     setCookie('tzoffset', new Date().getTimezoneOffset() * 60);
     {% endif %}

@@ -1,14 +1,14 @@
 {% load i18n %}
 <div class="panel-group col-md-12">
 {% for m in schema %}
-<div class="panel panel-default">
-    <div class="panel-heading schema-header" role="tab">
-      <span class="fa fa-plus pull-right panel-toggle"></span>
-      <h4 class="name panel-title" style="display: inline-block">
-         <a role="button">{% trans "table"|capfirst %}&nbsp;{{ m.0 }}</a>         
-      </h4>
+<div class="card">
+    <div class="card-header schema-header" role="tab">
+      <span class="fa fa-plus float-end panel-toggle"></span>
+      <h5 class="name card-title" style="display: inline-block">
+         <a role="button">{% trans "table"|capfirst %}&nbsp;{{ m.0 }}</a>
+      </h5>
     </div>
-    <div class="panel-collapse collapse panel-body table-responsive schema-table">
+    <div class="collapse card-body table-responsive schema-table">
         <table class="table table-condensed table-hover">
             <thead>
             </thead>

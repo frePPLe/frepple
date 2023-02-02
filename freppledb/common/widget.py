@@ -62,7 +62,7 @@ class WelcomeWidget(Widget):
 How to get started?
 <ol>
 <li>Check out the <span class="text-decoration-underline"><a href="%(docurl)s" target="_blank" rel="noopener">documentation</a></span></li>
-<li>Visit and join the <span class="text-decoration-underline"><a href="http://groups.google.com/group/frepple-users" target="_blank" rel="noopener">user community</a></span></li>
+<li>Visit and join the <span class="text-decoration-underline"><a href="https://github.com/frePPLe/frepple/discussions" target="_blank" rel="noopener">user community</a></span></li>
 <li><span class="text-decoration-underline"><a href="https://frepple.com/company/#contact" target="_blank" rel="noopener">Contact us</a></span></li>
 </ol>
 """

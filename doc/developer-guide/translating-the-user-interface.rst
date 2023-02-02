@@ -3,7 +3,7 @@ Translating the user interface
 ==============================
 
 This section provides step by step instructions on how to translate the user interface to your favourite language.
- 
+
 .. Hint::
 
    We are very keen on receiving translations for additional languages. And it's an easy way for you to contribute
@@ -21,7 +21,7 @@ For translators
 **2. Start translating**
 
   Pick up file the translation file of the language you wish to update from the github
-  source code repository. All terms to be translated are collected in this single file. 
+  source code repository. All terms to be translated are collected in this single file.
 
    - French: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/fr/fr.po
    - German: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/de/de.po
@@ -39,8 +39,8 @@ For translators
   Open the file with the editor you installed in step 1, and start translating. The terms will
   already "pre-translated" with an automated translation engine. Your job as a translator is to
   review the pre-translated strings (marked as "needs work"), change them where needed and remove
-  the "needs work" flag. 
-  
+  the "needs work" flag.
+
   Some strings may include HTML tags or Python code, e.g.:
 
        %(title)s for %(entity)s
@@ -52,7 +52,7 @@ For translators
 **3. Submit your translation**
 
   You can submit your translation a) either with a pull request on github, or b) by posting the file to the
-  `frePPLe user group <https://groups.google.com/forum/#!forum/frepple-users>`_.
+  `Github Dicussions <https://github.com/frePPLe/frepple/discussions>`_.
 
 For developers
 --------------
@@ -64,7 +64,7 @@ For developers
   translators can update.
 
   The following command runs this string collecting.
-   
+
   ::
 
        make extract-translations
@@ -78,12 +78,12 @@ For developers
 
   You can contact the frepple team and ask them to help you with a pre-translated file. It will makes the
   translation job much easier and faster.
-  
+
   If you want to create installation packages including the new language then the installer also needs
   updating. The files *contrib/installer/parameters.ini* and *contrib/installer/frepple.nsi* need straightforward
   editing.
 
-  To activate it you must also add the new language to *djangosettings.py*. Add the new language code and 
+  To activate it you must also add the new language to *djangosettings.py*. Add the new language code and
   description to the variable LANGUAGES:
 
   ::
@@ -113,7 +113,7 @@ For developers
 
   Run the following command to compile the output of the translators in the
   right format in various data files.
-   
+
   ::
 
        make compile-translations

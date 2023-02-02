@@ -2688,11 +2688,11 @@ class ManufacturingOrder(OperationPlan):
                         for r in self.operation.operationresources.using(
                             database
                         ).all():
-                            rsrc = r.getPreferredResource()
-                            if rsrc == opr.resource:
+                            if r.resource in (opr.resource, opr.resource.owner):
                                 opr.quantity = (self.quantity or Decimal(0)) * (
                                     r.quantity or Decimal(0)
                                 ) + (r.quantity_fixed or Decimal(0))
+                                break
 
         dependencies = (
             not delete

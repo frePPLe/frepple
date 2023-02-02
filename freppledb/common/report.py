@@ -653,7 +653,7 @@ class GridReport(View):
         elif isinstance(value, date):
             return date_format(value, format="DATE_FORMAT", use_l10n=False)
         elif isinstance(value, timedelta):
-            return _parseSeconds(value, excel_duration_in_dayst)
+            return _parseSeconds(value, excel_duration_in_days)
         elif isinstance(value, (list, tuple)):
             return "|".join([str(cls._localize(i, decimal_separator)) for i in value])
         else:

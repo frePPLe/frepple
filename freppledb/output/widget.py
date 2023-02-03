@@ -71,7 +71,7 @@ class LateOrdersWidget(Widget):
             db = DEFAULT_DB_ALIAS
         cursor = connections[db].cursor()
         result = [
-            '<div class="table-responsive"><table class="table table-condensed table-hover">',
+            '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="alignleft">%s</th>'
             '<th class="alignleft">%s</th><th class="alignleft">%s</th>'
             '<th class="aligncenter">%s</th><th class="aligncenter">%s</th>'
@@ -156,7 +156,7 @@ class ShortOrdersWidget(Widget):
             db = DEFAULT_DB_ALIAS
         cursor = connections[db].cursor()
         result = [
-            '<div class="table-responsive"><table class="table table-condensed table-hover">',
+            '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="alignleft">%s</th><th class="alignleft">%s</th>'
             '<th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
@@ -1071,7 +1071,7 @@ class PurchaseQueueWidget(Widget):
         except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
-            '<div class="table-responsive"><table class="table table-condensed table-hover">',
+            '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("item"))),
@@ -1129,7 +1129,7 @@ class DistributionQueueWidget(Widget):
         except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
-            '<div class="table-responsive"><table class="table table-condensed table-hover">',
+            '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("item"))),
@@ -1189,7 +1189,7 @@ class ShippingQueueWidget(Widget):
         except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
-            '<div class="table-responsive"><table class="table table-condensed table-hover">',
+            '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("item"))),
@@ -1249,7 +1249,7 @@ class ResourceQueueWidget(Widget):
         except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
-            '<div class="table-responsive"><table class="table table-condensed table-hover">',
+            '<div class="table-responsive"><table class="table table-sm table-hover">',
             "<thead><tr>"
             '<th class="alignleft">%s</th>'
             '<th>%s</th><th class="aligncenter">%s</th>'
@@ -1313,7 +1313,7 @@ class PurchaseAnalysisWidget(Widget):
         except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
-            '<div class="table-responsive"><table class="table table-condensed table-hover">',
+            '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("item"))),
@@ -1368,7 +1368,7 @@ class AlertsWidget(Widget):
         except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
-            '<div class="table-responsive"><table class="table table-condensed table-hover">',
+            '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("type"))),

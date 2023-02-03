@@ -35,7 +35,7 @@ function showsupplyinformationDrv($window, gettextCatalog) {
     var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
       gettextCatalog.getString("supply information") +
       '</h5></div>' +
-      '<div class="table-responsive"><table class="table table-hover table-condensed"><thead><tr><td>' +
+      '<div class="table-responsive"><table class="table table-hover table-sm"><thead><tr><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("priority") + '</b>' +
       '</td><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("types") + '</b>' +

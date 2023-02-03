@@ -1,0 +1,20 @@
+{% load i18n %}
+<button class="btn btn-sm btn-primary" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+      data-bs-title="{% trans 'Bookmark your favorite report configurations'|capfirst|force_escape %}">
+    <span class="fa fa-star"></span>
+    </div>
+</button>
+<ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
+    {% if preferences.favorites %}
+        {% for fav in preferences.favorites %}
+        <li><a class="dropdown-item" onclick="favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
+        {% endfor %}
+    {% endif %}
+    <li>
+        <a class="dropdown-item d-flex" >
+        <button id="favoritesave" onclick="favorite.save()" type="button" class="flex-fill btn btn-primary btn-sm disabled me-1">{% trans "save"|capfirst %}</button>
+        <input class="form-control form-control-sm" id="favoritename" oninput="favorite.check()" type="text" size="15">
+        </a>
+    </li>
+</ul>

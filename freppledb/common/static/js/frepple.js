@@ -499,7 +499,10 @@ jQuery.extend($.fn.fmatter, {
   longstring: function (cellvalue, options, rowdata) {
     if (typeof cellvalue !== 'string') return "";
     var tipcontent = $.jgrid.htmlEncode(cellvalue);
-    return '<span data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="' + tipcontent + '">' + tipcontent + '</span>';
+    if (tipcontent)
+      return '<span data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="' + tipcontent + '">' + tipcontent + '</span>';
+    else
+      return tipcontentreturn;
   },
 
   selectbutton: function (cellvalue, options, rowdata) {
@@ -2050,7 +2053,7 @@ var favorite = {
       divider = $("#favoritelist li.divider");
     }
     var newfav_li = $('<li></li>');
-    var newfav_a = $('<a href="#" onclick="favorite.open(event)"></a>');
+    var newfav_a = $('<a class="dropdown-item" href="#" onclick="favorite.open(event)"></a>');
     newfav_a.text(fav);
     newfav_a.append(
       '<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div>'

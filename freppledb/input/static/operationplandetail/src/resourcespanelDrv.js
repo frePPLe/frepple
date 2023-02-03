@@ -35,7 +35,7 @@ function showresourcespanelDrv($window, gettextCatalog) {
 		var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
 			gettextCatalog.getString("resource") +
 			'</h5></div>' +
-			'<table class="table table-condensed table-hover"><thead><tr><td>' +
+			'<table class="table table-sm table-hover"><thead><tr><td>' +
 			'<b style="text-transform: capitalize;">' + gettextCatalog.getString("name") + '</b>' +
 			'</td><td>' +
 			'<b style="text-transform: capitalize;">' + gettextCatalog.getString("quantity") + '</b>' +

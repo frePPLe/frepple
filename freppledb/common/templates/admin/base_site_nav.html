@@ -69,8 +69,8 @@ $(function() {
           {% endif %}
           {% firstof user.first_name user.username %}
         </a>
-				<ul class="dropdown-menu dropdown-menu-end">
-				  <li><a class="dropdown-item" href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</a></li>
+				<ul class="dropdown-menu dropdown-menu-end" style="right: 0 !important; left: auto !important">
+				  <li><button class="dropdown-item" href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</button></li>
 				  <li><a class="dropdown-item" href="/data/logout/?next=/">{% trans 'Log out'|capfirst %}</a></li>
 				</ul>
 			  </li>

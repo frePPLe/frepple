@@ -116,7 +116,7 @@ class InboxWidget(Widget):
               """
         result = []
         result.append(
-            '<div class="table-responsive"><table class="table table-condensed table-hover"><tbody>'
+            '<div class="table-responsive"><table class="table table-sm table-hover"><tbody>'
         )
         for notif in notifs:
             result.append(

@@ -154,6 +154,7 @@ The section below describes the installation and configuration of these.
   * | In odoo, you allow people to access frepple by granting the "frepple user" access
       right.
     | The access is not granted by default.
+    | You'll need to switch to developer mode to edit this access right.
 
   * | All odoo users with the "frepple user" permission are automatically synchronised
       with frepple.

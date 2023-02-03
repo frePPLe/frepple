@@ -2355,7 +2355,7 @@ class GridReport(View):
 
                 yield (
                     '<div class="table-responsive">'
-                    '<table class="table table-condensed" style="white-space: nowrap"><tbody>'
+                    '<table class="table table-sm" style="white-space: nowrap"><tbody>'
                 )
 
                 for filename, file in request.FILES.items():
@@ -2482,7 +2482,7 @@ class GridReport(View):
                 # Header in output
                 yield (
                     '<div class="table-responsive">'
-                    '<table class="table table-condensed" style="white-space: nowrap"><tbody>'
+                    '<table class="table table-sm" style="white-space: nowrap"><tbody>'
                 )
 
                 for filename, file in request.FILES.items():

@@ -1305,7 +1305,7 @@ def importWorkbook(request):
             # Process all rows in each worksheet
             yield (
                 '<div class="table-responsive">'
-                '<table class="table table-condensed" style="white-space: nowrap;"><tbody>'
+                '<table class="table table-sm" style="white-space: nowrap;"><tbody>'
             )
             for ws_name, model, contenttype_id, dependencies in models:
                 with transaction.atomic(using=request.database):

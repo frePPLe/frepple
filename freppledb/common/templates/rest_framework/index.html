@@ -56,7 +56,7 @@ curl -H 'Accept: application/json' --header 'Authorization: Bearer {{token}}' ht
     <div class="card-header">
       <b>REST API</b>
     </div>
-    <table class="table table-condensed table-hover">
+    <table class="table table-sm table-hover">
       <tr><th></th><th>{% trans 'List API' %}</th><th>{% trans 'Detail API' %}</th></tr>
       {% getMenu as menu %}
       {% for group in menu %}

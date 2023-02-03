@@ -56,7 +56,7 @@ class AnalysisDemandProblems(Widget):
         except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
-            '<div class="table-responsive"><table class="table table-condensed table-hover">',
+            '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th>'
             '<th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
             % (

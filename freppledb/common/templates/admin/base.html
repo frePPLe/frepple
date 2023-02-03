@@ -55,16 +55,16 @@
 {% block modal %}{% endblock %}
 <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
 <script>
-const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-const tooltipList = [...tooltipTriggerList].map(
+var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+var tooltipList = [...tooltipTriggerList].map(
     tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {
       container: 'body',
       trigger : 'hover',
       delay: { "show": 500, "hide": 100 }
     })
     );
-const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
 </script>
 </body>
 </html>

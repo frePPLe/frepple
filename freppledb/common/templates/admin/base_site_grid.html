@@ -92,11 +92,15 @@ function displayGrid(load) {
       width: 700
     },
     gridComplete: function() {
-      $('#grid [data-bs-toggle="tooltip"]')
-        .tooltip({"delay": {"show": 500}, "container": "#workarea"})
-        .on('blur', function() {
-          $('#grid [data-bs-toggle="tooltip"]').tooltip('hide');
-          });
+      tooltipList.forEach(function (t) {t.dispose();});
+      var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      tooltipList = [...tooltipTriggerList].map(
+          tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {
+            container: 'body',
+            trigger : 'hover',
+            delay: { "show": 500, "hide": 100 }
+          })
+          );
       },
     loadError: function(xhr,st,err) {
       if (xhr.status == 401) {
@@ -330,24 +334,7 @@ function displayGrid(load) {
 </div>
 
 <div id="toolicons" class="col-auto ms-auto ver-align-middle">{% block actions %}
-{% if reportclass.filterable %}
-<div class="btn-group" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
-   data-bs-title="{% trans 'Bookmark your favorite report configurations'|capfirst|force_escape %}">
-  <button class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span class="fa fa-star"></span>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-right" id="favoritelist">
-    {% if preferences.favorites %}
-    {% for fav in preferences.favorites %}
-    <li><a class="dropdown-item" onclick="favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
-    {% endfor %}
-    <li role="separator" class="divider"></li>
-    {% endif %}
-    <li><a class="dropdown-item" ><button id="favoritesave" onclick="favorite.save()" type="button" class="btn btn-primary btn-sm disabled">{% trans "save"|capfirst %}</button>
-    <input id="favoritename" oninput="favorite.check()" type="text" size="15"></a>
-    </li>
-  </ul>
-</div>{% endif %}
+{% if reportclass.filterable %}{% include "common/snippet_favorites.html" %}{% endif %}
 {% if hasaddperm %}<button class="btn btn-sm btn-primary" onclick="location.href='{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Create new object"|escape %}" ><span class="fa fa-plus"></span></button>
 {% if not is_popup and reportclass.canDuplicate %}<button class="btn btn-sm btn-primary"  disabled id="copy_selected" onclick="grid.showCopy()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Copy selected objects'|escape %}" ><span class="fa fa-copy"></span></button>
 {% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<button class="btn btn-sm btn-primary" id="delete_selected" disabled data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Delete selected objects'|escape %}" onclick="grid.showDelete('{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/')" ><span class="fa fa-minus"></span></button>
@@ -362,7 +349,7 @@ function displayGrid(load) {
 
 {% block table %}
 <div class="row" id="main-row" style="text-align: center;">
-<div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
+<div id="content-main" class="col" style="min-height: 150px; margin-top: 0.7em">
 <table id="grid" class="table table-striped" style="background-color: white"></table>
 <div id="gridpager"></div>
 </div>

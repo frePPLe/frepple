@@ -188,7 +188,7 @@ $(function() {
 
 <div class="row">
 
-<div id="save_undo" class="col-5 form-inline">
+<div id="save_undo" class="col-auto">
 {% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
 <button class="btn btn-primary" disabled id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}"><i class="fa fa-spinner fa-spin d-none"></i>{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}</button>

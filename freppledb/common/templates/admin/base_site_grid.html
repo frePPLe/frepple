@@ -309,25 +309,22 @@ function displayGrid(load) {
 
 <div class="row">
 
-<div id="save_undo" class="col-5 form-inline">
+<div id="save_undo" class="col-auto">
 {% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
-<button class="btn btn-primary" disabled id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}"><i class="fa fa-spinner fa-spin d-none"></i>{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}</button>
-<button class="btn btn-primary" disabled id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}</button>
+<button class="btn btn-primary text-capitalize" disabled id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}"><i class="fa fa-spinner fa-spin d-none"></i>{% filter force_escape %}{% trans "Save" %}{% endfilter %}</button>
+<button class="btn btn-primary text-capitalize" disabled id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">{% filter force_escape %}{% trans "Undo" %}{% endfilter %}</button>
 {% if actions %}
-<form class="form-addon" method="get" action="#" style="display: inline;" >
-  <input type="hidden" name="actions" id="actions" value="">
-  <div class="dropdown" style="display: inline;">
-      <button disabled class="btn btn-default dropdown-toggle form-control" type="button" name="actions1" id="actions1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-      <span>{% trans "select action"|capfirst %}</span>&nbsp;&nbsp;<i class="caret"></i>
+  <div class="dropdown">
+      <button disabled class="btn btn-primary dropdown-toggle" type="button" name="actions1" id="actions1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+      {% trans "select action"|capfirst %}
       </button>
-      <ul class="dropdown-menu" id="actionsul" aria-labelledby="actions1" style="top: auto;">
+      <ul class="dropdown-menu" id="actionsul" aria-labelledby="actions1">
       {% for i in  actions %}
         <li><a class="dropdown-item" onclick="" name="{{ i.name|escape }}">{% trans i.label|capfirst %}</a></li>
       {% endfor %}
       </ul>
   </div>
-</form>
 {% endif %}
 {% endif %}
 {% endblock save_undo_buttons %}

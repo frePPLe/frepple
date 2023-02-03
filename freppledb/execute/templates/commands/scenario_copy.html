@@ -46,12 +46,12 @@
          {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
        </button>
        <ul class="dropdown-menu" role="menu">
-         <li><a class="scenariocopy" href="#" data-source="{{ current_database }}" data-target="{{ j.name }}">
+         <li><a class="dropdown-item scenariocopy" href="#" data-source="{{ current_database }}" data-target="{{ j.name }}">
            {% trans "Copy from" %} {{ current_database }}
          </a></li>
          {% if dumps %}
          <li class="menu-item dropdown dropdown-submenu">
-            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">{% trans "Restore from backup" %}</a>
+            <a href="#" class="dropdown-item dropdown-toggle" data-bs-toggle="dropdown">{% trans "Restore from backup" %}</a>
             <ul class="dropdown-menu">
                 {% for dump in dumps %}
                 <li><a class="dropdown-item scenariocopy" href="#" dumpfile="{{ dump }}" data-source="{{ current_database }}" data-target="{{ j.name }}">{{ dump }}</a></li>

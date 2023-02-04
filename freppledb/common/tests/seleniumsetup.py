@@ -62,7 +62,7 @@ class SeleniumTest(StaticLiveServerTestCase):
             cls.driver = Edge(options=options)
         else:
             raise Exception("Invalid setting SELENIUM_TESTS")
-        cls.driver.set_window_size(1080, 800)
+        cls.driver.set_window_size(1920, 1080)
         cls.driver.implicitly_wait(10)
 
     @classmethod

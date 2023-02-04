@@ -271,10 +271,8 @@ function displayGrid(load) {
 	  $("#horizonunit").val($(this).prop('name'));
 	});
 
-  $("#actionsul li a").click(function(){
-    $("#actions1 span").text($(this).text());
-    $("#actions").val($(this).prop('name'));
-    grid.runAction($(this).prop('name'));
+  $("#gridactions").change(function(){
+    grid.runAction(this.value);
   });
 
   {% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}
@@ -312,19 +310,22 @@ function displayGrid(load) {
 <div id="save_undo" class="col-auto">
 {% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
-<button class="btn btn-primary text-capitalize" disabled id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}"><i class="fa fa-spinner fa-spin d-none"></i>{% filter force_escape %}{% trans "Save" %}{% endfilter %}</button>
-<button class="btn btn-primary text-capitalize" disabled id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">{% filter force_escape %}{% trans "Undo" %}{% endfilter %}</button>
+<button class="btn btn-primary text-capitalize" disabled id="save" onclick="upload.save()"
+  title="{% trans 'save changes'|capfirst|force_escape %}">
+    <i class="fa fa-spinner fa-spin d-none"></i>
+    {% filter force_escape %}{% trans "Save" %}{% endfilter %}
+</button>
+<button class="btn btn-primary text-capitalize" disabled id="undo" onclick="upload.undo()"
+  title="{% trans 'undo changes'|capfirst|force_escape %}">
+  {% filter force_escape %}{% trans "Undo" %}{% endfilter %}
+</button>
 {% if actions %}
-  <div class="dropdown">
-      <button disabled class="btn btn-primary dropdown-toggle" type="button" name="actions1" id="actions1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-      {% trans "select action"|capfirst %}
-      </button>
-      <ul class="dropdown-menu" id="actionsul" aria-labelledby="actions1">
+  <select disabled class="form-select d-inline-block w-auto" aria-label="select action" name="gridactions" id="gridactions">
+      <option id="noactionselected" selected>{% trans "select action"|capfirst %}</option>
       {% for i in  actions %}
-        <li><a class="dropdown-item" onclick="" name="{{ i.name|escape }}">{% trans i.label|capfirst %}</a></li>
+        <option value="{{ i.name|escape }}">{% trans i.label|capfirst %}</option>
       {% endfor %}
-      </ul>
-  </div>
+  </select>
 {% endif %}
 {% endif %}
 {% endblock save_undo_buttons %}

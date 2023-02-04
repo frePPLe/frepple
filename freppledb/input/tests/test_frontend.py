@@ -52,6 +52,7 @@ class PurchaseOrderScreen(SeleniumTest):
         reference = firstrow.get_attribute("id")
 
         supplier_content = table_page.get_content_of_row_column(firstrow, "supplier")
+        print(supplier_content, "---sup")
         supplier_inputfield = table_page.click_target_cell(supplier_content, "supplier")
         # only put existing supplier otherwise saving modification fails
         table_page.enter_text_in_inputfield(supplier_inputfield, newSupplier)

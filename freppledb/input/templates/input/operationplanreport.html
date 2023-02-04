@@ -172,8 +172,9 @@
     $("#undo").on('click', function() {
       $(window).off('beforeunload', upload.warnUnsavedChanges);
       });
-    $("#actionsul li").on('click', function() {
-      angular.element('#controller').scope().refreshstatus($("#actions").val());
+    $("#gridactions").on('change', function() {
+      var v = $("#gridactions").val();
+      if (v) angular.element('#controller').scope().refreshstatus(v);
     });
     $("#gridmode").on('click', function() {
       angular.element('#controller').scope().setMode("table");

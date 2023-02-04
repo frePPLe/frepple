@@ -239,7 +239,7 @@ var upload = {
       $("#grid").trigger("reloadGrid");
     $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
     $('#save, #undo').addClass("btn-primary").removeClass("btn-danger").prop('disabled', true);
-    $('#actions1').prop('disabled', true);
+    $('#gridactions').prop('disabled', true);
     $(".ng-dirty").removeClass('ng-dirty');
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
@@ -656,8 +656,8 @@ var grid = {
   },
 
   runAction: function (next_action) {
-    if ($("#actions").val() != "no_action")
-      actions[$("#actions").val()]();
+    var v = $("#gridactions").val();
+    if (v) actions[v]();
   },
 
   setStatus: function (newstatus, field_prefix) {
@@ -666,7 +666,7 @@ var grid = {
       jQuery("#grid").jqGrid("setCell", sel[i], field_prefix ? field_prefix + 'status' : 'status', newstatus, "dirty-cell");
       jQuery("#grid").jqGrid("setRowData", sel[i], false, "edited");
     };
-    $("#actions1").html(gettext("Select action") + '&nbsp;&nbsp;<span class="caret"></span>');
+    $("#noactionselected").prop("selected", true);
     $('#save').removeClass("btn-primary").addClass("btn-danger").prop("disabled", false);
     $('#undo').removeClass("btn-primary").addClass("btn-danger").prop("disabled", false);
   },
@@ -1933,12 +1933,12 @@ var grid = {
     if (sel > 0) {
       $("#copy_selected").prop('disabled', false).addClass("bold");
       $("#delete_selected").prop('disabled', false).addClass("bold");
-      if ($("#actions").length) $("#actions1").prop('disabled', false);
+      $("#gridactions").prop('disabled', false);
     }
     else {
       $("#copy_selected").prop('disabled', true).removeClass("bold");
       $("#delete_selected").prop('disabled', true).removeClass("bold");
-      if ($("#actions").length) $("#actions1").prop('disabled', true);
+      $("#gridactions").prop('disabled', true);
     }
   },
 
@@ -1946,13 +1946,13 @@ var grid = {
     if ($(this).is(':checked')) {
       $("#copy_selected").prop('disabled', false).addClass("bold");
       $("#delete_selected").prop('disabled', false).addClass("bold");
-      if ($("#actions").length) $("#actions1").prop('disabled', false);
+      $("#gridactions").prop('disabled', false);
       $('.cbox').prop("checked", true);
     }
     else {
       $("#copy_selected").prop('disabled', true).removeClass("bold");
       $("#delete_selected").prop('disabled', true).removeClass("bold");
-      if ($("#actions").length) $("#actions1").prop('disabled', true);
+      $("#gridactions").prop('disabled', true);
       $('.cbox').prop("checked", false);
     }
   },
@@ -2236,11 +2236,11 @@ var ERPconnection = {
     $('#popup').html('<div class="modal-dialog">' +
       '<div class="modal-content">' +
       '<div class="modal-header">' +
-      '<h5 class="modal-title text-capitalize-first">' + gettext("Export") + '</h5>' +
+      '<h5 class="modal-title text-capitalize">' + gettext("Export") + '</h5>' +
       '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
       '</div>' +
       '<div class="modal-body">' +
-      '<p class="text-capitalize-first">' + gettext("export selected records") + '</p>' +
+      '<p>' + gettext("Export selected records?") + '</p>' +
       '</div>' +
       '<div class="modal-footer justify-content-between">' +
       '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
@@ -2249,6 +2249,10 @@ var ERPconnection = {
       '</div>' +
       '</div>');
     showModal('popup');
+    document.getElementById('popup').addEventListener('hidden.bs.modal', event => {
+      $("#noactionselected").prop("selected", true);
+    }, { once: true });
+
     $('#button_export').on('click', function () {
       $('#popup .modal-body p').html(gettext('connecting') + '...');
       $.ajax({
@@ -2292,8 +2296,7 @@ var ERPconnection = {
         }
       });
     });
-    if ($("#actions").length)
-      $("#actions1 span").text($("#actionsul").children().first().text());
+    $("#noactionselected").prop("selected", true);
   },
 
 } //end Code for ERP integration

@@ -1138,205 +1138,112 @@ var grid = {
     hideModal('timebuckets');
     $.jgrid.hideModal("#searchmodfbox_grid");
 
-    // Prepare upfront the html for the scenarios to export
-    // We limit the list of scenarios to 6
-    if (scenario_permissions.length > 0) {
-      var cb = "";
-      for (var i = 0; i < scenario_permissions.length; i++) {
-        if (scenario_permissions[i][2] == 1)
-          cb +=
-            '<div class="form-check" style="white-space: nowrap">' +
-            '<input class="form-check-input" type="checkbox" value="" id="' + scenario_permissions[i][0] + '" checked disabled>' +
-            '&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="' + scenario_permissions[i][0] + '">' +
-            gettext(scenario_permissions[i][1]) +
-            '</label>' +
-            '</div>';
-      }
-      for (var i = 0; i < scenario_permissions.length && i < 6; i++) {
-        if (scenario_permissions[i][2] != 1)
-          cb +=
-            '<div class="form-check" style="white-space: nowrap">' +
-            '<input class="form-check-input" type="checkbox" value="" id="' + scenario_permissions[i][0] + '">' +
-            '&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="' + scenario_permissions[i][0] + '">' +
-            gettext(scenario_permissions[i][1]) +
-            '</label>' +
-            '</div>';
-      }
-    }
-
     // The only_list argument is true when we show a "list" report.
     // It is false for "table" reports.
     var showit = true;
-    if (only_list && scenario_permissions.length > 1)
-      $('#popup').html('<div class="modal" tabindex="-1">' +
-        '<div class="modal-dialog" style ="width: 400px;">' +
-        '<div class="modal-content">' +
-        '<div class="modal-header">' +
-        '<h5 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h5>' +
-        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' + gettext("Close") + '"></button>' +
+    var content = '<div class="modal-dialog">' +
+      '<div class="modal-content">' +
+      '<div class="modal-header">' +
+      '<h5 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h5>' +
+      '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' + gettext("Close") + '"></button>' +
+      '</div>' +
+      '<div class="modal-body">';
+    if (only_list)
+      content += '<div class="row" id="csvformat">' +
+        '<div class="col">' +
+        '<p class="fw-bold">' + gettext("Export format") + '</p>' +
+        '<div class="form-check">' +
+        '<input class="form-check-input" id="spreadsheetlist" type="radio" name="csvformat" value="spreadsheetlist" checked="">' +
+        '<label class="form-check-label" for="spreadsheetlist">' + gettext("Spreadsheet list") + '</label>' +
         '</div>' +
-        '<div class="modal-body">' +
-        '<table class="table table-borderless">' +
-        '<thead>' +
-        '<tr>' +
-        '<th scope="col">' + gettext("Export format") + '</th>' +
-        '<th scope="col">' + gettext("Scenarios to export") + '</th>' +
-        '</tr>' +
-        '</thead>' +
-        '<tbody>' +
-        '<tr>' +
-        '<td style="white-space: nowrap">' +
-        '<div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
-        '<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
-        '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
+        '<div class="form-check">' +
+        '<input class="form-check-input" id="csvlist" type="radio" name="csvformat" value="csvlist">' +
+        '<label class="form-check-label" for="csvlist">' + gettext("CSV list") + '</label>' +
         '</div>' +
-        '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' +
+        '<p class="fw-bold mt-3">' + gettext("Data source URL") + '&nbsp;&nbsp;' +
         '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Using this link external applications can pull data from frePPLe") + '">' +
         '<span class="fa fa-question-circle"></span>' +
-        '</a><br>' +
+        '</a><p>' +
         '<div class="input-group">' +
-        '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
-        '<span class="input-group-btn">' +
-        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
-        gettext("Copy to clipboard") + '"/></span>' +
+        '<input type="text" readonly id="urladdress" class="input-group-text" style="background: white">' +
+        '<span class="input-group-text fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
+        gettext("Copy to clipboard") + '"</span>' +
         '</div>' +
-        '</td>' +
-        '<td>' +
-        '<div class="check" name="scenarios" id="scenarios" value="default">' +
-        cb +
+        '</div>';
+    else if (!only_list)
+      content += '<div class="row" id="csvformat">' +
+        '<div class="col">' +
+        '<p class="fw-bold">' + gettext("Export format") + '</p>' +
+        '<div class="form-check">' +
+        '<input class="form-check-input" id="spreadsheettable" type="radio" name="csvformat" value="spreadsheettable" checked="">' +
+        '<label class="form-check-label" for="spreadsheettable">' + gettext("Spreadsheet table") + '</label>' +
         '</div>' +
-        '</td>' +
-        '</tr>' +
-        '</tbody>' +
-        '</table>' +
+        '<div class="form-check">' +
+        '<input class="form-check-input" id="spreadsheetlist" type="radio" name="csvformat" value="spreadsheetlist">' +
+        '<label class="form-check-label" for="spreadsheetlist">' + gettext("Spreadsheet list") + '</label>' +
         '</div>' +
-        '<div class="modal-footer justify-content-between">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
-        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary" value="' + gettext('Export') + '">' +
+        '<div class="form-check">' +
+        '<input class="form-check-input" id="csvtable" type="radio" name="csvformat" value="csvlist">' +
+        '<label class="form-check-label" for="csvtable">' + gettext("CSV table") + '</label>' +
         '</div>' +
+        '<div class="form-check">' +
+        '<input class="form-check-input" id="csvlist" type="radio" name="csvformat" value="csvlist">' +
+        '<label class="form-check-label" for="csvlist">' + gettext("CSV list") + '</label>' +
         '</div>' +
-        '</div>' +
-        '</div>');
-    else if (!only_list && scenario_permissions.length > 1)
-      $('#popup').html('<div class="modal-dialog" style="width: 400px;">' +
-        '<div class="modal-content">' +
-        '<div class="modal-header">' +
-        '<h5 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h5>' +
-        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' + gettext("Close") + '"></button>' +
-        '</div>' +
-        '<div class="modal-body">' +
-        '<table class="table table-borderless">' +
-        '<thead>' +
-        '<tr>' +
-        '<th scope="col">' + gettext("Export format") + '</th>' +
-        '<th scope="col">' + gettext("Scenarios to export") + '</th>' +
-        '</tr>' +
-        '</thead>' +
-        '<tbody>' +
-        '<tr>' +
-        '<td>' +
-        '<div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
-        '<label><input type="radio" name="csvformat" value="spreadsheettable" checked="">' + gettext("Spreadsheet table") + '</label><br>' +
-        '<label><input type="radio" name="csvformat" value="spreadsheetlist">' + gettext("Spreadsheet list") + '</label><br>' +
-        '<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label><br>' +
-        '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
-        '</div>' +
-        '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' +
+        '<p class="fw-bold mt-3">' + gettext("Data source URL") + '&nbsp;&nbsp;' +
         '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
         gettext("Using this link external applications can pull data from frePPLe") + '">' +
         '<span class="fa fa-question-circle"></span>' +
-        '</a><br>' +
+        '</a><p>' +
         '<div class="input-group">' +
-        '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
-        '<span class="input-group-btn">' +
-        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
-        gettext("Copy to clipboard") + '"/></span>' +
+        '<input type="text" readonly id="urladdress" class="input-group-text" style="background: white">' +
+        '<span class="input-group-text fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
+        gettext("Copy to clipboard") + '"</span>' +
         '</div>' +
-        '</td>' +
-        '<td>' +
-        '<div class="check" name="scenarios" id="scenarios" value="default">' +
-        cb +
-        '</div>' +
-        '</td>' +
-        '</tr>' +
-        '</tbody>' +
-        '</table>' +
-        '</div>' +
-        '<div class="modal-footer justify-content-between">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
-        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary" value="' + gettext('Export') + '">' +
-        '</div>' +
-        '</div>' +
-        '</div>');
-    else if (only_list && scenario_permissions.length <= 1)
-      $('#popup').html('<div class="modal-dialog" style="width: 400px;">' +
-        '<div class="modal-content">' +
-        '<div class="modal-header">' +
-        '<h5 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h5>' +
-        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' + gettext("Close") + '"></button>' +
-        '</div>' +
-        '<div class="modal-body">' +
-        '<label class="control-label"><b>' + gettext("Export format") +
-        '</b><div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
-        '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
-        '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
-        '</div>' +
-        '</label><br>' +
-        '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' +
-        '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
-        gettext("Using this link external applications can pull data from frePPLe") + '">' +
-        '<span class="fa fa-question-circle"></span>' +
-        '</a><br>' +
-        '<div class="input-group">' +
-        '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
-        '<span class="input-group-btn">' +
-        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
-        gettext("Copy to clipboard") + '"/></span>' +
-        '</div>' +
-        '</label><br>' +
-        '<div class="modal-footer justify-content-between">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
-        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary" value="' + gettext('Export') + '">' +
-        '</div>' +
-        '</div>' +
-        '</div>');
-    else if (!only_list && scenario_permissions.length <= 1)
-      $('#popup').html('<div class="modal-dialog" style="width: 400px;">' +
-        '<div class="modal-content">' +
-        '<div class="modal-header">' +
-        '<h5 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h5>' +
-        '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="' + gettext("Close") + '"></button>' +
-        '</div>' +
-        '<div class="modal-body">' +
-        '<label class="control-label"><b>' + gettext("Export format") +
-        '</b><div class="radio" name="csvformat" id="csvformat" value="spreadsheettable">' +
-        '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheettable" checked="">' + gettext("Spreadsheet table") + '</label><br>' +
-        '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist">' + gettext("Spreadsheet list") + '</label><br>' +
-        '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label><br>' +
-        '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
-        '</div>' +
-        '</label>' + '<br>' +
-        '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' +
-        '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
-        gettext("Using this link external applications can pull data from frePPLe") + '">' +
-        '<span class="fa fa-question-circle"></span>' +
-        '</a><br>' +
-        '<div class="input-group">' +
-        '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
-        '<span class="input-group-btn">' +
-        '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="' +
-        gettext("Copy to clipboard") + '"/></span>' +
-        '</div>' +
-        '<div class="modal-footer justify-content-between">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
-        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary" value="' + gettext('Export') + '">' +
-        '</div>' +
-        '</div>' +
-        '</div>');
+        '</div>';
     else
       showit = false;
-    if (showit) showModal('popup');
+
+    if (showit) {
+      // Prepare upfront the html for the scenarios to export
+      // We limit the list of scenarios to 6
+      if (scenario_permissions.length > 0) {
+        content += '<div class="col">' +
+          '<p class="fw-bold">' + gettext("Scenarios to export") + '</p>' +
+          '<div class="check" name="scenarios" id="scenarios" value="default">';
+        for (var i = 0; i < scenario_permissions.length; i++) {
+          if (scenario_permissions[i][2] == 1)
+            content +=
+              '<div class="form-check" style="white-space: nowrap">' +
+              '<input class="form-check-input" type="checkbox" value="" id="' + scenario_permissions[i][0] + '" checked disabled>' +
+              '&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="' + scenario_permissions[i][0] + '">' +
+              gettext(scenario_permissions[i][1]) +
+              '</label>' +
+              '</div>';
+        }
+        for (var i = 0; i < scenario_permissions.length && i < 6; i++) {
+          if (scenario_permissions[i][2] != 1)
+            content +=
+              '<div class="form-check" style="white-space: nowrap">' +
+              '<input class="form-check-input" type="checkbox" value="" id="' + scenario_permissions[i][0] + '">' +
+              '&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="' + scenario_permissions[i][0] + '">' +
+              gettext(scenario_permissions[i][1]) +
+              '</label>' +
+              '</div>';
+        }
+        content += '</div></div>';
+      }
+      content += '</div></div>' +  // closing modal-body and modal-content
+        '<div class="modal-footer justify-content-between">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="exportbutton" role="button" class="btn btn-primary" value="' + gettext('Export') + '">' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+      $('#popup').html(content);
+      showModal('popup');
+    }
 
     // initialize the data source url
     update_datasource_url();
@@ -1356,7 +1263,6 @@ var grid = {
       update_datasource_url();
       $('#urladdress').select();
       document.execCommand('copy');
-
     });
 
     //Compute the power query url to display
@@ -1557,7 +1463,7 @@ var grid = {
 
   //Display dialog for copying or deleting records
   showDelete: function (url) {
-    if ($('#delete_selected').hasClass("disabled")) return;
+    if ($('#delete_selected').prop("disabled")) return;
     var sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow');
     if (sel.length == 1)
       // Redirect to a page for deleting a single entity
@@ -1611,7 +1517,7 @@ var grid = {
   },
 
   showCopy: function () {
-    if ($('#copy_selected').hasClass("disabled")) return;
+    if ($('#copy_selected').prop("disabled")) return;
     var sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow');
     if (sel.length > 0) {
       hideModal('timebuckets');
@@ -2033,11 +1939,11 @@ var favorite = {
       || (typeof preferences !== 'undefined' && !("favorites" in preferences))
       || (typeof preferences !== 'undefined' && "favorites" in preferences && !(fav in preferences.favorites))
     )) {
-      $("#favoritesave").removeClass("disabled");
+      $("#favoritesave").prop("disabled", false);
       return true;
     }
     else {
-      $("#favoritesave").addClass("disabled");
+      $("#favoritesave").prop("disabled", true);
       return false;
     }
   },

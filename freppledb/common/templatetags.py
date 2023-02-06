@@ -127,7 +127,7 @@ class CrumbsNode(Node):
                     cur.append(
                         (
                             title,
-                            '<li><a href="%s%s%s">%s</a></li>'
+                            '<li class="breadcrumb-item"><a href="%s%s%s">%s</a></li>'
                             % (
                                 req.prefix,
                                 urlquote(req.path),

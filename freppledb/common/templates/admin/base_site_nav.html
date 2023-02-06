@@ -84,9 +84,9 @@ $(function() {
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
 	<div class="container-fluid">
 	  <div class="breadcrumbrow d-inline-block" aria-label="breadcrumb">
-		  <div class="col-sm-10">
+		  <div class="col flex-grow-1">
 		     <ol class="breadcrumb" id="breadcrumbs">
-		       <li><a id="cockpitcrumb" href="{{request.prefix}}/">{% trans 'home'|capfirst %}</a></li>
+		       <li id="cockpitcrumb" class="breadcrumb-item"><a href="{{request.prefix}}/">{% trans 'home'|capfirst %}</a></li>
 		       {% crumbs %}
 		     </ol>
 		  </div>

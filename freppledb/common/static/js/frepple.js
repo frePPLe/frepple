@@ -19,14 +19,14 @@ function getScrollBarWidth() {
 // This function is called when the window is resized.
 function breadcrumbs_reflow() {
   var crumbs = $("#breadcrumbs");
-  var height_one_line = Math.ceil($("#cockpitcrumb").height()) + 16;
+  var height_one_line = $("#cockpitcrumb").height();
 
   // Show all elements previously hidden
-  crumbs.children("li:hidden").show();
+  crumbs.children("li.d-none").removeClass("d-none");
   // Hide the first crumbs till it all fits on a single line.
   var first = true;
   crumbs.children("li").each(function () {
-    if (crumbs.height() > height_one_line && !first) $(this).hide();
+    if (crumbs.height() > height_one_line && !first) $(this).addClass("d-none");
     first = false;
   });
 }

@@ -1432,8 +1432,8 @@ class DistributionOrder(OperationPlan):
                     if (
                         not i.effective_start or self.enddate >= i.effective_start
                     ) and (not i.effective_end or self.enddate <= i.effective_end):
-                        self._itemsupplier = i
-                        return self._itemsupplier
+                        self._itemdistribution = i
+                        return self._itemdistribution
                     self._itemdistribution = i
                     return self._itemdistribution
             # No itemdistribution was found considering the effectivity dates. Ignore these and return the first one.

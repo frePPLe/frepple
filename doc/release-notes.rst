@@ -43,6 +43,9 @@ Release notes
 
 - | 15 & 16: Added a flag on workcenters to indicate tools (see above).
 
+- | 14 & 15 & 16: Update of replenishment logic when products can be both purchased and manufactured.
+    The solver will try first to buy then to manufacture.
+
 .. rubric:: User interface
 
 - | The styling and layout has been refreshed in a number of places. In

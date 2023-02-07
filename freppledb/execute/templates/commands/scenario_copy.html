@@ -46,7 +46,7 @@
          {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
        </button>
        <ul class="dropdown-menu" role="menu">
-         <li><a class="dropdown-item scenariocopy" href="#" data-source="{{ current_database }}" data-target="{{ j.name }}">
+         <li><a class="dropdown-item scenariocopy" href="#" data-source="{{ current_database }}" data-bs-target="{{ j.name }}">
            {% trans "Copy from" %} {{ current_database }}
          </a></li>
          {% if dumps %}
@@ -54,7 +54,7 @@
             <a href="#" class="dropdown-item dropdown-toggle" data-bs-toggle="dropdown">{% trans "Restore from backup" %}</a>
             <ul class="dropdown-menu">
                 {% for dump in dumps %}
-                <li><a class="dropdown-item scenariocopy" href="#" dumpfile="{{ dump }}" data-source="{{ current_database }}" data-target="{{ j.name }}">{{ dump }}</a></li>
+                <li><a class="dropdown-item scenariocopy" href="#" dumpfile="{{ dump }}" data-source="{{ current_database }}" data-bs-target="{{ j.name }}">{{ dump }}</a></li>
                 {% endfor%}
             </ul>
         </li>
@@ -69,12 +69,12 @@
        </button>
        <ul class="dropdown-menu" role="menu">
          {% if j.name in release_perm %}
-         <li><a class="dropdown-item scenariorelease" href="#" data-target="{{ j.name }}">
+         <li><a class="dropdown-item scenariorelease" href="#" data-bs-target="{{ j.name }}">
          {% trans "Release: You will lose ALL data in this scenario!" %}
          </a></li>
          {% endif %}
          {% if j.name in promote_perm and current_database == j.name %}
-         <li><a class="dropdown-item scenariopromote" href="#" data-source="{{ j.name }}" data-target="{{ DEFAULT_DB_ALIAS }}" >
+         <li><a class="dropdown-item scenariopromote" href="#" data-source="{{ j.name }}" data-bs-target="{{ DEFAULT_DB_ALIAS }}" >
          {% trans "Promote: All data will be copied to Production" %}
          </a></li>
          {% endif %}
@@ -89,7 +89,7 @@
     <td style="padding:5px 10px 5px 10px; text-align: center">{% trans j.status|lower|capfirst %}</td>
     {% endif %}
     <td style="padding:5px 10px 5px 10px">
-      <input class="scenariolabel" type="text" data-target="{{ j.name }}"
+      <input class="scenariolabel" type="text" data-bs-target="{{ j.name }}"
       value="{% if j.description %}{{j.description|escape}}{% else %}{{ j.name }}{% endif %}">
     </td>
     <td style="padding:5px 10px 5px 10px; text-align: center">{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
@@ -101,7 +101,7 @@
 <script>
 $(".scenariorelease").on("click", function(event) {
   event.preventDefault();
-  var releasedScenario = $(this).attr("data-target");
+  var releasedScenario = $(this).attr("data-bs-target");
   var target = "/" + releasedScenario;
   if (target == "/default")
     target = "";
@@ -125,7 +125,7 @@ $(".scenariopromote").on("click", function(event) {
    data: {
      promote: 1,
      source: $(this).attr("data-source"),
-     destination: $(this).attr("data-target")
+     destination: $(this).attr("data-bs-target")
      },
    success: function() {
      $("#scenariotoast").addClass("show");
@@ -144,7 +144,7 @@ $(".scenariocopy").on("click", function(event) {
    data: {
      copy: 1,
      source: $(this).attr("data-source"),
-     destination: $(this).attr("data-target"),
+     destination: $(this).attr("data-bs-target"),
      dumpfile: $(this).attr("dumpfile")
      },
    success: function() {
@@ -161,7 +161,7 @@ $(".scenariolabel").on("change", function(event) {
    type: 'POST',
    data: {
      update: 1,
-     scenario: $(this).attr("data-target"),
+     scenario: $(this).attr("data-bs-target"),
      description: $(this).val()
      },
    success: function() {

@@ -422,7 +422,7 @@ loadComplete: function(data) {
       data-mode="mode"></calendar>
   </div>
   <div id="kanban" data-ng-hide="mode != 'kanban'"
-    show-kanban-drv data-ng-class="{'row': colsum <= 12, 'longline': colsum > 12}"
+    show-kanban-drv class="row"
     data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
     data-kanbanoperationplans="kanbanoperationplans"
     data-operationplan="operationplan"
@@ -459,7 +459,7 @@ loadComplete: function(data) {
       data-mode="mode"></calendar>
   </div>
   <div id="kanban" data-ng-hide="mode != 'kanban'"
-    show-kanban-drv data-ng-class="{'row': colsum <= 12, 'longline': colsum > 12}"
+    show-kanban-drv class="row"
     data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
     data-kanbanoperationplans="kanbanoperationplans"
     data-operationplan="operationplan"

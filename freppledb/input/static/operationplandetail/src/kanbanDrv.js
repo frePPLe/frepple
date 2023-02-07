@@ -38,7 +38,6 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
 
     $scope.curselected = null;
     $scope.colstyle = 'col-md-1';
-    $scope.colsum = 12;
     $scope.type = 'PO';
     $scope.admin_escape = admin_escape;
     $scope.url_prefix = url_prefix;
@@ -51,50 +50,6 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
       'STCK': gettextCatalog.getString('Stock'),
       'DLVR': gettextCatalog.getString('Delivery'),
     };
-
-    getColStyle();
-
-    function getColStyle() {
-      // Column styles
-      switch ($scope.kanbancolumns.length) {
-        case 1:
-          $scope.colstyle = 'col-md-12';
-          $scope.colsum = 12;
-          break;
-        case 2:
-          $scope.colstyle = 'col-md-6';
-          $scope.colsum = 12;
-          break;
-        case 3:
-          $scope.colstyle = 'col-md-4';
-          $scope.colsum = 12;
-          break;
-        case 4:
-          $scope.colstyle = 'col-md-3';
-          $scope.colsum = 12;
-          break;
-        case 5:
-          $scope.colstyle = 'col-md-3';
-          $scope.colsum = 15;
-          break;
-        case 6:
-          $scope.colstyle = 'col-md-2';
-          $scope.colsum = 12;
-          break;
-        case 7:
-          $scope.colstyle = 'col-md-2';
-          $scope.colsum = 14;
-          break;
-        case 8:
-          $scope.colstyle = 'col-md-2';
-          $scope.colsum = 16;
-          break;
-        default:
-          $scope.colstyle = 'col-md-1';
-          $scope.colsum = $scope.kanbancolumns.length;
-      }
-      $scope.$parent.colsum = $scope.colsum;
-    }
 
     function getHeight(gutter) {
       if (preferences && preferences['height'])

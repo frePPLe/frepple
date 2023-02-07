@@ -19,14 +19,15 @@ function getScrollBarWidth() {
 // This function is called when the window is resized.
 function breadcrumbs_reflow() {
   var crumbs = $("#breadcrumbs");
-  var height_one_line = $("#cockpitcrumb").height();
+  var crumbrow = $(".breadcrumbrow");
+  var maxwidth = crumbrow.parent().width() - $("#database").closest(".navbar-nav").width();
 
   // Show all elements previously hidden
   crumbs.children("li.d-none").removeClass("d-none");
   // Hide the first crumbs till it all fits on a single line.
   var first = true;
   crumbs.children("li").each(function () {
-    if (crumbs.height() > height_one_line && !first) $(this).addClass("d-none");
+    if (crumbrow.width() > maxwidth && !first) $(this).addClass("d-none");
     first = false;
   });
 }
@@ -798,10 +799,17 @@ var grid = {
     }
     else {
       // Add selection of number of frozen columns
-      row2 = '<div class="row mt-3"><div class="col">' +
+      row2 = '<div class="row mt-3 mb-3"><div class="col">' +
         gettext("Frozen columns") +
-        '&nbsp;&nbsp;<input type="number" id="frozen" style="text-align: center; max-width: 50px" size="4" min="0" max="4" step="1" value="' + maxfrozen + '">' +
-        '</div></div>';
+        '&nbsp;&nbsp;<select id="frozen" class="form-select w-auto d-inline">';
+      var maxfreeze = Math.min(colModel.length, 5);
+      for (var i = 0; i <= maxfreeze; i++) {
+        if (i == maxfrozen)
+          row2 += '<option selected value="' + i + '">' + i + '</option>';
+        else
+          row2 += '<option value="' + i + '">' + i + '</option>';
+      }
+      row2 += '</select></div></div>';
     }
 
     row0 = row0.replace('placeholder0', val0s);

@@ -4,11 +4,10 @@
 {% block inline_field_sets %}
 {{ block.super }}
 {% if object_id %}
-<fieldset class="_module _aligned" id="fieldset-3" style="background:transparent">
-<legend>{% trans "related"|capfirst %}
-</legend>
+<fieldset class="module container-fluid" id="fieldset-3" style="background:transparent">
+<h1 class="text-capitalize">{% trans "related" %}</h1>
 <div class="row">
-  <div class="control-label col-md-3"><p>
+  <div class="control-label col-3"><p>
      <a href="{{ request.prefix }}/data/input/demand/?customer__name__ico={{ object_id | urlencode }}&noautofilter">
      {% trans "sales orders"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>

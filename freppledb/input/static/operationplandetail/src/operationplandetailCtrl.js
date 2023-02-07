@@ -29,7 +29,6 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   $scope.detailposition = detailposition;
   $scope.operationplans = [];
   $scope.kanbanoperationplans = {};
-  $scope.colsum = 12;
   $scope.kanbancolumns = preferences ? preferences.columns : undefined;
   if (!$scope.kanbancolumns)
     $scope.kanbancolumns = ["proposed", "approved", "confirmed", "completed", "closed"];

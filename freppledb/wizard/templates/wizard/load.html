@@ -7,7 +7,7 @@
   <div id="tasks" class="panel-group col-md-6 col-lg-8" role="tablist" aria-multiselectable="true">
   {% for step in wizard.steps %}
     <div class="card" id="wizard-{{ step.index }}">
-       <div id="wizardhead-{{ step.index }}" data-target="#wizardcontent-{{ step.index }}" class="card-header" role="tab"
+       <div id="wizardhead-{{ step.index }}" data-bs-target="#wizardcontent-{{ step.index }}" class="card-header" role="tab"
        {% if step.locked %}data-bs-toggle="tooltip" data-bs-placement="top" title="Complete the previous step to earn access!"{% else %}data-bs-toggle="collapse"{% endif %}>
         {% if step.icon %}<span style="font-size:1.5em" class="fa {{ step.icon }} float-end"></span>{% endif %}
         <h5 class="card-title">{{ step.title }}&nbsp;&nbsp;<small><span class="fa fa-plus fa-xs"></span></small></h5>

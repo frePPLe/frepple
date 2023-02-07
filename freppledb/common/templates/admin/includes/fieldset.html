@@ -1,14 +1,14 @@
-<fieldset class="module" id="fieldset-{% if stacked_prefix %}{{ stacked_prefix }}-{% endif %}{{ forloop.counter }}" style="background:transparent">
+<fieldset class="module mt-3 container-fluid" id="fieldset-{% if stacked_prefix %}{{ stacked_prefix }}-{% endif %}{{ forloop.counter }}" style="background:transparent">
     {% if fieldset.name %}
         {% if 'collapse' in fieldset.classes %}
-        <legend class="collapsable">
-        <a data-bs-toggle="collapse" data-target="#fieldset-{% if stacked_prefix %}{{ stacked_prefix }}-{% endif %}{{ forloop.counter }} .row">
+        <h1 class="collapsable text-capitalize">
+        <a data-bs-toggle="collapse" role="button" data-bs-target="#fieldset-{% if stacked_prefix %}{{ stacked_prefix }}-{% endif %}{{ forloop.counter }} .row">
         {{ fieldset.name }}
         &nbsp;<span class="btn btn-sm btn-default"><span class="fa fa-plus"></i></span>
         </a>
-        </legend>
+        </h1>
         {% else %}
-        <legend>{{ fieldset.name }}</legend>
+        <h1 class="text-capitalize">{{ fieldset.name }}</h1>
         {% endif %}
     {% endif %}
     {% if fieldset.description %}
@@ -17,18 +17,18 @@
     {% for line in fieldset %}
             <div class="row{% if 'collapse' in fieldset.classes %} collapse{% endif %}"><div class="control-group {% if line.fields|length_is:'1' and line.errors %}error {% endif %}{% for field in line %}{% if field.field.name %}field-{{ field.field.name }} {% endif %}{% if not line.has_visible_field %}hidden{% endif %}{% endfor %}">
                 {% for field in line %}
-                    <div class="col-md-{{ group_column_width }} form-group {% if not line.fields|length_is:'1' %} field-box{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}{% endif %}">
-                        <div style="text-align:right" class="control-label col-md-3">
+                    <div class="row mb-3 {% if not line.fields|length_is:'1' %} field-box{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}{% endif %}">
+                        <div class="control-label text-end col-3">
                             {{ field.label_tag }}
                         </div>
                         {% if field.is_checkbox %}
-                        <div class="controls col-md-9">
+                        <div class="controls col-9">
                             <div class="checkbox">
-                                {% render_field_bootstrap field.field %} {% if field.field.help_text %}<span class="help-block">{{ field.field.help_text|safe }}</span>{% endif %}
+                                {% render_field_bootstrap field.field %} {% if field.field.help_text %}<div class="mt-1 help-block">{{ field.field.help_text|safe }}</div>{% endif %}
                             </div>
                         </div>
                         {% else %}
-                        <div class="controls col-md-9">
+                        <div class="controls col-9">
                             {% if field.is_readonly %}
                                 <p>{{ field.contents }}</p>
                             {% else %}
@@ -36,7 +36,7 @@
                             {% endif %}
                             {% if not field.is_readonly and field.errors %}<span class="text-danger">{{ field.errors|striptags }}</span>{% endif %}
                             {% if field.field.help_text %}
-                                <span class="help-block">{{ field.field.help_text|safe }}</span>
+                                <div class="mt-1 help-block">{{ field.field.help_text|safe }}</div>
                             {% endif %}
                         </div>
                         {% endif %}

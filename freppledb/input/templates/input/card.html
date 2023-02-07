@@ -3,7 +3,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
 {% endcomment %}
 {% verbatim %}
 <div data-ng-attr-draggable="{{ editable ? 'true' : 'false' }}"
-      data-ng-class="['card', , {'calendar-event-inner': (mode == 'calendarweek' || mode == 'calendarday') && calendarmode == 'duration', 'active': opplan.hasOwnProperty('selected'), 'dirty': opplan.dirty}]"
+      data-ng-class="['card', {'calendar-event-inner': (mode == 'calendarweek' || mode == 'calendarday') && calendarmode == 'duration', 'active': opplan.hasOwnProperty('selected'), 'dirty': opplan.dirty}]"
       data-ng-style="{'overflow-y': 'hidden', 'background-color': opplan.color}"
       data-index="{{$index}}" data-reference="{{ opplan.id || opplan.reference }}">
     <div>

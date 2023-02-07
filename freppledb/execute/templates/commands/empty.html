@@ -28,7 +28,7 @@
         {% if with_archive_app %}
         <label>
           <input class="empty_all" type="checkbox" name="allhistory" value="1">&nbsp;<strong>{%trans 'plan history'|upper%}</strong>
-          <input class="empty_entity hidden" type="checkbox" name="models" data-tables="archive" value="archive.archivemanager">
+          <input class="empty_entity d-none" type="checkbox" name="models" data-tables="archive" value="archive.archivemanager">
         </label>
         {% endif %}
         <br>
@@ -72,12 +72,12 @@ $(".empty_entity").click( function() {
 
 function updateButtonState() {
 	// count how many checkboxes are enabled to enable/disable erase button
-	if (($(".empty_entity[data-tables='data']:checked").length > 0) 
+	if (($(".empty_entity[data-tables='data']:checked").length > 0)
 			|| ($(".empty_entity[data-tables='admin']:checked").length > 0)
 			|| ($(".empty_entity[data-tables='archive']:checked").length > 0))
 	  $("#erase").attr("disabled", false);
 	else
 	  $("#erase").attr("disabled", true);
-		
+
 }
 </script>

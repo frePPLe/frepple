@@ -2073,8 +2073,8 @@ class OperationPlanDetail(View):
                     coalesce(operationplan.location_id, operationplan.destination_id),
                     to_char(operationplan.startdate,'YYYY-MM-DD hh24:mi:ss'),
                     to_char(operationplan.enddate,'YYYY-MM-DD hh24:mi:ss'),
-                    trim(trailing '.' from (trim(trailing '0' from round(cte.quantity,8)::text)))||'/'||
-                    trim(trailing '.' from (trim(trailing '0' from round(operationplan.quantity,8)::text)))
+                    cte.quantity,
+                    operationplan.quantity
                     from cte
                     inner join operationplan on operationplan.reference = cte.reference
                     order by cte.rownum
@@ -2103,7 +2103,8 @@ class OperationPlanDetail(View):
                                 a[6],  # location
                                 a[7],  # startdate
                                 a[8],  # enddate
-                                a[9],  # quantity,
+                                float(a[9] or 0),  # quantity,
+                                float(a[10] or 0),  # opplan quantity,
                                 0 if a[0] == 1 else 2,
                             ]
                         )
@@ -2130,8 +2131,8 @@ class OperationPlanDetail(View):
                     coalesce(operationplan.location_id, operationplan.destination_id),
                     case when operationplan.type = 'STCK' then '' else to_char(operationplan.startdate,'YYYY-MM-DD hh24:mi:ss') end,
                     case when operationplan.type = 'STCK' then '' else to_char(operationplan.enddate,'YYYY-MM-DD hh24:mi:ss') end,
-                    trim(trailing '.' from (trim(trailing '0' from round(cte.quantity,8)::text)))||'/'||
-                    trim(trailing '.' from (trim(trailing '0' from round(operationplan.quantity,8)::text)))
+                    cte.quantity,
+                    operationplan.quantity
                     from cte
                     inner join operationplan on operationplan.reference = cte.reference
                     order by cte.rownum
@@ -2153,7 +2154,8 @@ class OperationPlanDetail(View):
                                 a[6],  # location
                                 a[7],  # startdate
                                 a[8],  # enddate
-                                a[9],  # quantity,
+                                float(a[9] or 0),  # quantity,
+                                float(a[10] or 0),  # opplan quantity
                                 0 if a[0] == 1 else 2,
                             ]
                         )

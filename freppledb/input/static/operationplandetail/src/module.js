@@ -52,3 +52,58 @@ operationplandetailapp.filter('formatdatetime', function () {
       return moment(datestr, datetimeformat).format(datetimeformat);
   };
 });
+
+
+operationplandetailapp.filter('formatnumber', function () {
+  return function (nData, maxdecimals = 6) {
+    // Number formatting function copied from free-jqgrid.
+    // Adapted to show a max number of decimal places.
+    if (typeof (nData) === 'undefined')
+      return '';
+    var isNumber = $.fmatter.isNumber;
+    if (!isNumber(nData))
+      nData *= 1;
+    if (isNumber(nData)) {
+      var bNegative = (nData < 0);
+      var absData = Math.abs(nData);
+      var sOutput;
+      if (absData > 100000 || maxdecimals <= 0)
+        sOutput = String(parseFloat(nData.toFixed()));
+      else if (absData > 10000 || maxdecimals <= 1)
+        sOutput = String(parseFloat(nData.toFixed(1)));
+      else if (absData > 1000 || maxdecimals <= 2)
+        sOutput = String(parseFloat(nData.toFixed(2)));
+      else if (absData > 100 || maxdecimals <= 3)
+        sOutput = String(parseFloat(nData.toFixed(3)));
+      else if (absData > 10 || maxdecimals <= 4)
+        sOutput = String(parseFloat(nData.toFixed(4)));
+      else if (absData > 1 || maxdecimals <= 5)
+        sOutput = String(parseFloat(nData.toFixed(5)));
+      else
+        sOutput = String(parseFloat(nData.toFixed(maxdecimals)));
+      var sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
+      if (sDecimalSeparator !== ".")
+        // Replace the "."
+        sOutput = sOutput.replace(".", sDecimalSeparator);
+      var sThousandsSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator") || ",";
+      if (sThousandsSeparator) {
+        var nDotIndex = sOutput.lastIndexOf(sDecimalSeparator);
+        nDotIndex = (nDotIndex > -1) ? nDotIndex : sOutput.length;
+        // we cut the part after the point for integer numbers
+        // it will prevent storing/restoring of wrong numbers during inline editing
+        var sNewOutput = sDecimalSeparator === undefined ? "" : sOutput.substring(nDotIndex);
+        var nCount = -1, i;
+        for (i = nDotIndex; i > 0; i--) {
+          nCount++;
+          if ((nCount % 3 === 0) && (i !== nDotIndex) && (!bNegative || (i > 1))) {
+            sNewOutput = sThousandsSeparator + sNewOutput;
+          }
+          sNewOutput = sOutput.charAt(i - 1) + sNewOutput;
+        }
+        sOutput = sNewOutput;
+      }
+      return sOutput;
+    }
+    return nData;
+  };
+});

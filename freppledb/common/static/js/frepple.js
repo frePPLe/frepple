@@ -799,7 +799,7 @@ var grid = {
     }
     else {
       // Add selection of number of frozen columns
-      row2 = '<div class="row mt-3 mb-3"><div class="col">' +
+      row2 = '<div class="row mt-3"><div class="col">' +
         gettext("Frozen columns") +
         '&nbsp;&nbsp;<select id="frozen" class="form-select w-auto d-inline">';
       var maxfreeze = Math.min(colModel.length, 5);
@@ -1471,7 +1471,7 @@ var grid = {
 
   //Display dialog for copying or deleting records
   showDelete: function (url) {
-    if ($('#delete_selected').prop("disabled")) return;
+    if ($('#delete_selected').is(":disabled")) return;
     var sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow');
     if (sel.length == 1)
       // Redirect to a page for deleting a single entity
@@ -1525,7 +1525,7 @@ var grid = {
   },
 
   showCopy: function () {
-    if ($('#copy_selected').prop("disabled")) return;
+    if ($('#copy_selected').is(":disabled")) return;
     var sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow');
     if (sel.length > 0) {
       hideModal('timebuckets');

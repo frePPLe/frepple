@@ -428,12 +428,12 @@ h1 small {
     .list-group {
         width: auto;
         position: absolute;
-        top: 52px;
+        top: 2.25rem;
         z-index: 4999;
         white-space: nowrap;
     }
 
-    .list-group-item {
+    .dropdown-item {
         border: none;
         line-height: 2em;
         padding-bottom: 1px;
@@ -449,11 +449,6 @@ h1 small {
         .form-control {
             width: auto !important;
         }
-    }
-
-    #addsearch {
-        padding-left: 6px;
-        padding-right: 6px;
     }
 
     .badge input {

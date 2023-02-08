@@ -8,6 +8,18 @@ $danger: #ff5252;
 $light: #E5E7EF;
 $dark: #E5E7EF;
 
+$white: #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #6c757d !default;
+$gray-700: #495057 !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;
+
 // Body background
 $body-bg: #ECECEC;
 
@@ -22,29 +34,35 @@ $body-color: #333333;
 
 // You probably don't need to update the variables below this line.
 // These updates are normally generic for all frepple themes.
-$spacer: 1rem;
+$accordion-bg: white;
+$accordion-btn-focus-border-color: $secondary;
+$accordion-button-active-bg: $secondary;
+$accordion-button-active-color: $body-color;
+$accordion-button-bg: $secondary;
+$accordion-button-color: $body-color;
+$accordion-button-padding-y: 0.5rem;
+$breadcrumb-divider-color: $body-color;
+$breadcrumb-divider: "\00a0\00a0\F0DA\00a0\00a0";
+$breadcrumb-item-padding-x: 0.2rem;
 $card-title-spacer-y: 0;
+$dropdown-color: $body-color;
+$dropdown-link-active-bg: $gray-200;
+$dropdown-link-active-color: $body-color;
+$dropdown-link-hover-bg: $gray-200;
+$dropdown-link-hover-color: $body-color;
 $h1-font-size: $font-size-base * 1.5;
 $h2-font-size: $font-size-base * 1.25;
 $h3-font-size: $font-size-base * 1.25;
 $h4-font-size: $font-size-base * 1.25;
 $h5-font-size: $font-size-base * 1.25;
-$link-color: $body-color;
-$link-hover-color: $body-color;
-$link-hover-decoration: none;
-$link-decoration: none;
-$accordion-button-bg: $secondary;
-$accordion-button-color: $body-color;
-$accordion-button-active-bg: $secondary;
-$accordion-button-active-color: $body-color;
-$accordion-btn-focus-border-color: $secondary;
-$accordion-bg: white;
-$accordion-button-padding-y: 0.5rem;
 $input-bg: white;
 $input-btn-focus-width: 2px;
+$link-color: $body-color;
+$link-decoration: none;
+$link-hover-color: $body-color;
+$link-hover-decoration: none;
+$navbar-light-color: $body-color;
+$nav-link-color: $body-color;
 $nav-tabs-border-color: $light;
 $nav-tabs-border-radius: 0;
-$breadcrumb-divider: "\00a0\00a0\F0DA\00a0\00a0";
-$breadcrumb-item-padding-x: 0.2rem;
-$breadcrumb-divider-color: $body-color;
-$nav-link-color: $body-color;
+$spacer: 1rem;

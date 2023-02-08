@@ -1684,19 +1684,19 @@ var grid = {
     event.stopPropagation();
     if (!grid.handlerinstalled) {
       $(document).on("click", grid.clickFilter);
-      var l = $('<span id="filterfield" class="list-group">');
+      var l = $('<span id="filterfield" class="list-group dropdown-menu">');
       var cnt = 15;  // Limits the number fields to choose from
       for (var col of $("#grid").jqGrid('getGridParam', 'colModel')) {
         var searchoptions = col.searchoptions;
         if (searchoptions && searchoptions.sopt && searchoptions.sopt.includes("cn")) {
-          var n = $('<button type="button" class="list-group-item list-group-item-action" onclick="grid.addFilter(event)" />');
+          var n = $('<a class="dropdown-item" onclick="grid.addFilter(event)" />');
           n.attr("data-filterfield", col.name);
           n.html(gettext("Search") + ' ' + col.label);
           l.append(n);
           if (--cnt <= 0) break;
         }
       }
-      $(el).parent().before(l);
+      $(el).before(l);
       grid.handlerinstalled = true;
     }
   },

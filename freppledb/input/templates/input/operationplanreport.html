@@ -274,7 +274,7 @@ function extraCustomize() {
     <button data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display kanban cards"|capfirst|force_escape %}" class="btn btn-sm btn-primary{% if preferences.mode == 'kanban' %} active{% endif %}" type="button" id="kanbanmode" name="mode">
       <span class="fa fa-columns fa-lg fa-lg" style="margin: 2px 0 3px 0;"></span>
     </button>
-    <div class="btn-group" data-bs-toggle="tooltip" data-bs-toggle="tooltip"
+    <div class="btn-group dropdown" data-bs-toggle="tooltip" data-bs-toggle="tooltip"
       data-bs-placement="top" title="{% trans "display calendar"|capfirst|force_escape %}">
       <button type="button" id="calendarmode" name="mode"
         class="btn btn-sm btn-primary dropdown-toggle{% if preferences.mode == 'calendarday' or preferences.mode == 'calendarweek' or preferences.mode == 'calendarmonth' %} active{% endif %}"
@@ -283,9 +283,9 @@ function extraCustomize() {
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
-        <li id="calendarmonth"><a href="#">{% trans "month"|capfirst %}</a></li>
-        <li id="calendarweek"><a href="#">{% trans "week"|capfirst %}</a></li>
-        <li id="calendarday"><a href="#">{% trans "day"|capfirst %}</a></li>
+        <li class="dropdown-item" id="calendarmonth"><a href="#">{% trans "month"|capfirst %}</a></li>
+        <li class="dropdown-item" id="calendarweek"><a href="#">{% trans "week"|capfirst %}</a></li>
+        <li class="dropdown-item" id="calendarday"><a href="#">{% trans "day"|capfirst %}</a></li>
       </ul>
     </div>
   </div>

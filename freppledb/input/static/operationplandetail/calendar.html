@@ -1,8 +1,8 @@
 <div data-ng-switch="mode">
   <div class="row calendar-navbar">
-    <div class="col-4 ver-align-middle alignleft">
+    <div class="col-auto me-auto ver-align-middle">
       <span data-ng-if="groupingcfg">
-      <button class="btn btn-primary dropdown-toggle form-control" style="width:auto" type="button" name="grouping" data-bs-toggle="dropdown">
+      <button class="dropdown-toggle form-control" style="width:auto" type="button" name="grouping" data-bs-toggle="dropdown">
         {{ grouping ? "Group by " + groupingcfg[grouping] : "No grouping" }}&nbsp;&nbsp;<i class="caret"></i>
       </button>
       <ul class="dropdown-menu" aria-labelledby="grouping">
@@ -29,9 +29,9 @@
         <i class="fa fa-chevron-right"></i>
       </button>
     </div>
-    <div class="col-4 ver-align-middle ">
-      <div class="float-end">
-      <button class="btn btn-primary dropdown-toggle form-control" style="width: auto" type="button" name="calmode" data-bs-toggle="dropdown">
+    <div class="col-auto ms-auto ver-align-middle ">
+      <div class="dropdown">
+      <button class="form-control dropdown-toggle w-auto" type="button" aria-expanded="false" name="calmode" data-bs-toggle="dropdown">
         {{ calendarmodes[calendarmode] }}&nbsp;&nbsp;<i class="caret"></i>
       </button>
       <ul class="dropdown-menu" aria-labelledby="calmode">

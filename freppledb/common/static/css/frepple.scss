@@ -104,6 +104,37 @@
     color: red;
 }
 
+/* Django admin overrrides. */
+
+.calendarbox,
+.calendar,
+.calendar-cancel,
+.calendar-shortcuts {
+    background-color: inherit;
+}
+
+.clockbox {
+    background-color: inherit;
+    padding: 1rem;
+
+    h2 {
+        font-size: 12px;
+    }
+}
+
+.calendar td a:focus,
+.timelist a:focus,
+.calendar td a:hover,
+.timelist a:hover {
+    color: inherit;
+    font-weight: bold;
+}
+
+.calendar table {
+    background-color: inherit;
+    caption-side: top;
+}
+
 /* Gantt charts */
 
 .time {

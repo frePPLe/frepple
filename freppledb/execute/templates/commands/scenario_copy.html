@@ -1,7 +1,12 @@
 {% load i18n %}
-<div id="scenariotoast" class="toast"><div style="position: relative; left: -50%">
-  <h1><span class="btn btn-primary"></span></h1>
-</div></div>
+<div class="position-relative">
+<div id="scenariotoast" class="toast top-0 start-50 translate-middle-x"
+  data-bs-delay="3000" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-body bg-success">
+  <span class="text-white"></span>
+  </div>
+</div>
+</div>
 <table id="scenarios" style="width:100%">
   <tr>
       <td colspan='5' style="padding-left:15px">
@@ -110,9 +115,8 @@ $(".scenariorelease").on("click", function(event) {
    type: 'POST',
    data: {release: 1, database:releasedScenario},
    complete: function() {
-     $("#scenariotoast").addClass("show");
      $("#scenariotoast span").text("Launched releasing task");
-     setTimeout(function(){$("#scenariotoast").removeClass("show") }, 3000);
+     bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0]).show();
      if (target == url_prefix) window.location.href = "/"; }
    });
 });
@@ -128,9 +132,8 @@ $(".scenariopromote").on("click", function(event) {
      destination: $(this).attr("data-bs-target")
      },
    success: function() {
-     $("#scenariotoast").addClass("show");
      $("#scenariotoast span").text("Launched promotion task");
-     setTimeout(function(){$("#scenariotoast").removeClass("show") }, 3000);
+     bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0]).show();
    }});
 });
 $(".scenariocopy").on("click", function(event) {
@@ -148,9 +151,8 @@ $(".scenariocopy").on("click", function(event) {
      dumpfile: $(this).attr("dumpfile")
      },
    success: function() {
-     $("#scenariotoast").addClass("show");
      $("#scenariotoast span").text("Launched copy task");
-     setTimeout(function(){$("#scenariotoast").removeClass("show") }, 3000);
+     bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0]).show();
    }});
 });
 $(".scenariolabel").on("change", function(event) {
@@ -165,11 +167,9 @@ $(".scenariolabel").on("change", function(event) {
      description: $(this).val()
      },
    success: function() {
-     $("#scenariotoast").addClass("show");
+    console.log("dddd")
      $("#scenariotoast span").text("Updated description");
-     setTimeout(function(){
-       $("#scenariotoast").removeClass("show");
-       }, 3000);
+     bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0]).show();
     }
    });
 });

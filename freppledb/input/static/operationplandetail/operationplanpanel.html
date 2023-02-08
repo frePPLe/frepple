@@ -19,9 +19,10 @@
   <span data-ng-if="operationplan.id == -1" style="text-transform: capitalize">{{ 'selected' | translate }}&nbsp;{{ operationplan.count }}</span>
   </h5>
 </div>
+<div class="card-body" data-ng-if="operationplan.id">
 <table style="table-layout:fixed" class="table table-sm table-hover" id="opplan-attributes-drvtable">
-  <thead data-ng-if="operationplan.operation.name || operationplan.name">
-    <tr>
+  <body >
+    <tr data-ng-if="operationplan.operation.name || operationplan.name">
       <td style="width: 120px">
         <b id="thead1" style="text-transform: capitalize">{{ 'name'|translate }}&nbsp;</b>
       </td>
@@ -37,8 +38,6 @@
         </b>
       </td>
     </tr>
-  </thead>
-  <tbody data-ng-if="operationplan.id">
     <tr data-ng-if="operationplan.id !== -1 && operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize">{{'reference'|translate}}</b></td>
       <td id="referencerow">{{operationplan.reference}}</td>
@@ -196,3 +195,4 @@
     </tr>
   </tbody>
 </table>
+</div>

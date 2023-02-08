@@ -35,7 +35,7 @@ function showoperationpeggingpanelDrv($window, gettextCatalog, $filter) {
     var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
       gettextCatalog.getString("demand") +
       '</h5></div>' +
-      '<div class="card-body table-responsive" style="max-height:15em; overflow:auto; padding:0">' +
+      '<div class="card-body table-responsive" style="max-height:15em; overflow:auto">' +
       '<table class="table table-sm table-hover"><thead><tr><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("name") + '</b>' +
       '</td><td>' +

@@ -34,7 +34,7 @@ function shownetworkstatusDrv($window, gettextCatalog) {
   function linkfunc(scope, elem, attrs) {
     var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
       gettextCatalog.getString("network status") +
-      '</h5></div>' +
+      '</h5></div><div class="card-body">' +
       '<table class="table table-sm table-hover"><thead><tr><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("item") + '</b>' +
       '</td><td>' +
@@ -53,7 +53,7 @@ function shownetworkstatusDrv($window, gettextCatalog) {
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("sales orders") + '</b>' +
       '</td></tr></thead>' +
       '<tbody></tbody>' +
-      '</table>';
+      '</table></div>';
 
     scope.$watchGroup(['operationplan.id', 'operationplan.network.length'], function (newValue, oldValue) {
       angular.element(document).find('#attributes-networkstatus').empty().append(template);

@@ -34,14 +34,14 @@ function showresourcespanelDrv($window, gettextCatalog) {
 	function linkfunc(scope, elem, attrs) {
 		var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
 			gettextCatalog.getString("resource") +
-			'</h5></div>' +
+			'</h5></div><div class="card-body">' +
 			'<table class="table table-sm table-hover"><thead><tr><td>' +
 			'<b style="text-transform: capitalize;">' + gettextCatalog.getString("name") + '</b>' +
 			'</td><td>' +
 			'<b style="text-transform: capitalize;">' + gettextCatalog.getString("quantity") + '</b>' +
 			'</td>' +
 			'<tbody></tbody>' +
-			'</table>';
+			'</table></div>';
 
 		function redraw() {
 			angular.element(document).find('#attributes-operationresources').empty().append(template);
@@ -57,15 +57,15 @@ function showresourcespanelDrv($window, gettextCatalog) {
 								+ '<td>' + grid.formatNumber(theresource.quantity) + '</td></tr>';
 						else {
 							rows += '<tr><td style="white-space: nowrap;"><div class="dropdown">'
-								+ '<button class="btn btn-default" data-bs-toggle="dropdown" type="button" style="text-transform: capitalize; min-width: 150px">'
+								+ '<button class="form-control w-auto dropdown-toggle" data-bs-toggle="dropdown" type="button" style="min-width: 150px">'
 								+ $.jgrid.htmlEncode(theresource.resource.name)
 								+ '</button>'
 								+ '<ul class="dropdown-menu">'
-								+ '<li><a role="menuitem" class="dropdown-item alternateresource" style="text-transform: capitalize">'
+								+ '<li><a role="menuitem" class="dropdown-item alternateresource text-capitalize">'
 								+ $.jgrid.htmlEncode(theresource.resource.name)
 								+ '</a></li>';
 							angular.forEach(theresource.alternates, function (thealternate) {
-								rows += '<li><a role="menuitem" class="dropdown-item alternateresource" style="text-transform: capitalize">'
+								rows += '<li><a role="menuitem" class="dropdown-item alternateresource text-capitalize">'
 									+ $.jgrid.htmlEncode(thealternate.name)
 									+ '</a></li>';
 							});

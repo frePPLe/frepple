@@ -33,8 +33,8 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
 
   function linkfunc(scope, elem, attrs) {
     var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
-      gettextCatalog.getString("material") +
-      '</h5></div>' +
+      gettextCatalog.getString("items") +
+      '</h5></div><div class="card-body">' +
       '<table class="table table-sm table-hover"><thead><tr><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("item") + '</b>' +
       '</td><td>' +
@@ -45,7 +45,7 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("date") + '</b>' +
       '</td></tr></thead>' +
       '<tbody></tbody>' +
-      '</table>';
+      '</table></div>';
 
     function redraw() {
       angular.element(document).find('#attributes-operationflowplans').empty().append(template);

@@ -1415,21 +1415,6 @@ var grid = {
       clear: 'fa fa-trash',
       close: 'fa fa-remove'
     };
-    $("#horizonstart").parent().datetimepicker({
-      format: dateformat,
-      calendarWeeks: true,
-      icons: iconslist,
-      locale: document.documentElement.lang
-    });
-    $("#horizonend").parent().datetimepicker({
-      format: dateformat,
-      calendarWeeks: true,
-      icons: iconslist,
-      locale: document.documentElement.lang
-    });
-    $("#horizonstart").parent().on("dp.change", function (selected) {
-      $("#horizonend").parent().data("DateTimePicker").minDate(selected.date);
-    });
     $("#okbutton").on('click', function () {
       // Compare old and new parameters
       var params = $('#horizonbuckets').val() + '|' +

@@ -17,10 +17,10 @@
             <div class="col">
               {% trans 'bucket size'|capfirst %}&nbsp;&nbsp;
               <div class="dropdown" style="display:inline">
-                  <button class="btn btn-default dropdown-toggle" type="button" name="horizonbuckets1" id="horizonbuckets1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  <button class="form-control d-inline w-auto dropdown-toggle" type="button" name="horizonbuckets1" id="horizonbuckets1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     {% if request.user.horizonbuckets %}{% trans request.user.horizonbuckets %}{% endif %}&nbsp;&nbsp;<span class="caret"></span>
                   </button>
-                  <ul class="dropdown-menu" aria-labelledby="horizonbuckets1" id="horizonbucketsul" style="top: auto;">
+                  <ul class="dropdown-menu" aria-labelledby="horizonbuckets1" id="horizonbucketsul">
                   {% for i in bucketnames %}
                     <li><a class="dropdown-item" onclick="" name="{{ i }}">{% trans i %}</a></li>
                   {% endfor %}
@@ -29,36 +29,25 @@
             </div>
           </div>
 
-          <div class="row" style="padding-bottom: 15px">
-            <div class="col form-inline">
+          <div class="row mb-3">
+            <div class="col">
               <input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>
               &nbsp;&nbsp;{% trans 'from'|capfirst %}&nbsp;
-              <div class="input-group date">
-              <input id="horizonstart"  style="display:inline; width:8em" type="text" class="vDateField form-control" value="{{request.user.horizonstart|date:"DATE_FORMAT"}}"/>
-              <span class="input-group-addon">
-                <span class="fa fa-calendar"></span>
-              </span>
-              </div>
+              <input id="horizonstart" name="horizonstart" type="date" class="vDateField form-control w-auto d-inline" value="{{request.user.horizonstart|date:"Y-m-d"}}"/>
               &nbsp;{% trans 'till' %}&nbsp;
-              <div class="input-group date">
-              <input id="horizonend" style="display:inline; width:8em" type="text" class="vDateField form-control" value="{{request.user.horizonend|date:"DATE_FORMAT"}}"/>
-              <span class="input-group-addon">
-                <span class="fa fa-calendar"></span>
-              </span>
-              </div>
-              <br>
+              <input id="horizonend" name="horizonend" type="date" class="vDateField form-control w-auto d-inline" value="{{request.user.horizonend|date:"Y-m-d"}}"/>
            </div>
           </div>
 
           <div class="row">
-            <div class="col form-inline">
+            <div class="col">
               <input type="radio" id="horizontype" name="horizontype" value="1"{% if request.user.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
               {% trans 'from'|capfirst %}
-              <input id="horizonbefore" style="width:4em; padding-left: 6px; padding-right:6px" name="horizonbefore" type="number" class="form-control arrows" min="0" max="99" value="{{request.user.horizonbefore}}"/>&nbsp;
+              <input id="horizonbefore" style="width:4em; padding-left: 6px; padding-right:6px" name="horizonbefore" type="number" class="form-control w-auto d-inline arrows" min="0" max="99" value="{{request.user.horizonbefore}}"/>&nbsp;
               {% trans 'before till' %}
-              <input id="horizonlength" style="width:4em; padding-left: 6px; padding-right:6px" name="horizonlength" type="number" class="form-control arrows" min="1" max="99" value="{{request.user.horizonlength}}"/>&nbsp;
+              <input id="horizonlength" style="width:4em; padding-left: 6px; padding-right:6px" name="horizonlength" type="number" class="form-control w-auto d-inline arrows" min="1" max="99" value="{{request.user.horizonlength}}"/>&nbsp;
               <div class="dropdown" style="display:inline">
-                <button style="padding-left: 6px; padding-right:6px" class="btn btn-default dropdown-toggle" type="button" name="horizonunit1" id="horizonunit1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button style="padding-left: 6px; padding-right:6px" class="form-control w-auto d-inline dropdown-toggle" type="button" name="horizonunit1" id="horizonunit1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   {% if request.user.horizonunit == "day" %}{% trans 'days' %}{% endif %}
                   {% if request.user.horizonunit == "week" %}{% trans 'weeks' %}{% endif %}
                   {% if request.user.horizonunit == "month" %}{% trans 'months' %}{% endif %}

@@ -1109,37 +1109,7 @@ var grid = {
   // editing it easier) or b) display a date picker it the field is of type
   // date.
   afterEditCell: function (rowid, cellname, value, iRow, iCol) {
-    var colmodel = $(this).jqGrid('getGridParam', 'colModel')[iCol];
-    var iconslist = {
-      time: 'fa fa-clock-o',
-      date: 'fa fa-calendar',
-      up: 'fa fa-chevron-up',
-      down: 'fa fa-chevron-down',
-      previous: 'fa fa-chevron-left',
-      next: 'fa fa-chevron-right',
-      today: 'fa fa-bullseye',
-      clear: 'fa fa-trash',
-      close: 'fa fa-remove'
-    };
-
-    if (colmodel.formatter == 'date') {
-      $(document.getElementById(iRow + '_' + cellname)).on('focusin', function () {
-        $(this).parent().css({ 'position': 'relative', 'overflow': 'visible' });
-        $(this).datetimepicker({
-          format: colmodel.formatoptions.srcformat == "Y-m-d" ? dateformat : datetimeformat,
-          useCurrent: false,
-          calendarWeeks: true,
-          icons: iconslist,
-          locale: document.documentElement.lang,
-          widgetPositioning: {
-            horizontal: 'auto',
-            vertical: (iRow < 11 ? 'bottom' : 'auto')
-          }
-        });
-      });
-    }
-    else
-      $(document.getElementById(iRow + '_' + cellname)).trigger("select");
+    $(document.getElementById(iRow + '_' + cellname)).trigger("select");
   },
 
   showExport: function (only_list, scenario_permissions) {
@@ -1404,17 +1374,6 @@ var grid = {
     // Show popup
     hideModal('popup');
     $.jgrid.hideModal("#searchmodfbox_grid");
-    var iconslist = {
-      time: 'fa fa-clock-o',
-      date: 'fa fa-calendar',
-      up: 'fa fa-chevron-up',
-      down: 'fa fa-chevron-down',
-      previous: 'fa fa-chevron-left',
-      next: 'fa fa-chevron-right',
-      today: 'fa fa-bullseye',
-      clear: 'fa fa-trash',
-      close: 'fa fa-remove'
-    };
     $("#okbutton").on('click', function () {
       // Compare old and new parameters
       var params = $('#horizonbuckets').val() + '|' +
@@ -2337,13 +2296,13 @@ var dashboard = {
       '<form class="form-horizontal">' +
 
       '<div class="row mb-3">' +
-      '<label class="col-3 control-label" for="id_name" class="col-form-label">' + gettext("Name") + ':</label>' +
+      '<label class="col-3 col-form-label" for="id_name" class="col-form-label">' + gettext("Name") + ':</label>' +
       '<div class="col-9">' +
       '<input id="id_name" class="form-control" type="text" value="' + rowname + '">' +
       '</div></div>' +
 
       '<div class="row mb-3">' +
-      '<label class="col-3 control-label" for="id_layout2" class="col-form-label">' + gettext("Layout") + ':</label>' +
+      '<label class="col-3 col-form-label" for="id_layout2" class="col-form-label">' + gettext("Layout") + ':</label>' +
       '<div class="col-9 dropdown">' +
       '<button class="btn btn-default dropdown-toggle w-100" id="id_layout2" name="layout" type="button" data-bs-toggle="dropdown" aria-haspopup="true">' +
       '<span id="id_layout">' + layout + '</span>&nbsp;<span class="caret"></span>' +
@@ -2369,7 +2328,7 @@ var dashboard = {
       '</div>' +
 
       '<div class="row mb-3">' +
-      '<label class="col-3 control-label" for="id_widget2" class="col-form-label">' + gettext("Add widget") + ':</label>' +
+      '<label class="col-3 col-form-label" for="id_widget2" class="col-form-label">' + gettext("Add widget") + ':</label>' +
       '<div class="col-9 dropdown">' +
       '<button class="btn btn-default dropdown-toggle w-100" id="id_widget2" type="button" data-bs-toggle="dropdown">' +
       '<span id="id_widget">-</span>&nbsp;<span class="caret"></span>' +

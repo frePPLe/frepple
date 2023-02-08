@@ -9,7 +9,7 @@
     line-height: 2em;
   }
 
-  #content-main .control-label {
+  #content-main .col-form-label {
     white-space: nowrap;
   }
 </style>
@@ -46,7 +46,7 @@
     {% if request.user.languageList|length > 2 %}
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-3" style="max-width:150px; text-align: right">
-        <label class="control-label" for="id_language">{% trans 'language'|capfirst%}:</label>
+        <label class="col-form-label" for="id_language">{% trans 'language'|capfirst%}:</label>
       </div>
       <div class="col-9" style="max-width:260px">
         <select name="language" class="form-select">
@@ -60,7 +60,7 @@
 
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-3" style="max-width:150px; text-align: right">
-        <label class="control-label" for="id_pagesize">{% trans 'page size'|capfirst%}:</label>
+        <label class="col-form-label" for="id_pagesize">{% trans 'page size'|capfirst%}:</label>
       </div>
       <div class="col-9" style="max-width:260px">
         <input class="form-control" id="id_pagesize" min="-7" max="10009999" name="pagesize" type="number" value="{{ request.user.pagesize }}">
@@ -71,7 +71,7 @@
     {% if THEMES|length > 1 %}
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-3" style="max-width:150px; text-align: right">
-        <label class="control-label" for="id_theme">{% trans 'theme'|capfirst%}:</label>
+        <label class="col-form-label" for="id_theme">{% trans 'theme'|capfirst%}:</label>
       </div>
       <div class="col-9" style="max-width:260px">
         <select name="theme" class="form-select">
@@ -86,7 +86,7 @@
     {% if SCENARIOS|length > 1 %}
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-3" style="max-width:150px; text-align: right">
-        <label class="control-label" for="id_default_scenario">{% trans 'default scenario'|capfirst%}:</label>
+        <label class="col-form-label" for="id_default_scenario">{% trans 'default scenario'|capfirst%}:</label>
       </div>
       <div class="col-9" style="max-width:260px">
         <select name="default_scenario" class="form-select">
@@ -100,7 +100,7 @@
 
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-3" style="max-width:150px; text-align: right">
-        <label class="control-label" for="id_avatar">{% trans 'avatar'|capfirst%}:</label>
+        <label class="col-form-label" for="id_avatar">{% trans 'avatar'|capfirst%}:</label>
       </div>
       <div class="col-9" style="max-width:260px">
         <div class="text-center">
@@ -116,7 +116,7 @@
 
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-3" style="max-width:150px; text-align: right">
-        <label class="control-label" for="id_cur_password">{% trans 'Change password'|capfirst%}:</label>
+        <label class="col-form-label" for="id_cur_password">{% trans 'Change password'|capfirst%}:</label>
       </div>
       <div class="col-9" style="max-width:260px">
         <input class="form-control" id="id_cur_password" name="cur_password" type="password" autocomplete="off" placeholder=" {% trans "Old password"|escape %} " style="margin-bottom: 10px">

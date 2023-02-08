@@ -18,7 +18,7 @@
             <div class="row{% if 'collapse' in fieldset.classes %} collapse{% endif %}"><div class="control-group {% if line.fields|length_is:'1' and line.errors %}error {% endif %}{% for field in line %}{% if field.field.name %}field-{{ field.field.name }} {% endif %}{% if not line.has_visible_field %}hidden{% endif %}{% endfor %}">
                 {% for field in line %}
                     <div class="row mb-3 {% if not line.fields|length_is:'1' %} field-box{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}{% endif %}">
-                        <div class="control-label text-end col-3">
+                        <div class="col-form-label text-end col-3">
                             {{ field.label_tag }}
                         </div>
                         {% if field.is_checkbox %}

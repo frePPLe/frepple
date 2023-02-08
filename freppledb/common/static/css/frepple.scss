@@ -412,7 +412,6 @@ span.help-block a {
 
 h1 small {
     display: inline-block;
-    line-height: 3;
 }
 
 #filterform {
@@ -453,6 +452,12 @@ h1 small {
 
     .badge input {
         color: $gray-600;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+        padding-top: 0;
+        padding-bottom: 0;
+        display: inline;
+        width: auto;
     }
 
     .fa-times {

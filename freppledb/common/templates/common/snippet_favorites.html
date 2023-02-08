@@ -13,7 +13,7 @@
     {% endif %}
     <li>
         <a class="dropdown-item d-flex" >
-        <button id="favoritesave" onclick="favorite.save()" type="button" class="flex-fill btn btn-primary btn-sm disabled me-1">{% trans "save"|capfirst %}</button>
+        <button id="favoritesave" onclick="favorite.save()" type="button" disabled class="flex-fill btn btn-primary btn-sm me-1">{% trans "save"|capfirst %}</button>
         <input class="form-control form-control-sm" id="favoritename" oninput="favorite.check()" type="text" size="15">
         </a>
     </li>

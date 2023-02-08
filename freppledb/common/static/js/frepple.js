@@ -1773,7 +1773,7 @@ var grid = {
 
     // Final result
     var newexpression = $('<span class="badge">' + col.label + '&nbsp;' + oper + '&nbsp;</span>');
-    var newelement = $('<input class="form-control p-1 d-inline w-auto" size="10">');
+    var newelement = $('<input class="form-control" size="10">');
     rule["filtercount"] = grid.countFilters++;  // Mark position in the expression
     newelement.val(rule.data);
     newelement.on('change', function (event) {
@@ -1942,6 +1942,7 @@ var favorite = {
 
   check: function () {
     var fav = $("#favoritename").val();
+    console.log("---", fav);
     if (fav.length > 0 && (
       (typeof favorites !== 'undefined' && !(fav in favorites))
       || (typeof preferences !== 'undefined' && !("favorites" in preferences))

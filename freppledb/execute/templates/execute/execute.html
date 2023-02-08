@@ -9,7 +9,7 @@
     return {
        "height": Math.round($("#gbox_grid").height() - 48),
        "refresh": (refresh !== null),
-       "expandtask": $("#tasks .collapse.in").first().attr("data-task")
+       "expandtask": $("#tasks .collapse.show").first().attr("data-task")
        };
   }
 
@@ -111,15 +111,14 @@
   }
 
   $(function() {
-
     if(location.hash != null && location.hash != "") {
-        $("#tasks .collapse").removeClass('in');
-        $("#tasks").find('.collapse[data-task="' + location.hash + '"]').addClass("in");
+        $("#tasks .collapse.show").removeClass('show');
+        $("#tasks").find('.collapse[data-task="' + location.hash + '"]').addClass("show");
     } else if (preferences && preferences.hasOwnProperty("expandtask")) {
         var el = $("#tasks").find('.collapse[data-task="' + preferences.expandtask + '"]');
         if (el.length > 0) {
-           $("#tasks .collapse").removeClass('in');
-           el.addClass("in");
+           $("#tasks .collapse.show").removeClass('show');
+           el.addClass("show");
         }
     }
 

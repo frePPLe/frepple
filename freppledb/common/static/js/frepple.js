@@ -1886,7 +1886,6 @@ var favorite = {
 
   check: function () {
     var fav = $("#favoritename").val();
-    console.log("---", fav);
     if (fav.length > 0 && (
       (typeof favorites !== 'undefined' && !(fav in favorites))
       || (typeof preferences !== 'undefined' && !("favorites" in preferences))

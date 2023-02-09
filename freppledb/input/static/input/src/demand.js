@@ -50,7 +50,11 @@ function DemandFactory ($http, getURLprefix, Location, Item, Customer) {
     angular.forEach(data, function(value, key) {
       switch (key) {
         case "due":
-          if (!moment.isMoment(value))
+          if (typeof value === "date" || value instanceof Date)
+            data['due'] = value;
+          else if (typeof value === "string" || value instanceof String)
+            data['due'] = new Date(value);
+          else if (!moment.isMoment(value))
             data['due'] = moment(value);
           break;
         case "pegging":
@@ -100,8 +104,12 @@ function DemandFactory ($http, getURLprefix, Location, Item, Customer) {
       fields.category = this.category;
     if (this.subcategory !== undefined)
       fields.subcategory = this.subcategory;
-    if (this.due !== undefined)
-      fields.due = this.due.format('YYYY-MM-DDTHH:mm:ss');
+    if (this.due !== undefined) {
+      if (this.due instanceof Date)
+        fields.due = this.due.toISOString();
+      else
+        fields.due = this.due.format('YYYY-MM-DDTHH:mm:ss');
+    }
     if (this.item !== undefined && this.item)
       fields.item = {name: this.item.name};
     if (this.location !== undefined && this.location)

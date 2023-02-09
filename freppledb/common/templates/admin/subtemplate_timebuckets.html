@@ -33,9 +33,9 @@
             <div class="col">
               <input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>
               &nbsp;&nbsp;{% trans 'from'|capfirst %}&nbsp;
-              <input id="horizonstart" name="horizonstart" type="date" class="vDateField form-control w-auto d-inline" value="{{request.user.horizonstart|date:"Y-m-d"}}"/>
+              <input id="horizonstart" name="horizonstart" type="date" class="form-control w-auto d-inline" value="{{request.user.horizonstart|date:"Y-m-d"}}"/>
               &nbsp;{% trans 'till' %}&nbsp;
-              <input id="horizonend" name="horizonend" type="date" class="vDateField form-control w-auto d-inline" value="{{request.user.horizonend|date:"Y-m-d"}}"/>
+              <input id="horizonend" name="horizonend" type="date" class="form-control w-auto d-inline" value="{{request.user.horizonend|date:"Y-m-d"}}"/>
            </div>
           </div>
 

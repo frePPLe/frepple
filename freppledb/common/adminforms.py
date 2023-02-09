@@ -30,9 +30,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction, DEFAULT_DB_ALIAS
 from django.db.models import Q
-from django.db.models.fields import DecimalField
+from django.db.models.fields import DecimalField, DateField, DateTimeField, TimeField
 from django import forms
-from django.forms.widgets import NumberInput
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.template.response import TemplateResponse
@@ -50,6 +49,18 @@ from .models import Comment, User, Scenario
 
 
 csrf_protect_m = method_decorator(csrf_protect)
+
+
+class DatePickerInput(forms.DateInput):
+    input_type = "date"
+
+
+class TimePickerInput(forms.TimeInput):
+    input_type = "time"
+
+
+class DateTimePickerInput(forms.DateTimeInput):
+    input_type = "datetime-local"
 
 
 class MultiDBModelAdmin(admin.ModelAdmin):
@@ -73,7 +84,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     formfield_overrides = {
         # Django by default uses the value of decimal_places to compute a step.
         # We prefer to stick to a default step of 1.
-        DecimalField: {"widget": NumberInput(attrs={"step": "1"})}
+        DecimalField: {"widget": forms.NumberInput(attrs={"step": "1"})},
+        DateField: {"widget": DatePickerInput()},
+        TimeField: {"widget": TimePickerInput()},
+        DateTimeField: {"widget": DateTimePickerInput()},
     }
 
     def get_urls(self):

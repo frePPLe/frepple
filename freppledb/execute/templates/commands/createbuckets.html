@@ -8,16 +8,16 @@
     </td>
     <td style="padding: 15px; width:99%">
          <p>{% trans "create time buckets for reporting."|capfirst %}</p>
-         <div class="row mb-3">
-         <label class="col-3 col-form-label">{% trans "start date"|capfirst %}</label>
-         <div class="col-9">
-         <input type="date" class="form-control" id="start" name="start" type="text" size="12" value="{{startdate|date:"Y-m-d"}}"/>
+         <div class="form-group">
+         <label class="col-sm-3 control-label">{% trans "start date"|capfirst %}</label>
+         <div class="col-sm-9">
+         <input class="form-control" id="start" name="start" type="text" size="12" value="{{startdate|date:"DATE_FORMAT"}}"/>
          </div>
          </div>
-         <div class="row mb-3">
-         <label class="col-3 col-form-label">{% trans "end date"|capfirst %}</label>
-         <div class="col-9">
-         <input type="date" class="form-control" id="end" name="end" type="text" size="12" value="{{enddate|date:"Y-m-d"}}"/>
+         <div class="form-group">
+         <label class="col-sm-3 control-label">{% trans "end date"|capfirst %}</label>
+         <div class="col-sm-9">
+         <input class="form-control" id="end" name="end" type="text" size="12" value="{{enddate|date:"DATE_FORMAT"}}"/>
          </div>
          </div>
          <div class="row mb-3">

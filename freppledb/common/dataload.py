@@ -107,7 +107,7 @@ def parseExcelWorksheet(
                     data = int(data)
             elif isinstance(field, DecimalField):
                 if isinstance(data, (Decimal, float)):
-                    data = round(data, 8)
+                    data = round(data, field.decimal_places)
             elif isinstance(field, DurationField):
                 if isinstance(data, timedelta):
                     return data

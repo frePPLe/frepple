@@ -1234,7 +1234,7 @@ class ResourceQueueWidget(Widget):
     tooltip = _("Display planned activities for the resources")
     permissions = (("view_resource_report", "Can view resource report"),)
     asynchronous = True
-    url = "/data/input/operationplanresource/?sidx=startdate&sord=asc"
+    url = "/data/input/operationplanresource/?sidx=operatiopnplan__startdate&sord=asc"
     exporturl = True
     limit = 20
 
@@ -1268,7 +1268,7 @@ class ResourceQueueWidget(Widget):
         for ldplan in (
             OperationPlanResource.objects.using(db)
             .select_related()
-            .order_by("startdate")[:limit]
+            .order_by("operationplan__startdate")[:limit]
         ):
             result.append(
                 '<tr%s><td class="text-decoration-underline"><a href="%s/data/input/operationplanresource/?noautofilter&resource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
@@ -1278,11 +1278,19 @@ class ResourceQueueWidget(Widget):
                     quote(ldplan.resource),
                     escape(ldplan.resource),
                     escape(ldplan.operationplan.operation),
-                    date_format(ldplan.startdate, format="DATE_FORMAT", use_l10n=False)
-                    if ldplan.startdate
+                    date_format(
+                        ldplan.operationplan.startdate,
+                        format="DATE_FORMAT",
+                        use_l10n=False,
+                    )
+                    if ldplan.operationplan.startdate
                     else "",
-                    date_format(ldplan.enddate, format="DATE_FORMAT", use_l10n=False)
-                    if ldplan.enddate
+                    date_format(
+                        ldplan.operationplan.enddate,
+                        format="DATE_FORMAT",
+                        use_l10n=False,
+                    )
+                    if ldplan.operationplan.enddate
                     else "",
                     int(ldplan.operationplan.quantity),
                     int(ldplan.operationplan.criticality),

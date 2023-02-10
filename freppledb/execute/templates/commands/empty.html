@@ -3,32 +3,32 @@
 <form role="form" method="post" action="{{request.prefix}}/execute/launch/empty/">{% csrf_token %}
   <table>
     <tr>
-      <td style="padding: 15px; vertical-align:top"><button  class="btn btn-primary" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-      <td style="padding: 15px">{% trans "Erase selected tables." %}<br><br>
-        <label>
-          <input class="empty_all" type="checkbox" name="alldata" checked value="1">&nbsp;<strong>{%trans 'data tables'|upper%}</strong>
-        </label>
+      <td style="padding: 1rem; vertical-align:top"><button  class="btn btn-primary" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+      <td style="padding: 1rem; line-height: 1.5rem">{% trans "Erase selected tables." %}<br><br>
+        <label class="form-check-label">
+          <input class="form-check-input empty_all" type="checkbox" name="alldata" checked value="1">&nbsp;<strong>{%trans 'data tables'|upper%}</strong>
+        </label class="form-check-label">
         <br>
         {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations and not item.1.admin %}
-        <label for="empty_{{ item.1.model | model_name }}">
-          <input class="empty_entity" type="checkbox" name="models" data-tables="data" value="{{ item.1.model | model_name }}" checked id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
+        <label class="form-check-label" for="empty_{{ item.1.model | model_name }}">
+          <input class="form-check-input empty_entity" type="checkbox" name="models" data-tables="data" value="{{ item.1.model | model_name }}" checked id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
         </label>
         <br>
         {% endif %}{% endfor %}{% endfor %}
-        <label>
-          <input class="empty_all" type="checkbox" name="alladmin" value="1">&nbsp;<strong>{%trans 'admin tables'|upper%}</strong>
+        <label class="form-check-label">
+          <input class="form-check-input empty_all" type="checkbox" name="alladmin" value="1">&nbsp;<strong>{%trans 'admin tables'|upper%}</strong>
         </label>
         <br>
         {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations and item.1.admin %}
-        <label for="empty_{{ item.1.model | model_name }}">
-          <input class="empty_entity" type="checkbox" name="models" data-tables="admin" value="{{ item.1.model | model_name }}" id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
+        <label class="form-check-label" for="empty_{{ item.1.model | model_name }}">
+          <input class="form-check-input empty_entity" type="checkbox" name="models" data-tables="admin" value="{{ item.1.model | model_name }}" id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
         </label>
         <br>
         {% endif %}{% endfor %}{% endfor %}
         {% if with_archive_app %}
-        <label>
+        <label class="form-check-label">
           <input class="empty_all" type="checkbox" name="allhistory" value="1">&nbsp;<strong>{%trans 'plan history'|upper%}</strong>
-          <input class="empty_entity d-none" type="checkbox" name="models" data-tables="archive" value="archive.archivemanager">
+          <input class="form-check-input empty_entity d-none" type="checkbox" name="models" data-tables="archive" value="archive.archivemanager">
         </label>
         {% endif %}
         <br>

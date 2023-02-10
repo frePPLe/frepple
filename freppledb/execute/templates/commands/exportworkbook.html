@@ -6,35 +6,35 @@
     <td style="vertical-align:top; padding:15px">
         <button type="submit" class="btn btn-primary" id="export" value="{% trans "export"|capfirst %}" >{% trans "export"|capfirst %}</button>
     </td>
-    <td style="padding:15px">
+    <td style="padding:1rem; line-height:1.5rem">
      <p>
       {% blocktrans %}Download all input data in a single spreadsheet.<br>Optionally, you can make the data anonymous during the export to hide sensitive company data.{% endblocktrans %}
-      &nbsp;<input style="margin: 0; display:inline-block; vertical-align: middle" type="checkbox" name="anonymous" value="0">
+      &nbsp;<input class="form-check-input" style="margin: 0; display:inline-block; vertical-align: middle" type="checkbox" name="anonymous" value="0">
       <br>
      </p>
       {% getMenu as menu %}
       <p>
-      <label>
-        <input class="chck_all check" type="checkbox" name="alldata" value="1">&nbsp;<strong>{%trans 'data tables'|upper%}</strong>
+      <label class="form-check-label">
+        <input class="chck_all form-check-input" type="checkbox" name="alldata" value="1">&nbsp;<strong>{%trans 'data tables'|upper%}</strong>
       </label><br>
       {% for group in menu %}
         {% for item in group.1 %}
           {% if item.1.model and not item.1.excludeFromBulkOperations and not item.1.admin %}
-            <label for="chbx_{{ item.1.model | model_name }}">
-              <input class="chck_entity check" data-tables="data" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
+            <label class="form-check-label" for="chbx_{{ item.1.model | model_name }}">
+              <input class="chck_entity form-check-input" data-tables="data" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
                 {{ group.0 }} - {{ item.0 }}
             </label><br>
           {% endif %}
         {% endfor %}
       {% endfor %}
-      <label>
-        <input class="chck_all check" type="checkbox" checked name="alladmin" value="1">&nbsp;<strong>{%trans 'admin tables'|upper%}</strong>
+      <label class="form-check-label">
+        <input class="chck_all form-check-input" type="checkbox" checked name="alladmin" value="1">&nbsp;<strong>{%trans 'admin tables'|upper%}</strong>
       </label><br>
       {% for group in menu %}
         {% for item in group.1 %}
           {% if item.1.model and not item.1.excludeFromBulkOperations and item.1.admin %}
-            <label for="chbx_{{ item.1.model | model_name }}">
-              <input class="chck_entity check" data-tables="admin" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
+            <label class="form-check-label" for="chbx_{{ item.1.model | model_name }}">
+              <input class="chck_entity form-check-input" data-tables="admin" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
                 {{ group.0 }} - {{ item.0 }}
             </label><br>
           {% endif %}

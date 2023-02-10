@@ -420,7 +420,7 @@ class Command(BaseCommand):
             <td style="vertical-align:top; padding: 15px">
                 <button type="submit" class="btn btn-primary">{%% trans "launch"|capfirst %%}</button>
             </td>
-            <td  style="padding: 15px;">%s<br><br>
+            <td class="ps-3 pt-3 pe-3">%s<br><br>
           {%% if planning_options %%}
           <p {%% if planning_options|length <= 1 %%}style="display: none"{%% endif %%}><b>{%% filter capfirst %%}%s{%% endfilter %%}</b><br>
           {%% for b in planning_options %%}
@@ -436,12 +436,10 @@ class Command(BaseCommand):
           <label for="plantype2">%s
               <span class="fa fa-question-circle" style="display:inline-block;"></span></label><br>
               </p>
-              <p>
               <b>{%% filter capfirst %%}%s{%% endfilter %%}</b><br>
               <label for="cb4"><input type="checkbox" name="constraint" {%% if capacityconstrained %%}checked {%% endif %%}value="4" id="cb4"/>&nbsp;&nbsp;%s</label><br>
               <label for="cb1"><input type="checkbox" name="constraint" {%% if leadtimeconstrained %%}checked {%% endif %%}value="1" id="cb1"/>&nbsp;&nbsp;%s</label><br>
               <label for="cb8"><input type="checkbox" name="constraint" {%% if fenceconstrained %%}checked {%% endif %%}value="8" id="cb8"/>&nbsp;&nbsp;%s</label><br>
-              </p>
             </td>
           </tr>
           </table>

@@ -835,9 +835,9 @@ var grid = {
       row2 +
       (typeof extra_customize_html !== 'undefined' ? extra_customize_html : '') +  // Not very clean to use a global variable here
       '</div>' +
-      '<div class="modal-footer">' +
+      '<div class="modal-footer justify-content-between">' +
       '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
-      '<input type="submit" id="resetCustbutton" role="button" class="btn btn-primary me-auto" value="' + gettext('Reset') + '">' +
+      '<input type="submit" id="resetCustbutton" role="button" class="btn btn-primary" value="' + gettext('Reset') + '">' +
       '<input type="submit" id="okCustbutton" role="button" class="btn btn-primary" value="' + gettext("OK") + '">' +
       '</div>' +
       '</div>' +

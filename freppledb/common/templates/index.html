@@ -64,9 +64,9 @@
             {% for widget in cols.widgets %}
             <div class="card mb-3" data-cockpit-widget="{{widget.name}}">
                 <div class="card-header" data-bs-toggle="tooltip" data-bs-placement="top" title="{{widget.tooltip|escape}}">
-                    <span class='fa fa-times float-end panel-close'></span>
-                    <span class='fa fa-minus float-end panel-toggle'></span>
-                    {% if widget.exporturl %}<a href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"><span class='fa fa-arrow-down float-end portlet-export'></span></a>
+                    <span class='fa fa-times float-end ms-2 panel-close'></span>
+                    <span class='fa fa-minus float-end  ms-2 panel-toggle'></span>
+                    {% if widget.exporturl %}<a href="{{request.prefix}}{{widget.url}}&amp;format=spreadsheet"><span class='fa fa-arrow-down float-end  ms-2 portlet-export'></span></a>
 					{% endif %}
                     {% if widget.url %}<a class="text-decoration-underline" href="{{request.prefix}}{{widget.url}}">{{widget.title|upper}}&nbsp;<span class="fa fa-caret-right"></span></a>
                     {% else %}<span style="cursor: default">{{widget.title|upper}}</span>

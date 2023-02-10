@@ -155,9 +155,10 @@
 #grid_frozen tr td {
   line-height: 22px;
 }
+
 .chck_all, .chck_entity, .empty_all, .empty_entity {
-  margin-left: 20px;
-  margin-right: 20px;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .toast {
@@ -218,7 +219,7 @@ loadComplete : function(data) {
 <div class="col">
   <h1>{% trans "launch tasks"|capfirst %}</h1>
 </div></div>
-<div class="row">
+<div class="row mb-2">
 	<div id="tasks" class="accordion col" role="tablist" aria-multiselectable="true" style="max-width:900px; min-width: 600px">
 	{% if perms.auth.generate_plan or perms.auth.copy_scenario or perms.auth.release_scenario or perms.auth.promote_scenario or perms.auth.run_db %}
 	<!--User has some permissions -->

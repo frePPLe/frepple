@@ -83,9 +83,9 @@ $(function() {
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
 	<div class="container-fluid">
-	  <div class="breadcrumbrow row" aria-label="breadcrumb">
+	  <div class="breadcrumbrow row align-items-center" aria-label="breadcrumb">
 		  <div class="col flex-grow-1">
-		     <ol class="breadcrumb" id="breadcrumbs">
+		     <ol class="breadcrumb mb-0" id="breadcrumbs">
 		       <li id="cockpitcrumb" class="breadcrumb-item"><a href="{{request.prefix}}/">{% trans 'home'|capfirst %}</a></li>
 		       {% crumbs %}
 		     </ol>
@@ -95,12 +95,12 @@ $(function() {
 			<ul class="nav navbar-nav ms-auto" class="selectdb">
 				{% if user.scenarios|length > 1 %}
 				   <li class="navbar-item dropdown">
-					<a href="#" class="dropdown-toggle pe-3" data-bs-toggle="dropdown"
+					<a href="#" class="dropdown-toggle form-control pe-3" data-bs-toggle="dropdown"
           			   role="button" aria-haspopup="true" aria-expanded="false" id="database">
 					<span data-bs-toggle="tooltip" data-bs-delay="2000" data-bs-placement="left"
 					  data-bs-title="{% trans "Select a what-if scenario.<br>Click <a class='text-decoration-underline' href='/execute/#scenario_copy'>here</a> to manage scenarios." %}"
 					  data-bs-html="true">
-						{{ request.scenario.name }}
+						{{ request.scenario.description }}
 					</span>
 					</a>
 					<ul class="dropdown-menu dropdown-menu-end">

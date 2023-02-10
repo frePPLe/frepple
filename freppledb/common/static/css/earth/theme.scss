@@ -1,12 +1,13 @@
-$primary: darken(#428bca, 6.5%);
-$secondary: #C1C688;
+$light: #D6A979;
+$dark: $light;
+
+$primary: darken(#3E8CA8, 10%);
+$secondary: lighten($light, 5%);
 $success: #8bc34a;
 $info: #03a9f4;
 $warning: #ffeb3b;
 $danger: #ff5252;
 
-$light: #D6A979;
-$dark: #D6A979;
 
 $white: #fff !default;
 $gray-100: #f8f9fa !default;

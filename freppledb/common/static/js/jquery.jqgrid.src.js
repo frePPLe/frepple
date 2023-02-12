@@ -1080,7 +1080,7 @@
 					operator: "form-select",
 					label: "form-select",
 					elem: "form-control",
-					operationGroup: "d-inline text-start mb-2",
+					operationGroup: "d-block text-start mb-2",
 					addRuleButton: "btn btn-sm btn-default",
 					deleteRuleButton: "btn btn-sm btn-default",
 					operationSelect: "form-select d-inline w-auto me-2",

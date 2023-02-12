@@ -1536,6 +1536,7 @@ var grid = {
       multipleSearch: true,
       multipleGroup: true,
       overlay: 0,
+      resize: false,
       sopt: ['eq', 'ne', 'lt', 'le', 'gt', 'ge', 'bw', 'bn', 'in', 'ni', 'ew', 'en', 'cn', 'nc'],
       onSearch: function () {
         var c = $("#fbox_" + thegridid).jqFilter('filterData');

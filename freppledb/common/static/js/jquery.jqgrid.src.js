@@ -499,7 +499,7 @@
 					cancel: "fa-ban"
 				},
 				form: {
-					close: "fa-times",
+					close: "",   // using bootstrap btn-close class instead
 					prev: "fa-caret-left",
 					next: "fa-caret-right",
 					save: "fa-floppy-o",
@@ -1004,6 +1004,112 @@
 				top: "ui-jqgrid-bootstrap-corner-top",
 				bottom: "ui-jqgrid-bootstrap-corner-bottom",
 				resizer: "ui-jqgrid-bootstrap"
+			},
+			bootstrap5: {
+				gBox: "ui-jqgrid-bootstrap",
+				gView: "card",
+				overlay: "modal-backdrop",
+				loading: "alert alert-info",
+				hDiv: "",
+				hTable: "table table-hover table-sm table-bordered",
+				colHeaders: "",
+				states: {
+					select: "table-success",
+					disabled: "disabled ui-jqgrid-disablePointerEvents",
+					hover: "active",
+					hoverTh: "table-active",
+					error: "alert alert-danger",
+					active: "active",
+					textOfClickable: ""
+				},
+				dialog: {
+					header: "modal-header",
+					window: "modal ui-jqgrid-bootstrap",
+					document: "modal-dialog",
+					subdocument: "modal-content",
+					body: "modal-body",
+					footer: "modal-footer",
+					content: "modal-content",
+					hr: "d-none",
+					closeButton: "btn btn-sm",
+					fmButton: "btn btn-outline-secondary",
+					dataField: "form-control",
+					viewCellLabel: "",
+					viewLabel: "control-label",
+					viewCellData: "",
+					viewData: "form-control",
+					leftCorner: "",
+					rightCorner: "",
+					defaultCorner: ""
+				},
+				filterToolbar: {
+					dataField: "form-control"
+				},
+				subgrid: {
+					thSubgrid: "",
+					rowSubTable: "",
+					row: "",
+					tdStart: "",
+					tdWithIcon: "",
+					buttonDiv: "",
+					button: "btn btn-sm",
+					tdData: "",
+					legacyTable: "table table-condensed table-hover table-bordered"
+				},
+				grid: "table table-condensed table-hover table-bordered",
+				gridRow: "",
+				rowNum: "",
+				gridFooter: "table table-hover table-condensed table-bordered",
+				rowFooter: "",
+				gridTitle: "",
+				gridError: "alert alert-danger",
+				gridErrorText: "sr-only",
+				titleButton: "btn btn-sm btn-outline-primary",
+				actionsDiv: "",
+				actionsButton: "btn btn-sm btn-outline-secondary",
+				toolbarUpper: "",
+				toolbarBottom: "",
+				pager: {
+					pager: "card-footer",
+					pagerButton: "btn btn-sm",
+					pagerInput: "form-control",
+					pagerSelect: "form-control"
+				},
+				navButton: "btn btn-sm",
+				searchDialog: {
+					operator: "form-select",
+					label: "form-select",
+					elem: "form-control",
+					operationGroup: "d-inline text-start mb-2",
+					addRuleButton: "btn btn-sm btn-default",
+					deleteRuleButton: "btn btn-sm btn-default",
+					operationSelect: "form-select d-inline w-auto me-2",
+					addGroupButton: "btn btn-sm btn-default",
+					deleteGroupButton: "btn btn-sm btn-default"
+				},
+				searchToolbar: {
+					menu: "dropdown-menu",
+					menuItem: "",
+					menuItemButton: "dropdown-item",
+					operButton: "btn btn-sm btn-outline-secondary",
+					clearButton: "btn btn-sm btn-outline-secondary"
+				},
+				top: "ui-jqgrid-bootstrap-corner-top",
+				bottom: "ui-jqgrid-bootstrap-corner-bottom",
+				resizer: "ui-jqgrid-bootstrap"
+			},
+			bootstrap5Primary: {
+				baseGuiStyle: "bootstrap5",
+				dialog: {
+					closeButton: "btn btn-sm btn-close me-3",
+					fmButton: "btn btn-primary"
+				},
+				searchDialog: {
+					addRuleButton: "btn btn-sm btn-primary",
+					deleteRuleButton: "btn btn-sm btn-primary",
+					addGroupButton: "btn btn-sm btn-primary",
+					deleteGroupButton: "btn btn-sm btn-primary"
+				}
 			}
 		},
 		htmlDecode: function (value) {

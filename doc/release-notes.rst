@@ -46,6 +46,11 @@ Release notes
 - | 14 & 15 & 16: Update of replenishment logic when products can be both purchased and manufactured.
     The solver will try first to buy then to manufacture.
 
+- | 14 & 15 & 16: When exporting RFQ purchase orders we now populate the order deadline date
+    and receipt date.
+  | We put the earliest order start and end date of the exported frepple records in these
+    fields. This makes it easier to quickly evaluate the urgency of the RFQs in the list.
+
 .. rubric:: User interface
 
 - | The styling and layout has been refreshed in a number of places. In

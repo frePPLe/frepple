@@ -94,7 +94,7 @@
     <td style="padding:5px 10px 5px 10px; text-align: center">{% trans j.status|lower|capfirst %}</td>
     {% endif %}
     <td style="padding:5px 10px 5px 10px">
-      <input class="scenariolabel" type="text" data-bs-target="{{ j.name }}"
+      <input class="form-control scenariolabel" type="text" data-bs-target="{{ j.name }}"
       value="{% if j.description %}{{j.description|escape}}{% else %}{{ j.name }}{% endif %}">
     </td>
     <td style="padding:5px 10px 5px 10px; text-align: center">{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>

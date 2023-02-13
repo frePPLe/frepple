@@ -61,12 +61,12 @@
       var taskid = rowdata['id'];
       var taskname = rowdata['name'];
       if (taskname == "backup")
-        return '<a class="btn btn-sm btn-primary" href="{{request.prefix}}/execute/logdownload/'
+        return '<a class="btn btn-primary" style="padding:0 0.5em 0 0.5em; font-size:66%" href="{{request.prefix}}/execute/logdownload/'
           + taskid + '/">{% trans "download"|capfirst|force_escape %}</a>&nbsp;'
-          + '<a class="btn btn-sm btn-primary" onclick="deletebutton(\'{{request.prefix}}/execute/logdelete/'
+          + '<a class="btn btn-primary" style="padding:0 0.5em 0 0.5em; font-size:66%" onclick="deletebutton(\'{{request.prefix}}/execute/logdelete/'
           + taskid + '/\')">{% trans "Delete"|capfirst|force_escape %}</a>';
       else
-        return '<a class="btn btn-sm btn-primary" href="{{request.prefix}}/execute/logfrepple/'+taskid+'/">{% trans "view"|capfirst|force_escape %}</a>';
+        return '<a class="btn btn-primary" style="padding:0 0.5em 0 0.5em; font-size:66%" href="{{request.prefix}}/execute/logfrepple/'+taskid+'/">{% trans "view"|capfirst|force_escape %}</a>';
     } else {
       return "";
     }

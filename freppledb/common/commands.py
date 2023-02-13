@@ -244,32 +244,31 @@ class PlanTaskSequence(PlanTask):
                     self.task.save(using=database)
 
                 # Run the step
+                stepstart = datetime.now()
                 if step.thread == "main":
                     logger.info(
-                        "Start step %s '%s' at %s"
+                        "Start step %s '%s'"
                         % (
                             step.sequence,
                             step.description,
-                            datetime.now().strftime("%H:%M:%S"),
                         )
                     )
                 else:
                     logger.info(
-                        "Start step %s %s '%s' at %s"
+                        "Start step %s %s '%s'"
                         % (
                             step.thread,
                             step.step,
                             step.description,
-                            datetime.now().strftime("%H:%M:%S"),
                         )
                     )
                 step.timestamp = self.timestamp
                 step.run(**PlanTaskRegistry.getArguments())
                 logger.info(
-                    "Finished '%s' at %s %s"
+                    "Finished '%s' in %s %s"
                     % (
                         step.description,
-                        datetime.now().strftime("%H:%M:%S"),
+                        str(datetime.now() - stepstart).split(".")[0],
                         "\n" if self.task else "",
                     )
                 )

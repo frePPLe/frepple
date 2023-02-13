@@ -31,7 +31,7 @@
 
           <div class="row mb-3">
             <div class="col">
-              <input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>
+              <input type="radio" class="ms-0 form-check-input align-text-bottom" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>
               &nbsp;&nbsp;{% trans 'from'|capfirst %}&nbsp;
               <input id="horizonstart" name="horizonstart" type="date" class="form-control w-auto d-inline" value="{{request.user.horizonstart|date:"Y-m-d"}}"/>
               &nbsp;{% trans 'till' %}&nbsp;
@@ -41,7 +41,7 @@
 
           <div class="row">
             <div class="col">
-              <input type="radio" id="horizontype" name="horizontype" value="1"{% if request.user.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
+              <input type="radio" class="ms-0 form-check-input align-text-bottom" id="horizontype" name="horizontype" value="1"{% if request.user.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
               {% trans 'from'|capfirst %}
               <input id="horizonbefore" style="width:4.5em" name="horizonbefore" type="number" class="form-control d-inline arrows ps-2 pe-2" min="0" max="99" value="{{request.user.horizonbefore}}"/>&nbsp;
               {% trans 'before till' %}

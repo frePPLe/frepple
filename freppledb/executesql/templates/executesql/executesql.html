@@ -120,8 +120,8 @@ $(function() {
 
 <div class="row mb-3 formgroup" style="text-align: center">
 <div class="col">
-<textarea id="executesql_statements" rows="10"
- style="width:100%; {% if request.prefs.height %}height:{{ request.prefs.height}}px; {% endif %}resize: none; font-size:1.25em; font-family:courier">
+<textarea id="executesql_statements" rows="10" class="w-100 form-control font-monospace"
+ style="{% if request.prefs.height %}height:{{ request.prefs.height}}px; {% endif %}resize: none; font-size:1.25em; font-family:courier">
 {{ request.prefs.sql }}
 </textarea>
 </div>

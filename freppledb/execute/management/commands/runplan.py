@@ -424,22 +424,48 @@ class Command(BaseCommand):
           {%% if planning_options %%}
           <p {%% if planning_options|length <= 1 %%}style="display: none"{%% endif %%}><b>{%% filter capfirst %%}%s{%% endfilter %%}</b><br>
           {%% for b in planning_options %%}
-          <label for="option_{{b.0}}"><input type="checkbox" name="env" {%% if b.0 in current_options %%}checked {%% endif %%}value="{{b.0}}" id="option_{{b.0}}"/>&nbsp;&nbsp;{{b.1}}</label><br>
+          <div class="form-check">
+            <label class="form-check-label" for="option_{{b.0}}">
+            <input type="checkbox" class="form-check-input" name="env" {%% if b.0 in current_options %%}checked {%% endif %%}value="{{b.0}}" id="option_{{b.0}}">
+            {{b.1}}
+            </label>
+          </div>
           {%% endfor %%}
           </p>
           {%% endif %%}
-          <p><b>%s</b><br>
-          <input type="radio" id="plantype1" name="plantype" {%% if plantype != '2' %%}checked {%% endif %%}value="1"/>
-          <label for="plantype1">%s
-          <span class="fa fa-question-circle" style="display:inline-block;"></span></label><br>
-          <input type="radio" id="plantype2" name="plantype" {%% if plantype == '2' %%}checked {%% endif %%}value="2"/>
-          <label for="plantype2">%s
-              <span class="fa fa-question-circle" style="display:inline-block;"></span></label><br>
-              </p>
+          <b>%s</b><br>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" id="plantype1" name="plantype" {%% if plantype != '2' %%}checked {%% endif %%}value="1"/>
+            <label class="form-check-label" for="plantype1">%s
+            <span class="fa fa-question-circle" style="display:inline-block;"></span>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" id="plantype2" name="plantype" {%% if plantype == '2' %%}checked {%% endif %%}value="2"/>
+            <label class="form-check-label" for="plantype2">%s
+            <span class="fa fa-question-circle" style="display:inline-block;"></span>
+            </label>
+          </div>
+              <br>
               <b>{%% filter capfirst %%}%s{%% endfilter %%}</b><br>
-              <label for="cb4"><input type="checkbox" name="constraint" {%% if capacityconstrained %%}checked {%% endif %%}value="4" id="cb4"/>&nbsp;&nbsp;%s</label><br>
-              <label for="cb1"><input type="checkbox" name="constraint" {%% if leadtimeconstrained %%}checked {%% endif %%}value="1" id="cb1"/>&nbsp;&nbsp;%s</label><br>
-              <label for="cb8"><input type="checkbox" name="constraint" {%% if fenceconstrained %%}checked {%% endif %%}value="8" id="cb8"/>&nbsp;&nbsp;%s</label><br>
+              <div class="form-check">
+                <label class="form-check-label" for="cb4">
+                <input class="form-check-input" type="checkbox" name="constraint" {%% if capacityconstrained %%}checked {%% endif %%}value="4" id="cb4"/>
+                %s
+                </label>
+              </div>
+              <div class="form-check">
+                <label class="form-check-label" for="cb1">
+                <input class="form-check-input" type="checkbox" name="constraint" {%% if leadtimeconstrained %%}checked {%% endif %%}value="1" id="cb1"/>
+                %s
+                </label>
+              </div>
+              <div class="form-check">
+                <label class="form-check-label" for="cb8">
+                <input class="form-check-input" type="checkbox" name="constraint" {%% if fenceconstrained %%}checked {%% endif %%}value="8" id="cb8"/>
+                %s
+                </label>
+              </div>
             </td>
           </tr>
           </table>

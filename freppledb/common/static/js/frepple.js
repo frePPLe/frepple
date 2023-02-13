@@ -3012,7 +3012,7 @@ var graph = {
         .append("div")
         .attr("id", "tooltip")
         .attr("role", "tooltip")
-        .attr("class", "popover fade right in")
+        .attr("class", "card p-2")
         .style("position", "absolute");
 
     // Update content and display
@@ -3614,14 +3614,14 @@ var follow = {
           '</div>' +
           '<div class="modal-body">' +
           '<table id="follower_key" style="width:100%">' +
-          '<tr><th>' + gettext("Follow") + ' ' +
+          '<tr><th>' + gettext("Follow") + '&nbsp;&nbsp;' +
           '<span class="dropdown">' +
-          '<button class="btn btn-default dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
+          '<button class="form-control w-auto d-inline dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
           '<span class="followerspan"></span>&nbsp;<span class="caret">' +
           '</button>' +
           '<ul class="dropdown-menu">' +
-          '<li><a href="#" onclick="follow.setMethod(this)">online</a></li>' +
-          '<li><a href="#" onclick="follow.setMethod(this)">email</a></li>' +
+          '<li><a class="dropdown-item" href="#" onclick="follow.setMethod(this)">online</a></li>' +
+          '<li><a class="dropdown-item" href="#" onclick="follow.setMethod(this)">email</a></li>' +
           '</ul></span>' +
           '</th></tr><tr><td id="follower_models" style="vertical-align:top"></td></tr>' +
           '</table>' +
@@ -3650,8 +3650,8 @@ var follow = {
         else if (data.models) {
           // You're directly following this object or not following it yet.
           for (var p of data.models) {
-            var e = $("<div class='checkbox'><label>"
-              + "<input type='checkbox'/><span class='text-capitalize'></span>"
+            var e = $("<div class='form-check'><label>"
+              + "<input class='form-check-input' type='checkbox'/><span class='text-capitalize'></span>"
               + "</label></div>"
             );
             e.find("span").text(p.label);
@@ -3666,16 +3666,16 @@ var follow = {
           dlg.find("th").after(e);
           e = $("<td id='follower_users' style='vertical-align:top'></td>");
           for (var u of data.users) {
-            var e2 = $("<div class='checkbox'><label>"
-              + "<input type='checkbox'/><span class='followername'></span>"
+            var e2 = $("<div class='form-check'><label>"
+              + "<input  class='form-check-input' type='checkbox'/><span class='followername'></span>"
               + "</label>&nbsp;&nbsp;"
               + '<span class="dropdown">'
-              + '<button class="btn btn-default dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">'
+              + '<button class="form-control w-auto d-inline dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">'
               + '<span class="followerspan"></span>&nbsp;<span class="caret">'
               + '</button>'
               + '<ul class="dropdown-menu">'
-              + '<li><a href="#" onclick="follow.setMethod(this)">online</a></li>'
-              + '<li><a href="#" onclick="follow.setMethod(this)">email</a></li>'
+              + '<li><a class="dropdown-item" href="#" onclick="follow.setMethod(this)">online</a></li>'
+              + '<li><a class="dropdown-item" href="#" onclick="follow.setMethod(this)">email</a></li>'
               + '</ul></span>'
               + "</div>"
             );

@@ -64,7 +64,7 @@
          <input class="form-control" name="format-quarter" type="text" size="12" value="%y Q%q"/>
          </div>
          </div>
-         <div class="row mb-3">
+         <div class="row">
          <label class="col-3 col-form-label">{% trans "year name"|capfirst %}</label>
          <div class="col-9">
          <input class="form-control" name="format-year" type="text" size="12" value="%Y"/>
@@ -75,18 +75,6 @@
 </table>
 </form>
 <script>
-  iconslist = {
-    time: 'fa fa-clock-o',
-    date: 'fa fa-calendar',
-    up: 'fa fa-chevron-up',
-    down: 'fa fa-chevron-down',
-    previous: 'fa fa-chevron-left',
-    next: 'fa fa-chevron-right',
-    today: 'fa fa-bullseye',
-    clear: 'fa fa-trash',
-    close: 'fa fa-close'
-  };
-
 $(function() {
   $("#weekstartul li a").click(function(){
     $("#weekstart1 span").text($(this).text());

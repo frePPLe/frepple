@@ -444,7 +444,7 @@ div.tt-dataset.tt-dataset-search {
 
 // Link to password change form on the user edit screen
 
-span.help-block a {
+div.help-block a {
     text-decoration: underline;
     font-weight: bold;
 }
@@ -984,4 +984,17 @@ h1 small {
 
 .supply .panel-heading.collapsed {
     opacity: 0.8;
+}
+
+// Log file viewer
+
+pre {
+    font-size: $font-size-base;
+}
+
+// Resize handler
+
+.handle {
+    cursor: ns-resize;
+    bottom: 0;
 }

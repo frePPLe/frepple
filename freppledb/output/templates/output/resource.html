@@ -216,7 +216,7 @@ function drawGraphs(jsondata)
 	        })
 	      .on("mouseenter", function(d) {
 	         graph.showTooltip(
-	           '<div class="card-header" style="text-align:center; font-weight:bold">'
+	           '<div style="text-align:center; font-weight:bold">'
 	           + timebuckets[d['bucket']]['name'] + "&nbsp;"
 	           + d['perc'] + '%</div>'
 	           + '<table><tr><td>{{_('available')|capfirst}}</td><td style="text-align:center">'

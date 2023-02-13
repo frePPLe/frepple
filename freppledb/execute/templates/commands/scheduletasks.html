@@ -316,7 +316,7 @@ function saveScheduledTask(el, event) {
     	  var newrow = $("#scheduledtask_headertemplate").clone();
     	  newrow.removeAttr("id");
     	  newrow.insertBefore(form);
-    	  newrow.removeClass("hidden").toggle();
+    	  newrow.removeClass("d-none");
     	}
     	form.prev().removeClass("d-none");
       form.prev().find("[data-field='next-run']").text(data);

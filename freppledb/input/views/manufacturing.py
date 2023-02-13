@@ -1315,21 +1315,17 @@ class OperationDependencyList(GridReport):
         <br>
         This table defines relations between operations.<br>
         Use this table for:<br>
-        <ul>
-        <li>
+        <br>
         <br>1.<br>
         Define which <b>steps in a routing operation can be executed in parallel</b>.<br>
         You use the dependencies to define which operation(s) is a prerequisite for another.<br>
-        </li>
-        <li>
+        <br>
         <br>2.<br>
         Define relations between <b>different steps in a project-oriented business</b>.<br>
         In most manufacturing oriented business, a bill-of-material is used to define
         different levels in the product structure.<br>
         In a project-oriented business you can directly link subprojects without
         defining intermediate items.<br>
-        </li>
-        </ul>
         <br>
         <br>
         """

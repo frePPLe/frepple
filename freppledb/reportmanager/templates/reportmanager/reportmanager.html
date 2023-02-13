@@ -40,7 +40,7 @@ function getSchema() {
 }
 
 function startEdit() {
-  $("#editreport, #editbuttons, #filterform").toggleClass("hidden");
+  $("#editreport, #editbuttons, #filterform").toggleClass("d-none");
   if ($("#schemacolumn").is(":empty")) getSchema();
 }
 {% endif %}
@@ -170,7 +170,7 @@ $(function() {
 {% endif %}
 </div>
 
-<div id="editreport" {% if report %}class="hidden"{% endif %}>
+<div id="editreport" {% if report %}class="d-none"{% endif %}>
 <div class="row pt-2 pb-2">
 <div class="col-form-label col-md-2" style="text-align:right">
   <label class="required" style="font-weight:bold; color:#333" for="id_name">{% trans "name"|capfirst %}:</label>

@@ -379,9 +379,33 @@ class ExportOperationPlans(PlanTask):
     @staticmethod
     def getPegging(opplan, buffer=None):
         unavail = opplan.unavailable
+        downstream = []
+        upstream = []
+        for k in opplan.pegging_downstream:
+            if k.level == 1:
+                downstream.append(
+                    (
+                        k.operationplan.reference,
+                        k.quantity,
+                        k.offset,
+                    )
+                )
+        for k in opplan.pegging_upstream:
+            if k.level == 1:
+                upstream.append(
+                    (
+                        k.operationplan.reference,
+                        k.quantity,
+                        k.offset,
+                    )
+                )
         pln = {
             "pegging": {
                 j.demand.name: round(j.quantity, 8) for j in opplan.pegging_demand
+            },
+            "newpegging": {
+                "downstream": downstream,
+                "upstream": upstream,
             },
             "downstream_opplans": [
                 (j.level, j.operationplan.reference, j.quantity)

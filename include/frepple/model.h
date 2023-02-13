@@ -9610,6 +9610,11 @@ class PeggingIterator : public Object {
                        : states.back().quantity;
   }
 
+
+  double getOffset() const {
+    return second_pass ? states_sorted.front().offset : states.back().offset;
+  }
+
   /* Returns the recursion depth of the iterator.*/
   short getLevel() const {
     return second_pass ? states_sorted.front().level : states.back().level;
@@ -9648,6 +9653,8 @@ class PeggingIterator : public Object {
     m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, nullptr, -1,
                            MANDATORY);
     m->addShortField<Cls>(Tags::level, &Cls::getLevel, nullptr, -1, MANDATORY);
+    m->addDoubleField<Cls>(Tags::offset, &Cls::getOffset, nullptr, -1,
+                           MANDATORY);
   }
 
  private:

@@ -90,6 +90,9 @@ class execute_with_commands(TransactionTestCase):
                 if file.endswith(".csv.gz"):
                     os.remove(os.path.join(outfolder, file))
         management.call_command("exporttofolder", verbosity="0")
+        self.assertEqual(
+            Task.objects.filter(name="exporttofolder").first().status, "100%"
+        )
         count = 0
         for file in os.listdir(outfolder):
             if file.endswith(".csv.gz"):

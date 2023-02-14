@@ -220,4 +220,43 @@ bool OperationDependency::checkLoops(const Operation* o,
   return true;
 }
 
+void OperationPlan::matchDependencies(bool log) {
+  if (!getOperation() || getOperation()->getDependencies().empty()) return;
+  if (log) logger << "Scanning dependencies of " << this << endl;
+  for (auto dpd : getOperation()->getDependencies()) {
+    if (dpd->getBlockedBy() == getOperation()) continue;
+    auto needed = getQuantity() * dpd->getQuantity();
+    auto o = dpd->getBlockedBy()->getOperationPlans();
+    while (o != OperationPlan::end()) {
+      if (getBatch() && o->getBatch() != getBatch()) {
+        // No match
+        ++o;
+        continue;
+      }
+      auto unpegged = o->getQuantity();
+      for (auto d : o->getDependencies()) {
+        if (d->getFirst()->getOperation() != dpd->getOperation() ||
+            d->getSecond()->getOperation() != getOperation()) {
+          continue;
+        }
+        if (d->getOperationDependency())
+          unpegged -= d->getSecond()->getQuantity() *
+                      d->getOperationDependency()->getQuantity();
+        else
+          unpegged -= d->getSecond()->getQuantity();
+      }
+      if (unpegged > ROUNDING_ERROR) {
+        new OperationPlanDependency(&*o, this, dpd);
+        if (log) logger << "  Matching " << &*o << endl;
+        needed -= unpegged;
+        if (needed < ROUNDING_ERROR) break;
+      }
+      ++o;
+    }
+    if (log && needed > ROUNDING_ERROR)
+      logger << "  Unmatched " << needed << " on operation '"
+             << dpd->getBlockedBy() << "'" << endl;
+  }
+}
+
 }  // namespace frepple

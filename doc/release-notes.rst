@@ -26,8 +26,7 @@ Release notes
     resource to come up with a level-loaded utlization of the resources
     in the pool.
 
-- Bug fix: Incorrect level calculation in models with operation dependencies
-  and without buffers.
+- Bug fix: Various corrections and enhancements to the operation dependency functionality.
 
 .. rubric:: Odoo integration
 

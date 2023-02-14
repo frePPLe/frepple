@@ -238,6 +238,10 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
 
   // Push dependencies on the stack.
   for (auto d : op->getDependencies()) {
+    auto o = downstream ? d->getSecond() : d->getFirst();
+    auto exists = visited.find(o);
+    if (exists != visited.end()) continue;
+    visited.insert(o);
     if (downstream && d->getFirst() == op)
       updateStack(d->getSecond(),
                   qty * d->getSecond()->getQuantity() / op->getQuantity(),

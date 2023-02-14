@@ -2320,7 +2320,9 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
       }
       auto unpegged = o->getQuantity();
       for (auto d : o->getDependencies()) {
-        if (d->getFirst() != &*o) continue;
+        if (d->getFirst()->getOperation() != dpd->getOperation() ||
+            d->getSecond()->getOperation() != opplan->getOperation())
+          continue;
         if (d->getOperationDependency())
           unpegged -= d->getSecond()->getQuantity() *
                       d->getOperationDependency()->getQuantity();

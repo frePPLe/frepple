@@ -896,22 +896,18 @@ PyObject* SolverPropagateStatus::solve(PyObject* self, PyObject* args) {
 }
 
 void SolverPropagateStatus::solve(void* v) {
-  short lvl = 0;
   bool log = getLogLevel() > 0;
-  while (true) {
-    bool operationsfound = false;
+  for (short lvl = 0; lvl <= HasLevel::getNumberOfLevels(); ++lvl) {
     for (auto& oper : Operation::all()) {
       if (oper.getLevel() != lvl) continue;
-      operationsfound = true;
       for (auto opplan = oper.getOperationPlans();
            opplan != OperationPlan::end(); ++opplan) {
+        if (!oper.getDependencies().empty()) opplan->matchDependencies(log);
         if (opplan->getSubOperationPlans() == OperationPlan::end() &&
             (opplan->getClosed() || opplan->getCompleted()))
           opplan->propagateStatus(log);
       }
     }
-    lvl += 1;
-    if (!operationsfound) break;
   }
   for (auto& buf : Buffer::all()) {
     auto oh = buf.getOnHand(Date::infinitePast, Date::infiniteFuture);

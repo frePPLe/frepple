@@ -2173,6 +2173,9 @@ class OperationPlan : public Object,
    */
   void propagateStatus(bool log = false);
 
+  /* Match linked operationplan dependencies. */
+  void matchDependencies(bool log = false);
+
   /* Remove the setup event. */
   void clearSetupEvent() {
     if (!setupevent) return;
@@ -9707,6 +9710,7 @@ class PeggingIterator : public Object {
 
   /* Optimization to reuse elements on the stack. */
   bool first;
+  set<OperationPlan*> visited;
 
   /* Extra data structure to avoid duplicate operationplan ids in the list. */
   bool second_pass;

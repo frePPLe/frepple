@@ -2076,7 +2076,7 @@ class OperationPlanDetail(View):
                     inner join lateral
                     (select t->>0 reference,
                     (t->>1)::numeric quantity,
-                    (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'newpegging'->'downstream') t) t on true
+                    (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'downstream_opplans') t) t on true
                     inner join operationplan nextopplan on nextopplan.reference = t.reference
                     where operationplan.reference = %%s
                     union all
@@ -2121,18 +2121,31 @@ class OperationPlanDetail(View):
                     inner join lateral
                     (select t->>0 reference,
                     (t->>1)::numeric quantity,
-                    (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'newpegging'->'downstream') t) t on true
+                    (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'downstream_opplans') t) t on true
                     inner join operationplan nextopplan on nextopplan.reference = t.reference
                     inner join lateral
                     (select t->>0 reference,
                     (t->>1)::numeric quantity,
-                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'newpegging'->'upstream') t) upstream on upstream.reference = operationplan.reference
+                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'upstream_opplans') t) upstream on upstream.reference = operationplan.reference
                     left outer join operationmaterial consuming_om on consuming_om.operation_id = nextopplan.operation_id
                         and consuming_om.quantity < 0 and consuming_om.item_id = operationplan.item_id
                     left outer join operationmaterial producing_om on producing_om.operation_id = nextopplan.operation_id
                         and producing_om.quantity > 0 and producing_om.item_id = nextopplan.item_id
+                    where
+                    (least( nextopplan.quantity, case when t.offset > 0 then
+                        least(t.offset + cte.y, nextopplan.quantity)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        else
+                        greatest(0, cte.y - upstream.offset)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        end))
+                    -
+                    (least( nextopplan.quantity, case when t.offset > 0 then
+                        least(t.offset + cte.x, nextopplan.quantity)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        else
+                        greatest(0,cte.x - upstream.offset) *coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        end))
+                    > 0
                     )
-                    select * from cte where y-x > 0
+                    select * from cte
                     order by path
                     """
                     % (
@@ -2199,7 +2212,7 @@ class OperationPlanDetail(View):
                     inner join lateral
                     (select t->>0 reference,
                     (t->>1)::numeric quantity,
-                    (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'newpegging'->'upstream') t) t on true
+                    (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t on true
                     inner join operationplan nextopplan on nextopplan.reference = t.reference
                     where operationplan.reference = %s
                     union all
@@ -2243,18 +2256,29 @@ class OperationPlanDetail(View):
                     inner join lateral
                     (select t->>0 reference,
                     (t->>1)::numeric quantity,
-                    (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'newpegging'->'upstream') t) t on true
+                    (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t on true
                     inner join operationplan nextopplan on nextopplan.reference = t.reference
                     inner join lateral
                     (select t->>0 reference,
                     (t->>1)::numeric quantity,
-                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'newpegging'->'downstream') t) upstream on upstream.reference = operationplan.reference
+                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'downstream_opplans') t) upstream on upstream.reference = operationplan.reference
                     left outer join operationmaterial consuming_om on consuming_om.operation_id = nextopplan.operation_id
                         and consuming_om.quantity < 0 and consuming_om.item_id = operationplan.item_id
                     left outer join operationmaterial producing_om on producing_om.operation_id = nextopplan.operation_id
                         and producing_om.quantity > 0 and producing_om.item_id = nextopplan.item_id
+                    where (least( nextopplan.quantity, case when t.offset > 0 then
+                        least(t.offset + cte.y, nextopplan.quantity)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        else
+                        greatest(0, cte.y - upstream.offset)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        end))
+                        -
+                        (least( nextopplan.quantity, case when t.offset > 0 then
+                        least(t.offset + cte.x, nextopplan.quantity)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        else
+                        greatest(0,cte.x - upstream.offset) *coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        end)) > 0
                     )
-                    select * from cte where y-x > 0
+                    select * from cte
                     order by path
                     """,
                     (opplan.reference,),

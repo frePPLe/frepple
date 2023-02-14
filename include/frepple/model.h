@@ -2415,7 +2415,11 @@ class OperationPlan : public Object,
 
   PeggingIterator getPeggingDownstream() const;
 
+  PeggingIterator getPeggingDownstreamFirstLevel() const;
+
   PeggingIterator getPeggingUpstream() const;
+
+  PeggingIterator getPeggingUpstreamFirstLevel() const;
 
   PeggingDemandIterator getPeggingDemand() const;
 
@@ -2508,8 +2512,14 @@ class OperationPlan : public Object,
         Tags::pegging_downstream, Tags::pegging, &Cls::getPeggingDownstream,
         DONT_SERIALIZE);
     m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
+        Tags::pegging_downstream_first_level, Tags::pegging,
+        &Cls::getPeggingDownstreamFirstLevel, DONT_SERIALIZE);
+    m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
         Tags::pegging_upstream, Tags::pegging, &Cls::getPeggingUpstream,
         DONT_SERIALIZE);
+    m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
+        Tags::pegging_upstream_first_level, Tags::pegging,
+        &Cls::getPeggingUpstreamFirstLevel, DONT_SERIALIZE);
     m->addIteratorField<Cls, PeggingDemandIterator, PeggingDemandIterator>(
         Tags::pegging_demand, Tags::pegging, &Cls::getPeggingDemand,
         PLAN + WRITE_OBJECT);
@@ -9582,7 +9592,7 @@ class PeggingIterator : public Object {
   PeggingIterator(const Demand*);
 
   /* Constructor for operationplan pegging, downstream (default) or upstream. */
-  PeggingIterator(const OperationPlan*, bool = true);
+  PeggingIterator(const OperationPlan*, bool = true, short = -1);
 
   /* Constructor for flowplan pegging, downstream (default) or upstream. */
   PeggingIterator(const FlowPlan*, bool = true);
@@ -9613,6 +9623,8 @@ class PeggingIterator : public Object {
                        : states.back().quantity;
   }
 
+  /* Return the max level of depth allowed*/
+  inline short getMaxLevel() const { return maxlevel; }
 
   double getOffset() const {
     return second_pass ? states_sorted.front().offset : states.back().offset;
@@ -9714,6 +9726,9 @@ class PeggingIterator : public Object {
 
   /* Extra data structure to avoid duplicate operationplan ids in the list. */
   bool second_pass;
+
+  /* The maximum level of depth allowed*/
+  short maxlevel;
 };
 
 /* An iterator that shows all demands linked to an operationplan. */

@@ -2169,8 +2169,16 @@ PeggingIterator OperationPlan::getPeggingDownstream() const {
   return PeggingIterator(this, true);
 }
 
+PeggingIterator OperationPlan::getPeggingDownstreamFirstLevel() const {
+  return PeggingIterator(this, true, 1);
+}
+
 PeggingIterator OperationPlan::getPeggingUpstream() const {
   return PeggingIterator(this, false);
+}
+
+PeggingIterator OperationPlan::getPeggingUpstreamFirstLevel() const {
+  return PeggingIterator(this, false, 1);
 }
 
 PeggingDemandIterator OperationPlan::getPeggingDemand() const {

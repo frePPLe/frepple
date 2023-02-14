@@ -160,7 +160,9 @@ class Tags {
   static const Keyword pegging;
   static const Keyword pegging_demand;
   static const Keyword pegging_downstream;
+  static const Keyword pegging_downstream_first_level;
   static const Keyword pegging_upstream;
+  static const Keyword pegging_upstream_first_level;
   static const Keyword percent;
   static const Keyword period_of_cover;
   static const Keyword plan;

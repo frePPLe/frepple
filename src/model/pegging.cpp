@@ -65,7 +65,8 @@ PeggingIterator::PeggingIterator(const PeggingIterator& c)
     : downstream(c.downstream),
       firstIteration(c.firstIteration),
       first(c.first),
-      second_pass(c.second_pass) {
+      second_pass(c.second_pass),
+      maxlevel(c.maxlevel) {
   initType(metadata);
   for (auto i = c.states.begin(); i != c.states.end(); ++i)
     states.emplace_back(i->opplan, i->quantity, i->offset, i->level, i->gap);
@@ -79,6 +80,7 @@ PeggingIterator& PeggingIterator::operator=(const PeggingIterator& c) {
   firstIteration = c.firstIteration;
   first = c.first;
   second_pass = c.second_pass;
+  maxlevel = c.maxlevel;
   for (auto& i : c.states)
     states.emplace_back(i.opplan, i.quantity, i.offset, i.level, i.gap);
   for (auto i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
@@ -129,8 +131,13 @@ PeggingIterator::PeggingIterator(const Demand* d)
   second_pass = true;
 }
 
-PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b)
-    : downstream(b), firstIteration(true), first(false), second_pass(false) {
+PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b,
+                                 short maxlevel)
+    : downstream(b),
+      firstIteration(true),
+      first(false),
+      second_pass(false),
+      maxlevel(maxlevel) {
   initType(metadata);
   if (!opplan) return;
   if (opplan->getTopOwner()->getOperation()->hasType<OperationSplit>())

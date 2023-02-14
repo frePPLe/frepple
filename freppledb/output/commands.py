@@ -381,40 +381,18 @@ class ExportOperationPlans(PlanTask):
         unavail = opplan.unavailable
         downstream = []
         upstream = []
-        for k in opplan.pegging_downstream:
-            if k.level == 1:
-                downstream.append(
-                    (
-                        k.operationplan.reference,
-                        k.quantity,
-                        k.offset,
-                    )
-                )
-        for k in opplan.pegging_upstream:
-            if k.level == 1:
-                upstream.append(
-                    (
-                        k.operationplan.reference,
-                        k.quantity,
-                        k.offset,
-                    )
-                )
         pln = {
             "pegging": {
                 j.demand.name: round(j.quantity, 8) for j in opplan.pegging_demand
             },
-            "newpegging": {
-                "downstream": downstream,
-                "upstream": upstream,
-            },
             "downstream_opplans": [
-                (j.level, j.operationplan.reference, j.quantity)
-                for j in opplan.pegging_downstream
+                (j.operationplan.reference, j.quantity, j.offset)
+                for j in opplan.pegging_downstream_first_level
                 if j.level != 0
             ],
             "upstream_opplans": [
-                (j.level, j.operationplan.reference, j.quantity)
-                for j in opplan.pegging_upstream
+                (j.operationplan.reference, j.quantity, j.offset)
+                for j in opplan.pegging_upstream_first_level
                 if j.level != 0
             ],
             "unavailable": unavail,

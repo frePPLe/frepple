@@ -2177,30 +2177,85 @@ class OperationPlanDetail(View):
                 # Upstream operationplans
                 cursor.execute(
                     """
-                    with cte as
+                    with recursive cte as
                     (
-                    select (value->>0)::int as level,
-                    value->>1 as reference,
-                    (value->>2)::numeric as quantity,
-                    row_number() over() as rownum
-                    from jsonb_array_elements((select plan->'upstream_opplans' from operationplan where reference = %s))
+                    select 1 as level,
+                        nextopplan.reference as nextreference,
+                        nextopplan.type,
+                        case when nextopplan.type = 'PO' then 'Purchase '||nextopplan.item_id||' @ '||nextopplan.location_id||' from '||nextopplan.supplier_id
+                        when nextopplan.type = 'DO' then 'Ship '||nextopplan.item_id||' from '||nextopplan.origin_id||' to '||nextopplan.destination_id
+                        else nextopplan.operation_id end,
+                        nextopplan.status,
+                        nextopplan.item_id,
+                        coalesce(nextopplan.location_id, nextopplan.destination_id),
+                        case when nextopplan.type = 'STCK' then null else to_char(nextopplan.startdate,'YYYY-MM-DD hh24:mi:ss') end,
+                        case when nextopplan.type = 'STCK' then null else to_char(nextopplan.enddate,'YYYY-MM-DD hh24:mi:ss') end,
+                        t.quantity,
+                        nextopplan.quantity,
+                        t.offset as x,
+                        t.offset + t.quantity as y,
+                        nextopplan.reference::varchar as path
+                    from operationplan
+                    inner join lateral
+                    (select t->>0 reference,
+                    (t->>1)::numeric quantity,
+                    (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'newpegging'->'upstream') t) t on true
+                    inner join operationplan nextopplan on nextopplan.reference = t.reference
+                    where operationplan.reference = %s
+                    union all
+                    select cte.level +  1,
+                        nextopplan.reference,
+                        nextopplan.type,
+                        case when nextopplan.type = 'PO' then 'Purchase '||nextopplan.item_id||' @ '||nextopplan.location_id||' from '||nextopplan.supplier_id
+                        when nextopplan.type = 'DO' then 'Ship '||nextopplan.item_id||' from '||nextopplan.origin_id||' to '||nextopplan.destination_id
+                        else nextopplan.operation_id end,
+                        nextopplan.status,
+                        nextopplan.item_id,
+                        coalesce(nextopplan.location_id, nextopplan.destination_id),
+                        case when nextopplan.type = 'STCK' then null else to_char(nextopplan.startdate,'YYYY-MM-DD hh24:mi:ss') end,
+                        case when nextopplan.type = 'STCK' then null else to_char(nextopplan.enddate,'YYYY-MM-DD hh24:mi:ss') end,
+                        least( nextopplan.quantity, case when t.offset > 0 then
+                        least(t.offset + cte.y, nextopplan.quantity)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        else
+                        greatest(0, cte.y - upstream.offset)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        end)
+                        -
+                        least( nextopplan.quantity, case when t.offset > 0 then
+                        least(t.offset + cte.x, nextopplan.quantity)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        else
+                        greatest(0,cte.x - upstream.offset) *coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        end),
+                        nextopplan.quantity,
+                        least( nextopplan.quantity, case when t.offset > 0 then
+                        least(t.offset + cte.x, nextopplan.quantity)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        else
+                        greatest(0,cte.x - upstream.offset) *coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        end) as x,
+                        least( nextopplan.quantity, case when t.offset > 0 then
+                        least(t.offset + cte.y, nextopplan.quantity)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        else
+                        greatest(0, cte.y - upstream.offset)*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        end)
+                        as y,
+                    cte.path||'/'||nextopplan.reference
+                    from operationplan
+                    inner join cte on operationplan.reference = cte.nextreference
+                    inner join lateral
+                    (select t->>0 reference,
+                    (t->>1)::numeric quantity,
+                    (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'newpegging'->'upstream') t) t on true
+                    inner join operationplan nextopplan on nextopplan.reference = t.reference
+                    inner join lateral
+                    (select t->>0 reference,
+                    (t->>1)::numeric quantity,
+                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'newpegging'->'downstream') t) upstream on upstream.reference = operationplan.reference
+                    left outer join operationmaterial consuming_om on consuming_om.operation_id = nextopplan.operation_id
+                        and consuming_om.quantity < 0 and consuming_om.item_id = operationplan.item_id
+                    left outer join operationmaterial producing_om on producing_om.operation_id = nextopplan.operation_id
+                        and producing_om.quantity > 0 and producing_om.item_id = nextopplan.item_id
                     )
-                    select cte.level,
-                    cte.reference,
-                    operationplan.type,
-                    case when operationplan.type = 'PO' then 'Purchase '||operationplan.item_id||' @ '||operationplan.location_id||' from '||operationplan.supplier_id
-                         when operationplan.type = 'DO' then 'Ship '||operationplan.item_id||' from '||operationplan.origin_id||' to '||operationplan.destination_id
-                    else operationplan.operation_id end,
-                    operationplan.status,
-                    operationplan.item_id,
-                    coalesce(operationplan.location_id, operationplan.destination_id),
-                    case when operationplan.type = 'STCK' then '' else to_char(operationplan.startdate,'YYYY-MM-DD hh24:mi:ss') end,
-                    case when operationplan.type = 'STCK' then '' else to_char(operationplan.enddate,'YYYY-MM-DD hh24:mi:ss') end,
-                    cte.quantity,
-                    operationplan.quantity
-                    from cte
-                    inner join operationplan on operationplan.reference = cte.reference
-                    order by cte.rownum
+                    select * from cte where y-x > 0
+                    order by path
                     """,
                     (opplan.reference,),
                 )

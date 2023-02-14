@@ -4,6 +4,25 @@ Release notes
 7.2.0 (Upcoming release)
 ========================
 
+.. rubric:: User interface
+
+- | The styling and layout has been refreshed.
+
+- | Updated Spanish translations have been contributed by Zipus. Gracias!
+
+- Bug fix: The empty-database task didn't work if only the resource-detail or
+  inventory-detail tables were selected by the user.
+
+- | Excel exports for fields of type duration is improved and more intuitive with
+    the default behavior of Excel.
+  | Durations less than a day are exported in the format hh:mm:ss. Longer
+    durations are exported by default as a number of days.
+  | A new parameter excel_duration_in_days is added to maintain backward compatibility for
+    customers that rely on the old format. The new format is the default,
+    but if set to false we stick with the old format.
+
+- Bug fix: Occassionally the user screen didn't open and showed an error.
+
 .. rubric:: Production planning
 
 - | Support for tool resources.
@@ -49,28 +68,6 @@ Release notes
     and receipt date.
   | We put the earliest order start and end date of the exported frepple records in these
     fields. This makes it easier to quickly evaluate the urgency of the RFQs in the list.
-
-.. rubric:: User interface
-
-- | The styling and layout has been refreshed in a number of places. In
-    upcoming release you can expect more of those.
-  | For the techies: we've upgraded from Bootstrap 3 to Bootstrap 5 for the CSS and
-    HTML styling framework.
-
-- | Updated Spanish translations have been contributed by Zipus. Gracias!
-
-- Bug fix: The empty-database task didn't work if only the resource-detail or
-  inventory-detail tables were selected by the user.
-
-- | Excel exports for fields of type duration is improved and more intuitive with
-    the default behavior of Excel.
-  | Durations less than a day are exported in the format hh:mm:ss. Longer
-    durations are exported by default as a number of days.
-  | A new parameter excel_duration_in_days is added to maintain backward compatibility for
-    customers that rely on the old format. The new format is the default,
-    but if set to false we stick with the old format.
-
-- Bug fix: Occassionally the user screen didn't open and showed an error.
 
 .. rubric:: Documentation
 

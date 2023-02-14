@@ -118,10 +118,17 @@ class Command(BaseCommand):
             "folder": "export",
             "sql": """COPY (
           select
-            resource_id as resource, startdate, enddate, setup,
-            operationplan_id as operationplan, status
+            operationplanresource.resource_id as resource,
+            operationplan.startdate,
+            operationplan.enddate,
+            operationplanresource.setup,
+            operationplanresource.operationplan_id as operationplan,
+            operationplan.status
           from operationplanresource
-          order by resource_id, startdate, quantity
+          inner join operationplan on operationplan.reference = operationplanresource.operationplan_id
+          order by operationplanresource.resource_id,
+          operationplan.startdate,
+          operationplanresource.quantity
           ) TO STDOUT WITH CSV HEADER""",
         },
         {

@@ -379,8 +379,6 @@ class ExportOperationPlans(PlanTask):
     @staticmethod
     def getPegging(opplan, buffer=None):
         unavail = opplan.unavailable
-        downstream = []
-        upstream = []
         pln = {
             "pegging": {
                 j.demand.name: round(j.quantity, 8) for j in opplan.pegging_demand
@@ -388,12 +386,18 @@ class ExportOperationPlans(PlanTask):
             "downstream_opplans": [
                 (j.operationplan.reference, j.quantity, j.offset)
                 for j in opplan.pegging_downstream_first_level
-                if j.level != 0
+                if (
+                    (j.level == 1 and opplan.owner == None)
+                    or (j.level == 2 and opplan.owner != None)
+                )
             ],
             "upstream_opplans": [
                 (j.operationplan.reference, j.quantity, j.offset)
                 for j in opplan.pegging_upstream_first_level
-                if j.level != 0
+                if (
+                    (j.level == 1 and opplan.owner == None)
+                    or (j.level == 2 and opplan.owner != None)
+                )
             ],
             "unavailable": unavail,
             "interruptions": [

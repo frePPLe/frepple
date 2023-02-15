@@ -2397,65 +2397,66 @@ class ManufacturingOrder(OperationPlan):
             def save(self, commit=True):
                 instance = super(MO_form, self).save(commit=False)
 
-                new_opr = []
                 if "resource" in fields:
                     try:
-                        opreslist = [
-                            r
-                            for r in instance.operation.operationresources.all().select_related(
-                                "resource"
-                            )
-                        ]
+                        updated_opr = []
+                        unchanged_opr = []
+                        created_opr = []
+                        opr_to_create = []
                         for res, quantity in self.cleaned_data["resource"]:
-                            newopres = None
-                            for o in opreslist:
-                                if o.resource.lft <= res.lft < o.resource.rght:
-                                    newopres = o
-                                    break
                             found = False
+                            # Let's see if an opr record already exists for that resource
                             for opplanres in instance.resources.all().select_related(
                                 "resource"
                             ):
-                                found = True
-                                oldopres = None
-                                for o in opreslist:
-                                    if (
-                                        o.resource.lft
-                                        <= opplanres.resource.lft
-                                        < o.resource.rght
-                                    ):
-                                        oldopres = o
-                                        break
-                                if (
-                                    oldopres
-                                    and newopres
-                                    and (
-                                        oldopres.id == newopres.id
-                                        or (
-                                            oldopres.name == newopres.name
-                                            and newopres.name
-                                        )
-                                    )
-                                ):
-                                    opplanres.resource = res
-                                    opplanres.save(using=database)
+                                if opplanres.resource.name == res.name:
+                                    found = True
+                                    if opplanres.quantity != quantity:
+                                        opplanres.quantity = quantity
+                                        updated_opr.append(opplanres)
+                                    else:
+                                        unchanged_opr.append(opplanres)
                                     break
-                            # record creation, no operationplanresource exists
+
                             if not found:
-                                opr = OperationPlanResource(
-                                    resource=res,
-                                    quantity=quantity,
+                                # I need to create an opr record for that resource
+                                # but I will do it later
+                                opr_to_create.append((res, quantity))
+
+                        # I visited all the resources, do I need to delete some unvisited opr records ?
+                        deleted_oprs = False
+                        for i in instance.resources.all():
+                            if i not in updated_opr and i not in unchanged_opr:
+                                deleted_oprs = True
+                                i.delete()
+
+                        # time now to create the new opr records
+                        for i in opr_to_create:
+                            created_opr.append(
+                                OperationPlanResource(
+                                    resource=i[0],
+                                    quantity=i[1],
                                     status=instance.status,
                                     operationplan=instance,
                                 )
-                                new_opr.append(opr)
+                            )
 
-                    except Exception:
+                        # and to save all that stuff
+                        if (
+                            commit
+                            or len(created_opr)
+                            or deleted_oprs
+                            or len(updated_opr) > 0
+                        ):
+                            instance.save(using=database)
+                            for i in created_opr:
+                                i.save(using=database)
+                            for i in updated_opr:
+                                i.save(using=database)
+
+                    except Exception as e:
+                        print(e)
                         pass
-                    if commit or len(new_opr) > 0:
-                        instance.save(using=database)
-                        for i in new_opr:
-                            i.save(using=database)
 
                 if "material" in fields:
                     try:

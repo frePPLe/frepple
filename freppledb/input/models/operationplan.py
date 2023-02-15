@@ -1039,11 +1039,11 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     """
                 with cte as (
                     select  out_resourceplan.startdate,
-                            sum(available) available,
-                            sum(unavailable) unavailable,
-                            sum(setup) setup,
-                            sum(load) load,
-                            sum(free) free
+                            sum(available) as available,
+                            sum(unavailable) as unavailable,
+                            sum(setup) as setup,
+                            sum(load) as load,
+                            sum(free) as free
                     from out_resourceplan
                     where resource in (select name from resource where owner_id = %s)
                     group by startdate)

@@ -34,7 +34,7 @@
                             {% else %}
                                 {% render_field_bootstrap field.field %}
                             {% endif %}
-                            {% if not field.is_readonly and field.errors %}<span class="text-danger">{{ field.errors|striptags }}</span>{% endif %}
+                            {% if not field.is_readonly and field.errors %}<span class="d-block text-danger">{{ field.errors|striptags }}</span>{% endif %}
                             {% if field.field.help_text %}
                                 <div class="mt-1 help-block">{{ field.field.help_text|safe }}</div>
                             {% endif %}

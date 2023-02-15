@@ -429,14 +429,6 @@ div.tt-dataset.tt-dataset-search {
         font-size: $font-size-base;
     }
 
-    /* TODO sgbutton-div {
-
-        .sgbutton.btn:focus,
-        .sgbutton.btn:hover {
-            border: 1px solid darken($btn-default-border, 20%);
-        }
-    }*/
-
     >.ui-jqgrid-pager {
         font-size: $font-size-base;
     }
@@ -720,7 +712,7 @@ h1 small {
 
 // Cards in calendar and kanban views
 
-#kanban,
+#kanban .column-body,
 #calendar {
 
     .card {

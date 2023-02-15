@@ -422,7 +422,7 @@ class Command(BaseCommand):
             </td>
             <td class="ps-3 pt-3 pe-3">%s<br><br>
           {%% if planning_options %%}
-          <p {%% if planning_options|length <= 1 %%}style="display: none"{%% endif %%}><b>{%% filter capfirst %%}%s{%% endfilter %%}</b><br>
+          <div {%% if planning_options|length <= 1 %%}class="d-none"{%% endif %%}><b>{%% filter capfirst %%}%s{%% endfilter %%}</b><br>
           {%% for b in planning_options %%}
           <div class="form-check">
             <label class="form-check-label" for="option_{{b.0}}">
@@ -431,7 +431,7 @@ class Command(BaseCommand):
             </label>
           </div>
           {%% endfor %%}
-          </p>
+          </div>
           {%% endif %%}
           <b>%s</b><br>
           <div class="form-check">

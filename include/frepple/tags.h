@@ -220,6 +220,7 @@ class Tags {
   static const Keyword suboperations;
   static const Keyword supplier;
   static const Keyword suppliers;
+  static const Keyword suppressFlowplanCreation;
   static const Keyword supply;
   static const Keyword timezone;
   static const Keyword tool;

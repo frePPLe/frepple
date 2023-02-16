@@ -102,4 +102,52 @@ void Plan::erase(const string& e) {
     throw DataException("erase operation not supported");
 }
 
+void Plan::setSuppressFlowplanCreation(bool b) {
+  suppress_flowplan_creation = b;
+
+  if (!suppress_flowplan_creation) {
+    // Delayed creation of flowplans - basically deplayed execution of
+    // Operationplan::createFlowLoads.
+    //
+    // If an operationplan doesn't have a single consunming flowplan.yet, we
+    // create them now. If there are existing flowplans, we assume they are
+    // complete.
+    // Similar logic for producing flowplans.
+    for (auto opplan = OperationPlan::begin(); opplan != OperationPlan::end();
+         ++opplan) {
+      if (!opplan->getConsumeMaterial()) continue;
+      bool consumptionexists = false;
+      bool productionexists = false;
+      auto flplniter = opplan->beginFlowPlans();
+      while (auto f = flplniter.next()) {
+        if (f->getQuantity() < 0)
+          consumptionexists = true;
+        else if (f->getQuantity() > 0)
+          productionexists = true;
+      };
+      if ((!productionexists || !consumptionexists) && opplan->getOwner()) {
+        auto subopplans = opplan->getOwner()->getSubOperationPlans();
+        while (auto subopplan = subopplans.next()) {
+          auto subflplniter = subopplan->beginFlowPlans();
+          while (auto f = subflplniter.next()) {
+            if (f->getQuantity() < 0)
+              consumptionexists = true;
+            else if (f->getQuantity() > 0)
+              productionexists = true;
+          };
+          if (productionexists && consumptionexists) break;
+        }
+      }
+      for (auto& h : opplan->getOperation()->getFlows()) {
+        if (!h.getAlternate() && ((!consumptionexists && h.isConsumer() &&
+                                   opplan->getConsumeMaterial()) ||
+                                  (!productionexists && h.isProducer() &&
+                                   opplan->getProduceMaterial())))
+          new FlowPlan(&*opplan, &h);
+      }
+      opplan->updateFeasible();
+    }
+  }
+}
+
 }  // namespace frepple

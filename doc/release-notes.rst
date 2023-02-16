@@ -69,6 +69,9 @@ Release notes
   | We put the earliest order start and end date of the exported frepple records in these
     fields. This makes it easier to quickly evaluate the urgency of the RFQs in the list.
 
+- | 14 & 15 & 16: Bug fix. When a material was manually deleted from an odoo manufacturing order,
+    frepple was still using it.
+
 .. rubric:: Documentation
 
 - The chapters are restructured and some new pages are added. We hope this

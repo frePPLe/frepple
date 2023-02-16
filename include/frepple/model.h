@@ -8520,6 +8520,8 @@ class Plan : public Plannable, public Object {
    */
   bool individual_pool_resources = false;
 
+  bool suppress_flowplan_creation = false;
+
   string timezone;
 
   /* Pointer to the singleton plan object. */
@@ -8605,6 +8607,10 @@ class Plan : public Plannable, public Object {
   bool getIndividualPoolResources() const { return individual_pool_resources; }
 
   void setIndividualPoolResources(bool b) { individual_pool_resources = b; }
+
+  bool getSuppressFlowplanCreation() const { return suppress_flowplan_creation; }
+
+  void setSuppressFlowplanCreation(bool b);
 
   void setLogFile(const string& s) { Environment::setLogFile(s); }
 
@@ -8695,6 +8701,9 @@ class Plan : public Plannable, public Object {
     m->addBoolField<Cls>(
         Tags::individualPoolResources, &Cls::getIndividualPoolResources,
         &Cls::setIndividualPoolResources, BOOL_FALSE, DONT_SERIALIZE);
+    m->addBoolField<Cls>(
+        Tags::suppressFlowplanCreation, &Cls::getSuppressFlowplanCreation,
+        &Cls::setSuppressFlowplanCreation, BOOL_FALSE, DONT_SERIALIZE);
     m->addStringField<Cls>(Tags::timezone, &Cls::getTimeZone, &Cls::setTimeZone,
                            "", DONT_SERIALIZE);
     Plannable::registerFields<Plan>(m);

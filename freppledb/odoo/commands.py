@@ -156,6 +156,11 @@ class OdooReadData(PlanTask):
             d = cursor.fetchone()
             frepple.settings.id = d[0] + 1
 
+        # Disable the automatic creation of inventory consumption & production until we have
+        # read all odoo data. When odoo data is available we don't create extra ones
+        # but take the odoo data as input.
+        frepple.settings.suppressFlowplanCreation = True
+
         if not debugFile:
             args = {
                 "language": odoo_language,
@@ -218,6 +223,10 @@ class OdooReadData(PlanTask):
             # Parse XML data file
             with open(debugFile, encoding="utf-8") as f:
                 frepple.readXMLdata(f.read(), False, False, loglevel)
+
+        # All predefined inventory detail records are now loaded.
+        # We now create any missing ones.
+        frepple.settings.suppressFlowplanCreation = False
 
         # Freeze the date of the extract (in memory and in database)
         frepple.settings.current = datetime.now()

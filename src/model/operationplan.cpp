@@ -1070,13 +1070,14 @@ void OperationPlan::createFlowLoads(
   }
 
   // Create flowplans for flows
-  for (auto& h : oper->getFlows()) {
-    // Only the primary flow is instantiated.
-    // Also for transfer batches, we only need to create the first flowplan.
-    // The getFlowplanDateQuantity method will be called during the creation,
-    // and create additional flowplans as required.
-    if (!h.getAlternate()) new FlowPlan(this, &h);
-  }
+  if (!Plan::instance().getSuppressFlowplanCreation())
+    for (auto& h : oper->getFlows()) {
+      // Only the primary flow is instantiated.
+      // Also for transfer batches, we only need to create the first flowplan.
+      // The getFlowplanDateQuantity method will be called during the creation,
+      // and create additional flowplans as required.
+      if (!h.getAlternate()) new FlowPlan(this, &h);
+    }
 }
 
 void OperationPlan::deleteFlowLoads() {

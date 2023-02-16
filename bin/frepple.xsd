@@ -1175,6 +1175,7 @@
         <xsd:element name="detectproblems" type="xsd:boolean" />
         <xsd:element name="calendar" type="calendar" />
         <xsd:element name="individualPoolResources" type="xsd:boolean" />
+		<xsd:element name="suppressFlowplanCreation" type="xsd:boolean" />
         <!-- OBJECT LISTS -->
         <xsd:element name="locations" type="locationlist" />
         <xsd:element name="customers" type="customerlist" />
@@ -1205,6 +1206,7 @@
       <xsd:attribute name="logfile" type="xsd:normalizedString" />
       <xsd:attribute name="detectproblems" type="xsd:boolean" />
       <xsd:attribute name="individualPoolResources" type="xsd:boolean" />
+	  <xsd:attribute name="suppressFlowplanCreation" type="xsd:boolean" /> 
     </xsd:complexType>
   </xsd:element>
 

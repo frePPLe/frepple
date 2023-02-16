@@ -1879,6 +1879,11 @@ class loadOperationPlans(LoadTask):
         else:
             filter_and = ""
 
+        # Disable the automatic creation of inventory consumption & production until we have
+        # read also operationplanmaterial. When operationplanmaterial data is available we
+        # don't create extra ones but take that data as input.
+        frepple.settings.suppressFlowplanCreation = True
+
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
                 consume_material = (
@@ -2264,6 +2269,10 @@ class loadOperationPlanMaterials(LoadTask):
                     "Loaded %d operationplanmaterials in %.2f seconds"
                     % (cnt, time() - starttime)
                 )
+
+                # All predefined inventory detail records are now loaded.
+                # We now create any missing ones.
+                frepple.settings.suppressFlowplanCreation = False
 
 
 @PlanTaskRegistry.register

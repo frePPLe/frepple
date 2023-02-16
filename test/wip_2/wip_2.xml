@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <suppressFlowplanCreation>true</suppressFlowplanCreation>
   <current>2019-01-01T00:00:00</current>
   <locations>
     <location name="prod"/>
@@ -148,8 +149,9 @@
         </flowplans>
     </operationplan>
 </operationplans>
+<suppressFlowplanCreation>false</suppressFlowplanCreation>
       
-<?python
+<?python  
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")

@@ -443,6 +443,15 @@ Object* FlowPlan::reader(const MetaClass* cat, const DataValueDict& in,
   while ((flpln = flplniter.next())) {
     if (flpln->getItem() == itm) return flpln;
   }
+  OperationPlan* correctowner = nullptr;
+  Flow* correctflow = nullptr;
+  for (auto& f : opplan->getOperation()->getFlows()) {
+    if (f.getItem() == itm) {
+      correctowner = opplan;
+      correctflow = const_cast<Flow*>(&f);
+      break;
+    }
+  }
   auto subopplans = opplan->getSubOperationPlans();
   OperationPlan* firstChildOpplan = nullptr;
   while (auto subopplan = subopplans.next()) {
@@ -452,21 +461,32 @@ Object* FlowPlan::reader(const MetaClass* cat, const DataValueDict& in,
     while ((subflpln = subflplniter.next())) {
       if (subflpln->getItem() == itm) return subflpln;
     }
+    if (!correctowner)
+      for (auto& f : subopplan->getOperation()->getFlows()) {
+        if (f.getItem() == itm) {
+          correctowner = subopplan;
+          correctflow = const_cast<Flow*>(&f);
+          break;
+        }
+      }
   }
 
-  // No existing flow is found, create a new one.
-  // TODO code assumes consuming flows
-  if (firstChildOpplan) opplan = firstChildOpplan;
+  // No existing flowplans is found, create a new one.
+  // TODO code assumes consuming flowplans
+  if (correctowner) opplan = correctowner;
+  if (!correctowner && firstChildOpplan) opplan = firstChildOpplan;
   auto loc = opplan->getLocation();
   if (!loc) {
     loc = opplan->getOperation()->getLocation();
     if (!loc) return nullptr;
   }
   auto buf = Buffer::findOrCreate(itm, loc, opplan->getBatch());
-  auto fl = new FlowStart(opplan->getOperation(), buf, -1);
-  fl->setHidden(true);
-  fl->setEffectiveEnd(Date::infinitePast);
-  return new FlowPlan(opplan, fl);
+  if (!correctflow) {
+    correctflow = new FlowStart(opplan->getOperation(), buf, -1);
+    correctflow->setHidden(true);
+    correctflow->setEffectiveEnd(Date::infinitePast);
+  }
+  return new FlowPlan(opplan, correctflow);
 }
 
 PyObject* FlowPlan::create(PyTypeObject* pytype, PyObject* args,

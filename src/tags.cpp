@@ -221,6 +221,7 @@ const Keyword Tags::suboperations("suboperations");
 const Keyword Tags::supplier("supplier");
 const Keyword Tags::suppliers("suppliers");
 const Keyword Tags::supply("supply");
+const Keyword Tags::suppressFlowplanCreation("suppressFlowplanCreation");
 const Keyword Tags::timezone("timezone");
 const Keyword Tags::tool("tool");
 const Keyword Tags::tosetup("tosetup");

@@ -1,7 +1,7 @@
 $light: #D6A979;
 $dark: $light;
 
-$primary: darken(#3E8CA8, 10%);
+$primary: darken(#3E8CA8, 8%);
 $secondary: lighten($light, 5%);
 $success: #8bc34a;
 $info: #03a9f4;
@@ -22,7 +22,7 @@ $gray-900: #212529 !default;
 $black: #000 !default;
 
 // Body background
-$body-bg: #ECECEC;
+$body-bg: #F0F0F0;
 
 // Logo height
 $navbar-brand-height: 3rem;
@@ -45,6 +45,7 @@ $accordion-button-padding-y: 0.5rem;
 $breadcrumb-divider-color: $body-color;
 $breadcrumb-divider: "\00a0\00a0\F0DA\00a0\00a0";
 $breadcrumb-item-padding-x: 0.2rem;
+$btn-active-bg-shade-amount: 70%;
 $card-title-spacer-y: 0;
 $dropdown-color: $body-color;
 $dropdown-link-active-bg: $gray-200;

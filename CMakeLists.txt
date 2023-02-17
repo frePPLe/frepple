@@ -113,6 +113,14 @@ endif()
 find_program(npm NAMES npm)
 find_program(grunt NAMES grunt)
 
+if(grunt)
+  add_custom_target(
+    grunt
+    COMMAND grunt
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  )
+endif()
+
 # C++ compiler flags and features
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

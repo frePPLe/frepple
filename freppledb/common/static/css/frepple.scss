@@ -413,9 +413,9 @@ div.tt-dataset.tt-dataset-search {
         background-color: $table-bg;
     }
 
-    // TODO .custom-hdiv {
-    //     background-color: $gray-light;
-    // }
+    .invStatus {
+        height: 100%;
+    }
 
     .ui-jqgrid-titlebar,
     ui-jqgrid-errorbar {
@@ -431,6 +431,11 @@ div.tt-dataset.tt-dataset-search {
 
     >.ui-jqgrid-pager {
         font-size: $font-size-base;
+    }
+
+    .ui-pager-control .ui-pg-input,
+    .ui-pager-control .ui-pg-selbox {
+        padding: ($spacer * .25);
     }
 }
 

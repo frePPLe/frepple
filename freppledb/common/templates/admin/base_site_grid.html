@@ -313,11 +313,11 @@ function displayGrid(load) {
 <button class="btn btn-primary text-capitalize" disabled id="save" onclick="upload.save()"
   title="{% trans 'save changes'|capfirst|force_escape %}">
     <i class="fa fa-spinner fa-spin d-none"></i>
-    {% filter force_escape %}{% trans "Save" %}{% endfilter %}
+    {% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}
 </button>
 <button class="btn btn-primary text-capitalize" disabled id="undo" onclick="upload.undo()"
   title="{% trans 'undo changes'|capfirst|force_escape %}">
-  {% filter force_escape %}{% trans "Undo" %}{% endfilter %}
+  {% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}
 </button>
 {% if actions %}
   <select disabled class="form-select d-inline-block w-auto" aria-label="select action" name="gridactions" id="gridactions">

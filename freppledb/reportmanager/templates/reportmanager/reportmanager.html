@@ -162,7 +162,7 @@ $(function() {
 <div class="row form-group mb-0">
 
 {% if perms.reportmanager.change_sqlreport %}
-<div id="editbuttons" class="col-md-5{% if report %} hidden{% endif %}">
+<div id="editbuttons" class="col-md-5{% if report %} d-none{% endif %}">
 <button id="reportmanager_save" class="btn btn-primary">{% trans "save"|capfirst %}</button>
 <button id="reportmanager_format" class="btn btn-primary">{% trans "format SQL query"|capfirst %}</button>
 {% if report %}<button id="reportmanager_delete" class="btn btn-primary">{% trans "Delete" %}</button>{% endif %}

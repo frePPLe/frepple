@@ -2362,7 +2362,7 @@ class GridReport(View):
                     numerrors = 0
                     numwarnings = 0
                     firsterror = True
-                    yield '<tr style="text-align: center"><th colspan="5">%s<div class="recordcount pull-right"></div></th></tr>' % filename
+                    yield '<tr><th colspan="5">%s<div class="recordcount pull-right"></div></th></tr>' % filename
                     data = EncodedCSVReader(file, delimiter=delimiter)
                     for error in parseCSVdata(
                         cls.model,
@@ -2489,7 +2489,7 @@ class GridReport(View):
                     numerrors = 0
                     numwarnings = 0
                     firsterror = True
-                    yield '<tr style="text-align: center"><th colspan="5">%s %s<div class="recordcount pull-right"></div></th></tr>' % (
+                    yield '<tr"><th colspan="5">%s %s<div class="recordcount pull-right"></div></th></tr>' % (
                         capfirst(_("file")),
                         filename,
                     )

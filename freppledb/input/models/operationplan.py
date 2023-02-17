@@ -40,7 +40,7 @@ from django.utils.encoding import force_str
 from django.utils.text import get_text_list
 
 from freppledb.common.dataload import BulkForeignKeyFormField
-from freppledb.common.fields import AliasDateTimeField
+from freppledb.common.fields import AliasDateTimeField, AliasField
 from freppledb.common.models import AuditModel, MultiDBManager, Parameter, Comment
 
 from ..models.calendar import Calendar
@@ -2005,6 +2005,10 @@ class PurchaseOrder(OperationPlan):
 class ManufacturingOrder(OperationPlan):
 
     extra_dependencies = [OperationResource]
+
+    delivery_order = AliasField(
+        db_column="demand_id", verbose_name=_("delivery order"), null=True, blank=True
+    )
 
     class ManufacturingOrderManager(OperationPlan.Manager):
         def get_queryset(self):

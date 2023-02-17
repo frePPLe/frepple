@@ -1309,7 +1309,7 @@ def importWorkbook(request):
             )
             for ws_name, model, contenttype_id, dependencies in models:
                 with transaction.atomic(using=request.database):
-                    yield '<tr style="text-align: center"><th colspan="5">%s %s<div class="recordcount pull-right"></div></th></tr>' % (
+                    yield '<tr><th colspan="5">%s %s<div class="recordcount"></div></th></tr>' % (
                         capfirst(_("worksheet")),
                         ws_name,
                     )

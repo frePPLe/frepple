@@ -309,6 +309,10 @@ div.tt-dataset.tt-dataset-search {
 
 /* Jqgrid */
 
+.cbox {
+    @extend .form-check-input;
+}
+
 .ui-jqdialog {
     font-size: $font-size-base;
     // TODO padding: $padding-base-vertical $padding-base-horizontal;

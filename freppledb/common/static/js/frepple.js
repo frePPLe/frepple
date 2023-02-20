@@ -2669,13 +2669,15 @@ function about_show() {
   });
 }
 
-function showModal(id, dispose = true) {
+function showModal(id, dispose = true, options = null) {
   var el = document.getElementById(id);
   if (dispose) {
     var p = bootstrap.Modal.getInstance(el);
     if (p) p.dispose();
   }
-  var p = bootstrap.Modal.getOrCreateInstance(el);
+  var p = options ?
+    bootstrap.Modal.getOrCreateInstance(el, options) :
+    bootstrap.Modal.getOrCreateInstance(el);
   p.show();
 }
 
@@ -2747,7 +2749,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     '</div>' +
     '</div>';
   $('#popup').html(modalcontent);
-  showModal('popup');
+  showModal('popup', true, { backdrop: "static", keyboard: false });
 
   if (!multiple) {
     $("#selected_files").removeAttr(multiple);

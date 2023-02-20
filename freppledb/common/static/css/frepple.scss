@@ -56,6 +56,10 @@
 
 // 5. frepple generic definitions
 
+.breadcrumb-item a {
+    color: $navbar-light-color;
+}
+
 .card-body table {
     margin-bottom: 0;
 }

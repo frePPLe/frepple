@@ -54,16 +54,9 @@
          <li><a class="dropdown-item scenariocopy" href="#" data-source="{{ current_database }}" data-bs-target="{{ j.name }}">
            {% trans "Copy from" %} {{ current_database }}
          </a></li>
-         {% if dumps %}
-         <li class="menu-item dropdown dropdown-submenu">
-            <a href="#" class="dropdown-item dropdown-toggle" data-bs-toggle="dropdown">{% trans "Restore from backup" %}</a>
-            <ul class="dropdown-menu">
-                {% for dump in dumps %}
-                <li><a class="dropdown-item scenariocopy" href="#" dumpfile="{{ dump }}" data-source="{{ current_database }}" data-bs-target="{{ j.name }}">{{ dump }}</a></li>
-                {% endfor%}
-            </ul>
-        </li>
-        {% endif %}
+         {% for dump in dumps %}
+         <li><a class="dropdown-item scenariocopy" href="#" dumpfile="{{ dump }}" data-source="{{ current_database }}" data-bs-target="{{ j.name }}">{% trans "Restore from backup" %} {{ dump }}</a></li>
+         {% endfor%}
        </ul>
        </div>
        {% elif j.name != DEFAULT_DB_ALIAS and j.status == 'In use'%}

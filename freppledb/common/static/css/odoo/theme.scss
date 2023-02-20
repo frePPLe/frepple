@@ -1,12 +1,12 @@
-$primary: #21b799;
-$secondary: #bbb;
-$success: #5cb85c;
-$info: #5bc0de;
-$warning: #f0ad4e;
-$danger: #d9534f;
-
 $light: #71639e;
-$dark: #71639e;
+$dark: $light;
+
+$primary: #71639e;
+$secondary: #71639e;
+$success: #8bc34a;
+$info: #03a9f4;
+$warning: #ffeb3b;
+$danger: #ff5252;
 
 $white: #fff !default;
 $gray-100: #f8f9fa !default;
@@ -21,7 +21,7 @@ $gray-900: #212529 !default;
 $black: #000 !default;
 
 // Body background
-$body-bg: #ECECEC;
+$body-bg: white;
 
 // Logo height
 $navbar-brand-height: 3rem;
@@ -30,7 +30,7 @@ $navbar-brand-height: 3rem;
 $font-size-base: 0.8rem;
 $font-family-sans-serif: 'FontAwesome', 'Open sans', Helvetica, Verdana, Arial, sans-serif;
 $font-family-monospace: 'FontAwesome', Menlo, Monaco, Consolas, "Courier New", monospace;
-$body-color: #666;
+$body-color: #495057;
 
 // You probably don't need to update the variables below this line.
 // These updates are normally generic for all frepple themes.
@@ -67,3 +67,13 @@ $nav-link-color: $body-color;
 $nav-tabs-border-color: $light;
 $nav-tabs-border-radius: 0;
 $spacer: 1rem;
+
+// Extra settings for the odoo theme
+$accordion-button-active-color: white;
+$accordion-button-color: white;
+$breadcrumb-color: white;
+$breadcrumb-divider-color: white;
+$nav-link-color: white;
+$nav-link-hover-color: white;
+$navbar-light-color: white;
+$navbar-light-hover-color: white;

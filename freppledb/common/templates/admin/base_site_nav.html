@@ -55,14 +55,14 @@ $(function() {
       <ul class="nav navbar-nav ms-auto">
         <li class="navbar-item" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="auto bottom"
           style="position:relative" data-bs-title="{% trans "No unread messages" %}">
-          <a href="{{request.prefix}}/inbox/">
+          <a class="nav-link" href="{{request.prefix}}/inbox/">
             <span id="messages" style="font-size: 1.5em" class="fa fa-envelope-open-o" aria-hidden="true"></span>
             <span style="font-size: 60%; position: absolute; top: -5px; left:7px" class="badge progress-bar-danger" aria-hidden="true"></span>
 			&nbsp;&nbsp;
           </a>
         </li>
 		<li class="navbar-item dropdown">
-		    <a href="#" class="dropdown-toggle pe-3" data-bs-toggle="dropdown"
+		    <a href="#" class="nav-link dropdown-toggle pe-3" data-bs-toggle="dropdown"
           role="button" aria-haspopup="true" aria-expanded="false">
           {% if user.avatar %}<img src="{{ user.avatar.url }}" class="avatar-sm">
           {% else %}<i style="font-size: 1.5em" class="fa fa-user-circle-o"></i>
@@ -81,7 +81,7 @@ $(function() {
   </div>
 </nav>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav id="nav-breacrumb-header" class="navbar navbar-expand-lg navbar-light bg-light">
 	<div class="container-fluid">
 	  <div class="breadcrumbrow row align-items-center" aria-label="breadcrumb">
 		  <div class="col flex-grow-1">

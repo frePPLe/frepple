@@ -1,12 +1,12 @@
-$primary: #80b307;
-$secondary: #b3c78e;
-$success: #5cb85c;
-$info: #5bc0de;
-$warning: #f0ad4e;
-$danger: #d9534f;
+$light: #43740a;
+$dark: $light;
 
-$light: #D6A979;
-$dark: #D6A979;
+$primary: #43740a;
+$secondary: #80b307;
+$success: #8bc34a;
+$info: #03a9f4;
+$warning: #ffeb3b;
+$danger: #ff7f00;
 
 $white: #fff !default;
 $gray-100: #f8f9fa !default;
@@ -67,3 +67,27 @@ $nav-link-color: $body-color;
 $nav-tabs-border-color: $light;
 $nav-tabs-border-radius: 0;
 $spacer: 1rem;
+
+// Extra settings for the odoo theme
+$accordion-button-active-color: white;
+$accordion-button-color: white;
+$breadcrumb-color: white;
+$breadcrumb-divider-color: white;
+$nav-link-color: white;
+$nav-link-hover-color: white;
+$navbar-light-color: white;
+$navbar-light-hover-color: white;
+
+
+
+$navbar-gradient-start-color: lighten(#68992f, 20%);
+$navbar-gradient-mid-color: #68992f;
+$navbar-gradient-stop-color: #43740a;
+
+#nav-menu-header {
+    background-image: linear-gradient(to bottom, $navbar-gradient-start-color 0%, $navbar-gradient-mid-color 100%);
+}
+
+#nav-breacrumb-header {
+    background-image: linear-gradient(to bottom, $navbar-gradient-mid-color 0%, $navbar-gradient-stop-color 100%);
+}

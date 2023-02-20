@@ -778,142 +778,6 @@ h1 small {
     }
 }
 
-// Wizard styles
-
-#wizard {
-    background-color: #fafafc !important;
-
-    .wrapper {
-        margin: 20px 0;
-    }
-
-    .heading {
-        margin-top: 10px;
-    }
-
-    #quickstart-wrapper {
-        overflow: hidden;
-        text-align: center;
-        display: -webkit-flex;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-justify-content: center;
-        -ms-flex-pack: center;
-        justify-content: center;
-        position: relative;
-        font-size: 16px;
-        font-weight: bold;
-        background-color: #0066cc;
-    }
-
-    #quickstart {
-        overflow: hidden;
-        text-align: center;
-        -webkit-justify-content: center;
-        -ms-flex-pack: center;
-        justify-content: center;
-        position: relative;
-        font-size: 16px;
-        font-weight: bold;
-        background-color: #0066cc;
-    }
-
-    #quickstart:hover {
-        background-color: #cc6600;
-    }
-
-    #quickstart-wrapper:hover,
-    #quickstart-wrapper.hovered {
-        background-color: #cc6600;
-    }
-
-    #quickstart-wrapper+div>.quickstart-option-reveal {
-        display: block;
-        background-color: #0066cc;
-    }
-
-    #quickstart-wrapper+div>.quickstart-option-reveal:hover {
-        display: block;
-        background-color: #cc6600;
-    }
-
-    #quickstart-group {
-        margin-top: 0px;
-    }
-
-    #quickstart-wrapper+#quickstart-group>.quickstart-option-reveal {
-        opacity: 0;
-    }
-
-
-    /** section for uploading data in welcome page */
-
-    #upload-wrapper {
-        overflow: hidden;
-        text-align: center;
-        display: -webkit-flex;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-justify-content: center;
-        -ms-flex-pack: center;
-        justify-content: center;
-        position: relative;
-        font-size: 16px;
-        font-weight: bold;
-        background-color: #0066cc;
-    }
-
-    #upload {
-        overflow: hidden;
-        text-align: center;
-        -webkit-justify-content: center;
-        -ms-flex-pack: center;
-        justify-content: center;
-        position: relative;
-        font-size: 16px;
-        font-weight: bold;
-        background-color: #0066cc;
-    }
-
-    #upload:hover {
-        background-color: #cc6600;
-    }
-
-    #upload-wrapper:hover,
-    #upload-wrapper.hovered {
-        background-color: #cc6600;
-    }
-
-    #upload-wrapper+div>.upload-option-reveal {
-        display: block;
-        font-size: 16px;
-        font-weight: bold;
-        background-color: #0066cc;
-    }
-
-    #upload-wrapper+div>.upload-option-reveal:hover {
-        background-color: #cc6600;
-
-    }
-
-    #upload-group {
-        margin-top: 0px;
-    }
-
-    #upload-wrapper+#upload-group>.upload-option-reveal {
-        opacity: 0;
-    }
-
-    /** wizard title styling */
-
-    .wizard-heading {
-        font-size: 30px;
-        color: #353740;
-    }
-}
-
-/*end of wizard style*/
-
 .fill-primary {
     fill: $secondary;
 }
@@ -932,7 +796,7 @@ h1 small {
     $r3: ceil(red($color3));
     $g3: ceil(green($color3));
     $b3: ceil(blue($color3));
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' width='500' height='10' viewBox='0 0 500 100'><path fill='rgb(${r1},${g1},${b1})' stroke-width='2' stroke='rgb(${r3},${g3},${b3})' d='m0,0 h225 l25,50 l-25,50 h-225 z'/><path fill='rgb(${r2},${g2},${b2})' stroke-width='2' stroke='rgb(${r3},${g3},${b3})' d='m225,0 h275 v100 h-275 l25,-50 z'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' width='500' height='10' viewBox='0 0 500 100'><path fill='rgb(" + $r1 + "," + $g1 +"," + $b1 + ")' stroke-width='2' stroke='rgb(" + $r3 + "," + $g3 + "," + $b3 +")' d='m0,0 h225 l25,50 l-25,50 h-225 z'/><path fill='rgb(" + $r2 + "," + $g2 + "," + $b2 + ")' stroke-width=' 2' stroke=' rgb(" + $r3 + "," + $g3 + "," + $b3 + ")' d=' m225, 0 h275 v100 h-275 l25, -50 z'/></svg>");
     background-size: 100% 100%;
     background-color: transparent;
 }
@@ -950,7 +814,7 @@ h1 small {
     $r4: ceil(red($color4));
     $g4: ceil(green($color4));
     $b4: ceil(blue($color4));
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' width='500' height='10' viewBox='0 0 500 100'><path fill='rgb(${r1},${g1},${b1})' stroke-width='2' stroke='rgb(${r4},${g4},${b4})' d='m0,0 h141 l25,50 l-25,50 h-141 z'/><path fill='rgb(${r2},${g2},${b2})' stroke-width='2' stroke='rgb(${r4},${g4},${b4})' d='m141,0 h166 l25,50 l-25,50 h-166 l25,-50 z'/><path fill='rgb(${r3},${g3},${b3})' stroke-width='2' stroke='rgb(${r4},${g4},${b4})' d='m307,0 h194 v100 h-194 l25,-50 z'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' width='500' height='10' viewBox='0 0 500 100'><path fill='rgb(" + $r1 + "," + $g1 + "," + $b1 + ")' stroke-width='2' stroke='rgb(" +$r4 +"," +$g4 +"," +$b4 + ")' d='m0,0 h141 l25,50 l-25,50 h-141 z'/><path fill='rgb(" +$r2 +"," +$g2 +"," +$b2 +")' stroke-width='2' stroke='rgb(" +$r4 +"," +$g4 +"," +$b4 +")' d='m141,0 h166 l25,50 l-25,50 h-166 l25,-50 z'/><path fill='rgb(" +$r3 +"," +$g3 +"," +$b3 +")' stroke-width='2' stroke='rgb(" +$r4 +"," +$g4 +"," +$b4 +")' d='m307,0 h194 v100 h-194 l25,-50 z'/></svg>");
     background-size: 100% 100%;
     background-color: transparent;
 }
@@ -964,23 +828,23 @@ h1 small {
 }
 
 .wizard-1-of-2 {
-    @include getBackground2Steps($secondary, lighten($secondary, 30%), $secondary);
+    @include getBackground2Steps($secondary, lighten($secondary, 20%), $secondary);
 }
 
 .wizard-2-of-2 {
-    @include getBackground2Steps(lighten($secondary, 30%), $secondary, $secondary);
+    @include getBackground2Steps(lighten($secondary, 20%), $secondary, $secondary);
 }
 
 .wizard-1-of-3 {
-    @include getBackground3Steps($secondary, lighten($secondary, 30%), lighten($secondary, 30%), $secondary);
+    @include getBackground3Steps($secondary, lighten($secondary, 20%), lighten($secondary, 20%), $secondary);
 }
 
 .wizard-2-of-3 {
-    @include getBackground3Steps(lighten($secondary, 30%), $secondary, lighten($secondary, 30%), $secondary);
+    @include getBackground3Steps(lighten($secondary, 20%), $secondary, lighten($secondary, 20%), $secondary);
 }
 
 .wizard-3-of-3 {
-    @include getBackground3Steps(lighten($secondary, 30%), lighten($secondary, 30%), $secondary, $secondary);
+    @include getBackground3Steps(lighten($secondary, 20%), lighten($secondary, 20%), $secondary, $secondary);
 }
 
 .supply .panel-heading.collapsed {

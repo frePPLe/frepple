@@ -1,5 +1,6 @@
+<div  class="row">
 <div data-ng-repeat="col in kanbancolumns" data-column="{{col}}"
-  class="col gx-3">
+  class="col-sm">
 <div class="card kanbancolumn">
   <div draggable="true" class="card-header">
     <div class="dropdown float-end">
@@ -21,5 +22,6 @@
       <ng-include src="'/input/card.html'"/>
     </div>
   </div>
+</div>
 </div>
 </div>

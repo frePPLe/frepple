@@ -73,6 +73,7 @@ $accordion-button-active-color: white;
 $accordion-button-color: white;
 $breadcrumb-color: white;
 $breadcrumb-divider-color: white;
+$card-cap-color: white;
 $nav-link-color: white;
 $nav-link-hover-color: white;
 $navbar-light-color: white;
@@ -88,6 +89,6 @@ $navbar-gradient-stop-color: #43740a;
     background-image: linear-gradient(to bottom, $navbar-gradient-start-color 0%, $navbar-gradient-mid-color 100%);
 }
 
-#nav-breacrumb-header {
+#nav-breadcrumb-header {
     background-image: linear-gradient(to bottom, $navbar-gradient-mid-color 0%, $navbar-gradient-stop-color 100%);
 }

@@ -36,7 +36,7 @@ function showoperationpeggingpanelDrv($window, gettextCatalog, $filter) {
       gettextCatalog.getString("demand") +
       '</h5></div>' +
       '<div class="card-body table-responsive" style="max-height:15em; overflow:auto">' +
-      '<table class="table table-sm table-hover"><thead><tr><td>' +
+      '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("name") + '</b>' +
       '</td><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("item") + '</b>' +

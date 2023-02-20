@@ -1,17 +1,4 @@
-<style>
-#setQuantity.ng-dirty, #setStart.ng-dirty, #setEnd.ng-dirty {
-  background: none !important;
-}
-#opplan-attributes-drvtable tbody tr td {
-    border: 0px;
-    vertical-align: middle;
-}
-#opplan-attributes-drvtable thead tr td {
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  border-bottom-color: #bbb;
-}
-</style>
+
 <div class="card-header">
   <h5 class="card-title">
   <span data-ng-if="operationplan.type" style="text-transform: capitalize">{{ opptype[operationplan.type] }}</span>
@@ -20,7 +7,12 @@
   </h5>
 </div>
 <div class="card-body" data-ng-if="operationplan.id">
-<table style="table-layout:fixed" class="table table-sm table-hover" id="opplan-attributes-drvtable">
+<style scoped>
+input.ng-dirty {
+  background: none !important;
+}
+</style>
+<table style="table-layout:fixed" class="table table-sm table-hover table-borderless" id="opplan-attributes-drvtable">
   <body >
     <tr data-ng-if="operationplan.operation.name || operationplan.name">
       <td style="width: 120px">

@@ -109,14 +109,13 @@
   }
 
   function setWidths() {
-    var w = $('#content-main').width();
+    var w = $("#workarea").width() - $('#detailspanel').width() - $("#resize-handle").parent().width();
     $('#grid').setGridWidth(w);
-    $("#grid").setGridHeight($('#content-main') - 52);
+    $("#grid").setGridHeight($('#content-main').height() - 52);
     $(".column-body").css("width", w - 25);
     $("#scrolldayview").css("width", w - 25);
     $("#scrollweekview").css("width", w - 60);
     $("#scrollmonthview").css("width", w - 45);
-    $("#detailspanel").css("width",  $("#workarea").width() - w - 20);
   }
 
   function getDirtyData() {
@@ -157,11 +156,12 @@
         }
       });
     else
-      $("#content-main").resizable({
+      $("#detailspanel").resizable({
         handleSelector: "#resize-handle",
         resizeWidth: true,
         resizeHeight: false,
         onDrag: setWidths,
+        reverse: detailposition == "right",
         onDragEnd: function (e, $el, opt) {
           grid.saveColumnConfiguration();
         }
@@ -227,13 +227,13 @@
 
 extra_customize_html = '<div class="row mt-3"><div class="col">'
   + gettext("Position of details") + '&nbsp;&nbsp;&nbsp;&nbsp;'
-  + '&nbsp;&nbsp;<label><input type="radio" id="detailpositionleft" name="detailposition" value="left"'
+  + '&nbsp;&nbsp;<label class="text-capitalize"><input class="form-check-input" type="radio" id="detailpositionleft" name="detailposition" value="left"'
       + ((detailposition == "left") ? ' checked="true"' : '')
       + '>&nbsp;' + gettext("left") + '&nbsp;</label>'
-  + '&nbsp;&nbsp;<label><input type="radio" id="detailpositionbottom" name="detailposition" value="bottom"'
+  + '&nbsp;&nbsp;&nbsp;<label class="text-capitalize"><input class="form-check-input" type="radio" id="detailpositionbottom" name="detailposition" value="bottom"'
       + ((detailposition != "left" && detailposition != "right") ? ' checked="true"' : '')
       + '>&nbsp;' + gettext("bottom") + '&nbsp;</label>'
-  + '&nbsp;&nbsp;<label><input type="radio" id="detailpositionright" name="detailposition" value="right"'
+  + '&nbsp;&nbsp;&nbsp;<label class="text-capitalize"><input class="form-check-input" type="radio" id="detailpositionright" name="detailposition" value="right"'
       + ((detailposition == "right") ? ' checked="true"' : '')
       + '>&nbsp;' + gettext("right") + '&nbsp;</label>'
   + '</div></div>';
@@ -405,15 +405,15 @@ loadComplete: function(data) {
 {% block table %}
 {% if preferences.details == "left" or preferences.details == "right" %}
 <div data-ng-controller="operationplandetailCtrl" id="controller">
-<div class="row">
+<div class="row{% if preferences.details == 'left' %} flex-row-reverse{% endif %}">
 
-<div id="content-main" class="col-md-12" style="float:{% if preferences.details == 'left' %}right{% else %}left{% endif%}; width:calc(100vw - {% if preferences.detailwidth %}{{ preferences.detailwidth }}px{% else %}25%{% endif %} - 20px)">
+<div id="content-main" class="col flex-grow-1">
 <div style="min-height: 150px; margin-top: 0.7em">
   <div data-ng-hide="mode == 'kanban' || mode.startsWith('calendar')">
     <table id="grid" class="table table-striped" style="background-color: white"></table>
     <div id="gridpager"></div>
   </div>
-  <div id="calendar" data-ng-hide="!mode.startsWith('calendar')" class="col-md-12">
+  <div id="calendar" data-ng-hide="!mode.startsWith('calendar')" class="col-12">
     <calendar
       data-range-changed="calendarRangeChanged(startdate, enddate)"
       data-event-selected="displayInfo(event)"
@@ -431,12 +431,12 @@ loadComplete: function(data) {
 </div>
 </div>
 
-<div style="float:{% if preferences.details == 'left' %}right{% else %}left{% endif%}">
+<div class="col-auto ps-1 pe-1">
 <span id="resize-handle" class="fa fa-bars fa-rotate-90 vhandle" ></span>
 </div>
 
-<div id="detailspanel" class="col-md-12"
-  style="margin-top: 0.7em; float:{% if preferences.details == 'left' %}left{% else %}right{% endif%}; width:{% if preferences.detailwidth %}{{ preferences.detailwidth }}px{% else %}25%{% endif %}">
+<div id="detailspanel" class="col-1 mt-1"
+  style="width:{% if preferences.detailwidth %}{{ preferences.detailwidth }}px{% else %}25%{% endif %}">
 <div  data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
 </div>
 

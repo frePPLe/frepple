@@ -82,7 +82,8 @@ $.fn.resizable = function fnResizable(options) {
     onDrag: null,
     // disable touch-action on $handle
     // prevents browser level actions like forward back gestures
-    touchActionNone: true
+    touchActionNone: true,
+    reverse: false
   };
   if (typeof options == "object") opt = $.extend(opt, options);
 
@@ -132,7 +133,9 @@ $.fn.resizable = function fnResizable(options) {
       var pos = getMousePos(e);
 
       if (opt.resizeWidth) {
-        var newWidth = startPos.width + pos.x - startPos.x;
+        var newWidth = opt.reverse ?
+          startPos.width - pos.x + startPos.x :
+          startPos.width + pos.x - startPos.x;
         $el.width(newWidth);
       }
 
@@ -1036,6 +1039,7 @@ var grid = {
         page = 1;
       else if (pgButton.indexOf("user") >= 0)
         page = $('input.ui-pg-input').val();
+      $('#save, #undo').addClass("btn-primary").removeClass("btn-danger").prop('disabled', true);
     }
     else if (typeof indx != 'undefined' && colModel[indx].name == "operationplans")
       // We're resizing a Gantt chart column. Not too clean to trigger the redraw here, but so be it...

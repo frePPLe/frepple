@@ -378,27 +378,156 @@ class ExportOperationPlans(PlanTask):
 
     @staticmethod
     def getPegging(opplan, buffer=None):
+        import frepple
+
         unavail = opplan.unavailable
+        downstream_opplans = []
+        upstream_opplans = []
+
+        # downstream
+        for j in opplan.pegging_downstream_first_level:
+            # some security
+            if j.operationplan == opplan:
+                continue
+            if (
+                # regular time_per/fixed time
+                # followed by a non-suboperation
+                (
+                    j.level == 1
+                    and (opplan.owner == None)
+                    and j.operationplan.owner == None
+                )
+                # routings will flow into the first step
+                or (
+                    j.level == 1
+                    and isinstance(opplan.operation, frepple.operation_routing)
+                    and opplan == j.operationplan.owner
+                    and len([k.priority for k in opplan.operation.suboperations]) > 0
+                    and j.operationplan.operation.priority
+                    == min([k.priority for k in opplan.operation.suboperations])
+                )
+                # suboperations flow into the next subop
+                or (
+                    j.level == 1
+                    and opplan.owner != None
+                    and isinstance(opplan.owner.operation, frepple.operation_routing)
+                    and len(
+                        [
+                            k.priority
+                            for k in opplan.owner.operation.suboperations
+                            if k.priority > opplan.operation.priority
+                        ]
+                    )
+                    > 0
+                    and j.operationplan.operation.priority
+                    == min(
+                        [
+                            k.priority
+                            for k in opplan.owner.operation.suboperations
+                            if k.priority > opplan.operation.priority
+                        ]
+                    )
+                )
+                # last subopration flows into next level
+                or (
+                    j.level == 2
+                    and opplan.owner != None
+                    and isinstance(opplan.owner.operation, frepple.operation_routing)
+                    and len(
+                        [
+                            k.priority
+                            for k in opplan.owner.operation.suboperations
+                            if k.priority > opplan.operation.priority
+                        ]
+                    )
+                    == 0
+                )
+                # parent is alternate
+                or (
+                    j.level == 2
+                    and opplan.owner != None
+                    and isinstance(opplan.owner.operation, frepple.operation_alternate)
+                )
+            ):
+                downstream_opplans.append(
+                    (j.operationplan.reference, j.quantity, j.offset)
+                )
+
+        # upstream
+        for j in opplan.pegging_upstream_first_level:
+            # some security
+            if j.operationplan == opplan:
+                continue
+            if (
+                # regular time_per/fixed time
+                # followed by a non-suboperation
+                (
+                    j.level == 1
+                    and (opplan.owner == None)
+                    and j.operationplan.owner == None
+                )
+                # routings will flow into the previous step
+                or (
+                    j.level == 1
+                    and isinstance(opplan.operation, frepple.operation_routing)
+                    and opplan == j.operationplan.owner
+                    and len([k.priority for k in opplan.operation.suboperations]) > 0
+                    and j.operationplan.operation.priority
+                    == max([k.priority for k in opplan.operation.suboperations])
+                )
+                # suboperations flow into the previous subop
+                or (
+                    j.level == 1
+                    and opplan.owner != None
+                    and isinstance(opplan.owner.operation, frepple.operation_routing)
+                    and len(
+                        [
+                            k.priority
+                            for k in opplan.owner.operation.suboperations
+                            if k.priority < opplan.operation.priority
+                        ]
+                    )
+                    > 0
+                    and j.operationplan.operation.priority
+                    == max(
+                        [
+                            k.priority
+                            for k in opplan.owner.operation.suboperations
+                            if k.priority < opplan.operation.priority
+                        ]
+                    )
+                )
+                # first subopration flows into previous level
+                or (
+                    j.level == 2
+                    and opplan.owner != None
+                    and isinstance(opplan.owner.operation, frepple.operation_routing)
+                    and len(
+                        [
+                            k.priority
+                            for k in opplan.owner.operation.suboperations
+                            if k.priority < opplan.operation.priority
+                        ]
+                    )
+                    == 0
+                )
+                # parent is alternate
+                or (
+                    j.level == 2
+                    and opplan.owner != None
+                    and isinstance(opplan.owner.operation, frepple.operation_alternate)
+                )
+            ):
+                upstream_opplans.append(
+                    (j.operationplan.reference, j.quantity, j.offset)
+                )
+
         pln = {
             "pegging": {
                 j.demand.name: round(j.quantity, 8) for j in opplan.pegging_demand
             },
-            "downstream_opplans": [
-                (j.operationplan.reference, j.quantity, j.offset)
-                for j in opplan.pegging_downstream_first_level
-                if (
-                    (j.level == 1 and opplan.owner == None)
-                    or (j.level == 2 and opplan.owner != None)
-                )
-            ],
-            "upstream_opplans": [
-                (j.operationplan.reference, j.quantity, j.offset)
-                for j in opplan.pegging_upstream_first_level
-                if (
-                    (j.level == 1 and opplan.owner == None)
-                    or (j.level == 2 and opplan.owner != None)
-                )
-            ],
+            "downstream_opplans": downstream_opplans,
+            "upstream_opplans": upstream_opplans,
             "unavailable": unavail,
             "interruptions": [
                 (

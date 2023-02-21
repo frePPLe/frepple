@@ -27,9 +27,9 @@
 
 {% block content %}
 {% if features %}
-<div class="row" id="wizard" style="padding-top: 15px; padding-bottom: 15px">
-	<div class="col-md-3"></div>
-	<div class="col-md-3">
+<div class="row pt-3 pb-3 gy-5 justify-content-evenly" id="wizard">
+
+	<div class="col-md-4">
 		<div class="text-center">
 			<h2 class="heading wizard-heading">
 				<span class="fa-stack">
@@ -38,26 +38,26 @@
 				</span>
 			</h2>
 			<h1 class="heading wizard-heading">Start with one item</h1>
-			<div class="wrapper">
-				<a href="{{request.prefix}}/wizard/quickstart/production/" id="quickstart" class="btn btn-primary">QUICKSTART</a>
+			<div>
+			  <a href="{{request.prefix}}/wizard/quickstart/production/" 
+				 id="quickstart" class="btn btn-primary btn-lg">QUICKSTART</a>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-3">
+	<div class="col-md-4">
 		<div class="text-center">
-		<h1 class="heading wizard-heading">
+		<h2 class="heading wizard-heading">
 			<span class="fa-stack">
 				<i class="fa fa-circle-o fa-stack-2x"></i>
 				<strong class="fa-stack-1x">2</strong>
 			</span>
-		</h1>
+		</h2>
 			<h1 class="heading wizard-heading">Upload more data</h1>
-			<div class="wrapper">
-				<a class="btn btn-primary" href="{{request.prefix}}/wizard/load/production/" id="upload">UPLOAD</a>
+			<div>
+				<a class="btn btn-primary btn-lg" href="{{request.prefix}}/wizard/load/production/" id="upload">UPLOAD</a>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-3"></div>
 </div>
 {% include "wizard/features.html" %}
 {% else %}

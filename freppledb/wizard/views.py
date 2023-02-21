@@ -176,7 +176,7 @@ def getWizardSteps(request, mode):
          <p>You can either enter some sample records one by one, or (even better) load an Excel
          or CSV file you extract from some existing database.</p>
 
-         <table class="table table-hover">
+         <table class="table">
          <thead>
          <tr>
            <th style="width:90px"></th>
@@ -192,11 +192,11 @@ def getWizardSteps(request, mode):
            <p><b><a href="{prefix}/data/input/item/" class="text-decoration-underline" target="_blank">Load item data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/master-data/items.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/item.mfg.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>Load all items: end items sold to customers, intermediate items in the production process and
@@ -220,11 +220,11 @@ def getWizardSteps(request, mode):
            <td><p><b><a href="{prefix}/data/input/location/" class="text-decoration-underline" target="_blank">Load location data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/master-data/locations.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/location.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>Load all locations from where items are sold to customers or where inventory is stored.</p>
@@ -239,11 +239,11 @@ def getWizardSteps(request, mode):
            <td><p><b><a href="{prefix}/data/input/customer/" class="text-decoration-underline" target="_blank">Load customer data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/master-data/customers.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/customer.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>Load all customers to which products are sold.</p>
@@ -271,7 +271,7 @@ def getWizardSteps(request, mode):
                 "content": """
          <p>With the master data in place we can now proceed and load the sales order book.</p>
 
-         <table class="table table-hover">
+         <table class="table">
          <thead>
          <tr>
          <th style="width:90px"></th>
@@ -286,11 +286,11 @@ def getWizardSteps(request, mode):
            <p><b><a href="{prefix}/data/input/demand/" class="text-decoration-underline" target"_blank">Load sales order data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/master-data/sales-orders.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/salesorder.mfg.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            For planning we only need the open sales orders, the remaining quantity to ship
@@ -342,7 +342,7 @@ def getWizardSteps(request, mode):
          </li>
          </ol>
 
-         <table class="table table-hover">
+         <table class="table">
          <thead>
          <tr>
          <th style="width:90px"></th>
@@ -357,11 +357,11 @@ def getWizardSteps(request, mode):
            <p><b><a href="{prefix}/data/input/operation/" class="text-decoration-underline" target="_blank">Load operation data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/manufacturing-bom/operations.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/operation.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>Defines the operations and their duration.</p>
@@ -378,11 +378,11 @@ def getWizardSteps(request, mode):
            <p><b><a href="{prefix}/data/input/operationmaterial/" class="text-decoration-underline" target="_blank">Load operation material data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/manufacturing-bom/operation-materials.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/operationmaterial.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>Defines the materials produced and consumed by the operations.</p>
@@ -412,7 +412,7 @@ def getWizardSteps(request, mode):
                 "content": """
          <p>In this step you define all suppliers and the lead times for purchasing items from them.</p>
 
-         <table class="table table-hover">
+         <table class="table">
          <thead>
          <tr>
          <th style="width:90px"></th>
@@ -427,11 +427,11 @@ def getWizardSteps(request, mode):
            <p><b><a href="{prefix}/data/input/supplier/" class="text-decoration-underline" target="_blank">Load supplier data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/purchasing/suppliers.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/supplier.mfg.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>Load all the suppliers from which you can purchase items.</p>
@@ -445,11 +445,11 @@ def getWizardSteps(request, mode):
            <p><b><a href="{prefix}/data/input/itemsupplier/" class="text-decoration-underline" target="_blank">Load item supplier data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/purchasing/item-suppliers.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/itemsupplier.mfg.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>In this table you define which item can be purchased from which supplier.</p>
@@ -482,7 +482,7 @@ def getWizardSteps(request, mode):
                 "content": """
          <p>All right, it's time to for a first checkpoint. We'll verify the supply chain structure
          you have modeled in the previous steps.</p>
-         <table class="table table-hover">
+         <table class="table">
          <thead>
          <tr>
          <th style="width:90px"></th>
@@ -533,7 +533,7 @@ def getWizardSteps(request, mode):
                 "content": """
          <p>We'll generate a first unconstrained plan and review the list of proposed manufacturing orders and
          purchase orders.</p>
-         <table class="table table-hover">
+         <table class="table">
          <thead>
          <tr>
          <th style="width:90px"></th>
@@ -545,9 +545,8 @@ def getWizardSteps(request, mode):
 
          <tr><td style="text-align: center">1<br>{label_config}</td>
          <td><p><b><a href="{prefix}/data/common/parameter/?name=forecast.populateForecastTable" class="text-decoration-underline" target="_blank">Enable or disable the use of forecast</a></b>:</p>
-         <div style="padding-left: 10px" class="radio">
-           <label>
-           <input type="radio" name="fcstbckt" data-parameter="forecast.populateForecastTable" data-parameter-value="true"
+         <div class="form-check ps-5">
+           <input class="form-check-input" id="fcst_auto" type="radio" name="fcstbckt" data-parameter="forecast.populateForecastTable" data-parameter-value="true"
            """.format(
                     **context
                 )
@@ -557,13 +556,12 @@ def getWizardSteps(request, mode):
                     else ""
                 )
                 + """>
-           Automatically populate the <a href="{prefix}/data/forecast/forecast/" class="text-decoration-underline" target="_blank">forecast table</a>.<br>
+           <label class="form-check-label" for="fcst_auto">Automatically populate the <a href="{prefix}/data/forecast/forecast/" class="text-decoration-underline" target="_blank">forecast table</a>.<br>
            Use this option if you want to plan forecast.
            </label>
          </div>
-         <div style="padding-left: 10px" class="radio">
-           <label>
-           <input type="radio" name="fcstbckt" data-parameter="forecast.populateForecastTable" data-parameter-value="false"
+         <div class="form-check ps-5">
+           <input class="form-check-input" type="radio" id="fcst_man" name="fcstbckt" data-parameter="forecast.populateForecastTable" data-parameter-value="false"
            """.format(
                     **context
                 )
@@ -573,7 +571,7 @@ def getWizardSteps(request, mode):
                     else ""
                 )
                 + """>
-           Do NOT populate the <a href="{prefix}/data/forecast/forecast/" class="text-decoration-underline" target="_blank">forecast table</a> automatically.<br>
+           <label class="form-check-label" for="fcst_man">Do NOT populate the <a href="{prefix}/data/forecast/forecast/" class="text-decoration-underline" target="_blank">forecast table</a> automatically.<br>
            Use this option if you do NOT want to plan forecast.
            </label>
          </div>
@@ -669,7 +667,7 @@ def getWizardSteps(request, mode):
          <p>The plan in of the previous steps started with an empty factory and empty inventories.
          A correct plan obviously needs to consider the current stock and all purchase orders and
          manufacturing orders that are already ongoing or confirmed to start.</p>
-         <table class="table table-hover">
+         <table class="table">
          <thead>
          <tr>
          <th style="width:90px"></th>
@@ -684,11 +682,11 @@ def getWizardSteps(request, mode):
            <p><b><a href="{prefix}/data/input/buffer/" class="text-decoration-underline" target="_blank">Load inventory data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/master-data/buffers.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/buffer.mfg.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>Load the current stock of all items. If the stock is 0, no record is required.</p>
@@ -702,11 +700,11 @@ def getWizardSteps(request, mode):
            <p><b><a href="{prefix}/data/input/purchaseorder/" class="text-decoration-underline" target="_blank">Load purchase order data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/purchasing/purchase-orders.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/purchaseorder.mfg.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>Load all purchase orders that you have already opened with suppliers.<br>
@@ -723,11 +721,11 @@ def getWizardSteps(request, mode):
            <p><b><a href="{prefix}/data/input/manufacturingorder/" class="text-decoration-underline" target="_blank">Load manufacturing order data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/manufacturing-bom/manufacturing-orders.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/manufacturingorder.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>Load all manufacturing orders already released to the shop floor as work-in-progress.<br>
@@ -774,7 +772,7 @@ def getWizardSteps(request, mode):
          capacity planning.</p>
          </li>
          </ul>
-         <table class="table table-hover">
+         <table class="table">
          <thead>
          <tr>
          <th style="width:90px"></th>
@@ -789,11 +787,11 @@ def getWizardSteps(request, mode):
            <p><b><a href="{prefix}/data/input/resource/" class="text-decoration-underline" target="_blank">Load resource data</a></b>
              &nbsp;&nbsp;
              <a href="{docroot}/modeling-wizard/manufacturing-capacity/resources.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              &nbsp;&nbsp;
              <a href="/static/wizard/sample_data/resource.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>Load all resources.<br>
@@ -808,10 +806,10 @@ def getWizardSteps(request, mode):
          <td>
            <p><b><a href="{prefix}/data/input/operationresource/" class="text-decoration-underline" target="_blank">Load operation resource data</a></b>
              <a href="{docroot}/modeling-wizard/manufacturing-capacity/operation-resources.html" target="_blank">
-             <i class="fa fa-book fa-2x" aria-hidden="true" data-toggle="tooltip" title="Documentation"></i>
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
              </a>
              <a href="/static/wizard/sample_data/operationresource.xlsx">
-             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-toggle="tooltip" title="Sample data in Excel format"></i>
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
              </a>
            </p>
            <p>This table associates each operation with the resources it utilizes.</p>
@@ -854,7 +852,7 @@ def getWizardSteps(request, mode):
          <p>The constrained plan generated in this step will respect all the capacity, material
          availability, and procurement lead times. In case of lead time or capacity shortages,
          demands will be planned late.</p>
-         <table class="table table-hover">
+         <table class="table">
          <thead>
          <tr>
          <th style="width:90px"></th>
@@ -893,7 +891,7 @@ def getWizardSteps(request, mode):
                 "locked": locked,
                 "content": """
          <p>A number of new screens are ready to be explored now!</p>
-         <table class="table table-hover">
+         <table class="table">
          <thead>
          <tr>
          <th style="width:90px"></th>
@@ -965,7 +963,7 @@ def getWizardSteps(request, mode):
                 "content": """
          <p>With the basics under your belt, you are ready to dig into some more advanced
          modeling and configuration topics.</p>
-         <table class="table table-hover">
+         <table class="table">
          <thead>
          <tr>
          <th>Topic</th>
@@ -978,7 +976,7 @@ def getWizardSteps(request, mode):
          <td>Learn about the most common gotchas and mistakes made by first-time users.</td>
          </tr>
          <tr>
-         <td><a href="{docroot}/examples/calendar/working-hours.html" class="text-decoration-underline" target="_blank">Working&nbsp;hours</a></td>
+         <td><a href="{docroot}/examples/calendar/calendar-working-hours.html" class="text-decoration-underline" target="_blank">Working&nbsp;hours</a></td>
          <td>Modeling working hours, shifts and holidays is required to get a realistic plan.</td>
          </tr>
          <tr>
@@ -1074,6 +1072,7 @@ Choose a smiley and share your comments to help us improve frePPLe!"></textarea>
           <div style="padding-top: 15px">
           <button class="btn btn-primary" disabled id='submit'>Send us feedback</button>
           <div style="float: right"><a href="https://www.capterra.com/p/132712/Frepple/" target="_blank" class="btn btn-primary">Write a review on capterra.com</a></div>
+          </div>
           </td>
           </tr>
         </table>
@@ -1294,13 +1293,12 @@ class QuickStartProduction(View):
 
     @method_decorator(staff_member_required())
     def post(self, request, *args, **kwargs):
-        post = {"messages": []}
         try:
             db = request.database
             data = json.loads(
                 request.body.decode(request.encoding or settings.DEFAULT_CHARSET)
             )
-            post["salesorder"] = data["name"]
+            post = {"salesorder": data["name"], "messages": []}
 
             items = 0
             locations = 0

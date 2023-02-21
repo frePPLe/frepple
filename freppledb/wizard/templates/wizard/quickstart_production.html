@@ -14,14 +14,14 @@ function getFormData(el) {
 $(function() {
 	// Submit sales order to go from step 1 to step 2
   $("#submitsalesorder").on("submit", function() {
-  	$("#inputstep2, #inputstep1").toggleClass("hidden");
+  	$("#inputstep2, #inputstep1").toggleClass("d-none");
   	if ($("#supply .supply").length == 0)
   		checkItemLocation(
   			$("#wizarditem").val(),
   			$("#wizardlocation").val(),
   			function(data) {
   				if (data.length)
-  					$("#supply_path_known, #supply_path_unknown").toggleClass("hidden");
+  					$("#supply_path_known, #supply_path_unknown").toggleClass("d-none");
   				else
   				  addItemLocation($("#wizarditem").val(), $("#wizardlocation").val());
   				}
@@ -31,7 +31,7 @@ $(function() {
 
 	// Returning from step 2 to step 1
   $("#backtosalesorder").on("click", function() {
-    $("#inputstep2, #inputstep1").toggleClass("hidden");
+    $("#inputstep2, #inputstep1").toggleClass("d-none");
     return false;
   });
 
@@ -44,7 +44,7 @@ $(function() {
       $("#supply .supply").each(function(i, group) {
       	var ok2 = false;
 	      $(group).find("form").each(function(i, el) {
-	      	if (ok && $(el).closest(".collapse").hasClass("in")) {
+	      	if (ok && $(el).closest(".collapse").hasClass("show")) {
 	      	  ok = el.checkValidity();
 	      	  ok2 = true;
 	      	  if (ok) data["supply"].push(getFormData($(el)));
@@ -102,25 +102,22 @@ function addItemLocation(item, location) {
   		Question ${index + 1}:
       How do you replenish item "<span class="item"></span>" in location "<span class="location"></span>"?
   		</h2>
-			<div class="panel-group" id="accordion${index}" role="tablist" aria-multiselectable="true" data-index="${index}">
-			  <div class="card">
-			    <div class="card-header collapsed" data-bs-toggle="collapse" data-bs-target="#collapse${index}-buy"
-            data-parent="#accordion${index}" style="cursor: pointer">
-			      <h5 class="card-title">
-			        <a class="accordion-toggle">
+			<div class="accordion" id="accordion${index}" data-index="${index}">
+			  <div class="accordion-item">
+			    <h2 class="accordion-header" id="header${index}-buy">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}-buy">
 			        Choice 1: I buy this item
-			        </a>
-			      </h5>
-			    </div>
-			    <div id="collapse${index}-buy" class="collapse">
-			      <div class="card-body">
+            </button>
+          </h2>
+			    <div id="collapse${index}-buy" class="accordion-collapse collapse" aria-labelledby="header${index}-buy" data-bs-parent="accordion${index}">
+			      <div class="accordion-body">
 			        <p>Define the supplier and lead time for purchasing this item.</p>
 			        <form class="form-horizontal">
-			          <div class="form-group">
+			          <div class="row mb-3">
 			            <input type="hidden" name="type" value="PO">
 			            <input type="hidden" name="item" class="itemvalue">
 			            <input type="hidden" name="location" class="locationvalue">
-			            <label class="col-sm-3 col-form-label" for="wizardsupplier${index}"
+			            <label class="col-sm-3 col-form-label text-end" for="wizardsupplier${index}"
                     data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                     data-bs-title="Supplier you purchase the item from.">
 			            {% trans "supplier"|capfirst %}
@@ -131,8 +128,8 @@ function addItemLocation(item, location) {
 			                maxlength="300" required placeholder="{% trans "supplier name"|capfirst %}">
 			            </div>
 			          </div>
-			          <div class="form-group">
-			            <label class="col-sm-3 col-form-label" for="wizardleadtime${index}"
+			          <div class="row mb-3">
+			            <label class="col-sm-3 col-form-label text-end" for="wizardleadtime${index}"
                     data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                     data-bs-title="Purchasing lead time<br>between placing the order and receiving the ordered items.">
 			            {% trans "lead time"|capfirst %}
@@ -147,24 +144,21 @@ function addItemLocation(item, location) {
 			      </div>
 			    </div>
 			  </div>
-			  <div class="card">
-			    <div class="card-header collapsed" data-bs-toggle="collapse" data-bs-target="#collapse${index}-produce"
-            data-parent="#accordion${index}" style="cursor: pointer">
-			      <h5 class="card-title">
-			        <a class="accordion-toggle">
-              Choice 2: I produce this item
-			        </a>
-			      </h5>
-			    </div>
-			    <div id="collapse${index}-produce" class="collapse">
-			      <div class="card-body">
+			  <div class="accordion-item">
+          <h2 class="accordion-header" id="header${index}-produce">
+            <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#collapse${index}-produce">
+                Choice 2: I produce this item
+            </button>
+          </h2>
+			    <div id="collapse${index}-produce" class="collapse" aria-labelledby="header${index}-produce" data-bs-parent="#accordion${index}">
+			      <div class="accordion-body">
 			        <p>Define the time, resource and materials to produce this item.</p>
-			        <form class="form-horizontal">
+			        <form>
 			          <input type="hidden" name="type" value="MO">
                 <input type="hidden" name="item" class="itemvalue">
                 <input type="hidden" name="location" class="locationvalue">
-			          <div class="form-group">
-			            <label class="col-sm-3 col-form-label" for="wizardoperation${index}"
+			          <div class="row mb-3">
+			            <label class="col-sm-3 col-form-label text-end" for="wizardoperation${index}"
                     data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                     data-bs-title="A unique name for the operation that produces this item.">
 			            {% trans "operation name"|capfirst %}
@@ -175,8 +169,8 @@ function addItemLocation(item, location) {
 			                name="operation" required placeholder="operation name">
 			            </div>
 			          </div>
-			          <div class="form-group">
-			            <label class="col-sm-3 col-form-label" for="wizardduration${index}"
+			          <div class="row mb-3">
+			            <label class="col-sm-3 col-form-label text-end" for="wizardduration${index}"
                     data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                     data-bs-title="The total operation time is the sum of:<br>- A fixed time for setup and overhead time<br>- A time per produced piece">
 			            {% trans "fixed time"|capfirst %}
@@ -187,8 +181,8 @@ function addItemLocation(item, location) {
 			                required placeholder="operation fixed time, formatted as dd hh:mm:ss">
 			            </div>
 			          </div>
-			          <div class="form-group">
-			            <label class="col-sm-3 col-form-label" for="wizarddurationper${index}"
+			          <div class="row mb-3">
+			            <label class="col-sm-3 col-form-label text-end" for="wizarddurationper${index}"
                     data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                     data-bs-title="The total operation time is the sum of:<br>- A fixed time for setup and overhead time<br>- A time per produced piece">
 			            {% trans "time per piece"|capfirst %}
@@ -199,8 +193,8 @@ function addItemLocation(item, location) {
 			                required placeholder="operation time per piece, formatted as dd hh:mm:ss">
 			            </div>
 			          </div>
-			          <div class="form-group">
-			            <label class="col-sm-3 col-form-label" for="wizardresource${index}"
+			          <div class="row mb-3">
+			            <label class="col-sm-3 col-form-label text-end" for="wizardresource${index}"
                     data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                     data-bs-title="The machine or operator needed to perform the operation.">
 			            {% trans "resource"|capfirst %}
@@ -211,8 +205,8 @@ function addItemLocation(item, location) {
 			                placeholder="{% trans "resource name"|capfirst %}">
 			            </div>
 			          </div>
-			          <div class="form-group">
-			            <label class="col-sm-3 col-form-label" for="wizardconsumeditem${index}0"
+			          <div class="row mb-3">
+			            <label class="col-sm-3 col-form-label text-end" for="wizardconsumeditem${index}0"
                     data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                     data-bs-title="The subassemblies or raw materials<br>consumed by this operation per produced item.">
 			              {% trans "consumed items"|capfirst %}
@@ -227,7 +221,7 @@ function addItemLocation(item, location) {
 			                min="0" placeholder="{% trans "consumed quantity"|capfirst %}">
 			            </div>
 			          </div>
-			          <div class="col-sm-offset-11 col-sm-1 text-center" data-index="0">
+			          <div class="ms-auto col-sm-1 text-center" data-index="0">
 			             <button class="btn btn-sm btn-primary" type="button" onclick="addConsumeditem(event)">
 			               <i class="fa fa-plus" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Add more consumed items"></i>
 			             </button>
@@ -236,24 +230,21 @@ function addItemLocation(item, location) {
 			      </div>
 			    </div>
 			  </div>
-			  <div class="card">
-			    <div class="card-header collapsed" data-bs-target="#collapse${index}-ship"
-            data-bs-toggle="collapse" data-parent="#accordion${index}" style="cursor:pointer">
-			      <h5 class="card-title">
-              <a class="accordion-toggle">
+			  <div class="accordion-item">
+			    <h2 class="accordion-header" id="header${index}-ship">
+            <button class="accordion-button" data-bs-target="#collapse${index}-ship" data-bs-toggle="collapse">
 			        Choice 3: I ship this item from another location
-			        </a>
-			      </h5>
-			    </div>
-			    <div id="collapse${index}-ship" class="collapse">
-			      <div class="card-body">
+            </button>
+			      </h2>
+			    <div id="collapse${index}-ship" class="collapse" aria-labelledby="header${index}-ship" data-bs-parent="#accordion${index}">
+			      <div class="accordion-body">
 			        <p>Define the origin location that can ship material to this location.</p>
-			        <form class="form-horizontal">
+			        <form>
 			          <input type="hidden" name="type" value="DO">
                 <input type="hidden" name="item" class="itemvalue">
                 <input type="hidden" name="location" class="locationvalue">
-			          <div class="form-group">
-			            <label class="col-sm-3 col-form-label" for="wizardorigin${index}"
+			          <div class="row mb-3">
+			            <label class="col-sm-3 col-form-label text-end" for="wizardorigin${index}"
                     data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                     data-bs-title="The warehouse or distribution center<br>from which we can source this item.">
 			              {% trans "source location"|capfirst %}
@@ -264,8 +255,8 @@ function addItemLocation(item, location) {
 			                required placeholder="{% trans "source location name"|capfirst %}" onchange="changeDOorigin(event)">
 			            </div>
 			          </div>
-                <div class="form-group">
-                <label class="col-sm-3 col-form-label" for="wizardtransporttime${index}"
+                <div class="row mb-3">
+                <label class="col-sm-3 col-form-label text-end" for="wizardtransporttime${index}"
                   data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                   data-bs-title="The shipping lead time to transport items<br>from the origin to the destination location.">
                   {% trans "transport time"|capfirst %}
@@ -298,8 +289,8 @@ function addConsumeditem(ev) {
 	var anchor = $(ev.target).closest(".col-sm-1");
 	var itemindex = parseInt(anchor.attr("data-index")) + 1;
 	anchor.attr("data-index", itemindex);
-	$(`<div class="form-group">
-	  <div class="col-sm-offset-3 col-sm-6">
+	$(`<div class="row mb-3">
+	  <div class="offset-3 col-sm-6">
 	    <input type="text" class="form-control" name="consumeditem-${itemindex}"
 	      placeholder="{% trans "component or subassembly item name"|capfirst %}" onchange="changeConsumedItem(event)">
 	  </div>
@@ -337,7 +328,7 @@ function changeDOorigin(ev) {
 
 {% block content %}
 <div class="row">
-  <div class="panel-group col-md-12" style="max-width: 900px" role="tablist">
+  <div class="panel-group col-md-12 mb-3" style="max-width: 900px" role="tablist">
     <div class="card">
       <div class="card-body">
         <div class="float-end">
@@ -355,7 +346,7 @@ function changeDOorigin(ev) {
   </div>
 </div>
 {% if not post %}
-<div class="row" id="inputstep1">
+<div class="row mb-3" id="inputstep1">
 	<div class="panel-group col-md-12" style="max-width:900px" role="tablist" aria-multiselectable="true">
 		<div class="card">
       <div class="card-header wizard-1-of-3" role="tab">
@@ -371,9 +362,9 @@ function changeDOorigin(ev) {
 				  <h2 style="margin-top: 0; margin-bottom:10px">
 				  Create a sales order
 				  </h2>
-          <form class="form-horizontal" id="submitsalesorder">
-            <div class="form-group">
-              <label class="col-sm-3 col-form-label" for="wizardsalesorder"
+          <form id="submitsalesorder">
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label text-end" for="wizardsalesorder"
                 data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                 data-bs-title="Unique name for the sales order.">
                 {% trans "name"|capfirst %}
@@ -384,8 +375,8 @@ function changeDOorigin(ev) {
                   maxlength="300" required placeholder="{% trans "unique sales order name"|capfirst %}">
               </div>
             </div>
-            <div class="form-group">
-              <label class="col-sm-3 col-form-label" for="wizarditem"
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label text-end" for="wizarditem"
                 data-bs-toggle="data-bs-html="true" data-delay="500"" data-bs-placement="right" data-bs-html="true"
                 data-bs-title="Item sold to the customer.">
                 {% trans "item"|capfirst %}
@@ -396,8 +387,8 @@ function changeDOorigin(ev) {
                   maxlength="300" required placeholder="{% trans "item name"|capfirst %}">
               </div>
             </div>
-            <div class="form-group">
-              <label class="col-sm-3 col-form-label" for="wizardlocation"
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label text-end" for="wizardlocation"
                 data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                 data-bs-title="Location from which the sales order is shipped.">
                 {% trans "location"|capfirst %}
@@ -408,8 +399,8 @@ function changeDOorigin(ev) {
                   maxlength="300" required placeholder="{% trans "location name"|capfirst %}">
               </div>
             </div>
-            <div class="form-group">
-              <label class="col-sm-3 col-form-label" for="wizardcustomer"
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label text-end" for="wizardcustomer"
                 data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                 data-bs-title="Customer placing the order.">
                 {% trans "customer"|capfirst %}
@@ -420,8 +411,8 @@ function changeDOorigin(ev) {
                   maxlength="300" required placeholder="{% trans "customer name"|capfirst %}">
               </div>
             </div>
-            <div class="form-group">
-              <label class="col-sm-3 col-form-label" for="wizardquantity"
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label text-end" for="wizardquantity"
                 data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                 data-bs-title="Quantity to be shipped.">
                 {% trans "quantity"|capfirst %}
@@ -432,8 +423,8 @@ function changeDOorigin(ev) {
                   required placeholder="{% trans "quantity"|capfirst %}" value="1">
               </div>
             </div>
-            <div class="form-group">
-              <label class="col-sm-3 col-form-label" for="wizarddue"
+            <div class="row mb-3">
+              <label class="col-sm-3 col-form-label text-end" for="wizarddue"
                 data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" data-delay="500"
                 data-bs-title="Delivery date requested by the customer.">
                 {% trans "due date"|capfirst %}
@@ -444,17 +435,18 @@ function changeDOorigin(ev) {
                   required placeholder="{% trans "due date"|capfirst %}" value="{% now "Y-m-d" %}">
               </div>
             </div>
-            <div class="mx-auto">
-              <button id="createsalesorder" type="submit" class="btn btn-primary mx-auto">
-              {% trans "Create sales order"|capfirst %}
-              </button>
+						<div class="row justify-content-center">
+              <div class="col-auto">
+                <input id="createsalesorder" type="submit" class="btn btn-primary mx-auto"
+                value="{% trans "Create sales order"|capfirst %}">
+              </div>
             </div>
           </form>
       </div>
     </div>
   </div>
 </div>
-<div class="row hidden" id="inputstep2">
+<div class="row d-none" id="inputstep2">
 	<div class="panel-group col-md-12" style="max-width:900px" role="tablist" aria-multiselectable="true">
 		<div class="card">
       <div class="card-header wizard-2-of-3" role="tab">
@@ -472,14 +464,15 @@ function changeDOorigin(ev) {
           The supply path defines all activities to deliver this sales order.
           </h2>
           <p>It can contain multiple levels in the bill of material and bill of distribution.</p>
-          <div id="supply"></div>
-          <div class="mx-auto">
-            <button type="submit" class="btn btn-primary mx-auto createsupplypath">
-            Create supply path
-            </button>
+          <div class="row mt-3 justify-content-evenly" id="supply"></div>
+          <div class="row mt-3 justify-content-evenly">
+            <div class="col-auto">
+              <button type="submit" class="btn btn-primary w-auto createsupplypath">
+              Create supply path
+              </button>
+            </div>
           </div>
-          </div>
-          <div id="supply_path_known" class="hidden">
+          <div id="supply_path_known" class="d-none">
           <h2>
           The supply path for this sales order is already defined.
           </h2>
@@ -495,7 +488,7 @@ function changeDOorigin(ev) {
 	</div>
 </div>
 {% else %}
-<div class="row">
+<div class="row mb-3">
   <div class="panel-group col-md-12" style="max-width:900px" role="tablist" aria-multiselectable="true">
     <div class="card" id="wizard-2">
       <div class="card-header wizard-3-of-3" role="tab">
@@ -515,8 +508,8 @@ function changeDOorigin(ev) {
           <div>
           <p>Here is the production plan for your sales order {{post.salesorder}}:</p>
           </div>
-          <div class="clearfix">
-          <div style="float: left; margin-left:10px; width:30%; max-width:130px; text-align:center"
+          <div class="row justify-content-evenly">
+          <div class="col-auto mb-3" style="max-width:130px"
             data-bs-toggle="tooltip" data-bs-placement="bottom"
             data-bs-title="Review all activities planned for this sales order">
             <p><a target="_blank" rel="noopener" href="{{request.prefix}}/demandpegging/{{post.salesorder|admin_quote}}/?noautofilter">
@@ -524,7 +517,7 @@ function changeDOorigin(ev) {
               <b>Sales order delivery plan</b>
             </a></p>
           </div>
-          <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
+          <div class="col-auto mb-3" style="max-width:130px"
             data-bs-toggle="tooltip" data-bs-placement="bottom"
             data-bs-title="A visual representation of the supply path">
             <p><a target="_blank" rel="noopener" href="{{request.prefix}}/supplypath/demand/{{post.salesorder|admin_quote}}/?noautofilter">
@@ -532,7 +525,7 @@ function changeDOorigin(ev) {
               <b>Sales order supply path</b>
             </a></p>
           </div>
-          <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
+          <div class="col-auto mb-3" style="max-width:130px"
             data-bs-toggle="tooltip" data-bs-placement="bottom"
             data-bs-title="Shows the inventory profile of all materials">
             <a target="_blank" rel="noopener" href="{{request.prefix}}/buffer/?noautofilter">
@@ -540,7 +533,7 @@ function changeDOorigin(ev) {
               <b>Inventory report</b>
             </a>
           </div>
-          <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
+          <div class="col-auto mb-3" style="max-width:130px"
             data-bs-toggle="tooltip" data-bs-placement="bottom"
             data-bs-title="Shows the loading of all resources">
             <p><a target="_blank" rel="noopener" href="{{request.prefix}}/resource/?noautofilter">
@@ -549,7 +542,7 @@ function changeDOorigin(ev) {
             </a></p>
           </div>
           </div>
-          <div class="clearfix">
+          <div>
           <p>Check out what we did with your input data:</p>
             <ul>
               {% for msg in post.messages %}
@@ -566,8 +559,6 @@ function changeDOorigin(ev) {
             </ul>
           </div>
         </div>
-
-       </div>
     </div>
   </div>
 {% endif %}

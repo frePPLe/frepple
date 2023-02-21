@@ -2696,7 +2696,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
 
   hideModal('timebuckets');
   $.jgrid.hideModal("#searchmodfbox_grid");
-  var modalcontent = '<div class="modal-dialog">' +
+  var modalcontent = '<div class="modal-dialog modal-lg">' +
     '<div class="modal-content">' +
     '<div class="modal-header">' +
     '<h5 class="modal-title">' +

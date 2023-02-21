@@ -32,6 +32,17 @@ $font-family-sans-serif: 'FontAwesome', 'Open sans', Helvetica, Verdana, Arial, 
 $font-family-monospace: 'FontAwesome', Menlo, Monaco, Consolas, "Courier New", monospace;
 $body-color: #495057;
 
+// Grid breakpoints
+$grid-breakpoints: (
+    xs: 0,
+    sm: 576px,
+    md: 768px,
+    lg: 1050px,
+    // Increased from the default 992px to account for the wide navbar
+    xl: 1200px,
+    xxl: 1400px
+);
+
 // You probably don't need to update the variables below this line.
 // These updates are normally generic for all frepple themes.
 $accordion-bg: white;

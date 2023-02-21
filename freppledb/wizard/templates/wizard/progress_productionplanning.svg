@@ -1,5 +1,5 @@
 {% load i18n %}
-<svg height="100%" width="100%" viewBox="0 0 500 440"
+<svg height="100%" width="100%" viewBox="0 0 500 370"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg">
 
@@ -43,7 +43,7 @@ rect.ok, rect.nok {
 <path stroke="grey" fill="transparent" stroke-width="4"
  d="m 75,68 c 60,0 346,10 346,71 0,61 -335,36 -335,102 0,65 313,83 313,83"
  />
-  
+
 <!-- Master data -->
 <g transform="translate(0 10)">
 <rect width="155" height="110" x="0" y="0" class="border"></rect>

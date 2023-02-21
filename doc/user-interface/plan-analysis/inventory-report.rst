@@ -24,10 +24,14 @@ Location                       Location of the buffer.
 Start inventory                Inventory in the buffer at the start of the time bucket.
 
 Start inventory days of cover  | Shows how many days of demand is covered with the starting inventory.
-                               | In other words, it shows when will you run out of stock without new 
+                               | In other words, it shows when will you run out of stock without new
                                  replenishments.
 
 Safety stock                   The safety stock at the start of the time bucket.
+
+Inventory status               | Represents the delay for unprotected buffers (community version or
+                                 buffers without inventory policy) otherwise represents the buffer
+                                 `inventory status <https://frepple.com/docs/current/user-interface/plan-analysis/inventory-status.php>`_
 
 Total produced                 | Quantity replenished into the buffer during the time bucket.
                                | A drill down menu is available to see the detail of the supplying operations,
@@ -38,38 +42,41 @@ Total produced                 | Quantity replenished into the buffer during the
 Total produced confirmed       | Quantity produced into the buffer during the time bucket by confirmed and
                                  approved operations.
 
-                               | Total produced confirmed = total produced by MO confirmed 
+                               | Total produced confirmed = total produced by MO confirmed
                                  + total produced by PO confirmed
-                                 + total produced by DO confirmed 
+                                 + total produced by DO confirmed
 
 Total produced proposed        | Quantity produced into the buffer during the time bucket by proposed operations.
 
-                               | Total produced confirmed = total produced by MO proposed 
+                               | Total produced confirmed = total produced by MO proposed
                                  + total produced by PO proposed
-                                 + total produced by DO proposed 
+                                 + total produced by DO proposed
 
 Produced by MO                 | Displays the quantity replenished by manufacturing orders.
 
                                | Produced by MO = Produced by MO proposed + Produced by MO confirmed
-                               
+
 Produced by MO confirmed       | Displays the quantity replenished by confirmed and approved manufacturing orders.
-                               
+
 Produced by MO proposed        | Displays the quantity replenished by proposed manufacturing orders.
 
 Produced by PO                 | Displays the quantity replenished by purchase orders.
 
                                | Produced by PO = Produced by PO proposed + Produced by PO confirmed
-                               
+
 Produced by PO confirmed       | Displays the quantity replenished by confirmed and approved purchase orders.
-                               
+
 Produced by PO proposed        | Displays the quantity replenished by proposed purchase orders.
+
+Proposed ordering              | Displays the quantity of the proposed POs that need to be
+                                 purchased in this time bucket.
 
 Produced by DO                 | Displays the quantity replenished by distribution orders.
 
                                | Produced by DO = Produced by DO proposed + Produced by DO confirmed
-                               
+
 Produced by DO confirmed       | Displays the quantity replenished by confirmed and approved distributrion orders.
-                               
+
 Produced by DO proposed        | Displays the quantity replenished by proposed distributrion orders.
 
 Total consumed                 | Quantity consumed from the buffer during the time bucket.
@@ -81,13 +88,13 @@ Total consumed                 | Quantity consumed from the buffer during the ti
 Total consumed confirmed       | Quantity consumed from the buffer during the time bucket by confirmed and
                                  approved operations.
 
-                               | Total consumed confirmed = total consumed by MO confirmed 
+                               | Total consumed confirmed = total consumed by MO confirmed
                                  + total consumed by PO confirmed
-                                 + total consumed by DO confirmed 
+                                 + total consumed by DO confirmed
 
 Total consumed proposed        | Quantity consumed from the buffer during the time bucket by proposed operations.
 
-                               | Total consumed proposed = total consumed by MO proposed 
+                               | Total consumed proposed = total consumed by MO proposed
                                  + total consumed by PO proposed
                                  + total consumed by DO proposed
                                  + consumed by SO
@@ -108,7 +115,17 @@ Consumed by DO proposed        | Displays the quantity consumed by proposed dist
 
 Consumed by DO confirmed       | Displays the quantity consumed by confirmed & approved distribution orders.
 
-Consumed by SO                 Displays the quantity consumed by sales orders.
+Consumed by SO                 | Displays the quantity consumed by sales orders.
+
+Consumed by Fcst               | Displays the quantity consumed by forecast.
+
+Net forecast                   | The net forecast for that time bucket.
+
+Open sales orders              | The open sales orders with a due date in that time bucket.
+
+Total demand                   | The total demand due in that time bucket.
+
+                               | Total demand = Open sales orders + Net forecast.
 
 Total in progress              | Sum of the manufacturing/purchase/distribution order quantities in progress.
                                | The shipping/starting date of the order must be before the end date
@@ -148,7 +165,7 @@ In transit DO                  | Sum of the distribution order quantities in tra
 
                                | In transit DO = In transit DO confirmed + In transit DO proposed
 
-In transit DO confirmed        | Sum of the confirmed and approved distribution order quantities in transit 
+In transit DO confirmed        | Sum of the confirmed and approved distribution order quantities in transit
                                  in that time bucket.
 
 In transit DO proposed         | Sum of the proposed distribution order quantities in transit in that time
@@ -158,6 +175,15 @@ End inventory                  | Inventory in the buffer at the end of the time 
                                | A drill down menu is available to see the detail of the consuming and
                                  producing operations, and to see the demands the consumed material is used
                                  for.
+
+Total backlog                  | The total quantity of demand due in the past that is still to be planned.
+
+                               | Total backlog = Order backlog + Forecast backlog
+
+Order backlog                  | The total quantity of sales orders due in the past that is still to be planned.
+
+Forecast backlog               | The total quantity of forecast due in the past that is still to be planned.
+
 ============================== ==============================================================================
 
 

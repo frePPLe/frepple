@@ -64,6 +64,11 @@ Release notes
 - | 14 & 15 & 16: Update of replenishment logic when products can be both purchased and manufactured.
     The solver will try first to buy then to manufacture.
 
+- | 14 & 15 & 16: Improved logic to handle situations where there are multiple vendor definitions
+    for the same supplier and item.
+  | Earlier releases used the first record. Now we take the minimum quantity and minimum lead time
+    of all date-effective records we find.
+
 - | 14 & 15 & 16: When exporting RFQ purchase orders we now populate the order deadline date
     and receipt date.
   | We put the earliest order start and end date of the exported frepple records in these
@@ -71,6 +76,8 @@ Release notes
 
 - | 14 & 15 & 16: Bug fix. When a material was manually deleted from an odoo manufacturing order,
     frepple was still using it.
+
+- | 14 & 15 & 16: Bug fix. Workcenter skills were not synchronised.
 
 .. rubric:: Documentation
 

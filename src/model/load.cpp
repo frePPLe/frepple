@@ -430,8 +430,9 @@ Resource* Load::findPreferredResource(Date d, OperationPlan* opplan) const {
       double my_utilization = DBL_MAX;
       if (opplan->getConfirmed() || opplan->getApproved()) {
         // Include utilization comparison for approved & confirmed
-        auto l = mmbr->getLoadPlans().getEvent(opplan->getStart());
-        if (l && l->getMax()) my_utilization = l->getOnhand() / l->getMax();
+        my_utilization = mmbr->getUtilization(
+            opplan->getStart() - Duration(3L * 24L * 3600L),
+            opplan->getEnd() + Duration(3L * 24L * 3600L));
       }
 
       // Check if better a) utilization, b) efficiency and c) priority

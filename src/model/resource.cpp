@@ -909,4 +909,20 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(
   return Py_BuildValue("");
 }
 
+double Resource::getUtilization(Date st, Date nd) const {
+  auto prevdate = st;
+  double curmax = 0.0, curload = 0.0, sumload = 0.0, summax = 0.0;
+  for (auto& l : getLoadPlans()) {
+    if (l.getDate() > prevdate) {
+      auto delta = (l.getDate() > nd ? nd : l.getDate()) - st;
+      sumload += curload * delta.getSeconds();
+      summax += curmax * delta.getSeconds();
+    }
+    if (l.getDate() > nd) break;
+    curload = l.getOnhand();
+    if (l.getEventType() == 4) curmax = l.getMax();
+  }
+  return summax ? sumload / summax : sumload;
+}
+
 }  // namespace frepple

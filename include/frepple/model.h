@@ -6515,6 +6515,8 @@ class Resource : public HasHierarchy<Resource>,
 
   inline OperationPlanIterator getOperationPlans() const;
 
+  double getUtilization(Date, Date) const;
+
   /* Returns a constant reference to the list of loads. It defines
    * which operations are using the resource.
    * TODO Get rid of this

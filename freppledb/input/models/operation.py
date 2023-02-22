@@ -496,6 +496,7 @@ class OperationResource(AuditModel):
         verbose_name_plural = _("operation resources")
 
     def getPreferredResource(self):
+        # TODO for approved & confirmed MOs the C++ engine also considers the utilization of the resource
         Resource.rebuildHierarchy(self._state.db)
         if not self.resource or self.resource.rght == self.resource.lft + 1:
             # Not an aggregate resource

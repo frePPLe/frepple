@@ -184,8 +184,14 @@ OperationPlanDependency::OperationPlanDependency(OperationPlan* op1,
                                                  OperationPlan* op2,
                                                  OperationDependency* d)
     : first(op1), second(op2), dpdcy(d) {
-  if (first) first->dependencies.push_front(this);
-  if (second) second->dependencies.push_front(this);
+  if (first) {
+    first->dependencies.push_front(this);
+    first->setChanged();
+  }
+  if (second) {
+    second->dependencies.push_front(this);
+    second->setChanged();
+  }
 }
 
 OperationPlanDependency::~OperationPlanDependency() {

@@ -37,9 +37,22 @@ $grid-breakpoints: (
     xs: 0,
     sm: 576px,
     md: 768px,
-    lg: 1050px, // Increased from the default 992px to account for the wide navbar
+    lg: 1050px,
+    // Increased from the default 992px to account for the wide navbar
     xl: 1200px,
     xxl: 1400px
+);
+
+$theme-colors: (
+    "primary": $primary,
+    "secondary": $secondary,
+    "success": $success,
+    "info": $info,
+    "warning": $warning,
+    "danger": $danger,
+    "light": $light,
+    "dark": $dark,
+    "gray": $gray-600
 );
 
 // You probably don't need to update the variables below this line.

@@ -839,8 +839,8 @@ var grid = {
       (typeof extra_customize_html !== 'undefined' ? extra_customize_html : '') +  // Not very clean to use a global variable here
       '</div>' +
       '<div class="modal-footer justify-content-between">' +
-      '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
-      '<input type="submit" id="resetCustbutton" role="button" class="btn btn-primary" value="' + gettext('Reset') + '">' +
+      '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-gray" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<input type="submit" id="resetCustbutton" role="button" class="btn btn-gray" value="' + gettext('Reset') + '">' +
       '<input type="submit" id="okCustbutton" role="button" class="btn btn-primary" value="' + gettext("OK") + '">' +
       '</div>' +
       '</div>' +
@@ -1218,7 +1218,7 @@ var grid = {
       }
       content += '</div></div>' +  // closing modal-body and modal-content
         '<div class="modal-footer justify-content-between">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
         '<input type="submit" id="exportbutton" role="button" class="btn btn-primary" value="' + gettext('Export') + '">' +
         '</div>' +
         '</div>' +
@@ -1438,7 +1438,7 @@ var grid = {
         '</div>' +
         '<div class="modal-footer justify-content-between">' +
         '<input type="submit" id="delbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Confirm') + '">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray pull-left" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
         '</div>' +
         '</div>' +
         '</div>');
@@ -1488,7 +1488,7 @@ var grid = {
         '<p>' + interpolate(gettext('You are about to duplicate %s objects'), [sel.length], false) + '</p>' +
         '</div>' +
         '<div class="modal-footer justify-content-between">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
         '<input type="submit" id="copybutton" role="button" class="btn btn-primary" value="' + gettext('Confirm') + '">' +
         '</div>' +
         '</div>' +
@@ -2106,7 +2106,7 @@ var ERPconnection = {
       '<p>' + gettext("Export selected records?") + '</p>' +
       '</div>' +
       '<div class="modal-footer justify-content-between">' +
-      '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
       '<input type="submit" id="button_export" role="button" class="btn btn-primary" value="' + gettext('Confirm') + '">' +
       '</div>' +
       '</div>' +
@@ -2192,10 +2192,10 @@ var dashboard = {
     $(".panel-toggle").click(function () {
       var icon = $(this);
       icon.toggleClass("fa-minus fa-plus");
-      icon.closest(".panel").find(".card-body").toggle();
+      icon.closest(".card").find(".card-body").toggle();
     });
     $(".panel-close").click(function () {
-      $(this).closest(".panel").remove();
+      $(this).closest(".card").remove();
       dashboard.save();
     });
   },
@@ -2349,11 +2349,11 @@ var dashboard = {
 
       '</form></div>' +
       '<div class="modal-footer">' +
-      '<input type="submit" role="button" onclick=\'hideModal("popup")\' class="btn btn-primary pull-left" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<input type="submit" role="button" onclick=\'hideModal("popup")\' class="btn btn-gray pull-left" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
       '<input type="submit" role="button" onclick=\'dashboard.saveCustomization("' + rowname + '")\' class="btn btn-primary pull-right" value="' + gettext('Save') + '">' +
       '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", false)\' class="btn btn-primary pull-right" value="' + gettext('Add new below') + '">' +
       '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", true)\' class="btn btn-primary pull-right" value="' + gettext('Add new above') + '">' +
-      '<input type="submit" role="button" onclick=\'dashboard.deleteRow("' + rowname + '")\' class="btn btn-primary pull-right" value="' + gettext('Delete') + '">' +
+      '<input type="submit" role="button" onclick=\'dashboard.deleteRow("' + rowname + '")\' class="btn btn-danger pull-right" value="' + gettext('Delete') + '">' +
       '</div>' +
 
       '</div></div></div>';

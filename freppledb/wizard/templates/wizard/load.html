@@ -4,7 +4,7 @@
 {% block content %}
 {% if wizard %}
 <div class="row">
-  <div id="tasks" class="panel-group col-md-6 col-lg-8" role="tablist" aria-multiselectable="true">
+  <div id="tasks" class="col-md-6 col-lg-8" role="tablist" aria-multiselectable="true">
   {% for step in wizard.steps %}
     <div class="card" id="wizard-{{ step.index }}">
        <div id="wizardhead-{{ step.index }}" data-bs-target="#wizardcontent-{{ step.index }}" class="card-header" role="tab"
@@ -21,7 +21,7 @@
   {% endfor %}
   </div>
   {% if mode %}
-   <div id="tasks" class="panel-group col-md-6 col-lg-4">
+   <div id="tasks" class="col-md-6 col-lg-4">
      <div class="card">
      <div class="card-header">Your progress</div>
      <div class="card-body">
@@ -29,7 +29,6 @@
      {% elif wizard.mode == "inventory" %}{% include 'wizard/progress_inventoryplanning.svg' %}
      {% else %}{% include 'wizard/progress_productionplanning.svg' %}{% endif %}
      </div>
-
    </div>
   {% endif %}
   {% if wizard.script %}

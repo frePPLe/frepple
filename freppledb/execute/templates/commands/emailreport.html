@@ -12,7 +12,7 @@
     <tr>
       <td></td>
       <td style="padding-left:15px">
-           <input type="checkbox" id="allcheckboxes" checked>
+           <input class="form-check-input" type="checkbox" id="allcheckboxes" checked>
            <strong>{% trans 'file name'|capfirst %}</strong>
       </td>
       <td><strong>{% trans 'size'|capfirst %}</strong></td>
@@ -23,7 +23,7 @@
     <tr data-file="{{j.0}}">
       <td></td>
       <td style="padding-left:15px">
-          <input type="checkbox" id="{{j.0}}" checked>
+          <input class="form-check-input" type="checkbox" id="{{j.0}}" checked>
           {{j.0}}
       </td>
       <td>{{j.2}}</td>

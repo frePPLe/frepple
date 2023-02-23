@@ -431,6 +431,7 @@ class Command(BaseCommand):
             </label>
           </div>
           {%% endfor %%}
+          <br>
           </div>
           {%% endif %%}
           <b>%s</b><br>

@@ -67,7 +67,7 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
             }
             else {
               rows += '<td style="white-space: nowrap"><div class="dropdown">'
-                + '<button class="btn btn-default" data-bs-toggle="dropdown" type="button" style="text-transform: capitalize; min-width: 150px">'
+                + '<button class="btn btn-primary" data-bs-toggle="dropdown" type="button" style="text-transform: capitalize; min-width: 150px">'
                 + $.jgrid.htmlEncode(theflow.buffer.item)
                 + '</button>'
                 + '<ul class="dropdown-menu">'

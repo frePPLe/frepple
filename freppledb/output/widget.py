@@ -74,8 +74,8 @@ class LateOrdersWidget(Widget):
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="alignleft">%s</th>'
             '<th class="alignleft">%s</th><th class="alignleft">%s</th>'
-            '<th class="aligncenter">%s</th><th class="aligncenter">%s</th>'
-            '<th class="aligncenter">%s</th></tr></thead>'
+            '<th class="text-center">%s</th><th class="text-center">%s</th>'
+            '<th class="text-center">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("name"))),
                 capfirst(force_str(_("item"))),
@@ -93,7 +93,7 @@ class LateOrdersWidget(Widget):
                 '<tr%s><td class="text-decoration-underline"><a href="%s/demandpegging/%s/">%s</a></td>'
                 '<td class="alignleft">%s</td><td class="alignleft">%s</td>'
                 '<td class="alignleft">%s</td><td class="alignleft">%s</td>'
-                '<td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
+                '<td class="text-center">%s</td><td class="text-center">%s</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     request.prefix,
@@ -158,7 +158,7 @@ class ShortOrdersWidget(Widget):
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="alignleft">%s</th><th class="alignleft">%s</th>'
-            '<th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
+            '<th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("name"))),
                 capfirst(force_str(_("item"))),
@@ -173,8 +173,8 @@ class ShortOrdersWidget(Widget):
         for rec in cursor.fetchall():
             result.append(
                 '<tr%s><td class="text-decoration-underline alignleft"><a href="%s/demandpegging/%s/">%s</a></td><td class="alignleft">%s</td>'
-                '<td class="alignleft">%s</td><td class="alignleft">%s</td><td class="aligncenter">%s</td>'
-                '<td class="aligncenter">%s</td></tr>'
+                '<td class="alignleft">%s</td><td class="alignleft">%s</td><td class="text-center">%s</td>'
+                '<td class="text-center">%s</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     request.prefix,
@@ -1072,7 +1072,7 @@ class PurchaseQueueWidget(Widget):
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
-            '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
+            '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("item"))),
                 capfirst(force_str(_("supplier"))),
@@ -1088,7 +1088,7 @@ class PurchaseQueueWidget(Widget):
             .order_by("startdate")[:limit]
         ):
             result.append(
-                '<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
+                '<tr%s><td>%s</td><td class="text-center">%s</td><td class="text-center">%s</td><td class="text-center">%s</td><td class="text-center">%s</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     escape(po.item.name),
@@ -1130,7 +1130,7 @@ class DistributionQueueWidget(Widget):
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
-            '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
+            '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("item"))),
                 capfirst(force_str(_("origin"))),
@@ -1147,7 +1147,7 @@ class DistributionQueueWidget(Widget):
             .order_by("startdate")[:limit]
         ):
             result.append(
-                '<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
+                '<tr%s><td>%s</td><td class="text-center">%s</td><td class="text-center">%s</td><td class="text-center">%s</td><td class="text-center">%s</td><td class="text-center">%s</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     escape(po.item.name),
@@ -1190,7 +1190,7 @@ class ShippingQueueWidget(Widget):
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
-            '<thead><tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
+            '<thead><tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("item"))),
                 capfirst(force_str(_("origin"))),
@@ -1207,7 +1207,7 @@ class ShippingQueueWidget(Widget):
             .order_by("startdate")[:limit]
         ):
             result.append(
-                '<tr%s><td>%s</td><td>%s</td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
+                '<tr%s><td>%s</td><td>%s</td><td>%s</td><td class="text-center">%s</td><td class="text-center">%s</td><td class="text-center">%s</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     escape(do.item),
@@ -1252,9 +1252,9 @@ class ResourceQueueWidget(Widget):
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             "<thead><tr>"
             '<th class="alignleft">%s</th>'
-            '<th>%s</th><th class="aligncenter">%s</th>'
-            '<th class="aligncenter">%s</th>'
-            '<th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
+            '<th>%s</th><th class="text-center">%s</th>'
+            '<th class="text-center">%s</th>'
+            '<th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("resource"))),
                 capfirst(force_str(_("operation"))),
@@ -1271,7 +1271,7 @@ class ResourceQueueWidget(Widget):
             .order_by("operationplan__startdate")[:limit]
         ):
             result.append(
-                '<tr%s><td class="text-decoration-underline"><a href="%s/data/input/operationplanresource/?noautofilter&resource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
+                '<tr%s><td class="text-decoration-underline"><a href="%s/data/input/operationplanresource/?noautofilter&resource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="text-center">%s</td><td class="text-center">%s</td><td class="text-center">%s</td><td class="text-center">%s</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     request.prefix,
@@ -1322,7 +1322,7 @@ class PurchaseAnalysisWidget(Widget):
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
-            '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
+            '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("item"))),
                 capfirst(force_str(_("supplier"))),
@@ -1339,7 +1339,7 @@ class PurchaseAnalysisWidget(Widget):
             .order_by("color", "enddate")[:limit]
         ):
             result.append(
-                '<tr%s><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s%%</td></tr>'
+                '<tr%s><td>%s</td><td class="text-center">%s</td><td class="text-center">%s</td><td class="text-center">%s</td><td class="text-center">%s%%</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     escape(po.item.name if po.item else ""),
@@ -1377,7 +1377,7 @@ class AlertsWidget(Widget):
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
-            '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
+            '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("type"))),
                 capfirst(force_str(_("count"))),
@@ -1397,7 +1397,7 @@ class AlertsWidget(Widget):
         alt = False
         for res in cursor.fetchall():
             result.append(
-                '<tr%s><td class="text-decoration-underline"><a href="%s/problem/?noautofilter&name=%s">%s</a></td><td class="aligncenter">%d</td><td class="aligncenter">%d</td></tr>'
+                '<tr%s><td class="text-decoration-underline"><a href="%s/problem/?noautofilter&name=%s">%s</a></td><td class="text-center">%d</td><td class="text-center">%d</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     request.prefix,

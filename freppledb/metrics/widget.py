@@ -57,8 +57,8 @@ class AnalysisDemandProblems(Widget):
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
-            '<thead><tr><th class="alignleft">%s</th><th class="aligncenter">%s</th>'
-            '<th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>'
+            '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th>'
+            '<th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
             % (
                 capfirst(force_str(_("item"))),
                 capfirst(force_str(_("value of late demands"))),
@@ -100,8 +100,8 @@ class AnalysisDemandProblems(Widget):
         for rec in topitems:
             result.append(
                 '<tr%s><td class="text-decoration-underline"><a href="%s/buffer/item/%s/">%s</a></td>'
-                '<td class="aligncenter">%s%s%s</td><td class="aligncenter">%s</td>'
-                '<td class="aligncenter">%s</td></tr>'
+                '<td class="text-center">%s%s%s</td><td class="text-center">%s</td>'
+                '<td class="text-center">%s</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     request.prefix,

@@ -110,7 +110,7 @@ function markMessageRead(el, status) {
   <input id="markMessages" type="checkbox" onclick="selectAll(this)" data-bs-toggle="tooltip"
     data-original="{% trans "Select/unselect all messages" %}" data-bs-placement="bottom">
 </td>
-<td class="aligncenter">
+<td class="text-center">
   <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" onclick="markMessageRead(null, 'R')"
     data-bs-title="Mark selected messages read" data-bs-placement="bottom">
     <i class="fa fa-envelope-open-o"></i>
@@ -135,7 +135,7 @@ function markMessageRead(el, status) {
 {% for notif in inbox %}
 <tr data-message="{{ notif.id }}" onclick="selectMessage(event, this)">
 <td><input type="checkbox" onclick="selectMessage(event, this)"></label></td>
-<td class="aligncenter msg-status">
+<td class="text-center msg-status">
   {% if notif.status == "R" %}
   <span class="btn btn-sm fa fa-envelope-open-o" onclick="markMessageRead(this)" data-bs-toggle="tooltip"
     data-bs-title="{% trans "Mark message unread" %}" data-bs-placement="bottom"></span>

@@ -87,7 +87,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         DecimalField: {"widget": forms.NumberInput(attrs={"step": "1"})},
         DateField: {"widget": DatePickerInput()},
         TimeField: {"widget": TimePickerInput()},
-        DateTimeField: {"widget": DateTimePickerInput()},
+        DateTimeField: {
+            "form_class": forms.fields.DateTimeField,
+            "widget": DateTimePickerInput(),
+        },
     }
 
     def get_urls(self):

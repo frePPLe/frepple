@@ -699,8 +699,8 @@ class OverviewReport(GridPivot):
                 for row in cursor_chunked:
                     if row[0]:
                         startbacklogdict[(row[0], row[1])] = (
-                            max(float(row[2]), 0),
-                            max(float(row[3]), 0),
+                            max(float(row[2] or 0), 0),
+                            max(float(row[3] or 0), 0),
                         )
         # Execute the actual query
         reasons_forecast = """

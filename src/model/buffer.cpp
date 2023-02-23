@@ -549,7 +549,8 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
           OperationPlan* opplan =
               dynamic_cast<const FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
-          if (topopplan->getOperation()->hasType<OperationSplit>())
+          if (topopplan->getOperation()->hasType<OperationSplit>() ||
+              topopplan->getOperation()->hasType<OperationAlternate>())
             topopplan = opplan;
           iter.updateStack(
               topopplan, topopplan->getQuantity() * newqty / f->getQuantity(),
@@ -580,7 +581,8 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
           OperationPlan* opplan =
               dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
-          if (topopplan->getOperation()->hasType<OperationSplit>())
+          if (topopplan->getOperation()->hasType<OperationSplit>() ||
+              topopplan->getOperation()->hasType<OperationAlternate>())
             topopplan = opplan;
           iter.updateStack(
               topopplan, topopplan->getQuantity() * newqty / f->getQuantity(),
@@ -626,7 +628,8 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
           OperationPlan* opplan =
               dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
-          if (topopplan->getOperation()->hasType<OperationSplit>())
+          if (topopplan->getOperation()->hasType<OperationSplit>() ||
+              topopplan->getOperation()->hasType<OperationAlternate>())
             topopplan = opplan;
           iter.updateStack(
               topopplan, -topopplan->getQuantity() * newqty / f->getQuantity(),
@@ -655,7 +658,8 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
           OperationPlan* opplan =
               dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan* topopplan = opplan->getTopOwner();
-          if (topopplan->getOperation()->hasType<OperationSplit>())
+          if (topopplan->getOperation()->hasType<OperationSplit>() ||
+              topopplan->getOperation()->hasType<OperationAlternate>())
             topopplan = opplan;
           iter.updateStack(
               topopplan, -topopplan->getQuantity() * newqty / f->getQuantity(),

@@ -1429,9 +1429,18 @@ class DistributionOrder(OperationPlan):
                 ):
                     if not firstItemDistribution:
                         firstItemDistribution = i
-                    if (
-                        not i.effective_start or self.enddate >= i.effective_start
-                    ) and (not i.effective_end or self.enddate <= i.effective_end):
+                    if self.enddate:
+                        enddate = self.enddate
+                    elif self.startdate:
+                        enddate = self.calculateOperationTime(
+                            self.startdate, i.leadtime, forward=True
+                        )
+                    else:
+                        self._itemdistribution = i
+                        return self._itemdistribution
+                    if (not i.effective_start or enddate >= i.effective_start) and (
+                        not i.effective_end or enddate <= i.effective_end
+                    ):
                         self._itemdistribution = i
                         return self._itemdistribution
                     self._itemdistribution = i
@@ -1767,9 +1776,18 @@ class PurchaseOrder(OperationPlan):
                 ):
                     if not firstSupplier:
                         firstSupplier = i
-                    if (
-                        not i.effective_start or self.enddate >= i.effective_start
-                    ) and (not i.effective_end or self.enddate <= i.effective_end):
+                    if self.enddate:
+                        enddate = self.enddate
+                    elif self.startdate:
+                        enddate = self.calculateOperationTime(
+                            self.startdate, i.leadtime, forward=True
+                        )
+                    else:
+                        self._itemsupplier = i
+                        return self._itemsupplier
+                    if (not i.effective_start or enddate >= i.effective_start) and (
+                        not i.effective_end or enddate <= i.effective_end
+                    ):
                         self._itemsupplier = i
                         return self._itemsupplier
             # No supplier was found considering the effectivity dates. Ignore these and return the first one.
@@ -2633,9 +2651,10 @@ class ManufacturingOrder(OperationPlan):
             if not self._resources:
                 # Create new opplanres records
                 for r in self.operation.operationresources.using(database).all():
-                    if r.effective_start and self.enddate < r.effective_start:
+                    enddate = self.enddate or self.startdate or None
+                    if r.effective_start and enddate < r.effective_start:
                         continue
-                    if r.effective_end and self.enddate > r.effective_end:
+                    if r.effective_end and enddate > r.effective_end:
                         continue
                     rsrc = r.getPreferredResource()
                     if not rsrc:

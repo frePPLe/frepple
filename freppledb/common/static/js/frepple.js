@@ -1789,7 +1789,6 @@ var grid = {
   },
 
   markSelectedRow: function (sel) {
-    console.log("pppppp", sel);
     if (typeof sel !== 'undefined' && sel > 0) {
       $("#delete_selected, #copy_selected").prop('disabled', false);
       if ($("#actions").length) $("#actions1").prop('disabled', false);

@@ -178,9 +178,6 @@ function displayGrid(load) {
     			);
     	{% endif %}
     	$('#curerror').html("");
-      $(".invStatus").each( function(value) {
-        $(this).parent().css('background',$(this).css('background-color'));
-      });
       upload.restoreSelection();
     },
     {% block extra_grid %}{% endblock %}

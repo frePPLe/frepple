@@ -383,9 +383,6 @@ onSelectRow: function(rowid, status, e) {
 multiboxonly: false,
 loadComplete: function(data) {
       $('#curerror').html("");
-      $(".invStatus").each( function(value) {
-        $(this).parent().css('background',$(this).css('background-color'));
-      });
       if (upload.selectedRows.length === 1) {
         angular.element('#controller').scope().displayInfo(
           jQuery("#grid").getRowData(upload.selectedRows[0])

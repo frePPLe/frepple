@@ -528,11 +528,11 @@ jQuery.extend($.fn.fmatter, {
     if (parseInt(rowdata.criticality) === 999 || parseInt(rowdata.operationplan__criticality) === 999) {
       return '';
     } else if (thedelay < 0) {
-      return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">' + (-thedelay) + ' ' + gettext("days early") + '</div>';
+      return '<div class="invStatus" style="background-color: #008000; color: #151515;">' + (-thedelay) + ' ' + gettext("days early") + '</div>';
     } else if (thedelay === 0) {
-      return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">' + gettext("on time") + '</div>';
+      return '<div class="invStatus" style="background-color: #008000; color: #151515;">' + gettext("on time") + '</div>';
     } else if (thedelay > 0) {
-      return '<div class="invStatus" style="text-align: center; background-color: #f00; color: #151515;">' + thedelay + ' ' + gettext("days late") + '</div>';
+      return '<div class="invStatus" style="background-color: #f00; color: #151515;">' + thedelay + ' ' + gettext("days late") + '</div>';
     }
     return '';
   },

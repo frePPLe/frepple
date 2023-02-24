@@ -429,8 +429,17 @@ div.tt-dataset.tt-dataset-search {
         background-color: $table-bg;
     }
 
+    td[role=gridcell]:has(div.invStatus) {
+        // Status color cells need to occupy the full center
+        padding: 0 !important;
+    }
+
     .invStatus {
+        // Status color text should be centered in the cell
         height: 100%;
+        @extend .d-flex;
+        @extend .align-items-center;
+        @extend .justify-content-center;
     }
 
     .ui-jqgrid-titlebar,

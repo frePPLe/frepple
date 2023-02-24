@@ -274,8 +274,10 @@ function displayGrid(load) {
 	  $("#horizonunit").val($(this).prop('name'));
 	});
 
-  $("#gridactions").change(function(){
-    grid.runAction(this.value);
+  $("#actionsul li a").click(function(){
+    $("#actions1 span").text($(this).text());
+    $("#actions").val($(this).prop('name'));
+    grid.runAction($(this).prop('name'));
   });
 
   {% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}
@@ -323,12 +325,19 @@ function displayGrid(load) {
   {% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}
 </button>
 {% if actions %}
-  <select disabled class="form-select d-inline-block w-auto" aria-label="select action" name="gridactions" id="gridactions">
-      <option id="noactionselected" selected>{% trans "select action"|capfirst %}</option>
+<form class="form-addon d-inline" method="get" action="#">
+  <input type="hidden" name="actions" id="actions" value="">
+  <div class="dropdown d-inline">
+      <button disabled class="d-inline w-auto dropdown-toggle form-control" type="button" name="actions1" id="actions1" data-bs-toggle="dropdown" aria-expanded="false">
+      <span>{% trans "select action"|capfirst %}</span>
+      </button>
+      <ul class="dropdown-menu" id="actionsul">
       {% for i in  actions %}
-        <option value="{{ i.name|escape }}">{% trans i.label|capfirst %}</option>
+        <li><a class="dropdown-item" name="{{ i.name|escape }}">{% trans i.label|capfirst %}</a></li>
       {% endfor %}
-  </select>
+      </ul>
+  </div>
+</form>
 {% endif %}
 {% endif %}
 {% endblock save_undo_buttons %}

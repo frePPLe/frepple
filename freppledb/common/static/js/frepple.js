@@ -660,8 +660,8 @@ var grid = {
   },
 
   runAction: function (next_action) {
-    var v = $("#gridactions").val();
-    if (v) actions[v]();
+    if ($("#actions").val() != "no_action")
+      actions[$("#actions").val()]();
   },
 
   setStatus: function (newstatus, field_prefix) {
@@ -670,7 +670,7 @@ var grid = {
       jQuery("#grid").jqGrid("setCell", sel[i], field_prefix ? field_prefix + 'status' : 'status', newstatus, "dirty-cell");
       jQuery("#grid").jqGrid("setRowData", sel[i], false, "edited");
     };
-    $("#noactionselected").prop("selected", true);
+    $("#actions1").html(gettext("Select action"));
     $('#save').removeClass("btn-primary").addClass("btn-danger").prop("disabled", false);
     $('#undo').removeClass("btn-primary").addClass("btn-danger").prop("disabled", false);
   },
@@ -1450,8 +1450,8 @@ var grid = {
           type: "POST",
           contentType: "application/json",
           success: function () {
-            $("#delete_selected").prop("disabled", true).removeClass("bold");
-            $("#copy_selected").prop("disabled", true).removeClass("bold");
+            $("#delete_selected").prop("disabled", true);
+            $("#copy_selected").prop("disabled", true);
             $('.cbox').prop("checked", false);
             $('#cb_grid.cbox').prop("checked", false);
             $("#grid").trigger("reloadGrid");
@@ -1501,8 +1501,8 @@ var grid = {
           type: "POST",
           contentType: "application/json",
           success: function () {
-            $("#delete_selected").prop("disabled", true).removeClass("bold");
-            $("#copy_selected").prop("disabled", true).removeClass("bold");
+            $("#delete_selected").prop("disabled", true);
+            $("#copy_selected").prop("disabled", true);
             $('.cbox').prop("checked", false);
             $('#cb_grid.cbox').prop("checked", false);
             $("#grid").trigger("reloadGrid");
@@ -1789,32 +1789,27 @@ var grid = {
   },
 
   markSelectedRow: function (sel) {
-    if (typeof sel === 'undefined') {
-      sel = 0;
-    }
-
-    if (sel > 0) {
-      $("#copy_selected").prop('disabled', false).addClass("bold");
-      $("#delete_selected").prop('disabled', false).addClass("bold");
-      $("#gridactions").prop('disabled', false);
+    console.log("pppppp", sel);
+    if (typeof sel !== 'undefined' && sel > 0) {
+      $("#delete_selected, #copy_selected").prop('disabled', false);
+      if ($("#actions").length) $("#actions1").prop('disabled', false);
     }
     else {
-      $("#copy_selected").prop('disabled', true).removeClass("bold");
-      $("#delete_selected").prop('disabled', true).removeClass("bold");
-      $("#gridactions").prop('disabled', true);
+      $("#delete_selected, #copy_selected").prop('disabled', true);
+      if ($("#actions").length) $("#actions1").prop('disabled', true);
     }
   },
 
   markAllRows: function () {
     if ($(this).is(':checked')) {
-      $("#copy_selected").prop('disabled', false).addClass("bold");
-      $("#delete_selected").prop('disabled', false).addClass("bold");
+      $("#copy_selected").prop('disabled', false);
+      $("#delete_selected").prop('disabled', false);
       $("#gridactions").prop('disabled', false);
       $('.cbox').prop("checked", true);
     }
     else {
-      $("#copy_selected").prop('disabled', true).removeClass("bold");
-      $("#delete_selected").prop('disabled', true).removeClass("bold");
+      $("#copy_selected").prop('disabled', true);
+      $("#delete_selected").prop('disabled', true);
       $("#gridactions").prop('disabled', true);
       $('.cbox').prop("checked", false);
     }
@@ -2159,7 +2154,8 @@ var ERPconnection = {
         }
       });
     });
-    $("#noactionselected").prop("selected", true);
+    if ($("#actions").length)
+      $("#actions1 span").text($("#actionsul").children().first().text());
   },
 
 } //end Code for ERP integration

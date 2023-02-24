@@ -39,7 +39,8 @@ class TableLocators:
     TABLE_ROWS = (By.CSS_SELECTOR, "tr")
     TABLE_SAVE_BUTTON = (By.CSS_SELECTOR, 'button[id="save"]')
     TABLE_UNDO_BUTTON = (By.CSS_SELECTOR, 'button[id="undo"]')
-    TABLE_SELECT_ACTION = (By.CSS_SELECTOR, 'select[id="gridactions"]')
+    TABLE_SELECT_ACTION = (By.CSS_SELECTOR, 'button[id="actions1"]')
+    TABLE_SELECT_ACTION_MENU = (By.CSS_SELECTOR, 'ul[id="actionsul"]')
 
     tablecolumns = {
         "supplier": (By.CSS_SELECTOR, 'td[aria-describedby="grid_supplier"]'),
@@ -63,4 +64,4 @@ class TableLocators:
 
     @staticmethod
     def actionLocator(actionTofind):
-        return (By.CSS_SELECTOR, "option[value='" + actionTofind + "']")
+        return (By.CSS_SELECTOR, "li>a[name='" + actionTofind + "']")

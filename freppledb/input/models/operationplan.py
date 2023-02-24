@@ -522,19 +522,18 @@ class OperationPlan(AuditModel):
                     jsonb_array_elements(operationplan.plan->'downstream_opplans') as dwnstrm,
                     jsonb_array_elements(operationplan.plan->'upstream_opplans') as upstrm
                   from operationplan
-                  where reference = %%s
+                  where reference = %s
                   )
                 select
                    1, operationplan.reference,
                    coalesce(cte.enddate + operation_dependency.hard_safety_leadtime, cte.enddate)
                 from cte
                 inner join operationplan
-                  on operationplan.reference = cte.dwnstrm->>1
+                  on operationplan.reference = cte.dwnstrm->>0
                 inner join operation_dependency
                   on cte.operation_id = operation_dependency.blockedby_id
                   and operationplan.operation_id = operation_dependency.operation_id
-                where dwnstrm->>0 in ('1' %s)
-                and operationplan.startdate < coalesce(cte.enddate + operation_dependency.hard_safety_leadtime, cte.enddate)
+                where operationplan.startdate < coalesce(cte.enddate + operation_dependency.hard_safety_leadtime, cte.enddate)
                 and (operationplan.status is null or operationplan.status in ('approved', 'proposed'))
                 union all
                 select
@@ -542,15 +541,13 @@ class OperationPlan(AuditModel):
                    coalesce(cte.startdate - operation_dependency.hard_safety_leadtime, cte.startdate)
                 from cte
                 inner join operationplan
-                  on operationplan.reference = cte.upstrm->>1
+                  on operationplan.reference = cte.upstrm->>0
                 inner join operation_dependency
                   on cte.operation_id = operation_dependency.operation_id
                   and operationplan.operation_id = operation_dependency.blockedby_id
-                where upstrm->>0 in ('1' %s)
-                and operationplan.enddate > coalesce(cte.startdate - operation_dependency.hard_safety_leadtime, cte.startdate)
+                where operationplan.enddate > coalesce(cte.startdate - operation_dependency.hard_safety_leadtime, cte.startdate)
                 and (operationplan.status is null or operationplan.status in ('approved', 'proposed'))
-                """
-                % ((",'2'", ",'2'") if self.owner else ("", "")),
+                """,
                 (self.reference,),
             )
             for rec in cursor.fetchall():

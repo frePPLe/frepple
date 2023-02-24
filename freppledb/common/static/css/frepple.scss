@@ -187,17 +187,28 @@
 /* Marking of edited and selected items. */
 
 .dirty-cell,
-input.ng-dirty {
-    background: $danger !important;
+input.ng-dirty,
+.dirty-cell.active,
+input.ng-dirty.active,
+.dirty-cell:hover,
+input.ng-dirty:hover {
+    background-color: $danger !important;
+    box-shadow: none !important;
 }
 
 .edit-cell {
-    background: yellow !important;
+    background-color: yellow !important;
+    box-shadow: none !important;
 }
 
 tr.ui-state-highlight {
     border: 1px solid $danger !important;
     background: lighten($danger, 15%) !important;
+}
+
+.editablepivotcol {
+    line-height: 21px;
+    display: block;
 }
 
 // Avatar

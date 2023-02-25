@@ -45,6 +45,10 @@ from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS, create_connect
 logger = logging.getLogger(__name__)
 
 
+def timesince(st):
+    return str(datetime.now() - st).split(".")[0]
+
+
 class Command(BaseCommand):
 
     help = """
@@ -98,7 +102,6 @@ class Command(BaseCommand):
             handler = logging.FileHandler(
                 os.path.join(settings.FREPPLE_LOGDIR, logfile), encoding="utf-8"
             )
-            # handler.setFormatter(logging.Formatter(settings.LOGGING['formatters']['simple']['format']))
             logger.addHandler(handler)
             logger.propagate = False
         except Exception as e:
@@ -156,10 +159,8 @@ class Command(BaseCommand):
             ] and os.path.isdir(settings.DATABASES[self.database]["FILEUPLOADFOLDER"]):
 
                 # Open the logfile
-                logger.info(
-                    "%s Started importfromfolder\n"
-                    % datetime.now().replace(microsecond=0)
-                )
+                startofall = datetime.now()
+                logger.info("Started importfromfolder\n")
 
                 all_models = [
                     (ct.model_class(), ct.pk)
@@ -194,10 +195,7 @@ class Command(BaseCommand):
                             break
 
                     if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
-                        logger.info(
-                            "%s Ignoring data in file: %s"
-                            % (datetime.now().replace(microsecond=0), ifile)
-                        )
+                        logger.info("Ignoring data in file: %s" % ifile)
                     elif self.user and not self.user.has_perm(
                         "%s.%s"
                         % (
@@ -206,10 +204,7 @@ class Command(BaseCommand):
                         )
                     ):
                         # Check permissions
-                        logger.info(
-                            "%s You don't have permissions to add: %s"
-                            % (datetime.now().replace(microsecond=0), ifile)
-                        )
+                        logger.info("You don't have permissions to add: %s" % ifile)
                     else:
                         deps = set([model])
                         GridReport.dependent_models(model, deps)
@@ -232,57 +227,45 @@ class Command(BaseCommand):
                         ),
                         ifile,
                     )
+                    starting = datetime.now()
                     if ifile.lower().endswith((".sql", ".sql.gz")):
                         logger.info(
-                            "%s Started executing SQL statements from file: %s"
-                            % (datetime.now().replace(microsecond=0), ifile)
+                            "Started executing SQL statements from file: %s" % ifile
                         )
                         errors[0] += self.executeSQLfile(filetoparse)
                         logger.info(
-                            "%s Finished executing SQL statements from file: %s"
-                            % (datetime.now().replace(microsecond=0), ifile)
+                            "Finished executing SQL statements from file %s in %s"
+                            % (ifile, timesince(starting))
                         )
                     elif ifile.lower().endswith((".cpy", ".cpy.gz")):
-                        logger.info(
-                            "%s Started uploading copy file: %s"
-                            % (datetime.now().replace(microsecond=0), ifile)
-                        )
+                        logger.info("Started uploading copy file: %s" % ifile)
                         errors[0] += self.executeCOPYfile(model, filetoparse)
                         logger.info(
-                            "%s Finished uploading copy file: %s"
-                            % (datetime.now().replace(microsecond=0), ifile)
+                            "Finished uploading copy file %s in %s"
+                            % (ifile, timesince(starting))
                         )
                     elif ifile.lower().endswith((".xlsx", ".xlsm")):
-                        logger.info(
-                            "%s Started processing data in Excel file: %s"
-                            % (datetime.now().replace(microsecond=0), ifile)
-                        )
+                        logger.info("Started processing data in Excel file: %s" % ifile)
                         returnederrors = self.loadExcelfile(model, filetoparse)
                         errors[0] += returnederrors[0]
                         errors[1] += returnederrors[1]
                         logger.info(
-                            "%s Finished processing data in file: %s"
-                            % (datetime.now().replace(microsecond=0), ifile)
+                            "Finished processing data in file %s in %s"
+                            % (ifile, timesince(starting))
                         )
                     else:
-                        logger.info(
-                            "%s Started processing data in CSV file: %s"
-                            % (datetime.now().replace(microsecond=0), ifile)
-                        )
+                        logger.info("Started processing data in CSV file: %s" % ifile)
                         returnederrors = self.loadCSVfile(model, filetoparse)
                         errors[0] += returnederrors[0]
                         errors[1] += returnederrors[1]
                         logger.info(
-                            "%s Finished processing data in CSV file: %s"
-                            % (datetime.now().replace(microsecond=0), ifile)
+                            "Finished processing data in CSV file %s in %s"
+                            % (ifile, timesince(starting))
                         )
             else:
                 errors[0] += 1
                 cnt = 0
-                logger.error(
-                    "%s Failed, folder does not exist"
-                    % datetime.now().replace(microsecond=0)
-                )
+                logger.error("Failed, folder does not exist")
 
             # Task update
             if errors[0] > 0:
@@ -306,10 +289,10 @@ class Command(BaseCommand):
             if task:
                 task.status = "Cancelled"
                 task.message = "Cancelled"
-            logger.info("%s Cancelled\n" % datetime.now().replace(microsecond=0))
+            logger.info("Cancelled\n")
 
         except Exception as e:
-            logger.error("%s Failed" % datetime.now().replace(microsecond=0))
+            logger.error("Failed")
             if task:
                 task.status = "Failed"
                 task.message = "%s" % e
@@ -325,9 +308,7 @@ class Command(BaseCommand):
                 task.processid = None
                 task.finished = datetime.now()
                 task.save(using=self.database)
-            logger.info(
-                "%s End of importfromfolder\n" % datetime.now().replace(microsecond=0)
-            )
+            logger.info("End of importfromfolder in %s\n" % timesince(startofall))
 
     def executeCOPYfile(self, model, ifile):
         """
@@ -391,9 +372,8 @@ class Command(BaseCommand):
             countAfter = cursor.fetchone()[0]
 
             logger.info(
-                "%s %s records uploaded into table %s"
+                "%s records uploaded into table %s"
                 % (
-                    datetime.now().replace(microsecond=0),
                     (countAfter - countBefore),
                     tableName,
                 )
@@ -401,10 +381,7 @@ class Command(BaseCommand):
             return 0
 
         except Exception as e:
-            logger.error(
-                "%s Error uploading COPY file: %s"
-                % (datetime.now().replace(microsecond=0), e)
-            )
+            logger.error("Error uploading COPY file: %s" % e)
             return 1
         finally:
             # Need to force closing the connection. Otherwise we keep the
@@ -428,10 +405,7 @@ class Command(BaseCommand):
                 cursor.execute(file_open(ifile, "rt").read())
             return 0
         except Exception as e:
-            logger.error(
-                "%s Error executing SQL: %s"
-                % (datetime.now().replace(microsecond=0), e)
-            )
+            logger.error("Error executing SQL: %s" % e)
             return 1
         finally:
             if conn:
@@ -448,9 +422,8 @@ class Command(BaseCommand):
                 ):
                     if error[0] == logging.ERROR:
                         logger.error(
-                            "%s Error: %s%s%s%s"
+                            "Error: %s%s%s%s"
                             % (
-                                datetime.now().replace(microsecond=0),
                                 "Row %s: " % error[1] if error[1] else "",
                                 "field %s: " % error[2] if error[2] else "",
                                 "%s: " % error[3] if error[3] else "",
@@ -460,9 +433,8 @@ class Command(BaseCommand):
                         errorcount += 1
                     elif error[0] == logging.WARNING:
                         logger.warning(
-                            "%s Warning: %s%s%s%s"
+                            "Warning: %s%s%s%s"
                             % (
-                                datetime.now().replace(microsecond=0),
                                 "Row %s: " % error[1] if error[1] else "",
                                 "field %s: " % error[2] if error[2] else "",
                                 "%s: " % error[3] if error[3] else "",
@@ -472,9 +444,8 @@ class Command(BaseCommand):
                         warningcount += 1
                     else:
                         logger.info(
-                            "%s %s%s%s%s"
+                            "%s%s%s%s"
                             % (
-                                datetime.now().replace(microsecond=0),
                                 "Row %s: " % error[1] if error[1] else "",
                                 "field %s: " % error[2] if error[2] else "",
                                 "%s: " % error[3] if error[3] else "",
@@ -487,10 +458,7 @@ class Command(BaseCommand):
 
         except Exception:
             errorcount += 1
-            logger.error(
-                "%s Error: Invalid data format - skipping the file \n"
-                % datetime.now().replace(microsecond=0)
-            )
+            logger.error("Error: Invalid data format - skipping the file \n")
         return [errorcount, warningcount]
 
     def loadExcelfile(self, model, file):
@@ -517,9 +485,8 @@ class Command(BaseCommand):
                     ):
                         if error[0] == logging.ERROR:
                             logger.error(
-                                "%s Error: %s%s%s%s"
+                                "Error: %s%s%s%s"
                                 % (
-                                    datetime.now().replace(microsecond=0),
                                     "Row %s: " % error[1] if error[1] else "",
                                     "field %s: " % error[2] if error[2] else "",
                                     "%s: " % error[3] if error[3] else "",
@@ -529,9 +496,8 @@ class Command(BaseCommand):
                             errorcount += 1
                         elif error[0] == logging.WARNING:
                             logger.warning(
-                                "%s Warning: %s%s%s%s"
+                                "Warning: %s%s%s%s"
                                 % (
-                                    datetime.now().replace(microsecond=0),
                                     "Row %s: " % error[1] if error[1] else "",
                                     "field %s: " % error[2] if error[2] else "",
                                     "%s: " % error[3] if error[3] else "",
@@ -541,9 +507,8 @@ class Command(BaseCommand):
                             warningcount += 1
                         else:
                             logger.info(
-                                "%s %s%s%s%s"
+                                "%s%s%s%s"
                                 % (
-                                    datetime.now().replace(microsecond=0),
                                     "Row %s: " % error[1] if error[1] else "",
                                     "field %s: " % error[2] if error[2] else "",
                                     "%s: " % error[3] if error[3] else "",
@@ -554,10 +519,7 @@ class Command(BaseCommand):
             NotificationFactory.launchWorker(database=self.database, url=None)
         except Exception:
             errorcount += 1
-            logger.error(
-                "%s Error: Invalid data format - skipping the file \n"
-                % datetime.now().replace(microsecond=0)
-            )
+            logger.error("Error: Invalid data format - skipping the file \n")
         return [errorcount, warningcount]
 
     # accordion template

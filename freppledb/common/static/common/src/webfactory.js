@@ -46,14 +46,14 @@ function webfactory($rootScope, $websocket, $interval, $http, $window) {
     angular.element("#controller").scope().$applyAsync(function(){
       if (typeof msg === 'object') {
         if (msg.hasOwnProperty('category') && msg.hasOwnProperty('description')) {
-          themodal.find('.modal-title span').html('Webservice error');
+          themodal.find('.modal-title').html('Webservice error');
           themodal.find('.modal-body').css({'width':500,'height':350,'overflow':'auto'});
           themodal.find('#savechangesparagraph').hide();
           themodal.find('#saveAbutton').hide();
           themodal.find('.modal-body').append(message);
         }
       } else {
-        themodal.find('.modal-title span').html('Websocket connection problem');
+        themodal.find('.modal-title').html('Websocket connection problem');
         themodal.find('.modal-body').html('<div style="width: 100%; overflow: auto;">'+ message + '</div>');
       }
     });

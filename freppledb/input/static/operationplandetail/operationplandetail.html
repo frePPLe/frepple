@@ -34,16 +34,14 @@
     </div>
   </div>
   <!-- row end  -->
-  <div id="popup2" class="modal fade in" role="dialog" style="z-index: 10000; overflow-y: visible">
+  <div id="popup2" class="modal" role="dialog" style="z-index: 10000; overflow-y: visible">
     <div class="modal-dialog" data-ng-style="{'width': (databaseerrormodal) ? '500px' : '300px'}">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="btn-close" data-bs-dismiss="modal">
-            <span aria-hidden="true" class="fa fa-times"></span>
-          </button>
-          <h5 class="modal-title" data-ng-if="!databaseerrormodal && !rowlimiterrormodal" style="text-transform: capitalize;" translate>unsaved changes</h5>
-          <h5 class="modal-title" data-ng-if="rowlimiterrormodal && rowlimiterrormodal" style="text-transform: capitalize;" translate>gantt chart rows limit</h5>
-          <h5 class="modal-title" data-ng-if="databaseerrormodal" style="text-transform: capitalize;" translate>database transaction failed</h5>
+          <h5 class="modal-title text-capitalize" data-ng-if="!databaseerrormodal && !rowlimiterrormodal" translate>unsaved changes</h5>
+          <h5 class="modal-title text-capitalize" data-ng-if="rowlimiterrormodal && rowlimiterrormodal" translate>gantt chart rows limit</h5>
+          <h5 class="modal-title text-capitalize" data-ng-if="databaseerrormodal" translate>database transaction failed</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body" ng-if="!databaseerrormodal && !rowlimiterrormodal">
           <p translate>Do you want to save your changes first?</p>

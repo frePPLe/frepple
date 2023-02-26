@@ -9,9 +9,10 @@ getent group frepple > /dev/null 2>&1 || addgroup --quiet frepple
 chgrp frepple /usr/bin/frepple /usr/bin/frepplectl
 chmod o= /usr/bin/frepple /usr/bin/frepplectl
 
-# Add apache user to the frepple user group
+# Add apache user to the frepple and monitoring groups
 . /etc/apache2/envvars
 adduser --quiet www-data frepple
+adduser --quiet www-data adm
 
 # Set permissions on configuration files
 chgrp frepple /etc/frepple /etc/frepple/*

@@ -20,7 +20,9 @@ function getScrollBarWidth() {
 function breadcrumbs_reflow() {
   var crumbs = $("#breadcrumbs");
   var crumbrow = $(".breadcrumbrow");
-  var maxwidth = crumbrow.parent().width() - $("#database").closest(".navbar-nav").width();
+  var maxwidth = crumbrow.parent().width();
+  var scenariowidth = $("#database").closest(".navbar-nav").width();
+  if (scenariowidth) maxwidth -= scenariowidth;
 
   // Show all elements previously hidden
   crumbs.children("li.d-none").removeClass("d-none");

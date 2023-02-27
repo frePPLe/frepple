@@ -12203,7 +12203,7 @@
 				// create operator container
 				var ruleOperatorTd = $("<td class='operators'></td>");
 				tr.append(ruleOperatorTd);
-				cm = p.columns[j];
+				cm = sortedcolumns[j];
 				// create it here so it can be referentiated in the onchange event
 				//var RD = that.createElement(rule, rule.data);
 				if (isIE && cm.inputtype === "text") {

@@ -62,7 +62,6 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     function hideColumn(col) {
       var idx = $scope.$parent.kanbancolumns.indexOf(col);
       $scope.$parent.kanbancolumns.splice(idx, 1);
-      getColStyle();
       PreferenceSvc.save("columns", $scope.$parent.kanbancolumns);
     };
     $scope.hideColumn = hideColumn;
@@ -134,7 +133,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     }
 
     function HandlerDrop(event) {
-      var endvalue = $(event.target).closest(".column").attr("data-column");
+      var endvalue = $(event.target).closest("div[data-column]").attr("data-column");
       if (endvalue) {
         var startvalue = event.originalEvent.dataTransfer.getData("startcolumn");
         var startindex = event.originalEvent.dataTransfer.getData("startindex");
@@ -228,22 +227,22 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
       );
       event.originalEvent.dataTransfer.setData(
         "startcolumn",
-        $(event.target).closest(".column").attr("data-column")
+        $(event.target).closest("div[data-column]").attr("data-column")
       );
       event.stopPropagation();
     };
 
     function enableDragDrop() {
-      $elem.on('dragover', '.column, .card', HandlerDragOver);
-      $elem.on('drop', '.column', HandlerDrop);
-      $elem.on('dragstart', '.column .panel .card-header, .card', HandlerDragStart);
+      $elem.on('dragover', 'div[data-column], .card', HandlerDragOver);
+      $elem.on('drop', 'div[data-column]', HandlerDrop);
+      $elem.on('dragstart', 'div[data-column] .panel .card-header, .card', HandlerDragStart);
     }
     $scope.enableDragDrop = enableDragDrop;
 
     function disableDragDrop() {
-      $elem.off('dragover', '.column, .card', HandlerDragOver);
-      $elem.off('drop', '.column', HandlerDrop);
-      $elem.off('dragstart', '.column .panel .card-header, .card', HandlerDragStart);
+      $elem.off('dragover', 'div[data-column], .card', HandlerDragOver);
+      $elem.off('drop', 'div[data-column]', HandlerDrop);
+      $elem.off('dragstart', 'div[data-column] .panel .card-header, .card', HandlerDragStart);
     }
     $scope.disableDragDrop = disableDragDrop;
 

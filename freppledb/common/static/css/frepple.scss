@@ -475,6 +475,10 @@ div.tt-dataset.tt-dataset-search {
     }
 }
 
+.g-menu-item {
+    @extend .dropdown-item;
+}
+
 // Link to password change form on the user edit screen
 
 div.help-block a {

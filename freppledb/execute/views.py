@@ -1369,6 +1369,16 @@ def importWorkbook(request):
                                 error[3] if error[3] else "",
                                 error[4],
                             )
+
+                    # Excel duration might have changed after reading the parameter tab
+                    if str(model._meta) == "common.parameter":
+                        # retrieve value of parameter excel_duration_in_days
+                        excel_duration_in_days = (
+                            Parameter.getValue(
+                                "excel_duration_in_days", request.database, "false"
+                            ).lower()
+                            == "true"
+                        )
             yield "</tbody></table></div>"
             yield "<div><strong>%s</strong><br><br></div>" % _("Done")
     except GeneratorExit:

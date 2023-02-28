@@ -18,7 +18,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from freppledb.common.models import HierarchyModel, AuditModel
+from freppledb.common.models import HierarchyModel, AuditModel, Parameter
 
 
 class Item(AuditModel, HierarchyModel):
@@ -71,6 +71,10 @@ class Item(AuditModel, HierarchyModel):
         help_text=_("Period of cover in days"),
     )
     uom = models.CharField(_("unit of measure"), max_length=20, null=True, blank=True)
+
+    extra_dependencies = [
+        Parameter,
+    ]
 
     def __str__(self):
         return self.name

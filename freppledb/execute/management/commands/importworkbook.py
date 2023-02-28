@@ -288,6 +288,17 @@ class Command(BaseCommand):
                             #       error[4]
                             #       )
                             # yield '</tbody></table></div>'
+
+                            # Excel duration might have changed after reading the parameter tab
+                            if str(model._meta) == "common.parameter":
+                                # retrieve value of parameter excel_duration_in_days
+                                excel_duration_in_days = (
+                                    Parameter.getValue(
+                                        "excel_duration_in_days", self.database, "false"
+                                    ).lower()
+                                    == "true"
+                                )
+
                         print("%s" % _("Done"))
                         # yield '<div><strong>%s</strong></div>' % _("Done")
             except GeneratorExit:

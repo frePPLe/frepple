@@ -155,11 +155,13 @@ class TablePage(BasePage):
         targetinputfield.send_keys(Keys.RETURN)
         time.sleep(0.3)
 
-    def enter_text_in_inputdatefield(self, targetinputdatefield, newdate):
-        # Localized date format:
-        # val = date_format(newdate, "DATE_FORMAT", use_l10n=False)
-        # Native browser input. Funky format to be followed.
-        val = newdate.strftime("%m-%d-%Y")
+    def enter_text_in_inputdatefield(
+        self, targetinputdatefield, newdate, withTime=True
+    ):
+        if withTime:
+            val = date_format(newdate, "DATETIME_FORMAT", use_l10n=False)
+        else:
+            val = newdate.strftime("%m-%d-%Y")
         targetinputdatefield.clear()
         time.sleep(0.3)
         targetinputdatefield.send_keys(val)

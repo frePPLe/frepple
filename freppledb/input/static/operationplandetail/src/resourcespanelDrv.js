@@ -79,8 +79,10 @@ function showresourcespanelDrv($window, gettextCatalog) {
 				var newresource = $(this).html();
 				var curresource = $(this).parent().parent().prev().html();
 				if (newresource != curresource) {
+					var first = true;
 					angular.forEach(scope.operationplan.loadplans, function (theresource) {
-						if (theresource.resource.name == curresource) {
+						if (theresource.resource.name == curresource && first) {
+							first = false;
 							// Update the assigned resource
 							theresource.resource.name = newresource;
 							// Update the alternate list

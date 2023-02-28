@@ -65,7 +65,7 @@ $(function() {
 	  {% setting "SESSION_COOKIE_AGE" as persistent_cookie %}
 	  {% if persistent_cookie %}
       <div class="mb-3 text-center">
-		  <input type="checkbox" id="remember_me" name="remember_me" value="false">&nbsp;
+		  <input class="form-check-input" type="checkbox" id="remember_me" name="remember_me" value="false">&nbsp;
 		  <label for="remember_me">{% trans "Remember Me" %}</label>
       </div>
       {% endif %}

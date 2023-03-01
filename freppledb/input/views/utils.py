@@ -2159,6 +2159,7 @@ class OperationPlanDetail(View):
                     and cte.level < 25
                     and cte.path not like '%%%%/'||nextopplan.reference||'/%%%%'
                     and cte.nextreference != nextopplan.reference
+                    and (select count(*) from operation_dependency where blockedby_id = nextopplan.operation_id) <= 1
                     )
                     select * from cte
                     order by path
@@ -2284,7 +2285,8 @@ class OperationPlanDetail(View):
                     left outer join lateral
                     (select t->>0 reference,
                     (t->>1)::numeric quantity,
-                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'downstream_opplans') t) downstream on downstream.reference = operationplan.reference
+                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'downstream_opplans') t) downstream
+                    on downstream.reference = operationplan.reference or downstream.reference = operationplan.owner_id
                     left outer join operationmaterial consuming_om on consuming_om.operation_id = operationplan.operation_id
                         and consuming_om.quantity < 0 and consuming_om.item_id = nextopplan.item_id
                     left outer join operationmaterial producing_om on producing_om.operation_id = operationplan.operation_id
@@ -2309,6 +2311,7 @@ class OperationPlanDetail(View):
                     and cte.level < 25
                     and cte.path not like '%%%%/'||nextopplan.reference||'/%%%%'
                     and cte.nextreference != nextopplan.reference
+                    and (select count(*) from operation_dependency where operation_id = nextopplan.operation_id) <= 1
                     )
                     select * from cte
                     order by path

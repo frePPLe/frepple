@@ -38,10 +38,7 @@ class Command(StdCommand):
         # freppledb.common.apps already checks for required apps.
         missing_apps = [
             i
-            for i in [
-                "freppledb.wizard",
-                "freppledb.metrics",
-            ]
+            for i in ["freppledb.wizard", "freppledb.metrics", "freppledb.debugreport"]
             if i not in settings.INSTALLED_APPS
         ]
         if missing_apps:

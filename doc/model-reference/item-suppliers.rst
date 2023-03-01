@@ -39,8 +39,8 @@ hard_safety_leadtime  duration          | Adds additional time on top of the sta
                                           material reception, administrative time, etc... that cannot
                                           be reduced or skipped.
                                         | The default is 0.
-extra_safety_leadtime duration          | Adds a safety lead time on top of standard lead time.
-                                        | The extra safety lead time is a soft constraint: we try
+soft_safety_leadtime  duration          | Adds a safety lead time on top of standard lead time.
+                                        | The soft safety lead time is a soft constraint: we try
                                           to receive the material this amount of time before the
                                           actual requirement date. But in case of shortages we can
                                           relax this and receive material closer to the requirement

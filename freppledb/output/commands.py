@@ -395,7 +395,7 @@ class ExportOperationPlans(PlanTask):
                 (
                     j.level == 1
                     and (opplan.owner == None)
-                    and j.operationplan.owner == None
+                    and not isinstance(j.operationplan.owner, frepple.operation_routing)
                 )
                 # routings will flow into the first step
                 or (

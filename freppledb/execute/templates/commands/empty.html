@@ -27,7 +27,7 @@
         {% endif %}{% endfor %}{% endfor %}
         {% if with_archive_app %}
         <label class="form-check-label">
-          <input class="empty_all" type="checkbox" name="allhistory" value="1">&nbsp;<strong>{%trans 'plan history'|upper%}</strong>
+          <input class="form-check-input empty_all" type="checkbox" name="allhistory" value="1">&nbsp;<strong>{%trans 'plan history'|upper%}</strong>
           <input class="form-check-input empty_entity d-none" type="checkbox" name="models" data-tables="archive" value="archive.archivemanager">
         </label>
         {% endif %}

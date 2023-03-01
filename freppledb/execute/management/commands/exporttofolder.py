@@ -40,6 +40,10 @@ from freppledb.output.views import buffer
 logger = logging.getLogger(__name__)
 
 
+def timesince(st):
+    return str(datetime.now() - st).split(".")[0]
+
+
 class Command(BaseCommand):
 
     help = """
@@ -206,10 +210,7 @@ class Command(BaseCommand):
             logger.addHandler(handler)
             logger.propagate = False
         except Exception as e:
-            print(
-                "%s Failed to open logfile %s: %s"
-                % (datetime.now().replace(microsecond=0), logfile, e)
-            )
+            print("Failed to open logfile %s: %s" % (logfile, e))
 
         task = None
         errors = 0
@@ -272,10 +273,8 @@ class Command(BaseCommand):
                         if exception.errno != errno.EEXIST:
                             raise
 
-                logger.info(
-                    "%s Started export to folder"
-                    % datetime.now().replace(microsecond=0)
-                )
+                startofall = datetime.now()
+                logger.info("Started export to folder")
 
                 cursor = connections[self.database].cursor()
 
@@ -289,24 +288,18 @@ class Command(BaseCommand):
                 idx = 1
                 for stmt in self.pre_sql_statements:
                     try:
-                        logger.info(
-                            "%s Executing pre-statement %s"
-                            % (datetime.now().replace(microsecond=0), idx)
-                        )
+                        starting = datetime.now()
+                        logger.info("Executing pre-statement %s" % idx)
                         cursor.execute(stmt)
                         if cursor.rowcount > 0:
                             logger.info(
-                                "%s %s record(s) modified"
-                                % (
-                                    datetime.now().replace(microsecond=0),
-                                    cursor.rowcount,
-                                )
+                                "%s record(s) modified in %s"
+                                % (cursor.rowcount, timesince(starting))
                             )
                     except Exception:
                         errors += 1
                         logger.error(
-                            "%s An error occurred when executing statement %s"
-                            % (datetime.now().replace(microsecond=0), idx)
+                            "An error occurred when executing statement %s" % idx
                         )
                     idx += 1
 
@@ -322,10 +315,8 @@ class Command(BaseCommand):
                         )
 
                     # Report progress
-                    logger.info(
-                        "%s Started export of %s"
-                        % (datetime.now().replace(microsecond=0), filename)
-                    )
+                    starting = datetime.now()
+                    logger.info("Started export of %s" % filename)
                     if task:
                         task.message = "Exporting %s" % filename
                         task.save(using=self.database)
@@ -419,66 +410,50 @@ class Command(BaseCommand):
 
                     except Exception as e:
                         errors += 1
-                        logger.error(
-                            "%s Failed to export to %s: %s"
-                            % (datetime.now().replace(microsecond=0), filename, e)
-                        )
+                        logger.error("Failed to export %s: %s" % (filename, e))
                         if task:
                             task.message = "Failed to export %s" % filename
 
+                    logger.info(
+                        "Finished export of %s in %s" % (filename, timesince(starting))
+                    )
                     task.status = str(int(i / cnt * 100)) + "%"
                     task.save(using=self.database)
 
-                logger.info(
-                    "%s Exported %s file(s)"
-                    % (datetime.now().replace(microsecond=0), cnt - errors)
-                )
+                logger.info("Exported %s files" % (cnt - errors))
 
                 idx = 1
                 for stmt in self.post_sql_statements:
                     try:
-                        logger.info(
-                            "%s Executing post-statement %s"
-                            % (datetime.now().replace(microsecond=0), idx)
-                        )
+                        starting = datetime.now()
+                        logger.info("Executing post-statement %s" % idx)
                         cursor.execute(stmt)
                         if cursor.rowcount > 0:
                             logger.info(
-                                "%s %s record(s) modified"
-                                % (
-                                    datetime.now().replace(microsecond=0),
-                                    cursor.rowcount,
-                                )
+                                "%s record(s) modified in %s"
+                                % (cursor.rowcount, timesince(starting))
                             )
                     except Exception:
                         errors += 1
                         logger.error(
-                            "%s An error occured when executing statement %s"
-                            % (datetime.now().replace(microsecond=0), idx)
+                            "An error occured when executing statement %s" % idx
                         )
                     idx += 1
 
             else:
                 errors += 1
-                logger.error(
-                    "%s Failed, folder does not exist"
-                    % datetime.now().replace(microsecond=0)
-                )
+                logger.error("Failed, folder does not exist")
                 task.message = "Destination folder does not exist"
                 task.save(using=self.database)
 
         except Exception as e:
-            logger.error(
-                "%s Failed to export: %s" % (datetime.now().replace(microsecond=0), e)
-            )
+            logger.error("Failed to export: %s" % e)
             errors += 1
             if task:
                 task.message = "Failed to export"
 
         finally:
-            logger.info(
-                "%s End of export to folder\n" % datetime.now().replace(microsecond=0)
-            )
+            logger.info("End of export to folder in %s\n" % timesince(startofall))
             if task:
                 if not errors:
                     task.status = "100%"

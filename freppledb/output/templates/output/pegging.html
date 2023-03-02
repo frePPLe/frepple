@@ -251,12 +251,18 @@ loadComplete: function(data) {
     var msg = $('<h2 style="padding:30px">').text(gettext("This demand has not been planned"));
     $("#content-main").replaceWith(msg);
   }
-  $('svg rect').tooltip({
-    title: buildtooltip,
-    animation: false,
-    html: true,
-    placement: 'auto bottom',
-    container: '#main-row'
+  $('svg rect').each(function() {
+    bootstrap.Tooltip.getOrCreateInstance($(this)[0], {
+      title: buildtooltip,
+      animation: false,
+      html: true,
+      container: 'body',
+      template: `
+         <div class="tooltip opacity-100" role="tooltip">
+           <div class="tooltip-arrow"></div>
+           <div class="tooltip-inner bg-white text-start text-body fs-6 p-3"></div>
+         </div>`
+    });
   });
 },
 {% endblock %}

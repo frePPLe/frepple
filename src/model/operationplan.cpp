@@ -2179,7 +2179,7 @@ PeggingIterator OperationPlan::getPeggingUpstream() const {
 }
 
 PeggingIterator OperationPlan::getPeggingUpstreamFirstLevel() const {
-  return PeggingIterator(this, false, 2);
+  return PeggingIterator(this, false, 3);
 }
 
 PeggingDemandIterator OperationPlan::getPeggingDemand() const {

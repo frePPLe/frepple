@@ -395,6 +395,7 @@ class ExportOperationPlans(PlanTask):
                 (
                     j.level == 1
                     and (opplan.owner == None)
+                    and not isinstance(opplan.operation, frepple.operation_routing)
                     and not isinstance(j.operationplan.owner, frepple.operation_routing)
                 )
                 # routings will flow into the first step
@@ -500,6 +501,24 @@ class ExportOperationPlans(PlanTask):
                 # first subopration flows into previous level
                 or (
                     j.level == 2
+                    and opplan.owner != None
+                    and isinstance(opplan.owner.operation, frepple.operation_routing)
+                    and len(
+                        [
+                            k.priority
+                            for k in opplan.owner.operation.suboperations
+                            if k.priority < opplan.operation.priority
+                        ]
+                    )
+                    == 0
+                )
+                # case of first suboperation of a routing where prev operation is an alternate
+                or (
+                    j.level == 3
+                    and j.operationplan.owner
+                    and isinstance(
+                        j.operationplan.owner.operation, frepple.operation_alternate
+                    )
                     and opplan.owner != None
                     and isinstance(opplan.owner.operation, frepple.operation_routing)
                     and len(

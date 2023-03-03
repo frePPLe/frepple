@@ -112,7 +112,7 @@
     var w = $("#workarea").width() - $('#detailspanel').width() - $("#resize-handle").parent().width();
     $('#grid').setGridWidth(w);
     $("#grid").setGridHeight($('#content-main').height() - 52);
-    $(".column-body").css("width", w - 25);
+    $("#kanban").css("width", w - 25);
     $("#scrolldayview").css("width", w - 25);
     $("#scrollweekview").css("width", w - 60);
     $("#scrollmonthview").css("width", w - 45);
@@ -404,7 +404,7 @@ loadComplete: function(data) {
 <div class="row{% if preferences.details == 'left' %} flex-row-reverse{% endif %}">
 
 <div id="content-main" class="col flex-grow-1">
-<div style="min-height: 150px; margin-top: 0.7em">
+<div class="pb-3" style="min-height: 150px; margin-top: 0.7em">
   <div data-ng-hide="mode == 'kanban' || mode.startsWith('calendar')" class="col-12">
     <table id="grid" class="table table-striped" style="background-color: white"></table>
     <div id="gridpager"></div>

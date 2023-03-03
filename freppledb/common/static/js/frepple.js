@@ -2305,7 +2305,7 @@ var dashboard = {
       '<div class="row mb-3">' +
       '<label class="col-3 col-form-label" for="id_layout2" class="col-form-label">' + gettext("Layout") + ':</label>' +
       '<div class="col-9 dropdown">' +
-      '<button class="btn btn-primary dropdown-toggle w-100" id="id_layout2" name="layout" type="button" data-bs-toggle="dropdown" aria-haspopup="true">' +
+      '<button class="form-control dropdown-toggle w-100" id="id_layout2" name="layout" type="button" data-bs-toggle="dropdown" aria-haspopup="true">' +
       '<span id="id_layout">' + layout + '</span>&nbsp;<span class="caret"></span>' +
       '</button>' +
       '<ul class="dropdown-menu" aria-labelledby="id_layout" id="id_layoutul">' +
@@ -2331,7 +2331,7 @@ var dashboard = {
       '<div class="row mb-3">' +
       '<label class="col-3 col-form-label" for="id_widget2" class="col-form-label">' + gettext("Add widget") + ':</label>' +
       '<div class="col-9 dropdown">' +
-      '<button class="btn btn-primary dropdown-toggle w-100" id="id_widget2" type="button" data-bs-toggle="dropdown">' +
+      '<button class="form-control dropdown-toggle w-100" id="id_widget2" type="button" data-bs-toggle="dropdown">' +
       '<span id="id_widget">-</span>&nbsp;<span class="caret"></span>' +
       '</button>' +
       '<ul class="dropdown-menu col-9" aria-labelledby="id_widget2" id="id_widgetul">';
@@ -2738,8 +2738,8 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     '</div>' +
     '</div>' +
     '<div class="modal-footer justify-content-between">' +
-    '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-bs-dismiss="modal" value="' + gettext('Close') + '">' +
-    '<input type="submit" id="copytoclipboard" role="button" class="btn btn-primary pull-left" value="' + gettext('Copy to Clipboard') + '" style="display: none;">' +
+    '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray pull-left" data-bs-dismiss="modal" value="' + gettext('Close') + '">' +
+    '<input type="submit" id="copytoclipboard" role="button" class="btn btn-gray pull-left" value="' + gettext('Copy to Clipboard') + '" style="display: none;">' +
     '<input type="submit" id="importbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Import') + '">' +
     '<input type="submit" id="cancelimportbutton" role="button" class="btn btn-primary pull-left" value="' + gettext('Cancel Import') + '" style="display: none;">' +
     '</div>' +

@@ -186,12 +186,12 @@
 
 /* Marking of edited and selected items. */
 
-.dirty-cell,
-input.ng-dirty,
-.dirty-cell.active,
-input.ng-dirty.active,
-.dirty-cell:hover,
-input.ng-dirty:hover {
+.dirty-cell:not(.nodirty),
+input.ng-dirty:not(.nodirty),
+.dirty-cell.active:not(.nodirty),
+input.ng-dirty.active:not(.nodirty),
+.dirty-cell:hover:not(.nodirty),
+input.ng-dirty:hover:not(.nodirty) {
     background-color: $danger !important;
     box-shadow: none !important;
 }
@@ -559,17 +559,6 @@ h1 small {
 // Kanban styles
 
 #kanban {
-
-    .longline {
-        overflow-x: auto;
-        display: table-row;
-    }
-
-    .longcol {
-        display: table-cell;
-        float: none;
-    }
-
     white-space: nowrap;
     user-select: none;
 
@@ -578,16 +567,11 @@ h1 small {
         background-color: $primary;
     }
 
-    .panel-body {
-        overflow-y: auto;
-    }
-
     .column {
         cursor: pointer;
         padding-left: 5px;
         padding-right: 5px;
     }
-
 }
 
 // Calendar

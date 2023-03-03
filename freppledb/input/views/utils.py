@@ -2071,7 +2071,7 @@ class OperationPlanDetail(View):
                         nextopplan.quantity,
                         t.offset as x,
                         t.offset + t.quantity as y,
-                        nextopplan.reference::varchar as path,
+                        (coalesce(nextopplan.item_id,'')||'/'||nextopplan.reference)::varchar as path,
                         nextopplan.owner_id
                     from operationplan
                     inner join lateral
@@ -2122,7 +2122,7 @@ class OperationPlanDetail(View):
                         greatest(0, cte.y - coalesce(upstream.offset,0))*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
                         end) end
                         as y,
-                    cte.path||'/'||nextopplan.reference,
+                    cte.path||'/'||coalesce(nextopplan.item_id,'')||'/'||nextopplan.reference,
                     nextopplan.owner_id
                     from operationplan
                     inner join cte on operationplan.reference = cte.nextreference
@@ -2223,7 +2223,7 @@ class OperationPlanDetail(View):
                         nextopplan.quantity,
                         t.offset as x,
                         t.offset + t.quantity as y,
-                        nextopplan.reference::varchar as path,
+                        (coalesce(nextopplan.item_id,'')||'/'||nextopplan.reference)::varchar as path,
                         nextopplan.owner_id
                     from operationplan
                     inner join lateral
@@ -2291,7 +2291,7 @@ class OperationPlanDetail(View):
                         greatest(0, cte.y - coalesce(downstream.offset,0))/coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
                         end) end) end
                         as y,
-                    cte.path||'/'||nextopplan.reference,
+                        cte.path||'/'||coalesce(nextopplan.item_id,'')||'/'||nextopplan.reference,
                     nextopplan.owner_id
                     from operationplan
                     inner join cte on operationplan.reference = cte.nextreference

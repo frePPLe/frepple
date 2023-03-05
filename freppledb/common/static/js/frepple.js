@@ -2509,7 +2509,6 @@ function getUnreadMessages() {
         tt_el.attr("data-bs-title", gettext("No unread messages"));
       }
       var tt = bootstrap.Tooltip.getInstance(tt_el);
-      if (tt) tt.dispose()
       if (tt) tt.dispose();
       bootstrap.Tooltip.getOrCreateInstance(tt_el);
     }

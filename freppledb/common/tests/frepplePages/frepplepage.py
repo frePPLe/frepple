@@ -178,9 +178,8 @@ class TablePage(BasePage):
         undo_button = self.driver.find_element(*TableLocators.TABLE_UNDO_BUTTON)
         ActionChains(self.driver).move_to_element(undo_button).click().perform()
 
-    def select_action(
-        self, actionToPerform
-    ):  # method that will select an action from the select action dropdown
+    def select_action(self, actionToPerform):
+        # method that will select an action from the select action dropdown
         select = self.driver.find_element(*TableLocators.TABLE_SELECT_ACTION)
         ActionChains(self.driver).move_to_element(select).click().perform()
         time.sleep(1)
@@ -188,12 +187,11 @@ class TablePage(BasePage):
         select_action = select_menu.find_element(
             *TableLocators.actionLocator(actionToPerform)
         )
+        ActionChains(self.driver).move_to_element(select_action).perform()
         select_action.click()
 
-    def multiline_checkboxes_check(
-        self, targetrows
-    ):  # method that will check a certain number of checkboxes in the checkbox column
-
+    def multiline_checkboxes_check(self, targetrows):
+        # method that will check a certain number of checkboxes in the checkbox column
         for row in targetrows:
             checkbox = row.find_element(*TableLocators.tablecolumnsinput["checkbox"])
             ActionChains(self.driver).move_to_element(checkbox).click().perform()

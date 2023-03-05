@@ -95,7 +95,12 @@ function displayGrid(load) {
       width: 700
     },
     gridComplete: function() {
-      tooltipList.forEach(function (t) {t.dispose();});
+      tooltipList.forEach(function (t) {
+        try{
+          t.dispose();
+        }
+        catch {}
+      });
       var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
       tooltipList = [...tooltipTriggerList].map(
           tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {

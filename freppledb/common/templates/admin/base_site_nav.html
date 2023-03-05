@@ -51,13 +51,13 @@ $(function() {
 			</form>
 
       {% if not request.session.navbar and user.is_authenticated and user.is_staff %}
-	  <div id="nav-menu" class="collapse navbar-collapse">
+	  <div id="nav-menu-end" class="collapse navbar-collapse">
       <ul class="nav navbar-nav ms-auto">
-        <li class="navbar-item" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="auto bottom"
+        <li class="navbar-item" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom"
           style="position:relative" data-bs-title="{% trans "No unread messages" %}">
           <a class="nav-link" href="{{request.prefix}}/inbox/">
             <span id="messages" style="font-size: 1.5em" class="fa fa-envelope-open-o" aria-hidden="true"></span>
-            <span style="font-size: 60%; position: absolute; top: -5px; left:7px" class="badge progress-bar-danger" aria-hidden="true"></span>
+            <span class="position-absolute top-20 start-50 translate-middle badge rounded-pill bg-danger" aria-hidden="true"></span>
 			&nbsp;&nbsp;
           </a>
         </li>

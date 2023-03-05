@@ -1240,8 +1240,6 @@ var grid = {
         });
     }
 
-    $('[data-bs-toggle="tooltip"]').tooltip({ delay: { "show": 500, "hide": 100 } });
-
     $('#copybutton').on('click', function () {
       // should be up to date but let's recompute it.
       update_datasource_url();
@@ -2499,16 +2497,20 @@ function getUnreadMessages() {
     contentType: "application/json",
     success: function (json) {
       var msg = $("#messages");
+      var tt_el = msg.parent().parent();
       if (json.unread) {
         msg.removeClass("fa-envelope-open-o").addClass("fa-envelope-o");
         msg.next().text(json.unread);
-        msg.parent().parent().attr("data-bs-title", interpolate(gettext("%s unread messages"), [json.unread]));
+        tt_el.attr("data-bs-title", interpolate(gettext("%s unread messages"), [json.unread]));
       }
       else {
         msg.removeClass("fa-envelope-o").addClass("fa-envelope-open-o");
         msg.next().text("");
-        msg.parent().parent().attr("data-bs-title", gettext("No unread messages"));
+        tt_el.attr("data-bs-title", gettext("No unread messages"));
       }
+      var tt = bootstrap.Tooltip.getInstance(tt_el);
+      if (tt) tt.dispose()
+      bootstrap.Tooltip.getOrCreateInstance(tt_el);
     }
   });
 }

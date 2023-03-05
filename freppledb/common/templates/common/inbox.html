@@ -99,18 +99,18 @@ function markMessageRead(el, status) {
 </div>
 
 <div id="content-main">
-<div class="row">
-<div class="col-md-12">
+<div class="row mb-3">
+<div class="col">
 <div class="card">
 {% if inbox %}
 <table class="table table-sm table-hover">
 <thead style="display: table-header-group;">
 <tr>
 <td>
-  <input id="markMessages" type="checkbox" onclick="selectAll(this)" data-bs-toggle="tooltip"
+  <input class="form-check-input" id="markMessages" type="checkbox" onclick="selectAll(this)" data-bs-toggle="tooltip"
     data-original="{% trans "Select/unselect all messages" %}" data-bs-placement="bottom">
 </td>
-<td class="text-center">
+<td colspan="3">
   <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" onclick="markMessageRead(null, 'R')"
     data-bs-title="Mark selected messages read" data-bs-placement="bottom">
     <i class="fa fa-envelope-open-o"></i>
@@ -134,7 +134,7 @@ function markMessageRead(el, status) {
 <tbody id="messagelist">
 {% for notif in inbox %}
 <tr data-message="{{ notif.id }}" onclick="selectMessage(event, this)">
-<td><input type="checkbox" onclick="selectMessage(event, this)"></label></td>
+<td><input class="form-check-input" type="checkbox" onclick="selectMessage(event, this)"></label></td>
 <td class="text-center msg-status">
   {% if notif.status == "R" %}
   <span class="btn btn-sm fa fa-envelope-open-o" onclick="markMessageRead(this)" data-bs-toggle="tooltip"
@@ -188,21 +188,21 @@ You read all messages.
 </div>
 
 {% if inbox %}
-<nav>
-<div class="text-center">
-<ul class="pagination">
-  <li>
-    <a href="?page={% if inbox.has_previous %}{{ inbox.previous_page_number }}{% else %}1{% endif %}" aria-label="Previous">
+<nav aria-label="pagination">
+<div class="mt-3 text-center ">
+<ul class="pagination pagination-sm justify-content-center">
+  <li class="page-item">
+    <a class="page-link" href="?page={% if inbox.has_previous %}{{ inbox.previous_page_number }}{% else %}1{% endif %}" aria-label="Previous">
     <i class="fa fa-chevron-left" aria-hidden="true"></i>
     </a>
   </li>
   {% for p in inbox.paginator.page_range %}
-  <li{% if inbox.number == p %} class="active"{% endif %}>
-    <a href="?page={{ p }}">{{ p }}</a>
+  <li class="page-item {% if inbox.number == p %} active{% endif %}">
+    <a class="page-link" href="?page={{ p }}">{{ p }}</a>
   </li>
   {% endfor %}
-  <li>
-    <a href="?page={% if inbox.has_next %}{{ inbox.next_page_number }}{% else %}{{ inbox.paginator.num_pages}}{% endif %}" aria-label="Next">
+  <li class="page-item">
+    <a class="page-link" href="?page={% if inbox.has_next %}{{ inbox.next_page_number }}{% else %}{{ inbox.paginator.num_pages}}{% endif %}" aria-label="Next">
     <i class="fa fa-chevron-right" aria-hidden="true"></i>
     </a>
   </li>

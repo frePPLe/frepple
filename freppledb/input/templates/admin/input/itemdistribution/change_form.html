@@ -7,10 +7,10 @@
 <fieldset class="module container-fluid" id="fieldset-3" style="background:transparent">
 <h1 class="text-capitalize">{% trans "related" %}</h1>
 <div class="row">
-  <div class="col-form-label col-3"><p>
+  <div class="col-form-label col-3">
      <a href="{{ request.prefix }}/data/input/distributionorder/?destination={{ adminform.form.instance.location | urlencode }}&origin={{ adminform.form.instance.origin | urlencode }}&item={{ adminform.form.instance.item | urlencode }}&noautofilter">
      {% trans "distribution orders"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
-  </p></div>
+  </div>
 </div>
 </fieldset>
 {% endif %}

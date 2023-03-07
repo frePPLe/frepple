@@ -442,6 +442,7 @@ div.tt-dataset.tt-dataset-search {
 
     td[role=gridcell]:has(div.invStatus) {
         // Status color cells need to occupy the full center
+        // This is NOT working in Firefox...
         padding: 0 !important;
     }
 
@@ -451,6 +452,10 @@ div.tt-dataset.tt-dataset-search {
         @extend .d-flex;
         @extend .align-items-center;
         @extend .justify-content-center;
+    }
+
+    td input {
+        padding: 1px 2px 1px 2px !important;
     }
 
     .ui-jqgrid-titlebar,

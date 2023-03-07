@@ -11,12 +11,12 @@ translations_extract () {
   # extract django
   cd freppledb
   django-admin.py makemessages --ignore node_modules --no-wrap -a -d django
-  django-admin.py makemessages --ignore node_modules --no-wrap -a -d djangojs
-  cd - 
-  
+  django-admin.py makemessages --ignore node_modules "--ignore=*bootstrap.js" "--ignore=*.min.js" --no-wrap -a -d djangojs
+  cd -
+
   # extract angular
   grunt nggettext_extract
-  
+
   ## Preparation for each language
   django=`python3 -c "import django; import os; print(os.path.dirname(django.__file__))"`
   for language in $( ls freppledb/locale )
@@ -111,6 +111,6 @@ then
 else
   echo "Usage:"
   echo "   translations extract      -> collects all translation strings from the source code"
-  echo "   translations compile      -> builds translation strings into a binary format"  
+  echo "   translations compile      -> builds translation strings into a binary format"
   exit 1
 fi

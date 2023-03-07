@@ -621,14 +621,14 @@ class OperationDependency(AuditModel):
         Operation,
         verbose_name=_("operation"),
         related_name="dependencies",
-        help_text=_("Operation"),
+        help_text=_("operation"),
         on_delete=models.CASCADE,
     )
     blockedby = models.ForeignKey(
         Operation,
         verbose_name=_("blocked by operation"),
         related_name="dependents",
-        help_text=_("Blocked-by operation"),
+        help_text=_("blocked-by operation"),
         on_delete=models.CASCADE,
     )
     quantity = models.DecimalField(

@@ -194,7 +194,7 @@ Here are the steps to get a fully working environment.
         #  - year-month-day: international format. This is the default
         DATE_STYLE = "year-month-date"
 
-   #. **/etc/frepple/djangosettings.py - INSTZALLED_APPS**
+   #. **/etc/frepple/djangosettings.py - INSTALLED_APPS**
 
       Change the "INSTALLED_APPS" to match your environment and the licensed modules.
       ::

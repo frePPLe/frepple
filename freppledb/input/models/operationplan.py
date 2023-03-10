@@ -893,7 +893,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                         case when available = 0 then 0 else
                     coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
                     - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)
-                        end) as numeric, 8)
+                        end as numeric), 8)
                     or free != round(cast(
                         greatest(available - (coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
                     - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)),0)

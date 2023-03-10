@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 14:50+0100\n"
-"PO-Revision-Date: 2022-10-26 16:59+0200\n"
+"PO-Revision-Date: 2023-03-10 17:34+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: he\n"
@@ -228,7 +228,6 @@ msgid "Click ok to confirm deleting the favorite"
 msgstr ""
 
 #: common/static/js/frepple.js:2144
-#, fuzzy
 msgid "Export selected records?"
 msgstr "ייצוא רשומות שנבחרו"
 
@@ -2352,9 +2351,8 @@ msgid "failed"
 msgstr "נכשל"
 
 #: common/templates/registration/forgotpassword_form.html:75
-#, fuzzy
 msgid "Email me a password reset link"
-msgstr "איפוס הסיסמה נשלח."
+msgstr "שלח לי בדוא\"ל קישור לאיפוס סיסמה"
 
 #: common/templates/registration/password_change_done.html:8
 #: common/templates/registration/password_change_form.html:9
@@ -2468,7 +2466,7 @@ msgid ""
 msgstr "קיימים (נדרש סינון) %(model)s על מנת למחוק אובייקט/ים DELETE בצע בקשת"
 
 #: common/templates/rest_framework/index.html:23
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This page helps developers to learn and experiment with the\n"
 "<a class=\"text-decoration-underline\" target=\"_blank\" rel=\"noopener\" "
@@ -2513,42 +2511,6 @@ msgid ""
 "</div></div>\n"
 "</div>\n"
 msgstr ""
-"דף זה מסייע למפתחים ללמוד ולהתנסות עם\n"
-"<a style=\"text-decoration:underline\" target=\"_blank\" rel=\"noopener\" "
-"href=\"https://en.wikipedia.org/wiki/Representational_state_transfer"
-"\">אתחול</a>\n"
-"frePPLe של API <br>\n"
-"frePPLe זה מאפשר ליישום שלך להחליף מידע עם ממשק API.<br>\n"
-"<br>\n"
-"לוקח אותך לדף רשימת האובייקטים \"API הקישור \"רשימת .<br>\n"
-"\" מעביר אותך לאובייקט ספציפי כשאתה נכנס למפתח הראשי של האובייקטdetail API\" "
-"וקישור.<br>\n"
-"GET, POST, OPTIONS, PUT, PATCH DELETE, HTTP בשיטות בדפים אלה תוכלו לבצע "
-"בקשות .<br>\n"
-"HTML או בדפדפן JSON ניתן להציג את התוצאות בפורמט כ<br>\n"
-"<br>\n"
-"משורת הפקודה API אתה יכול לגשת לממשק 'wget' או 'curl' באמצעות כלים כמו ה ."
-"<br>\n"
-" JSONלדוגמה, כדי להחזיר את רשימת כל הזמנות המכירה בפורמט:<br><br>\n"
-"<div style=\"margin-left:20px\">\n"
-"</a>אימות בסיסי <a style=\"text-decoration:underline\" href=\"https://en."
-"wikipedia.org/wiki/Basic_access_authentication\" target=\"_blank\">באמצעות:"
-"<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --http-user=%(username)s --http-password=PASSWORD http://127.0.0.1:8000/"
-"api/input/demand/<br><br>\n"
-"curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
-"</div>\n"
-"<input id=\"jwt\" type=\"number\" value=\"%(exp)s\" min=\"0\" step=\"1\" "
-"style=\"width:4em\"/>תקף להבא </a> JSON Web Token<a style=\"text-decoration:"
-"underline\" href=\"https://jwt.io/\" target=\"_blank\"> באמצעות dagen:<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
-"input/demand/<br><br>\n"
-"curl -H 'Accept: application/json' --header 'Authorization: Bearer "
-"%(token)s' http://127.0.0.1:8000/api/input/demand/\n"
-"</div>\n"
-"</div>\n"
 
 #: common/templates/rest_framework/index.html:60
 msgid "List API"
@@ -2788,20 +2750,18 @@ msgid "Plan type"
 msgstr "סוג תכנון"
 
 #: execute/management/commands/runplan.py:478
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Genereer een supply plan dat alle constraints respecteer."
-"<br>In geval van tekorten wordt de vraag te laat of te weinig ingepland."
-"\">תוכנית מאולצת</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Genereer een supply plan dat alle constraints "
+"respecteer.<br>In geval van tekorten wordt de vraag te laat of te weinig "
+"ingepland.\">תוכנית מאולצת</span>"
 
 #: execute/management/commands/runplan.py:483
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that shows material, "
@@ -2809,11 +2769,11 @@ msgid ""
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Genereer een supply plan dat material, capacity en lead "
-"time problemen toont die beletten dat de vraag op tijd kan worden geleveld."
-"<br>De vraag wordt steeds volledig en op de gewenste leverdatum ingepland."
-"\">תוכנית לא מאולצת</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Genereer een supply plan dat material, capacity en "
+"lead time problemen toont die beletten dat de vraag op tijd kan worden "
+"geleveld.<br>De vraag wordt steeds volledig en op de gewenste leverdatum "
+"ingepland.\">תוכנית לא מאולצת</span>"
 
 #: execute/management/commands/runplan.py:486 output/models.py:56
 #: output/templates/output/buffer.html:338
@@ -2843,9 +2803,8 @@ msgid "Group and schedule tasks"
 msgstr ""
 
 #: execute/management/commands/scheduletasks.py:362
-#, fuzzy
 msgid "Group tasks"
-msgstr "משימות"
+msgstr ""
 
 #: execute/management/commands/uploadreport.py:278
 msgid "Publish reports by FTP"
@@ -3953,9 +3912,8 @@ msgstr "ביקוש קיצוני"
 
 #: forecast/templates/forecast/wizard.html:4 forecast/views.py:2334
 #: forecast/views.py:2352
-#, fuzzy
 msgid "forecast wizard"
-msgstr "תכנון תחזית"
+msgstr ""
 
 #: forecast/views.py:136
 msgid "method"
@@ -4867,19 +4825,16 @@ msgid "suboperations"
 msgstr "תת-פעולות"
 
 #: input/models/operation.py:630 input/views/manufacturing.py:1343
-#, fuzzy
 msgid "blocked by operation"
-msgstr "פעולת בן"
+msgstr ""
 
 #: input/models/operation.py:632
-#, fuzzy
 msgid "blocked-by operation"
-msgstr "פעולת בן"
+msgstr ""
 
 #: input/models/operation.py:642
-#, fuzzy
 msgid "Quantity relation between the operations"
-msgstr "משך משתנה לפעולה"
+msgstr ""
 
 #: input/models/operation.py:645 input/models/operation.py:648
 #: input/models/supplier.py:90 input/models/supplier.py:93
@@ -4894,14 +4849,12 @@ msgid "hard safety lead time"
 msgstr ""
 
 #: input/models/operation.py:675
-#, fuzzy
 msgid "operation dependency"
-msgstr "תוכנית פעולה"
+msgstr ""
 
 #: input/models/operation.py:676 input/views/manufacturing.py:1306
-#, fuzzy
 msgid "operation dependencies"
-msgstr "משאבי פעולה"
+msgstr ""
 
 #: input/models/operationplan.py:55 input/models/operationplan.py:2545
 #: shopfloor/views.py:113
@@ -5497,9 +5450,8 @@ msgid "Safety stock quantity"
 msgstr "כמות מלאי ביטחון"
 
 #: inventoryplanning/admin.py:90 inventoryplanning/views.py:2798
-#, fuzzy
 msgid "segment detail"
-msgstr "פלח"
+msgstr ""
 
 #: inventoryplanning/attributes.py:18
 msgid "Successor part"
@@ -5701,9 +5653,8 @@ msgid "calculated safety stock"
 msgstr "חישוב מלאי ביטחון"
 
 #: inventoryplanning/models.py:410 inventoryplanning/views.py:570
-#, fuzzy
 msgid "reorder point"
-msgstr "כמות הזמנה חוזרת"
+msgstr ""
 
 #: inventoryplanning/models.py:413
 msgid "safety stock value"
@@ -5714,9 +5665,8 @@ msgid "reorder quantity value"
 msgstr "ערך הזמנה מחודשת"
 
 #: inventoryplanning/models.py:419
-#, fuzzy
 msgid "reorder point value"
-msgstr "ערך הזמנה מחודשת"
+msgstr ""
 
 #: inventoryplanning/models.py:431
 #: inventoryplanning/templates/inventoryplanning/drp.html:2183
@@ -6034,15 +5984,14 @@ msgid "Stocking policy"
 msgstr "מדיניות מלאי"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2989
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
 "\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
 "<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Zet de safety stock op 0 en reorderhoeveelheid op 1."
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
+"\"true\" data-bs-title=\"Zet de safety stock op 0 en reorderhoeveelheid op 1."
 "<br>Deze product-locatie wordt dan ingepland met een 1-op-1 matching tussen "
 "de vraag en supply.\" >לא להכניס למלאי</span>"
 
@@ -6052,14 +6001,13 @@ msgid "true"
 msgstr "אמת"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:3008
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
 "\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"In push mode wordt alle stock meteen downstream "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
+"\"true\" data-bs-title=\"In push mode wordt alle stock meteen downstream "
 "doorgezonden naar andere locaties.\">הפעל מצב הכנסה</span>"
 
 #: inventoryplanning/views.py:116
@@ -6327,18 +6275,16 @@ msgid "consumed"
 msgstr "נצרך"
 
 #: output/templates/output/buffer.html:441
-#, fuzzy
 msgid "consumed confirmed"
-msgstr "אושר"
+msgstr ""
 
 #: output/templates/output/buffer.html:442
 msgid "produced"
 msgstr "מיוצר"
 
 #: output/templates/output/buffer.html:443
-#, fuzzy
 msgid "produced confirmed"
-msgstr "סיום מאושר"
+msgstr ""
 
 #: output/templates/output/demand.html:153
 #: output/templates/output/demand.html:215
@@ -6903,7 +6849,6 @@ msgid "Ukrainian"
 msgstr "אוקראינית"
 
 #: settings.py:496
-#, fuzzy
 msgid "activity"
 msgstr "פעילות"
 
@@ -6912,9 +6857,8 @@ msgid "remark"
 msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:33
-#, fuzzy
 msgid "dates"
-msgstr "datum"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:34
 #: freppledb/planningboard/static/planningboard/planningboard.html:1139
@@ -6929,8 +6873,9 @@ msgid "start"
 msgstr "start"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:53
+#, fuzzy
 msgid "pause"
-msgstr ""
+msgstr "השהייה"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:1144
@@ -6945,24 +6890,20 @@ msgid "end"
 msgstr "eind"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:80
-#, fuzzy
 msgid "No materials"
-msgstr "חומרים"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:102
-#, fuzzy
 msgid "Update materials"
-msgstr "חומרים של הפעולה"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:118
-#, fuzzy
 msgid "add comment"
-msgstr "תגובה"
+msgstr "הוסף תגובה"
 
 #: shopfloor/templates/shopfloor/resource.html:8
-#, fuzzy
 msgid "Select a manufacturing order"
-msgstr "הזמנת ייצור"
+msgstr ""
 
 #: webservice/management/commands/runwebservice.py:196
 msgid "web service"
@@ -7097,9 +7038,8 @@ msgid "Data loading wizard for production planning"
 msgstr ""
 
 #: wizard/views.py:2818
-#, fuzzy
 msgid "Import from odoo"
-msgstr "ייבא קבצי נתונים מהתיקייה"
+msgstr ""
 
 #: wizard/views.py:2820
 msgid "Get started - Data loading wizard"
@@ -7549,14 +7489,10 @@ msgstr ""
 "<br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1506
-#, fuzzy
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
-"הפעולה מקבלת את הצבע של הקטגוריה שלה.<br>\n"
-"יש למלא את קטגוריות הפעולות בטבלת הפעולות.\n"
-"<br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:321
 msgid "Apply"

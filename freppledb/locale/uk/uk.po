@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 14:50+0100\n"
-"PO-Revision-Date: 2022-10-26 17:01+0200\n"
+"PO-Revision-Date: 2023-03-10 17:41+0100\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: uk\n"
@@ -220,9 +220,8 @@ msgid "Click ok to confirm deleting the favorite"
 msgstr "Натисніть ОК, щоб підтвердити видалення вибраного"
 
 #: common/static/js/frepple.js:2144
-#, fuzzy
 msgid "Export selected records?"
-msgstr "експортувати вибрані записи"
+msgstr ""
 
 #: common/static/js/frepple.js:2158
 msgid "connecting"
@@ -2353,9 +2352,8 @@ msgid "failed"
 msgstr "не вдалося"
 
 #: common/templates/registration/forgotpassword_form.html:75
-#, fuzzy
 msgid "Email me a password reset link"
-msgstr "Скидання пароля відправлено"
+msgstr ""
 
 #: common/templates/registration/password_change_done.html:8
 #: common/templates/registration/password_change_form.html:9
@@ -2476,7 +2474,7 @@ msgstr ""
 "%(model)s (потрібна фільтрація)"
 
 #: common/templates/rest_framework/index.html:23
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This page helps developers to learn and experiment with the\n"
 "<a class=\"text-decoration-underline\" target=\"_blank\" rel=\"noopener\" "
@@ -2521,44 +2519,6 @@ msgid ""
 "</div></div>\n"
 "</div>\n"
 msgstr ""
-"Ця сторінка допомагає розробникам вчитися і експериментувати с\n"
-"<a style=\"text-decoration:underline\" target=\"_blank\" href=\"https://en."
-"wikipedia.org/wiki/Representational_state_transfer\">REST</a>\n"
-"API для frePPLe.<br>\n"
-"Цей API дозволяє вашій програмі обмінюватися інформацією з frePPLe.<br>\n"
-"<br>\n"
-"Посилання «Список API» виводить вас на сторінку списку об'єктів.<br>\n"
-"а посилання «докладний API» приведе вас до певного об'єкту при введенні "
-"первинного ключа об'єкта.<br>\n"
-"на цих сторінках ви зможете виконувати HTTP-запити за допомогою методів GET, "
-"POST, OPTIONS, PUT, PATCH та DELETE.<br>\n"
-"Результати можуть відображатися в форматі JSON або у вигляді HTML у вашому "
-"браузері.<br>\n"
-"<br>\n"
-"Використовуючи інструмент типу 'wget' або 'curl', ви можете отримати доступ "
-"до API з командного рядка.<br>\n"
-"Наприклад, щоб повернути список всіх замовлень клієнта в форматі JSON:"
-"<br><br>\n"
-"<div style=\"margin-left:20px\">\n"
-"Using <a style=\"text-decoration:underline\" href=\"https://en.wikipedia.org/"
-"wiki/Basic_access_authentication\" target=\"_blank\">basic authentication</"
-"a>:<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --http-user=%(username)s --http-password=PASSWORD http://127.0.0.1:8000/"
-"api/input/demand/<br><br>\n"
-"curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
-"</div>\n"
-"Using <a style=\"text-decoration:underline\" href=\"https://jwt.io/\" target="
-"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
-"\"jwt\" type=\"number\" value=\"%(exp)s\" min=\"0\" step=\"1\" style="
-"\"width:4em\"/>  days:<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
-"input/demand/<br><br>\n"
-"curl -H 'Accept: application/json' --header 'Authorization: Bearer "
-"%(token)s' http://127.0.0.1:8000/api/input/demand/\n"
-"</div>\n"
-"</div>\n"
 
 #: common/templates/rest_framework/index.html:60
 msgid "List API"
@@ -2828,20 +2788,18 @@ msgid "Plan type"
 msgstr "Тип плану"
 
 #: execute/management/commands/runplan.py:478
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Сформувати план поставок, який відповідає всім "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Сформувати план поставок, який відповідає всім "
 "обмеженням<br>У разі недостатньої кількості попит планується із запізненням "
 "або частково. \"> План з обмеженнями</span>"
 
 #: execute/management/commands/runplan.py:483
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that shows material, "
@@ -2849,11 +2807,11 @@ msgid ""
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Створити план поставок, перевірити проблеми устаткування, "
-"потужності і операцій, які перешкоджають запланувати поставки вчасно. <br> "
-"Попит повністю спланований для поставок без запізнень \"> План без обмежень</"
-"span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Створити план поставок, перевірити проблеми "
+"устаткування, потужності і операцій, які перешкоджають запланувати поставки "
+"вчасно. <br> Попит повністю спланований для поставок без запізнень \"> План "
+"без обмежень</span>"
 
 #: execute/management/commands/runplan.py:486 output/models.py:56
 #: output/templates/output/buffer.html:338
@@ -2883,9 +2841,8 @@ msgid "Group and schedule tasks"
 msgstr "Групові та графікові завдання"
 
 #: execute/management/commands/scheduletasks.py:362
-#, fuzzy
 msgid "Group tasks"
-msgstr "Групові та графікові завдання"
+msgstr ""
 
 #: execute/management/commands/uploadreport.py:278
 msgid "Publish reports by FTP"
@@ -3995,9 +3952,8 @@ msgstr "відхилення попиту"
 
 #: forecast/templates/forecast/wizard.html:4 forecast/views.py:2334
 #: forecast/views.py:2352
-#, fuzzy
 msgid "forecast wizard"
-msgstr "план прогнозу"
+msgstr ""
 
 #: forecast/views.py:136
 msgid "method"
@@ -4917,19 +4873,16 @@ msgid "suboperations"
 msgstr "подоперації"
 
 #: input/models/operation.py:630 input/views/manufacturing.py:1343
-#, fuzzy
 msgid "blocked by operation"
-msgstr "дитяча операція"
+msgstr ""
 
 #: input/models/operation.py:632
-#, fuzzy
 msgid "blocked-by operation"
-msgstr "дитяча операція"
+msgstr ""
 
 #: input/models/operation.py:642
-#, fuzzy
 msgid "Quantity relation between the operations"
-msgstr "Змінна тривалість операції"
+msgstr ""
 
 #: input/models/operation.py:645 input/models/operation.py:648
 #: input/models/supplier.py:90 input/models/supplier.py:93
@@ -4944,14 +4897,12 @@ msgid "hard safety lead time"
 msgstr ""
 
 #: input/models/operation.py:675
-#, fuzzy
 msgid "operation dependency"
-msgstr "план операцій"
+msgstr ""
 
 #: input/models/operation.py:676 input/views/manufacturing.py:1306
-#, fuzzy
 msgid "operation dependencies"
-msgstr "ресурси операції"
+msgstr ""
 
 #: input/models/operationplan.py:55 input/models/operationplan.py:2545
 #: shopfloor/views.py:113
@@ -5541,9 +5492,8 @@ msgid "Safety stock quantity"
 msgstr "страховий запас"
 
 #: inventoryplanning/admin.py:90 inventoryplanning/views.py:2798
-#, fuzzy
 msgid "segment detail"
-msgstr "запаси детально"
+msgstr ""
 
 #: inventoryplanning/attributes.py:18
 msgid "Successor part"
@@ -5746,9 +5696,8 @@ msgid "calculated safety stock"
 msgstr "розрахований страховой запас"
 
 #: inventoryplanning/models.py:410 inventoryplanning/views.py:570
-#, fuzzy
 msgid "reorder point"
-msgstr "кількість замовлення ROQ"
+msgstr ""
 
 #: inventoryplanning/models.py:413
 msgid "safety stock value"
@@ -5759,9 +5708,8 @@ msgid "reorder quantity value"
 msgstr "перередагувати величину кількості (ROQ)"
 
 #: inventoryplanning/models.py:419
-#, fuzzy
 msgid "reorder point value"
-msgstr "перередагувати величину кількості (ROQ)"
+msgstr ""
 
 #: inventoryplanning/models.py:431
 #: inventoryplanning/templates/inventoryplanning/drp.html:2183
@@ -6079,17 +6027,16 @@ msgid "Stocking policy"
 msgstr "Політика запасів"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2989
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
 "\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
 "<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Встановлює страховий запас на 0 і кількість замовлення "
-"на 1<br>Це місце розташування об'єкта буде сплановано з поповненнями, "
-"відповідними 1-к-1 потреби.\">Без запасу</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
+"\"true\" data-bs-title=\"Встановлює страховий запас на 0 і кількість "
+"замовлення на 1<br>Це місце розташування об'єкта буде сплановано з "
+"поповненнями, відповідними 1-к-1 потреби.\">Без запасу</span>"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2999
 #: inventoryplanning/templates/inventoryplanning/drp.html:3018
@@ -6097,14 +6044,13 @@ msgid "true"
 msgstr "істина"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:3008
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
 "\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"В push-режимі, будь надлишковий запас буде "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
+"\"true\" data-bs-title=\"В push-режимі, будь надлишковий запас буде "
 "розподілятися всередині мережі між дочірніми місцями розташування"
 "\">активізувати push-режим</span>"
 
@@ -6373,18 +6319,16 @@ msgid "consumed"
 msgstr "споживається"
 
 #: output/templates/output/buffer.html:441
-#, fuzzy
 msgid "consumed confirmed"
-msgstr "підтверджено"
+msgstr ""
 
 #: output/templates/output/buffer.html:442
 msgid "produced"
 msgstr "виробляється"
 
 #: output/templates/output/buffer.html:443
-#, fuzzy
 msgid "produced confirmed"
-msgstr "затверджені та підтверджені випуски"
+msgstr ""
 
 #: output/templates/output/demand.html:153
 #: output/templates/output/demand.html:215
@@ -6957,7 +6901,7 @@ msgstr ""
 #: shopfloor/templates/shopfloor/manufacturingorder.html:33
 #, fuzzy
 msgid "dates"
-msgstr "дата"
+msgstr "дати"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:50
 #, fuzzy
@@ -6974,24 +6918,21 @@ msgid "end"
 msgstr "кінець"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:80
-#, fuzzy
 msgid "No materials"
-msgstr "матеріали"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:102
-#, fuzzy
 msgid "Update materials"
-msgstr "матеріали операції"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:118
 #, fuzzy
 msgid "add comment"
-msgstr "коментар"
+msgstr "додати коментар"
 
 #: shopfloor/templates/shopfloor/resource.html:8
-#, fuzzy
 msgid "Select a manufacturing order"
-msgstr "замовлення в виробництво"
+msgstr ""
 
 #: webservice/management/commands/runwebservice.py:196
 msgid "web service"
@@ -7125,9 +7066,8 @@ msgid "Data loading wizard for production planning"
 msgstr ""
 
 #: wizard/views.py:2818
-#, fuzzy
 msgid "Import from odoo"
-msgstr "Імпорт файли даних із папки"
+msgstr ""
 
 #: wizard/views.py:2820
 msgid "Get started - Data loading wizard"
@@ -7211,13 +7151,10 @@ msgstr ""
 "елементів.                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1506
-#, fuzzy
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
-"Операція отримує колір своєї категорії.<br>Категорії операції слід заповнити "
-"в таблиці операції.                        <br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:321
 #, fuzzy

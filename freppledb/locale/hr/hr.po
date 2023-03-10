@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 14:50+0100\n"
-"PO-Revision-Date: 2022-10-26 16:59+0200\n"
+"PO-Revision-Date: 2023-03-10 17:34+0100\n"
 "Last-Translator: Blago Čuljak <blago.culjak@hotmail.com>\n"
 "Language-Team: klaus\n"
 "Language: hr\n"
@@ -231,9 +231,8 @@ msgid "Click ok to confirm deleting the favorite"
 msgstr "Kliknite OK za potvrdu brisanja favorita"
 
 #: common/static/js/frepple.js:2144
-#, fuzzy
 msgid "Export selected records?"
-msgstr "izvoz odabranih zapisa"
+msgstr ""
 
 #: common/static/js/frepple.js:2158
 msgid "connecting"
@@ -1734,7 +1733,7 @@ msgstr "jednom"
 
 #: common/models.py:1477
 msgid "JSON"
-msgstr ""
+msgstr "JSON"
 
 #: common/models.py:1510 common/views.py:506 common/views.py:707
 msgid "model"
@@ -2350,9 +2349,8 @@ msgid "failed"
 msgstr "nije uspjelo"
 
 #: common/templates/registration/forgotpassword_form.html:75
-#, fuzzy
 msgid "Email me a password reset link"
-msgstr "Resetiranje lozinke poslano"
+msgstr ""
 
 #: common/templates/registration/password_change_done.html:8
 #: common/templates/registration/password_change_form.html:9
@@ -2749,20 +2747,18 @@ msgid "Plan type"
 msgstr "Tip plana"
 
 #: execute/management/commands/runplan.py:478
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that respects all constraints.<br>In "
-"case of shortages the demand is planned late or short.\">Ograničeni plan</"
-"span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"constraints.<br>In case of shortages the demand is planned late or short."
+"\">Ograničeni plan</span>"
 
 #: execute/management/commands/runplan.py:483
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that shows material, "
@@ -2770,11 +2766,11 @@ msgid ""
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that shows material, capacity and "
-"operation problems that prevent the demand from being planned in time."
-"<br>The demand is always met completely and on time.\">Neograničeni plan</"
-"span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Generate a supply plan that shows material, "
+"capacity and operation problems that prevent the demand from being planned "
+"in time.<br>The demand is always met completely and on time.\">Neograničeni "
+"plan</span>"
 
 #: execute/management/commands/runplan.py:486 output/models.py:56
 #: output/templates/output/buffer.html:338
@@ -2804,9 +2800,8 @@ msgid "Group and schedule tasks"
 msgstr ""
 
 #: execute/management/commands/scheduletasks.py:362
-#, fuzzy
 msgid "Group tasks"
-msgstr "zadaci"
+msgstr ""
 
 #: execute/management/commands/uploadreport.py:278
 msgid "Publish reports by FTP"
@@ -3130,7 +3125,7 @@ msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:30
 msgid "Label shown in the scenario dropdown list"
-msgstr ""
+msgstr "Oznaka prikazana na padajućem popisu scenarija"
 
 #: execute/templates/commands/scenario_copy.html:35
 msgid "Date of the last state change"
@@ -3146,8 +3141,9 @@ msgid "Copy from"
 msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:58
+#, fuzzy
 msgid "Restore from backup"
-msgstr ""
+msgstr "Obnovi iz sigurnosne kopije"
 
 #: execute/templates/commands/scenario_copy.html:71
 msgid "Release: You will lose ALL data in this scenario!"
@@ -3914,9 +3910,8 @@ msgstr "Demand outlier"
 
 #: forecast/templates/forecast/wizard.html:4 forecast/views.py:2334
 #: forecast/views.py:2352
-#, fuzzy
 msgid "forecast wizard"
-msgstr "plan predviđanja"
+msgstr ""
 
 #: forecast/views.py:136
 msgid "method"
@@ -4832,19 +4827,16 @@ msgid "suboperations"
 msgstr "podoperacije"
 
 #: input/models/operation.py:630 input/views/manufacturing.py:1343
-#, fuzzy
 msgid "blocked by operation"
-msgstr "podređena operacija"
+msgstr ""
 
 #: input/models/operation.py:632
-#, fuzzy
 msgid "blocked-by operation"
-msgstr "podređena operacija"
+msgstr ""
 
 #: input/models/operation.py:642
-#, fuzzy
 msgid "Quantity relation between the operations"
-msgstr "Promjenjivo trajanje operacije"
+msgstr ""
 
 #: input/models/operation.py:645 input/models/operation.py:648
 #: input/models/supplier.py:90 input/models/supplier.py:93
@@ -4859,14 +4851,12 @@ msgid "hard safety lead time"
 msgstr ""
 
 #: input/models/operation.py:675
-#, fuzzy
 msgid "operation dependency"
-msgstr "operativni plan"
+msgstr ""
 
 #: input/models/operation.py:676 input/views/manufacturing.py:1306
-#, fuzzy
 msgid "operation dependencies"
-msgstr "radni resursi"
+msgstr ""
 
 #: input/models/operationplan.py:55 input/models/operationplan.py:2545
 #: shopfloor/views.py:113
@@ -5455,9 +5445,8 @@ msgid "Safety stock quantity"
 msgstr "Količina sigurnosnih zaliha"
 
 #: inventoryplanning/admin.py:90 inventoryplanning/views.py:2798
-#, fuzzy
 msgid "segment detail"
-msgstr "nema segmenta"
+msgstr ""
 
 #: inventoryplanning/attributes.py:18
 msgid "Successor part"
@@ -5659,9 +5648,8 @@ msgid "calculated safety stock"
 msgstr "izračunata sigurnosna zaliha"
 
 #: inventoryplanning/models.py:410 inventoryplanning/views.py:570
-#, fuzzy
 msgid "reorder point"
-msgstr "Količina ponovne narudžbe"
+msgstr ""
 
 #: inventoryplanning/models.py:413
 msgid "safety stock value"
@@ -5672,9 +5660,8 @@ msgid "reorder quantity value"
 msgstr "vrijednost količina ponovne narudžbe"
 
 #: inventoryplanning/models.py:419
-#, fuzzy
 msgid "reorder point value"
-msgstr "vrijednost količina ponovne narudžbe"
+msgstr ""
 
 #: inventoryplanning/models.py:431
 #: inventoryplanning/templates/inventoryplanning/drp.html:2183
@@ -5992,15 +5979,14 @@ msgid "Stocking policy"
 msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2989
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
 "\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
 "<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
+"\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
 "<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Nemojte skladištiti</span>"
 
@@ -6010,15 +5996,14 @@ msgid "true"
 msgstr "istina"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:3008
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
 "\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"In push mode, any excess inventory will be distributed "
-"downstream to child locations.\">Aktivira način guranja</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
+"\"true\" data-original-title=\"In push mode, any excess inventory will be "
+"distributed downstream to child locations.\">Aktivira način guranja</span>"
 
 #: inventoryplanning/views.py:116
 msgid "segments"
@@ -6285,18 +6270,16 @@ msgid "consumed"
 msgstr "potrošeno"
 
 #: output/templates/output/buffer.html:441
-#, fuzzy
 msgid "consumed confirmed"
-msgstr "potvrđeno"
+msgstr ""
 
 #: output/templates/output/buffer.html:442
 msgid "produced"
 msgstr "proizvedeno"
 
 #: output/templates/output/buffer.html:443
-#, fuzzy
 msgid "produced confirmed"
-msgstr "genemigte und bestätigte Endtermine"
+msgstr ""
 
 #: output/templates/output/demand.html:153
 #: output/templates/output/demand.html:215
@@ -6871,17 +6854,17 @@ msgid "remark"
 msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:33
-#, fuzzy
 msgid "dates"
-msgstr "Datum/vrijeme"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:50
 msgid "start"
 msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:53
+#, fuzzy
 msgid "pause"
-msgstr ""
+msgstr "pauza"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:56
 #, fuzzy
@@ -6889,24 +6872,20 @@ msgid "end"
 msgstr "kraj"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:80
-#, fuzzy
 msgid "No materials"
-msgstr "materijali"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:102
-#, fuzzy
 msgid "Update materials"
-msgstr "radni materijal"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:118
-#, fuzzy
 msgid "add comment"
-msgstr "napomena"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/resource.html:8
-#, fuzzy
 msgid "Select a manufacturing order"
-msgstr "radni nalog"
+msgstr ""
 
 #: webservice/management/commands/runwebservice.py:196
 msgid "web service"
@@ -7040,9 +7019,8 @@ msgid "Data loading wizard for production planning"
 msgstr ""
 
 #: wizard/views.py:2818
-#, fuzzy
 msgid "Import from odoo"
-msgstr "Uvezi podatke iz %(erp)s"
+msgstr ""
 
 #: wizard/views.py:2820
 msgid "Get started - Data loading wizard"
@@ -7067,7 +7045,7 @@ msgstr "odustani"
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:523
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:557
 msgid "%s allocated out of %s"
-msgstr ""
+msgstr "%s dodijeljeno iz %s"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1360
 #: freppledb/planningboard/static/planningboard/planningboard.html:1389
@@ -7172,8 +7150,9 @@ msgstr "Dupliciraj"
 #: freppledb/planningboard/static/planningboard/planningboard.html:1347
 #: freppledb/planningboard/static/planningboard/planningboard.html:1382
 #: freppledb/planningboard/static/planningboard/planningboard.html:1409
+#, fuzzy
 msgid "Enter name"
-msgstr ""
+msgstr "Unesite naziv"
 
 #: freppledb/quoting/static/quoting/quoting.html:30
 #: freppledb/quoting/static/quoting/quoting.html:43
@@ -7564,11 +7543,11 @@ msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:222
 msgid "{{ aggregatedoperationplans.count }} selected"
-msgstr ""
+msgstr "{{ aggregatedoperationplans.count }} selected"
 
 #: freppledb/forecast/static/forecast/forecast.html:333
 msgid "{{m.label}}"
-msgstr ""
+msgstr "{{m.label}}"
 
 #, fuzzy
 #~ msgid "states.select"

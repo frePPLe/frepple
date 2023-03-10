@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 14:50+0100\n"
-"PO-Revision-Date: 2022-10-26 18:16+0200\n"
+"PO-Revision-Date: 2023-03-10 17:35+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Poedit 2.4.3\n"
 
 #: common/static/js/frepple.js:201
 msgid "Connection failed"
@@ -226,9 +226,8 @@ msgid "Click ok to confirm deleting the favorite"
 msgstr "Cliquez sur ok pour confirmer la suppression du favori"
 
 #: common/static/js/frepple.js:2144
-#, fuzzy
 msgid "Export selected records?"
-msgstr "exporter les lignes séléctionnées"
+msgstr "exporter les lignes séléctionnées?"
 
 #: common/static/js/frepple.js:2158
 msgid "connecting"
@@ -1698,9 +1697,8 @@ msgid "number"
 msgstr "nombre"
 
 #: common/models.py:1472
-#, fuzzy
 msgid "integer"
-msgstr "Entier"
+msgstr "entier"
 
 #: common/models.py:1473 forecast/widget.py:396
 #: input/models/operationplan.py:1100 input/views/inventory.py:1727
@@ -2078,13 +2076,13 @@ msgid "home"
 msgstr "accueil"
 
 #: common/templates/admin/base_site_nav.html:121
-#, fuzzy
 msgid ""
 "Select a what-if scenario.<br>Click <a class='text-decoration-underline' "
 "href='/execute/#scenario_copy'>here</a> to manage scenarios."
 msgstr ""
-"Sélectionnez un scénario de simulation.<br>Cliquez <a class='underline' "
-"href='/execute/#scenario_copy'>ici</a></br>pour gérer les scénarios."
+"Sélectionnez un scénario de simulation.<br>Cliquez <a class='text-decoration-"
+"underline' href='/execute/#scenario_copy'>ici</a></br>pour gérer les "
+"scénarios."
 
 #: common/templates/admin/change_form.html:91
 #: common/templates/admin/login.html:82
@@ -2354,9 +2352,8 @@ msgid "failed"
 msgstr "échoué"
 
 #: common/templates/registration/forgotpassword_form.html:75
-#, fuzzy
 msgid "Email me a password reset link"
-msgstr "Message de réinitialisation du mot de passe envoyé"
+msgstr "Envoyez-moi un lien de réinitialisation de mot de passe par e-mail"
 
 #: common/templates/registration/password_change_done.html:8
 #: common/templates/registration/password_change_form.html:9
@@ -2477,7 +2474,7 @@ msgstr ""
 "%(model)s (nécessite un filtre)"
 
 #: common/templates/rest_framework/index.html:23
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This page helps developers to learn and experiment with the\n"
 "<a class=\"text-decoration-underline\" target=\"_blank\" rel=\"noopener\" "
@@ -2523,8 +2520,9 @@ msgid ""
 "</div>\n"
 msgstr ""
 "Cette page aide les développeurs à apprendre et mettre en pratique\n"
-"<a style=\"text-decoration:underline\" target=\"_blank\" href=\"https://en."
-"wikipedia.org/wiki/Representational_state_transfer\">REST</a>\n"
+"<a class=\"text-decoration-underline\" target=\"_blank\" rel=\"noopener\" "
+"href=\"https://en.wikipedia.org/wiki/Representational_state_transfer\">REST</"
+"a>\n"
 "l'API de frePPLe.<br>\n"
 "Cette API permet à votre application d'échanger de l'information avec "
 "frePPLe de façon directe et efficace.<br>\n"
@@ -2541,25 +2539,30 @@ msgstr ""
 "partir de la ligne de commande.<br>\n"
 "Par exemple, pour renvoyer la liste de toutes les demandes client dans le "
 "format JSON:<br><br>\n"
-"<div style=\"margin-left:20px\">\n"
-"Utilisant <a style=\"text-decoration:underline\" href=\"https://en.wikipedia."
+"<div class=\"ms-4\">\n"
+"<div class=\"mb-2\">\n"
+"Utilisant <a class=\"text-decoration-underline\" href=\"https://en.wikipedia."
 "org/wiki/Basic_access_authentication\" target=\"_blank\">basic "
-"authentication</a>:<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
+"authentication</a>:\n"
+"</div>\n"
+"<div class=\"card mb-3\"><div class=\"card-body\">\n"
 "wget --http-user=%(username)s --http-password=PASSWORD http://127.0.0.1:8000/"
 "api/input/demand/<br><br>\n"
 "curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
+"</div></div>\n"
+"<div class=\"mb-2\">\n"
+"Utilisant <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" "
+"target=\"_blank\">JSON Web Token authentication</a> valable pour les "
+"prochains <input id=\"jwt\" class=\"d-inline form-control p-1\" type=\"number"
+"\" value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em; background:white"
+"\"/> jours:\n"
 "</div>\n"
-"Utilisant un <a style=\"text-decoration:underline\" href=\"https://jwt.io/\" "
-"target=\"_blank\">JSON Web Token</a> valable pour les prochains <input id="
-"\"jwt\" type=\"number\" value=\"%(exp)s\" min=\"0\" step=\"1\" style="
-"\"width:4em\"/>  jours:<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
+"<div class=\"card mb-3\"><div class=\"card-body\">\n"
 "wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
 "input/demand/<br><br>\n"
 "curl -H 'Accept: application/json' --header 'Authorization: Bearer "
 "%(token)s' http://127.0.0.1:8000/api/input/demand/\n"
-"</div>\n"
+"</div></div>\n"
 "</div>\n"
 
 #: common/templates/rest_framework/index.html:60
@@ -2828,20 +2831,19 @@ msgid "Plan type"
 msgstr "Type de plan"
 
 #: execute/management/commands/runplan.py:478
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Générer un plan d'approvisionnement qui respecte toutes les "
-"contraintes.<br>Dans le cas de quantités insuffisantes la demande sera "
-"planifiée soit en retard soit partiellement.\">Contraintes sur plan</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Générer un plan d'approvisionnement qui respecte "
+"toutes les contraintes.<br>Dans le cas de quantités insuffisantes la demande "
+"sera planifiée soit en retard soit partiellement.\">Contraintes sur plan</"
+"span>"
 
 #: execute/management/commands/runplan.py:483
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that shows material, "
@@ -2849,8 +2851,8 @@ msgid ""
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Générer un plan d'approvisionnement qui montre les "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Générer un plan d'approvisionnement qui montre les "
 "problèmes de de matériel, de capacité et d'opération qui empêchent la "
 "demande d'être planifiée à l'heure.<br>La demande est toujours entièrement "
 "planifiée et à temps.\">Plan non contraint</span>"
@@ -2883,9 +2885,8 @@ msgid "Group and schedule tasks"
 msgstr "Grouper et planifier des tâches"
 
 #: execute/management/commands/scheduletasks.py:362
-#, fuzzy
 msgid "Group tasks"
-msgstr "Grouper et planifier des tâches"
+msgstr ""
 
 #: execute/management/commands/uploadreport.py:278
 msgid "Publish reports by FTP"
@@ -4004,9 +4005,8 @@ msgstr "Exception de la demande"
 
 #: forecast/templates/forecast/wizard.html:4 forecast/views.py:2334
 #: forecast/views.py:2352
-#, fuzzy
 msgid "forecast wizard"
-msgstr "plan de prévisions"
+msgstr ""
 
 #: forecast/views.py:136
 msgid "method"
@@ -4928,19 +4928,16 @@ msgid "suboperations"
 msgstr "activités"
 
 #: input/models/operation.py:630 input/views/manufacturing.py:1343
-#, fuzzy
 msgid "blocked by operation"
-msgstr "Opération enfant"
+msgstr ""
 
 #: input/models/operation.py:632
-#, fuzzy
 msgid "blocked-by operation"
-msgstr "Opération enfant"
+msgstr ""
 
 #: input/models/operation.py:642
-#, fuzzy
 msgid "Quantity relation between the operations"
-msgstr "Durée variable pour l'opération"
+msgstr ""
 
 #: input/models/operation.py:645 input/models/operation.py:648
 #: input/models/supplier.py:90 input/models/supplier.py:93
@@ -4955,14 +4952,12 @@ msgid "hard safety lead time"
 msgstr "temps d'approvisionnement contraint"
 
 #: input/models/operation.py:675
-#, fuzzy
 msgid "operation dependency"
-msgstr "nom de l’opération"
+msgstr ""
 
 #: input/models/operation.py:676 input/views/manufacturing.py:1306
-#, fuzzy
 msgid "operation dependencies"
-msgstr "ressources opération"
+msgstr ""
 
 #: input/models/operationplan.py:55 input/models/operationplan.py:2545
 #: shopfloor/views.py:113
@@ -5553,9 +5548,8 @@ msgid "Safety stock quantity"
 msgstr "Quantité de stock de sécurité"
 
 #: inventoryplanning/admin.py:90 inventoryplanning/views.py:2798
-#, fuzzy
 msgid "segment detail"
-msgstr "rapport de stock détaillé"
+msgstr "Détail du segment"
 
 #: inventoryplanning/attributes.py:18
 msgid "Successor part"
@@ -5686,9 +5680,8 @@ msgid "segment"
 msgstr "segment"
 
 #: inventoryplanning/models.py:186
-#, fuzzy
 msgid "Overrides the decoupled lead time"
-msgstr "L’emporte sur le délai découplé"
+msgstr "Remplace le délai découplé"
 
 #: inventoryplanning/models.py:201
 msgid "inventory policy"
@@ -5759,9 +5752,8 @@ msgid "calculated safety stock"
 msgstr "stock de sécurité calculé"
 
 #: inventoryplanning/models.py:410 inventoryplanning/views.py:570
-#, fuzzy
 msgid "reorder point"
-msgstr "quantité de réapprovisionnement"
+msgstr "Point de réapprovisionnement"
 
 #: inventoryplanning/models.py:413
 msgid "safety stock value"
@@ -5772,9 +5764,8 @@ msgid "reorder quantity value"
 msgstr "valeur de la quantité de réapprovisionnement"
 
 #: inventoryplanning/models.py:419
-#, fuzzy
 msgid "reorder point value"
-msgstr "valeur de la quantité de réapprovisionnement"
+msgstr "Valeur du point de réapprovisionnement"
 
 #: inventoryplanning/models.py:431
 #: inventoryplanning/templates/inventoryplanning/drp.html:2183
@@ -6097,15 +6088,14 @@ msgid "Stocking policy"
 msgstr "Politique de stockage"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2989
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
 "\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
 "<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
+"\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
 "<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Ne pas stocker</span>"
 
@@ -6115,15 +6105,14 @@ msgid "true"
 msgstr "vrai"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:3008
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
 "\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"En mode push, Tout excès d'inventaire sera distribué "
-"en aval aux emplacements enfant.\">Active le mode push</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
+"\"true\" data-bs-title=\"En mode push, Tout excès d'inventaire sera "
+"distribué en aval aux emplacements enfant.\">Active le mode push</span>"
 
 #: inventoryplanning/views.py:116
 msgid "segments"
@@ -6392,18 +6381,16 @@ msgid "consumed"
 msgstr "stock consommé"
 
 #: output/templates/output/buffer.html:441
-#, fuzzy
 msgid "consumed confirmed"
-msgstr "total consommé confirmé"
+msgstr ""
 
 #: output/templates/output/buffer.html:442
 msgid "produced"
 msgstr "stock produit"
 
 #: output/templates/output/buffer.html:443
-#, fuzzy
 msgid "produced confirmed"
-msgstr "total production confirmé"
+msgstr ""
 
 #: output/templates/output/demand.html:153
 #: output/templates/output/demand.html:215
@@ -6975,9 +6962,8 @@ msgid "remark"
 msgstr "remarque"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:33
-#, fuzzy
 msgid "dates"
-msgstr "date"
+msgstr "dates"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:34
 #: freppledb/planningboard/static/planningboard/planningboard.html:1139
@@ -6993,7 +6979,7 @@ msgstr "début"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:53
 msgid "pause"
-msgstr ""
+msgstr "pause"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:1144
@@ -7008,24 +6994,20 @@ msgid "end"
 msgstr "fin"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:80
-#, fuzzy
 msgid "No materials"
-msgstr "matières"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:102
-#, fuzzy
 msgid "Update materials"
-msgstr "matériels opération"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:118
-#, fuzzy
 msgid "add comment"
-msgstr "commentaires"
+msgstr "ajouter un commentaire"
 
 #: shopfloor/templates/shopfloor/resource.html:8
-#, fuzzy
 msgid "Select a manufacturing order"
-msgstr "ordre de fabrication"
+msgstr ""
 
 #: webservice/management/commands/runwebservice.py:196
 msgid "web service"
@@ -7159,9 +7141,8 @@ msgstr ""
 "Assistant de chargement de données pour la planification de la production"
 
 #: wizard/views.py:2818
-#, fuzzy
 msgid "Import from odoo"
-msgstr "Importer des fichiers de données d'un répertoire"
+msgstr ""
 
 #: wizard/views.py:2820
 msgid "Get started - Data loading wizard"
@@ -7633,14 +7614,10 @@ msgstr ""
 "<br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1506
-#, fuzzy
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
-"Une opération obtient la couleur de la semaine où la demande qu'elle sert "
-"est prévue.\n"
-"<br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:321
 msgid "Apply"
@@ -7665,7 +7642,6 @@ msgid "Select panel measure"
 msgstr "Sélectionnez la mesure du panneau"
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:78
-#, fuzzy
 msgid "View end events"
 msgstr "Afficher les événements de fin"
 
@@ -7674,7 +7650,6 @@ msgid "View full duration"
 msgstr "Afficher la durée complète"
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:79
-#, fuzzy
 msgid "View start and end events"
 msgstr "Afficher les événements de début et de fin"
 

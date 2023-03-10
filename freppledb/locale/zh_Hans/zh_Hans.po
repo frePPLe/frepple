@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 14:50+0100\n"
-"PO-Revision-Date: 2022-10-26 17:01+0200\n"
+"PO-Revision-Date: 2023-03-10 17:43+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -235,9 +235,8 @@ msgid "Click ok to confirm deleting the favorite"
 msgstr ""
 
 #: common/static/js/frepple.js:2144
-#, fuzzy
 msgid "Export selected records?"
-msgstr "单击以选择记录"
+msgstr ""
 
 #: common/static/js/frepple.js:2158
 msgid "connecting"
@@ -296,7 +295,7 @@ msgid "Delete"
 msgstr "删除"
 
 #: common/static/js/frepple.js:2550
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%s unread messages"
 msgstr "未读消息 %s"
 
@@ -2385,9 +2384,8 @@ msgid "failed"
 msgstr "失败"
 
 #: common/templates/registration/forgotpassword_form.html:75
-#, fuzzy
 msgid "Email me a password reset link"
-msgstr "密码重置链接已经发送。"
+msgstr ""
 
 #: common/templates/registration/password_change_done.html:8
 #: common/templates/registration/password_change_form.html:9
@@ -2500,7 +2498,7 @@ msgid ""
 msgstr "发送一个DELETE请求删除一个或多个现有的 %(model)s 对象(需要过滤)"
 
 #: common/templates/rest_framework/index.html:23
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This page helps developers to learn and experiment with the\n"
 "<a class=\"text-decoration-underline\" target=\"_blank\" rel=\"noopener\" "
@@ -2545,40 +2543,6 @@ msgid ""
 "</div></div>\n"
 "</div>\n"
 msgstr ""
-"此页帮助开发人员学习和实验frePPLe的\n"
-"<a style=“text-decoration:underline” target=“_blank” href=“https://en."
-"wikipedia.org/wiki/Representational_state_transfer”>REST</a>\n"
-"API。<br>\n"
-"该API允许应用程序与frePPLe交换信息是有效的和直接的方式。<br>\n"
-"<br>\n"
-"这个“列表的API”链接将带您到对象列表的页面。<br>\n"
-"同时这个“详细的API”链接将带您到一个特定的对象，当你进入对象的主键<br>\n"
-"在这些页面中您将能够使用的HTTP请求方法有 GET，POST，OPTIONS，PUT，PATCH 和 "
-"DELETE。<br>\n"
-"结果可以以JSON格式显示或直接在您的浏览器中直接以网页（HTML)显示<br>\n"
-"<br>\n"
-"使用这样的工具‘wget’ or ‘curl’ 您可以从命令行访问API。<br>\n"
-"例如，返回JSON格式的所有销售订单清单：<br><br>\n"
-"<div style=\"margin-left:20px\">\n"
-"Using <a style=\"text-decoration:underline\" href=\"https://en.wikipedia.org/"
-"wiki/Basic_access_authentication\" target=\"_blank\">basic authentication</"
-"a>:<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --http-user=%(username)s --http-password=PASSWORD http://127.0.0.1:8000/"
-"api/input/demand/<br><br>\n"
-"curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
-"</div>\n"
-"Using <a style=\"text-decoration:underline\" href=\"https://jwt.io/\" target="
-"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
-"\"jwt\" type=\"number\" value=\"%(exp)s\" min=\"0\" step=\"1\" style="
-"\"width:4em\"/>  days:<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
-"input/demand/<br><br>\n"
-"curl -H 'Accept: application/json' --header 'Authorization: Bearer "
-"%(token)s' http://127.0.0.1:8000/api/input/demand/\n"
-"</div>\n"
-"</div>\n"
 
 #: common/templates/rest_framework/index.html:60
 msgid "List API"
@@ -2845,19 +2809,18 @@ msgid "Plan type"
 msgstr "套餐类型"
 
 #: execute/management/commands/runplan.py:478
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that respects all constraints.<br>In "
-"case of shortages the demand is planned late or short.\">约束条件计划</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"constraints.<br>In case of shortages the demand is planned late or short.\">"
+"约束条件计划</span>"
 
 #: execute/management/commands/runplan.py:483
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that shows material, "
@@ -2865,10 +2828,11 @@ msgid ""
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that shows material, capacity and "
-"operation problems that prevent the demand from being planned in time."
-"<br>The demand is always met completely and on time.\">非约束条件计划</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Generate a supply plan that shows material, "
+"capacity and operation problems that prevent the demand from being planned "
+"in time.<br>The demand is always met completely and on time.\">非约束条件计划"
+"</span>"
 
 #: execute/management/commands/runplan.py:486 output/models.py:56
 #: output/templates/output/buffer.html:338
@@ -2898,9 +2862,8 @@ msgid "Group and schedule tasks"
 msgstr ""
 
 #: execute/management/commands/scheduletasks.py:362
-#, fuzzy
 msgid "Group tasks"
-msgstr "任务"
+msgstr ""
 
 #: execute/management/commands/uploadreport.py:278
 msgid "Publish reports by FTP"
@@ -4019,9 +3982,8 @@ msgstr "需求异常值"
 
 #: forecast/templates/forecast/wizard.html:4 forecast/views.py:2334
 #: forecast/views.py:2352
-#, fuzzy
 msgid "forecast wizard"
-msgstr "预测计划"
+msgstr ""
 
 #: forecast/views.py:136
 msgid "method"
@@ -4933,19 +4895,16 @@ msgid "suboperations"
 msgstr "子操作"
 
 #: input/models/operation.py:630 input/views/manufacturing.py:1343
-#, fuzzy
 msgid "blocked by operation"
-msgstr "子类操作"
+msgstr ""
 
 #: input/models/operation.py:632
-#, fuzzy
 msgid "blocked-by operation"
-msgstr "子类操作"
+msgstr ""
 
 #: input/models/operation.py:642
-#, fuzzy
 msgid "Quantity relation between the operations"
-msgstr "对于操作的变数持续时间"
+msgstr ""
 
 #: input/models/operation.py:645 input/models/operation.py:648
 #: input/models/supplier.py:90 input/models/supplier.py:93
@@ -4960,14 +4919,12 @@ msgid "hard safety lead time"
 msgstr ""
 
 #: input/models/operation.py:675
-#, fuzzy
 msgid "operation dependency"
-msgstr "操作计划"
+msgstr ""
 
 #: input/models/operation.py:676 input/views/manufacturing.py:1306
-#, fuzzy
 msgid "operation dependencies"
-msgstr "操作：资源清单"
+msgstr ""
 
 #: input/models/operationplan.py:55 input/models/operationplan.py:2545
 #: shopfloor/views.py:113
@@ -5565,9 +5522,8 @@ msgid "Safety stock quantity"
 msgstr "安全库存量"
 
 #: inventoryplanning/admin.py:90 inventoryplanning/views.py:2798
-#, fuzzy
 msgid "segment detail"
-msgstr "段"
+msgstr ""
 
 #: inventoryplanning/attributes.py:18
 msgid "Successor part"
@@ -5769,9 +5725,8 @@ msgid "calculated safety stock"
 msgstr "计算安全库存"
 
 #: inventoryplanning/models.py:410 inventoryplanning/views.py:570
-#, fuzzy
 msgid "reorder point"
-msgstr "再订货数量"
+msgstr ""
 
 #: inventoryplanning/models.py:413
 msgid "safety stock value"
@@ -5782,9 +5737,8 @@ msgid "reorder quantity value"
 msgstr "再订货数量值"
 
 #: inventoryplanning/models.py:419
-#, fuzzy
 msgid "reorder point value"
-msgstr "再订货数量值"
+msgstr ""
 
 #: inventoryplanning/models.py:431
 #: inventoryplanning/templates/inventoryplanning/drp.html:2183
@@ -6116,15 +6070,15 @@ msgid "true"
 msgstr "真实"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:3008
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
 "\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that respects all constraints.<br>In "
-"case of shortages the demand is planned late or short.\">约束条件计划</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"constraints.<br>In case of shortages the demand is planned late or short.\">"
+"约束条件计划</span>"
 
 #: inventoryplanning/views.py:116
 msgid "segments"
@@ -6391,18 +6345,16 @@ msgid "consumed"
 msgstr "消耗"
 
 #: output/templates/output/buffer.html:441
-#, fuzzy
 msgid "consumed confirmed"
-msgstr "已确定"
+msgstr ""
 
 #: output/templates/output/buffer.html:442
 msgid "produced"
 msgstr "生产"
 
 #: output/templates/output/buffer.html:443
-#, fuzzy
 msgid "produced confirmed"
-msgstr "已批准和确认的完工数量"
+msgstr ""
 
 #: output/templates/output/demand.html:153
 #: output/templates/output/demand.html:215
@@ -7013,24 +6965,21 @@ msgid "end"
 msgstr "结束"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:80
-#, fuzzy
 msgid "No materials"
-msgstr "物料"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:102
-#, fuzzy
 msgid "Update materials"
-msgstr "操作：物料清单"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:118
 #, fuzzy
 msgid "add comment"
-msgstr "评论"
+msgstr "添加评论"
 
 #: shopfloor/templates/shopfloor/resource.html:8
-#, fuzzy
 msgid "Select a manufacturing order"
-msgstr "生产单"
+msgstr ""
 
 #: webservice/management/commands/runwebservice.py:196
 msgid "web service"
@@ -7167,9 +7116,8 @@ msgid "Data loading wizard for production planning"
 msgstr ""
 
 #: wizard/views.py:2818
-#, fuzzy
 msgid "Import from odoo"
-msgstr "导入/导出数据文件到一个文件夹"
+msgstr ""
 
 #: wizard/views.py:2820
 msgid "Get started - Data loading wizard"
@@ -7569,14 +7517,10 @@ msgid ""
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1506
-#, fuzzy
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
-"一个操作获得其类别的颜色。<br>\n"
-"                        操作类别应填写操作表上。\n"
-"                        <br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:321
 #, fuzzy
@@ -7745,7 +7689,6 @@ msgid "week number"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:222
-#, fuzzy
 msgid "{{ aggregatedoperationplans.count }} selected"
 msgstr "{{ aggregatedoperationplans.count }}已选定"
 

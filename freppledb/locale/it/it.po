@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 14:50+0100\n"
-"PO-Revision-Date: 2022-10-26 16:59+0200\n"
+"PO-Revision-Date: 2023-03-10 17:34+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: it\n"
@@ -225,9 +225,8 @@ msgid "Click ok to confirm deleting the favorite"
 msgstr ""
 
 #: common/static/js/frepple.js:2144
-#, fuzzy
 msgid "Export selected records?"
-msgstr "Clicca per selezionare la riga"
+msgstr ""
 
 #: common/static/js/frepple.js:2158
 msgid "connecting"
@@ -315,9 +314,8 @@ msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "Cancella prima tutti gli esistenti inserimenti E LE TABELLE AFFERENTI"
 
 #: common/static/js/frepple.js:2765
-#, fuzzy
 msgid "files selected"
-msgstr "file selezionati"
+msgstr ""
 
 #: common/static/js/frepple.js:2768
 msgid "Select files"
@@ -399,17 +397,15 @@ msgstr "scorte attuali"
 #: planningboard/static/planningboard/src/planningboard.js:863
 #: planningboard/static/planningboard/src/planningboard.js:884
 #: planningboard/static/planningboard/src/planningboard.js:885
-#, fuzzy
 msgid "minutes"
-msgstr "minuti"
+msgstr ""
 
 #: planningboard/static/planningboard/src/module.js:65
 #: planningboard/static/planningboard/src/planningboard.js:861
 #: planningboard/static/planningboard/src/planningboard.js:892
 #: planningboard/static/planningboard/src/planningboard.js:893
-#, fuzzy
 msgid "seconds"
-msgstr "secondi"
+msgstr ""
 
 #: planningboard/static/planningboard/src/module.js:69
 #: planningboard/static/planningboard/src/planningboard.js:865
@@ -420,21 +416,18 @@ msgstr "ore"
 
 #: planningboard/static/planningboard/src/planningboard.js:880
 #: planningboard/static/planningboard/src/planningboard.js:881
-#, fuzzy
 msgid "hour"
-msgstr "ora"
+msgstr ""
 
 #: planningboard/static/planningboard/src/planningboard.js:888
 #: planningboard/static/planningboard/src/planningboard.js:889
-#, fuzzy
 msgid "minute"
-msgstr "minuto"
+msgstr ""
 
 #: planningboard/static/planningboard/src/planningboard.js:895
 #: planningboard/static/planningboard/src/planningboard.js:896
-#, fuzzy
 msgid "second"
-msgstr "secondo"
+msgstr ""
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
@@ -1326,9 +1319,8 @@ msgstr ""
 "disponibili."
 
 #: common/localization.py:31 common/localization.py:49
-#, fuzzy
 msgid "Invalid date format"
-msgstr "Formato data non valido"
+msgstr ""
 
 #: common/menu.py:117
 msgid "Documentation"
@@ -1545,9 +1537,8 @@ msgid "scenario"
 msgstr "scenario"
 
 #: common/models.py:372
-#, fuzzy
 msgid "Detect automatically"
-msgstr "Individua automaticamente"
+msgstr ""
 
 #: common/models.py:375 common/templates/common/preferences.html:49
 #: common/views.py:168
@@ -1631,9 +1622,8 @@ msgid "followers"
 msgstr "seguaci"
 
 #: common/models.py:1023
-#, fuzzy
 msgid "notification"
-msgstr "notifica"
+msgstr ""
 
 #: common/models.py:1024
 msgid "notifications"
@@ -1699,7 +1689,6 @@ msgid "string"
 msgstr "stringa"
 
 #: common/models.py:1470
-#, fuzzy
 msgid "boolean"
 msgstr "booleano"
 
@@ -1708,11 +1697,8 @@ msgid "number"
 msgstr "numero"
 
 #: common/models.py:1472
-#, fuzzy
 msgid "integer"
 msgstr ""
-"Passare un numero intero di articoli è deprecato. Passare invece un array di "
-"argomenti."
 
 #: common/models.py:1473 forecast/widget.py:396
 #: input/models/operationplan.py:1100 input/views/inventory.py:1727
@@ -1721,9 +1707,8 @@ msgid "date"
 msgstr "data"
 
 #: common/models.py:1474
-#, fuzzy
 msgid "datetime"
-msgstr "giorno e ora"
+msgstr ""
 
 #: common/models.py:1475 execute/views.py:151 input/models/operation.py:149
 #: input/models/resource.py:274 input/views/capacity.py:103
@@ -1743,9 +1728,8 @@ msgid "time"
 msgstr "ora"
 
 #: common/models.py:1477
-#, fuzzy
 msgid "JSON"
-msgstr "JSON"
+msgstr ""
 
 #: common/models.py:1510 common/views.py:506 common/views.py:707
 msgid "model"
@@ -1758,9 +1742,8 @@ msgid "label"
 msgstr "etichetta"
 
 #: common/models.py:1519 common/views.py:722
-#, fuzzy
 msgid "editable"
-msgstr "modificabile"
+msgstr ""
 
 #: common/models.py:1521 common/views.py:726 forecast/models.py:1183
 #: forecast/views.py:365
@@ -1772,9 +1755,8 @@ msgid "Name can only be alphanumeric"
 msgstr ""
 
 #: common/models.py:1582
-#, fuzzy
 msgid "attribute"
-msgstr "attributo"
+msgstr ""
 
 #: common/models.py:1583 common/views.py:679
 #: inventoryplanning/templates/inventoryplanning/drp.html:2640
@@ -1887,9 +1869,8 @@ msgid "warning"
 msgstr "attenzione"
 
 #: common/report.py:2497
-#, fuzzy
 msgid "file"
-msgstr "file"
+msgstr ""
 
 #: common/report.py:2840
 #: inventoryplanning/templates/inventoryplanning/drp.html:3000
@@ -2359,9 +2340,8 @@ msgid "failed"
 msgstr "fallito"
 
 #: common/templates/registration/forgotpassword_form.html:75
-#, fuzzy
 msgid "Email me a password reset link"
-msgstr "Istruzioni per il recupero della password inviate"
+msgstr ""
 
 #: common/templates/registration/password_change_done.html:8
 #: common/templates/registration/password_change_form.html:9
@@ -2485,7 +2465,7 @@ msgstr ""
 "(richiede un filtro)"
 
 #: common/templates/rest_framework/index.html:23
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This page helps developers to learn and experiment with the\n"
 "<a class=\"text-decoration-underline\" target=\"_blank\" rel=\"noopener\" "
@@ -2530,44 +2510,6 @@ msgid ""
 "</div></div>\n"
 "</div>\n"
 msgstr ""
-"Questa pagina aiuta gli sviluppatori ad apprendere e sperimentare con i \n"
-"<a style=\"text-decoration:underline\" target=\"_blank\" href=\"https://en."
-"wikipedia.org/wiki/Representational_state_transfer\">REST</a>\n"
-"API of frePPLe.<br>\n"
-"Questa API consente alle tue applicazioni di scambiare informazioni con "
-"frePPle in maniera diretta ed efficiente.<br>\n"
-"<br>\n"
-"The \"list API\" link takes you to the object list page.<br>\n"
-"And the \"detail API\" link takes you to a specific object when you enter "
-"the object's primary key.<br>\n"
-"In these pages you will be able to perform HTTP requests with methods GET, "
-"POST, OPTIONS, PUT, PATCH and DELETE.<br>\n"
-"The results can shown in JSON format or as HTML in your browser.<br>\n"
-"<br>\n"
-"Using a tool like 'wget' or 'curl' you can access the API from the command "
-"line.<br>\n"
-"For instance, to return the list of all sales orders in JSON format:"
-"<br><br>\n"
-"<div style=\"margin-left:20px\">\n"
-"Using <a style=\"text-decoration:underline\" href=\"https://en.wikipedia.org/"
-"wiki/Basic_access_authentication\" target=\"_blank\">basic authentication</"
-"a>:<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --http-user=%(username)s --http-password=PASSWORD http://127.0.0.1:8000/"
-"api/input/demand/<br><br>\n"
-"curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
-"</div>\n"
-"Using <a style=\"text-decoration:underline\" href=\"https://jwt.io/\" target="
-"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
-"\"jwt\" type=\"number\" value=\"%(exp)s\" min=\"0\" step=\"1\" style="
-"\"width:4em\"/>  days:<br>\n"
-"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
-"wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
-"input/demand/<br><br>\n"
-"curl -H 'Accept: application/json' --header 'Authorization: Bearer "
-"%(token)s' http://127.0.0.1:8000/api/input/demand/\n"
-"</div>\n"
-"</div>\n"
 
 #: common/templates/rest_framework/index.html:60
 msgid "List API"
@@ -2806,20 +2748,18 @@ msgid "Plan type"
 msgstr "Tipo di piano"
 
 #: execute/management/commands/runplan.py:478
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generare un piano di approvvigionamento che rispetta tutti "
-"i vincoli.<br>In caso di carenze la domanda è pianificata in ritardo o in "
-"anticipo.\">Constrained plan</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Generare un piano di approvvigionamento che "
+"rispetta tutti i vincoli.<br>In caso di carenze la domanda è pianificata in "
+"ritardo o in anticipo.\">Constrained plan</span>"
 
 #: execute/management/commands/runplan.py:483
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
 "\"true\" data-bs-title=\"Generate a supply plan that shows material, "
@@ -2827,10 +2767,10 @@ msgid ""
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generare un piano di approvvigionamento che mostri problemi "
-"di materiale, capacità ed operazioni che impediscono alla dlomanda di essere "
-"pianificata in tempo.\">Unconstrained plan</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Generare un piano di approvvigionamento che mostri "
+"problemi di materiale, capacità ed operazioni che impediscono alla dlomanda "
+"di essere pianificata in tempo.\">Unconstrained plan</span>"
 
 #: execute/management/commands/runplan.py:486 output/models.py:56
 #: output/templates/output/buffer.html:338
@@ -2862,9 +2802,8 @@ msgid "Group and schedule tasks"
 msgstr ""
 
 #: execute/management/commands/scheduletasks.py:362
-#, fuzzy
 msgid "Group tasks"
-msgstr "compiti"
+msgstr ""
 
 #: execute/management/commands/uploadreport.py:278
 msgid "Publish reports by FTP"
@@ -2995,9 +2934,8 @@ msgstr "anno nome"
 
 #: execute/templates/commands/emailreport.html:6
 #: execute/templates/commands/uploadreport.html:6
-#, fuzzy
 msgid "publish"
-msgstr "pubblico"
+msgstr ""
 
 #: execute/templates/commands/emailreport.html:9
 msgid ""
@@ -3201,9 +3139,8 @@ msgid "Copy from"
 msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:58
-#, fuzzy
 msgid "Restore from backup"
-msgstr "Riprista da backup"
+msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:71
 msgid "Release: You will lose ALL data in this scenario!"
@@ -3244,15 +3181,13 @@ msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:98
 #: execute/templates/commands/scheduletasks.html:206
-#, fuzzy
 msgid "Move down"
-msgstr "Sposta giù"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:102
 #: execute/templates/commands/scheduletasks.html:210
-#, fuzzy
 msgid "Move up"
-msgstr "Sposta su"
+msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:120
 #: input/models/calendar.py:295 input/templates/input/calendardetail.html:72
@@ -3968,9 +3903,8 @@ msgstr "Deviazione della domanda"
 
 #: forecast/templates/forecast/wizard.html:4 forecast/views.py:2334
 #: forecast/views.py:2352
-#, fuzzy
 msgid "forecast wizard"
-msgstr "piano previsionale"
+msgstr ""
 
 #: forecast/views.py:136
 msgid "method"
@@ -4887,19 +4821,16 @@ msgid "suboperations"
 msgstr "sotto operazioni"
 
 #: input/models/operation.py:630 input/views/manufacturing.py:1343
-#, fuzzy
 msgid "blocked by operation"
-msgstr "Operazione figlio"
+msgstr ""
 
 #: input/models/operation.py:632
-#, fuzzy
 msgid "blocked-by operation"
-msgstr "Operazione figlio"
+msgstr ""
 
 #: input/models/operation.py:642
-#, fuzzy
 msgid "Quantity relation between the operations"
-msgstr "Una durata variabile per l'operazione"
+msgstr ""
 
 #: input/models/operation.py:645 input/models/operation.py:648
 #: input/models/supplier.py:90 input/models/supplier.py:93
@@ -4914,14 +4845,12 @@ msgid "hard safety lead time"
 msgstr ""
 
 #: input/models/operation.py:675
-#, fuzzy
 msgid "operation dependency"
-msgstr "piano operativo"
+msgstr ""
 
 #: input/models/operation.py:676 input/views/manufacturing.py:1306
-#, fuzzy
 msgid "operation dependencies"
-msgstr "risorse dell'operazione"
+msgstr ""
 
 #: input/models/operationplan.py:55 input/models/operationplan.py:2545
 #: shopfloor/views.py:113
@@ -5256,9 +5185,8 @@ msgid "item suppliers"
 msgstr "articolo fornitori"
 
 #: input/templates/input/calendardetail.html:44
-#, fuzzy
 msgid "monday"
-msgstr "lunedì"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:48
 #, fuzzy
@@ -5276,14 +5204,12 @@ msgid "thursday"
 msgstr "giovedì"
 
 #: input/templates/input/calendardetail.html:60
-#, fuzzy
 msgid "friday"
-msgstr "venerdì"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:64
-#, fuzzy
 msgid "saturday"
-msgstr "sabato"
+msgstr ""
 
 #: input/templates/input/calendardetail.html:68
 #, fuzzy
@@ -5520,9 +5446,8 @@ msgid "Safety stock quantity"
 msgstr "Quantità di stock di sicurezza"
 
 #: inventoryplanning/admin.py:90 inventoryplanning/views.py:2798
-#, fuzzy
 msgid "segment detail"
-msgstr "dettaglio inventario"
+msgstr ""
 
 #: inventoryplanning/attributes.py:18
 msgid "Successor part"
@@ -5724,9 +5649,8 @@ msgid "calculated safety stock"
 msgstr "stock di sicurezza calcolato"
 
 #: inventoryplanning/models.py:410 inventoryplanning/views.py:570
-#, fuzzy
 msgid "reorder point"
-msgstr "quantità di riordino"
+msgstr ""
 
 #: inventoryplanning/models.py:413
 msgid "safety stock value"
@@ -5737,9 +5661,8 @@ msgid "reorder quantity value"
 msgstr "valore della quantità di riordino"
 
 #: inventoryplanning/models.py:419
-#, fuzzy
 msgid "reorder point value"
-msgstr "valore della quantità di riordino"
+msgstr ""
 
 #: inventoryplanning/models.py:431
 #: inventoryplanning/templates/inventoryplanning/drp.html:2183
@@ -5893,9 +5816,8 @@ msgstr "Errore nel recuperare i dati"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1469
 #: output/templates/output/buffer.html:260
-#, fuzzy
 msgid "Archived"
-msgstr "Archiviato"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2190
 msgid "superseded"
@@ -6057,15 +5979,14 @@ msgid "Stocking policy"
 msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2989
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
 "\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
 "<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
+"\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
 "<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Non stoccate</span>"
 
@@ -6075,15 +5996,14 @@ msgid "true"
 msgstr "vero"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:3008
-#, fuzzy
 msgid ""
 "<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
 "\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"In push mode, any excess inventory will be distributed "
-"downstream to child locations.\">Attiva la modalità push</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
+"\"true\" data-bs-title=\"In push mode, any excess inventory will be "
+"distributed downstream to child locations.\">Attiva la modalità push</span>"
 
 #: inventoryplanning/views.py:116
 msgid "segments"
@@ -6160,9 +6080,8 @@ msgid "Display the locations with the highest inventory value"
 msgstr "Visualizza le sedi con il maggior valore di inventario"
 
 #: menu.py:23 settings.py:417
-#, fuzzy
 msgid "sales"
-msgstr "vendite"
+msgstr ""
 
 #: menu.py:25 output/views/constraint.py:30
 msgid "capacity"
@@ -6361,9 +6280,8 @@ msgid "produced"
 msgstr "prodotto"
 
 #: output/templates/output/buffer.html:443
-#, fuzzy
 msgid "produced confirmed"
-msgstr "data di fine approvata e confermata"
+msgstr ""
 
 #: output/templates/output/demand.html:153
 #: output/templates/output/demand.html:215
@@ -6938,9 +6856,8 @@ msgid "remark"
 msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:33
-#, fuzzy
 msgid "dates"
-msgstr "data"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:34
 #: freppledb/planningboard/static/planningboard/planningboard.html:1139
@@ -6971,24 +6888,20 @@ msgid "end"
 msgstr "fine"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:80
-#, fuzzy
 msgid "No materials"
-msgstr "materiali"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:102
-#, fuzzy
 msgid "Update materials"
-msgstr "materiali dell'operazione"
+msgstr ""
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:118
-#, fuzzy
 msgid "add comment"
-msgstr "commento"
+msgstr "aggiungi un commento"
 
 #: shopfloor/templates/shopfloor/resource.html:8
-#, fuzzy
 msgid "Select a manufacturing order"
-msgstr "ordine di produzione"
+msgstr ""
 
 #: webservice/management/commands/runwebservice.py:196
 msgid "web service"
@@ -7014,9 +6927,8 @@ msgstr "esplorare le funzionalità"
 
 #: wizard/templates/wizard/features.html:19
 #: wizard/templates/wizard/index.html:17
-#, fuzzy
 msgid "dashboard"
-msgstr "bacheca"
+msgstr ""
 
 #: wizard/templates/wizard/quickstart_forecast.html:61
 #: wizard/templates/wizard/quickstart_production.html:387
@@ -7122,9 +7034,8 @@ msgid "Data loading wizard for production planning"
 msgstr ""
 
 #: wizard/views.py:2818
-#, fuzzy
 msgid "Import from odoo"
-msgstr "Importa file di dati della cartella"
+msgstr ""
 
 #: wizard/views.py:2820
 msgid "Get started - Data loading wizard"
@@ -7561,9 +7472,8 @@ msgid "gantt chart rows limit"
 msgstr "limite righe diagramma di Gantt"
 
 #: freppledb/forecast/static/forecast/forecast.html:188
-#, fuzzy
 msgid "history"
-msgstr "cronologia"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:36
 msgid "item subcategory"
@@ -7611,9 +7521,8 @@ msgid "remove all rows"
 msgstr "rimuovere tutte le righe"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:81
-#, fuzzy
 msgid "remove row"
-msgstr "rimuovi riga"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:6
 msgid "selected"

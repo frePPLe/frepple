@@ -889,15 +889,15 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)),0)
                     where resource = %%s
                     and (
-                        load != round(
+                        load != round(cast(
                         case when available = 0 then 0 else
                     coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
                     - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)
-                        end, 8)
-                    or free != round(
+                        end) as numeric, 8)
+                    or free != round(cast(
                         greatest(available - (coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
-                    - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)),0),
-                       8)
+                    - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)),0)
+                      as numeric), 8)
                        )
                     """ % (
                     (

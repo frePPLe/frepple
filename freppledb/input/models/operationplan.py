@@ -765,7 +765,7 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
         if "operationplan__quantity" in fields:
             delta["quantity"] = fields["operationplan__quantity"]
             self.operationplan.quantity = delta["quantity"]
-        if delta:
+        if delta or "resource" in fields:
             self.operationplan.update(
                 database=database, delete=delete, create=create, **delta
             )
@@ -888,11 +888,17 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
                     free = greatest(available - (coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
                     - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)),0)
                     where resource = %%s
-                    and (load != case when available = 0 then 0 else
+                    and (
+                        load != round(
+                        case when available = 0 then 0 else
                     coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
-                    - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0) end
-                    or free != greatest(available - (coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
-                    - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)),0))
+                    - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)
+                        end, 8)
+                    or free != round(
+                        greatest(available - (coalesce(extract(epoch from (select working_time from working_time where startdate = out_resourceplan.startdate))/%%s, 0)
+                    - coalesce(extract(epoch from (select interruptions from interruptions where startdate = out_resourceplan.startdate))/%%s, 0)),0),
+                       8)
+                       )
                     """ % (
                     (
                         """union all
@@ -1182,13 +1188,13 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
                 with cte as (
                     select
                         operationplanmaterial.id,
-                        sum(operationplanmaterial.quantity)
+                        round(sum(operationplanmaterial.quantity)
                         over (
                             partition by operationplanmaterial.item_id,
                               operationplanmaterial.location_id,
                               operationplan.batch
                             order by flowdate, operationplanmaterial.quantity desc, operationplanmaterial.id
-                            ) as cumul,
+                            ), 8) as cumul,
                         (
                         select safetystock from (
                             select 1 as priority, coalesce(

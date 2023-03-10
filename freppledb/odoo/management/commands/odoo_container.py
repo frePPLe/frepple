@@ -26,6 +26,8 @@ from django.db import DEFAULT_DB_ALIAS
 from freppledb import __version__
 from freppledb.common.models import Parameter
 
+from ...utils import getOdooVersion
+
 
 class Command(BaseCommand):
 
@@ -100,18 +102,12 @@ class Command(BaseCommand):
             help="Location of the odoo connectors to install.",
         )
 
-    def getOdooVersion(self, dockerfile):
-        with open(dockerfile, mode="rt") as f:
-            for l in f.read().splitlines():
-                if l.startswith("FROM "):
-                    return l.split(":", 1)[-1]
-            raise CommandError("Can't find odoo version in dockerfile")
-
     def handle(self, **options):
         dockerfile = os.path.join(options["odoo_addon_path"], "dockerfile")
-        if not os.path.exists(dockerfile):
-            raise CommandError("Can't find dockerfile")
-        odooversion = self.getOdooVersion(dockerfile)
+        try:
+            odooversion = getOdooVersion(dockerfile)
+        except Exception:
+            raise CommandError("Can't determine odoo version")
 
         # Used as a) docker image name, b) docker container name,
         # c) docker volume name and d) odoo database name.

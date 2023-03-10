@@ -404,7 +404,7 @@ class loadCalendars(LoadTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        return -1 if kwargs.get("skipLoad", False) else 1
+        return 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -419,19 +419,29 @@ class loadCalendars(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
-                SELECT
-                  name, defaultvalue, source, 0 hidden
-                FROM calendar %s
-                union
-                SELECT
-                  name, 0, 'common_bucket', 1 hidden
-                FROM common_bucket
-                order by name asc
-                """
-                    % filter_where
-                )
+                if kwargs.get("skipLoad", False):
+                    cursor.execute(
+                        """
+                        select
+                        name, 0, 'common_bucket', 1 hidden
+                        FROM common_bucket
+                        order by name asc
+                        """
+                    )
+                else:
+                    cursor.execute(
+                        """
+                        select
+                        name, defaultvalue, source, 0 hidden
+                        FROM calendar %s
+                        union
+                        SELECT
+                        name, 0, 'common_bucket', 1 hidden
+                        FROM common_bucket
+                        order by name asc
+                        """
+                        % filter_where
+                    )
                 for i in cursor:
                     cnt += 1
                     try:
@@ -453,7 +463,7 @@ class loadCalendarBuckets(LoadTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        return -1 if kwargs.get("skipLoad", False) else 1
+        return 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -468,23 +478,35 @@ class loadCalendarBuckets(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                cursor.execute(
-                    """
-                SELECT
-                  calendar_id, startdate, enddate, priority, value,
-                  sunday, monday, tuesday, wednesday, thursday, friday, saturday,
-                  starttime, endtime, source
-                FROM calendarbucket %s
-                UNION
-                SELECT
-                  bucket_id calendar_id, startdate, enddate, 10 priority , 0 as value,
-                  't' sunday,'t' monday,'t' tuesday,'t' wednesday,'t' thurday,'t' friday,'t' saturday,
-                  time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source
-                FROM common_bucketdetail
-                ORDER BY calendar_id, startdate desc
-                """
-                    % filter_where
-                )
+                if kwargs.get("skipLoad", False):
+                    cursor.execute(
+                        """
+                        SELECT
+                        bucket_id calendar_id, startdate, enddate, 10 priority , 0 as value,
+                        't' sunday,'t' monday,'t' tuesday,'t' wednesday,'t' thurday,'t' friday,'t' saturday,
+                        time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source
+                        FROM common_bucketdetail
+                        ORDER BY calendar_id, startdate desc
+                        """
+                    )
+                else:
+                    cursor.execute(
+                        """
+                        SELECT
+                        calendar_id, startdate, enddate, priority, value,
+                        sunday, monday, tuesday, wednesday, thursday, friday, saturday,
+                        starttime, endtime, source
+                        FROM calendarbucket %s
+                        UNION
+                        SELECT
+                        bucket_id calendar_id, startdate, enddate, 10 priority , 0 as value,
+                        't' sunday,'t' monday,'t' tuesday,'t' wednesday,'t' thurday,'t' friday,'t' saturday,
+                        time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source
+                        FROM common_bucketdetail
+                        ORDER BY calendar_id, startdate desc
+                        """
+                        % filter_where
+                    )
                 prevcal = None
                 for i in cursor:
                     cnt += 1

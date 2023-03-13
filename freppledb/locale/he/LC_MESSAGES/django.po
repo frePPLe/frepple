@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2022-10-26 16:59+0200\n"
+"PO-Revision-Date: 2023-03-10 17:34+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: he\n"
@@ -2243,32 +2243,6 @@ msgstr "שלבי תכנון אופציונליים"
 #: execute/management/commands/runplan.py:450
 msgid "Plan type"
 msgstr "סוג תכנון"
-
-#: execute/management/commands/runplan.py:453
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that respects all constraints.<br>In "
-"case of shortages the demand is planned late or short.\">Constrained plan</"
-"span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Genereer een supply plan dat alle constraints respecteer."
-"<br>In geval van tekorten wordt de vraag te laat of te weinig ingepland."
-"\">תוכנית מאולצת</span>"
-
-#: execute/management/commands/runplan.py:458
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that shows material, capacity and "
-"operation problems that prevent the demand from being planned in time."
-"<br>The demand is always met completely and on time.\">Unconstrained plan</"
-"span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Genereer een supply plan dat material, capacity en lead "
-"time problemen toont die beletten dat de vraag op tijd kan worden geleveld."
-"<br>De vraag wordt steeds volledig en op de gewenste leverdatum ingepland."
-"\">תוכנית לא מאולצת</span>"
 
 #: execute/management/commands/runplan.py:461 output/models.py:56
 #: output/templates/output/buffer.html:331
@@ -5295,32 +5269,10 @@ msgstr "חישוב כמות הזמנה כלכלית"
 msgid "Stocking policy"
 msgstr "מדיניות מלאי"
 
-#: inventoryplanning/templates/inventoryplanning/drp.html:2918
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
-"with the demand.\" >Do not stock</span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Zet de safety stock op 0 en reorderhoeveelheid op 1."
-"<br>Deze product-locatie wordt dan ingepland met een 1-op-1 matching tussen "
-"de vraag en supply.\" >לא להכניס למלאי</span>"
-
 #: inventoryplanning/templates/inventoryplanning/drp.html:2928
 #: inventoryplanning/templates/inventoryplanning/drp.html:2947
 msgid "true"
 msgstr "אמת"
-
-#: inventoryplanning/templates/inventoryplanning/drp.html:2937
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"In push mode, any excess inventory will be distributed "
-"downstream to child locations.\">Activates push mode</span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"In push mode wordt alle stock meteen downstream "
-"doorgezonden naar andere locaties.\">הפעל מצב הכנסה</span>"
 
 #: inventoryplanning/views.py:116
 msgid "segments"

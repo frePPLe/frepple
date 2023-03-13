@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2022-10-26 16:59+0200\n"
+"PO-Revision-Date: 2023-03-10 17:34+0100\n"
 "Last-Translator: Blago Čuljak <blago.culjak@hotmail.com>\n"
 "Language-Team: klaus\n"
 "Language: hr\n"
@@ -1225,7 +1225,7 @@ msgstr "trajanje"
 
 #: common/models.py:1475
 msgid "JSON"
-msgstr ""
+msgstr "JSON"
 
 #: common/models.py:1508 common/views.py:506 common/views.py:707
 msgid "model"
@@ -2236,32 +2236,6 @@ msgstr "dodatni koraci pri planiranju"
 msgid "Plan type"
 msgstr "Tip plana"
 
-#: execute/management/commands/runplan.py:453
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that respects all constraints.<br>In "
-"case of shortages the demand is planned late or short.\">Constrained plan</"
-"span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that respects all constraints.<br>In "
-"case of shortages the demand is planned late or short.\">Ograničeni plan</"
-"span>"
-
-#: execute/management/commands/runplan.py:458
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that shows material, capacity and "
-"operation problems that prevent the demand from being planned in time."
-"<br>The demand is always met completely and on time.\">Unconstrained plan</"
-"span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that shows material, capacity and "
-"operation problems that prevent the demand from being planned in time."
-"<br>The demand is always met completely and on time.\">Neograničeni plan</"
-"span>"
-
 #: execute/management/commands/runplan.py:461 output/models.py:56
 #: output/templates/output/buffer.html:331
 #: output/templates/output/demand.html:155
@@ -2610,7 +2584,7 @@ msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:25
 msgid "Label shown in the scenario dropdown list"
-msgstr ""
+msgstr "Oznaka prikazana na padajućem popisu scenarija"
 
 #: execute/templates/commands/scenario_copy.html:30
 msgid "Date of the last state change"
@@ -2623,10 +2597,6 @@ msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:50
 msgid "Copy from"
-msgstr ""
-
-#: execute/templates/commands/scenario_copy.html:54
-msgid "Restore from backup"
 msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:73
@@ -5338,32 +5308,10 @@ msgstr "izračunata ek. količina reorganizacije"
 msgid "Stocking policy"
 msgstr ""
 
-#: inventoryplanning/templates/inventoryplanning/drp.html:2918
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
-"with the demand.\" >Do not stock</span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
-"with the demand.\" >Nemojte skladištiti</span>"
-
 #: inventoryplanning/templates/inventoryplanning/drp.html:2928
 #: inventoryplanning/templates/inventoryplanning/drp.html:2947
 msgid "true"
 msgstr "istina"
-
-#: inventoryplanning/templates/inventoryplanning/drp.html:2937
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"In push mode, any excess inventory will be distributed "
-"downstream to child locations.\">Activates push mode</span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"In push mode, any excess inventory will be distributed "
-"downstream to child locations.\">Aktivira način guranja</span>"
 
 #: inventoryplanning/views.py:116
 msgid "segments"

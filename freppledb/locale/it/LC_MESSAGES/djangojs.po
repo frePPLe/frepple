@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2022-10-26 16:59+0200\n"
+"PO-Revision-Date: 2023-03-10 17:34+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: it\n"
@@ -271,10 +271,6 @@ msgstr "e"
 
 #: common/static/js/frepple.js:2103 common/static/js/frepple.min.js:11
 msgid "Click ok to confirm deleting the favorite"
-msgstr ""
-
-#: common/static/js/frepple.js:2278 common/static/js/frepple.min.js:11
-msgid "export selected records"
 msgstr ""
 
 #: common/static/js/frepple.js:2288 common/static/js/frepple.js:2459

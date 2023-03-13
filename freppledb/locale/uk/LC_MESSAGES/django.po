@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2022-10-26 17:01+0200\n"
+"PO-Revision-Date: 2023-03-10 17:41+0100\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: uk\n"
@@ -2334,32 +2334,6 @@ msgstr "необов'язкові етапи планування"
 #: execute/management/commands/runplan.py:450
 msgid "Plan type"
 msgstr "Тип плану"
-
-#: execute/management/commands/runplan.py:453
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that respects all constraints.<br>In "
-"case of shortages the demand is planned late or short.\">Constrained plan</"
-"span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Сформувати план поставок, який відповідає всім "
-"обмеженням<br>У разі недостатньої кількості попит планується із запізненням "
-"або частково. \"> План з обмеженнями</span>"
-
-#: execute/management/commands/runplan.py:458
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Generate a supply plan that shows material, capacity and "
-"operation problems that prevent the demand from being planned in time."
-"<br>The demand is always met completely and on time.\">Unconstrained plan</"
-"span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Створити план поставок, перевірити проблеми устаткування, "
-"потужності і операцій, які перешкоджають запланувати поставки вчасно. <br> "
-"Попит повністю спланований для поставок без запізнень \"> План без обмежень</"
-"span>"
 
 #: execute/management/commands/runplan.py:461 output/models.py:56
 #: output/templates/output/buffer.html:331
@@ -5443,33 +5417,10 @@ msgstr "кількість економічного пере-замовленн�
 msgid "Stocking policy"
 msgstr "Політика запасів"
 
-#: inventoryplanning/templates/inventoryplanning/drp.html:2918
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
-"with the demand.\" >Do not stock</span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"Встановлює страховий запас на 0 і кількість замовлення "
-"на 1<br>Це місце розташування об'єкта буде сплановано з поповненнями, "
-"відповідними 1-к-1 потреби.\">Без запасу</span>"
-
 #: inventoryplanning/templates/inventoryplanning/drp.html:2928
 #: inventoryplanning/templates/inventoryplanning/drp.html:2947
 msgid "true"
 msgstr "істина"
-
-#: inventoryplanning/templates/inventoryplanning/drp.html:2937
-msgid ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"In push mode, any excess inventory will be distributed "
-"downstream to child locations.\">Activates push mode</span>"
-msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
-"data-original-title=\"В push-режимі, будь надлишковий запас буде "
-"розподілятися всередині мережі між дочірніми місцями розташування"
-"\">активізувати push-режим</span>"
 
 #: inventoryplanning/views.py:116
 msgid "segments"

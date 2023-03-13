@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2022-10-26 18:16+0200\n"
+"PO-Revision-Date: 2023-03-10 17:35+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Poedit 2.4.3\n"
 
 #: common/static/js/frepple.js:195 common/static/js/frepple.min.js:11
 msgid "Connection failed"
@@ -273,10 +273,6 @@ msgstr "et"
 #: common/static/js/frepple.js:2103 common/static/js/frepple.min.js:11
 msgid "Click ok to confirm deleting the favorite"
 msgstr "Cliquez sur ok pour confirmer la suppression du favori"
-
-#: common/static/js/frepple.js:2278 common/static/js/frepple.min.js:11
-msgid "export selected records"
-msgstr "exporter les lignes séléctionnées"
 
 #: common/static/js/frepple.js:2288 common/static/js/frepple.js:2459
 #: common/static/js/frepple.min.js:11

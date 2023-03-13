@@ -2750,9 +2750,6 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
   $('#popup').html(modalcontent);
   showModal('popup', true, { backdrop: "static", keyboard: false });
 
-  if (!multiple) {
-    $("#selected_files").removeAttr(multiple);
-  }
   if (title !== '') {
     $("#modal_title").text(title);
   }

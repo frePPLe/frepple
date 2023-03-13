@@ -15,12 +15,6 @@
       <td><strong>{% trans 'size'|capfirst %}</strong></td>
       <td><strong>{% trans 'changed'|capfirst %}</strong></td>
       <td>
-        <span class="btn btn-sm btn-primary" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Upload data files' %}"
-          onclick="import_show('{% trans 'Upload data files' %}',null,true,uploadfilesajax,null,'{% trans 'Upload' %}')">
-          <span class="fa fa-arrow-up"></span>
-        </span>
-      </td>
-      <td>
         <span class="btn btn-sm btn-primary" style="margin-bottom:5px" data-bs-toggle="tooltip"
            data-bs-placement="top" data-bs-title="{% trans "Download all files" %}"
            onClick="downloadImportFile(0)">
@@ -39,7 +33,6 @@
       <td style="padding-left:15px">{{j.0}}</td>
       <td>{{j.2}}</td>
       <td>{{j.1}}</td>
-      <td></td>
       <td>
         <div class="btn btn-sm btn-primary downloadfile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Download file" %}" onClick="downloadImportFile(0, '{{j.0}}')">
           <span class="fa fa-arrow-down"></span>
@@ -52,52 +45,120 @@
       </td>
     </tr>
     {% endfor %}
+    <tr>
+      <td></td>
+      <td colspan="5">
+      <div id="addfiles2import" style="outline: 2px dashed black; outline-offset: -1em">
+      <div class="text-center box__input" style="text-align: center; padding: 20px;">
+      <form id="fileuploadform">
+        <input class="d-none" type="file" name="fileupload" id="fileupload" multiple />
+      </form>
+      <label id="fileuploadlabel" class="d-block" for="fileupload">
+      <a class="btn btn-primary">
+        {% translate "Select files to upload" %}
+      </a>&nbsp;
+      <span class="box__dragndrop" style="display: inline;">
+      {% translate "or drop them here" %}
+      </span><i class="fa fa-sign-in fa-2x fa-rotate-90"></i>
+      </label>
+      <div id="fileuploadmsg1" class="d-none"><span></span>&nbsp;&nbsp;<i class="fa fa-spinner fa-spin"></i></div>
+      <div id="fileuploadmsg2" class="d-none"><span></span>&nbsp;&nbsp;<i class="fa fa-spinner fa-spin"></i></div>
+      <div id="fileuploadmsg3" class="d-none"><i class="text-danger fa fa-2x fa-exclamation-triangle"></i>&nbsp;&nbsp;<span></span></div>
+      </div>
+      </div>
+    </td>
+  </tr>
   </table>
 </form>
 <script>
-var xhr = {abort: function () {}};
-var uploadfilesajax = {
-  url: '{{request.prefix}}/execute/uploadtofolder/0/',
-  success: function (data) {
-    var el = $('#uploadResponse');
-    el.empty();
-    $("#animatedcog").css('visibility','hidden');
-    var lines = data.split('\\n');
-    for (var i = 0; i < lines.length; i++) {
-      el.append(lines[i] + '<br>');
-    }
-    if (el.attr('data-scrolled')!== "true") {
-      el.attr('data-scrolled', el[0].scrollHeight - el.height());
-      el.scrollTop(el[0].scrollHeight - el.height());
-    }
-    if (document.queryCommandSupported('copy'))
-      $('#copytoclipboard').show();
-    $('#canceluploadbutton').hide();
-    $('#cancelimportbutton').hide();
-    $('#cancelbutton').one('click', function() {location.reload();});
-  },
-  error: function (result, stat, errorThrown) {
-    if (result.status == 401) {
-      location.reload();
+
+var filesdropped = null;
+var filesselected = null;
+
+$('#addfiles2import')
+  .on('drag dragstart dragend dragover dragenter dragleave drop', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  })
+  .on('dragover dragenter', function () {
+    $('#addfiles2import').removeClass('bg-info').addClass('bg-info');
+  })
+  .on('dragleave dragend drop', function () {
+    $('#addfiles2import').removeClass('bg-info');
+  })
+  .on('drop', function (e) {
+    filesdropped = e.originalEvent.dataTransfer.files;
+    filesselected = null;
+    if (filesdropped.length <= 0 || $("#uploadlabel").hasClass("d-none"))
       return;
+    else if (filesdropped.length == 1) {
+      $("#fileuploadmsg1 span").text(interpolate(gettext("Uploading file %s"), [filesdropped[0].name]));
+      $("#fileuploadmsg1").toggleClass("d-none");
     }
-    var el = $('#uploadResponse');
-    el.empty();
-    $("#animatedcog").css('visibility','hidden');
-    var lines = result.responseText.split('\\n');
-    for (var i = 0; i < lines.length; i++) {
-      el.append(lines[i] + '<br>');
+    else {
+      $("#fileuploadmsg2 span").text(interpolate(gettext("Uploading %s files"), [filesdropped.length]));
+      $("#fileuploadmsg2").toggleClass("d-none");
     }
-    if (el.attr('data-scrolled')!== "true") {
-      el.attr('data-scrolled', el[0].scrollHeight - el.height());
-      el.scrollTop(el[0].scrollHeight - el.height());
+    $("#fileuploadlabel").toggleClass("d-none");
+    uploadFiles();
+  });
+
+  $("#fileupload").on('change', function (e) {
+    filesdropped = null;
+    filesselected = e.target.files;
+    if (filesselected.length <= 0 || $("#uploadlabel").hasClass("d-none"))
+      return;
+    else if (filesselected.length == 1) {
+      $("#fileuploadmsg1 span").text(interpolate(gettext("Uploading file %s"), [filesselected[0].name]));
+      $("#fileuploadmsg1").toggleClass("d-none");
     }
-    if (document.queryCommandSupported('copy'))
-      $('#copytoclipboard').show();
-    $('#canceluploadbutton').hide();
-    $('#cancelimportbutton').hide();
+    else {
+      $("#fileuploadmsg2 span").text(interpolate(gettext("Uploading %s files"), [filesselected.length]));
+      $("#fileuploadmsg2").toggleClass("d-none");
     }
-};
+    $("#fileuploadlabel").toggleClass("d-none");
+    uploadFiles();
+  });
+
+function uploadFiles() {
+  filesdata = new FormData($("#fileuploadform")[0]);
+  if (filesdropped) {
+    $.each(filesdropped, function (i, fdropped) {
+      filesdata.append(fdropped.name, fdropped);
+    });
+  }
+  if (filesselected) {
+    filesdata.delete('fileupload');
+    $.each(filesselected, function (i, fdropped) {
+      filesdata.append(fdropped.name, fdropped);
+    });
+  }
+
+    // Upload the files
+    xhr = $.ajax(
+      Object.assign({
+        type: 'post',
+        url: '{{request.prefix}}/execute/uploadtofolder/0/',
+        cache: false,
+        data: filesdata,
+        success: function (data) {
+          $("#fileuploadlabel").removeClass("d-none");
+          $("#fileuploadmsg2, #fileuploadmsg1").removeClass("d-none").addClass("d-none");
+          location.reload();
+        },
+        error: function (result, stat, errorThrown) {
+          $("#fileuploadmsg2, #fileuploadmsg1").removeClass("d-none").addClass("d-none");
+          $("#fileuploadmsg3").removeClass("d-none");
+          $("#fileuploadmsg3 span").text(result.responseText);
+          $("#fileuploadlabel").toggleClass("d-none");
+          filesdropped = null;
+          filesselected = null;
+        },
+        processData: false,
+        contentType: false
+      })
+    );
+}
 
 function deleteImportFile(folder, filename) {
   $.jgrid.hideModal("#searchmodfbox_grid");

@@ -14,6 +14,23 @@
   }
 </style>
 
+<script>
+  $(function() {
+    $("#languageul li a").click(function() {
+      $("#languagebtn").text($(this).text());
+      $("#language").val($(this).attr('data-lang'));
+    });
+    $("#themeul li a").click(function() {
+      $("#themebtn").text($(this).text());
+      $("#theme").val($(this).text());
+    });
+    $("#scenarioul li a").click(function() {
+      $("#scenariobtn").text($(this).text());
+      $("#default_scenario").val($(this).prop('name'));
+    });
+  });
+</script>
+
 {% endblock %} {% block content_title %}
   <form action="." method="post" class="form" enctype="multipart/form-data">
 <div class="row mt-3">
@@ -49,11 +66,16 @@
         <label class="col-form-label" for="id_language">{% trans 'language'|capfirst%}:</label>
       </div>
       <div class="col-9" style="max-width:260px">
-        <select name="language" class="form-select">
-            {% for i,j in request.user.languageList %}
-            <option value="{{ i }}"{% if j == LANGUAGE %} selected{% endif %}>{{ j }}</option>
-            {% endfor %}
-        </select>
+        <div class="dropdown">
+          <button id="languagebtn" class="form-control dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ LANGUAGE }}
+        </button>
+        <ul id="languageul" class="dropdown-menu w-100">
+          {% for i,j in request.user.languageList %}
+            <li><a data-lang="{{i}}" class="dropdown-item" href="#">{{ j }}</a></li>
+          {% endfor %}
+        </ul>
+        </div>
       </div>
     </div>
     {% endif %}
@@ -69,16 +91,21 @@
     </div>
 
     {% if THEMES|length > 1 %}
-    <div class="row" style="padding-bottom: 20px;">
+    <div class="row pb-3">
       <div class="col-3" style="max-width:150px; text-align: right">
         <label class="col-form-label" for="id_theme">{% trans 'theme'|capfirst%}:</label>
       </div>
       <div class="col-9" style="max-width:260px">
-        <select name="theme" class="form-select">
+        <div class="dropdown">
+          <button id="themebtn" class="form-control dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ request.user.theme }}
+        </button>
+        <ul id="themeul" class="dropdown-menu w-100">
           {% for j in THEMES %}
-          <option value="{{j}}"{% if j == request.user.theme %} selected{% endif%}>{% filter capfirst %}{{j}}{%endfilter%}</option>
+            <li><a class="dropdown-item" href="#">{{ j }}</a></li>
           {% endfor %}
-        </select>
+        </ul>
+        </div>
       </div>
     </div>
     {% endif %}
@@ -89,11 +116,15 @@
         <label class="col-form-label" for="id_default_scenario">{% trans 'default scenario'|capfirst%}:</label>
       </div>
       <div class="col-9" style="max-width:260px">
-        <select name="default_scenario" class="form-select">
+        <div class="dropdown">
+          <button id="scenariobtn" class="form-control dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ request.user.default_scenario }}
+        </button>
+        <ul id="scenarioul" class="dropdown-menu w-100">
           {% for j in SCENARIOS %}
-          <option value="{{j.name}}"{% if j.name == request.user.default_scenario %} selected{% endif%}>{% filter capfirst %}{%if j.description %}{{j.description}}{% else %}{{j.name}}{% endif %}{%endfilter%}</option>
+            <li><a name="{{ j.name }}" class="dropdown-item" href="#">{%if j.description %}{{j.description}}{% else %}{{j.name}}{% endif %}</a></li>
           {% endfor %}
-        </select>
+        </ul>
       </div>
     </div>
     {% endif %}

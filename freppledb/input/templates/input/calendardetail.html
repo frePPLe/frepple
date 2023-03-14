@@ -21,9 +21,9 @@
 
 {% block table %}
 {% if hasaddperm %}
-<div class="row">
-  <div class="col mt-3">
-    <form class="d-flex flex-wrap align-items-center">
+<form>
+  <div class="row mt-1 gy-3 align-items-center flex-wrap justify-content-evenly" style="max-width: 1400px">
+    <div class="col-auto d-flex align-items-center">
       <div class="d-inline-block me-3">
         <button class="btn btn-primary d-block" id="add_button" disabled>{% trans "Add"|capfirst %}</button>
       </div>
@@ -36,37 +36,41 @@
         <div class="mt-1 help-block">{% trans "end date"|capfirst %}</div>
       </div>
       <div class="d-inline-block me-2">
-        <input type="number" size="9" class="form-control w-auto d-inline" id="add_value">
+        <input type="number" style="width: 6em" class="form-control d-inline" id="add_value">
         <div class="mt-1 help-block">{% trans "value"|capfirst %}</div>
       </div>
+    </div>
+    <div class="col-auto d-flex align-items-center">
       <div class="d-inline-block" style="text-align:center">
-        <input type="checkbox" id="add_monday" checked>
+        <input class="form-check-input" type="checkbox" id="add_monday" checked>
         <div class="mt-1 help-block">&nbsp;{% trans "monday"|capfirst %}&nbsp;</div>
       </div>
       <div class="d-inline-block" style="text-align:center">
-        <input type="checkbox" id="add_tuesday" checked>
+        <input class="form-check-input" type="checkbox" id="add_tuesday" checked>
         <div class="mt-1 help-block">&nbsp;{% trans "tuesday"|capfirst %}&nbsp;</div>
       </div>
       <div class="d-inline-block" style="text-align:center">
-        <input type="checkbox" id="add_wednesday" checked>
+        <input class="form-check-input" type="checkbox" id="add_wednesday" checked>
         <div class="mt-1 help-block">&nbsp;{% trans "wednesday"|capfirst %}&nbsp;</div>
       </div>
       <div class="d-inline-block" style="text-align:center">
-        <input type="checkbox" id="add_thursday" checked>
+        <input class="form-check-input" type="checkbox" id="add_thursday" checked>
         <div class="mt-1 help-block">&nbsp;{% trans "thursday"|capfirst %}&nbsp;</div>
       </div>
       <div class="d-inline-block" style="text-align:center">
-        <input type="checkbox" id="add_friday" checked>
+        <input class="form-check-input" type="checkbox" id="add_friday" checked>
         <div class="mt-1 help-block">{% trans "friday"|capfirst %}&nbsp;</div>
       </div>
       <div class="d-inline-block" style="text-align:center">
-        <input type="checkbox" id="add_saturday" checked>
+        <input class="form-check-input" type="checkbox" id="add_saturday" checked>
         <div class="mt-1 help-block">&nbsp;{% trans "saturday"|capfirst %}&nbsp;</div>
       </div>
       <div class="d-inline-block" style="text-align:center">
-        <input type="checkbox" id="add_sunday" checked>
+        <input class="form-check-input" type="checkbox" id="add_sunday" checked>
         <div class="mt-1 help-block">&nbsp;{% trans "sunday"|capfirst %}&nbsp;</div>
       </div>
+    </div>
+    <div class="col-auto d-flex align-items-center">
       <div class="d-inline-block ms-2  me-2">
         <input type="time" class="form-control" id="add_start_time" value="00:00:00">
         <div class="mt-1 help-block">{% trans "start time"|capfirst %}</div>
@@ -75,9 +79,9 @@
         <input type="time" class="form-control" id="add_end_time" value="23:59:59">
         <div class="mt-1 help-block">{% trans "end time"|capfirst %}</div>
       </div>
-    </form>
+    </div>
   </div>
-</div>
+</form>
 {% endif %}
 {{ block.super }}
 {% endblock %}

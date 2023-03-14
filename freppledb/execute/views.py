@@ -41,6 +41,7 @@ from django.db.models.fields import AutoField
 from django.db.models.fields.related import ForeignKey
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render
+from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from django.db import DEFAULT_DB_ALIAS
 from django.contrib.admin.views.decorators import staff_member_required
@@ -800,9 +801,9 @@ class FileManager:
                             "Failed file upload: incorrect file name '%s'" % filename
                         )
                         response.write(
-                            "%s: %s\n"
+                            "%s: <strong>Error</strong> %s<br>\n"
                             % (
-                                clean_filename,
+                                escape(clean_filename),
                                 _("Filename extension must be among %(ext)s")
                                 % {"ext": ", ".join(extensions)},
                             )
@@ -817,17 +818,17 @@ class FileManager:
 
                     response.write(
                         force_str(
-                            "%s: <strong>%s</strong><br>" % (clean_filename, _("OK"))
+                            "%s: <strong>%s</strong><br>"
+                            % (escape(clean_filename), _("OK"))
                         )
                     )
                 except Exception as e:
                     logger.error("Failed file upload: %s" % e)
                     response.write(
-                        "%s: <strong>%s</strong><br>"
-                        % (clean_filename, _("Upload failed"))
+                        "%s: <strong>Error</strong> %s<br>"
+                        % (escape(clean_filename), _("Upload failed"))
                     )
                     errorcount += 1
-            response.write(force_str("%s" % capfirst(_("finished"))))
         if errorcount:
             response.status_code = 400
             response.reason_phrase = "%s files failed to upload correctly" % errorcount

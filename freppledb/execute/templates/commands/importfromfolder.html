@@ -53,17 +53,20 @@
       <form id="fileuploadform">
         <input class="d-none" type="file" name="fileupload" id="fileupload" multiple />
       </form>
-      <label id="fileuploadlabel" class="d-block" for="fileupload">
+      <label id="fileuploadlabel" class="d-block p-3" for="fileupload">
       <a class="btn btn-primary">
         {% translate "Select files to upload" %}
-      </a>&nbsp;
-      <span class="box__dragndrop" style="display: inline;">
-      {% translate "or drop them here" %}
-      </span><i class="fa fa-sign-in fa-2x fa-rotate-90"></i>
+      </a>&nbsp;{% translate "or drop them here" %}
+      <i class="fa fa-sign-in fa-2x fa-rotate-90"></i>
       </label>
       <div id="fileuploadmsg1" class="d-none"><span></span>&nbsp;&nbsp;<i class="fa fa-spinner fa-spin"></i></div>
       <div id="fileuploadmsg2" class="d-none"><span></span>&nbsp;&nbsp;<i class="fa fa-spinner fa-spin"></i></div>
-      <div id="fileuploadmsg3" class="d-none"><i class="text-danger fa fa-2x fa-exclamation-triangle"></i>&nbsp;&nbsp;<span></span></div>
+      <div id="fileuploadmsg3" class="d-none ps-3 pe-3">
+        <table><tr>
+          <td><i class="d-block p-3 text-danger fa fa-2x fa-exclamation-triangle"></i></td>
+          <td><span></span></td>
+        </tr></table>
+      </div>
       </div>
       </div>
     </td>
@@ -149,7 +152,7 @@ function uploadFiles() {
         error: function (result, stat, errorThrown) {
           $("#fileuploadmsg2, #fileuploadmsg1").removeClass("d-none").addClass("d-none");
           $("#fileuploadmsg3").removeClass("d-none");
-          $("#fileuploadmsg3 span").text(result.responseText);
+          $("#fileuploadmsg3 span").html(result.responseText);
           $("#fileuploadlabel").toggleClass("d-none");
           filesdropped = null;
           filesselected = null;

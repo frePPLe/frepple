@@ -765,12 +765,21 @@ class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
         if "operationplan__quantity" in fields:
             delta["quantity"] = fields["operationplan__quantity"]
             self.operationplan.quantity = delta["quantity"]
-        if delta or "resource" in fields:
+        if "resource" in fields or "quantity" in fields:
+            delta["resource"] = [
+                (fields["resource"], fields.get("quantity", self.quantity))
+                if r.id == self.id
+                else (r.resource, r.quantity)
+                for r in self.operationplan.resources.using(database).all()
+            ]
+        if delta:
             self.operationplan.update(
                 database=database, delete=delete, create=create, **delta
             )
             self.operationplan.save(using=database)
-        if "quantity" in fields:
+            # We don't need to save this resourcedetail record. The update does that already.
+            self.skipsave = True
+        elif "quantity" in fields:
             self.quantity = fields["quantity"]
             self.save(using=database)
 
@@ -2428,7 +2437,7 @@ class ManufacturingOrder(OperationPlan):
                         unchanged_opr = []
                         created_opr = []
                         opr_to_create = []
-                        # Make resource assignments unique: [(res1, 1), (res1, 2)] becomes [(res1, 2)]
+                        # Make resource assignments unique: [(res1, 1), (res1, 1)] becomes [(res1, 2)]
                         unique_resources = []
                         for r in self.cleaned_data["resource"]:
                             f = None

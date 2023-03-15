@@ -2129,7 +2129,8 @@ class GridReport(View):
                                             request.database, **form.cleaned_data
                                         )
                                     obj = form.save(commit=False)
-                                    obj.save(using=request.database)
+                                    if not hasattr(obj, "skipsave"):
+                                        obj.save(using=request.database)
                                     Comment(
                                         user_id=request.user.pk,
                                         content_type_id=content_type_id,

@@ -1932,9 +1932,13 @@ class loadOperationPlans(LoadTask):
                         )
                       )
                       """
+                    parent_filter = (
+                        " where status in ('confirmed', 'approved', 'completed') "
+                    )
                     create_flag = True
                 else:
-                    confirmed_filter = ""
+                    confirmed_filter = " and operationplan.status <> 'closed'"
+                    parent_filter = " where status <> 'closed' "
                     create_flag = False
                 cnt_mo = 0
                 cnt_po = 0
@@ -2121,7 +2125,7 @@ class loadOperationPlans(LoadTask):
                         coalesce(dmd.name, null) %s
                         FROM operationplan
                         INNER JOIN (select reference
-                        from operationplan
+                        from operationplan %s
                         ) opplan_parent
                         on operationplan.owner_id = opplan_parent.reference
                         LEFT OUTER JOIN (select name from demand
@@ -2142,7 +2146,7 @@ class loadOperationPlans(LoadTask):
                         and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                         ORDER BY operationplan.reference ASC
                         """
-                    % (attrsql, filter_and)
+                    % (attrsql, parent_filter, filter_and)
                 )
                 for i in cursor:
                     try:

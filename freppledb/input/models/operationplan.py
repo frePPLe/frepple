@@ -2428,7 +2428,22 @@ class ManufacturingOrder(OperationPlan):
                         unchanged_opr = []
                         created_opr = []
                         opr_to_create = []
-                        for res, quantity in self.cleaned_data["resource"]:
+                        # Make resource assignments unique: [(res1, 1), (res1, 2)] becomes [(res1, 2)]
+                        unique_resources = []
+                        for r in self.cleaned_data["resource"]:
+                            f = None
+                            for ur in unique_resources:
+                                if ur[0] == r[0]:
+                                    f = ur
+                                    break
+                            if f:
+                                unique_resources.append(
+                                    (f[0], str(float(f[1]) + float(r[1])))
+                                )
+                                unique_resources.remove(f)
+                            else:
+                                unique_resources.append(r)
+                        for res, quantity in unique_resources:
                             found = False
                             # Let's see if an opr record already exists for that resource
                             for opplanres in instance.resources.all().select_related(
@@ -2480,7 +2495,6 @@ class ManufacturingOrder(OperationPlan):
                                 i.save(using=database)
 
                     except Exception as e:
-                        print(e)
                         pass
 
                 if "material" in fields:

@@ -6,6 +6,7 @@ tzlocal
 
 # Extra packages for development environments
 black >= 19.3b0
+Jinja2 < 3.1      # Jinja 3.1 breaks sphinx
 Sphinx
 sphinx-tabs
 sphinx-sitemap

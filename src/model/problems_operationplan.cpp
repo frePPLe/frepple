@@ -38,37 +38,40 @@ void OperationPlan::updateProblems() {
   bool needsBeforeFence(false);
   bool needsPrecedence(false);
 
-  if (!firstsubopplan) {
-    // Avoid duplicating problems on child and owner operationplans
-    // Check if a BeforeCurrent or BeforeFence problem is required.
-    // Note that we either detect of beforeCurrent or a beforeFence problem,
-    // never both simultaneously.
-    if (getConfirmed()) {
-      if (getEnd() < Plan::instance().getCurrent()) needsBeforeCurrent = true;
-    } else {
-      if (getStart() < Plan::instance().getCurrent())
-        needsBeforeCurrent = true;
-      else if (getProposed() && getStart() < oper->getFence(this))
-        needsBeforeFence = true;
+  if (!getCompleted() && !getClosed()) {
+    if (!firstsubopplan) {
+      // Avoid duplicating problems on child and owner operationplans
+      // Check if a BeforeCurrent or BeforeFence problem is required.
+      // Note that we either detect of beforeCurrent or a beforeFence problem,
+      // never both simultaneously.
+      if (getConfirmed()) {
+        if (getEnd() < Plan::instance().getCurrent()) needsBeforeCurrent = true;
+      } else {
+        if (getStart() < Plan::instance().getCurrent())
+          needsBeforeCurrent = true;
+        else if (getProposed() && getStart() < oper->getFence(this))
+          needsBeforeFence = true;
+      }
     }
-  }
 
-  if (dependencies.empty()) {
-    // Note: 1 second grace period to avoid rounding issues
-    // TODO hard safety time not considered for the precedence problem
-    if (nextsubopplan && getEnd() > nextsubopplan->getStart() + Duration(1L) &&
-        !nextsubopplan->getConfirmed() && owner &&
-        !owner->getOperation()->hasType<OperationSplit>())
-      needsPrecedence = true;
-  } else {
-    for (auto d : dependencies) {
-      if (this != d->getSecond()) continue;
-      Date nd = d->getFirst()->getEnd();
-      if (d->getOperationDependency())
-        nd += d->getOperationDependency()->getHardSafetyLeadtime();
-      if (nd > getStart() + Duration(1L)) {
+    if (dependencies.empty()) {
+      // Note: 1 second grace period to avoid rounding issues
+      // TODO hard safety time not considered for the precedence problem
+      if (nextsubopplan &&
+          getEnd() > nextsubopplan->getStart() + Duration(1L) &&
+          !nextsubopplan->getConfirmed() && owner &&
+          !owner->getOperation()->hasType<OperationSplit>())
         needsPrecedence = true;
-        break;
+    } else {
+      for (auto d : dependencies) {
+        if (this != d->getSecond()) continue;
+        Date nd = d->getFirst()->getEnd();
+        if (d->getOperationDependency())
+          nd += d->getOperationDependency()->getHardSafetyLeadtime();
+        if (nd > getStart() + Duration(1L)) {
+          needsPrecedence = true;
+          break;
+        }
       }
     }
   }

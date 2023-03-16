@@ -61,6 +61,7 @@ from django.utils.encoding import force_str
 from django.utils.text import capfirst
 from django.core.management import get_commands, call_command
 
+from freppledb import __version__
 from freppledb.admin import data_site
 from freppledb.common.auth import basicauthentication
 from freppledb.common.dataload import parseExcelWorksheet
@@ -1025,6 +1026,7 @@ def scheduletasks(request):
 def exportWorkbook(request):
     # Create a workbook
     wb = Workbook(write_only=True)
+    wb.properties.creator = "frepple %s" % __version__
 
     # Create a named style for the header row
     headerstyle = NamedStyle(name="headerstyle")

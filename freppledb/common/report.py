@@ -81,6 +81,7 @@ from django.utils.text import capfirst, get_text_list, format_lazy
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
 
+from freppledb import __version__
 from freppledb.boot import getAttributeFields
 from freppledb.common.auth import MultiDBBackend
 from freppledb.common.models import (
@@ -979,6 +980,7 @@ class GridReport(View):
             title = cls.title(request, *args, **kwargs)
         else:
             title = cls.model._meta.verbose_name_plural if cls.model else cls.title
+        wb.properties.creator = "frepple %s" % __version__
         # Excel can't have longer worksheet names
         ws = wb.create_sheet(title=force_str(title)[:31])
 
@@ -3606,6 +3608,7 @@ class GridPivot(GridReport):
             title = cls.title(request, *args, **kwargs)
         else:
             title = cls.model._meta.verbose_name_plural if cls.model else cls.title
+        wb.properties.creator = "frepple %s" % __version__
         # Excel can't have longer worksheet names
         ws = wb.create_sheet(title=force_str(title)[:31])
 

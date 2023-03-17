@@ -627,7 +627,7 @@ class GridReport(View):
     message_when_empty = None
 
     # Defines the difference between height of the grid and its boundaries
-    heightmargin = 75
+    heightmargin = 85
 
     # Define a list of actions
     actions = None

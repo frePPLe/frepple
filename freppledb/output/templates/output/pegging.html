@@ -244,6 +244,7 @@ treeReader: {
   expanded_field: 'expanded'
   },
 ExpandColClick: true,
+shrinkToFit: true,
 resizeStop: gantt.redraw,
 loadComplete: function(data) {
   $('#curerror').html("");
@@ -251,6 +252,7 @@ loadComplete: function(data) {
     var msg = $('<h2 style="padding:30px">').text(gettext("This demand has not been planned"));
     $("#content-main").replaceWith(msg);
   }
+  $("#grid").jqGrid("gridResize", { shrinkToFit: false });
   $('svg rect').each(function() {
     bootstrap.Tooltip.getOrCreateInstance($(this)[0], {
       title: buildtooltip,

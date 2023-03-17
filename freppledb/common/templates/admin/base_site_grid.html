@@ -222,10 +222,10 @@ function displayGrid(load) {
           {% if not reportclass.variableheight or not preferences.details or preferences.details == "bottom" %}
             {% if preferences.height %}{{preferences.height}}{% else %}{{reportclass.height}}{% endif %}
           {% else %}
-            Math.max(150, $(window).height() - $("#grid").offset().top - 63)
+            Math.max(150, $(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}})
           {% endif %}
         {% else %}
-          Math.max(150, $(window).height() - $("#grid").offset().top - 63)
+          Math.max(150, $(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}})
         {% endif %}
     });{% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}

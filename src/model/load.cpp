@@ -401,15 +401,16 @@ Resource* Load::findPreferredResource(Date d, OperationPlan* opplan) const {
   // We avoid assigning the same resource twice.
   // TODO We ignore date effectivity.
   Resource* best_res = nullptr;
-  Resource* backup_res = getResource();
+  Resource* backup_res = nullptr;
   double best_utilization = DBL_MAX;
   double best_eff = 0.0;
   double best_priority = DBL_MAX;
   for (Resource::memberRecursiveIterator mmbr(getResource()); !mmbr.empty();
        ++mmbr) {
     ResourceSkill* tmpRsrcSkill = nullptr;
-    if (!mmbr->isGroup() &&
-        (!getSkill() || mmbr->hasSkill(getSkill(), d, d, &tmpRsrcSkill))) {
+    if (mmbr->isGroup()) continue;
+    if (!backup_res) backup_res = &*mmbr;
+    if (!getSkill() || mmbr->hasSkill(getSkill(), d, d, &tmpRsrcSkill)) {
       if (getQuantity() > 1.0 &&
           Plan::instance().getIndividualPoolResources()) {
         // Need to avoid assigning the same resource twice

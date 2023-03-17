@@ -1054,16 +1054,28 @@ void OperationPlan::createFlowLoads(
     else
       // Restore previous assignments
       for (auto& res : *assigned_resources) {
+        Resource* backup_res = nullptr;
+        const Load* backup_ld = nullptr;
         bool found = false;
-        for (auto& g : oper->getLoads()) {
-          if (!g.getAlternate() && res->isMemberOf(g.getResource()) &&
-              (!g.getSkill() || res->hasSkill(g.getSkill(), getStart()))) {
-            new LoadPlan(this, &g, res);
-            found = true;
-            break;
+        for (Resource::memberRecursiveIterator mmbr(res); !mmbr.empty();
+             ++mmbr) {
+          if (mmbr->isGroup()) continue;
+          for (auto& g : oper->getLoads()) {
+            if (!g.getAlternate() && mmbr->isMemberOf(g.getResource())) {
+              if (!g.getSkill() || mmbr->hasSkill(g.getSkill(), getStart())) {
+                new LoadPlan(this, &g, &*mmbr);
+                found = true;
+                break;
+              } else if (!backup_res) {
+                backup_res = &*mmbr;
+                backup_ld = &g;
+              }
+            }
           }
         }
-        if (!found)
+        if (!found && backup_res)
+          new LoadPlan(this, backup_ld, backup_res);
+        else if (!found)
           logger << "Warning: Assigned resource '" << res << "' on '"
                  << getReference() << "' is invalid." << endl;
       }

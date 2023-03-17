@@ -2036,10 +2036,6 @@ class ManufacturingOrder(OperationPlan):
 
     extra_dependencies = [OperationResource]
 
-    delivery_order = AliasField(
-        db_column="demand_id", verbose_name=_("delivery order"), null=True, blank=True
-    )
-
     class ManufacturingOrderManager(OperationPlan.Manager):
         def get_queryset(self):
             return super().get_queryset().filter(type="MO")

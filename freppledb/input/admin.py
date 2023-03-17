@@ -771,7 +771,7 @@ class OperationResource_admin(MultiDBModelAdmin):
 @admin.register(ManufacturingOrder, site=data_site)
 class ManufacturingOrder_admin(MultiDBModelAdmin):
     model = ManufacturingOrder
-    raw_id_fields = ("operation", "owner")
+    raw_id_fields = ("operation", "owner", "demand")
     save_on_top = True
     fieldsets = (
         (
@@ -787,6 +787,7 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
                     "owner",
                     "status",
                     "batch",
+                    "demand",
                 ]
                 + [a[0] for a in getAttributes(ManufacturingOrder) if a[3]]
             },
@@ -802,7 +803,6 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
         "item",
         "supplier",
         "location",
-        "demand",
         "name",
         "due",
         "color",

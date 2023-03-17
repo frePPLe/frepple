@@ -1279,6 +1279,7 @@ class ManufacturingOrderFilter(filters.FilterSet):
                 "owner": ["exact", "in"],
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "demand": ["exact", "in"],
             },
             **getAttributeAPIFilterDefinition(models.OperationPlan)
         )
@@ -1460,6 +1461,7 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
             "lastmodified",
             "resources",
             "materials",
+            "demand",
         ) + getAttributeAPIFields(models.OperationPlan)
         read_only_fields = ("lastmodified",) + getAttributeAPIReadOnlyFields(
             models.OperationPlan

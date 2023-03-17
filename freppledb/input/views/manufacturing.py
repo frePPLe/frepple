@@ -2017,12 +2017,12 @@ class ManufacturingOrderList(OperationPlanMixin):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),
         GridFieldText(
-            "delivery_order",
-            title=_("delivery order"),
-            field_name="delivery_order",
+            "demand",
+            title=_("demand"),
+            field_name="demand__name",
             formatter="detail",
-            extra='"role":"input/demand"',
             initially_hidden=True,
+            extra='"role":"input/demand"',
         ),
         GridFieldJSON(
             "demands",

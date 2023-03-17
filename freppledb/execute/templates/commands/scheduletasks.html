@@ -86,9 +86,10 @@
             <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "arguments"|capfirst %}" value="{{ t.arguments }}">
           </div>
           <div class="col-auto">
-            <input data-field="task-abort-on-failure" type="checkbox" value="1" data-delay="500"
+            <input class="form-check-input align-middle" data-field="task-abort-on-failure" type="checkbox" value="1" data-delay="500"
                 {% if t.abort_on_failure %}checked{% endif %}
                 data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "abort on failure"|capfirst %}">
+            &nbsp;
             <button class="btn btn-sm btn-primary" onclick="deleteTask(this, event)">
               <span class="fa fa-trash-o" data-bs-toggle="tooltip" data-bs-placement="top"
                 data-bs-title="{% trans "Delete" %}"></span>
@@ -196,7 +197,8 @@
   </div>
   <div class="col-auto">
     <input data-field="task-abort-on-failure" type="checkbox" value="1" data-delay="500"
-        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "abort on failure"|capfirst %}">
+        class="form-check-input align-middle" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "abort on failure"|capfirst %}">
+    &nbsp;
     <button class="btn btn-sm btn-primary" onclick="deleteTask(this, event)">
       <span class="fa fa-trash-o" data-bs-toggle="tooltip" data-bs-placement="top"
         data-bs-title="{% trans "Delete" %}"></span>

@@ -718,16 +718,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         object_name = str(opts.verbose_name)
 
-        if perms_needed or protected:
-            title = _("Cannot delete %(name)s") % {"name": object_name}
-        else:
-            title = format_lazy(
-                "{} {}: {}  {}",
-                self.model._meta.verbose_name,
-                unquote(object_id),
-                _("About to delete!"),
-                _("Are you sure?"),
-            )
+        title = format_lazy("{} {}", self.model._meta.verbose_name, unquote(object_id))
 
         context = {
             **self.admin_site.each_context(request),

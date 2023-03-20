@@ -35,19 +35,19 @@
     {% endfor %}
     </ul>
 {% else %}
-    <p style="padding-top:7px">{% blocktrans with escaped_object=object %}Are you sure you want to delete the {{ object_name }} "{{ escaped_object }}"? All of the following related items will be deleted:{% endblocktrans %}</p>
-    {% include "admin/includes/object_delete_summary.html" %}
-    <h2>{% trans "Objects"|capfirst %}</h2>
-    <ul>{{ deleted_objects|unordered_list }}</ul>
-    <form action="" method="post">{% csrf_token %}
+    <p class="pt-3">{% blocktrans with escaped_object=object %}Are you sure you want to delete the {{ object_name }} "{{ escaped_object }}"? All of the following related items will be deleted:{% endblocktrans %}</p>
+    <form class="pb-3" action="" method="post">{% csrf_token %}
     <div>
     <input type="hidden" name="post" value="yes" />
     {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}
     {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}" />{% endif %}
-    <input type="submit" class="btn btn-primary" value="{% trans "Yes, I'm sure" %}" />
-    <a href="#" onclick="window.history.back(); return false;" class="btn btn-primary">{% trans "No, take me back" %}</a>
+    <input type="submit" class="btn btn-danger" value="{% trans "Yes, I'm sure" %}" />
+    <a href="#" onclick="window.history.back(); return false;" class="btn btn-gray">{% trans "No, take me back" %}</a>
     </div>
     </form>
+    {% include "admin/includes/object_delete_summary.html" %}
+    <h2>{% trans "Objects"|capfirst %}</h2>
+    <ul class="pb-3">{{ deleted_objects|unordered_list }}</ul>
 {% endif %}
 </div>
 </div>

@@ -723,6 +723,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         context = {
             **self.admin_site.each_context(request),
             "title": title,
+            "post_title": _("delete"),
             "object_name": object_name,
             "object": obj,
             "model": self.model,

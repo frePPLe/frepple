@@ -1,6 +1,22 @@
 Release notes
 -------------
 
+7.3.0 (Upcoming release)
+========================
+
+.. rubric:: User interface
+
+- | Some smaller layout and styling updates were added, continuing on the big user interface
+    refresh of 7.2.
+
+.. rubric:: Production planning
+
+- | Bug fix: A corner case was corrected when a manufacturing orders require a certain resource skill
+    while not a single resource has the required skill.
+	
+- | Completed and closed manufacturing orders no longer create problems.
+  | This reduces the alert list a bit compared to previous releases. 
+
 7.2.0 (2023/03/03)
 ==================
 

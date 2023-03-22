@@ -13,9 +13,17 @@ Release notes
 
 - | Bug fix: A corner case was corrected when a manufacturing orders require a certain resource skill
     while not a single resource has the required skill.
-	
+
 - | Completed and closed manufacturing orders no longer create problems.
-  | This reduces the alert list a bit compared to previous releases. 
+  | This reduces the alert list a bit compared to previous releases.
+
+.. rubric:: Odoo integration
+
+- | 15 & 16: The progress of work orders is now synchronised between odoo and frepple.
+  | Earlier releases only interfaced at the level of the manyfacturing orders, and completely
+    left the detail of the progress to odoo. However, when the duration and complexity of
+    manufacturing orders is increasing, the more detailed level of the work orders
+    is needed to generate a good and accurate plan.
 
 7.2.0 (2023/03/03)
 ==================

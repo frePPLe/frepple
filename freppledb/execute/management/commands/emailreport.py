@@ -15,6 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import gzip
+import linecache
 import os
 import re
 from io import BytesIO
@@ -66,6 +68,18 @@ class Command(BaseCommand):
         parser.add_argument(
             "--report", help="a comma separated list of reports to email"
         )
+
+    @staticmethod
+    def file_is_empty(file):
+        if file.lower().endswith(".csv"):
+            return len(linecache.getline(file, 2).strip()) == 0
+        elif file.lower().endswith(".csv.gz"):
+            with gzip.open(file, "rb") as f:
+                for i, l in enumerate(f):
+                    if i == 1:
+                        return len(l.strip()) == 0
+            return True
+        return False
 
     def handle(self, **options):
         now = datetime.now()
@@ -178,6 +192,19 @@ class Command(BaseCommand):
             task.arguments = "--recipient=%s --report=%s" % (recipient, report)
             task.save(using=database)
 
+            # Filter for reports that are a one-line report (only the header)
+            for file in correctedReports[:]:
+                if Command.file_is_empty(file):
+                    correctedReports.remove(file)
+
+            # Return if all reports are empty
+            if len(correctedReports) == 0:
+                task.processid = None
+                task.message = "All reports are empty, no email will be sent."
+                task.status = "Done"
+                task.finished = datetime.now()
+                return
+
             # create message
             message = EmailMessage(
                 subject="Exported reports",
@@ -238,7 +265,7 @@ class Command(BaseCommand):
 
         if (
             "FILEUPLOADFOLDER" not in settings.DATABASES[request.database]
-            or not not settings.EMAIL_HOST
+            or not settings.EMAIL_HOST
             or not request.user.is_superuser
         ):
             return None

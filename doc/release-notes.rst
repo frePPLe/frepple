@@ -9,6 +9,9 @@ Release notes
 - | Some smaller layout and styling updates were added, continuing on the big user interface
     refresh of 7.2.
 
+- | The command *Publish reports by email* will not send empty reports anymore. If all reports
+    to be sent are empty then no mail is sent.
+
 .. rubric:: Production planning
 
 - | Bug fix: A corner case was corrected when a manufacturing orders require a certain resource skill

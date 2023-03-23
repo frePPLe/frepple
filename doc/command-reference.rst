@@ -78,7 +78,23 @@ see demand OR material, lead time and capacity problems to be shown.
   completely and on time.
 
 In both the constrained and unconstrained plans you can select which constraints
-are considered during plan creation.
+are considered during plan creation:
+
+* | Capacity:
+  | Respect the capacity limits of your resources.
+
+* | Lead time:
+  | Don't generate any plans that start or end in the past.
+  | Only confirmed manufacturing and purchase orders are allowed in the past, as these
+    are considered frozen.
+  | All approved and proposed manufacturing and purchase orders must start in the future.
+
+* | Release fence:
+  | Don't propose any plans within a frozen time window (which is configured
+    on each operation).
+  | Within this release fence the plan can exist only of approved and confirmed
+    manufacturing and purchase orders. The planning algorithm is no longer allowed
+    to propose new activities.
 
 A separate page provides more details on the :doc:`/developer-guide/planning-algorithm`.
 

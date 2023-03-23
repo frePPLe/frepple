@@ -1,0 +1,63 @@
+{% load i18n %}
+<form role="form" method="post" action="{{request.prefix}}/execute/launch/runplan/">{% csrf_token %}
+    <table>
+    <tr>
+    <td style="vertical-align:top; padding: 15px">
+        <button type="submit" class="btn btn-primary">{% trans "launch"|capfirst %}</button>
+    </td>
+    <td class="ps-3 pt-3 pe-3">{% translate "Load all input data, run the planning algorithm, and export the results." %}<br><br>
+    {% if planning_options %}
+    <div {% if planning_options|length <= 1 %}class="d-none"{% endif %}><b>{% filter capfirst %}{% translate "optional planning steps" %}{% endfilter %}</b><br>
+    {% for b in planning_options %}
+    <div class="form-check">
+    <label class="form-check-label" for="option_{{b.0}}">
+    <input type="checkbox" class="form-check-input" name="env" {% if b.0 in current_options %}checked {% endif %}value="{{b.0}}" id="option_{{b.0}}">
+    {{b.1}}
+    </label>
+    </div>
+    {% endfor %}
+    <br>
+    </div>
+    {% endif %}
+    <b>{% translate "Plan type" %}</b><br>
+    <div class="form-check">
+    <input class="form-check-input" type="radio" id="plantype1" name="plantype" {% if plantype != '2' %}checked {% endif %}value="1"/>
+    <label class="form-check-label" for="plantype1">
+        {% blocktrans %}<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.">Constrained plan</span>{% endblocktrans %}
+    <span class="fa fa-question-circle" style="display:inline-block;"></span>
+    </label>
+    </div>
+    <div class="form-check">
+    <input class="form-check-input" type="radio" id="plantype2" name="plantype" {% if plantype == '2' %}checked {% endif %}value="2"/>
+    <label class="form-check-label" for="plantype2">
+        {% blocktrans %}<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Generate a supply plan that shows material, capacity and operation problems that prevent the demand from being planned in time.<br>The demand is always met completely and on time.">Unconstrained plan</span>{% endblocktrans %}
+    <span class="fa fa-question-circle" style="display:inline-block;"></span>
+    </label>
+    </div>
+        <br>
+        <b>{% filter capfirst %}{% translate "constraints" %}{% endfilter %}</b><br>
+        <div class="form-check">
+        <label class="form-check-label" for="cb4">
+        <input class="form-check-input" type="checkbox" name="constraint" {% if capacityconstrained %}checked {% endif %}value="4" id="cb4"/>
+        {% blocktrans %}<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Respect the capacity limits of your resources.">Capacity: respect capacity limits</span>{% endblocktrans %}
+        <span class="fa fa-question-circle"></span>
+        </label>
+        </div>
+        <div class="form-check">
+        <label class="form-check-label" for="cb1">
+        <input class="form-check-input" type="checkbox" name="constraint" {% if leadtimeconstrained %}checked {% endif %}value="1" id="cb1"/>
+        {% blocktrans %}<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Don't generate any plans that start or end in the past.<br>Proposed and approved activities must all be in the future.<br>Only confirmed activities are allowed to be in the past.">Lead time: do not plan in the past</span>{% endblocktrans %}
+        <span class="fa fa-question-circle"></span>
+        </label>
+        </div>
+        <div class="form-check">
+        <label class="form-check-label" for="cb8">
+        <input class="form-check-input" type="checkbox" name="constraint" {% if fenceconstrained %}checked {% endif %}value="8" id="cb8"/>
+        {% blocktrans %}<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Don't propose any plans within a frozen time window (which is configured on each operation).<br>Within the frozen zone only approved and confirmed activities are allowed, no new proposed activities.">Release fence: do not plan within a frozen time window</span>{% endblocktrans %}
+          <span class="fa fa-question-circle"></span>
+        </label>
+        </div>
+    </td>
+    </tr>
+    </table>
+</form>

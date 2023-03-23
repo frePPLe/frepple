@@ -28,7 +28,8 @@ from django.db import DEFAULT_DB_ALIAS
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_str
-from django.template import Template, RequestContext
+from django.template import RequestContext
+from django.template.loader import render_to_string
 
 import freppledb.common.commands
 from freppledb.common.middleware import _thread_locals
@@ -398,8 +399,8 @@ class Command(BaseCommand):
                             except Exception:
                                 pass
 
-            context = RequestContext(
-                request,
+            return render_to_string(
+                "commands/runplan.html",
                 {
                     "planning_options": planning_options,
                     "current_options": current_options,
@@ -409,95 +410,7 @@ class Command(BaseCommand):
                     "fenceconstrained": constraint & 8,
                     "plantype": plantype,
                 },
+                request=request,
             )
-
-            template = Template(
-                """
-        {%% load i18n %%}
-        <form role="form" method="post" action="{{request.prefix}}/execute/launch/runplan/">{%% csrf_token %%}
-          <table>
-          <tr>
-            <td style="vertical-align:top; padding: 15px">
-                <button type="submit" class="btn btn-primary">{%% trans "launch"|capfirst %%}</button>
-            </td>
-            <td class="ps-3 pt-3 pe-3">%s<br><br>
-          {%% if planning_options %%}
-          <div {%% if planning_options|length <= 1 %%}class="d-none"{%% endif %%}><b>{%% filter capfirst %%}%s{%% endfilter %%}</b><br>
-          {%% for b in planning_options %%}
-          <div class="form-check">
-            <label class="form-check-label" for="option_{{b.0}}">
-            <input type="checkbox" class="form-check-input" name="env" {%% if b.0 in current_options %%}checked {%% endif %%}value="{{b.0}}" id="option_{{b.0}}">
-            {{b.1}}
-            </label>
-          </div>
-          {%% endfor %%}
-          <br>
-          </div>
-          {%% endif %%}
-          <b>%s</b><br>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" id="plantype1" name="plantype" {%% if plantype != '2' %%}checked {%% endif %%}value="1"/>
-            <label class="form-check-label" for="plantype1">%s
-            <span class="fa fa-question-circle" style="display:inline-block;"></span>
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" id="plantype2" name="plantype" {%% if plantype == '2' %%}checked {%% endif %%}value="2"/>
-            <label class="form-check-label" for="plantype2">%s
-            <span class="fa fa-question-circle" style="display:inline-block;"></span>
-            </label>
-          </div>
-              <br>
-              <b>{%% filter capfirst %%}%s{%% endfilter %%}</b><br>
-              <div class="form-check">
-                <label class="form-check-label" for="cb4">
-                <input class="form-check-input" type="checkbox" name="constraint" {%% if capacityconstrained %%}checked {%% endif %%}value="4" id="cb4"/>
-                %s
-                </label>
-              </div>
-              <div class="form-check">
-                <label class="form-check-label" for="cb1">
-                <input class="form-check-input" type="checkbox" name="constraint" {%% if leadtimeconstrained %%}checked {%% endif %%}value="1" id="cb1"/>
-                %s
-                </label>
-              </div>
-              <div class="form-check">
-                <label class="form-check-label" for="cb8">
-                <input class="form-check-input" type="checkbox" name="constraint" {%% if fenceconstrained %%}checked {%% endif %%}value="8" id="cb8"/>
-                %s
-                </label>
-              </div>
-            </td>
-          </tr>
-          </table>
-        </form>
-      """
-                % (
-                    force_str(
-                        _(
-                            "Load all input data, run the planning algorithm, and export the results."
-                        )
-                    ),
-                    force_str(_("optional planning steps")),
-                    force_str(_("Plan type")),
-                    force_str(
-                        _(
-                            '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.">Constrained plan</span>'
-                        )
-                    ),
-                    force_str(
-                        _(
-                            '<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Generate a supply plan that shows material, capacity and operation problems that prevent the demand from being planned in time.<br>The demand is always met completely and on time.">Unconstrained plan</span>'
-                        )
-                    ),
-                    force_str(_("constraints")),
-                    force_str(_("Capacity: respect capacity limits")),
-                    force_str(_("Lead time: do not plan in the past")),
-                    force_str(
-                        _("Release fence: do not plan within the release time window")
-                    ),
-                )
-            )
-            return template.render(context)
         else:
             return None

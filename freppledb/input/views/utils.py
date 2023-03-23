@@ -610,7 +610,8 @@ class PathReport(GridReport):
             )
 
         query = (
-            query + " order by grandparentoperation, parentoperation, sibling_priority"
+            query
+            + " order by grandparentoperation_priority, grandparentoperation, parentoperation_priority, parentoperation, sibling_priority"
         )
 
         if downstream:
@@ -821,7 +822,7 @@ class PathReport(GridReport):
       inner join item on item.lft between i_parent.lft and i_parent.rght
       inner join location on location.lft = location.rght - 1
       where location_id is null and itemsupplier.resource_id = %%s
-      order by grandparentoperation, parentoperation, sibling_priority
+      order by grandparentoperation_priority, grandparentoperation, parentoperation_priority, parentoperation, sibling_priority
       """ % (
             "operationresource.resource_id = %s"
             if not downstream
@@ -941,7 +942,7 @@ class PathReport(GridReport):
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
       grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
       ) t
-      order by grandparentoperation, parentoperation, sibling_priority
+      order by grandparentoperation_priority, grandparentoperation, parentoperation_priority, parentoperation, sibling_priority
       """
 
         cursor.execute(query, (operation_name,) * 3)
@@ -1187,7 +1188,8 @@ class PathReport(GridReport):
             )
 
         query = (
-            query + " order by grandparentoperation, parentoperation, sibling_priority"
+            query
+            + " order by grandparentoperation_priority, grandparentoperation, parentoperation_priority, parentoperation, sibling_priority"
         )
 
         if downstream:
@@ -1404,7 +1406,7 @@ class PathReport(GridReport):
                 ),
                 "duration": i[6],
                 "duration_per": i[7],
-                "quantity": bom_quantity,
+                "quantity": abs(bom_quantity),
                 "buffers": tuple(json.loads(i[4]).items())
                 if i[4]
                 else tuple([("%s @ %s" % (i[17], i[1]), 1)])

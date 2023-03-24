@@ -33,7 +33,7 @@
     <tr>
         <td style="padding-left:15px; padding-top:10px"><strong>{% trans 'emails'|capfirst %}:</strong>
         </td>
-        <td style="padding-top:10px; padding-left:15px"" colspan="3">
+        <td style="padding-top:10px; padding-left:15px" colspan="3">
         <input type="email" class="form-control" id="emails" name="recipient" multiple value="{{user_email}}">
         </td>
     </tr>
@@ -62,15 +62,17 @@ function validateEmailButton() {
     {% endfor %}
     var testEmail = /^([\w+-.%]+@[\w-.]+\.[A-Za-z]{2,},?)+$/;
     emails_ok = $("#emails").val() != '' && testEmail.test($("#emails").val());
+    var tt = bootstrap.Tooltip.getInstance("#emails");
     if (!emails_ok) {
        $("#emails").attr('data-bs-title', '{% trans 'please correct invalid email addresses'|capfirst %}');
-       $('#emails').tooltip('show');
+       if (tt) tt.dispose();
+       bootstrap.Tooltip.getOrCreateInstance("#emails").show();
     }
     else {
-       $("#emails").tooltip('hide').attr('data-bs-title', '{% trans 'please enter email addresses'|capfirst %}');
+       $("#emails").attr('data-bs-title', '{% trans 'please enter email addresses'|capfirst %}');
+       if (tt) tt.hide();
     }
     $('#emailreport').prop('disabled', !(oneChecked && emails_ok));
-
 }
 
 $(function() {

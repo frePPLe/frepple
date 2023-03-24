@@ -28,6 +28,13 @@ Release notes
     manufacturing orders is increasing, the more detailed level of the work orders
     is needed to generate a good and accurate plan.
 
+.. rubric:: Internal APIs
+
+- | The database structure for pegging information has been optimized for size and
+    performance.
+  | If your customizations rely on the pegging data (either in a custom report or through
+    the REST API), it may need updating.
+
 7.2.0 (2023/03/03)
 ==================
 

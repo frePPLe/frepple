@@ -1965,9 +1965,6 @@ void OperationRouting::addSubOperationPlan(OperationPlan* parent,
       }
     }
 
-    // Stop if this is not a valid step
-    if (!ok) throw DataException("Invalid routing suboperationplan");
-
     // Remove existing suboperationplan
     if (subopplan && subopplan->getOperation() == child->getOperation()) {
       parent->eraseSubOperationPlan(subopplan);

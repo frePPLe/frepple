@@ -473,7 +473,7 @@ class ReportByDemand(GridReport):
                     inner join lateral (select t->>'opplan' as opplan, t->>'quantity' as quantity
                                 from jsonb_array_elements(demand.plan->'pegging') t) t on true
                     inner join operationplan on operationplan.reference = t.opplan
-                    where name = %s
+                    where demand.name = %s
                     order by path,level desc
           ),
            pegging_0 as (

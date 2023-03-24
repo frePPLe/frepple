@@ -1445,10 +1445,9 @@ class ExportPegging(PlanTask):
             if i.hidden or not isinstance(i, frepple.demand_default):
                 continue
             peg = []
-            for j in i.pegging:
+            for j in i.pegging_first_level:
                 peg.append(
                     {
-                        "level": j.level,
                         "opplan": j.operationplan.reference,
                         "quantity": j.quantity,
                     }

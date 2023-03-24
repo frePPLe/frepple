@@ -346,6 +346,10 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args,
 
 PeggingIterator Demand::getPegging() const { return PeggingIterator(this); }
 
+PeggingIterator Demand::getPeggingFirstLevel() const {
+  return PeggingIterator(this, 0);
+}
+
 Problem::List::iterator Demand::getConstraintIterator() const {
   return constraints.begin();
 }

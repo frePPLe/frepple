@@ -157,6 +157,7 @@ const Keyword Tags::ordertype("ordertype");
 const Keyword Tags::origin("origin");
 const Keyword Tags::owner("owner");
 const Keyword Tags::pegging("pegging");
+const Keyword Tags::pegging_first_level("pegging_first_level");
 const Keyword Tags::pegging_demand("pegging_demand");
 const Keyword Tags::pegging_downstream("pegging_downstream");
 const Keyword Tags::pegging_downstream_first_level(

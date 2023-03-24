@@ -158,6 +158,7 @@ class Tags {
   static const Keyword origin;
   static const Keyword owner;
   static const Keyword pegging;
+  static const Keyword pegging_first_level;
   static const Keyword pegging_demand;
   static const Keyword pegging_downstream;
   static const Keyword pegging_downstream_first_level;

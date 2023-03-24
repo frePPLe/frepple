@@ -7722,6 +7722,8 @@ class Demand : public HasHierarchy<Demand>,
 
   PeggingIterator getPegging() const;
 
+  PeggingIterator getPeggingFirstLevel() const;
+
   /* Return the latest delivery date for the demand. */
   Date getDeliveryDate() const {
     OperationPlan* op = getLatestDelivery();
@@ -7761,6 +7763,9 @@ class Demand : public HasHierarchy<Demand>,
                          BOOL_FALSE, DONT_SERIALIZE);
     m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
         Tags::pegging, Tags::pegging, &Cls::getPegging, PLAN + WRITE_OBJECT);
+    m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
+        Tags::pegging_first_level, Tags::pegging, &Cls::getPeggingFirstLevel,
+        PLAN + WRITE_OBJECT);
     m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(
         Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans,
         DETAIL + WRITE_OBJECT + WRITE_HIDDEN);
@@ -8610,7 +8615,9 @@ class Plan : public Plannable, public Object {
 
   void setIndividualPoolResources(bool b) { individual_pool_resources = b; }
 
-  bool getSuppressFlowplanCreation() const { return suppress_flowplan_creation; }
+  bool getSuppressFlowplanCreation() const {
+    return suppress_flowplan_creation;
+  }
 
   void setSuppressFlowplanCreation(bool b);
 
@@ -9600,7 +9607,7 @@ class PeggingIterator : public Object {
   PeggingIterator& operator=(const PeggingIterator&);
 
   /* Constructor for demand pegging. */
-  PeggingIterator(const Demand*);
+  PeggingIterator(const Demand*, short = -1);
 
   /* Constructor for operationplan pegging, downstream (default) or upstream. */
   PeggingIterator(const OperationPlan*, bool = true, short = -1);

@@ -509,7 +509,7 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
     return;
 
   // Did we reach the maximum depth we want to visit
-  if (iter.getMaxLevel() > 0 && lvl > iter.getMaxLevel()) return;
+  if (iter.getMaxLevel() != -1 && lvl > iter.getMaxLevel()) return;
 
   if (curflowplan->getBuffer()->hasType<BufferInfinite>() &&
       ((curflowplan->getQuantity() < 0 && !iter.isDownstream()) ||

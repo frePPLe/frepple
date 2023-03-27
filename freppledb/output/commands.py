@@ -466,6 +466,9 @@ class ExportOperationPlans(PlanTask):
                     j.level == 1
                     and (opplan.owner == None)
                     and j.operationplan.owner == None
+                    and not isinstance(
+                        j.operationplan.operation, frepple.operation_alternate
+                    )
                 )
                 # routings will flow into the previous step
                 or (
@@ -498,7 +501,7 @@ class ExportOperationPlans(PlanTask):
                         ]
                     )
                 )
-                # first subopration flows into previous level
+                # first suboperation flows into previous level
                 or (
                     j.level == 2
                     and opplan.owner != None
@@ -535,6 +538,13 @@ class ExportOperationPlans(PlanTask):
                     j.level == 2
                     and opplan.owner != None
                     and isinstance(opplan.owner.operation, frepple.operation_alternate)
+                )
+                or (
+                    j.level == 2
+                    and j.operationplan.owner != None
+                    and isinstance(
+                        j.operationplan.owner.operation, frepple.operation_alternate
+                    )
                 )
             ):
                 upstream_opplans.append(

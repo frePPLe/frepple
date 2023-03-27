@@ -342,23 +342,18 @@ class ReportByDemand(GridReport):
                         coalesce(nextopplan.location_id, nextopplan.destination_id),
                         case when nextopplan.type = 'STCK' then null else to_char(nextopplan.startdate,'YYYY-MM-DD hh24:mi:ss') end,
                         case when nextopplan.type = 'STCK' then null else to_char(nextopplan.enddate,'YYYY-MM-DD hh24:mi:ss') end,
-                        t.quantity as t_quantity,
-                        nextopplan.quantity,
-                        t.offset as x,
-                        t.offset + t.quantity as y,
+                        nextopplan.quantity::numeric  as quantity,
+                        nextopplan.quantity::numeric as total_quantity,
+                        0::numeric as x,
+                        0::numeric + nextopplan.quantity as y,
                         (coalesce(nextopplan.item_id,'')||'/'||nextopplan.reference)::varchar as path,
                         nextopplan.owner_id
-                    from operationplan
+                    from operationplan nextopplan
+                    inner join demand on demand.name = %s
                     inner join lateral
-                    (select t->>0 reference,
-                    (t->>1)::numeric quantity,
-                    (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t on true
-                    inner join operationplan nextopplan on nextopplan.reference = t.reference
-                    where operationplan.reference in
-                    (select t.opplan as opplan from demand
-                    inner join lateral (select t->>'opplan' as opplan
-                                from jsonb_array_elements(demand.plan->'pegging') t) t on true
-                    where name = %s)
+                    (select t->>'opplan' as reference,
+                    (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
+                    where nextopplan.reference = t.reference
                     union all
                     select cte.level +  1,
                         nextopplan.reference,
@@ -468,12 +463,6 @@ class ReportByDemand(GridReport):
                     and (select count(*) from operation_dependency where operation_id = nextopplan.operation_id) <= 1
                     )
                     select distinct cte.level, cte.nextreference, cte.quantity, cte.path from cte
-                    union all
-                    select 0, t.opplan, t.quantity::numeric, operationplan.item_id||'/'||operationplan.reference from demand
-                    inner join lateral (select t->>'opplan' as opplan, t->>'quantity' as quantity
-                                from jsonb_array_elements(demand.plan->'pegging') t) t on true
-                    inner join operationplan on operationplan.reference = t.opplan
-                    where demand.name = %s
                     order by path,level desc
           ),
            pegging_0 as (
@@ -575,7 +564,7 @@ class ReportByDemand(GridReport):
         # Build the Python result
         with transaction.atomic(using=request.database):
             with connections[request.database].chunked_cursor() as cursor_chunked:
-                cursor_chunked.execute(query, baseparams * 3)
+                cursor_chunked.execute(query, baseparams * 2)
                 prevrec = None
                 parents = {}
                 for rec in cursor_chunked:

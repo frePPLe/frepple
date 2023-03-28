@@ -1891,6 +1891,8 @@ class GridReport(View):
             # Filename parameter is encoded as specified in rfc5987
             if callable(cls.title):
                 title = cls.title(request, *args, **kwargs)
+            elif hasattr(cls, "title"):
+                title = cls.title
             else:
                 title = cls.model._meta.verbose_name_plural if cls.model else cls.title
             response[
@@ -1920,6 +1922,8 @@ class GridReport(View):
             # Filename parameter is encoded as specified in rfc5987
             if callable(cls.title):
                 title = cls.title(request, *args, **kwargs)
+            elif hasattr(cls, "title"):
+                title = cls.title
             else:
                 title = cls.model._meta.verbose_name_plural if cls.model else cls.title
             response[
@@ -3606,6 +3610,8 @@ class GridPivot(GridReport):
         wb = Workbook(write_only=True)
         if callable(cls.title):
             title = cls.title(request, *args, **kwargs)
+        elif hasattr(cls, "title"):
+            title = cls.title
         else:
             title = cls.model._meta.verbose_name_plural if cls.model else cls.title
         wb.properties.creator = "frepple %s" % __version__

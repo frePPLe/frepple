@@ -89,12 +89,12 @@ PeggingIterator& PeggingIterator::operator=(const PeggingIterator& c) {
   return *this;
 }
 
-PeggingIterator::PeggingIterator(const Demand* d, short maxLevel)
+PeggingIterator::PeggingIterator(const Demand* d, short maxLvl)
     : downstream(false),
       firstIteration(true),
       first(false),
       second_pass(false),
-      maxlevel(maxlevel) {
+      maxlevel(maxLvl) {
   initType(metadata);
   const Demand::OperationPlanList& deli = d->getDelivery();
   for (auto opplaniter = deli.begin(); opplaniter != deli.end(); ++opplaniter) {

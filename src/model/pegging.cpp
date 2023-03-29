@@ -223,6 +223,9 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
   // Zero quantity operationplans don't have further pegging
   if (!op->getQuantity()) return;
 
+  // Did we reach the maximum depth we want to visit
+  if ((*this).getMaxLevel() != -1 && lvl > (*this).getMaxLevel()) return;
+
   // For each flowplan ask the buffer to find the pegged operationplans.
   if (downstream)
     for (auto i = op->beginFlowPlans(); i != op->endFlowPlans(); ++i) {

@@ -21,6 +21,7 @@ import xmlrpc.client
 
 from django.conf import settings
 from django.core import management
+from django.db.models import F
 from django.test import TransactionTestCase
 from django.contrib.auth.models import Group
 
@@ -119,6 +120,12 @@ class OdooTest(TransactionTestCase):
         self.assertEqual(
             PurchaseOrder.objects.all().filter(status="proposed").count(),
             0,
+        )
+        self.assertEqual(
+            ManufacturingOrder.objects.all()
+            .filter(status="approved", quantity=8, reference=F("operation_id"))
+            .count(),
+            3,
         )
 
         # Generate plan

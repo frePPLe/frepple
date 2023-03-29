@@ -28,6 +28,11 @@ Release notes
     manufacturing orders is increasing, the more detailed level of the work orders
     is needed to generate a good and accurate plan.
 
+- | 15 & 16: On manufacturing orders the connector now picks up the quantity actually
+    produced instead of only the quantity.
+  | When pieces are scrapped or lost in any other way in the factory, the manufacturing
+    orders in frepple will now adjust accordingly.
+
 .. rubric:: Internal APIs
 
 - | The database structure for pegging information has been optimized for size and

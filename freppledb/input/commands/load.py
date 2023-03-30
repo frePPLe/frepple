@@ -1685,7 +1685,7 @@ class loadOperationMaterials(LoadTask):
                             curflow.effective_start = i[4]
                         if i[5] and i[5] < datetime(2030, 12, 29):
                             curflow.effective_end = i[5]
-                        if i[6]:
+                        if i[6] and i[6] != "":
                             curflow.name = i[6]
                         if i[7] is not None:
                             curflow.priority = i[7]
@@ -2270,7 +2270,6 @@ class loadOperationPlanMaterials(LoadTask):
                     inner join operationplan
                     on operationplan.reference = opplanmat.operationplan_id
                     where operationplan.type = 'MO'
-                    and (opplanmat.status in ('confirmed', 'closed') or opplanmat.status is null)
                     %s
                     order by operationplan_id
                     """

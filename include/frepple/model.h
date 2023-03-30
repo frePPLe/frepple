@@ -5615,8 +5615,11 @@ class Flow : public Object,
   Flow* getAlternate() const {
     if (getName().empty() || !getOperation()) return nullptr;
     for (auto h = getOperation()->getFlows().begin();
-         h != getOperation()->getFlows().end() && this != &*h; ++h)
-      if (getName() == h->getName()) return const_cast<Flow*>(&*h);
+         h != getOperation()->getFlows().end(); ++h) {
+      if (this == &*h && getPriority()) return nullptr;
+      if (getName() == h->getName() && h->getPriority())
+        return const_cast<Flow*>(&*h);
+    }
     return nullptr;
   }
 
@@ -5625,7 +5628,8 @@ class Flow : public Object,
     if (getName().empty() || !getOperation()) return false;
     for (auto h = getOperation()->getFlows().begin();
          h != getOperation()->getFlows().end(); ++h)
-      if (this != &*h && getName() == h->getName()) return true;
+      if (this != &*h && getName() == h->getName() && h->getPriority())
+        return true;
     return false;
   }
 

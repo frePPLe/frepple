@@ -55,9 +55,9 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
         if (scope.operationplan.hasOwnProperty('flowplans')) {
           rows = '';
           angular.forEach(scope.operationplan.flowplans, function (theflow) {
-            rows += ''
+            rows += '<tr>';
             if (!theflow.hasOwnProperty('alternates')) {
-              rows += '<tr><td><span ';
+              rows += '<td><span ';
               if (theflow.buffer.description)
                 rows += ' onmouseenter="$(this).tooltip(\'show\')" title="' + $.jgrid.htmlEncode(theflow.buffer.description) + '"';
               rows += '>' + $.jgrid.htmlEncode(theflow.buffer.item)

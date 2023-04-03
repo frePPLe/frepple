@@ -1086,10 +1086,7 @@ class OperationPlanResource_admin(MultiDBModelAdmin):
         "operationplan",
     )  # TODO a foreign key to OperationPlan doesn't work because it's an abstract class without admin
     save_on_top = True
-    fieldsets = (
-        (None, {"fields": ("operationplan", "resource", "status")}),
-        (_("computed fields"), {"fields": ("quantity", "startdate", "enddate")}),
-    )
+    fieldsets = ((None, {"fields": ("operationplan", "resource", "quantity")}),)
     tabs = [
         {
             "name": "edit",

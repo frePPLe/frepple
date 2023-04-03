@@ -1546,6 +1546,8 @@ class loadResources(LoadTask):
                             raise ValueError("Resource type '%s' not recognized" % i[5])
                         if i[11] == "tool":
                             x.tool = True
+                        elif i[11] == "tool per piece":
+                            x.toolperpiece = True
                         if i[7] is not None:
                             x.maxearly = i[7].total_seconds()
                         if i[2] is not None:

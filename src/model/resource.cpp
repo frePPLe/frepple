@@ -144,6 +144,13 @@ void Resource::setTool(bool b) {
   while (Resource* res = resiter.next()) res->tool = b;
 }
 
+void Resource::setToolPerPiece(bool b) {
+  // All resources in a hierarchy must have the same value of this field.
+  auto resiter = getTop()->getAllMembers();
+  if (!resiter.empty()) resiter->toolperpiece = b;
+  while (Resource* res = resiter.next()) res->toolperpiece = b;
+}
+
 void Resource::setMaximum(double m) {
   if (m < 0)
     throw DataException("Maximum capacity for resource '" + getName() +
@@ -311,6 +318,12 @@ void Resource::setOwner(Resource* o) {
       o->setTool(true);
     else
       setTool(true);
+  }
+  if (getToolPerPiece() != o->getToolPerPiece()) {
+    if (getToolPerPiece())
+      o->setToolPerPiece(true);
+    else
+      setToolPerPiece(true);
   }
 }
 

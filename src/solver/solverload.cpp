@@ -47,7 +47,8 @@ void SolverCreate::chooseResource(
 {
   auto data = static_cast<SolverData*>(v);
   auto lplan = data->state->q_loadplan;
-  if (l->getResource()->getTool() && lplan->getOperationPlan()->getOwner() &&
+  if ((l->getResource()->getTool() || l->getResource()->getToolPerPiece()) &&
+      lplan->getOperationPlan()->getOwner() &&
       lplan->getResource()->getOwner() &&
       lplan->getOperationPlan()
           ->getOwner()

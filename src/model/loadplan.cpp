@@ -240,8 +240,9 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
   newres->setChanged();
 
   // Switch also other steps in a routing if the use the same tool
-  if (newres->getTool() && getOperationPlan()->getOwner() &&
-      getResource()->getOwner() && getLoad() &&
+  if ((newres->getTool() || newres->getToolPerPiece()) &&
+      getOperationPlan()->getOwner() && getResource()->getOwner() &&
+      getLoad() &&
       getOperationPlan()
           ->getOwner()
           ->getOperation()
@@ -543,9 +544,13 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const {
              Plan::instance().getIndividualPoolResources())
     // Continuous pooled resource with individual assignments
     return lp->isStart() ? 1.0 : -1.0;
+  else if (lp->getResource()->getToolPerPiece())
+    // Tool-per-piece resource
+    return (lp->isStart() ? getQuantity() : -getQuantity()) *
+           lp->getOperationPlan()->getQuantity();
   else
     // Continuous resource
-    return lp->isStart() ? getQuantity() : -getQuantity();
+    return (lp->isStart() ? getQuantity() : -getQuantity());
 }
 
 tuple<double, Date, double> LoadPlan::getBucketEnd() const {

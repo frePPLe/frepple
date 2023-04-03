@@ -225,6 +225,7 @@ class Tags {
   static const Keyword supply;
   static const Keyword timezone;
   static const Keyword tool;
+  static const Keyword toolperpiece;
   static const Keyword tosetup;
   static const Keyword transferbatch;
   static const Keyword type;

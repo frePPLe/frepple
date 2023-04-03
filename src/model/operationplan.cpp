@@ -1806,7 +1806,9 @@ void OperationPlan::propagateStatus(bool log) {
   // Check that upstream buffers have enough supply in the closed or completed
   // status
   for (auto myflpln = beginFlowPlans(); myflpln != endFlowPlans(); ++myflpln) {
-    if (myflpln->getQuantity() >= 0) continue;
+    if (myflpln->getQuantity() >= 0 ||
+        myflpln->getBuffer()->hasType<BufferInfinite>())
+      continue;
 
     // Get current status
     double closed_balance = 0.0;

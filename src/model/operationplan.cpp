@@ -1766,7 +1766,7 @@ void OperationPlan::propagateStatus(bool log) {
       if (!subopplan->getCompleted()) all_steps_completed = false;
       if (!subopplan->getClosed()) all_steps_closed = false;
     }
-    if (all_steps_closed) {
+    if (all_steps_closed && !getOwner()->getClosed()) {
       getOwner()->flags |= STATUS_CONFIRMED + STATUS_CLOSED;
       getOwner()->flags &= ~(STATUS_APPROVED + STATUS_COMPLETED);
       if (log) {
@@ -1776,7 +1776,7 @@ void OperationPlan::propagateStatus(bool log) {
         }
         logger << "    Marking routing as closed " << getOwner() << endl;
       }
-    } else if (all_steps_completed) {
+    } else if (all_steps_completed && !getOwner()->getCompleted()) {
       getOwner()->flags |= STATUS_CONFIRMED + STATUS_COMPLETED;
       getOwner()->flags &= ~(STATUS_APPROVED + STATUS_CLOSED);
       if (log) {

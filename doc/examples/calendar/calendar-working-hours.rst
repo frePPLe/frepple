@@ -50,9 +50,9 @@ an operation in location A that loads a resource in location B using another cal
     last exactly 48 hours.
 
   | The manufacturing operation takes also 48 hours, but due to the working hours it lasts much longer. 
-    The manufacturing ends right before the Christmas break starts at 24/12/2014 17:00:00 and uses 8 hours 
-    available time on the following days: 24/12/2014, 23/12/2014, 22/12/2014, 19/12/2014, 18/12/2014 
-    and 17/12/2014. The replenishment thus starts on 17/12/2014 08:00:00.
+    The manufacturing ends right before the Christmas break starts at 24/12 17:00:00 and uses 8 hours 
+    available time on the following days: 24/12, 23/12, 22/12, 19/12, 18/12 
+    and 17/12. The replenishment thus starts on 17/12 08:00:00.
 
   .. image:: _images/calendar-working-hours-4.png
      :alt: Distribution orders

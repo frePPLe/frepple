@@ -8,6 +8,7 @@ on:
   pull_request:
   repository_dispatch:
     types: [odoo_connector]
+  workflow_dispatch:
 
 env:
   BUILD_TYPE: Release

@@ -558,7 +558,7 @@ class ReportByDemand(GridReport):
             operationplan.supplier_id, operationplan.origin_id,
             operationplan.criticality, operationplan.demand_id,
             extract(epoch from operationplan.delay), ops.rownum, pegging.required_quantity
-          order by ops.rownum, pegging.rownum
+          order by pegging.rownum
           """
 
         # Build the Python result

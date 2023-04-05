@@ -159,6 +159,7 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
   state->q_qty = q;
   state->q_date = d;
   state->q_date_max = d;
+  state->forceAccept = prevstate->forceAccept;
   if (full) {
     state->q_loadplan = prevstate->q_loadplan;
     state->q_flowplan = prevstate->q_flowplan;
@@ -199,6 +200,7 @@ void SolverCreate::SolverData::pop(bool copy_answer) {
     prevstate->a_date = state->a_date;
     prevstate->a_penalty = state->a_penalty;
     prevstate->a_cost = state->a_cost;
+    prevstate->forceAccept = state->forceAccept;
   }
   --state;
   --prevstate;

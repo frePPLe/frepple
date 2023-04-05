@@ -226,6 +226,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             data->state->curBuffer = nullptr;
             data->state->q_qty = plan_qty;
             data->state->q_qty_min = minshipment;
+            data->state->forceAccept = false;
             data->state->q_date = plan_date;
             data->constraints = &(const_cast<Demand*>(l)->getConstraints());
             data->state->curDemand = const_cast<Demand*>(l);
@@ -355,11 +356,14 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             // 3) The remaining quantity after accepting this answer is less
             //    than the minimum quantity.
             if (data->state->a_qty < ROUNDING_ERROR ||
-                data->state->a_qty + ROUNDING_ERROR < minshipment ||
+                (data->state->a_qty + ROUNDING_ERROR < minshipment &&
+                 !data->state->forceAccept) ||
                 (plan_qty - data->state->a_qty < minshipment &&
-                 fabs(plan_qty - data->state->a_qty) > ROUNDING_ERROR)) {
+                 fabs(plan_qty - data->state->a_qty) > ROUNDING_ERROR &&
+                 !data->state->forceAccept)) {
               if (plan_qty - data->state->a_qty < minshipment &&
                   data->state->a_qty + ROUNDING_ERROR >= minshipment &&
+                  !data->state->forceAccept &&
                   data->state->a_qty > best_a_qty) {
                 // The remaining quantity after accepting this answer is less
                 // than the minimum quantity. Therefore, we delay accepting it

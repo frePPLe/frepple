@@ -868,6 +868,8 @@ class SolverCreate : public Solver {
     double q_qty_min;
 
     bool has_bucketized_resources;
+
+    bool forceAccept;
   };
 
   /* This class is a helper class of the SolverCreate class.

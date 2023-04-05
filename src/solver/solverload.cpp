@@ -188,7 +188,21 @@ void SolverCreate::chooseResource(
     lplan->getOperationPlan()->setStartEndAndQuantity(
         originalOpplan.start, originalOpplan.end, originalOpplan.quantity);
     lplan->setResource(res, false, false);
-    lplan->getOperationPlan()->setEnd(originalOpplan.end);
+    if (lplan->getResource()->getToolPerPiece() &&
+        lplan->getLoad()->getQuantity()) {
+      double mx = lplan->getMax();
+      if (-lplan->getQuantity() > mx + ROUNDING_ERROR) {
+        lplan->getOperationPlan()->setQuantity(
+            mx / lplan->getLoad()->getQuantity(), true);
+        lplan->getOperationPlan()->setEnd(originalOpplan.end);
+        if (data->state->q_qty_min > lplan->getOperationPlan()->getQuantity()) {
+          // Assure we don't reject this answer as too small!
+          data->state->forceAccept = true;
+          data->state->q_qty_min = lplan->getOperationPlan()->getQuantity();
+        }
+      }
+    } else
+      lplan->getOperationPlan()->setEnd(originalOpplan.end);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
 

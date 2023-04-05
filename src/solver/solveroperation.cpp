@@ -909,7 +909,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   // Check the constraints
   checkOperation(z, *data);
   if (!propagate) return z;
-  data->state->q_qty_min = orig_q_qty_min;
+  if (!data->state->forceAccept) data->state->q_qty_min = orig_q_qty_min;
 
   // Multiply the operation reply with the flow quantity to get a final reply
   if (data->state->curBuffer && data->state->a_qty)

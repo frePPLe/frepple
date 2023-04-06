@@ -14,6 +14,13 @@ Release notes
 
 .. rubric:: Production planning
 
+- | A new type of resource is added to model tools that are attached to each
+    individual pieces of a manufacturing order.
+  | It's used to model holders or frames that are attached to each piece while
+    it is on the shop floor. A big manufacturing order needs more holders than a smaller one,
+    which is different from the other resource types.
+  | Check out `example resource tools <examples/resource/resource-tool.html>`_ for more details.
+
 - | Bug fix: A corner case was corrected when a manufacturing orders require a certain resource skill
     while not a single resource has the required skill.
 

@@ -21,11 +21,15 @@ Release notes
     which is different from the other resource types.
   | Check out `example resource tools <examples/resource/resource-tool.html>`_ for more details.
 
+- | Completed and closed manufacturing orders no longer create problems.
+  | This reduces the alert list a bit compared to previous releases.
+
 - | Bug fix: A corner case was corrected when a manufacturing orders require a certain resource skill
     while not a single resource has the required skill.
 
-- | Completed and closed manufacturing orders no longer create problems.
-  | This reduces the alert list a bit compared to previous releases.
+- | Bug fix: When a routing manufacturing order included some step manufacturing orders in the
+    "proposed" status, then other manufacturing order steps in the "approved", "confirmed" or
+    "completed" status were getting ignored and deleted.
 
 .. rubric:: Odoo integration
 

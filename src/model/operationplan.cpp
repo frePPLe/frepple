@@ -1547,7 +1547,11 @@ void OperationPlan::deleteOperationPlans(Operation* o,
         opplan = opplan->next;
 
     // Note that the deletion of the operationplan also updates the opplan list
-    if (deleteLockedOpplans || tmp->getProposed()) delete tmp;
+    bool del = deleteLockedOpplans;
+    if (!del && tmp->getProposed()) {
+      del = tmp->getOwner() ? tmp->getOwner()->getProposed() : true;
+    }
+    if (del) delete tmp;
   }
 }
 

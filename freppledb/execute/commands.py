@@ -119,7 +119,13 @@ class SupplyPlanning(PlanTask):
 
     description = "Generate supply plan"
     sequence = 200
-    label = ("supply", _("Generate supply plan"))
+    label = (
+        "supply",
+        _("Generate supply plan"),
+        _(
+            "Compute finite material and finite capacity purchasing, inventory and resource plans."
+        ),
+    )
 
     @classmethod
     def getWeight(cls, **kwargs):

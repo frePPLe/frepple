@@ -299,10 +299,21 @@ class PlanTaskSequence(PlanTask):
             if t.label:
                 if callable(t.label):
                     lbl = t.label(**kwargs)
+                elif len(t.label) > 2:
+                    lbl = [t.label[0], force_str(t.label[1]), force_str(t.label[2])]
                 else:
-                    lbl = (t.label[0], force_str(t.label[1]))
-                if lbl and lbl not in labellist:
-                    labellist.append(lbl)
+                    lbl = [t.label[0], force_str(t.label[1])]
+                if lbl:
+                    found = False
+                    for l in labellist:
+                        if l[0] == lbl[0]:
+                            l[1] = lbl[1]
+                            if len(lbl) > 2:
+                                l[2] = lbl[2]
+                            found = True
+                            break
+                    if not found:
+                        labellist.append([l for l in lbl])
             m = getattr(t, "getLabels", None)
             if callable(m):
                 t.getLabels(labellist, **kwargs)

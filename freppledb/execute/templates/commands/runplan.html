@@ -10,9 +10,11 @@
     <div {% if planning_options|length <= 1 %}class="d-none"{% endif %}><b>{% filter capfirst %}{% translate "optional planning steps" %}{% endfilter %}</b><br>
     {% for b in planning_options %}
     <div class="form-check">
-    <label class="form-check-label" for="option_{{b.0}}">
+    <label class="form-check-label" for="option_{{b.0}}"
+    {% if b.2 %}data-bs-toggle="tooltip" data-bs-title="{{ b.2 }}"{% endif %}>
     <input type="checkbox" class="form-check-input" name="env" {% if b.0 in current_options %}checked {% endif %}value="{{b.0}}" id="option_{{b.0}}">
     {{b.1}}
+    {% if b.2 %}<span class="fa fa-question-circle"></span>{% endif %}
     </label>
     </div>
     {% endfor %}

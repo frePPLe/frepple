@@ -62,7 +62,7 @@ class SeleniumTest(StaticLiveServerTestCase):
             cls.driver = Edge(options=options)
         else:
             raise Exception("Invalid setting SELENIUM_TESTS")
-        cls.driver.set_window_size(1920, 1080)
+        cls.driver.set_window_size(1920, 1480)
         cls.driver.implicitly_wait(10)
 
     @classmethod
@@ -71,3 +71,7 @@ class SeleniumTest(StaticLiveServerTestCase):
         time.sleep(2)
         del os.environ["FREPPLE_TEST"]
         super().tearDownClass()
+
+    @classmethod
+    def saveScreenshot(cls, name="screenshot.png"):
+        cls.driver.save_screenshot(name)

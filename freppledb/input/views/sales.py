@@ -657,6 +657,8 @@ class DeliveryOrderList(GridReport):
             initially_hidden=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
+        GridFieldLastModified("lastmodified", initially_hidden=True),
         # Optional fields referencing the item
         GridFieldText(
             "item__type",

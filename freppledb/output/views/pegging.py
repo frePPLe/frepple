@@ -45,13 +45,13 @@ class ReportByDemand(GridReport):
     multiselect = False
     help_url = "user-interface/plan-analysis/demand-gantt-report.html"
     rows = (
-        GridFieldText("depth", title=_("depth"), editable=False, sortable=False),
+        GridFieldText("id", key=True, editable=False, sortable=False, hidden=True),
+        GridFieldText("depth", title=_("depth"), editable=False, sortable=False),        
         GridFieldText(
             "operation",
             title=_("operation"),
             editable=False,
             sortable=False,
-            key=True,
             formatter="detail",
             extra='"role":"input/operation"',
         ),
@@ -84,7 +84,7 @@ class ReportByDemand(GridReport):
         GridFieldNumber(
             "quantity",
             title=_("required quantity"),
-            field_name="quantity",
+            field_name="required_quantity",
             editable=False,
             sortable=False,
         ),
@@ -576,6 +576,7 @@ class ReportByDemand(GridReport):
                             yield prevrec
                         # New operation
                         prevrec = {
+                            "id": rec[13],
                             "operation": rec[1],
                             "type": rec[10],
                             "showdrilldown": rec[11],
@@ -599,6 +600,7 @@ class ReportByDemand(GridReport):
                             "leaf": "true",
                             "expanded": "true",
                             "resource": rec[9],
+                            "required_quantity": str(rec[21]),
                             "operationplans": [
                                 {
                                     "operation": rec[1],
@@ -634,7 +636,7 @@ class ReportByDemand(GridReport):
                                 }
                             ],
                         }
-                        parents[rec[2]] = rec[1]
+                        parents[rec[2]] = rec[13]
                     elif rec[4] != prevrec["operationplans"][-1]["reference"]:
                         # Extra operationplan for the operation
                         prevrec["operationplans"].append(

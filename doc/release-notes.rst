@@ -34,10 +34,15 @@ Release notes
 .. rubric:: Odoo integration
 
 - | 15 & 16: The progress of work orders is now synchronised between odoo and frepple.
-  | Earlier releases only interfaced at the level of the manyfacturing orders, and completely
+  | Earlier releases only interfaced at the level of the manufacturing orders, and completely
     left the detail of the progress to odoo. However, when the duration and complexity of
     manufacturing orders is increasing, the more detailed level of the work orders
     is needed to generate a good and accurate plan.
+  | The connector now creates frepple operations specific to each manufacturing order to
+    correctly capture the details of its progress. Odoo allows manual editing (of
+    materials, work centers, durations, dependencies, ...) at the manufacturing order level.
+    Only with a dedicated operation can we assure that frepple correctly represents The
+    odoo data.
 
 - | 15 & 16: On manufacturing orders the connector now picks up the quantity actually
     produced instead of only the quantity.

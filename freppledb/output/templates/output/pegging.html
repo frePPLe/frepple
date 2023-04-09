@@ -94,10 +94,10 @@ function ganttcell(cellvalue, options, rowdata)
 
   for (data of rowdata["operationplans"])
   {
-     var row = 0;
+    var row = 0;
      for (; row < layer.length; ++row)
      {
-        if (data["startdate"] >= layer[row])
+        if (data["startdate"] >= layer[row] && (data["enddate"] != data["startdate"]))
         {
            layer[row] = data["enddate"];
            break;
@@ -211,6 +211,7 @@ var viewend = new Date(horizonend.getTime());
 $(function() {
   gantt.header();
   $("#jqgh_grid_operationplans").css("overflow-x", "scroll").scroll(gantt.scroll);
+  jQuery("#groupmode").click(function() {grid.toggleGroup();});
 });
 
 function reslistfmt(cellvalue, options, row)
@@ -271,6 +272,9 @@ loadComplete: function(data) {
 
 {% block actions %}
 {% include "common/snippet_favorites.html" %}
+<button data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "toggle operation grouping"|capfirst|force_escape %}" class="btn btn-sm btn-primary" type="button" id="groupmode" name="mode" {% if request.hidetoggle %}hidden{% endif %}>
+  <span class="fa fa-sitemap fa-lg fa-lg" style="margin: 2px 0 3px 0;"></span>
+</button>
 <button class="btn btn-sm btn-primary" onclick="gantt.zoom(0.5)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'zoom in'|capfirst|force_escape %}" ><span class="fa fa-search-plus"></span></button>
 <button class="btn btn-sm btn-primary" onclick="gantt.zoom(2.0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'zoom out'|capfirst|force_escape %}" ><span class="fa fa-search-minus"></span></button>
 <button class="btn btn-sm btn-primary" onclick="grid.showCustomize(false);" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>

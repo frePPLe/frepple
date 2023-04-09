@@ -46,7 +46,7 @@ class ReportByDemand(GridReport):
     help_url = "user-interface/plan-analysis/demand-gantt-report.html"
     rows = (
         GridFieldText("id", key=True, editable=False, sortable=False, hidden=True),
-        GridFieldText("depth", title=_("depth"), editable=False, sortable=False),        
+        GridFieldText("depth", title=_("depth"), editable=False, sortable=False),
         GridFieldText(
             "operation",
             title=_("operation"),
@@ -102,6 +102,10 @@ class ReportByDemand(GridReport):
         GridFieldText("due", editable=False, sortable=False, hidden=True),
         GridFieldText("showdrilldown", editable=False, sortable=False, hidden=True),
     )
+
+    @classmethod
+    def initialize(reportclass, request):
+        reportclass.mode = request.GET.get("mode", "group")
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
@@ -272,7 +276,10 @@ class ReportByDemand(GridReport):
                     select
                     (select due from demand where name = %s),
                     min(operationplan.startdate),
-                    max(operationplan.enddate) from operationplan
+                    max(operationplan.enddate),
+                    (sum(case when operation_id is not null then 1 else 0 end)
+                    -count(distinct operation_id)=0)
+                    from operationplan
                     where reference in
                     (
                     select nextreference from cte1
@@ -284,7 +291,7 @@ class ReportByDemand(GridReport):
             (args[0], args[0]),
         )
         x = cursor.fetchone()
-        (due, start, end) = x
+        (due, start, end, hidetoggle) = x
         if not due:
             # This demand is unplanned
             request.report_startdate = datetime.now().replace(
@@ -312,6 +319,7 @@ class ReportByDemand(GridReport):
         request.report_enddate = end.replace(hour=0, minute=0, second=0, microsecond=0)
         request.report_bucket = None
         request.report_bucketlist = []
+        request.hidetoggle = hidetoggle
 
     @classmethod
     def query(reportclass, request, basequery):
@@ -472,20 +480,22 @@ class ReportByDemand(GridReport):
               opplan,
               min(lvl) as lvl,
               quantity as required_quantity,
-              sum(quantity) as quantity
+              sum(quantity) as quantity,
+              path
             from (select
-              row_number() over () as rownum, opplan, due, lvl, quantity
+              row_number() over () as rownum, opplan, due, lvl, quantity, path
             from (select
               due,
               cte.nextreference as opplan,
               cte.level as lvl,
-              cte.quantity as quantity
+              cte.quantity as quantity,
+              cte.path
               from demand
               cross join cte
               where name = %s
               ) d1
               ) d2
-            group by opplan, quantity
+            group by opplan, quantity, path
             ),
             pegging as (select
               child.rownum,
@@ -494,7 +504,8 @@ class ReportByDemand(GridReport):
 			  parent.opplan as parent_reference,
               child.lvl,
               child.required_quantity,
-              child.quantity
+              child.quantity,
+              child.path
             from pegging_0 child
 			left outer join pegging_0 parent
 			on parent.lvl = child.lvl -1
@@ -526,7 +537,8 @@ class ReportByDemand(GridReport):
             extract(epoch from operationplan.delay),
             pegging.required_quantity,
             operationplan.batch,
-            item.description
+            item.description,
+            pegging.path
           from pegging
           inner join operationplan
             on operationplan.reference = pegging.opplan
@@ -557,7 +569,8 @@ class ReportByDemand(GridReport):
             coalesce(operationplan.location_id, operationplan.destination_id),
             operationplan.supplier_id, operationplan.origin_id,
             operationplan.criticality, operationplan.demand_id,
-            extract(epoch from operationplan.delay), ops.rownum, pegging.required_quantity
+            extract(epoch from operationplan.delay), ops.rownum, pegging.required_quantity,
+            pegging.path
           order by pegging.rownum
           """
 
@@ -567,16 +580,17 @@ class ReportByDemand(GridReport):
                 cursor_chunked.execute(query, baseparams * 2)
                 prevrec = None
                 parents = {}
+                response = []
                 for rec in cursor_chunked:
                     if not prevrec or rec[1] != prevrec["operation"]:
                         # Return prev operation
                         if prevrec:
                             if prevrec["depth"] < rec[2]:
                                 prevrec["leaf"] = "false"
-                            yield prevrec
+                            response.append(prevrec)
                         # New operation
                         prevrec = {
-                            "id": rec[13],
+                            "id": rec[24],
                             "operation": rec[1],
                             "type": rec[10],
                             "showdrilldown": rec[11],
@@ -636,7 +650,7 @@ class ReportByDemand(GridReport):
                                 }
                             ],
                         }
-                        parents[rec[2]] = rec[13]
+                        parents[rec[2]] = rec[24]
                     elif rec[4] != prevrec["operationplans"][-1]["reference"]:
                         # Extra operationplan for the operation
                         prevrec["operationplans"].append(
@@ -673,6 +687,91 @@ class ReportByDemand(GridReport):
                         )
                     elif rec[9] and not rec[9] in prevrec["resource"]:
                         # Extra resource loaded by the operationplan
-                        prevrec["resource"].append(rec[9])
+                        prevrec["resource"] = sorted(prevrec["resource"].append(rec[9]))
                 if prevrec:
-                    yield prevrec
+                    response.append(prevrec)
+
+                # group by operation
+                group_by_operation = reportclass.mode == "group"
+                if group_by_operation:
+                    indexOfOperation = {}
+                    index = 0
+                    removed = 0
+                    for r in response[:]:
+                        if r["operation"] not in indexOfOperation:
+                            indexOfOperation[r["operation"]] = index
+                        else:
+                            # aggregate the resource field if needed
+                            if r.get("resource", None):
+                                if not response[indexOfOperation[r["operation"]]].get(
+                                    "resource", None
+                                ):
+                                    response[indexOfOperation[r["operation"]]][
+                                        "resource"
+                                    ] = []
+                                for j in r["resource"]:
+                                    if (
+                                        j
+                                        not in response[
+                                            indexOfOperation[r["operation"]]
+                                        ]["resource"]
+                                    ):
+                                        response[indexOfOperation[r["operation"]]][
+                                            "resource"
+                                        ].append(j)
+                                        response[indexOfOperation[r["operation"]]][
+                                            "resource"
+                                        ] = sorted(
+                                            response[indexOfOperation[r["operation"]]][
+                                                "resource"
+                                            ]
+                                        )
+
+                            response[indexOfOperation[r["operation"]]][
+                                "operationplans"
+                            ] += r["operationplans"]
+                            # remove possible duplicates opplans from list
+                            duplicates = 0
+                            refdict = {}
+                            index2 = 0
+                            for i in response[indexOfOperation[r["operation"]]][
+                                "operationplans"
+                            ][:]:
+                                if i["reference"] not in refdict:
+                                    refdict[i["reference"]] = i
+                                else:
+                                    response[indexOfOperation[r["operation"]]][
+                                        "operationplans"
+                                    ].pop(index2 - duplicates)
+                                    duplicates += 1
+                                    # update the required_quantity
+                                    for j in response[indexOfOperation[r["operation"]]][
+                                        "operationplans"
+                                    ]:
+                                        if j["reference"] == i["reference"]:
+                                            j["required_quantity"] = float(
+                                                j["required_quantity"]
+                                            ) + float(i["required_quantity"])
+
+                                            break
+                                index2 += 1
+
+                            response[indexOfOperation[r["operation"]]][
+                                "required_quantity"
+                            ] = sum(
+                                float(opplan["required_quantity"])
+                                for opplan in response[
+                                    indexOfOperation[r["operation"]]
+                                ]["operationplans"]
+                            )
+
+                            float(r["required_quantity"]) + float(
+                                response[indexOfOperation[r["operation"]]][
+                                    "required_quantity"
+                                ]
+                            )
+                            response.pop(index - removed)
+                            removed += 1
+                        index += 1
+                for r in response:
+                    yield r

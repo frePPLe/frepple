@@ -700,7 +700,7 @@ class ReportByDemand(GridReport):
                     removed = 0
                     for r in response[:]:
                         if r["operation"] not in indexOfOperation:
-                            indexOfOperation[r["operation"]] = index
+                            indexOfOperation[r["operation"]] = index - removed
                             # update parent and id fields if one the parents is a duplicate
                             for i in updateParent:
                                 if i in r["parent"] or i in r["id"]:

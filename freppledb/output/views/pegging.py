@@ -277,8 +277,8 @@ class ReportByDemand(GridReport):
                     (select due from demand where name = %s),
                     min(operationplan.startdate),
                     max(operationplan.enddate),
-                    (sum(case when operation_id is not null then 1 else 0 end)
-                    -count(distinct operation_id)=0)
+                    (sum(case when name is not null then 1 else 0 end)
+                    -count(distinct name)=0)
                     from operationplan
                     where reference in
                     (
@@ -693,13 +693,24 @@ class ReportByDemand(GridReport):
 
                 # group by operation
                 group_by_operation = reportclass.mode == "group"
-                if group_by_operation:
+                if group_by_operation and not request.hidetoggle:
                     indexOfOperation = {}
+                    updateParent = {}
                     index = 0
                     removed = 0
                     for r in response[:]:
                         if r["operation"] not in indexOfOperation:
                             indexOfOperation[r["operation"]] = index
+                            # update parent and id fields if one the parents is a duplicate
+                            for i in updateParent:
+                                if i in r["parent"] or i in r["id"]:
+                                    response[index - removed]["parent"] = r[
+                                        "parent"
+                                    ].replace(i, updateParent[i])
+                                    response[index - removed]["id"] = r["id"].replace(
+                                        i, updateParent[i]
+                                    )
+                                    break
                         else:
                             # aggregate the resource field if needed
                             if r.get("resource", None):
@@ -726,7 +737,7 @@ class ReportByDemand(GridReport):
                                                 "resource"
                                             ]
                                         )
-
+                            # add all the operationplans to the list
                             response[indexOfOperation[r["operation"]]][
                                 "operationplans"
                             ] += r["operationplans"]
@@ -770,7 +781,14 @@ class ReportByDemand(GridReport):
                                     "required_quantity"
                                 ]
                             )
-                            response.pop(index - removed)
+                            oldRecord = response.pop(index - removed)
+                            if (
+                                oldRecord["parent"]
+                                != response[indexOfOperation[r["operation"]]]["parent"]
+                            ):
+                                updateParent[oldRecord["parent"]] = response[
+                                    indexOfOperation[r["operation"]]
+                                ]["parent"]
                             removed += 1
                         index += 1
                 for r in response:

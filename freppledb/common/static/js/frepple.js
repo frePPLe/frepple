@@ -1828,6 +1828,18 @@ var grid = {
     window.location.href = url;
   },
 
+  toggleGroup: function () {
+    var url = (location.href.indexOf("#") != -1 ? location.href.substr(0, location.href.indexOf("#")) : location.href);
+    if (url.indexOf("mode=ungroup") > 0)
+      url = url.replace("mode=ungroup", "mode=group");
+    else if (url.indexOf("mode=group") > 0)
+      url = url.replace("mode=group", "mode=ungroup");
+    else
+      url = url + "?mode=ungroup";
+
+    window.location.href = url;
+  },
+
   findCrossByName: function (name) {
     for (var i in cross)
       if (cross[i]["key"] == name) {

@@ -888,3 +888,8 @@ pre {
     cursor: ns-resize;
     bottom: 0;
 }
+
+// Fix date widget in chrome
+input[type="date"] {
+    appearance: auto;
+}

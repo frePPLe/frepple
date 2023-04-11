@@ -12,6 +12,8 @@ Release notes
 - | The command *Publish reports by email* will not send empty reports anymore. If all reports
     to be sent are empty then no mail is sent.
 
+- | Fix style problem of date widgets in Chrome 112.
+
 .. rubric:: Production planning
 
 - | A new type of resource is added to model tools that are attached to each

@@ -104,10 +104,6 @@ class ReportByDemand(GridReport):
     )
 
     @classmethod
-    def initialize(reportclass, request):
-        reportclass.mode = request.GET.get("mode", "group")
-
-    @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         return Demand.objects.filter(name__exact=args[0]).values("name")
 
@@ -278,7 +274,7 @@ class ReportByDemand(GridReport):
                     min(operationplan.startdate),
                     max(operationplan.enddate),
                     (sum(case when name is not null then 1 else 0 end)
-                    -count(distinct name)=0)
+                    -count(distinct name) != 0)
                     from operationplan
                     where reference in
                     (
@@ -291,7 +287,7 @@ class ReportByDemand(GridReport):
             (args[0], args[0]),
         )
         x = cursor.fetchone()
-        (due, start, end, hidetoggle) = x
+        (due, start, end, requires_grouping) = x
         if not due:
             # This demand is unplanned
             request.report_startdate = datetime.now().replace(
@@ -319,7 +315,7 @@ class ReportByDemand(GridReport):
         request.report_enddate = end.replace(hour=0, minute=0, second=0, microsecond=0)
         request.report_bucket = None
         request.report_bucketlist = []
-        request.hidetoggle = hidetoggle
+        request.requires_grouping = requires_grouping
 
     @classmethod
     def query(reportclass, request, basequery):
@@ -613,7 +609,7 @@ class ReportByDemand(GridReport):
                             else None,
                             "leaf": "true",
                             "expanded": "true",
-                            "resource": rec[9],
+                            "resource": sorted(rec[9]) if rec[9] else None,
                             "required_quantity": str(rec[21]),
                             "operationplans": [
                                 {
@@ -626,8 +622,12 @@ class ReportByDemand(GridReport):
                                         / horizon,
                                         3,
                                     ),
-                                    "w": round(
-                                        (rec[6] - rec[5]).total_seconds() / horizon, 3
+                                    "w": max(
+                                        50,
+                                        round(
+                                            (rec[6] - rec[5]).total_seconds() / horizon,
+                                            3,
+                                        ),
                                     ),
                                     "startdate": str(rec[5]),
                                     "enddate": str(rec[6]),
@@ -685,6 +685,9 @@ class ReportByDemand(GridReport):
                                 "item__description": rec[23],
                             }
                         )
+                        prevrec["required_quantity"] = float(
+                            prevrec["required_quantity"]
+                        ) + float(rec[21])
                     elif rec[9] and not rec[9] in prevrec["resource"]:
                         # Extra resource loaded by the operationplan
                         prevrec["resource"] = sorted(prevrec["resource"].append(rec[9]))
@@ -692,104 +695,106 @@ class ReportByDemand(GridReport):
                     response.append(prevrec)
 
                 # group by operation
-                group_by_operation = reportclass.mode == "group"
-                if group_by_operation and not request.hidetoggle:
+                if request.requires_grouping:
                     indexOfOperation = {}
                     updateParent = {}
                     index = 0
                     removed = 0
+                    deletedRecords = []
                     for r in response[:]:
                         if r["operation"] not in indexOfOperation:
                             indexOfOperation[r["operation"]] = index - removed
-                            # update parent and id fields if one the parents is a duplicate
-                            for i in updateParent:
-                                if i in r["parent"] or i in r["id"]:
-                                    response[index - removed]["parent"] = r[
-                                        "parent"
-                                    ].replace(i, updateParent[i])
-                                    response[index - removed]["id"] = r["id"].replace(
-                                        i, updateParent[i]
-                                    )
-                                    break
                         else:
-                            # aggregate the resource field if needed
-                            if r.get("resource", None):
-                                if not response[indexOfOperation[r["operation"]]].get(
-                                    "resource", None
-                                ):
-                                    response[indexOfOperation[r["operation"]]][
-                                        "resource"
-                                    ] = []
-                                for j in r["resource"]:
-                                    if (
-                                        j
-                                        not in response[
-                                            indexOfOperation[r["operation"]]
-                                        ]["resource"]
-                                    ):
-                                        response[indexOfOperation[r["operation"]]][
-                                            "resource"
-                                        ].append(j)
-                                        response[indexOfOperation[r["operation"]]][
-                                            "resource"
-                                        ] = sorted(
-                                            response[indexOfOperation[r["operation"]]][
-                                                "resource"
-                                            ]
-                                        )
-                            # add all the operationplans to the list
-                            response[indexOfOperation[r["operation"]]][
-                                "operationplans"
-                            ] += r["operationplans"]
-                            # remove possible duplicates opplans from list
-                            duplicates = 0
-                            refdict = {}
-                            index2 = 0
-                            for i in response[indexOfOperation[r["operation"]]][
-                                "operationplans"
-                            ][:]:
-                                if i["reference"] not in refdict:
-                                    refdict[i["reference"]] = i
-                                else:
-                                    response[indexOfOperation[r["operation"]]][
-                                        "operationplans"
-                                    ].pop(index2 - duplicates)
-                                    duplicates += 1
-                                    # update the required_quantity
-                                    for j in response[indexOfOperation[r["operation"]]][
-                                        "operationplans"
-                                    ]:
-                                        if j["reference"] == i["reference"]:
-                                            j["required_quantity"] = float(
-                                                j["required_quantity"]
-                                            ) + float(i["required_quantity"])
-
-                                            break
-                                index2 += 1
-
-                            response[indexOfOperation[r["operation"]]][
-                                "required_quantity"
-                            ] = sum(
-                                float(opplan["required_quantity"])
-                                for opplan in response[
-                                    indexOfOperation[r["operation"]]
-                                ]["operationplans"]
-                            )
-
-                            float(r["required_quantity"]) + float(
-                                response[indexOfOperation[r["operation"]]][
-                                    "required_quantity"
-                                ]
-                            )
-                            oldRecord = response.pop(index - removed)
-                            if (
-                                oldRecord["parent"]
-                                != response[indexOfOperation[r["operation"]]]["parent"]
-                            ):
-                                updateParent[oldRecord["parent"]] = response[
-                                    indexOfOperation[r["operation"]]
-                                ]["parent"]
+                            deletedRecords.append(response.pop(index - removed))
                             removed += 1
                         index += 1
+
+                    for rec in deletedRecords:
+                        # store the old and new id
+                        if (
+                            rec["id"]
+                            != response[indexOfOperation[rec["operation"]]]["id"]
+                        ):
+                            val = response[indexOfOperation[rec["operation"]]]["id"]
+                            for i in updateParent:
+                                if i in val:
+                                    val = val.replace(i, updateParent[i])
+                            updateParent[rec["id"]] = val
+
+                        # aggregate the resources:
+                        if rec.get("resource"):
+                            if (
+                                "resource"
+                                not in response[indexOfOperation[rec["operation"]]]
+                            ):
+                                response[indexOfOperation[rec["operation"]]][
+                                    "resource"
+                                ] = []
+                            response[indexOfOperation[rec["operation"]]][
+                                "resource"
+                            ] = sorted(
+                                response[indexOfOperation[rec["operation"]]]["resource"]
+                                + [
+                                    r
+                                    for r in rec["resource"]
+                                    if r
+                                    not in response[indexOfOperation[rec["operation"]]][
+                                        "resource"
+                                    ]
+                                ]
+                            )
+
+                        # aggregate the operationplans:
+                        response[indexOfOperation[rec["operation"]]][
+                            "operationplans"
+                        ] += rec["operationplans"]
+                        # remove possible duplicates opplans from list
+                        duplicates = 0
+                        refdict = {}
+                        index2 = 0
+                        for i in response[indexOfOperation[rec["operation"]]][
+                            "operationplans"
+                        ][:]:
+                            if i["reference"] not in refdict:
+                                refdict[i["reference"]] = index2 - duplicates
+                            else:
+                                deleted_opplan = response[
+                                    indexOfOperation[rec["operation"]]
+                                ]["operationplans"].pop(index2 - duplicates)
+                                duplicates += 1
+                                # update the required_quantity
+                                response[indexOfOperation[rec["operation"]]][
+                                    "operationplans"
+                                ][refdict[i["reference"]]]["required_quantity"] = float(
+                                    response[indexOfOperation[rec["operation"]]][
+                                        "operationplans"
+                                    ][refdict[i["reference"]]]["required_quantity"]
+                                ) + float(
+                                    deleted_opplan["required_quantity"]
+                                )
+                            index2 += 1
+
+                        # update the required_quantity at record level
+                        response[indexOfOperation[rec["operation"]]][
+                            "required_quantity"
+                        ] = sum(
+                            float(opplan["required_quantity"])
+                            for opplan in response[indexOfOperation[rec["operation"]]][
+                                "operationplans"
+                            ]
+                        )
+
+                    # A final loop to update the ids
+                    for r in response:
+                        for i in reversed(list(updateParent.keys())):
+                            if i in r["id"] or (
+                                r.get("parent") and i in r.get("parent")
+                            ):
+                                r["id"] = r["id"].replace(i, updateParent[i])
+                                if "parent" in r:
+                                    r["parent"] = r["parent"].replace(
+                                        i, updateParent[i]
+                                    )
+
                 for r in response:
                     yield r

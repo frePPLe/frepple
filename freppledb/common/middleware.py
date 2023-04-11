@@ -113,8 +113,8 @@ class HTTPAuthenticationMiddleware:
                     login(request, user)
                     MultiDBBackend.getScenarios(user)
                     request.user = user
-                    if not decoded.get("navbar", True):
-                        request.session["navbar"] = False
+                    if "navbar" in decoded:
+                        request.session["navbar"] = decoded["navbar"] == True
                     if decoded.get("xframe_options_exempt", True):
                         request.session["xframe_options_exempt"] = True
             except Exception as e:

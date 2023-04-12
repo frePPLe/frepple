@@ -41,6 +41,7 @@
         <load>
           <resource name="1. operator pool"/>
           <quantity>3</quantity>
+		  <search>PRIORITY</search>
         </load>
       </loads>
       <duration>P1D</duration>
@@ -52,6 +53,7 @@
         <load>
           <resource name="1. operator pool"/>
           <quantity>2</quantity>
+		  <search>PRIORITY</search>
         </load>
       </loads>
       <duration>P1D</duration>
@@ -141,6 +143,7 @@
           <resource name="2. operator pool"/>
           <quantity>3</quantity>
           <skill name="2. special"/>
+		  <search>PRIORITY</search>
         </load>
       </loads>
       <duration>P1D</duration>
@@ -153,6 +156,7 @@
           <resource name="2. operator pool"/>
           <quantity>2</quantity>
           <skill name="2. special"/>
+		  <search>PRIORITY</search>
         </load>
       </loads>
       <duration>P1D</duration>
@@ -212,6 +216,7 @@
         <load>
           <resource name="3. operator pool"/>
           <quantity>1</quantity>
+		  <search>PRIORITY</search>
         </load>
       </loads>
       <duration>P1D</duration>
@@ -223,6 +228,7 @@
         <load>
           <resource name="3. operator pool"/>
           <quantity>2</quantity>
+		  <search>PRIORITY</search>
         </load>
       </loads>
       <duration>P1D</duration>
@@ -236,6 +242,7 @@
           <resource name="3. operator pool"/>
           <quantity>1</quantity>
           <skill name="3. nobody can do this"/>
+		  <search>PRIORITY</search>
         </load>
       </loads>
       <duration>P1D</duration>

@@ -33,6 +33,11 @@ Release notes
     "proposed" status, then other manufacturing order steps in the "approved", "confirmed" or
     "completed" status were getting ignored and deleted.
 
+- | The default search mode in the operation resource table is changed from "priority"
+    to "minpenalty".
+  | Since this field is used in modeling resource pools, dividing the work over the pool
+    is a more intuitive default (compared to loading the primary member of the pool).
+
 .. rubric:: Odoo integration
 
 - | 15 & 16: The progress of work orders is now synchronised between odoo and frepple.

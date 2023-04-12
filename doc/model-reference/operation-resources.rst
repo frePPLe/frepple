@@ -53,22 +53,19 @@ search          string            | Defines the order of preference among the al
 
                                   * | PRIORITY
                                     | Select the alternate with the lowest priority number.
-                                    | This is the default.
 
                                   * | MINCOST
-                                    | Select the alternate which gives the lowest cost.
-                                    | The cost includes the cost of all upstream operations,
-                                      resources and buffers.
+                                    | Select the cheapest resource.
 
                                   * | MINPENALTY
                                     | Select the alternate which gives the lowest penalty.
-                                    | The penalty includes the penalty of all penalties
-                                      incurred in the upstream plan along the load.
+                                    | Building before the requirement date incurs a penalty,
+                                      so this mode favors resources that are readily available.
+                                    | This is the default.
 
                                   * | MINCOSTPENALTY
                                     | Select the alternate which gives the lowest sum of
                                       the cost and penalty.
-                                    | The sum is computed for the complete upstream path.
 =============== ================= ===========================================================
 
 On *default resources* the resource is used during the complete duration

@@ -61,11 +61,11 @@
               <load>
                 <resource name="1.operator pool"/>
                 <quantity>1</quantity>
+				<search>PRIORITY</search>
               </load>
               <load>
                 <resource name="1.holders"/>
                 <quantity>1</quantity>
-				<search>MINPENALTY</search>
               </load>
             </loads>
             <duration>P1D</duration>
@@ -80,11 +80,11 @@
               <load>
                 <resource name="1.operator pool"/>
                 <quantity>1</quantity>
+				<search>PRIORITY</search>
               </load>
               <load>
                 <resource name="1.holders"/>
                 <quantity>1</quantity>
-				<search>MINPENALTY</search>
               </load>
             </loads>
             <duration>P1D</duration>
@@ -99,11 +99,11 @@
               <load>
                 <resource name="1.operator pool"/>
                 <quantity>1</quantity>
+				<search>PRIORITY</search>
               </load>
               <load>
                 <resource name="1.holders"/>
                 <quantity>1</quantity>
-				<search>MINPENALTY</search>
               </load>
             </loads>
             <duration>P1D</duration>
@@ -118,11 +118,11 @@
               <load>
                 <resource name="1.operator pool"/>
                 <quantity>1</quantity>
+				<search>PRIORITY</search>
               </load>
               <load>
                 <resource name="1.holders"/>
                 <quantity>1</quantity>
-				<search>MINPENALTY</search>
               </load>
             </loads>
             <duration>P1D</duration>
@@ -137,11 +137,11 @@
               <load>
                 <resource name="1.operator pool"/>
                 <quantity>1</quantity>
+				<search>PRIORITY</search>
               </load>
               <load>
                 <resource name="1.holders"/>
                 <quantity>1</quantity>
-				<search>MINPENALTY</search>
               </load>
             </loads>
             <duration>P1D</duration>

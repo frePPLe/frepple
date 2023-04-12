@@ -364,7 +364,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
     if (currentOpplan.end > data->state->q_operationplan->getEnd())
       data->state->a_penalty +=
           (currentOpplan.end - data->state->q_operationplan->getEnd()) * 0.05 /
-          3600.0 * (res->getCost() >= 0 ? res->getCost() : 1.0);
+          3600.0 * (res->getCost() > 0 ? res->getCost() : 1.0);
   }
 
   // Maintain the constraint list
@@ -956,7 +956,8 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
     // hardcoded
     if (originalOpplan.end > opplan->getEnd())
       data->state->a_penalty += (originalOpplan.end - opplan->getEnd()) *
-                                res->getCost() * 0.05 / 3600.0;
+                                (res->getCost() > 0 ? res->getCost() : 1.0) *
+                                0.05 / 3600.0;
   }
 
   // Maintain the constraint list

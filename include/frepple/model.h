@@ -7124,7 +7124,7 @@ class Load : public Object,
                         1);
     m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
     m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch,
-                                     &Cls::setSearch, SearchMode::PRIORITY);
+                                     &Cls::setSearch, SearchMode::MINPENALTY);
     m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart,
                          &Cls::setEffectiveStart);
     m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd,
@@ -7152,7 +7152,7 @@ class Load : public Object,
   Skill* skill = nullptr;
 
   /* Mode to select the preferred alternates. */
-  SearchMode search = SearchMode::PRIORITY;
+  SearchMode search = SearchMode::MINPENALTY;
 
  protected:
   /* Factory method. */

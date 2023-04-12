@@ -30,7 +30,7 @@ FrePPLe has 3 constructs to model different types of tools.
 
 :download:`Download an Excel spreadsheet with the data for this example <resource-tool.xlsx>`
 
-The first type of tool is modeled very much as a material.
+The **first type** of tool is modeled very much as a material.
 
 * | They are modeled as a buffer for which the subcategory field is set
     to "tool".
@@ -39,8 +39,8 @@ The first type of tool is modeled very much as a material.
     record to consume the tool item.
   | The operation that releases the tool get an operation-material
     record to produce the tool item.
-  | The flows are typically (but not necessary) of type "fixed_start" and
-    "fixed_end" to keep the tool quantity independent of the size of the
+  | The operation-materials records will typically (but not necessary) be populated using
+    the "fixed quantity" column to keep the tool quantity independent of the size of the
     manufacturing order quantity.
 
 * | In this example we have a production consisting of 5 subsequent steps.
@@ -65,12 +65,14 @@ The first type of tool is modeled very much as a material.
   | How many cards do you need at least to bring the lateness to its minimum? And
     can you explain that result?
 
-The second type of tool is modeled as a resource:
+The **second type** of tool is modeled as a resource:
 
-* The tool resources are marked with the subcategory "tool" or "tool per piece"
+* The tool resources are marked with the subcategory "tool" (when independent of the MO quantity)
+  or "tool per piece" (when proportional to the MO quantity)
   in the `resource table <https://demo.frepple.com/resource-tool/data/input/resource/>`_.
 
-  In this example we have 3 pallets, 10 frames of type #1, 5 frames of type #2 and
+  In this example, we'll be using pallets to model "tool" resources and frames to model "tool per piece" resources.
+  This example has 3 pallets, 10 frames of type #1, 5 frames of type #2 and
   7 frames of type #3.
 
   .. image:: _images/resource-tool-2.png
@@ -80,10 +82,14 @@ The second type of tool is modeled as a resource:
     `manufacturing order report <https://demo.frepple.com/resource-tool/data/input/manufacturingorder/>`_
     to verify the following behavior:
 
+  | For **tool** resources:
+
   - The same tool is used for all steps in a routing. You cannot perform step A with pallet #2 and
-    step B with palle #1.
+    step B with pallet #1.
 
   - Manufacturing orders always use 1 pallet, regardless of their quantity.
+
+  | For **tool per piece** resources:
 
   - | Manufacturing orders use as many frames as the quantity of the manufacturing order.
       A big manufacturing order needs more frames than a smaller one.

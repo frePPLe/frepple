@@ -150,12 +150,13 @@ class BufferList(GridReport):
             extra='"role":"input/location"',
             model=Location,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "item",
             title=_("item"),
             field_name="item__name",
             formatter="detail",
             extra='"role":"input/item"',
+            model=Item,
         ),
         GridFieldText(
             "batch", title=_("batch"), field_name="batch", initially_hidden=True

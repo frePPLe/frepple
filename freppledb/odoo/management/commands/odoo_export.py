@@ -193,7 +193,7 @@ class Command(BaseCommand):
                 task.processid = None
             raise e
 
-        except URLError:
+        except URLError as e:
             if task:
                 task.status = "Failed"
                 task.message = "Couldn't connect to odoo"
@@ -386,16 +386,15 @@ class Command(BaseCommand):
                 )
 
         # Work orders to export
-        # Normally we don't create work orders, but only updates existing work orders.
-        # We leave it to odoo to create the workorders for a manufacturing order.
+        # We don't create work orders, but only updates existing work orders.
+        # We leave it to odoo to create the workorders for a new manufacturing order.
         for i in (
             ManufacturingOrder.objects.using(self.database)
             .filter(
                 owner__operation__type="routing",
                 operation__source__startswith="odoo",
                 owner__item__source__startswith="odoo",
-                status__in=("proposed", "approved"),
-                startdate__lte=today + timedelta(days=7),
+                status="approved",
             )
             .order_by("startdate")
             .select_related("operation", "location", "item", "owner")

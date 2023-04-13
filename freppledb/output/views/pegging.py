@@ -796,5 +796,5 @@ class ReportByDemand(GridReport):
                                         i, updateParent[i]
                                     )
 
-                for r in response:
+                for r in sorted(response, key=lambda d: d["id"]):
                     yield r

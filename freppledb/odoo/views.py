@@ -196,7 +196,7 @@ def Upload(request):
                         )
                     else:
                         data_odoo.append(
-                            '<operationplan ordertype="MO" id="%s" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s/>'
+                            '<operationplan ordertype="MO" id="%s" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s>'
                             % (
                                 op.reference,
                                 quoteattr(op.operation.item.name),
@@ -211,6 +211,44 @@ def Upload(request):
                                 quoteattr(op.batch or ""),
                             )
                         )
+                        wolist = [i for i in op.xchildren.using(request.database).all()]
+                        if wolist:
+                            for wo in wolist:
+                                data_odoo.append(
+                                    '<workorder operation=%s start="%s" end="%s">'
+                                    % (
+                                        quoteattr(wo.operation.name),
+                                        wo.startdate,
+                                        wo.enddate,
+                                    )
+                                )
+                                for wores in wo.resources.using(request.database).all():
+                                    if (
+                                        wores.resource.source
+                                        and wores.resource.source.startswith("odoo")
+                                    ):
+                                        data_odoo.append(
+                                            "<resource name=%s id=%s/>"
+                                            % (
+                                                quoteattr(wores.resource.name),
+                                                quoteattr(wores.resource.category),
+                                            )
+                                        )
+                                data_odoo.append("</workorder>")
+                        else:
+                            for opplanres in op.resources.using(request.database).all():
+                                if (
+                                    opplanres.resource.source
+                                    and opplanres.resource.source.startswith("odoo")
+                                ):
+                                    data_odoo.append(
+                                        "<resource name=%s id=%s/>"
+                                        % (
+                                            quoteattr(opplanres.resource.name),
+                                            quoteattr(opplanres.resource.category),
+                                        )
+                                    )
+                        data_odoo.append("</operationplan>")
             except Exception as e:
                 logger.error("Exception during odoo export: %s" % e)
         if not data_ok:

@@ -347,12 +347,6 @@ class Command(BaseCommand):
             ):
                 continue
             self.exported.append(i)
-            res = set()
-            try:
-                for j in i.operationplanresources:
-                    res.add(j.resource.name)
-            except Exception:
-                pass
             demand_str = json.dumps(i.plan["pegging"]) if i.plan["pegging"] else ""
             if i.operation.category == "subcontractor":
                 yield '<operationplan ordertype="PO" id=%s item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s/>' % (
@@ -369,7 +363,7 @@ class Command(BaseCommand):
                     quoteattr(i.batch or ""),
                 )
             else:
-                yield '<operationplan reference=%s ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" resource=%s demand=%s batch=%s/>' % (
+                yield '<operationplan reference=%s ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" demand=%s batch=%s>' % (
                     quoteattr(i.reference),
                     quoteattr(i.operation.item.name),
                     quoteattr(i.operation.location.name),
@@ -380,10 +374,39 @@ class Command(BaseCommand):
                     quoteattr(i.operation.location.subcategory),
                     quoteattr(i.operation.item.subcategory),
                     int(i.criticality),
-                    quoteattr(",".join(res)),
                     quoteattr(demand_str),
                     quoteattr(i.batch or ""),
                 )
+                if i.status == "proposed":
+                    wolist = [i for i in i.xchildren.using(self.database).all()]
+                    if wolist:
+                        for wo in wolist:
+                            yield '<workorder operation=%s start="%s" end="%s">' % (
+                                quoteattr(wo.operation.name),
+                                wo.startdate,
+                                wo.enddate,
+                            )
+                            for wores in wo.resources.using(self.database).all():
+                                if (
+                                    wores.resource.source
+                                    and wores.resource.source.startswith("odoo")
+                                ):
+                                    yield "<resource name=%s id=%s/>" % (
+                                        quoteattr(wores.resource.name),
+                                        quoteattr(wores.resource.category),
+                                    )
+                            yield "</workorder>"
+                    else:
+                        for opplanres in i.resources.using(self.database).all():
+                            if (
+                                opplanres.resource.source
+                                and opplanres.resource.source.startswith("odoo")
+                            ):
+                                yield "<resource name=%s id=%s/>" % (
+                                    quoteattr(opplanres.resource.name),
+                                    quoteattr(opplanres.resource.category),
+                                )
+                yield "</operationplan>"
 
         # Work orders to export
         # We don't create work orders, but only updates existing work orders.
@@ -410,13 +433,7 @@ class Command(BaseCommand):
             ):
                 continue
             self.exported.append(i)
-            res = set()
-            try:
-                for j in i.operationplanresources:
-                    res.add(j.resource.name)
-            except Exception:
-                pass
-            yield '<operationplan reference=%s owner=%s ordertype="WO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s resource=%s batch=%s/>' % (
+            yield '<operationplan reference=%s owner=%s ordertype="WO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s batch=%s>' % (
                 quoteattr(i.reference),
                 quoteattr(i.owner.reference),
                 quoteattr(i.owner.operation.item.name),
@@ -427,9 +444,15 @@ class Command(BaseCommand):
                 i.quantity,
                 quoteattr(i.operation.location.subcategory),
                 quoteattr(i.owner.operation.item.subcategory),
-                quoteattr(",".join(res)),
                 quoteattr(i.batch or ""),
             )
+            for wores in i.resources.using(self.database).all():
+                if wores.resource.source and wores.resource.source.startswith("odoo"):
+                    yield "<resource name=%s id=%s/>" % (
+                        quoteattr(wores.resource.name),
+                        quoteattr(wores.resource.category),
+                    )
+            yield "</operationplan>"
 
         # Write the footer
         yield "</operationplans>"

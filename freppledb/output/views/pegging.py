@@ -171,7 +171,8 @@ class ReportByDemand(GridReport):
                         coalesce(nextopplan.location_id, nextopplan.destination_id),
                         case when nextopplan.type = 'STCK' then null else to_char(nextopplan.startdate,'YYYY-MM-DD hh24:mi:ss') end,
                         case when nextopplan.type = 'STCK' then null else to_char(nextopplan.enddate,'YYYY-MM-DD hh24:mi:ss') end,
-                        case when downstream.offset is null
+                        case when nextopplan.owner_id is not null then cte.y
+						when downstream.offset is null
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
@@ -201,7 +202,8 @@ class ReportByDemand(GridReport):
                         else
                         greatest(0,cte.x - coalesce(downstream.offset,0)) /coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
                         end) end as x,
-                        case when downstream.offset is null
+                        case when nextopplan.owner_id is not null then cte.y
+						when downstream.offset is null
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
@@ -227,17 +229,24 @@ class ReportByDemand(GridReport):
                     (t->>1)::numeric quantity,
                     (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t on true
                     inner join operationplan nextopplan on nextopplan.reference = t.reference
+                    left outer join operationplan nextopplan_last_step on nextopplan_last_step.owner_id = nextopplan.reference
+					and nextopplan_last_step.operation_id = (select name from operation where owner_id = nextopplan.operation_id order by priority desc limit 1)
                     left outer join lateral
                     (select t->>0 reference,
                     (t->>1)::numeric quantity,
-                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'downstream_opplans') t) downstream
+                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'downstream_opplans') t
+                    union all
+					select t2->>0 reference,
+                    (t2->>1)::numeric quantity,
+                    (t2->>2)::numeric as offset from jsonb_array_elements(nextopplan_last_step.plan->'downstream_opplans') t2) downstream
                     on downstream.reference = operationplan.reference or downstream.reference = operationplan.owner_id
                     left outer join operationmaterial consuming_om on consuming_om.operation_id = operationplan.operation_id
                         and consuming_om.quantity < 0 and consuming_om.item_id = nextopplan.item_id
                     left outer join operationmaterial producing_om on producing_om.operation_id = operationplan.operation_id
                         and producing_om.quantity > 0 and producing_om.item_id = operationplan.item_id
                     where
-                    case when downstream.offset is null
+                    case when nextopplan.owner_id is not null then cte.y
+						when downstream.offset is null
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
@@ -370,7 +379,8 @@ class ReportByDemand(GridReport):
                         coalesce(nextopplan.location_id, nextopplan.destination_id),
                         case when nextopplan.type = 'STCK' then null else to_char(nextopplan.startdate,'YYYY-MM-DD hh24:mi:ss') end,
                         case when nextopplan.type = 'STCK' then null else to_char(nextopplan.enddate,'YYYY-MM-DD hh24:mi:ss') end,
-                        case when downstream.offset is null
+                        case when nextopplan.owner_id is not null then cte.y
+						when downstream.offset is null
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
@@ -400,7 +410,8 @@ class ReportByDemand(GridReport):
                         else
                         greatest(0,cte.x - coalesce(downstream.offset,0)) /coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
                         end) end as x,
-                        case when downstream.offset is null
+                        case when nextopplan.owner_id is not null then cte.y
+						when downstream.offset is null
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
@@ -426,17 +437,24 @@ class ReportByDemand(GridReport):
                     (t->>1)::numeric quantity,
                     (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t on true
                     inner join operationplan nextopplan on nextopplan.reference = t.reference
+                    left outer join operationplan nextopplan_last_step on nextopplan_last_step.owner_id = nextopplan.reference
+					and nextopplan_last_step.operation_id = (select name from operation where owner_id = nextopplan.operation_id order by priority desc limit 1)
                     left outer join lateral
                     (select t->>0 reference,
                     (t->>1)::numeric quantity,
-                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'downstream_opplans') t) downstream
+                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'downstream_opplans') t
+                    union all
+					select t2->>0 reference,
+                    (t2->>1)::numeric quantity,
+                    (t2->>2)::numeric as offset from jsonb_array_elements(nextopplan_last_step.plan->'downstream_opplans') t2) downstream
                     on downstream.reference = operationplan.reference or downstream.reference = operationplan.owner_id
                     left outer join operationmaterial consuming_om on consuming_om.operation_id = operationplan.operation_id
                         and consuming_om.quantity < 0 and consuming_om.item_id = nextopplan.item_id
                     left outer join operationmaterial producing_om on producing_om.operation_id = operationplan.operation_id
                         and producing_om.quantity > 0 and producing_om.item_id = operationplan.item_id
                     where
-                    case when downstream.offset is null
+                    case when nextopplan.owner_id is not null then cte.y
+						when downstream.offset is null
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then

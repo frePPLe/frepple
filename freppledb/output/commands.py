@@ -38,7 +38,6 @@ logger = logging.getLogger(__name__)
 
 @PlanTaskRegistry.register
 class TruncatePlan(PlanTask):
-
     description = "Erasing previous plan"
     sequence = 400
     export = True
@@ -212,7 +211,6 @@ class TruncatePlan(PlanTask):
 
 @PlanTaskRegistry.register
 class ShowPlanStats(PlanTask):
-
     description = "Show plan statistics"
     sequence = 402
 
@@ -243,7 +241,6 @@ class ShowPlanStats(PlanTask):
 
 @PlanTaskRegistry.register
 class ExportProblems(PlanTask):
-
     description = ("Export plan", "Exporting problems")
     sequence = (401, "export2", 2)
     export = True
@@ -298,7 +295,6 @@ class ExportProblems(PlanTask):
 
 @PlanTaskRegistry.register
 class ExportConstraints(PlanTask):
-
     description = ("Export plan", "Exporting constraints")
     sequence = (401, "export2", 3)
     export = True
@@ -364,7 +360,6 @@ class ExportConstraints(PlanTask):
 
 @PlanTaskRegistry.register
 class ExportOperationPlans(PlanTask):
-
     description = ("Export plan", "Exporting operationplans")
     sequence = (401, "export1", 1)
     export = True
@@ -397,6 +392,21 @@ class ExportOperationPlans(PlanTask):
                     and (opplan.owner == None)
                     and not isinstance(opplan.operation, frepple.operation_routing)
                     and not isinstance(j.operationplan.owner, frepple.operation_routing)
+                    and not isinstance(
+                        j.operationplan.owner, frepple.operation_alternate
+                    )
+                )
+                # regular time_per/fixed time
+                # followed by an alternate
+                or (
+                    j.level == 2
+                    and (opplan.owner == None)
+                    and not isinstance(opplan.operation, frepple.operation_routing)
+                    and not isinstance(opplan.operation, frepple.operation_alternate)
+                    and j.operationplan.owner
+                    and isinstance(
+                        j.operationplan.owner.operation, frepple.operation_alternate
+                    )
                 )
                 # routings will flow into the first step
                 or (
@@ -865,7 +875,6 @@ class ExportOperationPlans(PlanTask):
 
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
-
         with_fcst = "freppledb.forecast" in settings.INSTALLED_APPS
 
         cls.attrs = [x for x in getAttributes(OperationPlan) if x[0] != "forecast"]
@@ -1065,7 +1074,6 @@ class ExportOperationPlans(PlanTask):
 
 @PlanTaskRegistry.register
 class ExportOperationPlanMaterials(PlanTask):
-
     description = ("Export plan", "Exporting operationplan materials")
     sequence = (401, "export1", 2)
     export = True
@@ -1142,7 +1150,6 @@ class ExportOperationPlanMaterials(PlanTask):
 
 @PlanTaskRegistry.register
 class ComputePeriodOfCover(PlanTask):
-
     description = ("Export plan", "Compute period of cover")
     sequence = (401, "export1", 5)
     export = True
@@ -1172,7 +1179,6 @@ class ComputePeriodOfCover(PlanTask):
         cursor = connections[database].cursor()
 
         if cluster != -1:
-
             cursor.execute(
                 """
                 create temp table cluster_item_tmp as select name from item where false;
@@ -1265,7 +1271,6 @@ class ComputePeriodOfCover(PlanTask):
 
 @PlanTaskRegistry.register
 class ExportOperationPlanResources(PlanTask):
-
     description = ("Export plan", "Exporting operationplan resources")
     sequence = (401, "export1", 3)
     export = True
@@ -1342,7 +1347,6 @@ class ExportOperationPlanResources(PlanTask):
 
 @PlanTaskRegistry.register
 class ExportResourcePlans(PlanTask):
-
     description = ("Export plan", "Exporting resource plans")
     sequence = (401, "export2", 1)
     export = True
@@ -1433,7 +1437,6 @@ class ExportResourcePlans(PlanTask):
 
 @PlanTaskRegistry.register
 class ExportPegging(PlanTask):
-
     description = ("Export plan", "Exporting demand pegging")
     sequence = (401, "export1", 4)
     export = True

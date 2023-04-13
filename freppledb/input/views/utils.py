@@ -145,7 +145,6 @@ class OperationPlanMixin(GridReport):
 
     @classmethod
     def operationplanExtraBasequery(cls, query, request):
-
         # special keyword superop used for search field of operationplan
         if "parentreference" in request.GET:
             parentreference = request.GET["parentreference"]
@@ -1447,7 +1446,6 @@ class PathReport(GridReport):
 
         if i[4]:
             for buffer, quantity in tuple(json.loads(i[4]).items()):
-
                 # I might already have visisted that buffer
                 if buffer in reportclass.node_count:
                     continue
@@ -1771,7 +1769,6 @@ class OperationPlanDetail(View):
 
         # Loop over all operationplans
         for opplan in opplans:
-
             # Check permissions
             if opplan.type == "DO" and not view_DO:
                 continue
@@ -2246,7 +2243,8 @@ class OperationPlanDetail(View):
                         coalesce(nextopplan.location_id, nextopplan.destination_id),
                         case when nextopplan.type = 'STCK' then null else to_char(nextopplan.startdate,'YYYY-MM-DD hh24:mi:ss') end,
                         case when nextopplan.type = 'STCK' then null else to_char(nextopplan.enddate,'YYYY-MM-DD hh24:mi:ss') end,
-                        case when downstream.offset is null
+                        case when nextopplan.owner_id is not null then cte.y
+						when downstream.offset is null
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
@@ -2276,7 +2274,8 @@ class OperationPlanDetail(View):
                         else
                         greatest(0,cte.x - coalesce(downstream.offset,0)) /coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
                         end) end as x,
-                        case when downstream.offset is null
+                        case when nextopplan.owner_id is not null then cte.y
+						when downstream.offset is null
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
@@ -2302,17 +2301,24 @@ class OperationPlanDetail(View):
                     (t->>1)::numeric quantity,
                     (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'upstream_opplans') t) t on true
                     inner join operationplan nextopplan on nextopplan.reference = t.reference
+                    left outer join operationplan nextopplan_last_step on nextopplan_last_step.owner_id = nextopplan.reference
+					and nextopplan_last_step.operation_id = (select name from operation where owner_id = nextopplan.operation_id order by priority desc limit 1)
                     left outer join lateral
                     (select t->>0 reference,
                     (t->>1)::numeric quantity,
-                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'downstream_opplans') t) downstream
+                    (t->>2)::numeric as offset from jsonb_array_elements(nextopplan.plan->'downstream_opplans') t
+                    union all
+					select t2->>0 reference,
+                    (t2->>1)::numeric quantity,
+                    (t2->>2)::numeric as offset from jsonb_array_elements(nextopplan_last_step.plan->'downstream_opplans') t2) downstream
                     on downstream.reference = operationplan.reference or downstream.reference = operationplan.owner_id
                     left outer join operationmaterial consuming_om on consuming_om.operation_id = operationplan.operation_id
                         and consuming_om.quantity < 0 and consuming_om.item_id = nextopplan.item_id
                     left outer join operationmaterial producing_om on producing_om.operation_id = operationplan.operation_id
                         and producing_om.quantity > 0 and producing_om.item_id = operationplan.item_id
                     where
-                    case when downstream.offset is null
+                    case when nextopplan.owner_id is not null then cte.y
+						when downstream.offset is null
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
@@ -2343,7 +2349,7 @@ class OperationPlanDetail(View):
                     and (select count(*) from operation_dependency where operation_id = nextopplan.operation_id) <= 1
                     )
                     select * from cte
-                    order by path
+                    order by path, level desc
                     """,
                     (opplan.reference,),
                 )

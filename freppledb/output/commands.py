@@ -1458,7 +1458,11 @@ class ExportPegging(PlanTask):
             if i.hidden or not isinstance(i, frepple.demand_default):
                 continue
             peg = []
+            maxlevel = -1
             for j in i.pegging_first_level:
+                if maxlevel >= 0 and j.level > maxlevel:
+                    break
+                maxlevel = j.level
                 peg.append(
                     {
                         "opplan": j.operationplan.reference,

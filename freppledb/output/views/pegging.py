@@ -274,7 +274,7 @@ class ReportByDemand(GridReport):
                     and cte.level < 25
                     and cte.path not like '%%%%/'||nextopplan.reference||'/%%%%'
                     and cte.nextreference != nextopplan.reference
-                    and (select count(*) from operation_dependency where operation_id = nextopplan.operation_id) <= 1
+                    and (select count(*) from operation_dependency where operation_id = nextopplan.operation_id) <= 4
                     )
                     select nextreference from cte
                     )
@@ -482,7 +482,7 @@ class ReportByDemand(GridReport):
                     and cte.level < 25
                     and cte.path not like '%%%%/'||nextopplan.reference||'/%%%%'
                     and cte.nextreference != nextopplan.reference
-                    and (select count(*) from operation_dependency where operation_id = nextopplan.operation_id) <= 1
+                    and (select count(*) from operation_dependency where operation_id = nextopplan.operation_id) <= 4
                     )
                     select distinct cte.level, cte.nextreference, cte.quantity, cte.path from cte
                     order by path,level desc

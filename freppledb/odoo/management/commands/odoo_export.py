@@ -450,7 +450,7 @@ class Command(BaseCommand):
                 if wores.resource.source and wores.resource.source.startswith("odoo"):
                     yield "<resource name=%s id=%s/>" % (
                         quoteattr(wores.resource.name),
-                        quoteattr(wores.resource.category),
+                        quoteattr(wores.resource.category or ""),
                     )
             yield "</operationplan>"
 

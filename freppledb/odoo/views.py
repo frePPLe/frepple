@@ -245,7 +245,7 @@ def Upload(request):
                                         "<resource name=%s id=%s/>"
                                         % (
                                             quoteattr(opplanres.resource.name),
-                                            quoteattr(opplanres.resource.category),
+                                            quoteattr(opplanres.resource.category or ""),
                                         )
                                     )
                         data_odoo.append("</operationplan>")

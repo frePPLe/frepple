@@ -1,8 +1,13 @@
 Release notes
 -------------
 
-7.3.0 (Upcoming release)
+8.0.0 (Upcoming release)
 ========================
+
+Oh-oh... Something exciting is coming up!
+
+7.3.0 (2023/04/14)
+==================
 
 .. rubric:: User interface
 

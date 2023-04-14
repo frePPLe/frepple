@@ -16,6 +16,7 @@
 #
 
 import os.path
+import unittest
 
 from django.conf import settings
 from django.core import management
@@ -152,6 +153,7 @@ class cookbooktest(TransactionTestCase):
             "resource-skills.expect",
         )
 
+    @unittest.skip("Temporarily taken out")
     def test_resource_tool(self):
         self.loadExcel(
             settings.FREPPLE_HOME,

@@ -2,19 +2,24 @@
  *                                                                         *
  * Copyright (C) 2007-2015 by frePPLe bv                                   *
  *                                                                         *
- * This library is free software; you can redistribute it and/or modify it *
- * under the terms of the GNU Affero General Public License as Objecthed   *
- * by the Free Software Foundation; either version 3 of the License, or    *
- * (at your option) any later version.                                     *
+ * Permission is hereby granted, free of charge, to any person obtaining   *
+ * a copy of this software and associated documentation files (the         *
+ * "Software"), to deal in the Software without restriction, including     *
+ * without limitation the rights to use, copy, modify, merge, publish,     *
+ * distribute, sublicense, and/or sell copies of the Software, and to      *
+ * permit persons to whom the Software is furnished to do so, subject to   *
+ * the following conditions:                                               *
  *                                                                         *
- * This library is distributed in the hope that it will be useful,         *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of          *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the            *
- * GNU Affero General Public License for more details.                     *
+ * The above copyright notice and this permission notice shall be          *
+ * included in all copies or substantial portions of the Software.         *
  *                                                                         *
- * You should have received a copy of the GNU Affero General Public        *
- * License along with this program.                                        *
- * If not, see <http://www.gnu.org/licenses/>.                             *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,         *
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF      *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                   *
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE  *
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION  *
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION   *
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.         *
  *                                                                         *
  ***************************************************************************/
 
@@ -1576,6 +1581,9 @@ class MetaClass : public NonCopyable {
   /* A pointer to the Python type. */
   PyTypeObject* pythonClass = nullptr;
 
+  /* A pointer to the Python type. */
+  PyTypeObject* pythonBaseClass = nullptr;
+
   /* A factory method for the registered class. */
   creatorDefault factoryMethod = nullptr;
 
@@ -1589,6 +1597,11 @@ class MetaClass : public NonCopyable {
 
   /* Destructor. */
   virtual ~MetaClass() {}
+
+  void setPythonClass(PythonType& t) const {
+    const_cast<MetaClass*>(this)->pythonClass = t.type_object();
+    const_cast<MetaClass*>(this)->pythonBaseClass = pythonClass;
+  }
 
   /* Initialize the data structure and register the class. */
   void addClass(const string&, const string&, bool = false,
@@ -1688,6 +1701,8 @@ class MetaClass : public NonCopyable {
   /* Find a particular class by its name. If it can't be located the return
    * value is nullptr. */
   static const MetaClass* findClass(const char*);
+
+  static const MetaClass* findClass(PyObject*);
 
   /* Default constructor. */
   MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")) {}
@@ -2130,6 +2145,8 @@ class Serializer {
 
   inline bool getWriteHidden() const { return writeHidden; }
 
+  inline bool getFlattenProperties() const { return flatten_properties; }
+
   /* Update the flag to write hidden objects or not.
    * The value of the flag before the call is returned. This is useful
    * to restore the previous state later on.
@@ -2188,6 +2205,10 @@ class Serializer {
 
   virtual void writeElement(const Keyword& t, const PooledString& p,
                             const double val) = 0;
+
+  virtual void writeElement(const string&, const string&) {
+    throw LogicException("Not implemented");
+  }
 
   /* Write a boolean value enclosed opening and closing tags. The boolean
    * is written out as the string 'true' or 'false'.
@@ -2327,6 +2348,8 @@ class Serializer {
    * In service mode, objects are serialized slightly different.
    */
   bool service_mode = false;
+
+  bool flatten_properties = false;
 };
 
 /* A class to model a string to be interpreted as a keyword.
@@ -2628,9 +2651,6 @@ class Environment {
 
   /* The name of the log file. */
   static string logfilename;
-
-  /* A list of all loaded modules. */
-  static set<string> moduleRegistry;
 
  public:
   /* Search for a file with a given name.
@@ -3288,7 +3308,7 @@ class Object : public PyObject {
 
   /* Initialize the object to a certain Python type. */
   inline void initType(const MetaClass* t) {
-    PyObject_INIT(this, t->pythonClass);
+    PyObject_INIT(this, t->pythonBaseClass);
   }
 
   /* Initialize the object to a certain Python type. */
@@ -6933,7 +6953,7 @@ class FreppleCategory : public PythonExtension<FreppleCategory<T>> {
     x.supportstr();
     x.supportcompare();
     x.supportcreate(Object::create<T>);
-    const_cast<MetaCategory*>(T::metadata)->pythonClass = x.type_object();
+    T::metadata->setPythonClass(x);
     return x.typeReady();
   }
 };
@@ -6955,7 +6975,7 @@ class FreppleClass : public PythonExtension<FreppleClass<ME, BASE>> {
     x.setBase(BASE::metadata->pythonClass);
     x.addMethod("toXML", ME::toXML, METH_VARARGS,
                 "return a XML representation");
-    const_cast<MetaClass*>(ME::metadata)->pythonClass = x.type_object();
+    ME::metadata->setPythonClass(x);
     return x.typeReady();
   }
 };

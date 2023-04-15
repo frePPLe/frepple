@@ -3,9 +3,6 @@
  *
  * This file is a heavily modified version of the code published under
  * MIT license on https://github.com/twinssbc/AngularJS-ResponsiveCalendar.
- * The changes are redistributed under the GNU Affero General Public License.
- *
- * The MIT License (MIT)
  *
  * Copyright (c) 2014 twinssbc
  *

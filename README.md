@@ -25,8 +25,7 @@ Visit [https://frepple.com](https://frepple.com) for documentation, screencasts 
 
 ## License
 
-The *Community Edition* is released under the [GNU Affero General
-Public License v3 or later](http://www.gnu.org/licenses/).
+The *Community Edition* is released under the [MIT licence](https://opensource.org/license/mit/).
 
 The *Enterprise Edition* can be purchased from frePPLe bv. It provides additional functionality
 and professional support.

@@ -2,27 +2,33 @@
  *                                                                         *
  * Copyright (C) 2007-2015 by frePPLe bv                                   *
  *                                                                         *
- * This library is free software; you can redistribute it and/or modify it *
- * under the terms of the GNU Affero General Public License as published   *
- * by the Free Software Foundation; either version 3 of the License, or    *
- * (at your option) any later version.                                     *
+ * Permission is hereby granted, free of charge, to any person obtaining   *
+ * a copy of this software and associated documentation files (the         *
+ * "Software"), to deal in the Software without restriction, including     *
+ * without limitation the rights to use, copy, modify, merge, publish,     *
+ * distribute, sublicense, and/or sell copies of the Software, and to      *
+ * permit persons to whom the Software is furnished to do so, subject to   *
+ * the following conditions:                                               *
  *                                                                         *
- * This library is distributed in the hope that it will be useful,         *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of          *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the            *
- * GNU Affero General Public License for more details.                     *
+ * The above copyright notice and this permission notice shall be          *
+ * included in all copies or substantial portions of the Software.         *
  *                                                                         *
- * You should have received a copy of the GNU Affero General Public        *
- * License along with this program.                                        *
- * If not, see <http://www.gnu.org/licenses/>.                             *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,         *
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF      *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                   *
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE  *
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION  *
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION   *
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.         *
  *                                                                         *
  ***************************************************************************/
 
 #define FREPPLE_CORE
+#include "forecast/forecast.h"
 #include "frepple.h"
+#include "frepple/database.h"
 #include "freppleinterface.h"
 using namespace frepple;
-#include <sys/stat.h>
 
 DECLARE_EXPORT(const char*) FreppleVersion() { return PACKAGE_VERSION; }
 
@@ -36,8 +42,67 @@ DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles) {
   LibraryUtils::initialize();
   LibraryModel::initialize();
   LibrarySolver::initialize();
+  Cache::initialize();
 
+  PyGILState_STATE state = PyGILState_Ensure();
+  try {
+    PythonInterpreter::registerGlobalMethod(
+        "readJSONdata", readJSONdata, METH_VARARGS,
+        "Processes a JSON string passed as argument.");
+    PythonInterpreter::registerGlobalMethod("readJSONfile", readJSONfile,
+                                            METH_VARARGS, "Read a JSON file.");
+    PythonInterpreter::registerGlobalMethod("saveJSONfile", saveJSONfile,
+                                            METH_VARARGS,
+                                            "Save the model to a JSON file.");
+    PythonInterpreter::registerGlobalMethod(
+        "runDatabaseThread", runDatabaseThread, METH_VARARGS,
+        "Start a thread to persist data in a PostgreSQL database.");
 
+    // Initialize the forecast module
+    int nok = 0;
+    nok += ForecastBucket::initialize();
+    nok += Forecast::initialize();
+    nok += ForecastSolver::initialize();
+    nok += ForecastMeasure::initialize();
+    nok += ForecastMeasureAggregated::initialize();
+    nok += ForecastMeasureAggregatedPlanned::initialize();
+    nok += ForecastMeasureLocal::initialize();
+    nok += ForecastMeasureComputed::initialize();
+    nok += ForecastMeasureTemp::initialize();
+    if (nok) throw RuntimeException("Error registering forecasting module");
+
+    Measures::forecasttotal = new ForecastMeasureComputed(
+        "forecasttotal",
+        "if(forecastoverride == -1, forecastbaseline, forecastoverride)");
+    Measures::forecastnet =
+        new ForecastMeasureAggregatedPlanned("forecastnet", 0);
+    Measures::forecastconsumed =
+        new ForecastMeasureAggregatedPlanned("forecastconsumed", 0);
+    Measures::forecastbaseline =
+        new const ForecastMeasureAggregated("forecastbaseline", 0);
+    Measures::forecastoverride = new ForecastMeasureAggregated(
+        "forecastoverride", -1, false, Measures::forecastbaseline);
+    Measures::orderstotal = new ForecastMeasureAggregated("orderstotal", 0);
+    Measures::ordersadjustment =
+        new ForecastMeasureAggregated("ordersadjustment", 0);
+    Measures::ordersopen = new ForecastMeasureAggregated("ordersopen", 0);
+    Measures::forecastplanned =
+        new ForecastMeasureAggregatedPlanned("forecastplanned", 0);
+    Measures::ordersplanned =
+        new ForecastMeasureAggregatedPlanned("ordersplanned", 0);
+    Measures::outlier = new ForecastMeasureLocal("outlier", 0);
+    Measures::nodata = new ForecastMeasureLocal("nodata", 0);
+    Measures::leaf = new ForecastMeasureLocal("leaf", 0);
+    ForecastMeasureComputed::compileMeasures();
+
+    PyGILState_Release(state);
+  } catch (const exception& e) {
+    PyGILState_Release(state);
+    logger << "Error: " << e.what() << endl;
+  } catch (...) {
+    PyGILState_Release(state);
+    logger << "Error: unknown exception" << endl;
+  }
 
   // Search for the initialization PY file
   if (!procesInitializationFiles) return;

@@ -1,18 +1,24 @@
 #
 # Copyright (C) 2022 by frePPLe bv
 #
-# This library is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Affero General Public License as published
-# by the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
 #
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
-# General Public License for more details.
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
 #
-# You should have received a copy of the GNU Affero General Public
-# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from django.conf import settings
 from django.db import migrations, models
@@ -22,52 +28,174 @@ import freppledb.common.fields
 
 class Migration(migrations.Migration):
 
-    replaces = [('execute', '0005_squashed_60'), ('execute', '0006_meta'), ('execute', '0007_scheduled_task')]
+    replaces = [
+        ("execute", "0005_squashed_60"),
+        ("execute", "0006_meta"),
+        ("execute", "0007_scheduled_task"),
+    ]
 
     initial = True
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('common', '0014_squashed_60'),
+        ("common", "0014_squashed_60"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Task',
+            name="Task",
             fields=[
-                ('id', models.AutoField(editable=False, primary_key=True, serialize=False, verbose_name='identifier')),
-                ('name', models.CharField(db_index=True, editable=False, max_length=50, verbose_name='name')),
-                ('submitted', models.DateTimeField(editable=False, verbose_name='submitted')),
-                ('started', models.DateTimeField(blank=True, editable=False, null=True, verbose_name='started')),
-                ('finished', models.DateTimeField(blank=True, editable=False, null=True, verbose_name='submitted')),
-                ('arguments', models.TextField(editable=False, max_length=200, null=True, verbose_name='arguments')),
-                ('status', models.CharField(editable=False, max_length=20, verbose_name='status')),
-                ('message', models.TextField(editable=False, max_length=200, null=True, verbose_name='message')),
-                ('user', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='tasks', to=settings.AUTH_USER_MODEL, verbose_name='user')),
-                ('logfile', models.TextField(editable=False, max_length=200, null=True, verbose_name='log file')),
-                ('processid', models.IntegerField(editable=False, null=True, verbose_name='processid')),
+                (
+                    "id",
+                    models.AutoField(
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="identifier",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        db_index=True,
+                        editable=False,
+                        max_length=50,
+                        verbose_name="name",
+                    ),
+                ),
+                (
+                    "submitted",
+                    models.DateTimeField(editable=False, verbose_name="submitted"),
+                ),
+                (
+                    "started",
+                    models.DateTimeField(
+                        blank=True, editable=False, null=True, verbose_name="started"
+                    ),
+                ),
+                (
+                    "finished",
+                    models.DateTimeField(
+                        blank=True, editable=False, null=True, verbose_name="submitted"
+                    ),
+                ),
+                (
+                    "arguments",
+                    models.TextField(
+                        editable=False,
+                        max_length=200,
+                        null=True,
+                        verbose_name="arguments",
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        editable=False, max_length=20, verbose_name="status"
+                    ),
+                ),
+                (
+                    "message",
+                    models.TextField(
+                        editable=False,
+                        max_length=200,
+                        null=True,
+                        verbose_name="message",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="tasks",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="user",
+                    ),
+                ),
+                (
+                    "logfile",
+                    models.TextField(
+                        editable=False,
+                        max_length=200,
+                        null=True,
+                        verbose_name="log file",
+                    ),
+                ),
+                (
+                    "processid",
+                    models.IntegerField(
+                        editable=False, null=True, verbose_name="processid"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'execute_log',
-                'verbose_name': 'task',
-                'verbose_name_plural': 'tasks',
-                'default_permissions': ['view'],
+                "db_table": "execute_log",
+                "verbose_name": "task",
+                "verbose_name_plural": "tasks",
+                "default_permissions": ["view"],
             },
         ),
         migrations.CreateModel(
-            name='ScheduledTask',
+            name="ScheduledTask",
             fields=[
-                ('name', models.CharField(db_index=True, max_length=300, primary_key=True, serialize=False, verbose_name='name')),
-                ('next_run', models.DateTimeField(blank=True, db_index=True, null=True, verbose_name='nextrun')),
-                ('email_failure', models.CharField(blank=True, max_length=300, null=True, verbose_name='email_failure')),
-                ('email_success', models.CharField(blank=True, max_length=300, null=True, verbose_name='email_success')),
-                ('data', freppledb.common.fields.JSONBField(blank=True, default='{}', null=True)),
-                ('user', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='schedules', to=settings.AUTH_USER_MODEL)),
+                (
+                    "name",
+                    models.CharField(
+                        db_index=True,
+                        max_length=300,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="name",
+                    ),
+                ),
+                (
+                    "next_run",
+                    models.DateTimeField(
+                        blank=True, db_index=True, null=True, verbose_name="nextrun"
+                    ),
+                ),
+                (
+                    "email_failure",
+                    models.CharField(
+                        blank=True,
+                        max_length=300,
+                        null=True,
+                        verbose_name="email_failure",
+                    ),
+                ),
+                (
+                    "email_success",
+                    models.CharField(
+                        blank=True,
+                        max_length=300,
+                        null=True,
+                        verbose_name="email_success",
+                    ),
+                ),
+                (
+                    "data",
+                    freppledb.common.fields.JSONBField(
+                        blank=True, default="{}", null=True
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="schedules",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'scheduled task',
-                'verbose_name_plural': 'scheduled tasks',
-                'db_table': 'execute_schedule',
+                "verbose_name": "scheduled task",
+                "verbose_name_plural": "scheduled tasks",
+                "db_table": "execute_schedule",
             },
         ),
     ]

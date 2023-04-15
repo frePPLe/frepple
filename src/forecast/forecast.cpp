@@ -1,0 +1,1580 @@
+/***************************************************************************
+ *                                                                         *
+ * Copyright (C) 2012-2015 by frePPLe bv                                   *
+ *                                                                         *
+ * Permission is hereby granted, free of charge, to any person obtaining   *
+ * a copy of this software and associated documentation files (the         *
+ * "Software"), to deal in the Software without restriction, including     *
+ * without limitation the rights to use, copy, modify, merge, publish,     *
+ * distribute, sublicense, and/or sell copies of the Software, and to      *
+ * permit persons to whom the Software is furnished to do so, subject to   *
+ * the following conditions:                                               *
+ *                                                                         *
+ * The above copyright notice and this permission notice shall be          *
+ * included in all copies or substantial portions of the Software.         *
+ *                                                                         *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,         *
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF      *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                   *
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE  *
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION  *
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION   *
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.         *
+ *                                                                         *
+ ***************************************************************************/
+
+#include "forecast.h"
+
+#include <random>
+
+#include "frepple/database.h"
+#include "rapidjson/document.h"
+
+namespace frepple {
+
+ForecastHash::HashTable ForecastHash::table;
+
+Calendar* Forecast::calptr = nullptr;
+long ForecastBase::horizon_future = 365L * 3L;
+long ForecastBase::horizon_history = 365L * 10L;
+long ForecastBase::forecast_partition = -1L;
+
+const Keyword Forecast::tag_methods("methods");
+const Keyword Forecast::tag_method("method");
+const Keyword Forecast::tag_deviation("deviation");
+const Keyword Forecast::tag_smape_error("smape_error");
+const Keyword Forecast::tag_horizon_future("horizon_future");
+const Keyword Forecast::tag_horizon_history("horizon_history");
+const Keyword Forecast::tag_forecast_partition("forecast_partition");
+const Keyword ForecastBucket::tag_weight("weight");
+const Keyword ForecastBucket::tag_forecast("forecast");
+const Keyword ForecastBucket::tag_forecast_total("forecasttotal");
+const Keyword ForecastBucket::tag_forecast_consumed("forecastconsumed");
+const Keyword ForecastBucket::tag_forecast_baseline("forecastbaseline");
+const Keyword ForecastBucket::tag_forecast_override("forecastoverride");
+const Keyword ForecastBucket::tag_orders_total("orderstotal");
+const Keyword ForecastBucket::tag_orders_adjustment("ordersadjustment");
+const Keyword ForecastBucket::tag_orders_adjustment_1("ordersadjustment1");
+const Keyword ForecastBucket::tag_orders_adjustment_2("ordersadjustment2");
+const Keyword ForecastBucket::tag_orders_adjustment_3("ordersadjustment3");
+const Keyword ForecastBucket::tag_orders_open("ordersopen");
+const Keyword ForecastBucket::tag_orders_planned("ordersplanned");
+const Keyword ForecastBucket::tag_outlier("outlier");
+const Keyword ForecastBucket::tag_forecast_planned("forecastplanned");
+
+const MetaClass* Forecast::metadata = nullptr;
+const MetaClass* ForecastBucket::metadata = nullptr;
+const MetaCategory* ForecastBucket::metacategory = nullptr;
+short ForecastBucket::DueWithinBucket = 1;
+const string ForecastBucket::DUEATSTART = "start";
+const string ForecastBucket::DUEATMIDDLE = "middle";
+const string ForecastBucket::DUEATEND = "end";
+
+int Forecast::initialize() {
+  // Initialize the metadata
+  metadata = MetaClass::registerClass<Forecast>("demand", "demand_forecast",
+                                                Object::create<Forecast>);
+  registerFields<Forecast>(const_cast<MetaClass*>(metadata));
+
+  // Get notified when a calendar is deleted
+  FunctorStatic<Calendar, Forecast>::connect(SIG_REMOVE);
+
+  // An extra global method
+  PythonInterpreter::registerGlobalMethod(
+      "saveforecast", saveForecast, METH_VARARGS,
+      "Save the forecast information to a file.");
+  PythonInterpreter::registerGlobalMethod(
+      "aggregateMeasures", ForecastMeasure::aggregateMeasuresPython,
+      METH_VARARGS,
+      "Recompute the aggregate levels for the specified measures");
+  PythonInterpreter::registerGlobalMethod(
+      "computeMeasures", ForecastMeasure::computeMeasuresPython, METH_VARARGS,
+      "Recompute calculated measures for the specified measures");
+  PythonInterpreter::registerGlobalMethod(
+      "updatePlannedForecast", ForecastMeasure::updatePlannedForecastPython,
+      METH_NOARGS, "Update the planned quantity in the forecastplan table");
+  PythonInterpreter::registerGlobalMethod(
+      "resetMeasures", ForecastMeasure::resetMeasuresPython, METH_VARARGS,
+      "Reset the specified measures");
+
+  // Initialize the Python class
+  PythonType& x = FreppleClass<Forecast, Demand>::getPythonType();
+  x.addMethod("inspect", inspectPython, METH_VARARGS,
+              "debugging function to print the forecast information");
+  x.addMethod("set", setValuePython, METH_VARARGS | METH_KEYWORDS,
+              "update measure data");
+  x.addMethod("get", getValuePython, METH_VARARGS | METH_KEYWORDS,
+              "retrience measure data");
+  return FreppleClass<Forecast, Demand>::initialize();
+}
+
+ForecastBase* ForecastHash::findForecast(Item* i, Customer* c, Location* l,
+                                         bool allow_create) {
+  if (!i || !l || !c) return nullptr;
+  if (c->getNumberOfDemands()) {
+    ItemLocationCustomerHash tmp(i, l, c);
+    auto iter = table.find(&tmp);
+    if (iter != table.end()) return static_cast<Forecast*>(*iter);
+  }
+  return allow_create ? new ForecastAggregated(i, l, c) : nullptr;
+}
+
+bool Forecast::isLeaf() const {
+  if (leaf == -1) {
+    const_cast<Forecast*>(this)->leaf = 1;
+    for (Item::memberRecursiveIterator itm(getItem()); !itm.empty(); ++itm)
+      for (Customer::memberRecursiveIterator cust(getCustomer()); !cust.empty();
+           ++cust)
+        for (Location::memberRecursiveIterator loc(getLocation()); !loc.empty();
+             ++loc)
+          if ((&*itm != getItem() || &*cust != getCustomer() ||
+               &*loc != getLocation()) &&
+              findForecast(&*itm, &*cust, &*loc)) {
+            // A forecast exists for this member tuple.
+            const_cast<Forecast*>(this)->leaf = 0;
+            return false;
+          }
+  }
+  return leaf == 1;
+}
+
+int ForecastBucket::initialize() {
+  // Initialize the metadata
+  // No factory method for this class
+  metacategory = MetaCategory::registerCategory<ForecastBucket>(
+      "forecastbucket", "forecastbuckets", reader);
+  metadata = MetaClass::registerClass<ForecastBucket>("forecastbucket",
+                                                      "demand_forecastbucket");
+  registerFields<ForecastBucket>(const_cast<MetaClass*>(metadata));
+
+  ProblemOutlier::metadata =
+      MetaClass::registerClass<ProblemOutlier>("problem", "outlier", true);
+
+  // Initialize the Python class
+  PythonType& x = FreppleClass<ForecastBucket, Demand>::getPythonType();
+  x.setName("demand_forecastbucket");
+  x.setDoc("frePPLe forecastbucket");
+  x.supportgetattro();
+  x.supportsetattro();
+  x.supportstr();
+  x.supportcreate(create);
+  x.supportcompare();
+  x.setBase(metacategory->pythonClass);
+  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
+  x.addMethod("addConstraint", addConstraint, METH_VARARGS,
+              "add a constraint to the demand");
+  x.addMethod("set", setMeasurePython, METH_VARARGS | METH_KEYWORDS,
+              "update a measure");
+  x.addMethod("get", getMeasurePython, METH_VARARGS, "get a measure");
+  metadata->setPythonClass(x);
+  return x.typeReady();
+}
+
+Object* ForecastBucket::reader(const MetaClass* cat, const DataValueDict& in,
+                               CommandManager* mgr) {
+  // Pick up the forecast attribute. An error is reported if it's missing.
+  const DataValue* fcstElement = in.get(ForecastBucket::tag_forecast);
+  if (!fcstElement) throw DataException("Missing forecast field");
+  Object* fcstobject = fcstElement->getObject();
+  if (!fcstobject || fcstobject->getType() != *Forecast::metadata)
+    throw DataException("Invalid forecast field");
+
+  // Pick up the start date.
+  const DataValue* strtElement = in.get(Tags::start);
+  if (!strtElement) throw DataException("Start date must be provided");
+  Date strt = strtElement->getDate();
+
+  // Pick up the end date.
+  const DataValue* endElement = in.get(Tags::end);
+  Date nd;
+  if (endElement) nd = endElement->getDate();
+
+  // Find the bucket
+  {
+    auto data = static_cast<Forecast*>(fcstobject)->getData();
+    ForecastBucket* fcstbckt = nullptr;
+    for (auto& fcstbktdata : data->getBuckets()) {
+      if (fcstbktdata.getDates().within(strt)) {
+        fcstbckt = fcstbktdata.getOrCreateForecastBucket();
+        if (fcstbckt && !nd || (nd && fcstbckt->getStartDate() <= nd &&
+                                fcstbckt->getEndDate() >= nd))
+          // A single bucket is being updated
+          return fcstbckt;
+        break;
+      }
+    }
+  }
+
+  /** Only a start date was given, and we didn't find a matching bucket. */
+  if (!nd) return nullptr;
+
+  /** A start and end date are given, and multiple buckets can be impacted. */
+  DateRange dr(strt, nd);
+  static_cast<Forecast*>(fcstobject)->setFields(dr, in, mgr);
+  return nullptr;
+}
+
+PyObject* ForecastBucket::create(PyTypeObject* pytype, PyObject* args,
+                                 PyObject* kwds) {
+  try {
+    // Pick up the forecast. An error is reported if it's missing or has a wrong
+    // data type.
+    PyObject* pyfcst = PyDict_GetItemString(kwds, "forecast");
+    if (!pyfcst) throw DataException("missing forecast on forecastbucket");
+    if (!PyObject_TypeCheck(pyfcst, Forecast::metadata->pythonClass))
+      throw DataException("forecastbucket forecast must be of type forecast");
+
+    // Pick up the start date
+    PyObject* strt = PyDict_GetItemString(kwds, "start");
+    if (!strt) throw DataException("Start date must be provided");
+    Date startdate = PythonData(strt).getDate();
+
+    // Initialize the forecast.
+    Forecast* fcst = static_cast<Forecast*>(pyfcst);
+    auto data = fcst->getData();
+
+    // Find the correct forecast bucket
+    // @todo This linear loop doesn't scale well when the number of buckets
+    // increases. The loading time goes up quadratically: need to read more
+    // buckets + each bucket takes longer
+    for (auto& bckt : data->getBuckets()) {
+      auto fcstbckt = bckt.getOrCreateForecastBucket();
+      if (!fcstbckt) continue;
+      if (fcstbckt->getDueRange().within(startdate)) {
+        // Iterate over extra keywords, and set attributes.
+        PyObject *key, *value;
+        Py_ssize_t pos = 0;
+        while (PyDict_Next(kwds, &pos, &key, &value)) {
+          PythonData field(value);
+          PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+          DataKeyword attr(PyBytes_AsString(key_utf8));
+          Py_DECREF(key_utf8);
+          if (!attr.isA(ForecastBucket::tag_forecast) &&
+              !attr.isA(Tags::start) && !attr.isA(Tags::name) &&
+              !attr.isA(Tags::type) && !attr.isA(Tags::action)) {
+            const MetaFieldBase* fmeta =
+                fcstbckt->getType().findField(attr.getHash());
+            if (!fmeta && fcstbckt->getType().category)
+              fmeta = fcstbckt->getType().category->findField(attr.getHash());
+            if (fmeta)
+              // Update the attribute
+              fmeta->setField(fcstbckt, field);
+            else
+              fcstbckt->setProperty(attr.getName(), value);
+          }
+        };
+
+        // Return the object
+        Py_INCREF(fcstbckt);
+        return fcstbckt;
+      }
+    }
+    return nullptr;
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
+}
+
+ForecastBucketData::ForecastBucketData(const ForecastBase* f, Date s, Date e,
+                                       short i, bool d)
+    : fcst(const_cast<ForecastBase*>(f)), dates(s, e), index(i) {
+  if (d) markDirty();
+  if (fcst->getPlanned()) {
+    string fcstbcktname;
+    if (e - s > Duration(22L * 3600L))
+      fcstbcktname = static_cast<const Forecast*>(f)->getName() + " - " +
+                     s.toString("%Y-%m-%d");
+    else
+      fcstbcktname =
+          static_cast<const Forecast*>(f)->getName() + " - " + string(s);
+    auto tmp = Demand::find(fcstbcktname);
+    if (tmp && tmp->hasType<ForecastBucket>())
+      fcstbkt = static_cast<ForecastBucket*>(tmp);
+  }
+}
+
+ForecastBucket::ForecastBucket(Forecast* f, const DateRange& b, short i)
+    : timebucket(b), bucketindex(i) {
+  if (!f->getName().empty()) {
+    if (b.getDuration() > Duration(22L * 3600L))
+      setName(f->getName() + " - " + b.getStart().toString("%Y-%m-%d"));
+    else
+      setName(f->getName() + " - " + string(b.getStart()));
+  }
+  setOwner(f);
+  setHidden(true);  // Avoid the subdemands show up in the list of demands
+  setItem(f->getItem());
+  setCustomer(f->getCustomer());
+  auto currentdate = Plan::instance().getCurrent();
+  Date due;
+  switch (DueWithinBucket) {
+    case 0:  // Start
+      due = b.getStart();
+      break;
+    case 1: {  // Middle
+      DateDetail tmp =
+          b.getStart() + Duration(b.getDuration().getSeconds() / 2);
+      tmp.roundDownDay();  // Truncate to the start of the day
+      due = tmp;
+      break;
+    }
+    case 2: {  // End
+      // Removing one second to the end date to remain in the same bucket.
+      due = b.getEnd() - Duration(1L);
+      break;
+    }
+  }
+  if (b.getStart() <= currentdate && b.getEnd() > currentdate &&
+      due < currentdate)
+    // Forecast in the current week shouldn't be in the past
+    due = currentdate;
+  setDue(due);
+  setPriority(f->getPriority());
+  setMaxLateness(f->getMaxLateness());
+  auto tmp = f->getRawMinShipment();
+  if (tmp >= 0.0) setMinShipment(tmp);
+  if (f->getOperation()) setOperation(f->getOperation());
+  setLocation(f->getLocation());
+  initType(metadata);
+}
+
+void ForecastBucket::writeProperties(Serializer& o) const {
+  Object::writeProperties(o);
+  auto fcstdata = getForecast()->getData();
+  auto& fcstbktdata = fcstdata->getBuckets()[bucketindex];
+  for (auto& tmp : fcstbktdata.getMeasures())
+    o.writeElement(Tags::data, tmp.first, tmp.second);
+}
+
+double ForecastBucket::getForecastTotal() const {
+  auto data = getForecast()->getData();
+  return Measures::forecasttotal->getValue(data->getBuckets()[bucketindex]);
+}
+
+double ForecastBucket::getForecastNet() const {
+  auto data = getForecast()->getData();
+  auto& bcktdata = data->getBuckets()[bucketindex];
+  return Measures::forecasttotal->getValue(bcktdata) -
+         Measures::forecastconsumed->getValue(bcktdata);
+}
+
+double ForecastBucket::getForecastConsumed() const {
+  auto data = getForecast()->getData();
+  return Measures::forecastconsumed->getValue(data->getBuckets()[bucketindex]);
+}
+
+double ForecastBucket::getForecastBaseline() const {
+  auto data = getForecast()->getData();
+  return Measures::forecastbaseline->getValue(data->getBuckets()[bucketindex]);
+}
+
+void ForecastBucket::setForecastBaseline(double v) {
+  auto data = getForecast()->getData();
+  Measures::forecastbaseline->disaggregate(data->getBuckets()[bucketindex], v);
+}
+
+double ForecastBucket::getForecastOverride() const {
+  auto data = getForecast()->getData();
+  return Measures::forecastoverride->getValue(data->getBuckets()[bucketindex]);
+}
+
+void ForecastBucket::setForecastOverride(double v) {
+  auto data = getForecast()->getData();
+  Measures::forecastoverride->disaggregate(data->getBuckets()[bucketindex], v);
+}
+
+double ForecastBucket::getOrdersOpen() const {
+  auto data = getForecast()->getData();
+  return Measures::ordersopen->getValue(data->getBuckets()[bucketindex]);
+}
+
+double ForecastBucket::getOrdersTotal() const {
+  auto data = getForecast()->getData();
+  return Measures::orderstotal->getValue(data->getBuckets()[bucketindex]);
+}
+
+void ForecastBucket::setOrdersTotal(double v) {
+  auto data = getForecast()->getData();
+  Measures::orderstotal->disaggregate(data->getBuckets()[bucketindex], v);
+}
+
+double ForecastBucket::getOrdersAdjustment() const {
+  auto data = getForecast()->getData();
+  return Measures::ordersadjustment->getValue(data->getBuckets()[bucketindex]);
+}
+
+void ForecastBucket::setOrdersAdjustment(double v) {
+  auto data = getForecast()->getData();
+  Measures::ordersadjustment->disaggregate(data->getBuckets()[bucketindex], v);
+}
+
+bool Forecast::callback(Calendar* l, const Signal a) {
+  // This function is called when a calendar is about to be deleted.
+  // If that calendar happens to be the one defining calendar buckets, we
+  // reset the calendar pointer to null.
+  if (calptr == l) calptr = nullptr;
+  return true;
+}
+
+Forecast::~Forecast() {
+  // Update the dictionary
+  eraseFromHash(this);
+
+  // Delete all children demands
+  ForecastBucket::bucketiterator iter(this);
+  while (ForecastBucket* bckt = iter.next()) delete bckt;
+}
+
+void Forecast::setPlanned(const bool b) {
+  if (planned == b) return;
+  planned = b;
+  if (getItem() && getLocation() && getCustomer()) {
+    for (auto m = getMembers(); m != end(); ++m)
+      m->setQuantity(b ? static_cast<ForecastBucket*>(&*m)->getForecastNet()
+                       : 0);
+  }
+}
+
+void ForecastBase::setFields(DateRange& d, const DataValueDict& in,
+                             CommandManager* mgr, bool add) {
+  // Get all data, if not done yet
+  auto data = getData();
+
+  // Find all forecast demands, and sum their weights
+  double weights = 0.0;
+  for (auto& x : data->getBuckets()) {
+    if (d.intersect(x.getDates())) {
+      // Bucket intersects with daterange
+      if (!d.getDuration()) {
+        // Single date provided. Update that one bucket.
+        // TODO Currently we only update the fcstoverride field
+        const DataValue* fcstOverrideElement =
+            in.get(ForecastBucket::tag_forecast_override);
+        if (fcstOverrideElement) {
+          double total = fcstOverrideElement->getDouble();
+          Measures::forecastoverride->disaggregate(
+              this, x.getStart(), x.getEnd(),
+              add ? Measures::forecastoverride->getValue(x) + total : total,
+              false, 0.0, mgr);
+        }
+        return;
+      }
+      weights += static_cast<double>(x.getDates().overlap(d));
+    }
+  }
+
+  // Update the forecast quantity, respecting the weights
+  // TODO Currently we only update the total field. Need to do this for all
+  // possible fields...
+  const DataValue* fcstOverrideElement =
+      in.get(ForecastBucket::tag_forecast_override);
+  if (fcstOverrideElement) {
+    double total = fcstOverrideElement->getDouble();
+    // Expect to find at least one non-zero weight...
+    if (!weights && total) {
+      ostringstream o;
+      o << "No valid forecast date in range " << d << " of forecast '"
+        << getForecastItem() << "', '" << getForecastLocation() << "', '"
+        << getForecastCustomer() << "'";
+      throw DataException(o.str());
+    } else if (weights)
+      total /= weights;
+    double carryover = 0.0;
+    for (auto& x : data->getBuckets()) {
+      if (d.intersect(x.getDates())) {
+        // Bucket intersects with daterange
+        Duration o = x.getDates().overlap(d);
+        double percent = static_cast<double>(o);
+        if (getDiscrete()) {
+          // Rounding to discrete numbers
+          carryover += total * percent;
+          auto intdelta = ceil(carryover - 0.5);
+          if (!intdelta)
+            // Little trick to avoid "-0" as forecast override
+            intdelta = 0.0;
+          carryover -= intdelta;
+          if (o < x.getDates().getDuration() || add) {
+            // The bucket is only partially updated
+            auto tmp = Measures::forecastoverride->getValue(x);
+            if (tmp == -1) tmp = 0;
+            Measures::forecastoverride->disaggregate(this, x.getStart(),
+                                                     x.getEnd(), tmp + intdelta,
+                                                     false, 0.0, mgr);
+          } else
+            // The bucket is completely updated
+            Measures::forecastoverride->disaggregate(
+                this, x.getStart(), x.getEnd(), intdelta, false, 0.0, mgr);
+        } else {
+          // No rounding
+          if (o < x.getDates().getDuration() || add) {
+            // The bucket is only partially updated
+            auto tmp = Measures::forecastoverride->getValue(x);
+            if (tmp == -1) tmp = 0;
+            Measures::forecastoverride->disaggregate(
+                this, x.getStart(), x.getEnd(), tmp + total * percent, false,
+                0.0, mgr);
+          } else
+            // The bucket is completely updated
+            Measures::forecastoverride->disaggregate(
+                this, x.getStart(), x.getEnd(), total * percent, false, 0.0,
+                mgr);
+        }
+      }
+    }
+  }
+}
+
+void Forecast::setItem(Item* i) {
+  // No change
+  if (getItem() == i) return;
+
+  // Check for duplicates
+  if (getLocation() && i && getCustomer()) {
+    auto exists = findForecast(i, getCustomer(), getLocation());
+    if (exists) {
+      if (exists->isAggregate()) {
+        // Replace existing element
+        eraseFromHash(exists);
+        delete exists;
+      } else
+        // Already exists
+        throw DataException(
+            "Duplicate forecast for item, location and customer");
+    }
+  }
+
+  // Update the dictionary
+  if (getLocation() && getItem() && getCustomer()) eraseFromHash(this);
+  Demand::setItem(i);
+  if (getLocation() && getItem() && getCustomer()) insertInHash(this);
+
+  // Update the item for all buckets/subdemands
+  for (auto m = getMembers(); m != end(); ++m) m->setItem(i);
+}
+
+void Forecast::setCustomer(Customer* i) {
+  // No change
+  if (getCustomer() == i) return;
+
+  // Check for duplicates
+  if (getLocation() && getItem() && i) {
+    auto exists = findForecast(getItem(), i, getLocation());
+    if (exists) {
+      if (exists->isAggregate()) {
+        // Replace existing element
+        eraseFromHash(exists);
+        delete exists;
+      } else
+        // Already exists
+        throw DataException(
+            "Duplicate forecast for item, location and customer");
+    }
+  }
+
+  // Update the dictionary
+  if (getLocation() && getItem() && getCustomer()) eraseFromHash(this);
+  Demand::setCustomer(i);
+  if (getLocation() && getItem() && getCustomer()) insertInHash(this);
+
+  // Update the item for all buckets/subdemands
+  for (auto m = getMembers(); m != end(); ++m) m->setCustomer(i);
+}
+
+void Forecast::setLocation(Location* i) {
+  // No change
+  if (getLocation() == i) return;
+
+  // Check for duplicates
+  if (i && getItem() && getCustomer()) {
+    auto exists = findForecast(getItem(), getCustomer(), i);
+    if (exists) {
+      if (exists->isAggregate()) {
+        // Replace existing element
+        eraseFromHash(exists);
+        delete exists;
+      } else
+        // Already exists
+        throw DataException(
+            "Duplicate forecast for item, location and customer");
+    }
+  }
+
+  // Update the dictionary
+  if (getLocation() && getItem() && getCustomer()) eraseFromHash(this);
+  Demand::setLocation(i);
+  if (getLocation() && getItem() && getCustomer()) insertInHash(this);
+
+  // Update the item for all buckets/subdemands
+  for (auto m = getMembers(); m != end(); ++m) m->setLocation(i);
+}
+
+void Forecast::setMaxLateness(Duration i) {
+  Demand::setMaxLateness(i);
+  // Update the maximum lateness for all buckets/subdemands
+  for (auto m = getMembers(); m != end(); ++m) m->setMaxLateness(i);
+}
+
+void Forecast::setMinShipment(double i) {
+  Demand::setMinShipment(i);
+  // Update the minimum shipment for all buckets/subdemands
+  for (auto m = getMembers(); m != end(); ++m) m->setMinShipment(i);
+}
+
+void Forecast::setPriority(int i) {
+  Demand::setPriority(i);
+  // Update the priority for all buckets/subdemands
+  for (auto m = getMembers(); m != end(); ++m) m->setPriority(i);
+}
+
+void Forecast::setMethodsString(const string& n) {
+  int tmp_methods = 0;
+  if (n.empty())
+    tmp_methods |= METHOD_ALL;
+  else {
+    for (const char* ch = n.c_str(); *ch; ++ch) {
+      if (isspace(*ch) || ispunct(*ch)) continue;
+      if (!strncmp(ch, "automatic", 9)) {
+        ch += 8;
+        tmp_methods |= METHOD_ALL;
+      } else if (!strncmp(ch, "constant", 8)) {
+        ch += 7;
+        tmp_methods |= METHOD_CONSTANT;
+      } else if (!strncmp(ch, "trend", 5)) {
+        ch += 4;
+        tmp_methods |= METHOD_TREND;
+      } else if (!strncmp(ch, "intermittent", 12)) {
+        ch += 11;
+        tmp_methods |= METHOD_CROSTON;
+      } else if (!strncmp(ch, "seasonal", 8)) {
+        ch += 7;
+        tmp_methods |= METHOD_SEASONAL;
+      } else if (!strncmp(ch, "moving average", 14)) {
+        ch += 13;
+        tmp_methods |= METHOD_MOVINGAVERAGE;
+      } else if (!strncmp(ch, "manual", 6)) {
+        ch += 5;
+        tmp_methods |= METHOD_MANUAL;
+      } else
+        throw DataException("Can't parse forecast methods list");
+    }
+  }
+  methods = tmp_methods;
+}
+
+string Forecast::getMethodsString() const {
+  if (!methods || methods & METHOD_MANUAL) return "manual";
+  if ((methods & METHOD_ALL) == METHOD_ALL) return "automatic";
+  stringstream o;
+  bool first = true;
+  if (methods & METHOD_CONSTANT) {
+    if (first) {
+      first = false;
+      o << "constant";
+    } else
+      o << ", constant";
+  }
+  if (methods & METHOD_TREND) {
+    if (first) {
+      first = false;
+      o << "trend";
+    } else
+      o << ", trend";
+  }
+  if (methods & METHOD_SEASONAL) {
+    if (first) {
+      first = false;
+      o << "seasonal";
+    } else
+      o << ", seasonal";
+  }
+  if (methods & METHOD_CROSTON) {
+    if (first) {
+      first = false;
+      o << "intermittent";
+    } else
+      o << ", intermittent";
+  }
+  if (methods & METHOD_MOVINGAVERAGE) {
+    if (first) {
+      first = false;
+      o << "moving average";
+    } else
+      o << ", moving average";
+  }
+  return o.str();
+}
+
+void ForecastBase::ParentIterator::increment() {
+  while (item) {
+    // Find the next parent
+    if (customer) customer = customer->getOwner();
+    if (!customer) {
+      customer = rootforecast->getForecastCustomer();
+      if (location) location = location->getOwner();
+      if (!location) {
+        location = rootforecast->getForecastLocation();
+        if (item) item = item->getOwner();
+      }
+    }
+
+    // Check if a forecast exists at this combination
+    if (item) {
+      forecast = Forecast::findForecast(item, customer, location);
+      if (!forecast)
+        forecast = new ForecastAggregated(item, location, customer);
+      return;
+    }
+  }
+
+  // No more parents exists
+  customer = nullptr;
+  location = nullptr;
+  forecast = nullptr;
+}
+
+void ForecastBase::ChildIterator::increment() {
+  do {
+    // Move to the next item, location, customer combination
+    // Increment customer
+    if (customer == rootforecast->getForecastCustomer())
+      customer = customer->getFirstChild();
+    else
+      customer = customer->getNextBrother();
+    if (!customer) {
+      // Increment location
+      customer = rootforecast->getForecastCustomer();
+      if (location == rootforecast->getForecastLocation())
+        location = location->getFirstChild();
+      else
+        location = location->getNextBrother();
+      if (!location) {
+        location = rootforecast->getForecastLocation();
+        // Increment item
+        if (item == rootforecast->getForecastItem())
+          item = item->getFirstChild();
+        else
+          item = item->getNextBrother();
+        if (!item) {
+          // End of iteration
+          item = nullptr;
+          customer = nullptr;
+          location = nullptr;
+          forecast = nullptr;
+          return;
+        }
+      }
+    }
+
+    // Check if a forecast exists at this combination
+    forecast = Forecast::findForecast(item, customer, location);
+  } while (!forecast);
+}
+
+void ForecastBase::LeaveIterator::increment() {
+  do {
+    if ((++customer).empty()) {
+      customer = Customer::memberRecursiveIterator(
+          rootforecast->getForecastCustomer());
+      if ((++location).empty()) {
+        location = Location::memberRecursiveIterator(
+            rootforecast->getForecastLocation());
+        if ((++item).empty()) {
+          // End of the iteration
+          forecast = nullptr;
+          return;
+        }
+      }
+    }
+
+    auto tmp = Forecast::findForecast(&*item, &*customer, &*location);
+    if (tmp) {
+      forecast = tmp;
+      if (measure ? measure->isLeaf(forecast) : forecast->isLeaf())
+        // A leaf forecast exists at this combination
+        return;
+    }
+  } while (true);
+}
+
+double ForecastBucket::getOrdersAdjustmentMinus1() const {
+  auto data = getForecast()->getData();
+  Date tmpdate = getDue() - Duration(365 * 86400L);
+  for (auto& b : data->getBuckets()) {
+    if (b.getStart() <= tmpdate && b.getEnd() > tmpdate)
+      return Measures::ordersadjustment->getValue(b);
+  }
+  return 0.0;
+}
+
+void ForecastBucket::setOrdersAdjustmentMinus1(double val) {
+  auto data = getForecast()->getData();
+  Date tmpdate = getDue() - Duration(365 * 86400L);
+  for (auto& b : data->getBuckets()) {
+    if (b.getStart() <= tmpdate && b.getEnd() > tmpdate) {
+      Measures::ordersadjustment->disaggregate(b, val);
+      return;
+    }
+  }
+}
+
+double ForecastBucket::getOrdersAdjustmentMinus2() const {
+  auto data = getForecast()->getData();
+  Date tmpdate = getDue() - Duration(2 * 365 * 86400L);
+  for (auto& b : data->getBuckets()) {
+    if (b.getStart() <= tmpdate && b.getEnd() > tmpdate)
+      return Measures::ordersadjustment->getValue(b);
+  }
+  return 0.0;
+}
+
+void ForecastBucket::setOrdersAdjustmentMinus2(double val) {
+  auto data = getForecast()->getData();
+  Date tmpdate = getDue() - Duration(2 * 365 * 86400L);
+  for (auto& b : data->getBuckets()) {
+    if (b.getStart() <= tmpdate && b.getEnd() > tmpdate) {
+      Measures::ordersadjustment->disaggregate(b, val);
+      return;
+    }
+  }
+}
+
+double ForecastBucket::getOrdersAdjustmentMinus3() const {
+  auto data = getForecast()->getData();
+  Date tmpdate = getDue() - Duration(3 * 365 * 86400L);
+  for (auto& b : data->getBuckets()) {
+    if (b.getStart() <= tmpdate && b.getEnd() > tmpdate)
+      return Measures::ordersadjustment->getValue(b);
+  }
+  return 0.0;
+}
+
+void ForecastBucket::setOrdersAdjustmentMinus3(double val) {
+  auto data = getForecast()->getData();
+  Date tmpdate = getDue() - Duration(3 * 365 * 86400L);
+  for (auto& b : data->getBuckets()) {
+    if (b.getStart() <= tmpdate && b.getEnd() > tmpdate) {
+      Measures::ordersadjustment->disaggregate(b, val);
+      return;
+    }
+  }
+}
+
+double ForecastBucket::getOrdersPlanned() const {
+  auto fcstdata = getForecast()->getData();
+  return fcstdata->getBuckets()[getIndex()].getOrdersPlanned();
+}
+
+double ForecastBucketData::getOrdersPlanned() const {
+  if (!getForecast()->getPlanned()) return 0.0;
+  double planned = 0.0;
+  Item::bufferIterator bufiter(getForecast()->getForecastItem());
+  while (Buffer* buf = bufiter.next()) {
+    if (buf->getLocation() != getForecast()->getForecastLocation()) continue;
+
+    for (auto& oo : buf->getFlowPlans()) {
+      if (oo.getQuantity() >= 0 || oo.getEventType() != 1) continue;
+      OperationPlan* opplan = static_cast<FlowPlan&>(oo).getOperationPlan();
+      DemandDefault* dmd = dynamic_cast<DemandDefault*>(opplan->getDemand());
+      if (dmd && getDates().within(opplan->getEnd()) &&
+          dmd->getCustomer() == getForecast()->getForecastCustomer())
+        planned += opplan->getQuantity();
+    }
+  }
+  return planned;
+}
+
+double ForecastBucket::getForecastPlanned() const {
+  auto fcstdata = getForecast()->getData();
+  return fcstdata->getBuckets()[getIndex()].getForecastPlanned();
+}
+
+double ForecastBucketData::getForecastPlanned() const {
+  // Find all delivery operationplans that fall within this forecast bucket
+  if (!getForecast()->getPlanned()) return 0.0;
+  double planned = 0.0;
+  auto fcst = static_cast<const Forecast*>(getForecast());
+  for (auto m = fcst->getMembers(); m != Demand::end(); ++m) {
+    auto dlvryIter = m->getOperationPlans();
+    while (OperationPlan* dlvry = dlvryIter.next())
+      if (getDates().within(dlvry->getEnd())) planned += dlvry->getQuantity();
+  }
+  return planned;
+}
+
+ForecastData::ForecastData(const ForecastBase* f) {
+  if (Cache::instance->getLogLevel() > 0)
+    logger << "Cache reads forecast " << f->getForecastItem() << "   "
+           << f->getForecastLocation() << "   " << f->getForecastCustomer()
+           << endl;
+
+  // One off initialization
+  thread_local static string dbconnection =
+      Plan::instance().getStringProperty("dbconnection");
+  thread_local static DatabaseReader db(dbconnection);
+  thread_local static DatabasePreparedStatement<5> stmt;
+  thread_local static short mode = 0;
+  if (!mode) {
+    if (dbconnection.empty())
+      // Mode 1: Not connected to a database
+      mode = 1;
+    else {
+      // Mode 2: Connected to a database
+      mode = 2;
+      // We use a single, dedicated database connection for this
+      std::string str =
+          "select extract(epoch from startdate), extract(epoch from enddate), "
+          "value from forecastplan "
+          "where item_id = $1::text and location_id = $2::text "
+          "and customer_id = $3::text "
+          "and enddate >= $4::timestamp and startdate <= $5::timestamp "
+          "order by startdate";
+
+      if (f->getForecastPartition() != -1) {
+        const string s = "forecastplan";
+        string t = "forecastplan_";
+        t.append(to_string(f->getForecastPartition()));
+
+        string::size_type n = 0;
+        while ((n = str.find(s, n)) != string::npos) {
+          str.replace(n, s.size(), t);
+          n += t.size();
+        }
+      }
+      try {
+        stmt =
+            DatabasePreparedStatement<5>(db, "Read forecastplan values", str);
+        auto currentdate = Plan::instance().getCurrent();
+        stmt.setArgument(
+            3, currentdate - Duration(86400L * f->getHorizonHistory()));
+        stmt.setArgument(
+            4, currentdate + Duration(86400L * f->getHorizonFuture()));
+      } catch (...) {
+        db.closeConnection();
+      }
+    }
+  }
+
+  // One-of building of forecast bucket dates
+  thread_local static vector<DateRange> dates;
+  if (dates.empty()) {
+    Date prevDate;
+    Date hrzn_start =
+        Plan::instance().getCurrent() -
+        Duration(ForecastBase::getHorizonHistoryStatic() * 86400L);
+    Date hrzn_end = Plan::instance().getCurrent() +
+                    Duration(ForecastBase::getHorizonFutureStatic() * 86400L);
+    for (Calendar::EventIterator i(Forecast::getCalendar_static());
+         prevDate <= hrzn_end; prevDate = i.getDate(), ++i) {
+      if (prevDate && i.getDate() > hrzn_start &&
+          i.getDate() != Date::infiniteFuture)
+        dates.push_back(DateRange(prevDate, i.getDate()));
+    }
+  }
+
+  // Create buckets
+  short cnt = 0;
+  for (auto b : dates)
+    buckets.emplace_back(f, b.getStart(), b.getEnd(), cnt++, mode == 2);
+
+  if (mode == 2) {
+    // Reading forecast data from a database connection
+    stmt.setArgument(0, f->getForecastItem()->getName());
+    stmt.setArgument(1, f->getForecastLocation()->getName());
+    stmt.setArgument(2, f->getForecastCustomer()->getName());
+    DatabaseResult res(db, stmt);
+    auto totalRows = res.countRows();
+    auto bckiter = buckets.begin();
+    for (int i = 0; i < totalRows; ++i) {
+      // Find the matching forecastbucketdata object
+      Date st(res.getValueLong(i, 0));
+      Date nd(res.getValueLong(i, 1));
+      while (bckiter != buckets.end() && bckiter->getStart() < st)
+        // missing record in the database, which is perfectly ok
+        ++bckiter;
+      if (bckiter == buckets.end()) {
+        logger << "Time buckets not aligned: got " << st << ", " << nd << endl;
+        throw DataException("Forecastplan buckets not matching calendar");
+      }
+      if (bckiter->getStart() != st || bckiter->getEnd() != nd) {
+        logger << "Time buckets not aligned: got " << st << ", " << nd
+               << " and expected " << bckiter->getStart() << ", "
+               << bckiter->getEnd() << endl;
+        throw DataException("Forecastplan buckets not matching calendar");
+      }
+
+      // Parse the JSON content, which is expected to be in the format:
+      //   {"a": number, "b": number, ...}
+      // Malformed JSON content is silently ignored.
+      auto jsondata = res.getValueString(i, 2);
+      rapidjson::Document doc;
+      if (!doc.Parse(jsondata.c_str()).HasParseError() && doc.IsObject()) {
+        for (auto itr = doc.MemberBegin(); itr != doc.MemberEnd(); ++itr) {
+          // Only non-default values are kept in the dictionary
+          auto key = itr->name.GetString();
+          auto msr = ForecastMeasure::find(key);
+          if (!msr)
+            // Silently ignore this measure
+            continue;
+          if (itr->value.IsDouble()) {
+            auto val = itr->value.GetDouble();
+            if (val != msr->getDefault())
+              bckiter->setValue(false, msr, val);
+            else
+              bckiter->removeValue(false, msr);
+          } else if (itr->value.IsInt()) {
+            auto val = itr->value.GetInt();
+            if (val != msr->getDefault())
+              bckiter->setValue(false, msr, val);
+            else
+              bckiter->removeValue(false, msr);
+          } else if (itr->value.IsInt64()) {
+            auto val = itr->value.GetInt64();
+            if (val != msr->getDefault())
+              bckiter->setValue(false, msr, static_cast<double>(val));
+            else
+              bckiter->removeValue(false, msr);
+          } else if (itr->value.IsUint()) {
+            auto val = itr->value.GetUint();
+            if (val != msr->getDefault())
+              bckiter->setValue(false, msr, val);
+            else
+              bckiter->removeValue(false, msr);
+          } else if (itr->value.IsUint64()) {
+            auto val = itr->value.GetUint64();
+            if (val != msr->getDefault())
+              bckiter->setValue(false, msr, static_cast<double>(val));
+            else
+              bckiter->removeValue(false, msr);
+          } else if (itr->value.IsBool()) {
+            auto val = itr->value.GetBool();
+            if (val)
+              bckiter->setValue(false, msr, 1);
+            else
+              bckiter->removeValue(false, msr);
+          } else if (itr->value.IsNull()) {
+            if (msr->getValue(buckets.back())) bckiter->removeValue(false, msr);
+          }
+        }
+
+        // Update the supply side
+        if (bckiter->getEnd() > Plan::instance().getCurrent() &&
+            f->getPlanned()) {
+          auto tmp = Measures::forecastnet->getValue(*bckiter);
+          if (tmp)
+            bckiter->getOrCreateForecastBucket()->setQuantity(tmp);
+          else {
+            auto fcstbckt = bckiter->getOrCreateForecastBucket();
+            if (fcstbckt)
+              bckiter->getOrCreateForecastBucket()->setQuantity(0.0);
+          }
+        }
+      }
+    }
+
+    // We need an additional loop to reset the dirty flag on all buckets:
+    bckiter = buckets.begin();
+    while (bckiter != buckets.end()) {
+      bckiter->clearDirty();
+      ++bckiter;
+    }
+  }
+}
+
+void ForecastData::clearDirty() const {
+  for (auto i = buckets.begin(); i != buckets.end(); ++i) i->clearDirty();
+}
+
+size_t ForecastData::getSize() const {
+  size_t tmp = 0;
+  size_t cnt = 0;
+  for (auto i = buckets.begin(); i != buckets.end(); ++i) {
+    ++cnt;
+    tmp += i->getSize();
+  }
+  return tmp;
+}
+
+size_t ForecastBucketData::getSize() const {
+  // Assuming the implementation of the measure map is a red-black binary tree,
+  // the size per measure is a) a pointer to a pooledstring, b) a pointer to the
+  // numeric, and c) 3 pointers to maintain the tree structure.
+  return sizeof(ForecastBucketData) +
+         measures.size() * (4 * sizeof(void*) + sizeof(double));
+}
+
+void ForecastData::flush() {
+  if (Cache::instance->getLogLevel() > 0) {
+    assert(!buckets.empty());
+    auto fcst = buckets[0].getForecast();
+    logger << "Cache writes forecast " << fcst->getForecastItem() << "   "
+           << fcst->getForecastLocation() << "   "
+           << fcst->getForecastCustomer() << endl;
+  }
+
+  try {
+    thread_local static string dbconnection =
+        Plan::instance().getStringProperty("dbconnection");
+    thread_local static DatabaseReader db(dbconnection);
+    thread_local static DatabasePreparedStatement<48> stmt;
+    thread_local static DatabasePreparedStatement<0> stmt_begin;
+    thread_local static DatabasePreparedStatement<0> stmt_end;
+    thread_local static short mode = 0;
+    if (mode == 0) {
+      // We use a single, dedicated database connection for this
+      if (dbconnection.empty())
+        mode = 1;
+      else {
+        mode = 2;
+        try {
+          string str =
+              "with cte (st, nd, val) as ( values "
+              "($1, $2, $3),"
+              "($4, $5, $6),"
+              "($7, $8, $9),"
+              "($10, $11, $12),"
+              "($13, $14, $15),"
+              "($16, $17, $18),"
+              "($19, $20, $21),"
+              "($22, $23, $24),"
+              "($25, $26, $27),"
+              "($28, $29, $30),"
+              "($31, $32, $33),"
+              "($34, $35, $36),"
+              "($37, $38, $39),"
+              "($40, $41, $42),"
+              "($43, $44, $45)"
+              ")"
+              "insert into forecastplan";
+          auto partition = ForecastBase::getForecastPartitionStatic();
+          if (partition != -1) {
+            str += "_";
+            str += to_string(partition);
+          }
+          str +=
+              "  as fcstplan "
+              "(item_id,location_id,customer_id,startdate,enddate,value)"
+              "  select $46,$47,$48,st::timestamp,nd::timestamp,val::jsonb"
+              "  from cte where st is not null "
+              "on conflict(item_id, location_id, customer_id, startdate) "
+              "do update set value = excluded.value "
+              "where fcstplan.value is distinct from excluded.value";
+          stmt = DatabasePreparedStatement<48>(db, "forecastplan_write", str);
+          stmt_begin = DatabasePreparedStatement<0>(db, "begin_trx", "begin");
+          stmt_end = DatabasePreparedStatement<0>(db, "commit_trx", "commit");
+        } catch (exception& e) {
+          logger << "Error creating forecastplan export:" << endl;
+          logger << e.what() << endl;
+          db.closeConnection();
+        } catch (...) {
+          db.closeConnection();
+        }
+      }
+    }
+
+    if (mode == 2) {
+      // start a transaction
+      DatabaseResult(db, stmt_begin);
+      bool first = true;
+      short argcount = 0;
+      for (auto& i : buckets) {
+        if (!i.isDirty()) continue;
+        if (first) {
+          if (!i.getForecast()->getForecastItem() ||
+              !i.getForecast()->getForecastLocation() ||
+              !i.getForecast()->getForecastCustomer())
+            break;
+          stmt.setArgument(45, i.getForecast()->getForecastItem()->getName());
+          stmt.setArgument(46,
+                           i.getForecast()->getForecastLocation()->getName());
+          stmt.setArgument(47,
+                           i.getForecast()->getForecastCustomer()->getName());
+          first = false;
+        }
+        stmt.setArgument(argcount, i.getStart());
+        stmt.setArgument(argcount + 1, i.getEnd());
+        stmt.setArgument(argcount + 2, i.toString());
+        if (argcount < 42)
+          argcount += 3;
+        else {
+          DatabaseResult(db, stmt);
+          argcount = 0;
+        }
+        i.clearDirty();
+      }
+      if (argcount > 0) {
+        while (argcount <= 42) {
+          stmt.setArgument(argcount, "");
+          stmt.setArgument(argcount + 1, "");
+          stmt.setArgument(argcount + 2, "");
+          argcount += 3;
+        }
+        DatabaseResult(db, stmt);
+      }
+      // commit the transaction
+      DatabaseResult(db, stmt_end);
+    }
+  } catch (exception& e) {
+    logger << "Exception caught when saving a forecast" << e.what() << endl;
+  }
+}
+
+ForecastBucket* ForecastBucketData::getOrCreateForecastBucket() const {
+  if (!fcstbkt)
+    const_cast<ForecastBucketData*>(this)->fcstbkt =
+        new ForecastBucket(static_cast<Forecast*>(fcst), dates, index);
+  return fcstbkt;
+}
+
+void ForecastBucketData::deleteForecastBucket() const {
+  delete fcstbkt;
+  const_cast<ForecastBucketData*>(this)->fcstbkt = nullptr;
+}
+
+void ForecastBucketData::markDirty() {
+  if (dirty) return;
+  dirty = true;
+  getForecast()->markDirty();
+}
+
+string ForecastBucketData::toString(bool add_dates) const {
+  stringstream o;
+  // Use the same precision as we use for all numbers in our postgres database
+  o.precision(20);
+  o << "{";
+  bool first = true;
+  if (add_dates) {
+    o << "\"startdate\":\"" << getStart() << "\",\"enddate\":\"" << getEnd()
+      << "\"";
+    first = false;
+  }
+  for (auto tmp = measures.begin(); tmp != measures.end(); ++tmp)
+    if (tmp->first.front() != '-') {
+      // Measures starting with '-' are hidden, temporary measures
+      if (first) {
+        first = false;
+        o << "\"" << tmp->first << "\":" << round(tmp->second * 1e8) / 1e8;
+      } else
+        o << ",\"" << tmp->first << "\":" << round(tmp->second * 1e8) / 1e8;
+    }
+  o << "}";
+  return o.str();
+}
+
+string ForecastData::toString() const {
+  stringstream o;
+  o << "[";
+  bool first = true;
+  for (auto& tmp : buckets) {
+    if (first)
+      first = false;
+    else
+      o << ',';
+    o << tmp.toString(true);
+  }
+  o << "]";
+  return o.str();
+}
+
+CommandSetForecastData::CommandSetForecastData(ForecastBucketData* b,
+                                               const ForecastMeasure* k,
+                                               double newvalue)
+    : owner(b->getForecast()->getData()), fcstbucket(b), key(k) {
+  oldvalue = key->getValue(*b);
+}
+
+void Forecast::parse(Object* o, const DataValueDict& in, CommandManager* mgr) {
+  // TODO currently only the JSON parser calls this function
+
+  // Validate the forecast field
+  ForecastBase* forecast = nullptr;
+  auto fcstname = in.get(ForecastBucket::tag_forecast);
+  if (fcstname) {
+    auto tmp = Demand::find(fcstname->getString());
+    if (tmp && tmp->hasType<Forecast>()) forecast = static_cast<Forecast*>(tmp);
+  }
+
+  if (!forecast) {
+    // Validate item
+    Item* item = nullptr;
+    auto itemname = in.get(Tags::item);
+    if (itemname) item = Item::find(itemname->getString());
+
+    // Validate location
+    Location* location = nullptr;
+    auto locname = in.get(Tags::location);
+    if (locname) location = Location::find(locname->getString());
+
+    // Validate customer
+    Customer* customer;
+    auto custname = in.get(Tags::customer);
+    if (custname)
+      customer = Customer::find(custname->getString());
+    else
+      // Customer field can be left blank.
+      // This is used in the inventory planning screen.
+      customer = Customer::getRoot();
+
+    // Check if a forecast can be found here
+    if (item && customer && location)
+      forecast = Forecast::findForecast(item, customer, location, true);
+    if (!forecast)
+      throw DataException(
+          "Required fields missing: forecast or item, location and customer");
+  }
+
+  // Pick up the start and end date
+  Date startdate;
+  Date enddate;
+  auto dateval = in.get(Tags::startdate);
+  if (dateval) startdate = dateval->getDate();
+  dateval = in.get(Tags::enddate);
+  if (dateval) enddate = dateval->getDate();
+  if (!enddate && !startdate)
+    throw DataException("Missing startdate and enddate");
+  else if (!enddate)
+    enddate = startdate;
+  else if (!startdate)
+    startdate = enddate;
+
+  // Parse the measures
+  // TODO This code accesses internal APIs of JSONDataValueDict
+  auto& j = static_cast<const JSONDataValueDict&>(in);
+  for (auto i = j.strt; i <= j.nd; ++i) {
+    if (j.fields[i].name == "startdate" || j.fields[i].name == "enddate" ||
+        j.fields[i].name == "item" || j.fields[i].name == "location" ||
+        j.fields[i].name == "customer" || j.fields[i].name == "forecast")
+      continue;
+
+    // Find and update the measure
+    auto msr = ForecastMeasure::find(j.fields[i].name);
+    if (msr)
+      msr->disaggregate(forecast, startdate, enddate,
+                        j.fields[i].value.getDouble(), false, 0.0, mgr);
+  }
+}
+
+void ForecastBucketData::validateOverride(const ForecastMeasure* key) {
+  // Loop over all leafs, searching for existing overrides
+  auto index = getIndex();
+  for (auto ch = getForecast()->getLeaves(false, key); ch; ++ch) {
+    auto chdata = ch->getData();
+    if (key->getValue(chdata->getBuckets()[index]) != -1.0) {
+      // Override found -> case where they are all 0
+      measures[key->getHashedName()] = 0.0;
+      return;
+    }
+  }
+  // No override found at any leaf -> case where all overrides are gone
+  measures.erase(key->getHashedName());
+}
+
+PyObject* Forecast::setValuePython(PyObject* self, PyObject* args,
+                                   PyObject* kwdict) {
+  try {
+    // Parse the arguments
+    PyObject* pystartdate = nullptr;
+    PyObject* pyenddate = nullptr;
+    if (!PyArg_ParseTuple(args, "|OO:set", &pystartdate, &pyenddate))
+      return nullptr;
+    Date startdate = Date::infinitePast;
+    Date enddate = Date::infiniteFuture;
+    if (pystartdate) startdate = PythonData(pystartdate).getDate();
+    if (pyenddate) enddate = PythonData(pyenddate).getDate();
+
+    // Update the forecast with each keyword argument
+    PyObject *pykey, *pyvalue;
+    Py_ssize_t pos = 0;
+    while (PyDict_Next(kwdict, &pos, &pykey, &pyvalue)) {
+      PythonData key(pykey);
+      PythonData value(pyvalue);
+      auto msr = ForecastMeasure::find(key.getString());
+      if (!msr)
+        // TODO is auto-creation of measures really useful?
+        msr = new ForecastMeasureAggregated(PooledString(key.getString()));
+      msr->disaggregate(static_cast<Forecast*>(self), startdate, enddate,
+                        value.getDouble());
+    }
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
+  return Py_BuildValue("");
+}
+
+PyObject* Forecast::getValuePython(PyObject* self, PyObject* args,
+                                   PyObject* kwdict) {
+  try {
+    // Parse the arguments
+    PyObject* pydate;
+    char* pymeasure;
+    if (!PyArg_ParseTuple(args, "Os:get", &pydate, &pymeasure)) return nullptr;
+    Date thedate = PythonData(pydate).getDate();
+    string measure = pymeasure;
+
+    // Retrieve the forecast with each keyword argument
+    auto msr = ForecastMeasure::find(measure);
+    if (!msr) throw DataException("Unknown measure");
+    auto fcstdata = static_cast<Forecast*>(self)->getData();
+    for (auto& bckt : fcstdata->getBuckets()) {
+      if (bckt.getDates().within(thedate))
+        return PythonData(bckt.getValue(*msr));
+    }
+    throw DataException("Couldn't find time bucket");
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
+  return Py_BuildValue("");
+}
+
+void ForecastBase::inspect(const string& msg) const {
+  logger << "Inspecting forecast " << getForecastName() << " ("
+         << getForecastItem() << ", " << getForecastLocation() << ", "
+         << getForecastCustomer() << ": ";
+  if (!msg.empty()) logger << msg;
+  logger << endl;
+
+  auto fcstdata = getData();
+  for (auto& bckt : fcstdata->getBuckets())
+    logger << "    " << bckt.getStart() << " - " << bckt.getEnd() << ": "
+           << bckt.toString(false) << endl;
+}
+
+PyObject* Forecast::inspectPython(PyObject* self, PyObject* args) {
+  try {
+    char* msg = nullptr;
+    if (!PyArg_ParseTuple(args, "|s:inspect", &msg)) return nullptr;
+
+    static_cast<Forecast*>(self)->inspect(msg ? msg : "");
+
+    return Py_BuildValue("");
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
+}
+
+PyObject* Forecast::saveForecast(PyObject* self, PyObject* args) {
+  // Pick up arguments
+  const char* filename = "plan.out";
+  if (!PyArg_ParseTuple(args, "s:saveforecast", &filename)) return nullptr;
+
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+
+  // Execute and catch exceptions
+  ofstream textoutput;
+  try {
+    // Open the output file
+    textoutput.open(filename, ios::out);
+
+    struct {
+      bool operator()(ForecastBase* const& a, ForecastBase* const& b) {
+        if (a->getForecastItem() != b->getForecastItem()) {
+          if (a->getForecastItem()) {
+            if (b->getForecastItem())
+              return a->getForecastItem()->getName() <
+                     b->getForecastItem()->getName();
+            else
+              return false;
+          } else
+            return true;
+        } else if (a->getForecastLocation() != b->getForecastLocation()) {
+          if (a->getForecastLocation()) {
+            if (b->getForecastLocation())
+              return a->getForecastLocation()->getName() <
+                     b->getForecastLocation()->getName();
+            else
+              return false;
+          } else
+            return true;
+        } else if (a->getForecastCustomer()) {
+          if (b->getForecastCustomer())
+            return a->getForecastCustomer()->getName() <
+                   b->getForecastCustomer()->getName();
+          else
+            return false;
+        } else
+          return true;
+      }
+    } mysort;
+
+    // This is quite memory&cpu-intensive as we need to fill and sort a vector
+    // with pointers to all forecasts. Since we expect to call this function
+    // only small datasets we can live with this.
+    vector<ForecastBase*> sortedforecast;
+    for (auto fcst = Forecast::getForecasts(); fcst; ++fcst)
+      sortedforecast.push_back(&*fcst);
+    sort(sortedforecast.begin(), sortedforecast.end(), mysort);
+
+    // Write out all forecasts
+    for (auto& fcst : sortedforecast) {
+      auto fcstdata = fcst->getData();
+      for (auto& bckt : fcstdata->getBuckets())
+        textoutput << fcst->getForecastItem() << "\t"
+                   << fcst->getForecastLocation() << "\t"
+                   << fcst->getForecastCustomer() << "\t" << bckt.getStart()
+                   << "\t" << bckt.getEnd() << "\t" << bckt.toString(false)
+                   << endl;
+    }
+
+    // Close the output file
+    textoutput.close();
+  } catch (...) {
+    if (textoutput.is_open()) textoutput.close();
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return nullptr;
+  }
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
+}
+
+PyObject* ForecastBucket::getMeasurePython(PyObject* self, PyObject* args,
+                                           PyObject* kwdict) {
+  try {
+    // Parse the arguments
+    char* pymeasure = nullptr;
+    if (!PyArg_ParseTuple(args, "s:set", &pymeasure)) return nullptr;
+    if (!pymeasure) return nullptr;
+    auto msr = ForecastMeasure::find(pymeasure);
+    if (!msr) return nullptr;
+    auto me = static_cast<ForecastBucket*>(self);
+    auto fcstdata = me->getForecast()->getData();
+    return PythonData(
+        msr->getValue(fcstdata->getBuckets()[me->getBucketIndex()]));
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
+  return Py_BuildValue("");
+}
+
+PyObject* ForecastBucket::setMeasurePython(PyObject* self, PyObject* args,
+                                           PyObject* kwdict) {
+  try {
+    // Update the forecastbucket with each keyword argument
+    PyObject *pykey, *pyvalue;
+    Py_ssize_t pos = 0;
+    auto fcstbucket = static_cast<ForecastBucket*>(self);
+    auto fcst = fcstbucket->getForecast();
+    while (PyDict_Next(kwdict, &pos, &pykey, &pyvalue)) {
+      PythonData key(pykey);
+      PythonData value(pyvalue);
+      auto msr = ForecastMeasure::find(key.getString());
+      if (!msr)
+        // TODO is auto-creation of measures really useful?
+        msr = new ForecastMeasureAggregated(PooledString(key.getString()));
+      msr->disaggregate(fcst, fcstbucket->getStartDate(),
+                        fcstbucket->getEndDate(), value.getDouble());
+    }
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
+  return Py_BuildValue("");
+}
+
+}  // namespace frepple

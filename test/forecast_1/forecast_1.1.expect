@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Forecast matching test model</name>
+	<description>
+    This test case test the matching between an actual order and a forecast.
+    Different scenarios are being validated:
+      - A: match at &apos;customer&apos;+&apos;item&apos; level
+      - B: match at &apos;item&apos; level
+      - C: match at &apos;parent customer&apos; + &apos;item&apos; level
+      - D: match at &apos;customer&apos; + &apos;parent item&apos; level
+      - E: match at &apos;parent customer&apos; + &apos;parent item&apos; level
+  </description>
+	<current>2009-01-01T00:00:00</current>
+	<locations>
+		<location>
+			<name>Store</name>
+		</location>
+	</locations>
+	<customers>
+		<customer>
+			<name>A customer</name>
+			<owner>
+				<name>A parent customer</name>
+			</owner>
+		</customer>
+		<customer>
+			<name>A grandparent customer</name>
+		</customer>
+		<customer>
+			<name>A parent customer</name>
+			<owner>
+				<name>A grandparent customer</name>
+			</owner>
+		</customer>
+		<customer>
+			<name>B customer</name>
+			<owner>
+				<name>B parent customer</name>
+			</owner>
+		</customer>
+		<customer>
+			<name>B grandparent customer</name>
+		</customer>
+		<customer>
+			<name>B parent customer</name>
+			<owner>
+				<name>B grandparent customer</name>
+			</owner>
+		</customer>
+		<customer>
+			<name>C customer</name>
+			<owner>
+				<name>C parent customer</name>
+			</owner>
+		</customer>
+		<customer>
+			<name>C grandparent customer</name>
+		</customer>
+		<customer>
+			<name>C parent customer</name>
+			<owner>
+				<name>C grandparent customer</name>
+			</owner>
+		</customer>
+		<customer>
+			<name>D customer</name>
+			<owner>
+				<name>D parent customer</name>
+			</owner>
+		</customer>
+		<customer>
+			<name>D grandparent customer</name>
+		</customer>
+		<customer>
+			<name>D parent customer</name>
+			<owner>
+				<name>D grandparent customer</name>
+			</owner>
+		</customer>
+		<customer>
+			<name>E customer</name>
+			<owner>
+				<name>E parent customer</name>
+			</owner>
+		</customer>
+		<customer>
+			<name>E grandparent customer</name>
+		</customer>
+		<customer>
+			<name>E parent customer</name>
+			<owner>
+				<name>E grandparent customer</name>
+			</owner>
+		</customer>
+	</customers>
+	<calendars>
+		<calendar>
+			<name>Months</name>
+			<buckets>
+				<bucket>
+					<start>2009-01-01T00:00:00</start>
+					<end>2009-02-01T00:00:00</end>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2009-03-01T00:00:00</start>
+					<end>2009-04-01T00:00:00</end>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+	</calendars>
+	<items>
+		<item>
+			<name>A grandparent item</name>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>A item</name>
+			<owner>
+				<name>A parent item</name>
+			</owner>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>A parent item</name>
+			<owner>
+				<name>A grandparent item</name>
+			</owner>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>B grandparent item</name>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>B item</name>
+			<owner>
+				<name>B parent item</name>
+			</owner>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>B parent item</name>
+			<owner>
+				<name>B grandparent item</name>
+			</owner>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>C grandparent item</name>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>C item</name>
+			<owner>
+				<name>C parent item</name>
+			</owner>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>C parent item</name>
+			<owner>
+				<name>C grandparent item</name>
+			</owner>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>D grandparent item</name>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>D item</name>
+			<owner>
+				<name>D parent item</name>
+			</owner>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>D parent item</name>
+			<owner>
+				<name>D grandparent item</name>
+			</owner>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>E grandparent item</name>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>E item</name>
+			<owner>
+				<name>E parent item</name>
+			</owner>
+			<cost>10</cost>
+		</item>
+		<item>
+			<name>E parent item</name>
+			<owner>
+				<name>E grandparent item</name>
+			</owner>
+			<cost>10</cost>
+		</item>
+	</items>
+	<operations>
+		<operation>
+			<name>A delivery</name>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>B delivery</name>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>C delivery</name>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>D delivery</name>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
+			<name>E delivery</name>
+			<duration>P1D</duration>
+		</operation>
+	</operations>
+	<demands>
+		<demand xsi:type="demand_forecast">
+			<name>A forecast</name>
+			<item>
+				<name>A item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>A customer</name>
+			</customer>
+			<operation>
+				<name>A delivery</name>
+			</operation>
+			<calendar>
+				<name>Months</name>
+			</calendar>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>A forecast - 2009-01-01</name>
+					<quantity>90</quantity>
+					<start>2009-01-01T00:00:00</start>
+					<end>2009-02-01T00:00:00</end>
+					<data forecastconsumed="10"/>
+					<data forecastnet="90"/>
+					<data forecastoverride="100"/>
+					<data forecasttotal="100"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>A forecast - 2009-02-01</name>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>A forecast - 2009-03-01</name>
+					<start>2009-03-01T00:00:00</start>
+					<end>2009-04-01T00:00:00</end>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand xsi:type="demand_forecast">
+			<name>A forecast not selected</name>
+			<description>This forecast is not selected because lower level is planned</description>
+			<item>
+				<name>A parent item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>A parent customer</name>
+			</customer>
+			<operation>
+				<name>A delivery</name>
+			</operation>
+			<calendar>
+				<name>Months</name>
+			</calendar>
+			<planned>false</planned>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>A forecast not selected - 2009-01-01</name>
+					<start>2009-01-01T00:00:00</start>
+					<end>2009-02-01T00:00:00</end>
+					<data forecastconsumed="10"/>
+					<data forecastnet="90"/>
+					<data forecastoverride="100"/>
+					<data forecasttotal="100"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>A forecast not selected - 2009-02-01</name>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>A forecast not selected - 2009-03-01</name>
+					<start>2009-03-01T00:00:00</start>
+					<end>2009-04-01T00:00:00</end>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand>
+			<name>A order</name>
+			<quantity>10</quantity>
+			<item>
+				<name>A item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>A customer</name>
+			</customer>
+			<operation>
+				<name>A delivery</name>
+			</operation>
+			<due>2009-01-02T00:00:00</due>
+		</demand>
+		<demand xsi:type="demand_forecast">
+			<name>B forecast</name>
+			<item>
+				<name>B item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>B customer</name>
+			</customer>
+			<operation>
+				<name>B delivery</name>
+			</operation>
+			<calendar>
+				<name>Months</name>
+			</calendar>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>B forecast - 2009-01-01</name>
+					<quantity>90</quantity>
+					<start>2009-01-01T00:00:00</start>
+					<end>2009-02-01T00:00:00</end>
+					<data forecastconsumed="10"/>
+					<data forecastnet="90"/>
+					<data forecastoverride="100"/>
+					<data forecasttotal="100"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>B forecast - 2009-02-01</name>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>B forecast - 2009-03-01</name>
+					<start>2009-03-01T00:00:00</start>
+					<end>2009-04-01T00:00:00</end>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand>
+			<name>B order 1</name>
+			<quantity>10</quantity>
+			<item>
+				<name>B item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>B customer</name>
+			</customer>
+			<operation>
+				<name>B delivery</name>
+			</operation>
+			<due>2009-01-02T00:00:00</due>
+		</demand>
+		<demand>
+			<name>B order 2</name>
+			<quantity>10</quantity>
+			<item>
+				<name>B item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<operation>
+				<name>B delivery</name>
+			</operation>
+			<due>2009-01-02T00:00:00</due>
+		</demand>
+		<demand xsi:type="demand_forecast">
+			<name>C forecast</name>
+			<item>
+				<name>C item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>C parent customer</name>
+			</customer>
+			<operation>
+				<name>C delivery</name>
+			</operation>
+			<calendar>
+				<name>Months</name>
+			</calendar>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>C forecast - 2009-01-01</name>
+					<quantity>90</quantity>
+					<start>2009-01-01T00:00:00</start>
+					<end>2009-02-01T00:00:00</end>
+					<data forecastconsumed="10"/>
+					<data forecastnet="90"/>
+					<data forecastoverride="100"/>
+					<data forecasttotal="100"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>C forecast - 2009-02-01</name>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>C forecast - 2009-03-01</name>
+					<start>2009-03-01T00:00:00</start>
+					<end>2009-04-01T00:00:00</end>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand xsi:type="demand_forecast">
+			<name>C forecast not selected</name>
+			<description>This forecast is not selected since we search higher
+      levels in the customer dimension first.
+      Switching the flag Customer_Then_Item_Hierarchy to false will
+      flip the search order around.</description>
+			<item>
+				<name>C parent item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>C customer</name>
+			</customer>
+			<operation>
+				<name>C delivery</name>
+			</operation>
+			<calendar>
+				<name>Months</name>
+			</calendar>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>C forecast not selected - 2009-01-01</name>
+					<quantity>100</quantity>
+					<start>2009-01-01T00:00:00</start>
+					<end>2009-02-01T00:00:00</end>
+					<data forecastnet="100"/>
+					<data forecastoverride="100"/>
+					<data forecasttotal="100"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>C forecast not selected - 2009-02-01</name>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>C forecast not selected - 2009-03-01</name>
+					<start>2009-03-01T00:00:00</start>
+					<end>2009-04-01T00:00:00</end>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand>
+			<name>C order</name>
+			<quantity>10</quantity>
+			<item>
+				<name>C item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>C customer</name>
+			</customer>
+			<operation>
+				<name>C delivery</name>
+			</operation>
+			<due>2009-01-02T00:00:00</due>
+		</demand>
+		<demand xsi:type="demand_forecast">
+			<name>D forecast</name>
+			<item>
+				<name>D parent item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>D customer</name>
+			</customer>
+			<operation>
+				<name>D delivery</name>
+			</operation>
+			<calendar>
+				<name>Months</name>
+			</calendar>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>D forecast - 2009-01-01</name>
+					<quantity>90</quantity>
+					<start>2009-01-01T00:00:00</start>
+					<end>2009-02-01T00:00:00</end>
+					<data forecastconsumed="10"/>
+					<data forecastnet="90"/>
+					<data forecastoverride="100"/>
+					<data forecasttotal="100"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>D forecast - 2009-02-01</name>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>D forecast - 2009-03-01</name>
+					<start>2009-03-01T00:00:00</start>
+					<end>2009-04-01T00:00:00</end>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand>
+			<name>D order</name>
+			<quantity>10</quantity>
+			<item>
+				<name>D item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>D customer</name>
+			</customer>
+			<operation>
+				<name>D delivery</name>
+			</operation>
+			<due>2009-01-02T00:00:00</due>
+		</demand>
+		<demand xsi:type="demand_forecast">
+			<name>E forecast</name>
+			<item>
+				<name>E parent item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>E parent customer</name>
+			</customer>
+			<operation>
+				<name>E delivery</name>
+			</operation>
+			<calendar>
+				<name>Months</name>
+			</calendar>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>E forecast - 2009-01-01</name>
+					<quantity>90</quantity>
+					<start>2009-01-01T00:00:00</start>
+					<end>2009-02-01T00:00:00</end>
+					<data forecastconsumed="10"/>
+					<data forecastnet="90"/>
+					<data forecastoverride="100"/>
+					<data forecasttotal="100"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>E forecast - 2009-02-01</name>
+					<start>2009-02-01T00:00:00</start>
+					<end>2009-03-01T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>E forecast - 2009-03-01</name>
+					<start>2009-03-01T00:00:00</start>
+					<end>2009-04-01T00:00:00</end>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand>
+			<name>E order</name>
+			<quantity>10</quantity>
+			<item>
+				<name>E item</name>
+			</item>
+			<location>
+				<name>Store</name>
+			</location>
+			<customer>
+				<name>E customer</name>
+			</customer>
+			<operation>
+				<name>E delivery</name>
+			</operation>
+			<due>2009-01-02T00:00:00</due>
+		</demand>
+	</demands>
+</plan>

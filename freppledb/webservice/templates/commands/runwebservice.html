@@ -1,0 +1,19 @@
+{% load i18n %}
+<table>
+  <tr>
+    <td style="padding: 5px 15px;">
+      <form method="post" action="{{request.prefix}}/execute/launch/runwebservice/">
+      {% csrf_token %}<button class="btn btn-primary" type="submit" value="{% trans "Start"|capfirst %}" style="width: 100%;">{% trans "Start"|capfirst %}</button>
+      </form>
+    </td>
+    <td>&nbsp;{% trans "Start the web service." %}</td>
+  </tr>
+  <tr>
+    <td style="padding: 5px 15px;">
+      <form method="post" action="{{request.prefix}}/execute/launch/stopwebservice/">
+      {% csrf_token %}<button class="btn btn-primary" id="stop" type="submit" value="{% trans "Stop"|capfirst %}" style="width: 100%;">{% trans "Stop"|capfirst %}</button>
+      </form>
+    </td>
+    <td>&nbsp;{% trans "Stop the web service." %}</td>
+  </tr>
+</table>

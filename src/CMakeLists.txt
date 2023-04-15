@@ -17,8 +17,14 @@ add_library(utils STATIC
   "utils/library.cpp"
   "utils/python.cpp"
   "utils/xml.cpp"
+  "utils/cache.cpp"
+  "utils/database.cpp"
+  "utils/json.cpp"
   "${CMAKE_SOURCE_DIR}/include/frepple/utils.h"
+  "${CMAKE_SOURCE_DIR}/include/frepple/cache.h"
+  "${CMAKE_SOURCE_DIR}/include/frepple/database.h"
   "${CMAKE_SOURCE_DIR}/include/frepple/xml.h"
+  "${CMAKE_SOURCE_DIR}/include/frepple/json.h"
   "${CMAKE_BINARY_DIR}/include/config.h"
 )
 
@@ -72,6 +78,23 @@ add_library(solver STATIC
 )
 add_dependencies(solver model)
 
+add_library(forecast STATIC
+  "forecast/exprtk.h"
+  "forecast/forecast.cpp"
+  "forecast/forecast.h"
+  "forecast/forecastsolver.cpp"
+  "forecast/measure.cpp"
+  "forecast/measure_compute.cpp"
+  "forecast/timeseries.cpp"
+)
+
+if(MSVC)
+  set_target_properties(forecast PROPERTIES
+    COMPILE_FLAGS "/bigobj"
+  )
+endif()
+
+add_dependencies(forecast solver)
 # Main shared library
 add_library(frepple SHARED
   dllmain.cpp
@@ -82,11 +105,14 @@ target_link_libraries(frepple PUBLIC utils)
 target_link_libraries(frepple PUBLIC model)
 target_link_libraries(frepple PUBLIC solver)
 target_link_libraries(frepple PUBLIC xerces-c)
+target_link_libraries(frepple PUBLIC forecast)
 
 if(WIN32)
+  target_link_libraries(frepple PRIVATE libpq)
   target_link_libraries(frepple PRIVATE ${PYTHON_LIBRARY_RELEASE})
   set_target_properties(frepple PROPERTIES LINK_FLAGS "/ignore:4099")
 else()
+  target_link_libraries(frepple PRIVATE pq)
   target_link_libraries(frepple PRIVATE ${PYTHON_LIBRARIES})
 endif()
 

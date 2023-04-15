@@ -121,3 +121,13 @@ FrePPLe redistributes parts of the following third party software components:
     Redistributed angular-websocket.min.js
     Licensed under the MIT license
     See https://github.com/AngularClass/angular-websocket
+
+* src/forecast/exprtk.h
+    Free use of the C++ Mathematical Expression Toolkit Library is
+    permitted under the guidelines and in accordance with the most
+    current version of the MIT License.
+    See http://www.partow.net/programming/exprtk/index.html
+
+* include\rapidjson\*
+    Redistributed http://rapidjson.org/
+    Licensed under the MIT license

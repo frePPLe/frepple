@@ -161,6 +161,33 @@ if(NOT ${HAVE_XERCESC})
   message(FATAL_ERROR "xerces-c include headers not found")
 endif()
 
+find_program(pg_config NAMES pg_config)
+
+if(pg_config)
+  execute_process(
+    COMMAND ${pg_config} --libdir
+    OUTPUT_VARIABLE POSTGRES_LIB
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  execute_process(
+    COMMAND ${pg_config} --includedir
+    OUTPUT_VARIABLE POSTGRES_INCLUDE
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  link_directories("${POSTGRES_LIB}")
+  include_directories(${POSTGRES_INCLUDE})
+  list(APPEND CMAKE_REQUIRED_INCLUDES "${POSTGRES_INCLUDE}")
+  check_include_file("libpq-fe.h" HAVE_LIBPQ)
+
+  if(NOT HAVE_LIBPQ)
+    message("PostgreSQL include headers not found ${HAVE_LIBPQ}")
+  endif()
+else()
+  message(FATAL_ERROR "PostgreSQL pg_config not found")
+endif()
+
 # C++ header file locations
 include_directories(
   "${CMAKE_SOURCE_DIR}/include"

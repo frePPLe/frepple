@@ -1,0 +1,2857 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Forecast aggregation/disaggregation test model</name>
+	<description>
+  This test checks for the aggregation/disaggregation feature
+	</description>
+	<current>2016-02-01T00:00:00</current>
+	<locations>
+		<location>
+			<name>All locations</name>
+		</location>
+		<location>
+			<name>Tennis shop Brussels</name>
+			<owner>
+				<name>All locations</name>
+			</owner>
+		</location>
+		<location>
+			<name>Tennis shop Paris</name>
+			<owner>
+				<name>All locations</name>
+			</owner>
+		</location>
+	</locations>
+	<customers>
+		<customer>
+			<name>All customers</name>
+		</customer>
+		<customer>
+			<name>Generic customer</name>
+			<owner>
+				<name>All customers</name>
+			</owner>
+		</customer>
+	</customers>
+	<calendars>
+		<calendar>
+			<name>planningbuckets</name>
+			<buckets>
+				<bucket>
+					<start>2013-01-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2013-02-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2013-03-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2013-04-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2013-05-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2013-06-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2013-07-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2013-08-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2013-09-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2013-10-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2013-11-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2013-12-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-01-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-02-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-03-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-04-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-05-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-06-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-07-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-08-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-09-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-10-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-11-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2014-12-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-01-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-02-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-03-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-04-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-05-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-06-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-07-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-08-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-09-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-10-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-11-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2015-12-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-01-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-02-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-03-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-04-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-05-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-06-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-07-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-08-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-09-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-10-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-11-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2016-12-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-01-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-02-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-03-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-04-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-05-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-06-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-07-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-08-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-09-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-10-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-11-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2017-12-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-01-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-02-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-03-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-04-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-05-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-06-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-07-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-08-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-09-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-10-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-11-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+				<bucket>
+					<start>2018-12-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+	</calendars>
+	<items>
+		<item>
+			<name>All items</name>
+		</item>
+		<item>
+			<name>All material</name>
+			<owner>
+				<name>All items</name>
+			</owner>
+		</item>
+		<item>
+			<name>All-surface tennis ball pack</name>
+			<owner>
+				<name>All material</name>
+			</owner>
+			<cost>7.5</cost>
+		</item>
+	</items>
+	<demands>
+		<demand xsi:type="demand_forecast">
+			<name>All items @ All locations @ All customers</name>
+			<item>
+				<name>All items</name>
+			</item>
+			<location>
+				<name>All locations</name>
+			</location>
+			<customer>
+				<name>All customers</name>
+			</customer>
+			<priority>10</priority>
+			<calendar>
+				<name>planningbuckets</name>
+			</calendar>
+			<discrete>false</discrete>
+			<planned>false</planned>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-01-01</name>
+					<start>2013-01-01T00:00:00</start>
+					<end>2013-02-01T00:00:00</end>
+					<data orderstotal="69"/>
+					<data orderstotalvalue="517.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-02-01</name>
+					<start>2013-02-01T00:00:00</start>
+					<end>2013-03-01T00:00:00</end>
+					<data orderstotal="79"/>
+					<data orderstotalvalue="592.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-03-01</name>
+					<start>2013-03-01T00:00:00</start>
+					<end>2013-04-01T00:00:00</end>
+					<data orderstotal="37"/>
+					<data orderstotalvalue="277.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-04-01</name>
+					<start>2013-04-01T00:00:00</start>
+					<end>2013-05-01T00:00:00</end>
+					<data orderstotal="37"/>
+					<data orderstotalvalue="277.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-05-01</name>
+					<start>2013-05-01T00:00:00</start>
+					<end>2013-06-01T00:00:00</end>
+					<data orderstotal="91"/>
+					<data orderstotalvalue="682.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-06-01</name>
+					<start>2013-06-01T00:00:00</start>
+					<end>2013-07-01T00:00:00</end>
+					<data orderstotal="139"/>
+					<data orderstotalvalue="1042.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-07-01</name>
+					<start>2013-07-01T00:00:00</start>
+					<end>2013-08-01T00:00:00</end>
+					<data orderstotal="172"/>
+					<data orderstotalvalue="1290"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-08-01</name>
+					<start>2013-08-01T00:00:00</start>
+					<end>2013-09-01T00:00:00</end>
+					<data orderstotal="211"/>
+					<data orderstotalvalue="1582.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-09-01</name>
+					<start>2013-09-01T00:00:00</start>
+					<end>2013-10-01T00:00:00</end>
+					<data orderstotal="43"/>
+					<data orderstotalvalue="322.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-10-01</name>
+					<start>2013-10-01T00:00:00</start>
+					<end>2013-11-01T00:00:00</end>
+					<data orderstotal="56"/>
+					<data orderstotalvalue="420"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-11-01</name>
+					<start>2013-11-01T00:00:00</start>
+					<end>2013-12-01T00:00:00</end>
+					<data orderstotal="31"/>
+					<data orderstotalvalue="232.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2013-12-01</name>
+					<start>2013-12-01T00:00:00</start>
+					<end>2014-01-01T00:00:00</end>
+					<data orderstotal="84"/>
+					<data orderstotalvalue="630"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-01-01</name>
+					<start>2014-01-01T00:00:00</start>
+					<end>2014-02-01T00:00:00</end>
+					<data orderstotal="24"/>
+					<data orderstotalvalue="180"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-02-01</name>
+					<start>2014-02-01T00:00:00</start>
+					<end>2014-03-01T00:00:00</end>
+					<data orderstotal="25"/>
+					<data orderstotalvalue="187.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-03-01</name>
+					<start>2014-03-01T00:00:00</start>
+					<end>2014-04-01T00:00:00</end>
+					<data orderstotal="48"/>
+					<data orderstotalvalue="360"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-04-01</name>
+					<start>2014-04-01T00:00:00</start>
+					<end>2014-05-01T00:00:00</end>
+					<data orderstotal="31"/>
+					<data orderstotalvalue="232.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-05-01</name>
+					<start>2014-05-01T00:00:00</start>
+					<end>2014-06-01T00:00:00</end>
+					<data orderstotal="44"/>
+					<data orderstotalvalue="330"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-06-01</name>
+					<start>2014-06-01T00:00:00</start>
+					<end>2014-07-01T00:00:00</end>
+					<data orderstotal="288"/>
+					<data orderstotalvalue="2160"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-07-01</name>
+					<start>2014-07-01T00:00:00</start>
+					<end>2014-08-01T00:00:00</end>
+					<data orderstotal="279"/>
+					<data orderstotalvalue="2092.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-08-01</name>
+					<start>2014-08-01T00:00:00</start>
+					<end>2014-09-01T00:00:00</end>
+					<data orderstotal="212"/>
+					<data orderstotalvalue="1590"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-09-01</name>
+					<start>2014-09-01T00:00:00</start>
+					<end>2014-10-01T00:00:00</end>
+					<data orderstotal="27"/>
+					<data orderstotalvalue="202.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-10-01</name>
+					<start>2014-10-01T00:00:00</start>
+					<end>2014-11-01T00:00:00</end>
+					<data orderstotal="23"/>
+					<data orderstotalvalue="172.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-11-01</name>
+					<start>2014-11-01T00:00:00</start>
+					<end>2014-12-01T00:00:00</end>
+					<data orderstotal="50"/>
+					<data orderstotalvalue="375"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2014-12-01</name>
+					<start>2014-12-01T00:00:00</start>
+					<end>2015-01-01T00:00:00</end>
+					<data orderstotal="24"/>
+					<data orderstotalvalue="180"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-01-01</name>
+					<start>2015-01-01T00:00:00</start>
+					<end>2015-02-01T00:00:00</end>
+					<data orderstotal="43"/>
+					<data orderstotalvalue="322.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-02-01</name>
+					<start>2015-02-01T00:00:00</start>
+					<end>2015-03-01T00:00:00</end>
+					<data orderstotal="30"/>
+					<data orderstotalvalue="225"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-03-01</name>
+					<start>2015-03-01T00:00:00</start>
+					<end>2015-04-01T00:00:00</end>
+					<data orderstotal="86"/>
+					<data orderstotalvalue="645"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-04-01</name>
+					<start>2015-04-01T00:00:00</start>
+					<end>2015-05-01T00:00:00</end>
+					<data orderstotal="65"/>
+					<data orderstotalvalue="487.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-05-01</name>
+					<start>2015-05-01T00:00:00</start>
+					<end>2015-06-01T00:00:00</end>
+					<data orderstotal="24"/>
+					<data orderstotalvalue="180"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-06-01</name>
+					<start>2015-06-01T00:00:00</start>
+					<end>2015-07-01T00:00:00</end>
+					<data orderstotal="190"/>
+					<data orderstotalvalue="1425"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-07-01</name>
+					<start>2015-07-01T00:00:00</start>
+					<end>2015-08-01T00:00:00</end>
+					<data orderstotal="268"/>
+					<data orderstotalvalue="2010"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-08-01</name>
+					<start>2015-08-01T00:00:00</start>
+					<end>2015-09-01T00:00:00</end>
+					<data orderstotal="168"/>
+					<data orderstotalvalue="1260"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-09-01</name>
+					<start>2015-09-01T00:00:00</start>
+					<end>2015-10-01T00:00:00</end>
+					<data orderstotal="39"/>
+					<data orderstotalvalue="292.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-10-01</name>
+					<start>2015-10-01T00:00:00</start>
+					<end>2015-11-01T00:00:00</end>
+					<data orderstotal="87"/>
+					<data orderstotalvalue="652.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-11-01</name>
+					<start>2015-11-01T00:00:00</start>
+					<end>2015-12-01T00:00:00</end>
+					<data orderstotal="29"/>
+					<data orderstotalvalue="217.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2015-12-01</name>
+					<start>2015-12-01T00:00:00</start>
+					<end>2016-01-01T00:00:00</end>
+					<data orderstotal="38"/>
+					<data orderstotalvalue="285"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-01-01</name>
+					<start>2016-01-01T00:00:00</start>
+					<end>2016-02-01T00:00:00</end>
+					<data orderstotal="72"/>
+					<data orderstotalvalue="540"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-02-01</name>
+					<start>2016-02-01T00:00:00</start>
+					<end>2016-03-01T00:00:00</end>
+					<data forecastbaseline="42.5753"/>
+					<data forecastbaselinevalue="319.314"/>
+					<data forecastnet="42.5753"/>
+					<data forecastnetvalue="319.314"/>
+					<data forecasttotal="42.5753"/>
+					<data forecasttotalvalue="319.314"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-03-01</name>
+					<start>2016-03-01T00:00:00</start>
+					<end>2016-04-01T00:00:00</end>
+					<data forecastbaseline="56.5182"/>
+					<data forecastbaselinevalue="423.886"/>
+					<data forecastnet="56.5182"/>
+					<data forecastnetvalue="423.886"/>
+					<data forecasttotal="56.5182"/>
+					<data forecasttotalvalue="423.886"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-04-01</name>
+					<start>2016-04-01T00:00:00</start>
+					<end>2016-05-01T00:00:00</end>
+					<data forecastbaseline="43.3904"/>
+					<data forecastbaselinevalue="325.428"/>
+					<data forecastnet="43.3904"/>
+					<data forecastnetvalue="325.428"/>
+					<data forecasttotal="43.3904"/>
+					<data forecasttotalvalue="325.428"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-05-01</name>
+					<start>2016-05-01T00:00:00</start>
+					<end>2016-06-01T00:00:00</end>
+					<data forecastbaseline="49.6789"/>
+					<data forecastbaselinevalue="372.592"/>
+					<data forecastnet="49.6789"/>
+					<data forecastnetvalue="372.592"/>
+					<data forecasttotal="49.6789"/>
+					<data forecasttotalvalue="372.592"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-06-01</name>
+					<start>2016-06-01T00:00:00</start>
+					<end>2016-07-01T00:00:00</end>
+					<data forecastbaseline="200.352"/>
+					<data forecastbaselinevalue="1502.64"/>
+					<data forecastnet="200.352"/>
+					<data forecastnetvalue="1502.64"/>
+					<data forecasttotal="200.352"/>
+					<data forecasttotalvalue="1502.64"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-07-01</name>
+					<start>2016-07-01T00:00:00</start>
+					<end>2016-08-01T00:00:00</end>
+					<data forecastbaseline="232.693"/>
+					<data forecastbaselinevalue="1745.19"/>
+					<data forecastnet="232.693"/>
+					<data forecastnetvalue="1745.19"/>
+					<data forecasttotal="232.693"/>
+					<data forecasttotalvalue="1745.19"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-08-01</name>
+					<start>2016-08-01T00:00:00</start>
+					<end>2016-09-01T00:00:00</end>
+					<data forecastbaseline="188.111"/>
+					<data forecastbaselinevalue="1410.83"/>
+					<data forecastnet="188.111"/>
+					<data forecastnetvalue="1410.83"/>
+					<data forecasttotal="188.111"/>
+					<data forecasttotalvalue="1410.83"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-09-01</name>
+					<start>2016-09-01T00:00:00</start>
+					<end>2016-10-01T00:00:00</end>
+					<data forecastbaseline="34.5267"/>
+					<data forecastbaselinevalue="258.95"/>
+					<data forecastnet="34.5267"/>
+					<data forecastnetvalue="258.95"/>
+					<data forecasttotal="34.5267"/>
+					<data forecasttotalvalue="258.95"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-10-01</name>
+					<start>2016-10-01T00:00:00</start>
+					<end>2016-11-01T00:00:00</end>
+					<data forecastbaseline="53.0171"/>
+					<data forecastbaselinevalue="397.628"/>
+					<data forecastnet="53.0171"/>
+					<data forecastnetvalue="397.628"/>
+					<data forecasttotal="53.0171"/>
+					<data forecasttotalvalue="397.628"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-11-01</name>
+					<start>2016-11-01T00:00:00</start>
+					<end>2016-12-01T00:00:00</end>
+					<data forecastbaseline="35.1672"/>
+					<data forecastbaselinevalue="263.754"/>
+					<data forecastnet="35.1672"/>
+					<data forecastnetvalue="263.754"/>
+					<data forecasttotal="35.1672"/>
+					<data forecasttotalvalue="263.754"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2016-12-01</name>
+					<start>2016-12-01T00:00:00</start>
+					<end>2017-01-01T00:00:00</end>
+					<data forecastbaseline="46.5733"/>
+					<data forecastbaselinevalue="349.3"/>
+					<data forecastnet="46.5733"/>
+					<data forecastnetvalue="349.3"/>
+					<data forecasttotal="46.5733"/>
+					<data forecasttotalvalue="349.3"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-01-01</name>
+					<start>2017-01-01T00:00:00</start>
+					<end>2017-02-01T00:00:00</end>
+					<data forecastbaseline="43.6259"/>
+					<data forecastbaselinevalue="327.194"/>
+					<data forecastnet="43.6259"/>
+					<data forecastnetvalue="327.194"/>
+					<data forecasttotal="43.6259"/>
+					<data forecasttotalvalue="327.194"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-02-01</name>
+					<start>2017-02-01T00:00:00</start>
+					<end>2017-03-01T00:00:00</end>
+					<data forecastbaseline="41.1774"/>
+					<data forecastbaselinevalue="308.83"/>
+					<data forecastnet="41.1774"/>
+					<data forecastnetvalue="308.83"/>
+					<data forecasttotal="41.1774"/>
+					<data forecasttotalvalue="308.83"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-03-01</name>
+					<start>2017-03-01T00:00:00</start>
+					<end>2017-04-01T00:00:00</end>
+					<data forecastbaseline="55.0231"/>
+					<data forecastbaselinevalue="412.673"/>
+					<data forecastnet="55.0231"/>
+					<data forecastnetvalue="412.673"/>
+					<data forecasttotal="55.0231"/>
+					<data forecasttotalvalue="412.673"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-04-01</name>
+					<start>2017-04-01T00:00:00</start>
+					<end>2017-05-01T00:00:00</end>
+					<data forecastbaseline="42.4669"/>
+					<data forecastbaselinevalue="318.502"/>
+					<data forecastnet="42.4669"/>
+					<data forecastnetvalue="318.502"/>
+					<data forecasttotal="42.4669"/>
+					<data forecasttotalvalue="318.502"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-05-01</name>
+					<start>2017-05-01T00:00:00</start>
+					<end>2017-06-01T00:00:00</end>
+					<data forecastbaseline="48.8292"/>
+					<data forecastbaselinevalue="366.219"/>
+					<data forecastnet="48.8292"/>
+					<data forecastnetvalue="366.219"/>
+					<data forecasttotal="48.8292"/>
+					<data forecasttotalvalue="366.219"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-06-01</name>
+					<start>2017-06-01T00:00:00</start>
+					<end>2017-07-01T00:00:00</end>
+					<data forecastbaseline="197.601"/>
+					<data forecastbaselinevalue="1482.01"/>
+					<data forecastnet="197.601"/>
+					<data forecastnetvalue="1482.01"/>
+					<data forecasttotal="197.601"/>
+					<data forecasttotalvalue="1482.01"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-07-01</name>
+					<start>2017-07-01T00:00:00</start>
+					<end>2017-08-01T00:00:00</end>
+					<data forecastbaseline="230.128"/>
+					<data forecastbaselinevalue="1725.96"/>
+					<data forecastnet="230.128"/>
+					<data forecastnetvalue="1725.96"/>
+					<data forecasttotal="230.128"/>
+					<data forecasttotalvalue="1725.96"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-08-01</name>
+					<start>2017-08-01T00:00:00</start>
+					<end>2017-09-01T00:00:00</end>
+					<data forecastbaseline="186.449"/>
+					<data forecastbaselinevalue="1398.37"/>
+					<data forecastnet="186.449"/>
+					<data forecastnetvalue="1398.37"/>
+					<data forecasttotal="186.449"/>
+					<data forecasttotalvalue="1398.37"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-09-01</name>
+					<start>2017-09-01T00:00:00</start>
+					<end>2017-10-01T00:00:00</end>
+					<data forecastbaseline="34.2822"/>
+					<data forecastbaselinevalue="257.116"/>
+					<data forecastnet="34.2822"/>
+					<data forecastnetvalue="257.116"/>
+					<data forecasttotal="34.2822"/>
+					<data forecasttotalvalue="257.116"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-10-01</name>
+					<start>2017-10-01T00:00:00</start>
+					<end>2017-11-01T00:00:00</end>
+					<data forecastbaseline="52.7162"/>
+					<data forecastbaselinevalue="395.372"/>
+					<data forecastnet="52.7162"/>
+					<data forecastnetvalue="395.372"/>
+					<data forecasttotal="52.7162"/>
+					<data forecasttotalvalue="395.372"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-11-01</name>
+					<start>2017-11-01T00:00:00</start>
+					<end>2017-12-01T00:00:00</end>
+					<data forecastbaseline="35.0074"/>
+					<data forecastbaselinevalue="262.555"/>
+					<data forecastnet="35.0074"/>
+					<data forecastnetvalue="262.555"/>
+					<data forecasttotal="35.0074"/>
+					<data forecasttotalvalue="262.555"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2017-12-01</name>
+					<start>2017-12-01T00:00:00</start>
+					<end>2018-01-01T00:00:00</end>
+					<data forecastbaseline="46.4038"/>
+					<data forecastbaselinevalue="348.028"/>
+					<data forecastnet="46.4038"/>
+					<data forecastnetvalue="348.028"/>
+					<data forecasttotal="46.4038"/>
+					<data forecasttotalvalue="348.028"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2018-01-01</name>
+					<start>2018-01-01T00:00:00</start>
+					<end>2018-02-01T00:00:00</end>
+					<data forecastbaseline="43.4987"/>
+					<data forecastbaselinevalue="326.24"/>
+					<data forecastnet="43.4987"/>
+					<data forecastnetvalue="326.24"/>
+					<data forecasttotal="43.4987"/>
+					<data forecasttotalvalue="326.24"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2018-02-01</name>
+					<start>2018-02-01T00:00:00</start>
+					<end>2018-03-01T00:00:00</end>
+					<data forecastbaseline="41.0813"/>
+					<data forecastbaselinevalue="308.11"/>
+					<data forecastnet="41.0813"/>
+					<data forecastnetvalue="308.11"/>
+					<data forecasttotal="41.0813"/>
+					<data forecasttotalvalue="308.11"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2018-03-01</name>
+					<start>2018-03-01T00:00:00</start>
+					<end>2018-04-01T00:00:00</end>
+					<data forecastbaseline="54.9204"/>
+					<data forecastbaselinevalue="411.903"/>
+					<data forecastnet="54.9204"/>
+					<data forecastnetvalue="411.903"/>
+					<data forecasttotal="54.9204"/>
+					<data forecasttotalvalue="411.903"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2018-04-01</name>
+					<start>2018-04-01T00:00:00</start>
+					<end>2018-05-01T00:00:00</end>
+					<data forecastbaseline="42.4035"/>
+					<data forecastbaselinevalue="318.026"/>
+					<data forecastnet="42.4035"/>
+					<data forecastnetvalue="318.026"/>
+					<data forecasttotal="42.4035"/>
+					<data forecasttotalvalue="318.026"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2018-05-01</name>
+					<start>2018-05-01T00:00:00</start>
+					<end>2018-06-01T00:00:00</end>
+					<data forecastbaseline="48.7708"/>
+					<data forecastbaselinevalue="365.781"/>
+					<data forecastnet="48.7708"/>
+					<data forecastnetvalue="365.781"/>
+					<data forecasttotal="48.7708"/>
+					<data forecasttotalvalue="365.781"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2018-06-01</name>
+					<start>2018-06-01T00:00:00</start>
+					<end>2018-07-01T00:00:00</end>
+					<data forecastbaseline="197.412"/>
+					<data forecastbaselinevalue="1480.59"/>
+					<data forecastnet="197.412"/>
+					<data forecastnetvalue="1480.59"/>
+					<data forecasttotal="197.412"/>
+					<data forecasttotalvalue="1480.59"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2018-07-01</name>
+					<start>2018-07-01T00:00:00</start>
+					<end>2018-08-01T00:00:00</end>
+					<data forecastbaseline="229.952"/>
+					<data forecastbaselinevalue="1724.64"/>
+					<data forecastnet="229.952"/>
+					<data forecastnetvalue="1724.64"/>
+					<data forecasttotal="229.952"/>
+					<data forecasttotalvalue="1724.64"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2018-08-01</name>
+					<start>2018-08-01T00:00:00</start>
+					<end>2018-09-01T00:00:00</end>
+					<data forecastbaseline="186.335"/>
+					<data forecastbaselinevalue="1397.51"/>
+					<data forecastnet="186.335"/>
+					<data forecastnetvalue="1397.51"/>
+					<data forecasttotal="186.335"/>
+					<data forecasttotalvalue="1397.51"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2018-09-01</name>
+					<start>2018-09-01T00:00:00</start>
+					<end>2018-10-01T00:00:00</end>
+					<data forecastbaseline="34.2654"/>
+					<data forecastbaselinevalue="256.99"/>
+					<data forecastnet="34.2654"/>
+					<data forecastnetvalue="256.99"/>
+					<data forecasttotal="34.2654"/>
+					<data forecasttotalvalue="256.99"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2018-10-01</name>
+					<start>2018-10-01T00:00:00</start>
+					<end>2018-11-01T00:00:00</end>
+					<data forecastbaseline="52.6956"/>
+					<data forecastbaselinevalue="395.217"/>
+					<data forecastnet="52.6956"/>
+					<data forecastnetvalue="395.217"/>
+					<data forecasttotal="52.6956"/>
+					<data forecasttotalvalue="395.217"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All items @ All locations @ All customers - 2018-11-01</name>
+					<start>2018-11-01T00:00:00</start>
+					<end>2018-12-01T00:00:00</end>
+					<data forecastbaseline="34.9964"/>
+					<data forecastbaselinevalue="262.473"/>
+					<data forecastnet="34.9964"/>
+					<data forecastnetvalue="262.473"/>
+					<data forecasttotal="34.9964"/>
+					<data forecasttotalvalue="262.473"/>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand xsi:type="demand_forecast">
+			<name>All-surface tennis ball pack @ All customers @ All locations</name>
+			<item>
+				<name>All-surface tennis ball pack</name>
+			</item>
+			<location>
+				<name>All locations</name>
+			</location>
+			<customer>
+				<name>All customers</name>
+			</customer>
+			<calendar>
+				<name>planningbuckets</name>
+			</calendar>
+			<discrete>false</discrete>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-01-01</name>
+					<start>2013-01-01T00:00:00</start>
+					<end>2013-02-01T00:00:00</end>
+					<data orderstotal="69"/>
+					<data orderstotalvalue="517.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-02-01</name>
+					<start>2013-02-01T00:00:00</start>
+					<end>2013-03-01T00:00:00</end>
+					<data orderstotal="79"/>
+					<data orderstotalvalue="592.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-03-01</name>
+					<start>2013-03-01T00:00:00</start>
+					<end>2013-04-01T00:00:00</end>
+					<data orderstotal="37"/>
+					<data orderstotalvalue="277.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-04-01</name>
+					<start>2013-04-01T00:00:00</start>
+					<end>2013-05-01T00:00:00</end>
+					<data orderstotal="37"/>
+					<data orderstotalvalue="277.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-05-01</name>
+					<start>2013-05-01T00:00:00</start>
+					<end>2013-06-01T00:00:00</end>
+					<data orderstotal="91"/>
+					<data orderstotalvalue="682.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-06-01</name>
+					<start>2013-06-01T00:00:00</start>
+					<end>2013-07-01T00:00:00</end>
+					<data orderstotal="139"/>
+					<data orderstotalvalue="1042.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-07-01</name>
+					<start>2013-07-01T00:00:00</start>
+					<end>2013-08-01T00:00:00</end>
+					<data orderstotal="172"/>
+					<data orderstotalvalue="1290"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-08-01</name>
+					<start>2013-08-01T00:00:00</start>
+					<end>2013-09-01T00:00:00</end>
+					<data orderstotal="211"/>
+					<data orderstotalvalue="1582.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-09-01</name>
+					<start>2013-09-01T00:00:00</start>
+					<end>2013-10-01T00:00:00</end>
+					<data orderstotal="43"/>
+					<data orderstotalvalue="322.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-10-01</name>
+					<start>2013-10-01T00:00:00</start>
+					<end>2013-11-01T00:00:00</end>
+					<data orderstotal="56"/>
+					<data orderstotalvalue="420"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-11-01</name>
+					<start>2013-11-01T00:00:00</start>
+					<end>2013-12-01T00:00:00</end>
+					<data orderstotal="31"/>
+					<data orderstotalvalue="232.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2013-12-01</name>
+					<start>2013-12-01T00:00:00</start>
+					<end>2014-01-01T00:00:00</end>
+					<data orderstotal="84"/>
+					<data orderstotalvalue="630"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-01-01</name>
+					<start>2014-01-01T00:00:00</start>
+					<end>2014-02-01T00:00:00</end>
+					<data orderstotal="24"/>
+					<data orderstotalvalue="180"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-02-01</name>
+					<start>2014-02-01T00:00:00</start>
+					<end>2014-03-01T00:00:00</end>
+					<data orderstotal="25"/>
+					<data orderstotalvalue="187.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-03-01</name>
+					<start>2014-03-01T00:00:00</start>
+					<end>2014-04-01T00:00:00</end>
+					<data orderstotal="48"/>
+					<data orderstotalvalue="360"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-04-01</name>
+					<start>2014-04-01T00:00:00</start>
+					<end>2014-05-01T00:00:00</end>
+					<data orderstotal="31"/>
+					<data orderstotalvalue="232.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-05-01</name>
+					<start>2014-05-01T00:00:00</start>
+					<end>2014-06-01T00:00:00</end>
+					<data orderstotal="44"/>
+					<data orderstotalvalue="330"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-06-01</name>
+					<start>2014-06-01T00:00:00</start>
+					<end>2014-07-01T00:00:00</end>
+					<data orderstotal="288"/>
+					<data orderstotalvalue="2160"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-07-01</name>
+					<start>2014-07-01T00:00:00</start>
+					<end>2014-08-01T00:00:00</end>
+					<data orderstotal="279"/>
+					<data orderstotalvalue="2092.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-08-01</name>
+					<start>2014-08-01T00:00:00</start>
+					<end>2014-09-01T00:00:00</end>
+					<data orderstotal="212"/>
+					<data orderstotalvalue="1590"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-09-01</name>
+					<start>2014-09-01T00:00:00</start>
+					<end>2014-10-01T00:00:00</end>
+					<data orderstotal="27"/>
+					<data orderstotalvalue="202.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-10-01</name>
+					<start>2014-10-01T00:00:00</start>
+					<end>2014-11-01T00:00:00</end>
+					<data orderstotal="23"/>
+					<data orderstotalvalue="172.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-11-01</name>
+					<start>2014-11-01T00:00:00</start>
+					<end>2014-12-01T00:00:00</end>
+					<data orderstotal="50"/>
+					<data orderstotalvalue="375"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2014-12-01</name>
+					<start>2014-12-01T00:00:00</start>
+					<end>2015-01-01T00:00:00</end>
+					<data orderstotal="24"/>
+					<data orderstotalvalue="180"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-01-01</name>
+					<start>2015-01-01T00:00:00</start>
+					<end>2015-02-01T00:00:00</end>
+					<data orderstotal="43"/>
+					<data orderstotalvalue="322.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-02-01</name>
+					<start>2015-02-01T00:00:00</start>
+					<end>2015-03-01T00:00:00</end>
+					<data orderstotal="30"/>
+					<data orderstotalvalue="225"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-03-01</name>
+					<start>2015-03-01T00:00:00</start>
+					<end>2015-04-01T00:00:00</end>
+					<data orderstotal="86"/>
+					<data orderstotalvalue="645"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-04-01</name>
+					<start>2015-04-01T00:00:00</start>
+					<end>2015-05-01T00:00:00</end>
+					<data orderstotal="65"/>
+					<data orderstotalvalue="487.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-05-01</name>
+					<start>2015-05-01T00:00:00</start>
+					<end>2015-06-01T00:00:00</end>
+					<data orderstotal="24"/>
+					<data orderstotalvalue="180"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-06-01</name>
+					<start>2015-06-01T00:00:00</start>
+					<end>2015-07-01T00:00:00</end>
+					<data orderstotal="190"/>
+					<data orderstotalvalue="1425"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-07-01</name>
+					<start>2015-07-01T00:00:00</start>
+					<end>2015-08-01T00:00:00</end>
+					<data orderstotal="268"/>
+					<data orderstotalvalue="2010"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-08-01</name>
+					<start>2015-08-01T00:00:00</start>
+					<end>2015-09-01T00:00:00</end>
+					<data orderstotal="168"/>
+					<data orderstotalvalue="1260"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-09-01</name>
+					<start>2015-09-01T00:00:00</start>
+					<end>2015-10-01T00:00:00</end>
+					<data orderstotal="39"/>
+					<data orderstotalvalue="292.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-10-01</name>
+					<start>2015-10-01T00:00:00</start>
+					<end>2015-11-01T00:00:00</end>
+					<data orderstotal="87"/>
+					<data orderstotalvalue="652.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-11-01</name>
+					<start>2015-11-01T00:00:00</start>
+					<end>2015-12-01T00:00:00</end>
+					<data orderstotal="29"/>
+					<data orderstotalvalue="217.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2015-12-01</name>
+					<start>2015-12-01T00:00:00</start>
+					<end>2016-01-01T00:00:00</end>
+					<data orderstotal="38"/>
+					<data orderstotalvalue="285"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-01-01</name>
+					<start>2016-01-01T00:00:00</start>
+					<end>2016-02-01T00:00:00</end>
+					<data orderstotal="72"/>
+					<data orderstotalvalue="540"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-02-01</name>
+					<quantity>42.5753</quantity>
+					<start>2016-02-01T00:00:00</start>
+					<end>2016-03-01T00:00:00</end>
+					<data forecastbaseline="42.5753"/>
+					<data forecastbaselinevalue="319.314"/>
+					<data forecastnet="42.5753"/>
+					<data forecastnetvalue="319.314"/>
+					<data forecasttotal="42.5753"/>
+					<data forecasttotalvalue="319.314"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-03-01</name>
+					<quantity>56.5182</quantity>
+					<start>2016-03-01T00:00:00</start>
+					<end>2016-04-01T00:00:00</end>
+					<data forecastbaseline="56.5182"/>
+					<data forecastbaselinevalue="423.886"/>
+					<data forecastnet="56.5182"/>
+					<data forecastnetvalue="423.886"/>
+					<data forecasttotal="56.5182"/>
+					<data forecasttotalvalue="423.886"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-04-01</name>
+					<quantity>43.3904</quantity>
+					<start>2016-04-01T00:00:00</start>
+					<end>2016-05-01T00:00:00</end>
+					<data forecastbaseline="43.3904"/>
+					<data forecastbaselinevalue="325.428"/>
+					<data forecastnet="43.3904"/>
+					<data forecastnetvalue="325.428"/>
+					<data forecasttotal="43.3904"/>
+					<data forecasttotalvalue="325.428"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-05-01</name>
+					<quantity>49.6789</quantity>
+					<start>2016-05-01T00:00:00</start>
+					<end>2016-06-01T00:00:00</end>
+					<data forecastbaseline="49.6789"/>
+					<data forecastbaselinevalue="372.592"/>
+					<data forecastnet="49.6789"/>
+					<data forecastnetvalue="372.592"/>
+					<data forecasttotal="49.6789"/>
+					<data forecasttotalvalue="372.592"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-06-01</name>
+					<quantity>200.352</quantity>
+					<start>2016-06-01T00:00:00</start>
+					<end>2016-07-01T00:00:00</end>
+					<data forecastbaseline="200.352"/>
+					<data forecastbaselinevalue="1502.64"/>
+					<data forecastnet="200.352"/>
+					<data forecastnetvalue="1502.64"/>
+					<data forecasttotal="200.352"/>
+					<data forecasttotalvalue="1502.64"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-07-01</name>
+					<quantity>232.693</quantity>
+					<start>2016-07-01T00:00:00</start>
+					<end>2016-08-01T00:00:00</end>
+					<data forecastbaseline="232.693"/>
+					<data forecastbaselinevalue="1745.19"/>
+					<data forecastnet="232.693"/>
+					<data forecastnetvalue="1745.19"/>
+					<data forecasttotal="232.693"/>
+					<data forecasttotalvalue="1745.19"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-08-01</name>
+					<quantity>188.111</quantity>
+					<start>2016-08-01T00:00:00</start>
+					<end>2016-09-01T00:00:00</end>
+					<data forecastbaseline="188.111"/>
+					<data forecastbaselinevalue="1410.83"/>
+					<data forecastnet="188.111"/>
+					<data forecastnetvalue="1410.83"/>
+					<data forecasttotal="188.111"/>
+					<data forecasttotalvalue="1410.83"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-09-01</name>
+					<quantity>34.5267</quantity>
+					<start>2016-09-01T00:00:00</start>
+					<end>2016-10-01T00:00:00</end>
+					<data forecastbaseline="34.5267"/>
+					<data forecastbaselinevalue="258.95"/>
+					<data forecastnet="34.5267"/>
+					<data forecastnetvalue="258.95"/>
+					<data forecasttotal="34.5267"/>
+					<data forecasttotalvalue="258.95"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-10-01</name>
+					<quantity>53.0171</quantity>
+					<start>2016-10-01T00:00:00</start>
+					<end>2016-11-01T00:00:00</end>
+					<data forecastbaseline="53.0171"/>
+					<data forecastbaselinevalue="397.628"/>
+					<data forecastnet="53.0171"/>
+					<data forecastnetvalue="397.628"/>
+					<data forecasttotal="53.0171"/>
+					<data forecasttotalvalue="397.628"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-11-01</name>
+					<quantity>35.1672</quantity>
+					<start>2016-11-01T00:00:00</start>
+					<end>2016-12-01T00:00:00</end>
+					<data forecastbaseline="35.1672"/>
+					<data forecastbaselinevalue="263.754"/>
+					<data forecastnet="35.1672"/>
+					<data forecastnetvalue="263.754"/>
+					<data forecasttotal="35.1672"/>
+					<data forecasttotalvalue="263.754"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2016-12-01</name>
+					<quantity>46.5733</quantity>
+					<start>2016-12-01T00:00:00</start>
+					<end>2017-01-01T00:00:00</end>
+					<data forecastbaseline="46.5733"/>
+					<data forecastbaselinevalue="349.3"/>
+					<data forecastnet="46.5733"/>
+					<data forecastnetvalue="349.3"/>
+					<data forecasttotal="46.5733"/>
+					<data forecasttotalvalue="349.3"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-01-01</name>
+					<quantity>43.6259</quantity>
+					<start>2017-01-01T00:00:00</start>
+					<end>2017-02-01T00:00:00</end>
+					<data forecastbaseline="43.6259"/>
+					<data forecastbaselinevalue="327.194"/>
+					<data forecastnet="43.6259"/>
+					<data forecastnetvalue="327.194"/>
+					<data forecasttotal="43.6259"/>
+					<data forecasttotalvalue="327.194"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-02-01</name>
+					<quantity>41.1774</quantity>
+					<start>2017-02-01T00:00:00</start>
+					<end>2017-03-01T00:00:00</end>
+					<data forecastbaseline="41.1774"/>
+					<data forecastbaselinevalue="308.83"/>
+					<data forecastnet="41.1774"/>
+					<data forecastnetvalue="308.83"/>
+					<data forecasttotal="41.1774"/>
+					<data forecasttotalvalue="308.83"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-03-01</name>
+					<quantity>55.0231</quantity>
+					<start>2017-03-01T00:00:00</start>
+					<end>2017-04-01T00:00:00</end>
+					<data forecastbaseline="55.0231"/>
+					<data forecastbaselinevalue="412.673"/>
+					<data forecastnet="55.0231"/>
+					<data forecastnetvalue="412.673"/>
+					<data forecasttotal="55.0231"/>
+					<data forecasttotalvalue="412.673"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-04-01</name>
+					<quantity>42.4669</quantity>
+					<start>2017-04-01T00:00:00</start>
+					<end>2017-05-01T00:00:00</end>
+					<data forecastbaseline="42.4669"/>
+					<data forecastbaselinevalue="318.502"/>
+					<data forecastnet="42.4669"/>
+					<data forecastnetvalue="318.502"/>
+					<data forecasttotal="42.4669"/>
+					<data forecasttotalvalue="318.502"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-05-01</name>
+					<quantity>48.8292</quantity>
+					<start>2017-05-01T00:00:00</start>
+					<end>2017-06-01T00:00:00</end>
+					<data forecastbaseline="48.8292"/>
+					<data forecastbaselinevalue="366.219"/>
+					<data forecastnet="48.8292"/>
+					<data forecastnetvalue="366.219"/>
+					<data forecasttotal="48.8292"/>
+					<data forecasttotalvalue="366.219"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-06-01</name>
+					<quantity>197.601</quantity>
+					<start>2017-06-01T00:00:00</start>
+					<end>2017-07-01T00:00:00</end>
+					<data forecastbaseline="197.601"/>
+					<data forecastbaselinevalue="1482.01"/>
+					<data forecastnet="197.601"/>
+					<data forecastnetvalue="1482.01"/>
+					<data forecasttotal="197.601"/>
+					<data forecasttotalvalue="1482.01"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-07-01</name>
+					<quantity>230.128</quantity>
+					<start>2017-07-01T00:00:00</start>
+					<end>2017-08-01T00:00:00</end>
+					<data forecastbaseline="230.128"/>
+					<data forecastbaselinevalue="1725.96"/>
+					<data forecastnet="230.128"/>
+					<data forecastnetvalue="1725.96"/>
+					<data forecasttotal="230.128"/>
+					<data forecasttotalvalue="1725.96"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-08-01</name>
+					<quantity>186.449</quantity>
+					<start>2017-08-01T00:00:00</start>
+					<end>2017-09-01T00:00:00</end>
+					<data forecastbaseline="186.449"/>
+					<data forecastbaselinevalue="1398.37"/>
+					<data forecastnet="186.449"/>
+					<data forecastnetvalue="1398.37"/>
+					<data forecasttotal="186.449"/>
+					<data forecasttotalvalue="1398.37"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-09-01</name>
+					<quantity>34.2822</quantity>
+					<start>2017-09-01T00:00:00</start>
+					<end>2017-10-01T00:00:00</end>
+					<data forecastbaseline="34.2822"/>
+					<data forecastbaselinevalue="257.116"/>
+					<data forecastnet="34.2822"/>
+					<data forecastnetvalue="257.116"/>
+					<data forecasttotal="34.2822"/>
+					<data forecasttotalvalue="257.116"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-10-01</name>
+					<quantity>52.7162</quantity>
+					<start>2017-10-01T00:00:00</start>
+					<end>2017-11-01T00:00:00</end>
+					<data forecastbaseline="52.7162"/>
+					<data forecastbaselinevalue="395.372"/>
+					<data forecastnet="52.7162"/>
+					<data forecastnetvalue="395.372"/>
+					<data forecasttotal="52.7162"/>
+					<data forecasttotalvalue="395.372"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-11-01</name>
+					<quantity>35.0074</quantity>
+					<start>2017-11-01T00:00:00</start>
+					<end>2017-12-01T00:00:00</end>
+					<data forecastbaseline="35.0074"/>
+					<data forecastbaselinevalue="262.555"/>
+					<data forecastnet="35.0074"/>
+					<data forecastnetvalue="262.555"/>
+					<data forecasttotal="35.0074"/>
+					<data forecasttotalvalue="262.555"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2017-12-01</name>
+					<quantity>46.4038</quantity>
+					<start>2017-12-01T00:00:00</start>
+					<end>2018-01-01T00:00:00</end>
+					<data forecastbaseline="46.4038"/>
+					<data forecastbaselinevalue="348.028"/>
+					<data forecastnet="46.4038"/>
+					<data forecastnetvalue="348.028"/>
+					<data forecasttotal="46.4038"/>
+					<data forecasttotalvalue="348.028"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2018-01-01</name>
+					<quantity>43.4987</quantity>
+					<start>2018-01-01T00:00:00</start>
+					<end>2018-02-01T00:00:00</end>
+					<data forecastbaseline="43.4987"/>
+					<data forecastbaselinevalue="326.24"/>
+					<data forecastnet="43.4987"/>
+					<data forecastnetvalue="326.24"/>
+					<data forecasttotal="43.4987"/>
+					<data forecasttotalvalue="326.24"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2018-02-01</name>
+					<quantity>41.0813</quantity>
+					<start>2018-02-01T00:00:00</start>
+					<end>2018-03-01T00:00:00</end>
+					<data forecastbaseline="41.0813"/>
+					<data forecastbaselinevalue="308.11"/>
+					<data forecastnet="41.0813"/>
+					<data forecastnetvalue="308.11"/>
+					<data forecasttotal="41.0813"/>
+					<data forecasttotalvalue="308.11"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2018-03-01</name>
+					<quantity>54.9204</quantity>
+					<start>2018-03-01T00:00:00</start>
+					<end>2018-04-01T00:00:00</end>
+					<data forecastbaseline="54.9204"/>
+					<data forecastbaselinevalue="411.903"/>
+					<data forecastnet="54.9204"/>
+					<data forecastnetvalue="411.903"/>
+					<data forecasttotal="54.9204"/>
+					<data forecasttotalvalue="411.903"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2018-04-01</name>
+					<quantity>42.4035</quantity>
+					<start>2018-04-01T00:00:00</start>
+					<end>2018-05-01T00:00:00</end>
+					<data forecastbaseline="42.4035"/>
+					<data forecastbaselinevalue="318.026"/>
+					<data forecastnet="42.4035"/>
+					<data forecastnetvalue="318.026"/>
+					<data forecasttotal="42.4035"/>
+					<data forecasttotalvalue="318.026"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2018-05-01</name>
+					<quantity>48.7708</quantity>
+					<start>2018-05-01T00:00:00</start>
+					<end>2018-06-01T00:00:00</end>
+					<data forecastbaseline="48.7708"/>
+					<data forecastbaselinevalue="365.781"/>
+					<data forecastnet="48.7708"/>
+					<data forecastnetvalue="365.781"/>
+					<data forecasttotal="48.7708"/>
+					<data forecasttotalvalue="365.781"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2018-06-01</name>
+					<quantity>197.412</quantity>
+					<start>2018-06-01T00:00:00</start>
+					<end>2018-07-01T00:00:00</end>
+					<data forecastbaseline="197.412"/>
+					<data forecastbaselinevalue="1480.59"/>
+					<data forecastnet="197.412"/>
+					<data forecastnetvalue="1480.59"/>
+					<data forecasttotal="197.412"/>
+					<data forecasttotalvalue="1480.59"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2018-07-01</name>
+					<quantity>229.952</quantity>
+					<start>2018-07-01T00:00:00</start>
+					<end>2018-08-01T00:00:00</end>
+					<data forecastbaseline="229.952"/>
+					<data forecastbaselinevalue="1724.64"/>
+					<data forecastnet="229.952"/>
+					<data forecastnetvalue="1724.64"/>
+					<data forecasttotal="229.952"/>
+					<data forecasttotalvalue="1724.64"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2018-08-01</name>
+					<quantity>186.335</quantity>
+					<start>2018-08-01T00:00:00</start>
+					<end>2018-09-01T00:00:00</end>
+					<data forecastbaseline="186.335"/>
+					<data forecastbaselinevalue="1397.51"/>
+					<data forecastnet="186.335"/>
+					<data forecastnetvalue="1397.51"/>
+					<data forecasttotal="186.335"/>
+					<data forecasttotalvalue="1397.51"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2018-09-01</name>
+					<quantity>34.2654</quantity>
+					<start>2018-09-01T00:00:00</start>
+					<end>2018-10-01T00:00:00</end>
+					<data forecastbaseline="34.2654"/>
+					<data forecastbaselinevalue="256.99"/>
+					<data forecastnet="34.2654"/>
+					<data forecastnetvalue="256.99"/>
+					<data forecasttotal="34.2654"/>
+					<data forecasttotalvalue="256.99"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2018-10-01</name>
+					<quantity>52.6956</quantity>
+					<start>2018-10-01T00:00:00</start>
+					<end>2018-11-01T00:00:00</end>
+					<data forecastbaseline="52.6956"/>
+					<data forecastbaselinevalue="395.217"/>
+					<data forecastnet="52.6956"/>
+					<data forecastnetvalue="395.217"/>
+					<data forecasttotal="52.6956"/>
+					<data forecasttotalvalue="395.217"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ All customers @ All locations - 2018-11-01</name>
+					<quantity>34.9964</quantity>
+					<start>2018-11-01T00:00:00</start>
+					<end>2018-12-01T00:00:00</end>
+					<data forecastbaseline="34.9964"/>
+					<data forecastbaselinevalue="262.473"/>
+					<data forecastnet="34.9964"/>
+					<data forecastnetvalue="262.473"/>
+					<data forecasttotal="34.9964"/>
+					<data forecasttotalvalue="262.473"/>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand xsi:type="demand_forecast">
+			<name>All-surface tennis ball pack @ Tennis shop Brussels</name>
+			<item>
+				<name>All-surface tennis ball pack</name>
+			</item>
+			<location>
+				<name>Tennis shop Brussels</name>
+			</location>
+			<customer>
+				<name>Generic customer</name>
+			</customer>
+			<calendar>
+				<name>planningbuckets</name>
+			</calendar>
+			<discrete>false</discrete>
+			<planned>false</planned>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-01-01</name>
+					<start>2013-01-01T00:00:00</start>
+					<end>2013-02-01T00:00:00</end>
+					<data orderstotal="46"/>
+					<data orderstotalvalue="345"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-02-01</name>
+					<start>2013-02-01T00:00:00</start>
+					<end>2013-03-01T00:00:00</end>
+					<data orderstotal="42"/>
+					<data orderstotalvalue="315"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-03-01</name>
+					<start>2013-03-01T00:00:00</start>
+					<end>2013-04-01T00:00:00</end>
+					<data orderstotal="33"/>
+					<data orderstotalvalue="247.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-04-01</name>
+					<start>2013-04-01T00:00:00</start>
+					<end>2013-05-01T00:00:00</end>
+					<data orderstotal="36"/>
+					<data orderstotalvalue="270"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-05-01</name>
+					<start>2013-05-01T00:00:00</start>
+					<end>2013-06-01T00:00:00</end>
+					<data orderstotal="41"/>
+					<data orderstotalvalue="307.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-06-01</name>
+					<start>2013-06-01T00:00:00</start>
+					<end>2013-07-01T00:00:00</end>
+					<data orderstotal="54"/>
+					<data orderstotalvalue="405"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-07-01</name>
+					<start>2013-07-01T00:00:00</start>
+					<end>2013-08-01T00:00:00</end>
+					<data orderstotal="66"/>
+					<data orderstotalvalue="495"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-08-01</name>
+					<start>2013-08-01T00:00:00</start>
+					<end>2013-09-01T00:00:00</end>
+					<data orderstotal="113"/>
+					<data orderstotalvalue="847.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-09-01</name>
+					<start>2013-09-01T00:00:00</start>
+					<end>2013-10-01T00:00:00</end>
+					<data orderstotal="26"/>
+					<data orderstotalvalue="195"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-10-01</name>
+					<start>2013-10-01T00:00:00</start>
+					<end>2013-11-01T00:00:00</end>
+					<data orderstotal="11"/>
+					<data orderstotalvalue="82.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-11-01</name>
+					<start>2013-11-01T00:00:00</start>
+					<end>2013-12-01T00:00:00</end>
+					<data orderstotal="28"/>
+					<data orderstotalvalue="210"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2013-12-01</name>
+					<start>2013-12-01T00:00:00</start>
+					<end>2014-01-01T00:00:00</end>
+					<data orderstotal="47"/>
+					<data orderstotalvalue="352.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-01-01</name>
+					<start>2014-01-01T00:00:00</start>
+					<end>2014-02-01T00:00:00</end>
+					<data orderstotal="20"/>
+					<data orderstotalvalue="150"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-02-01</name>
+					<start>2014-02-01T00:00:00</start>
+					<end>2014-03-01T00:00:00</end>
+					<data orderstotal="19"/>
+					<data orderstotalvalue="142.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-03-01</name>
+					<start>2014-03-01T00:00:00</start>
+					<end>2014-04-01T00:00:00</end>
+					<data orderstotal="21"/>
+					<data orderstotalvalue="157.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-04-01</name>
+					<start>2014-04-01T00:00:00</start>
+					<end>2014-05-01T00:00:00</end>
+					<data orderstotal="30"/>
+					<data orderstotalvalue="225"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-05-01</name>
+					<start>2014-05-01T00:00:00</start>
+					<end>2014-06-01T00:00:00</end>
+					<data orderstotal="12"/>
+					<data orderstotalvalue="90"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-06-01</name>
+					<start>2014-06-01T00:00:00</start>
+					<end>2014-07-01T00:00:00</end>
+					<data orderstotal="140"/>
+					<data orderstotalvalue="1050"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-07-01</name>
+					<start>2014-07-01T00:00:00</start>
+					<end>2014-08-01T00:00:00</end>
+					<data orderstotal="148"/>
+					<data orderstotalvalue="1110"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-08-01</name>
+					<start>2014-08-01T00:00:00</start>
+					<end>2014-09-01T00:00:00</end>
+					<data orderstotal="116"/>
+					<data orderstotalvalue="870"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-09-01</name>
+					<start>2014-09-01T00:00:00</start>
+					<end>2014-10-01T00:00:00</end>
+					<data orderstotal="13"/>
+					<data orderstotalvalue="97.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-10-01</name>
+					<start>2014-10-01T00:00:00</start>
+					<end>2014-11-01T00:00:00</end>
+					<data orderstotal="7"/>
+					<data orderstotalvalue="52.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-11-01</name>
+					<start>2014-11-01T00:00:00</start>
+					<end>2014-12-01T00:00:00</end>
+					<data orderstotal="28"/>
+					<data orderstotalvalue="210"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2014-12-01</name>
+					<start>2014-12-01T00:00:00</start>
+					<end>2015-01-01T00:00:00</end>
+					<data orderstotal="13"/>
+					<data orderstotalvalue="97.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-01-01</name>
+					<start>2015-01-01T00:00:00</start>
+					<end>2015-02-01T00:00:00</end>
+					<data orderstotal="37"/>
+					<data orderstotalvalue="277.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-02-01</name>
+					<start>2015-02-01T00:00:00</start>
+					<end>2015-03-01T00:00:00</end>
+					<data orderstotal="8"/>
+					<data orderstotalvalue="60"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-03-01</name>
+					<start>2015-03-01T00:00:00</start>
+					<end>2015-04-01T00:00:00</end>
+					<data orderstotal="39"/>
+					<data orderstotalvalue="292.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-04-01</name>
+					<start>2015-04-01T00:00:00</start>
+					<end>2015-05-01T00:00:00</end>
+					<data orderstotal="43"/>
+					<data orderstotalvalue="322.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-05-01</name>
+					<start>2015-05-01T00:00:00</start>
+					<end>2015-06-01T00:00:00</end>
+					<data orderstotal="22"/>
+					<data orderstotalvalue="165"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-06-01</name>
+					<start>2015-06-01T00:00:00</start>
+					<end>2015-07-01T00:00:00</end>
+					<data orderstotal="72"/>
+					<data orderstotalvalue="540"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-07-01</name>
+					<start>2015-07-01T00:00:00</start>
+					<end>2015-08-01T00:00:00</end>
+					<data orderstotal="139"/>
+					<data orderstotalvalue="1042.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-08-01</name>
+					<start>2015-08-01T00:00:00</start>
+					<end>2015-09-01T00:00:00</end>
+					<data orderstotal="57"/>
+					<data orderstotalvalue="427.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-09-01</name>
+					<start>2015-09-01T00:00:00</start>
+					<end>2015-10-01T00:00:00</end>
+					<data orderstotal="27"/>
+					<data orderstotalvalue="202.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-10-01</name>
+					<start>2015-10-01T00:00:00</start>
+					<end>2015-11-01T00:00:00</end>
+					<data orderstotal="44"/>
+					<data orderstotalvalue="330"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-11-01</name>
+					<start>2015-11-01T00:00:00</start>
+					<end>2015-12-01T00:00:00</end>
+					<data orderstotal="17"/>
+					<data orderstotalvalue="127.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2015-12-01</name>
+					<start>2015-12-01T00:00:00</start>
+					<end>2016-01-01T00:00:00</end>
+					<data orderstotal="11"/>
+					<data orderstotalvalue="82.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-01-01</name>
+					<start>2016-01-01T00:00:00</start>
+					<end>2016-02-01T00:00:00</end>
+					<data orderstotal="38"/>
+					<data orderstotalvalue="285"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-02-01</name>
+					<start>2016-02-01T00:00:00</start>
+					<end>2016-03-01T00:00:00</end>
+					<data forecastbaseline="20.4872"/>
+					<data forecastbaselinevalue="153.654"/>
+					<data forecasttotal="20.4872"/>
+					<data forecasttotalvalue="153.654"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-03-01</name>
+					<start>2016-03-01T00:00:00</start>
+					<end>2016-04-01T00:00:00</end>
+					<data forecastbaseline="28.5126"/>
+					<data forecastbaselinevalue="213.844"/>
+					<data forecasttotal="28.5126"/>
+					<data forecasttotalvalue="213.844"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-04-01</name>
+					<start>2016-04-01T00:00:00</start>
+					<end>2016-05-01T00:00:00</end>
+					<data forecastbaseline="34.5215"/>
+					<data forecastbaselinevalue="258.911"/>
+					<data forecasttotal="34.5215"/>
+					<data forecasttotalvalue="258.911"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-05-01</name>
+					<start>2016-05-01T00:00:00</start>
+					<end>2016-06-01T00:00:00</end>
+					<data forecastbaseline="21.2099"/>
+					<data forecastbaselinevalue="159.074"/>
+					<data forecasttotal="21.2099"/>
+					<data forecasttotalvalue="159.074"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-06-01</name>
+					<start>2016-06-01T00:00:00</start>
+					<end>2016-07-01T00:00:00</end>
+					<data forecastbaseline="77.2207"/>
+					<data forecastbaselinevalue="579.155"/>
+					<data forecasttotal="77.2207"/>
+					<data forecasttotalvalue="579.155"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-07-01</name>
+					<start>2016-07-01T00:00:00</start>
+					<end>2016-08-01T00:00:00</end>
+					<data forecastbaseline="104.006"/>
+					<data forecastbaselinevalue="780.045"/>
+					<data forecasttotal="104.006"/>
+					<data forecasttotalvalue="780.045"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-08-01</name>
+					<start>2016-08-01T00:00:00</start>
+					<end>2016-09-01T00:00:00</end>
+					<data forecastbaseline="80.9813"/>
+					<data forecastbaselinevalue="607.36"/>
+					<data forecasttotal="80.9813"/>
+					<data forecasttotalvalue="607.36"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-09-01</name>
+					<start>2016-09-01T00:00:00</start>
+					<end>2016-10-01T00:00:00</end>
+					<data forecastbaseline="19.2713"/>
+					<data forecastbaselinevalue="144.535"/>
+					<data forecasttotal="19.2713"/>
+					<data forecasttotalvalue="144.535"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-10-01</name>
+					<start>2016-10-01T00:00:00</start>
+					<end>2016-11-01T00:00:00</end>
+					<data forecastbaseline="18.1752"/>
+					<data forecastbaselinevalue="136.314"/>
+					<data forecasttotal="18.1752"/>
+					<data forecasttotalvalue="136.314"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-11-01</name>
+					<start>2016-11-01T00:00:00</start>
+					<end>2016-12-01T00:00:00</end>
+					<data forecastbaseline="21.2381"/>
+					<data forecastbaselinevalue="159.285"/>
+					<data forecasttotal="21.2381"/>
+					<data forecasttotalvalue="159.285"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2016-12-01</name>
+					<start>2016-12-01T00:00:00</start>
+					<end>2017-01-01T00:00:00</end>
+					<data forecastbaseline="20.139"/>
+					<data forecastbaselinevalue="151.042"/>
+					<data forecasttotal="20.139"/>
+					<data forecasttotalvalue="151.042"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-01-01</name>
+					<start>2017-01-01T00:00:00</start>
+					<end>2017-02-01T00:00:00</end>
+					<data forecastbaseline="30.6762"/>
+					<data forecastbaselinevalue="230.072"/>
+					<data forecasttotal="30.6762"/>
+					<data forecasttotalvalue="230.072"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-02-01</name>
+					<start>2017-02-01T00:00:00</start>
+					<end>2017-03-01T00:00:00</end>
+					<data forecastbaseline="18.8019"/>
+					<data forecastbaselinevalue="141.014"/>
+					<data forecasttotal="18.8019"/>
+					<data forecasttotalvalue="141.014"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-03-01</name>
+					<start>2017-03-01T00:00:00</start>
+					<end>2017-04-01T00:00:00</end>
+					<data forecastbaseline="26.662"/>
+					<data forecastbaselinevalue="199.965"/>
+					<data forecasttotal="26.662"/>
+					<data forecasttotalvalue="199.965"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-04-01</name>
+					<start>2017-04-01T00:00:00</start>
+					<end>2017-05-01T00:00:00</end>
+					<data forecastbaseline="33.3347"/>
+					<data forecastbaselinevalue="250.01"/>
+					<data forecasttotal="33.3347"/>
+					<data forecasttotalvalue="250.01"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-05-01</name>
+					<start>2017-05-01T00:00:00</start>
+					<end>2017-06-01T00:00:00</end>
+					<data forecastbaseline="20.2321"/>
+					<data forecastbaselinevalue="151.741"/>
+					<data forecasttotal="20.2321"/>
+					<data forecasttotalvalue="151.741"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-06-01</name>
+					<start>2017-06-01T00:00:00</start>
+					<end>2017-07-01T00:00:00</end>
+					<data forecastbaseline="74.2252"/>
+					<data forecastbaselinevalue="556.689"/>
+					<data forecasttotal="74.2252"/>
+					<data forecasttotalvalue="556.689"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-07-01</name>
+					<start>2017-07-01T00:00:00</start>
+					<end>2017-08-01T00:00:00</end>
+					<data forecastbaseline="100.966"/>
+					<data forecastbaselinevalue="757.243"/>
+					<data forecasttotal="100.966"/>
+					<data forecasttotalvalue="757.243"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-08-01</name>
+					<start>2017-08-01T00:00:00</start>
+					<end>2017-09-01T00:00:00</end>
+					<data forecastbaseline="79.0444"/>
+					<data forecastbaselinevalue="592.833"/>
+					<data forecasttotal="79.0444"/>
+					<data forecasttotalvalue="592.833"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-09-01</name>
+					<start>2017-09-01T00:00:00</start>
+					<end>2017-10-01T00:00:00</end>
+					<data forecastbaseline="18.9531"/>
+					<data forecastbaselinevalue="142.148"/>
+					<data forecasttotal="18.9531"/>
+					<data forecasttotalvalue="142.148"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-10-01</name>
+					<start>2017-10-01T00:00:00</start>
+					<end>2017-11-01T00:00:00</end>
+					<data forecastbaseline="17.8683"/>
+					<data forecastbaselinevalue="134.012"/>
+					<data forecasttotal="17.8683"/>
+					<data forecasttotalvalue="134.012"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-11-01</name>
+					<start>2017-11-01T00:00:00</start>
+					<end>2017-12-01T00:00:00</end>
+					<data forecastbaseline="21.0259"/>
+					<data forecastbaselinevalue="157.694"/>
+					<data forecasttotal="21.0259"/>
+					<data forecasttotalvalue="157.694"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2017-12-01</name>
+					<start>2017-12-01T00:00:00</start>
+					<end>2018-01-01T00:00:00</end>
+					<data forecastbaseline="19.94"/>
+					<data forecastbaselinevalue="149.55"/>
+					<data forecasttotal="19.94"/>
+					<data forecasttotalvalue="149.55"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2018-01-01</name>
+					<start>2018-01-01T00:00:00</start>
+					<end>2018-02-01T00:00:00</end>
+					<data forecastbaseline="30.5064"/>
+					<data forecastbaselinevalue="228.798"/>
+					<data forecasttotal="30.5064"/>
+					<data forecasttotalvalue="228.798"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2018-02-01</name>
+					<start>2018-02-01T00:00:00</start>
+					<end>2018-03-01T00:00:00</end>
+					<data forecastbaseline="18.6858"/>
+					<data forecastbaselinevalue="140.144"/>
+					<data forecasttotal="18.6858"/>
+					<data forecasttotalvalue="140.144"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2018-03-01</name>
+					<start>2018-03-01T00:00:00</start>
+					<end>2018-04-01T00:00:00</end>
+					<data forecastbaseline="26.5345"/>
+					<data forecastbaselinevalue="199.009"/>
+					<data forecasttotal="26.5345"/>
+					<data forecasttotalvalue="199.009"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2018-04-01</name>
+					<start>2018-04-01T00:00:00</start>
+					<end>2018-05-01T00:00:00</end>
+					<data forecastbaseline="33.2524"/>
+					<data forecastbaselinevalue="249.393"/>
+					<data forecasttotal="33.2524"/>
+					<data forecasttotalvalue="249.393"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2018-05-01</name>
+					<start>2018-05-01T00:00:00</start>
+					<end>2018-06-01T00:00:00</end>
+					<data forecastbaseline="20.1649"/>
+					<data forecastbaselinevalue="151.237"/>
+					<data forecasttotal="20.1649"/>
+					<data forecasttotalvalue="151.237"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2018-06-01</name>
+					<start>2018-06-01T00:00:00</start>
+					<end>2018-07-01T00:00:00</end>
+					<data forecastbaseline="74.0197"/>
+					<data forecastbaselinevalue="555.148"/>
+					<data forecasttotal="74.0197"/>
+					<data forecasttotalvalue="555.148"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2018-07-01</name>
+					<start>2018-07-01T00:00:00</start>
+					<end>2018-08-01T00:00:00</end>
+					<data forecastbaseline="100.757"/>
+					<data forecastbaselinevalue="755.676"/>
+					<data forecasttotal="100.757"/>
+					<data forecasttotalvalue="755.676"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2018-08-01</name>
+					<start>2018-08-01T00:00:00</start>
+					<end>2018-09-01T00:00:00</end>
+					<data forecastbaseline="78.9113"/>
+					<data forecastbaselinevalue="591.835"/>
+					<data forecasttotal="78.9113"/>
+					<data forecasttotalvalue="591.835"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2018-09-01</name>
+					<start>2018-09-01T00:00:00</start>
+					<end>2018-10-01T00:00:00</end>
+					<data forecastbaseline="18.9312"/>
+					<data forecastbaselinevalue="141.984"/>
+					<data forecasttotal="18.9312"/>
+					<data forecasttotalvalue="141.984"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2018-10-01</name>
+					<start>2018-10-01T00:00:00</start>
+					<end>2018-11-01T00:00:00</end>
+					<data forecastbaseline="17.8472"/>
+					<data forecastbaselinevalue="133.854"/>
+					<data forecasttotal="17.8472"/>
+					<data forecasttotalvalue="133.854"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Brussels - 2018-11-01</name>
+					<start>2018-11-01T00:00:00</start>
+					<end>2018-12-01T00:00:00</end>
+					<data forecastbaseline="21.0113"/>
+					<data forecastbaselinevalue="157.585"/>
+					<data forecasttotal="21.0113"/>
+					<data forecasttotalvalue="157.585"/>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand xsi:type="demand_forecast">
+			<name>All-surface tennis ball pack @ Tennis shop Paris</name>
+			<item>
+				<name>All-surface tennis ball pack</name>
+			</item>
+			<location>
+				<name>Tennis shop Paris</name>
+			</location>
+			<customer>
+				<name>Generic customer</name>
+			</customer>
+			<calendar>
+				<name>planningbuckets</name>
+			</calendar>
+			<discrete>false</discrete>
+			<planned>false</planned>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-01-01</name>
+					<start>2013-01-01T00:00:00</start>
+					<end>2013-02-01T00:00:00</end>
+					<data orderstotal="23"/>
+					<data orderstotalvalue="172.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-02-01</name>
+					<start>2013-02-01T00:00:00</start>
+					<end>2013-03-01T00:00:00</end>
+					<data orderstotal="37"/>
+					<data orderstotalvalue="277.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-03-01</name>
+					<start>2013-03-01T00:00:00</start>
+					<end>2013-04-01T00:00:00</end>
+					<data orderstotal="4"/>
+					<data orderstotalvalue="30"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-04-01</name>
+					<start>2013-04-01T00:00:00</start>
+					<end>2013-05-01T00:00:00</end>
+					<data orderstotal="1"/>
+					<data orderstotalvalue="7.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-05-01</name>
+					<start>2013-05-01T00:00:00</start>
+					<end>2013-06-01T00:00:00</end>
+					<data orderstotal="50"/>
+					<data orderstotalvalue="375"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-06-01</name>
+					<start>2013-06-01T00:00:00</start>
+					<end>2013-07-01T00:00:00</end>
+					<data orderstotal="85"/>
+					<data orderstotalvalue="637.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-07-01</name>
+					<start>2013-07-01T00:00:00</start>
+					<end>2013-08-01T00:00:00</end>
+					<data orderstotal="106"/>
+					<data orderstotalvalue="795"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-08-01</name>
+					<start>2013-08-01T00:00:00</start>
+					<end>2013-09-01T00:00:00</end>
+					<data orderstotal="98"/>
+					<data orderstotalvalue="735"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-09-01</name>
+					<start>2013-09-01T00:00:00</start>
+					<end>2013-10-01T00:00:00</end>
+					<data orderstotal="17"/>
+					<data orderstotalvalue="127.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-10-01</name>
+					<start>2013-10-01T00:00:00</start>
+					<end>2013-11-01T00:00:00</end>
+					<data orderstotal="45"/>
+					<data orderstotalvalue="337.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-11-01</name>
+					<start>2013-11-01T00:00:00</start>
+					<end>2013-12-01T00:00:00</end>
+					<data orderstotal="3"/>
+					<data orderstotalvalue="22.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2013-12-01</name>
+					<start>2013-12-01T00:00:00</start>
+					<end>2014-01-01T00:00:00</end>
+					<data orderstotal="37"/>
+					<data orderstotalvalue="277.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-01-01</name>
+					<start>2014-01-01T00:00:00</start>
+					<end>2014-02-01T00:00:00</end>
+					<data orderstotal="4"/>
+					<data orderstotalvalue="30"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-02-01</name>
+					<start>2014-02-01T00:00:00</start>
+					<end>2014-03-01T00:00:00</end>
+					<data orderstotal="6"/>
+					<data orderstotalvalue="45"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-03-01</name>
+					<start>2014-03-01T00:00:00</start>
+					<end>2014-04-01T00:00:00</end>
+					<data orderstotal="27"/>
+					<data orderstotalvalue="202.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-04-01</name>
+					<start>2014-04-01T00:00:00</start>
+					<end>2014-05-01T00:00:00</end>
+					<data orderstotal="1"/>
+					<data orderstotalvalue="7.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-05-01</name>
+					<start>2014-05-01T00:00:00</start>
+					<end>2014-06-01T00:00:00</end>
+					<data orderstotal="32"/>
+					<data orderstotalvalue="240"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-06-01</name>
+					<start>2014-06-01T00:00:00</start>
+					<end>2014-07-01T00:00:00</end>
+					<data orderstotal="148"/>
+					<data orderstotalvalue="1110"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-07-01</name>
+					<start>2014-07-01T00:00:00</start>
+					<end>2014-08-01T00:00:00</end>
+					<data orderstotal="131"/>
+					<data orderstotalvalue="982.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-08-01</name>
+					<start>2014-08-01T00:00:00</start>
+					<end>2014-09-01T00:00:00</end>
+					<data orderstotal="96"/>
+					<data orderstotalvalue="720"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-09-01</name>
+					<start>2014-09-01T00:00:00</start>
+					<end>2014-10-01T00:00:00</end>
+					<data orderstotal="14"/>
+					<data orderstotalvalue="105"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-10-01</name>
+					<start>2014-10-01T00:00:00</start>
+					<end>2014-11-01T00:00:00</end>
+					<data orderstotal="16"/>
+					<data orderstotalvalue="120"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-11-01</name>
+					<start>2014-11-01T00:00:00</start>
+					<end>2014-12-01T00:00:00</end>
+					<data orderstotal="22"/>
+					<data orderstotalvalue="165"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2014-12-01</name>
+					<start>2014-12-01T00:00:00</start>
+					<end>2015-01-01T00:00:00</end>
+					<data orderstotal="11"/>
+					<data orderstotalvalue="82.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-01-01</name>
+					<start>2015-01-01T00:00:00</start>
+					<end>2015-02-01T00:00:00</end>
+					<data orderstotal="6"/>
+					<data orderstotalvalue="45"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-02-01</name>
+					<start>2015-02-01T00:00:00</start>
+					<end>2015-03-01T00:00:00</end>
+					<data orderstotal="22"/>
+					<data orderstotalvalue="165"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-03-01</name>
+					<start>2015-03-01T00:00:00</start>
+					<end>2015-04-01T00:00:00</end>
+					<data orderstotal="47"/>
+					<data orderstotalvalue="352.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-04-01</name>
+					<start>2015-04-01T00:00:00</start>
+					<end>2015-05-01T00:00:00</end>
+					<data orderstotal="22"/>
+					<data orderstotalvalue="165"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-05-01</name>
+					<start>2015-05-01T00:00:00</start>
+					<end>2015-06-01T00:00:00</end>
+					<data orderstotal="2"/>
+					<data orderstotalvalue="15"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-06-01</name>
+					<start>2015-06-01T00:00:00</start>
+					<end>2015-07-01T00:00:00</end>
+					<data orderstotal="118"/>
+					<data orderstotalvalue="885"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-07-01</name>
+					<start>2015-07-01T00:00:00</start>
+					<end>2015-08-01T00:00:00</end>
+					<data orderstotal="129"/>
+					<data orderstotalvalue="967.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-08-01</name>
+					<start>2015-08-01T00:00:00</start>
+					<end>2015-09-01T00:00:00</end>
+					<data orderstotal="111"/>
+					<data orderstotalvalue="832.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-09-01</name>
+					<start>2015-09-01T00:00:00</start>
+					<end>2015-10-01T00:00:00</end>
+					<data orderstotal="12"/>
+					<data orderstotalvalue="90"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-10-01</name>
+					<start>2015-10-01T00:00:00</start>
+					<end>2015-11-01T00:00:00</end>
+					<data orderstotal="43"/>
+					<data orderstotalvalue="322.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-11-01</name>
+					<start>2015-11-01T00:00:00</start>
+					<end>2015-12-01T00:00:00</end>
+					<data orderstotal="12"/>
+					<data orderstotalvalue="90"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2015-12-01</name>
+					<start>2015-12-01T00:00:00</start>
+					<end>2016-01-01T00:00:00</end>
+					<data orderstotal="27"/>
+					<data orderstotalvalue="202.5"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-01-01</name>
+					<start>2016-01-01T00:00:00</start>
+					<end>2016-02-01T00:00:00</end>
+					<data orderstotal="34"/>
+					<data orderstotalvalue="255"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-02-01</name>
+					<start>2016-02-01T00:00:00</start>
+					<end>2016-03-01T00:00:00</end>
+					<data forecastbaseline="22.088"/>
+					<data forecastbaselinevalue="165.66"/>
+					<data forecasttotal="22.088"/>
+					<data forecasttotalvalue="165.66"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-03-01</name>
+					<start>2016-03-01T00:00:00</start>
+					<end>2016-04-01T00:00:00</end>
+					<data forecastbaseline="28.0056"/>
+					<data forecastbaselinevalue="210.042"/>
+					<data forecasttotal="28.0056"/>
+					<data forecasttotalvalue="210.042"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-04-01</name>
+					<start>2016-04-01T00:00:00</start>
+					<end>2016-05-01T00:00:00</end>
+					<data forecastbaseline="8.86893"/>
+					<data forecastbaselinevalue="66.517"/>
+					<data forecasttotal="8.86893"/>
+					<data forecasttotalvalue="66.517"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-05-01</name>
+					<start>2016-05-01T00:00:00</start>
+					<end>2016-06-01T00:00:00</end>
+					<data forecastbaseline="28.469"/>
+					<data forecastbaselinevalue="213.518"/>
+					<data forecasttotal="28.469"/>
+					<data forecasttotalvalue="213.518"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-06-01</name>
+					<start>2016-06-01T00:00:00</start>
+					<end>2016-07-01T00:00:00</end>
+					<data forecastbaseline="123.132"/>
+					<data forecastbaselinevalue="923.488"/>
+					<data forecasttotal="123.132"/>
+					<data forecasttotalvalue="923.488"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-07-01</name>
+					<start>2016-07-01T00:00:00</start>
+					<end>2016-08-01T00:00:00</end>
+					<data forecastbaseline="128.687"/>
+					<data forecastbaselinevalue="965.15"/>
+					<data forecasttotal="128.687"/>
+					<data forecasttotalvalue="965.15"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-08-01</name>
+					<start>2016-08-01T00:00:00</start>
+					<end>2016-09-01T00:00:00</end>
+					<data forecastbaseline="107.13"/>
+					<data forecastbaselinevalue="803.474"/>
+					<data forecasttotal="107.13"/>
+					<data forecasttotalvalue="803.474"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-09-01</name>
+					<start>2016-09-01T00:00:00</start>
+					<end>2016-10-01T00:00:00</end>
+					<data forecastbaseline="15.2554"/>
+					<data forecastbaselinevalue="114.415"/>
+					<data forecasttotal="15.2554"/>
+					<data forecasttotalvalue="114.415"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-10-01</name>
+					<start>2016-10-01T00:00:00</start>
+					<end>2016-11-01T00:00:00</end>
+					<data forecastbaseline="34.8419"/>
+					<data forecastbaselinevalue="261.314"/>
+					<data forecasttotal="34.8419"/>
+					<data forecasttotalvalue="261.314"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-11-01</name>
+					<start>2016-11-01T00:00:00</start>
+					<end>2016-12-01T00:00:00</end>
+					<data forecastbaseline="13.9292"/>
+					<data forecastbaselinevalue="104.469"/>
+					<data forecasttotal="13.9292"/>
+					<data forecasttotalvalue="104.469"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2016-12-01</name>
+					<start>2016-12-01T00:00:00</start>
+					<end>2017-01-01T00:00:00</end>
+					<data forecastbaseline="26.4344"/>
+					<data forecastbaselinevalue="198.258"/>
+					<data forecasttotal="26.4344"/>
+					<data forecasttotalvalue="198.258"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-01-01</name>
+					<start>2017-01-01T00:00:00</start>
+					<end>2017-02-01T00:00:00</end>
+					<data forecastbaseline="12.9497"/>
+					<data forecastbaselinevalue="97.1224"/>
+					<data forecasttotal="12.9497"/>
+					<data forecasttotalvalue="97.1224"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-02-01</name>
+					<start>2017-02-01T00:00:00</start>
+					<end>2017-03-01T00:00:00</end>
+					<data forecastbaseline="22.3755"/>
+					<data forecastbaselinevalue="167.816"/>
+					<data forecasttotal="22.3755"/>
+					<data forecasttotalvalue="167.816"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-03-01</name>
+					<start>2017-03-01T00:00:00</start>
+					<end>2017-04-01T00:00:00</end>
+					<data forecastbaseline="28.3611"/>
+					<data forecastbaselinevalue="212.708"/>
+					<data forecasttotal="28.3611"/>
+					<data forecasttotalvalue="212.708"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-04-01</name>
+					<start>2017-04-01T00:00:00</start>
+					<end>2017-05-01T00:00:00</end>
+					<data forecastbaseline="9.1322"/>
+					<data forecastbaselinevalue="68.4915"/>
+					<data forecasttotal="9.1322"/>
+					<data forecasttotalvalue="68.4915"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-05-01</name>
+					<start>2017-05-01T00:00:00</start>
+					<end>2017-06-01T00:00:00</end>
+					<data forecastbaseline="28.5971"/>
+					<data forecastbaselinevalue="214.478"/>
+					<data forecasttotal="28.5971"/>
+					<data forecasttotalvalue="214.478"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-06-01</name>
+					<start>2017-06-01T00:00:00</start>
+					<end>2017-07-01T00:00:00</end>
+					<data forecastbaseline="123.376"/>
+					<data forecastbaselinevalue="925.316"/>
+					<data forecasttotal="123.376"/>
+					<data forecasttotalvalue="925.316"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-07-01</name>
+					<start>2017-07-01T00:00:00</start>
+					<end>2017-08-01T00:00:00</end>
+					<data forecastbaseline="129.163"/>
+					<data forecastbaselinevalue="968.72"/>
+					<data forecasttotal="129.163"/>
+					<data forecasttotalvalue="968.72"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-08-01</name>
+					<start>2017-08-01T00:00:00</start>
+					<end>2017-09-01T00:00:00</end>
+					<data forecastbaseline="107.404"/>
+					<data forecastbaselinevalue="805.533"/>
+					<data forecasttotal="107.404"/>
+					<data forecasttotalvalue="805.533"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-09-01</name>
+					<start>2017-09-01T00:00:00</start>
+					<end>2017-10-01T00:00:00</end>
+					<data forecastbaseline="15.329"/>
+					<data forecastbaselinevalue="114.968"/>
+					<data forecasttotal="15.329"/>
+					<data forecasttotalvalue="114.968"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-10-01</name>
+					<start>2017-10-01T00:00:00</start>
+					<end>2017-11-01T00:00:00</end>
+					<data forecastbaseline="34.848"/>
+					<data forecastbaselinevalue="261.36"/>
+					<data forecasttotal="34.848"/>
+					<data forecasttotalvalue="261.36"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-11-01</name>
+					<start>2017-11-01T00:00:00</start>
+					<end>2017-12-01T00:00:00</end>
+					<data forecastbaseline="13.9815"/>
+					<data forecastbaselinevalue="104.861"/>
+					<data forecasttotal="13.9815"/>
+					<data forecasttotalvalue="104.861"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2017-12-01</name>
+					<start>2017-12-01T00:00:00</start>
+					<end>2018-01-01T00:00:00</end>
+					<data forecastbaseline="26.4638"/>
+					<data forecastbaselinevalue="198.479"/>
+					<data forecasttotal="26.4638"/>
+					<data forecasttotalvalue="198.479"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2018-01-01</name>
+					<start>2018-01-01T00:00:00</start>
+					<end>2018-02-01T00:00:00</end>
+					<data forecastbaseline="12.9924"/>
+					<data forecastbaselinevalue="97.4427"/>
+					<data forecasttotal="12.9924"/>
+					<data forecasttotalvalue="97.4427"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2018-02-01</name>
+					<start>2018-02-01T00:00:00</start>
+					<end>2018-03-01T00:00:00</end>
+					<data forecastbaseline="22.3955"/>
+					<data forecastbaselinevalue="167.966"/>
+					<data forecasttotal="22.3955"/>
+					<data forecasttotalvalue="167.966"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2018-03-01</name>
+					<start>2018-03-01T00:00:00</start>
+					<end>2018-04-01T00:00:00</end>
+					<data forecastbaseline="28.3859"/>
+					<data forecastbaselinevalue="212.894"/>
+					<data forecasttotal="28.3859"/>
+					<data forecasttotalvalue="212.894"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2018-04-01</name>
+					<start>2018-04-01T00:00:00</start>
+					<end>2018-05-01T00:00:00</end>
+					<data forecastbaseline="9.15107"/>
+					<data forecastbaselinevalue="68.633"/>
+					<data forecasttotal="9.15107"/>
+					<data forecasttotalvalue="68.633"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2018-05-01</name>
+					<start>2018-05-01T00:00:00</start>
+					<end>2018-06-01T00:00:00</end>
+					<data forecastbaseline="28.6058"/>
+					<data forecastbaselinevalue="214.544"/>
+					<data forecasttotal="28.6058"/>
+					<data forecasttotalvalue="214.544"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2018-06-01</name>
+					<start>2018-06-01T00:00:00</start>
+					<end>2018-07-01T00:00:00</end>
+					<data forecastbaseline="123.392"/>
+					<data forecastbaselinevalue="925.44"/>
+					<data forecasttotal="123.392"/>
+					<data forecasttotalvalue="925.44"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2018-07-01</name>
+					<start>2018-07-01T00:00:00</start>
+					<end>2018-08-01T00:00:00</end>
+					<data forecastbaseline="129.195"/>
+					<data forecastbaselinevalue="968.965"/>
+					<data forecasttotal="129.195"/>
+					<data forecasttotalvalue="968.965"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2018-08-01</name>
+					<start>2018-08-01T00:00:00</start>
+					<end>2018-09-01T00:00:00</end>
+					<data forecastbaseline="107.423"/>
+					<data forecastbaselinevalue="805.675"/>
+					<data forecasttotal="107.423"/>
+					<data forecasttotalvalue="805.675"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2018-09-01</name>
+					<start>2018-09-01T00:00:00</start>
+					<end>2018-10-01T00:00:00</end>
+					<data forecastbaseline="15.3341"/>
+					<data forecastbaselinevalue="115.006"/>
+					<data forecasttotal="15.3341"/>
+					<data forecasttotalvalue="115.006"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2018-10-01</name>
+					<start>2018-10-01T00:00:00</start>
+					<end>2018-11-01T00:00:00</end>
+					<data forecastbaseline="34.8484"/>
+					<data forecastbaselinevalue="261.363"/>
+					<data forecasttotal="34.8484"/>
+					<data forecasttotalvalue="261.363"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>All-surface tennis ball pack @ Tennis shop Paris - 2018-11-01</name>
+					<start>2018-11-01T00:00:00</start>
+					<end>2018-12-01T00:00:00</end>
+					<data forecastbaseline="13.9851"/>
+					<data forecastbaselinevalue="104.888"/>
+					<data forecasttotal="13.9851"/>
+					<data forecasttotalvalue="104.888"/>
+				</bucket>
+			</buckets>
+		</demand>
+	</demands>
+</plan>

@@ -1,17 +1,23 @@
 # Copyright (C) 2021 by frePPLe bv
 #
-# This library is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Affero General Public License as published
-# by the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
 #
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
-# General Public License for more details.
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
 #
-# You should have received a copy of the GNU Affero General Public
-# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
 from django.db import migrations
@@ -29,7 +35,7 @@ class Migration(migrations.Migration):
             delete from buffer a
             using (
                 select max(id) as id, item_id, location_id, batch
-                from buffer 
+                from buffer
                 group by item_id, location_id, batch
                 having count(*) > 1
                 ) b
@@ -50,7 +56,7 @@ class Migration(migrations.Migration):
             delete from calendarbucket a
             using (
                 select max(id) as id, calendar_id, priority, startdate, enddate
-                from calendarbucket 
+                from calendarbucket
                 group by calendar_id, priority, startdate, enddate
                 having count(*) > 1
                 ) b
@@ -84,7 +90,7 @@ class Migration(migrations.Migration):
             delete from suboperation a
             using (
                 select max(id) as id, operation_id, suboperation_id, effective_start
-                from suboperation 
+                from suboperation
                 group by operation_id, suboperation_id, effective_start
                 having count(*) > 1
                 ) b
@@ -105,7 +111,7 @@ class Migration(migrations.Migration):
             delete from operationmaterial a
             using (
                 select max(id) as id, operation_id, item_id, effective_start
-                from operationmaterial 
+                from operationmaterial
                 group by operation_id, item_id, effective_start
                 having count(*) > 1
                 ) b
@@ -126,7 +132,7 @@ class Migration(migrations.Migration):
             delete from operationresource a
             using (
                 select max(id) as id, operation_id, resource_id, effective_start
-                from operationresource 
+                from operationresource
                 group by operation_id, resource_id, effective_start
                 having count(*) > 1
                 ) b
@@ -147,7 +153,7 @@ class Migration(migrations.Migration):
             delete from itemsupplier a
             using (
                 select max(id) as id, item_id, supplier_id, location_id, effective_start
-                from itemsupplier 
+                from itemsupplier
                 group by item_id, supplier_id, location_id, effective_start
                 having count(*) > 1
                 ) b
@@ -169,7 +175,7 @@ class Migration(migrations.Migration):
             delete from itemdistribution a
             using (
                 select max(id) as id, item_id, origin_id, location_id, effective_start
-                from itemdistribution 
+                from itemdistribution
                 group by item_id, origin_id, location_id, effective_start
                 having count(*) > 1
                 ) b

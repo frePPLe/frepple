@@ -1,18 +1,24 @@
 /*
  * Copyright (C) 2017 by frePPLe bv
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
- * General Public License for more details.
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU Affero General Public
- * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
  *
  */
 
@@ -29,33 +35,33 @@ function PreferenceSvc($http) {
 
   function save(key, value, callback) {
     var data = preferences;
-    if (typeof(data) !== 'undefined' && data !== 'None' && data !== null)
+    if (typeof (data) !== 'undefined' && data !== 'None' && data !== null)
       data = angular.fromJson(preferences);
     else
       data = {};
-      
+
     // Key and value can both be an array to save lists of keys
     // and values with just one call
     if (typeof key === 'object' && key.length === value.length) {
-      angular.forEach(key, function(currentKey,index) {
+      angular.forEach(key, function (currentKey, index) {
         data[currentKey] = value[index];
       });
     } else
       data[key] = value;
 
     // Post to the server
-    var urlprefix = '/'+angular.element(document).find('#database').attr('name');
+    var urlprefix = '/' + angular.element(document).find('#database').attr('name');
     if (urlprefix === '/default' || urlprefix === '/undefined')
       urlprefix = '';
     var tmp = {};
     tmp[reportkey] = data;
     $http.post(urlprefix + '/settings/', angular.toJson(tmp))
       .then(
-        function(response) {
+        function (response) {
           if (typeof callback === 'function')
             callback(response);
         },
-        function(response) {
+        function (response) {
           angular.element(document).find('.modal-body').html('<div style="width: 100%; overflow: auto;">' + response.data + '</div>');
           showModal('popup2');
         }
@@ -64,7 +70,7 @@ function PreferenceSvc($http) {
 
   function get(key, defaultvalue) {
     var data = preferences;
-    if (typeof(data) !== 'undefined' && data !== 'None' && data !== null)
+    if (typeof (data) !== 'undefined' && data !== 'None' && data !== null)
       data = angular.fromJson(preferences);
     else
       data = {};

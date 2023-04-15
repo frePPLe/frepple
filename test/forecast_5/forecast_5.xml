@@ -1,0 +1,823 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Forecast test model</name>
+  <description>
+  This test demonstrates the capability to analyze a time series of
+  historical demand, and use it to create future forecasted demand quantities.
+  </description>
+  <current>2016-01-18T00:00:00</current>
+
+  <!--
+  This calendar defines the forecasting buckets.
+  -->
+  <calendars>
+    <calendar name="planningbuckets">
+      <buckets>
+        <bucket start="2012-01-01T00:00:00" value="1"/>
+        <bucket start="2012-02-01T00:00:00" value="1"/>
+        <bucket start="2012-03-01T00:00:00" value="1"/>
+        <bucket start="2012-04-01T00:00:00" value="1"/>
+        <bucket start="2012-05-01T00:00:00" value="1"/>
+        <bucket start="2012-06-01T00:00:00" value="1"/>
+        <bucket start="2012-07-01T00:00:00" value="1"/>
+        <bucket start="2012-08-01T00:00:00" value="1"/>
+        <bucket start="2012-09-01T00:00:00" value="1"/>
+        <bucket start="2012-10-01T00:00:00" value="1"/>
+        <bucket start="2012-11-01T00:00:00" value="1"/>
+        <bucket start="2012-12-01T00:00:00" value="1"/>
+        <bucket start="2013-01-01T00:00:00" value="1"/>
+        <bucket start="2013-02-01T00:00:00" value="1"/>
+        <bucket start="2013-03-01T00:00:00" value="1"/>
+        <bucket start="2013-04-01T00:00:00" value="1"/>
+        <bucket start="2013-05-01T00:00:00" value="1"/>
+        <bucket start="2013-06-01T00:00:00" value="1"/>
+        <bucket start="2013-07-01T00:00:00" value="1"/>
+        <bucket start="2013-08-01T00:00:00" value="1"/>
+        <bucket start="2013-09-01T00:00:00" value="1"/>
+        <bucket start="2013-10-01T00:00:00" value="1"/>
+        <bucket start="2013-11-01T00:00:00" value="1"/>
+        <bucket start="2013-12-01T00:00:00" value="1"/>
+        <bucket start="2014-01-01T00:00:00" value="1"/>
+        <bucket start="2014-02-01T00:00:00" value="1"/>
+        <bucket start="2014-03-01T00:00:00" value="1"/>
+        <bucket start="2014-04-01T00:00:00" value="1"/>
+        <bucket start="2014-05-01T00:00:00" value="1"/>
+        <bucket start="2014-06-01T00:00:00" value="1"/>
+        <bucket start="2014-07-01T00:00:00" value="1"/>
+        <bucket start="2014-08-01T00:00:00" value="1"/>
+        <bucket start="2014-09-01T00:00:00" value="1"/>
+        <bucket start="2014-10-01T00:00:00" value="1"/>
+        <bucket start="2014-11-01T00:00:00" value="1"/>
+        <bucket start="2014-12-01T00:00:00" value="1"/>
+        <bucket start="2015-01-01T00:00:00" value="1"/>
+        <bucket start="2015-02-01T00:00:00" value="1"/>
+        <bucket start="2015-03-01T00:00:00" value="1"/>
+        <bucket start="2015-04-01T00:00:00" value="1"/>
+        <bucket start="2015-05-01T00:00:00" value="1"/>
+        <bucket start="2015-06-01T00:00:00" value="1"/>
+        <bucket start="2015-07-01T00:00:00" value="1"/>
+        <bucket start="2015-08-01T00:00:00" value="1"/>
+        <bucket start="2015-09-01T00:00:00" value="1"/>
+        <bucket start="2015-10-01T00:00:00" value="1"/>
+        <bucket start="2015-11-01T00:00:00" value="1"/>
+        <bucket start="2015-12-01T00:00:00" value="1"/>
+        <bucket start="2016-01-01T00:00:00" value="1"/>
+        <bucket start="2016-02-01T00:00:00" value="1"/>
+        <bucket start="2016-03-01T00:00:00" value="1"/>
+        <bucket start="2016-04-01T00:00:00" value="1"/>
+        <bucket start="2016-05-01T00:00:00" value="1"/>
+        <bucket start="2016-06-01T00:00:00" value="1"/>
+      </buckets>
+    </calendar>
+  </calendars>
+  <demands>
+    <demand name="flat demand" xsi:type="demand_forecast" discrete="false">
+      <item name="flat demand"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-02-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-03-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-04-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-05-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-06-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-07-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-08-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-09-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-10-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-11-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-12-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="trending demand" xsi:type="demand_forecast">
+      <item name="trending demand"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-10-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-11-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-12-01T00:00:00</start>
+          <orderstotal>30</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-01-01T00:00:00</start>
+          <orderstotal>40</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-02-01T00:00:00</start>
+          <orderstotal>50</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-03-01T00:00:00</start>
+          <orderstotal>60</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-04-01T00:00:00</start>
+          <orderstotal>70</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-05-01T00:00:00</start>
+          <orderstotal>80</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-06-01T00:00:00</start>
+          <orderstotal>90</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-07-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-08-01T00:00:00</start>
+          <orderstotal>110</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-09-01T00:00:00</start>
+          <orderstotal>120</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-10-01T00:00:00</start>
+          <orderstotal>130</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-11-01T00:00:00</start>
+          <orderstotal>140</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-12-01T00:00:00</start>
+          <orderstotal>150</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="irregular demand" xsi:type="demand_forecast">
+      <item name="irregular demand"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-11-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-12-01T00:00:00</start>
+          <orderstotal>50</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-01-01T00:00:00</start>
+          <orderstotal>40</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-02-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-03-01T00:00:00</start>
+          <orderstotal>90</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-04-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-05-01T00:00:00</start>
+          <orderstotal>30</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-06-01T00:00:00</start>
+          <orderstotal>70</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-07-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-08-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-09-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-10-01T00:00:00</start>
+          <orderstotal>100</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-11-01T00:00:00</start>
+          <orderstotal>30</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-12-01T00:00:00</start>
+          <orderstotal>50</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="trend plus constant demand" xsi:type="demand_forecast">
+      <item name="trend plus constant demand"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-01-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-02-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-03-01T00:00:00</start>
+          <orderstotal>30</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-04-01T00:00:00</start>
+          <orderstotal>40</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-05-01T00:00:00</start>
+          <orderstotal>50</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-06-01T00:00:00</start>
+          <orderstotal>60</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-07-01T00:00:00</start>
+          <orderstotal>70</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-08-01T00:00:00</start>
+          <orderstotal>70</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-09-01T00:00:00</start>
+          <orderstotal>70</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-10-01T00:00:00</start>
+          <orderstotal>70</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-11-01T00:00:00</start>
+          <orderstotal>70</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-12-01T00:00:00</start>
+          <orderstotal>70</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="constant plus trend demand" xsi:type="demand_forecast">
+      <item name="constant plus trend demand"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-11-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-12-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-01-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-02-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-03-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-04-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-05-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-06-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-07-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-08-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-09-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-10-01T00:00:00</start>
+          <orderstotal>30</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-11-01T00:00:00</start>
+          <orderstotal>40</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-12-01T00:00:00</start>
+          <orderstotal>50</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="seasonal demand" xsi:type="demand_forecast">
+      <item name="seasonal demand"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-04-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-05-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-06-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-07-01T00:00:00</start>
+          <orderstotal>30</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-08-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-09-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-10-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-11-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-12-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-01-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-02-01T00:00:00</start>
+          <orderstotal>30</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-03-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-04-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-05-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-06-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-07-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-08-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-09-01T00:00:00</start>
+          <orderstotal>30</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-10-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-11-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-12-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="intermittent demand 00" xsi:type="demand_forecast">
+      <item name="intermittent demand 00"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-04-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-07-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-09-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-04-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-09-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="intermittent demand 01" xsi:type="demand_forecast">
+      <item name="intermittent demand 01"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-02-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-05-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-07-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-02-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-07-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="intermittent demand 02" xsi:type="demand_forecast">
+      <item name="intermittent demand 02"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-12-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-03-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-05-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-12-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-05-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="intermittent demand 03" xsi:type="demand_forecast">
+      <item name="intermittent demand 03"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-10-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-01-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-03-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-10-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-03-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="intermittent demand 04" xsi:type="demand_forecast">
+      <item name="intermittent demand 04"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-08-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-11-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-01-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-08-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-01-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="intermittent demand 05" xsi:type="demand_forecast">
+      <item name="intermittent demand 05"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-06-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-09-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-11-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-06-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-11-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="intermittent demand 06" xsi:type="demand_forecast">
+      <item name="intermittent demand 06"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-04-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-07-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-09-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-04-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-09-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="intermittent demand 07" xsi:type="demand_forecast">
+      <item name="intermittent demand 07"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-02-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-05-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-07-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-02-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-07-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="intermittent demand 08" xsi:type="demand_forecast">
+      <item name="intermittent demand 08"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2012-12-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-03-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-05-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-12-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-05-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="intermittent demand 09" xsi:type="demand_forecast">
+      <item name="intermittent demand 09"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2012-10-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-01-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-03-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-10-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-03-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="intermittent demand 10" xsi:type="demand_forecast">
+      <item name="intermittent demand 10"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2012-08-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2012-11-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-01-01T00:00:00</start>
+          <orderstotal>7</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-08-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2014-01-01T00:00:00</start>
+          <orderstotal>5</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="little history" xsi:type="demand_forecast" discrete="false">
+      <item name="little history"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-11-01T00:00:00</start>
+          <orderstotal>10</orderstotal>
+        </bucket>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2015-12-01T00:00:00</start>
+          <orderstotal>20</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="inactive forecast" xsi:type="demand_forecast">
+      <item name="inactive forecast"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+    </demand>
+    <demand name="dead demand" xsi:type="demand_forecast" discrete="false">
+      <item name="dead demand"/>
+      <customer name="all customers"/>
+      <location name="all locations"/>
+      <calendar name="planningbuckets"/>
+      <buckets>
+        <bucket xsi:type="demand_forecastbucket">
+          <start>2013-02-01T00:00:00</start>
+          <orderstotal>10000</orderstotal>
+        </bucket>
+      </buckets>
+    </demand>    
+  </demands>
+
+<?python
+frepple.solver_forecast(loglevel=3, DeadAfterInactivity=2*365).solve()
+frepple.updatePlannedForecast()
+frepple.saveXMLfile("output.1.xml")
+
+with open("output.2.xml","wt") as output:
+    fcst = frepple.demand(name="irregular demand")
+    for bckt in fcst.members:
+        print(bckt.due, file=output)
+?>
+</plan>

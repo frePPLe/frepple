@@ -22,9 +22,10 @@ party applications.
 The remainder of this page contains more information on the
 technologies and tasks involved for developing this type of embedding:
 
-- | To start with, there are **licensing restrictions** on the embedding.
-  | The Community Edition of frepple can only be embedded in products
-    that have an AGPL-compatible license.
+- | To start with, you need to be aware of the **MIT license compliance**.
+  | The Community Edition of frepple requires a copy of the terms of the MIT
+    License and also a copyright notice to be included with all copies of the
+    software or its substantial portions.
   | The Enterprise Edition can be embedded also in applications with a different
     license - contact us for details.
 

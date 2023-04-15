@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Forecast matching test model</name>
+  <description>
+    This test case test the matching between an actual order and a forecast.
+    Different scenarios are being validated:
+      - A: match at 'customer'+'item' level
+      - B: match at 'item' level
+      - C: match at 'parent customer' + 'item' level
+      - D: match at 'customer' + 'parent item' level
+      - E: match at 'parent customer' + 'parent item' level
+  </description>
+  <current>2009-01-01T00:00:00</current>
+  <calendars>
+    <calendar name="Months">
+      <buckets>
+        <bucket start="2009-01-01T00:00:00" end="2009-02-01T00:00:00" value="1"/>
+        <bucket start="2009-02-01T00:00:00" end="2009-03-01T00:00:00" value="1"/>
+        <bucket start="2009-03-01T00:00:00" end="2009-04-01T00:00:00" value="1"/>
+      </buckets>
+    </calendar>
+  </calendars>
+
+  <!-- Define a hierarchical tree of customers:
+    "grandparent customer"   -> "parent customer" -> "customer"
+  -->
+  <customers>
+    <customer name="A parent customer">
+      <owner name="A grandparent customer" />
+      <members>
+         <customer name="A customer"/>
+      </members>
+    </customer>
+    <customer name="B parent customer">
+      <owner name="B grandparent customer" />
+      <members>
+         <customer name="B customer"/>
+      </members>
+    </customer>
+    <customer name="C parent customer">
+      <owner name="C grandparent customer" />
+      <members>
+         <customer name="C customer"/>
+      </members>
+    </customer>
+    <customer name="D parent customer">
+      <owner name="D grandparent customer" />
+      <members>
+         <customer name="D customer"/>
+      </members>
+    </customer>
+    <customer name="E parent customer">
+      <owner name="E grandparent customer" />
+      <members>
+         <customer name="E customer"/>
+      </members>
+    </customer>
+  </customers>
+
+  <!-- Define a hierarchical tree of items:
+    "grandparent item"   -> "parent item" -> "item"
+  -->
+  <items>
+    <item name="A parent item" cost="10">
+      <owner name="A grandparent item"  cost="10"/>
+      <members>
+         <item name="A item" cost="10"/>
+      </members>
+    </item>
+    <item name="B parent item" cost="10">
+      <owner name="B grandparent item"  cost="10"/>
+      <members>
+         <item name="B item" cost="10"/>
+      </members>
+    </item>
+    <item name="C parent item" cost="10">
+      <owner name="C grandparent item"  cost="10"/>
+      <members>
+         <item name="C item" cost="10"/>
+      </members>
+    </item>
+    <item name="D parent item" cost="10">
+      <owner name="D grandparent item"  cost="10"/>
+      <members>
+         <item name="D item" cost="10"/>
+      </members>
+    </item>
+    <item name="E parent item" cost="10">
+      <owner name="E grandparent item"  cost="10"/>
+      <members>
+         <item name="E item" cost="10"/>
+      </members>
+    </item>
+  </items>
+
+  <!-- Case A: Match at 'customer' and 'item' level. -->
+  <demands>
+    <!-- Forecasts -->
+    <demand name="A forecast" xsi:type="demand_forecast">
+      <item name="A item" />
+      <customer name="A customer" />
+      <location name="Store" />
+      <operation name="A delivery" xsi:type="operation_fixed_time">
+        <duration>P1D</duration>
+      </operation>
+      <calendar name="Months" />
+      <buckets>
+        <bucket>
+          <start>2009-01-01T00:00:00</start>
+          <forecastoverride>100</forecastoverride>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="A forecast not selected" xsi:type="demand_forecast">
+      <description>This forecast is not selected because lower level is planned</description>
+      <item name="A parent item" />
+      <customer name="A parent customer" />
+      <operation name="A delivery"/>
+      <location name="Store" />
+      <calendar name="Months" />
+      <planned>false</planned>
+    </demand>
+    <!-- Actual orders -->
+    <demand name="A order">
+      <item name="A item"/>
+      <customer name="A customer"/>
+      <location name="Store" />
+      <operation name="A delivery"/>
+      <quantity>10</quantity>
+      <due>2009-01-02T00:00:00</due>
+    </demand>
+  </demands>
+
+  <!-- Case B: Match at 'item' level. -->
+  <demands>
+    <!-- Forecasts -->
+    <demand name="B forecast" xsi:type="demand_forecast">
+      <item name="B item" />
+      <customer name="B customer"/>
+      <operation name="B delivery" xsi:type="operation_fixed_time">
+      	<duration>P1D</duration>
+      </operation>
+      <location name="Store" />
+      <calendar name="Months" />
+      <buckets>
+        <bucket>
+          <start>2009-01-01T00:00:00</start>
+          <forecastoverride>100</forecastoverride>
+        </bucket>
+      </buckets>
+    </demand>
+    <!-- Actual orders -->
+    <demand name="B order 1">
+      <item name="B item"/>
+      <customer name="B customer"/>
+      <location name="Store" />
+      <operation name="B delivery"/>
+      <quantity>10</quantity>
+      <due>2009-01-02T00:00:00</due>
+    </demand>
+    <demand name="B order 2">
+      <item name="B item"/>
+      <operation name="B delivery"/>
+      <location name="Store" />
+      <quantity>10</quantity>
+      <due>2009-01-02T00:00:00</due>
+    </demand>
+  </demands>
+
+  <!-- Case C: Match at 'parent customer' + 'item' level. -->
+  <demands>
+    <!-- Forecasts -->
+    <demand name="C forecast" xsi:type="demand_forecast">
+      <item name="C item" />
+      <customer name="C parent customer" />
+      <location name="Store" />
+      <operation name="C delivery" xsi:type="operation_fixed_time">
+      	<duration>P1D</duration>
+      </operation>
+      <calendar name="Months" />
+      <buckets>
+        <bucket>
+          <start>2009-01-01T00:00:00</start>
+          <forecastoverride>100</forecastoverride>
+        </bucket>
+      </buckets>
+    </demand>
+    <demand name="C forecast not selected" xsi:type="demand_forecast">
+      <description>This forecast is not selected since we search higher
+      levels in the customer dimension first.
+      Switching the flag Customer_Then_Item_Hierarchy to false will
+      flip the search order around.</description>
+      <item name="C parent item" />
+      <customer name="C customer" />
+      <operation name="C delivery"/>
+      <location name="Store" />
+      <calendar name="Months" />
+      <buckets>
+        <bucket>
+          <start>2009-01-01T00:00:00</start>
+          <forecastoverride>100</forecastoverride>
+        </bucket>
+      </buckets>
+    </demand>
+    <!-- Actual orders -->
+    <demand name="C order">
+      <item name="C item"/>
+      <customer name="C customer"/>
+      <location name="Store" />
+      <operation name="C delivery"/>
+      <quantity>10</quantity>
+      <due>2009-01-02T00:00:00</due>
+    </demand>
+  </demands>
+
+  <!-- Case D: Match at 'customer' + 'parent item' level. -->
+  <demands>
+    <!-- Forecasts -->
+    <demand name="D forecast" xsi:type="demand_forecast">
+      <item name="D parent item" />
+      <customer name="D customer" />
+      <location name="Store" />
+      <operation name="D delivery" xsi:type="operation_fixed_time">
+      	<duration>P1D</duration>
+      </operation>
+      <calendar name="Months" />
+      <buckets>
+        <bucket>
+          <start>2009-01-01T00:00:00</start>
+          <forecastoverride>100</forecastoverride>
+        </bucket>
+      </buckets>
+    </demand>
+    <!-- Actual orders -->
+    <demand name="D order">
+      <item name="D item"/>
+      <customer name="D customer"/>
+      <location name="Store" />
+      <operation name="D delivery"/>
+      <quantity>10</quantity>
+      <due>2009-01-02T00:00:00</due>
+    </demand>
+  </demands>
+
+  <!-- Case E: Match at 'parent customer' + 'parent item' level. -->
+  <demands>
+    <!-- Forecasts -->
+    <demand name="E forecast" xsi:type="demand_forecast">
+      <item name="E parent item" />
+      <customer name="E parent customer" />
+      <location name="Store" />
+      <operation name="E delivery" xsi:type="operation_fixed_time">
+      	<duration>P1D</duration>
+      </operation>
+      <calendar name="Months" />
+      <buckets>
+        <bucket>
+          <start>2009-01-01T00:00:00</start>
+          <forecastoverride>100</forecastoverride>
+        </bucket>
+      </buckets>
+    </demand>
+    <!-- Actual orders -->
+    <demand name="E order">
+      <item name="E item"/>
+      <customer name="E customer"/>
+      <location name="Store" />
+      <operation name="E delivery"/>
+      <quantity>10</quantity>
+      <due>2009-01-02T00:00:00</due>
+    </demand>
+  </demands>
+
+<?python
+
+# Make sure the values in the forecast hierarchy are all in sync
+frepple.aggregateMeasures()
+   
+frepple.solver_forecast(
+  loglevel=2,
+  Net_CustomerThenItemHierarchy=True,
+  Net_MatchUsingDeliveryOperation=False
+  ).solve()
+frepple.updatePlannedForecast()
+frepple.saveXMLfile("output.1.xml")
+
+# Simple Python API test
+print("Printing all demands:")
+for x in frepple.demands():
+  print("   ", x.name, x.status, x.__class__, x.quantity)
+
+# Change the nettable quantity of demand
+for x in frepple.demands():
+  if not isinstance(x, (frepple.demand_forecast, frepple.demand_forecastbucket)) and x.quantity > 1:
+    x.quantity_to_net = x.quantity - 1
+
+frepple.solver_forecast(
+  loglevel=2,
+  Net_CustomerThenItemHierarchy=True,
+  Net_MatchUsingDeliveryOperation=False
+  ).solve()
+frepple.updatePlannedForecast()
+frepple.saveXMLfile("output.2.xml")
+?>
+
+</plan>

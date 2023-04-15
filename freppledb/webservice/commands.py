@@ -1,0 +1,191 @@
+#
+# Copyright (C) 2019 by frePPLe bv
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
+from datetime import datetime
+import os
+import logging
+import sys
+from time import sleep
+import uvicorn
+
+from django.db import DEFAULT_DB_ALIAS, connections
+from django.conf import settings
+from django.core import management
+
+from freppledb.common.commands import PlanTaskRegistry, PlanTask
+from freppledb.common.models import Parameter
+from freppledb.execute.models import Task
+from freppledb.webservice.utils import useWebService
+
+logger = logging.getLogger(__name__)
+
+
+@PlanTaskRegistry.register
+class setDatabaseConnection(PlanTask):
+    """
+    Set a PostgreSQL connection string used by the core engine to
+    connect to the database.
+    http://www.postgresql.org/docs/10/static/libpq-connect.html#LIBPQ-PARAMKEYWORDS
+    """
+
+    description = "Setting database connection and cache"
+    sequence = 90.5
+
+    @staticmethod
+    def getWeight(**kwargs):
+        return 0.1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        # Database connection string
+        res = ["client_encoding=utf-8", "connect_timeout=10"]
+        if settings.DATABASES[database]["NAME"]:
+            res.append("dbname=%s" % settings.DATABASES[database]["NAME"])
+        if settings.DATABASES[database]["USER"]:
+            res.append("user=%s" % settings.DATABASES[database]["USER"])
+        if settings.DATABASES[database]["PASSWORD"]:
+            res.append("password=%s" % settings.DATABASES[database]["PASSWORD"])
+        if settings.DATABASES[database]["HOST"]:
+            res.append("host=%s" % settings.DATABASES[database]["HOST"])
+        if settings.DATABASES[database]["PORT"]:
+            res.append("port=%s" % settings.DATABASES[database]["PORT"])
+        frepple.settings.dbconnection = " ".join(res)
+        frepple.settings.database = database
+        frepple.settings.dbchannel = "frepple"
+
+        # Cache settings
+        # frepple.cache.maximum = settings.CACHE_MAXIMUM
+        # frepple.cache.threads = settings.CACHE_THREADS
+        # frepple.cache.write_immediately = False
+        # frepple.cache.loglevel = Parameter.getValue("cache.loglevel", database, 0)
+
+
+@PlanTaskRegistry.register
+class StopWebService(PlanTask):
+
+    description = "Stop web service"
+    sequence = 999
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        if useWebService(database) and "nowebservice" not in os.environ:
+            return -1
+        else:
+            return -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        from http.client import HTTPConnection
+        from freppledb.common.auth import getWebserviceAuthorization
+
+        if "FREPPLE_TEST" in os.environ:
+            server = settings.DATABASES[database]["TEST"].get("FREPPLE_PORT", None)
+        else:
+            server = settings.DATABASES[database].get("FREPPLE_PORT", None)
+        if not server:
+            return
+
+        # The previous quoting server is shut down at the start of the planning
+        # two reasons:
+        #  - During the creation of the plan we would have 2 processes both writing
+        #    to the same log file.
+        #  - Avoid doubling the memory requirements.
+        # Disadvantages are that 1) the web service is not available while the plan
+        # is being generated, and 2) if the new plan fails for some reason we won't
+        # have an active web service for a while.
+        logger.info("Previous web service shutting down")
+
+        # Connect to the url "/stop/"
+        try:
+
+            # Call the stopwebservice command to benefit from the emergency brake.
+            management.call_command("stopwebservice", database=database, force=True)
+
+        except Exception:
+            # The service wasn't up
+            pass
+
+        # Clear the processid for extra robustness.
+        # There should no longer a processid on any runplan task (except for the current task).
+        # The command runwebservice expects the processid column to be correct.
+        Task.objects.all().using(database).filter(
+            processid__isnull=False, name="runplan"
+        ).exclude(processid=os.getpid()).update(processid=None)
+
+        # Give it some time to die
+        sleep(2)
+
+
+@PlanTaskRegistry.register
+class RunWebService(PlanTask):
+
+    description = "Run web service"
+    sequence = 1000
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        if useWebService(database) and "nowebservice" not in os.environ:
+            return 1
+        else:
+            return -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        if "FREPPLE_TEST" in os.environ:
+            server = settings.DATABASES[database]["TEST"].get("FREPPLE_PORT", None)
+        else:
+            server = settings.DATABASES[database].get("FREPPLE_PORT", None)
+        if not server:
+            logger.warning(
+                "\nWeb service will not be activated: missing FREPPLE_PORT configuration for database %s"
+                % database
+            )
+            return
+
+        # Start the web service
+        logger.info("Web service starting at %s" % datetime.now().strftime("%H:%M:%S"))
+        if PlanTaskRegistry.reg.task:
+            PlanTaskRegistry.reg.task.finished = datetime.now()
+            PlanTaskRegistry.reg.task.status = "Done"
+            PlanTaskRegistry.reg.task.message = "Web service active"
+            PlanTaskRegistry.reg.task.save(using=database)
+
+        # Close all database connections.
+        loglevel = int(Parameter.getValue("plan.loglevel", database, 0))
+        connections.close_all()
+        if "FREPPLE_TEST" in os.environ:
+            server = settings.DATABASES[database]["TEST"].get("FREPPLE_PORT", None)
+        else:
+            server = settings.DATABASES[database].get("FREPPLE_PORT", None)
+
+        # Running the server
+        uvicorn.run(
+            ":".join(settings.ASGI_APPLICATION.rsplit(".", 1)),
+            port=server.split(":")[-1],
+            log_level="debug",
+        )
+
+        # Exit immediately, to avoid that any more messages are printed to the log file
+        sys.exit(0)

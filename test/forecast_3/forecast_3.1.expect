@@ -1,0 +1,967 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Forecast test model</name>
+	<description>
+  This test verifies how actual orders consume from the forecast.
+  It shows netting from earlier and later time buckets.
+  </description>
+	<current>2022-01-01T00:00:00</current>
+	<locations>
+		<location>
+			<name>All locations</name>
+		</location>
+	</locations>
+	<customers>
+		<customer>
+			<name>Customer 1</name>
+		</customer>
+	</customers>
+	<calendars>
+		<calendar>
+			<name>planningbuckets</name>
+			<buckets>
+				<bucket>
+					<start>2021-12-22T00:00:00</start>
+					<end>2021-12-23T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2021-12-23T00:00:00</start>
+					<end>2021-12-24T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2021-12-24T00:00:00</start>
+					<end>2021-12-25T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2021-12-25T00:00:00</start>
+					<end>2021-12-26T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2021-12-26T00:00:00</start>
+					<end>2021-12-27T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2021-12-27T00:00:00</start>
+					<end>2021-12-28T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2021-12-28T00:00:00</start>
+					<end>2021-12-29T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2021-12-29T00:00:00</start>
+					<end>2021-12-30T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2021-12-30T00:00:00</start>
+					<end>2021-12-31T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2021-12-31T00:00:00</start>
+					<end>2022-01-01T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-01T00:00:00</start>
+					<end>2022-01-02T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-02T00:00:00</start>
+					<end>2022-01-03T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-03T00:00:00</start>
+					<end>2022-01-04T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-04T00:00:00</start>
+					<end>2022-01-05T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-05T00:00:00</start>
+					<end>2022-01-06T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-06T00:00:00</start>
+					<end>2022-01-07T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-07T00:00:00</start>
+					<end>2022-01-08T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-08T00:00:00</start>
+					<end>2022-01-09T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-09T00:00:00</start>
+					<end>2022-01-10T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-10T00:00:00</start>
+					<end>2022-01-11T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-11T00:00:00</start>
+					<end>2022-01-12T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-12T00:00:00</start>
+					<end>2022-01-13T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-13T00:00:00</start>
+					<end>2022-01-14T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-14T00:00:00</start>
+					<end>2022-01-15T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-15T00:00:00</start>
+					<end>2022-01-16T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-16T00:00:00</start>
+					<end>2022-01-17T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-17T00:00:00</start>
+					<end>2022-01-18T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-18T00:00:00</start>
+					<end>2022-01-19T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-19T00:00:00</start>
+					<end>2022-01-20T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-20T00:00:00</start>
+					<end>2022-01-21T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-21T00:00:00</start>
+					<end>2022-01-22T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-22T00:00:00</start>
+					<end>2022-01-29T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-01-29T00:00:00</start>
+					<end>2022-02-05T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-02-05T00:00:00</start>
+					<end>2022-02-12T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-02-12T00:00:00</start>
+					<end>2022-02-19T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-02-19T00:00:00</start>
+					<end>2022-02-26T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-02-26T00:00:00</start>
+					<end>2022-03-05T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-03-05T00:00:00</start>
+					<end>2022-03-12T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-03-12T00:00:00</start>
+					<end>2022-03-19T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-03-19T00:00:00</start>
+					<end>2022-03-26T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-03-26T00:00:00</start>
+					<end>2022-04-02T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-04-02T00:00:00</start>
+					<end>2022-04-09T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-04-09T00:00:00</start>
+					<end>2022-04-16T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-04-16T00:00:00</start>
+					<end>2022-04-23T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-04-23T00:00:00</start>
+					<end>2022-04-30T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-04-30T00:00:00</start>
+					<end>2022-05-07T00:00:00</end>
+				</bucket>
+				<bucket>
+					<start>2022-05-07T00:00:00</start>
+					<end>2022-05-14T00:00:00</end>
+				</bucket>
+			</buckets>
+		</calendar>
+	</calendars>
+	<items>
+		<item>
+			<name>Product 1</name>
+		</item>
+	</items>
+	<operations>
+		<operation>
+			<name>delivery 1</name>
+			<duration>P1D</duration>
+		</operation>
+	</operations>
+	<demands>
+		<demand xsi:type="demand_forecast">
+			<name>Forecast 1</name>
+			<item>
+				<name>Product 1</name>
+			</item>
+			<location>
+				<name>All locations</name>
+			</location>
+			<customer>
+				<name>Customer 1</name>
+			</customer>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<priority>1</priority>
+			<calendar>
+				<name>planningbuckets</name>
+			</calendar>
+			<buckets>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2021-12-22</name>
+					<start>2021-12-22T00:00:00</start>
+					<end>2021-12-23T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2021-12-23</name>
+					<start>2021-12-23T00:00:00</start>
+					<end>2021-12-24T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2021-12-24</name>
+					<start>2021-12-24T00:00:00</start>
+					<end>2021-12-25T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2021-12-25</name>
+					<start>2021-12-25T00:00:00</start>
+					<end>2021-12-26T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2021-12-26</name>
+					<start>2021-12-26T00:00:00</start>
+					<end>2021-12-27T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2021-12-27</name>
+					<start>2021-12-27T00:00:00</start>
+					<end>2021-12-28T00:00:00</end>
+					<data forecastoverride="30"/>
+					<data forecasttotal="30"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2021-12-28</name>
+					<start>2021-12-28T00:00:00</start>
+					<end>2021-12-29T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2021-12-29</name>
+					<start>2021-12-29T00:00:00</start>
+					<end>2021-12-30T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2021-12-30</name>
+					<start>2021-12-30T00:00:00</start>
+					<end>2021-12-31T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2021-12-31</name>
+					<start>2021-12-31T00:00:00</start>
+					<end>2022-01-01T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-01</name>
+					<start>2022-01-01T00:00:00</start>
+					<end>2022-01-02T00:00:00</end>
+					<data forecastconsumed="20"/>
+					<data forecastoverride="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-02</name>
+					<start>2022-01-02T00:00:00</start>
+					<end>2022-01-03T00:00:00</end>
+					<data forecastconsumed="20"/>
+					<data forecastoverride="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-03</name>
+					<start>2022-01-03T00:00:00</start>
+					<end>2022-01-04T00:00:00</end>
+					<data forecastconsumed="20"/>
+					<data forecastoverride="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-04</name>
+					<start>2022-01-04T00:00:00</start>
+					<end>2022-01-05T00:00:00</end>
+					<data forecastconsumed="20"/>
+					<data forecastoverride="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-05</name>
+					<start>2022-01-05T00:00:00</start>
+					<end>2022-01-06T00:00:00</end>
+					<data forecastconsumed="20"/>
+					<data forecastoverride="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-06</name>
+					<start>2022-01-06T00:00:00</start>
+					<end>2022-01-07T00:00:00</end>
+					<data forecastconsumed="20"/>
+					<data forecastoverride="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-07</name>
+					<quantity>20</quantity>
+					<start>2022-01-07T00:00:00</start>
+					<end>2022-01-08T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-08</name>
+					<quantity>20</quantity>
+					<start>2022-01-08T00:00:00</start>
+					<end>2022-01-09T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-09</name>
+					<quantity>20</quantity>
+					<start>2022-01-09T00:00:00</start>
+					<end>2022-01-10T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-10</name>
+					<quantity>20</quantity>
+					<start>2022-01-10T00:00:00</start>
+					<end>2022-01-11T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-11</name>
+					<quantity>20</quantity>
+					<start>2022-01-11T00:00:00</start>
+					<end>2022-01-12T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-12</name>
+					<quantity>20</quantity>
+					<start>2022-01-12T00:00:00</start>
+					<end>2022-01-13T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-13</name>
+					<quantity>20</quantity>
+					<start>2022-01-13T00:00:00</start>
+					<end>2022-01-14T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-14</name>
+					<quantity>20</quantity>
+					<start>2022-01-14T00:00:00</start>
+					<end>2022-01-15T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-15</name>
+					<quantity>20</quantity>
+					<start>2022-01-15T00:00:00</start>
+					<end>2022-01-16T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-16</name>
+					<quantity>20</quantity>
+					<start>2022-01-16T00:00:00</start>
+					<end>2022-01-17T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-17</name>
+					<quantity>20</quantity>
+					<start>2022-01-17T00:00:00</start>
+					<end>2022-01-18T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-18</name>
+					<quantity>20</quantity>
+					<start>2022-01-18T00:00:00</start>
+					<end>2022-01-19T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-19</name>
+					<quantity>20</quantity>
+					<start>2022-01-19T00:00:00</start>
+					<end>2022-01-20T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-20</name>
+					<quantity>20</quantity>
+					<start>2022-01-20T00:00:00</start>
+					<end>2022-01-21T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-21</name>
+					<quantity>20</quantity>
+					<start>2022-01-21T00:00:00</start>
+					<end>2022-01-22T00:00:00</end>
+					<data forecastnet="20"/>
+					<data forecastoverride="20"/>
+					<data forecastplanned="20"/>
+					<data forecasttotal="20"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-22</name>
+					<quantity>50</quantity>
+					<start>2022-01-22T00:00:00</start>
+					<end>2022-01-29T00:00:00</end>
+					<data forecastconsumed="90"/>
+					<data forecastnet="50"/>
+					<data forecastoverride="140"/>
+					<data forecastplanned="50"/>
+					<data forecasttotal="140"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-01-29</name>
+					<start>2022-01-29T00:00:00</start>
+					<end>2022-02-05T00:00:00</end>
+					<data forecastoverride="0"/>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-02-05</name>
+					<start>2022-02-05T00:00:00</start>
+					<end>2022-02-12T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-02-12</name>
+					<start>2022-02-12T00:00:00</start>
+					<end>2022-02-19T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-02-19</name>
+					<start>2022-02-19T00:00:00</start>
+					<end>2022-02-26T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-02-26</name>
+					<start>2022-02-26T00:00:00</start>
+					<end>2022-03-05T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-03-05</name>
+					<start>2022-03-05T00:00:00</start>
+					<end>2022-03-12T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-03-12</name>
+					<start>2022-03-12T00:00:00</start>
+					<end>2022-03-19T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-03-19</name>
+					<start>2022-03-19T00:00:00</start>
+					<end>2022-03-26T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-03-26</name>
+					<start>2022-03-26T00:00:00</start>
+					<end>2022-04-02T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-04-02</name>
+					<start>2022-04-02T00:00:00</start>
+					<end>2022-04-09T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-04-09</name>
+					<start>2022-04-09T00:00:00</start>
+					<end>2022-04-16T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-04-16</name>
+					<start>2022-04-16T00:00:00</start>
+					<end>2022-04-23T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-04-23</name>
+					<start>2022-04-23T00:00:00</start>
+					<end>2022-04-30T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-04-30</name>
+					<start>2022-04-30T00:00:00</start>
+					<end>2022-05-07T00:00:00</end>
+				</bucket>
+				<bucket xsi:type="demand_forecastbucket">
+					<name>Forecast 1 - 2022-05-07</name>
+					<start>2022-05-07T00:00:00</start>
+					<end>2022-05-14T00:00:00</end>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand>
+			<name>Order 0 for product 1</name>
+			<quantity>90</quantity>
+			<item>
+				<name>Product 1</name>
+			</item>
+			<location>
+				<name>All locations</name>
+			</location>
+			<customer>
+				<name>Customer 1</name>
+			</customer>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<due>2021-12-28T00:00:00</due>
+			<status>closed</status>
+		</demand>
+		<demand>
+			<name>Order 1 for product 1</name>
+			<quantity>90</quantity>
+			<item>
+				<name>Product 1</name>
+			</item>
+			<location>
+				<name>All locations</name>
+			</location>
+			<customer>
+				<name>Customer 1</name>
+			</customer>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<due>2022-01-03T00:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>Order 2 for product 1</name>
+			<quantity>30</quantity>
+			<item>
+				<name>Product 1</name>
+			</item>
+			<location>
+				<name>All locations</name>
+			</location>
+			<customer>
+				<name>Customer 1</name>
+			</customer>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<due>2022-01-03T10:00:00</due>
+			<priority>1</priority>
+		</demand>
+		<demand>
+			<name>Order 3 for product 1</name>
+			<quantity>90</quantity>
+			<item>
+				<name>Product 1</name>
+			</item>
+			<location>
+				<name>All locations</name>
+			</location>
+			<customer>
+				<name>Customer 1</name>
+			</customer>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<due>2022-01-27T00:00:00</due>
+			<priority>2</priority>
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan>
+			<reference>1</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand>
+				<name>Order 1 for product 1</name>
+			</demand>
+			<start>2022-01-02T00:00:00</start>
+			<end>2022-01-03T00:00:00</end>
+			<quantity>90</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>2</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand>
+				<name>Order 2 for product 1</name>
+			</demand>
+			<start>2022-01-02T10:00:00</start>
+			<end>2022-01-03T10:00:00</end>
+			<quantity>30</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>3</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-07</name>
+				<start>2022-01-07T00:00:00</start>
+				<end>2022-01-08T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-06T00:00:00</start>
+			<end>2022-01-07T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>4</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-08</name>
+				<start>2022-01-08T00:00:00</start>
+				<end>2022-01-09T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-07T00:00:00</start>
+			<end>2022-01-08T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>5</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-09</name>
+				<start>2022-01-09T00:00:00</start>
+				<end>2022-01-10T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-08T00:00:00</start>
+			<end>2022-01-09T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>6</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-10</name>
+				<start>2022-01-10T00:00:00</start>
+				<end>2022-01-11T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-09T00:00:00</start>
+			<end>2022-01-10T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>7</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-11</name>
+				<start>2022-01-11T00:00:00</start>
+				<end>2022-01-12T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-10T00:00:00</start>
+			<end>2022-01-11T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>8</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-12</name>
+				<start>2022-01-12T00:00:00</start>
+				<end>2022-01-13T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-11T00:00:00</start>
+			<end>2022-01-12T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>9</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-13</name>
+				<start>2022-01-13T00:00:00</start>
+				<end>2022-01-14T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-12T00:00:00</start>
+			<end>2022-01-13T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>10</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-14</name>
+				<start>2022-01-14T00:00:00</start>
+				<end>2022-01-15T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-13T00:00:00</start>
+			<end>2022-01-14T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>11</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-15</name>
+				<start>2022-01-15T00:00:00</start>
+				<end>2022-01-16T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-14T00:00:00</start>
+			<end>2022-01-15T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>12</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-16</name>
+				<start>2022-01-16T00:00:00</start>
+				<end>2022-01-17T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-15T00:00:00</start>
+			<end>2022-01-16T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>13</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-17</name>
+				<start>2022-01-17T00:00:00</start>
+				<end>2022-01-18T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-16T00:00:00</start>
+			<end>2022-01-17T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>14</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-18</name>
+				<start>2022-01-18T00:00:00</start>
+				<end>2022-01-19T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-17T00:00:00</start>
+			<end>2022-01-18T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>15</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-19</name>
+				<start>2022-01-19T00:00:00</start>
+				<end>2022-01-20T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-18T00:00:00</start>
+			<end>2022-01-19T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>16</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-20</name>
+				<start>2022-01-20T00:00:00</start>
+				<end>2022-01-21T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-19T00:00:00</start>
+			<end>2022-01-20T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>17</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-21</name>
+				<start>2022-01-21T00:00:00</start>
+				<end>2022-01-22T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-20T00:00:00</start>
+			<end>2022-01-21T00:00:00</end>
+			<quantity>20</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>18</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand xsi:type="demand_forecastbucket">
+				<name>Forecast 1 - 2022-01-22</name>
+				<start>2022-01-22T00:00:00</start>
+				<end>2022-01-29T00:00:00</end>
+				<forecast xsi:type="demand_forecast">
+					<name>Forecast 1</name>
+				</forecast>
+			</demand>
+			<start>2022-01-24T00:00:00</start>
+			<end>2022-01-25T00:00:00</end>
+			<quantity>50</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>19</reference>
+			<operation>
+				<name>delivery 1</name>
+			</operation>
+			<demand>
+				<name>Order 3 for product 1</name>
+			</demand>
+			<start>2022-01-26T00:00:00</start>
+			<end>2022-01-27T00:00:00</end>
+			<quantity>90</quantity>
+		</operationplan>
+	</operationplans>
+</plan>

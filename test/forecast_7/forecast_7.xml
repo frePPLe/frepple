@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Forecast aggregation/disaggregation test model</name>
+	<description>
+  This test checks for the aggregation/disaggregation feature
+	</description>
+	<current>2016-02-01T00:00:00</current>
+  
+<?python
+# Define some computed measures
+frepple.measure_computed(
+    name="forecastconsumedvalue",
+    compute_expression="if(cost == 0, forecastconsumedvalue, forecastconsumed * cost)",
+    update_expression="if(cost != 0, forecastconsumed := newvalue / cost, forecastconsumedvalue := newvalue)",
+)
+forecastbaselinevalue = frepple.measure_computed(
+    name="forecastbaselinevalue",
+    compute_expression="if(cost == 0, forecastbaselinevalue, forecastbaseline * cost)",
+    update_expression="if(cost != 0, forecastbaseline := newvalue / cost, forecastbaselinevalue := newvalue)",
+)
+frepple.measure_computed(
+    name="forecastnetvalue",
+    compute_expression="if(cost == 0, forecastnetvalue, forecastnet * cost)",
+    update_expression="if(cost != 0, forecastnet := newvalue / cost, forecastnetvalue := newvalue)",
+)
+frepple.measure_computed(
+    name="forecastoverridevalue",
+    compute_expression="if(cost == 0, forecastoverridevalue, if(forecastoverride == -1, -1, forecastoverride * cost))",
+    update_expression="if(cost != 0, forecastoverride := if(newvalue == -1, -1, newvalue / cost), forecastoverridevalue := newvalue)",
+    overrides=forecastbaselinevalue, default=-1.0,
+)
+frepple.measure_computed(
+    name="forecastplannedvalue",
+    compute_expression="if(cost == 0, forecastplannedvalue, forecastplanned * cost)",
+    update_expression="if(cost != 0, forecastplanned := newvalue / cost, forecastplannedvalue := newvalue)",
+)
+frepple.measure_computed(
+    name="forecasttotalvalue",
+    compute_expression="if(cost == 0, forecasttotalvalue, forecasttotal * cost)",
+    update_expression="if(cost != 0, forecasttotal := newvalue / cost, forecasttotalvalue := newvalue)",
+)
+frepple.measure_computed(
+    name="ordersadjustmentvalue",
+    compute_expression="if(cost == 0, ordersadjustmentvalue, ordersadjustment * cost)",
+    update_expression="if(cost != 0, ordersadjustment := newvalue / cost, ordersadjustmentvalue := newvalue)",
+)
+frepple.measure_computed(
+    name="ordersopenvalue",
+    compute_expression="if(cost == 0, ordersopenvalue, ordersopen * cost)",
+    update_expression="if(cost != 0, ordersopen  := newvalue / cost, ordersopenvalue := newvalue)",
+)
+frepple.measure_computed(
+    name="ordersplannedvalue",
+    compute_expression="if(cost == 0, ordersplannedvalue, ordersplanned * cost)",
+    update_expression="if(cost != 0, ordersplanned := newvalue / cost, ordersplannedvalue := newvalue)",
+)
+frepple.measure_computed(
+    name="orderstotalvalue",
+    compute_expression="if(cost == 0, orderstotalvalue, orderstotal * cost)",
+    update_expression="if(cost != 0, orderstotal := newvalue / cost, orderstotalvalue := newvalue)",
+)
+frepple.compileMeasures()
+?>
+
+	<!--
+  This calendar defines the forecasting buckets.
+  -->
+	<calendars>
+		<calendar name="planningbuckets">
+			<buckets>
+				<bucket start="2013-01-01T00:00:00" value="1"/>
+				<bucket start="2013-02-01T00:00:00" value="1"/>
+				<bucket start="2013-03-01T00:00:00" value="1"/>
+				<bucket start="2013-04-01T00:00:00" value="1"/>
+				<bucket start="2013-05-01T00:00:00" value="1"/>
+				<bucket start="2013-06-01T00:00:00" value="1"/>
+				<bucket start="2013-07-01T00:00:00" value="1"/>
+				<bucket start="2013-08-01T00:00:00" value="1"/>
+				<bucket start="2013-09-01T00:00:00" value="1"/>
+				<bucket start="2013-10-01T00:00:00" value="1"/>
+				<bucket start="2013-11-01T00:00:00" value="1"/>
+				<bucket start="2013-12-01T00:00:00" value="1"/>
+				<bucket start="2014-01-01T00:00:00" value="1"/>
+				<bucket start="2014-02-01T00:00:00" value="1"/>
+				<bucket start="2014-03-01T00:00:00" value="1"/>
+				<bucket start="2014-04-01T00:00:00" value="1"/>
+				<bucket start="2014-05-01T00:00:00" value="1"/>
+				<bucket start="2014-06-01T00:00:00" value="1"/>
+				<bucket start="2014-07-01T00:00:00" value="1"/>
+				<bucket start="2014-08-01T00:00:00" value="1"/>
+				<bucket start="2014-09-01T00:00:00" value="1"/>
+				<bucket start="2014-10-01T00:00:00" value="1"/>
+				<bucket start="2014-11-01T00:00:00" value="1"/>
+				<bucket start="2014-12-01T00:00:00" value="1"/>
+				<bucket start="2015-01-01T00:00:00" value="1"/>
+				<bucket start="2015-02-01T00:00:00" value="1"/>
+				<bucket start="2015-03-01T00:00:00" value="1"/>
+				<bucket start="2015-04-01T00:00:00" value="1"/>
+				<bucket start="2015-05-01T00:00:00" value="1"/>
+				<bucket start="2015-06-01T00:00:00" value="1"/>
+				<bucket start="2015-07-01T00:00:00" value="1"/>
+				<bucket start="2015-08-01T00:00:00" value="1"/>
+				<bucket start="2015-09-01T00:00:00" value="1"/>
+				<bucket start="2015-10-01T00:00:00" value="1"/>
+				<bucket start="2015-11-01T00:00:00" value="1"/>
+				<bucket start="2015-12-01T00:00:00" value="1"/>
+				<bucket start="2016-01-01T00:00:00" value="1"/>
+				<bucket start="2016-02-01T00:00:00" value="1"/>
+				<bucket start="2016-03-01T00:00:00" value="1"/>
+				<bucket start="2016-04-01T00:00:00" value="1"/>
+				<bucket start="2016-05-01T00:00:00" value="1"/>
+				<bucket start="2016-06-01T00:00:00" value="1"/>
+				<bucket start="2016-07-01T00:00:00" value="1"/>
+				<bucket start="2016-08-01T00:00:00" value="1"/>
+				<bucket start="2016-09-01T00:00:00" value="1"/>
+				<bucket start="2016-10-01T00:00:00" value="1"/>
+				<bucket start="2016-11-01T00:00:00" value="1"/>
+				<bucket start="2016-12-01T00:00:00" value="1"/>
+				<bucket start="2017-01-01T00:00:00" value="1"/>
+				<bucket start="2017-02-01T00:00:00" value="1"/>
+				<bucket start="2017-03-01T00:00:00" value="1"/>
+				<bucket start="2017-04-01T00:00:00" value="1"/>
+				<bucket start="2017-05-01T00:00:00" value="1"/>
+				<bucket start="2017-06-01T00:00:00" value="1"/>
+				<bucket start="2017-07-01T00:00:00" value="1"/>
+				<bucket start="2017-08-01T00:00:00" value="1"/>
+				<bucket start="2017-09-01T00:00:00" value="1"/>
+				<bucket start="2017-10-01T00:00:00" value="1"/>
+				<bucket start="2017-11-01T00:00:00" value="1"/>
+				<bucket start="2017-12-01T00:00:00" value="1"/>
+				<bucket start="2018-01-01T00:00:00" value="1"/>
+				<bucket start="2018-02-01T00:00:00" value="1"/>
+				<bucket start="2018-03-01T00:00:00" value="1"/>
+				<bucket start="2018-04-01T00:00:00" value="1"/>
+				<bucket start="2018-05-01T00:00:00" value="1"/>
+				<bucket start="2018-06-01T00:00:00" value="1"/>
+				<bucket start="2018-07-01T00:00:00" value="1"/>
+				<bucket start="2018-08-01T00:00:00" value="1"/>
+				<bucket start="2018-09-01T00:00:00" value="1"/>
+				<bucket start="2018-10-01T00:00:00" value="1"/>
+				<bucket start="2018-11-01T00:00:00" value="1"/>
+				<bucket start="2018-12-01T00:00:00" value="1"/>
+			</buckets>
+		</calendar>
+	</calendars>
+
+	<items>
+		<item name="All material" cost="0">
+			<owner name="All items" cost="0"/>
+			<members>
+				<item name="All-surface tennis ball pack" cost="7.5">
+				</item>
+			</members>
+		</item>
+	</items>
+
+	<locations>
+		<location name="Tennis shop Brussels">
+			<owner name="All locations"/>
+		</location>
+		<location name="Tennis shop Paris">
+			<owner name="All locations"/>
+		</location>
+	</locations>
+
+	<customers>
+		<customer name="Generic customer">
+			<owner name="All customers"/>
+		</customer>
+	</customers>
+
+	<demands>
+		<demand name="All items @ All locations @ All customers" xsi:type="demand_forecast" discrete="false" planned="false">
+			<item name="All items" />
+			<location name="All locations" />
+			<customer name="All customers" />
+			<priority>10</priority>
+			<calendar name="planningbuckets" />
+		</demand>
+		<demand name="All-surface tennis ball pack @ Tennis shop Brussels" xsi:type="demand_forecast" discrete="false" planned="true">
+			<item name="All-surface tennis ball pack"/>
+			<customer name="Generic customer"/>
+			<location name="Tennis shop Brussels"/>
+			<calendar name="planningbuckets"/>    
+			<buckets>
+				<bucket>
+					<start>2013-01-01T00:00:00</start>
+					<orderstotal>46.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-02-01T00:00:00</start>
+					<orderstotal>42.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-03-01T00:00:00</start>
+					<orderstotal>33.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-04-01T00:00:00</start>
+					<orderstotal>36.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-05-01T00:00:00</start>
+					<orderstotal>41.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-06-01T00:00:00</start>
+					<orderstotal>54.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-07-01T00:00:00</start>
+					<orderstotal>66.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-08-01T00:00:00</start>
+					<orderstotal>113.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-09-01T00:00:00</start>
+					<orderstotal>26.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-10-01T00:00:00</start>
+					<orderstotal>11.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-11-01T00:00:00</start>
+					<orderstotal>28.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-12-01T00:00:00</start>
+					<orderstotal>47.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-01-01T00:00:00</start>
+					<orderstotal>20.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-02-01T00:00:00</start>
+					<orderstotal>19.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-03-01T00:00:00</start>
+					<orderstotal>21.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-04-01T00:00:00</start>
+					<orderstotal>30.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-05-01T00:00:00</start>
+					<orderstotal>12.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-06-01T00:00:00</start>
+					<orderstotal>140.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-07-01T00:00:00</start>
+					<orderstotal>148.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-08-01T00:00:00</start>
+					<orderstotal>116.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-09-01T00:00:00</start>
+					<orderstotal>13.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-10-01T00:00:00</start>
+					<orderstotal>7.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-11-01T00:00:00</start>
+					<orderstotal>28.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-12-01T00:00:00</start>
+					<orderstotal>13.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-01-01T00:00:00</start>
+					<orderstotal>37.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-02-01T00:00:00</start>
+					<orderstotal>8.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-03-01T00:00:00</start>
+					<orderstotal>39.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-04-01T00:00:00</start>
+					<orderstotal>43.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-05-01T00:00:00</start>
+					<orderstotal>22.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-06-01T00:00:00</start>
+					<orderstotal>72.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-07-01T00:00:00</start>
+					<orderstotal>139.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-08-01T00:00:00</start>
+					<orderstotal>57.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-09-01T00:00:00</start>
+					<orderstotal>27.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-10-01T00:00:00</start>
+					<orderstotal>44.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-11-01T00:00:00</start>
+					<orderstotal>17.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-12-01T00:00:00</start>
+					<orderstotal>11.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2016-01-01T00:00:00</start>
+					<orderstotal>38.0</orderstotal>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand name="All-surface tennis ball pack @ Tennis shop Paris" xsi:type="demand_forecast" discrete="false" planned="true">
+			<item name="All-surface tennis ball pack"/>
+			<customer name="Generic customer"/>
+			<location name="Tennis shop Paris"/>
+			<calendar name="planningbuckets"/>
+			<buckets>
+				<bucket>
+					<start>2013-01-01T00:00:00</start>
+					<orderstotal>23.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-02-01T00:00:00</start>
+					<orderstotal>37.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-03-01T00:00:00</start>
+					<orderstotal>4.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-04-01T00:00:00</start>
+					<orderstotal>1.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-05-01T00:00:00</start>
+					<orderstotal>50.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-06-01T00:00:00</start>
+					<orderstotal>85.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-07-01T00:00:00</start>
+					<orderstotal>106.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-08-01T00:00:00</start>
+					<orderstotal>98.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-09-01T00:00:00</start>
+					<orderstotal>17.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-10-01T00:00:00</start>
+					<orderstotal>45.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-11-01T00:00:00</start>
+					<orderstotal>3.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2013-12-01T00:00:00</start>
+					<orderstotal>37.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-01-01T00:00:00</start>
+					<orderstotal>4.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-02-01T00:00:00</start>
+					<orderstotal>6.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-03-01T00:00:00</start>
+					<orderstotal>27.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-04-01T00:00:00</start>
+					<orderstotal>1.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-05-01T00:00:00</start>
+					<orderstotal>32.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-06-01T00:00:00</start>
+					<orderstotal>148.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-07-01T00:00:00</start>
+					<orderstotal>131.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-08-01T00:00:00</start>
+					<orderstotal>96.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-09-01T00:00:00</start>
+					<orderstotal>14.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-10-01T00:00:00</start>
+					<orderstotal>16.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-11-01T00:00:00</start>
+					<orderstotal>22.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2014-12-01T00:00:00</start>
+					<orderstotal>11.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-01-01T00:00:00</start>
+					<orderstotal>6.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-02-01T00:00:00</start>
+					<orderstotal>22.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-03-01T00:00:00</start>
+					<orderstotal>47.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-04-01T00:00:00</start>
+					<orderstotal>22.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-05-01T00:00:00</start>
+					<orderstotal>2.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-06-01T00:00:00</start>
+					<orderstotal>118.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-07-01T00:00:00</start>
+					<orderstotal>129.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-08-01T00:00:00</start>
+					<orderstotal>111.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-09-01T00:00:00</start>
+					<orderstotal>12.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-10-01T00:00:00</start>
+					<orderstotal>43.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-11-01T00:00:00</start>
+					<orderstotal>12.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2015-12-01T00:00:00</start>
+					<orderstotal>27.0</orderstotal>
+				</bucket>
+				<bucket>
+					<start>2016-01-01T00:00:00</start>
+					<orderstotal>34.0</orderstotal>
+				</bucket>
+			</buckets>
+		</demand>
+		<demand name="All-surface tennis ball pack @ All customers @ All locations" xsi:type="demand_forecast" discrete="false" planned="false">
+			<item name="All-surface tennis ball pack"/>
+			<customer name="All customers"/>
+			<location name="All locations"/>
+			<calendar name="planningbuckets"/>
+		</demand>
+	</demands>
+
+<?python
+# Planning the top level
+frepple.demand(name="All-surface tennis ball pack @ All customers @ All locations").planned = True
+frepple.demand(name="All-surface tennis ball pack @ Tennis shop Brussels").planned = False
+frepple.demand(name="All-surface tennis ball pack @ Tennis shop Paris").planned = False
+frepple.aggregateMeasures()
+frepple.solver_forecast(loglevel=10).solve()
+frepple.updatePlannedForecast()
+frepple.saveXMLfile("output.1.xml")
+
+# Planning the leaf level
+frepple.demand(name="All-surface tennis ball pack @ All customers @ All locations").planned = False
+frepple.demand(name="All-surface tennis ball pack @ Tennis shop Brussels").planned = True
+frepple.demand(name="All-surface tennis ball pack @ Tennis shop Paris").planned = True
+frepple.aggregateMeasures()
+frepple.solver_forecast(loglevel=10).solve()
+frepple.updatePlannedForecast()
+frepple.saveXMLfile("output.2.xml")
+?>
+</plan>

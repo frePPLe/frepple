@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Copyright (C) 2007-2013 by frePPLe bv
+Copyright (C) 2007-2013 by frePPLe bv
 
- This library is free software; you can redistribute it and/or modify it
- under the terms of the GNU Affero General Public License as published
- by the Free Software Foundation; either version 3 of the License, or
- (at your option) any later version.
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
 
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
- General Public License for more details.
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
 
- You should have received a copy of the GNU Affero General Public
- License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified">
 
@@ -1157,6 +1163,85 @@
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="problem" type="problem" />
     </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:simpleType name="positiveInt">
+    <xsd:restriction base="xsd:int">
+      <xsd:minInclusive value="0" />
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <!-- FORECAST -->
+  <xsd:complexType name="demand_forecast">
+    <xsd:complexContent>
+      <xsd:extension base="demand">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:element name="calendar" type="calendar" />
+          <xsd:element name="horizon_future" type="positiveInt" />
+          <xsd:element name="horizon_history" type="positiveInt" />
+          <xsd:element name="forecast_partition" type="xsd:integer" />
+          <xsd:element name="discrete" type="xsd:boolean" />
+          <xsd:element name="planned" type="xsd:boolean" />
+          <xsd:element name="methods" type="xsd:string" />
+          <xsd:element name="buckets" type="demand_forecastbucketlist" />
+        </xsd:choice>
+        <xsd:attribute name="discrete" type="xsd:boolean" />
+        <xsd:attribute name="planned" type="xsd:boolean" />
+        <xsd:attribute name="methods" type="xsd:string" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="demand_forecastbucket">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="name" type="xsd:normalizedString" minOccurs="0" />
+      <xsd:element name="forecasttotal" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="forecasttotalvalue" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="forecastconsumed" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="forecastconsumedvalue" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="forecastbaseline" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="forecastbaselinevalue" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="forecastoverride" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="forecastoverridevalue" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="forecastplanned" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="forecastplannedvalue" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="ordersopen" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="ordersopenvalue" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="orderstotal" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="orderstotalvalue" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="ordersadjustment" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="ordersadjustmentvalue" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="ordersplanned" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="ordersplannedvalue" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="quantity" type="positiveDouble" minOccurs="0" />
+      <xsd:element name="start" type="xsd:dateTime" minOccurs="0" />
+      <xsd:element name="end" type="xsd:dateTime" minOccurs="0" />
+    </xsd:choice>
+    <xsd:attribute name="name" type="xsd:normalizedString" />
+    <xsd:attribute name="forecasttotal" type="positiveDouble" />
+    <xsd:attribute name="forecasttotalvalue" type="positiveDouble" />
+    <xsd:attribute name="forecastconsumed" type="positiveDouble" />
+    <xsd:attribute name="forecastconsumedvalue" type="positiveDouble" />
+    <xsd:attribute name="forecastbaseline" type="positiveDouble" />
+    <xsd:attribute name="forecastbaselinevalue" type="positiveDouble" />
+    <xsd:attribute name="forecastoverride" type="positiveDouble" />
+    <xsd:attribute name="forecastoverridevalue" type="positiveDouble" />
+    <xsd:attribute name="ordersopen" type="positiveDouble" />
+    <xsd:attribute name="ordersopenvalue" type="positiveDouble" />
+    <xsd:attribute name="orderstotal" type="positiveDouble" />
+    <xsd:attribute name="orderstotalvalue" type="positiveDouble" />
+    <xsd:attribute name="ordersadjustment" type="positiveDouble" />
+    <xsd:attribute name="ordersadjustmentvalue" type="positiveDouble" />
+    <xsd:attribute name="quantity" type="positiveDouble" />
+    <xsd:attribute name="consumed" type="positiveDouble" />
+    <xsd:attribute name="start" type="xsd:dateTime" />
+    <xsd:attribute name="end" type="xsd:dateTime" />
+  </xsd:complexType>
+
+  <xsd:complexType name="demand_forecastbucketlist">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="bucket" type="demand_forecastbucket" />
+    </xsd:choice>
   </xsd:complexType>
 
   <!-- Define the root element and its contents. -->

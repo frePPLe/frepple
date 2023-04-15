@@ -4,7 +4,7 @@
   "description": "Javascript package for the frePPLe user interface.",
   "homepage": "https://frepple.com",
   "author": "frePPLe bv",
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "private": true,
   "dependencies": {
     "angular-gettext": "^2.3.8"

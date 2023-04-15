@@ -2,19 +2,24 @@
  *                                                                         *
  * Copyright (C) 2007-2015 by frePPLe bv                                   *
  *                                                                         *
- * This library is free software; you can redistribute it and/or modify it *
- * under the terms of the GNU Affero General Public License as published   *
- * by the Free Software Foundation; either version 3 of the License, or    *
- * (at your option) any later version.                                     *
+ * Permission is hereby granted, free of charge, to any person obtaining   *
+ * a copy of this software and associated documentation files (the         *
+ * "Software"), to deal in the Software without restriction, including     *
+ * without limitation the rights to use, copy, modify, merge, publish,     *
+ * distribute, sublicense, and/or sell copies of the Software, and to      *
+ * permit persons to whom the Software is furnished to do so, subject to   *
+ * the following conditions:                                               *
  *                                                                         *
- * This library is distributed in the hope that it will be useful,         *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of          *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the            *
- * GNU Affero General Public License for more details.                     *
+ * The above copyright notice and this permission notice shall be          *
+ * included in all copies or substantial portions of the Software.         *
  *                                                                         *
- * You should have received a copy of the GNU Affero General Public        *
- * License along with this program.                                        *
- * If not, see <http://www.gnu.org/licenses/>.                             *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,         *
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF      *
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND                   *
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE  *
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION  *
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION   *
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.         *
  *                                                                         *
  ***************************************************************************/
 
@@ -40,8 +45,10 @@ int Plan::initialize() {
   x.setDoc("frePPLe global settings");
   x.supportgetattro();
   x.supportsetattro();
+  x.addMethod("setBaseClass", setBaseClass, METH_VARARGS,
+              "specifies a Python base class to use for the engine objects");
   int tmp = x.typeReady();
-  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
+  metadata->setPythonClass(x);
 
   // Create a singleton plan object
   // Since we can count on the initialization being executed only once, also
@@ -52,6 +59,24 @@ int Plan::initialize() {
   // Add access to the information with a global attribute.
   PythonInterpreter::registerGlobalObject("settings", &Plan::instance());
   return tmp;
+}
+
+PyObject* Plan::setBaseClass(PyObject* self, PyObject* args) {
+  PyObject* class_cpp = nullptr;
+  PyObject* class_py = nullptr;
+  int ok = PyArg_ParseTuple(args, "OO:setBaseClass", &class_cpp, &class_py);
+  if (!ok) return nullptr;
+  if (!class_cpp || !PyType_Check(class_cpp)) {
+    PyErr_SetString(PyExc_TypeError, "First argument must be a type");
+    return nullptr;
+  }
+  if (!class_py || !PyType_Check(class_py)) {
+    PyErr_SetString(PyExc_TypeError, "Second argument must be a type");
+    return nullptr;
+  }
+  auto t = MetaClass::findClass(class_cpp);
+  if (t) const_cast<MetaClass*>(t)->pythonBaseClass = (PyTypeObject*)(class_py);
+  return Py_BuildValue("");
 }
 
 Plan::~Plan() {

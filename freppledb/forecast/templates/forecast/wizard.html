@@ -1,0 +1,257 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n %}
+
+{% block title %}{%trans 'forecast wizard'|capfirst %}{% endblock %}
+
+{% block extrahead %}{{block.super}}
+<script type="text/javascript">
+
+  var reportkey = '{{reportkey|safe}}';
+  var preferences = {{preferences|json}};
+  var initialfilter;
+  var favorites = {};
+  var hidemessage = preferences && preferences["hidemessage"] ? true : false;
+
+  function extraPreference() {
+    console.log(hidemessage);
+    return {
+      "hidemessage": hidemessage
+    };
+  }
+
+  $(function() {
+    $("#hidemessage").on("click", function() {
+      hidemessage = true;
+      $("#hidemessage").parent().parent().hide();
+      grid.saveColumnConfiguration();
+    });
+  });
+</script>
+{% endblock %}
+
+{% block content %}
+
+{% if not preferences.hidemessage %}
+<div class="card mb-3">
+<div class="card-body">
+    <button id="hidemessage" type="button" class="d-block btn-close float-end" aria-label="Close"></button>
+    <p>This screen assists users in controlling <b>forecasts and inventory policies in specific situations</b>.</p>
+    Calculating a statistical forecast will not cover situations such as:
+    <ol class="mb-0">
+        <li>Introduction of new items</li>
+        <li>Phasing out of old items</li>
+        <li>Planning for promotions or special events</li>
+    </ol>
+</div>
+</div>
+{% endif%}
+
+<div class="row">
+
+<div class="hidden-xs col-md-3">
+ <h3>Recent forecast wizard activity</h3>
+ <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Location</th>
+        <th>User</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>X1</td>
+        <td>Y</td>
+        <td>admin</td>
+        <td>2 hours ago</td>
+      </tr>
+      <tr>
+        <td>X2</td>
+        <td>Y</td>
+        <td>admin</td>
+        <td>yesterday</td>
+      </tr>
+      <tr>
+        <td>X3</td>
+        <td>Y</td>
+        <td>another user</td>
+        <td>2022-11-01</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="col-sm-12 col-md-9">
+    <div class="row" style="padding-bottom:1em">
+        <div class="col-8">
+            <button class="btn btn-primary">Save</button>
+        </div>
+        <div id="toolicons" class="col-2 hor-align-right ver-align-middle pull-right">
+            <button class="btn btn-sm btn-primary" onclick="grid.showBucket()" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-title="Configure time buckets">
+                <span class="fa fa-clock-o"></span>
+            </button>
+            <button class="btn btn-sm btn-primary" data-ng-click="showCustomizeGrid()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Customize">
+            <span class="fa fa-wrench"></span>
+            </button>
+            <button class="btn btn-sm btn-primary" onclick="window.open('https://frepple.com/docs/current/user-interface/plan-analysis/forecast-editor.html')" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-title="Help">
+            <span class="fa fa-question"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div id="tasks" class="col-12" role="tablist" aria-multiselectable="true">
+                <div class="card" id="wizard-1">
+                    <div id="wizardhead-1" data-bs-target="#wizardcontent-1" class="card-header" role="tab" data-bs-toggle="collapse">
+                        <h5 class="card-title">Step 1 - Select item and location</h5>
+                    </div>
+                    <div id="wizardcontent-1" aria-labelledby="wizardhead-1" class="panel-collapse collapse" role="tabpanel">
+                        <div class="card-body">Step 1 </div>
+                    </div>
+                </div>
+
+                <div class="card" id="wizard-2">
+                    <div id="wizardhead-2" data-bs-target="#wizardcontent-2" class="card-header" role="tab" data-bs-toggle="collapse">
+                        <h5 class="card-title">Step  - Set forecast profile</h5>
+                    </div>
+                    <div id="wizardcontent-2" aria-labelledby="wizardhead-2" class="panel-collapse collapse" role="tabpanel">
+                        <div class="card-body">
+                            <div style="width:100%">
+                                graph
+                            </div>
+                            <table>
+                            <tr>
+                                <td style="vertical-align:top; padding: 15px">
+                                    <button id="applyedit" type="submit" data-ng-click="applyEdit()" class="btn btn-primary disabled" translate>Apply</button>
+                                </td>
+                                <td>
+                                    <form class="form-inline">
+                                    Update forecast from&nbsp;
+                                    <div class="form-group">
+                                    <div class='input-group date' id='editstartdate'>
+                                        <input type="text" class="form-control" style="width:8em">
+                                        <span class="input-group-addon">
+                                            <span class="fa fa-calendar"></span>
+                                        </span>
+                                    </div>
+                                    </div>
+                                    &nbsp;till&nbsp;
+                                    <div class="form-group">
+                                    <div class='input-group date' id='editenddate'>
+                                        <input type="text" class="form-control" style="width:8em">
+                                        <span class="input-group-addon">
+                                            <span class="fa fa-calendar"></span>
+                                        </span>
+                                    </div>
+                                    </div>
+                                    </form>
+                                    <div class="radio">
+                                        <label><input type="radio" data-ng-model="edit_mode" name="fcsttradio" value="0"  data-ng-change="changeEdit()">
+                                        Copy forecast of
+                                        <input data-ng-model="edit_set" data-ng-change="changeEdit()" data-ng-focus="edit_mode=0" style="width:10em; background:transparent !important"></label>
+                                        starting from
+                                        <input data-ng-model="edit_set" data-ng-change="changeEdit()" data-ng-focus="edit_mode=0" style="width:10em; background:transparent !important"></label>
+                                    </div>
+                                    <div class="radio">
+                                        <label><input type="radio" data-ng-model="edit_mode" name="fcsttradio" value="1" data-ng-change="changeEdit()">
+                                        Copy actuals of
+                                        <input type="number" data-ng-change="changeEdit()" data-ng-focus="edit_mode=1" data-ng-model="edit_inc" style="width:10em; background:transparent !important"></label>
+                                        starting from <input type="number" data-ng-change="changeEdit()" data-ng-focus="edit_mode=1" data-ng-model="edit_inc" style="width:10em; background:transparent !important"></label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                        <input type="radio" data-ng-model="edit_mode" name="fcsttradio" value="2" data-ng-change="changeEdit()">
+                                        Increase by
+                                        <input type="number" data-ng-change="changeEdit()" data-ng-focus="edit_mode=2" data-ng-model="edit_inc_perc" style="width:5em; background:transparent !important">
+                                            <select name="unitspercent" id="unitspercent">
+                                                <option value="units">units</option>
+                                                <option value="percent">percent</option>
+                                        </select>
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                        <input type="radio" data-ng-model="edit_mode" name="fcsttradio" value="2" data-ng-change="changeEdit()">
+                                        Linearly step from
+                                        <input type="number" data-ng-change="changeEdit()" data-ng-focus="edit_mode=2" data-ng-model="edit_inc_perc" style="width:5em; background:transparent !important">
+                                        to
+                                        <input type="number" data-ng-change="changeEdit()" data-ng-focus="edit_mode=2" data-ng-model="edit_inc_perc" style="width:5em; background:transparent !important">
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="wizard-3">
+                    <div id="wizardhead-3" data-bs-target="#wizardcontent-3" class="card-header" role="tab" data-bs-toggle="collapse">
+                        <h5 class="card-title">Step 3 - Set inventory policies</h5>
+                    </div>
+                    <div id="wizardcontent-3" aria-labelledby="wizardhead-3" class="panel-collapse collapse" role="tabpanel">
+                        <div class="card-body">
+                            <div style="width:100%">
+                                graph
+                            </div>
+                            <table>
+                            <tr>
+                                <td style="vertical-align:top; padding: 15px">
+                                    <button id="applyedit" type="submit" data-ng-click="applyEdit()" class="btn btn-primary disabled" translate>Apply</button>
+                                </td>
+                                <td>
+                                    <form class="form-inline">
+                                    Update safety stock from&nbsp;
+                                    <div class="form-group">
+                                    <div class='input-group date' id='editstartdate'>
+                                        <input type="text" class="form-control" style="width:8em">
+                                        <span class="input-group-addon">
+                                            <span class="fa fa-calendar"></span>
+                                        </span>
+                                    </div>
+                                    </div>
+                                    &nbsp;till&nbsp;
+                                    <div class="form-group">
+                                    <div class='input-group date' id='editenddate'>
+                                        <input type="text" class="form-control" style="width:8em">
+                                        <span class="input-group-addon">
+                                            <span class="fa fa-calendar"></span>
+                                        </span>
+                                    </div>
+                                    </div>
+                                    </form>
+                                    <div class="radio">
+                                        <label>
+                                        <input type="radio" data-ng-model="edit_mode" name="invradio" value="2" data-ng-change="changeEdit()">
+                                        Linearly step from
+                                        <input type="number" data-ng-change="changeEdit()" data-ng-focus="edit_mode=2" data-ng-model="edit_inc_perc" style="width:5em; background:transparent !important">
+                                        to
+                                        <input type="number" data-ng-change="changeEdit()" data-ng-focus="edit_mode=2" data-ng-model="edit_inc_perc" style="width:5em; background:transparent !important">
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label><input type="radio" data-ng-model="edit_mode" name="invradio" value="0"  data-ng-change="changeEdit()">
+                                        Set as
+                                        <input data-ng-model="edit_set" data-ng-change="changeEdit()" data-ng-focus="edit_mode=0" style="width:10em; background:transparent !important"></label>
+                                        days of demand
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                        <input type="radio" data-ng-model="edit_mode" name="invradio" value="2" data-ng-change="changeEdit()">
+                                        Do not stock
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}

@@ -450,6 +450,7 @@ INSTALLED_APPS = (
     #'freppledb.erpconnection',
     "freppledb.wizard",
     "freppledb.input",
+    "freppledb.forecast",
     "freppledb.output",
     "freppledb.metrics",
     "freppledb.execute",

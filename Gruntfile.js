@@ -74,7 +74,9 @@ module.exports = function (grunt) {
         files: {
           'freppledb/common/static/common/po/template.pot': [
             'freppledb/input/static/operationplandetail/*.html',
-            'freppledb/input/static/operationplandetail/src/*.js'
+            'freppledb/input/static/operationplandetail/src/*.js',
+            'freppledb/forecast/static/forecast/*.html',
+            'freppledb/forecast/static/forecast/src/*.js'
           ]
         }
       },
@@ -132,6 +134,18 @@ module.exports = function (grunt) {
           'freppledb/input/static/operationplandetail/src/kanbanDrv.js'
         ],
         dest: 'freppledb/input/static/js/frepple-operationplandetail.js'
+      },
+      forecast: {
+        src: [
+            'freppledb/forecast/static/forecast/src/module.js',
+            'freppledb/forecast/static/forecast/src/customerstable.js',
+            'freppledb/forecast/static/forecast/src/itemstable.js',
+            'freppledb/forecast/static/forecast/src/locationstable.js',
+            'freppledb/forecast/static/forecast/src/forecastgridDrv.js',
+            'freppledb/forecast/static/forecast/src/displayForecastGraph.js',
+            'freppledb/forecast/static/forecast/src/forecast.js'
+            ],
+          dest: 'freppledb/forecast/static/js/frepple-forecast.js'
       }
     },
 
@@ -176,6 +190,10 @@ module.exports = function (grunt) {
       operationplandetail: {
         src: ['freppledb/input/static/js/frepple-operationplandetail.js'],
         dest: 'freppledb/input/static/js/frepple-operationplandetail.min.js'
+      },
+      forecast: {
+        src: ['freppledb/forecast/static/js/frepple-forecast.js'],
+        dest: 'freppledb/forecast/static/js/frepple-forecast.min.js'
       }
     },
 
@@ -183,7 +201,8 @@ module.exports = function (grunt) {
     clean: [
       'freppledb/common/static/js/frepple-common.js',
       'freppledb/input/static/js/frepple-input.js',
-      'freppledb/input/static/js/frepple-operationplandetail.js'
+      'freppledb/input/static/js/frepple-operationplandetail.js',
+      'freppledb/forecast/static/js/frepple-forecast.js'
     ]
   });
 

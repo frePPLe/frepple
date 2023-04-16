@@ -1,0 +1,27 @@
+{% extends "admin/base_site_grid.html" %}
+
+{% block before_table %}{% tabs "forecast.forecast" %}{{block.super}}{% endblock %}
+
+{% block extrahead %}{{block.super}}
+<script type="text/javascript">
+
+// TODO demand column needs separate formatter for demand and forecasts
+
+function probfmt(cellvalue, options, row)
+{
+  if (row['entity'] == 'material')
+    var role = 'input/buffer';
+  else if (row['entity'] == 'capacity')
+    var role = 'input/resource';
+  else if (row['entity'] == 'demand')
+    var role = 'input/demand';
+  else
+    var role = 'input/operation';
+  return cellvalue + "<a href='" + url_prefix + "/detail/" + role
+     + "/" + admin_escape(cellvalue)
+     + "/'><span class='ps-1 context fa fa-caret-right'></span></a>";
+}
+
+</script>
+{% endblock %}
+

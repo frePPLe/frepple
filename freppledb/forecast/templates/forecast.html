@@ -1,0 +1,159 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n %}
+
+{% block title %}{%trans 'Forecast editor'|capfirst %}{% endblock %}
+
+{% block extrahead %}{{block.super}}
+<script type="text/javascript" src="{{STATIC_URL}}js/angular.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/angular-cookies.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/angular-gettext.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/i18n/angular-freppletranslations.js"></script>
+{% if debug_js %}
+<script type="text/javascript" src="{{STATIC_URL}}forecast/src/module.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}forecast/src/forecast.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}forecast/src/itemstable.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}forecast/src/customerstable.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}forecast/src/locationstable.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}forecast/src/displayForecastGraph.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}forecast/src/forecastgridDrv.js"></script>
+{% else %}
+<script type="text/javascript" src="{{STATIC_URL}}js/frepple-forecast.min.js"></script>
+{% endif %}
+<style>
+
+#forecasttable thead th {
+  background-color: #aaa;
+  height: 22px;
+  border: 1px solid #bbb;
+  border-top: 0;
+  border-bottom: 0;
+}
+
+#forecasttable tbody tr {
+  height: 21px;
+}
+
+#forecasttable tbody tr td{
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-right: 3px;
+  padding-left: 3px;
+  width: 79px;
+  border: 1px solid #bbb;
+  border-top: 0;
+  border-bottom: 0;
+}
+
+#forecasttable tbody tr td input {
+  width: 75px;
+  text-align: center;
+  font-size: 11px;
+}
+
+#forecasttabletags tbody tr {
+  height: 21px;
+}
+
+#forecasttabletags tbody tr td{
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+tbody tr td {
+  border-top: none !important;
+}
+
+#forecasttable input[type='number'] {
+    -moz-appearance:textfield;
+}
+
+.evtitemrow, .evtcustrow, .evtlocatrow {
+  padding-left: 15px;
+  padding-bottom: 3px;
+}
+
+.numbervaluesfirst {
+  overflow: hidden;
+  float: right;
+  padding-right: 10px;
+  padding-left: 10px;
+  white-space: nowrap;
+}
+
+.numbervaluesmiddle {
+  min-width: 70px;
+  overflow: hidden;
+  float: right;
+  padding-right: 10px;
+  white-space: nowrap;
+}
+
+.numbervalues {
+  min-width: 70px;
+  overflow: hidden;
+  float: right;
+  padding-right: 10px;
+  white-space: nowrap;
+}
+
+.numbervalueslast {
+  min-width: 70px;
+  overflow: hidden;
+  float: right;
+  padding-right: 10px;
+  white-space: nowrap;
+}
+
+.evtitemrow .fa, .evtcustrow .fa, .evtlocatrow .fa {
+  float: left;
+}
+
+.fa-warning.text-danger {
+  color: #8a6d3b !important;
+}
+
+</style>
+{% endblock %}
+
+{% block extracontainer %}data-ng-app='forecastapp' style="overflow-x: hidden;"{% endblock %}
+
+{% block content %}
+<script>
+var language="{{LANGUAGE_CODE}}";
+var preferences={% if preferences %}
+  {{preferences|json}}
+{% else %}
+  {'measure': 'forecasttotal',
+   'sequence': 'ILC',
+   'showtab': 'forecast',
+   'height': 240
+  }{% endif %};
+var currentbucket="{{currentbucket}}";
+var bucketsperyear={{bucketsperyear|safe}};
+var currentdate="{{currentdate}}";
+var version='{% version_short %}';
+var measures = {{measures|safe}};
+
+$(function() {
+  $("#horizonbucketsul li a").click(function(){
+    $("#horizonbuckets1").html($(this).text() + '  <span class="caret"></span>');
+    $("#horizonbuckets").val($(this).prop('name'));
+  });
+
+  $("#horizonunitul li a").click(function(){
+    $("#horizonunit1").html($(this).text() + '  <span class="caret"></span>');
+    $("#horizonunit").val($(this).prop('name'));
+  });
+});
+
+</script>
+
+<div data-ng-include="'/static/forecast/forecast.html'"></div>
+<div id="popup" class="modal fade in" role="dialog" style="z-index: 10000;">
+</div>
+{% endblock %}
+{% block footer %}
+
+{% endblock %}
+{% block modal %}{% include "admin/subtemplate_timebuckets.html" %}{% endblock %}

@@ -1,0 +1,437 @@
+{% extends "admin/base_site_gridpivot.html" %}
+{% load i18n %}
+
+{% block extrahead %}{{block.super}}
+<script type="text/javascript">
+  var currency = JSON.parse('{{currency|safe}}');
+</script>
+{% endblock %}
+
+{% block tools %}{% if args.0 %}{% tabs "forecast.forecast" %}{% endif %}{{block.super}}{% endblock %}
+
+{% block before_table %}{% if args.0 %}
+<div id="graph" style="clear: both; height: 400px; padding: 10px; "></div>
+{% endif %}{% endblock %}
+
+{% block crosses %}
+{% if args.0 %}$(function(){
+  // Resize top graph
+  var h = $(window).height();
+  $("#graph").width($(window).width()-55).height(h>800 || h<580 ? 280 : h-520);
+});{% endif %}
+
+{% if args.0 or mode == "graph" %}
+function drawGraphs(jsondata)
+{
+  $('#curerror').html("");
+  {% if args.0 %}var margin = {top: 0, right: 100, bottom: 30, left: 70};
+  {% else %}var margin = {top: 0, right: 0, bottom: 0, left: 70};
+  {% endif %}var width = $({% if args.0 %}"#graph"{% else %}"#grid_graph"{% endif %}).width() - margin.left - margin.right;
+  var height = {% if args.0 %}$("#graph").height(){% else %}80{% endif %} - margin.top - margin.bottom;
+
+  // Lookup table of displayed columns
+  var fields = {};
+  for (var i of cross_idx)
+    fields[cross[i].key] = 0;
+
+  // Define X-axis
+  var domain_x = [];
+  var bucketnamelength = 0;
+  for (var i in timebuckets)
+  {
+    domain_x.push(timebuckets[i]['name']);
+    bucketnamelength = Math.max(timebuckets[i]['name'].length, bucketnamelength);
+  }
+  var x = d3.scale.ordinal()
+    .domain(domain_x)
+    .rangeRoundBands([0, width], 0);
+  var x_width = x.rangeBand();
+  {% if mode == "graph" %}graph.header(margin.left, x);{% endif %}
+
+  // Define Y-axis
+  var y = d3.scale.linear().rangeRound([height, 0]);
+
+  // Draw all graphs
+  $("#grid"){% if not args.0 %}.find(".graph"){% endif %}.each(function(index)
+  {
+    // Create a new SVG element
+    $({% if args.0 %}$("#graph").get(0){% else %}this{% endif %}).html("");
+    var svg = d3.select({% if args.0 %}$("#graph").get(0){% else %}this{% endif %})
+      .append("svg")
+      .attr("class","graphcell")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Build the data for d3
+    var max_y = 0;
+    var min_y = 0;
+    var data = [];
+    for (var bckt in timebuckets)
+    {
+      var tmp = jsondata['rows'][index][timebuckets[bckt]['name']];
+      tmpdict = {
+        'forecast': jsondata['rows'][index]['forecast'],
+        'bucket': bckt,
+        };
+      for (var i in cross)
+        tmpdict[cross[i].key] = tmp[i];
+      data.push(tmpdict);
+      if (tmpdict['forecastoverride'] > max_y
+        && ('forecastoverride' in fields || 'forecastoverridevalue' in fields))
+          max_y = tmpdict['forecastoverride'];
+      if (tmpdict['forecasttotal'] > max_y
+        && ('forecasttotal' in fields || 'forecasttotalvalue' in fields))
+          max_y = tmpdict['forecasttotal'];
+      if (tmpdict['orderstotal'] > max_y
+        && ('orderstotal' in fields || 'orderstotalvalue' in fields))
+          max_y = tmpdict['orderstotal'];
+      if (tmpdict['ordersplanned'] + tmpdict['forecastplanned'] > max_y
+        && ('ordersplanned' in fields || 'ordersplannedvalue' in fields)
+        && ('forecastplanned' in fields || 'forecastplannedvalue' in fields)
+        )
+        max_y = tmpdict['ordersplanned'] + tmpdict['forecastplanned'];
+      else if (tmpdict['ordersplanned'] > max_y
+        && ('ordersplanned' in fields || 'ordersplannedvalue' in fields))
+          max_y = tmpdict['ordersplanned'];
+      else if (tmpdict['forecastplanned'] > max_y
+        && ('forecastplanned' in fields || 'forecastplannedvalue' in fields))
+          max_y = tmpdict['forecastplanned'];
+      if (tmpdict['backlog'] > max_y
+        && ('backlog' in fields || 'backlogvalue' in fields))
+        max_y = tmpdict['backlog'];
+    }
+
+    // Update the scale of the Y-axis by looking for the max value
+    y.domain([min_y,max_y]);
+    var y_zero = y(0);
+
+    // Create D3 bars
+    var my_y;
+    svg.selectAll("g")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("transform", function(d) { return "translate(" + x(timebuckets[d['bucket']]['name']) + ",0)"; })
+      .each(function(d) {
+        var bucket = d3.select(this);
+        var top;
+        if (d['ordersopen'] > 0
+          && ('ordersopen' in fields || 'ordersopenvalue' in fields))
+        {
+          my_y = y(d['ordersopen']);
+          bucket.append("rect")
+            .attr("width", x_width/2)
+            .attr("height", y_zero - my_y)
+            .attr("x", x_width/2)
+            .attr("y", my_y)
+            .style("fill","#2B95EC");
+        }
+        if (d['ordersplanned'] > 0
+          && ('ordersplanned' in fields || 'ordersplannedvalue' in fields))
+        {
+          top = y(d['ordersplanned']);
+          bucket.append("rect")
+            .attr("width", x_width/2)
+            .attr("y", top)
+            .attr("height", y_zero - top)
+            .style("fill","#7B5E08");
+        }
+        if (d['forecastplanned'] > 0
+          && ('forecastplanned' in fields || 'forecastplannedvalue' in fields))
+        {
+          bucket.append("rect")
+            .attr("width", x_width/2)
+            .attr("y", y(d['forecastplanned'] + d['ordersplanned']))
+            .attr("height", y(d['ordersplanned']) - y(d['forecastplanned'] + d['ordersplanned']))
+            .style("fill","#F6BD0F");
+        }
+
+		// Draw hoover tooltip
+    bucket.append("rect")
+	      .attr("height", height)
+	      .attr("width", x_width)
+	      .attr("fill-opacity", 0)
+          .on("click", function(d) {
+            if (d3.event.defaultPrevented || d['orderstotal'] === 0) return;
+            d3.select("#tooltip").style('display', 'none');
+	        window.location = url_prefix
+	            + "/forecast/demand/?noautofilter"
+	            + '&amp;item__name__ico=' +  admin_escape(jsondata['rows'][index]['item'])
+	            + '&amp;location__name__ico=' +  admin_escape(jsondata['rows'][index]['location'])
+	            + '&amp;customer__name__ico=' +  admin_escape(jsondata['rows'][index]['customer'])
+	            + "&amp;o=5a&amp;due__gte=" + timebuckets[d['bucket']]['startdate']
+	            + "&amp;o=5a&amp;due__lt=" + timebuckets[d['bucket']]['enddate'];
+	        d3.event.stopPropagation();
+          })
+        .on("mouseenter", function(d) {
+           result = '<div style="text-align:center; font-weight:bold">'
+               + timebuckets[d['bucket']]['name'] + '</div><table>';
+           for (var c of cross_idx) {
+             if ((d["future"] == 1 && cross[c]["mode_future"] != 'hide')
+               || (d["past"] == 1 && cross[c]["mode_past"] != 'hide')) {
+               if (cross[c].formatter == "currency")
+                 result += '<tr><td>' + cross[c].name + '</td><td style="text-align:right">'
+                   + currency[0] + grid.formatNumber(d[cross[c].key], 2) + currency[1]
+                   + '</td></tr>';
+               else
+                 result += '<tr><td>' + cross[c].name + '</td><td style="text-align:right">'
+                   + grid.formatNumber(d[cross[c].key])
+                   + '</td></tr>';
+             }
+           }
+           result += "</table>";
+           graph.showTooltip(result);
+        })
+        .on("mouseleave", graph.hideTooltip)
+        .on("mousemove", graph.moveTooltip);
+      });
+
+    // Create D3 lines
+    if ('orderstotal' in fields || 'orderstotalvalue' in fields)
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['orderstotal']); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#8BBA00")
+        .attr("d", line(data));
+    }
+    if ('forecasttotal' in fields || 'forecasttotalvalue' in fields || 'forecastoverride' in fields || 'forecastoverridevalue' in fields)
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['future'] == 1 ? d['forecasttotal'] : 0); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#FF0000")
+        .attr("d", line(data));
+
+      line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['future'] != 1 ? d['forecasttotal'] : 0); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#FF7B00")
+        .attr("d", line(data));
+    }
+    if ('backlog' in fields || 'backlogvalue' in fields)
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['backlog']); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#090808")
+        .attr("d", line(data));
+    }
+
+    // Display Y-Axis
+    var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(d3.format("s"));
+    {% if not args.0 %}
+    svg.append("g")
+      .attr("class", "miniaxis")
+      .call(graph.miniAxis.bind(yAxis));
+    {% else %}
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+    // Display X-axis for a single forecast
+    var nth = Math.ceil(timebuckets.length / width * bucketnamelength * 10);
+    var myticks = [];
+    for (var i in timebuckets)
+      if (i % nth === 0) myticks.push(timebuckets[i]['name']);
+    var xAxis = d3.svg.axis()
+      .scale(x)
+      .tickValues(myticks)
+      .orient("bottom");
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+    // Display legend
+    var legend = svg.append("g");
+    var codes = [
+      ["{{_('open orders')|capfirst}}", "#2B95EC", 'ordersopen'],
+      ["{{_('total orders')|capfirst}}", "#8BBA00", 'orderstotal'],
+      ["{{_('forecast total')|capfirst}}", "#FF0000", 'forecasttotal'],
+      ["{{_('planned orders')|capfirst}}", "#7B5E08", 'ordersplanned'],
+      ["{{_('planned net forecast')|capfirst}}", "#F6BD0F", 'forecastplanned'],
+      ["{{_('past forecast')|capfirst}}", "#FF7B00", 'forecasttotal'],
+      ["{{_('backlog')|capfirst}}", "#090808", 'backlog']
+      ];
+    var visible = 0;
+    for (var i in codes)
+    {
+      if (!(codes[i][2] in fields) && !((codes[i][2]+'value') in fields))
+        continue;
+      legend.append("rect")
+        .attr("x", width + 82)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", codes[i][1])
+        .attr("transform", "translate(0," + (visible*20+10) + ")");
+      legend.append("text")
+        .attr("x", width + 76)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(codes[i][0])
+        .attr("transform", "translate(0," + (visible*20+10) + ")");
+      visible += 1;
+    }{% endif %}
+    });
+}
+{% endif %}
+{% if args.0 or mode == "table" %}
+
+function assureVisible()
+{
+  var left_of_cell = $(event.target).offset().left;
+  var min_visible = $("#grid_frozen").offset().left + $("#grid_frozen").width();
+  var max_visible = $("#gbox_grid").offset().left + $("#gbox_grid").width();
+  if (left_of_cell < min_visible || left_of_cell + $(event.target).width() > max_visible)
+  {
+    // The input cell which gets the focus isn't visible. This happens normally
+    // only when using the tab button to navigate to a new cell.
+    // We adjust the scroll position to make it visible.
+    var scr = $(".ui-jqgrid-bdiv");
+    scr.scrollLeft(scr.scrollLeft() + left_of_cell - min_visible - 3);
+  }
+}
+
+function getDirtyData()
+{
+  var changes = [];
+  $(".dirty-cell").each( function() {
+    var curCol = jQuery.jgrid.getCellIndex($(this).closest("td,th"));
+    var curRow = $(this).closest("tr").attr('id');
+    var curRowData = jQuery("#grid").jqGrid('getRowData', curRow);
+    var colmodel = jQuery("#grid").jqGrid ('getGridParam', 'colModel')[curCol];
+    changes.push({
+         'id': curRow, 'item': curRowData.item, 'location': curRowData.location,
+         'customer': curRowData.customer,
+         'startdate': colmodel['startdate'], 'enddate': colmodel['enddate'],
+         [$(this).attr("data-measure")]: $(this).val()
+           ? $(this).val()
+           : cross[cross_idx[$(this).attr("tabindex")]].defaultvalue
+         });
+    });
+  return changes;
+}
+
+function onChange(event)
+{
+  $(event.target).addClass('dirty-cell');
+  upload.select();
+}
+
+function crosses (cellvalue, options, rowdata)
+{
+  var result = '';
+
+  for (var i in cross_idx) {
+    //
+    // Case 1: Editable cell
+    //
+    if ((cellvalue[0] == 1 && cross[cross_idx[i]].mode_past == "edit") ||
+        (cellvalue[1] == 1 && cross[cross_idx[i]].mode_future == "edit")) {
+       result += '<input type="number" style="width:100%" class="smallpadding" data-measure="'
+         + cross[cross_idx[i]].key + '" value="'
+         + (cellvalue[cross_idx[i]] === null ? '' : cellvalue[cross_idx[i]])
+         + '" tabindex="' + i
+         + '" oninput="onChange(event)" onclick="$(this).select();" onfocus="assureVisible()"/><br>';
+     }
+
+     //
+     // Case 2: View-only cell
+     //
+     else if ((cellvalue[0] == 1 && cross[cross_idx[i]].mode_past == "view") ||
+       (cellvalue[1] == 1 && cross[cross_idx[i]].mode_future == "view")) {
+       if (cross[cross_idx[i]].editable)
+         result += '<span class="editablepivotcol">';
+       var backlog = cross[cross_idx[i]].key.includes("backlog")
+         && cellvalue[cross_idx[i]] !== null
+         && cellvalue[cross_idx[i]] > 0.0;
+       if (backlog) result += "<span class='red'>";
+       if (cross[cross_idx[i]].formatter == "currency")
+           result += currency[0] + grid.formatNumber(cellvalue[cross_idx[i]], 2) + currency[1];
+       else
+         result += grid.formatNumber(cellvalue[cross_idx[i]]);
+       if (backlog) result += "</span>";
+
+       // Add drilldown on some hardcoded measures
+	     switch(cross[cross_idx[i]].key) {
+	      case "orderstotal":
+	      case "orderstotalvalue":
+	        if (cellvalue[cross_idx[i]] != 0.0)
+	          result += '<a href="{{request.prefix}}/forecast/demand/?noautofilter' +
+	            '&amp;item__name__ico=' +  admin_escape(rowdata['item']) +
+	            '&amp;location__name__ico=' +  admin_escape(rowdata['location']) +
+	            '&amp;customer__name__ico=' +  admin_escape(rowdata['customer']) +
+	            '&amp;o=5a&amp;due__gte='+ options['colModel']['startdate'] +
+	            '&amp;due__lt='+ options['colModel']['enddate'] +
+	            '">&nbsp;<span class="fa fa-caret-right"></span></a>';
+	        if (cellvalue[2])
+	          result += '&nbsp;<span class="fa fa-warning text-danger" data-bs-toggle="tooltip" data-bs-title="{% trans "Demand outlier" %}" onmouseover="$(this).tooltip(\'show\')"></span>';
+	        break;
+	      case "ordersopen":
+	      case "ordersopenvalue":
+	        if (cellvalue[cross_idx[i]] != 0.0)
+	          result += '<a href="{{request.prefix}}/forecast/demand/?noautofilter' +
+	            '&amp;item__name__ico=' +  admin_escape(rowdata['item']) +
+	            '&amp;location__name__ico=' +  admin_escape(rowdata['location']) +
+	            '&amp;customer__name__ico=' +  admin_escape(rowdata['customer']) +
+	            '&amp;o=5a&amp;due__gte='+ options['colModel']['startdate'] +
+	            '&amp;due__lt='+ options['colModel']['enddate'] +
+	            '&amp;status=open" tabindex="-1">&nbsp;<span class="fa fa-caret-right"></span></a>';
+	        break;
+	      case "ordersplanned":
+	      case "ordersplannedvalue":
+	        if (cellvalue[1] === 1 && cellvalue[cross_idx[i]] != 0.0)
+	           result += '<a href="{{request.prefix}}/data/input/deliveryorder/?noautofilter' +
+	            '&amp;item=' +  admin_escape(rowdata['item']) +
+	            '&amp;location=' +  admin_escape(rowdata['location']) +
+	            '&amp;cust=' +  admin_escape(rowdata['customer']) +
+	            '&amp;o=5a&amp;enddate__gte='+ options['colModel']['startdate'] +
+	            '&amp;enddate__lt='+ options['colModel']['enddate'] +
+	            '&amp;orders=True" tabindex="-1">&nbsp;<span class="fa fa-caret-right"></span></a>';
+	        break;
+	      case "forecastplanned":
+	      case "forecastplannedvalue":
+	        if (cellvalue[1] === 1 && cellvalue[cross_idx[i]] != 0.0)
+	          result += '<a href="{{request.prefix}}/data/input/deliveryorder/?noautofilter' +
+	            '&amp;item=' +  admin_escape(rowdata['item']) +
+	            '&amp;location=' +  admin_escape(rowdata['location']) +
+	            '&amp;cust=' +  admin_escape(rowdata['customer']) +
+	            '&amp;o=5a&amp;enddate__gte='+ options['colModel']['startdate'] +
+	            '&amp;enddate__lt='+ options['colModel']['enddate'] +
+	            '&amp;orders=False" tabindex="-1">&nbsp;<span class="fa fa-caret-right"></span></a>';
+	        break;
+	      }
+        result += cross[cross_idx[i]].editable ? "</span>" : "<br>";
+      }
+
+    //
+    // Case 3: Hidden cell
+    //
+    else {
+      if (cross[cross_idx[i]].editable)
+         result += '<span class="editablepivotcol">&nbsp;</span>';
+      else
+         result += '<br>';
+    }
+  }
+  return result;
+};
+{% endif %}{% endblock %}
+
+{% block extra_grid %}{% if args.0 or mode == "graph" %}loadComplete: drawGraphs,
+{% endif %}{% endblock %}

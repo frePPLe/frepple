@@ -51,7 +51,7 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         # Database name
-        "NAME": "novoferm",
+        "NAME": "frepple",
         # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.

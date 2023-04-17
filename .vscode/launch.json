@@ -52,11 +52,11 @@
                 },
                 {
                     "name": "FCST",
-                    "value": "0"
+                    "value": "1"
                 },
                 {
                     "name": "INVPLAN",
-                    "value": "0"
+                    "value": "1"
                 },
                 {
                     "name": "FREPPLE_LOGFILE",

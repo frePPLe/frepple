@@ -430,7 +430,7 @@ class PathReport(GridReport):
        from
       (
       select operation.name as operation,
-           operation.type operation_type,
+           coalesce(operation.type,'fixed_type') operation_type,
            operation.location_id operation_location,
            coalesce(operation.priority, 1) as operation_priority,
            operation.duration as operation_duration,
@@ -488,7 +488,7 @@ class PathReport(GridReport):
       left outer join item parentitem on parentitem.name = parentoperation.item_id
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-      where operation.type in ('time_per','fixed_time')
+      where coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       %s
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
       grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
@@ -666,7 +666,7 @@ class PathReport(GridReport):
        from
       (
       select operation.name as operation,
-           operation.type operation_type,
+           coalesce(operation.type,'fixed_type') operation_type,
            operation.location_id operation_location,
            operation.priority as operation_priority,
            operation.duration as operation_duration,
@@ -724,7 +724,7 @@ class PathReport(GridReport):
       left outer join item parentitem on parentitem.name = parentoperation.item_id
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-      where operation.type in ('time_per','fixed_time')
+      where coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       and %s
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
       grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
@@ -884,7 +884,7 @@ class PathReport(GridReport):
        from
       (
       select operation.name as operation,
-           operation.type operation_type,
+           coalesce(operation.type,'fixed_type') operation_type,
            operation.location_id operation_location,
            operation.priority as operation_priority,
            operation.duration as operation_duration,
@@ -942,7 +942,7 @@ class PathReport(GridReport):
       left outer join item parentitem on parentitem.name = parentoperation.item_id
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-      where operation.type in ('time_per','fixed_time')
+      where coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       and (operation.name = %s or parentoperation.name = %s or grandparentoperation.name = %s)
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
       grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
@@ -1004,7 +1004,7 @@ class PathReport(GridReport):
       from
       (
       select operation.name as operation,
-           operation.type operation_type,
+           coalesce(operation.type,'fixed_type') operation_type,
            operation.location_id operation_location,
            operation.priority as operation_priority,
            operation.duration as operation_duration,
@@ -1062,7 +1062,7 @@ class PathReport(GridReport):
       left outer join item parentitem on parentitem.name = parentoperation.item_id
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-      where operation.type in ('time_per','fixed_time')
+      where coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       and operation.location_id = %%s
       %s
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,

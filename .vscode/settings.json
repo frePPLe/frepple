@@ -1,8 +1,9 @@
 {
-    "python.formatting.provider": "black",
+    "python.formatting.provider": "none",
     "[python]": {
         "editor.formatOnPaste": false,
-        "editor.formatOnSaveMode": "file"
+        "editor.formatOnSaveMode": "file",
+        "editor.defaultFormatter": "ms-python.black-formatter"
     },
     "esbonio.sphinx.confDir": ""
 }

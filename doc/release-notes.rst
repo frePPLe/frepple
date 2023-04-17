@@ -53,7 +53,7 @@ Oh-oh... Something exciting is coming up!
   | The connector now creates frepple operations specific to each manufacturing order to
     correctly capture the details of its progress. Odoo allows manual editing (of
     materials, work centers, durations, dependencies, ...) at the manufacturing order level.
-    Only with a dedicated operation can we assure that frepple correctly represents The
+    Only with a dedicated operation can we assure that frepple correctly represents the
     odoo data.
 
 - | 15 & 16: On manufacturing orders the connector now picks up the quantity actually

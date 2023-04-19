@@ -526,7 +526,9 @@ class PathReport(GridReport):
       left outer join item parentitem on parentitem.name = parentoperation.item_id
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-      where coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
+      where operation.priority != 0 and
+      not exists (select 1 from operation parent_op where parent_op.name = operation.owner_id and parent_op.priority = 0)
+      and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       %s
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
       grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
@@ -762,7 +764,10 @@ class PathReport(GridReport):
       left outer join item parentitem on parentitem.name = parentoperation.item_id
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-      where coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
+      where
+      operation.priority != 0 and
+      not exists (select 1 from operation parent_op where parent_op.name = operation.owner_id and parent_op.priority = 0)
+      and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       and %s
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
       grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
@@ -980,7 +985,9 @@ class PathReport(GridReport):
       left outer join item parentitem on parentitem.name = parentoperation.item_id
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-      where coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
+      where operation.priority != 0 and
+      not exists (select 1 from operation parent_op where parent_op.name = operation.owner_id and parent_op.priority = 0)
+      and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       and (operation.name = %s or parentoperation.name = %s or grandparentoperation.name = %s)
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
       grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
@@ -1100,7 +1107,9 @@ class PathReport(GridReport):
       left outer join item parentitem on parentitem.name = parentoperation.item_id
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-      where coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
+      where operation.priority != 0 and
+      not exists (select 1 from operation parent_op where parent_op.name = operation.owner_id and parent_op.priority = 0)
+      and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       and operation.location_id = %%s
       %s
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,

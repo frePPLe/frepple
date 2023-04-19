@@ -62,9 +62,14 @@ class TruncatePlan(PlanTask):
         cursor = connections[database].cursor()
         if cluster == -1:
             # Complete export for the complete model
-            cursor.execute(
-                "truncate table out_problem, out_resourceplan, out_constraint"
-            )
+            if "fcst" in os.environ:
+                cursor.execute(
+                    "truncate table out_problem, out_resourceplan, out_constraint"
+                )
+            else:
+                # TODO not very clean to make this difference here
+                cursor.execute("delete from out_problem where name != 'outlier'")
+                cursor.execute("truncate table out_resourceplan, out_constraint")
             cursor.execute(
                 """
                 update operationplan
@@ -164,6 +169,31 @@ class TruncatePlan(PlanTask):
                 """
             )
 
+            # TODO next subqueries are not efficient - the exists condition triggers a sequential scan
+            if "freppledb.forecast" in settings.INSTALLED_APPS:
+                cursor.execute(
+                    """
+                    delete from out_constraint
+                    where exists (
+                    select 1 from forecast
+                    inner join cluster_keys
+                        on cluster_keys.name = forecast.item_id
+                        and out_constraint.demand like forecast.name || ' - %'
+                    )
+                    """
+                )
+                cursor.execute(
+                    """
+                    delete from out_problem
+                    where entity = 'forecast'
+                    and exists (
+                    select 1 from forecast
+                    inner join cluster_keys
+                        on cluster_keys.name = forecast.item_id
+                        and out_problem.owner like forecast.name || ' - %'
+                    )
+                    """
+                )
             cursor.execute("truncate table cluster_keys")
             for i in frepple.resources():
                 if i.cluster in cluster:
@@ -262,6 +292,7 @@ class ExportProblems(PlanTask):
     def getData(cluster=-1):
         import frepple
 
+        with_fcst = "freppledb.forecast" in settings.INSTALLED_APPS
         for i in frepple.problems():
             if isinstance(i.owner, frepple.operationplan):
                 owner = i.owner.operation
@@ -269,8 +300,17 @@ class ExportProblems(PlanTask):
                 owner = i.owner
             if cluster != -1 and owner.cluster not in cluster:
                 continue
+            entity = i.entity
+            if (
+                entity == "demand"
+                and with_fcst
+                and isinstance(
+                    owner, (frepple.demand_forecastbucket, frepple.demand_forecast)
+                )
+            ):
+                entity = "forecast"
             yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
-                clean_value(i.entity),
+                clean_value(entity),
                 clean_value(i.name),
                 clean_value(owner.name)[:300],
                 clean_value(i.description),
@@ -326,7 +366,7 @@ class ExportConstraints(PlanTask):
                     else "\\N",
                     "\\N"
                     if isinstance(d, frepple.demand_default)
-                    else clean_value(d.owner.name),
+                    else clean_value(d.owner.name if d.owner else d.name),
                     clean_value(d.item.name),
                     clean_value(i.entity),
                     clean_value(i.name),
@@ -601,10 +641,12 @@ class ExportOperationPlans(PlanTask):
         return json.dumps(pln).replace("\\", "\\\\")
 
     @classmethod
-    def getData(cls, timestamp, cluster=-1, accepted_status=[]):
+    def getData(cls, with_fcst, timestamp, cluster=-1, accepted_status=[]):
         import frepple
 
         linetemplate = "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s"
+        if with_fcst:
+            linetemplate += "\v%s"
         for unused in cls.attrs:
             linetemplate += "\v%s"
         linetemplate += "\n"
@@ -622,6 +664,35 @@ class ExportOperationPlans(PlanTask):
                 if status not in accepted_status:
                     continue
                 delay = j.delay
+
+                if not with_fcst:
+                    demand = j.demand
+                    forecast = None
+                elif j.demand and not isinstance(
+                    j.demand, frepple.demand_forecastbucket
+                ):
+                    demand = j.demand
+                    forecast = None
+                elif j.demand and isinstance(j.demand, frepple.demand_forecastbucket):
+                    demand = None
+                    forecast = j.demand
+                elif (
+                    j.owner
+                    and j.owner.demand
+                    and not isinstance(j.owner.demand, frepple.demand_forecastbucket)
+                ):
+                    demand = j.owner.demand
+                    forecast = None
+                elif (
+                    j.owner
+                    and j.owner.demand
+                    and isinstance(j.owner.demand, frepple.demand_forecastbucket)
+                ):
+                    demand = None
+                    forecast = j.owner.demand
+                else:
+                    demand = None
+                    forecast = None
                 color = 100 - delay / 86400
 
                 data = None
@@ -635,7 +706,7 @@ class ExportOperationPlans(PlanTask):
                         str(j.start),
                         str(j.end),
                         round(j.criticality, 8),
-                        j.delay,
+                        delay,
                         cls.getPegging(j),
                         clean_value(j.source),
                         timestamp,
@@ -648,11 +719,7 @@ class ExportOperationPlans(PlanTask):
                         "\\N",
                         "\\N",
                         "\\N",
-                        clean_value(j.demand.name)
-                        if j.demand
-                        else clean_value(j.owner.demand.name)
-                        if j.owner and j.owner.demand
-                        else "\\N",
+                        clean_value(j.demand.name) if demand else "\\N",
                         j.demand.due
                         if j.demand
                         else j.owner.demand.due
@@ -673,7 +740,7 @@ class ExportOperationPlans(PlanTask):
                         str(j.start),
                         str(j.end),
                         round(j.criticality, 8),
-                        j.delay,
+                        delay,
                         cls.getPegging(j),
                         clean_value(j.source),
                         timestamp,
@@ -692,11 +759,7 @@ class ExportOperationPlans(PlanTask):
                         else "\\N",
                         "\\N",
                         "\\N",
-                        clean_value(j.demand.name)
-                        if j.demand
-                        else clean_value(j.owner.demand.name)
-                        if j.owner and j.owner.demand
-                        else "\\N",
+                        clean_value(j.demand.name) if demand else "\\N",
                         j.demand.due
                         if j.demand
                         else j.owner.demand.due
@@ -721,7 +784,7 @@ class ExportOperationPlans(PlanTask):
                         str(j.start),
                         str(j.end),
                         round(j.criticality, 8),
-                        j.delay,
+                        delay,
                         cls.getPegging(j),
                         clean_value(j.source),
                         timestamp,
@@ -734,11 +797,7 @@ class ExportOperationPlans(PlanTask):
                         "\\N",
                         clean_value(j.operation.buffer.location.name),
                         clean_value(j.operation.itemsupplier.supplier.name),
-                        clean_value(j.demand.name)
-                        if j.demand
-                        else clean_value(j.owner.demand.name)
-                        if j.owner and j.owner.demand
-                        else "\\N",
+                        clean_value(j.demand.name) if demand else "\\N",
                         j.demand.due
                         if j.demand
                         else j.owner.demand.due
@@ -763,7 +822,7 @@ class ExportOperationPlans(PlanTask):
                         str(j.start),
                         str(j.end),
                         round(j.criticality, 8),
-                        j.delay,
+                        delay,
                         cls.getPegging(j),
                         clean_value(j.source),
                         timestamp,
@@ -784,11 +843,7 @@ class ExportOperationPlans(PlanTask):
                         "\\N",
                         clean_value(i.location.name) if i.location else "\\N",
                         "\\N",
-                        clean_value(j.demand.name)
-                        if j.demand
-                        else clean_value(j.owner.demand.name)
-                        if j.owner and j.owner.demand
-                        else "\\N",
+                        clean_value(j.demand.name) if demand and j.demand else "\\N",
                         j.demand.due
                         if j.demand
                         else j.owner.demand.due
@@ -815,7 +870,7 @@ class ExportOperationPlans(PlanTask):
                         str(j.start),
                         str(j.end),
                         round(j.criticality, 8),
-                        j.delay,
+                        delay,
                         cls.getPegging(j),
                         clean_value(j.source),
                         timestamp,
@@ -836,11 +891,7 @@ class ExportOperationPlans(PlanTask):
                             else j.demand.location.name
                         ),
                         "\\N",
-                        clean_value(j.demand.name)
-                        if j.demand
-                        else clean_value(j.owner.demand.name)
-                        if j.owner and j.owner.demand
-                        else "\\N",
+                        clean_value(j.demand.name) if demand else "\\N",
                         j.demand.due
                         if j.demand
                         else j.owner.demand.due
@@ -852,6 +903,10 @@ class ExportOperationPlans(PlanTask):
                         "\\N",
                     ]
                 if data:
+                    if with_fcst:
+                        data.append(
+                            clean_value(forecast.owner.name) if forecast else "\\N"
+                        )
                     for attr in cls.attrs:
                         v = getattr(j, attr[0], None)
                         if v is None:
@@ -875,9 +930,9 @@ class ExportOperationPlans(PlanTask):
                         else:
                             raise Exception("Unknown attribute type %s" % attr[2])
                     yield linetemplate % tuple(data)
-                if status == "proposed":
-                    proposedFound = True
-                    proposedFoundDate = j.start
+                    if status == "proposed":
+                        proposedFound = True
+                        proposedFoundDate = j.start
 
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -914,6 +969,8 @@ class ExportOperationPlans(PlanTask):
                 batch character varying(300),
                 quantity_completed numeric(20,8)
             """
+        if with_fcst:
+            sql += ", forecast character varying(300)"
         for attr in cls.attrs:
             if attr[2] == "boolean":
                 sql += ", %s boolean" % attr[0]
@@ -939,6 +996,7 @@ class ExportOperationPlans(PlanTask):
         cursor.copy_from(
             CopyFromGenerator(
                 cls.getData(
+                    with_fcst,
                     cls.parent.timestamp,
                     cluster=cluster,
                     accepted_status=["confirmed", "approved", "completed", "closed"],
@@ -1003,6 +1061,7 @@ class ExportOperationPlans(PlanTask):
         cursor.copy_from(
             CopyFromGenerator(
                 cls.getData(
+                    with_fcst,
                     cls.parent.timestamp,
                     cluster=cluster,
                     accepted_status=["proposed"],
@@ -1037,6 +1096,13 @@ class ExportOperationPlans(PlanTask):
                 "batch",
                 "quantity_completed",
             ]
+            + (
+                [
+                    "forecast",
+                ]
+                if with_fcst
+                else []
+            )
             + [a[0] for a in cls.attrs],
         )
 

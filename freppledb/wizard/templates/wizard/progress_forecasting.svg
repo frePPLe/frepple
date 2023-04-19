@@ -1,0 +1,99 @@
+{% load i18n %}
+<svg height="100%" width="100%" viewBox="0 0 500 150"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg">
+
+<style>
+rect.border {
+   rx: 2;
+   ry: 2;
+   stroke: gray;
+   fill: white;
+}
+
+text {
+   font-size: 1em;
+}
+
+text.border {
+   fill: gray;
+   font-size: 0.75em;
+}
+
+.gold {
+   fill: gold;
+}
+
+tspan.gold {
+   text-shadow: 0 0 3px #000;
+}
+
+path.notrophy {
+  fill: lightgray;
+}
+
+rect.ok, rect.nok {
+  rx: 2;
+  ry: 2;
+  cursor: pointer;
+}
+</style>
+
+<!-- Path -->
+<path stroke="grey" fill="transparent" stroke-width="4"
+ d="M 66,65 C 210,65 353,100 393,100"
+ />
+
+<!-- Master data -->
+<g transform="translate(0 10)">
+<rect width="155" height="110" x="0" y="0" class="border"></rect>
+<text x="5" y="14" class="border">{% trans 'master data'|capfirst %}</text>
+
+<g transform="translate(5 20)">
+<a href="{{prefix}}data/input/item/">
+<rect width="145" height="25" x="0" y="0" class="{% if noItem %}nok fill-primary-light{% else %}ok fill-primary{% endif %}"></rect>
+<text x="5" y="17">{% trans 'items'|capfirst %}&nbsp;&nbsp;{% if noItem %}&#xf006;{% else %}<tspan class="gold">&#xf005;</tspan>{% endif %}</text>
+</a>
+</g>
+
+<g transform="translate(5 50)">
+<a href="{{prefix}}data/input/location/">
+<rect width="145" height="25" x="0" y="0" class="{% if noLocation %}nok fill-primary-light{% else %}ok fill-primary{% endif %}"></rect>
+<text x="5" y="17">{% trans 'locations'|capfirst %}&nbsp;&nbsp;{% if noLocation %}&#xf006;{% else %}<tspan class="gold">&#xf005;</tspan>{% endif %}</text>
+</a>
+</g>
+
+<g transform="translate(5 80)">
+<a href="{{prefix}}data/input/customer/">
+<rect width="145" height="25" x="0" y="0" class="{% if noCustomer %}nok fill-primary-light{% else %}ok fill-primary{% endif %}"></rect>
+<text x="5" y="17">{% trans 'customers'|capfirst %}&nbsp;&nbsp;{% if noCustomer %}&#xf006;{% else %}<tspan class="gold">&#xf005;</tspan>{% endif %}</text>
+</a>
+</g>
+
+</g>
+
+<!-- Historical sales data -->
+<g transform="translate(185 60)">
+<rect width="155" height="50" x="0" y="0" class="border"></rect>
+<text x="5" y="14" class="border">{% trans 'sales history'|capfirst %}</text>
+
+<g transform="translate(5 20)">
+<a href="{{prefix}}data/input/demand/">
+<rect width="145" height="25" x="0" y="0" class="{% if noDemand %}nok fill-primary-light{% else %}ok fill-primary{% endif %}"></rect>
+<text x="5" y="17">{% trans 'sales orders'|capfirst %}&nbsp;&nbsp;{% if noDemand %}&#xf006;{% else %}<tspan class="gold">&#xf005;</tspan>{% endif %}</text>
+</a>
+</g>
+
+</g>
+
+<!-- trophy -->
+<g transform="translate(370 80) scale(0.5 0.5)">
+<path class="{% if noForecastPlan %}notrophy{% else %}gold{% endif %}" d="M80.944,16C81.908,6.669,82,0,82,0H18.001c0,0,0.091,6.669,1.056,16C12.352,16,0,16,0,16v3
+  c0,36.992,26.842,46.346,35.799,48.435c3.146,3.326,6.846,5.603,11.201,6.321V81c0,7-15,13-21,13c-1.656,0-3,1.344-3,3s1.344,3,3,3
+  h24h24c1.656,0,3-1.344,3-3s-1.344-3-3-3c-6,0-21-6-21-13v-7.244c4.355-0.719,8.057-2.994,11.203-6.321
+  C73.162,65.344,100,55.99,100,19v-3C100,16,86.229,16,80.944,16z M6.066,22h13.697c1.598,12.098,4.637,26.756,10.402,37.428
+  C20.676,55.47,7.123,45.693,6.066,22z M55.729,26.102L59.271,37L50,30.265L40.729,37l3.541-10.898L35,19.367h11.459L50,8.469
+  l3.541,10.898H65L55.729,26.102z M69.836,59.428c5.766-10.672,8.805-25.331,10.4-37.428h13.697
+  C92.877,45.693,79.324,55.471,69.836,59.428z"/>
+</g>
+</svg>

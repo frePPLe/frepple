@@ -24,7 +24,7 @@ import os
 import logging
 import uuid
 from time import time
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from dateutil.parser import parse
 
 from django.conf import settings
@@ -184,7 +184,6 @@ class checkBrokenSupplyPath(CheckTask):
         Item.rebuildHierarchy(database)
         Location.rebuildHierarchy(database)
         with_fcst_module = "freppledb.forecast" in settings.INSTALLED_APPS
-        param = True
         currentdate = Parameter.getValue("currentdate", database=database)
         try:
             currentdate = parse(currentdate)
@@ -195,18 +194,27 @@ class checkBrokenSupplyPath(CheckTask):
                 if currentdate and currentdate.lower() == "today"
                 else n.replace(microsecond=0)
             )
-        try:
-            p = Parameter.objects.using(database).get(name="plan.fixBrokenSupplyPath")
-            param = p.value.strip().lower() == "true"
-        except Exception:
-            pass
-
-        if not param:
-            logger.info("skipping search of broken supply")
-            return
+        param = (
+            Parameter.getValue(
+                "plan.fixBrokenSupplyPath", database=database, default="true"
+            )
+            .strip()
+            .lower()
+            == "true"
+        )
 
         with connections[database].cursor() as cursor:
-            cursor = connections[database].cursor()
+            if not param:
+                logger.info("skipping search of broken supply")
+                cursor.execute(
+                    """
+                    delete from itemsupplier where supplier_id = 'Unknown supplier';
+                    delete from operationplan where supplier_id = 'Unknown supplier';
+                    delete from supplier where name = 'Unknown supplier';
+                    """
+                )
+                return
+
             # cleaning previous records
             cursor.execute(
                 """
@@ -1833,6 +1841,28 @@ class loadDemand(LoadTask):
         else:
             attrsql = ""
 
+        # Find the start date of the current forecasting bucket
+        calendar = Parameter.getValue("forecast.calendar", database, None)
+        threshold = frepple.settings.current
+        if (
+            Parameter.getValue("forecast.Net_PastDemand", database, "false").lower()
+            == "true"
+        ):
+            try:
+                threshold -= timedelta(
+                    days=float(Parameter.getValue("forecast.Net_NetLate", database, 0))
+                )
+            except Exception:
+                pass
+        fcst_start_date = None
+        if calendar:
+            for i in frepple.calendar(name=calendar).events():
+                if i[0] > threshold:
+                    break
+                fcst_start_date = i[0]
+        if not fcst_start_date:
+            fcst_start_date = date(2030, 1, 1)
+
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
@@ -1845,9 +1875,10 @@ class loadDemand(LoadTask):
                     category, subcategory, source, location_id, status,
                     batch, description, policy %s
                     FROM demand
-                    WHERE (status IS NULL OR status in ('open', 'quote')) %s
+                    WHERE (status IS NULL OR status in ('open', 'quote', 'inquiry') or (status = 'closed' and due >= %%s)) %s
                     """
-                    % (attrsql, filter_and)
+                    % (attrsql, filter_and),
+                    (fcst_start_date,),
                 )
                 for i in cursor:
                     cnt += 1
@@ -1916,6 +1947,7 @@ class loadOperationPlans(LoadTask):
 
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
+                with_fcst = "freppledb.forecast" in settings.INSTALLED_APPS
                 consume_material = (
                     Parameter.getValue("WIP.consume_material", database, "true").lower()
                     == "true"
@@ -1960,8 +1992,48 @@ class loadOperationPlans(LoadTask):
                     attrsql = ""
 
                 starttime = time()
-                cursor.execute(
-                    """
+                if with_fcst:
+                    cursor.execute(
+                        """
+                        SELECT
+                        operationplan.operation_id, operationplan.reference, operationplan.quantity,
+                        case when operationplan.plan ? 'setupend'
+                           then (operationplan.plan->>'setupend')::timestamp
+                           else operationplan.startdate
+                           end, operationplan.enddate, operationplan.status, operationplan.source,
+                        operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
+                        operationplan.item_id, operationplan.location_id, operationplan.batch, operationplan.quantity_completed,
+                        array(
+                            select resource_id
+                            from operationplanresource
+                            where operationplan_id = operationplan.reference
+                            order by resource_id
+                        ),
+                        case when operationplan.plan ? 'setupoverride'
+                          then (operationplan.plan->>'setupoverride')::integer
+                        end,
+                        coalesce(dmd.name, null),
+                        coalesce(forecast.name, null), operationplan.due
+                        %s
+                        FROM operationplan
+                        LEFT OUTER JOIN (select name from demand
+                        where demand.status is null or demand.status in ('open', 'quote')
+                        ) dmd
+                        on dmd.name = operationplan.demand_id
+                        LEFT OUTER JOIN (select name from forecast) forecast
+                        on forecast.name = operationplan.forecast
+                        WHERE operationplan.owner_id IS NULL
+                        and operationplan.quantity >= 0 and operationplan.status <> 'closed'
+                        %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
+                        and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
+                        and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
+                        ORDER BY operationplan.reference ASC
+                        """
+                        % (attrsql, filter_and, confirmed_filter)
+                    )
+                else:
+                    cursor.execute(
+                        """
                         SELECT
                         operationplan.operation_id, operationplan.reference, operationplan.quantity,
                         case when operationplan.plan ? 'setupend'
@@ -1993,12 +2065,17 @@ class loadOperationPlans(LoadTask):
                         and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                         ORDER BY operationplan.reference ASC
                         """
-                    % (attrsql, filter_and, confirmed_filter)
-                )
+                        % (attrsql, filter_and, confirmed_filter)
+                    )
                 for i in cursor:
                     try:
                         if i[17]:
                             dmd = frepple.demand(name=i[17])
+                        elif with_fcst and i[18] and i[19]:
+                            dmd = frepple.demand_forecastbucket(
+                                forecast=frepple.demand_forecast(name=i[18]),
+                                start=i[19],
+                            )
                         else:
                             dmd = None
                         if i[7] == "MO":
@@ -2090,9 +2167,10 @@ class loadOperationPlans(LoadTask):
                                 create=create_flag,
                                 batch=i[13],
                             )
-                            if opplan and i[5] == "confirmed":
-                                if not consume_capacity:
-                                    opplan.consume_capacity = False
+                            if opplan:
+                                if i[5] == "confirmed":
+                                    if not consume_capacity:
+                                        opplan.consume_capacity = False
                                 elif i[5] == "completed":
                                     if not consume_material_completed:
                                         opplan.consume_material = False
@@ -2104,7 +2182,7 @@ class loadOperationPlans(LoadTask):
                             continue
 
                         if opplan:
-                            idx = 18
+                            idx = 20 if with_fcst else 18
                             for a in attrs:
                                 setattr(opplan, a, i[idx])
                                 idx += 1
@@ -2115,8 +2193,53 @@ class loadOperationPlans(LoadTask):
                         logger.error("**** %s ****" % e)
         with transaction.atomic(using=database):
             with connections[database].chunked_cursor() as cursor:
-                cursor.execute(
-                    """
+                if with_fcst:
+                    cursor.execute(
+                        """
+                        SELECT
+                        operationplan.operation_id, operationplan.reference, operationplan.quantity,
+                        case when operationplan.plan ? 'setupend'
+                           then (operationplan.plan->>'setupend')::timestamp
+                           else operationplan.startdate
+                           end, operationplan.enddate, operationplan.status,
+                        operationplan.owner_id, operationplan.source, operationplan.batch,
+                        array(
+                            select resource_id
+                            from operationplanresource
+                            where operationplan_id = operationplan.reference
+                            order by resource_id
+                        ),
+                        coalesce(dmd.name, null), coalesce(forecast.name, null), operationplan.due %s
+                        FROM operationplan
+                        INNER JOIN (select reference
+                        from operationplan %s
+                        ) opplan_parent
+                        on operationplan.owner_id = opplan_parent.reference
+                        LEFT OUTER JOIN (select name from demand
+                        where demand.status is null or demand.status in ('open', 'quote')
+                        ) dmd
+                        on dmd.name = operationplan.demand_id
+                        LEFT OUTER JOIN (select name from forecast) forecast
+                        on forecast.name = operationplan.forecast
+                        WHERE operationplan.quantity >= 0
+                        and (
+                          operationplan.status <> 'closed'
+                          or exists (
+                            select 1 from operationplan as parent_opplan
+                            where parent_opplan.reference = operationplan.owner_id
+                            and parent_opplan.status <> 'closed'
+                            )
+                        )
+                        %s and operationplan.type = 'MO'
+                        and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
+                        and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
+                        ORDER BY operationplan.reference ASC
+                        """
+                        % (attrsql, parent_filter, filter_and)
+                    )
+                else:
+                    cursor.execute(
+                        """
                         SELECT
                         operationplan.operation_id, operationplan.reference, operationplan.quantity,
                         case when operationplan.plan ? 'setupend'
@@ -2154,8 +2277,8 @@ class loadOperationPlans(LoadTask):
                         and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                         ORDER BY operationplan.reference ASC
                         """
-                    % (attrsql, parent_filter, filter_and)
-                )
+                        % (attrsql, parent_filter, filter_and)
+                    )
                 for i in cursor:
                     try:
                         cnt_mo += 1
@@ -2189,7 +2312,12 @@ class loadOperationPlans(LoadTask):
                                     )
                             if i[10]:
                                 opplan.demand = frepple.demand(name=i[10])
-                            idx = 11
+                            elif with_fcst and i[11] and i[12]:
+                                opplan.demand = frepple.forecastbucket(
+                                    forecast=frepple.demand_forecast(name=i[11]),
+                                    start=i[12],
+                                )
+                            idx = 13 if with_fcst else 11
                             for a in attrs:
                                 setattr(opplan, a, i[idx])
                                 idx += 1

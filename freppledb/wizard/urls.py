@@ -29,6 +29,7 @@ from .views import (
     FeatureDashboard,
     WizardLoad,
     SendSurveyMail,
+    QuickStartForecast,
     QuickStartProduction,
 )
 
@@ -38,8 +39,10 @@ autodiscover = True
 
 urlpatterns = [
     path(r"", Home),
+    path(r"wizard/quickstart/forecast/", QuickStartForecast.as_view()),
     path(r"wizard/quickstart/production/", QuickStartProduction.as_view()),
     path(r"wizard/supplypath/", CheckSupplyPath),
+    path(r"wizard/load/", WizardLoad),
     path(r"wizard/load/<str:mode>/", WizardLoad),
     path(r"wizard/sendsurveymail/", SendSurveyMail.action),
     path(r"wizard/features/", FeatureDashboard.as_view()),

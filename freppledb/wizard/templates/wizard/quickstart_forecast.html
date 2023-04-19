@@ -1,0 +1,174 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n %}
+
+{% block extrahead %}{{block.super}}
+<script>
+$(function() {
+	$("#submitform").on("submit", function() {
+		$('<i class="fa fa-spinner fa-spin"></i>').prependTo("#submitbutton");
+		$("#submitbutton").prop("disabled", true);
+	});
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12 mb-3" style="max-width: 900px" role="tablist">
+    <div class="card">
+      <div class="card-body">
+        <div class="pull-right">
+          <img src="/static/img/forecast-editor-thumbnail.png" style="width: 150px" alt="Forecast Editor">
+        </div>
+        <p>The forecasting module analyzes the sales history (the <span style="color:rgb(139, 186, 0)">green line</span> in the graph) and
+        computes the estimated sales for the future periods (the <span style="color:rgb(255, 0, 0)">red line</span> in the graph).
+        </p>
+        <p>You can review the forecast results, collaborate with your team members, adjust the
+        forecast manually and upload your own forecast values.</p>
+        <p>Let's start simple by giving us the sales history for a single item + location + customer combination.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% if not post %}
+<div class="row mb-3">
+	<div class="col-12" style="max-width: 900px" role="tablist">
+		<div class="card">
+			<div class="card-header wizard-1-of-2" role="tab">
+				<table style="width:100%">
+					<tr>
+						<td style="width:50%">Step 1: Enter sales history</td>
+						<td style="width:50%">Step 2: Results</td>
+					</tr>
+				</table>
+			</div>
+			<div class="panel-collapse" role="tabpanel">
+				<div class="card-body">
+				  <h2 style="margin-top: 0; margin-bottom:10px">
+				  Enter the sales history of a item + location + customer combination
+				  </h2>
+					<form id="submitform" action="{{request.prefix}}/wizard/quickstart/forecast/" method="post">
+						{% csrf_token %}
+						<div class="row mb-3">
+							<label class="col-sm-3 form-label text-end" for="wizarditem"
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                data-bs-title="Item of the item+location+customer<br>combination to be forecasted.">
+                {% trans "item"|capfirst %}
+                <i class="fa fa-question-circle"></i>
+              </label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="wizarditem" name="item" required
+									maxlength="300" placeholder="{% trans "item name"|capfirst %}">
+							</div>
+						</div>
+						<div class="row mb-3">
+							<label class="col-sm-3 col-form-label text-end" for="wizardlocation"
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                data-bs-title="Location of the item+location+customer<br>combination to be forecasted.">
+                {% trans "location"|capfirst %}
+                <i class="fa fa-question-circle"></i>
+              </label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="wizardlocation" name="location" required
+									maxlength="300" placeholder="{% trans "location name"|capfirst %}">
+							</div>
+						</div>
+						<div class="row mb-3">
+							<label class="col-sm-3 col-form-label text-end" for="wizardcustomer"
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                data-bs-title="Customer of the item+location+customer<br>combination to be forecasted.">
+                {% trans "customer"|capfirst %}
+                <i class="fa fa-question-circle"></i>
+              </label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="wizardcustomer" name="customer" required
+									maxlength="300" placeholder="{% trans "customer name"|capfirst %}">
+							</div>
+						</div>
+						<div class="row mb-3">
+							<label class="col-sm-3 col-form-label text-end" style="white-space: nowrap" for="wizardhistory"
+                data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true"
+                data-bs-title="Sales history.<br>For good statistical results we need at least 5 periods of history.<br>For seasonal patterns we need at least 2 cycles of history.">
+                {% blocktrans %}Sales history in the last {{buckets}}{% endblocktrans %}
+                <i class="fa fa-question-circle"></i>
+              </label>
+							<div class="col-sm-9">
+								<input type="text" required class="form-control" name="history"
+									pattern="[0-9 \t]*" placeholder="{% trans "a list of integers:eg 10  20  30"|capfirst %}">
+							</div>
+						</div>
+						<div class="row mt-3 justify-content-center">
+              <div class="col-auto">
+                <button id="submitbutton" type="submit" class="btn btn-primary d-block">
+                {% trans "Generate forecast"|capfirst %}
+                </button>
+              </div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% else %}
+<div class="row">
+  <div class="col-12" style="max-width:900px" role="tablist">
+    <div class="card" id="wizard-2">
+      <div class="card-header wizard-2-of-2" role="tab">
+        <h5 class="card-title">
+        <table style="width:100%">
+        <tr>
+        <td style="width:50%">
+          <a class="text-decoration-underline" href="{{request.prefix}}/wizard/quickstart/forecast/">Step 1: Enter sales history</a>
+        </td>
+        <td style="width:50%">Step 2: Results</td>
+        </tr>
+        </table>
+        </h5>
+      </div>
+      <div class="panel-collapse" role="tabpanel">
+        <div class="card-body">
+          <div>
+          <p>Here are the forecasts for {{post.item}} - {{post.location}} - {{post.customer}}:</p>
+          </div>
+          <div class="row justify-content-evenly">
+          <div class="col-auto mb-3" style="max-width:130px"
+            data-bs-toggle="tooltip" data-bs-placement="bottom"
+            data-bs-title="Review forecast values across multiple dimensions">
+            <p><a target="_blank" rel="noopener" href="{{request.prefix}}/forecast/editor/{{post.item|admin_quote}}/">
+              <img src="/static/wizard/img/forecast_editor_thumbnail.png" style="width: 100%" alt="Forecast Editor"><br>
+              <b>Forecast Editor</b>
+            </a></p>
+          </div>
+          <div class="col-auto mb-3" style="max-width:130px"
+            data-bs-toggle="tooltip" data-bs-placement="bottom"
+            data-bs-title="Scroll through a list of forecast values">
+            <p><a target="_blank" rel="noopener" href="{{request.prefix}}/forecast/?noautofilter&item={{post.item|admin_quote}}&location={{post.location|admin_quote}}&customer={{post.customer|admin_quote}}">
+              <img src="/static/wizard/img/forecast_report_thumbnail.png" style="width: 100%" alt="Forecast report"><br>
+              <b>Forecast Report</b>
+            </a></p>
+          </div>
+          </div>
+          <div>
+          <p>Check out what we did with your input data:</p>
+            <ul>
+              {% for msg in post.messages %}
+              <li class="disc"><p>{{ msg | safe }}</p></li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="clearfix">
+          <p>Next actions:</p>
+            <ul>
+            <li class="disc"><p><a class="text-decoration-underline" href="{{request.prefix}}/wizard/quickstart/forecast/">Repeat these steps</a> for another item + location + customer.</p></li>
+            <li class="disc"><p><a class="text-decoration-underline" href="{{request.prefix}}/wizard/load/forecast/" target="_blank" rel="noopener">Learn how to load Excel spreadsheets</a>
+          to repeat this calculation for many items, locations and customers.</p></li>
+            </ul>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

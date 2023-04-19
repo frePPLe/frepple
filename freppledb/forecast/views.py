@@ -795,10 +795,12 @@ class OverviewReport(GridPivot):
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
         if args and args[0]:
+            request.session["lasttab"] = "plan"
             return {
                 "title": force_str(Forecast._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan"),
                 "currency": json.dumps(getCurrency()),
+                "active_tab": "plan",
             }
         else:
             return {"currency": json.dumps(getCurrency())}

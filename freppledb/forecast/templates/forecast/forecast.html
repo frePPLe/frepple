@@ -7,7 +7,19 @@
 </script>
 {% endblock %}
 
-{% block tools %}{% if args.0 %}{% tabs "forecast.forecast" %}{% endif %}{{block.super}}{% endblock %}
+{% block tools %}
+{% if args.0 %}
+  {% include "common/snippet_follow.html" %}
+{% endif %}
+{{block.super}}
+{% endblock %}
+
+{% block tabs %}
+{% if args.0 %}
+  {% tabs "forecast.forecast" %}
+{% endif %}
+{{block.super}}
+{% endblock %}
 
 {% block before_table %}{% if args.0 %}
 <div id="graph" style="clear: both; height: 400px; padding: 10px; "></div>

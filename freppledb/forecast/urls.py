@@ -41,7 +41,7 @@ urlpatterns = [
     path("data/forecast/measure/", views.MeasureList.as_view()),
     path("forecast/demand/", views.OrderReport.as_view()),
     # NOT READY... path("forecast/wizard/", views.ForecastWizard.as_view()),
-    path("forecast/<str:name>/", views.OverviewReport.as_view(), name="forecast_plan"),
+    re_path("forecast/(.+)/$", views.OverviewReport.as_view(), name="forecast_plan"),
     path(r"forecast/", views.OverviewReport.as_view()),
     re_path(
         r"^constraintforecast/(.+)/$",

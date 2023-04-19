@@ -23,7 +23,8 @@
 
 from django.conf import settings
 from django.contrib.admin.utils import unquote
-from django.db.models import F, Q
+from django.db.models.functions import Cast
+from django.db.models import Q, IntegerField
 from django.db.models.expressions import RawSQL
 from django.template import Template
 from django.utils.translation import gettext_lazy as _
@@ -220,6 +221,8 @@ class DemandList(GridReport):
         <br>
         The sales orders table contains all the orders placed by your customers.<br><br>
         Orders in the status "open" are still be delivered and will be planned.<br><br>
+        Orders in the status "closed" represent the sales history, and are used
+        to compute a statistical sales forecast for the future.<br><br>
         <br><br>
         <div role="group" class="btn-group.btn-group-justified">
         <a href="{{request.prefix}}/data/input/demand/add/" class="btn btn-primary">Create a single sales order<br>in a form</a>
@@ -625,9 +628,8 @@ class DeliveryOrderList(GridReport):
             extra='"role":"input/item"',
         ),
         GridFieldText(
-            "customer",
+            "cust",
             title=_("customer"),
-            field_name="demand__customer__name",
             formatter="detail",
             extra='"role":"input/customer"',
         ),
@@ -639,17 +641,14 @@ class DeliveryOrderList(GridReport):
             extra='"role":"input/location"',
         ),
         GridFieldNumber("quantity", title=_("quantity")),
-        GridFieldNumber("demand__quantity", title=_("demand quantity"), editable=False),
+        GridFieldNumber("demandquantity", title=_("demand quantity"), editable=False),
         GridFieldDateTime("startdate", title=_("start date")),
         GridFieldDateTime(
             "enddate",
             title=_("end date"),
             extra=GridFieldDateTime.extra + ',"cellattr":enddatecellattr',
         ),
-        GridFieldDateTime(
-            "due", field_name="demand__due", title=_("due date"), editable=False
-        ),
-        GridFieldDateTime("duedate", title=_("due date"), editable=False, hidden=True),
+        GridFieldDateTime("duedate", title="due date", editable=False),
         GridFieldChoice(
             "status",
             title=_("status"),
@@ -856,11 +855,102 @@ class DeliveryOrderList(GridReport):
             parentreference = request.GET["parentreference"]
             q = q.filter(reference=parentreference)
 
-        if "orders" in request.GET:
-            orders = request.GET["orders"]
-            q = q.filter(demand__isnull=(orders.lower() in ["false", "0"]))
+        if "freppledb.forecast" in settings.INSTALLED_APPS:
+            q = q.annotate(
+                cust=RawSQL(
+                    """
+                    coalesce(
+                      (select customer_id from demand where demand.name = demand_id),
+                      (select customer_id from forecast where forecast.name = forecast)
+                      )
+                    """,
+                    (),
+                ),
+                cust_lft=Cast(
+                    RawSQL(
+                        """
+                        select lft from customer where name =
+                            coalesce(
+                            (select customer_id from demand where demand.name = demand_id),
+                            (select customer_id from forecast where forecast.name = forecast)
+                            )
+                        """,
+                        [],
+                    ),
+                    IntegerField(),
+                ),
+                demandquantity=RawSQL(
+                    """
+                    coalesce(
+                      (select quantity from demand where demand.name = demand_id),
+                      (
+                          select (value->>'forecastnet')::numeric
+                          from forecastplan
+                          inner join forecast
+                            on forecastplan.item_id = forecast.item_id and forecastplan.location_id = forecast.location_id
+                            and forecastplan.customer_id = forecast.customer_id
+                          where forecast.name = forecast and operationplan.due >= startdate and operationplan.due < enddate
+                      ))
+                    """,
+                    (),
+                ),
+                duedate=RawSQL(
+                    """
+                    coalesce(
+                    (select due from demand where demand.name = demand_id),
+                    (
+                      select case when parameter.value = 'start' then startdate
+                      when parameter.value = 'end' then enddate - interval '1 second'
+                      else date_trunc('day', startdate + (enddate-startdate)/2) end
+                      from forecastplan
+                      inner join common_parameter parameter on name = 'forecast.DueWithinBucket'
+                      inner join forecast
+                        on forecastplan.item_id = forecast.item_id and forecastplan.location_id = forecast.location_id
+                        and forecastplan.customer_id = forecast.customer_id
+                      where forecast.name = forecast and operationplan.due >= startdate and operationplan.due < enddate
+                    ))
+                    """,
+                    (),
+                ),
+            )
 
-        q = q.annotate(duedate=F("demand__due"))
+            # forecast report drill down
+            if "item" in request.GET:
+                item = Item.objects.using(request.database).get(
+                    name__exact=unquote(request.GET["item"])
+                )
+                q = q.filter(item__lft__gte=item.lft, item__lft__lt=item.rght)
+            if "location" in request.GET:
+                location = Location.objects.using(request.database).get(
+                    name__exact=unquote(request.GET["location"])
+                )
+                q = q.filter(
+                    location__lft__gte=location.lft, location__lft__lt=location.rght
+                )
+            if "customer" in request.GET:
+                customer = Customer.objects.using(request.database).get(
+                    name__exact=unquote(request.GET["customer"])
+                )
+                q = q.filter(cust_lft__gte=customer.lft, cust_lft__lt=customer.rght)
+            if "orders" in request.GET:
+                orders = request.GET["orders"]
+                q = q.filter(demand__isnull=(orders.lower() in ["false", "0"]))
+
+        else:
+            q = q.annotate(
+                cust=RawSQL(
+                    "(select demand.customer_id from demand where demand.name = operationplan.demand_id)",
+                    (),
+                ),
+                demandquantity=RawSQL(
+                    "(select demand.quantity from demand where demand.name = operationplan.demand_id)",
+                    (),
+                ),
+                duedate=RawSQL(
+                    "(select due from demand where demand.name = operationplan.demand_id)",
+                    (),
+                ),
+            )
 
         if args and args[0]:
             path = request.path.split("/")[4]

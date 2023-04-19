@@ -480,11 +480,33 @@ jQuery.extend($.fn.fmatter, {
     for (var i = 0; i < count; i++) {
       if (result != '')
         result += ', ';
-      result += cellvalue[i][0] + " : " + $.jgrid.htmlEncode(cellvalue[i][1])
-        + "<a href=\"" + url_prefix + "/detail/input/demand/" + admin_escape(cellvalue[i][1])
-        + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right' role='input/demand'></span></a>";
+      if (cellvalue[i][2] == 'F') {
+        result += cellvalue[i][0] + " : " + $.jgrid.htmlEncode(cellvalue[i][1])
+          + "<a href=\"" + url_prefix + "/detail/forecast/forecast/" + admin_escape(cellvalue[i][1])
+          + "\" onclick='event.stopPropagation()' objectid='" + $.jgrid.htmlEncode(cellvalue[i][1]).substring(0, $.jgrid.htmlEncode(cellvalue[i][1]).length - 13) + "'>"
+          + "<span class='ps-2 fa fa-caret-right' role='forecast/forecast'></span></a>";
+      }
+      else
+        result += cellvalue[i][0] + " : " + $.jgrid.htmlEncode(cellvalue[i][1])
+          + "<a href=\"" + url_prefix + "/detail/input/demand/" + admin_escape(cellvalue[i][1])
+          + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right' role='input/demand'></span></a>";
     }
     return result;
+  },
+
+  forecastdetail: function (cellvalue, options, rowdata) {
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null)
+      return '';
+    if (options['colModel']['popup'] || rowdata.showdrilldown === '0')
+      return $.jgrid.htmlEncode(cellvalue);
+
+    if (rowdata.hasOwnProperty('hasForecastRecord')
+      && (rowdata.hasForecastRecord === 'True'))
+      return $.jgrid.htmlEncode(cellvalue)
+        + "<a href=\"" + url_prefix + "/detail/" + options.colModel.role + "/" + admin_escape(cellvalue)
+        + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>";
+    else
+      return $.jgrid.htmlEncode(cellvalue);
   },
 
   listdetail: function (cellvalue, options, rowdata) {
@@ -3529,10 +3551,10 @@ function Gauge(placeholderName, configuration) {
 function showModalImage(event, title) {
   var popup = $('#popup');
   popup.html(
-    '<div class="modal-dialog modal-lg" style="margin-top: 20px; width:90%; margin-left: auto; margin-right: auto">'
+    '<div class="modal-dialog modal-xl" style="margin-top: 20px; width:90%; margin-left: auto; margin-right: auto">'
     + '<div class="modal-content">'
     + '<div class="modal-header" style="border-top-left-radius: inherit; border-top-right-radius: inherit">'
-    + '<button type="button" class="btn-close" data-bs-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'
+    + '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>'
     + '<h5 class="modal-title"></h5>'
     + '</div>'
     + '<div class="modal-body">'

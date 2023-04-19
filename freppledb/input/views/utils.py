@@ -77,6 +77,44 @@ def search(request):
     # We are interested in models satisfying these criteria:
     #  - primary key is of type text
     #  - user has change permissions
+    with_forecast = "freppledb.forecast" in settings.INSTALLED_APPS
+    if with_forecast:
+        from freppledb.forecast.models import Forecast
+
+        query = (
+            Forecast.objects.using(request.database)
+            .filter(
+                Q(item__name__icontains=term) | Q(item__description__icontains=term)
+            )
+            .order_by("item__name")
+            .distinct("item__name")
+            .values_list("item__name", "item__description")
+        )
+        count = len(query)
+        if count > 0:
+            result.append(
+                {
+                    "value": None,
+                    "label": (
+                        ungettext(
+                            "%(name)s - %(count)d match",
+                            "%(name)s - %(count)d matches",
+                            count,
+                        )
+                        % {"name": force_str(_("Forecast editor")), "count": count}
+                    ).capitalize(),
+                }
+            )
+            result.extend(
+                [
+                    {
+                        "url": "/forecast/editor/",
+                        "value": i[0],
+                        "display": "%s%s" % (i[0], " %s" % (i[1],) if i[1] else ""),
+                    }
+                    for i in query[:10]
+                ]
+            )
     for cls, admn in data_site._registry.items():
         if request.user.has_perm(
             "%s.view_%s" % (cls._meta.app_label, cls._meta.object_name.lower())
@@ -1575,6 +1613,28 @@ class PathReport(GridReport):
                 request, item_name, reportclass.downstream, depth=0
             ):
                 results.append(i)
+        elif (
+            str(reportclass.objecttype._meta) == "forecast.forecast"
+            and "freppledb.forecast" in settings.INSTALLED_APPS
+        ):
+            from freppledb.forecast.models import Forecast
+
+            forecast_name = basequery.query.get_compiler(basequery.db).as_sql(
+                with_col_aliases=False
+            )[1][0]
+            d = Forecast.objects.get(name=forecast_name)
+            buffer_name = "%s @ %s" % (d.item.name, d.location.name)
+
+            for i in reportclass.getOperationFromBuffer(
+                request,
+                buffer_name,
+                reportclass.downstream,
+                depth=0,
+                previousOperation=None,
+                bom_quantity=1,
+            ):
+                yield i
+
         else:
             raise Exception("Supply path for an unknown entity")
 
@@ -1842,8 +1902,51 @@ class OperationPlanDetail(View):
                                 }
                             )
                         except Demand.DoesNotExist:
-                            # Looks like this demand was deleted since the plan was generated
-                            continue
+                            if "freppledb.forecast" in settings.INSTALLED_APPS:
+                                try:
+                                    d, due = d.rsplit(" - ", 1)
+                                    cursor.execute(
+                                        """
+                                        select
+                                          forecast.item_id, item.description,
+                                          case
+                                            when lower(d.value) = 'start' then startdate
+                                            when lower(d.value) = 'end' then enddate - interval '1 second'
+                                            else date_trunc('day', startdate + (enddate - startdate)/2)
+                                          end as due
+                                        from forecast
+                                        inner join item
+                                          on item.name = forecast.item_id
+                                        left outer join common_parameter d on d.name = 'forecast.DueWithinBucket'
+                                        inner join common_parameter b on b.name = 'forecast.calendar'
+                                        inner join common_bucketdetail on common_bucketdetail.bucket_id = b.value
+                                          and to_date(%s, 'YYYY-MM-DD') >= common_bucketdetail.startdate
+                                          and to_date(%s, 'YYYY-MM-DD') < common_bucketdetail.enddate
+                                        where forecast.name = %s
+                                        """,
+                                        (due, due, d),
+                                    )
+                                    rec = cursor.fetchone()
+                                    res["pegging_demand"].append(
+                                        {
+                                            "demand": {
+                                                "name": d,
+                                                "item": {
+                                                    "name": rec[0],
+                                                    "description": rec[1],
+                                                },
+                                                "due": rec[2].strftime("%Y-%m-%d"),
+                                                "forecast": True,
+                                            },
+                                            "quantity": q,
+                                        }
+                                    )
+                                except Exception:
+                                    # Looks like this demand was deleted since the plan was generated
+                                    continue
+                            else:
+                                # Looks like this demand was deleted since the plan was generated
+                                continue
                     res["pegging_demand"].sort(
                         key=lambda f: (f["demand"]["name"], f["demand"]["due"])
                     )

@@ -6,6 +6,10 @@ Release notes
 
 Oh-oh... Something exciting is coming up!
 
+.. rubric:: Odoo integration
+
+- | 15 & 16: Usability improvements to skill maintenance.
+
 7.3.0 (2023/04/14)
 ==================
 

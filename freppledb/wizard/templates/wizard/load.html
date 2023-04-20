@@ -4,9 +4,9 @@
 {% block content %}
 {% if wizard %}
 <div class="row">
-  <div id="tasks" class="col-md-6 col-lg-8" role="tablist" aria-multiselectable="true">
+  <div id="tasks" class="col-lg-7 order-lg-1 col-sm-12 order-sm-2 mb-3" role="tablist" aria-multiselectable="true">
   {% for step in wizard.steps %}
-    <div class="card" id="wizard-{{ step.index }}">
+    <div class="card mb-2" id="wizard-{{ step.index }}">
        <div id="wizardhead-{{ step.index }}" data-bs-target="#wizardcontent-{{ step.index }}" class="card-header" role="tab"
        {% if step.locked %}data-bs-toggle="tooltip" data-bs-placement="top" title="Complete the previous step to earn access!"{% else %}data-bs-toggle="collapse"{% endif %}>
         {% if step.icon %}<span style="font-size:1.5em" class="fa {{ step.icon }} float-end"></span>{% endif %}
@@ -21,12 +21,11 @@
   {% endfor %}
   </div>
   {% if mode %}
-   <div id="tasks" class="col-md-6 col-lg-4">
+   <div class="col-lg-5 order-lg-2 col-sm-12 order-sm-1 mb-3">
      <div class="card">
-     <div class="card-header">Your progress</div>
+     <div class="card-header"><h5 class="card-title">Your progress</h5></div>
      <div class="card-body">
      {% if wizard.mode == "forecast" %}{% include 'wizard/progress_forecasting.svg' %}
-     {% elif wizard.mode == "inventory" %}{% include 'wizard/progress_inventoryplanning.svg' %}
      {% else %}{% include 'wizard/progress_productionplanning.svg' %}{% endif %}
      </div>
    </div>

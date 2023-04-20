@@ -1,8 +1,6 @@
 {% extends "index.html" %}
 {% load i18n %}
 {% load static %}
-{% block extrahead %}{{block.super}}
-{% endblock %}
 
 {% block actions %}
 <div class="btn-group" role="group">
@@ -27,34 +25,51 @@
 
 {% block content %}
 {% if features %}
-<div class="row pt-3 pb-3 gy-5 justify-content-evenly" id="wizard">
+<div class="row pt-3 pb-3">
+    <div class="col-auto mx-auto">
+		<h1 class="heading wizard-heading fw-bold">Two ways to get started quickly</h1>
+	</div>
+</div>
+<div class="row pb-3 gy-5" id="wizard">
 
-	<div class="col-md-4">
+	<div class="col-md-6">
 		<div class="text-center">
 			<h2 class="heading wizard-heading">
 				<span class="fa-stack">
 					<i class="fa fa-circle-o fa-stack-2x"></i>
-					<strong class="fa-stack-1x">1</strong>
+					<strong class="fa-stack-1x">A</strong>
 				</span>
 			</h2>
 			<h1 class="heading wizard-heading">Start with one item</h1>
-			<div>
-			  <a href="{{request.prefix}}/wizard/quickstart/production/" 
-				 id="quickstart" class="btn btn-primary btn-lg">QUICKSTART</a>
+			<div class="dropdown-center">
+				<button class="btn btn-primary btn-lg" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+				QUICKSTART
+			    </button>
+				<ul class="dropdown-menu bg-primary">
+				<li><a href="{{request.prefix}}/wizard/quickstart/forecast/" class="btn btn-primary w-100">FORECAST</a></li>
+				<li><a href="{{request.prefix}}/wizard/quickstart/production/" class="btn btn-primary w-100">PRODUCTION</a></li>
+				</ul>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-4">
+
+	<div class="col-md-6">
 		<div class="text-center">
 		<h2 class="heading wizard-heading">
 			<span class="fa-stack">
 				<i class="fa fa-circle-o fa-stack-2x"></i>
-				<strong class="fa-stack-1x">2</strong>
+				<strong class="fa-stack-1x">B</strong>
 			</span>
 		</h2>
 			<h1 class="heading wizard-heading">Upload more data</h1>
-			<div>
-				<a class="btn btn-primary btn-lg" href="{{request.prefix}}/wizard/load/production/" id="upload">UPLOAD</a>
+			<div class="dropdown-center">
+				<button class="btn btn-primary btn-lg" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+				UPLOAD
+				</button>
+				<ul class="dropdown-menu bg-primary">
+				<li><a class="btn btn-primary w-100" href="{{request.prefix}}/wizard/load/forecast/">FORECAST</a></li>
+				<li><a class="btn btn-primary w-100" href="{{request.prefix}}/wizard/load/production/">PRODUCTION</a></li>
+				</ul>
 			</div>
 		</div>
 	</div>

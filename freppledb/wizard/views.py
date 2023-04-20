@@ -30,7 +30,7 @@ from django.core import management
 from django.core.mail import EmailMessage
 from django.db import connections
 from django.http import HttpResponse, HttpResponseServerError
-from django.http import HttpResponseNotAllowed
+from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
@@ -38,8 +38,8 @@ from django.views import View
 from django.views.generic.base import TemplateView
 
 from freppledb import __version__
-from freppledb.common.report import getCurrency
-from freppledb.common.models import Bucket, Parameter
+from freppledb.common.report import getCurrency, getCurrentDate
+from freppledb.common.models import Bucket, BucketDetail, Parameter, Attribute
 from freppledb.input.models import (
     Location,
     Item,
@@ -62,6 +62,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+if "freppledb.forecast" in settings.INSTALLED_APPS:
+    from freppledb.forecast.models import ForecastPlan
 
 def parseDuration(v):
     d = v.strip().split(": ")
@@ -113,11 +115,11 @@ def getWizardSteps(request, mode):
     context = {
         "docroot": docurl,
         "prefix": request.prefix,
-        "label_data": '<span class="label label-primary">Data entry</span>',
-        "label_config": '<span class="label label-warning">Configuration</span>',
-        "label_action": '<span class="label label-danger">Action</span>',
-        "label_check": '<span class="label label-warning">Check</span>',
-        "label_analysis": '<span class="label label-success">Analyis</span>',
+        "label_data": '<span class="badge bg-primary">Data entry</span>',
+        "label_config": '<span class="badge bg-primary">Configuration</span>',
+        "label_action": '<span class="badge bg-danger">Action</span>',
+        "label_check": '<span class="badge bg-primary">Check</span>',
+        "label_analysis": '<span class="badge bg-success">Analyis</span>',
     }
 
     # Possible icons to display on the right hand side
@@ -132,7 +134,13 @@ def getWizardSteps(request, mode):
     done = False
 
     # Welcome step
-    welcome = """This wizard will guide you through the steps to load your data and configure up a
+    if mode:
+        welcome = """
+           <p>Work towards the goal!</p>
+           <p>New steps unlock only if you complete the previous one.</p>
+           """
+    else:
+        welcome = """This wizard will guide you through the steps to load your data and configure up a
            first basic planning model.<br>
            <br>
            Before you start, we need to set some expectations right:
@@ -149,8 +157,15 @@ def getWizardSteps(request, mode):
            </p>
            </li>
            </ol>
-           <p>Ready to get going? Work towards the goal!</p>
-           <p>New steps unlock only if you complete the previous one.</p>
+           <p>Ready to get going? Select the type of model you want to build.</p>
+           <div class="row">
+           <div class="col-md-4 text-center">
+             <a class="btn btn-primary" href="{prefix}/wizard/load/forecast/">Start data load wizard<br>for forecasting</a>
+           </div>
+           <div class="col-md-4 text-center">
+             <a class="btn btn-primary" href="{prefix}/wizard/load/production/">Start data load wizard<br>for production planning</a>
+           </div>
+           </div>
         """
     steps.append(
         {
@@ -163,6 +178,417 @@ def getWizardSteps(request, mode):
     )
     index += 1
 
+    if "freppledb.forecast" in settings.INSTALLED_APPS and mode == "forecast":
+        # Forecasting master data
+        done = (
+            Item.objects.using(request.database).exists()
+            and Location.objects.using(request.database).exists()
+            and Customer.objects.using(request.database).exists()
+        )
+        locked = not done
+        steps.append(
+            {
+                "index": index,
+                "title": "Step %s: Load master data: items, locations and customers"
+                % index,
+                "icon": ICON_AVAILABLE if not done else ICON_DONE,
+                "locked": False,
+                "content": """
+         <p>Unsurprisingly, we start by loading some basic master data: items, locations and customers.</p>
+         <p>You can either enter some sample records one by one, or (even better) load an Excel
+         or CSV file you extract from another system.</p>
+         <table class="table">
+         <thead>
+         <tr>
+           <th style="width:90px"></th>
+           <th>Step</th>
+           <th style="text-align: center; width:250px">Screenshot</th>
+         </tr>
+         </thead>
+         <tbody>
+           <tr><td>
+           1<br>{label_data}
+           </td>
+           <td>
+           <p><b><a href="{prefix}/data/input/item/" class="text-decoration-underline" target="_blank">Load item data</a></b>
+             &nbsp;&nbsp;
+             <a href="{docroot}/modeling-wizard/master-data/items.html" target="_blank">
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
+             </a>
+             &nbsp;&nbsp;
+             <a href="/static/wizard/sample_data/item.fcst.xlsx">
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
+             </a>
+           </p>
+           <p>Load the items you want to forecast. You can do this in various ways:<br>
+           <span class="circle">A</span> Click on the plus sign to add data records one by one in form.<br>
+           <span class="circle">B</span> Edit data directly in the grid.<br>
+           <span class="circle">C</span> Click the up arrow icon to import a data file in Excel or CSV format. Have a look
+           at the sample data to see how your data file should look like. You can even drag and drop your data
+           file directly on the grid area <span class="circle">B</span>.<br>
+           <span class="circle">D</span> You can click the down arrow icon to export the existing data as a spreadsheet,
+           make changes to the spreadsheet and then upload it again with the up arrow icon <span class="circle">C</span>.</p>
+           </td>
+           <td style="text-align: center">
+           <a href="#" onclick="showModalImage(event, 'Load items')"><img src="/static/wizard/img/item.png" style="width: 200px"></a>
+           </td></tr>
+
+           <tr><td>
+           2<br>{label_data}
+           </td>
+           <td><p><b><a href="{prefix}/data/input/location/" class="text-decoration-underline" target="_blank">Load location data</a></b>
+             &nbsp;&nbsp;
+             <a href="{docroot}/modeling-wizard/master-data/locations.html" target="_blank">
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
+             </a>
+             &nbsp;&nbsp;
+             <a href="/static/wizard/sample_data/location.xlsx">
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
+             </a>
+           </p>
+           <p>Load all locations from where items are sold to customers or where inventory is stored.<br>
+           Location can be structured in a hierachical tree which allows intuitive
+           navigation through the forecast data at aggregated levels.</p>
+           </td>
+           <td style="text-align: center">
+           <a href="#" onclick="showModalImage(event, 'Load locations')"><img src="/static/wizard/img/location.png" style="width: 200px"></a>
+           </td></tr>
+
+           <tr><td>
+           3<br>{label_data}
+           </td>
+           <td><p><b><a href="{prefix}/data/input/customer/" class="text-decoration-underline" target="_blank">Load customer data</a></b>
+             &nbsp;&nbsp;
+             <a href="{docroot}/modeling-wizard/master-data/customers.html" target="_blank">
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
+             </a>
+             &nbsp;&nbsp;
+             <a href="/static/wizard/sample_data/customer.xlsx">
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
+             </a>
+           </p>
+           <p>Load all customers for which you want to compute a forecast.<br>
+           In a first model we recommend to keep the customer hierarchy simple: for instance,
+           map all sales to a single aggregate customer.</p>
+           </td>
+           <td style="text-align: center">
+           <a href="#" onclick="showModalImage(event, 'Load customers')"><img src="/static/wizard/img/customer.png" style="width: 200px"></a>
+           </td></tr>
+         </tbody></table>
+         """.format(
+                    **context
+                ),
+            }
+        )
+        index += 1
+
+        # Forecasting sales history
+        if not locked:
+            done = Demand.objects.using(request.database).exists()
+        steps.append(
+            {
+                "index": index,
+                "title": "Step %s: Load historical sales data" % index,
+                "icon": ICON_LOCK if locked else ICON_DONE if done else ICON_AVAILABLE,
+                "locked": locked,
+                "content": """
+         <p>With the master data in place we can now proceed and load the sales order history.</p>
+         <p>You will need to load the historical demand values for a period that is typically
+         2 to 3 times as long as the future time window you want to forecast for. For instance, if you
+         want to forecast for next year, you will need to load 2 to 3 years of historical sales data.
+         If your demand presents seasonal patterns, you should also provide at least 3 past
+         cycles so that we can correctly forecast the next cycle.
+         The forecasting algorithms in frePPLe are able to generate a forecast with less historical
+         data than the rules of thumb described above, but the statistical accuracy will then obviously
+         be somewhat lower.</p>
+
+         <table class="table">
+         <thead>
+         <tr>
+           <th style="width:90px"></th>
+           <th>Step</th>
+           <th style="text-align: center; width:250px">Screenshot</th>
+         </tr>
+         </thead>
+         <tbody>
+         <tr>
+           <td style="text-align: center">1<br>{label_data}</td>
+           <td><p><b><a href="{prefix}/data/input/demand/" class="text-decoration-underline" target="_blank">Load sales order data</a></b>
+             &nbsp;&nbsp;
+             <a href="{docroot}/modeling-wizard/master-data/sales-orders.html" target="_blank">
+             <i class="fa fa-book fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Documentation"></i>
+             </a>
+             &nbsp;&nbsp;
+             <a href="/static/wizard/sample_data/salesorder.fcst.xlsx">
+             <i class="fa fa-file-excel-o fa-2x" aria-hidden="true" data-bs-toggle="tooltip" title="Sample data in Excel format"></i>
+             </a>
+           </p>
+           <p>Load all sales orders for the time window described above.<br>
+           As the majority of these orders will already have been shipped, their status
+           be "closed". Overdue backlog orders can be loaded with the status "open".<br>
+           Unless the number of sales orders exceeds 2 million, we recommend to load them
+           directly. For larger data volumes you might consider aggregating the data per time bucket.</p>
+           </td>
+           <td style="text-align: center">
+           <a href="#" onclick="showModalImage(event, 'Load sales orders')"><img src="/static/wizard/img/salesorder.png" style="width: 200px"></a>
+           </td></tr>
+         </tbody></table>
+         """.format(
+                    **context
+                ),
+            }
+        )
+        index += 1
+        if not locked:
+            locked = not done
+
+        # Forecasting generate plan
+        if not locked:
+            done = ForecastPlan.objects.using(request.database).exists()
+        parameter_forecast_calendar = Parameter.getValue(
+            "forecast.calendar", request.database, None
+        )
+        parameter_forecast_horizonfuture = int(
+            Parameter.getValue("forecast.Horizon_future", request.database, "365")
+        )
+        parameter_currentdate = Parameter.getValue(
+            "currentdate", request.database, "now"
+        )
+        steps.append(
+            {
+                "index": index,
+                "title": "Step %s: Calculate statistical forecast" % index,
+                "icon": ICON_LOCK if locked else ICON_DONE if done else ICON_AVAILABLE,
+                "locked": locked,
+                "content": """
+         <p>Almost there! First, let's configure a few important parameters so
+         that we can compute the statistical forecast for you.</p>
+
+         <table class="table">
+         <thead>
+         <tr>
+           <th style="width:90px"></th>
+           <th>Step</th>
+           <th style="text-align: center; width:250px">Screenshot</th>
+         </tr>
+         </thead>
+         <tbody>
+
+         <tr><td style="text-align: center">1<br>{label_config}</td>
+         <td><p><b><a href="{prefix}/data/common/parameter/?name=forecast.calendar" class="text-decoration-underline" target="_blank">Configure the forecasting time bucket size</a></b>:</p>
+         <p>Forecast values are computed by time bucket.<br>
+         You need to configure what time bucket size you wish to use.</p>
+         <div class="form-check ps-5 mb-2">
+           <input class="form-check-input" type="radio" id="fcstbckt_month" name="fcstbckt" data-forecastbucketsize="month"
+         """.format(
+                    **context
+                )
+                + (
+                    ' checked="checked"'
+                    if parameter_forecast_calendar == "month"
+                    else ""
+                )
+                + """><label for="fcstbckt_month" class="form-check-label">Monthly</label>
+         </div>
+         <div class="form-check ps-5 mb-3">
+           <input class="form-check-input" type="radio" id="fcstbckt_week" name="fcstbckt" data-forecastbucketsize="week"
+         """.format(
+                    **context
+                )
+                + (
+                    ' checked="checked"'
+                    if parameter_forecast_calendar == "week"
+                    else ""
+                )
+                + '''><label for="fcstbckt_week" class="form-check-label">Weekly</label>
+         </div>
+         <p class=mt-3">You can always review and update your choice with the parameter "forecast.calendar"
+         in the <a href="{prefix}/data/common/parameter/" class="text-decoration-underline" target="_blank">parameter table</a>
+         (available in the "admin" menu).</p>
+         </td>
+         <td></td>
+         </tr>
+
+         <tr>
+         <td style="text-align: center">2<br>{label_config}</td>
+         <td><p><b><a href="{prefix}/data/common/parameter/?name=forecast.Horizon_future" class="text-decoration-underline" target="_blank">Configure the forecasting horizon</a></b>:</p>
+         <p>You also need to configure how far in the future you wish to forecast for:<br>
+         <div class="ps-5 mt-2">
+         <input class="form-control d-inline w-auto" style="width:20em" size="10" value="'''.format(
+                    **context
+                )
+                + str(parameter_forecast_horizonfuture)
+                + '''" data-parameter="forecast.Horizon_future"> days</div></p>
+         <p>You can always review and update your choice with the parameter "forecast.Horizon_future"
+         in the <a href="{prefix}/data/common/parameter/" class="text-decoration-underline" target="_blank">parameter table</a>
+         (available in the "admin" menu).</p>
+         </td><td colspan="2"></td></tr>
+
+         <tr>
+         <td style="text-align: center">3<br>{label_config}</td>
+         <td><p><b><a href="{prefix}/data/common/parameter/?name=forecast.currentdate" class="text-decoration-underline" target="_blank">Configure the current date</a></b>:</p>
+         <p>In normal situations you'll want to compute the forecast starting from today onwards.<br>
+         When your dataset is not recent you may want to step back to a moment in the past, and simulate
+         generating a forecast from that moment onwards.</p>
+         <p>Specify here the current date (in the format YYYY-MM-DD HH:MM:SS), or leave the default
+         value "now" to use the system clock.<br>
+         <div class="ps-5 mt-2">
+         <input class="form-control d-inline w-auto" style="width:20em" size="17" value="'''.format(
+                    **context
+                )
+                + str(parameter_currentdate)
+                + """" data-parameter="currentdate"></div></p>
+         <p>You can always review and update your choice with the parameter "currentdate"
+         in the <a href="{prefix}/data/common/parameter/" class="text-decoration-underline" target="_blank">parameter table</a>
+         (available in the "admin" menu).</p>
+         </td><td colspan="2"></td></tr>
+
+         <tr><td style="text-align: center">4<br>{label_action}</td>
+         <td><p><b><a href="{prefix}/execute/" class="text-decoration-underline" target="_blank">Generate statistical forecast</a></b>:</p>
+         <p>You can now compute the first statistical forecast.</p>
+         <p>Open the <a href="{prefix}/execute/">execution screen</a> (available in the "admin" menu) and select
+         the "generate plan" <span class="circle">A</span> task. Make sure the option "generate forecast"
+         <span class="circle">B</span>is checked.</p>
+         <p><span class="circle">C</span> Launch the task and wait for it to complete. <span class="circle">D</span></p>
+         <p>Whenever you change any of the intput data, you will need to come back here to recompute the forecast.</p>
+         </td>
+         <td style="text-align: center">
+         <a href="#" onclick="showModalImage(event, 'Generate statistical forecast')"><img src="/static/wizard/img/generate_forecast.png" style="width: 200px"></a>
+         </td></tr>
+         </tbody></table>
+         """.format(
+                    **context
+                ),
+            }
+        )
+        script += (
+            '''
+         $("input[data-forecastbucketsize]").on('change', function(event) {
+         $.ajax({
+           type: 'POST',
+           url: "'''
+            + request.prefix
+            + """/execute/api/loaddata/",
+           data: {
+             fixture: 'parameters_' + $(this).attr("data-forecastbucketsize") + '_forecast'
+             }
+           });
+       });
+      """
+        )
+        index += 1
+        if not locked:
+            locked = not done
+
+        # Forecasting - review results
+        steps.append(
+            {
+                "index": index,
+                "title": "Step %s: Review results" % index,
+                "icon": ICON_LOCK if locked else None,
+                "locked": locked,
+                "content": """
+         <p>Now that the forecast has been computed, let's take some time to visit the main screens to
+         review and update the results.</p>
+         <table class="table">
+         <thead>
+         <tr>
+         <th style="width:90px"></th>
+         <th>Step</th>
+         <th style="text-align: center; width:250px">Screenshot</th>
+         </tr>
+         </thead>
+         <tbody>
+         <tr>
+         <td style="text-align: center">1<br>{label_analysis}</td>
+         <td><p><b><a href="{prefix}/forecast/editor/" class="text-decoration-underline" target="_blank">Review forecast editor</a></b><br>
+         <p>The <a href="{prefix}/forecast/editor/" class="text-decoration-underline" target="_blank">forecast editor</a> (available
+         in the "sales" menu) is the main screen for reviewing the results.<p>
+         <p><span class="circle">A</span> Select a combination of item + location + customer in the top pane, and
+         review the details in the bottom pane.</p>
+         <p><span class="circle">B</span> You can override the forecast proposed by the system. If you edit at a
+         higher level the value is distributed automatically to all child levels.</p>
+         <p><span class="circle">C</span> You can adjust the sales history to adjust for exceptional demands.</p>
+         <p><span class="circle">D</span> You can switch from units to monetary value.</p>
+         <p><span class="circle">E</span> You can also visualize the report in different time bucket sizes.</p>
+         </p>
+         </td>
+         <td style="text-align: center">
+         <a href="#" onclick="showModalImage(event, 'Forecast editor')"><img src="/static/wizard/img/forecast_editor.png" style="width: 200px"></a>
+         </td>
+         </tr>
+         <tr><td style="text-align: center">2<br>{label_analysis}</td>
+         <td><p><a href="{prefix}/forecast/" class="text-decoration-underline" target="_blank"><b>Review forecast report</b></a></p>
+         <p>The <a href="{prefix}/forecast/" class="text-decoration-underline" target="_blank">forecast report</a> (available in the "sales" menu)
+         is handy for going through a larger list of forecasts.</p>
+         <p><span class="circle">A</span> In this screen you can easily export forecast data as a spreadsheet.<p>
+         <p><span class="circle">B</span> You can also upload an Excel spreadsheet with forecast values from your sales team.</p>
+         </td>
+         <td style="text-align: center">
+         <a href="#" onclick="showModalImage(event, 'Forecast report')"><img src="/static/wizard/img/forecast_report.png" style="width: 200px"></a>
+         </td>
+         </tr>
+         </tbody>
+         </table>
+         <p class="mt-3">Congratulations! You are now able to use the forecasting capabilities of frePPLe.</p>
+         """.format(
+                    **context
+                ),
+            }
+        )
+        index += 1
+
+        # Forecasting - advanced features
+        steps.append(
+            {
+                "index": index,
+                "title": "Bonus: Advanced forecasting functionality",
+                "icon": ICON_LOCK if locked else None,
+                "locked": locked,
+                "content": """
+         <p>With the basics under your belt, you are ready to dig into some more advanced
+         modeling and configuration topics.</p>
+         <table class="table">
+         <thead>
+         <tr>
+         <th>Topic</th>
+         <th>Description</th>
+         </tr>
+         </thead>
+         <tbody>
+         <tr>
+         <td><a href="{docroot}/videos/demand-forecasting/filter-outliers.html?highlight=outlier" class="text-decoration-underline" target="_blank">Outlier detection</a></td>
+         <td><p>Exceptional one-off sales can seriously impact the accuracy of the forecast.
+         FrePPLe provides mechanism to automatically detect and filter them out.</p>
+         </td>
+         </tr>
+         <tr>
+         <td><a href="{docroot}/examples/forecasting/forecast-method" class="text-decoration-underline" target="_blank">Forecasting methods</a></td>
+         <td><p>This example model digs into the forecasting algorithms and their configuration.</p></td>
+         </tr>
+         <tr>
+         <td><a href="{docroot}/examples/forecasting/middle-out-forecast" class="text-decoration-underline" target="_blank">Middle-out forecasting</a></td>
+         <td><p>The statistical forecast is computed by default at the lowest level in the
+         hierarchies. In some situations, it's more appropriate to calculate the forecast at a higher level
+         to achieve more accurate results.</p></td>
+         </tr>
+         <tr>
+         <td><a href="{docroot}/examples/forecasting/forecast-netting" class="text-decoration-underline" target="_blank">Forecast netting</a></td>
+         <td><p>Demand in the near future mostly consists of customer sales orders. Demand far out in the
+         future consists mostly of forecast. In many industries, both sales and forecast
+         will coexist in the same time bucket.</p>
+         <p>The forecast netting (aka forecast consumption) subtracts the sales orders from the
+         forecast to avoid double-planning the same demand.</p>
+         </td>
+         </tr>
+         </tbody>
+         </table>
+         """.format(
+                    **context
+                ),
+            }
+        )
+        index += 1
     if mode == "production":
         # Production master data
         done = (
@@ -1214,6 +1640,10 @@ def WizardLoad(request, mode=None):
                 "noOperationResource": not OperationResource.objects.using(db).exists(),
             }
         )
+        if with_fcst_module:
+            context.update(
+                {"noForecastPlan": not ForecastPlan.objects.using(db).exists()}
+            )
     return render(request, "wizard/load.html", context=context)
 
 
@@ -1535,3 +1965,122 @@ class FeatureDashboard(TemplateView):
         context = super().get_context_data(**kwargs)
         context["title"] = "Explore features"
         return context
+
+
+class QuickStartForecast(View):
+    @method_decorator(staff_member_required())
+    def get(self, request, *args, **kwargs):
+        post = request.session.get("post", False)
+        if post:
+            del request.session["post"]
+        return render(
+            request,
+            "wizard/quickstart_forecast.html",
+            context={
+                "title": _("Quickstart forecasting"),
+                "post": post,
+                "buckets": {
+                    "day": _("days"),
+                    "week": _("weeks"),
+                    "month": _("months"),
+                    "quarter": _("quarters"),
+                }.get(
+                    Parameter.getValue("forecast.calendar", request.database, None),
+                    _("months"),
+                ),
+            },
+        )
+
+    @method_decorator(staff_member_required())
+    def post(self, request, *args, **kwargs):
+        post = {
+            "item": request.POST["item"],
+            "location": request.POST["location"],
+            "customer": request.POST["customer"],
+            "messages": [],
+        }
+
+        # Create item
+        item, created = Item.objects.using(request.database).get_or_create(
+            name=post["item"]
+        )
+        if created:
+            post["messages"].append(
+                "Created a new <a target='_blank' class='text-decoration-underline' href='%s/data/input/item/?noautofilter&sidx=lastmodified&amp;sord=desc'>item</a>"
+                % request.prefix
+            )
+
+        # Create location
+        location, created = Location.objects.using(request.database).get_or_create(
+            name=post["location"]
+        )
+        if created:
+            post["messages"].append(
+                "Created a new <a target='_blank' class='text-decoration-underline' href='%s/data/input/location/?noautofilter&sidx=lastmodified&amp;sord=desc'>location</a>"
+                % request.prefix
+            )
+
+        # Create customer
+        customer, created = Customer.objects.using(request.database).get_or_create(
+            name=post["customer"]
+        )
+        if created:
+            post["messages"].append(
+                "Created a new <a target='_blank' class='text-decoration-underline' href='%s/data/input/customer/?noautofilter&sidx=lastmodified&amp;sord=desc'>customer</a>"
+                % request.prefix
+            )
+
+        # Create demand
+        created = False
+        Demand.objects.using(request.database).filter(
+            item=item, customer=customer, location=location, source="wizard"
+        ).delete()
+        history = request.POST["history"].split()
+        cal = Parameter.getValue("forecast.calendar", request.database, "month")
+        currentdate = getCurrentDate(request.database).date()
+        buckets = list(
+            BucketDetail.objects.filter(bucket__name=cal, enddate__lte=currentdate)
+            .order_by("-enddate")
+            .only("name", "startdate", "enddate")[: len(history)]
+        )
+        idx = len(history)
+        for qty in history:
+            created = True
+            idx -= 1
+            (buckets[idx].enddate - buckets[idx].startdate) / 2
+            Demand(
+                name="History %s - %s - %s - %s"
+                % (item.name, location.name, customer.name, buckets[idx].name),
+                item=item,
+                location=location,
+                customer=customer,
+                due=(
+                    buckets[idx].startdate
+                    + (buckets[idx].enddate - buckets[idx].startdate) / 2
+                ).date(),
+                quantity=float(qty),
+                status="closed",
+                source="wizard",
+            ).save(using=request.database)
+        if created:
+            post["messages"].append(
+                "Created %d closed <a target='_blank' class='text-decoration-underline' href='%s/data/input/demand/?noautofilter&sidx=lastmodified&amp;sord=desc'>sales orders</a>"
+                % (len(history), request.prefix)
+            )
+
+        # Generate the plan
+        management.call_command(
+            "runplan",
+            database=request.database,
+            env="fcst,supply",
+            constraint=13,
+            background=True,
+        )
+        post["messages"].append(
+            "<a target='_blank' class='text-decoration-underline' href='%s/execute/'>Generated the plan</a>"
+            % request.prefix
+        )
+
+        # Don't return HTML, but a redirect after leaving info on the session
+        request.session["post"] = post
+        return HttpResponseRedirect("%s%s" % (request.prefix, request.path))

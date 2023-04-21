@@ -1958,8 +1958,6 @@ class exportItemSuppliers(PlanTask):
 
         def getData(null_location):
             for s in frepple.suppliers():
-                if source and source != s.source:
-                    continue
                 for i in s.itemsuppliers:
                     if i.hidden or (source and source != i.source):
                         continue

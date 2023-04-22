@@ -47,15 +47,15 @@
                     "value": "freppledb.settings"
                 },
                 {
-                    "name": "SUPPLY",
+                    "name": "supply",
                     "value": "1"
                 },
                 {
-                    "name": "FCST",
+                    "name": "fcst",
                     "value": "1"
                 },
                 {
-                    "name": "INVPLAN",
+                    "name": "invplan",
                     "value": "1"
                 },
                 {
@@ -109,15 +109,15 @@
                     "value": "freppledb.settings"
                 },
                 {
-                    "name": "SUPPLY",
+                    "name": "supply",
                     "value": "1"
                 },
                 {
-                    "name": "FCST",
+                    "name": "fcst",
                     "value": "1"
                 },
                 {
-                    "name": "INVPLAN",
+                    "name": "invplan",
                     "value": "1"
                 },
                 {

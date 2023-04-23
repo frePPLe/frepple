@@ -808,28 +808,28 @@ class SolverCreate : public Solver {
     /* Points to the demand being planned.
      * This field is only non-null when planning the delivery operation.
      */
-    Demand* curDemand;
+    Demand* curDemand = nullptr;
 
     /* Points to the current owner operationplan. This is used when
      * operations are nested. */
-    OperationPlan* curOwnerOpplan;
+    OperationPlan* curOwnerOpplan = nullptr;
 
-    OperationPlan* blockedOpplan;
+    OperationPlan* blockedOpplan = nullptr;
 
-    OperationDependency* dependency;
+    OperationDependency* dependency = nullptr;
 
     /* Points to the current buffer. */
-    Buffer* curBuffer;
+    Buffer* curBuffer = nullptr;
 
     /* A flag to force the resource solver to move the operationplan to
      * a later date where it is feasible.
      */
-    bool forceLate;
+    bool forceLate = false;
 
     PooledString curBatch;
 
     /* This is the quantity we are asking for. */
-    double q_qty;
+    double q_qty = 0;
 
     /* This is the date we are asking for. */
     Date q_date;
@@ -841,40 +841,40 @@ class SolverCreate : public Solver {
     Date q_date_max;
 
     /* This is the quantity we can get by the requested Date. */
-    double a_qty;
+    double a_qty = 0;
 
     /* This is the Date when we can get extra availability. */
     Date a_date;
 
     /* This is a pointer to a LoadPlan. It is used for communication
      * between the Operation-Solver and the Resource-Solver. */
-    LoadPlan* q_loadplan;
+    LoadPlan* q_loadplan = nullptr;
 
     /* This is a pointer to a FlowPlan. It is used for communication
      * between the Operation-Solver and the Buffer-Solver. */
-    FlowPlan* q_flowplan;
+    FlowPlan* q_flowplan = nullptr;
 
     /* A pointer to an operationplan currently being solved. */
-    OperationPlan* q_operationplan;
+    OperationPlan* q_operationplan = nullptr;
 
     /* Cost of the reply.
      * Only the direct cost should be returned in this field.
      */
-    double a_cost;
+    double a_cost = 0.0;
 
     /* Penalty associated with the reply.
      * This field contains indirect costs and other penalties that are
      * not strictly related to the request. Examples are setup costs,
      * inventory carrying costs, ...
      */
-    double a_penalty;
+    double a_penalty = 0.0;
 
     /* Defines a minimum quantity that we expect the answer to cover. */
-    double q_qty_min;
+    double q_qty_min = 0;
 
-    bool has_bucketized_resources;
+    bool has_bucketized_resources = false;
 
-    bool forceAccept;
+    bool forceAccept = false;
   };
 
   /* This class is a helper class of the SolverCreate class.
@@ -980,15 +980,15 @@ class SolverCreate : public Solver {
     State statestack[MAXSTATES];
 
     /* Count the number of asks. */
-    unsigned long iteration_count;
+    unsigned long iteration_count = 0;
 
     /* True when planning in constrained mode. */
-    bool constrainedPlanning;
+    bool constrainedPlanning = true;
 
     /* Flags whether or not constraints are being tracked. */
-    bool logConstraints;
+    bool logConstraints = true;
 
-    bool coordination_run;
+    bool coordination_run = false;
 
     /* Flags whether a resource in the supply path did hit its max_earlylimit.
      * This is then used to replan at a different date. */
@@ -1001,10 +1001,10 @@ class SolverCreate : public Solver {
     bool incostevaluation = false;
 
     /* Detection of broken supply chains. */
-    bool broken_path;
+    bool broken_path = false;
 
     /* Internal flag that is set to true when solving for safety stock. */
-    bool safety_stock_planning;
+    bool safety_stock_planning = false;
 
     bool buffer_solve_shortages_only = true;
 

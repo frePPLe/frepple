@@ -164,7 +164,6 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
   state->q_qty = q;
   state->q_date = d;
   state->q_date_max = d;
-  state->forceAccept = prevstate->forceAccept;
   if (full) {
     state->q_loadplan = prevstate->q_loadplan;
     state->q_flowplan = prevstate->q_flowplan;
@@ -179,6 +178,8 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
     state->a_cost = prevstate->a_cost;
     state->a_penalty = prevstate->a_penalty;
     state->curBatch = prevstate->curBatch;
+    state->forceAccept = prevstate->forceAccept;
+    state->has_bucketized_resources = prevstate->has_bucketized_resources;
   } else {
     state->q_loadplan = nullptr;
     state->q_flowplan = nullptr;
@@ -193,6 +194,8 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
     state->a_cost = 0.0;
     state->a_penalty = 0.0;
     state->curBatch = PooledString::emptystring;
+    state->forceAccept = false;
+    state->has_bucketized_resources = false;
   }
   state->a_date = Date::infiniteFuture;
   state->a_qty = 0.0;

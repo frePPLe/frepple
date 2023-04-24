@@ -11,6 +11,12 @@ Oh-oh... Something exciting is coming up!
 - | Closed operationplans are no longer automatically deleted.
   | Some customers like to keep them around. In very old releases we did keep
     them, but then stopped doing that.
+
+.. rubric:: User interface
+
+- | Bug fix: 7.2 introduced some situations where some reports in scenarios
+    mix data from the default scenario.
+
 .. rubric:: Odoo integration
 
 - | 15 & 16: Usability improvements to skill maintenance.

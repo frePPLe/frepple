@@ -83,7 +83,14 @@ jobs:
 
       - name: Get the version
         if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple'
-        run: echo "frepple_version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+        run: |
+          echo "frepple_version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+          echo `cmake --system-information | grep 'CMAKE_PROJECT_VERSION:STATIC' | sed 's/CMAKE_PROJECT_VERSION:STATIC/project_version/g'` >> $GITHUB_ENV
+
+      - name: Check the version
+        if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple' && ${{ env.frepple_version }} != ${{ env.project_version }}
+        run: |
+          exit 1
 
       - name: Login to GitHub Container Registry
         if: startsWith(github.ref, 'refs/tags/') && github.repository == 'frePPLe/frepple'

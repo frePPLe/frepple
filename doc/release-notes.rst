@@ -6,9 +6,17 @@ Release notes
 
 Oh-oh... Something exciting is coming up!
 
+.. rubric:: Production planning
+
+- | Closed operationplans are no longer automatically deleted.
+  | Some customers like to keep them around. In very old releases we did keep
+    them, but then stopped doing that.
 .. rubric:: Odoo integration
 
 - | 15 & 16: Usability improvements to skill maintenance.
+
+- | Bug fix: Item supplier records were not synced from odoo if the source field
+    of the supplier is edited.
 
 7.3.0 (2023/04/14)
 ==================

@@ -387,8 +387,7 @@ $(function(){
       var gridheight = $(window).height() - $("#content-main").offset().top - 40;
       if (gridheight < 200)
       	gridheight = 200;
-      $("#grid").css({height: gridheight + "px"});
-      $("#grid").setGridHeight(gridheight - $(".ui-jqgrid-pager").height());
+      $("#grid").setGridHeight(gridheight);
     }
   });
 

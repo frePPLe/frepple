@@ -410,6 +410,10 @@ def wrapTask(request, action):
         # Also run the workflow upon loading of manufacturing_demo or distribution_demo
         if args.get("regenerateplan", False) == "true":
             active_modules = "supply"
+            if "freppledb.inventoryplanning" in settings.INSTALLED_APPS:
+                active_modules = "invplan,balancing," + active_modules
+            if "freppledb.forecast" in settings.INSTALLED_APPS:
+                active_modules = "fcst," + active_modules
             task = Task(
                 name="runplan", submitted=now, status="Waiting", user=request.user
             )
@@ -518,6 +522,17 @@ def wrapTask(request, action):
             arguments.append('--format-year="%s"' % format_year)
         if arguments:
             task.arguments = " ".join(arguments)
+        task.save(using=request.database)
+    elif action == "measure_copy":
+        if not request.user.has_perm("auth.run_db"):
+            raise Exception("Missing execution privileges")
+        task = Task(
+            name="measure_copy",
+            submitted=now,
+            status="Waiting",
+            user=request.user,
+            arguments="%s %s" % (args["source"], args["destination"]),
+        )
         task.save(using=request.database)
     else:
         # Generic task wrapper

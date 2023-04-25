@@ -167,6 +167,42 @@ class Command(BaseCommand):
         },
     ]
 
+    if "freppledb.forecast" in settings.INSTALLED_APPS:
+        from freppledb.forecast.views import OverviewReport as ForecastOverviewReport
+
+        statements.append(
+            {
+                "filename": "forecastreport.csv",
+                "folder": "export",
+                "report": ForecastOverviewReport,
+                "data": {
+                    "format": "csvlist",
+                    "buckets": "month",
+                    "horizontype": True,
+                    "horizonunit": "month",
+                    "horizonlength": 6,
+                },
+            }
+        )
+
+    if "freppledb.inventoryplanning" in settings.INSTALLED_APPS:
+        statements.append(
+            {
+                "filename": "inventoryplanning.csv",
+                "folder": "export",
+                "sql": """COPY (
+                    select
+                        item_id as item, location_id as location,
+                        leadtime, safetystock, reorderquantity, onhand, color as "inventory status",
+                        overduesalesorders, opensalesorders, proposedpurchases, proposedtransfers,
+                        openpurchases, opentransfers, localforecast, dependentdemand, totaldemand,
+                        reorderpoint
+                        from out_inventoryplanning
+                        order by item_id, location_id
+                    ) TO STDOUT WITH CSV HEADER""",
+            }
+        )
+
     def get_version(self):
         return __version__
 

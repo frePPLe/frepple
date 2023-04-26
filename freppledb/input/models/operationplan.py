@@ -1169,6 +1169,11 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
         verbose_name_plural = _("inventory detail")
         indexes = [models.Index(fields=["item", "location"], name="opplanmat_itemloc")]
 
+    @classmethod
+    def export_objects(cls, query, request):
+        # When exporting a workbook of the model, we don't want to include the stock operationplans
+        return query.exclude(operationplan__type="STCK")
+
     def update(self, database, delete=False, create=False, **fields):
         if not self.operationplan:
             return

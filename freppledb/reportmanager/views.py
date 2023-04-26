@@ -46,7 +46,7 @@ from django.utils.encoding import smart_str
 
 from django.utils.translation import gettext as _
 
-from freppledb.common.models import User
+from freppledb.common.models import User, Parameter
 from freppledb.common.report import (
     create_connection,
     GridReport,
@@ -447,7 +447,11 @@ class ReportManager(GridReport):
                             ("offset %s" % ((page - 1) * request.pagesize + 1))
                             if page and page > 1
                             else "",
-                            "limit %s" % request.pagesize if page else "",
+                            "limit %s" % request.pagesize
+                            if page
+                            else "limit %s" % kwargs["report_download_limit"]
+                            if "report_download_limit" in kwargs
+                            else "",
                         ),
                         request.filter[1],
                     )
@@ -561,6 +565,20 @@ class ReportManager(GridReport):
             if not request.user.has_perm("reportmanager.add_sqlreport"):
                 return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
 
+        # restrict the download size
+        fmt = request.GET.get("format", None)
+        if fmt in (
+            "spreadsheetlist",
+            "spreadsheettable",
+            "spreadsheet",
+            "csvlist",
+            "csvtable",
+            "csv",
+        ):
+            kwargs["report_download_limit"] = int(
+                Parameter.getValue("report_download_limit", request.database, None)
+                or 20000
+            )
         # Default logic
         return super().get(request, *args, **kwargs)
 

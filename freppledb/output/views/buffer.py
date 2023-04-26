@@ -611,7 +611,7 @@ class OverviewReport(GridPivot):
 
         backlog_fcst = """
             union all
-          select opm.item_id, opm.location_id, 0::numeric qty_orders, coalesce(sum((forecastplan.value->>'forecastnet')::numeric),0) qty_forecast
+          select opm.item_id, opm.location_id, '' as batch, 0::numeric qty_orders, coalesce(sum((forecastplan.value->>'forecastnet')::numeric),0) qty_forecast
           from forecastplan
           left outer join common_parameter cp on cp.name = 'forecast.DueWithinBucket'
           inner join (%s) opm on forecastplan.item_id = opm.item_id
@@ -626,9 +626,13 @@ class OverviewReport(GridPivot):
         )
 
         deliveries_no_fcst = """
-            select opm.item_id, opm.location_id,
-                sum(case when operationplan.demand_id is not null then opm.quantity end) qty_orders,
-                0 qty_forecast
+            select opm.item_id,
+            opm.location_id,
+            case when item.type is distinct from 'make to order' then ''
+            else operationplan.batch
+            end as batch,
+            sum(case when operationplan.demand_id is not null then opm.quantity end) qty_orders,
+            0 qty_forecast
             from (%s) opm2
             inner join operationplanmaterial opm on opm.item_id = opm2.item_id and opm.location_id = opm2.location_id
             inner join item on item.name = opm.item_id
@@ -636,13 +640,18 @@ class OverviewReport(GridPivot):
                 and operationplan.demand_id is not null
                 and operationplan.enddate < %%s
                 and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opm2.opplan_batch)
-            group by opm.item_id, opm.location_id
+            group by opm.item_id, opm.location_id, case when item.type is distinct from 'make to order' then ''
+            else operationplan.batch
+            end
         """ % (
             basesql,
         )
 
         deliveries_fcst = """
             select opm.item_id, opm.location_id,
+            case when item.type is distinct from 'make to order' then ''
+            else operationplan.batch
+            end as batch,
             sum(case when operationplan.demand_id is not null then opm.quantity end) qty_orders,
             sum(case when operationplan.forecast is not null then opm.quantity end) qty_forecast
           from (%s) opm2
@@ -652,26 +661,37 @@ class OverviewReport(GridPivot):
           and (operationplan.demand_id is not null or operationplan.forecast is not null)
           and operationplan.enddate < %%s
           and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opm2.opplan_batch)
-          group by opm.item_id, opm.location_id
+          group by opm.item_id, opm.location_id,
+            case when item.type is distinct from 'make to order' then ''
+            else operationplan.batch
+            end
         """ % (
             basesql,
         )
 
         query = """
-          select item_id, location_id, sum(qty_orders), sum(qty_forecast) from
+          select item_id, location_id, batch, sum(qty_orders), sum(qty_forecast) from
           (
-          select opm.item_id, opm.location_id, sum(demand.quantity) qty_orders, 0::numeric qty_forecast
+          select opm.item_id, opm.location_id,
+          case when item.type is distinct from 'make to order' then ''
+          else demand.batch
+          end as batch,
+          sum(demand.quantity) qty_orders, 0::numeric qty_forecast
           from (%s) opm
           inner join demand on demand.item_id = opm.item_id
+          inner join item on item.name = demand.item_id
           and demand.location_id = opm.location_id
-          and demand.status in ('open','quote') and due < %%s
-          group by opm.item_id, opm.location_id
+          and demand.status in ('open','quote') and demand.due < %%s
+          and (item.type is distinct from 'make to order' or demand.batch = opm.opplan_batch)
+          group by opm.item_id, opm.location_id, case when item.type is distinct from 'make to order' then ''
+          else demand.batch
+          end
           %s
           union all
           -- deliveries
           %s
           ) t
-          group by item_id, location_id
+          group by item_id, location_id, batch
         """ % (
             basesql,
             backlog_fcst if "freppledb.forecast" in settings.INSTALLED_APPS else "",
@@ -702,11 +722,12 @@ class OverviewReport(GridPivot):
                         else ()
                     ),
                 )
+
                 for row in cursor_chunked:
                     if row[0]:
-                        startbacklogdict[(row[0], row[1])] = (
-                            max(float(row[2] or 0), 0),
+                        startbacklogdict[(row[0], row[1], row[2])] = (
                             max(float(row[3] or 0), 0),
+                            max(float(row[4] or 0), 0),
                         )
         # Execute the actual query
         reasons_forecast = """
@@ -767,7 +788,9 @@ class OverviewReport(GridPivot):
            and coalesce(location_id, destination_id) = location.name) is_ip_buffer,
            (select sum(quantity) from demand where status in ('open','quote')
            and item_id = item.name and location_id = location.name
-           and due >= d.startdate and due < d.enddate) open_orders,
+           and due >= d.startdate and due < d.enddate
+           and (item.type is distinct from 'make to order'
+           or coalesce(demand.batch,'') is not distinct from opplanmat.opplan_batch)) open_orders,
            %s net_forecast,
            %s
            (select json_agg(json_build_array(t.name, t.owner))
@@ -914,10 +937,10 @@ class OverviewReport(GridPivot):
                'consumedMO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedMO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedFcst', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is null and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedFcst', sum(case when operationplan.demand_id is null and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedDO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'consumedDO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedSO', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is not null and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedSO', sum(case when operationplan.demand_id is not null and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
                'produced', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'produced_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'produced_proposed', sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
@@ -1090,7 +1113,7 @@ class OverviewReport(GridPivot):
                     if prev_buffer != row[0] and not history:
 
                         order_backlog, forecast_backlog = startbacklogdict.get(
-                            (row[1], row[2]), (0, 0)
+                            (row[1], row[2], row[22]), (0, 0)
                         )
                         prev_buffer = row[0]
                     if history:

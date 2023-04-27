@@ -1492,28 +1492,30 @@ class Attribute(AuditModel):
 
     def _getContentTypeChoices():
         try:
-            return [
-                (i.model, i.model)
-                for i in ContentType.objects.all()
-                .using(DEFAULT_DB_ALIAS)
-                .exclude(
-                    app_label__in=[
-                        "auth",
-                        "contenttypes",
-                        "admin",
-                        "reportmanager",
-                        "archive",
-                        "out",
-                    ]
-                )
-                if i.model
-                not in (
-                    "purchaseorder",
-                    "deliveryorder",
-                    "manufacturingorder",
-                    "distributionorder",
-                )
-            ]
+            return sorted(
+                [
+                    (i.model, i.model)
+                    for i in ContentType.objects.all()
+                    .using(DEFAULT_DB_ALIAS)
+                    .exclude(
+                        app_label__in=[
+                            "auth",
+                            "contenttypes",
+                            "admin",
+                            "reportmanager",
+                            "archive",
+                            "out",
+                        ]
+                    )
+                    if i.model
+                    not in (
+                        "purchaseorder",
+                        "deliveryorder",
+                        "manufacturingorder",
+                        "distributionorder",
+                    )
+                ]
+            )
         except Exception:
             return []
 

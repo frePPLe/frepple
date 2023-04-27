@@ -13,7 +13,7 @@ input.ng-dirty {
 }
 </style>
 <table style="table-layout:fixed" class="table table-sm table-hover table-borderless" id="opplan-attributes-drvtable">
-  <body >
+  <body>
     <tr data-ng-if="operationplan.operation.name || operationplan.name">
       <td style="width: 120px">
         <b id="thead1" style="text-transform: capitalize">{{ 'name'|translate }}&nbsp;</b>
@@ -84,6 +84,10 @@ input.ng-dirty {
            <span class="fa fa-caret-right"></span>
         </a>
       </td>
+    </tr>
+    <tr ng-if="operationplan.batch">
+      <td><b style="text-transform: capitalize">{{'batch'|translate}}</b></td>
+      <td>{{operationplan.batch}}</td>
     </tr>
     <tr ng-if="operationplan.type == 'DO'">
       <td><b style="text-transform: capitalize">{{'origin'|translate}}</b></td>

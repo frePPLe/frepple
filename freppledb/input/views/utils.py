@@ -1886,6 +1886,7 @@ class OperationPlanDetail(View):
                     else None,
                     "color": float(opplan.color) if opplan.color else "",
                     "owner": opplan.owner.reference if opplan.owner else None,
+                    "batch": opplan.batch,
                 }
                 if opplan.plan and "pegging" in opplan.plan:
                     res["pegging_demand"] = []

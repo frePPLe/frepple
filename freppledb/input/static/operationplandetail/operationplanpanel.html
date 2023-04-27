@@ -118,8 +118,8 @@ input.ng-dirty {
         <small data-ng-if="operationplan.colmodel.operationplan__startdate">({{ operationplan.colmodel.operationplan__startdate.type|translate }})</small>
       </td>
       <td>
-        <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__startdate")' class="form-control" type="datetime-local" ng-model="operationplan.start" ng-model-options="{debounce: 300}">
-        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__startdate")' class="form-control" type="datetime-local" ng-model="operationplan.operationplan__startdate" ng-model-options="{debounce: 300}">
+        <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__startdate")' class="form-control" type="datetime-local" ng-model="operationplan.start" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
+        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__startdate")' class="form-control" type="datetime-local" ng-model="operationplan.operationplan__startdate" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
       </td>
     </tr>
     <tr data-ng-if="operationplan.setupend">
@@ -136,8 +136,8 @@ input.ng-dirty {
         <small data-ng-if="operationplan.colmodel.operationplan__enddate">({{ operationplan.colmodel.operationplan__enddate.type|translate }})</small>
       </td>
       <td>
-        <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__enddate")' class="form-control" type="datetime-local" ng-model="operationplan.end" ng-model-options="{debounce: 300}">
-        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__enddate")' class="form-control" type="datetime-local" ng-model="operationplan.operationplan__enddate" ng-model-options="{debounce: 300}">
+        <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__enddate")' class="form-control" type="datetime-local" ng-model="operationplan.end" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
+        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__enddate")' class="form-control" type="datetime-local" ng-model="operationplan.operationplan__enddate" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
       </td>
     </tr>
     <tr>
@@ -147,8 +147,8 @@ input.ng-dirty {
       </td>
       <td>
         <span data-ng-if="operationplan.id === -1">{{(operationplan.operationplan__quantity || operationplan.quantity || 0)|number}}</span>
-        <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__quantity")' class="form-control" type="number" ng-model="operationplan.quantity" ng-model-options="{debounce: 300}">
-        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__quantity")' class="form-control" type="number" ng-model="operationplan.operationplan__quantity" ng-model-options="{debounce: 300}">
+        <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__quantity")' class="form-control" type="number" ng-model="operationplan.quantity" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
+        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__quantity")' class="form-control" type="number" ng-model="operationplan.operationplan__quantity" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
       </td>
     </tr>
     <tr data-ng-if="operationplan.type === 'MO' || (operationplan.id === -1 && (operationplan.colmodel.quantity_completed || operationplan.colmodel.operationplan__quantity_completed))">
@@ -158,8 +158,8 @@ input.ng-dirty {
       </td>
       <td>
         <span data-ng-if="operationplan.id === -1">{{(operationplan.operationplan__quantity_completed || operationplan.quantity_completed || 0)|number}}</span>
-        <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__quantity_completed")' class="form-control" type="number" ng-model="operationplan.quantity_completed" ng-model-options="{debounce: 300}">
-        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__quantity_completed")' class="form-control" type="number" ng-model="operationplan.operationplan__quantity_completed" ng-model-options="{debounce: 300}">
+        <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__quantity_completed")' class="form-control" type="number" ng-model="operationplan.quantity_completed" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
+        <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__quantity_completed")' class="form-control" type="number" ng-model="operationplan.operationplan__quantity_completed" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
       </td>
     </tr>
     <tr data-ng-repeat="(key, value) in operationplan.colmodel"
@@ -176,12 +176,12 @@ input.ng-dirty {
       <td>
         <span data-ng-if="actions.hasOwnProperty('erp_incr_export') && operationplan.status != 'proposed'" style="text-transform: capitalize">{{operationplan.status|translate}}</span>
         <div class="btn-group" role="group">
-          <button id="proposedBtn" data-ng-if="actions.hasOwnProperty('proposed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'proposed'|translate}}"> <i class="fa fa-unlock"></i></button>
-          <button id="approvedBtn" data-ng-if="actions.hasOwnProperty('approved')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'approved'|translate}}"><i class="fa fa-unlock-alt"></i></button>
-          <button id="confirmedBtn" data-ng-if="actions.hasOwnProperty('confirmed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'confirmed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'confirmed'|translate}}"><i class="fa fa-lock"></i></button>
-          <button id="completedBtn" data-ng-if="actions.hasOwnProperty('completed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'completed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'completed'|translate}}"><i class="fa fa-check"></i></button>
-          <button id="closedBtn" data-ng-if="actions.hasOwnProperty('closed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'closed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'closed'|translate}}"><i class="fa fa-times"></i></button>
-          <button id="erp_incr_exportBtn" data-ng-if="actions.hasOwnProperty('erp_incr_export') && operationplan.status == 'proposed'" type="button" class="btn btn-primary" ng-click="actions['erp_incr_export']()" style="text-transform: capitalize">{{'export'|translate}}</button>
+          <button id="proposedBtn" data-ng-if="(!editable && operationplan.status == 'proposed') || editable" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'proposed'|translate}}"> <i class="fa fa-unlock"></i></button>
+          <button id="approvedBtn" data-ng-if="(!editable && operationplan.status == 'approved') || editable" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'approved'|translate}}"><i class="fa fa-unlock-alt"></i></button>
+          <button id="confirmedBtn" data-ng-if="(!editable && operationplan.status == 'confirmed') || editable" type="button" class="btn btn-primary" ng-click="operationplan.status = 'confirmed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'confirmed'|translate}}"><i class="fa fa-lock"></i></button>
+          <button id="completedBtn" data-ng-if="(!editable && operationplan.status == 'completed') || editable" type="button" class="btn btn-primary" ng-click="operationplan.status = 'completed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'completed'|translate}}"><i class="fa fa-check"></i></button>
+          <button id="closedBtn" data-ng-if="(!editable && operationplan.status == 'closed') || (editable && actions.hasOwnProperty('closed'))" type="button" class="btn btn-primary" ng-click="operationplan.status = 'closed'" style="text-transform: capitalize" disabled="disabled" data-bs-toggle="tooltip" title="{{'closed'|translate}}"><i class="fa fa-times"></i></button>
+          <button id="erp_incr_exportBtn" data-ng-if="editable && actions.hasOwnProperty('erp_incr_export') && operationplan.status == 'proposed'" type="button" class="btn btn-primary" ng-click="actions['erp_incr_export']()" style="text-transform: capitalize">{{'export'|translate}}</button>
         </div>
       </td>
     </tr>

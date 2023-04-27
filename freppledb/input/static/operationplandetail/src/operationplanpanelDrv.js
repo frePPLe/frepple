@@ -40,6 +40,7 @@ function showoperationplanDrv($window, gettextCatalog) {
 
   function linkfunc(scope, elem, attrs) {
     scope.actions = actions;
+    scope.editable = editable;
     scope.opptype = { //just a translation
       'MO': gettextCatalog.getString('manufacturing order'),
       'PO': gettextCatalog.getString('purchase order'),

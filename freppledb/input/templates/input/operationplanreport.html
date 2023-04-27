@@ -68,6 +68,7 @@
   var grouping = preferences && preferences.grouping || null;
   var groupingdir = preferences && preferences.groupingdir || "asc";
   var detailposition = preferences && preferences.details || "bottom";
+  var editable = {% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %};
 
   function extraPreference() {
     return {

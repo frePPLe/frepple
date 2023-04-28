@@ -108,6 +108,13 @@ class BaseReport(GridReport):
             extra='"role":"input/demand"',
         ),
         GridFieldText(
+            "forecast",
+            title=_("forecast"),
+            editable=False,
+            formatter="detail",
+            extra='"role":"forecast/forecast"',
+        ),
+        GridFieldText(
             "entity", title=_("entity"), editable=False, width=80, align="center"
         ),
         GridFieldText(

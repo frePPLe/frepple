@@ -9,6 +9,11 @@ function probfmt(cellvalue, options, row)
     var role = 'input/buffer';
   else if (row['entity'] == 'capacity')
     var role = 'input/resource';
+  else if (row['entity'] == 'forecast'){
+    var forecast = row['owner'].substring(0,row['owner'].lastIndexOf(" - "));
+    return cellvalue + "<a href='" + url_prefix + "/detail/forecast/forecast/" + admin_escape(forecast)
+     + "/'><span class='ps-1 context fa fa-caret-right'></span></a>";
+    }
   else if (row['entity'] == 'demand')
     var role = 'input/demand';
   else

@@ -1,0 +1,282 @@
+{% extends "admin/base_site_gridpivot.html" %}
+{% load i18n %}
+
+{% block tools %}{% if args.0 %}{% tabs "input.item" %}{% endif %}{{block.super}}{% endblock %}
+
+{% block before_table %}{% if args.0 %}
+<div id="graph" style="clear: both; height: 400px; padding: 10px; "></div>
+{% endif %}{% endblock %}
+
+{% block crosses %}
+{% if args.0 %}$(function(){
+  // Resize top graph
+  var h = $(window).height();
+  $("#graph").width($(window).width()-60).height(h>800 || h<480 ? 400 : h-420);
+});{% endif %}
+
+{% if args.0 or mode == "graph" %}
+function drawGraphs(jsondata)
+{
+  {% if args.0 %}var margin = {top: 0, right: 100, bottom: 30, left: 50};
+  {% else %}var margin = {top: 0, right: 0, bottom: 0, left: 50};
+  {% endif %}var width = Math.max($({% if args.0 %}"#graph"{% else %}"#grid_graph"{% endif %}).width() - margin.left - margin.right, 0);
+  var height = {% if args.0 %}$("#graph").height(){% else %}80{% endif %} - margin.top - margin.bottom;
+
+  // Lookup table of displayed columns
+  var fields = {};
+  for (var i in cross_idx)
+    fields[cross_idx[i]] = 0;
+
+  // Define X-axis
+  var domain_x = [];
+  var bucketnamelength = 0;
+  for (var i in timebuckets)
+  {
+    domain_x.push(timebuckets[i]['name']);
+    bucketnamelength = Math.max(timebuckets[i]['name'].length, bucketnamelength);
+  }
+  var x = d3.scale.ordinal()
+    .domain(domain_x)
+    .rangeRoundBands([0, width], 0);
+  var x_width = x.rangeBand();
+  {% if mode == "graph" and not args.0 %}graph.header(margin.left, x);{% endif %}
+
+  // Define Y-axis
+  var y = d3.scale.linear().rangeRound([height, 0]);
+
+  // Draw all graphs
+  $("#grid"){% if not args.0 %}.find(".graph"){% endif %}.each(function(index)
+  {
+    // Create a new SVG element
+    $({% if args.0 %}$("#graph").get(0){% else %}this{% endif %}).html("");
+    var svg = d3.select({% if args.0 %}$("#graph").get(0){% else %}this{% endif %})
+      .append("svg")
+      .attr("class","graphcell")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Build the data for d3
+    var max_y = 0;
+    var min_y = 0;
+    var data = [];
+    for (var bckt in timebuckets)
+    {
+      var tmp = jsondata['rows'][index][timebuckets[bckt]['name']];
+      data.push({
+        'item': jsondata['rows'][index]['item'],
+        'bucket': bckt,
+        'forecast': tmp[0],
+        'orders': tmp[1],
+        'demand': tmp[2],
+        'supply': tmp[3],
+        'backlog_o': tmp[4],
+        'backlog_f': tmp[5],
+        'backlog': tmp[6],
+        'reasons': tmp[7]
+        });
+      if (tmp[6] < min_y && 6 in fields)
+        min_y = tmp[6];
+      if (tmp[2] > max_y && 2 in fields)
+        max_y = tmp[2];
+      if (tmp[3] > max_y && 3 in fields)
+        max_y = tmp[3];
+      if (tmp[6] > max_y && 6 in fields)
+        max_y = tmp[6];
+    }
+
+    // Update the scale of the Y-axis by looking for the max value
+    y.domain([min_y,max_y]);
+    var y_zero = y(0);
+
+    // Create D3 bars
+    var my_y;
+    svg.selectAll("g")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("transform", function(d) { return "translate(" + x(timebuckets[d['bucket']]['name']) + ",0)"; })
+      .on("click", function(d) {
+          if (d3.event.defaultPrevented || (d['orders'] == 0 && d['backlog_o'] == 0))
+            return;
+          d3.select("#tooltip").style('display', 'none');
+          window.location = "{{ request.prefix }}"
+            + "/data/input/demand/?noautofilter&amp;item__name=" + admin_escape(d['item'])
+            + "&amp;deliverydate__gte=" + timebuckets[d['bucket']]['startdate']
+            + "&amp;due__lt=" + timebuckets[d['bucket']]['enddate']
+            + "&amp;status__in=open,quote";
+          var coord = d3.mouse(document.body);
+          d3.event.stopPropagation();
+        })
+      .each(function(d) {
+        var bucket = d3.select(this);
+        if (d['demand'] > 0 && 2 in fields)
+        {
+          my_y = y(d['demand']);
+          bucket.append("rect")
+            .attr("width", x_width/2)
+            .attr("height", y_zero - my_y)
+            .attr("x", x_width/2)
+            .attr("y", my_y)
+            .style("fill","#F6BD0F");
+        }
+        if (d['supply'] > 0 && 3 in fields)
+        {
+          my_y = y(d['supply']);
+          bucket.append("rect")
+            .attr("width", x_width/2)
+            .attr("height", y_zero - my_y)
+            .attr("y", my_y)
+            .style("fill","#2B95EC");
+        }
+        // Invisible rectangle for the tooltip
+      	bucket.append("rect")
+	      .attr("height", height)
+	      .attr("width", x_width)
+	      .attr("fill-opacity", 0)
+        .on("mouseenter", function(d) {
+           var txt = '<div style="text-align:center; font-weight:bold">'
+             + timebuckets[d['bucket']]['name'] + '</div><table>';
+           if (d['forecast'] != 0)
+             txt += '<tr><td>{{_('net forecast')|capfirst}}</td><td style="text-align:center">'
+               + grid.formatNumber(d['forecast']) + '</td></tr>';
+           if (d['orders'] != 0)
+             txt += '<tr><td>{{_('sales orders')|capfirst}}</td><td style="text-align:center">'
+               + grid.formatNumber(d['orders']) + '</td></tr>';
+           if (d['demand'] == 0)
+             txt += '<tr><td>{{_('demand')|capfirst}}</td><td style="text-align:center">0</td></tr>';
+           txt += '</td></tr><tr><td>{{_('supply')|capfirst}}</td><td style="text-align:center">'
+             + grid.formatNumber(d['supply']) + '</td></tr>';
+           if (d['backlog_o'] != 0)
+             txt += '<tr><td>{{_('sales order backlog')|capfirst}}</td><td style="text-align:center">'
+               + grid.formatNumber(d['backlog_o'])
+               + '</td></tr>';
+           if (d['backlog_f'] != 0)
+             txt += '<tr><td>{{_('forecast backlog')|capfirst}}</td><td style="text-align:center">'
+               + grid.formatNumber(d['backlog_f'])
+               + '</td></tr>';
+           if (d['backlog'] == 0)
+             txt += '<tr><td>{{_('backlog')|capfirst}}</td><td style="text-align:center">0</td></tr>';
+           txt += '</table>';
+           if (d['reasons']) {
+             txt += '<div style="text-align:center; font-weight:bold">'
+               + '{{_('constraints')|capfirst}}</div><table style="white-space:nowrap">';
+             for (var r of d['reasons'])
+               txt += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>';
+             txt += '</table>';
+           }
+           graph.showTooltip(txt);
+           })
+	      .on("mouseleave", graph.hideTooltip)
+	      .on("mousemove", graph.moveTooltip);
+      });
+
+    // Create D3 line
+    if (6 in fields || 4 in fields || 5 in fields)
+    {
+      var line = d3.svg.line()
+        .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
+        .y(function(d) { return y(d['backlog']); });
+      svg.append("svg:path")
+        .attr('class', 'graphline')
+        .attr("stroke","#8BBA00")
+        .attr("d", line(data));
+    }
+
+    // Display Y-Axis
+    var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(d3.format("s"));
+    {% if not args.0 %}
+    svg.append("g")
+      .attr("class", "miniaxis")
+      .call(graph.miniAxis.bind(yAxis));
+    {% else %}
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+    // Display X-axis for a single item
+    var nth = Math.ceil(timebuckets.length / width * bucketnamelength * 10);
+    var myticks = [];
+    for (var i in timebuckets)
+      if (i % nth == 0) myticks.push(timebuckets[i]['name']);
+    var xAxis = d3.svg.axis()
+      .scale(x)
+      .tickValues(myticks)
+      .orient("bottom");
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+    // Display legend
+    var legend = svg.append("g");
+    var codes = [
+      [2, "{{_('demand')|capfirst}}", "#F6BD0F"],
+      [3, "{{_('supply')|capfirst}}", "#2B95EC"],
+      [6, "{{_('backlog')|capfirst}}", "#8BBA00"]
+      ];
+    var visible = 0;
+    for (var i in codes)
+    {
+      if (!(codes[i][0] in fields))
+        continue;
+      legend.append("rect")
+        .attr("x", width + 82)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", codes[i][2])
+        .attr("transform", "translate(0," + (visible*20+10) + ")");
+      legend.append("text")
+        .attr("x", width + 76)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(codes[i][1])
+        .attr("transform", "translate(0," + (visible*20+10) + ")");
+      visible += 1;
+    }{% endif %}
+    });
+}
+{% endif %}
+{% if args.0 or mode == "table" %}
+function crosses (cellvalue, options, rowdata)
+{
+  var result = '';
+  for (var i in cross_idx)
+    switch(cross_idx[i])
+    {
+      case 1:
+        if (cellvalue[cross_idx[i]] != 0.0)
+          result += grid.formatNumber(cellvalue[cross_idx[i]]) +
+            '<a href="{{request.prefix}}/data/input/demand/?noautofilter&amp;' +
+            '&amp;due__gte=' + options['colModel']['startdate'] +
+            '&amp;due__lt=' + options['colModel']['enddate'] +
+            '&amp;item__name=' + admin_escape(rowdata['item']) +
+            '&amp;status_in=' + admin_escape('quote,open') + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0</br>';
+        break;
+      case 4:
+        if (cellvalue[cross_idx[i]] != 0.0)
+          result += grid.formatNumber(cellvalue[cross_idx[i]]) +
+            '<a href="{{request.prefix}}/data/input/demand/?noautofilter' +
+            '&amp;item__name=' + admin_escape(rowdata['item']) +
+            '&amp;deliverydate__gte=' + options['colModel']['enddate'] +
+            '&amp;due__lt=' + options['colModel']['enddate'] +
+            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br/>';
+        else
+          result += '0</br>';
+        break;
+      default:
+        result += grid.formatNumber(cellvalue[cross_idx[i]]) + '</br>';
+    }
+  return result;
+};
+{% endif %}{% endblock %}
+
+{% block extra_grid %}{% if args.0 or mode == "graph" %}loadComplete: drawGraphs,
+{% endif %}{% endblock %}

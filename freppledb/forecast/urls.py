@@ -25,6 +25,7 @@ from django.urls import re_path, path
 
 from . import views
 from . import serializers
+from . import services
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
@@ -64,4 +65,9 @@ urlpatterns = [
     re_path(
         r"^api/forecast/measure/(?P<pk>(.+))/$", serializers.MeasuredetailAPI.as_view()
     ),
+]
+
+
+svcpatterns = [
+    re_path(r"^svc/forecast/detail/$", services.ForecastService.as_asgi()),
 ]

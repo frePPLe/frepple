@@ -33,8 +33,11 @@ from django.urls import re_path
 from channels.auth import AuthMiddlewareStack
 from channels.generic.http import AsyncHttpConsumer
 from channels.generic.websocket import WebsocketConsumer
+from channels.middleware import BaseMiddleware
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
+
+from .urls import svcpatterns
 
 # Assure frePPLe is found in the Python path.
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
@@ -82,41 +85,64 @@ class HttpService(AsyncHttpConsumer):
         )
 
 
-class WebsocketService(WebsocketConsumer):
-    def connect(self):
-        self.user = self.scope["user"]
-        print("connecting", self.user)
-        connected.add(self)
-        self.accept()
+# class WebsocketService(WebsocketConsumer):
+#     def connect(self):
+#         self.user = self.scope["user"]
+#         print("connecting", self.user)
+#         connected.add(self)
+#         self.accept()
 
-    def disconnect(self, close_code):
-        print("disconnecting")
-        connected.remove(self)
-        pass
+#     def disconnect(self, close_code):
+#         print("disconnecting")
+#         connected.remove(self)
+#         pass
 
-    def receive(self, text_data):
-        print("receive", text_data, self.scope)
-        text_data_json = json.loads(text_data)
-        message = text_data_json["message"]
+#     def receive(self, text_data):
+#         print("receive", text_data, self.scope)
+#         text_data_json = json.loads(text_data)
+#         message = text_data_json["message"]
 
-        self.send(text_data=json.dumps({"message": message}))
+#         self.send(text_data=json.dumps({"message": message}))
+
+
+class HTTPNotFound(AsyncHttpConsumer):
+    async def handle(self, body):
+        await self.send_response(
+            400, b"Not found", headers=[(b"Content-Type", b"text/plain")]
+        )
+
+
+class AuthenticatedMiddleware(BaseMiddleware):
+    async def __call__(self, scope, receive, send):
+        if not scope["user"].is_authenticated:
+            await send(
+                {
+                    "type": "http.response.start",
+                    "status": 401,
+                    "headers": [(b"Content-Type", b"text/plain")],
+                }
+            )
+            return await send(
+                {
+                    "type": "http.response.body",
+                    "body": b"Unauthenticated",
+                    "more_body": False,
+                }
+            )
+        return await super().__call__(scope, receive, send)
 
 
 application = ProtocolTypeRouter(
     {
-        "http": URLRouter(
-            [
-                re_path(r"", HttpService.as_asgi()),
-            ]
-        ),
-        "websocket": AllowedHostsOriginValidator(
-            AuthMiddlewareStack(
-                URLRouter(
-                    [
-                        re_path(r"ws/", WebsocketService.as_asgi()),
-                    ]
-                )
+        "http": AuthMiddlewareStack(
+            AuthenticatedMiddleware(
+                URLRouter(svcpatterns + [re_path(r".*", HTTPNotFound.as_asgi())])
             )
         ),
+        # "websocket": AllowedHostsOriginValidator(
+        #     AuthenticatedMiddleware(AuthMiddlewareStack(
+        #         URLRouter([re_path(r"ws/", WebsocketService.as_asgi())])
+        #     ))
+        # ),
     }
 )

@@ -183,9 +183,20 @@ class RunWebService(PlanTask):
         # Running the server
         uvicorn.run(
             ":".join(settings.ASGI_APPLICATION.rsplit(".", 1)),
-            port=server.split(":")[-1],
+            port=int(server.split(":")[-1]),
             log_level="debug",
         )
+        # s = server.split(":", 1)
+        # from daphne.cli import CommandLineInterface
+        # CommandLineInterface().run(
+        #     (
+        #         ":".join(settings.ASGI_APPLICATION.rsplit(".", 1)),
+        #         "--bind",
+        #         s[0],
+        #         "--port",
+        #         s[1],
+        #     )
+        # )
 
         # Exit immediately, to avoid that any more messages are printed to the log file
         sys.exit(0)

@@ -37,6 +37,7 @@ urlpatterns = [
     re_path(r"favicon\.ico$", RedirectView.as_view(url="/static/favicon.ico")),
     re_path(r"robots\.txt$", RedirectView.as_view(url="/static/robots.txt")),
 ]
+svcpatterns = []
 
 # Custom handlers for error pages.
 handler404 = "freppledb.common.views.handler404"
@@ -46,9 +47,11 @@ handler500 = "freppledb.common.views.handler500"
 for app in settings.INSTALLED_APPS:
     try:
         mod = import_module("%s.urls" % app)
-        if hasattr(mod, "urlpatterns"):
-            if getattr(mod, "autodiscover", False):
+        if getattr(mod, "autodiscover", False):
+            if hasattr(mod, "urlpatterns"):
                 urlpatterns += mod.urlpatterns
+            if hasattr(mod, "svcpatterns"):
+                svcpatterns += mod.svcpatterns
     except ImportError as e:
         # Silently ignore if the missing module is called urls
         if "urls" not in str(e):

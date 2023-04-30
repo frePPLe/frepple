@@ -343,6 +343,15 @@ def LaunchTask(request, action):
                 content_type="text/plain; charset=%s" % settings.DEFAULT_CHARSET,
                 streaming_content=importWorkbook(request),
             )
+        elif action in ("frepple_stop_web_service", "stopwebservice"):
+            if not request.user.has_perm("auth.generate_plan"):
+                raise Exception("Missing execution privileges")
+            from django.core import management
+
+            management.call_command(
+                "stopwebservice", force=True, database=request.database
+            )
+            return HttpResponseRedirect("%s/execute/" % request.prefix)
         else:
             wrapTask(request, action)
             return HttpResponseRedirect("%s/execute/" % request.prefix)
@@ -366,7 +375,8 @@ def wrapTask(request, action):
     args = request.POST or request.GET
 
     # A
-    if action == "runplan":
+    # TODO remove special case - call runwebservice or runplan instead
+    if action in ("runplan", "runwebservice"):
         if not request.user.has_perm("auth.generate_plan"):
             raise Exception("Missing execution privileges")
         constraint = 0
@@ -375,16 +385,63 @@ def wrapTask(request, action):
                 constraint += int(value)
             except Exception:
                 pass
+
         task = Task(name="runplan", submitted=now, status="Waiting", user=request.user)
-        task.arguments = "--constraint=%s --plantype=%s" % (
-            constraint,
-            args.get("plantype", 1),
-        )
-        env = []
-        for value in args.getlist("env"):
-            env.append(value)
+        background = False
+        if action in ("frepple_start_web_service", "runwebservice"):
+            # Load existing plan and run as a web service
+            background = True
+            env = []
+            constraint = 15
+            plantype = 1
+            try:
+                lastrun = (
+                    Task.objects.all()
+                    .using(request.database)
+                    .filter(name="runplan")
+                    .order_by("-id")[0]
+                )
+                for i in shlex.split(lastrun.arguments):
+                    if "=" in i:
+                        key, val = i.split("=")
+                        if key == "--constraint":
+                            constraint = int(val)
+                        elif key == "--plantype":
+                            plantype = int(val)
+            except Exception:
+                pass
+            task.arguments = "--constraint=%s --plantype=%s --background" % (
+                constraint,
+                plantype,
+            )
+        else:
+            # Create a new plan
+            task.arguments = "--constraint=%s --plantype=%s" % (
+                constraint,
+                args.get("plantype", 1),
+            )
+            env = []
+            for value in args.getlist("env"):
+                env.append(value)
+            task.arguments = "--constraint=%s --plantype=%s" % (
+                constraint,
+                args.get("plantype", 1),
+            )
+            if (
+                Parameter.getValue("plan.webservice", request.database, "true").lower()
+                == "true"
+            ):
+                task.arguments += " --background"
+                background = True
+        if background:
+            # Avoid getting multiple waiting tasks in background mode
+            cnt = Task.objects.all().filter(name="runplan", status="Waiting").count()
+            if cnt > 0:
+                return None
         if env:
-            task.arguments = "%s --env=%s" % (task.arguments, ",".join(env))
+            task.arguments += " --env=%s" % ",".join(env)
+        else:
+            task.arguments += " --env=loadplan"
         task.save(using=request.database)
     # C
     elif action == "empty":

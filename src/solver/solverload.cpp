@@ -164,13 +164,12 @@ void SolverCreate::chooseResource(
     res_stack.pop_back();
 
     // Check if the resource has the right skill
+    // TODO if there is a date effective skill, we need to consider it in the
+    // reply
     ResourceSkill* rscSkill = nullptr;
     if (l->getSkill() && !res->hasSkill(l->getSkill(), originalOpplan.start,
                                         originalOpplan.end, &rscSkill))
       continue;
-    // TODO if there is a date effective skill, we need to consider it in the
-    // reply
-    qualified_resource_exists = true;
 
     // Avoid double allocations to the same resource
     if (lplan->getLoad()->getResource()->isGroup() &&
@@ -185,7 +184,10 @@ void SolverCreate::chooseResource(
           break;
         }
       }
-      if (exists) continue;
+      if (exists) {
+        qualified_resource_exists = true;
+        continue;
+      }
     }
 
     // Switch to this resource
@@ -199,6 +201,9 @@ void SolverCreate::chooseResource(
       if (-lplan->getQuantity() > mx + ROUNDING_ERROR) {
         lplan->getOperationPlan()->setQuantity(
             mx / lplan->getLoad()->getQuantity(), true);
+        if (!lplan->getOperationPlan()->getQuantity())
+          // We have less tools available than the operation size minimum
+          continue;
         lplan->getOperationPlan()->setEnd(originalOpplan.end);
         if (data->state->q_qty_min > lplan->getOperationPlan()->getQuantity()) {
           // Assure we don't reject this answer as too small!
@@ -210,6 +215,7 @@ void SolverCreate::chooseResource(
       lplan->getOperationPlan()->setEnd(originalOpplan.end);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();
+    qualified_resource_exists = true;
 
     // Remember the first alternate
     if (!firstAlternate) {

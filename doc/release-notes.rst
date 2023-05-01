@@ -12,6 +12,9 @@ Oh-oh... Something exciting is coming up!
   | Some customers like to keep them around. In very old releases we did keep
     them, but then stopped doing that.
 
+- | Bug fix: Fix corner case with the tools-per-piece feature when the tool
+    availability conflicts with the operation size minimum.
+
 .. rubric:: User interface
 
 - | Bug fix: 7.2 introduced some situations where some reports in scenarios

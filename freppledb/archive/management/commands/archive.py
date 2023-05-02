@@ -209,7 +209,7 @@ class Command(BaseCommand):
                 inner join item on op.item_id = item.name
                 left outer join itemsupplier on itemsupplier.item_id = op.item_id and itemsupplier.supplier_id = op.supplier_id
                 where
-                op.type = 'PO' and op.status in ('confirmed','approved')
+                op.type <> 'STCK' and op.status in ('confirmed','approved','completed')
                 """
                 % (now,)
             )

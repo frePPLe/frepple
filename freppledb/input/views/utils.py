@@ -2199,7 +2199,7 @@ class OperationPlanDetail(View):
                     inner join operationplan nextopplan on nextopplan.reference = t.reference
                     where operationplan.reference = %%s
                     union all
-                    select cte.level +  1,
+                    select cte.level +  case when nextopplan.owner_id = cte.owner_id then 0 else 1 end,
                         nextopplan.reference,
                         nextopplan.type,
                         case when nextopplan.type = 'PO' then 'Purchase '||nextopplan.item_id||' @ '||nextopplan.location_id||' from '||nextopplan.supplier_id
@@ -2351,7 +2351,7 @@ class OperationPlanDetail(View):
                     inner join operationplan nextopplan on nextopplan.reference = t.reference
                     where operationplan.reference = %s
                     union all
-                    select cte.level +  1,
+                    select cte.level +  case when nextopplan.owner_id = cte.owner_id then 0 else 1 end,
                         nextopplan.reference,
                         nextopplan.type,
                         case when nextopplan.type = 'PO' then 'Purchase '||nextopplan.item_id||' @ '||nextopplan.location_id||' from '||nextopplan.supplier_id

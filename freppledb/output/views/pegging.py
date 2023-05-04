@@ -166,7 +166,7 @@ class ReportByDemand(GridReport):
                     inner join operationplan nextopplan on nextopplan.reference = t.reference
                     where operationplan.reference in (select opplan from cte0)
                     union all
-                    select cte.level +  1,
+                    select cte.level +  case when nextopplan.owner_id = cte.owner_id then 0 else 1 end,
                         nextopplan.reference,
                         nextopplan.type,
                         case when nextopplan.type = 'PO' then 'Purchase '||nextopplan.item_id||' @ '||nextopplan.location_id||' from '||nextopplan.supplier_id
@@ -374,7 +374,7 @@ class ReportByDemand(GridReport):
                     (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
                     where nextopplan.reference = t.reference
                     union all
-                    select cte.level +  1,
+                    select cte.level +  case when nextopplan.owner_id = cte.owner_id then 0 else 1 end,
                         nextopplan.reference,
                         nextopplan.type,
                         case when nextopplan.type = 'PO' then 'Purchase '||nextopplan.item_id||' @ '||nextopplan.location_id||' from '||nextopplan.supplier_id

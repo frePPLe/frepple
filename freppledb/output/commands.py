@@ -511,10 +511,51 @@ class ExportOperationPlans(PlanTask):
                 )
 
         # upstream
+        found = False
         for j in opplan.pegging_upstream_first_level:
+
+            # ignore anything before this opplan in the upstream path
+            if (
+                not found
+                and opplan.owner != None
+                and isinstance(opplan.owner.operation, frepple.operation_routing)
+            ):
+                if j.operationplan.reference == opplan.reference:
+                    found = True
+                continue
+
             # some security
             if j.operationplan == opplan:
                 continue
+
+            # suboperations flow into the previous subop
+            if (
+                j.level == 1
+                and opplan.owner != None
+                and isinstance(opplan.owner.operation, frepple.operation_routing)
+                and len(
+                    [
+                        k.priority
+                        for k in opplan.owner.operation.suboperations
+                        if k.priority < opplan.operation.priority
+                    ]
+                )
+                > 0
+                and j.operationplan.operation.priority
+                == max(
+                    [
+                        k.priority
+                        for k in opplan.owner.operation.suboperations
+                        if k.priority < opplan.operation.priority
+                    ]
+                )
+            ):
+                upstream_opplans.append(
+                    (j.operationplan.reference, j.quantity, j.offset)
+                )
+                # We are done for this opplan
+                break
+
             if (
                 # regular time_per/fixed time
                 # followed by a non-suboperation
@@ -535,41 +576,11 @@ class ExportOperationPlans(PlanTask):
                     and j.operationplan.operation.priority
                     == max([k.priority for k in opplan.operation.suboperations])
                 )
-                # suboperations flow into the previous subop
-                or (
-                    j.level == 1
-                    and opplan.owner != None
-                    and isinstance(opplan.owner.operation, frepple.operation_routing)
-                    and len(
-                        [
-                            k.priority
-                            for k in opplan.owner.operation.suboperations
-                            if k.priority < opplan.operation.priority
-                        ]
-                    )
-                    > 0
-                    and j.operationplan.operation.priority
-                    == max(
-                        [
-                            k.priority
-                            for k in opplan.owner.operation.suboperations
-                            if k.priority < opplan.operation.priority
-                        ]
-                    )
-                )
                 # first suboperation flows into previous level
                 or (
                     j.level == 2
                     and opplan.owner != None
                     and isinstance(opplan.owner.operation, frepple.operation_routing)
-                    and len(
-                        [
-                            k.priority
-                            for k in opplan.owner.operation.suboperations
-                            if k.priority < opplan.operation.priority
-                        ]
-                    )
-                    == 0
                 )
                 # case of first suboperation of a routing where prev operation is an alternate
                 or (

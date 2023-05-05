@@ -138,7 +138,7 @@ menu.addItem(
     report=freppledb.input.views.PurchaseOrderList,
     index=100,
     model=PurchaseOrder,
-    dependencies=[ItemSupplier],
+    dependencies=[Item, Location, Supplier],
 )
 menu.addItem(
     "purchasing",

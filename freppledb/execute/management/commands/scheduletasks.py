@@ -158,7 +158,7 @@ class Command(BaseCommand):
 
                 # Check the status
                 steptask = Task.objects.all().using(database).get(pk=steptask.id)
-                if steptask.status == "Failed":
+                if self.getStepTaskStatus(steptask) == "Failed":
                     failed.append(str(steptask.id))
                     if step.get("abort_on_failure", False):
                         task = Task.objects.all().using(database).get(pk=task.id)
@@ -175,9 +175,12 @@ class Command(BaseCommand):
             # Reread the task from the database and update it
             task = Task.objects.all().using(database).get(pk=task.id)
             task.processid = None
-            if failed:
+            if failed or not self.getScheduledTaskStatus(task, database):
                 task.status = "Failed"
-                task.message = "Failed at tasks: %s" % ", ".join(failed)
+                if failed:
+                    task.message = "Failed at tasks: %s" % ", ".join(failed)
+                else:
+                    task.message = task.check_message
             else:
                 task.status = "Done"
                 task.message = ""
@@ -292,6 +295,18 @@ class Command(BaseCommand):
 
         finally:
             setattr(_thread_locals, "database", old_thread_locals)
+
+    def getStepTaskStatus(self, steptask):
+        """
+        This methods allows customizing pass-fail criteria of tasks.
+        """
+        return steptask.status
+
+    def getScheduledTaskStatus(self, task, database):
+        """
+        This methods allows customizing pass-fail criteria of a complete scheduled task.
+        """
+        return True
 
     def createScheduledTasks(self, *args, **options):
         """

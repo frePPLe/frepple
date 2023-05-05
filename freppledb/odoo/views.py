@@ -179,6 +179,7 @@ def Upload(request):
                         not op.operation.source
                         or op.status != "proposed"
                         or not op.operation.item
+                        or op in obj
                     ):
                         continue
                     data_ok = True

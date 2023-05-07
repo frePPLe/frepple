@@ -39,9 +39,7 @@ from freppledb.webservice.utils import checkRunning, waitTillNotRunning
 
 class Command(BaseCommand):
 
-    help = """
-    This command stops the frePPLe web service if it is running.
-    """
+    help = "This command stops the frePPLe web service if it is running."
 
     requires_model_validation = False
 
@@ -109,14 +107,15 @@ class Command(BaseCommand):
                 if not server:
                     return
                 conn = HTTPConnection(server, timeout=10)
-                headers = {
-                    "Authorization": "Bearer %s"
-                    % getWebserviceAuthorization(sub="admin", exp=600, aud="*")
-                }
                 conn.request(
                     "POST",
-                    "/stop/force/" if options["force"] else "/stop/",
-                    headers=headers,
+                    "/svc/stop/force/" if options["force"] else "/svc/stop/",
+                    headers={
+                        "Authorization": "Bearer %s"
+                        % getWebserviceAuthorization(
+                            database=database, user="admin", exp=600
+                        )
+                    },
                 )
                 response = conn.getresponse()
                 response.read()

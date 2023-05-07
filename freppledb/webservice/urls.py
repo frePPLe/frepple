@@ -23,12 +23,12 @@
 
 from django.urls import re_path
 
-from .services import StopService, ForcedStopService, PingService
+from .services import StopService, PingService
 
 autodiscover = True
 
 svcpatterns = [
     re_path(r"^svc/stop/$", StopService.as_asgi()),
-    re_path(r"^svc/stop/force/$", ForcedStopService.as_asgi()),
+    re_path(r"^svc/stop/force/$", StopService.as_asgi()),  # No difference
     re_path(r"^svc/ping/$", PingService.as_asgi()),
 ]

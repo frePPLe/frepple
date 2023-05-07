@@ -20,6 +20,7 @@ psycopg2-binary == 2.8.6
 setuptools <= 46.1
 setuptools-rust == 0.12.1
 pysftp == 0.2.9
-uvicorn == 0.21.1
 channels == 4.0.0
+daphne == 4.0.0
+Twisted[tls,http2]
 https://github.com/frePPLe/django/tarball/frepple_7.0

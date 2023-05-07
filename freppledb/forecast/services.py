@@ -21,9 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import os
-import signal
-
 from channels.generic.http import AsyncHttpConsumer
 
 
@@ -38,8 +35,8 @@ class ForecastService(AsyncHttpConsumer):
             )
         else:
             await self.send_response(
-                404,
-                "Shutting down",
+                200,
+                "TEST",
                 headers=[(b"Content-Type", b"text/plain")],
             )
         print("qqqq", self.scope)

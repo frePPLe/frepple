@@ -21,21 +21,30 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import base64
 from importlib import import_module
 import json
+import jwt
 import logging
 import os
 import sys
 
 from django.conf import settings
+from django.contrib.auth import authenticate
+from django.db import DEFAULT_DB_ALIAS
 from django.urls import re_path
 
-from channels.auth import AuthMiddlewareStack
+from django.contrib.auth.models import AnonymousUser
+from freppledb.common.models import User
+
+from channels.auth import AuthMiddleware
+from channels.db import database_sync_to_async
 from channels.generic.http import AsyncHttpConsumer
 from channels.generic.websocket import WebsocketConsumer
 from channels.middleware import BaseMiddleware
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
+from channels.sessions import CookieMiddleware, SessionMiddleware
 
 from .urls import svcpatterns
 
@@ -112,9 +121,84 @@ class HTTPNotFound(AsyncHttpConsumer):
         )
 
 
-class AuthenticatedMiddleware(BaseMiddleware):
+@database_sync_to_async
+def get_user(username=None, email=None, password=None):
+    try:
+        if username:
+            if password:
+                return authenticate(username=username, password=password)
+            else:
+                return User.objects.get(username=username)
+        elif email:
+            return User.objects.get(email=email)
+        else:
+            return AnonymousUser()
+    except Exception:
+        return AnonymousUser()
+
+
+class TokenMiddleware(BaseMiddleware):
+    """
+    - adds scenario database to the scope
+    - add user to the scope if a JWT token is present
+    """
+
+    def __init__(self, app):
+        self.database = os.environ.get("FREPPLE_DATABASE", DEFAULT_DB_ALIAS)
+        super().__init__(app)
+
     async def __call__(self, scope, receive, send):
-        if not scope["user"].is_authenticated:
+        scope["database"] = self.database
+        try:
+            if "headers" in scope:
+                for h in scope["headers"]:
+                    if h[0] == b"authorization":
+                        auth = h[1].decode("ascii").split()
+                        if auth[0] == "Bearer":
+                            # JWT webtoken authentication
+                            for secret in (
+                                getattr(settings, "AUTH_SECRET_KEY", None),
+                                settings.DATABASES[self.database].get(
+                                    "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
+                                ),
+                            ):
+                                if secret:
+                                    decoded = jwt.decode(
+                                        auth[1],
+                                        secret,
+                                        algorithms=["HS256"],
+                                    )
+                                    if "user" in decoded:
+                                        scope["user"] = await get_user(
+                                            username=decoded["user"]
+                                        )
+                                    elif "email" in decoded:
+                                        scope["user"] = await get_user(
+                                            email=decoded["email"]
+                                        )
+                        elif auth[0] == "basic":
+                            # Basic authentication
+                            args = (
+                                base64.b64decode(auth[1])
+                                .decode("iso-8859-1")
+                                .split(":")
+                            )
+                            scope["user"] = await get_user(
+                                username=args[0], password=args[1]
+                            )
+        except Exception:
+            pass
+        return await super().__call__(scope, receive, send)
+
+
+class AuthenticatedMiddleware(BaseMiddleware):
+    """
+    Disallows any unauthenticated connection with the service.
+    A django session or a JWT token are required.
+    """
+
+    async def __call__(self, scope, receive, send):
+        if "user" not in scope or not scope["user"].is_authenticated:
             await send(
                 {
                     "type": "http.response.start",
@@ -134,9 +218,17 @@ class AuthenticatedMiddleware(BaseMiddleware):
 
 application = ProtocolTypeRouter(
     {
-        "http": AuthMiddlewareStack(
-            AuthenticatedMiddleware(
-                URLRouter(svcpatterns + [re_path(r".*", HTTPNotFound.as_asgi())])
+        "http": CookieMiddleware(
+            SessionMiddleware(
+                TokenMiddleware(
+                    AuthMiddleware(
+                        AuthenticatedMiddleware(
+                            URLRouter(
+                                svcpatterns + [re_path(r".*", HTTPNotFound.as_asgi())]
+                            )
+                        )
+                    )
+                )
             )
         ),
         # "websocket": AllowedHostsOriginValidator(

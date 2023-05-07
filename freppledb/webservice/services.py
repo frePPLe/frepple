@@ -25,50 +25,36 @@ import os
 import signal
 
 from channels.generic.http import AsyncHttpConsumer
+from .commands import WebService
 
 
 class StopService(AsyncHttpConsumer):
+
+    msgtemplate = """
+        <!doctype html>
+        <html lang="en">
+            <head>
+            <meta http-equiv="content-type" content="text/html; charset=utf-8">
+            </head>
+            <body>%s</body>
+        </html>
+        """
+
     async def handle(self, body):
         if self.scope["method"] != "POST":
-            await self.send_response(
+            return await self.send_response(
                 401,
-                "Only POST requests allowed",
-                headers=[
-                    (b"Content-Type", b"text/html"),
-                ],
-            )
-        else:
-            # TODO wait for lock
-            await self.send_response(
-                404,
-                "Shutting down",
-                headers=[
-                    (b"Content-Type", b"text/html"),
-                ],
-            )
-            os.kill(os.getpid(), signal.CTRL_C_EVENT)
-
-
-class ForcedStopService(AsyncHttpConsumer):
-    async def handle(self, body):
-        if self.scope["method"] != "POST":
-            await self.send_response(
-                401,
-                "Only POST requests allowed",
+                (self.msgtemplate % "Only POST requests allowed").encode("utf-8"),
                 headers=[(b"Content-Type", b"text/html")],
             )
         else:
+            # TODO wait for lock?
             await self.send_response(
                 404,
-                "Forced shutdown",
-                headers=[
-                    (b"Content-Type", b"text/html"),
-                ],
+                (self.msgtemplate % "Shutting down").encode("utf-8"),
+                headers=[(b"Content-Type", b"text/html")],
             )
-            os.kill(os.getpid(), signal.CTRL_C_EVENT)
-
-
-from channels.exceptions import StopConsumer
+            WebService.stop()
 
 
 class PingService(AsyncHttpConsumer):
@@ -76,7 +62,5 @@ class PingService(AsyncHttpConsumer):
         await self.send_response(
             200,
             b"OK",
-            headers=[
-                (b"Content-Type", b"text/html"),
-            ],
+            headers=[(b"Content-Type", b"text/html")],
         )

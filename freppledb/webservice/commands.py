@@ -26,7 +26,7 @@ import os
 import logging
 import sys
 from time import sleep
-import uvicorn
+from daphne.cli import CommandLineInterface
 
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.conf import settings
@@ -38,6 +38,28 @@ from freppledb.execute.models import Task
 from freppledb.webservice.utils import useWebService
 
 logger = logging.getLogger(__name__)
+
+
+class WebService:
+    service = None
+
+    @classmethod
+    def start(cls, address, port):
+        cls.service = CommandLineInterface()
+        cls.service.run(
+            (
+                ":".join(settings.ASGI_APPLICATION.rsplit(".", 1)),
+                "--bind",
+                address,
+                "--port",
+                port,
+            )
+        )
+
+    @classmethod
+    def stop(cls):
+        if cls.service:
+            cls.service.server.stop()
 
 
 @PlanTaskRegistry.register
@@ -181,22 +203,8 @@ class RunWebService(PlanTask):
             server = settings.DATABASES[database].get("FREPPLE_PORT", None)
 
         # Running the server
-        uvicorn.run(
-            ":".join(settings.ASGI_APPLICATION.rsplit(".", 1)),
-            port=int(server.split(":")[-1]),
-            log_level="debug",
-        )
-        # s = server.split(":", 1)
-        # from daphne.cli import CommandLineInterface
-        # CommandLineInterface().run(
-        #     (
-        #         ":".join(settings.ASGI_APPLICATION.rsplit(".", 1)),
-        #         "--bind",
-        #         s[0],
-        #         "--port",
-        #         s[1],
-        #     )
-        # )
+        os.environ["FREPPLE_DATABASE"] = database
+        WebService.start(*server.split(":", 1))
 
         # Exit immediately, to avoid that any more messages are printed to the log file
         sys.exit(0)

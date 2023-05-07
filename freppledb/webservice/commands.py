@@ -119,9 +119,6 @@ class StopWebService(PlanTask):
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        from http.client import HTTPConnection
-        from freppledb.common.auth import getWebserviceAuthorization
-
         if "FREPPLE_TEST" in os.environ:
             server = settings.DATABASES[database]["TEST"].get("FREPPLE_PORT", None)
         else:
@@ -141,10 +138,8 @@ class StopWebService(PlanTask):
 
         # Connect to the url "/stop/"
         try:
-
             # Call the stopwebservice command to benefit from the emergency brake.
             management.call_command("stopwebservice", database=database, force=True)
-
         except Exception:
             # The service wasn't up
             pass

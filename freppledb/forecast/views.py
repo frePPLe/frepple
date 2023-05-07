@@ -24,7 +24,8 @@
 from datetime import datetime
 import itertools
 import json
-import requests
+import os
+import sys
 
 from django.conf import settings
 from django.contrib.admin.models import LogEntry
@@ -50,7 +51,8 @@ from django.views.generic.base import View
 
 from freppledb.boot import getAttributeFields, getAttributes
 from freppledb.forecast.models import Forecast, ForecastPlan, Measure, ForecastPlanView
-from freppledb.common.models import BucketDetail, Parameter, Comment, Bucket
+from freppledb.common.auth import getWebserviceAuthorization
+from freppledb.common.models import Parameter, Comment, Bucket
 from freppledb.common.report import (
     GridPivot,
     GridFieldText,
@@ -1681,10 +1683,8 @@ class ForecastEditor:
         # Dispatch to the correct method
         if request.method == "GET":
             return ForecastEditor.getDetail(request)
-        elif request.method == "POST":
-            return ForecastEditor.postDetail(request)
         else:
-            return HttpResponseNotAllowed(["get", "post"])
+            return HttpResponseNotAllowed(["get"])
 
     @staticmethod
     def getDetail(request):
@@ -2068,179 +2068,6 @@ class ForecastEditor:
         )
 
     @staticmethod
-    def postDetail(request):
-        """
-        TODO the results posted by the forecast editor are structured differently
-        than the results posted to the inventory planning screen.
-        Ideally, they posted the exact same data format.
-        """
-
-        # Check permissions
-        if not request.user.has_perm("forecast.add_forecastplan"):
-            return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
-
-        data = json.loads(request.body.decode(request.encoding))
-        errors = []
-
-        # Validate item
-        item = None
-        try:
-            itemname = data.get("item", None)
-            if itemname:
-                item = Item.objects.all().using(request.database).get(pk=itemname)
-            else:
-                item = Item.objects.all().using(request.database).get(lvl=0)
-        except Item.DoesNotExist:
-            errors.append("Item not found")
-        except Item.MultipleObjectsReturned:
-            errors.append("Multiple items found")
-
-        # Validate location
-        location = None
-        try:
-            locationname = data.get("location", None)
-            if locationname:
-                location = (
-                    Location.objects.all().using(request.database).get(pk=locationname)
-                )
-            else:
-                location = Location.objects.all().using(request.database).get(lvl=0)
-        except Location.DoesNotExist:
-            errors.append("Location not found")
-        except Location.MultipleObjectsReturned:
-            errors.append("Multiple locations found")
-
-        # Validate customer
-        customer = None
-        try:
-            customername = data.get("customer", None)
-            if customername:
-                customer = (
-                    Customer.objects.all().using(request.database).get(pk=customername)
-                )
-            else:
-                customer = Customer.objects.all().using(request.database).get(lvl=0)
-        except Customer.DoesNotExist:
-            errors.append("Customer not found")
-        except Customer.MultipleObjectsReturned:
-            errors.append("Multiple customers found")
-
-        # Find forecast
-        try:
-            fcst = (
-                Forecast.objects.all()
-                .using(request.database)
-                .get(item=item, location=location, customer=customer)
-            )
-        except Forecast.DoesNotExist:
-            fcst = None
-
-        simulate = False  # data.get("recalculate", False) No simulations for now
-
-        # Save all changes to the database
-        session = requests.Session()
-        with transaction.atomic(using=request.database):
-
-            if fcst:
-                # Update forecast method
-                mthd = data.get("forecastmethod", None)
-                if mthd:
-                    if not request.user.has_perm("forecast.change_forecast"):
-                        errors.append(force_str(_("Permission denied")))
-                    else:
-                        fcst.method = mthd
-                        fcst.save(using=request.database)
-
-            # Update forecast values
-            if "buckets" in data:
-                if not request.user.has_perm("forecast.change_forecast"):
-                    errors.append(force_str(_("Permission denied")))
-                else:
-                    # Build a list of buckets
-                    buckets = {}
-                    horizonbuckets = data.get("horizonbuckets", None)
-                    for b in BucketDetail.objects.using(request.database).filter(
-                        bucket=horizonbuckets
-                    ):
-                        buckets[b.name] = (b.startdate, b.enddate)
-
-                    if not buckets:
-                        errors.append("No forecast buckets found")
-                    else:
-                        # Process the updates
-                        for bckt in data["buckets"]:
-                            if bckt["bucket"] in buckets:
-                                data = {
-                                    "startdate": buckets[bckt["bucket"]][0],
-                                    "enddate": buckets[bckt["bucket"]][1],
-                                    "database": request.database,
-                                    "forecast": None,
-                                    "item": item.name,
-                                    "location": location.name,
-                                    "customer": customer.name,
-                                    "session": session,
-                                }
-                                for key, val in bckt.items():
-                                    if key not in (
-                                        "startdate",
-                                        "enddate",
-                                        "bucket",
-                                        "item",
-                                        "location",
-                                        "customer",
-                                    ):
-                                        data[key] = float(val)
-                                Forecast.updatePlan(**data)
-
-            if not simulate:
-                # Save a new comment
-                if "commenttype" in data and "comment" in data:
-                    if not request.user.has_perm("common.add_comment"):
-                        errors.append(force_str(_("Permission denied")))
-                    elif data["commenttype"] == "item" and item:
-                        Comment(
-                            content_object=item,
-                            user=request.user,
-                            comment=data["comment"],
-                        ).save(using=request.database)
-                    elif data["commenttype"] == "location" and location:
-                        Comment(
-                            content_object=location,
-                            user=request.user,
-                            comment=data["comment"],
-                        ).save(using=request.database)
-                    elif data["commenttype"] == "customer" and customer:
-                        Comment(
-                            content_object=customer,
-                            user=request.user,
-                            comment=data["comment"],
-                        ).save(using=request.database)
-                    elif data["commenttype"] == "itemlocation":
-                        try:
-                            buf = (
-                                Buffer.objects.all()
-                                .using(request.database)
-                                .get(item__name=item.name, location__name=location.name)
-                            )
-                            Comment(
-                                content_object=buf,
-                                user=request.user,
-                                comment=data["comment"],
-                            ).save(using=request.database)
-                        except Buffer.DoesNotExist:
-                            errors.append("Invalid comment data")
-                    else:
-                        errors.append("Invalid comment data")
-
-        if errors:
-            logger.error("Error saving forecast updates: %s" % "".join(errors))
-            return HttpResponseServerError(
-                "Error saving forecast updates: %s" % "<br/>".join(errors)
-            )
-        else:
-            return HttpResponse(content="OK")
-
-    @staticmethod
     @staff_member_required
     def planning(request, item=None):
         # Check permissions
@@ -2326,6 +2153,23 @@ class ForecastEditor:
             )
         }
 
+        if "FREPPLE_TEST" in os.environ:
+            server = settings.DATABASES[request.database]["TEST"].get(
+                "FREPPLE_PORT", None
+            )
+        else:
+            server = settings.DATABASES[request.database].get("FREPPLE_PORT", None)
+        proxied = settings.DATABASES[request.database].get(
+            "FREPPLE_PORT_PROXIED",
+            not settings.DEBUG
+            and not (
+                "freppleserver" in sys.argv[0]
+                or "freppleservice" in sys.argv[0]
+                or "runwebserver" in sys.argv
+            )
+            and "FREPPLE_TEST" not in os.environ,
+        )
+
         return render(
             request,
             "forecast.html",
@@ -2340,6 +2184,11 @@ class ForecastEditor:
                 "currentbucket": currentbucket,
                 "currentdate": currentdate.strftime("%Y-%m-%d"),
                 "measures": json.dumps(measures),
+                "token": getWebserviceAuthorization(
+                    user=request.user.username, sid=request.user.id, exp=3600
+                ),
+                "port": server,
+                "proxied": proxied,
             },
         )
 

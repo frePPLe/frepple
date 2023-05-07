@@ -135,6 +135,11 @@ var currentdate="{{currentdate}}";
 var version='{% version_short %}';
 var measures = {{measures|safe}};
 
+var service_url = document.location.protocol
+  + "//" + {% if proxied %}window.location.host{% else %}'{{port}}'{% endif %}
+  + '/svc/';
+var service_token = '{{token}}';
+
 $(function() {
   $("#horizonbucketsul li a").click(function(){
     $("#horizonbuckets1").html($(this).text() + '  <span class="caret"></span>');

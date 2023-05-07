@@ -799,12 +799,14 @@ function forecastController($scope, $http, $q, $location) {
   $scope.busy_saving = false;
 
   function postDetail(data, callback) {
-    data = angular.toJson(data);
-    var url = detailurl;
-    url += '?measure=' + admin_escape($scope.measure);
     $scope.busy_saving = true;
-
-    $http.post(url, data).then(function (response) {
+    $http.post(
+      service_url + 'forecast/detail/?measure=' + admin_escape($scope.measure),
+      angular.toJson(data),
+      {
+        headers: { "Authorization": "Bearer " + service_token }
+      }
+    ).then(function (response) {
       $scope.databaseerrormodal = false;
       callback(response);
       $scope.busy_saving = false;

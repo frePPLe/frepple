@@ -176,12 +176,7 @@ class Forecast(AuditModel):
             "http://%s/flush/%s/" % (server, mode),
             headers={
                 "Authorization": "Bearer %s"
-                % getWebserviceAuthorization(
-                    sub="admin",
-                    sid=1,
-                    exp=3600,
-                    aud="*",
-                ),
+                % getWebserviceAuthorization(user="admin", exp=3600),
                 "Content-Type": "application/json",
                 "content-length": "0",
             },

@@ -198,6 +198,26 @@ class AuthenticatedMiddleware(BaseMiddleware):
     """
 
     async def __call__(self, scope, receive, send):
+        if scope["method"] == "OPTIONS":
+            await send(
+                {
+                    "type": "http.response.start",
+                    "status": 200,
+                    "headers": [
+                        (
+                            b"Content-Security-Policy",
+                            b"frame-ancestors 'self' https://localhost:8000",
+                        )
+                    ],
+                }
+            )
+            return await send(
+                {
+                    "type": "http.response.body",
+                    "body": b"OK",
+                    "more_body": False,
+                }
+            )
         if "user" not in scope or not scope["user"].is_authenticated:
             await send(
                 {

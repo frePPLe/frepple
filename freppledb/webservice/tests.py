@@ -46,9 +46,7 @@ class WebServiceTest(TransactionTestCase):
         os.environ["FREPPLE_TEST"] = "webservice"
         if "nowebservice" in os.environ:
             del os.environ["nowebservice"]
-        self.token = "Bearer %s" % getWebserviceAuthorization(
-            sub="admin", sid=0, exp=600, aud="*"
-        )
+        self.token = "Bearer %s" % getWebserviceAuthorization(user="admin", exp=600)
 
     def getData(self, url, **kwargs):
         conn = http.client.HTTPConnection(

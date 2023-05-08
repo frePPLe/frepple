@@ -24,6 +24,7 @@
 import base64
 from datetime import datetime, timedelta
 import email
+import itertools
 import json
 import jwt
 import time
@@ -146,47 +147,44 @@ class Command(BaseCommand):
                 raise CommandError("Missing parameter %s" % ", ".join(missing))
 
             # Collect data to send
-            task.status = "0%"
-            task.message = "Collecting plan data to send"
-            task.save(using=self.database, update_fields=("status", "message"))
+            counter = 1
             self.exported = []
             self.boundary = email.generator._make_boundary()
-            body = "\n".join(self.generateDataToPublish()).encode("utf-8")
+            for page in self.generatePagesToPublish(records_per_page=100):
 
-            # Connect to the odoo URL to POST data
-            task.status = "33%"
-            task.message = "Sending plan data to odoo"
-            task.save(using=self.database, update_fields=("status", "message"))
-            encoded = base64.encodebytes(
-                ("%s:%s" % (self.odoo_user, self.odoo_password)).encode("utf-8")
-            )
-            size = len(body)
-            req = Request(
-                "%sfrepple/xml/" % self.odoo_url,
-                data=body,
-                headers={
-                    "Authorization": "Basic %s" % encoded.decode("ascii")[:-1],
-                    "Content-Type": "multipart/form-data; boundary=%s" % self.boundary,
-                    "Content-length": size,
-                },
-            )
-            with urlopen(req) as f:
-                # Read the odoo response
-                f.read()
-            task.status = "33%"
-            task.message = "Exporting plan data to odoo"
-            task.save(using=self.database, update_fields=("status", "message"))
+                # Connect to the odoo URL to POST data
+                encoded = base64.encodebytes(
+                    ("%s:%s" % (self.odoo_user, self.odoo_password)).encode("utf-8")
+                )
+                size = len(page)
+                req = Request(
+                    "%sfrepple/xml/" % self.odoo_url,
+                    data=page,
+                    headers={
+                        "Authorization": "Basic %s" % encoded.decode("ascii")[:-1],
+                        "Content-Type": "multipart/form-data; boundary=%s"
+                        % self.boundary,
+                        "Content-length": size,
+                    },
+                )
+                with urlopen(req) as f:
+                    # Read the odoo response
+                    f.read()
 
-            # Mark the exported operations as approved
-            task.status = "66%"
-            task.message = "Marking exported data to odoo"
-            task.save(using=self.database, update_fields=("status", "message"))
-            for i in self.exported:
-                i.status = "approved"
-                i.save(using=self.database, update_fields=("status",))
-            del self.exported
+                # Mark the exported operations as approved
+                for i in self.exported:
+                    i.status = "approved"
+                    i.save(using=self.database, update_fields=("status",))
+
+                # Progress
+                task.status = "%s%%" % counter
+                task.message = "Sent page %s of plan data to odoo" % counter
+                task.save(using=self.database, update_fields=("status", "message"))
+                counter += 1
+                self.exported = []
 
             # Task update
+            del self.exported
             task.status = "Done"
             task.message = None
             task.finished = datetime.now()
@@ -221,10 +219,20 @@ class Command(BaseCommand):
                 task.save(using=self.database)
             setattr(_thread_locals, "database", old_thread_locals)
 
-    def generateDataToPublish(self):
-        yield "--%s\r" % self.boundary
-        yield 'Content-Disposition: form-data; name="webtoken"\r'
-        yield "\r"
+    def generatePagesToPublish(self, records_per_page=100):
+        cnt = 0
+        output = []
+        for rec in self.generateOperationPlansToPublish():
+            output.append(rec)
+            cnt += 1
+            if cnt >= records_per_page:
+                yield self.buildPage(output, "operationplans")
+                output = []
+                cnt = 0
+        if cnt:
+            yield self.buildPage(output, "operationplans")
+
+    def buildPage(self, output, objtype):
         token = jwt.encode(
             {"exp": round(time.time()) + 600, "user": self.odoo_user},
             settings.DATABASES[self.database].get(
@@ -234,28 +242,41 @@ class Command(BaseCommand):
         )
         if not isinstance(token, str):
             token = token.decode("ascii")
-        yield "%s\r" % token
-        yield "--%s\r" % self.boundary
-        yield 'Content-Disposition: form-data; name="database"\r'
-        yield "\r"
-        yield "%s\r" % self.odoo_db
-        yield "--%s\r" % self.boundary
-        yield 'Content-Disposition: form-data; name="language"\r'
-        yield "\r"
-        yield "%s\r" % self.odoo_language
-        yield "--%s\r" % self.boundary
-        yield 'Content-Disposition: form-data; name="company"\r'
-        yield "\r"
-        yield "%s\r" % self.odoo_company
-        yield "--%s\r" % self.boundary
-        yield 'Content-Disposition: file; name="frePPLe plan"; filename="frepple_plan.xml"\r'
-        yield "Content-Type: application/xml\r"
-        yield "\r"
-        yield '<?xml version="1.0" encoding="UTF-8" ?>'
-        yield '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
-        yield "<operationplans>"
-        today = datetime.today()
+        header = [
+            "--%s\r" % self.boundary,
+            'Content-Disposition: form-data; name="webtoken"\r',
+            "\r",
+            "%s\r" % token,
+            "--%s\r" % self.boundary,
+            'Content-Disposition: form-data; name="database"\r',
+            "\r",
+            "%s\r" % self.odoo_db,
+            "--%s\r" % self.boundary,
+            'Content-Disposition: form-data; name="language"\r',
+            "\r",
+            "%s\r" % self.odoo_language,
+            "--%s\r" % self.boundary,
+            'Content-Disposition: form-data; name="company"\r',
+            "\r",
+            "%s\r" % self.odoo_company,
+            "--%s\r" % self.boundary,
+            'Content-Disposition: file; name="frePPLe plan"; filename="frepple_plan.xml"\r',
+            "Content-Type: application/xml\r",
+            "\r",
+            '<?xml version="1.0" encoding="UTF-8" ?>',
+            '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">',
+            "<%s>" % objtype,
+        ]
+        footer = [
+            "</%s>" % objtype,
+            "</plan>",
+            "--%s--\r" % self.boundary,
+            "\r",
+        ]
+        return "\n".join(itertools.chain(header, output, footer)).encode("utf-8")
 
+    def generateOperationPlansToPublish(self):
+        today = datetime.today()
         # Purchase orders to export
         for i in (
             PurchaseOrder.objects.using(self.database)
@@ -370,7 +391,7 @@ class Command(BaseCommand):
                     quoteattr(i.batch or ""),
                 )
             else:
-                yield '<operationplan reference=%s ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" demand=%s batch=%s>' % (
+                rec = '<operationplan reference=%s ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" demand=%s batch=%s>' % (
                     quoteattr(i.reference),
                     quoteattr(i.operation.item.name),
                     quoteattr(i.operation.location.name),
@@ -388,7 +409,7 @@ class Command(BaseCommand):
                     wolist = [i for i in i.xchildren.using(self.database).all()]
                     if wolist:
                         for wo in wolist:
-                            yield '<workorder operation=%s start="%s" end="%s">' % (
+                            rec += '<workorder operation=%s start="%s" end="%s">' % (
                                 quoteattr(wo.operation.name),
                                 wo.startdate,
                                 wo.enddate,
@@ -398,22 +419,22 @@ class Command(BaseCommand):
                                     wores.resource.source
                                     and wores.resource.source.startswith("odoo")
                                 ):
-                                    yield "<resource name=%s id=%s/>" % (
+                                    rec += "<resource name=%s id=%s/>" % (
                                         quoteattr(wores.resource.name),
                                         quoteattr(wores.resource.category),
                                     )
-                            yield "</workorder>"
+                            rec += "</workorder>"
                     else:
                         for opplanres in i.resources.using(self.database).all():
                             if (
                                 opplanres.resource.source
                                 and opplanres.resource.source.startswith("odoo")
                             ):
-                                yield "<resource name=%s id=%s/>" % (
+                                rec += "<resource name=%s id=%s/>" % (
                                     quoteattr(opplanres.resource.name),
                                     quoteattr(opplanres.resource.category),
                                 )
-                yield "</operationplan>"
+                yield rec + "</operationplan>"
 
         # Work orders to export
         # We don't create work orders, but only updates existing work orders.
@@ -440,7 +461,7 @@ class Command(BaseCommand):
             ):
                 continue
             self.exported.append(i)
-            yield '<operationplan reference=%s owner=%s ordertype="WO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s batch=%s>' % (
+            rec = '<operationplan reference=%s owner=%s ordertype="WO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s batch=%s>' % (
                 quoteattr(i.reference),
                 quoteattr(i.owner.reference),
                 quoteattr(i.owner.operation.item.name),
@@ -455,17 +476,11 @@ class Command(BaseCommand):
             )
             for wores in i.resources.using(self.database).all():
                 if wores.resource.source and wores.resource.source.startswith("odoo"):
-                    yield "<resource name=%s id=%s/>" % (
+                    rec += "<resource name=%s id=%s/>" % (
                         quoteattr(wores.resource.name),
                         quoteattr(wores.resource.category or ""),
                     )
-            yield "</operationplan>"
-
-        # Write the footer
-        yield "</operationplans>"
-        yield "</plan>"
-        yield "--%s--\r" % self.boundary
-        yield "\r"
+            yield rec + "</operationplan>"
 
     # accordion template
     title = _("Export data to %(erp)s") % {"erp": "odoo"}

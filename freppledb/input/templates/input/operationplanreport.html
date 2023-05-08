@@ -308,6 +308,7 @@ onSelectAll: function(aRowids,status){
     angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
   else
     angular.element('#controller').scope().displayInfo(undefined);
+  if ($("#actions").length) $("#actions1").prop('disabled', !status);
 },
 beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
   var selection = $(this).jqGrid('getGridParam','selarrrow');

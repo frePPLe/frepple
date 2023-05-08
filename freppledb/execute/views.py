@@ -250,8 +250,10 @@ def APITask(request, action):
             response = {}
             args = request.GET.getlist("id")
             if args:
+                msg = "retrieving task status of %s" % ",".join(args)
                 tasks = Task.objects.all().using(request.database).filter(id__in=args)
             else:
+                msg = "retrieving task status of all running tasks"
                 tasks = (
                     Task.objects.all()
                     .using(request.database)
@@ -274,6 +276,7 @@ def APITask(request, action):
             response = {}
             with transaction.atomic(using=request.database):
                 args = request.GET.getlist("id")
+                msg = "canceling task %s" % ",".join(args)
                 for t in (
                     Task.objects.all()
                     .using(request.database)
@@ -306,6 +309,7 @@ def APITask(request, action):
             if not taskid:
                 return HttpResponseNotFound("Task or log file not found")
             try:
+                msg = "retrieving task log of %s" % taskid
                 task = Task.objects.all().using(request.database).get(id=taskid)
                 if task and task.logfile:
                     return sendStaticFile(
@@ -321,13 +325,14 @@ def APITask(request, action):
             except Exception as e:
                 return HttpResponseNotFound("Task or log file not found")
         else:
+            msg = "launching task"
             task = wrapTask(request, action)
             if task:
                 response = {"taskid": task.id, "message": "Successfully launched task"}
             else:
                 response = {"message": "No task was launched"}
     except Exception:
-        response = {"message": "Exception launching task"}
+        response = {"message": "Exception %s" % msg}
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 

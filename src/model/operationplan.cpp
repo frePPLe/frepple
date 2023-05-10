@@ -2290,6 +2290,7 @@ OperationPlan::InterruptionIterator::next() {
 
 double OperationPlan::getEfficiency(Date d) const {
   double best = DBL_MAX;
+  double parallel_factor = 0.0;
   LoadPlanIterator e = beginLoadPlans();
   if (e == endLoadPlans()) {
     // Use the operation loads
@@ -2311,16 +2312,46 @@ double OperationPlan::getEfficiency(Date d) const {
     }
   } else {
     // Use the operationplan loadplans
+    auto individual = Plan::instance().getIndividualPoolResources();
     while (e != endLoadPlans()) {
       if (e->getQuantity() <= 0) {
-        auto tmp = e->getResource()->getEfficiencyCalendar()
-                       ? e->getResource()->getEfficiencyCalendar()->getValue(
-                             d ? d : getStart())
-                       : e->getResource()->getEfficiency();
-        if (tmp < best) best = tmp;
+        if (e->getResource()->getOwner() && individual) {
+          // Planning with individual resources from a pool.
+          // Efficiency depends on sum of all efficiencies.
+          // Eg Allocating 1 resource with 100% efficiencies is the same
+          // as allocating 2 resource each with 50% efficiency.
+          auto total_allocated = 0.0;
+          for (LoadPlanIterator inner = beginLoadPlans();
+               inner != endLoadPlans(); ++inner)
+            if (e->getResource()->getRoot() == inner->getResource()->getRoot())
+              total_allocated +=
+                  inner->getResource()->getEfficiencyCalendar()
+                      ? inner->getResource()->getEfficiencyCalendar()->getValue(
+                            d ? d : getStart())
+                      : inner->getResource()->getEfficiency();
+          double load_quantity = 1.0;
+          for (auto h = getOperation()->getLoads().begin();
+               h != getOperation()->getLoads().end(); ++h) {
+            if (e->getResource()->isMemberOf(h->getResource())) {
+              load_quantity = h->getQuantity();
+              break;
+            }
+          }
+          total_allocated /= load_quantity;
+          if (!parallel_factor || total_allocated < parallel_factor)
+            parallel_factor = total_allocated;
+          if (parallel_factor * 100 < best) best = parallel_factor * 100;
+        } else {
+          auto tmp = e->getResource()->getEfficiencyCalendar()
+                         ? e->getResource()->getEfficiencyCalendar()->getValue(
+                               d ? d : getStart())
+                         : e->getResource()->getEfficiency();
+          if (tmp < best) best = tmp;
+        }
       }
       ++e;
     }
+    if (parallel_factor) best /= parallel_factor;
   }
   if (best == DBL_MAX)
     return 1.0;

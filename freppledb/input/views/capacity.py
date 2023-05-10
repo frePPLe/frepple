@@ -31,6 +31,7 @@ from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 
 from freppledb.boot import getAttributeFields
+from freppledb.common.models import Parameter
 from freppledb.input.models import (
     Item,
     Resource,
@@ -497,6 +498,12 @@ class ResourceDetail(OperationPlanMixin):
         groupingcfg["resource__subcategory"] = force_str(
             format_lazy("{} - {}", _("resource"), _("subcategory"))
         )
+        individualPoolResources = (
+            Parameter.getValue(
+                "plan.individualPoolResources", request.database, "false"
+            ).lower()
+            == "true"
+        )
         if args and args[0]:
             request.session["lasttab"] = "plandetail"
             return {
@@ -508,6 +515,7 @@ class ResourceDetail(OperationPlanMixin):
                 "post_title": _("plan detail"),
                 "groupingcfg": groupingcfg,
                 "currentdate": getCurrentDate(database=request.database),
+                "individualPoolResources": individualPoolResources,
             }
         else:
             return {
@@ -517,6 +525,7 @@ class ResourceDetail(OperationPlanMixin):
                 "model": OperationPlanResource,
                 "groupingcfg": groupingcfg,
                 "currentdate": getCurrentDate(database=request.database),
+                "individualPoolResources": individualPoolResources,
             }
 
     rows = (

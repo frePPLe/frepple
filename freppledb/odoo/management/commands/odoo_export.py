@@ -174,7 +174,8 @@ class Command(BaseCommand):
                 # Mark the exported operations as approved
                 for i in self.exported:
                     i.status = "approved"
-                    i.save(using=self.database, update_fields=("status",))
+                    i.source = "odoo_1"
+                    i.save(using=self.database, update_fields=("status","source"))
 
                 # Progress
                 task.status = "%s%%" % counter
@@ -289,8 +290,7 @@ class Command(BaseCommand):
             .select_related("location", "item", "supplier")
         ):
             if (
-                i.status not in ("proposed", "approved")
-                or not i.item
+                not i.item
                 or not i.item.source
                 or not i.item.subcategory
                 or not i.location.subcategory
@@ -325,8 +325,7 @@ class Command(BaseCommand):
             .select_related("item", "origin", "destination")
         ):
             if (
-                i.status not in ("proposed", "approved")
-                or not i.item
+                not i.item
                 or not i.item.source
                 or not i.item.subcategory
                 or not i.origin.subcategory
@@ -365,8 +364,7 @@ class Command(BaseCommand):
             .select_related("operation", "location", "item", "owner")
         ):
             if (
-                i.status not in ("proposed", "approved")
-                or not i.operation
+                not i.operation
                 or not i.operation.source
                 or not i.operation.item
                 or not i.operation.source.startswith("odoo")
@@ -404,36 +402,35 @@ class Command(BaseCommand):
                     int(i.criticality),
                     quoteattr(demand_str),
                     quoteattr(i.batch or ""),
-                )
-                if i.status == "proposed":
-                    wolist = [i for i in i.xchildren.using(self.database).all()]
-                    if wolist:
-                        for wo in wolist:
-                            rec += '<workorder operation=%s start="%s" end="%s">' % (
-                                quoteattr(wo.operation.name),
-                                wo.startdate,
-                                wo.enddate,
-                            )
-                            for wores in wo.resources.using(self.database).all():
-                                if (
-                                    wores.resource.source
-                                    and wores.resource.source.startswith("odoo")
-                                ):
-                                    rec += "<resource name=%s id=%s/>" % (
-                                        quoteattr(wores.resource.name),
-                                        quoteattr(wores.resource.category),
-                                    )
-                            rec += "</workorder>"
-                    else:
-                        for opplanres in i.resources.using(self.database).all():
+                )                
+                wolist = [i for i in i.xchildren.using(self.database).all()]
+                if wolist:
+                    for wo in wolist:
+                        rec += '<workorder operation=%s start="%s" end="%s">' % (
+                            quoteattr(wo.operation.name),
+                            wo.startdate,
+                            wo.enddate,
+                        )
+                        for wores in wo.resources.using(self.database).all():
                             if (
-                                opplanres.resource.source
-                                and opplanres.resource.source.startswith("odoo")
+                                wores.resource.source
+                                and wores.resource.source.startswith("odoo")
                             ):
                                 rec += "<resource name=%s id=%s/>" % (
-                                    quoteattr(opplanres.resource.name),
-                                    quoteattr(opplanres.resource.category),
+                                    quoteattr(wores.resource.name),
+                                    quoteattr(wores.resource.category),
                                 )
+                        rec += "</workorder>"
+                else:
+                    for opplanres in i.resources.using(self.database).all():
+                        if (
+                            opplanres.resource.source
+                            and opplanres.resource.source.startswith("odoo")
+                        ):
+                            rec += "<resource name=%s id=%s/>" % (
+                                quoteattr(opplanres.resource.name),
+                                quoteattr(opplanres.resource.category),
+                            )
                 yield rec + "</operationplan>"
 
         # Work orders to export

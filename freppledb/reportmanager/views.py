@@ -138,6 +138,7 @@ class ReportList(GridReport):
             "name",
             title=_("name"),
             extra="formatter:reportlink",
+            editable=False,
         ),
         GridFieldText("description", title=_("description")),
         GridFieldText("sql", title=_("SQL query")),

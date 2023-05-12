@@ -112,7 +112,7 @@ Object* SetupMatrixRule::reader(const MetaClass* cat, const DataValueDict& atts,
       }
   }
 
-  // Pick up the action attribute and update the bucket accordingly
+  // Pick up the action attribute and update accordingly
   switch (MetaClass::decodeAction(atts)) {
     case Action::ADD:
       // Only additions are allowed

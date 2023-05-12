@@ -8177,7 +8177,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
 
   /* Finds the loadplan on the operationplan when we read data. */
   static Object* reader(const MetaClass*, const DataValueDict&,
-                        CommandManager*);
+                        CommandManager* = nullptr);
 
   bool getProposed() const {
     return (flags & (STATUS_CONFIRMED + STATUS_CLOSED)) == 0;

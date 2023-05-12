@@ -2323,7 +2323,9 @@ double OperationPlan::getEfficiency(Date d) const {
           auto total_allocated = 0.0;
           for (LoadPlanIterator inner = beginLoadPlans();
                inner != endLoadPlans(); ++inner)
-            if (e->getResource()->getRoot() == inner->getResource()->getRoot())
+            if (e->getResource()->getRoot() ==
+                    inner->getResource()->getRoot() &&
+                inner->getQuantity() < 0)
               total_allocated +=
                   inner->getResource()->getEfficiencyCalendar()
                       ? inner->getResource()->getEfficiencyCalendar()->getValue(
@@ -2340,7 +2342,7 @@ double OperationPlan::getEfficiency(Date d) const {
           total_allocated /= load_quantity;
           if (!parallel_factor || total_allocated < parallel_factor)
             parallel_factor = total_allocated;
-          if (parallel_factor * 100 < best) best = parallel_factor * 100;
+          if (parallel_factor < best) best = parallel_factor;
         } else {
           auto tmp = e->getResource()->getEfficiencyCalendar()
                          ? e->getResource()->getEfficiencyCalendar()->getValue(
@@ -2351,7 +2353,6 @@ double OperationPlan::getEfficiency(Date d) const {
       }
       ++e;
     }
-    if (parallel_factor) best /= parallel_factor;
   }
   if (best == DBL_MAX)
     return 1.0;

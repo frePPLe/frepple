@@ -327,11 +327,6 @@
             <status>approved</status>
             <start>2021-02-01T00:00:00</start>
             <quantity>2</quantity>
-            <loadplans>
-                <loadplan>
-                    <resource name="4. operator A"/>
-                </loadplan>
-            </loadplans>
         </operationplan>
         <operationplan>
             <reference>MO - 2 operators</reference>
@@ -341,14 +336,6 @@
             <status>approved</status>
             <start>2021-02-01T00:00:00</start>
             <quantity>2</quantity>
-            <loadplans>
-                <loadplan>
-                    <resource name="4. operator B"/>
-                </loadplan>
-                <loadplan>
-                    <resource name="4. operator C"/>
-                </loadplan>
-            </loadplans>
         </operationplan>
         <operationplan>
             <reference>MO - 2.5 operators</reference>
@@ -359,21 +346,18 @@
             <status>approved</status>
             <start>2021-02-01T00:00:00</start>
             <quantity>2</quantity>
-            <loadplans>
-                <loadplan>
-                    <resource name="4. operator B"/>
-                </loadplan>
-                <loadplan>
-                    <resource name="4. operator C"/>
-                </loadplan>
-                <loadplan>
-                    <resource name="4. operator E"/>
-                </loadplan>
-            </loadplans>
         </operationplan>
     </operationplans>
 
 <?python
+
+opplan = frepple.operationplan(reference="MO - 2 operators")
+frepple.loadplan(operationplan=opplan, resource=frepple.resource(name="4. operator D"), action="A")
+
+opplan = frepple.operationplan(reference="MO - 2.5 operators")
+frepple.loadplan(operationplan=opplan, resource=frepple.resource(name="4. operator B"), action="A")
+frepple.loadplan(operationplan=opplan, resource=frepple.resource(name="4. operator E"), action="A")
+
 print ("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")

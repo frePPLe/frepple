@@ -417,94 +417,104 @@ Object* LoadPlan::reader(const MetaClass* cat, const DataValueDict& in,
   // If multiple exist, we pick up the first one.
   // If none is found, we throw a data error.
   auto ldplniter = opplan->getLoadPlans();
-  LoadPlan* ldpln;
-  while ((ldpln = ldplniter.next())) {
-    if (ldpln->getResource()->getTop() == res->getTop()) {
-      ldpln->setResource(res);
-      const DataValue* statusElement = in.get(Tags::status);
-      if (statusElement) ldpln->setStatus(statusElement->getString());
-      return ldpln;
+  LoadPlan* ldpln_tmp = nullptr;
+  LoadPlan* ldpln = nullptr;
+  const Load* ld = nullptr;
+  auto individualresources = Plan::instance().getIndividualPoolResources();
+  while ((ldpln_tmp = ldplniter.next())) {
+    if ((individualresources && ldpln_tmp->getResource() == res) ||
+        (!individualresources &&
+         ldpln_tmp->getResource()->getTop() == res->getTop())) {
+      ldpln = ldpln_tmp;
+      break;
     }
   }
-  return nullptr;
+
+  // Pick up the action attribute and update accordingly
+  const DataValue* statusElement = in.get(Tags::status);
+  switch (MetaClass::decodeAction(in)) {
+    case Action::ADD:
+      // Only additions are allowed
+      if (ldpln) {
+        ostringstream o;
+        o << "Loadplan already exists";
+        throw DataException(o.str());
+      }
+      for (auto& g : opplan->getOperation()->getLoads())
+        if (g.getResource()->getTop() == res->getTop()) ld = &g;
+      ldpln = new LoadPlan(opplan, ld, res);
+      if (statusElement) ldpln->setStatus(statusElement->getString());
+      opplan->setStart(opplan->getStart());  // Recompute duration
+      if (mgr) mgr->add(new CommandCreateObject(ldpln));
+      return ldpln;
+    case Action::CHANGE:
+      // Only changes are allowed
+      if (!ldpln) throw DataException("Loadplan not found");
+      ldpln->setResource(res);
+      if (statusElement) ldpln->setStatus(statusElement->getString());
+      return ldpln;
+    case Action::REMOVE:
+      // Delete the entity
+      if (!ldpln)
+        throw DataException("Loadplan not found");
+      else {
+        // Delete it
+        delete ldpln;
+        opplan->setStart(opplan->getStart());  // Recompute duration
+        return nullptr;
+      }
+    case Action::ADD_CHANGE:
+      if (!ldpln) {
+        // Adding a new loadplan
+        for (auto& g : opplan->getOperation()->getLoads())
+          if (g.getResource()->getTop() == res->getTop()) ld = &g;
+        ldpln = new LoadPlan(opplan, ld, res);
+        opplan->setStart(opplan->getStart());  // Recompute duration
+        if (mgr) mgr->add(new CommandCreateObject(ldpln));
+      } else
+        ldpln->setResource(res);
+      if (statusElement) ldpln->setStatus(statusElement->getString());
+      return ldpln;
+  }
+
+  // This part of the code isn't expected not be reached
+  throw LogicException("Unreachable code reached");
 }
 
 PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args,
                            PyObject* kwds) {
   try {
-    // Pick up the operationplan attribute. An error is reported if it's
-    // missing.
-    PyObject* opplanobject = PyDict_GetItemString(kwds, "operationplan");
-    if (!opplanobject) throw DataException("Missing operationplan field");
-    if (!PyObject_TypeCheck(opplanobject, OperationPlan::metadata->pythonClass))
-      throw DataException("Invalid operationplan field");
-    OperationPlan* opplan = static_cast<OperationPlan*>(opplanobject);
-
-    // Pick up the resource.
-    PyObject* resobject = PyDict_GetItemString(kwds, "resource");
-    if (!resobject) throw DataException("Missing resource field");
-    if (!PyObject_TypeCheck(resobject, Resource::metadata->pythonClass))
-      throw DataException("Invalid resource field");
-    Resource* res = static_cast<Resource*>(resobject);
-
-    // Find the load on the operationplan that has the same top resource
-    // and the same alternate.
-    // If multiple exist, we pick up the first one.
-    // If none is found, we throw a data error.
-    LoadPlan* ldpln = nullptr;
-    bool ok = false;
-    for (auto lditer = opplan->getOperation()->getLoads().begin();
-         lditer != opplan->getOperation()->getLoads().end() && !ok; ++lditer) {
-      if (lditer->getResource()->getTop() == res->getTop()) {
-        auto ldplniter = opplan->getLoadPlans();
-        while (!ok && (ldpln = ldplniter.next())) {
-          if ((lditer->getName().empty() &&
-               ldpln->getResource()->getTop() == res->getTop()) ||
-              (!lditer->getName().empty() &&
-               lditer->getName() == ldpln->getLoad()->getName())) {
-            ldpln->setResource(res);
-            ok = true;
-            PyObject* statusobject = PyDict_GetItemString(kwds, "status");
-            if (statusobject) {
-              PythonData status(statusobject);
-              ldpln->setStatus(status.getString());
-            }
-            break;
-          }
-        }
-      }
-    }
-
-    // Iterate over extra keywords, and set attributes.
+    // Find or create the C++ object
+    PythonDataValueDict atts(kwds);
+    Object* ldpln = reader(LoadPlan::metadata, atts);
     if (!ldpln) {
       Py_INCREF(Py_None);
       return Py_None;
-    } else {
-      PyObject *key, *value;
-      Py_ssize_t pos = 0;
-      while (PyDict_Next(kwds, &pos, &key, &value)) {
-        PythonData field(value);
-        PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
-        DataKeyword attr(PyBytes_AsString(key_utf8));
-        Py_DECREF(key_utf8);
-        if (!attr.isA(Tags::operationplan) && !attr.isA(Tags::resource) &&
-            !attr.isA(Tags::action) && !attr.isA(Tags::status)) {
-          const MetaFieldBase* fmeta =
-              ldpln->getType().findField(attr.getHash());
-          if (!fmeta && ldpln->getType().category)
-            fmeta = ldpln->getType().category->findField(attr.getHash());
-          if (fmeta)
-            // Update the attribute
-            fmeta->setField(ldpln, field);
-          else
-            ldpln->setProperty(attr.getName(), value);
-          ;
-        }
-      };
-      Py_INCREF(ldpln);
-      return static_cast<PyObject*>(ldpln);
     }
+    Py_INCREF(ldpln);
 
+    // Iterate over extra keywords, and set attributes.
+    PyObject *key, *value;
+    Py_ssize_t pos = 0;
+    while (PyDict_Next(kwds, &pos, &key, &value)) {
+      PythonData field(value);
+      PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+      DataKeyword attr(PyBytes_AsString(key_utf8));
+      Py_DECREF(key_utf8);
+      if (!attr.isA(Tags::operationplan) && !attr.isA(Tags::resource) &&
+          !attr.isA(Tags::action) && !attr.isA(Tags::status)) {
+        const MetaFieldBase* fmeta = ldpln->getType().findField(attr.getHash());
+        if (!fmeta && ldpln->getType().category)
+          fmeta = ldpln->getType().category->findField(attr.getHash());
+        if (fmeta)
+          // Update the attribute
+          fmeta->setField(ldpln, field);
+        else
+          ldpln->setProperty(attr.getName(), value);
+        ;
+      }
+    };
+    return static_cast<PyObject*>(ldpln);
   } catch (...) {
     PythonType::evalException();
     return nullptr;

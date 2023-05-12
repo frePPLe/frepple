@@ -24,6 +24,9 @@ BUFFER	3. item 2 @ factory	2021-01-01T00:00:00	10	10
 BUFFER	3. item 2 @ factory	2021-01-01T00:00:00	-10	0
 BUFFER	3. item 3 @ factory	2021-02-01T00:00:00	10	10
 BUFFER	3. item 3 @ factory	2021-02-01T00:00:00	-10	0
+BUFFER	4. item 1 @ factory	2021-02-02T04:48:00	2	2
+BUFFER	4. item 1 @ factory	2021-02-02T12:00:00	2	4
+BUFFER	4. item 1 @ factory	2021-02-04T00:00:00	2	6
 DEMAND	1. order 1	2021-01-01T00:00:00	10
 DEMAND	1. order 2	2021-01-01T00:00:00	10
 DEMAND	1. order 3	2021-02-01T00:00:00	10
@@ -93,6 +96,18 @@ RESOURCE	3. operator A	2021-01-01T00:00:00	-1	1
 RESOURCE	3. operator A	2021-01-01T00:00:00	-1	0
 RESOURCE	3. operator A	2021-01-21T00:00:00	1	1
 RESOURCE	3. operator A	2021-02-01T00:00:00	-1	0
+RESOURCE	4. operator A	2021-02-01T00:00:00	1	1
+RESOURCE	4. operator A	2021-02-04T00:00:00	-1	0
+RESOURCE	4. operator B	2021-02-01T00:00:00	1	1
+RESOURCE	4. operator B	2021-02-01T00:00:00	1	2
+RESOURCE	4. operator B	2021-02-02T04:48:00	-1	1
+RESOURCE	4. operator B	2021-02-02T12:00:00	-1	0
+RESOURCE	4. operator C	2021-02-01T00:00:00	1	1
+RESOURCE	4. operator C	2021-02-02T04:48:00	-1	0
+RESOURCE	4. operator D	2021-02-01T00:00:00	1	1
+RESOURCE	4. operator D	2021-02-02T12:00:00	-1	0
+RESOURCE	4. operator E	2021-02-01T00:00:00	1	1
+RESOURCE	4. operator E	2021-02-02T04:48:00	-1	0
 OPERATION	1. make item 1	2020-12-31T00:00:00	2021-01-01T00:00:00	10
 OPERATION	1. make item 1	2021-01-31T00:00:00	2021-02-01T00:00:00	10
 OPERATION	1. make item 2	2020-12-21T00:00:00	2021-01-01T00:00:00	10
@@ -106,6 +121,9 @@ OPERATION	2. make item 2	2021-01-22T00:00:00	2021-02-02T00:00:00	10
 OPERATION	3. make item 1	2020-12-31T00:00:00	2021-01-01T00:00:00	10
 OPERATION	3. make item 2	2020-12-21T00:00:00	2021-01-01T00:00:00	10
 OPERATION	3. make item 3	2021-01-21T00:00:00	2021-02-01T00:00:00	10
+OPERATION	4. make item 1	2021-02-01T00:00:00	2021-02-02T04:48:00	2	approved
+OPERATION	4. make item 1	2021-02-01T00:00:00	2021-02-02T12:00:00	2	approved
+OPERATION	4. make item 1	2021-02-01T00:00:00	2021-02-04T00:00:00	2	approved
 PROBLEM	overload	Resource '1. operator A' has capacity shortage of 1	2020-12-31T00:00:00 / 2021-01-01T00:00:00
 PROBLEM	overload	Resource '1. operator A' has capacity shortage of 2	2021-01-22T00:00:00 / 2021-02-01T00:00:00
 PROBLEM	overload	Resource '1. operator B' has capacity shortage of 1	2020-12-31T00:00:00 / 2021-01-01T00:00:00
@@ -115,6 +133,7 @@ PROBLEM	overload	Resource '2. operator A' has capacity shortage of 2	2021-01-22T
 PROBLEM	overload	Resource '2. operator B' has capacity shortage of 1	2020-12-31T00:00:00 / 2021-01-01T00:00:00
 PROBLEM	overload	Resource '2. operator B' has capacity shortage of 2	2021-01-22T00:00:00 / 2021-02-01T00:00:00
 PROBLEM	overload	Resource '3. operator A' has capacity shortage of 2	2020-12-21T00:00:00 / 2021-01-01T00:00:00
+PROBLEM	overload	Resource '4. operator B' has capacity shortage of 1	2021-02-01T00:00:00 / 2021-02-02T04:48:00
 PROBLEM	before current	Operation '1. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00
 PROBLEM	before current	Operation '1. make item 2' planned in the past	2020-12-21T00:00:00 / 2021-01-01T00:00:00
 PROBLEM	before current	Operation '2. make item 1' planned in the past	2020-12-31T00:00:00 / 2021-01-01T00:00:00

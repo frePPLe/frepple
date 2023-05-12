@@ -6,8 +6,8 @@
 function objectfmt(cellvalue, options, row)
 {
   var role = row['app'] + "/" + row['model']
-  return cellvalue + "<a href='" + url_prefix + "/detail/" + role
-    + "/" + admin_escape(cellvalue) + "/' onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right' role='"
+  return cellvalue + "<a href=\"" + url_prefix + "/detail/" + role
+    + "/" + admin_escape(cellvalue) + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right' role='"
     + role + "'></span></a>";
 }
 </script>

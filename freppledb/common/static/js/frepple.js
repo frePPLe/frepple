@@ -37,22 +37,14 @@ function breadcrumbs_reflow() {
 
 // A function to escape all special characters in a name.
 // We escape all special characters in the EXACT same way as the django admin does.
-function admin_escape(n, escape_quotes = false) {
+function admin_escape(n) {
   if (!n) return "";
-  if (!escape_quotes)
-    return n.replace(/_/g, '_5F')
-      .replace(/:/g, '_3A').replace(/\//g, '_2F').replace(/#/g, '_23').replace(/\?/g, '_3F')
-      .replace(/;/g, '_3B').replace(/@/g, '_40').replace(/&/g, '_26').replace(/=/g, '_3D')
-      .replace(/\+/g, '_2B').replace(/\$/g, '_24').replace(/,/g, '_2C').replace(/"/g, '_22')
-      .replace(/</g, '_3C').replace(/>/g, '_3E').replace(/%/g, '_25').replace(/\\/g, '_5C')
-      .replace(/\t/g, '%09');
-
   return n.replace(/_/g, '_5F')
     .replace(/:/g, '_3A').replace(/\//g, '_2F').replace(/#/g, '_23').replace(/\?/g, '_3F')
     .replace(/;/g, '_3B').replace(/@/g, '_40').replace(/&/g, '_26').replace(/=/g, '_3D')
     .replace(/\+/g, '_2B').replace(/\$/g, '_24').replace(/,/g, '_2C').replace(/"/g, '_22')
     .replace(/</g, '_3C').replace(/>/g, '_3E').replace(/%/g, '_25').replace(/\\/g, '_5C')
-    .replace(/\t/g, '%09').replace(/'/g, "&apos;")
+    .replace(/\t/g, '%09');
 }
 
 
@@ -447,8 +439,8 @@ jQuery.extend($.fn.fmatter, {
     if (options['colModel']['popup'] || rowdata.showdrilldown === '0')
       return $.jgrid.htmlEncode(cellvalue);
     return $.jgrid.htmlEncode(cellvalue)
-      + "<a href='" + url_prefix + "/data/" + options.colModel.role + "/" + admin_escape(cellvalue)
-      + "/change/' onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>";
+      + "<a href=\"" + url_prefix + "/data/" + options.colModel.role + "/" + admin_escape(cellvalue)
+      + "/change/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>";
   },
 
   detail: function (cellvalue, options, rowdata) {

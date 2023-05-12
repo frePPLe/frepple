@@ -52,7 +52,7 @@ function reslistfmt(cellvalue, options, row)
   var result = '';
   for (var i in cellvalue)
     result += cellvalue[i][0]
-      + "<a href='" + url_prefix + "/detail/input/resource/" + admin_escape(cellvalue[i][0]) + "/'>"
+      + "<a href=\"" + url_prefix + "/detail/input/resource/" + admin_escape(cellvalue[i][0]) + "/\">"
       + "<span class='ps-2 fa fa-caret-right'></span></a><br>";
   return result;
 }

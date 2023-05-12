@@ -496,11 +496,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['consumed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__lt=0&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__lt=0&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -508,11 +508,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumed_confirmed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumed_confirmed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['consumed_confirmed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__lt=0&amp;operationplan__status__in=confirmed,approved,completed&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__lt=0&amp;operationplan__status__in=confirmed,approved,completed&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -520,11 +520,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumed_proposed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumed_proposed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['consumed_proposed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__lt=0&amp;operationplan__status=proposed&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__lt=0&amp;operationplan__status=proposed&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -532,11 +532,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumedMO']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumedMO']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-           admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['consumedMO']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+           admin_escape(rowdata['buffer']) +
            "/?flowdate__gte=" + options['colModel']['startdate'] +
            "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-           "&amp;quantity__lt=0&amp;operationplan__type=MO&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           "&amp;quantity__lt=0&amp;operationplan__type=MO&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -544,11 +544,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumedMO_confirmed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumedMO_confirmed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['consumedMO_confirmed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__lt=0&amp;operationplan__status__in=confirmed,approved,completed&amp;operationplan__type=MO&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__lt=0&amp;operationplan__status__in=confirmed,approved,completed&amp;operationplan__type=MO&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -556,11 +556,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumedMO_proposed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumedMO_proposed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['consumedMO_proposed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__lt=0&amp;operationplan__status=proposed&amp;operationplan__type=MO&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__lt=0&amp;operationplan__status=proposed&amp;operationplan__type=MO&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -568,14 +568,14 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumedDO']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumedDO']]) + "<a href='{{request.prefix}}/data/input/distributionorder/consumed/" +
-              admin_escape(rowdata['item'],true) + "/" +
-              admin_escape(rowdata['location'],true) + "/" +
+           result += grid.formatNumber(cellvalue[id_by_field['consumedDO']]) + "<a href=\"{{request.prefix}}/data/input/distributionorder/consumed/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
               "?noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -583,14 +583,14 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumedDO_confirmed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumedDO_confirmed']]) + "<a href='{{request.prefix}}/data/input/distributionorder/consumed/" +
-              admin_escape(rowdata['item'],true) + "/" +
-              admin_escape(rowdata['location'],true) + "/" +
+           result += grid.formatNumber(cellvalue[id_by_field['consumedDO_confirmed']]) + "<a href=\"{{request.prefix}}/data/input/distributionorder/consumed/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
               "?status__in=confirmed,approved,completed&amp;noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -598,14 +598,14 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumedDO_proposed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumedDO_proposed']]) + "<a href='{{request.prefix}}/data/input/distributionorder/consumed/" +
-              admin_escape(rowdata['item'],true) + "/" +
-              admin_escape(rowdata['location'],true) + "/" +
+           result += grid.formatNumber(cellvalue[id_by_field['consumedDO_proposed']]) + "<a href=\"{{request.prefix}}/data/input/distributionorder/consumed/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
               "?status__in=proposed&amp;noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -613,14 +613,14 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumedSO']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumedSO']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/consumed/" +
-              admin_escape(rowdata['item'],true) + "/" +
-              admin_escape(rowdata['location'],true) + "/" +
+           result += grid.formatNumber(cellvalue[id_by_field['consumedSO']]) + "<a href=\"{{request.prefix}}/data/input/deliveryorder/consumed/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
               "?noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "&amp;orders=True" +"'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;orders=True\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -628,14 +628,14 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['consumedFcst']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumedFcst']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/consumed/" +
-              admin_escape(rowdata['item'],true) + "/" +
-              admin_escape(rowdata['location'],true) + "/" +
+           result += grid.formatNumber(cellvalue[id_by_field['consumedFcst']]) + "<a href=\"{{request.prefix}}/data/input/deliveryorder/consumed/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
               "?noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "&amp;orders=False" +"'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;orders=False\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -643,11 +643,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['produced']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['produced']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['produced']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__gte=0&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__gte=0&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -655,11 +655,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['produced_confirmed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['produced_confirmed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['produced_confirmed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__gte=0&amp;operationplan__status__in=confirmed,approved,completed&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__gte=0&amp;operationplan__status__in=confirmed,approved,completed&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -667,11 +667,11 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['produced_proposed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['produced_proposed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['produced_proposed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__gte=0&amp;operationplan__status=proposed&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__gte=0&amp;operationplan__status=proposed&amp;noautofilter\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -679,13 +679,13 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['producedMO']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['producedMO']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['producedMO']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
               "&amp;quantity__gte=0&amp;noautofilter&amp;operationplan__type=MO" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -693,13 +693,13 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['producedMO_confirmed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['producedMO_confirmed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['producedMO_confirmed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
               "&amp;quantity__gte=0&amp;operationplan__status__in=confirmed,approved,completed&amp;noautofilter&amp;operationplan__type=MO" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -707,13 +707,13 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['producedMO_proposed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['producedMO_proposed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['producedMO_proposed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
               "&amp;quantity__gte=0&amp;operationplan__status=proposed&amp;noautofilter&amp;operationplan__type=MO" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -721,13 +721,13 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['producedDO']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['producedDO']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['producedDO']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
               "&amp;quantity__gte=0&amp;noautofilter&amp;operationplan__type=DO" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -735,13 +735,13 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['producedDO_confirmed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['producedDO_confirmed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['producedDO_confirmed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
               "&amp;quantity__gte=0&amp;operationplan__status__in=confirmed,approved,completed&amp;noautofilter&amp;operationplan__type=DO" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -749,13 +749,13 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['producedDO_proposed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['producedDO_proposed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['producedDO_proposed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
               "&amp;quantity__gte=0&amp;operationplan__status=proposed&amp;noautofilter&amp;operationplan__type=DO" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "'\"&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -763,13 +763,13 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['producedPO']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['producedPO']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['producedPO']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
               "&amp;quantity__gte=0&amp;noautofilter&amp;operationplan__type=PO" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -777,13 +777,13 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['producedPO_confirmed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['producedPO_confirmed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['producedPO_confirmed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
               "&amp;quantity__gte=0&amp;noautofilter&amp;operationplan__type=PO&amp;operationplan__status__in=confirmed,approved,completed" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -791,13 +791,13 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['producedPO_proposed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['producedPO_proposed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
-              admin_escape(rowdata['buffer'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['producedPO_proposed']]) + "<a href=\"{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
+              admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
               "&amp;quantity__gte=0&amp;noautofilter&amp;operationplan__type=PO&amp;operationplan__status=proposed" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&operationplan__batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -805,12 +805,12 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['work_in_progress_mo']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['work_in_progress_mo']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
-              admin_escape(rowdata['item'],true) + "/" + admin_escape(rowdata['location'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['work_in_progress_mo']]) + "<a href=\"{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -818,12 +818,12 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['work_in_progress_mo_confirmed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['work_in_progress_mo_confirmed']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
-              admin_escape(rowdata['item'],true) + "/" + admin_escape(rowdata['location'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['work_in_progress_mo_confirmed']]) + "<a href=\"{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?operationplan__status__in=confirmed,approved,completed&amp;noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -831,12 +831,12 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['work_in_progress_mo_proposed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['work_in_progress_mo_proposed']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
-              admin_escape(rowdata['item'],true) + "/" + admin_escape(rowdata['location'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['work_in_progress_mo_proposed']]) + "<a href=\"{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?operationplan__status=proposed&amp;noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -844,12 +844,12 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['on_order_po']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['on_order_po']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
-              admin_escape(rowdata['item'],true) + "/" + admin_escape(rowdata['location'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['on_order_po']]) + "<a href=\"{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -857,14 +857,14 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['proposed_ordering']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['proposed_ordering']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/?noautofilter" +
-              "&amp;item=" + admin_escape(rowdata['item'],true) +
-              "&amp;location=" + admin_escape(rowdata['location'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['proposed_ordering']]) + "<a href=\"{{request.prefix}}/data/input/purchaseorder/?noautofilter" +
+              "&amp;item=" + admin_escape(rowdata['item']) +
+              "&amp;location=" + admin_escape(rowdata['location']) +
               "&amp;startdate__lt=" + options['colModel']['enddate'] +
               "&amp;startdate__gte=" + options['colModel']['startdate'] +
               "&amp;status=proposed" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -872,12 +872,12 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['on_order_po_confirmed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['on_order_po_confirmed']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
-              admin_escape(rowdata['item'],true) + "/" + admin_escape(rowdata['location'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['on_order_po_confirmed']]) + "<a href=\"{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?noautofilter&amp;operationplan__status__in=confirmed,approved,completed" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -885,12 +885,12 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['on_order_po_proposed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['on_order_po_proposed']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
-              admin_escape(rowdata['item'],true) + "/" + admin_escape(rowdata['location'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['on_order_po_proposed']]) + "<a href=\"{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?noautofilter&amp;operationplan__status=proposed" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -898,12 +898,12 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['in_transit_do']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['in_transit_do']]) + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
-              admin_escape(rowdata['item'],true) + "/" + admin_escape(rowdata['location'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['in_transit_do']]) + "<a href=\"{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?noautofilter" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -911,12 +911,12 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['in_transit_do_confirmed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['in_transit_do_confirmed']]) + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
-              admin_escape(rowdata['item'],true) + "/" + admin_escape(rowdata['location'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['in_transit_do_confirmed']]) + "<a href=\"{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?noautofilter&amp;operationplan__status__in=confirmed,approved,completed" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -924,12 +924,12 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['in_transit_do_proposed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['in_transit_do_proposed']]) + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
-              admin_escape(rowdata['item'],true) + "/" + admin_escape(rowdata['location'],true) +
+           result += grid.formatNumber(cellvalue[id_by_field['in_transit_do_proposed']]) + "<a href=\"{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?noautofilter&amp;operationplan__status=proposed" +
               (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -937,14 +937,14 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['open_orders']] != 0.0)
-        result += grid.formatNumber(cellvalue[id_by_field['open_orders']]) + "<a href='{{request.prefix}}/data/input/demand/" +
-            "?noautofilter&amp;item=" + admin_escape(rowdata['item'],true) +
-            "&amp;location=" + admin_escape(rowdata['location'],true) +
+        result += grid.formatNumber(cellvalue[id_by_field['open_orders']]) + "<a href=\"{{request.prefix}}/data/input/demand/" +
+            "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;due__gte=" +
             (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) +
             "&amp;due__lt=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+            "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -952,15 +952,15 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['net_forecast']] != 0.0)
-          result += grid.formatNumber(cellvalue[id_by_field['net_forecast']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
-          "?noautofilter&amp;item=" + admin_escape(rowdata['item'],true) +
-            "&amp;location=" + admin_escape(rowdata['location'],true) +
+          result += grid.formatNumber(cellvalue[id_by_field['net_forecast']]) + "<a href=\"{{request.prefix}}/data/input/deliveryorder/" +
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;orders=false" +
             "&amp;demand__due__gte=" +
             (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) +
             "&amp;demand__due__lt=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+            "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -968,14 +968,14 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['total_demand']] != 0.0)
-          result += grid.formatNumber(cellvalue[id_by_field['total_demand']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
-          "?noautofilter&amp;item=" + admin_escape(rowdata['item'],true) +
-            "&amp;location=" + admin_escape(rowdata['location'],true) +
+          result += grid.formatNumber(cellvalue[id_by_field['total_demand']]) + "<a href=\"{{request.prefix}}/data/input/deliveryorder/" +
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;demand__due__gte=" +
             (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) +
             "&amp;demand__due__lt=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+            "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -983,14 +983,14 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['order_backlog']] != 0.0)
-          result += grid.formatNumber(cellvalue[id_by_field['order_backlog']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
-          "?noautofilter&amp;item=" + admin_escape(rowdata['item'],true) +
-            "&amp;location=" + admin_escape(rowdata['location'],true) +
+          result += grid.formatNumber(cellvalue[id_by_field['order_backlog']]) + "<a href=\"{{request.prefix}}/data/input/deliveryorder/" +
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;orders=True" +
             "&amp;duedate__lt=" + options['colModel']['enddate'] +
             "&amp;enddate__gte=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+            "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -998,14 +998,14 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['forecast_backlog']] != 0.0)
-          result += grid.formatNumber(cellvalue[id_by_field['forecast_backlog']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
-          "?noautofilter&amp;item=" + admin_escape(rowdata['item'],true) +
-            "&amp;location=" + admin_escape(rowdata['location'],true) +
+          result += grid.formatNumber(cellvalue[id_by_field['forecast_backlog']]) + "<a href=\"{{request.prefix}}/data/input/deliveryorder/" +
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;orders=False" +
             "&amp;duedate__lt=" + options['colModel']['enddate'] +
             "&amp;enddate__gte=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+            "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -1013,13 +1013,13 @@ function crosses (cellvalue, options, rowdata)
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['total_backlog']] != 0.0)
-          result += grid.formatNumber(cellvalue[id_by_field['total_backlog']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/" +
-          "?noautofilter&amp;item=" + admin_escape(rowdata['item'],true) +
-            "&amp;location=" + admin_escape(rowdata['location'],true) +
+          result += grid.formatNumber(cellvalue[id_by_field['total_backlog']]) + "<a href=\"{{request.prefix}}/data/input/deliveryorder/" +
+          "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
+            "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;duedate__lt=" + options['colModel']['enddate'] +
             "&amp;enddate__gte=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
-            "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+            "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;

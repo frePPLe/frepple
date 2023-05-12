@@ -219,8 +219,8 @@ function reslistfmt(cellvalue, options, row)
   result = '';
   for (var i in cellvalue)
     result += cellvalue[i]
-      + "<a href='" + url_prefix + "/detail/input/resource/" + admin_escape(cellvalue[i])
-      + "/' onclick='event.stopPropagation()'>"
+      + "<a href=\"" + url_prefix + "/detail/input/resource/" + admin_escape(cellvalue[i])
+      + "/\" onclick='event.stopPropagation()'>"
       + "<span class='ps-2 fa fa-caret-right'></span>"
       + "</a><br>";
   return result;

@@ -19,8 +19,8 @@ function probfmt(cellvalue, options, row)
     var role = 'input/demand';
   else
     var role = 'input/operation';
-  return $.jgrid.htmlEncode(cellvalue) + "<a href='" + url_prefix + "/detail/" + role
-     + "/" + admin_escape(cellvalue) + "/' onclick='event.stopPropatation()'><span class='ps-2 context fa fa-caret-right'></span></a>";
+  return $.jgrid.htmlEncode(cellvalue) + "<a href=\"" + url_prefix + "/detail/" + role
+     + "/" + admin_escape(cellvalue) + "/\" onclick='event.stopPropatation()'><span class='ps-2 context fa fa-caret-right'></span></a>";
 }
 
 </script>

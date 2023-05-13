@@ -198,17 +198,22 @@ class AuthenticatedMiddleware(BaseMiddleware):
     """
 
     async def __call__(self, scope, receive, send):
+        scope["response_headers"] = [
+            (b"Access-Control-Allow-Origin", b"http://localhost:8000"),
+            (b"Access-Control-Allow-Methods", b"GET, POST, OPTIONS"),
+            (b"Server", b"frepple"),
+            (b"Access-Control-Allow-Credentials", b"true"),
+            (
+                b"Access-Control-Allow-Headers",
+                b"authorization, content-type, x-requested-with",
+            ),
+        ]
         if scope["method"] == "OPTIONS":
             await send(
                 {
                     "type": "http.response.start",
-                    "status": 200,
-                    "headers": [
-                        (
-                            b"Content-Security-Policy",
-                            b"frame-ancestors 'self' https://localhost:8000",
-                        )
-                    ],
+                    "status": 204,
+                    "headers": scope["response_headers"],
                 }
             )
             return await send(
@@ -219,11 +224,12 @@ class AuthenticatedMiddleware(BaseMiddleware):
                 }
             )
         if "user" not in scope or not scope["user"].is_authenticated:
+            scope["response_headers"].append((b"Content-Type", b"text/plain"))
             await send(
                 {
                     "type": "http.response.start",
                     "status": 401,
-                    "headers": [(b"Content-Type", b"text/plain")],
+                    "headers": scope["response_headers"],
                 }
             )
             return await send(

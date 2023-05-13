@@ -21,6 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import json
+
 from channels.generic.http import AsyncHttpConsumer
 
 
@@ -37,96 +39,69 @@ class ForecastService(AsyncHttpConsumer):
         """
 
     async def handle(self, body):
-        print("pppp", self.scope)
+        import frepple
+
         if self.scope["method"] != "POST":
+            self.scope["response_headers"].append((b"Content-Type", b"text/html"))
             await self.send_response(
                 401,
                 (self.msgtemplate % "Only POST requests allowed").encode("utf-8"),
-                headers=[(b"Content-Type", b"text/plain")],
+                headers=self.scope["response_headers"],
             )
             return
 
-        await self.send_response(
-                200,
-                (self.msgtemplate % "OK").encode("utf-8"),
-                headers=[(b"Content-Type", b"text/plain")],
+        # Check permissions
+        if not self.scope["user"].has_perm("forecast.change_forecast"):
+            self.scope["response_headers"].append((b"Content-Type", b"text/html"))
+            await self.send_response(
+                403,
+                (self.msgtemplate % "Permission denied").encode("utf-8"),
+                headers=self.scope["response_headers"],
             )
+            return
 
-        # # Check permissions
-        # if not request.user.has_perm("forecast.add_forecastplan"):
-        #     return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
+        data = json.loads(body.decode("utf-8"))
+        errors = []
+        print("ppppp", data)
 
-        # data = json.loads(request.body.decode(request.encoding))
-        # errors = []
+        # Validate
+        try:
+            item = frepple.item(name=data["item"], action="C")
+        except:
+            item = None
+            errors.append(b"Item not found")
+        try:
+            location = frepple.location(name=data["location"], action="C")
+        except:
+            location = None
+            errors.append(b"Location not found")
+        try:
+            customer = frepple.customer(name=data["customer"], action="C")
+        except:
+            customer = None
+            errors.append(b"Customer not found")
 
-        # # Validate item
-        # item = None
-        # try:
-        #     itemname = data.get("item", None)
-        #     if itemname:
-        #         item = Item.objects.all().using(request.database).get(pk=itemname)
-        #     else:
-        #         item = Item.objects.all().using(request.database).get(lvl=0)
-        # except Item.DoesNotExist:
-        #     errors.append("Item not found")
-        # except Item.MultipleObjectsReturned:
-        #     errors.append("Multiple items found")
+        # Find forecast
+        if item and location and customer:
+            fcst = None
+            pass
+            # try:    TODO
+            #     fcst = (
+            #         Forecast.objects.all()
+            #         .using(request.database)
+            #         .get(item=item, location=location, customer=customer)
+            #     )
+            # except Forecast.DoesNotExist:
+            #     fcst = None
+        else:
+            fcst = None
 
-        # # Validate location
-        # location = None
-        # try:
-        #     locationname = data.get("location", None)
-        #     if locationname:
-        #         location = (
-        #             Location.objects.all().using(request.database).get(pk=locationname)
-        #         )
-        #     else:
-        #         location = Location.objects.all().using(request.database).get(lvl=0)
-        # except Location.DoesNotExist:
-        #     errors.append("Location not found")
-        # except Location.MultipleObjectsReturned:
-        #     errors.append("Multiple locations found")
-
-        # # Validate customer
-        # customer = None
-        # try:
-        #     customername = data.get("customer", None)
-        #     if customername:
-        #         customer = (
-        #             Customer.objects.all().using(request.database).get(pk=customername)
-        #         )
-        #     else:
-        #         customer = Customer.objects.all().using(request.database).get(lvl=0)
-        # except Customer.DoesNotExist:
-        #     errors.append("Customer not found")
-        # except Customer.MultipleObjectsReturned:
-        #     errors.append("Multiple customers found")
-
-        # # Find forecast
-        # try:
-        #     fcst = (
-        #         Forecast.objects.all()
-        #         .using(request.database)
-        #         .get(item=item, location=location, customer=customer)
-        #     )
-        # except Forecast.DoesNotExist:
-        #     fcst = None
-
-        # simulate = False  # data.get("recalculate", False) No simulations for now
-
-        # # Save all changes to the database
-        # session = requests.Session()
-        # with transaction.atomic(using=request.database):
-
-        #     if fcst:
-        #         # Update forecast method
-        #         mthd = data.get("forecastmethod", None)
-        #         if mthd:
-        #             if not request.user.has_perm("forecast.change_forecast"):
-        #                 errors.append(force_str(_("Permission denied")))
-        #             else:
-        #                 fcst.method = mthd
-        #                 fcst.save(using=request.database)
+        # Update forecast method
+        mthd = data.get("forecastmethod", None)
+        if fcst and mthd and self.scope["user"].has_perm("forecast.change_forecast"):
+            fcst.method = mthd
+            print("updated forecast method to mthd", fcst.mthd)
+            # TODO fcst.save(using=self.scope["database"])
 
         #     # Update forecast values
         #     if "buckets" in data:
@@ -209,10 +184,13 @@ class ForecastService(AsyncHttpConsumer):
         #             else:
         #                 errors.append("Invalid comment data")
 
-        # if errors:
-        #     logger.error("Error saving forecast updates: %s" % "".join(errors))
-        #     return HttpResponseServerError(
-        #         "Error saving forecast updates: %s" % "<br/>".join(errors)
-        #     )
-        # else:
-        #     return HttpResponse(content="OK")
+        self.scope["response_headers"].append((b"Content-Type", b"application/json"))
+        if errors:
+            answer = {b"errors": errors}
+        else:
+            answer = {"OK": 1}
+        await self.send_response(
+            500 if errors else 200,
+            json.dumps(answer).encode("utf-8"),
+            headers=self.scope["response_headers"],
+        )

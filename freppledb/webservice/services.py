@@ -41,26 +41,28 @@ class StopService(AsyncHttpConsumer):
         """
 
     async def handle(self, body):
+        self.scope["response_headers"].append((b"Content-Type", b"text/html"))
         if self.scope["method"] != "POST":
             return await self.send_response(
                 401,
                 (self.msgtemplate % "Only POST requests allowed").encode("utf-8"),
-                headers=[(b"Content-Type", b"text/html")],
+                headers=self.scope["response_headers"],
             )
         else:
             # TODO wait for lock?
             await self.send_response(
                 404,
                 (self.msgtemplate % "Shutting down").encode("utf-8"),
-                headers=[(b"Content-Type", b"text/html")],
+                headers=self.scope["response_headers"],
             )
             WebService.stop()
 
 
 class PingService(AsyncHttpConsumer):
     async def handle(self, body):
+        self.scope["response_headers"].append((b"Content-Type", b"text/plain"))
         await self.send_response(
             200,
             b"OK",
-            headers=[(b"Content-Type", b"text/html")],
+            headers=self.scope["response_headers"],
         )

@@ -1604,6 +1604,7 @@ class Forecast : public Demand, public ForecastBase {
  private:
   static PyObject* inspectPython(PyObject*, PyObject*);
   static PyObject* setValuePython(PyObject*, PyObject*, PyObject*);
+  static PyObject* setValuePython2(PyObject*, PyObject*, PyObject*);
   static PyObject* getValuePython(PyObject*, PyObject*, PyObject*);
   static PyObject* saveForecast(PyObject*, PyObject*);
 

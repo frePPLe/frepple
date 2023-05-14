@@ -146,6 +146,8 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
    */
   void updateSort();
 
+  static map<string, CalendarBucket*> names;
+
  public:
   /* Default constructor. */
   CalendarBucket() { initType(metadata); }
@@ -253,6 +255,18 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
     return days == 127 && !starttime && endtime == Duration(86400L);
   }
 
+  string CalendarBucket::getName() const;
+
+  void setName(const string& nm) {
+    auto f = names.find(nm);
+    if (f == names.end()) names[nm] = this;
+  }
+
+  static inline CalendarBucket* getByName(const string& nm) {
+    auto f = names.find(nm);
+    return f != names.end() ? f->second : nullptr;
+  }
+
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaCategory* metacategory;
   static const MetaClass* metadata;
@@ -274,6 +288,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
                                       &Cls::setCalendar,
                                       DONT_SERIALIZE + PARENT);
     HasSource::registerFields<Cls>(m);
+    m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
   }
 
  public:

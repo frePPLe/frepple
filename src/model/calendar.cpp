@@ -34,6 +34,7 @@ const MetaCategory* Calendar::metadata;
 const MetaClass* CalendarDefault::metadata;
 const MetaCategory* CalendarBucket::metacategory;
 const MetaClass* CalendarBucket::metadata;
+map<string, CalendarBucket*> CalendarBucket::names;
 
 int Calendar::initialize() {
   // Initialize the metadata
@@ -723,6 +724,15 @@ PyObject* CalendarEventIterator::iternext() {
   else
     --eventiter;
   return result;
+}
+
+string CalendarBucket::getName() const {
+  // We don't store the name field on the calendar bucket.
+  // We just do an inefficient linear loop here (since you won't call this
+  // method too often anyway).
+  for (auto f : names)
+    if (f.second == this) return f.first;
+  return "";
 }
 
 }  // namespace frepple

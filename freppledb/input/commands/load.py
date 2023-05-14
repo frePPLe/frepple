@@ -509,13 +509,13 @@ class loadCalendarBuckets(LoadTask):
                         SELECT
                         calendar_id, startdate, enddate, priority, value,
                         sunday, monday, tuesday, wednesday, thursday, friday, saturday,
-                        starttime, endtime, source
+                        starttime, endtime, source, null
                         FROM calendarbucket %s
                         UNION
                         SELECT
                         bucket_id calendar_id, startdate, enddate, 10 priority , 0 as value,
                         't' sunday,'t' monday,'t' tuesday,'t' wednesday,'t' thurday,'t' friday,'t' saturday,
-                        time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source
+                        time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source, name
                         FROM common_bucketdetail
                         ORDER BY calendar_id, startdate desc
                         """
@@ -560,6 +560,8 @@ class loadCalendarBuckets(LoadTask):
                             b.endtime = (
                                 i[13].hour * 3600 + i[13].minute * 60 + i[13].second + 1
                             )
+                        if i[15]:
+                            b.name = i[15]
                     except Exception as e:
                         logger.error("**** %s ****" % e)
                 logger.info(

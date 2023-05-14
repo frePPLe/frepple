@@ -21,6 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from datetime import date, datetime
+from dateutil.parser import parse
 import json
 
 from channels.generic.http import AsyncHttpConsumer
@@ -62,7 +64,6 @@ class ForecastService(AsyncHttpConsumer):
 
         data = json.loads(body.decode("utf-8"))
         errors = []
-        print("ppppp", data)
 
         # Validate
         try:
@@ -103,46 +104,48 @@ class ForecastService(AsyncHttpConsumer):
             print("updated forecast method to mthd", fcst.mthd)
             # TODO fcst.save(using=self.scope["database"])
 
-        #     # Update forecast values
-        #     if "buckets" in data:
-        #         if not request.user.has_perm("forecast.change_forecast"):
-        #             errors.append(force_str(_("Permission denied")))
-        #         else:
-        #             # Build a list of buckets
-        #             buckets = {}
-        #             horizonbuckets = data.get("horizonbuckets", None)
-        #             for b in BucketDetail.objects.using(request.database).filter(
-        #                 bucket=horizonbuckets
-        #             ):
-        #                 buckets[b.name] = (b.startdate, b.enddate)
-
-        #             if not buckets:
-        #                 errors.append("No forecast buckets found")
-        #             else:
-        #                 # Process the updates
-        #                 for bckt in data["buckets"]:
-        #                     if bckt["bucket"] in buckets:
-        #                         data = {
-        #                             "startdate": buckets[bckt["bucket"]][0],
-        #                             "enddate": buckets[bckt["bucket"]][1],
-        #                             "database": request.database,
-        #                             "forecast": None,
-        #                             "item": item.name,
-        #                             "location": location.name,
-        #                             "customer": customer.name,
-        #                             "session": session,
-        #                         }
-        #                         for key, val in bckt.items():
-        #                             if key not in (
-        #                                 "startdate",
-        #                                 "enddate",
-        #                                 "bucket",
-        #                                 "item",
-        #                                 "location",
-        #                                 "customer",
-        #                             ):
-        #                                 data[key] = float(val)
-        #                         Forecast.updatePlan(**data)
+        # Update forecast values
+        if (
+            "buckets" in data
+            and item
+            and location
+            and customer
+            and self.scope["user"].has_perm("forecast.change_forecast")
+        ):
+            for bckt in data["buckets"]:
+                try:
+                    args = {
+                        "item": item,
+                        "location": location,
+                        "customer": customer,
+                    }
+                    bucket = bckt.get("bucket", None)
+                    if bucket:
+                        args["bucket"] = bucket
+                    startdate = bckt.get("startdate", None)
+                    if startdate:
+                        # Guess! the date format, using Month-Day-Year as preference
+                        # to resolve ambiguity.
+                        # This default style is also the default datestyle in Postgres
+                        # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
+                        args["startdate"] = parse(
+                            startdate, yearfirst=False, dayfirst=False
+                        )
+                    enddate = bckt.get("enddate", None)
+                    if enddate:
+                        # Guess! the date format, using Month-Day-Year as preference
+                        # to resolve ambiguity.
+                        # This default style is also the default datestyle in Postgres
+                        # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
+                        args["enddate"] = parse(
+                            enddate, yearfirst=False, dayfirst=False
+                        )
+                    for key, val in bckt.items():
+                        if key not in ("bucket", "startdate", "enddate"):
+                            args[key] = float(val)
+                    frepple.setForecast(**args)
+                except Exception as e:
+                    errors.append(b"Error processing %s" % e)
 
         #     if not simulate:
         #         # Save a new comment

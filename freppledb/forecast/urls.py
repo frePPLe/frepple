@@ -69,5 +69,5 @@ urlpatterns = [
 
 
 svcpatterns = [
-    re_path(r"^svc/forecast/detail/$", services.ForecastService.as_asgi()),
+    re_path(r"^forecast/detail/$", services.ForecastService.as_asgi()),
 ]

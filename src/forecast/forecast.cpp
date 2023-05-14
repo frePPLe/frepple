@@ -96,6 +96,9 @@ int Forecast::initialize() {
   PythonInterpreter::registerGlobalMethod(
       "resetMeasures", ForecastMeasure::resetMeasuresPython, METH_VARARGS,
       "Reset the specified measures");
+  PythonInterpreter::registerGlobalMethod(
+      "setForecast", Forecast::setValuePython2, METH_VARARGS,
+      "Reset the specified measures");
 
   // Initialize the Python class
   PythonType& x = FreppleClass<Forecast, Demand>::getPythonType();
@@ -1399,6 +1402,24 @@ PyObject* Forecast::setValuePython(PyObject* self, PyObject* args,
     PythonType::evalException();
     return nullptr;
   }
+  return Py_BuildValue("");
+}
+
+PyObject* Forecast::setValuePython2(PyObject* self, PyObject* args,
+                                    PyObject* kwdict) {
+  // Args bucket, startdate, enddate, item, location, customer, measures
+  // if (!PyArg_ParseTuple(args, "hs|sss:setForecast", &mode, &pymeasure1,
+  //                       &pymeasure2, &pymeasure3, &pymeasure4))
+  //   return nullptr;
+  logger << "TODO!!!!" << endl;
+  Py_BEGIN_ALLOW_THREADS;
+  try {
+  } catch (...) {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return nullptr;
+  }
+  Py_END_ALLOW_THREADS;
   return Py_BuildValue("");
 }
 

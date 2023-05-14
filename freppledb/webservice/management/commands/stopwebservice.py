@@ -109,7 +109,7 @@ class Command(BaseCommand):
                 conn = HTTPConnection(server, timeout=10)
                 conn.request(
                     "POST",
-                    "/svc/stop/force/" if options["force"] else "/svc/stop/",
+                    "/stop/force/" if options["force"] else "/stop/",
                     headers={
                         "Authorization": "Bearer %s"
                         % getWebserviceAuthorization(

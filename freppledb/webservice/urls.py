@@ -28,7 +28,7 @@ from .services import StopService, PingService
 autodiscover = True
 
 svcpatterns = [
-    re_path(r"^svc/stop/$", StopService.as_asgi()),
-    re_path(r"^svc/stop/force/$", StopService.as_asgi()),  # No difference
-    re_path(r"^svc/ping/$", PingService.as_asgi()),
+    re_path(r"^stop/$", StopService.as_asgi()),
+    re_path(r"^stop/force/$", StopService.as_asgi()),  # No difference
+    re_path(r"^ping/$", PingService.as_asgi()),
 ]

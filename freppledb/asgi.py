@@ -199,7 +199,6 @@ class AuthenticatedMiddleware(BaseMiddleware):
 
     async def __call__(self, scope, receive, send):
         scope["response_headers"] = [
-            (b"Access-Control-Allow-Origin", b"http://localhost:8000"),
             (b"Access-Control-Allow-Methods", b"GET, POST, OPTIONS"),
             (b"Server", b"frepple"),
             (b"Access-Control-Allow-Credentials", b"true"),
@@ -208,6 +207,12 @@ class AuthenticatedMiddleware(BaseMiddleware):
                 b"authorization, content-type, x-requested-with",
             ),
         ]
+        for hdr in scope["headers"]:
+            if hdr[0] == b"origin":
+                scope["response_headers"].append(
+                    (b"Access-Control-Allow-Origin", hdr[1])
+                )
+                break
         if scope["method"] == "OPTIONS":
             await send(
                 {
@@ -239,7 +244,25 @@ class AuthenticatedMiddleware(BaseMiddleware):
                     "more_body": False,
                 }
             )
-        return await super().__call__(scope, receive, send)
+        try:
+            return await super().__call__(scope, receive, send)
+        except Exception as e:
+            print("Error:", e)
+            scope["response_headers"].append((b"Content-Type", b"text/plain"))
+            await send(
+                {
+                    "type": "http.response.start",
+                    "status": 500,
+                    "headers": scope["response_headers"],
+                }
+            )
+            return await send(
+                {
+                    "type": "http.response.body",
+                    "body": b"Server error",
+                    "more_body": False,
+                }
+            )
 
 
 application = ProtocolTypeRouter(

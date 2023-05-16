@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2023-03-10 17:08+0100\n"
+"PO-Revision-Date: 2023-05-16 15:51+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: klaus\n"
 "Language: de\n"
@@ -69,19 +69,19 @@ msgstr "Speichern"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:338
 msgid "Return to page"
-msgstr ""
+msgstr "Zurück"
 
 #: common/static/js/frepple.js:562 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:406
 msgid "days early"
-msgstr "Tage früh"
+msgstr "Tage zu früh"
 
 #: common/static/js/frepple.js:564 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:408
 msgid "on time"
-msgstr "pünktlich"
+msgstr "Pünktlich"
 
 #: common/static/js/frepple.js:567 common/static/js/frepple.js:569
 #: common/static/js/frepple.min.js:11
@@ -120,7 +120,7 @@ msgstr "Fixierte Spalten"
 #: forecast/static/forecast/src/forecast.js:919
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Customize"
-msgstr "Individuallisieren"
+msgstr "Anpassen"
 
 #: common/static/js/frepple.js:873 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:945
@@ -149,13 +149,13 @@ msgstr "Zurücksetzen"
 #: common/static/js/frepple.js:1318 common/static/js/frepple.js:1350
 #: common/static/js/frepple.min.js:11
 msgid "Export CSV or Excel file"
-msgstr "CSV- oder Excel-Datei exportieren"
+msgstr "Export als CSV oder Excel"
 
 #: common/static/js/frepple.js:1222 common/static/js/frepple.js:1272
 #: common/static/js/frepple.js:1321 common/static/js/frepple.js:1353
 #: common/static/js/frepple.min.js:11
 msgid "Export format"
-msgstr "Export Format"
+msgstr "Export-Format"
 
 #: common/static/js/frepple.js:1223 common/static/js/frepple.js:1273
 #: common/static/js/frepple.min.js:11
@@ -166,7 +166,7 @@ msgstr "Zu exportierende Szenarien"
 #: common/static/js/frepple.js:1323 common/static/js/frepple.js:1356
 #: common/static/js/frepple.min.js:11
 msgid "Spreadsheet list"
-msgstr "Tabelle Liste"
+msgstr "Tabellen Liste"
 
 #: common/static/js/frepple.js:1231 common/static/js/frepple.js:1283
 #: common/static/js/frepple.js:1324 common/static/js/frepple.js:1358
@@ -178,7 +178,7 @@ msgstr "CSV Liste"
 #: common/static/js/frepple.js:1327 common/static/js/frepple.js:1361
 #: common/static/js/frepple.min.js:11
 msgid "Data source URL"
-msgstr "Datenquellen-URL"
+msgstr "URL Datenquelle"
 
 #: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
 #: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
@@ -204,7 +204,8 @@ msgstr "Daten löschen"
 #: common/static/js/frepple.js:1614 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr "Sie sind im Begriff %s Objekte und alle Datensätze zu löschen!"
+msgstr ""
+"Sie sind im Begriff %s Objekte und ALLE ZUEGHÖRIGEN DATENSÄTZE zu löschen!"
 
 #: common/static/js/frepple.js:1617 common/static/js/frepple.js:1666
 #: common/static/js/frepple.js:2281 common/static/js/frepple.js:2371
@@ -248,7 +249,7 @@ msgstr "und"
 
 #: common/static/js/frepple.js:2103 common/static/js/frepple.min.js:11
 msgid "Click ok to confirm deleting the favorite"
-msgstr "Klicken Sie auf OK, um das Löschen des Favoriten zu bestätigen"
+msgstr "Klicken Sie OK, um das Löschen des Favoriten zu bestätigen"
 
 #: common/static/js/frepple.js:2288 common/static/js/frepple.js:2459
 #: common/static/js/frepple.min.js:11
@@ -275,7 +276,7 @@ msgstr "Wiederholen"
 
 #: common/static/js/frepple.js:2661 common/static/js/frepple.min.js:11
 msgid "Customize a dashboard row"
-msgstr "Dashboard Reihe anpassen"
+msgstr "Dashboard-Zeile anpassen"
 
 #: common/static/js/frepple.js:2667 common/static/js/frepple.min.js:11
 msgid "Name"
@@ -287,7 +288,7 @@ msgstr "Layout"
 
 #: common/static/js/frepple.js:2679 common/static/js/frepple.min.js:11
 msgid "Single column"
-msgstr "Eine Spalte"
+msgstr "Einzelne Spalte"
 
 #: common/static/js/frepple.js:2682 common/static/js/frepple.min.js:11
 msgid "Two columns"
@@ -311,7 +312,7 @@ msgstr "Füge neue unterhalb hinzu"
 
 #: common/static/js/frepple.js:2719 common/static/js/frepple.min.js:11
 msgid "Add new above"
-msgstr "Fügen Sie neue oberhalb hinzu"
+msgstr "Füge neue oberhalb hinzu"
 
 #: common/static/js/frepple.js:2720 common/static/js/frepple.min.js:11
 msgid "Delete"
@@ -332,19 +333,20 @@ msgstr "Installierte Anwendungen"
 
 #: common/static/js/frepple.js:3036 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
-msgstr "CSV- oder Excel-Datei importieren"
+msgstr "CSV oder Excel-Datei importieren"
 
 #: common/static/js/frepple.js:3042 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
-msgstr "Laden Excel-Datei oder CSV-formatierte Textdatei."
+msgstr "Laden einer Excel- oder CSV-Datei."
 
 #: common/static/js/frepple.js:3043 common/static/js/frepple.min.js:11
 msgid "The first row should contain the field names."
-msgstr "Die erste Zeile sollte Feldnamen enthalten."
+msgstr "Die erste Zeile muss Feldnamen enthalten."
 
 #: common/static/js/frepple.js:3045 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr "Löschen Sie zuerst alle vorhandenen Datensätze UND ALLE RELATED TABLES"
+msgstr ""
+"Löschen Sie zuerst alle vorhandenen Datensätze UND ALLE ZUGEHÖRIGEN TABELLEN"
 
 #: common/static/js/frepple.js:3052 common/static/js/frepple.min.js:11
 msgid "files selected"
@@ -352,19 +354,19 @@ msgstr "Ausgewählte Dateien"
 
 #: common/static/js/frepple.js:3067 common/static/js/frepple.min.js:11
 msgid "Data file"
-msgstr "Daten File"
+msgstr "Daten-Datei"
 
 #: common/static/js/frepple.js:3076 common/static/js/frepple.min.js:11
 msgid "Import"
-msgstr "Importiere"
+msgstr "Importieren"
 
 #: common/static/js/frepple.js:3077 common/static/js/frepple.min.js:11
 msgid "Cancel Import"
-msgstr "Abbruch Importieren"
+msgstr "Abbruch des Imports"
 
 #: common/static/js/frepple.js:3146 common/static/js/frepple.min.js:11
 msgid "Importing..."
-msgstr "Importieren..."
+msgstr "Importiere..."
 
 #: common/static/js/frepple.js:3165 common/static/js/frepple.min.js:11
 msgid "Canceled"
@@ -373,7 +375,7 @@ msgstr "Abgebrochen"
 #: common/static/js/frepple.js:3220 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "%s records processed"
-msgstr "%s verarbeitete Datensätze"
+msgstr "%s Datensätze verarbeitet"
 
 #: common/static/js/frepple.js:3954 common/static/js/frepple.min.js:11
 msgid "Follow"
@@ -385,7 +387,7 @@ msgstr "Aktualisieren"
 
 #: common/static/js/frepple.js:4002 common/static/js/frepple.min.js:11
 msgid "Add followers"
-msgstr ""
+msgstr "Füge Follower hinzu"
 
 #: common/static/js/frepple.min.js:11
 msgid "OR"
@@ -403,7 +405,7 @@ msgstr "Bestandsstatus"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:29
 msgid "onhand at lead time"
-msgstr "zur Vorlaufzeit zur Hand"
+msgstr "auf Lager in der Lead-time"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
@@ -416,4 +418,4 @@ msgstr "Aktueller Bestand"
 #: planningboard/static/planningboard/src/planningboard.js:876
 #: planningboard/static/planningboard/src/planningboard.js:877
 msgid "hours"
-msgstr "Std"
+msgstr "Stunden"

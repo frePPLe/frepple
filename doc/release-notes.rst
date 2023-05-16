@@ -17,6 +17,8 @@ Oh-oh... Something exciting is coming up!
 
 .. rubric:: User interface
 
+- | Updated German translations have been contributed by Thomas Stöckel. Vielen Dank!
+
 - | Bug fix: 7.2 introduced some situations where some reports in scenarios
     mix data from the default scenario.
 

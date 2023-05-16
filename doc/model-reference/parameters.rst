@@ -46,8 +46,13 @@ plan.administrativeLeadtime  | Specifies an administrative lead time in days.
                              | FrePPLe will plan the sales orders this amount of time ahead of their
                                due date. This creates extra safety in the delivery schedule and also
                                moves all material and capacity needs early.
-                             | Default value: 0 days
-                             | Accepted values : Any positive decimal number.
+
+                             | The default value is 0 days, which is a just-in-time plan, where we try
+                               to plan all demands in **backward scheduling mode** from their due date.
+
+                             | Setting this parameter to a high value (eg 999) will result in a plan
+                               where everything is planned ASAP in **forward scheduling mode**.
+
 plan.autoFenceOperations     | The number of days the solver should wait for a confirmed
                                replenishment before generating a proposed order.
                              | Default: 999 (wait indefinitely)

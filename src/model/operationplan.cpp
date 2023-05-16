@@ -2271,7 +2271,7 @@ OperationPlan::InterruptionIterator::next() {
       // Becoming available after unavailable period
       status = true;
       end = (curdate > opplan->getEnd()) ? opplan->getEnd() : curdate;
-      return this;
+      if (start != end) return this;
     } else if (!available && status) {
       // Becoming unavailable after available period
       status = false;

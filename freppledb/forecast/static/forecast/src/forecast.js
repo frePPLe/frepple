@@ -387,8 +387,6 @@ function forecastController($scope, $http, $q, $location) {
       }
     });
 
-
-    var bucketsPerYear = {}, a;
     //count the number of buckets for each year in detaildata
     for (let something in $scope.detaildata.forecast) {
       detailbucketslist[$scope.detaildata.forecast[something].bucket] = something;
@@ -1174,6 +1172,7 @@ function forecastController($scope, $http, $q, $location) {
     $scope.measure = $scope.preferences.favorites[f]['measure'];
     $scope.sequence = $scope.preferences.favorites[f]['sequence'];
     $scope.rows = $scope.preferences.favorites[f]['rows'];
+    $scope.grid.setPristine = true;
   }
   $scope.openfavorite = openfavorite;
 }

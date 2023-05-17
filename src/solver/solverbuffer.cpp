@@ -360,6 +360,10 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             Duration repeat_early;
             Date prev_date = Date::infiniteFuture;
             short prev_stuck = 0;
+
+            // Detect whether any operation did hit its size-maximum limit
+            data->hitMaxSize = false;
+
             do {
               // Create supply
               data->state->curBuffer = const_cast<Buffer*>(b);
@@ -442,8 +446,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             if (data->state->a_qty > ROUNDING_ERROR &&
                 data->state->a_qty < -theDelta - ROUNDING_ERROR &&
                 ((getAllowSplits() && !data->safety_stock_planning) ||
-                 data->state->a_qty ==
-                     b->getProducingOperation()->getSizeMaximum()))
+                 data->hitMaxSize))
               theDelta += data->state->a_qty;
             else
               loop = false;

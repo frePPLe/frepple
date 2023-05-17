@@ -15,6 +15,9 @@ Oh-oh... Something exciting is coming up!
 - | Bug fix: Fix corner case with the tools-per-piece feature when the tool
     availability conflicts with the operation size minimum.
 
+- | Bug fix: When operation maximum size is specified on buffers with alternate
+    replenishment operations, some demands could remain partially unplanned.
+
 .. rubric:: User interface
 
 - | Updated German translations have been contributed by Thomas Stöckel. Vielen Dank!

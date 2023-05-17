@@ -994,6 +994,8 @@ class SolverCreate : public Solver {
      * This is then used to replan at a different date. */
     Duration hitMaxEarly;
 
+    bool hitMaxSize = false;
+    
     /* Simplistic flag to trace the costs being considered for alternate
      * selection. */
     bool logcosts = false;  // SET TO TRUE AND RECOMPILE TO ACTIVATE EXTRA

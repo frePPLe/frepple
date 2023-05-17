@@ -678,9 +678,9 @@ void SolverCreate::solve(const Operation* oper, void* v) {
       }
     }
   } while (repeat);
-  if (data->state->a_qty == oper->getSizeMaximum() &&
-      !(oper->getOwner() && oper->getOwner()->hasType<OperationRouting>()))
-    data->hitMaxSize = true;
+  if (!oper->getOwner() || !oper->getOwner()->hasType<OperationRouting>())
+    data->hitMaxSize = data->state->a_qty == oper->getSizeMaximum();
+
 
   // Message
   if (getLogLevel() > 1) {
@@ -1314,6 +1314,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
              << endl;
     data->state->a_date = top_q_date + delay;
   }
+  data->hitMaxSize = data->state->a_qty == oper->getSizeMaximum();
 
   // Message
   if (getLogLevel() > 1) {

@@ -82,18 +82,6 @@ for app in settings.INSTALLED_APPS:
             raise e
 
 
-class HttpService(AsyncHttpConsumer):
-    async def handle(self, body):
-        print("receiving ", body, self)
-        await self.send_response(
-            200,
-            b"Your response bytes",
-            headers=[
-                (b"Content-Type", b"text/plain"),
-            ],
-        )
-
-
 # class WebsocketService(WebsocketConsumer):
 #     def connect(self):
 #         self.user = self.scope["user"]
@@ -116,21 +104,22 @@ class HttpService(AsyncHttpConsumer):
 
 class HTTPNotFound(AsyncHttpConsumer):
     async def handle(self, body):
+        self.scope["response_headers"].append((b"Content-Type", b"text/plain"))
         await self.send_response(
-            400, b"Not found", headers=[(b"Content-Type", b"text/plain")]
+            400, b"Not found", headers=self.scope["response_headers"]
         )
 
 
 @database_sync_to_async
-def get_user(username=None, email=None, password=None):
+def get_user(username=None, email=None, password=None, database=DEFAULT_DB_ALIAS):
     try:
         if username:
             if password:
                 return authenticate(username=username, password=password)
             else:
-                return User.objects.get(username=username)
+                return User.objects.using(database).get(username=username)
         elif email:
-            return User.objects.get(email=email)
+            return User.objects.using(database).get(email=email)
         else:
             return AnonymousUser()
     except Exception:
@@ -170,11 +159,13 @@ class TokenMiddleware(BaseMiddleware):
                                     )
                                     if "user" in decoded:
                                         scope["user"] = await get_user(
-                                            username=decoded["user"]
+                                            username=decoded["user"],
+                                            database=scope["database"],
                                         )
                                     elif "email" in decoded:
                                         scope["user"] = await get_user(
-                                            email=decoded["email"]
+                                            email=decoded["email"],
+                                            database=scope["database"],
                                         )
                         elif auth[0] == "basic":
                             # Basic authentication
@@ -184,7 +175,9 @@ class TokenMiddleware(BaseMiddleware):
                                 .split(":")
                             )
                             scope["user"] = await get_user(
-                                username=args[0], password=args[1]
+                                username=args[0],
+                                password=args[1],
+                                database=scope["database"],
                             )
         except Exception:
             pass

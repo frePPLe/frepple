@@ -255,7 +255,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
     return days == 127 && !starttime && endtime == Duration(86400L);
   }
 
-  string CalendarBucket::getName() const;
+  string getName() const;
 
   void setName(const string& nm) {
     auto f = names.find(nm);

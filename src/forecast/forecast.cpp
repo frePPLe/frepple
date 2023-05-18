@@ -1374,6 +1374,7 @@ void ForecastBucketData::validateOverride(const ForecastMeasure* key) {
 
 PyObject* Forecast::setValuePython(PyObject* self, PyObject* args,
                                    PyObject* kwdict) {
+  // TODO Can this method be merged with the next one?
   try {
     // Parse the arguments
     PyObject* pystartdate = nullptr;
@@ -1406,20 +1407,77 @@ PyObject* Forecast::setValuePython(PyObject* self, PyObject* args,
 }
 
 PyObject* Forecast::setValuePython2(PyObject* self, PyObject* args,
-                                    PyObject* kwdict) {
-  // Args bucket, startdate, enddate, item, location, customer, measures
-  // if (!PyArg_ParseTuple(args, "hs|sss:setForecast", &mode, &pymeasure1,
-  //                       &pymeasure2, &pymeasure3, &pymeasure4))
-  //   return nullptr;
-  logger << "TODO!!!!" << endl;
-  Py_BEGIN_ALLOW_THREADS;
+                                    PyObject* kwargs) {
+  // Keyword arguments are:
+  //  bucket, startdate, enddate, item, location, customer, plus measure names
+  Item* item = nullptr;
+  Location* location = nullptr;
+  Customer* customer = nullptr;
+  Date startdate = Date::infinitePast;
+  Date enddate = Date::infiniteFuture;
+  bool date_ok = false;
   try {
+    auto py_val = PyDict_GetItemString(kwargs, "item");
+    if (!PyObject_TypeCheck(py_val, Item::metadata->pythonClass))
+      throw DataException("item argument must be of type item");
+    else
+      item = static_cast<Item*>(py_val);
+    py_val = PyDict_GetItemString(kwargs, "location");
+    if (!PyObject_TypeCheck(py_val, Location::metadata->pythonClass))
+      throw DataException("location argument must be of type location");
+    else
+      location = static_cast<Location*>(py_val);
+    py_val = PyDict_GetItemString(kwargs, "customer");
+    if (!PyObject_TypeCheck(py_val, Customer::metadata->pythonClass))
+      throw DataException("customer argument must be of type customer");
+    else
+      customer = static_cast<Customer*>(py_val);
+    py_val = PyDict_GetItemString(kwargs, "bucket");
+    if (py_val) {
+      auto bucket = CalendarBucket::getByName(PythonData(py_val).getString());
+      if (bucket) {
+        startdate = bucket->getStart();
+        enddate = bucket->getEnd();
+        date_ok = true;
+      }
+    }
+    if (!startdate && !enddate) {
+      py_val = PyDict_GetItemString(kwargs, "startdate");
+      if (py_val) {
+        startdate = PythonData(py_val).getDate();
+        date_ok = true;
+      }
+      py_val = PyDict_GetItemString(kwargs, "enddate");
+      if (py_val) {
+        enddate = PythonData(py_val).getDate();
+        date_ok = true;
+      } else if (startdate)
+        enddate = startdate;
+    }
+
+    if (date_ok && item && location && customer) {
+      // Update the forecast with each keyword argument
+      auto fcst = Forecast::findForecast(item, customer, location, true);
+      PyObject *pykey, *pyvalue;
+      Py_ssize_t pos = 0;
+      while (PyDict_Next(kwargs, &pos, &pykey, &pyvalue)) {
+        PythonData key(pykey);
+        PythonData value(pyvalue);
+        auto keystring = key.getString();
+        if (keystring != "item" && keystring != "customer" &&
+            keystring != "location" && keystring != "bucket" &&
+            keystring != "startdate" && keystring != "enddate") {
+          auto msr = ForecastMeasure::find(keystring);
+          if (msr) {
+            msr->disaggregate(fcst, startdate, enddate, value.getDouble());
+          }
+        }
+      }
+    }
   } catch (...) {
-    Py_BLOCK_THREADS;
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS;
   return Py_BuildValue("");
 }
 

@@ -98,10 +98,10 @@ class setDatabaseConnection(PlanTask):
         frepple.settings.dbchannel = "frepple"
 
         # Cache settings
-        # frepple.cache.maximum = settings.CACHE_MAXIMUM
-        # frepple.cache.threads = settings.CACHE_THREADS
-        # frepple.cache.write_immediately = False
-        # frepple.cache.loglevel = Parameter.getValue("cache.loglevel", database, 0)
+        frepple.cache.maximum = settings.CACHE_MAXIMUM
+        frepple.cache.threads = settings.CACHE_THREADS
+        frepple.cache.write_immediately = False
+        frepple.cache.loglevel = Parameter.getValue("cache.loglevel", database, 0)
 
 
 @PlanTaskRegistry.register
@@ -113,7 +113,7 @@ class StopWebService(PlanTask):
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         if useWebService(database) and "nowebservice" not in os.environ:
-            return -1
+            return 1
         else:
             return -1
 

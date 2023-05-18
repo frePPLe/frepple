@@ -146,6 +146,7 @@ class ForecastService(AsyncHttpConsumer):
                     frepple.setForecast(**args)
                 except Exception as e:
                     errors.append(b"Error processing %s" % e)
+            frepple.cache.flush()
 
         #     if not simulate:
         #         # Save a new comment

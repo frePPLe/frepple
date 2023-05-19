@@ -57,6 +57,7 @@ from freppledb.common.report import (
     GridFieldChoice,
     GridFieldDuration,
     getCurrentDate,
+    GridFieldJSON,
 )
 from .utils import OperationPlanMixin
 
@@ -440,6 +441,10 @@ class ResourceDetail(OperationPlanMixin):
             setup_end=RawSQL("(operationplan.plan->>'setupend')", []),
             setup_duration=RawSQL("(operationplan.plan->>'setup')", []),
             setup_override=RawSQL("(operationplan.plan->>'setupoverride')", []),
+            resources=RawSQL(
+                "(select json_agg(json_build_array(resource_id, quantity)) from (select resource_id, round(quantity,2) quantity from operationplanresource opplanres2 where operationplan.reference = opplanres2.operationplan_id  order by quantity desc limit 10) res)",
+                [],
+            ),
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
             ),
@@ -785,6 +790,16 @@ class ResourceDetail(OperationPlanMixin):
             editable=False,
             initially_hidden=True,
             search=False,
+        ),
+        GridFieldJSON(
+            "resources",
+            title=_("resources"),
+            editable=False,
+            search=True,
+            sortable=False,
+            initially_hidden=True,
+            formatter="listdetail",
+            extra='"role":"input/resource"',
         ),
         # Optional fields referencing the item
         GridFieldText(

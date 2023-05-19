@@ -632,16 +632,14 @@ class CalendarList(GridReport):
         <h3>Define calendars</h3>
         <br>
         A calendar represents a numeric value that is varying over time.<br><br>
-        Different other models refer to calendars:
-        <ul>
-        <li>- A location refers to a calendar to define the working hours and holidays.</li>
-        <li>- A resource refers to a calendar to define the working hours and holidays.</li>
-        <li>- A supplier refers to a calendar to define the working hours and holidays.</li>
-        <li>- An operation refers to a calendar to define the working hours and holidays.</li>
-        <li>- A resource refers to a calendar to define the efficiency varying over time.</li>
-        <li>- A resource refers to a calendar to define the resource size varying over time.</li>
-        <li>- A buffer refers to a calendar to define the safety stock varying over time.</li>
-        </ul>
+        Different other models refer to calendars:<br>
+        - A location refers to a calendar to define the working hours and holidays.<br>
+        - A resource refers to a calendar to define the working hours and holidays.<br>
+        - A supplier refers to a calendar to define the working hours and holidays.<br>
+        - An operation refers to a calendar to define the working hours and holidays.<br>
+        - A resource refers to a calendar to define the efficiency varying over time.<br>
+        - A resource refers to a calendar to define the resource size varying over time.<br>
+        - A buffer refers to a calendar to define the safety stock varying over time.<br>
         <br><br>
         <div role="group" class="btn-group.btn-group-justified">
         <a href="{{request.prefix}}/data/input/calendar/add/" class="btn btn-primary">Create a single calendar<br>in a form</a>

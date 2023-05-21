@@ -1441,7 +1441,7 @@ PyObject* Forecast::setValuePython2(PyObject* self, PyObject* args,
         date_ok = true;
       }
     }
-    if (!startdate && !enddate) {
+    if (startdate == Date::infinitePast && enddate == Date::infiniteFuture) {
       py_val = PyDict_GetItemString(kwargs, "startdate");
       if (py_val) {
         startdate = PythonData(py_val).getDate();

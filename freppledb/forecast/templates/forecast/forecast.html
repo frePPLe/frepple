@@ -32,6 +32,25 @@
   $("#graph").width($(window).width()-55).height(h>800 || h<580 ? 280 : h-520);
 });{% endif %}
 
+var service_url = {% if proxied %}'/svc'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
+var service_token = '{{token}}';
+
+function saveData(rows) {
+      $.ajax({
+        url: service_url + 'forecast/detail/',
+        data: JSON.stringify(rows),
+        type: "POST",
+        headers: { "Authorization": "Bearer " + service_token },
+        contentType: "application/json",
+        success: function () {
+          upload.undo();
+          $("#save i").addClass('hidden');
+          $(".ng-dirty").removeClass('ng-dirty');
+        },
+        error: ajaxerror
+    });
+}
+
 {% if args.0 or mode == "graph" %}
 function drawGraphs(jsondata)
 {

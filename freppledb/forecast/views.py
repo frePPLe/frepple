@@ -796,6 +796,22 @@ class OverviewReport(GridPivot):
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
+        if "FREPPLE_TEST" in os.environ:
+            server = settings.DATABASES[request.database]["TEST"].get(
+                "FREPPLE_PORT", None
+            )
+        else:
+            server = settings.DATABASES[request.database].get("FREPPLE_PORT", None)
+        proxied = settings.DATABASES[request.database].get(
+            "FREPPLE_PORT_PROXIED",
+            not settings.DEBUG
+            and not (
+                "freppleserver" in sys.argv[0]
+                or "freppleservice" in sys.argv[0]
+                or "runwebserver" in sys.argv
+            )
+            and "FREPPLE_TEST" not in os.environ,
+        )
         if args and args[0]:
             request.session["lasttab"] = "plan"
             return {
@@ -803,9 +819,21 @@ class OverviewReport(GridPivot):
                 "post_title": _("plan"),
                 "currency": json.dumps(getCurrency()),
                 "active_tab": "plan",
+                "token": getWebserviceAuthorization(
+                    user=request.user.username, sid=request.user.id, exp=3600
+                ),
+                "port": server,
+                "proxied": proxied,
             }
         else:
-            return {"currency": json.dumps(getCurrency())}
+            return {
+                "currency": json.dumps(getCurrency()),
+                "token": getWebserviceAuthorization(
+                    user=request.user.username, sid=request.user.id, exp=3600
+                ),
+                "port": server,
+                "proxied": proxied,
+            }
 
     @classmethod
     def query(reportclass, request, basequery, sortsql="1 asc"):
@@ -1100,82 +1128,7 @@ class OverviewReport(GridPivot):
 
     @staticmethod
     def parseJSONupload(request):
-        # Check permissions
-        if not request.user.has_perm("forecast.change_forecast"):
-            return HttpResponseForbidden(_("Permission denied"))
-
-        # Loop over the data records
-        resp = HttpResponse()
-        ok = True
-
-        for rec in json.JSONDecoder().decode(
-            request.read().decode(request.encoding or settings.DEFAULT_CHARSET)
-        ):
-            try:
-                try:
-                    fcst = (
-                        Forecast.objects.all()
-                        .using(request.database)
-                        .get(name=rec["id"])
-                        .name
-                    )
-                    item = customer = location = None
-                except Forecast.DoesNotExist:
-                    fcst = None
-                    try:
-                        item = (
-                            Item.objects.all()
-                            .using(request.database)
-                            .get(name=rec["item"])
-                            .name
-                        )
-                        customer = (
-                            Customer.objects.all()
-                            .using(request.database)
-                            .get(name=rec["customer"])
-                            .name
-                        )
-                        location = (
-                            Location.objects.all()
-                            .using(request.database)
-                            .get(name=rec["location"])
-                            .name
-                        )
-                    except Exception:
-                        raise Exception("Forecast or item+location+customer not found")
-                data = {
-                    "startdate": datetime.strptime(
-                        rec["startdate"], "%Y-%m-%d %H:%M:%S"
-                    ).date(),
-                    "enddate": datetime.strptime(
-                        rec["enddate"], "%Y-%m-%d %H:%M:%S"
-                    ).date(),
-                    "database": request.database,
-                    "forecast": fcst,
-                    "item": item,
-                    "location": location,
-                    "customer": customer,
-                }
-                for key, val in rec.items():
-                    if key not in (
-                        "id",
-                        "startdate",
-                        "enddate",
-                        "item",
-                        "location",
-                        "customer",
-                        "forecast",
-                    ):
-                        data[key] = val
-                Forecast.updatePlan(**data)
-            except Exception as e:
-                ok = False
-                resp.write(e)
-                resp.write("<br/>")
-        if ok:
-            resp.write("OK")
-        resp.status_code = ok and 200 or 403
-        return resp
+        raise Exception("No longer used!!!")
 
 
 class UpstreamForecastPath(PathReport):

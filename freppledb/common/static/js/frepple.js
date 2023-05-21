@@ -284,19 +284,22 @@ var upload = {
     if (rows != null && rows.length > 0) {
       // Send the update to the server
       $("#save i").removeClass('hidden');
-      $.ajax({
-        url: location.pathname,
-        data: JSON.stringify(rows),
-        type: "POST",
-        contentType: "application/json",
-        success: function () {
-          upload.undo();
-          $("#save i").addClass('hidden');
-          $(".ng-dirty").removeClass('ng-dirty');
-          if (typeof ok_callback !== 'undefined') ok_callback();
-        },
-        error: ajaxerror
-      });
+      if (typeof saveData !== 'undefined')
+        saveData(rows)
+      else
+        $.ajax({
+          url: location.pathname,
+          data: JSON.stringify(rows),
+          type: "POST",
+          contentType: "application/json",
+          success: function () {
+            upload.undo();
+            $("#save i").addClass('hidden');
+            $(".ng-dirty").removeClass('ng-dirty');
+            if (typeof ok_callback !== 'undefined') ok_callback();
+          },
+          error: ajaxerror
+        });
     }
   },
 

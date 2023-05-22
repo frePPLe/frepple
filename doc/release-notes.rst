@@ -18,6 +18,10 @@ Oh-oh... Something exciting is coming up!
 - | Bug fix: When operation maximum size is specified on buffers with alternate
     replenishment operations, some demands could remain partially unplanned.
 
+- | Bug fix: The autofence that makes the solver wait for existing confirmed
+    and approved supply had a corner case where extra replenishments were
+    incorrectly triggered.
+
 .. rubric:: User interface
 
 - | Updated German translations have been contributed by Thomas Stöckel. Vielen Dank!

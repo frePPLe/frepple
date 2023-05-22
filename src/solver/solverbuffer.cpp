@@ -176,7 +176,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       if (theDelta < -ROUNDING_ERROR && autofence) {
         // Solution zero: wait for confirmed supply that is already existing
         auto free_stock = b->getOnHand(Date::infiniteFuture);
-        if (free_stock > -ROUNDING_ERROR || b->getItem()->hasType<ItemMTO>()) {
+        if (free_stock > -ROUNDING_ERROR) {
           for (Buffer::flowplanlist::const_iterator scanner = cur;
                scanner != b->getFlowPlans().end() &&
                scanner->getDate() <
@@ -211,6 +211,20 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 extraConfirmedDate = scanner->getDate();
               break;
             }
+          }
+        }
+        if (!supply_exists_already) {
+          auto fence_free = b->getOnHand(
+              max(theDate, Plan::instance().getCurrent()) + autofence,
+              Date::infiniteFuture);
+          auto all_free =
+              b->getOnHand(max(theDate, Plan::instance().getCurrent()),
+                           Date::infiniteFuture);
+          if (theDelta < fence_free) {
+            // There is confirmed supply within the fence that partially covers
+            // the requirement. We reduce the allowed replenishment quantity.
+            shortage += fence_free - theDelta;
+            theDelta = fence_free;
           }
         }
 

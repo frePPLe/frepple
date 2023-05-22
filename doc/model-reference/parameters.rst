@@ -238,3 +238,14 @@ inventoryplanning.rebalancing_total_cost_threshold   | The minimum total cost th
                                                        cost below the threshold will not be created.
                                                      | Default value: 1000000
 ==================================================== ===========================================================================
+
+**Report manager parameters**
+
+==================================================== ===========================================================================
+Parameter                                            Description
+==================================================== ===========================================================================
+report_download_limit                                | The maximum number of rows that are allowed to be downloaded with a
+                                                       custom report. The limit protects against inefficient SQL report queries
+                                                       that download excessive ammounts of data.
+                                                     | Default value: 20000
+==================================================== ===========================================================================

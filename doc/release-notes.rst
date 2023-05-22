@@ -25,6 +25,12 @@ Oh-oh... Something exciting is coming up!
 - | Bug fix: 7.2 introduced some situations where some reports in scenarios
     mix data from the default scenario.
 
+.. rubric:: Report manager
+
+- | A new parameter report_download_limit is introduced to protect the application
+    performance against inefficient and excessive SQL queries.
+  | Downloading a custom report is by default limited to 20000 rows.
+
 .. rubric:: Odoo integration
 
 - | 15 & 16: Usability improvements to skill maintenance.

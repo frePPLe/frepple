@@ -5363,6 +5363,8 @@ class OperationDelivery : public OperationFixedTime {
   static inline void registerFields(MetaClass* m) {
     m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer,
                                     &Cls::setBuffer, MANDATORY);
+    m->addDurationField<Cls>(Tags::duration, &Cls::getDuration,
+                             &Cls::setDuration);
   }
 
   static Duration getDeliveryDuration() { return deliveryduration; }

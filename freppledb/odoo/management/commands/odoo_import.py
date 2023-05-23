@@ -76,7 +76,7 @@ class Command(BaseCommand):
         if database not in settings.DATABASES.keys():
             raise CommandError("No database settings known for '%s'" % self.database)
         kwargs = {
-            "env": environment,
+            "env": "%s,nowebservice" % environment,
             "database": database,
             "task": task,
             "constraint": 0,

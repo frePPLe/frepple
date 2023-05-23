@@ -175,7 +175,7 @@ class Command(BaseCommand):
                 for i in self.exported:
                     i.status = "approved"
                     i.source = "odoo_1"
-                    i.save(using=self.database, update_fields=("status","source"))
+                    i.save(using=self.database, update_fields=("status", "source"))
 
                 # Progress
                 task.status = "%s%%" % counter
@@ -389,49 +389,62 @@ class Command(BaseCommand):
                     quoteattr(i.batch or ""),
                 )
             else:
-                rec = '<operationplan reference=%s ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" demand=%s batch=%s>' % (
-                    quoteattr(i.reference),
-                    quoteattr(i.operation.item.name),
-                    quoteattr(i.operation.location.name),
-                    quoteattr(i.operation.name),
-                    i.startdate,
-                    i.enddate,
-                    i.quantity,
-                    quoteattr(i.operation.location.subcategory),
-                    quoteattr(i.operation.item.subcategory),
-                    int(i.criticality),
-                    quoteattr(demand_str),
-                    quoteattr(i.batch or ""),
-                )                
+                rec = [
+                    '<operationplan reference=%s ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" demand=%s batch=%s>'
+                    % (
+                        quoteattr(i.reference),
+                        quoteattr(i.operation.item.name),
+                        quoteattr(i.operation.location.name),
+                        quoteattr(i.operation.name),
+                        i.startdate,
+                        i.enddate,
+                        i.quantity,
+                        quoteattr(i.operation.location.subcategory),
+                        quoteattr(i.operation.item.subcategory),
+                        int(i.criticality),
+                        quoteattr(demand_str),
+                        quoteattr(i.batch or ""),
+                    )
+                ]
                 wolist = [i for i in i.xchildren.using(self.database).all()]
                 if wolist:
                     for wo in wolist:
-                        rec += '<workorder operation=%s start="%s" end="%s">' % (
-                            quoteattr(wo.operation.name),
-                            wo.startdate,
-                            wo.enddate,
+                        rec.append(
+                            '<workorder operation=%s start="%s" end="%s">'
+                            % (
+                                quoteattr(wo.operation.name),
+                                wo.startdate,
+                                wo.enddate,
+                            )
                         )
                         for wores in wo.resources.using(self.database).all():
                             if (
                                 wores.resource.source
                                 and wores.resource.source.startswith("odoo")
                             ):
-                                rec += "<resource name=%s id=%s/>" % (
-                                    quoteattr(wores.resource.name),
-                                    quoteattr(wores.resource.category),
+                                rec.append(
+                                    "<resource name=%s id=%s/>"
+                                    % (
+                                        quoteattr(wores.resource.name),
+                                        quoteattr(wores.resource.category),
+                                    )
                                 )
-                        rec += "</workorder>"
+                        rec.append("</workorder>")
                 else:
                     for opplanres in i.resources.using(self.database).all():
                         if (
                             opplanres.resource.source
                             and opplanres.resource.source.startswith("odoo")
                         ):
-                            rec += "<resource name=%s id=%s/>" % (
-                                quoteattr(opplanres.resource.name),
-                                quoteattr(opplanres.resource.category),
+                            rec.append(
+                                "<resource name=%s id=%s/>"
+                                % (
+                                    quoteattr(opplanres.resource.name),
+                                    quoteattr(opplanres.resource.category),
+                                )
                             )
-                yield rec + "</operationplan>"
+                rec.append("</operationplan>")
+                yield "".join(rec)
 
         # Work orders to export
         # We don't create work orders, but only updates existing work orders.
@@ -458,26 +471,33 @@ class Command(BaseCommand):
             ):
                 continue
             self.exported.append(i)
-            rec = '<operationplan reference=%s owner=%s ordertype="WO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s batch=%s>' % (
-                quoteattr(i.reference),
-                quoteattr(i.owner.reference),
-                quoteattr(i.owner.operation.item.name),
-                quoteattr(i.operation.location.name),
-                quoteattr(i.operation.name),
-                i.startdate,
-                i.enddate,
-                i.quantity,
-                quoteattr(i.operation.location.subcategory),
-                quoteattr(i.owner.operation.item.subcategory),
-                quoteattr(i.batch or ""),
-            )
+            rec = [
+                '<operationplan reference=%s owner=%s ordertype="WO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s batch=%s>'
+                % (
+                    quoteattr(i.reference),
+                    quoteattr(i.owner.reference),
+                    quoteattr(i.owner.operation.item.name),
+                    quoteattr(i.operation.location.name),
+                    quoteattr(i.operation.name),
+                    i.startdate,
+                    i.enddate,
+                    i.quantity,
+                    quoteattr(i.operation.location.subcategory),
+                    quoteattr(i.owner.operation.item.subcategory),
+                    quoteattr(i.batch or ""),
+                )
+            ]
             for wores in i.resources.using(self.database).all():
                 if wores.resource.source and wores.resource.source.startswith("odoo"):
-                    rec += "<resource name=%s id=%s/>" % (
-                        quoteattr(wores.resource.name),
-                        quoteattr(wores.resource.category or ""),
+                    rec.append(
+                        "<resource name=%s id=%s/>"
+                        % (
+                            quoteattr(wores.resource.name),
+                            quoteattr(wores.resource.category or ""),
+                        )
                     )
-            yield rec + "</operationplan>"
+            rec.append("</operationplan>")
+            yield "".join(rec)
 
     # accordion template
     title = _("Export data to %(erp)s") % {"erp": "odoo"}

@@ -2109,7 +2109,7 @@ class OperationPlanDetail(View):
                           sum(case when type = 'DO' then quantity end) as DO
                           from operationplan
                           inner join items on items.name = operationplan.item_id
-                          and status in ('approved', 'confirmed')
+                          where status in ('approved', 'confirmed') and operationplan.owner_id is null
                           group by item_id, coalesce(location_id, destination_id)
                           ) orders_plus
                         on orders_plus.item_id = items.name and orders_plus.location_id = location.name

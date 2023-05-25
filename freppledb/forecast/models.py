@@ -167,7 +167,7 @@ class Forecast(AuditModel):
         Customer.createRootObject(database=database)
 
     @staticmethod
-    def flush(session, mode, database=DEFAULT_DB_ALIAS):
+    def flush(session, mode, database=DEFAULT_DB_ALIAS, token=None):
         if "FREPPLE_TEST" in os.environ:
             server = settings.DATABASES[database]["TEST"]["FREPPLE_PORT"]
         else:
@@ -176,7 +176,7 @@ class Forecast(AuditModel):
             "http://%s/flush/%s/" % (server, mode),
             headers={
                 "Authorization": "Bearer %s"
-                % getWebserviceAuthorization(user="admin", exp=3600),
+                % (token or getWebserviceAuthorization(user="admin", exp=3600)),
                 "Content-Type": "application/json",
                 "content-length": "0",
             },
@@ -240,15 +240,14 @@ class Forecast(AuditModel):
                 data[m] = float(val)
         my_session = session or requests.Session()
         my_token = token or getWebserviceAuthorization(
-            sub=request.user.username if request else "admin",
+            user=request.user.username if request else "admin",
             sid=request.user.id if request else 1,
             exp=3600,
-            aud="*",
         )
         try:
-            payload = json.dumps({"forecast": [data]}).encode("utf-8")
+            payload = json.dumps([data]).encode("utf-8")
             response = my_session.post(
-                "http://%s/json" % server,
+                "http://%s/forecast/detail/" % server,
                 data=payload,
                 headers={
                     "Authorization": "Bearer %s" % my_token,
@@ -672,12 +671,11 @@ class ForecastPlan(models.Model):
                 # Initialize http connection
                 session = requests.Session()
                 token = getWebserviceAuthorization(
-                    sub=user.username if user else "admin",
+                    user=user.username if user else "admin",
                     sid=user.id if user else 1,
                     exp=3600,
-                    aud="*",
                 )
-                Forecast.flush(session, mode="manual", database=database)
+                Forecast.flush(session, mode="manual", database=database, token=token)
 
             # Case 2: Skip empty rows
             elif rowWrapper.empty():
@@ -780,7 +778,7 @@ class ForecastPlan(models.Model):
                         yield (ERROR, rownumber, None, None, str(e))
 
         if session:
-            Forecast.flush(session, mode="auto", database=database)
+            Forecast.flush(session, mode="auto", database=database, token=token)
             session.close()
         yield (
             INFO,

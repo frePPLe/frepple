@@ -27,7 +27,6 @@ import json
 
 from channels.db import database_sync_to_async
 from channels.generic.http import AsyncHttpConsumer
-from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.common.models import Comment
 from freppledb.forecast.models import Forecast
@@ -179,13 +178,12 @@ class ForecastService(AsyncHttpConsumer):
                                     "customer",
                                     "startdate",
                                     "enddate",
+                                    "forecast",
                                 ):
                                     args[key] = float(val)
                             frepple.setForecast(**args)
                         except Exception as e:
                             errors.append("Error processing %s" % e)
-                    frepple.cache.flush()
-
             else:
                 # Message format #2
 
@@ -305,4 +303,35 @@ class ForecastService(AsyncHttpConsumer):
                 500,
                 json.dumps({"errors": errors}).encode(),
                 headers=self.scope["response_headers"],
+            )
+
+
+class FlushService(AsyncHttpConsumer):
+    async def handle(self, body):
+        import frepple
+
+        self.scope["response_headers"].append((b"Content-Type", b"text/html"))
+        try:
+            if self.scope["method"] != "POST":
+                await self.send_response(
+                    401,
+                    b"Only POST requests allowed",
+                    headers=self.scope["response_headers"],
+                )
+                return
+            if self.scope["path"] == "/flush/manual/":
+                frepple.cache.write_immediately = False
+            elif self.scope["path"] == "/flush/auto/":
+                frepple.cache.flush()
+                frepple.cache.write_immediately = True
+            else:
+                await self.send_response(
+                    404,
+                    b"Only supported modes are 'manual' and 'auto'",
+                    headers=self.scope["response_headers"],
+                )
+            await self.send_response(200, b"OK", headers=self.scope["response_headers"])
+        except Exception as e:
+            await self.send_response(
+                500, b"Error flushing forecast", headers=self.scope["response_headers"]
             )

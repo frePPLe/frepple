@@ -10,9 +10,9 @@ Jinja2 < 3.1      # Jinja 3.1 breaks sphinx
 Sphinx
 sphinx-tabs
 sphinx-sitemap
-selenium == 4.9.1 # Issues with urllib3 on recent versions
-selenium_firefox == 2.0.7
-msedge-selenium-tools == 3.141.4
+selenium
+selenium_firefox == 2.0.7   # Issues with urllib3 on recent versions
+msedge-selenium-tools == 3.141.4 # Issues with urllib3 on recent versions
 
 # Extra packages for windows development environments
 # pywin32

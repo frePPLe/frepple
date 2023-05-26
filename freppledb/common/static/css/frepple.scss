@@ -147,6 +147,14 @@
     caption-side: top;
 }
 
+form .module input[type=checkbox] {
+    @extend .form-check-input;
+}
+
+form .module li:has(input[type=checkbox]) {
+    list-style: none;
+}
+
 /* Gantt charts */
 
 .time {

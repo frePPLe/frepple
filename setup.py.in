@@ -81,7 +81,6 @@ setup(
     url="http://frepple.com",
     packages=packages,
     data_files=data_files,
-    options={"install": {"optimize": 2}},
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Intended Audience :: Manufacturing",

@@ -131,17 +131,17 @@ class ForecastService(AsyncHttpConsumer):
                         item = frepple.item(name=bckt["item"], action="C")
                     except:
                         item = None
-                        errors.append("Item not found")
+                        errors.append("Item not found: %s" % bckt["item"])
                     try:
                         location = frepple.location(name=bckt["location"], action="C")
                     except:
                         location = None
-                        errors.append("Location not found")
+                        errors.append("Location not found: %s" % bckt["location"])
                     try:
                         customer = frepple.customer(name=bckt["customer"], action="C")
                     except:
                         customer = None
-                        errors.append("Customer not found")
+                        errors.append("Customer not found: %s" % bckt["customer"])
                     if customer and item and location:
                         try:
                             args = {
@@ -192,17 +192,17 @@ class ForecastService(AsyncHttpConsumer):
                     item = frepple.item(name=data["item"], action="C")
                 except:
                     item = None
-                    errors.append("Item not found")
+                    errors.append("Item not found: %s" % data["item"])
                 try:
                     location = frepple.location(name=data["location"], action="C")
                 except:
                     location = None
-                    errors.append("Location not found")
+                    errors.append("Location not found: %s" % data["location"])
                 try:
                     customer = frepple.customer(name=data["customer"], action="C")
                 except:
                     customer = None
-                    errors.append("Customer not found")
+                    errors.append("Customer not found: %s" % data["customer"])
 
                 # Update forecast method
                 mthd = data.get("forecastmethod", None)

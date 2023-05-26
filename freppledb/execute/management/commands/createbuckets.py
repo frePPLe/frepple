@@ -53,7 +53,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--start",
-            default=date_format(date(2018, 1, 1), format="DATE_FORMAT", use_l10n=False),
+            default=date_format(date(2017, 1, 1), format="DATE_FORMAT", use_l10n=False),
             help="Start date in %s format" % settings.DATE_FORMAT,
         )
         parser.add_argument(

@@ -24,6 +24,7 @@
  ***************************************************************************/
 
 #define FREPPLE_CORE
+#include "frepple/cache.h"
 #include "frepple/model.h"
 
 namespace frepple {
@@ -616,6 +617,13 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     auto tmp = PooledString::getSize();
     logger << "String pool           \t" << tmp.first << "\t" << tmp.second
            << endl;
+    total += tmp.second;
+
+    // Cached objects - only for the enterprise branch
+    tmp = Cache::instance->getStatus();
+    logger << "Memory cache          \t" << tmp.first << "\t" << tmp.second
+           << endl;
+    total += tmp.second;
 
     // TOTAL
     logger << "Total                 \t\t" << total << endl << endl;

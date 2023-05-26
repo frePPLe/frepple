@@ -89,6 +89,7 @@ $(function() {
           window.location.href = url_prefix + "/reportmanager/" + data.id + '/';
         }
       	else {
+          $("#save_ok").remove();
           $("#workarea").prepend(
             '<div id="save_ok" class="row"><div class="col mt-2">'
             + '<div class="alert alert-danger">{% trans "Saving the report failed" %}&nbsp;:&nbsp;'

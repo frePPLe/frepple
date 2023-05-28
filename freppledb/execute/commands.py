@@ -58,7 +58,7 @@ class UpdateLastCurrentDate(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        return 0.1
+        return -1 if "loadplan" in os.environ else 0.1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -86,8 +86,12 @@ class MakePlanFeasible(PlanTask):
     sequence = 199
 
     @classmethod
-    def getWeight(cls, **kwargs):
-        if "supply" in os.environ:
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        if "supply" in os.environ or (
+            "nowebservice" not in os.environ
+            and Parameter.getValue("plan.webservice", database, "true").lower()
+            == "true"
+        ):
             return 1
         else:
             return -1

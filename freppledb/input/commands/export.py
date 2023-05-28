@@ -20,6 +20,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
+
 from datetime import datetime
 import logging
 from psycopg2.extras import execute_batch
@@ -1971,7 +1972,7 @@ class exportItemSuppliers(PlanTask):
                         i.leadtime,
                         i.size_minimum,
                         i.size_multiple,
-                        i.size_maximum if i.size_maximum < 10**12 else None,
+                        i.size_maximum if i.size_maximum < 10 ** 12 else None,
                         i.batchwindow,
                         i.hard_safety_leadtime,
                         i.extra_safety_leadtime,

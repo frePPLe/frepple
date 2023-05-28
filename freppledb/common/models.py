@@ -280,7 +280,7 @@ class AuditModel(models.Model):
         try:
             cls._meta.get_field(field)
             return True
-        except models.FieldDoesNotExist:
+        except Exception:
             return False
 
     def save(self, *args, **kwargs):

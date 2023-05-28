@@ -54,7 +54,7 @@ menu.addItem(
 menu.addItem(
     "sales",
     "problem report",
-    url="/problem/?entity=demand",
+    url="/problem/?entity__in=demand,forecast",
     report=freppledb.output.views.problem.Report,
     index=400,
     dependencies=[Item, Location, Customer, OperationPlan],

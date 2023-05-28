@@ -331,6 +331,7 @@ angular.module('calendar', [])
           opplan.selected = true;
           scope.curselected = opplan;
           scope.eventSelected({ event: opplan });
+          angular.element(document).find("#delete_selected, #gridactions").prop("disabled", false);
         };
 
         scope.changeCard = function (opplan, field, oldvalue, newvalue) {

@@ -425,7 +425,8 @@ void SolverCreate::SolverData::commit() {
               solver->userexit_nextdemand.call(PythonData(cluster)).getObject();
           if (!obj || obj == Py_None)
             break;
-          else if (obj->getType().category == Demand::metadata)
+          else if (obj->getType().category == Demand::metadata ||
+                   obj->getType().type == "demand_forecastbucket")
             curdmd = static_cast<Demand*>(obj);
           else
             throw DataException("User exit nextdemand must return a demand");

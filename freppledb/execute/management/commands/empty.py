@@ -26,6 +26,7 @@ from datetime import datetime
 
 from django.apps import apps
 from django.conf import settings
+from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management.color import no_style
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
@@ -233,6 +234,11 @@ class Command(BaseCommand):
                 tables.add("out_problem")
             if "resource" in tables and "out_resourceplan" not in tables:
                 tables.add("out_resourceplan")
+            if "freppledb.forecast" in settings.INSTALLED_APPS:
+                if "forecast" in tables:
+                    tables.add("forecastplan")
+                if "forecastplan" in tables:
+                    cursor.execute("refresh materialized view forecastreport_view")
             if "demand" in tables and "out_constraint" not in tables:
                 tables.add("out_constraint")
             if (
@@ -257,6 +263,21 @@ class Command(BaseCommand):
             tables.discard("execute_log")
             tables.discard("execute_schedule")
             tables.discard("common_scenario")
+
+            if "freppledb.webservice" in settings.INSTALLED_APPS:
+                # Stop the web service
+                if user:
+                    call_command(
+                        "stopwebservice",
+                        user=user,
+                        database=database,
+                        force=True,
+                        wait=False,
+                    )
+                else:
+                    call_command(
+                        "stopwebservice", database=database, force=True, wait=False
+                    )
 
             # Delete all records from the tables.
             with transaction.atomic(using=database, savepoint=False):

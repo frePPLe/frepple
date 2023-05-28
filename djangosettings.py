@@ -216,6 +216,36 @@ LANGUAGE_CODE = "en"
 # The value None disables this feature.
 GOOGLE_ANALYTICS = None
 
+# Installed applications.
+# The order is important: urls, templates and menus of the earlier entries
+# take precedence over and override later entries.
+INSTALLED_APPS = (
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "freppledb.boot",
+    # Add any project specific apps here
+    # "freppledb.odoo",
+    # "freppledb.erpconnection",
+    "freppledb.wizard",
+    "freppledb.input",
+    "freppledb.forecast",
+    "freppledb.output",
+    "freppledb.metrics",
+    "freppledb.execute",
+    "freppledb.webservice",
+    "freppledb.common",
+    "django_filters",
+    "rest_framework",
+    "django.contrib.admin",
+    "freppledb.archive",
+    # The next two apps allow users to run their own SQL statements on
+    # the database, using the SQL_ROLE configured above.
+    "freppledb.reportmanager",
+    "freppledb.executesql",
+    "freppledb.debugreport",
+)
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
 
 # A list of user names thatcan generate database dumps and download them.
@@ -436,37 +466,6 @@ MIDDLEWARE = (
     "django.middleware.csrf.CsrfViewMiddleware",
 )
 
-# Installed applications.
-# The order is important: urls, templates and menus of the earlier entries
-# take precedence over and override later entries.
-INSTALLED_APPS = (
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "freppledb.boot",
-    # Add any project specific apps here
-    # "freppledb.odoo",
-    #'freppledb.erpconnection',
-    "freppledb.wizard",
-    "freppledb.input",
-    "freppledb.forecast",
-    "freppledb.output",
-    "freppledb.metrics",
-    "freppledb.execute",
-    "freppledb.webservice",
-    "freppledb.common",
-    "django_filters",
-    "rest_framework",
-    "django.contrib.admin",
-    "freppledb.archive",
-    # The next two apps allow users to run their own SQL statements on
-    # the database, using the SQL_ROLE configured above.
-    "freppledb.reportmanager",
-    "freppledb.executesql",
-    "freppledb.debugreport",
-)
-
 # Custom attribute fields in the database
 # After each change of this setting, the following commands MUST be
 # executed to create the fields in the database(s).
@@ -552,6 +551,11 @@ MAXMEMORYSIZE = None  # limit in MB, minimum around 230, use None for unlimited
 # Maximum allowed memory size for the planning engine. Only used on Linux!
 MAXCPUTIME = None  # limit in seconds, use None for unlimited
 
+# Specify number of objects we are allowed to cache and the number of
+# threads we create to write changed objects
+CACHE_MAXIMUM = 1000000
+CACHE_THREADS = 3
+
 # Max total log files size in MB, if the limit is reached deletes the oldest.
 MAXTOTALLOGFILESIZE = 200
 
@@ -596,10 +600,12 @@ DEFAULT_DASHBOARD = [
             {
                 "width": 9,
                 "widgets": [
+                    ("forecast", {"history": 36, "future": 12}),
                     (
                         "analysis_demand_problems",
                         {"top": 20, "orderby": "latedemandvalue"},
-                    )
+                    ),
+                    ("outliers", {"limit": 20}),
                 ],
             },
             {
@@ -608,6 +614,7 @@ DEFAULT_DASHBOARD = [
                     ("demand_alerts", {}),
                     ("delivery_performance", {"green": 90, "yellow": 80}),
                     ("archived_demand", {"history": 12}),
+                    ("forecast_error", {"history": 12}),
                 ],
             },
         ],

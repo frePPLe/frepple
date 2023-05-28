@@ -181,28 +181,28 @@ class ReportManager(GridReport):
             return ('"%s" is distinct from %%s' % field, [smart_str(data).strip()])
         else:
             return (
-                'upper("%s") is distinct from upper(%%s)' % field,
+                'upper("%s"::text) is distinct from upper(%%s)' % field,
                 [smart_str(data).strip()],
             )
 
     @staticmethod
     def _filter_bn(reportrow, field, data):
         return (
-            'not upper("%s") like upper(%%s)' % field,
+            'not upper("%s"::text) like upper(%%s)' % field,
             ["%s%%" % smart_str(data).strip()],
         )
 
     @staticmethod
     def _filter_en(reportrow, field, data):
         return (
-            'not upper("%s") like upper(%%s)' % field,
+            'not upper("%s"::text) like upper(%%s)' % field,
             ["%%%s" % smart_str(data).strip()],
         )
 
     @staticmethod
     def _filter_nc(reportrow, field, data):
         return (
-            'not upper("%s") like upper(%%s)' % field,
+            'not upper("%s"::text) like upper(%%s)' % field,
             ["%%%s%%" % smart_str(data).strip()],
         )
 
@@ -230,12 +230,12 @@ class ReportManager(GridReport):
         ):
             return ('"%s" = %%s' % field, [smart_str(data).strip()])
         else:
-            return ('upper("%s") = upper(%%s)' % field, [smart_str(data).strip()])
+            return ('upper("%s"::text) = upper(%%s)' % field, [smart_str(data).strip()])
 
     @staticmethod
     def _filter_bw(reportrow, field, data):
         return (
-            'upper("%s") like upper(%%s)' % field,
+            'upper("%s"::text) like upper(%%s)' % field,
             ["%s%%" % smart_str(data).strip()],
         )
 
@@ -258,14 +258,14 @@ class ReportManager(GridReport):
     @staticmethod
     def _filter_ew(reportrow, field, data):
         return (
-            'upper("%s") like upper(%%s)' % field,
+            'upper("%s"::text) like upper(%%s)' % field,
             ["%%%s" % smart_str(data).strip()],
         )
 
     @staticmethod
     def _filter_cn(reportrow, field, data):
         return (
-            'upper("%s") like upper(%%s)' % field,
+            'upper("%s"::text) like upper(%%s)' % field,
             ["%%%s%%" % smart_str(data).strip()],
         )
 

@@ -105,7 +105,10 @@ void Plan::erase(const string& e) {
     Customer::clear();
   else if (e == "operation")
     Operation::clear();
-  else if (e == "demand")
+  else if (e == "demand" || e == "forecast")
+    // TODO handling demand and forecast here as the same is not correct.
+    // In this file, we can't make the distinction - as the forecast class isn't
+    // known at this point yet.
     Demand::clear();
   else if (e == "buffer")
     Buffer::clear();

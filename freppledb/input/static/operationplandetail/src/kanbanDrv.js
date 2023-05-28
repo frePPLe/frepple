@@ -86,6 +86,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
       opplan.selected = true;
       $scope.curselected = opplan;
       $scope.$parent.displayInfo(opplan);
+      angular.element(document).find("#delete_selected, #gridactions").prop("disabled", false);
     };
     $scope.selectCard = selectCard;
 

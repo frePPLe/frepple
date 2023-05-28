@@ -273,7 +273,9 @@ class Command(BaseCommand):
                 # Generate the constrained plan
                 if verbosity > 1:
                     print("  Generating plan...")
-                management.call_command("runplan", database=database, env="supply")
+                management.call_command(
+                    "runplan", database=database, env="fcst,supply,nowebservice"
+                )
 
                 if options["pause"]:
                     print(

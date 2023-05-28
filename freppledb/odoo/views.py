@@ -218,7 +218,12 @@ def Upload(request):
                                 quoteattr(op.batch or ""),
                             )
                         )
-                        wolist = [i for i in op.xchildren.using(request.database).all()]
+                        wolist = [
+                            i
+                            for i in op.xchildren.using(request.database)
+                            .all()
+                            .order_by("operation__priority")
+                        ]
                         if wolist:
                             for wo in wolist:
                                 data_odoo.append(
@@ -235,10 +240,11 @@ def Upload(request):
                                         and wores.resource.source.startswith("odoo")
                                     ):
                                         data_odoo.append(
-                                            "<resource name=%s id=%s/>"
+                                            '<resource name=%s id=%s quantity="%s"/>'
                                             % (
                                                 quoteattr(wores.resource.name),
                                                 quoteattr(wores.resource.category),
+                                                wores.quantity,
                                             )
                                         )
                                 data_odoo.append("</workorder>")

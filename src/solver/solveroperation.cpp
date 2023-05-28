@@ -681,7 +681,6 @@ void SolverCreate::solve(const Operation* oper, void* v) {
   if (!oper->getOwner() || !oper->getOwner()->hasType<OperationRouting>())
     data->hitMaxSize = data->state->a_qty == oper->getSizeMaximum();
 
-
   // Message
   if (getLogLevel() > 1) {
     logger << indentlevel-- << "Operation '" << oper

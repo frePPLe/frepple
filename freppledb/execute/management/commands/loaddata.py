@@ -135,6 +135,8 @@ class Command(loaddata.Command):
             super().handle(*fixture_labels, **options)
 
             # if the fixture doesn't contain the 'demo' word, let's not apply loaddata post-treatments
+            if "FREPPLE_TEST" in os.environ:
+                return
             for f in fixture_labels:
                 if "demo" not in f.lower():
                     return

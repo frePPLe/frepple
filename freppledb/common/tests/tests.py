@@ -21,9 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import time
-
-from django.db import DEFAULT_DB_ALIAS
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
 

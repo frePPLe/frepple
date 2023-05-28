@@ -2290,7 +2290,6 @@ OperationPlan::InterruptionIterator::next() {
 
 double OperationPlan::getEfficiency(Date d) const {
   double best = DBL_MAX;
-  double parallel_factor = 0.0;
   LoadPlanIterator e = beginLoadPlans();
   if (e == endLoadPlans()) {
     // Use the operation loads
@@ -2312,6 +2311,7 @@ double OperationPlan::getEfficiency(Date d) const {
     }
   } else {
     // Use the operationplan loadplans
+    double parallel_factor = 0.0;
     auto individual = Plan::instance().getIndividualPoolResources();
     while (e != endLoadPlans()) {
       if (e->getQuantity() <= 0) {
@@ -2323,14 +2323,14 @@ double OperationPlan::getEfficiency(Date d) const {
           auto total_allocated = 0.0;
           for (LoadPlanIterator inner = beginLoadPlans();
                inner != endLoadPlans(); ++inner)
-            if (e->getResource()->getRoot() ==
-                    inner->getResource()->getRoot() &&
-                inner->getQuantity() < 0)
+            if (e->getResource()->getTop() == inner->getResource()->getTop() &&
+                inner->getQuantity() < 0) {
               total_allocated +=
                   inner->getResource()->getEfficiencyCalendar()
                       ? inner->getResource()->getEfficiencyCalendar()->getValue(
                             d ? d : getStart())
                       : inner->getResource()->getEfficiency();
+            }
           double load_quantity = 1.0;
           for (auto h = getOperation()->getLoads().begin();
                h != getOperation()->getLoads().end(); ++h) {
@@ -2342,7 +2342,6 @@ double OperationPlan::getEfficiency(Date d) const {
           total_allocated /= load_quantity;
           if (!parallel_factor || total_allocated < parallel_factor)
             parallel_factor = total_allocated;
-          if (parallel_factor < best) best = parallel_factor;
         } else {
           auto tmp = e->getResource()->getEfficiencyCalendar()
                          ? e->getResource()->getEfficiencyCalendar()->getValue(
@@ -2352,6 +2351,12 @@ double OperationPlan::getEfficiency(Date d) const {
         }
       }
       ++e;
+    }
+    if (parallel_factor) {
+      if (best == DBL_MAX)
+        best = parallel_factor;
+      else
+        best *= parallel_factor / 100;
     }
   }
   if (best == DBL_MAX)

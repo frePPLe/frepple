@@ -477,6 +477,23 @@ void SolverCreate::solve(const Buffer* b, void* v) {
           // excess material can be used to compute the date when the buffer
           // can be asked again for additional supply.
           extraInventoryDate = Date::infiniteFuture;
+          if (b->getOnHand(Date::infiniteFuture) >= -ROUNDING_ERROR) {
+            for (auto cur = b->getFlowPlans().rbegin();
+                 cur != b->getFlowPlans().end(); --cur) {
+              if (!cur->isLastOnDate())
+                continue;
+              else if ((data->buffer_solve_shortages_only &&
+                        cur->getOnhand() >= -ROUNDING_ERROR) ||
+                       (!data->buffer_solve_shortages_only &&
+                        cur->getOnhand() >= cur->getMin() - ROUNDING_ERROR))
+                extraInventoryDate = cur->getDate();
+              else
+                break;
+            }
+            if (extraInventoryDate != Date::infiniteFuture && getLogLevel() > 1)
+              logger << indentlevel << "Correcting new date to "
+                     << extraInventoryDate << endl;
+          }
         }
       } else if (theDelta > unconfirmed_supply + ROUNDING_ERROR)
         // There is excess material at this date (coming from planned/frozen

@@ -46,7 +46,8 @@ function webfactory($rootScope, $websocket, $interval, $http, $window) {
     } else if (typeof msg === 'object') {
       message = '<div style="width: 100%; overflow: auto;" class="webservicerror">' + msg.description + '</div>';
     } else {
-      message = '<p>Websocket connection is not working.</p><p>Please check that <strong>plan.webservice</strong> parameter is set to <strong>true</strong>,<br>and <strong>execute the plan</strong>.</p>';
+      message = "<p>The web service isn't running.</p><p>Use the <a class='underline' target='_blank' href='" + url_prefix
+      + "/execute/#runwebservice'>web service</a> task in the admin/execute screen to restart it.</p>";
     }
 
     angular.element("#controller").scope().$applyAsync(function () {
@@ -63,6 +64,8 @@ function webfactory($rootScope, $websocket, $interval, $http, $window) {
         themodal.find('.modal-body').html('<div style="width: 100%; overflow: auto;">' + message + '</div>');
       }
     });
+    var p = angular.element(document).find('#popup2');
+    p.find(".modal-footer").hide();
     showModal('popup2');
   }
 

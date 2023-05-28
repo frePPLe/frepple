@@ -28,6 +28,7 @@ import random
 from rest_framework.test import APIClient, APITestCase, APIRequestFactory
 import tempfile
 from time import sleep
+from unittest import skipUnless
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
@@ -971,3 +972,29 @@ class NotificationTest(TransactionTestCase):
 
         self.assertEqual(Comment.objects.count(), 4000)
         self.assertEqual(Notification.objects.count(), 6000)
+
+
+@skipUnless("freppledb.forecast" in settings.INSTALLED_APPS, "App not activated")
+class ManufacturingDemoTest(TransactionTestCase):
+
+    fixtures = ["manufacturing_demo"]
+
+    def setUp(self):
+        # Make sure the test database is used
+        os.environ["FREPPLE_TEST"] = "YES"
+
+    def tearDown(self):
+        del os.environ["FREPPLE_TEST"]
+
+    def test_plan(self):
+        from freppledb.forecast.models import ForecastPlan
+        from freppledb.input.models import OperationPlan
+
+        # Run frePPLe on the test database.
+        ForecastPlan.objects.all().delete()
+        OperationPlan.objects.filter(status="proposed").delete()
+        management.call_command(
+            "runplan", plantype=1, constraint=15, env="fcst,invplan,supply"
+        )
+        self.assertGreater(ForecastPlan.objects.all().count(), 0)
+        self.assertGreater(OperationPlan.objects.filter(status="proposed").count(), 0)

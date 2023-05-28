@@ -570,14 +570,14 @@ class ResourceDetail(OperationPlanMixin):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
         GridFieldText(
-            "operationplan__item",
+            "operationplan__item__name",
             title=_("item"),
             editable=False,
             formatter="detail",
             extra='"role":"input/item"',
         ),
         GridFieldText(
-            "operationplan__location",
+            "operationplan__location__name",
             title=_("location"),
             editable=False,
             formatter="detail",
@@ -737,9 +737,8 @@ class ResourceDetail(OperationPlanMixin):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
         GridFieldDuration(
-            "delay",
+            "operationplan__delay",
             title=_("delay"),
-            field_name="operationplan__delay",
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),

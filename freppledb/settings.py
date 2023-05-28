@@ -427,10 +427,12 @@ DEFAULT_DASHBOARD = [
             {
                 "width": 9,
                 "widgets": [
+                    ("forecast", {"history": 36, "future": 12}),
                     (
                         "analysis_demand_problems",
                         {"top": 20, "orderby": "latedemandvalue"},
-                    )
+                    ),
+                    ("outliers", {"limit": 20}),
                 ],
             },
             {
@@ -439,6 +441,7 @@ DEFAULT_DASHBOARD = [
                     ("demand_alerts", {}),
                     ("delivery_performance", {"green": 90, "yellow": 80}),
                     ("archived_demand", {"history": 12}),
+                    ("forecast_error", {"history": 12}),
                 ],
             },
         ],

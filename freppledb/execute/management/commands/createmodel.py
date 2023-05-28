@@ -190,18 +190,17 @@ class Command(BaseCommand):
             task.arguments = (
                 "--cluster=%s --demand=%s --forecast_per_item=%s --level=%s --resource=%s "
                 "--resource_size=%s --components=%s --components_per=%s --deliver_lt=%s --procure_lt=%s"
-                % (
-                    cluster,
-                    demand,
-                    forecast_per_item,
-                    level,
-                    resource,
-                    resource_size,
-                    components,
-                    components_per,
-                    deliver_lt,
-                    procure_lt,
-                )
+            ) % (
+                cluster,
+                demand,
+                forecast_per_item,
+                level,
+                resource,
+                resource_size,
+                components,
+                components_per,
+                deliver_lt,
+                procure_lt,
             )
             task.save(using=database)
 
@@ -233,32 +232,29 @@ class Command(BaseCommand):
             param.value = datetime.strftime(startdate, "%Y-%m-%d %H:%M:%S")
             param.save(using=database)
 
+            # Parameters
+            Parameter.objects.using(database).create(name="plan.loglevel", value="3")
+            Parameter.objects.using(database).create(
+                name="loading_time_units",
+                value="days",
+                description="Time units to be used for the resource report: hours, days, weeks",
+            ).save(using=database)
+
+            with_forecast = "freppledb.forecast" in settings.INSTALLED_APPS
+            if with_forecast:
+                management.call_command(
+                    "loaddata",
+                    "parameters_week_forecast",
+                    database=database,
+                    verbosity=0,
+                )
+
             # Planning horizon
-            # minimum 10 daily buckets, weekly buckets till 40 days after current
             if verbosity > 0:
                 print("Updating buckets...")
             management.call_command("createbuckets", user=user, database=database)
             task.status = "2%"
             task.save(using=database)
-
-            # Weeks calendar
-            if verbosity > 0:
-                print("Creating weeks calendar...")
-            with transaction.atomic(using=database):
-                weeks = Calendar.objects.using(database).create(
-                    name="Weeks", defaultvalue=0
-                )
-                for i in (
-                    BucketDetail.objects.using(database).filter(bucket="week").all()
-                ):
-                    CalendarBucket(
-                        startdate=i.startdate,
-                        enddate=i.enddate,
-                        value=1,
-                        calendar=weeks,
-                    ).save(using=database)
-                task.status = "4%"
-                task.save(using=database)
 
             # Working days calendar
             if verbosity > 0:
@@ -478,6 +474,25 @@ class Command(BaseCommand):
                     # Commit the current cluster
                     task.status = "%d%%" % (12 + progress * (i + 1))
                     task.save(using=database)
+
+            if with_forecast:
+                from freppledb.forecast.models import Forecast
+
+                for i in range(cluster):
+                    # Forecast
+                    fcst = Forecast.objects.using(database).create(
+                        name="Forecast item %05d" % i,
+                        item=it,
+                        customer=random.choice(cust),
+                        location=loc,
+                        maxlateness=timedelta(
+                            days=60
+                        ),  # Forecast can only be planned 2 months late
+                        priority=3,  # Low priority: prefer planning orders over forecast
+                        discrete=True,
+                    )
+
+                    # TODO set some gross forecast values or historical demand values
 
             # Task update
             task.status = "Done"

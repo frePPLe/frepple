@@ -333,6 +333,10 @@ class Command(BaseCommand):
                     "Permission denied - you did't have access rights to the scenario that was backed up"
                 )
 
+            # Shut down the web service in the destination
+            if "freppledb.webservice" in settings.DATABASES:
+                call_command("stopwebservice", database=destination, force=True)
+
             # Update the scenario table
             destinationscenario.status = "In use"
             destinationscenario.lastrefresh = datetime.today()

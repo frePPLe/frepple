@@ -24,6 +24,7 @@
 import os
 from datetime import timedelta, datetime
 
+from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
@@ -87,6 +88,19 @@ class GetPlanMetrics(PlanTask):
                     """,
                     (window,),
                 )
+
+                if "freppledb.forecast" in settings.INSTALLED_APPS:
+                    cursor.execute(
+                        """
+                        insert into out_problem_tmp
+                        select item.name as item_id, out_problem.name, out_problem.weight, out_problem.weight*coalesce(item.cost) from out_problem
+                        inner join forecast on forecast.name = left(out_problem.owner, -13)
+                        inner join item on item.name = forecast.item_id
+                        where out_problem.name in ('unplanned', 'late')
+                        and out_problem.startdate < %s;
+                       """,
+                        (window,),
+                    )
 
                 cursor.execute(
                     """

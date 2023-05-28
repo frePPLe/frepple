@@ -128,7 +128,7 @@ class InboxWidget(Widget):
             result.append(
                 """<tr><td>
                 <a class="text-decoration-underline" href="%s%s">%s</a>&nbsp;<span class="small">%s</span>
-                <div class="small pull-right" data-toggle="tooltip" data-bs-title="%s %s">%s%s&nbsp;&nbsp;%s</div>
+                <div class="small pull-right" data-bs-toggle="tooltip" data-bs-title="%s %s">%s%s&nbsp;&nbsp;%s</div>
                 <br><p style="padding-left: 10px; display: inline-block">%s</p>"""
                 % (
                     _thread_locals.request.prefix,

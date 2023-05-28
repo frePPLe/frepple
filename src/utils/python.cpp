@@ -214,7 +214,8 @@ void PythonInterpreter::initialize() {
   nok += PyModule_AddObject(module, "RuntimeException", PythonRuntimeException);
 
   // Add a string constant for the version
-  nok += PyModule_AddStringConstant(module, "version", PACKAGE_VERSION);
+  nok += PyModule_AddStringConstant(module, "version",
+                                    PACKAGE_VERSION "." PACKAGE_BRANCH);
 
   // Redirect the stderr and stdout streams of Python
   registerGlobalMethod("log", python_log, METH_VARARGS,

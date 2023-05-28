@@ -198,7 +198,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
     aggregatedopplan.end = aggregatedopplan.enddate;
     aggregatedopplan.id = -1;
     aggregatedopplan.count = selectionData.length;
-    if (aggregatedopplan.count > 0) aggregatedopplan.type = selectionData[0].type;
+    aggregatedopplan.type = (selectionData.length > 0) ? selectionData[0].type : "";
     $scope.$apply(function () { $scope.operationplan.extend(aggregatedopplan); });
   }
   $scope.processAggregatedInfo = processAggregatedInfo;

@@ -797,6 +797,10 @@ class ForecastPlan(models.Model):
             },
         )
 
+        # refresh materialized view in case new combinations have been added
+        with connections[database].cursor() as cursor:
+            cursor.execute("REFRESH MATERIALIZED VIEW forecastreport_view")
+
 
 class Measure(AuditModel):
     obfuscate = False

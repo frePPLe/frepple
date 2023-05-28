@@ -98,7 +98,7 @@ int Forecast::initialize() {
       "Reset the specified measures");
   PythonInterpreter::registerGlobalMethod(
       "setForecast", Forecast::setValuePython2, METH_VARARGS,
-      "Reset the specified measures");
+      "Update forecast values");
 
   // Initialize the Python class
   PythonType& x = FreppleClass<Forecast, Demand>::getPythonType();

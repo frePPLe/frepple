@@ -283,7 +283,7 @@ class PlanTaskSequence(PlanTask):
             # Final task status
             if self.task:
                 self.task.finished = datetime.now()
-                self.task.status = "100%"
+                self.task.status = "Done"
                 self.task.message = ""
                 self.task.save(using=database)
         except Exception as e:

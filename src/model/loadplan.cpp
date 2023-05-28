@@ -650,7 +650,15 @@ LoadPlan::AlternateIterator::AlternateIterator(const LoadPlan* o) : ldplan(o) {
                             ? i->getEfficiencyCalendar()->getValue(
                                   ldplan->getOperationPlan()->getStart())
                             : i->getEfficiency();
-          if (my_eff > 0.0) resources.push_back(&*i);
+          if (my_eff <= 0.0) continue;
+          bool already_assigned = false;
+          auto ldplniter = ldplan->getOperationPlan()->getLoadPlans();
+          while (auto checkldpln = ldplniter.next())
+            if (checkldpln->getResource() == &*i) {
+              already_assigned = true;
+              break;
+            }
+          if (!already_assigned) resources.push_back(&*i);
         }
       }
     }

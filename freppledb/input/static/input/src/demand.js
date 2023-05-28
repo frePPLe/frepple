@@ -63,6 +63,10 @@ function DemandFactory($http, getURLprefix, Location, Item, Customer) {
           else if (!moment.isMoment(value))
             data['due'] = moment(value);
           break;
+        case "delivery":
+          if (!moment.isMoment(value))
+            data['delivery'] = moment(value);
+          break;
         case "pegging":
           value.forEach(function (i, indx) {
             if (!moment.isMoment(i.operationplan.start))

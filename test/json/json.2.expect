@@ -1,0 +1,5777 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<current>2012-01-01T00:00:00</current>
+	<locations>
+		<location>
+			<name>Factory 1</name>
+			<available>
+				<name>Working Days</name>
+			</available>
+		</location>
+		<location>
+			<name>Finished goods</name>
+			<owner>
+				<name>Factory 1</name>
+			</owner>
+			<available>
+				<name>Working Days</name>
+			</available>
+		</location>
+		<location>
+			<name>Line 1</name>
+			<owner>
+				<name>Factory 1</name>
+			</owner>
+			<available>
+				<name>Working Days</name>
+			</available>
+		</location>
+	</locations>
+	<calendars>
+		<calendar>
+			<name>Capacity line 1 station 1a</name>
+			<buckets>
+				<bucket>
+					<start>2011-02-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>Capacity line 1 station 1b</name>
+			<buckets>
+				<bucket>
+					<start>2011-02-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>Capacity line 1 station 2</name>
+			<buckets>
+				<bucket>
+					<start>2011-02-01T00:00:00</start>
+					<value>2</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>Capacity line 1 station 3</name>
+			<buckets>
+				<bucket>
+					<start>2011-02-01T00:00:00</start>
+					<value>4</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>Capacity line 1 station 4</name>
+			<buckets>
+				<bucket>
+					<start>2011-02-01T00:00:00</start>
+					<value>2</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>Capacity line 1 station 5</name>
+			<buckets>
+				<bucket>
+					<start>2011-02-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>Capacity line 1 station 6</name>
+			<buckets>
+				<bucket>
+					<start>2011-02-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>Capacity line 1 station 7</name>
+			<buckets>
+				<bucket>
+					<start>2011-02-01T00:00:00</start>
+					<value>1</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>Operators line 1</name>
+			<buckets>
+				<bucket>
+					<start>2011-01-01T00:00:00</start>
+					<value>9</value>
+				</bucket>
+			</buckets>
+		</calendar>
+		<calendar>
+			<name>Working Days</name>
+			<default>1</default>
+			<buckets>
+				<bucket>
+					<start>2011-12-31T00:00:00</start>
+					<end>2012-04-30T00:00:00</end>
+					<days>65</days>
+				</bucket>
+			</buckets>
+		</calendar>
+	</calendars>
+	<resources>
+		<resource>
+			<name>Line 1 station 1a</name>
+			<maximum_calendar>
+				<name>Capacity line 1 station 1a</name>
+			</maximum_calendar>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</resource>
+		<resource>
+			<name>Line 1 station 1b</name>
+			<maximum_calendar>
+				<name>Capacity line 1 station 1b</name>
+			</maximum_calendar>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</resource>
+		<resource>
+			<name>Line 1 station 2</name>
+			<maximum_calendar>
+				<name>Capacity line 1 station 2</name>
+			</maximum_calendar>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</resource>
+		<resource>
+			<name>Line 1 station 3</name>
+			<maximum_calendar>
+				<name>Capacity line 1 station 3</name>
+			</maximum_calendar>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</resource>
+		<resource>
+			<name>Line 1 station 4</name>
+			<maximum_calendar>
+				<name>Capacity line 1 station 4</name>
+			</maximum_calendar>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</resource>
+		<resource>
+			<name>Line 1 station 5</name>
+			<maximum_calendar>
+				<name>Capacity line 1 station 5</name>
+			</maximum_calendar>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</resource>
+		<resource>
+			<name>Line 1 station 6</name>
+			<maximum_calendar>
+				<name>Capacity line 1 station 6</name>
+			</maximum_calendar>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</resource>
+		<resource>
+			<name>Line 1 station 7</name>
+			<maximum_calendar>
+				<name>Capacity line 1 station 7</name>
+			</maximum_calendar>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</resource>
+		<resource>
+			<name>Operators line 1</name>
+			<maximum_calendar>
+				<name>Operators line 1</name>
+			</maximum_calendar>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</resource>
+	</resources>
+	<items>
+		<item>
+			<name>01 step 01b</name>
+			<owner>
+				<name>group 1b</name>
+			</owner>
+		</item>
+		<item>
+			<name>01 step 02</name>
+		</item>
+		<item>
+			<name>01 step 03</name>
+		</item>
+		<item>
+			<name>01 step 04</name>
+		</item>
+		<item>
+			<name>01 step 05</name>
+		</item>
+		<item>
+			<name>01 step 06</name>
+		</item>
+		<item>
+			<name>01 step 07</name>
+		</item>
+		<item>
+			<name>02 step 01b</name>
+			<owner>
+				<name>group 1b</name>
+			</owner>
+		</item>
+		<item>
+			<name>02 step 02</name>
+		</item>
+		<item>
+			<name>02 step 03</name>
+		</item>
+		<item>
+			<name>02 step 04</name>
+		</item>
+		<item>
+			<name>02 step 05</name>
+		</item>
+		<item>
+			<name>02 step 06</name>
+		</item>
+		<item>
+			<name>02 step 07</name>
+		</item>
+		<item>
+			<name>03 step 01b</name>
+			<owner>
+				<name>group 1b</name>
+			</owner>
+		</item>
+		<item>
+			<name>03 step 02</name>
+		</item>
+		<item>
+			<name>03 step 03</name>
+		</item>
+		<item>
+			<name>03 step 04</name>
+		</item>
+		<item>
+			<name>03 step 05</name>
+		</item>
+		<item>
+			<name>03 step 06</name>
+		</item>
+		<item>
+			<name>03 step 07</name>
+		</item>
+		<item>
+			<name>04 step 01b</name>
+			<owner>
+				<name>group 1a</name>
+			</owner>
+		</item>
+		<item>
+			<name>04 step 02</name>
+		</item>
+		<item>
+			<name>04 step 03</name>
+		</item>
+		<item>
+			<name>04 step 04</name>
+		</item>
+		<item>
+			<name>04 step 05</name>
+		</item>
+		<item>
+			<name>04 step 06</name>
+		</item>
+		<item>
+			<name>04 step 07</name>
+		</item>
+		<item>
+			<name>05 step 01b</name>
+			<owner>
+				<name>group 1a</name>
+			</owner>
+		</item>
+		<item>
+			<name>05 step 02</name>
+		</item>
+		<item>
+			<name>05 step 03</name>
+		</item>
+		<item>
+			<name>05 step 04</name>
+		</item>
+		<item>
+			<name>05 step 05</name>
+		</item>
+		<item>
+			<name>05 step 06</name>
+		</item>
+		<item>
+			<name>05 step 07</name>
+		</item>
+		<item>
+			<name>group 1</name>
+		</item>
+		<item>
+			<name>group 1a</name>
+			<owner>
+				<name>group 1</name>
+			</owner>
+		</item>
+		<item>
+			<name>group 1b</name>
+			<owner>
+				<name>group 1</name>
+			</owner>
+		</item>
+	</items>
+	<buffers>
+		<buffer>
+			<name>01 step 01b @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>01 step 01b</name>
+			</producing>
+			<item>
+				<name>01 step 01b</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>01 step 02 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>01 step 02</name>
+			</producing>
+			<item>
+				<name>01 step 02</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>01 step 03 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>01 step 03</name>
+			</producing>
+			<item>
+				<name>01 step 03</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>01 step 04 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>01 step 04</name>
+			</producing>
+			<item>
+				<name>01 step 04</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>01 step 05 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>01 step 05</name>
+			</producing>
+			<item>
+				<name>01 step 05</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>01 step 06 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>01 step 06</name>
+			</producing>
+			<item>
+				<name>01 step 06</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>01 step 07 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>01 step 07</name>
+			</producing>
+			<item>
+				<name>01 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>02 step 01b @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>02 step 01b</name>
+			</producing>
+			<item>
+				<name>02 step 01b</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>02 step 02 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>02 step 02</name>
+			</producing>
+			<item>
+				<name>02 step 02</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>02 step 03 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>02 step 03</name>
+			</producing>
+			<item>
+				<name>02 step 03</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>02 step 04 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>02 step 04</name>
+			</producing>
+			<item>
+				<name>02 step 04</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>02 step 05 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>02 step 05</name>
+			</producing>
+			<item>
+				<name>02 step 05</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>02 step 06 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>02 step 06</name>
+			</producing>
+			<item>
+				<name>02 step 06</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>02 step 07 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>02 step 07</name>
+			</producing>
+			<item>
+				<name>02 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>03 step 01b @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>03 step 01b</name>
+			</producing>
+			<item>
+				<name>03 step 01b</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>03 step 02 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>03 step 02</name>
+			</producing>
+			<item>
+				<name>03 step 02</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>03 step 03 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>03 step 03</name>
+			</producing>
+			<item>
+				<name>03 step 03</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>03 step 04 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>03 step 04</name>
+			</producing>
+			<item>
+				<name>03 step 04</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>03 step 05 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>03 step 05</name>
+			</producing>
+			<item>
+				<name>03 step 05</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>03 step 06 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>03 step 06</name>
+			</producing>
+			<item>
+				<name>03 step 06</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>03 step 07 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>03 step 07</name>
+			</producing>
+			<item>
+				<name>03 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>04 step 01b @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>04 step 01b</name>
+			</producing>
+			<item>
+				<name>04 step 01b</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>04 step 02 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>04 step 02</name>
+			</producing>
+			<item>
+				<name>04 step 02</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>04 step 03 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>04 step 03</name>
+			</producing>
+			<item>
+				<name>04 step 03</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>04 step 04 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>04 step 04</name>
+			</producing>
+			<item>
+				<name>04 step 04</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>04 step 05 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>04 step 05</name>
+			</producing>
+			<item>
+				<name>04 step 05</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>04 step 06 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>04 step 06</name>
+			</producing>
+			<item>
+				<name>04 step 06</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>04 step 07 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>04 step 07</name>
+			</producing>
+			<item>
+				<name>04 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>05 step 01b @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>05 step 01b</name>
+			</producing>
+			<item>
+				<name>05 step 01b</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>05 step 02 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>05 step 02</name>
+			</producing>
+			<item>
+				<name>05 step 02</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>05 step 03 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>05 step 03</name>
+			</producing>
+			<item>
+				<name>05 step 03</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>05 step 04 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>05 step 04</name>
+			</producing>
+			<item>
+				<name>05 step 04</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>05 step 05 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>05 step 05</name>
+			</producing>
+			<item>
+				<name>05 step 05</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>05 step 06 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>05 step 06</name>
+			</producing>
+			<item>
+				<name>05 step 06</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>05 step 07 @ Line 1</name>
+			<producing xsi:type="operation_time_per">
+				<name>05 step 07</name>
+			</producing>
+			<item>
+				<name>05 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</buffer>
+	</buffers>
+	<operations>
+		<operation xsi:type="operation_time_per">
+			<name>01 step 01b</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>01 step 01b</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 1b</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>01 step 01b</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT9S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>01 step 02</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>01 step 02</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 2</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>01 step 01b</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>01 step 02</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT16S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>01 step 03</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>01 step 03</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 3</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>01 step 02</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>01 step 03</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT27S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>01 step 04</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>01 step 04</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 4</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>01 step 03</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>01 step 04</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT12S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>01 step 05</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>01 step 05</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 5</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>01 step 04</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>01 step 05</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT6S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>01 step 06</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>01 step 06</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 6</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>01 step 05</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>01 step 06</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT1S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>01 step 07</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>01 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 7</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>01 step 06</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>01 step 07</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT10S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>02 step 01b</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>02 step 01b</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 1b</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>02 step 01b</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT9S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>02 step 02</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>02 step 02</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 2</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>02 step 01b</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>02 step 02</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT16S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>02 step 03</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>02 step 03</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 3</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>02 step 02</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>02 step 03</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT27S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>02 step 04</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>02 step 04</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 4</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>02 step 03</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>02 step 04</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT12S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>02 step 05</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>02 step 05</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 5</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>02 step 04</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>02 step 05</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT6S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>02 step 06</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>02 step 06</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 6</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>02 step 05</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>02 step 06</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT1S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>02 step 07</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>02 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 7</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>02 step 06</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>02 step 07</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT10S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>03 step 01b</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>03 step 01b</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 1b</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>03 step 01b</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT9S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>03 step 02</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>03 step 02</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 2</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>03 step 01b</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>03 step 02</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT16S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>03 step 03</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>03 step 03</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 3</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>03 step 02</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>03 step 03</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT27S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>03 step 04</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>03 step 04</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 4</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>03 step 03</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>03 step 04</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT12S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>03 step 05</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>03 step 05</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 5</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>03 step 04</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>03 step 05</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT6S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>03 step 06</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>03 step 06</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 6</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>03 step 05</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>03 step 06</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT1S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>03 step 07</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>03 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 7</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>03 step 06</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>03 step 07</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT10S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>04 step 01b</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>04 step 01b</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 1b</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>04 step 01b</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT9S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>04 step 02</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>04 step 02</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 2</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>04 step 01b</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>04 step 02</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT16S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>04 step 03</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>04 step 03</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 3</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>04 step 02</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>04 step 03</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT27S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>04 step 04</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>04 step 04</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 4</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>04 step 03</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>04 step 04</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT12S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>04 step 05</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>04 step 05</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 5</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>04 step 04</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>04 step 05</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT6S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>04 step 06</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>04 step 06</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 6</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>04 step 05</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>04 step 06</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT1S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>04 step 07</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>04 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 7</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>04 step 06</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>04 step 07</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT10S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>05 step 01b</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>05 step 01b</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 1b</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>05 step 01b</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT9S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>05 step 02</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>05 step 02</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 2</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>05 step 01b</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>05 step 02</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT16S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>05 step 03</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>05 step 03</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 3</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>05 step 02</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>05 step 03</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT27S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>05 step 04</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>05 step 04</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 4</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>05 step 03</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>05 step 04</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT12S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>05 step 05</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>05 step 05</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 5</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>05 step 04</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>05 step 05</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT6S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>05 step 06</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>05 step 06</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 6</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>05 step 05</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>05 step 06</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT1S</duration_per>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>05 step 07</name>
+			<size_minimum>500</size_minimum>
+			<size_maximum>500</size_maximum>
+			<item>
+				<name>05 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Line 1 station 7</name>
+					</resource>
+				</load>
+				<load>
+					<resource>
+						<name>Operators line 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>05 step 06</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>05 step 07</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT10S</duration_per>
+		</operation>
+	</operations>
+	<demands>
+		<demand>
+			<name>Order 001</name>
+			<quantity>5000</quantity>
+			<item>
+				<name>01 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<due>2012-01-01T00:00:00</due>
+			<priority>1</priority>
+			<minshipment>500</minshipment>
+		</demand>
+		<demand>
+			<name>Order 002</name>
+			<quantity>5000</quantity>
+			<item>
+				<name>02 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<due>2012-01-01T00:00:00</due>
+			<priority>3</priority>
+			<minshipment>500</minshipment>
+		</demand>
+		<demand>
+			<name>Order 003</name>
+			<quantity>5000</quantity>
+			<item>
+				<name>03 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<due>2012-01-01T00:00:00</due>
+			<priority>5</priority>
+			<minshipment>500</minshipment>
+		</demand>
+		<demand>
+			<name>Order 004</name>
+			<quantity>5000</quantity>
+			<item>
+				<name>04 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<due>2012-01-01T00:00:00</due>
+			<priority>7</priority>
+			<minshipment>500</minshipment>
+		</demand>
+		<demand>
+			<name>Order 005</name>
+			<quantity>5000</quantity>
+			<item>
+				<name>05 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+			<due>2012-01-01T00:00:00</due>
+			<priority>9</priority>
+			<minshipment>500</minshipment>
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan>
+			<reference>1</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 01b</name>
+			</operation>
+			<start>2011-12-30T00:15:00</start>
+			<end>2011-12-30T01:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>2</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 01b</name>
+			</operation>
+			<start>2011-12-30T01:38:20</start>
+			<end>2011-12-30T02:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>3</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 01b</name>
+			</operation>
+			<start>2011-12-30T03:01:40</start>
+			<end>2011-12-30T04:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>4</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 01b</name>
+			</operation>
+			<start>2011-12-30T04:25:00</start>
+			<end>2011-12-30T05:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>5</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 01b</name>
+			</operation>
+			<start>2011-12-30T05:48:20</start>
+			<end>2011-12-30T07:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>6</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 01b</name>
+			</operation>
+			<start>2011-12-30T07:11:40</start>
+			<end>2011-12-30T08:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>7</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 01b</name>
+			</operation>
+			<start>2011-12-30T08:35:00</start>
+			<end>2011-12-30T09:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>8</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 01b</name>
+			</operation>
+			<start>2011-12-30T09:58:20</start>
+			<end>2011-12-30T11:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>9</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 01b</name>
+			</operation>
+			<start>2011-12-30T11:21:40</start>
+			<end>2011-12-30T12:36:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>10</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 01b</name>
+			</operation>
+			<start>2011-12-30T12:45:00</start>
+			<end>2011-12-30T14:00:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>11</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 02</name>
+			</operation>
+			<start>2011-12-30T01:30:00</start>
+			<end>2011-12-30T03:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>12</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 02</name>
+			</operation>
+			<start>2011-12-30T02:53:20</start>
+			<end>2011-12-30T05:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>13</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 02</name>
+			</operation>
+			<start>2011-12-30T04:16:40</start>
+			<end>2011-12-30T06:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>14</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 02</name>
+			</operation>
+			<start>2011-12-30T05:40:00</start>
+			<end>2011-12-30T07:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>15</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 02</name>
+			</operation>
+			<start>2011-12-30T07:03:20</start>
+			<end>2011-12-30T09:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>16</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 02</name>
+			</operation>
+			<start>2011-12-30T08:26:40</start>
+			<end>2011-12-30T10:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>17</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 02</name>
+			</operation>
+			<start>2011-12-30T09:50:00</start>
+			<end>2011-12-30T12:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>18</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 02</name>
+			</operation>
+			<start>2011-12-30T11:13:20</start>
+			<end>2011-12-30T13:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>19</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 02</name>
+			</operation>
+			<start>2011-12-30T12:36:40</start>
+			<end>2011-12-30T14:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>20</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 02</name>
+			</operation>
+			<start>2011-12-30T14:00:00</start>
+			<end>2011-12-30T16:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>21</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 03</name>
+			</operation>
+			<start>2011-12-30T03:43:20</start>
+			<end>2011-12-30T07:28:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>22</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 03</name>
+			</operation>
+			<start>2011-12-30T05:06:40</start>
+			<end>2011-12-30T08:51:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>23</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 03</name>
+			</operation>
+			<start>2011-12-30T06:30:00</start>
+			<end>2011-12-30T10:15:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>24</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 03</name>
+			</operation>
+			<start>2011-12-30T07:53:20</start>
+			<end>2011-12-30T11:38:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>25</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 03</name>
+			</operation>
+			<start>2011-12-30T09:16:40</start>
+			<end>2011-12-30T13:01:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>26</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 03</name>
+			</operation>
+			<start>2011-12-30T10:40:00</start>
+			<end>2011-12-30T14:25:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>27</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 03</name>
+			</operation>
+			<start>2011-12-30T12:03:20</start>
+			<end>2011-12-30T15:48:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>28</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 03</name>
+			</operation>
+			<start>2011-12-30T13:26:40</start>
+			<end>2011-12-30T17:11:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>29</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 03</name>
+			</operation>
+			<start>2011-12-30T14:50:00</start>
+			<end>2011-12-30T18:35:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>30</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 03</name>
+			</operation>
+			<start>2011-12-30T16:13:20</start>
+			<end>2011-12-30T19:58:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>31</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 04</name>
+			</operation>
+			<start>2011-12-30T07:28:20</start>
+			<end>2011-12-30T09:08:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>32</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 04</name>
+			</operation>
+			<start>2011-12-30T08:51:40</start>
+			<end>2011-12-30T10:31:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>33</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 04</name>
+			</operation>
+			<start>2011-12-30T10:15:00</start>
+			<end>2011-12-30T11:55:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>34</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 04</name>
+			</operation>
+			<start>2011-12-30T11:38:20</start>
+			<end>2011-12-30T13:18:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>35</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 04</name>
+			</operation>
+			<start>2011-12-30T13:01:40</start>
+			<end>2011-12-30T14:41:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>36</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 04</name>
+			</operation>
+			<start>2011-12-30T14:25:00</start>
+			<end>2011-12-30T16:05:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>37</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 04</name>
+			</operation>
+			<start>2011-12-30T15:48:20</start>
+			<end>2011-12-30T17:28:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>38</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 04</name>
+			</operation>
+			<start>2011-12-30T17:11:40</start>
+			<end>2011-12-30T18:51:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>39</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 04</name>
+			</operation>
+			<start>2011-12-30T18:35:00</start>
+			<end>2011-12-30T20:15:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>40</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 04</name>
+			</operation>
+			<start>2011-12-30T19:58:20</start>
+			<end>2011-12-30T21:38:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>41</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 05</name>
+			</operation>
+			<start>2011-12-30T09:08:20</start>
+			<end>2011-12-30T09:58:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>42</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 05</name>
+			</operation>
+			<start>2011-12-30T10:31:40</start>
+			<end>2011-12-30T11:21:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>43</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 05</name>
+			</operation>
+			<start>2011-12-30T11:55:00</start>
+			<end>2011-12-30T12:45:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>44</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 05</name>
+			</operation>
+			<start>2011-12-30T13:18:20</start>
+			<end>2011-12-30T14:08:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>45</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 05</name>
+			</operation>
+			<start>2011-12-30T14:41:40</start>
+			<end>2011-12-30T15:31:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>46</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 05</name>
+			</operation>
+			<start>2011-12-30T16:05:00</start>
+			<end>2011-12-30T16:55:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>47</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 05</name>
+			</operation>
+			<start>2011-12-30T17:28:20</start>
+			<end>2011-12-30T18:18:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>48</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 05</name>
+			</operation>
+			<start>2011-12-30T18:51:40</start>
+			<end>2011-12-30T19:41:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>49</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 05</name>
+			</operation>
+			<start>2011-12-30T20:15:00</start>
+			<end>2011-12-30T21:05:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>50</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 05</name>
+			</operation>
+			<start>2011-12-30T21:38:20</start>
+			<end>2011-12-30T22:28:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>51</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 06</name>
+			</operation>
+			<start>2011-12-30T09:58:20</start>
+			<end>2011-12-30T10:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>52</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 06</name>
+			</operation>
+			<start>2011-12-30T11:21:40</start>
+			<end>2011-12-30T11:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>53</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 06</name>
+			</operation>
+			<start>2011-12-30T12:45:00</start>
+			<end>2011-12-30T12:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>54</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 06</name>
+			</operation>
+			<start>2011-12-30T14:08:20</start>
+			<end>2011-12-30T14:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>55</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 06</name>
+			</operation>
+			<start>2011-12-30T15:31:40</start>
+			<end>2011-12-30T15:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>56</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 06</name>
+			</operation>
+			<start>2011-12-30T16:55:00</start>
+			<end>2011-12-30T17:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>57</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 06</name>
+			</operation>
+			<start>2011-12-30T18:18:20</start>
+			<end>2011-12-30T18:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>58</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 06</name>
+			</operation>
+			<start>2011-12-30T19:41:40</start>
+			<end>2011-12-30T19:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>59</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 06</name>
+			</operation>
+			<start>2011-12-30T21:05:00</start>
+			<end>2011-12-30T21:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>60</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 06</name>
+			</operation>
+			<start>2011-12-30T22:28:20</start>
+			<end>2011-12-30T22:36:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>61</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 07</name>
+			</operation>
+			<start>2011-12-30T10:06:40</start>
+			<end>2011-12-30T11:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>62</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 07</name>
+			</operation>
+			<start>2011-12-30T11:30:00</start>
+			<end>2011-12-30T12:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>63</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 07</name>
+			</operation>
+			<start>2011-12-30T12:53:20</start>
+			<end>2011-12-30T14:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>64</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 07</name>
+			</operation>
+			<start>2011-12-30T14:16:40</start>
+			<end>2011-12-30T15:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>65</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 07</name>
+			</operation>
+			<start>2011-12-30T15:40:00</start>
+			<end>2011-12-30T17:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>66</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 07</name>
+			</operation>
+			<start>2011-12-30T17:03:20</start>
+			<end>2011-12-30T18:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>67</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 07</name>
+			</operation>
+			<start>2011-12-30T18:26:40</start>
+			<end>2011-12-30T19:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>68</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 07</name>
+			</operation>
+			<start>2011-12-30T19:50:00</start>
+			<end>2011-12-30T21:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>69</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 07</name>
+			</operation>
+			<start>2011-12-30T21:13:20</start>
+			<end>2011-12-30T22:36:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>70</reference>
+			<operation xsi:type="operation_time_per">
+				<name>01 step 07</name>
+			</operation>
+			<start>2011-12-30T22:36:40</start>
+			<end>2011-12-31T00:00:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>71</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 01b</name>
+			</operation>
+			<start>2011-12-29T10:21:40</start>
+			<end>2011-12-29T11:36:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>72</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 01b</name>
+			</operation>
+			<start>2011-12-29T11:45:00</start>
+			<end>2011-12-29T13:00:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>73</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 01b</name>
+			</operation>
+			<start>2011-12-29T13:08:20</start>
+			<end>2011-12-29T14:23:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>74</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 01b</name>
+			</operation>
+			<start>2011-12-29T14:31:40</start>
+			<end>2011-12-29T15:46:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>75</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 01b</name>
+			</operation>
+			<start>2011-12-29T15:55:00</start>
+			<end>2011-12-29T17:10:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>76</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 01b</name>
+			</operation>
+			<start>2011-12-29T17:18:20</start>
+			<end>2011-12-29T18:33:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>77</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 01b</name>
+			</operation>
+			<start>2011-12-29T18:41:40</start>
+			<end>2011-12-29T19:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>78</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 01b</name>
+			</operation>
+			<start>2011-12-29T20:05:00</start>
+			<end>2011-12-29T21:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>79</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 01b</name>
+			</operation>
+			<start>2011-12-29T21:28:20</start>
+			<end>2011-12-29T22:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>80</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 01b</name>
+			</operation>
+			<start>2011-12-29T22:51:40</start>
+			<end>2011-12-30T00:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>81</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 02</name>
+			</operation>
+			<start>2011-12-29T11:36:40</start>
+			<end>2011-12-29T13:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>82</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 02</name>
+			</operation>
+			<start>2011-12-29T13:00:00</start>
+			<end>2011-12-29T15:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>83</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 02</name>
+			</operation>
+			<start>2011-12-29T14:23:20</start>
+			<end>2011-12-29T16:36:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>84</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 02</name>
+			</operation>
+			<start>2011-12-29T15:46:40</start>
+			<end>2011-12-29T18:00:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>85</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 02</name>
+			</operation>
+			<start>2011-12-29T17:10:00</start>
+			<end>2011-12-29T19:23:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>86</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 02</name>
+			</operation>
+			<start>2011-12-29T18:33:20</start>
+			<end>2011-12-29T20:46:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>87</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 02</name>
+			</operation>
+			<start>2011-12-29T19:56:40</start>
+			<end>2011-12-29T22:10:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>88</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 02</name>
+			</operation>
+			<start>2011-12-29T21:20:00</start>
+			<end>2011-12-29T23:33:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>89</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 02</name>
+			</operation>
+			<start>2011-12-29T22:43:20</start>
+			<end>2011-12-30T00:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>90</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 02</name>
+			</operation>
+			<start>2011-12-30T00:06:40</start>
+			<end>2011-12-30T02:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>91</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 03</name>
+			</operation>
+			<start>2011-12-29T13:50:00</start>
+			<end>2011-12-29T17:35:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>92</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 03</name>
+			</operation>
+			<start>2011-12-29T15:13:20</start>
+			<end>2011-12-29T18:58:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>93</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 03</name>
+			</operation>
+			<start>2011-12-29T16:36:40</start>
+			<end>2011-12-29T20:21:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>94</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 03</name>
+			</operation>
+			<start>2011-12-29T18:00:00</start>
+			<end>2011-12-29T21:45:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>95</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 03</name>
+			</operation>
+			<start>2011-12-29T19:23:20</start>
+			<end>2011-12-29T23:08:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>96</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 03</name>
+			</operation>
+			<start>2011-12-29T20:46:40</start>
+			<end>2011-12-30T00:31:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>97</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 03</name>
+			</operation>
+			<start>2011-12-29T22:10:00</start>
+			<end>2011-12-30T01:55:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>98</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 03</name>
+			</operation>
+			<start>2011-12-29T23:33:20</start>
+			<end>2011-12-30T03:18:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>99</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 03</name>
+			</operation>
+			<start>2011-12-30T00:56:40</start>
+			<end>2011-12-30T04:41:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>100</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 03</name>
+			</operation>
+			<start>2011-12-30T02:20:00</start>
+			<end>2011-12-30T06:05:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>101</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 04</name>
+			</operation>
+			<start>2011-12-29T17:35:00</start>
+			<end>2011-12-29T19:15:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>102</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 04</name>
+			</operation>
+			<start>2011-12-29T18:58:20</start>
+			<end>2011-12-29T20:38:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>103</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 04</name>
+			</operation>
+			<start>2011-12-29T20:21:40</start>
+			<end>2011-12-29T22:01:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>104</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 04</name>
+			</operation>
+			<start>2011-12-29T21:45:00</start>
+			<end>2011-12-29T23:25:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>105</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 04</name>
+			</operation>
+			<start>2011-12-29T23:08:20</start>
+			<end>2011-12-30T00:48:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>106</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 04</name>
+			</operation>
+			<start>2011-12-30T00:31:40</start>
+			<end>2011-12-30T02:11:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>107</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 04</name>
+			</operation>
+			<start>2011-12-30T01:55:00</start>
+			<end>2011-12-30T03:35:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>108</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 04</name>
+			</operation>
+			<start>2011-12-30T03:18:20</start>
+			<end>2011-12-30T04:58:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>109</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 04</name>
+			</operation>
+			<start>2011-12-30T04:41:40</start>
+			<end>2011-12-30T06:21:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>110</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 04</name>
+			</operation>
+			<start>2011-12-30T06:05:00</start>
+			<end>2011-12-30T07:45:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>111</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 05</name>
+			</operation>
+			<start>2011-12-29T19:15:00</start>
+			<end>2011-12-29T20:05:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>112</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 05</name>
+			</operation>
+			<start>2011-12-29T20:38:20</start>
+			<end>2011-12-29T21:28:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>113</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 05</name>
+			</operation>
+			<start>2011-12-29T22:01:40</start>
+			<end>2011-12-29T22:51:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>114</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 05</name>
+			</operation>
+			<start>2011-12-29T23:25:00</start>
+			<end>2011-12-30T00:15:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>115</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 05</name>
+			</operation>
+			<start>2011-12-30T00:48:20</start>
+			<end>2011-12-30T01:38:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>116</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 05</name>
+			</operation>
+			<start>2011-12-30T02:11:40</start>
+			<end>2011-12-30T03:01:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>117</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 05</name>
+			</operation>
+			<start>2011-12-30T03:35:00</start>
+			<end>2011-12-30T04:25:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>118</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 05</name>
+			</operation>
+			<start>2011-12-30T04:58:20</start>
+			<end>2011-12-30T05:48:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>119</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 05</name>
+			</operation>
+			<start>2011-12-30T06:21:40</start>
+			<end>2011-12-30T07:11:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>120</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 05</name>
+			</operation>
+			<start>2011-12-30T07:45:00</start>
+			<end>2011-12-30T08:35:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>121</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 06</name>
+			</operation>
+			<start>2011-12-29T20:05:00</start>
+			<end>2011-12-29T20:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>122</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 06</name>
+			</operation>
+			<start>2011-12-29T21:28:20</start>
+			<end>2011-12-29T21:36:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>123</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 06</name>
+			</operation>
+			<start>2011-12-29T22:51:40</start>
+			<end>2011-12-29T23:00:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>124</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 06</name>
+			</operation>
+			<start>2011-12-30T00:15:00</start>
+			<end>2011-12-30T00:23:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>125</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 06</name>
+			</operation>
+			<start>2011-12-30T01:38:20</start>
+			<end>2011-12-30T01:46:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>126</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 06</name>
+			</operation>
+			<start>2011-12-30T03:01:40</start>
+			<end>2011-12-30T03:10:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>127</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 06</name>
+			</operation>
+			<start>2011-12-30T04:25:00</start>
+			<end>2011-12-30T04:33:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>128</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 06</name>
+			</operation>
+			<start>2011-12-30T05:48:20</start>
+			<end>2011-12-30T05:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>129</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 06</name>
+			</operation>
+			<start>2011-12-30T07:11:40</start>
+			<end>2011-12-30T07:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>130</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 06</name>
+			</operation>
+			<start>2011-12-30T08:35:00</start>
+			<end>2011-12-30T08:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>131</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 07</name>
+			</operation>
+			<start>2011-12-29T20:13:20</start>
+			<end>2011-12-29T21:36:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>132</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 07</name>
+			</operation>
+			<start>2011-12-29T21:36:40</start>
+			<end>2011-12-29T23:00:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>133</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 07</name>
+			</operation>
+			<start>2011-12-29T23:00:00</start>
+			<end>2011-12-30T00:23:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>134</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 07</name>
+			</operation>
+			<start>2011-12-30T00:23:20</start>
+			<end>2011-12-30T01:46:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>135</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 07</name>
+			</operation>
+			<start>2011-12-30T01:46:40</start>
+			<end>2011-12-30T03:10:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>136</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 07</name>
+			</operation>
+			<start>2011-12-30T03:10:00</start>
+			<end>2011-12-30T04:33:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>137</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 07</name>
+			</operation>
+			<start>2011-12-30T04:33:20</start>
+			<end>2011-12-30T05:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>138</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 07</name>
+			</operation>
+			<start>2011-12-30T05:56:40</start>
+			<end>2011-12-30T07:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>139</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 07</name>
+			</operation>
+			<start>2011-12-30T07:20:00</start>
+			<end>2011-12-30T08:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>140</reference>
+			<operation xsi:type="operation_time_per">
+				<name>02 step 07</name>
+			</operation>
+			<start>2011-12-30T08:43:20</start>
+			<end>2011-12-30T10:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>141</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 01b</name>
+			</operation>
+			<start>2011-12-28T20:28:20</start>
+			<end>2011-12-28T21:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>142</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 01b</name>
+			</operation>
+			<start>2011-12-28T21:51:40</start>
+			<end>2011-12-28T23:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>143</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 01b</name>
+			</operation>
+			<start>2011-12-28T23:15:00</start>
+			<end>2011-12-29T00:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>144</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 01b</name>
+			</operation>
+			<start>2011-12-29T00:38:20</start>
+			<end>2011-12-29T01:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>145</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 01b</name>
+			</operation>
+			<start>2011-12-29T02:01:40</start>
+			<end>2011-12-29T03:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>146</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 01b</name>
+			</operation>
+			<start>2011-12-29T03:25:00</start>
+			<end>2011-12-29T04:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>147</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 01b</name>
+			</operation>
+			<start>2011-12-29T04:48:20</start>
+			<end>2011-12-29T06:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>148</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 01b</name>
+			</operation>
+			<start>2011-12-29T06:11:40</start>
+			<end>2011-12-29T07:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>149</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 01b</name>
+			</operation>
+			<start>2011-12-29T07:35:00</start>
+			<end>2011-12-29T08:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>150</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 01b</name>
+			</operation>
+			<start>2011-12-29T08:58:20</start>
+			<end>2011-12-29T10:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>151</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 02</name>
+			</operation>
+			<start>2011-12-28T21:43:20</start>
+			<end>2011-12-28T23:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>152</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 02</name>
+			</operation>
+			<start>2011-12-28T23:06:40</start>
+			<end>2011-12-29T01:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>153</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 02</name>
+			</operation>
+			<start>2011-12-29T00:30:00</start>
+			<end>2011-12-29T02:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>154</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 02</name>
+			</operation>
+			<start>2011-12-29T01:53:20</start>
+			<end>2011-12-29T04:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>155</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 02</name>
+			</operation>
+			<start>2011-12-29T03:16:40</start>
+			<end>2011-12-29T05:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>156</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 02</name>
+			</operation>
+			<start>2011-12-29T04:40:00</start>
+			<end>2011-12-29T06:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>157</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 02</name>
+			</operation>
+			<start>2011-12-29T06:03:20</start>
+			<end>2011-12-29T08:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>158</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 02</name>
+			</operation>
+			<start>2011-12-29T07:26:40</start>
+			<end>2011-12-29T09:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>159</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 02</name>
+			</operation>
+			<start>2011-12-29T08:50:00</start>
+			<end>2011-12-29T11:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>160</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 02</name>
+			</operation>
+			<start>2011-12-29T10:13:20</start>
+			<end>2011-12-29T12:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>161</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 03</name>
+			</operation>
+			<start>2011-12-28T23:56:40</start>
+			<end>2011-12-29T03:41:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>162</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 03</name>
+			</operation>
+			<start>2011-12-29T01:20:00</start>
+			<end>2011-12-29T05:05:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>163</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 03</name>
+			</operation>
+			<start>2011-12-29T02:43:20</start>
+			<end>2011-12-29T06:28:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>164</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 03</name>
+			</operation>
+			<start>2011-12-29T04:06:40</start>
+			<end>2011-12-29T07:51:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>165</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 03</name>
+			</operation>
+			<start>2011-12-29T05:30:00</start>
+			<end>2011-12-29T09:15:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>166</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 03</name>
+			</operation>
+			<start>2011-12-29T06:53:20</start>
+			<end>2011-12-29T10:38:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>167</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 03</name>
+			</operation>
+			<start>2011-12-29T08:16:40</start>
+			<end>2011-12-29T12:01:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>168</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 03</name>
+			</operation>
+			<start>2011-12-29T09:40:00</start>
+			<end>2011-12-29T13:25:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>169</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 03</name>
+			</operation>
+			<start>2011-12-29T11:03:20</start>
+			<end>2011-12-29T14:48:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>170</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 03</name>
+			</operation>
+			<start>2011-12-29T12:26:40</start>
+			<end>2011-12-29T16:11:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>171</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 04</name>
+			</operation>
+			<start>2011-12-29T03:41:40</start>
+			<end>2011-12-29T05:21:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>172</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 04</name>
+			</operation>
+			<start>2011-12-29T05:05:00</start>
+			<end>2011-12-29T06:45:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>173</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 04</name>
+			</operation>
+			<start>2011-12-29T06:28:20</start>
+			<end>2011-12-29T08:08:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>174</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 04</name>
+			</operation>
+			<start>2011-12-29T07:51:40</start>
+			<end>2011-12-29T09:31:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>175</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 04</name>
+			</operation>
+			<start>2011-12-29T09:15:00</start>
+			<end>2011-12-29T10:55:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>176</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 04</name>
+			</operation>
+			<start>2011-12-29T10:38:20</start>
+			<end>2011-12-29T12:18:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>177</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 04</name>
+			</operation>
+			<start>2011-12-29T12:01:40</start>
+			<end>2011-12-29T13:41:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>178</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 04</name>
+			</operation>
+			<start>2011-12-29T13:25:00</start>
+			<end>2011-12-29T15:05:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>179</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 04</name>
+			</operation>
+			<start>2011-12-29T14:48:20</start>
+			<end>2011-12-29T16:28:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>180</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 04</name>
+			</operation>
+			<start>2011-12-29T16:11:40</start>
+			<end>2011-12-29T17:51:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>181</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 05</name>
+			</operation>
+			<start>2011-12-29T05:21:40</start>
+			<end>2011-12-29T06:11:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>182</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 05</name>
+			</operation>
+			<start>2011-12-29T06:45:00</start>
+			<end>2011-12-29T07:35:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>183</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 05</name>
+			</operation>
+			<start>2011-12-29T08:08:20</start>
+			<end>2011-12-29T08:58:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>184</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 05</name>
+			</operation>
+			<start>2011-12-29T09:31:40</start>
+			<end>2011-12-29T10:21:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>185</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 05</name>
+			</operation>
+			<start>2011-12-29T10:55:00</start>
+			<end>2011-12-29T11:45:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>186</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 05</name>
+			</operation>
+			<start>2011-12-29T12:18:20</start>
+			<end>2011-12-29T13:08:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>187</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 05</name>
+			</operation>
+			<start>2011-12-29T13:41:40</start>
+			<end>2011-12-29T14:31:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>188</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 05</name>
+			</operation>
+			<start>2011-12-29T15:05:00</start>
+			<end>2011-12-29T15:55:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>189</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 05</name>
+			</operation>
+			<start>2011-12-29T16:28:20</start>
+			<end>2011-12-29T17:18:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>190</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 05</name>
+			</operation>
+			<start>2011-12-29T17:51:40</start>
+			<end>2011-12-29T18:41:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>191</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 06</name>
+			</operation>
+			<start>2011-12-29T06:11:40</start>
+			<end>2011-12-29T06:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>192</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 06</name>
+			</operation>
+			<start>2011-12-29T07:35:00</start>
+			<end>2011-12-29T07:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>193</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 06</name>
+			</operation>
+			<start>2011-12-29T08:58:20</start>
+			<end>2011-12-29T09:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>194</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 06</name>
+			</operation>
+			<start>2011-12-29T10:21:40</start>
+			<end>2011-12-29T10:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>195</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 06</name>
+			</operation>
+			<start>2011-12-29T11:45:00</start>
+			<end>2011-12-29T11:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>196</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 06</name>
+			</operation>
+			<start>2011-12-29T13:08:20</start>
+			<end>2011-12-29T13:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>197</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 06</name>
+			</operation>
+			<start>2011-12-29T14:31:40</start>
+			<end>2011-12-29T14:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>198</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 06</name>
+			</operation>
+			<start>2011-12-29T15:55:00</start>
+			<end>2011-12-29T16:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>199</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 06</name>
+			</operation>
+			<start>2011-12-29T17:18:20</start>
+			<end>2011-12-29T17:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>200</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 06</name>
+			</operation>
+			<start>2011-12-29T18:41:40</start>
+			<end>2011-12-29T18:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>201</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 07</name>
+			</operation>
+			<start>2011-12-29T06:20:00</start>
+			<end>2011-12-29T07:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>202</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 07</name>
+			</operation>
+			<start>2011-12-29T07:43:20</start>
+			<end>2011-12-29T09:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>203</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 07</name>
+			</operation>
+			<start>2011-12-29T09:06:40</start>
+			<end>2011-12-29T10:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>204</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 07</name>
+			</operation>
+			<start>2011-12-29T10:30:00</start>
+			<end>2011-12-29T11:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>205</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 07</name>
+			</operation>
+			<start>2011-12-29T11:53:20</start>
+			<end>2011-12-29T13:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>206</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 07</name>
+			</operation>
+			<start>2011-12-29T13:16:40</start>
+			<end>2011-12-29T14:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>207</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 07</name>
+			</operation>
+			<start>2011-12-29T14:40:00</start>
+			<end>2011-12-29T16:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>208</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 07</name>
+			</operation>
+			<start>2011-12-29T16:03:20</start>
+			<end>2011-12-29T17:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>209</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 07</name>
+			</operation>
+			<start>2011-12-29T17:26:40</start>
+			<end>2011-12-29T18:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>210</reference>
+			<operation xsi:type="operation_time_per">
+				<name>03 step 07</name>
+			</operation>
+			<start>2011-12-29T18:50:00</start>
+			<end>2011-12-29T20:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>211</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 01b</name>
+			</operation>
+			<start>2011-12-28T06:35:00</start>
+			<end>2011-12-28T07:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>212</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 01b</name>
+			</operation>
+			<start>2011-12-28T07:58:20</start>
+			<end>2011-12-28T09:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>213</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 01b</name>
+			</operation>
+			<start>2011-12-28T09:21:40</start>
+			<end>2011-12-28T10:36:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>214</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 01b</name>
+			</operation>
+			<start>2011-12-28T10:45:00</start>
+			<end>2011-12-28T12:00:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>215</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 01b</name>
+			</operation>
+			<start>2011-12-28T12:08:20</start>
+			<end>2011-12-28T13:23:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>216</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 01b</name>
+			</operation>
+			<start>2011-12-28T13:31:40</start>
+			<end>2011-12-28T14:46:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>217</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 01b</name>
+			</operation>
+			<start>2011-12-28T14:55:00</start>
+			<end>2011-12-28T16:10:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>218</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 01b</name>
+			</operation>
+			<start>2011-12-28T16:18:20</start>
+			<end>2011-12-28T17:33:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>219</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 01b</name>
+			</operation>
+			<start>2011-12-28T17:41:40</start>
+			<end>2011-12-28T18:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>220</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 01b</name>
+			</operation>
+			<start>2011-12-28T19:05:00</start>
+			<end>2011-12-28T20:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>221</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 02</name>
+			</operation>
+			<start>2011-12-28T07:50:00</start>
+			<end>2011-12-28T10:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>222</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 02</name>
+			</operation>
+			<start>2011-12-28T09:13:20</start>
+			<end>2011-12-28T11:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>223</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 02</name>
+			</operation>
+			<start>2011-12-28T10:36:40</start>
+			<end>2011-12-28T12:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>224</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 02</name>
+			</operation>
+			<start>2011-12-28T12:00:00</start>
+			<end>2011-12-28T14:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>225</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 02</name>
+			</operation>
+			<start>2011-12-28T13:23:20</start>
+			<end>2011-12-28T15:36:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>226</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 02</name>
+			</operation>
+			<start>2011-12-28T14:46:40</start>
+			<end>2011-12-28T17:00:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>227</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 02</name>
+			</operation>
+			<start>2011-12-28T16:10:00</start>
+			<end>2011-12-28T18:23:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>228</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 02</name>
+			</operation>
+			<start>2011-12-28T17:33:20</start>
+			<end>2011-12-28T19:46:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>229</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 02</name>
+			</operation>
+			<start>2011-12-28T18:56:40</start>
+			<end>2011-12-28T21:10:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>230</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 02</name>
+			</operation>
+			<start>2011-12-28T20:20:00</start>
+			<end>2011-12-28T22:33:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>231</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 03</name>
+			</operation>
+			<start>2011-12-28T10:03:20</start>
+			<end>2011-12-28T13:48:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>232</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 03</name>
+			</operation>
+			<start>2011-12-28T11:26:40</start>
+			<end>2011-12-28T15:11:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>233</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 03</name>
+			</operation>
+			<start>2011-12-28T12:50:00</start>
+			<end>2011-12-28T16:35:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>234</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 03</name>
+			</operation>
+			<start>2011-12-28T14:13:20</start>
+			<end>2011-12-28T17:58:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>235</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 03</name>
+			</operation>
+			<start>2011-12-28T15:36:40</start>
+			<end>2011-12-28T19:21:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>236</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 03</name>
+			</operation>
+			<start>2011-12-28T17:00:00</start>
+			<end>2011-12-28T20:45:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>237</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 03</name>
+			</operation>
+			<start>2011-12-28T18:23:20</start>
+			<end>2011-12-28T22:08:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>238</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 03</name>
+			</operation>
+			<start>2011-12-28T19:46:40</start>
+			<end>2011-12-28T23:31:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>239</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 03</name>
+			</operation>
+			<start>2011-12-28T21:10:00</start>
+			<end>2011-12-29T00:55:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>240</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 03</name>
+			</operation>
+			<start>2011-12-28T22:33:20</start>
+			<end>2011-12-29T02:18:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>241</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 04</name>
+			</operation>
+			<start>2011-12-28T13:48:20</start>
+			<end>2011-12-28T15:28:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>242</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 04</name>
+			</operation>
+			<start>2011-12-28T15:11:40</start>
+			<end>2011-12-28T16:51:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>243</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 04</name>
+			</operation>
+			<start>2011-12-28T16:35:00</start>
+			<end>2011-12-28T18:15:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>244</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 04</name>
+			</operation>
+			<start>2011-12-28T17:58:20</start>
+			<end>2011-12-28T19:38:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>245</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 04</name>
+			</operation>
+			<start>2011-12-28T19:21:40</start>
+			<end>2011-12-28T21:01:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>246</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 04</name>
+			</operation>
+			<start>2011-12-28T20:45:00</start>
+			<end>2011-12-28T22:25:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>247</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 04</name>
+			</operation>
+			<start>2011-12-28T22:08:20</start>
+			<end>2011-12-28T23:48:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>248</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 04</name>
+			</operation>
+			<start>2011-12-28T23:31:40</start>
+			<end>2011-12-29T01:11:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>249</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 04</name>
+			</operation>
+			<start>2011-12-29T00:55:00</start>
+			<end>2011-12-29T02:35:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>250</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 04</name>
+			</operation>
+			<start>2011-12-29T02:18:20</start>
+			<end>2011-12-29T03:58:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>251</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 05</name>
+			</operation>
+			<start>2011-12-28T15:28:20</start>
+			<end>2011-12-28T16:18:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>252</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 05</name>
+			</operation>
+			<start>2011-12-28T16:51:40</start>
+			<end>2011-12-28T17:41:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>253</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 05</name>
+			</operation>
+			<start>2011-12-28T18:15:00</start>
+			<end>2011-12-28T19:05:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>254</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 05</name>
+			</operation>
+			<start>2011-12-28T19:38:20</start>
+			<end>2011-12-28T20:28:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>255</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 05</name>
+			</operation>
+			<start>2011-12-28T21:01:40</start>
+			<end>2011-12-28T21:51:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>256</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 05</name>
+			</operation>
+			<start>2011-12-28T22:25:00</start>
+			<end>2011-12-28T23:15:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>257</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 05</name>
+			</operation>
+			<start>2011-12-28T23:48:20</start>
+			<end>2011-12-29T00:38:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>258</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 05</name>
+			</operation>
+			<start>2011-12-29T01:11:40</start>
+			<end>2011-12-29T02:01:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>259</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 05</name>
+			</operation>
+			<start>2011-12-29T02:35:00</start>
+			<end>2011-12-29T03:25:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>260</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 05</name>
+			</operation>
+			<start>2011-12-29T03:58:20</start>
+			<end>2011-12-29T04:48:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>261</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 06</name>
+			</operation>
+			<start>2011-12-28T16:18:20</start>
+			<end>2011-12-28T16:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>262</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 06</name>
+			</operation>
+			<start>2011-12-28T17:41:40</start>
+			<end>2011-12-28T17:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>263</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 06</name>
+			</operation>
+			<start>2011-12-28T19:05:00</start>
+			<end>2011-12-28T19:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>264</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 06</name>
+			</operation>
+			<start>2011-12-28T20:28:20</start>
+			<end>2011-12-28T20:36:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>265</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 06</name>
+			</operation>
+			<start>2011-12-28T21:51:40</start>
+			<end>2011-12-28T22:00:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>266</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 06</name>
+			</operation>
+			<start>2011-12-28T23:15:00</start>
+			<end>2011-12-28T23:23:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>267</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 06</name>
+			</operation>
+			<start>2011-12-29T00:38:20</start>
+			<end>2011-12-29T00:46:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>268</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 06</name>
+			</operation>
+			<start>2011-12-29T02:01:40</start>
+			<end>2011-12-29T02:10:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>269</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 06</name>
+			</operation>
+			<start>2011-12-29T03:25:00</start>
+			<end>2011-12-29T03:33:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>270</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 06</name>
+			</operation>
+			<start>2011-12-29T04:48:20</start>
+			<end>2011-12-29T04:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>271</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 07</name>
+			</operation>
+			<start>2011-12-28T16:26:40</start>
+			<end>2011-12-28T17:50:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>272</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 07</name>
+			</operation>
+			<start>2011-12-28T17:50:00</start>
+			<end>2011-12-28T19:13:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>273</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 07</name>
+			</operation>
+			<start>2011-12-28T19:13:20</start>
+			<end>2011-12-28T20:36:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>274</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 07</name>
+			</operation>
+			<start>2011-12-28T20:36:40</start>
+			<end>2011-12-28T22:00:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>275</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 07</name>
+			</operation>
+			<start>2011-12-28T22:00:00</start>
+			<end>2011-12-28T23:23:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>276</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 07</name>
+			</operation>
+			<start>2011-12-28T23:23:20</start>
+			<end>2011-12-29T00:46:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>277</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 07</name>
+			</operation>
+			<start>2011-12-29T00:46:40</start>
+			<end>2011-12-29T02:10:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>278</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 07</name>
+			</operation>
+			<start>2011-12-29T02:10:00</start>
+			<end>2011-12-29T03:33:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>279</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 07</name>
+			</operation>
+			<start>2011-12-29T03:33:20</start>
+			<end>2011-12-29T04:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>280</reference>
+			<operation xsi:type="operation_time_per">
+				<name>04 step 07</name>
+			</operation>
+			<start>2011-12-29T04:56:40</start>
+			<end>2011-12-29T06:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>281</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 01b</name>
+			</operation>
+			<start>2011-12-27T16:41:40</start>
+			<end>2011-12-27T17:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>282</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 01b</name>
+			</operation>
+			<start>2011-12-27T18:05:00</start>
+			<end>2011-12-27T19:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>283</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 01b</name>
+			</operation>
+			<start>2011-12-27T19:28:20</start>
+			<end>2011-12-27T20:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>284</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 01b</name>
+			</operation>
+			<start>2011-12-27T20:51:40</start>
+			<end>2011-12-27T22:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>285</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 01b</name>
+			</operation>
+			<start>2011-12-27T22:15:00</start>
+			<end>2011-12-27T23:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>286</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 01b</name>
+			</operation>
+			<start>2011-12-27T23:38:20</start>
+			<end>2011-12-28T00:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>287</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 01b</name>
+			</operation>
+			<start>2011-12-28T01:01:40</start>
+			<end>2011-12-28T02:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>288</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 01b</name>
+			</operation>
+			<start>2011-12-28T02:25:00</start>
+			<end>2011-12-28T03:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>289</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 01b</name>
+			</operation>
+			<start>2011-12-28T03:48:20</start>
+			<end>2011-12-28T05:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>290</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 01b</name>
+			</operation>
+			<start>2011-12-28T05:11:40</start>
+			<end>2011-12-28T06:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>291</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 02</name>
+			</operation>
+			<start>2011-12-27T17:56:40</start>
+			<end>2011-12-27T20:10:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>292</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 02</name>
+			</operation>
+			<start>2011-12-27T19:20:00</start>
+			<end>2011-12-27T21:33:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>293</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 02</name>
+			</operation>
+			<start>2011-12-27T20:43:20</start>
+			<end>2011-12-27T22:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>294</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 02</name>
+			</operation>
+			<start>2011-12-27T22:06:40</start>
+			<end>2011-12-28T00:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>295</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 02</name>
+			</operation>
+			<start>2011-12-27T23:30:00</start>
+			<end>2011-12-28T01:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>296</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 02</name>
+			</operation>
+			<start>2011-12-28T00:53:20</start>
+			<end>2011-12-28T03:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>297</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 02</name>
+			</operation>
+			<start>2011-12-28T02:16:40</start>
+			<end>2011-12-28T04:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>298</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 02</name>
+			</operation>
+			<start>2011-12-28T03:40:00</start>
+			<end>2011-12-28T05:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>299</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 02</name>
+			</operation>
+			<start>2011-12-28T05:03:20</start>
+			<end>2011-12-28T07:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>300</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 02</name>
+			</operation>
+			<start>2011-12-28T06:26:40</start>
+			<end>2011-12-28T08:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>301</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 03</name>
+			</operation>
+			<start>2011-12-27T20:10:00</start>
+			<end>2011-12-27T23:55:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>302</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 03</name>
+			</operation>
+			<start>2011-12-27T21:33:20</start>
+			<end>2011-12-28T01:18:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>303</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 03</name>
+			</operation>
+			<start>2011-12-27T22:56:40</start>
+			<end>2011-12-28T02:41:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>304</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 03</name>
+			</operation>
+			<start>2011-12-28T00:20:00</start>
+			<end>2011-12-28T04:05:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>305</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 03</name>
+			</operation>
+			<start>2011-12-28T01:43:20</start>
+			<end>2011-12-28T05:28:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>306</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 03</name>
+			</operation>
+			<start>2011-12-28T03:06:40</start>
+			<end>2011-12-28T06:51:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>307</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 03</name>
+			</operation>
+			<start>2011-12-28T04:30:00</start>
+			<end>2011-12-28T08:15:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>308</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 03</name>
+			</operation>
+			<start>2011-12-28T05:53:20</start>
+			<end>2011-12-28T09:38:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>309</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 03</name>
+			</operation>
+			<start>2011-12-28T07:16:40</start>
+			<end>2011-12-28T11:01:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>310</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 03</name>
+			</operation>
+			<start>2011-12-28T08:40:00</start>
+			<end>2011-12-28T12:25:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>311</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 04</name>
+			</operation>
+			<start>2011-12-27T23:55:00</start>
+			<end>2011-12-28T01:35:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>312</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 04</name>
+			</operation>
+			<start>2011-12-28T01:18:20</start>
+			<end>2011-12-28T02:58:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>313</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 04</name>
+			</operation>
+			<start>2011-12-28T02:41:40</start>
+			<end>2011-12-28T04:21:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>314</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 04</name>
+			</operation>
+			<start>2011-12-28T04:05:00</start>
+			<end>2011-12-28T05:45:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>315</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 04</name>
+			</operation>
+			<start>2011-12-28T05:28:20</start>
+			<end>2011-12-28T07:08:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>316</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 04</name>
+			</operation>
+			<start>2011-12-28T06:51:40</start>
+			<end>2011-12-28T08:31:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>317</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 04</name>
+			</operation>
+			<start>2011-12-28T08:15:00</start>
+			<end>2011-12-28T09:55:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>318</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 04</name>
+			</operation>
+			<start>2011-12-28T09:38:20</start>
+			<end>2011-12-28T11:18:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>319</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 04</name>
+			</operation>
+			<start>2011-12-28T11:01:40</start>
+			<end>2011-12-28T12:41:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>320</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 04</name>
+			</operation>
+			<start>2011-12-28T12:25:00</start>
+			<end>2011-12-28T14:05:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>321</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 05</name>
+			</operation>
+			<start>2011-12-28T01:35:00</start>
+			<end>2011-12-28T02:25:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>322</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 05</name>
+			</operation>
+			<start>2011-12-28T02:58:20</start>
+			<end>2011-12-28T03:48:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>323</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 05</name>
+			</operation>
+			<start>2011-12-28T04:21:40</start>
+			<end>2011-12-28T05:11:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>324</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 05</name>
+			</operation>
+			<start>2011-12-28T05:45:00</start>
+			<end>2011-12-28T06:35:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>325</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 05</name>
+			</operation>
+			<start>2011-12-28T07:08:20</start>
+			<end>2011-12-28T07:58:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>326</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 05</name>
+			</operation>
+			<start>2011-12-28T08:31:40</start>
+			<end>2011-12-28T09:21:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>327</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 05</name>
+			</operation>
+			<start>2011-12-28T09:55:00</start>
+			<end>2011-12-28T10:45:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>328</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 05</name>
+			</operation>
+			<start>2011-12-28T11:18:20</start>
+			<end>2011-12-28T12:08:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>329</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 05</name>
+			</operation>
+			<start>2011-12-28T12:41:40</start>
+			<end>2011-12-28T13:31:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>330</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 05</name>
+			</operation>
+			<start>2011-12-28T14:05:00</start>
+			<end>2011-12-28T14:55:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>331</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 06</name>
+			</operation>
+			<start>2011-12-28T02:25:00</start>
+			<end>2011-12-28T02:33:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>332</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 06</name>
+			</operation>
+			<start>2011-12-28T03:48:20</start>
+			<end>2011-12-28T03:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>333</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 06</name>
+			</operation>
+			<start>2011-12-28T05:11:40</start>
+			<end>2011-12-28T05:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>334</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 06</name>
+			</operation>
+			<start>2011-12-28T06:35:00</start>
+			<end>2011-12-28T06:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>335</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 06</name>
+			</operation>
+			<start>2011-12-28T07:58:20</start>
+			<end>2011-12-28T08:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>336</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 06</name>
+			</operation>
+			<start>2011-12-28T09:21:40</start>
+			<end>2011-12-28T09:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>337</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 06</name>
+			</operation>
+			<start>2011-12-28T10:45:00</start>
+			<end>2011-12-28T10:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>338</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 06</name>
+			</operation>
+			<start>2011-12-28T12:08:20</start>
+			<end>2011-12-28T12:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>339</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 06</name>
+			</operation>
+			<start>2011-12-28T13:31:40</start>
+			<end>2011-12-28T13:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>340</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 06</name>
+			</operation>
+			<start>2011-12-28T14:55:00</start>
+			<end>2011-12-28T15:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>341</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 07</name>
+			</operation>
+			<start>2011-12-28T02:33:20</start>
+			<end>2011-12-28T03:56:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>342</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 07</name>
+			</operation>
+			<start>2011-12-28T03:56:40</start>
+			<end>2011-12-28T05:20:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>343</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 07</name>
+			</operation>
+			<start>2011-12-28T05:20:00</start>
+			<end>2011-12-28T06:43:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>344</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 07</name>
+			</operation>
+			<start>2011-12-28T06:43:20</start>
+			<end>2011-12-28T08:06:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>345</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 07</name>
+			</operation>
+			<start>2011-12-28T08:06:40</start>
+			<end>2011-12-28T09:30:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>346</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 07</name>
+			</operation>
+			<start>2011-12-28T09:30:00</start>
+			<end>2011-12-28T10:53:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>347</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 07</name>
+			</operation>
+			<start>2011-12-28T10:53:20</start>
+			<end>2011-12-28T12:16:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>348</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 07</name>
+			</operation>
+			<start>2011-12-28T12:16:40</start>
+			<end>2011-12-28T13:40:00</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>349</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 07</name>
+			</operation>
+			<start>2011-12-28T13:40:00</start>
+			<end>2011-12-28T15:03:20</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>350</reference>
+			<operation xsi:type="operation_time_per">
+				<name>05 step 07</name>
+			</operation>
+			<start>2011-12-28T15:03:20</start>
+			<end>2011-12-28T16:26:40</end>
+			<quantity>500</quantity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<reference>351</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 01 step 07 @ Line 1</name>
+				<buffer>
+					<name>01 step 07 @ Line 1</name>
+					<item>
+						<name>01 step 07</name>
+					</item>
+					<location>
+						<name>Line 1</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>Order 001</name>
+			</demand>
+			<start>2011-12-31T00:00:00</start>
+			<end>2011-12-31T00:00:00</end>
+			<quantity>5000</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>01 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>352</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 02 step 07 @ Line 1</name>
+				<buffer>
+					<name>02 step 07 @ Line 1</name>
+					<item>
+						<name>02 step 07</name>
+					</item>
+					<location>
+						<name>Line 1</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>Order 002</name>
+			</demand>
+			<start>2011-12-31T00:00:00</start>
+			<end>2011-12-31T00:00:00</end>
+			<quantity>5000</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>02 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>353</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 03 step 07 @ Line 1</name>
+				<buffer>
+					<name>03 step 07 @ Line 1</name>
+					<item>
+						<name>03 step 07</name>
+					</item>
+					<location>
+						<name>Line 1</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>Order 003</name>
+			</demand>
+			<start>2011-12-31T00:00:00</start>
+			<end>2011-12-31T00:00:00</end>
+			<quantity>5000</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>03 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>354</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 04 step 07 @ Line 1</name>
+				<buffer>
+					<name>04 step 07 @ Line 1</name>
+					<item>
+						<name>04 step 07</name>
+					</item>
+					<location>
+						<name>Line 1</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>Order 004</name>
+			</demand>
+			<start>2011-12-31T00:00:00</start>
+			<end>2011-12-31T00:00:00</end>
+			<quantity>5000</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>04 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<reference>355</reference>
+			<operation xsi:type="operation_delivery">
+				<name>Ship 05 step 07 @ Line 1</name>
+				<buffer>
+					<name>05 step 07 @ Line 1</name>
+					<item>
+						<name>05 step 07</name>
+					</item>
+					<location>
+						<name>Line 1</name>
+					</location>
+				</buffer>
+			</operation>
+			<demand>
+				<name>Order 005</name>
+			</demand>
+			<start>2011-12-31T00:00:00</start>
+			<end>2011-12-31T00:00:00</end>
+			<quantity>5000</quantity>
+			<ordertype>DLVR</ordertype>
+			<item>
+				<name>05 step 07</name>
+			</item>
+			<location>
+				<name>Line 1</name>
+			</location>
+		</operationplan>
+	</operationplans>
+</plan>

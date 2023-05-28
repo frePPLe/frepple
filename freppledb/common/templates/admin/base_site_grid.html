@@ -306,7 +306,7 @@ function displayGrid(load) {
       }});
   }
   {% endif %}
-  });
+});
 </script>
 {% endblock %}
 {% block content %}
@@ -317,14 +317,14 @@ function displayGrid(load) {
 <div id="save_undo" class="col-auto">
 {% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
-<button class="btn btn-primary text-capitalize" disabled id="save" onclick="upload.save()"
+<button class="btn btn-primary" disabled id="save" onclick="upload.save()"
   title="{% trans 'save changes'|capfirst|force_escape %}">
     <i class="fa fa-spinner fa-spin d-none"></i>
-    {% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}
+    {% filter force_escape|capfirst %}{% trans "Save" %}{% endfilter %}
 </button>
-<button class="btn btn-primary text-capitalize" disabled id="undo" onclick="upload.undo()"
+<button class="btn btn-primary" disabled id="undo" onclick="upload.undo()"
   title="{% trans 'undo changes'|capfirst|force_escape %}">
-  {% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}
+  {% filter force_escape|capfirst %}{% trans "Undo" %}{% endfilter %}
 </button>
 {% if actions %}
 <form class="form-addon d-inline" method="get" action="#">

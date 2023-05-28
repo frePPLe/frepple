@@ -398,6 +398,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="cost" type="positiveDouble" />
+	<xsd:attribute name="volume" type="positiveDouble" />
+	<xsd:attribute name="weight" type="positiveDouble" />
+	<xsd:attribute name="uom" type="xsd:normalizedString" />
   </xsd:complexType>
 
   <xsd:complexType name="item_mto">

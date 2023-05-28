@@ -396,6 +396,8 @@ loadComplete: function(data) {
           selectiondata.push(jQuery("#grid").getRowData(x));
         angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
       }
+      else
+        angular.element('#controller').scope().processAggregatedInfo([], jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
       upload.restoreSelection();
     },
 {% endblock %}

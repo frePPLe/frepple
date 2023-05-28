@@ -472,8 +472,6 @@ def wrapTask(request, action):
         # Also run the workflow upon loading of manufacturing_demo or distribution_demo
         if args.get("regenerateplan", False) == "true":
             active_modules = "supply"
-            if "freppledb.inventoryplanning" in settings.INSTALLED_APPS:
-                active_modules = "invplan,balancing," + active_modules
             if "freppledb.forecast" in settings.INSTALLED_APPS:
                 active_modules = "fcst," + active_modules
             task = Task(

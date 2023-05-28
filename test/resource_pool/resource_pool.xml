@@ -274,6 +274,10 @@
 
     <!-- Case 4: variable number of assigned operators -->
     <resources>
+        <resource name="4. machine">
+            <location name="factory"/>
+			<efficiency>100</efficiency>
+        </resource>	
         <resource name="4. operator pool">
             <location name="factory"/>
         </resource>
@@ -312,6 +316,10 @@
                     <resource name="4. operator pool"/>
                     <quantity>1</quantity>
                     <search>PRIORITY</search>
+                </load>
+                <load>
+                    <resource name="4. machine"/>
+                    <quantity>1</quantity>
                 </load>
             </loads>
             <duration>P1D</duration>

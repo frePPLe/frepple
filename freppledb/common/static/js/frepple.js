@@ -1475,10 +1475,8 @@ var grid = {
           type: "POST",
           contentType: "application/json",
           success: function () {
-            $("#delete_selected").prop("disabled", true);
-            $("#copy_selected").prop("disabled", true);
-            $('.cbox').prop("checked", false);
-            $('#cb_grid.cbox').prop("checked", false);
+            $("#delete_selected, #copy_selected").prop("disabled", true);
+            $('.cbox, #cb_grid.cbox').prop("checked", false);
             $("#grid").trigger("reloadGrid");
             hideModal('popup');
           },
@@ -1526,10 +1524,8 @@ var grid = {
           type: "POST",
           contentType: "application/json",
           success: function () {
-            $("#delete_selected").prop("disabled", true);
-            $("#copy_selected").prop("disabled", true);
-            $('.cbox').prop("checked", false);
-            $('#cb_grid.cbox').prop("checked", false);
+            $("#delete_selected, #copy_selected").prop("disabled", true);
+            $('.cbox, #cb_grid.cbox').prop("checked", false);
             $("#grid").trigger("reloadGrid");
             hideModal('popup');
           },
@@ -1826,14 +1822,12 @@ var grid = {
 
   markAllRows: function () {
     if ($(this).is(':checked')) {
-      $("#copy_selected").prop('disabled', false);
-      $("#delete_selected").prop('disabled', false);
+      $("#copy_selected, #delete_selected").prop('disabled', false);
       $("#gridactions").prop('disabled', false);
       $('.cbox').prop("checked", true);
     }
     else {
-      $("#copy_selected").prop('disabled', true);
-      $("#delete_selected").prop('disabled', true);
+      $("#copy_selected, #delete_selected").prop('disabled', true);
       $("#gridactions").prop('disabled', true);
       $('.cbox').prop("checked", false);
     }

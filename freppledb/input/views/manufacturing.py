@@ -1335,7 +1335,14 @@ class OperationDependencyList(GridReport):
         """
     )
     rows = (
-        GridFieldInteger("id", title=_("identifier"), key=True, initially_hidden=True),
+        GridFieldInteger(
+            "id",
+            title=_("identifier"),
+            key=True,
+            formatter="detail",
+            extra='"role":"input/operationdependency"',
+            initially_hidden=True,
+        ),
         GridFieldText(
             "operation",
             title=_("operation"),

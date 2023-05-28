@@ -1,0 +1,1102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <current>2012-01-01T00:00:00</current>
+    <locations>
+        <location name="Factory 1">
+            <available name="Working Days"/>
+        </location>
+        <location name="Finished goods">
+            <owner name="Factory 1"/>
+            <available name="Working Days"/>
+        </location>
+        <location name="Line 1">
+            <owner name="Factory 1"/>
+            <available name="Working Days"/>
+        </location>
+    </locations>
+    <calendars>
+        <calendar name="Capacity line 1 station 2">
+            <buckets>
+                <bucket start="2011-02-01T00:00:00" value="2"/>
+            </buckets>
+        </calendar>
+        <calendar name="Capacity line 1 station 1b">
+            <buckets>
+                <bucket start="2011-02-01T00:00:00" value="1"/>
+            </buckets>
+        </calendar>
+        <calendar name="Capacity line 1 station 4">
+            <buckets>
+                <bucket start="2011-02-01T00:00:00" value="2"/>
+            </buckets>
+        </calendar>
+        <calendar name="Capacity line 1 station 5">
+            <buckets>
+                <bucket start="2011-02-01T00:00:00" value="1"/>
+            </buckets>
+        </calendar>
+        <calendar name="Capacity line 1 station 6">
+            <buckets>
+                <bucket start="2011-02-01T00:00:00" value="1"/>
+            </buckets>
+        </calendar>
+        <calendar name="Capacity line 1 station 1a">
+            <buckets>
+                <bucket start="2011-02-01T00:00:00"  value="1"/>
+            </buckets>
+        </calendar>
+        <calendar name="Capacity line 1 station 7">
+            <buckets>
+                <bucket start="2011-02-01T00:00:00"  value="1"/>
+            </buckets>
+        </calendar>
+        <calendar name="Capacity line 1 station 3">
+            <buckets>
+                <bucket start="2011-02-01T00:00:00"  value="4"/>
+            </buckets>
+        </calendar>
+        <calendar name="Operators line 1">
+            <buckets>
+                <bucket start="2011-01-01T00:00:00" value="9"/>
+            </buckets>
+        </calendar>
+        <calendar name="Working Days">
+            <default>1</default>
+            <buckets>
+                <!-- 65 = effective on saturday and sunday -->
+                <bucket start="2011-12-31T00:00:00" end="2012-04-30T00:00:00" days="65" value="0"/>
+            </buckets>
+        </calendar>
+    </calendars>
+    <operations>
+        <operation name="01 step 01b" xsi:type="operation_time_per">
+        	<item name="01 step 01b"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT9S</duration_per>
+        </operation>
+        <operation name="01 step 02" xsi:type="operation_time_per">
+        	<item name="01 step 02"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT16S</duration_per>
+        </operation>
+        <operation name="01 step 03" xsi:type="operation_time_per">
+        	<item name="01 step 03"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT27S</duration_per>
+        </operation>
+        <operation name="01 step 04" xsi:type="operation_time_per">
+        	<item name="01 step 04"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT12S</duration_per>
+        </operation>
+        <operation name="01 step 05" xsi:type="operation_time_per">
+        	<item name="01 step 05"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT6S</duration_per>
+        </operation>
+        <operation name="01 step 06" xsi:type="operation_time_per">
+        	<item name="01 step 06"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT1S</duration_per>
+        </operation>
+        <operation name="01 step 07" xsi:type="operation_time_per">
+        	<item name="01 step 07"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT10S</duration_per>
+        </operation>
+        <operation name="02 step 01b" xsi:type="operation_time_per">
+        	<item name="02 step 01b"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT9S</duration_per>
+        </operation>
+        <operation name="02 step 02" xsi:type="operation_time_per">
+        	<item name="02 step 02"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT16S</duration_per>
+        </operation>
+        <operation name="02 step 03" xsi:type="operation_time_per">
+        	<item name="02 step 03"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT27S</duration_per>
+        </operation>
+        <operation name="02 step 04" xsi:type="operation_time_per">
+        	<item name="02 step 04"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT12S</duration_per>
+        </operation>
+        <operation name="02 step 05" xsi:type="operation_time_per">
+        	<item name="02 step 05"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT6S</duration_per>
+        </operation>
+        <operation name="02 step 06" xsi:type="operation_time_per">
+        	<item name="02 step 06"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT1S</duration_per>
+        </operation>
+        <operation name="02 step 07" xsi:type="operation_time_per">
+        	<item name="02 step 07"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT10S</duration_per>
+        </operation>
+        <operation name="03 step 01b" xsi:type="operation_time_per">
+        	<item name="03 step 01b"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT9S</duration_per>
+        </operation>
+        <operation name="03 step 02" xsi:type="operation_time_per">
+        	<item name="03 step 02"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT16S</duration_per>
+        </operation>
+        <operation name="03 step 03" xsi:type="operation_time_per">
+        	<item name="03 step 03"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT27S</duration_per>
+        </operation>
+        <operation name="03 step 04" xsi:type="operation_time_per">
+        	<item name="03 step 04"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT12S</duration_per>
+        </operation>
+        <operation name="03 step 05" xsi:type="operation_time_per">
+        	<item name="03 step 05"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT6S</duration_per>
+        </operation>
+        <operation name="03 step 06" xsi:type="operation_time_per">
+        	<item name="03 step 06"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT1S</duration_per>
+        </operation>
+        <operation name="03 step 07" xsi:type="operation_time_per">
+        	<item name="03 step 07"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT10S</duration_per>
+        </operation>
+        <operation name="04 step 01b" xsi:type="operation_time_per">
+        	<item name="04 step 01b"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT9S</duration_per>
+        </operation>
+        <operation name="04 step 02" xsi:type="operation_time_per">
+        	<item name="04 step 02"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT16S</duration_per>
+        </operation>
+        <operation name="04 step 03" xsi:type="operation_time_per">
+        	<item name="04 step 03"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT27S</duration_per>
+        </operation>
+        <operation name="04 step 04" xsi:type="operation_time_per">
+        	<item name="04 step 04"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT12S</duration_per>
+        </operation>
+        <operation name="04 step 05" xsi:type="operation_time_per">
+        	<item name="04 step 05"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT6S</duration_per>
+        </operation>
+        <operation name="04 step 06" xsi:type="operation_time_per">
+        	<item name="04 step 06"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT1S</duration_per>
+        </operation>
+        <operation name="04 step 07" xsi:type="operation_time_per">
+        	<item name="04 step 07"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT10S</duration_per>
+        </operation>
+        <operation name="05 step 01b" xsi:type="operation_time_per">
+        	<item name="05 step 01b"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT9S</duration_per>
+        </operation>
+        <operation name="05 step 02" xsi:type="operation_time_per">
+        	<item name="05 step 02"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT16S</duration_per>
+        </operation>
+        <operation name="05 step 03" xsi:type="operation_time_per">
+        	<item name="05 step 03"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT27S</duration_per>
+        </operation>
+        <operation name="05 step 04" xsi:type="operation_time_per">
+        	<item name="05 step 04"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT12S</duration_per>
+        </operation>
+        <operation name="05 step 05" xsi:type="operation_time_per">
+        	<item name="05 step 05"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT6S</duration_per>
+        </operation>
+        <operation name="05 step 06" xsi:type="operation_time_per">
+        	<item name="05 step 06"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT1S</duration_per>
+        </operation>
+        <operation name="05 step 07" xsi:type="operation_time_per">
+        	<item name="05 step 07"/>
+            <size_minimum>500</size_minimum>
+            <size_maximum>500</size_maximum>
+            <location name="Line 1"/>
+            <duration>P0D</duration>
+            <duration_per>PT10S</duration_per>
+        </operation>
+    </operations>
+    <items>
+        <item name="group 1"/>
+        <item name="group 1b">
+            <owner name="group 1"/>
+            <members>
+                <item name="01 step 01b"/>
+                <item name="02 step 01b"/>
+                <item name="03 step 01b"/>
+            </members>
+        </item>
+        <item name="group 1a">
+            <owner name="group 1"/>
+            <members>
+                <item name="04 step 01b"/>
+                <item name="05 step 01b"/>
+            </members>
+        </item>
+    </items>
+    <demands>
+        <demand name="Order 001">
+            <quantity>5000</quantity>
+            <item name="01 step 07"/>
+            <location name="Line 1"/>
+            <due>2012-01-01T00:00:00</due>
+            <priority>1</priority>
+            <minshipment>500</minshipment>
+        </demand>
+        <demand name="Order 002">
+            <quantity>5000</quantity>
+            <item name="02 step 07"/>
+            <location name="Line 1"/>
+            <due>2012-01-01T00:00:00</due>
+            <priority>3</priority>
+            <minshipment>500</minshipment>
+        </demand>
+        <demand name="Order 003">
+            <quantity>5000</quantity>
+            <item name="03 step 07"/>
+            <location name="Line 1"/>
+            <due>2012-01-01T00:00:00</due>
+            <priority>5</priority>
+            <minshipment>500</minshipment>
+        </demand>
+        <demand name="Order 004">
+            <quantity>5000</quantity>
+            <item name="04 step 07"/>
+            <location name="Line 1"/>
+            <due>2012-01-01T00:00:00</due>
+            <priority>7</priority>
+            <minshipment>500</minshipment>
+        </demand>
+        <demand name="Order 005">
+            <quantity>5000</quantity>
+            <item name="05 step 07"/>
+            <location name="Line 1"/>
+            <due>2012-01-01T00:00:00</due>
+            <priority>9</priority>
+            <minshipment>500</minshipment>
+        </demand>
+    </demands>
+    <resources>
+        <resource name="Line 1 station 1a">
+            <maximum_calendar name="Capacity line 1 station 1a"/>
+            <location name="Line 1"/>
+        </resource>
+        <resource name="Line 1 station 1b">
+            <maximum_calendar name="Capacity line 1 station 1b"/>
+            <location name="Line 1"/>
+        </resource>
+        <resource name="Line 1 station 2">
+            <maximum_calendar name="Capacity line 1 station 2"/>
+            <location name="Line 1"/>
+        </resource>
+        <resource name="Line 1 station 3">
+            <maximum_calendar name="Capacity line 1 station 3"/>
+            <location name="Line 1"/>
+        </resource>
+        <resource name="Line 1 station 4">
+            <maximum_calendar name="Capacity line 1 station 4"/>
+            <location name="Line 1"/>
+        </resource>
+        <resource name="Line 1 station 5">
+            <maximum_calendar name="Capacity line 1 station 5"/>
+            <location name="Line 1"/>
+        </resource>
+        <resource name="Line 1 station 6">
+            <maximum_calendar name="Capacity line 1 station 6"/>
+            <location name="Line 1"/>
+        </resource>
+        <resource name="Line 1 station 7">
+            <maximum_calendar name="Capacity line 1 station 7"/>
+            <location name="Line 1"/>
+        </resource>
+        <resource name="Operators line 1">
+            <maximum_calendar name="Operators line 1"/>
+            <location name="Line 1"/>
+        </resource>
+    </resources>
+    <loads>
+        <load>
+            <operation name="01 step 01b" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 1b"/>
+        </load>
+        <load>
+            <operation name="01 step 01b" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="01 step 02" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 2"/>
+        </load>
+        <load>
+            <operation name="01 step 02" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="01 step 03" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 3"/>
+        </load>
+        <load>
+            <operation name="01 step 03" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="01 step 04" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 4"/>
+        </load>
+        <load>
+            <operation name="01 step 04" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="01 step 05" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 5"/>
+        </load>
+        <load>
+            <operation name="01 step 05" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="01 step 06" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 6"/>
+        </load>
+        <load>
+            <operation name="01 step 06" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="01 step 07" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 7"/>
+        </load>
+        <load>
+            <operation name="01 step 07" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="02 step 01b" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 1b"/>
+        </load>
+        <load>
+            <operation name="02 step 01b" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="02 step 02" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 2"/>
+        </load>
+        <load>
+            <operation name="02 step 02" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="02 step 03" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 3"/>
+        </load>
+        <load>
+            <operation name="02 step 03" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="02 step 04" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 4"/>
+        </load>
+        <load>
+            <operation name="02 step 04" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="02 step 05" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 5"/>
+        </load>
+        <load>
+            <operation name="02 step 05" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="02 step 06" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 6"/>
+        </load>
+        <load>
+            <operation name="02 step 06" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="02 step 07" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 7"/>
+        </load>
+        <load>
+            <operation name="02 step 07" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="03 step 01b" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 1b"/>
+        </load>
+        <load>
+            <operation name="03 step 01b" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="03 step 02" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 2"/>
+        </load>
+        <load>
+            <operation name="03 step 02" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="03 step 03" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 3"/>
+        </load>
+        <load>
+            <operation name="03 step 03" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="03 step 04" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 4"/>
+        </load>
+        <load>
+            <operation name="03 step 04" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="03 step 05" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 5"/>
+        </load>
+        <load>
+            <operation name="03 step 05" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="03 step 06" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 6"/>
+        </load>
+        <load>
+            <operation name="03 step 06" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="03 step 07" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 7"/>
+        </load>
+        <load>
+            <operation name="03 step 07" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="04 step 01b" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 1b"/>
+        </load>
+        <load>
+            <operation name="04 step 01b" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="04 step 02" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 2"/>
+        </load>
+        <load>
+            <operation name="04 step 02" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="04 step 03" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 3"/>
+        </load>
+        <load>
+            <operation name="04 step 03" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="04 step 04" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 4"/>
+        </load>
+        <load>
+            <operation name="04 step 04" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="04 step 05" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 5"/>
+        </load>
+        <load>
+            <operation name="04 step 05" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="04 step 06" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 6"/>
+        </load>
+        <load>
+            <operation name="04 step 06" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="04 step 07" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 7"/>
+        </load>
+        <load>
+            <operation name="04 step 07" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="05 step 01b" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 1b"/>
+        </load>
+        <load>
+            <operation name="05 step 01b" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="05 step 02" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 2"/>
+        </load>
+        <load>
+            <operation name="05 step 02" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="05 step 03" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 3"/>
+        </load>
+        <load>
+            <operation name="05 step 03" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="05 step 04" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 4"/>
+        </load>
+        <load>
+            <operation name="05 step 04" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="05 step 05" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 5"/>
+        </load>
+        <load>
+            <operation name="05 step 05" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="05 step 06" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 6"/>
+        </load>
+        <load>
+            <operation name="05 step 06" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+        <load>
+            <operation name="05 step 07" xsi:type="operation_time_per"/>
+            <resource name="Line 1 station 7"/>
+        </load>
+        <load>
+            <operation name="05 step 07" xsi:type="operation_time_per"/>
+            <resource name="Operators line 1"/>
+        </load>
+    </loads>
+    <flows>
+        <flow xsi:type="flow_end">
+            <operation name="01 step 01b" xsi:type="operation_time_per"/>
+            <item name="01 step 01b"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="01 step 02" xsi:type="operation_time_per"/>
+            <item name="01 step 01b"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="01 step 02" xsi:type="operation_time_per"/>
+            <item name="01 step 02"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="01 step 03" xsi:type="operation_time_per"/>
+            <item name="01 step 02"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="01 step 03" xsi:type="operation_time_per"/>
+            <item name="01 step 03"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="01 step 04" xsi:type="operation_time_per"/>
+            <item name="01 step 03"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="01 step 04" xsi:type="operation_time_per"/>
+            <item name="01 step 04"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="01 step 05" xsi:type="operation_time_per"/>
+            <item name="01 step 04"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="01 step 05" xsi:type="operation_time_per"/>
+            <item name="01 step 05"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="01 step 06" xsi:type="operation_time_per"/>
+            <item name="01 step 05"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="01 step 06" xsi:type="operation_time_per"/>
+            <item name="01 step 06"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="01 step 07" xsi:type="operation_time_per"/>
+            <item name="01 step 06"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="01 step 07" xsi:type="operation_time_per"/>
+            <item name="01 step 07"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="02 step 01b" xsi:type="operation_time_per"/>
+            <item name="02 step 01b"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="02 step 02" xsi:type="operation_time_per"/>
+            <item name="02 step 01b"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="02 step 02" xsi:type="operation_time_per"/>
+            <item name="02 step 02"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="02 step 03" xsi:type="operation_time_per"/>
+            <item name="02 step 02"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="02 step 03" xsi:type="operation_time_per"/>
+            <item name="02 step 03"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="02 step 04" xsi:type="operation_time_per"/>
+            <item name="02 step 03"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="02 step 04" xsi:type="operation_time_per"/>
+            <item name="02 step 04"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="02 step 05" xsi:type="operation_time_per"/>
+            <item name="02 step 04"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="02 step 05" xsi:type="operation_time_per"/>
+            <item name="02 step 05"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="02 step 06" xsi:type="operation_time_per"/>
+            <item name="02 step 05"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="02 step 06" xsi:type="operation_time_per"/>
+            <item name="02 step 06"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="02 step 07" xsi:type="operation_time_per"/>
+            <item name="02 step 06"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="02 step 07" xsi:type="operation_time_per"/>
+            <item name="02 step 07"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="03 step 01b" xsi:type="operation_time_per"/>
+            <item name="03 step 01b"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="03 step 02" xsi:type="operation_time_per"/>
+            <item name="03 step 01b"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="03 step 02" xsi:type="operation_time_per"/>
+            <item name="03 step 02"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="03 step 03" xsi:type="operation_time_per"/>
+            <item name="03 step 02"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="03 step 03" xsi:type="operation_time_per"/>
+            <item name="03 step 03"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="03 step 04" xsi:type="operation_time_per"/>
+            <item name="03 step 03"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="03 step 04" xsi:type="operation_time_per"/>
+            <item name="03 step 04"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="03 step 05" xsi:type="operation_time_per"/>
+            <item name="03 step 04"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="03 step 05" xsi:type="operation_time_per"/>
+            <item name="03 step 05"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="03 step 06" xsi:type="operation_time_per"/>
+            <item name="03 step 05"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="03 step 06" xsi:type="operation_time_per"/>
+            <item name="03 step 06"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="03 step 07" xsi:type="operation_time_per"/>
+            <item name="03 step 06"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="03 step 07" xsi:type="operation_time_per"/>
+            <item name="03 step 07"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="04 step 01b" xsi:type="operation_time_per"/>
+            <item name="04 step 01b"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="04 step 02" xsi:type="operation_time_per"/>
+            <item name="04 step 01b"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="04 step 02" xsi:type="operation_time_per"/>
+            <item name="04 step 02"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="04 step 03" xsi:type="operation_time_per"/>
+            <item name="04 step 02"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="04 step 03" xsi:type="operation_time_per"/>
+            <item name="04 step 03"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="04 step 04" xsi:type="operation_time_per"/>
+            <item name="04 step 03"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="04 step 04" xsi:type="operation_time_per"/>
+            <item name="04 step 04"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="04 step 05" xsi:type="operation_time_per"/>
+            <item name="04 step 04"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="04 step 05" xsi:type="operation_time_per"/>
+            <item name="04 step 05"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="04 step 06" xsi:type="operation_time_per"/>
+            <item name="04 step 05"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="04 step 06" xsi:type="operation_time_per"/>
+            <item name="04 step 06"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="04 step 07" xsi:type="operation_time_per"/>
+            <item name="04 step 06"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="04 step 07" xsi:type="operation_time_per"/>
+            <item name="04 step 07"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="05 step 01b" xsi:type="operation_time_per"/>
+            <item name="05 step 01b"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="05 step 02" xsi:type="operation_time_per"/>
+            <item name="05 step 01b"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="05 step 02" xsi:type="operation_time_per"/>
+            <item name="05 step 02"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="05 step 03" xsi:type="operation_time_per"/>
+            <item name="05 step 02"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="05 step 03" xsi:type="operation_time_per"/>
+            <item name="05 step 03"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="05 step 04" xsi:type="operation_time_per"/>
+            <item name="05 step 03"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="05 step 04" xsi:type="operation_time_per"/>
+            <item name="05 step 04"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="05 step 05" xsi:type="operation_time_per"/>
+            <item name="05 step 04"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="05 step 05" xsi:type="operation_time_per"/>
+            <item name="05 step 05"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="05 step 06" xsi:type="operation_time_per"/>
+            <item name="05 step 05"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="05 step 06" xsi:type="operation_time_per"/>
+            <item name="05 step 06"/>
+            <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+            <operation name="05 step 07" xsi:type="operation_time_per"/>
+            <item name="05 step 06"/>
+            <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+            <operation name="05 step 07" xsi:type="operation_time_per"/>
+            <item name="05 step 07"/>
+            <quantity>1</quantity>
+        </flow>
+    </flows>
+
+<?python
+print("CREATING PLAN")
+frepple.solver_mrp(name="MRP", plantype=2, constraints=15, loglevel=0).solve()
+
+import os
+import timeit
+tm = timeit.timeit(
+  setup='import frepple',
+  stmt='frepple.saveJSONfile("output.1.xml")',
+  number=1
+  )
+print("EXPORT IN JSON FORMAT: %d bytes in %f seconds" %
+  (os.stat('output.1.xml').st_size, tm)
+  )
+tm = timeit.timeit(
+  setup='import frepple',
+  stmt='frepple.saveXMLfile("output.2.xml")',
+  number=1
+  )
+print("EXPORT IN XML FORMAT: %d bytes in %f seconds" %
+  (os.stat('output.2.xml').st_size, tm)
+  )
+
+print("READING JSON STRING")
+frepple.readJSONdata('''
+  {"demands":[
+  {"name":"Extra order","quantity":5000,"item":{"name":"01 step 07"},"due":"2012-01-01T00:00:00","priority":1,"minshipment":500}
+  ]}
+  ''')
+frepple.saveJSONfile("output.3.xml", "BASE", True)
+
+print("RELOADING ENTIRE MODEL FROM JSON FILE")
+frepple.erase(True)
+frepple.readJSONfile("output.1.xml")
+frepple.saveJSONfile("output.4.xml", "BASE")
+
+print("Confirming an operationplan")
+frepple.readJSONdata('{"operationplans":[{"reference":"94","status":"confirmed"}]}')
+frepple.saveJSONfile("output.5.xml", "BASE", True)
+?>
+
+</plan>

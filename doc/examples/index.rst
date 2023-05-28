@@ -13,3 +13,4 @@ This section of the documentation illustrates a number of common modelling situa
    operation/index
    buffer/index
    supplier/index
+   forecasting/index

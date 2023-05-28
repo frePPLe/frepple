@@ -468,7 +468,7 @@ class PathReport(GridReport):
        from
       (
       select operation.name as operation,
-           coalesce(operation.type,'fixed_type') operation_type,
+           coalesce(operation.type,'fixed_time') operation_type,
            operation.location_id operation_location,
            coalesce(operation.priority, 1) as operation_priority,
            operation.duration as operation_duration,
@@ -706,7 +706,7 @@ class PathReport(GridReport):
        from
       (
       select operation.name as operation,
-           coalesce(operation.type,'fixed_type') operation_type,
+           coalesce(operation.type,'fixed_time') operation_type,
            operation.location_id operation_location,
            operation.priority as operation_priority,
            operation.duration as operation_duration,
@@ -927,7 +927,7 @@ class PathReport(GridReport):
        from
       (
       select operation.name as operation,
-           coalesce(operation.type,'fixed_type') operation_type,
+           coalesce(operation.type,'fixed_time') operation_type,
            operation.location_id operation_location,
            operation.priority as operation_priority,
            operation.duration as operation_duration,
@@ -1049,7 +1049,7 @@ class PathReport(GridReport):
       from
       (
       select operation.name as operation,
-           coalesce(operation.type,'fixed_type') operation_type,
+           coalesce(operation.type,'fixed_time') operation_type,
            operation.location_id operation_location,
            operation.priority as operation_priority,
            operation.duration as operation_duration,
@@ -1823,6 +1823,7 @@ class OperationPlanDetail(View):
                 for x in OperationPlanResource.objects.all()
                 .using(request.database)
                 .filter(operationplan__reference__in=ids)
+                .order_by("resource__owner", "resource_id")
                 .values(
                     "operationplan_id",
                     "quantity",

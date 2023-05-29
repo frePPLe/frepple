@@ -100,7 +100,7 @@ class setDatabaseConnection(PlanTask):
         # Cache settings
         frepple.cache.maximum = settings.CACHE_MAXIMUM
         frepple.cache.threads = settings.CACHE_THREADS
-        frepple.cache.write_immediately = False
+        frepple.cache.write_immediately = True
         frepple.cache.loglevel = Parameter.getValue("cache.loglevel", database, 0)
 
 

@@ -39,11 +39,9 @@ from django.http import (
     HttpResponse,
     HttpResponseForbidden,
     HttpResponseNotFound,
-    HttpResponseServerError,
     HttpResponseNotAllowed,
 )
 from django.shortcuts import render
-from django.template import Template
 from django.utils.encoding import force_str
 from django.utils.text import capfirst, format_lazy
 from django.utils.translation import gettext_lazy as _

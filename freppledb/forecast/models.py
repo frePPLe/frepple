@@ -21,7 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from collections import OrderedDict
 from datetime import date, datetime
 from dateutil.parser import parse
 from itertools import chain
@@ -38,13 +37,12 @@ from django.conf import settings
 from django.core import management
 from django.core.exceptions import ValidationError
 from django.db import models, DEFAULT_DB_ALIAS, connections
-from django.db.models import Case, When, Value
 from django.utils import translation
 from django.utils.encoding import force_str
 from django.utils.translation import pgettext, gettext_lazy as _
 
 from freppledb.common.auth import getWebserviceAuthorization
-from freppledb.common.models import AuditModel, BucketDetail, Parameter
+from freppledb.common.models import AuditModel, BucketDetail
 from freppledb.input.models import Customer, Item, Location, Operation
 from freppledb.webservice.utils import useWebService
 
@@ -437,28 +435,6 @@ class ForecastPlan(models.Model):
         session = None
         token = None
 
-        # Read the name of all buckets in memory
-        # We use an ordered dict in case Excel contains dates instead of bucket names
-        # to be able to use first the forecast.calendar bucket
-        bucket_names = OrderedDict()
-        forecast_calendar = Parameter.getValue("forecast.calendar", database, "month")
-
-        for i in (
-            BucketDetail.objects.all()
-            .using(database)
-            .only("name", "startdate", "enddate")
-            .annotate(
-                custom_order=Case(
-                    When(bucket=forecast_calendar, then=Value(1)), default=Value(2)
-                )
-            )
-            .order_by("custom_order")
-        ):
-            bucket_names[i.name.lower()] = (
-                i.startdate,
-                i.enddate,
-            )
-
         # Need to assure that the web service is up and running
         if useWebService(database):
             try:
@@ -479,6 +455,7 @@ class ForecastPlan(models.Model):
             bounds = CellRange(data.auto_filter.ref).bounds
         else:
             bounds = None
+        svcdata = []
 
         for row in data:
             rownumber += 1
@@ -499,35 +476,16 @@ class ForecastPlan(models.Model):
                 colnum = 1
                 for col in rowWrapper.values():
                     if isinstance(col, datetime):
-                        for bucket in bucket_names:
-                            if (
-                                col >= bucket_names[bucket][0]
-                                and col < bucket_names[bucket][1]
-                            ):
-                                col = bucket
-                                break
-
-                    col = str(col).strip().strip("#").lower() if col else ""
+                        col = col.strftime("%Y-%m-%dT%H:%M:%S")
+                    else:
+                        col = str(col).strip().strip("#").lower() if col else ""
 
                     ok = False
                     if pivotbuckets is not None:
-                        try:
-                            (startdate, enddate) = bucket_names[col]
-                            headers.append(
-                                PropertyField(name=col, editable=True, type="string")
-                            )
-                            pivotbuckets.append((col, startdate, enddate))
-                        except KeyError:
-                            headers.append(None)
-                            yield (
-                                WARNING,
-                                None,
-                                None,
-                                None,
-                                force_str(
-                                    _("Bucket '%(name)s' not found") % {"name": col}
-                                ),
-                            )
+                        headers.append(
+                            PropertyField(name=col, editable=True, type="string")
+                        )
+                        pivotbuckets.append(col)
                         continue
                     for i in chain(
                         ForecastPlan._meta.fields,
@@ -675,6 +633,24 @@ class ForecastPlan(models.Model):
                     sid=user.id if user else 1,
                     exp=3600,
                 )
+                if "FREPPLE_TEST" in os.environ:
+                    server = settings.DATABASES[database]["TEST"].get(
+                        "FREPPLE_PORT", None
+                    )
+                else:
+                    server = settings.DATABASES[database].get("FREPPLE_PORT", None)
+
+                def sendToService(d):
+                    response = session.post(
+                        "http://%s/forecast/detail/" % server,
+                        headers={
+                            "Authorization": "Bearer %s" % token,
+                            "Content-Type": "application/json",
+                        },
+                        json=d,
+                    )
+                    return response.json().get("errors", []) or []
+
                 Forecast.flush(session, mode="manual", database=database, token=token)
 
             # Case 2: Skip empty rows
@@ -705,22 +681,24 @@ class ForecastPlan(models.Model):
                     if not field:
                         # Irrelevant data field
                         continue
-                    for col, startdate, enddate in pivotbuckets:
+                    for col in pivotbuckets:
                         try:
                             val = rowWrapper.get(col, None)
                             if val is not None and val != "":
-                                Forecast.updatePlan(
-                                    startdate=startdate,
-                                    enddate=enddate,
-                                    database=database,
-                                    forecast=rowWrapper.get("forecast", None),
-                                    item=rowWrapper.get("item", None),
-                                    location=rowWrapper.get("location", None),
-                                    customer=rowWrapper.get("customer", None),
-                                    session=session,
-                                    token=token,
-                                    **{field.name: val * multiplier}
+                                svcdata.append(
+                                    {
+                                        "bucket": col,
+                                        "forecast": rowWrapper.get("forecast", None),
+                                        "item": rowWrapper.get("item", None),
+                                        "location": rowWrapper.get("location", None),
+                                        "customer": rowWrapper.get("customer", None),
+                                        field.name: val * multiplier,
+                                    }
                                 )
+                                if len(svcdata) >= 1000:
+                                    for e in sendToService(svcdata):
+                                        yield (ERROR, None, None, None, e)
+                                    svcdata = []
                                 changed += 1
                         except Exception as e:
                             errors += 1
@@ -728,54 +706,40 @@ class ForecastPlan(models.Model):
                 else:
                     # Upload in list layout
                     try:
-                        # Find the time bucket
-                        bucket = rowWrapper.get("bucket", None)
-                        if bucket:
-                            if isinstance(bucket, datetime):
-                                startdate = None
-                                enddate = None
-                                for buck in bucket_names:
-                                    if (
-                                        bucket >= bucket_names[buck][0]
-                                        and bucket < bucket_names[buck][1]
-                                    ):
-                                        startdate = bucket_names[buck][0]
-                                        enddate = bucket_names[buck][1]
-                                        break
-                            else:
-                                b = bucket_names.get(bucket.lower(), None)
-                                if b:
-                                    startdate = b[0]
-                                    enddate = b[1]
-                                else:
-                                    startdate = rowWrapper.get("startdate", None)
-                                    enddate = rowWrapper.get("enddate", None)
-                        else:
-                            startdate = rowWrapper.get("startdate", None)
-                            enddate = rowWrapper.get("enddate", None)
-
-                        Forecast.updatePlan(
-                            startdate=startdate,
-                            enddate=enddate,
-                            database=database,
-                            forecast=rowWrapper.get("forecast", None),
-                            item=rowWrapper.get("item", None),
-                            location=rowWrapper.get("location", None),
-                            customer=rowWrapper.get("customer", None),
-                            session=session,
-                            token=token,
-                            **{
-                                m.name: rowWrapper.get(m.name) * multiplier
-                                if rowWrapper.get(m.name) is not None
-                                and rowWrapper.get(m.name) != ""
-                                else None
-                                for m in measures
-                            }
-                        )
+                        r = {
+                            m.name: rowWrapper.get(m.name) * multiplier
+                            if rowWrapper.get(m.name) is not None
+                            and rowWrapper.get(m.name) != ""
+                            else None
+                            for m in measures
+                        }
+                        for f in (
+                            "forecast",
+                            "item",
+                            "customer",
+                            "location",
+                            "startdate",
+                            "enddate",
+                            "bucket",
+                        ):
+                            t = rowWrapper.get(f, None)
+                            if isinstance(t, datetime):
+                                t = t.strftime("%Y-%m-%dT%H:%M:%S")
+                            if t:
+                                r[f] = t
+                        svcdata.append(r)
+                        if len(svcdata) >= 1000:
+                            for e in sendToService(svcdata):
+                                yield (ERROR, None, None, None, e)
+                            svcdata = []
                         changed += 1
                     except Exception as e:
                         errors += 1
                         yield (ERROR, rownumber, None, None, str(e))
+
+        if svcdata:
+            for e in sendToService(svcdata):
+                yield (ERROR, None, None, None, e)
 
         if session:
             Forecast.flush(session, mode="auto", database=database, token=token)

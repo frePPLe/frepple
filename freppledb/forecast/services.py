@@ -38,8 +38,8 @@ class ForecastService(AsyncHttpConsumer):
     Processes forecast update messages in these formats:
     - From forecast editor:
       {item, location, customer, buckets:[{startdate, endate, bucket, msr1, msr2}]}
-    - From forecast report (regular jqgrid save):
-      [{item, location, customer, startdate, endate, msr1, msr2}]
+    - From forecast report (regular jqgrid save) and excel upload:
+      [{item, location, customer, bucket, startdate, endate, msr1, msr2}]
     """
 
     msgtemplate = """
@@ -176,6 +176,7 @@ class ForecastService(AsyncHttpConsumer):
                                     "item",
                                     "location",
                                     "customer",
+                                    "bucket",
                                     "startdate",
                                     "enddate",
                                     "forecast",
@@ -265,7 +266,6 @@ class ForecastService(AsyncHttpConsumer):
                             frepple.setForecast(**args)
                         except Exception as e:
                             errors.append("Error processing %s" % e)
-                    frepple.cache.flush()
 
                 # Save a new comment
                 if (

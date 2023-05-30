@@ -797,6 +797,7 @@ class CalendarBucketList(GridReport):
         GridFieldText(
             "source", title=_("source"), initially_hidden=True
         ),  # Not really right, since the engine doesn't read or store it
+        GridFieldNumber("calendar__defaultvalue", title=_("default value"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 

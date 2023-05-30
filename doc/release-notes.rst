@@ -22,6 +22,9 @@ Oh-oh... Something exciting is coming up!
     and approved supply had a corner case where extra replenishments were
     incorrectly triggered.
 
+- | Bug fix: Calendar buckets with an effective start time before 2am were
+    not correctly handled on dates where the daylight saving time changes.
+
 .. rubric:: User interface
 
 - | Updated German translations have been contributed by Thomas Stöckel. Vielen Dank!

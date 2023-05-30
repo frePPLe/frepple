@@ -902,6 +902,7 @@ class DateDetail {
    * these limits.
    */
   void normalize() const {
+    const_cast<struct tm*>(&time_info)->tm_isdst = -1;
     const_cast<DateDetail*>(this)->val =
         mktime(const_cast<struct tm*>(&time_info));
   }
@@ -978,7 +979,6 @@ class DateDetail {
   void addDays(int days) {
     if (val < 0) normalize();
     time_info.tm_mday += days;
-    time_info.tm_isdst = -1;
     val = -1;
   }
 };

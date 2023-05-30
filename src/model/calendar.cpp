@@ -583,6 +583,7 @@ void Calendar::buildEventList(Date includedate) {
         datedetail = &datedetail_startdata;
       } else
         datedetail = &datedetail_refdate;
+      DateDetail tmp_detail = tmp;
       int ref_weekday = datedetail->tm_wday;  // 0: sunday, 6: saturday
       Duration ref_time = long(datedetail->tm_sec + datedetail->tm_min * 60 +
                                datedetail->tm_hour * 3600);
@@ -595,17 +596,20 @@ void Calendar::buildEventList(Date includedate) {
         // Entry is currently effective.
         if (!b->starttime && b->endtime == Duration(86400L)) {
           // The next event is the start of the next ineffective day
-          tmp -= ref_time;
+          tmp_detail.setSecondsDay(0L);
+          tmp = tmp_detail;
           while ((b->days & (1 << ref_weekday)) &&
                  tmp != Date::infiniteFuture) {
             if (++ref_weekday > 6) ref_weekday = 0;
-            DateDetail t = tmp;
-            t.addDays(1);
-            tmp = t;
+            tmp_detail = tmp;
+            tmp_detail.addDays(1);
+            tmp = tmp_detail;
           }
-        } else
+        } else {
           // The next event is the end date on the current day
-          tmp += b->endtime - ref_time;
+          tmp_detail.setSecondsDay(b->endtime);
+          tmp = tmp_detail;
+        }
         if (tmp > b->enddate) tmp = b->enddate;
 
         // Evaluate the result
@@ -621,19 +625,20 @@ void Calendar::buildEventList(Date includedate) {
 
         // The next event is the start date, either today or on the next
         // effective day.
-        tmp += b->starttime - ref_time;
+        tmp_detail.setSecondsDay(b->starttime);
+        tmp = tmp_detail;
         if (ref_time >= b->endtime && (b->days & (1 << ref_weekday))) {
           if (++ref_weekday > 6) ref_weekday = 0;
-          DateDetail t = tmp;
-          t.addDays(1);
-          tmp = t;
+          tmp_detail.setSecondsDay(b->starttime);
+          tmp_detail.addDays(1);
+          tmp = tmp_detail;
         }
         while (!(b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture &&
                tmp <= b->enddate) {
           if (++ref_weekday > 6) ref_weekday = 0;
-          DateDetail t = tmp;
-          t.addDays(1);
-          tmp = t;
+          tmp_detail = tmp;
+          tmp_detail.addDays(1);
+          tmp = tmp_detail;
         }
         if (tmp < b->startdate) tmp = b->startdate;
         if (tmp >= b->enddate) continue;

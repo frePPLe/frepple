@@ -1462,8 +1462,8 @@ var grid = {
         '<p>' + interpolate(gettext('You are about to delete %s objects AND ALL RELATED RECORDS!'), [sel.length], false) + '</p>' +
         '</div>' +
         '<div class="modal-footer justify-content-between">' +
-        '<input type="submit" id="delbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Confirm') + '">' +
         '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray pull-left" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+        '<input type="submit" id="delbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Confirm') + '">' +
         '</div>' +
         '</div>' +
         '</div>');

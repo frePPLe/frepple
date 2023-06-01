@@ -1150,7 +1150,7 @@ var grid = {
     // The only_list argument is true when we show a "list" report.
     // It is false for "table" reports.
     var showit = true;
-    var content = '<div class="modal-dialog">' +
+    var content = '<div class="modal-dialog modal-lg">' +
       '<div class="modal-content">' +
       '<div class="modal-header">' +
       '<h5 class="modal-title text-capitalize-first">' + gettext("Export CSV or Excel file") + '</h5>' +

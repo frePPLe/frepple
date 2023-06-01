@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Development server",
+            "name": "Web server Python",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/frepplectl.py",
@@ -15,7 +15,16 @@
             ]
         },
         {
-            "name": "Engine Debug Windows",
+            "name": "Web service Python",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "127.0.0.1",
+                "port": 17999,
+            }
+        },
+        {
+            "name": "Planning engine Windows",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/frepple.exe",
@@ -59,17 +68,25 @@
                     "value": "1"
                 },
                 {
+                    "name": "xloadplan",
+                    "value": "1"
+                },
+                {
                     "name": "FREPPLE_LOGFILE",
                     "value": "frepple.log"
                 },
                 {
                     "name": "xVIRTUAL_ENV",
                     "value": "${workspaceFolder}/venv"
+                },
+                {
+                    "name": "xdebugpy",
+                    "value": "1"
                 }
             ]
         },
         {
-            "name": "Engine Debug Linux",
+            "name": "Planning engine Linux",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/frepple",

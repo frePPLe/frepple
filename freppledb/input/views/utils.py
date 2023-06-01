@@ -2180,7 +2180,7 @@ class OperationPlanDetail(View):
                         case when nextopplan.type = 'PO' then 'Purchase '||nextopplan.item_id||' @ '||nextopplan.location_id||' from '||nextopplan.supplier_id
                         when nextopplan.type = 'DO' then 'Ship '||nextopplan.item_id||' from '||nextopplan.origin_id||' to '||nextopplan.destination_id
                         %s
-                        else nextopplan.operation_id end,
+                        else nextopplan.operation_id end as operation_name,
                         nextopplan.status,
                         nextopplan.item_id,
                         coalesce(nextopplan.location_id, nextopplan.destination_id),
@@ -2191,13 +2191,15 @@ class OperationPlanDetail(View):
                         t.offset as x,
                         t.offset + t.quantity as y,
                         (coalesce(nextopplan.item_id,'')||'/'||nextopplan.reference)::varchar as path,
-                        nextopplan.owner_id
+                        nextopplan.owner_id,
+                        operation.name as operation_id
                     from operationplan
                     inner join lateral
                     (select t->>0 reference,
                     (t->>1)::numeric quantity,
                     (t->>2)::numeric as offset from jsonb_array_elements(operationplan.plan->'downstream_opplans') t) t on true
                     inner join operationplan nextopplan on nextopplan.reference = t.reference
+                    left outer join operation on operation.name = nextopplan.operation_id
                     where operationplan.reference = %%s
                     union all
                     select cte.level +  case when nextopplan.owner_id = cte.owner_id then 0 else 1 end,
@@ -2206,7 +2208,7 @@ class OperationPlanDetail(View):
                         case when nextopplan.type = 'PO' then 'Purchase '||nextopplan.item_id||' @ '||nextopplan.location_id||' from '||nextopplan.supplier_id
                         when nextopplan.type = 'DO' then 'Ship '||nextopplan.item_id||' from '||nextopplan.origin_id||' to '||nextopplan.destination_id
                         %s
-                        else nextopplan.operation_id end,
+                        else nextopplan.operation_id end as operation_name,
                         nextopplan.status,
                         nextopplan.item_id,
                         coalesce(nextopplan.location_id, nextopplan.destination_id),
@@ -2214,35 +2216,36 @@ class OperationPlanDetail(View):
                         to_char(nextopplan.enddate,'YYYY-MM-DD hh24:mi:ss'),
                         (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.y else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        least(t.offset + t.quantity, t.offset + cte.x/coalesce(-consuming_om.quantity,1)*coalesce(producing_om.quantity,1)
-                        + (cte.y-cte.x)/coalesce(-consuming_om.quantity,1)*coalesce(producing_om.quantity,1))
+                        least(t.offset + t.quantity, t.offset + cte.x*coalesce(producing_om.quantity,1)
+                        + (cte.y-cte.x)*coalesce(producing_om.quantity,1))
                         else
-                        greatest(0, cte.y - coalesce(upstream.offset,0))*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        greatest(0, cte.y - coalesce(upstream.offset,0))*coalesce(producing_om.quantity, operationmaterial.quantity,1)
                         end) end)
                         -
                         (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        t.offset + cte.x/coalesce(-consuming_om.quantity,1)*coalesce(producing_om.quantity,1)
+                        t.offset + cte.x*coalesce(producing_om.quantity,1)
                         else
-                        greatest(0,cte.x - coalesce(upstream.offset,0)) *coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        greatest(0,cte.x - coalesce(upstream.offset,0)) *coalesce(producing_om.quantity,1)
                         end) end),
                         nextopplan.quantity,
                         case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        t.offset + cte.x/coalesce(-consuming_om.quantity,1)*coalesce(producing_om.quantity,1)
+                        t.offset + cte.x*coalesce(producing_om.quantity,1)
                         else
-                        greatest(0,cte.x - coalesce(upstream.offset,0)) *coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        greatest(0,cte.x - coalesce(upstream.offset,0)) *coalesce(producing_om.quantity,1)
                         end) end as x,
                         case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.y else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        least(t.offset + t.quantity, t.offset + cte.x/coalesce(-consuming_om.quantity,1)*coalesce(producing_om.quantity,1)
-                        + (cte.y-cte.x)/coalesce(-consuming_om.quantity,1)*coalesce(producing_om.quantity,1))
+                        least(t.offset + t.quantity, t.offset + cte.x*coalesce(producing_om.quantity,1)
+                        + (cte.y-cte.x)*coalesce(producing_om.quantity,1))
                         else
-                        greatest(0, cte.y - coalesce(upstream.offset,0))*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        greatest(0, cte.y - coalesce(upstream.offset,0))*coalesce(producing_om.quantity, operationmaterial.quantity,1)
                         end) end
                         as y,
                     cte.path||'/'||coalesce(nextopplan.item_id,'')||'/'||nextopplan.reference,
-                    nextopplan.owner_id
+                    nextopplan.owner_id,
+                    operation.name as operation_id
                     from operationplan
                     inner join cte on operationplan.reference = cte.nextreference
                     inner join lateral
@@ -2258,20 +2261,24 @@ class OperationPlanDetail(View):
                         and consuming_om.quantity < 0 and consuming_om.item_id = operationplan.item_id
                     left outer join operationmaterial producing_om on producing_om.operation_id = nextopplan.operation_id
                         and producing_om.quantity > 0 and producing_om.item_id = nextopplan.item_id
+                    left outer join operation on operation.name = nextopplan.operation_id
+                    left outer join operationmaterial on operationmaterial.operation_id = cte.operation_id
+                    and operationmaterial.quantity > 0
+                    and operationmaterial.item_id = nextopplan.item_id
                     where
                     (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.y else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        least(t.offset + t.quantity, t.offset + cte.x/coalesce(-consuming_om.quantity,1)*coalesce(producing_om.quantity,1)
-                        + (cte.y-cte.x)/coalesce(-consuming_om.quantity,1)*coalesce(producing_om.quantity,1))
+                        least(t.offset + t.quantity, t.offset + cte.x*coalesce(producing_om.quantity,1)
+                        + (cte.y-cte.x)*coalesce(producing_om.quantity,1))
                         else
-                        greatest(0, cte.y - coalesce(upstream.offset,0))*coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        greatest(0, cte.y - coalesce(upstream.offset,0))*coalesce(producing_om.quantity, operationmaterial.quantity,1)
                         end) end)
                     -
                     (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        t.offset + cte.x/coalesce(-consuming_om.quantity,1)*coalesce(producing_om.quantity,1)
+                        t.offset + cte.x*coalesce(producing_om.quantity,1)
                         else
-                        greatest(0,cte.x - coalesce(upstream.offset,0)) *coalesce(producing_om.quantity,1)/coalesce(-consuming_om.quantity,1)
+                        greatest(0,cte.x - coalesce(upstream.offset,0)) *coalesce(producing_om.quantity,1)
                         end) end)
                     > 0
                     -- infinite loop security
@@ -2368,48 +2375,48 @@ class OperationPlanDetail(View):
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1)
+                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)
                         else
-                        greatest(0,cte.x - coalesce(downstream.offset,0)) /coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
+                        greatest(0,cte.x - coalesce(downstream.offset,0)) *coalesce(-consuming_om.quantity,1)
                         end) end) = 0 then t.quantity
                         else
                         (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.y else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        least(t.offset + t.quantity, t.offset + cte.x*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1)
-                        + (cte.y-cte.x)*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1))
+                        least(t.offset + t.quantity, t.offset + cte.x*coalesce(-consuming_om.quantity,1)
+                        + (cte.y-cte.x)*coalesce(-consuming_om.quantity,1))
                         else
-                        greatest(0, cte.y - coalesce(downstream.offset,0))/coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
+                        greatest(0, cte.y - coalesce(downstream.offset,0))*coalesce(-consuming_om.quantity,1)
                         end) end) end
                         -
                         (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1)
+                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)
                         else
-                        greatest(0,cte.x - coalesce(downstream.offset,0)) /coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
+                        greatest(0,cte.x - coalesce(downstream.offset,0)) *coalesce(-consuming_om.quantity,1)
                         end) end),
                         nextopplan.quantity,
                         case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1)
+                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)
                         else
-                        greatest(0,cte.x - coalesce(downstream.offset,0)) /coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
+                        greatest(0,cte.x - coalesce(downstream.offset,0)) *coalesce(-consuming_om.quantity,1)
                         end) end as x,
                         case when nextopplan.owner_id is not null then cte.y
 						when downstream.offset is null
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1)
+                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)
                         else
-                        greatest(0,cte.x - coalesce(downstream.offset,0)) /coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
+                        greatest(0,cte.x - coalesce(downstream.offset,0)) *coalesce(-consuming_om.quantity,1)
                         end) end) = 0 then t.quantity
                         else
                         (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.y else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        least(t.offset + t.quantity, t.offset + cte.x*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1)
-                        + (cte.y-cte.x)*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1))
+                        least(t.offset + t.quantity, t.offset + cte.x*coalesce(-consuming_om.quantity,1)
+                        + (cte.y-cte.x)*coalesce(-consuming_om.quantity,1))
                         else
-                        greatest(0, cte.y - coalesce(downstream.offset,0))/coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
+                        greatest(0, cte.y - coalesce(downstream.offset,0))*coalesce(-consuming_om.quantity,1)
                         end) end) end
                         as y,
                         cte.path||'/'||coalesce(nextopplan.item_id,'')||'/'||nextopplan.reference,
@@ -2442,24 +2449,24 @@ class OperationPlanDetail(View):
                         and t.offset = 0
                         and (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1)
+                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)
                         else
-                        greatest(0,cte.x - coalesce(downstream.offset,0)) /coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
+                        greatest(0,cte.x - coalesce(downstream.offset,0)) *coalesce(-consuming_om.quantity,1)
                         end) end) = 0 then t.quantity
                         else
                         (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.y else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        least(t.offset + t.quantity, t.offset + cte.x*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1)
-                        + (cte.y-cte.x)*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1))
+                        least(t.offset + t.quantity, t.offset + cte.x*coalesce(-consuming_om.quantity,1)
+                        + (cte.y-cte.x)*coalesce(-consuming_om.quantity,1))
                         else
-                        greatest(0, cte.y - coalesce(downstream.offset,0))/coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
+                        greatest(0, cte.y - coalesce(downstream.offset,0))*coalesce(-consuming_om.quantity,1)
                         end) end) end
                     -
                     (case when nextopplan.owner_id = cte.nextreference or cte.owner_id = nextopplan.owner_id then cte.x else
                         least( nextopplan.quantity, case when t.offset > 0 then
-                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)/coalesce(producing_om.quantity,1)
+                        t.offset + cte.x*coalesce(-consuming_om.quantity,1)
                         else
-                        greatest(0,cte.x - coalesce(downstream.offset,0)) /coalesce(producing_om.quantity,1)*coalesce(-consuming_om.quantity,1)
+                        greatest(0,cte.x - coalesce(downstream.offset,0)) *coalesce(-consuming_om.quantity,1)
                         end) end)
                     > 0
                     -- infinite loop security

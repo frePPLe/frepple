@@ -1987,9 +1987,9 @@ class loadOperationPlans(LoadTask):
                 cnt_do = 0
                 cnt_dlvr = 0
 
-                attrs = [f[0] for f in getAttributes(OperationPlan)]
+                attrs = ["operationplan.%s" % f[0] for f in getAttributes(OperationPlan)]
                 if attrs:
-                    attrsql = ", operationplan.%s" % ", ".join(attrs)
+                    attrsql = ", %s" % ", ".join(attrs)
                 else:
                     attrsql = ""
 

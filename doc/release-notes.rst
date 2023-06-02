@@ -14,7 +14,7 @@ This release brings two exciting changes:
   | So far, it was available only in the Enterprise and Cloud Editions.
   | Read `this post <https://frepple.com/blog/the-forecast-module-goes-open-source/>`_ to learn more.
 
-Join the `webinar on Thursday June 7 at 4 PM Central European Time <https://frepple.com/webinar_frepple_8.ics>`_ to hear the full story
+Join the `webinar on Thursday June 8 at 4 PM Central European Time <https://frepple.com/webinar_frepple_8.ics>`_ to hear the full story
 and ask us any questions you may have.
 
 .. rubric:: Production planning

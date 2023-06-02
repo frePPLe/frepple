@@ -182,6 +182,30 @@ $(function() {
     $("#horizonunit").val($(this).prop('name'));
   });
 
+  {% if reportclass.editable and haschangeperm %}
+  if (isDragnDropUploadCapable()) {
+    $("#content-main").on('dragover', function(e) {
+      if (e.originalEvent.dataTransfer.types) {
+        for (var i = 0; i < e.originalEvent.dataTransfer.types.length; i++) {
+          if (e.originalEvent.dataTransfer.types[i] == "Files") {
+            $("#content-main").addClass("dropfile");
+            e.stopPropagation();
+            e.preventDefault();
+            }
+        }
+      }});
+    $("#content-main").on('dragleave', function(e) {
+  	  $("#content-main").removeClass("dropfile");
+  	  e.stopPropagation();
+  	  e.preventDefault();
+      });
+    $("#content-main").on('drop', function(e) {
+      if (e.originalEvent.dataTransfer.files.length > 0) {
+        import_show('', undefined, true, undefined, e.originalEvent.dataTransfer.files);
+  	    e.preventDefault();
+      }});
+  }
+  {% endif %}
 });
 
 </script>

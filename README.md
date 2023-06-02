@@ -4,11 +4,14 @@
 
 ## Open source supply chain planning
 
-FrePPLe is an easy-to-use and easy-to-implement open source **advanced planning and scheduling** tool for manufacturing companies.
+FrePPLe is an easy-to-use and easy-to-implement open source **demand forecasting** and
+**advanced planning and scheduling** tool for manufacturing companies.
 
 When spreadsheets doesn't suffice any longer to adequately plan and schedule your production, frePPLe allows an easy and cost-efficient way to generate a more optimized plan.
 
-FrePPLe implements planning algoritms based on best practices such as **theory of constraints** (ie *plan around the bottleneck*), **pull-based planning** (ie *start production as late as possible and directly triggered by demand*) and **lean manufacturing** (ie *avoid intermediate delays and inventory*).
+FrePPLe implements time series forecasting algorithms to analyze the sales history and compute the forecasted sales for the future.
+
+FrePPLe implements production planning and scheduling algorithms based on best practices such as **theory of constraints** (ie *plan around the bottleneck*), **pull-based planning** (ie *start production as late as possible and directly triggered by demand*) and **lean manufacturing** (ie *avoid intermediate delays and inventory*).
 
 ## Download
 

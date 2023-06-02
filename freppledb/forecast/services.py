@@ -241,7 +241,7 @@ class ForecastService(AsyncHttpConsumer):
                             }
                             bucket = bckt.get("bucket", None)
                             if bucket:
-                                args["bucket"] = bucket
+                                args["bucket"] = bucket.lower()
                             startdate = bckt.get("startdate", None)
                             if startdate:
                                 # Guess! the date format, using Month-Day-Year as preference

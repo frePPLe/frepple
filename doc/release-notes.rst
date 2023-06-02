@@ -1,10 +1,21 @@
 Release notes
 -------------
 
-8.0.0 (Upcoming release)
-========================
+8.0.0 (2023/06/03)
+==================
 
-Oh-oh... Something exciting is coming up!
+This release brings two exciting changes:
+
+- | The license changes from `AGPL <https://wikipedia.org/wiki/Affero_General_Public_License>`_ to
+    `MIT <https://wikipedia.org/wiki/MIT_License>`_.
+  | Read `this post <https://frepple.com/blog/why-we-are-chang…from-agpl-to-mit/>`_ to learn more.
+
+- | The forecasting module is moving into the Community Edition.
+  | So far, it was available only in the Enterprise and Cloud Editions.
+  | Read `this post <https://frepple.com/blog/the-forecast-module-goes-open-source/>`_ to learn more.
+
+Join the `webinar on Thursday June 7 at 4 PM Central European Time <https://frepple.com/webinar_frepple_8.ics>`_ to hear the full story
+and ask us any questions you may have.
 
 .. rubric:: Production planning
 

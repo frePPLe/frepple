@@ -59,12 +59,12 @@ function delayfmt(cellvalue, options, rowdata) {
   return thecolor0 + (sign*days).toString() + " " + gettext("days") + thecolor1;
 }
 
-function plannedquantitycellattr(rowId, value, rowdata) {
+function plannedquantitycellattr(cellvalue, options, rowdata) {
   var tmp = parseFloat(rowdata.plannedquantity);
   if ((isNaN(tmp) || parseFloat(rowdata.quantity) - tmp > 0) && rowdata.status != 'closed' && rowdata.status != 'canceled')
-    return 'style="background-color: #f00"';
+    return '<div class="invStatus" style="background-color: #f00">' + grid.formatNumber(cellvalue) + "</div>";
   else
-    return '';
+    return grid.formatNumber(cellvalue);
 }
 
 </script>

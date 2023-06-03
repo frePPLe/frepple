@@ -8,7 +8,7 @@ This release brings two exciting changes:
 
 - | The license of the Community Edition changes from `AGPL <https://wikipedia.org/wiki/Affero_General_Public_License>`_ to
     `MIT <https://wikipedia.org/wiki/MIT_License>`_.
-  | Read `this post <https://frepple.com/blog/why-we-are-chang…from-agpl-to-mit/>`_ to learn more.
+  | Read `this post <https://frepple.com/blog/why-we-are-changing-our-license-from-agpl-to-mit/>`_ to learn more.
 
 - | The forecasting module is moving into the Community Edition.
   | So far, it was available only in the Enterprise and Cloud Editions.

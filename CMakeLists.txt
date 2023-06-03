@@ -17,7 +17,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     file(READ "/etc/issue" LINUX_ISSUE)
 
     # Ubuntu 20
-    elseif(LINUX_ISSUE MATCHES "Ubuntu 20")
+    if(LINUX_ISSUE MATCHES "Ubuntu 20")
       set(CPACK_GENERATOR "DEB")
       set(DISTRO "ubuntu20")
 

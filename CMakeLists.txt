@@ -2,7 +2,7 @@
 set(CMAKE_VERBOSE_MAKEFILE ON)
 cmake_minimum_required(VERSION 3.0)
 
-project(frepple VERSION 8.0.0)
+project(frepple VERSION 8.1.0)
 
 set(PROJECT_EDITION "Community Edition")
 set(PROJECT_BRANCH "community")
@@ -15,16 +15,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   # Detect the linux distribution
   if(EXISTS "/etc/issue")
     file(READ "/etc/issue" LINUX_ISSUE)
-
-    # Ubuntu 18
-    if(LINUX_ISSUE MATCHES "Ubuntu 18")
-      set(CPACK_GENERATOR "DEB")
-      set(DISTRO "ubuntu18")
-
-    # Ubuntu 19
-    elseif(LINUX_ISSUE MATCHES "Ubuntu 19")
-      set(CPACK_GENERATOR "DEB")
-      set(DISTRO "ubuntu19")
 
     # Ubuntu 20
     elseif(LINUX_ISSUE MATCHES "Ubuntu 20")

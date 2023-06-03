@@ -47,7 +47,7 @@ if(docker)
   )
 
   # Build-only images
-  foreach(dist ubuntu-18.04 opensuse-15.1 rockylinux-8 debian-10)
+  foreach(dist opensuse-15.1 rockylinux-8 debian-10)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${dist}.dockerfile ${dist}/dockerfile COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh ${dist}/entrypoint.sh COPYONLY)
     add_custom_target(

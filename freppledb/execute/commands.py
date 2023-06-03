@@ -290,3 +290,28 @@ class EraseModel(PlanTask):
 
         frepple.erase(True)
         frepple.printsize()
+
+
+@PlanTaskRegistry.register
+class ActivatePythonDebugger(PlanTask):
+    description = "Activate Python debugger"
+    sequence = 50
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return 0.1 if "debugpy" in os.environ else -1
+
+    @classmethod
+    def run(cls, **kwargs):
+        import debugpy
+        import pathlib
+
+        p = pathlib.Path(os.__file__)
+        python_exec = os.path.join(p.parents[1], "python.exe")
+        if not os.path.exists(python_exec):
+            python_exec = os.path.join(p.parents[2], "bin", "python")
+            if not os.path.exists(python_exec):
+                    raise Exception("Python executable not found")
+
+        debugpy.configure(python=python_exec)
+        debugpy.listen(("0.0.0.0", 17999))

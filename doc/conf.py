@@ -133,6 +133,8 @@ html_favicon = "../src/frepple.ico"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = []
 
+html_permalinks = False
+
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
 # directly to the root of the documentation.

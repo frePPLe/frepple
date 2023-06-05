@@ -2481,7 +2481,7 @@ class OperationPlan : public Object,
     m->addIteratorField<Cls, OperationPlan::ProblemIterator, Problem>(
         Tags::problems, Tags::problem, &Cls::getProblems, PLAN + WRITE_OBJECT);
     m->addStringRefField<Cls>(Tags::batch, &Cls::getBatchString, &Cls::setBatch,
-                              "", PLAN);
+                              "");
     // Default of -999 to enforce serializing the value if it is 0
     m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr,
                            -999, PLAN);

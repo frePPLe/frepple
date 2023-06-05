@@ -243,7 +243,7 @@ def Upload(request):
                                             '<resource name=%s id=%s quantity="%s"/>'
                                             % (
                                                 quoteattr(wores.resource.name),
-                                                quoteattr(wores.resource.category),
+                                                quoteattr(wores.resource.category or ""),
                                                 wores.quantity,
                                             )
                                         )

@@ -128,12 +128,14 @@ class OdooTest(TransactionTestCase):
             PurchaseOrder.objects.all().filter(status="proposed").count(),
             0,
         )
-        self.assertEqual(
-            ManufacturingOrder.objects.all()
-            .filter(status="approved", quantity=8, reference=F("operation_id"))
-            .count(),
-            3,
-        )
+        if int(getOdooVersion()) >= 15:
+            # Work order level integration is only available from odoo 15 onwards
+            self.assertEqual(
+                ManufacturingOrder.objects.all()
+                .filter(status="approved", quantity=8, reference=F("operation_id"))
+                .count(),
+                3,
+            )
 
         # Generate plan
         management.call_command(

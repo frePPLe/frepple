@@ -728,7 +728,7 @@ class ExportOperationPlans(PlanTask):
                         clean_value(j.operation.buffer.item.name),
                         clean_value(j.operation.buffer.location.name),
                         "\\N",
-                        "\\N",
+                        clean_value(j.operation.buffer.location.name),
                         "\\N",
                         clean_value(j.demand.name) if demand else "\\N",
                         j.demand.due

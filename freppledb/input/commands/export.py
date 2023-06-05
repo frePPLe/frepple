@@ -63,14 +63,17 @@ map_search = {0: "PRIORITY", 1: "MINCOST", 2: "MINPENALTY", 3: "MINCOSTPENALTY"}
 
 def SQL4attributes(attrs, with_on_conflict=True):
     """Snippet is used many times in this file"""
+    res0 = []
+    res1 = []
+    res2 = []
+    for a in attrs:
+        res0.append(",%s" % a[0])
+        res1.append(",%s * '1 second'::interval" if a[2] == "duration" else ",%s")
+        res2.append(",\n%s=excluded.%s" % (a[0], a[0]))
     if with_on_conflict:
-        return (
-            "".join([",%s" % i for i in attrs]),
-            ",%s" * len(attrs),
-            "".join([",\n%s=excluded.%s" % (i, i) for i in attrs]),
-        )
+        return ("".join(res0), "".join(res1), "".join(res2))
     else:
-        return ("".join([",%s" % i for i in attrs]), ",%s" * len(attrs))
+        return ("".join(res0), "".join(res1))
 
 
 @PlanTaskRegistry.register
@@ -768,7 +771,7 @@ class exportCalendars(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(Calendar)]
+        attrs = list(getAttributes(Calendar))
 
         def getData():
             for i in frepple.calendars():
@@ -780,7 +783,7 @@ class exportCalendars(PlanTask):
                     continue
                 r = [i.name, round(i.default, 8), i.source, cls.timestamp]
                 for a in attrs:
-                    r.append(getattr(i, a, None))
+                    r.append(getattr(i, a[0], None))
                 yield r
 
         with connections[database].cursor() as cursor:
@@ -816,7 +819,7 @@ class exportLocations(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(Location)]
+        attrs = list(getAttributes(Location))
 
         def getData():
             for i in frepple.locations():
@@ -832,7 +835,7 @@ class exportLocations(PlanTask):
                     cls.timestamp,
                 ]
                 for a in attrs:
-                    r.append(getattr(i, a, None))
+                    r.append(getattr(i, a[0], None))
                 yield r
 
         def getOwners():
@@ -880,7 +883,7 @@ class exportItems(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(Item)]
+        attrs = list(getAttributes(Item))
 
         def getData():
             for i in frepple.items():
@@ -902,7 +905,7 @@ class exportItems(PlanTask):
                     cls.timestamp,
                 ]
                 for a in attrs:
-                    r.append(getattr(i, a, None))
+                    r.append(getattr(i, a[0], None))
                 yield r
 
         def getOwners():
@@ -954,7 +957,7 @@ class exportOperations(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(Operation)]
+        attrs = list(getAttributes(Operation))
 
         def getData():
             for i in frepple.operations():
@@ -1000,7 +1003,7 @@ class exportOperations(PlanTask):
                     cls.timestamp,
                 ]
                 for a in attrs:
-                    r.append(getattr(i, a, None))
+                    r.append(getattr(i, a[0], None))
                 yield r
 
         def getOwners():
@@ -1080,7 +1083,7 @@ class exportSetupMatrices(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(SetupMatrix)]
+        attrs = list(getAttributes(SetupMatrix))
 
         def getData():
             for i in frepple.setupmatrices():
@@ -1088,7 +1091,7 @@ class exportSetupMatrices(PlanTask):
                     continue
                 r = [i.name, i.source, cls.timestamp]
                 for a in attrs:
-                    r.append(getattr(i, a, None))
+                    r.append(getattr(i, a[0], None))
                 yield r
 
         with connections[database].cursor() as cursor:
@@ -1123,7 +1126,7 @@ class exportResources(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(Resource)]
+        attrs = list(getAttributes(Resource))
 
         def getData():
             for i in frepple.resources():
@@ -1150,7 +1153,7 @@ class exportResources(PlanTask):
                     cls.timestamp,
                 ]
                 for a in attrs:
-                    r.append(getattr(i, a, None))
+                    r.append(getattr(i, a[0], None))
                 yield r
 
         def getOwners():
@@ -1213,7 +1216,7 @@ class exportSetupRules(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(SetupRule)]
+        attrs = list(getAttributes(SetupRule))
 
         def getData():
             for m in frepple.setupmatrices():
@@ -1232,7 +1235,7 @@ class exportSetupRules(PlanTask):
                         cls.timestamp,
                     ]
                     for a in attrs:
-                        r.append(getattr(i, a, None))
+                        r.append(getattr(i, a[0], None))
                     yield r
 
         with connections[database].cursor() as cursor:
@@ -1272,7 +1275,7 @@ class exportSkills(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(Skill)]
+        attrs = list(getAttributes(Skill))
 
         def getData():
             for i in frepple.skills():
@@ -1280,7 +1283,7 @@ class exportSkills(PlanTask):
                     continue
                 r = [i.name, i.source, cls.timestamp]
                 for a in attrs:
-                    r.append(getattr(i, a, None))
+                    r.append(getattr(i, a[0], None))
                 yield r
 
         with connections[database].cursor() as cursor:
@@ -1315,7 +1318,7 @@ class exportResourceSkills(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(ResourceSkill)]
+        attrs = list(getAttributes(ResourceSkill))
 
         def getData():
             for s in frepple.skills():
@@ -1334,7 +1337,7 @@ class exportResourceSkills(PlanTask):
                         s.name,
                     ]
                     for a in attrs:
-                        r.append(getattr(i, a, None))
+                        r.append(getattr(i, a[0], None))
                     yield r
 
         with connections[database].cursor() as cursor:
@@ -1373,7 +1376,7 @@ class exportOperationResources(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(OperationResource)]
+        attrs = list(getAttributes(OperationResource))
 
         def getData():
             for o in frepple.operations():
@@ -1399,7 +1402,7 @@ class exportOperationResources(PlanTask):
                         cls.timestamp,
                     ]
                     for a in attrs:
-                        r.append(getattr(i, a, None))
+                        r.append(getattr(i, a[0], None))
                     yield r
 
         with connections[database].cursor() as cursor:
@@ -1443,7 +1446,7 @@ class exportCustomers(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(Customer)]
+        attrs = list(getAttributes(Customer))
 
         def getData():
             for i in frepple.customers():
@@ -1458,7 +1461,7 @@ class exportCustomers(PlanTask):
                     cls.timestamp,
                 ]
                 for a in attrs:
-                    r.append(getattr(i, a, None))
+                    r.append(getattr(i, a[0], None))
                 yield r
 
         def getOwners():
@@ -1506,7 +1509,7 @@ class exportDemands(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(Demand)]
+        attrs = list(getAttributes(Demand))
 
         def getData():
             for i in frepple.demands():
@@ -1546,7 +1549,7 @@ class exportDemands(PlanTask):
                     i.owner.policy if has_parent else None,
                 ]
                 for a in attrs:
-                    r.append(getattr(i, a, None))
+                    r.append(getattr(i, a[0], None))
                 yield r
 
         with connections[database].cursor() as cursor:
@@ -1599,7 +1602,7 @@ class exportCalendarBuckets(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(CalendarBucket)]
+        attrs = list(getAttributes(CalendarBucket))
 
         def int_to_time(i):
             hour = i // 3600
@@ -1639,7 +1642,7 @@ class exportCalendarBuckets(PlanTask):
                         cls.timestamp,
                     ]
                     for a in attrs:
-                        r.append(getattr(i, a, None))
+                        r.append(getattr(i, a[0], None))
                     yield r
 
         with connections[database].cursor() as cursor:
@@ -1687,7 +1690,7 @@ class exportBuffers(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(Buffer)]
+        attrs = list(getAttributes(Buffer))
 
         def getData():
             for i in frepple.buffers():
@@ -1708,7 +1711,7 @@ class exportBuffers(PlanTask):
                     cls.timestamp,
                 ]
                 for a in attrs:
-                    r.append(getattr(i, a, None))
+                    r.append(getattr(i, a[0], None))
                 yield r
 
         with connections[database].cursor() as cursor:
@@ -1752,7 +1755,7 @@ class exportOperationMaterials(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(OperationMaterial)]
+        attrs = list(getAttributes(OperationMaterial))
 
         def getData():
             for o in frepple.operations():
@@ -1781,7 +1784,7 @@ class exportOperationMaterials(PlanTask):
                         cls.timestamp,
                     ]
                     for a in attrs:
-                        r.append(getattr(i, a, None))
+                        r.append(getattr(i, a[0], None))
                     yield r
 
         with connections[database].cursor() as cursor:
@@ -1826,7 +1829,7 @@ class exportOperationDependencies(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(OperationDependency)]
+        attrs = list(getAttributes(OperationDependency))
 
         def getData():
             for o in frepple.operations():
@@ -1848,7 +1851,7 @@ class exportOperationDependencies(PlanTask):
                         cls.timestamp,
                     ]
                     for a in attrs:
-                        r.append(getattr(i, a, None))
+                        r.append(getattr(i, a[0], None))
                     yield r
 
         with connections[database].cursor() as cursor:
@@ -1886,7 +1889,7 @@ class exportSuppliers(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(Supplier)]
+        attrs = list(getAttributes(Supplier))
 
         def getData():
             for i in frepple.suppliers():
@@ -1906,7 +1909,7 @@ class exportSuppliers(PlanTask):
                     cls.timestamp,
                 ]
                 for a in attrs:
-                    r.append(getattr(i, a, None))
+                    r.append(getattr(i, a[0], None))
                 yield r
 
         def getOwners():
@@ -1955,7 +1958,7 @@ class exportItemSuppliers(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(ItemSupplier)]
+        attrs = list(getAttributes(ItemSupplier))
 
         def getData(null_location):
             for s in frepple.suppliers():
@@ -1986,7 +1989,7 @@ class exportItemSuppliers(PlanTask):
                         cls.timestamp,
                     ]
                     for a in attrs:
-                        r.append(getattr(i, a, None))
+                        r.append(getattr(i, a[0], None))
                     yield r
 
         with connections[database].cursor() as cursor:
@@ -2074,7 +2077,7 @@ class exportItemDistributions(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(ItemDistribution)]
+        attrs = list(getAttributes(ItemDistribution))
 
         def getData():
             for s in frepple.items():
@@ -2099,7 +2102,7 @@ class exportItemDistributions(PlanTask):
                         cls.timestamp,
                     ]
                     for a in attrs:
-                        r.append(getattr(i, a, None))
+                        r.append(getattr(i, a[0], None))
                     yield r
 
         with connections[database].cursor() as cursor:

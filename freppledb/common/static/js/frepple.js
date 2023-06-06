@@ -1446,7 +1446,7 @@ var grid = {
   showDelete: function (url) {
     if ($('#delete_selected').is(":disabled")) return;
     var sel = jQuery("#grid").jqGrid('getGridParam', 'selarrrow');
-    if (sel.length == 1)
+    if (sel.length == 1 && typeof dont_show_related_objects_for_deletion == 'undefined')
       // Redirect to a page for deleting a single entity
       location.href = url + admin_escape(sel[0]) + '/delete/';
     else if (sel.length > 0) {

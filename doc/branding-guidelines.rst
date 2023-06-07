@@ -4,8 +4,8 @@ Branding guidelines
 
 This page describes what we see as appropriate usage of the frepple name, logo and branding.
 
-* | The official name is **frePPLe**, with PPL capitalized.
-  | Alternatively you can use the name in lower case or upper case.
+* The official name is **frePPLe**, with PPL capitalized. Alternatively you can use
+  the name in lower case or upper case.
 
 * The official tag line is **the world's most advanced open source supply chain
   planning solution**.
@@ -18,10 +18,9 @@ This page describes what we see as appropriate usage of the frepple name, logo a
 * We consider the following as approved usage of the frePPLe name. No approval
   is needed for any of the following.
 
-  * | You can use our software in your own software or documentation, which is based on or
-      extends frepple.
-    | The derived products can't be called "frePPLe", but calling them "powered by frePPLe"
-      or "derived from frePPLe" is correct.
+  * You can use our software in your own software or documentation, which is based on or
+    extends frepple. The derived products can't be called "frePPLe", but calling them
+    "powered by frePPLe" or "derived from frePPLe" is correct.
 
   * You can use the frePPLe name and logo in any publication or public event.
 

@@ -82,6 +82,12 @@ frePPLe |release| documentation
     Software license info
     </div>
     <div class="sphinxcolumn">
+    <a class="reference internal" href="branding-guidelines.html"><span class="doc">Branding guidelines</span></a><br>
+    Approved usage of the log and brand
+    </div>
+    </div>
+    <div class="sphinxrow">
+    <div class="sphinxcolumn">
     <a class="reference internal" href="release-notes.html"><span class="doc">Release notes</span></a><br>
     What's new and exciting?
     </div>
@@ -103,4 +109,5 @@ frePPLe |release| documentation
    erp-integration/index
    developer-guide/index
    license
+   branding-guidelines
    release-notes

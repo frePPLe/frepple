@@ -152,7 +152,11 @@ PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b,
 }
 
 PeggingIterator::PeggingIterator(const FlowPlan* fp, bool b)
-    : downstream(b), firstIteration(true), first(false), second_pass(false) {
+    : downstream(b),
+      firstIteration(true),
+      first(false),
+      second_pass(false),
+      maxlevel(-1) {
   initType(metadata);
   if (!fp) return;
   updateStack(fp->getOperationPlan()->getTopOwner(),
@@ -160,7 +164,11 @@ PeggingIterator::PeggingIterator(const FlowPlan* fp, bool b)
 }
 
 PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
-    : downstream(b), firstIteration(true), first(false), second_pass(false) {
+    : downstream(b),
+      firstIteration(true),
+      first(false),
+      second_pass(false),
+      maxlevel(-1) {
   initType(metadata);
   if (!lp) return;
   updateStack(lp->getOperationPlan()->getTopOwner(),

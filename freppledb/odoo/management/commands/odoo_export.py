@@ -426,7 +426,7 @@ class Command(BaseCommand):
                                     "<resource name=%s id=%s/>"
                                     % (
                                         quoteattr(wores.resource.name),
-                                        quoteattr(wores.resource.category),
+                                        quoteattr(wores.resource.category or ""),
                                     )
                                 )
                         rec.append("</workorder>")
@@ -440,7 +440,7 @@ class Command(BaseCommand):
                                 "<resource name=%s id=%s/>"
                                 % (
                                     quoteattr(opplanres.resource.name),
-                                    quoteattr(opplanres.resource.category),
+                                    quoteattr(opplanres.resource.category or ""),
                                 )
                             )
                 rec.append("</operationplan>")

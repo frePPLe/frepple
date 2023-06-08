@@ -820,7 +820,7 @@ class loadOperations(LoadTask):
                                 source=i[15],
                             )
                             if i[7]:
-                                x.duration = i[7].total_seconds()
+                                x.duration = i[7]
                         elif i[6] == "time_per":
                             x = frepple.operation_time_per(
                                 name=i[0],
@@ -830,9 +830,9 @@ class loadOperations(LoadTask):
                                 source=i[15],
                             )
                             if i[7]:
-                                x.duration = i[7].total_seconds()
+                                x.duration = i[7]
                             if i[8]:
-                                x.duration_per = i[8].total_seconds()
+                                x.duration_per = i[8]
                         elif i[6] == "alternate":
                             x = frepple.operation_alternate(
                                 name=i[0],
@@ -867,9 +867,9 @@ class loadOperations(LoadTask):
                                 "Operation type '%s' not recognized" % i[6]
                             )
                         if i[1]:
-                            x.fence = i[1].total_seconds()
+                            x.fence = i[1]
                         if i[2]:
-                            x.posttime = i[2].total_seconds()
+                            x.posttime = i[2]
                         if i[3] is not None:
                             x.size_minimum = i[3]
                         if i[4]:
@@ -1153,14 +1153,14 @@ class loadItemSuppliers(LoadTask):
                             supplier=cursupplier,
                             item=curitem,
                             source=i[9],
-                            leadtime=i[11].total_seconds() if i[11] else 0,
-                            fence=i[14].total_seconds() if i[14] else 0,
+                            leadtime=i[11] if i[11] else 0,
+                            fence=i[14] if i[14] else 0,
                             resource_qty=i[13],
-                            batchwindow=i[15].total_seconds()
+                            batchwindow=i[15]
                             if i[15] is not None
                             else 7 * 86400,
-                            extra_safety_leadtime=i[16].total_seconds() if i[16] else 0,
-                            hard_safety_leadtime=i[17].total_seconds() if i[17] else 0,
+                            extra_safety_leadtime=i[16] if i[16] else 0,
+                            hard_safety_leadtime=i[17] if i[17] else 0,
                         )
                         if i[2]:
                             curitemsupplier.location = frepple.location(name=i[2])
@@ -1237,10 +1237,10 @@ class loadItemDistributions(LoadTask):
                             origin=curorigin,
                             item=curitem,
                             source=i[10],
-                            leadtime=i[11].total_seconds() if i[11] else 0,
-                            fence=i[14].total_seconds() if i[14] else 0,
+                            leadtime=i[11] if i[11] else 0,
+                            fence=i[14] if i[14] else 0,
                             resource_qty=i[13],
-                            batchwindow=i[15].total_seconds()
+                            batchwindow=i[15]
                             if i[15] is not None
                             else 7 * 86400,
                         )
@@ -1357,7 +1357,7 @@ class loadBuffers(LoadTask):
                             source=i[11],
                         )
                         if i[8]:
-                            b.mininterval = i[8].total_seconds()
+                            b.mininterval = i[8]
                     else:
                         raise ValueError("Buffer type '%s' not recognized" % i[7])
                     if i[10] == "tool":
@@ -1468,7 +1468,7 @@ class loadSetupMatrices(LoadTask):
                             priority=i[1],
                             fromsetup=i[2],
                             tosetup=i[3],
-                            duration=i[4].total_seconds() if i[4] else 0,
+                            duration=i[4] if i[4] else 0,
                             cost=i[5],
                             source=i[6],
                         )
@@ -1565,7 +1565,7 @@ class loadResources(LoadTask):
                         elif i[11] == "tool per piece":
                             x.toolperpiece = True
                         if i[7] is not None:
-                            x.maxearly = i[7].total_seconds()
+                            x.maxearly = i[7]
                         if i[2] is not None:
                             x.maximum = i[2]
                         if i[3]:
@@ -1714,7 +1714,7 @@ class loadOperationMaterials(LoadTask):
                                 curflow.transferbatch = i[10]
                         else:
                             if i[12]:
-                                curflow.offset = i[12].total_seconds()
+                                curflow.offset = i[12]
                     except Exception as e:
                         logger.error("**** %s ****" % e)
                 logger.info(
@@ -1909,7 +1909,7 @@ class loadDemand(LoadTask):
                         if i[8] is not None:
                             x.minshipment = i[8]
                         if i[9] is not None:
-                            x.maxlateness = i[9].total_seconds()
+                            x.maxlateness = i[9]
                         if i[13]:
                             x.location = frepple.location(name=i[13])
                         idx = 18

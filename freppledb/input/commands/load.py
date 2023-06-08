@@ -820,7 +820,8 @@ class loadOperations(LoadTask):
                                 source=i[15],
                             )
                             if i[7]:
-                                x.duration = i[7]
+                                # Convert to second to support microseconds
+                                x.duration = i[7].total_seconds()
                         elif i[6] == "time_per":
                             x = frepple.operation_time_per(
                                 name=i[0],
@@ -830,9 +831,11 @@ class loadOperations(LoadTask):
                                 source=i[15],
                             )
                             if i[7]:
-                                x.duration = i[7]
+                                # Convert to second to support microseconds
+                                x.duration = i[7].total_seconds()
                             if i[8]:
-                                x.duration_per = i[8]
+                                # Convert to second to support microseconds
+                                x.duration_per = i[8].total_seconds()
                         elif i[6] == "alternate":
                             x = frepple.operation_alternate(
                                 name=i[0],

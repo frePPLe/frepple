@@ -2880,18 +2880,7 @@ class PythonData : public DataValue {
    * Duration.
    * A Duration is represented as a number of seconds in Python.
    */
-  Duration getDuration() const {
-    if (PyUnicode_Check(obj)) {
-      // Replace the unicode object with a string encoded in the correct locale
-      PyObject* utf8_string = PyUnicode_AsUTF8String(obj);
-      Duration t(PyBytes_AsString(utf8_string));
-      Py_DECREF(utf8_string);
-      return t;
-    }
-    long result = PyLong_AsLong(obj);
-    if (result == -1 && PyErr_Occurred()) throw DataException("Invalid number");
-    return result;
-  }
+  Duration getDuration() const;
 
   /* Return the frePPle Object referred to by the Python value.
    * If it points to a non-frePPLe object, the return value is nullptr.

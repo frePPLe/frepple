@@ -453,6 +453,27 @@ Date PythonData::getDate() const {
         "string");
 }
 
+Duration PythonData::getDuration() const {
+  if (obj == Py_None)
+    return 0L;
+  else if (PyUnicode_Check(obj)) {
+    // Replace the unicode object with a string encoded in the correct locale
+    PyObject* utf8_string = PyUnicode_AsUTF8String(obj);
+    Duration t(PyBytes_AsString(utf8_string));
+    Py_DECREF(utf8_string);
+    return t;
+  } else if (obj && PyDelta_Check(obj)) {
+    auto result_py = PyObject_CallMethod(obj, "total_seconds", nullptr);
+    auto result = PyLong_AsLong(result_py);
+    Py_DECREF(result_py);
+    return result;
+  } else {
+    long result = PyLong_AsLong(obj);
+    if (result == -1 && PyErr_Occurred()) throw DataException("Invalid number");
+    return result;
+  }
+}
+
 PythonData::PythonData(Object* p) {
   if (obj) Py_DECREF(obj);
   obj = p ? static_cast<PyObject*>(p) : Py_None;

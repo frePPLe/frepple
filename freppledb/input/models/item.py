@@ -75,6 +75,7 @@ class Item(AuditModel, HierarchyModel):
         null=True,
         blank=True,
         help_text=_("Period of cover in days"),
+        editable=False,
     )
     uom = models.CharField(_("unit of measure"), max_length=20, null=True, blank=True)
 

@@ -319,7 +319,10 @@ pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
             true, execute, rounddown);
       } else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>())) {
         oper->setOperationPlanParameters(
-            0.0, computeFlowToOperationDate(oper->getStart()),
+            0.0,
+            (mode == 1 && getFlow()->hasType<FlowEnd>())
+                ? oper->getStart()
+                : computeFlowToOperationDate(oper->getStart()),
             Date::infinitePast, false, execute, rounddown);
       }
     }
@@ -341,7 +344,10 @@ pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
       else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>()))
         opplan_quantity =
             oper->setOperationPlanParameters(
-                    0.0, computeFlowToOperationDate(oper->getStart()),
+                    0.0,
+                    (mode == 1 && getFlow()->hasType<FlowEnd>())
+                        ? oper->getStart()
+                        : computeFlowToOperationDate(oper->getStart()),
                     Date::infinitePast, false, execute, rounddown)
                 .quantity;
       else
@@ -356,7 +362,10 @@ pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
       else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>()))
         opplan_quantity =
             oper->setOperationPlanParameters(
-                    0.001, computeFlowToOperationDate(oper->getStart()),
+                    0.001,
+                    (mode == 1 && getFlow()->hasType<FlowEnd>())
+                        ? oper->getStart()
+                        : computeFlowToOperationDate(oper->getStart()),
                     Date::infinitePast, false, execute, rounddown)
                 .quantity;
       else
@@ -375,12 +384,15 @@ pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
                                 true, execute, rounddown)
                             .quantity;
     else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>()))
-      opplan_quantity = oper->setOperationPlanParameters(
-                                (quantity - getFlow()->getQuantityFixed()) /
-                                    getFlow()->getQuantity(),
-                                computeFlowToOperationDate(oper->getStart()),
-                                Date::infinitePast, false, execute, rounddown)
-                            .quantity;
+      opplan_quantity =
+          oper->setOperationPlanParameters(
+                  (quantity - getFlow()->getQuantityFixed()) /
+                      getFlow()->getQuantity(),
+                  (mode == 1 && getFlow()->hasType<FlowEnd>())
+                      ? oper->getStart()
+                      : computeFlowToOperationDate(oper->getStart()),
+                  Date::infinitePast, false, execute, rounddown)
+              .quantity;
     else
       throw LogicException("Unreachable code reached");
   }

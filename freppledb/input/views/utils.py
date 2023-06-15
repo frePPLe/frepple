@@ -23,6 +23,8 @@
 
 from datetime import datetime
 import json
+import os
+import sys
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -41,6 +43,7 @@ from django.utils.text import format_lazy
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 
+from freppledb.common.auth import getWebserviceAuthorization
 from freppledb.common.report import (
     GridReport,
     GridFieldText,
@@ -276,6 +279,32 @@ class OperationPlanMixin(GridReport):
         return cls._generate_json_data(request, *args, **kwargs)
 
     calendarmode = "duration"
+
+    @classmethod
+    def extra_context(reportclass, request, *args, **kwargs):
+        if "FREPPLE_TEST" in os.environ:
+            port = settings.DATABASES[request.database]["TEST"].get(
+                "FREPPLE_PORT", None
+            )
+        else:
+            port = settings.DATABASES[request.database].get("FREPPLE_PORT", None)
+        proxied = settings.DATABASES[request.database].get(
+            "FREPPLE_PORT_PROXIED",
+            not settings.DEBUG
+            and not (
+                "freppleserver" in sys.argv[0]
+                or "freppleservice" in sys.argv[0]
+                or "runwebserver" in sys.argv
+            )
+            and "FREPPLE_TEST" not in os.environ,
+        )
+        return {
+            "token": getWebserviceAuthorization(
+                user=request.user.username, sid=request.user.id, exp=3600
+            ),
+            "port": port,
+            "proxied": proxied,
+        }
 
 
 class PathReport(GridReport):

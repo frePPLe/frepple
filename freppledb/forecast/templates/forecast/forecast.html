@@ -35,7 +35,7 @@
 var service_url = {% if proxied %}'/svc'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
 var service_token = '{{token}}';
 
-function saveData(rows) {
+function saveData(rows, ok_callback) {
       $.ajax({
         url: service_url + 'forecast/detail/',
         data: JSON.stringify(rows),
@@ -46,6 +46,7 @@ function saveData(rows) {
           upload.undo();
           $("#save i").addClass('hidden');
           $(".ng-dirty").removeClass('ng-dirty');
+          if (typeof ok_callback !== 'undefined') ok_callback();
         },
         error: ajaxerror
     });

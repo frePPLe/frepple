@@ -509,29 +509,35 @@ class ResourceDetail(OperationPlanMixin):
             ).lower()
             == "true"
         )
+        ctx = super().extra_context(request, *args, **kwargs)
         if args and args[0]:
             request.session["lasttab"] = "plandetail"
-            return {
-                "default_operationplan_type": "MO",
-                "groupBy": "operationplan__status",
-                "active_tab": "plandetail",
-                "model": Resource,
-                "title": force_str(Resource._meta.verbose_name) + " " + args[0],
-                "post_title": _("plan detail"),
-                "groupingcfg": groupingcfg,
-                "currentdate": getCurrentDate(database=request.database),
-                "individualPoolResources": individualPoolResources,
-            }
+            ctx.update(
+                {
+                    "default_operationplan_type": "MO",
+                    "groupBy": "operationplan__status",
+                    "active_tab": "plandetail",
+                    "model": Resource,
+                    "title": force_str(Resource._meta.verbose_name) + " " + args[0],
+                    "post_title": _("plan detail"),
+                    "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(database=request.database),
+                    "individualPoolResources": individualPoolResources,
+                }
+            )
         else:
-            return {
-                "default_operationplan_type": "MO",
-                "groupBy": "operationplan__status",
-                "active_tab": "plandetail",
-                "model": OperationPlanResource,
-                "groupingcfg": groupingcfg,
-                "currentdate": getCurrentDate(database=request.database),
-                "individualPoolResources": individualPoolResources,
-            }
+            ctx.update(
+                {
+                    "default_operationplan_type": "MO",
+                    "groupBy": "operationplan__status",
+                    "active_tab": "plandetail",
+                    "model": OperationPlanResource,
+                    "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(database=request.database),
+                    "individualPoolResources": individualPoolResources,
+                }
+            )
+        return ctx
 
     rows = (
         GridFieldInteger(

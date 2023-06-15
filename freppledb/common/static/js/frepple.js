@@ -285,7 +285,7 @@ var upload = {
       // Send the update to the server
       $("#save i").removeClass('hidden');
       if (typeof saveData !== 'undefined')
-        saveData(rows)
+        saveData(rows, ok_callback);
       else
         $.ajax({
           url: location.pathname,

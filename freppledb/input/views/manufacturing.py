@@ -1639,115 +1639,137 @@ class ManufacturingOrderList(OperationPlanMixin):
         groupingcfg["operation__item__subcategory"] = force_str(
             format_lazy("{} - {}", _("item"), _("subcategory"))
         )
+        ctx = super().extra_context(request, *args, **kwargs)
         if args and args[0]:
             request.session["lasttab"] = "plandetail"
             paths = request.path.split("/")
             path = paths[4]
             if path == "location" or request.path.startswith("/detail/input/location/"):
-                return {
-                    "default_operationplan_type": "MO",
-                    "groupBy": "status",
-                    "active_tab": "plandetail",
-                    "model": Location,
-                    "title": force_str(Location._meta.verbose_name) + " " + args[0],
-                    "post_title": _("manufacturing orders"),
-                    "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                }
+                ctx.update(
+                    {
+                        "default_operationplan_type": "MO",
+                        "groupBy": "status",
+                        "active_tab": "plandetail",
+                        "model": Location,
+                        "title": force_str(Location._meta.verbose_name) + " " + args[0],
+                        "post_title": _("manufacturing orders"),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database),
+                    }
+                )
             elif path == "operation" or request.path.startswith(
                 "/detail/input/operation/"
             ):
-                return {
-                    "default_operationplan_type": "MO",
-                    "groupBy": "status",
-                    "active_tab": "plandetail",
-                    "model": Operation,
-                    "title": force_str(Operation._meta.verbose_name) + " " + args[0],
-                    "post_title": _("manufacturing orders"),
-                    "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                }
+                ctx.update(
+                    {
+                        "default_operationplan_type": "MO",
+                        "groupBy": "status",
+                        "active_tab": "plandetail",
+                        "model": Operation,
+                        "title": force_str(Operation._meta.verbose_name)
+                        + " "
+                        + args[0],
+                        "post_title": _("manufacturing orders"),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database),
+                    }
+                )
             elif path == "item" or request.path.startswith("/detail/input/item/"):
-                return {
-                    "default_operationplan_type": "MO",
-                    "groupBy": "status",
-                    "active_tab": "plandetail",
-                    "model": Item,
-                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": _("manufacturing orders"),
-                    "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                }
+                ctx.update(
+                    {
+                        "default_operationplan_type": "MO",
+                        "groupBy": "status",
+                        "active_tab": "plandetail",
+                        "model": Item,
+                        "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                        "post_title": _("manufacturing orders"),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database),
+                    }
+                )
             elif path == "operationplanmaterial":
-                return {
-                    "default_operationplan_type": "MO",
-                    "groupBy": "status",
-                    "active_tab": "plandetail",
-                    "model": Item,
-                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_str(
-                        _("work in progress in %(loc)s at %(date)s")
-                        % {"loc": args[1], "date": args[2]}
-                    ),
-                    "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                }
+                ctx.update(
+                    {
+                        "default_operationplan_type": "MO",
+                        "groupBy": "status",
+                        "active_tab": "plandetail",
+                        "model": Item,
+                        "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                        "post_title": force_str(
+                            _("work in progress in %(loc)s at %(date)s")
+                            % {"loc": args[1], "date": args[2]}
+                        ),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database),
+                    }
+                )
             elif path == "produced":
-                return {
-                    "default_operationplan_type": "MO",
-                    "groupBy": "status",
-                    "active_tab": "plandetail",
-                    "model": Item,
-                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_str(
-                        _("produced in %(loc)s between %(date1)s and %(date2)s")
-                        % {"loc": args[1], "date1": args[2], "date2": args[3]}
-                    ),
-                    "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                }
+                ctx.update(
+                    {
+                        "default_operationplan_type": "MO",
+                        "groupBy": "status",
+                        "active_tab": "plandetail",
+                        "model": Item,
+                        "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                        "post_title": force_str(
+                            _("produced in %(loc)s between %(date1)s and %(date2)s")
+                            % {"loc": args[1], "date1": args[2], "date2": args[3]}
+                        ),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database),
+                    }
+                )
             elif path == "consumed":
-                return {
+                ctx.update(
+                    {
+                        "default_operationplan_type": "MO",
+                        "groupBy": "status",
+                        "active_tab": "plandetail",
+                        "model": Item,
+                        "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                        "post_title": force_str(
+                            _("consumed in %(loc)s between %(date1)s and %(date2)s")
+                            % {"loc": args[1], "date1": args[2], "date2": args[3]}
+                        ),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database),
+                    }
+                )
+            else:
+                ctx.update(
+                    {
+                        "default_operationplan_type": "MO",
+                        "groupBy": "status",
+                        "active_tab": "edit",
+                        "model": Item,
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database),
+                    }
+                )
+        elif "parentreference" in request.GET:
+            ctx.update(
+                {
                     "default_operationplan_type": "MO",
                     "groupBy": "status",
                     "active_tab": "plandetail",
-                    "model": Item,
-                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_str(
-                        _("consumed in %(loc)s between %(date1)s and %(date2)s")
-                        % {"loc": args[1], "date1": args[2], "date2": args[3]}
-                    ),
+                    "title": force_str(ManufacturingOrder._meta.verbose_name)
+                    + " "
+                    + request.GET["parentreference"],
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(database=request.database),
                 }
-            else:
-                return {
+            )
+        else:
+            ctx.update(
+                {
                     "default_operationplan_type": "MO",
                     "groupBy": "status",
-                    "active_tab": "edit",
-                    "model": Item,
+                    "active_tab": "plandetail",
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(database=request.database),
                 }
-        elif "parentreference" in request.GET:
-            return {
-                "default_operationplan_type": "MO",
-                "groupBy": "status",
-                "active_tab": "plandetail",
-                "title": force_str(ManufacturingOrder._meta.verbose_name)
-                + " "
-                + request.GET["parentreference"],
-                "groupingcfg": groupingcfg,
-                "currentdate": getCurrentDate(database=request.database),
-            }
-        else:
-            return {
-                "default_operationplan_type": "MO",
-                "groupBy": "status",
-                "active_tab": "plandetail",
-                "groupingcfg": groupingcfg,
-                "currentdate": getCurrentDate(database=request.database),
-            }
+            )
+        return ctx
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

@@ -69,6 +69,25 @@
   var groupingdir = preferences && preferences.groupingdir || "asc";
   var detailposition = preferences && preferences.details || "bottom";
   var editable = {% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %};
+  var service_url = {% if proxied %}'/svc'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
+  var service_token = '{{token}}';
+
+  function saveData(rows, ok_callback) {
+      $.ajax({
+        url: service_url + 'operationplan/',
+        data: JSON.stringify(rows),
+        type: "POST",
+        headers: { "Authorization": "Bearer " + service_token },
+        contentType: "application/json",
+        success: function () {
+          upload.undo();
+          $("#save i").addClass('hidden');
+          $(".ng-dirty").removeClass('ng-dirty');
+          if (typeof ok_callback !== 'undefined') ok_callback();
+        },
+        error: ajaxerror
+    });
+  }
 
   function extraPreference() {
     return {

@@ -24,8 +24,9 @@
 from django.urls import re_path
 from django.views.generic.base import TemplateView
 
-import freppledb.input.views
-import freppledb.input.serializers
+from . import views
+from . import serializers
+from . import services
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
@@ -38,494 +39,485 @@ urlpatterns = [
     # Model list reports, which override standard admin screens
     re_path(
         r"^data/input/buffer/$",
-        freppledb.input.views.BufferList.as_view(),
+        views.BufferList.as_view(),
         name="input_buffer_changelist",
     ),
     re_path(
         r"^data/input/resource/$",
-        freppledb.input.views.ResourceList.as_view(),
+        views.ResourceList.as_view(),
         name="input_resource_changelist",
     ),
     re_path(
         r"^data/input/location/$",
-        freppledb.input.views.LocationList.as_view(),
+        views.LocationList.as_view(),
         name="input_location_changelist",
     ),
     re_path(
         r"^data/input/customer/$",
-        freppledb.input.views.CustomerList.as_view(),
+        views.CustomerList.as_view(),
         name="input_customer_changelist",
     ),
     re_path(
         r"^data/input/demand/$",
-        freppledb.input.views.DemandList.as_view(),
+        views.DemandList.as_view(),
         name="input_demand_changelist",
     ),
     re_path(
         r"^data/input/item/$",
-        freppledb.input.views.ItemList.as_view(),
+        views.ItemList.as_view(),
         name="input_item_changelist",
     ),
     re_path(
         r"^data/input/operationresource/$",
-        freppledb.input.views.OperationResourceList.as_view(),
+        views.OperationResourceList.as_view(),
         name="input_operationresource_changelist",
     ),
     re_path(
         r"^data/input/operationmaterial/$",
-        freppledb.input.views.OperationMaterialList.as_view(),
+        views.OperationMaterialList.as_view(),
         name="input_operationmaterial_changelist",
     ),
     re_path(
         r"^data/input/calendar/$",
-        freppledb.input.views.CalendarList.as_view(),
+        views.CalendarList.as_view(),
         name="input_calendar_changelist",
     ),
     re_path(
         r"^data/input/calendardetail/(.+)/$",
-        freppledb.input.views.manufacturing.CalendarDetail.as_view(),
+        views.manufacturing.CalendarDetail.as_view(),
         name="input_calendardetail",
     ),
     re_path(
         r"^data/input/calendarbucket/$",
-        freppledb.input.views.CalendarBucketList.as_view(),
+        views.CalendarBucketList.as_view(),
         name="input_calendarbucket_changelist",
     ),
     re_path(
         r"^data/input/operation/$",
-        freppledb.input.views.OperationList.as_view(),
+        views.OperationList.as_view(),
         name="input_operation_changelist",
     ),
     re_path(
         r"^data/input/setupmatrix/$",
-        freppledb.input.views.SetupMatrixList.as_view(),
+        views.SetupMatrixList.as_view(),
         name="input_setupmatrix_changelist",
     ),
     re_path(
         r"^data/input/setuprule/$",
-        freppledb.input.views.SetupRuleList.as_view(),
+        views.SetupRuleList.as_view(),
         name="input_setuprule_changelist",
     ),
     re_path(
         r"^data/input/suboperation/$",
-        freppledb.input.views.SubOperationList.as_view(),
+        views.SubOperationList.as_view(),
         name="input_suboperation_changelist",
     ),
     re_path(
         r"^data/input/operationdependency/$",
-        freppledb.input.views.OperationDependencyList.as_view(),
+        views.OperationDependencyList.as_view(),
         name="input_operationdepency_changelist",
     ),
     re_path(
         r"^data/input/manufacturingorder/$",
-        freppledb.input.views.ManufacturingOrderList.as_view(),
+        views.ManufacturingOrderList.as_view(),
         name="input_manufacturingorder_changelist",
     ),
     re_path(
         r"^data/input/manufacturingorder/location/(.+)/$",
-        freppledb.input.views.ManufacturingOrderList.as_view(),
+        views.ManufacturingOrderList.as_view(),
         name="input_manufacturingorder_by_location",
     ),
     re_path(
         r"^data/input/manufacturingorder/operation/(.+)/$",
-        freppledb.input.views.ManufacturingOrderList.as_view(),
+        views.ManufacturingOrderList.as_view(),
         name="input_manufacturingorder_by_operation",
     ),
     re_path(
         r"^data/input/manufacturingorder/item/(.+)/$",
-        freppledb.input.views.ManufacturingOrderList.as_view(),
+        views.ManufacturingOrderList.as_view(),
         name="input_manufacturingorder_by_item",
     ),
     re_path(
         r"^data/input/manufacturingorder/operationplanmaterial/([^/]+)/([^/]+)/(.+)/$",
-        freppledb.input.views.ManufacturingOrderList.as_view(),
+        views.ManufacturingOrderList.as_view(),
         name="input_manufacturingorder_by_opm",
     ),
     re_path(
         r"^data/input/manufacturingorder/produced/([^/]+)/([^/]+)/([^/]+)/(.+)/$",
-        freppledb.input.views.ManufacturingOrderList.as_view(),
+        views.ManufacturingOrderList.as_view(),
         name="input_manufacturingorder_by_produced",
     ),
     re_path(
         r"^data/input/manufacturingorder/consumed/([^/]+)/([^/]+)/([^/]+)/(.+)/$",
-        freppledb.input.views.ManufacturingOrderList.as_view(),
+        views.ManufacturingOrderList.as_view(),
         name="input_manufacturingorder_by_consumed",
     ),
     re_path(
         r"^data/input/purchaseorder/$",
-        freppledb.input.views.PurchaseOrderList.as_view(),
+        views.PurchaseOrderList.as_view(),
         name="input_purchaseorder_changelist",
     ),
     re_path(
         r"^data/input/purchaseorder/item/(.+)/$",
-        freppledb.input.views.PurchaseOrderList.as_view(),
+        views.PurchaseOrderList.as_view(),
         name="input_purchaseorder_by_item",
     ),
     re_path(
         r"^data/input/purchaseorder/supplier/(.+)/$",
-        freppledb.input.views.PurchaseOrderList.as_view(),
+        views.PurchaseOrderList.as_view(),
         name="input_purchaseorder_by_supplier",
     ),
     re_path(
         r"^data/input/purchaseorder/location/(.+)/$",
-        freppledb.input.views.PurchaseOrderList.as_view(),
+        views.PurchaseOrderList.as_view(),
         name="input_purchaseorder_by_location",
     ),
     re_path(
         r"^data/input/purchaseorder/operationplanmaterial/([^/]+)/([^/]+)/(.+)/$",
-        freppledb.input.views.PurchaseOrderList.as_view(),
+        views.PurchaseOrderList.as_view(),
         name="input_purchaseorder_by_opm",
     ),
     re_path(
         r"^data/input/purchaseorder/produced/([^/]+)/([^/]+)/([^/]+)/(.+)/$",
-        freppledb.input.views.PurchaseOrderList.as_view(),
+        views.PurchaseOrderList.as_view(),
         name="input_purchaseorder_by_produced",
     ),
     re_path(
         r"^data/input/distributionorder/$",
-        freppledb.input.views.DistributionOrderList.as_view(),
+        views.DistributionOrderList.as_view(),
         name="input_distributionorder_changelist",
     ),
     re_path(
         r"^data/input/distributionorder/item/(.+)/$",
-        freppledb.input.views.DistributionOrderList.as_view(),
+        views.DistributionOrderList.as_view(),
         name="input_distributionorder_by_item",
     ),
     re_path(
         r"^data/input/distributionorder/location/(.+)/in/$",
-        freppledb.input.views.DistributionOrderList.as_view(),
+        views.DistributionOrderList.as_view(),
         name="input_distributionorder_in_by_location",
     ),
     re_path(
         r"^data/input/distributionorder/location/(.+)/out/$",
-        freppledb.input.views.DistributionOrderList.as_view(),
+        views.DistributionOrderList.as_view(),
         name="input_distributionorder_out_by_location",
     ),
     re_path(
         r"^data/input/distributionorder/operationplanmaterial/([^/]+)/([^/]+)/(.+)/$",
-        freppledb.input.views.DistributionOrderList.as_view(),
+        views.DistributionOrderList.as_view(),
         name="input_distributionorder_by_opm",
     ),
     re_path(
         r"^data/input/distributionorder/produced/([^/]+)/([^/]+)/([^/]+)/(.+)/$",
-        freppledb.input.views.DistributionOrderList.as_view(),
+        views.DistributionOrderList.as_view(),
         name="input_distributionorder_by_produced",
     ),
     re_path(
         r"^data/input/distributionorder/consumed/([^/]+)/([^/]+)/([^/]+)/(.+)/$",
-        freppledb.input.views.DistributionOrderList.as_view(),
+        views.DistributionOrderList.as_view(),
         name="input_distributionorder_by_consumed",
     ),
     re_path(
         r"^data/input/skill/$",
-        freppledb.input.views.SkillList.as_view(),
+        views.SkillList.as_view(),
         name="input_skill_changelist",
     ),
     re_path(
         r"^data/input/resourceskill/$",
-        freppledb.input.views.ResourceSkillList.as_view(),
+        views.ResourceSkillList.as_view(),
         name="input_resourceskill_changelist",
     ),
     re_path(
         r"^data/input/supplier/$",
-        freppledb.input.views.SupplierList.as_view(),
+        views.SupplierList.as_view(),
         name="input_supplier_changelist",
     ),
     re_path(
         r"^data/input/itemsupplier/$",
-        freppledb.input.views.ItemSupplierList.as_view(),
+        views.ItemSupplierList.as_view(),
         name="input_itemsupplier_changelist",
     ),
     re_path(
         r"^data/input/itemdistribution/$",
-        freppledb.input.views.ItemDistributionList.as_view(),
+        views.ItemDistributionList.as_view(),
         name="input_itemdistribution_changelist",
     ),
     re_path(
         r"^data/input/deliveryorder/item/(.+)/$",
-        freppledb.input.views.DeliveryOrderList.as_view(),
+        views.DeliveryOrderList.as_view(),
         name="input_deliveryorder_by_item",
     ),
     re_path(
         r"^data/input/deliveryorder/consumed/([^/]+)/([^/]+)/([^/]+)/(.+)/$",
-        freppledb.input.views.DeliveryOrderList.as_view(),
+        views.DeliveryOrderList.as_view(),
         name="input_deliveryorder_by_consumed",
     ),
     re_path(
         r"^data/input/deliveryorder/$",
-        freppledb.input.views.DeliveryOrderList.as_view(),
+        views.DeliveryOrderList.as_view(),
         name="input_deliveryorder_changelist",
     ),
     re_path(
         r"^data/input/operationplanmaterial/item/(.+)/$",
-        freppledb.input.views.InventoryDetail.as_view(),
+        views.InventoryDetail.as_view(),
         name="input_operationplanmaterial_plandetail_by_item",
     ),
     re_path(
         r"^data/input/operationplanmaterial/buffer/(.+)/$",
-        freppledb.input.views.InventoryDetail.as_view(),
+        views.InventoryDetail.as_view(),
         name="input_operationplanmaterial_plandetail_by_buffer",
     ),
     re_path(
         r"^data/input/operationplanmaterial/$",
-        freppledb.input.views.InventoryDetail.as_view(),
+        views.InventoryDetail.as_view(),
         name="input_operationplanmaterial_plan",
     ),
     re_path(
         r"^data/input/operationplanresource/resource/(.+)/$",
-        freppledb.input.views.ResourceDetail.as_view(),
+        views.ResourceDetail.as_view(),
         name="input_operationplanresource_plandetail",
     ),
     re_path(
         r"^data/input/operationplanresource/$",
-        freppledb.input.views.ResourceDetail.as_view(),
+        views.ResourceDetail.as_view(),
         name="input_operationplanresource_plan",
     ),
     # Special reports
     re_path(
         r"^data/input/buffer/(.+)/create_or_edit/",
-        freppledb.input.views.CreateOrEditBuffer,
+        views.CreateOrEditBuffer,
         name="create_or_edit_buffer",
     ),
     re_path(
         r"^supplypath/item/(.+)/$",
-        freppledb.input.views.UpstreamItemPath.as_view(),
+        views.UpstreamItemPath.as_view(),
         name="supplypath_item",
     ),
     re_path(
         r"^whereused/item/(.+)/$",
-        freppledb.input.views.DownstreamItemPath.as_view(),
+        views.DownstreamItemPath.as_view(),
         name="whereused_item",
     ),
     re_path(
         r"^supplypath/buffer/(.+)/$",
-        freppledb.input.views.UpstreamBufferPath.as_view(),
+        views.UpstreamBufferPath.as_view(),
         name="supplypath_buffer",
     ),
     re_path(
         r"^whereused/buffer/(.+)/$",
-        freppledb.input.views.DownstreamBufferPath.as_view(),
+        views.DownstreamBufferPath.as_view(),
         name="whereused_buffer",
     ),
     re_path(
         r"^supplypath/resource/(.+)/$",
-        freppledb.input.views.UpstreamResourcePath.as_view(),
+        views.UpstreamResourcePath.as_view(),
         name="supplypath_resource",
     ),
     re_path(
         r"^supplypath/demand/(.+)/$",
-        freppledb.input.views.UpstreamDemandPath.as_view(),
+        views.UpstreamDemandPath.as_view(),
         name="supplypath_demand",
     ),
     re_path(
         r"^whereused/resource/(.+)/$",
-        freppledb.input.views.DownstreamResourcePath.as_view(),
+        views.DownstreamResourcePath.as_view(),
         name="whereused_resource",
     ),
     re_path(
         r"^supplypath/operation/(.+)/$",
-        freppledb.input.views.UpstreamOperationPath.as_view(),
+        views.UpstreamOperationPath.as_view(),
         name="supplypath_operation",
     ),
     re_path(
         r"^whereused/operation/(.+)/$",
-        freppledb.input.views.DownstreamOperationPath.as_view(),
+        views.DownstreamOperationPath.as_view(),
         name="whereused_operation",
     ),
-    re_path(r"^search/$", freppledb.input.views.search, name="search"),
+    re_path(r"^search/$", views.search, name="search"),
     re_path(
         r"^operationplan/$",
-        freppledb.input.views.OperationPlanDetail.as_view(),
+        views.OperationPlanDetail.as_view(),
         name="operationplandetail",
     ),
     # REST API framework
-    re_path(r"^api/input/buffer/$", freppledb.input.serializers.BufferAPI.as_view()),
-    re_path(
-        r"^api/input/resource/$", freppledb.input.serializers.ResourceAPI.as_view()
-    ),
-    re_path(
-        r"^api/input/location/$", freppledb.input.serializers.LocationAPI.as_view()
-    ),
-    re_path(
-        r"^api/input/customer/$", freppledb.input.serializers.CustomerAPI.as_view()
-    ),
-    re_path(r"^api/input/demand/$", freppledb.input.serializers.DemandAPI.as_view()),
-    re_path(r"^api/input/item/$", freppledb.input.serializers.ItemAPI.as_view()),
+    re_path(r"^api/input/buffer/$", serializers.BufferAPI.as_view()),
+    re_path(r"^api/input/resource/$", serializers.ResourceAPI.as_view()),
+    re_path(r"^api/input/location/$", serializers.LocationAPI.as_view()),
+    re_path(r"^api/input/customer/$", serializers.CustomerAPI.as_view()),
+    re_path(r"^api/input/demand/$", serializers.DemandAPI.as_view()),
+    re_path(r"^api/input/item/$", serializers.ItemAPI.as_view()),
     re_path(
         r"^api/input/operationresource/$",
-        freppledb.input.serializers.OperationResourceAPI.as_view(),
+        serializers.OperationResourceAPI.as_view(),
     ),
     re_path(
         r"^api/input/operationmaterial/$",
-        freppledb.input.serializers.OperationMaterialAPI.as_view(),
+        serializers.OperationMaterialAPI.as_view(),
     ),
     re_path(
         r"^api/input/operationplanresource/$",
-        freppledb.input.serializers.OperationPlanResourceAPI.as_view(),
+        serializers.OperationPlanResourceAPI.as_view(),
     ),
     re_path(
         r"^api/input/operationplanmaterial/$",
-        freppledb.input.serializers.OperationPlanMaterialAPI.as_view(),
+        serializers.OperationPlanMaterialAPI.as_view(),
     ),
-    re_path(
-        r"^api/input/calendar/$", freppledb.input.serializers.CalendarAPI.as_view()
-    ),
+    re_path(r"^api/input/calendar/$", serializers.CalendarAPI.as_view()),
     re_path(
         r"^api/input/calendarbucket/$",
-        freppledb.input.serializers.CalendarBucketAPI.as_view(),
+        serializers.CalendarBucketAPI.as_view(),
     ),
-    re_path(
-        r"^api/input/operation/$", freppledb.input.serializers.OperationAPI.as_view()
-    ),
+    re_path(r"^api/input/operation/$", serializers.OperationAPI.as_view()),
     re_path(
         r"^api/input/setupmatrix/$",
-        freppledb.input.serializers.SetupMatrixAPI.as_view(),
+        serializers.SetupMatrixAPI.as_view(),
     ),
-    re_path(
-        r"^api/input/setuprule/$", freppledb.input.serializers.SetupRuleAPI.as_view()
-    ),
+    re_path(r"^api/input/setuprule/$", serializers.SetupRuleAPI.as_view()),
     re_path(
         r"^api/input/suboperation/$",
-        freppledb.input.serializers.SubOperationAPI.as_view(),
+        serializers.SubOperationAPI.as_view(),
     ),
     re_path(
         r"^api/input/operationdependency/$",
-        freppledb.input.serializers.OperationDependencyAPI.as_view(),
+        serializers.OperationDependencyAPI.as_view(),
     ),
     re_path(
         r"^api/input/manufacturingorder/$",
-        freppledb.input.serializers.ManufacturingOrderAPI.as_view(),
+        serializers.ManufacturingOrderAPI.as_view(),
     ),
     re_path(
         r"^api/input/purchaseorder/$",
-        freppledb.input.serializers.PurchaseOrderAPI.as_view(),
+        serializers.PurchaseOrderAPI.as_view(),
     ),
     re_path(
         r"^api/input/distributionorder/$",
-        freppledb.input.serializers.DistributionOrderAPI.as_view(),
+        serializers.DistributionOrderAPI.as_view(),
     ),
     re_path(
         r"^api/input/deliveryorder/$",
-        freppledb.input.serializers.DeliveryOrderAPI.as_view(),
+        serializers.DeliveryOrderAPI.as_view(),
     ),
-    re_path(r"^api/input/skill/$", freppledb.input.serializers.SkillAPI.as_view()),
+    re_path(r"^api/input/skill/$", serializers.SkillAPI.as_view()),
     re_path(
         r"^api/input/resourceskill/$",
-        freppledb.input.serializers.ResourceSkillAPI.as_view(),
+        serializers.ResourceSkillAPI.as_view(),
     ),
-    re_path(
-        r"^api/input/supplier/$", freppledb.input.serializers.SupplierAPI.as_view()
-    ),
+    re_path(r"^api/input/supplier/$", serializers.SupplierAPI.as_view()),
     re_path(
         r"^api/input/itemsupplier/$",
-        freppledb.input.serializers.ItemSupplierAPI.as_view(),
+        serializers.ItemSupplierAPI.as_view(),
     ),
     re_path(
         r"^api/input/itemdistribution/$",
-        freppledb.input.serializers.ItemDistributionAPI.as_view(),
+        serializers.ItemDistributionAPI.as_view(),
     ),
     re_path(
         r"^api/input/buffer/(?P<pk>(.+))/$",
-        freppledb.input.serializers.BufferdetailAPI.as_view(),
+        serializers.BufferdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/resource/(?P<pk>(.+))/$",
-        freppledb.input.serializers.ResourcedetailAPI.as_view(),
+        serializers.ResourcedetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/location/(?P<pk>(.+))/$",
-        freppledb.input.serializers.LocationdetailAPI.as_view(),
+        serializers.LocationdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/customer/(?P<pk>(.+))/$",
-        freppledb.input.serializers.CustomerdetailAPI.as_view(),
+        serializers.CustomerdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/demand/(?P<pk>(.+))/$",
-        freppledb.input.serializers.DemanddetailAPI.as_view(),
+        serializers.DemanddetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/item/(?P<pk>(.+))/$",
-        freppledb.input.serializers.ItemdetailAPI.as_view(),
+        serializers.ItemdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/operationresource/(?P<pk>(.+))/$",
-        freppledb.input.serializers.OperationResourcedetailAPI.as_view(),
+        serializers.OperationResourcedetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/operationmaterial/(?P<pk>(.+))/$",
-        freppledb.input.serializers.OperationMaterialdetailAPI.as_view(),
+        serializers.OperationMaterialdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/operationplanresource/(?P<pk>(.+))/$",
-        freppledb.input.serializers.OperationPlanResourcedetailAPI.as_view(),
+        serializers.OperationPlanResourcedetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/operationplanmaterial/(?P<pk>(.+))/$",
-        freppledb.input.serializers.OperationPlanMaterialdetailAPI.as_view(),
+        serializers.OperationPlanMaterialdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/calendar/(?P<pk>(.+))/$",
-        freppledb.input.serializers.CalendardetailAPI.as_view(),
+        serializers.CalendardetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/calendarbucket/(?P<pk>(.+))/$",
-        freppledb.input.serializers.CalendarBucketdetailAPI.as_view(),
+        serializers.CalendarBucketdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/operation/(?P<pk>(.+))/$",
-        freppledb.input.serializers.OperationdetailAPI.as_view(),
+        serializers.OperationdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/setupmatrix/(?P<pk>(.+))/$",
-        freppledb.input.serializers.SetupMatrixdetailAPI.as_view(),
+        serializers.SetupMatrixdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/setuprule/(?P<pk>(.+))/$",
-        freppledb.input.serializers.SetupRuledetailAPI.as_view(),
+        serializers.SetupRuledetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/suboperation/(?P<pk>(.+))/$",
-        freppledb.input.serializers.SubOperationdetailAPI.as_view(),
+        serializers.SubOperationdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/operationdependency/(?P<pk>(.+))/$",
-        freppledb.input.serializers.OperationDependencydetailAPI.as_view(),
+        serializers.OperationDependencydetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/manufacturingorder/(?P<pk>(.+))/$",
-        freppledb.input.serializers.ManufacturingOrderdetailAPI.as_view(),
+        serializers.ManufacturingOrderdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/purchaseorder/(?P<pk>(.+))/$",
-        freppledb.input.serializers.PurchaseOrderdetailAPI.as_view(),
+        serializers.PurchaseOrderdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/distributionorder/(?P<pk>(.+))/$",
-        freppledb.input.serializers.DistributionOrderdetailAPI.as_view(),
+        serializers.DistributionOrderdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/deliveryorder/(?P<pk>(.+))/$",
-        freppledb.input.serializers.DeliveryOrderdetailAPI.as_view(),
+        serializers.DeliveryOrderdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/skill/(?P<pk>(.+))/$",
-        freppledb.input.serializers.SkilldetailAPI.as_view(),
+        serializers.SkilldetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/resourceskill/(?P<pk>(.+))/$",
-        freppledb.input.serializers.ResourceSkilldetailAPI.as_view(),
+        serializers.ResourceSkilldetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/supplier/(?P<pk>(.+))/$",
-        freppledb.input.serializers.SupplierdetailAPI.as_view(),
+        serializers.SupplierdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/itemsupplier/(?P<pk>(.+))/$",
-        freppledb.input.serializers.ItemSupplierdetailAPI.as_view(),
+        serializers.ItemSupplierdetailAPI.as_view(),
     ),
     re_path(
         r"^api/input/itemdistribution/(?P<pk>(.+))/$",
-        freppledb.input.serializers.ItemDistributiondetailAPI.as_view(),
+        serializers.ItemDistributiondetailAPI.as_view(),
     ),
+]
+
+
+svcpatterns = [
+    re_path(r"^operationplan/$", services.OperationplanService.as_asgi()),
 ]

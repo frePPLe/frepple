@@ -659,110 +659,174 @@ class DistributionOrderList(OperationPlanMixin):
         if args and args[0]:
             paths = request.path.split("/")
             if paths[4] == "operationplanmaterial":
-                return {
-                    "default_operationplan_type": "DO",
-                    "groupBy": "status",
-                    "active_tab": "distributionorders",
-                    "model": Item,
-                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_str(
-                        _("in transit in %(loc)s at %(date)s")
-                        % {"loc": args[1], "date": args[2]}
-                    ),
-                    "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                }
+                return (
+                    super()
+                    .extra_context(request, *args, **kwargs)
+                    .update(
+                        {
+                            "default_operationplan_type": "DO",
+                            "groupBy": "status",
+                            "active_tab": "distributionorders",
+                            "model": Item,
+                            "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                            "post_title": force_str(
+                                _("in transit in %(loc)s at %(date)s")
+                                % {"loc": args[1], "date": args[2]}
+                            ),
+                            "groupingcfg": groupingcfg,
+                            "currentdate": getCurrentDate(database=request.database),
+                        }
+                    )
+                )
             elif paths[4] == "produced":
-                return {
-                    "default_operationplan_type": "DO",
-                    "groupBy": "status",
-                    "active_tab": "distributionorders",
-                    "model": Item,
-                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_str(
-                        _("received in %(loc)s between %(date1)s and %(date2)s")
-                        % {"loc": args[1], "date1": args[2], "date2": args[3]}
-                    ),
-                    "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                }
+                return (
+                    super()
+                    .extra_context(request, *args, **kwargs)
+                    .update(
+                        {
+                            "default_operationplan_type": "DO",
+                            "groupBy": "status",
+                            "active_tab": "distributionorders",
+                            "model": Item,
+                            "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                            "post_title": force_str(
+                                _("received in %(loc)s between %(date1)s and %(date2)s")
+                                % {"loc": args[1], "date1": args[2], "date2": args[3]}
+                            ),
+                            "groupingcfg": groupingcfg,
+                            "currentdate": getCurrentDate(database=request.database),
+                        }
+                    )
+                )
             elif paths[4] == "consumed":
-                return {
-                    "default_operationplan_type": "DO",
-                    "groupBy": "status",
-                    "active_tab": "distributionorders",
-                    "model": Item,
-                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": force_str(
-                        _("shipped from %(loc)s between %(date1)s and %(date2)s")
-                        % {"loc": args[1], "date1": args[2], "date2": args[3]}
-                    ),
-                    "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                }
+                return (
+                    super()
+                    .extra_context(request, *args, **kwargs)
+                    .update(
+                        {
+                            "default_operationplan_type": "DO",
+                            "groupBy": "status",
+                            "active_tab": "distributionorders",
+                            "model": Item,
+                            "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                            "post_title": force_str(
+                                _(
+                                    "shipped from %(loc)s between %(date1)s and %(date2)s"
+                                )
+                                % {"loc": args[1], "date1": args[2], "date2": args[3]}
+                            ),
+                            "groupingcfg": groupingcfg,
+                            "currentdate": getCurrentDate(database=request.database),
+                        }
+                    )
+                )
             elif paths[4] == "item":
-                return {
-                    "default_operationplan_type": "DO",
-                    "groupBy": "status",
-                    "active_tab": "distributionorders",
-                    "model": Item,
-                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": _("distribution orders"),
-                    "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                }
+                return (
+                    super()
+                    .extra_context(request, *args, **kwargs)
+                    .update(
+                        {
+                            "default_operationplan_type": "DO",
+                            "groupBy": "status",
+                            "active_tab": "distributionorders",
+                            "model": Item,
+                            "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                            "post_title": _("distribution orders"),
+                            "groupingcfg": groupingcfg,
+                            "currentdate": getCurrentDate(database=request.database),
+                        }
+                    )
+                )
             elif paths[4] == "location":
                 path = paths[-2]
                 if path == "in":
-                    return {
-                        "default_operationplan_type": "DO",
-                        "groupBy": "status",
-                        "active_tab": "inboundorders",
-                        "model": Location,
-                        "title": force_str(Location._meta.verbose_name) + " " + args[0],
-                        "post_title": _("inbound distribution"),
-                        "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database),
-                    }
+                    return (
+                        super()
+                        .extra_context(request, *args, **kwargs)
+                        .update(
+                            {
+                                "default_operationplan_type": "DO",
+                                "groupBy": "status",
+                                "active_tab": "inboundorders",
+                                "model": Location,
+                                "title": force_str(Location._meta.verbose_name)
+                                + " "
+                                + args[0],
+                                "post_title": _("inbound distribution"),
+                                "groupingcfg": groupingcfg,
+                                "currentdate": getCurrentDate(
+                                    database=request.database
+                                ),
+                            }
+                        )
+                    )
                 elif path == "out":
-                    return {
+                    return (
+                        super()
+                        .extra_context(request, *args, **kwargs)
+                        .update(
+                            {
+                                "default_operationplan_type": "DO",
+                                "groupBy": "status",
+                                "active_tab": "outboundorders",
+                                "model": Location,
+                                "title": force_str(Location._meta.verbose_name)
+                                + " "
+                                + args[0],
+                                "post_title": _("outbound distribution"),
+                                "groupingcfg": groupingcfg,
+                                "currentdate": getCurrentDate(
+                                    database=request.database
+                                ),
+                            }
+                        )
+                    )
+            else:
+                return (
+                    super()
+                    .extra_context(request, *args, **kwargs)
+                    .update(
+                        {
+                            "default_operationplan_type": "DO",
+                            "groupBy": "status",
+                            "active_tab": "edit",
+                            "model": Item,
+                            "groupingcfg": groupingcfg,
+                            "currentdate": getCurrentDate(database=request.database),
+                        }
+                    )
+                )
+        elif "parentreference" in request.GET:
+            return (
+                super()
+                .extra_context(request, *args, **kwargs)
+                .update(
+                    {
                         "default_operationplan_type": "DO",
                         "groupBy": "status",
-                        "active_tab": "outboundorders",
-                        "model": Location,
-                        "title": force_str(Location._meta.verbose_name) + " " + args[0],
-                        "post_title": _("outbound distribution"),
+                        "active_tab": "edit",
+                        "title": force_str(DistributionOrder._meta.verbose_name)
+                        + " "
+                        + request.GET["parentreference"],
                         "groupingcfg": groupingcfg,
                         "currentdate": getCurrentDate(database=request.database),
                     }
-            else:
-                return {
-                    "default_operationplan_type": "DO",
-                    "groupBy": "status",
-                    "active_tab": "edit",
-                    "model": Item,
-                    "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                }
-        elif "parentreference" in request.GET:
-            return {
-                "default_operationplan_type": "DO",
-                "groupBy": "status",
-                "active_tab": "edit",
-                "title": force_str(DistributionOrder._meta.verbose_name)
-                + " "
-                + request.GET["parentreference"],
-                "groupingcfg": groupingcfg,
-                "currentdate": getCurrentDate(database=request.database),
-            }
+                )
+            )
         else:
-            return {
-                "default_operationplan_type": "DO",
-                "groupBy": "status",
-                "active_tab": "edit",
-                "groupingcfg": groupingcfg,
-                "currentdate": getCurrentDate(database=request.database),
-            }
+            return (
+                super()
+                .extra_context(request, *args, **kwargs)
+                .update(
+                    {
+                        "default_operationplan_type": "DO",
+                        "groupBy": "status",
+                        "active_tab": "edit",
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database),
+                    }
+                )
+            )
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
@@ -1446,12 +1510,13 @@ class InventoryDetail(OperationPlanMixin):
         groupingcfg["item__subcategory"] = force_str(
             format_lazy("{} - {}", _("item"), _("subcategory"))
         )
+        ctx = super().extra_context(request, *args, **kwargs)
         if args and args[0]:
             if request.path_info.startswith(
                 "/data/input/operationplanmaterial/item/"
             ) or request.path_info.startswith("/detail/input/item/"):
                 request.session["lasttab"] = "inventorydetail"
-                return {
+                ctx.update({
                     "default_operationplan_type": "MO",
                     "groupBy": "operationplan__status",
                     "active_tab": "inventorydetail",
@@ -1460,7 +1525,7 @@ class InventoryDetail(OperationPlanMixin):
                     "post_title": _("inventory detail"),
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(database=request.database),
-                }
+                })
             elif request.path_info.startswith(
                 "/data/input/operationplanmaterial/buffer/"
             ):
@@ -1473,7 +1538,7 @@ class InventoryDetail(OperationPlanMixin):
                     buffer = Buffer.objects.get(id=args[0])
                     item = buffer.item.name
                     location = buffer.location.name
-                return {
+                ctx.update( {
                     "default_operationplan_type": "MO",
                     "groupBy": "operationplan__status",
                     "active_tab": "plandetail",
@@ -1486,16 +1551,17 @@ class InventoryDetail(OperationPlanMixin):
                     "post_title": _("plan detail"),
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(database=request.database),
-                }
+                })
         else:
-            return {
+            ctx.update({
                 "default_operationplan_type": "MO",
                 "groupBy": "operationplan__status",
                 "active_tab": "plandetail",
                 "model": OperationPlanMaterial,
                 "groupingcfg": groupingcfg,
                 "currentdate": getCurrentDate(database=request.database),
-            }
+            })
+        return ctx
 
     rows = (
         GridFieldInteger(

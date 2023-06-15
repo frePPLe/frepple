@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import asyncio
 import os
 import portend
 from datetime import datetime, timedelta
@@ -29,6 +30,9 @@ from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.common.models import Parameter
+
+# Only a single service can be making updates at the same time
+lock = asyncio.Lock()
 
 
 def useWebService(database=DEFAULT_DB_ALIAS):

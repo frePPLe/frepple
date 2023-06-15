@@ -28,6 +28,7 @@ import json
 from channels.db import database_sync_to_async
 from channels.generic.http import AsyncHttpConsumer
 
+from freppledb.webservice.utils import lock
 from freppledb.common.models import Comment
 from freppledb.forecast.models import Forecast
 from freppledb.input.models import Item, Location, Customer, Buffer
@@ -84,7 +85,7 @@ class ForecastService(AsyncHttpConsumer):
                 user=self.scope["user"],
                 comment=comment,
             ).save(using=self.scope["database"])
-        elif commenttype == "itemlocation":
+        elif commenttype == "itemlocation" and item and location:
             # TODO buffer object may not exist
             Comment(
                 content_object=Buffer.objects.all()
@@ -98,212 +99,285 @@ class ForecastService(AsyncHttpConsumer):
             raise Exception("Invalid comment type")
 
     async def handle(self, body):
-        errors = []
-        try:
-            import frepple
+        async with lock:
+            errors = []
+            try:
+                import frepple
 
-            if self.scope["method"] != "POST":
-                self.scope["response_headers"].append((b"Content-Type", b"text/html"))
-                await self.send_response(
-                    401,
-                    (self.msgtemplate % "Only POST requests allowed").encode(),
-                    headers=self.scope["response_headers"],
-                )
-                return
+                if self.scope["method"] != "POST":
+                    self.scope["response_headers"].append(
+                        (b"Content-Type", b"text/html")
+                    )
+                    await self.send_response(
+                        401,
+                        (self.msgtemplate % "Only POST requests allowed").encode(),
+                        headers=self.scope["response_headers"],
+                    )
+                    return
 
-            # Check permissions
-            if not self.scope["user"].has_perm("forecast.change_forecast"):
-                self.scope["response_headers"].append((b"Content-Type", b"text/html"))
-                await self.send_response(
-                    403,
-                    (self.msgtemplate % "Permission denied").encode(),
-                    headers=self.scope["response_headers"],
-                )
-                return
+                # Check permissions
+                if not self.scope["user"].has_perm("forecast.change_forecast"):
+                    self.scope["response_headers"].append(
+                        (b"Content-Type", b"text/html")
+                    )
+                    await self.send_response(
+                        403,
+                        (self.msgtemplate % "Permission denied").encode(),
+                        headers=self.scope["response_headers"],
+                    )
+                    return
 
-            data = json.loads(body.decode("utf-8"))
+                data = json.loads(body.decode("utf-8"))
 
-            if isinstance(data, list):
-                # Message format #1
-                for bckt in data:
-                    # Validate
-                    try:
-                        item = frepple.item(name=bckt["item"], action="C")
-                    except:
+                if isinstance(data, list):
+                    # Message format #1
+                    for bckt in data:
+                        # Validate
                         item = None
-                        errors.append("Item not found: %s" % bckt["item"])
-                    try:
-                        location = frepple.location(name=bckt["location"], action="C")
-                    except:
                         location = None
-                        errors.append("Location not found: %s" % bckt["location"])
-                    try:
-                        customer = frepple.customer(name=bckt["customer"], action="C")
-                    except:
                         customer = None
-                        errors.append("Customer not found: %s" % bckt["customer"])
-                    if customer and item and location:
-                        try:
-                            args = {
-                                "item": item,
-                                "location": location,
-                                "customer": customer,
-                            }
-                            bucket = bckt.get("bucket", None)
-                            if bucket:
-                                args["bucket"] = bucket.lower()
-                            startdate = bckt.get("startdate", None)
-                            if startdate:
-                                # Guess! the date format, using Month-Day-Year as preference
-                                # to resolve ambiguity.
-                                # This default style is also the default datestyle in Postgres
-                                # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                args["startdate"] = parse(
-                                    startdate, yearfirst=False, dayfirst=False
+                        if bckt.get("item", None):
+                            try:
+                                item = frepple.item(name=bckt["item"], action="C")
+                            except:
+                                errors.append("Item not found: %s" % bckt["item"])
+                        else:
+                            # Use root item
+                            for i in frepple.items():
+                                item = i
+                                break
+                            while item and item.owner:
+                                item = item.owner
+                        if bckt.get("location", None):
+                            try:
+                                location = frepple.location(
+                                    name=bckt["location"], action="C"
                                 )
-                            enddate = bckt.get("enddate", None)
-                            if enddate:
-                                # Guess! the date format, using Month-Day-Year as preference
-                                # to resolve ambiguity.
-                                # This default style is also the default datestyle in Postgres
-                                # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                args["enddate"] = parse(
-                                    enddate, yearfirst=False, dayfirst=False
+                            except:
+                                errors.append(
+                                    "Location not found: %s" % bckt["location"]
                                 )
-                            for key, val in bckt.items():
-                                if key not in (
-                                    "id",
-                                    "item",
-                                    "location",
-                                    "customer",
-                                    "bucket",
-                                    "startdate",
-                                    "enddate",
-                                    "forecast",
-                                ):
-                                    args[key] = float(val)
-                            frepple.setForecast(**args)
-                        except Exception as e:
-                            errors.append("Error processing %s" % e)
-            else:
-                # Message format #2
+                        else:
+                            # Use root location
+                            for i in frepple.locations():
+                                location = i
+                                break
+                            while location and location.owner:
+                                location = location.owner
+                        if bckt.get("customer", None):
+                            try:
+                                customer = frepple.customer(
+                                    name=bckt["customer"], action="C"
+                                )
+                            except:
+                                errors.append(
+                                    "Customer not found: %s" % bckt["customer"]
+                                )
+                        else:
+                            # Use root customer
+                            for i in frepple.customers():
+                                customer = i
+                                break
+                            while customer and customer.owner:
+                                customer = customer.owner
+                        if customer and item and location:
+                            try:
+                                args = {
+                                    "item": item,
+                                    "location": location,
+                                    "customer": customer,
+                                }
+                                bucket = bckt.get("bucket", None)
+                                if bucket:
+                                    args["bucket"] = bucket.lower()
+                                startdate = bckt.get("startdate", None)
+                                if startdate:
+                                    # Guess! the date format, using Month-Day-Year as preference
+                                    # to resolve ambiguity.
+                                    # This default style is also the default datestyle in Postgres
+                                    # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
+                                    args["startdate"] = parse(
+                                        startdate, yearfirst=False, dayfirst=False
+                                    )
+                                enddate = bckt.get("enddate", None)
+                                if enddate:
+                                    # Guess! the date format, using Month-Day-Year as preference
+                                    # to resolve ambiguity.
+                                    # This default style is also the default datestyle in Postgres
+                                    # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
+                                    args["enddate"] = parse(
+                                        enddate, yearfirst=False, dayfirst=False
+                                    )
+                                for key, val in bckt.items():
+                                    if key not in (
+                                        "id",
+                                        "item",
+                                        "location",
+                                        "customer",
+                                        "bucket",
+                                        "startdate",
+                                        "enddate",
+                                        "forecast",
+                                    ):
+                                        args[key] = float(val)
+                                frepple.setForecast(**args)
+                            except Exception as e:
+                                errors.append("Error processing %s" % e)
+                else:
+                    # Message format #2
 
-                # Validate
-                try:
-                    item = frepple.item(name=data["item"], action="C")
-                except:
+                    # Pick up item, customer and location
                     item = None
-                    errors.append("Item not found: %s" % data["item"])
-                try:
-                    location = frepple.location(name=data["location"], action="C")
-                except:
                     location = None
-                    errors.append("Location not found: %s" % data["location"])
-                try:
-                    customer = frepple.customer(name=data["customer"], action="C")
-                except:
                     customer = None
-                    errors.append("Customer not found: %s" % data["customer"])
-
-                # Update forecast method
-                mthd = data.get("forecastmethod", None)
-                if (
-                    mthd
-                    and self.scope["user"].has_perm("forecast.change_forecast")
-                    and item
-                    and customer
-                    and location
-                ):
-                    try:
-                        await self.updateForecastMethod(
-                            item.name,
-                            location.name,
-                            customer.name,
-                            mthd,
-                        )
-                    except Exception:
-                        errors.append("Exception updating forecast method")
-
-                # Update forecast values
-                if (
-                    "buckets" in data
-                    and item
-                    and location
-                    and customer
-                    and self.scope["user"].has_perm("forecast.change_forecast")
-                ):
-                    for bckt in data["buckets"]:
+                    if data.get("item", None):
                         try:
-                            args = {
-                                "item": item,
-                                "location": location,
-                                "customer": customer,
-                            }
-                            bucket = bckt.get("bucket", None)
-                            if bucket:
-                                args["bucket"] = bucket.lower()
-                            startdate = bckt.get("startdate", None)
-                            if startdate:
-                                # Guess! the date format, using Month-Day-Year as preference
-                                # to resolve ambiguity.
-                                # This default style is also the default datestyle in Postgres
-                                # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                args["startdate"] = parse(
-                                    startdate, yearfirst=False, dayfirst=False
-                                )
-                            enddate = bckt.get("enddate", None)
-                            if enddate:
-                                # Guess! the date format, using Month-Day-Year as preference
-                                # to resolve ambiguity.
-                                # This default style is also the default datestyle in Postgres
-                                # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                args["enddate"] = parse(
-                                    enddate, yearfirst=False, dayfirst=False
-                                )
-                            for key, val in bckt.items():
-                                if key not in ("id", "bucket", "startdate", "enddate"):
-                                    args[key] = float(val)
-                            frepple.setForecast(**args)
-                        except Exception as e:
-                            errors.append("Error processing %s" % e)
+                            item = frepple.item(name=data["item"], action="C")
+                        except:
+                            errors.append("Item not found: %s" % data["item"])
+                    else:
+                        # Use root item
+                        for i in frepple.items():
+                            item = i
+                            break
+                        while item and item.owner:
+                            item = item.owner
+                    if data.get("location", None):
+                        try:
+                            location = frepple.location(
+                                name=data["location"], action="C"
+                            )
+                        except:
+                            errors.append("Location not found: %s" % data["location"])
+                    else:
+                        # Use root location
+                        for i in frepple.locations():
+                            location = i
+                            break
+                        while location and location.owner:
+                            location = location.owner
+                    if data.get("customer", None):
+                        try:
+                            customer = frepple.customer(
+                                name=data["customer"], action="C"
+                            )
+                        except:
+                            errors.append("Customer not found: %s" % data["customer"])
+                    else:
+                        # Use root customer
+                        for i in frepple.customers():
+                            customer = i
+                            break
+                        while customer and customer.owner:
+                            customer = customer.owner
 
-                # Save a new comment
-                if (
-                    "commenttype" in data
-                    and "comment" in data
-                    and self.scope["user"].has_perm("common.add_comment")
-                ):
-                    try:
-                        await self.updateComment(
-                            data["commenttype"],
-                            data["comment"],
-                            item,
-                            location,
-                            customer,
-                        )
-                    except Exception:
-                        errors.append(b"Exception entering comment")
+                    # Update forecast method
+                    mthd = data.get("forecastmethod", None)
+                    if mthd and self.scope["user"].has_perm("forecast.change_forecast"):
+                        try:
+                            if item and location and customer:
+                                await self.updateForecastMethod(
+                                    item.name, location.name, customer.name, mthd
+                                )
+                            else:
+                                if not item:
+                                    errors.append("Item not found: %s" % data["item"])
+                                if not location:
+                                    errors.append(
+                                        "Location not found: %s" % data["location"]
+                                    )
+                                if not customer:
+                                    errors.append(
+                                        "Customer not found: %s" % data["customer"]
+                                    )
+                        except Exception:
+                            errors.append("Exception updating forecast method")
 
-            # Reply
-            self.scope["response_headers"].append(
-                (b"Content-Type", b"application/json")
-            )
-            if errors:
-                answer = {"errors": errors}
-            else:
-                answer = {"OK": 1}
-            await self.send_response(
-                500 if errors else 200,
-                json.dumps(answer).encode(),
-                headers=self.scope["response_headers"],
-            )
-        except Exception as e:
-            errors.append(str(e).encode())
-            await self.send_response(
-                500,
-                json.dumps({"errors": errors}).encode(),
-                headers=self.scope["response_headers"],
-            )
+                    # Update forecast values
+                    if (
+                        "buckets" in data
+                        and item
+                        and location
+                        and customer
+                        and self.scope["user"].has_perm("forecast.change_forecast")
+                    ):
+                        for bckt in data["buckets"]:
+                            try:
+                                args = {
+                                    "item": item,
+                                    "location": location,
+                                    "customer": customer,
+                                }
+                                bucket = bckt.get("bucket", None)
+                                if bucket:
+                                    args["bucket"] = bucket.lower()
+                                startdate = bckt.get("startdate", None)
+                                if startdate:
+                                    # Guess! the date format, using Month-Day-Year as preference
+                                    # to resolve ambiguity.
+                                    # This default style is also the default datestyle in Postgres
+                                    # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
+                                    args["startdate"] = parse(
+                                        startdate, yearfirst=False, dayfirst=False
+                                    )
+                                enddate = bckt.get("enddate", None)
+                                if enddate:
+                                    # Guess! the date format, using Month-Day-Year as preference
+                                    # to resolve ambiguity.
+                                    # This default style is also the default datestyle in Postgres
+                                    # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
+                                    args["enddate"] = parse(
+                                        enddate, yearfirst=False, dayfirst=False
+                                    )
+                                for key, val in bckt.items():
+                                    if key not in (
+                                        "id",
+                                        "bucket",
+                                        "startdate",
+                                        "enddate",
+                                    ):
+                                        args[key] = float(val)
+                                frepple.setForecast(**args)
+                            except Exception as e:
+                                errors.append("Error processing %s" % e)
+
+                    # Save a new comment
+                    if (
+                        "commenttype" in data
+                        and "comment" in data
+                        and self.scope["user"].has_perm("common.add_comment")
+                    ):
+                        try:
+                            await self.updateComment(
+                                data["commenttype"],
+                                data["comment"],
+                                item,
+                                location,
+                                customer,
+                            )
+                        except Exception:
+                            errors.append(b"Exception entering comment")
+
+                # Reply
+                self.scope["response_headers"].append(
+                    (b"Content-Type", b"application/json")
+                )
+                if errors:
+                    answer = {"errors": errors}
+                else:
+                    answer = {"OK": 1}
+                await self.send_response(
+                    500 if errors else 200,
+                    json.dumps(answer).encode(),
+                    headers=self.scope["response_headers"],
+                )
+            except Exception as e:
+                errors.append(str(e).encode())
+                await self.send_response(
+                    500,
+                    json.dumps({"errors": errors}).encode(),
+                    headers=self.scope["response_headers"],
+                )
 
 
 class FlushService(AsyncHttpConsumer):
@@ -320,10 +394,12 @@ class FlushService(AsyncHttpConsumer):
                 )
                 return
             if self.scope["path"] == "/flush/manual/":
-                frepple.cache.write_immediately = False
+                async with lock:
+                    frepple.cache.write_immediately = False
             elif self.scope["path"] == "/flush/auto/":
-                frepple.cache.flush()
-                frepple.cache.write_immediately = True
+                async with lock:
+                    frepple.cache.flush()
+                    frepple.cache.write_immediately = True
             else:
                 await self.send_response(
                     404,

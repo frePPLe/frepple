@@ -815,8 +815,15 @@ function forecastController($scope, $http, $q, $location) {
         return;
       }
       $scope.databaseerrormodal = true;
-      angular.element(document).find('#popup2 .modal-body').html('<div style="width: 100%; overflow: auto;">' + response.data + '</div>');
-      showModal('#popup2');
+      if (hasOwnProperty(response.data, "errors")) {
+        var msg = "";
+        for (var o of response.data.errors)
+          msg += o + "<br>";
+      }
+      else
+        var msg = response.data;
+      angular.element(document).find('#popup2 .modal-body').html('<div style="width: 100%; overflow: auto;">' + msg + '</div>');
+      showModal('popup2');
       $scope.busy_saving = false;
     });
   }

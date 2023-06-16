@@ -276,7 +276,7 @@ function displayGrid(load) {
 	  $("#horizonunit").val($(this).prop('name'));
 	});
 
-  $("#actionsul li a").click(function(){
+  $("#actionsul li a, button#actions1").click(function(){
     $("#actions1 span").text($(this).text());
     $("#actions").val($(this).prop('name'));
     grid.runAction($(this).prop('name'));
@@ -328,6 +328,12 @@ function displayGrid(load) {
 </button>
 {% if actions %}
 <form class="form-addon d-inline" method="get" action="#">
+{% if actions|length == 1 %}
+  <input type="hidden" name="actions" id="actions" value="{{ actions.0.name }}">
+  <button class="btn btn-primary" disabled id="actions1" name="{{ actions.0.name|escape }}">
+  {% filter force_escape|capfirst %}{% trans actions.0.label|capfirst %}{% endfilter %}
+  </button>
+{% else %}
   <input type="hidden" name="actions" id="actions" value="">
   <div class="dropdown d-inline">
       <button disabled class="d-inline w-auto dropdown-toggle form-control" type="button" name="actions1" id="actions1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -339,6 +345,7 @@ function displayGrid(load) {
       {% endfor %}
       </ul>
   </div>
+{% endif %}
 </form>
 {% endif %}
 {% endif %}

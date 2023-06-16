@@ -9,6 +9,11 @@ Release notes
 - | Bug fix: A corner case was corrected during safety stock planning
     when the producing flow has a offset.
 
+.. rubric:: Odoo integration
+
+- | The approval button to export a proposed purchase order, distribution order
+    or manufacturing order from frePPLe to odoo is now a button rather than a
+    dropdown. Saves you a click.
 
 8.0.0 (2023/06/03)
 ==================

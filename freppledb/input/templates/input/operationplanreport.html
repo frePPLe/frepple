@@ -192,7 +192,7 @@
     $("#undo").on('click', function() {
       $(window).off('beforeunload', upload.warnUnsavedChanges);
       });
-    $("#actionsul li").on('click', function() {
+    $("#actionsul li, button#actions1").on('click', function() {
       angular.element('#controller').scope().refreshstatus($("#actions").val());
     });
     $("#gridmode").on('click', function() {

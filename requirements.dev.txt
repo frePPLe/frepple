@@ -7,9 +7,9 @@ tzlocal
 # Extra packages for development environments
 black == 21.9b0
 Jinja2 < 3.1      # Jinja 3.1 breaks sphinx
-Sphinx
-sphinx-tabs
-sphinx-sitemap
+Sphinx == 3.5.3
+sphinx-tabs == 3.4.1
+sphinx-sitemap == 2.5.0
 selenium
 selenium_firefox == 2.0.7   # Issues with urllib3 on recent versions
 msedge-selenium-tools == 3.141.4 # Issues with urllib3 on recent versions

@@ -67,7 +67,7 @@ For developers
 
   ::
 
-       make extract-translations
+       translations.sh extract
 
 **2. Add support for an additional language**
 
@@ -116,4 +116,4 @@ For developers
 
   ::
 
-       make compile-translations
+       translations.sh compile

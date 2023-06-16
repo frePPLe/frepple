@@ -46,7 +46,7 @@ from freppledb.input.models import PurchaseOrder, DistributionOrder, Manufacturi
 
 class Command(BaseCommand):
 
-    help = "Loads data from an Odoo instance into the frePPLe database"
+    help = "Exports frepple data to odoo."
 
     requires_system_checks = []
 

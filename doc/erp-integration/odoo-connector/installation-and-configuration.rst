@@ -171,8 +171,8 @@ Data mapping details
 --------------------
 
 The connector doesn't cover all possible configurations of Odoo and frePPLe.
-The connector will very likely require some customization to fit the particular
-setup of the ERP and the planning requirements in frePPLe.
+The connector will very likely require some customization to fit your particular
+odoo configuration and the planning requirements in frePPLe.
 
 :download:`Download mapping as svg image <_images/odoo-integration.svg>`
 

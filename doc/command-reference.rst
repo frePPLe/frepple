@@ -27,6 +27,8 @@ This section provides an overview of the available actions:
   * :ref:`scenario_copy`
   * :ref:`backup`
   * :ref:`empty`
+  * :ref:`odoo_import`
+  * :ref:`odoo_export`
 
 * Administrator commands
 
@@ -393,8 +395,9 @@ to upload to that folder.
 Web service
 -----------
 
-In the Enterprise Edition users have the option to start and stop the web service
-which keeps the plan in memory.
+This action starts or stop the frepple web service which keeps the plan
+in memory. The web service normally starts automatically, and the use of this
+command is more an exception.
 
 .. tabs::
 
@@ -525,6 +528,64 @@ tables for users, permissions, task log, etc...).
       .. code-block:: bash
 
         POST /execute/api/empty/?models=input.demand,input.operationplan
+
+.. _odoo_import:
+
+Import data from odoo
+---------------------
+
+This command is only active when the odoo integration app is installed. It brings
+all planning relevant data from odoo into the frePPLe database.
+
+See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`
+
+.. tabs::
+
+   .. tab:: Execution screen
+
+      .. image:: /erp-integration/odoo-connector/_images/odoo_import.png
+         :alt: Execution screen - import from odoo
+
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl odoo_import
+
+   .. tab:: Web API
+
+      .. code-block:: bash
+
+        POST /execute/api/odoo_import/
+
+.. _odoo_export:
+
+Export data to odoo
+-------------------
+
+This command is only active when the odoo integration app is installed. It
+publishes part of the plan from frepple into odoo.
+
+See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`
+
+.. tabs::
+
+   .. tab:: Execution screen
+
+      .. image:: /erp-integration/odoo-connector/_images/odoo_export.png
+         :alt: Execution screen - export to odoo
+
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl odoo_export
+
+   .. tab:: Web API
+
+      .. code-block:: bash
+
+        POST /execute/api/odoo_export/
 
 Administrator commands
 ~~~~~~~~~~~~~~~~~~~~~~

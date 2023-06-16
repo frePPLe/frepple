@@ -1,0 +1,61 @@
+Using the connector in frePPLe
+------------------------------
+
+The odoo integration brings new functionality to the user interface.
+
+* | **Task "Import data from Odoo"**
+  | The execute screen has an *import data from odoo* command that
+    allows to import the Odoo data in frePPLe database and then generate a plan.
+
+  .. image:: _images/odoo_import.png
+   :alt: Import data from odoo
+
+  | The connector distinguishes different modes to retrieve data from Odoo. This
+    allows us to schedule the interfacing of larger and/or slowly changing data
+    volumes (eg sales order history over the last few years as required for the
+    forecast calculation) from the extraction of data elements that need to be
+    retrieved whenever the plan is generated (eg open sales orders, current
+    inventory).
+  | Using the argument odoo_read_1 or odoo_read_2 specific the requested data
+    extraction mode. By default all data elements are extracted in mode 1.
+    It requires customization of the Odoo addon to define for which
+    data elements you want to use mode 2.
+
+* | **Task "Export data to Odoo"**
+
+  | The execute screen has an *import data from odoo* command that
+    allows to import the Odoo data in frePPLe database and then generate a plan.
+
+  | The plan exported to odoo is a subset of the plan which passes
+    certain filter conditions. The remaining part of the plan can
+    only be exported manually from frePPLe to Odoo: see below.
+
+  .. image:: _images/odoo_export.png
+   :alt: Export data to odoo
+
+  | The default command will export the following parts of the plan to odoo:
+
+  - proposed purchase orders starting within the next 7 days
+
+  - proposed distribution orders starting within the next 7 days
+
+  - proposed manufacturing orders starting within the next 7 days
+
+  - rescheduled new dates for approved work orders
+
+  | In practice we have seen that implementation projects have different requirements,
+    and this command very often needs to be customized.
+
+* | **An incremental export from the frePPLe user interface for
+    individual purchase, manufacturing and distribution
+    orders.**
+
+  | Users select a number of proposed tranactions, and click the "export to odoo"
+    button. This immediately creates the matching transaction in odoo.
+
+  | A typical usage is to automatically export the proposed purchase for
+    cheap or fast moving items, and let the planner review and approve
+    the proposed plan in frePPLe for expensive or slow moving items.
+
+  .. image:: _images/odoo-approve-export.png
+   :alt: Exporting individual transactions to odoo

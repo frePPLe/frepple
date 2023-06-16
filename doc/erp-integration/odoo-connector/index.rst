@@ -12,5 +12,6 @@ FrePPLe provides an integration with `Odoo <https://www.odoo.com>`_, a leading o
    :maxdepth: 1
 
    overview
-   using-the-connector
+   using-the-connector-in-odoo
+   using-the-connector-in-frepple
    installation-and-configuration

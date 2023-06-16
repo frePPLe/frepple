@@ -502,7 +502,7 @@ class Command(BaseCommand):
     # accordion template
     title = _("Export data to %(erp)s") % {"erp": "odoo"}
     index = 1450
-    help_url = "integration-guide/odoo-connector.html"
+    help_url = "command-reference.html#odoo_export"
 
     @staticmethod
     def getHTML(request):

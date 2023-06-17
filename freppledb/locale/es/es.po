@@ -14,15 +14,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-07 14:50+0100\n"
-"PO-Revision-Date: 2023-03-10 17:16+0100\n"
-"Last-Translator: Joao Ranita <jranita@frepple.com>\n"
+"PO-Revision-Date: 2023-06-17 02:43+0200\n"
+"Last-Translator: Zipus <zipus.technologies@gmail.com>\n"
 "Language-Team: frepple\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 2.3\n"
 
 #: common/static/js/frepple.js:201
 msgid "Connection failed"
@@ -434,7 +434,7 @@ msgstr "segundo"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
-msgstr "clase ABC"
+msgstr "Clasificación ABC"
 
 #: admin.py:22
 #, python-format
@@ -2884,7 +2884,7 @@ msgstr "Agrupar y programar tareas"
 
 #: execute/management/commands/scheduletasks.py:362
 msgid "Group tasks"
-msgstr ""
+msgstr "Agrupar tareas"
 
 #: execute/management/commands/uploadreport.py:278
 msgid "Publish reports by FTP"
@@ -3255,7 +3255,7 @@ msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:7
 msgid "Run a sequence of tasks."
-msgstr ""
+msgstr "Ejecutar una secuencia de tareas."
 
 #: execute/templates/commands/scheduletasks.html:15
 msgid "next scheduled run"
@@ -4002,7 +4002,7 @@ msgstr "Demanda atípica"
 #: forecast/templates/forecast/wizard.html:4 forecast/views.py:2334
 #: forecast/views.py:2352
 msgid "forecast wizard"
-msgstr ""
+msgstr "asistente de pronóstico"
 
 #: forecast/views.py:136
 msgid "method"
@@ -4485,7 +4485,7 @@ msgstr "ventana de procesamiento por lotes"
 #: input/models/itemdistribution.py:86
 msgid ""
 "Proposed distribution orders within this window will be grouped together"
-msgstr ""
+msgstr "La distribución de pedidos propuesta en esta ventana será agrupada"
 
 #: input/models/itemdistribution.py:96
 msgid "Shipping cost per unit"
@@ -4928,11 +4928,11 @@ msgstr "suboperaciones"
 
 #: input/models/operation.py:630 input/views/manufacturing.py:1343
 msgid "blocked by operation"
-msgstr ""
+msgstr "bloqueada por la operación"
 
 #: input/models/operation.py:632
 msgid "blocked-by operation"
-msgstr ""
+msgstr "bloqueada por la operación"
 
 #: input/models/operation.py:642
 msgid "Quantity relation between the operations"
@@ -4952,11 +4952,11 @@ msgstr "tiempo duro de espera de seguridad"
 
 #: input/models/operation.py:675
 msgid "operation dependency"
-msgstr ""
+msgstr "dependencia de la operación"
 
 #: input/models/operation.py:676 input/views/manufacturing.py:1306
 msgid "operation dependencies"
-msgstr ""
+msgstr "dependencias de la operación"
 
 #: input/models/operationplan.py:55 input/models/operationplan.py:2545
 #: shopfloor/views.py:113
@@ -5473,7 +5473,7 @@ msgstr "cantidad completaa del plan de operación"
 #: input/views/manufacturing.py:1558 input/views/manufacturing.py:1564
 #: input/views/manufacturing.py:1571 input/views/manufacturing.py:1577
 msgid "blockedby"
-msgstr ""
+msgstr "bloqueado por"
 
 #: input/views/manufacturing.py:1676
 #, python-format
@@ -5551,7 +5551,7 @@ msgstr "Cantidad de inventario de seguridad"
 
 #: inventoryplanning/admin.py:90 inventoryplanning/views.py:2798
 msgid "segment detail"
-msgstr "Detalle del segmento"
+msgstr "detalle del segmento"
 
 #: inventoryplanning/attributes.py:18
 msgid "Successor part"
@@ -5756,7 +5756,7 @@ msgstr "inventario de seguridad calculado"
 
 #: inventoryplanning/models.py:410 inventoryplanning/views.py:570
 msgid "reorder point"
-msgstr "Punto de reorden"
+msgstr "punto de reaprovisionamiento"
 
 #: inventoryplanning/models.py:413
 msgid "safety stock value"
@@ -5768,7 +5768,7 @@ msgstr "valor de cantidad de reorden"
 
 #: inventoryplanning/models.py:419
 msgid "reorder point value"
-msgstr "Valor del punto de repedido"
+msgstr "valor del punto de reaprovisionamiento"
 
 #: inventoryplanning/models.py:431
 #: inventoryplanning/templates/inventoryplanning/drp.html:2183
@@ -6378,7 +6378,7 @@ msgstr "consumido"
 
 #: output/templates/output/buffer.html:441
 msgid "consumed confirmed"
-msgstr ""
+msgstr "consumido confirmado"
 
 #: output/templates/output/buffer.html:442
 msgid "produced"
@@ -6976,7 +6976,7 @@ msgstr "inicio"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:53
 msgid "pause"
-msgstr ""
+msgstr "pausar"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:1144
@@ -6992,11 +6992,11 @@ msgstr "fin"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:80
 msgid "No materials"
-msgstr ""
+msgstr "Sin materiales"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:102
 msgid "Update materials"
-msgstr ""
+msgstr "Actualizar materiales"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:118
 msgid "add comment"
@@ -7138,7 +7138,7 @@ msgstr "Asistente de carga de datos para la planificación de producción"
 
 #: wizard/views.py:2818
 msgid "Import from odoo"
-msgstr ""
+msgstr "Importar desde odoo"
 
 #: wizard/views.py:2820
 msgid "Get started - Data loading wizard"
@@ -7601,6 +7601,8 @@ msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
+"Una operación usa el color de la semana en que la demanda vinculada vence.\n"
+"                        <br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:321
 msgid "Apply"

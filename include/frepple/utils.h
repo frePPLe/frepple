@@ -3064,10 +3064,7 @@ class PythonDataValueDict : public DataValueDict {
   PythonDataValueDict(PyObject* a) : kwds(a) {}
 
   virtual const DataValue* get(const Keyword& k) const {
-    if (!kwds) {
-      const_cast<PythonDataValueDict*>(this)->result = PythonData();
-      return &result;
-    }
+    if (!kwds) return nullptr;
     PyObject* val = PyDict_GetItemString(kwds, k.getName().c_str());
     if (!val) return nullptr;
     const_cast<PythonDataValueDict*>(this)->result = PythonData(val);

@@ -28,14 +28,49 @@ import json
 from channels.db import database_sync_to_async
 from channels.generic.http import AsyncHttpConsumer
 
+from freppledb.common.commands import PlanTaskRegistry
+from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.webservice.utils import lock
 
 
 class OperationplanService(AsyncHttpConsumer):
-    """
-    Processes forecast update messages in these formats:
+    @database_sync_to_async
+    def savePlan(
+        self,
+        deleted_opplans,
+        related_opplans,
+        related_resources,
+        related_buffers,
+        related_demands,
+    ):
+        PlanTaskRegistry.run(
+            export=1,
+            database=self.scope["database"],
+            deleted_opplans=deleted_opplans,
+            opplans=related_opplans,
+            resources=related_resources,
+            buffers=related_buffers,
+            demands=related_demands,
+        )
 
-    """
+    def collectRelated(
+        self,
+        opplan,
+        related_opplans,
+        related_resources,
+        related_buffers,
+        related_demands,
+    ):
+        for d in opplan.loadplans:
+            related_resources.add(d.resource)
+        for d in opplan.flowplans:
+            related_buffers.add(d.buffer)
+        if opplan.demand:
+            related_demands.add(opplan.demand)
+        if opplan.owner:
+            self.collectRelated(
+                opplan.owner, related_opplans, related_resources, related_buffers
+            )
 
     async def handle(self, body):
         errors = []
@@ -52,26 +87,193 @@ class OperationplanService(AsyncHttpConsumer):
                 return
 
             data = json.loads(body.decode("utf-8"))
-
-            # Check permissions
-            if not self.scope["user"].has_perm("input.change_operationplan"):
-                self.scope["response_headers"].append((b"Content-Type", b"text/html"))
-                await self.send_response(
-                    403,
-                    (self.msgtemplate % "Permission denied").encode(),
-                    headers=self.scope["response_headers"],
-                )
-                return
+            deleted_opplans = set()
+            related_opplans = set()
+            related_resources = set()
+            related_buffers = set()
+            related_demands = set()
 
             async with lock:
-                print("receiving data ", data)
+                # Update the plan in memory
+                for rec in data:
+                    try:
+                        for d in rec.get("delete", []):
+                            if self.scope["user"].has_perm(
+                                "input.delete_operationplan"
+                            ):
+                                opplan = frepple.operationplan(
+                                    {"reference": d, "action": "C"}
+                                )
+                                if opplan:
+                                    self.collectRelated(
+                                        opplan,
+                                        related_opplans,
+                                        related_resources,
+                                        related_buffers,
+                                        related_demands,
+                                    )
+                                    deleted_opplans.add(opplan.reference)
+                                    del opplan
+                            elif "permission denied" not in errors:
+                                errors.append("permission denied")
+
+                        # Build arguments
+                        changes = {}
+                        ref = rec.get(
+                            "operationplan__reference",
+                            rec.get(
+                                "operationplan__id",
+                                rec.get("reference", rec.get("id", None)),
+                            ),
+                        )
+                        if ref:
+                            changes["reference"] = ref
+                        else:
+                            type = rec.get("type", "MO")
+                            if (
+                                type == "PO"
+                                and "supplier" in rec
+                                and "location" in rec
+                                and "item" in rec
+                            ):
+                                changes["location"] = frepple.location(
+                                    name=rec["location"], action="C"
+                                )
+                                changes["supplier"] = frepple.supplier(
+                                    name=rec["supplier"], action="C"
+                                )
+                                changes["item"] = frepple.item(
+                                    name=rec["item"], action="C"
+                                )
+                                changes["ordertype"] = "PO"
+                            elif (
+                                type == "DO"
+                                and "origin" in rec
+                                and "destination" in rec
+                                and "item" in rec
+                            ):
+                                changes["location"] = frepple.location(
+                                    name=rec["destination"], action="C"
+                                )
+                                changes["origin"] = frepple.location(
+                                    name=rec["origin"], action="C"
+                                )
+                                changes["item"] = frepple.item(
+                                    name=rec["item"], action="C"
+                                )
+                                changes["ordertype"] = "DO"
+                            elif "operation" in rec:
+                                changes["operation"] = frepple.operation(
+                                    name=rec["operation"], action="C"
+                                )
+                                changes["ordertype"] = "MO"
+                        if "operationplan__quantity" in rec:
+                            changes["quantity"] = float(rec["operationplan__quantity"])
+                        elif "quantity" in rec:
+                            changes["quantity"] = float(rec["quantity"])
+                        if "operationplan__quantity_completed" in rec:
+                            changes["quantity_completed"] = float(
+                                rec["operationplan__quantity_completed"]
+                            )
+                        elif "quantity_completed" in rec:
+                            changes["quantity_completed"] = float(
+                                rec["quantity_completed"]
+                            )
+                        if "startdate" in rec and rec["startdate"] != "\xa0":
+                            changes["start"] = parseLocalizedDateTime(
+                                rec["startdate"]
+                            ).strftime("%Y-%m-%dT%H:%M:%S")
+                        elif (
+                            "operationplan__startdate" in rec
+                            and rec["operationplan__startdate"] != "\xa0"
+                        ):
+                            changes["start"] = parseLocalizedDateTime(
+                                rec["operationplan__startdate"]
+                            ).strftime("%Y-%m-%dT%H:%M:%S")
+                        if "enddate" in rec and rec["enddate"] != "\xa0":
+                            changes["end"] = parseLocalizedDateTime(
+                                rec["enddate"]
+                            ).strftime("%Y-%m-%dT%H:%M:%S")
+                        elif (
+                            "operationplan__enddate" in rec
+                            and rec["operationplan__enddate"] != "\xa0"
+                        ):
+                            changes["end"] = parseLocalizedDateTime(
+                                rec["operationplan__enddate"]
+                            ).strftime("%Y-%m-%dT%H:%M:%S")
+                        if "demand" in rec:
+                            changes["demand"] = rec["demand"]
+                        if "batch" in rec:
+                            changes["batch"] = rec["batch"]
+                        if "status" in rec:
+                            changes["status"] = rec["status"]
+                        elif "operationplan__status" in rec:
+                            changes["status"] = rec["operationplan__status"]
+                        rsrcs = rec.get("resources", rec.get("resource", None))
+                        if rsrcs:
+                            # Force deletion of existing loadplans (because the loadplan data isn't in delta mode)
+                            changes["resetResources"] = True
+                            if isinstance(rsrcs, str):
+                                changes["loadplans"] = [{"resource": {"name": rsrcs}}]
+                            else:
+                                changes["loadplans"] = [
+                                    {"resource": {"name": l[0]}} for l in rsrcs
+                                ]
+                        if "remark" in rec:
+                            changes["remark"] = rec["remark"]
+
+                        # Update the engine
+                        if changes:
+                            if self.scope["user"].has_perm(
+                                "input.change_operationplan"
+                            ):
+                                opplan = frepple.operationplan(**changes)
+                                related_opplans.add(opplan)
+                                self.collectRelated(
+                                    opplan,
+                                    related_opplans,
+                                    related_resources,
+                                    related_buffers,
+                                    related_demands,
+                                )
+                            elif "permission denied" not in errors:
+                                errors.append("permission denied")
+
+                    except Exception as e:
+                        errors.append(str(e))
+
+                # Save all changes
+                if (
+                    deleted_opplans
+                    or related_opplans
+                    or related_resources
+                    or related_buffers
+                    or related_demands
+                ):
+                    try:
+                        await self.savePlan(
+                            deleted_opplans,
+                            related_opplans,
+                            related_resources,
+                            related_buffers,
+                            related_demands,
+                        )
+                    except Exception as e:
+                        errors.append("Error saving plan")
 
             self.scope["response_headers"].append((b"Content-Type", b"text/html"))
-            await self.send_response(
-                200,
-                b"echo",
-                headers=self.scope["response_headers"],
-            )
+            if errors:
+                await self.send_response(
+                    500,
+                    json.dumps({"errors": errors}).encode(),
+                    headers=self.scope["response_headers"],
+                )
+            else:
+                await self.send_response(
+                    200,
+                    b'{"OK": 1}',
+                    headers=self.scope["response_headers"],
+                )
         except Exception as e:
             print("exception " % e)
             await self.send_response(

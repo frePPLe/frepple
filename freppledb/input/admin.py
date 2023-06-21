@@ -201,7 +201,7 @@ class Customer_admin(MultiDBModelAdmin):
             _("advanced"),
             {
                 "fields": ["category", "subcategory"]
-                + [a[0] for a in getAttributes(Location) if a[3]],
+                + [a[0] for a in getAttributes(Customer) if a[3]],
                 "classes": ("collapse",),
             },
         ),

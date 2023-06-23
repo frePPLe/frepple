@@ -21,8 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from datetime import date, datetime
-from dateutil.parser import parse
+from collections import OrderedDict
 import json
 
 from channels.db import database_sync_to_async
@@ -43,15 +42,20 @@ class OperationplanService(AsyncHttpConsumer):
         related_buffers,
         related_demands,
     ):
-        PlanTaskRegistry.run(
-            export=1,
-            database=self.scope["database"],
-            deleted_opplans=deleted_opplans,
-            opplans=related_opplans,
-            resources=related_resources,
-            buffers=related_buffers,
-            demands=related_demands,
-        )
+        try:
+            PlanTaskRegistry.run(
+                export=1,
+                cluster=-2,
+                database=self.scope["database"],
+                deleted_opplans=deleted_opplans,
+                opplans=related_opplans,
+                resources=related_resources,
+                buffers=related_buffers,
+                demands=related_demands,
+            )
+        except Exception as e:
+            print("Error saving plan:", e)
+            raise e
 
     def collectRelated(
         self,
@@ -118,7 +122,7 @@ class OperationplanService(AsyncHttpConsumer):
                                 errors.append("permission denied")
 
                         # Build arguments
-                        changes = {}
+                        changes = OrderedDict()
                         ref = rec.get(
                             "operationplan__reference",
                             rec.get(
@@ -179,17 +183,6 @@ class OperationplanService(AsyncHttpConsumer):
                             changes["quantity_completed"] = float(
                                 rec["quantity_completed"]
                             )
-                        if "startdate" in rec and rec["startdate"] != "\xa0":
-                            changes["start"] = parseLocalizedDateTime(
-                                rec["startdate"]
-                            ).strftime("%Y-%m-%dT%H:%M:%S")
-                        elif (
-                            "operationplan__startdate" in rec
-                            and rec["operationplan__startdate"] != "\xa0"
-                        ):
-                            changes["start"] = parseLocalizedDateTime(
-                                rec["operationplan__startdate"]
-                            ).strftime("%Y-%m-%dT%H:%M:%S")
                         if "enddate" in rec and rec["enddate"] != "\xa0":
                             changes["end"] = parseLocalizedDateTime(
                                 rec["enddate"]
@@ -200,6 +193,17 @@ class OperationplanService(AsyncHttpConsumer):
                         ):
                             changes["end"] = parseLocalizedDateTime(
                                 rec["operationplan__enddate"]
+                            ).strftime("%Y-%m-%dT%H:%M:%S")
+                        if "startdate" in rec and rec["startdate"] != "\xa0":
+                            changes["start"] = parseLocalizedDateTime(
+                                rec["startdate"]
+                            ).strftime("%Y-%m-%dT%H:%M:%S")
+                        elif (
+                            "operationplan__startdate" in rec
+                            and rec["operationplan__startdate"] != "\xa0"
+                        ):
+                            changes["start"] = parseLocalizedDateTime(
+                                rec["operationplan__startdate"]
                             ).strftime("%Y-%m-%dT%H:%M:%S")
                         if "demand" in rec:
                             changes["demand"] = rec["demand"]
@@ -226,8 +230,32 @@ class OperationplanService(AsyncHttpConsumer):
                         if changes:
                             if self.scope["user"].has_perm(
                                 "input.change_operationplan"
+                                if ref
+                                else "input.add_operationplan"
                             ):
-                                opplan = frepple.operationplan(**changes)
+                                if ref:
+                                    opplan = frepple.operationplan(
+                                        reference=ref, action="C"
+                                    )
+                                    # Original related objects
+                                    self.collectRelated(
+                                        opplan,
+                                        related_opplans,
+                                        related_resources,
+                                        related_buffers,
+                                        related_demands,
+                                    )
+                                else:
+                                    opplan = frepple.operationplan(**changes)
+                                # Apply changes
+                                for fld, val in changes.items():
+                                    if fld == "end":
+                                        setattr(opplan, "end_force", val)
+                                    elif fld == "start":
+                                        setattr(opplan, "start_force", val)
+                                    elif fld != "reference":
+                                        setattr(opplan, fld, val)
+                                # New related objects
                                 related_opplans.add(opplan)
                                 self.collectRelated(
                                     opplan,
@@ -259,6 +287,7 @@ class OperationplanService(AsyncHttpConsumer):
                             related_demands,
                         )
                     except Exception as e:
+                        print("exception " % e)
                         errors.append("Error saving plan")
 
             self.scope["response_headers"].append((b"Content-Type", b"text/html"))

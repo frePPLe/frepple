@@ -56,7 +56,17 @@ class TruncatePlan(PlanTask):
             return -1
 
     @classmethod
-    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
+    def run(
+        cls,
+        cluster=-1,
+        database=DEFAULT_DB_ALIAS,
+        deleted_opplans=None,
+        opplans=None,
+        resources=None,
+        buffers=None,
+        demands=None,
+        **kwargs
+    ):
         import frepple
 
         cursor = connections[database].cursor()
@@ -94,6 +104,65 @@ class TruncatePlan(PlanTask):
                 where (status='proposed' or status is null) or type = 'STCK'
                 """
             )
+        elif cluster == -2:
+            # Minimal incremental export
+            if deleted_opplans:
+                cursor.execute(
+                    """
+                    delete from operationplan
+                    where reference in any(%s)
+                    """,
+                    (deleted_opplans),
+                )
+            if resources:
+                resnames = [r.name for r in resources]
+                cursor.execute(
+                    """
+                    delete from operationplanresource
+                    where resource_id = any(%s)
+                    """,
+                    (resnames,),
+                )
+                cursor.execute(
+                    """
+                    delete from out_resourceplan
+                    where resource_id = any(%s)
+                    """,
+                    (resnames,),
+                )
+            if buffers:
+                t = [
+                    (b.item.name, b.location.name, b.batch) for b in buffers if b.batch
+                ]
+                if t:
+                    execute_batch(
+                        cursor,
+                        """
+                            delete from operationplanmaterial
+                            using operationplan
+                            where operationplanmaterial.operationplan_id = operationplan.reference
+                            and operationplanmaterial.item_id = %s
+                            and operationplanmaterial.location_id = %s
+                            and operationplan.batch = %s
+                            """,
+                        t,
+                        page_size=200,
+                    )
+                t = [(b.item.name, b.location.name) for b in buffers if not b.batch]
+                if t:
+                    execute_batch(
+                        cursor,
+                        """
+                            delete from operationplanmaterial
+                            using operationplan
+                            where operationplanmaterial.operationplan_id = operationplan.reference
+                            and operationplanmaterial.item_id = %s
+                            and operationplanmaterial.location_id = %s
+                            and (operationplan.batch is null or  operationplan.batch ='')
+                            """,
+                        t,
+                        page_size=200,
+                    )
         else:
             # Partial export for a single cluster
             cursor.execute(
@@ -321,22 +390,24 @@ class ExportProblems(PlanTask):
 
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
-        cursor = connections[database].cursor()
-        cursor.copy_from(
-            CopyFromGenerator(cls.getData(cluster)),
-            "out_problem",
-            columns=(
-                "entity",
-                "name",
-                "owner",
-                "description",
-                "startdate",
-                "enddate",
-                "weight",
-            ),
-            size=1024,
-            sep="\v",
-        )
+        if cluster == -2:
+            return
+        with connections[database].cursor() as cursor:
+            cursor.copy_from(
+                CopyFromGenerator(cls.getData(cluster)),
+                "out_problem",
+                columns=(
+                    "entity",
+                    "name",
+                    "owner",
+                    "description",
+                    "startdate",
+                    "enddate",
+                    "weight",
+                ),
+                size=1024,
+                sep="\v",
+            )
 
 
 @PlanTaskRegistry.register
@@ -383,25 +454,27 @@ class ExportConstraints(PlanTask):
 
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
-        cursor = connections[database].cursor()
-        cursor.copy_from(
-            CopyFromGenerator(cls.getData(cluster=cluster)),
-            "out_constraint",
-            columns=(
-                "demand",
-                "forecast",
-                "item",
-                "entity",
-                "name",
-                "owner",
-                "description",
-                "startdate",
-                "enddate",
-                "weight",
-            ),
-            size=1024,
-            sep="\v",
-        )
+        if cluster == -2:
+            return
+        with connections[database].cursor() as cursor:
+            cursor.copy_from(
+                CopyFromGenerator(cls.getData(cluster=cluster)),
+                "out_constraint",
+                columns=(
+                    "demand",
+                    "forecast",
+                    "item",
+                    "entity",
+                    "name",
+                    "owner",
+                    "description",
+                    "startdate",
+                    "enddate",
+                    "weight",
+                ),
+                size=1024,
+                sep="\v",
+            )
 
 
 @PlanTaskRegistry.register
@@ -475,7 +548,9 @@ class ExportOperationPlans(PlanTask):
         return json.dumps(pln).replace("\\", "\\\\")
 
     @classmethod
-    def getData(cls, with_fcst, timestamp, cluster=-1, accepted_status=[]):
+    def getData(
+        cls, with_fcst, timestamp, cluster=-1, opplans=None, accepted_status=[]
+    ):
         import frepple
 
         linetemplate = "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s"
@@ -485,293 +560,308 @@ class ExportOperationPlans(PlanTask):
             linetemplate += "\v%s"
         linetemplate += "\n"
 
-        for i in frepple.operations():
-            if cluster != -1 and i.cluster not in cluster:
-                continue
-
-            # variable used to make sure only first proposed operationplan has its color set.
-            proposedFound = False
-            proposedFoundDate = None
-
-            for j in i.operationplans:
-                status = j.status
-                if status not in accepted_status:
+        if cluster == -2:
+            for j in opplans:
+                if j.status in accepted_status:
+                    data = cls.getDataOpplan(
+                        j.operation, j, with_fcst, timestamp, False, None
+                    )
+                    if data:
+                        yield linetemplate % tuple(data)
+        else:
+            for i in frepple.operations():
+                if cluster != -1 and i.cluster not in cluster:
                     continue
-                delay = j.delay
 
-                if not with_fcst:
-                    demand = j.demand
-                    forecast = None
-                elif j.demand and not isinstance(
-                    j.demand, frepple.demand_forecastbucket
-                ):
-                    demand = j.demand
-                    forecast = None
-                elif j.demand and isinstance(j.demand, frepple.demand_forecastbucket):
-                    demand = None
-                    forecast = j.demand
-                elif (
-                    j.owner
-                    and j.owner.demand
-                    and not isinstance(j.owner.demand, frepple.demand_forecastbucket)
-                ):
-                    demand = j.owner.demand
-                    forecast = None
-                elif (
-                    j.owner
-                    and j.owner.demand
-                    and isinstance(j.owner.demand, frepple.demand_forecastbucket)
-                ):
-                    demand = None
-                    forecast = j.owner.demand
-                else:
-                    demand = None
-                    forecast = None
-                color = 100 - delay / 86400
+                # variable used to make sure only first proposed operationplan has its color set.
+                proposedFound = False
+                proposedFoundDate = None
 
-                data = None
-                if isinstance(i, frepple.operation_inventory):
-                    # Export inventory
-                    data = [
-                        clean_value(i.name),
-                        "STCK",
-                        status,
-                        round(j.quantity, 8),
-                        str(j.start),
-                        str(j.end),
-                        round(j.criticality, 8),
-                        delay,
-                        cls.getPegging(j),
-                        clean_value(j.source),
-                        timestamp,
-                        "\\N",
-                        clean_value(j.owner.reference)
-                        if j.owner and not j.owner.operation.hidden
-                        else "\\N",
-                        clean_value(j.operation.buffer.item.name),
-                        clean_value(j.operation.buffer.location.name),
-                        "\\N",
-                        clean_value(j.operation.buffer.location.name),
-                        "\\N",
-                        clean_value(j.demand.name) if demand else "\\N",
-                        j.demand.due
-                        if j.demand
-                        else j.owner.demand.due
-                        if j.owner and j.owner.demand
-                        else "\\N",
-                        "\\N",  # color is empty for stock
-                        clean_value(j.reference),
-                        clean_value(j.batch),
-                        "\\N",
-                    ]
-                elif isinstance(i, frepple.operation_itemdistribution):
-                    # Export DO
-                    data = [
-                        clean_value(i.name),
-                        "DO",
-                        status,
-                        round(j.quantity, 8),
-                        str(j.start),
-                        str(j.end),
-                        round(j.criticality, 8),
-                        delay,
-                        cls.getPegging(j),
-                        clean_value(j.source),
-                        timestamp,
-                        "\\N",
-                        clean_value(j.owner.reference)
-                        if j.owner and not j.owner.operation.hidden
-                        else "\\N",
-                        clean_value(j.operation.destination.item.name)
-                        if j.operation.destination
-                        else j.operation.origin.item.name,
-                        clean_value(j.operation.destination.location.name)
-                        if j.operation.destination
-                        else "\\N",
-                        clean_value(j.operation.origin.location.name)
-                        if j.operation.origin
-                        else "\\N",
-                        "\\N",
-                        "\\N",
-                        clean_value(j.demand.name) if demand else "\\N",
-                        j.demand.due
-                        if j.demand
-                        else j.owner.demand.due
-                        if j.owner and j.owner.demand
-                        else "\\N",
-                        color
-                        if (proposedFound is False and status == "proposed")
-                        or (status == "proposed" and j.start == proposedFoundDate)
-                        or status in ("confirmed", "approved")
-                        else "\\N",  # color
-                        clean_value(j.reference),
-                        clean_value(j.batch),
-                        "\\N",
-                    ]
-                elif isinstance(i, frepple.operation_itemsupplier):
-                    # Export PO
-                    data = [
-                        clean_value(i.name),
-                        "PO",
-                        status,
-                        round(j.quantity, 8),
-                        str(j.start),
-                        str(j.end),
-                        round(j.criticality, 8),
-                        delay,
-                        cls.getPegging(j),
-                        clean_value(j.source),
-                        timestamp,
-                        "\\N",
-                        clean_value(j.owner.reference)
-                        if j.owner and not j.owner.operation.hidden
-                        else "\\N",
-                        clean_value(j.operation.buffer.item.name),
-                        "\\N",
-                        "\\N",
-                        clean_value(j.operation.buffer.location.name),
-                        clean_value(j.operation.itemsupplier.supplier.name),
-                        clean_value(j.demand.name) if demand else "\\N",
-                        j.demand.due
-                        if j.demand
-                        else j.owner.demand.due
-                        if j.owner and j.owner.demand
-                        else "\\N",
-                        color
-                        if (proposedFound is False and status == "proposed")
-                        or (status == "proposed" and j.start == proposedFoundDate)
-                        or status in ("confirmed", "approved")
-                        else "\\N",  # color
-                        clean_value(j.reference),
-                        clean_value(j.batch),
-                        "\\N",
-                    ]
-                elif not i.hidden:
-                    # Export MO
-                    data = [
-                        clean_value(i.name),
-                        "MO",
-                        status,
-                        round(j.quantity, 8),
-                        str(j.start),
-                        str(j.end),
-                        round(j.criticality, 8),
-                        delay,
-                        cls.getPegging(j),
-                        clean_value(j.source),
-                        timestamp,
-                        clean_value(i.name),
-                        clean_value(j.owner.reference)
-                        if j.owner and not j.owner.operation.hidden
-                        else "\\N",
-                        clean_value(i.item.name)
-                        if i.item
-                        else clean_value(i.owner.item.name)
-                        if i.owner and i.owner.item
-                        else clean_value(j.demand.item.name)
-                        if j.demand and j.demand.item
-                        else clean_value(j.owner.demand.item.name)
-                        if j.owner and j.owner.demand and j.owner.demand.item
-                        else "\\N",
-                        "\\N",
-                        "\\N",
-                        clean_value(i.location.name) if i.location else "\\N",
-                        "\\N",
-                        clean_value(j.demand.name) if demand and j.demand else "\\N",
-                        j.demand.due
-                        if j.demand
-                        else j.owner.demand.due
-                        if j.owner and j.owner.demand
-                        else "\\N",
-                        color
-                        if (proposedFound is False and status == "proposed")
-                        or (status == "proposed" and j.start == proposedFoundDate)
-                        or status in ("confirmed", "approved")
-                        else "\\N",  # color
-                        clean_value(j.reference),
-                        clean_value(j.batch),
-                        round(j.quantity_completed, 8)
-                        if j.quantity_completed
-                        else "\\N",
-                    ]
-                elif j.demand or (j.owner and j.owner.demand):
-                    # Export shipments (with automatically created delivery operations)
-                    data = [
-                        clean_value(i.name),
-                        "DLVR",
-                        status,
-                        round(j.quantity, 8),
-                        str(j.start),
-                        str(j.end),
-                        round(j.criticality, 8),
-                        delay,
-                        cls.getPegging(j),
-                        clean_value(j.source),
-                        timestamp,
-                        "\\N",
-                        clean_value(j.owner.reference)
-                        if j.owner and not j.owner.operation.hidden
-                        else "\\N",
-                        clean_value(
-                            j.owner.demand.item.name
-                            if j.owner and j.owner.demand
-                            else j.demand.item.name
-                        ),
-                        "\\N",
-                        "\\N",
-                        clean_value(
-                            j.owner.demand.location.name
-                            if j.owner and j.owner.demand
-                            else j.demand.location.name
-                        ),
-                        "\\N",
-                        clean_value(j.demand.name) if demand else "\\N",
-                        j.demand.due
-                        if j.demand
-                        else j.owner.demand.due
-                        if j.owner and j.owner.demand
-                        else "\\N",
-                        "\\N",  # color is empty for deliver operation
-                        clean_value(j.reference),
-                        clean_value(j.batch),
-                        "\\N",
-                    ]
-                if data:
-                    if with_fcst:
-                        data.append(
-                            clean_value(forecast.owner.name) if forecast else "\\N"
+                for j in i.operationplans:
+                    if j.status in accepted_status:
+                        data = cls.getDataOpplan(
+                            i, j, with_fcst, timestamp, proposedFound, proposedFoundDate
                         )
-                    for attr in cls.attrs:
-                        v = getattr(j, attr[0], None)
-                        if v is None:
-                            data.append("\\N")
-                        elif attr[2] == "boolean":
-                            data.append(True if v else False)
-                        elif attr[2] == "duration":
-                            data.append(v)
-                        elif attr[2] == "integer":
-                            data.append(round(v))
-                        elif attr[2] == "number":
-                            data.append(round(v, 6))
-                        elif attr[2] == "string":
-                            data.append(clean_value(v))
-                        elif attr[2] == "time":
-                            data.append(v)
-                        elif attr[2] == "date":
-                            data.append(v)
-                        elif attr[2] == "datetime":
-                            data.append(v)
-                        else:
-                            raise Exception("Unknown attribute type %s" % attr[2])
-                    yield linetemplate % tuple(data)
-                    if status == "proposed":
-                        proposedFound = True
-                        proposedFoundDate = j.start
+                        if data:
+                            yield linetemplate % tuple(data)
+                            if j.status == "proposed":
+                                proposedFound = True
+                                proposedFoundDate = j.start
 
     @classmethod
-    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
-        with_fcst = "freppledb.forecast" in settings.INSTALLED_APPS
+    def getDataOpplan(
+        cls, i, j, with_fcst, timestamp, proposedFound, proposedFoundDate
+    ):
+        import frepple
 
+        status = j.status
+        delay = j.delay
+
+        if not with_fcst:
+            demand = j.demand
+            forecast = None
+        elif j.demand and not isinstance(j.demand, frepple.demand_forecastbucket):
+            demand = j.demand
+            forecast = None
+        elif j.demand and isinstance(j.demand, frepple.demand_forecastbucket):
+            demand = None
+            forecast = j.demand
+        elif (
+            j.owner
+            and j.owner.demand
+            and not isinstance(j.owner.demand, frepple.demand_forecastbucket)
+        ):
+            demand = j.owner.demand
+            forecast = None
+        elif (
+            j.owner
+            and j.owner.demand
+            and isinstance(j.owner.demand, frepple.demand_forecastbucket)
+        ):
+            demand = None
+            forecast = j.owner.demand
+        else:
+            demand = None
+            forecast = None
+        color = 100 - delay / 86400
+
+        data = None
+        if isinstance(i, frepple.operation_inventory):
+            # Export inventory
+            data = [
+                clean_value(i.name),
+                "STCK",
+                status,
+                round(j.quantity, 8),
+                str(j.start),
+                str(j.end),
+                round(j.criticality, 8),
+                delay,
+                cls.getPegging(j),
+                clean_value(j.source),
+                timestamp,
+                "\\N",
+                clean_value(j.owner.reference)
+                if j.owner and not j.owner.operation.hidden
+                else "\\N",
+                clean_value(j.operation.buffer.item.name),
+                clean_value(j.operation.buffer.location.name),
+                "\\N",
+                clean_value(j.operation.buffer.location.name),
+                "\\N",
+                clean_value(j.demand.name) if demand else "\\N",
+                j.demand.due
+                if j.demand
+                else j.owner.demand.due
+                if j.owner and j.owner.demand
+                else "\\N",
+                "\\N",  # color is empty for stock
+                clean_value(j.reference),
+                clean_value(j.batch),
+                "\\N",
+            ]
+        elif isinstance(i, frepple.operation_itemdistribution):
+            # Export DO
+            data = [
+                clean_value(i.name),
+                "DO",
+                status,
+                round(j.quantity, 8),
+                str(j.start),
+                str(j.end),
+                round(j.criticality, 8),
+                delay,
+                cls.getPegging(j),
+                clean_value(j.source),
+                timestamp,
+                "\\N",
+                clean_value(j.owner.reference)
+                if j.owner and not j.owner.operation.hidden
+                else "\\N",
+                clean_value(j.operation.destination.item.name)
+                if j.operation.destination
+                else j.operation.origin.item.name,
+                clean_value(j.operation.destination.location.name)
+                if j.operation.destination
+                else "\\N",
+                clean_value(j.operation.origin.location.name)
+                if j.operation.origin
+                else "\\N",
+                "\\N",
+                "\\N",
+                clean_value(j.demand.name) if demand else "\\N",
+                j.demand.due
+                if j.demand
+                else j.owner.demand.due
+                if j.owner and j.owner.demand
+                else "\\N",
+                color
+                if (proposedFound is False and status == "proposed")
+                or (status == "proposed" and j.start == proposedFoundDate)
+                or status in ("confirmed", "approved")
+                else "\\N",  # color
+                clean_value(j.reference),
+                clean_value(j.batch),
+                "\\N",
+            ]
+        elif isinstance(i, frepple.operation_itemsupplier):
+            # Export PO
+            data = [
+                clean_value(i.name),
+                "PO",
+                status,
+                round(j.quantity, 8),
+                str(j.start),
+                str(j.end),
+                round(j.criticality, 8),
+                delay,
+                cls.getPegging(j),
+                clean_value(j.source),
+                timestamp,
+                "\\N",
+                clean_value(j.owner.reference)
+                if j.owner and not j.owner.operation.hidden
+                else "\\N",
+                clean_value(j.operation.buffer.item.name),
+                "\\N",
+                "\\N",
+                clean_value(j.operation.buffer.location.name),
+                clean_value(j.operation.itemsupplier.supplier.name),
+                clean_value(j.demand.name) if demand else "\\N",
+                j.demand.due
+                if j.demand
+                else j.owner.demand.due
+                if j.owner and j.owner.demand
+                else "\\N",
+                color
+                if (proposedFound is False and status == "proposed")
+                or (status == "proposed" and j.start == proposedFoundDate)
+                or status in ("confirmed", "approved")
+                else "\\N",  # color
+                clean_value(j.reference),
+                clean_value(j.batch),
+                "\\N",
+            ]
+        elif not i.hidden:
+            # Export MO
+            data = [
+                clean_value(i.name),
+                "MO",
+                status,
+                round(j.quantity, 8),
+                str(j.start),
+                str(j.end),
+                round(j.criticality, 8),
+                delay,
+                cls.getPegging(j),
+                clean_value(j.source),
+                timestamp,
+                clean_value(i.name),
+                clean_value(j.owner.reference)
+                if j.owner and not j.owner.operation.hidden
+                else "\\N",
+                clean_value(i.item.name)
+                if i.item
+                else clean_value(i.owner.item.name)
+                if i.owner and i.owner.item
+                else clean_value(j.demand.item.name)
+                if j.demand and j.demand.item
+                else clean_value(j.owner.demand.item.name)
+                if j.owner and j.owner.demand and j.owner.demand.item
+                else "\\N",
+                "\\N",
+                "\\N",
+                clean_value(i.location.name) if i.location else "\\N",
+                "\\N",
+                clean_value(j.demand.name) if demand and j.demand else "\\N",
+                j.demand.due
+                if j.demand
+                else j.owner.demand.due
+                if j.owner and j.owner.demand
+                else "\\N",
+                color
+                if (proposedFound is False and status == "proposed")
+                or (status == "proposed" and j.start == proposedFoundDate)
+                or status in ("confirmed", "approved")
+                else "\\N",  # color
+                clean_value(j.reference),
+                clean_value(j.batch),
+                round(j.quantity_completed, 8) if j.quantity_completed else "\\N",
+            ]
+        elif j.demand or (j.owner and j.owner.demand):
+            # Export shipments (with automatically created delivery operations)
+            data = [
+                clean_value(i.name),
+                "DLVR",
+                status,
+                round(j.quantity, 8),
+                str(j.start),
+                str(j.end),
+                round(j.criticality, 8),
+                delay,
+                cls.getPegging(j),
+                clean_value(j.source),
+                timestamp,
+                "\\N",
+                clean_value(j.owner.reference)
+                if j.owner and not j.owner.operation.hidden
+                else "\\N",
+                clean_value(
+                    j.owner.demand.item.name
+                    if j.owner and j.owner.demand
+                    else j.demand.item.name
+                ),
+                "\\N",
+                "\\N",
+                clean_value(
+                    j.owner.demand.location.name
+                    if j.owner and j.owner.demand
+                    else j.demand.location.name
+                ),
+                "\\N",
+                clean_value(j.demand.name) if demand else "\\N",
+                j.demand.due
+                if j.demand
+                else j.owner.demand.due
+                if j.owner and j.owner.demand
+                else "\\N",
+                "\\N",  # color is empty for deliver operation
+                clean_value(j.reference),
+                clean_value(j.batch),
+                "\\N",
+            ]
+        if data:
+            if with_fcst:
+                data.append(clean_value(forecast.owner.name) if forecast else "\\N")
+            for attr in cls.attrs:
+                v = getattr(j, attr[0], None)
+                if v is None:
+                    data.append("\\N")
+                elif attr[2] == "boolean":
+                    data.append(True if v else False)
+                elif attr[2] == "duration":
+                    data.append(v)
+                elif attr[2] == "integer":
+                    data.append(round(v))
+                elif attr[2] == "number":
+                    data.append(round(v, 6))
+                elif attr[2] == "string":
+                    data.append(clean_value(v))
+                elif attr[2] == "time":
+                    data.append(v)
+                elif attr[2] == "date":
+                    data.append(v)
+                elif attr[2] == "datetime":
+                    data.append(v)
+                else:
+                    raise Exception("Unknown attribute type %s" % attr[2])
+        return data
+
+    @classmethod
+    def run(cls, cluster=-1, opplans=None, database=DEFAULT_DB_ALIAS, **kwargs):
+        if cluster == -2 and not opplans:
+            return
+        with_fcst = "freppledb.forecast" in settings.INSTALLED_APPS
         cls.attrs = [x for x in getAttributes(OperationPlan) if x[0] != "forecast"]
 
         # Export operationplans to a temporary table
@@ -833,6 +923,7 @@ class ExportOperationPlans(PlanTask):
                     with_fcst,
                     cls.parent.timestamp,
                     cluster=cluster,
+                    opplans=opplans,
                     accepted_status=["confirmed", "approved", "completed", "closed"],
                 )
             ),
@@ -882,14 +973,15 @@ class ExportOperationPlans(PlanTask):
 
         # Make sure any deleted confirmed MO from Plan Editor gets deleted in the database
         # Only MO can currently be deleted through Plan Editor
-        cursor.execute(
-            """
-            delete from operationplan
-            where status in ('confirmed','approved','completed','closed')
-            and type = 'MO'
-            and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-            """
-        )
+        if cluster != -2:
+            cursor.execute(
+                """
+                delete from operationplan
+                where status in ('confirmed','approved','completed','closed')
+                and type = 'MO'
+                and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+                """
+            )
 
         # directly injecting proposed records in operationplan table
         cursor.copy_from(
@@ -898,6 +990,7 @@ class ExportOperationPlans(PlanTask):
                     with_fcst,
                     cls.parent.timestamp,
                     cluster=cluster,
+                    opplans=opplans,
                     accepted_status=["proposed"],
                 )
             ),
@@ -955,6 +1048,8 @@ class ExportOperationPlans(PlanTask):
               deliverydate = cte.deliverydate
             from cte
             where cte.demand_id = demand.name
+            and demand.plannedquantity is distinct from cte.plannedquantity
+            and demand.deliverydate is distinct from cte.deliverydate
             """
         )
         cursor.execute(
@@ -992,11 +1087,11 @@ class ExportOperationPlanMaterials(PlanTask):
             return -1
 
     @staticmethod
-    def getData(timestamp, cluster=-1, buffers=None, **kwargs):
+    def getData(timestamp, cluster=-1, buffers=None):
         import frepple
 
-        for i in buffers or frepple.buffers():
-            if cluster != -1 and i.cluster not in cluster:
+        for i in buffers if cluster == -2 else frepple.buffers():
+            if cluster not in (-1, -2) and i.cluster not in cluster:
                 continue
             for j in i.flowplans:
                 if not j.quantity:
@@ -1026,14 +1121,24 @@ class ExportOperationPlanMaterials(PlanTask):
                     )
 
     @classmethod
-    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, timestamp=None, **kwargs):
+    def run(
+        cls,
+        cluster=-1,
+        buffers=None,
+        database=DEFAULT_DB_ALIAS,
+        timestamp=None,
+        **kwargs
+    ):
+        if cluster == -2 and not buffers:
+            return
+
         cursor = connections[database].cursor()
         cursor.copy_from(
             CopyFromGenerator(
                 cls.getData(
                     timestamp=timestamp or cls.parent.timestamp,
                     cluster=cluster,
-                    **kwargs
+                    buffers=buffers,
                 )
             ),
             "operationplanmaterial",
@@ -1080,6 +1185,9 @@ class ComputePeriodOfCover(PlanTask):
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
+
+        if cluster == -2:
+            return
 
         currentdate = frepple.settings.current
         cursor = connections[database].cursor()
@@ -1193,7 +1301,7 @@ class ExportOperationPlanResources(PlanTask):
         import frepple
 
         for i in resources or frepple.resources():
-            if cluster != -1 and i.cluster not in cluster:
+            if cluster not in (-1, -2) and i.cluster not in cluster:
                 continue
             for j in i.loadplans:
                 if j.quantity >= 0:
@@ -1227,28 +1335,30 @@ class ExportOperationPlanResources(PlanTask):
         resources=None,
         **kwargs
     ):
-        cursor = connections[database].cursor()
-        cursor.copy_from(
-            CopyFromGenerator(
-                cls.getData(
-                    timestamp=timestamp or cls.parent.timestamp,
-                    cluster=cluster,
-                    resources=resources,
-                    **kwargs
-                )
-            ),
-            "operationplanresource",
-            columns=(
-                "operationplan_id",
-                "resource_id",
-                "quantity",
-                "setup",
-                "status",
-                "lastmodified",
-            ),
-            size=1024,
-            sep="\v",
-        )
+        if cluster == -2 and not resources:
+            return
+        with connections[database].cursor() as cursor:
+            cursor.copy_from(
+                CopyFromGenerator(
+                    cls.getData(
+                        timestamp=timestamp or cls.parent.timestamp,
+                        cluster=cluster,
+                        resources=resources,
+                        **kwargs
+                    )
+                ),
+                "operationplanresource",
+                columns=(
+                    "operationplan_id",
+                    "resource_id",
+                    "quantity",
+                    "setup",
+                    "status",
+                    "lastmodified",
+                ),
+                size=1024,
+                sep="\v",
+            )
 
 
 @PlanTaskRegistry.register
@@ -1268,6 +1378,9 @@ class ExportResourcePlans(PlanTask):
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, resources=None, **kwargs):
         import frepple
 
+        if cluster == -2 and not resources:
+            return
+
         # Set the timestamp for the export tasks in this thread
         cls.parent.timestamp = datetime.now()
 
@@ -1277,11 +1390,12 @@ class ExportResourcePlans(PlanTask):
         # The end date is computed as 5 weeks after the end of the latest loadplan in
         # the entire plan.
         # If no loadplans exist at all we use the current date +- 1 month.
+        # TODO not very efficient in an incremental export
         cursor = connections[database].cursor()
         startdate = datetime.max
         enddate = datetime.min
         for i in frepple.resources():
-            if cluster != -1 and i.cluster not in cluster:
+            if cluster not in (-1, -2) and i.cluster not in cluster:
                 continue
             for j in i.loadplans:
                 if j.startdate < startdate:
@@ -1308,10 +1422,10 @@ class ExportResourcePlans(PlanTask):
         )
         buckets = [rec[0] for rec in cursor.fetchall()]
 
-        def getData():
+        def getData(resources):
             # Loop over all reporting buckets of all resources
             for i in resources or frepple.resources():
-                if cluster != -1 and cluster != i.cluster:
+                if cluster not in (-1, -2) and cluster != i.cluster:
                     continue
                 for j in i.plan(buckets):
                     yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
@@ -1325,7 +1439,7 @@ class ExportResourcePlans(PlanTask):
                     )
 
         cursor.copy_from(
-            CopyFromGenerator(getData()),
+            CopyFromGenerator(getData(resources=resources)),
             "out_resourceplan",
             columns=(
                 "resource",
@@ -1355,11 +1469,11 @@ class ExportPegging(PlanTask):
             return -1
 
     @staticmethod
-    def getDemandPlan(cluster=-1):
+    def getDemandPlan(cluster=-1, demands=None):
         import frepple
 
-        for i in frepple.demands():
-            if cluster != -1 and i.cluster not in cluster:
+        for i in demands if cluster == -2 else frepple.demands():
+            if cluster not in (-1, 2) and i.cluster not in cluster:
                 continue
             if i.hidden or not isinstance(i, frepple.demand_default):
                 continue
@@ -1378,15 +1492,15 @@ class ExportPegging(PlanTask):
             yield (json.dumps({"pegging": peg}), i.name)
 
     @classmethod
-    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
+    def run(cls, cluster=-1, demands=None, database=DEFAULT_DB_ALIAS, **kwargs):
         with transaction.atomic(using=database, savepoint=False):
-            cursor = connections[database].cursor()
-            execute_batch(
-                cursor,
-                "update demand set plan=%s where name=%s",
-                cls.getDemandPlan(cluster=cluster),
-                page_size=200,
-            )
+            with connections[database].cursor() as cursor:
+                execute_batch(
+                    cursor,
+                    "update demand set plan=%s where name=%s",
+                    cls.getDemandPlan(cluster=cluster, demands=demands),
+                    page_size=200,
+                )
 
 
 @PlanTaskRegistry.register

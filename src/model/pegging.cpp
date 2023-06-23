@@ -144,7 +144,8 @@ PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b,
       maxlevel(maxlevel) {
   initType(metadata);
   if (!opplan) return;
-  if (opplan->getTopOwner()->getOperation()->hasType<OperationSplit>())
+  if (opplan->getTopOwner()->getOperation()->hasType<OperationSplit>() ||
+      maxlevel > 0)
     updateStack(opplan, opplan->getQuantity(), 0.0, 0, 0L);
   else
     updateStack(opplan->getTopOwner(), opplan->getTopOwner()->getQuantity(),
@@ -159,8 +160,12 @@ PeggingIterator::PeggingIterator(const FlowPlan* fp, bool b)
       maxlevel(-1) {
   initType(metadata);
   if (!fp) return;
-  updateStack(fp->getOperationPlan()->getTopOwner(),
-              fp->getOperationPlan()->getQuantity(), 0.0, 0, 0L);
+  if (maxlevel > 0)
+    updateStack(fp->getOperationPlan(), fp->getOperationPlan()->getQuantity(),
+                0.0, 0, 0L);
+  else
+    updateStack(fp->getOperationPlan()->getTopOwner(),
+                fp->getOperationPlan()->getQuantity(), 0.0, 0, 0L);
 }
 
 PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
@@ -171,8 +176,12 @@ PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
       maxlevel(-1) {
   initType(metadata);
   if (!lp) return;
-  updateStack(lp->getOperationPlan()->getTopOwner(),
-              lp->getOperationPlan()->getQuantity(), 0.0, 0, 0L);
+  if (maxlevel > 0)
+    updateStack(lp->getOperationPlan(), lp->getOperationPlan()->getQuantity(),
+                0.0, 0, 0L);
+  else
+    updateStack(lp->getOperationPlan()->getTopOwner(),
+                lp->getOperationPlan()->getQuantity(), 0.0, 0, 0L);
 }
 
 PeggingIterator& PeggingIterator::operator--() {
@@ -235,7 +244,10 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
   if (!op->getQuantity()) return;
 
   // Did we reach the maximum depth we want to visit
-  if ((*this).getMaxLevel() != -1 && lvl > (*this).getMaxLevel()) return;
+  // If the operation is hidden, we allow one more level
+  if (maxlevel != -1 && lvl > maxlevel &&
+      !op->getOperation()->getHidden())
+    return;
 
   // For each flowplan ask the buffer to find the pegged operationplans.
   if (downstream)
@@ -254,9 +266,67 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
   // Push child operationplans on the stack.
   // The pegged quantity is equal to the ratio of the quantities of the
   // parent and child operationplan.
-  for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j)
-    updateStack(&*j, qty * j->getQuantity() / op->getQuantity(),
-                offset * j->getQuantity() / op->getQuantity(), lvl + 1, 0L);
+
+  if (maxlevel > 0) {
+    if (lvl <= maxlevel - 1 || op->getOperation()->getHidden()) {
+      // DOWNSTREAM
+      if (downstream) {
+        // In downstream, a routing operation will send its first step
+        if (op->getOperation()->hasType<OperationRouting>()) {
+          for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j) {
+            updateStack(&*j, qty * j->getQuantity() / op->getQuantity(),
+                        offset * j->getQuantity() / op->getQuantity(), lvl + 1,
+                        0L);
+            break;
+          }
+        }
+
+        // In downstream, a routing suboperation will send the next suboperation
+        if (op->getOwner() &&
+            op->getOwner()->getOperation()->hasType<OperationRouting>() &&
+            op->getNextSubOpplan()) {
+          updateStack(
+              op->getNextSubOpplan(),
+              qty * op->getNextSubOpplan()->getQuantity() / op->getQuantity(),
+              offset * op->getNextSubOpplan()->getQuantity() /
+                  op->getQuantity(),
+              lvl + 1, 0L);
+        }
+      } else {
+        // UPSTREAM
+        // In upstream, a routing operation will send its last step
+        if (op->getOperation()->hasType<OperationRouting>()) {
+          OperationPlan* opplan_last;
+          for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j) {
+            opplan_last = &*j;
+          }
+          if (opplan_last)
+            updateStack(opplan_last,
+                        qty * opplan_last->getQuantity() / op->getQuantity(),
+                        offset * opplan_last->getQuantity() / op->getQuantity(),
+                        lvl + 1, 0L);
+        }
+
+        // In upstream, a routing suboperation will send the previous
+        // suboperation
+        if (op->getOwner() &&
+            op->getOwner()->getOperation()->hasType<OperationRouting>() &&
+            op->getPrevSubOpplan()) {
+          updateStack(
+              op->getPrevSubOpplan(),
+              qty * op->getPrevSubOpplan()->getQuantity() / op->getQuantity(),
+              offset * op->getPrevSubOpplan()->getQuantity() /
+                  op->getQuantity(),
+              lvl + 1, 0L);
+        }
+      }
+    }
+  } else {
+    for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j) {
+      updateStack(&*j, qty * j->getQuantity() / op->getQuantity(),
+                  offset * j->getQuantity() / op->getQuantity(), lvl + 1, 0L);
+    }
+  }
 
   // Push dependencies on the stack.
   for (auto d : op->getDependencies()) {

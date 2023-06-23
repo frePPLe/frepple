@@ -2,9 +2,11 @@
 Inventory planning screen
 =========================
 
-.. Important::
 
-   This module is only available in the Enterprise Edition.
+  .. Important::
+
+     This module is only available in the Enterprise Edition.
+
 
 The inventory planning screen allows the management of the inventory policies
 at the decoupling points in the supply chain.

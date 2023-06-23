@@ -2,9 +2,9 @@
 Forecast report
 ===============
 
-.. Important::
+  .. Important::
 
-   This report is only available in the Enterprise Edition.
+     This report is only available in the Enterprise Edition.
 
 This report provides a convenient way to review and enter forecast numbers. When entering
 forecast numbers, the numbers will be disaggregated to the planning buckets.

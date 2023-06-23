@@ -11,11 +11,11 @@ This section guides users during the creation of their first frePPLe model.
    :width: 100%
    :alt: Wizard screenshot
 
-.. Important::
+  .. Important::
 
-   | The wizard aims at helping you to bring up a basic model as quick and easy
-     as possible.
-   | It does NOT cover all possible features and functionality of frePPLe.
+     | The wizard aims at helping you to bring up a basic model as quick and easy
+       as possible.
+     | It does NOT cover all possible features and functionality of frePPLe.
 
 .. toctree::
    :maxdepth: 2

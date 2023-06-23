@@ -2,9 +2,9 @@
 Plan editor
 ===========
 
-.. Important::
+  .. Important::
 
-   This report is only available in the Enterprise Edition.
+     This report is only available in the Enterprise Edition.
 
 The plan editor report provides an interactive Gantt chart
 where the user can visually review the plan and make changes to it.

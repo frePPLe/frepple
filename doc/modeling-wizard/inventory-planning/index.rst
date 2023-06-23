@@ -2,9 +2,9 @@
 Inventory planning
 ==================
 
-.. Important::
+  .. Important::
 
-   This functionality is only available in the Enterprise Edition.
+     This functionality is only available in the Enterprise Edition.
 
 This module provides the functionality to compute a safety stock and a reorder
 quantity for your buffers.

@@ -24,16 +24,16 @@ effective_start  dateTime          Earliest allowed end date for using this subo
 effective_end    dateTime          Latest allowed end date for using this suboperation.
 ================ ================= ===========================================================
 
-.. Important::
+  .. Important::
 
    This table is now deprecated.
-   
+
    All information can now be defined in the operation table.
-   
+
    * **Old data model**:
-   
+
      Operation table:
-   
+
      ============ ========== ========= ================ ==============
      Name         Type       Priority  Effective start  Effective end
      ============ ========== ========= ================ ==============
@@ -44,22 +44,22 @@ effective_end    dateTime          Latest allowed end date for using this subope
      Make X Alt1  time_per
      Make X Alt2  time_per
      ============ ========== ========= ================ ==============
-   
+
      Suboperation table:
-   
+
      ============ ============ ======== =============== =============
      Operation    Suboperation Priority Effective-start Effective-end
      ============ ============ ======== =============== =============
      Paint        Apply paint  1
      Paint        Dry paint    2
-     Make X       Make X Alt1  1                        2020-01-01 
+     Make X       Make X Alt1  1                        2020-01-01
      Make X       Make X Alt2  2        2019-12-01
      ============ ============ ======== =============== =============
-   
+
    * **New data model**:
-  
+
      Operation table:
-   
+
      ============ ========== ======== ================ ============= ========
      Name         Type       Priority  Effective-start Effective-end Owner
      ============ ========== ======== ================ ============= ========

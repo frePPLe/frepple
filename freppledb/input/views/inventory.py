@@ -656,13 +656,11 @@ class DistributionOrderList(OperationPlanMixin):
         groupingcfg["item__subcategory"] = force_str(
             format_lazy("{} - {}", _("item"), _("subcategory"))
         )
+        ctx = super().extra_context(request, *args, **kwargs)
         if args and args[0]:
             paths = request.path.split("/")
             if paths[4] == "operationplanmaterial":
-                return (
-                    super()
-                    .extra_context(request, *args, **kwargs)
-                    .update(
+                ctx.update(
                         {
                             "default_operationplan_type": "DO",
                             "groupBy": "status",
@@ -676,13 +674,9 @@ class DistributionOrderList(OperationPlanMixin):
                             "groupingcfg": groupingcfg,
                             "currentdate": getCurrentDate(database=request.database),
                         }
-                    )
                 )
             elif paths[4] == "produced":
-                return (
-                    super()
-                    .extra_context(request, *args, **kwargs)
-                    .update(
+                ctx.update(
                         {
                             "default_operationplan_type": "DO",
                             "groupBy": "status",
@@ -696,13 +690,9 @@ class DistributionOrderList(OperationPlanMixin):
                             "groupingcfg": groupingcfg,
                             "currentdate": getCurrentDate(database=request.database),
                         }
-                    )
                 )
             elif paths[4] == "consumed":
-                return (
-                    super()
-                    .extra_context(request, *args, **kwargs)
-                    .update(
+                ctx.update(
                         {
                             "default_operationplan_type": "DO",
                             "groupBy": "status",
@@ -719,12 +709,8 @@ class DistributionOrderList(OperationPlanMixin):
                             "currentdate": getCurrentDate(database=request.database),
                         }
                     )
-                )
             elif paths[4] == "item":
-                return (
-                    super()
-                    .extra_context(request, *args, **kwargs)
-                    .update(
+                ctx.update(
                         {
                             "default_operationplan_type": "DO",
                             "groupBy": "status",
@@ -736,14 +722,10 @@ class DistributionOrderList(OperationPlanMixin):
                             "currentdate": getCurrentDate(database=request.database),
                         }
                     )
-                )
             elif paths[4] == "location":
                 path = paths[-2]
                 if path == "in":
-                    return (
-                        super()
-                        .extra_context(request, *args, **kwargs)
-                        .update(
+                    ctx.update(
                             {
                                 "default_operationplan_type": "DO",
                                 "groupBy": "status",
@@ -759,12 +741,8 @@ class DistributionOrderList(OperationPlanMixin):
                                 ),
                             }
                         )
-                    )
                 elif path == "out":
-                    return (
-                        super()
-                        .extra_context(request, *args, **kwargs)
-                        .update(
+                    ctx.update(
                             {
                                 "default_operationplan_type": "DO",
                                 "groupBy": "status",
@@ -780,12 +758,8 @@ class DistributionOrderList(OperationPlanMixin):
                                 ),
                             }
                         )
-                    )
             else:
-                return (
-                    super()
-                    .extra_context(request, *args, **kwargs)
-                    .update(
+                ctx.update(
                         {
                             "default_operationplan_type": "DO",
                             "groupBy": "status",
@@ -795,12 +769,8 @@ class DistributionOrderList(OperationPlanMixin):
                             "currentdate": getCurrentDate(database=request.database),
                         }
                     )
-                )
         elif "parentreference" in request.GET:
-            return (
-                super()
-                .extra_context(request, *args, **kwargs)
-                .update(
+            ctx.update(
                     {
                         "default_operationplan_type": "DO",
                         "groupBy": "status",
@@ -812,12 +782,8 @@ class DistributionOrderList(OperationPlanMixin):
                         "currentdate": getCurrentDate(database=request.database),
                     }
                 )
-            )
         else:
-            return (
-                super()
-                .extra_context(request, *args, **kwargs)
-                .update(
+            ctx.update(
                     {
                         "default_operationplan_type": "DO",
                         "groupBy": "status",
@@ -826,7 +792,7 @@ class DistributionOrderList(OperationPlanMixin):
                         "currentdate": getCurrentDate(database=request.database),
                     }
                 )
-            )
+        return ctx
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

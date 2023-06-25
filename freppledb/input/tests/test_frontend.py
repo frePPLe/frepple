@@ -20,10 +20,11 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-import unittest
-import time
 import datetime as mainDate
 from datetime import datetime
+import os
+import time
+import unittest
 
 from django.db.models import Q
 from django.core import management
@@ -37,10 +38,23 @@ from freppledb.input.models import (
     DistributionOrder,
     ManufacturingOrder,
 )
+from freppledb.webservice.utils import waitTillRunning
 
 
 class PurchaseOrderScreen(SeleniumTest):
     fixtures = ["manufacturing_demo"]
+
+    def setUp(self):
+        os.environ["FREPPLE_TEST"] = "webservice"
+        if "nowebservice" in os.environ:
+            del os.environ["nowebservice"]
+        management.call_command("runplan", env="loadplan", background=True)
+        waitTillRunning(timeout=180)
+        super().setUp()
+
+    def tearDown(self):
+        management.call_command("stopwebservice", force=True, wait=True)
+        super().tearDown()
 
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_single_row_modification(self):
@@ -141,6 +155,18 @@ class PurchaseOrderScreen(SeleniumTest):
 class DistributionOrderScreen(SeleniumTest):
 
     fixtures = ["manufacturing_demo"]
+
+    def setUp(self):
+        os.environ["FREPPLE_TEST"] = "webservice"
+        if "nowebservice" in os.environ:
+            del os.environ["nowebservice"]
+        management.call_command("runplan", env="loadplan", background=True)
+        waitTillRunning(timeout=180)
+        super().setUp()
+
+    def tearDown(self):
+        management.call_command("stopwebservice", force=True, wait=True)
+        super().tearDown()
 
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_single_row_modification(self):
@@ -247,9 +273,16 @@ class ManufacturingOrderScreen(SeleniumTest):
     fixtures = ["manufacturing_demo"]
 
     def setUp(self):
+        os.environ["FREPPLE_TEST"] = "webservice"
+        if "nowebservice" in os.environ:
+            del os.environ["nowebservice"]
+        management.call_command("runplan", plantype=1, constraint=15, env="supply,loadplan", background=True)
+        waitTillRunning(timeout=180)
         super().setUp()
 
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+    def tearDown(self):
+        management.call_command("stopwebservice", force=True, wait=True)
+        super().tearDown()
 
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_single_row_modification(self):

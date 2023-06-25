@@ -126,7 +126,7 @@ class TruncatePlan(PlanTask):
                 cursor.execute(
                     """
                     delete from out_resourceplan
-                    where resource_id = any(%s)
+                    where resource = any(%s)
                     """,
                     (resnames,),
                 )

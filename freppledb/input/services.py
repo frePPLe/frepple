@@ -66,12 +66,15 @@ class OperationplanService(AsyncHttpConsumer):
         related_demands,
     ):
         import frepple
+
         for d in opplan.loadplans:
             related_resources.add(d.resource)
         for d in opplan.flowplans:
             related_buffers.add(d.buffer)
             for flpln in d.buffer.flowplans:
-                if isinstance(flpln.operationplan.operation, frepple.operation_inventory):
+                if isinstance(
+                    flpln.operationplan.operation, frepple.operation_inventory
+                ):
                     # Force stck opplan to be present in the database
                     related_opplans.add(flpln.operationplan)
                 break
@@ -79,7 +82,11 @@ class OperationplanService(AsyncHttpConsumer):
             related_demands.add(opplan.demand)
         if opplan.owner:
             self.collectRelated(
-                opplan.owner, related_opplans, related_resources, related_buffers
+                opplan.owner,
+                related_opplans,
+                related_resources,
+                related_buffers,
+                related_demands,
             )
 
     async def handle(self, body):

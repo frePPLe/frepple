@@ -924,7 +924,9 @@ class ExportOperationPlans(PlanTask):
                     cls.parent.timestamp,
                     cluster=cluster,
                     opplans=opplans,
-                    accepted_status=["confirmed", "approved", "completed", "closed"],
+                    accepted_status=["confirmed", "approved", "completed", "closed"]
+                    if cluster != -2
+                    else ["proposed", "confirmed", "approved", "completed", "closed"],
                 )
             ),
             table="tmp_operationplan",
@@ -983,55 +985,56 @@ class ExportOperationPlans(PlanTask):
                 """
             )
 
-        # directly injecting proposed records in operationplan table
-        cursor.copy_from(
-            CopyFromGenerator(
-                cls.getData(
-                    with_fcst,
-                    cls.parent.timestamp,
-                    cluster=cluster,
-                    opplans=opplans,
-                    accepted_status=["proposed"],
-                )
-            ),
-            table="operationplan",
-            size=1024,
-            sep="\v",
-            columns=[
-                "name",
-                "type",
-                "status",
-                "quantity",
-                "startdate",
-                "enddate",
-                "criticality",
-                "delay",
-                "plan",
-                "source",
-                "lastmodified",
-                "operation_id",
-                "owner_id",
-                "item_id",
-                "destination_id",
-                "origin_id",
-                "location_id",
-                "supplier_id",
-                "demand_id",
-                "due",
-                "color",
-                "reference",
-                "batch",
-                "quantity_completed",
-            ]
-            + (
-                [
-                    "forecast",
+        # Directly injecting proposed records in operationplan table
+        if cluster != -2:
+            cursor.copy_from(
+                CopyFromGenerator(
+                    cls.getData(
+                        with_fcst,
+                        cls.parent.timestamp,
+                        cluster=cluster,
+                        opplans=opplans,
+                        accepted_status=["proposed"],
+                    )
+                ),
+                table="operationplan",
+                size=1024,
+                sep="\v",
+                columns=[
+                    "name",
+                    "type",
+                    "status",
+                    "quantity",
+                    "startdate",
+                    "enddate",
+                    "criticality",
+                    "delay",
+                    "plan",
+                    "source",
+                    "lastmodified",
+                    "operation_id",
+                    "owner_id",
+                    "item_id",
+                    "destination_id",
+                    "origin_id",
+                    "location_id",
+                    "supplier_id",
+                    "demand_id",
+                    "due",
+                    "color",
+                    "reference",
+                    "batch",
+                    "quantity_completed",
                 ]
-                if with_fcst
-                else []
+                + (
+                    [
+                        "forecast",
+                    ]
+                    if with_fcst
+                    else []
+                )
+                + [a[0] for a in cls.attrs],
             )
-            + [a[0] for a in cls.attrs],
-        )
 
         # update demand table specific fields
         cursor.execute(

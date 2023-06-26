@@ -811,16 +811,16 @@ class loadOperations(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cursor.execute(
                     """
-                SELECT
-                  name, fence, posttime, sizeminimum, sizemultiple, sizemaximum,
-                  type, duration, duration_per, location_id, cost, search, description,
-                  category, subcategory, source, item_id, priority, effective_start,
-                  effective_end, available_id,
-                  (select type from item where item.name = operation.item_id)
-                  %s
-                FROM operation %s
-                """
-                    % filter_where
+                    SELECT
+                    name, fence, posttime, sizeminimum, sizemultiple, sizemaximum,
+                    type, duration, duration_per, location_id, cost, search, description,
+                    category, subcategory, source, item_id, priority, effective_start,
+                    effective_end, available_id,
+                    (select type from item where item.name = operation.item_id)
+                    %s
+                    FROM operation %s
+                    """
+                    % (attrsql, filter_where)
                 )
                 for i in cursor:
                     cnt += 1

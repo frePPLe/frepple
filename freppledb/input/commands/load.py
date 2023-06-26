@@ -33,7 +33,14 @@ from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from freppledb.boot import getAttributes
 from freppledb.common.models import Parameter
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
-from freppledb.input.models import Resource, Item, Location, OperationPlan, Demand
+from freppledb.input.models import (
+    Resource,
+    Item,
+    Location,
+    OperationPlan,
+    Demand,
+    Operation,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -693,6 +700,12 @@ class loadOperations(LoadTask):
         else:
             filter_where = ""
 
+        attrs = [f[0] for f in getAttributes(Operation)]
+        if attrs:
+            attrsql = ", %s" % ", ".join(attrs)
+        else:
+            attrsql = ""
+
         with connections[database].cursor() as cursor:
             cnt = 0
             starttime = time()
@@ -804,6 +817,7 @@ class loadOperations(LoadTask):
                   category, subcategory, source, item_id, priority, effective_start,
                   effective_end, available_id,
                   (select type from item where item.name = operation.item_id)
+                  %s
                 FROM operation %s
                 """
                     % filter_where
@@ -900,6 +914,10 @@ class loadOperations(LoadTask):
                             x.available = frepple.calendar(name=i[20])
                         if i[13] == "subcontractor":
                             x.nolocationcalendar = True
+                        idx = 22
+                        for a in attrs:
+                            setattr(x, a, i[idx])
+                            idx += 1
                     except Exception as e:
                         logger.error("**** %s ****" % e)
                 logger.info(

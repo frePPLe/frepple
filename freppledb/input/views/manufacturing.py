@@ -369,6 +369,9 @@ class OperationMaterialList(GridReport):
             # Adding custom operation attributes
             for f in getAttributeFields(
                 Operation,
+                related_name_prefix="operation",
+                initially_hidden=True,
+                editable=False,
             ):
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "operation.%s, " % f.name.split("__")[-1]

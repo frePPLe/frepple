@@ -2052,8 +2052,14 @@ double Operation::setOperationPlanQuantity(OperationPlan* oplan, double f,
   if (f < 0)
     throw DataException("Operationplans can't have negative quantities");
 
-  // Only proposed and approved operationplans respect sizing constraints
-  if (!oplan->getProposed() && !oplan->getApproved()) {
+  // Only proposed and approved operationplans respect sizing constraints.
+  // Special case: a confirmed step in a approved or proposed routing
+  // operationplan also needs to respect the sizing constraints.
+  if (!oplan->getProposed() && !oplan->getApproved() &&
+      !(oplan->getOwner() &&
+        oplan->getOwner()->getOperation()->hasType<OperationRouting>() &&
+        (oplan->getOwner()->getProposed() ||
+         oplan->getOwner()->getApproved()))) {
     if (execute) {
       oplan->quantity = f;
       if (upd) oplan->update();
@@ -2175,20 +2181,8 @@ double OperationRouting::setOperationPlanQuantity(OperationPlan* oplan,
 
   // Update all routing sub operationplans
   for (auto i = oplan->firstsubopplan; i; i = i->nextsubopplan) {
-    if (!i->getProposed()) {
-      // Find the unlocked operationplan on the same operation
-      OperationPlan* match = i->prevsubopplan;
-      while (match && match->getOperation() != i->getOperation())
-        match = match->prevsubopplan;
-      if (match) {
-        match->quantity = newqty - i->quantity;
-        if (match->quantity < 0.0) match->quantity = 0.0;
-        if (upd) match->resizeFlowLoadPlans();
-      }
-    } else {
-      i->quantity = newqty;
-      if (upd) i->resizeFlowLoadPlans();
-    }
+    i->quantity = newqty;
+    if (upd) i->resizeFlowLoadPlans();
   }
 
   // Update the flow and loadplans, and mark for problem detection

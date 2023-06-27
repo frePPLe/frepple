@@ -331,6 +331,7 @@ pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
 
   double opplan_quantity;
   bool less_than_fixed_qty =
+      fabs(getFlow()->getQuantityFixed()) &&
       fabs(quantity) < fabs(getFlow()->getQuantityFixed()) + ROUNDING_ERROR;
   if (getFlow()->getQuantity() == 0.0 || less_than_fixed_qty) {
     // Fixed quantity flows only allow resizing to 0

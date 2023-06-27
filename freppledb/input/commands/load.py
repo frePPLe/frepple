@@ -2208,8 +2208,8 @@ class loadOperationPlans(LoadTask):
 
                         if opplan:
                             idx = 20 if with_fcst else 18
-                            for a in attrs:
-                                setattr(opplan, a, i[idx])
+                            for a in getAttributes(OperationPlan):
+                                setattr(opplan, a[0], i[idx])
                                 idx += 1
 
                         if dmd and opplan:
@@ -2343,8 +2343,8 @@ class loadOperationPlans(LoadTask):
                                     start=i[12],
                                 )
                             idx = 13 if with_fcst else 11
-                            for a in attrs:
-                                setattr(opplan, a, i[idx])
+                            for a in getAttributes(OperationPlan):
+                                setattr(opplan, a[0], i[idx])
                                 idx += 1
                     except Exception as e:
                         logger.error("**** %s ****" % e)

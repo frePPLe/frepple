@@ -505,7 +505,7 @@ class loadCalendarBuckets(LoadTask):
                         SELECT
                         bucket_id calendar_id, startdate, enddate, 10 priority , 0 as value,
                         't' sunday,'t' monday,'t' tuesday,'t' wednesday,'t' thurday,'t' friday,'t' saturday,
-                        time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source
+                        time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source, lower(name)
                         FROM common_bucketdetail
                         ORDER BY calendar_id, startdate desc
                         """

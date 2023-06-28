@@ -2164,6 +2164,47 @@ void OperationPlan::setQuantityCompleted(double q) {
                                      Date::infinitePast, true, true, true);
 }
 
+void OperationPlan::setSupplier(Supplier* newsupplier) {
+  if (oper && oper->hasType<OperationItemSupplier>()) {
+    // Changing supplier of existing purchase order
+    if (getSupplier() == newsupplier) return;
+
+    // Look for a matching operation replenishing this buffer.
+    Operation* newoper = nullptr;
+    Buffer* destbuffer = static_cast<OperationItemSupplier*>(oper)->getBuffer();
+    destbuffer->getProducingOperation();
+    for (auto flowiter = destbuffer->getFlows().begin();
+         flowiter != destbuffer->getFlows().end() && !newoper; ++flowiter) {
+      if (!flowiter->getOperation()->hasType<OperationItemSupplier>()) continue;
+      OperationItemSupplier* opitemsupplier =
+          static_cast<OperationItemSupplier*>(flowiter->getOperation());
+      if (!newsupplier || newsupplier->isMemberOf(
+                              opitemsupplier->getItemSupplier()->getSupplier()))
+        newoper = opitemsupplier;
+    }
+
+    // Create a new operation
+    if (!newoper && newsupplier) {
+      ItemSupplier* itemsupplier = new ItemSupplier();
+      itemsupplier->setSupplier(newsupplier);
+      itemsupplier->setItem(destbuffer->getItem());
+      itemsupplier->setLocation(destbuffer->getLocation());
+      itemsupplier->setHidden(true);
+      itemsupplier->setPriority(0);
+      newoper = new OperationItemSupplier(itemsupplier, destbuffer);
+    }
+
+    // Switch the operation, keeping the receipt date the same
+    if (newoper && newoper != oper) {
+      oper = newoper;
+      oper->setOperationPlanParameters(this, quantity, dates.getStart(),
+                                       dates.getEnd(), false, true);
+    }
+  } else
+    // Dummy update during input parsing
+    sup = newsupplier;
+}
+
 void OperationPlan::clear() {
   for (auto& o : Operation::all()) o.deleteOperationPlans();
 }

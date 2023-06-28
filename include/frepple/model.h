@@ -2757,7 +2757,7 @@ class OperationPlan : public Object,
 
   inline Location* getOrigin() const;
 
-  void setSupplier(Supplier* l) { sup = l; }
+  void setSupplier(Supplier*);
 
   inline Supplier* getSupplier() const;
 

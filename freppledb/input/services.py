@@ -145,45 +145,43 @@ class OperationplanService(AsyncHttpConsumer):
                         )
                         if ref:
                             changes["reference"] = ref
+                            opplan = frepple.operationplan(
+                                        reference=ref, action="C"
+                                    )
+                            changes["ordertype"] = opplan.ordertype
                         else:
-                            type = rec.get("type", "MO")
-                            if (
-                                type == "PO"
-                                and "supplier" in rec
-                                and "location" in rec
-                                and "item" in rec
-                            ):
+                            changes["ordertype"] = rec.get("type", "MO")
+                        if changes["ordertype"] == "PO":
+                            if "location" in rec:
                                 changes["location"] = frepple.location(
                                     name=rec["location"], action="C"
                                 )
+                            if "supplier" in rec:
                                 changes["supplier"] = frepple.supplier(
                                     name=rec["supplier"], action="C"
                                 )
+                            if "item" in rec:
                                 changes["item"] = frepple.item(
                                     name=rec["item"], action="C"
                                 )
-                                changes["ordertype"] = "PO"
-                            elif (
-                                type == "DO"
-                                and "origin" in rec
-                                and "destination" in rec
-                                and "item" in rec
-                            ):
+                        elif changes["ordertype"] == "DO":
+                            if "location" in changes:
                                 changes["location"] = frepple.location(
                                     name=rec["destination"], action="C"
                                 )
+                            if "origin" in rec:
                                 changes["origin"] = frepple.location(
                                     name=rec["origin"], action="C"
                                 )
+                            if "item" in rec:
                                 changes["item"] = frepple.item(
                                     name=rec["item"], action="C"
                                 )
-                                changes["ordertype"] = "DO"
-                            elif "operation" in rec:
+                        elif changes["ordertype"] == "MO":
+                            if "operation" in rec:
                                 changes["operation"] = frepple.operation(
                                     name=rec["operation"], action="C"
                                 )
-                                changes["ordertype"] = "MO"
                         if "operationplan__quantity" in rec:
                             changes["quantity"] = float(rec["operationplan__quantity"])
                         elif "quantity" in rec:
@@ -247,9 +245,6 @@ class OperationplanService(AsyncHttpConsumer):
                                 else "input.add_operationplan"
                             ):
                                 if ref:
-                                    opplan = frepple.operationplan(
-                                        reference=ref, action="C"
-                                    )
                                     # Original related objects
                                     self.collectRelated(
                                         opplan,

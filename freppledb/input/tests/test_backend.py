@@ -121,6 +121,10 @@ class DataLoadTest(TestCase):
         self.assertContains(response, '"records":3,')
         response = self.client.get("/data/input/suboperation/?format=json")
         self.assertContains(response, '"records":0,')
+        response = self.client.get("/data/input/calendardetail/Working%20Days/?format=json")
+        self.assertContains(response, '"records":1,')
+        response = self.client.get("/data/input/calendardetail/Working%20Days/")
+        checkResponse(self, response)
 
     def test_csv_upload(self):
         self.assertEqual(

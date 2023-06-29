@@ -16,12 +16,12 @@ C - end item,2020-03-04 00:00:00,2020-03-05 00:00:00,10.0,C - order 2
 C - end item,2020-03-05 00:00:00,2020-03-06 00:00:00,10.0,C - order 1
 C - subassembly,2020-03-02 00:00:00,2020-03-03 00:00:00,10.0
 C - subassembly,2020-03-03 00:00:00,2020-03-04 00:00:00,10.0
-D - assembly,2020-03-03 00:00:00,2020-03-04 00:00:00,10.0,6
-D - assembly,2020-03-04 00:00:00,2020-03-05 00:00:00,10.0,5
-D - end item,2020-03-04 00:00:00,2020-03-05 00:00:00,10.0,6
-D - end item,2020-03-05 00:00:00,2020-03-06 00:00:00,10.0,5
-D - subassembly,2020-03-02 00:00:00,2020-03-03 00:00:00,10.0,6
-D - subassembly,2020-03-03 00:00:00,2020-03-04 00:00:00,10.0,5
+D - assembly,2020-03-03 00:00:00,2020-03-04 00:00:00,10.0,2
+D - assembly,2020-03-04 00:00:00,2020-03-05 00:00:00,10.0,1
+D - end item,2020-03-04 00:00:00,2020-03-05 00:00:00,10.0,2
+D - end item,2020-03-05 00:00:00,2020-03-06 00:00:00,10.0,1
+D - subassembly,2020-03-02 00:00:00,2020-03-03 00:00:00,10.0,2
+D - subassembly,2020-03-03 00:00:00,2020-03-04 00:00:00,10.0,1
 E - assembly,2020-03-04 00:00:00,2020-03-05 00:00:00,40.0,yellow
 E - end item,2020-03-05 00:00:00,2020-03-06 00:00:00,40.0,yellow
 E - subassembly,2020-03-03 00:00:00,2020-03-04 00:00:00,40.0,yellow
@@ -44,8 +44,8 @@ Purchase C - component 2 @ factory C from My Supplier,2020-02-25 00:00:00,2020-0
 Purchase C - component 3 @ factory C from My Supplier,2020-02-24 00:00:00,2020-03-02 00:00:00,30.0
 Purchase D - component 1 @ factory D from My Supplier,2020-02-26 00:00:00,2020-03-04 00:00:00,30.0
 Purchase D - component 2 @ factory D from My Supplier,2020-02-25 00:00:00,2020-03-03 00:00:00,30.0
-Purchase D - component 3 @ 5 @ factory D from My Supplier,2020-02-25 00:00:00,2020-03-03 00:00:00,30.0,5
-Purchase D - component 3 @ 6 @ factory D from My Supplier,2020-02-24 00:00:00,2020-03-02 00:00:00,30.0,6
+Purchase D - component 3 @ 1 @ factory D from My Supplier,2020-02-25 00:00:00,2020-03-03 00:00:00,30.0,1
+Purchase D - component 3 @ 2 @ factory D from My Supplier,2020-02-24 00:00:00,2020-03-02 00:00:00,30.0,2
 Purchase E - component 1 @ yellow @ factory E from My Supplier,2020-02-27 00:00:00,2020-03-05 00:00:00,40.0,yellow
 Purchase E - component 2 @ yellow @ factory E from My Supplier,2020-02-26 00:00:00,2020-03-04 00:00:00,40.0,yellow
 Purchase E - component 3 @ yellow @ factory E from My Supplier,2020-02-25 00:00:00,2020-03-03 00:00:00,40.0,yellow

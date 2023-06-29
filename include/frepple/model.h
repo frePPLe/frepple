@@ -2766,6 +2766,14 @@ class OperationPlan : public Object,
   void setItem(Item*);
 
   inline Item* getItem() const;
+
+  /* Called when the item, location or supplier of an existing purchase order is
+   * changed */
+  void updatePurchaseOrder(Item*, Location*, Supplier*);
+
+  /* Called when the item, origin or location of an existing distribution order
+   * is changed */
+  void updateDistributionOrder(Item*, Location*, Location*);
 };
 
 template <class type>

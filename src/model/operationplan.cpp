@@ -40,11 +40,11 @@ bool OperationPlan::propagatesetups = true;
 
 const MetaCategory* SetupEvent::metadata;
 
-Location* OperationPlan::loc = NULL;
-Location* OperationPlan::ori = NULL;
-Supplier* OperationPlan::sup = NULL;
+Location* OperationPlan::loc = nullptr;
+Location* OperationPlan::ori = nullptr;
+Supplier* OperationPlan::sup = nullptr;
 string OperationPlan::ordertype;
-Item* OperationPlan::itm = NULL;
+Item* OperationPlan::itm = nullptr;
 
 int OperationPlan::initialize() {
   // Initialize the metadata
@@ -2162,6 +2162,164 @@ void OperationPlan::setQuantityCompleted(double q) {
   if (oper && !getProposed())
     oper->setOperationPlanParameters(this, getQuantity(), getStart(),
                                      Date::infinitePast, true, true, true);
+}
+
+void OperationPlan::setItem(Item* newitem) {
+  if (oper && oper->hasType<OperationItemSupplier>()) {
+    // Changing location of existing purchase order
+    if (getItem() == newitem) return;
+    if (!newitem) throw DataException("Purchase order item can't be empty");
+
+    // TODO
+
+  } else if (oper && oper->hasType<OperationItemDistribution>()) {
+    // Changing destination of existing distribution order
+    if (getItem() == newitem) return;
+    if (!newitem) throw DataException("Distribution order item can't be empty");
+
+    // TODO
+
+  } else
+    // Dummy update during input parsing
+    itm = newitem;
+}
+
+void OperationPlan::setOrigin(Location* neworigin) {
+  if (oper && oper->hasType<OperationItemDistribution>()) {
+    // Changing origin of existing distribution order
+    if (getOrigin() == neworigin) return;
+
+    // TODO
+  } else
+    // Dummy update during input parsing
+    ori = neworigin;
+}
+
+void OperationPlan::setLocation(Location* newlocation) {
+  if (oper && oper->hasType<OperationItemSupplier>()) {
+    // Changing location of existing purchase order
+    if (getLocation() == newlocation) return;
+    if (!newlocation)
+      throw DataException("Purchase order location can't be empty");
+
+    // Find or create the destination buffer.
+    Buffer* destbuffer = nullptr;
+    Item::bufferIterator buf_iter(getItem());
+    while (Buffer* tmpbuf = buf_iter.next()) {
+      if (tmpbuf->getLocation() == newlocation && !tmpbuf->getBatch()) {
+        destbuffer = tmpbuf;
+        break;
+      }
+    }
+    if (!destbuffer) destbuffer = Buffer::findOrCreate(getItem(), newlocation);
+
+    // Look for a matching operation replenishing this buffer.
+    Operation* newoper = nullptr;
+    destbuffer->getProducingOperation();
+    for (auto flowiter = destbuffer->getFlows().begin();
+         flowiter != destbuffer->getFlows().end() && !newoper; ++flowiter) {
+      if (!flowiter->getOperation()->hasType<OperationItemSupplier>()) continue;
+      OperationItemSupplier* opitemsupplier =
+          static_cast<OperationItemSupplier*>(flowiter->getOperation());
+      if (!getSupplier() ||
+          getSupplier()->isMemberOf(
+              opitemsupplier->getItemSupplier()->getSupplier()))
+        newoper = opitemsupplier;
+    }
+
+    // Create a new operation
+    if (!newoper) {
+      ItemSupplier* itemsupplier = new ItemSupplier();
+      itemsupplier->setSupplier(getSupplier());
+      itemsupplier->setItem(destbuffer->getItem());
+      itemsupplier->setLocation(destbuffer->getLocation());
+      itemsupplier->setHidden(true);
+      itemsupplier->setPriority(0);
+      newoper = new OperationItemSupplier(itemsupplier, destbuffer);
+    }
+
+    // Switch the operation, keeping the receipt date the same
+    if (newoper && newoper != oper) {
+      oper = newoper;
+      oper->setOperationPlanParameters(this, quantity, dates.getStart(),
+                                       dates.getEnd(), false, true);
+    }
+  } else if (oper && oper->hasType<OperationItemDistribution>()) {
+    // Changing location of existing distribution order
+    if (getLocation() == newlocation) return;
+    if (!newlocation)
+      throw DataException("Distribution order location can't be empty");
+
+    // Find or create the destination buffer.
+    Buffer* destbuffer = nullptr;
+    Item::bufferIterator buf_iter(getItem());
+    while (Buffer* tmpbuf = buf_iter.next()) {
+      if (tmpbuf->getLocation() == newlocation && !tmpbuf->getBatch()) {
+        destbuffer = tmpbuf;
+        break;
+      }
+    }
+    if (!destbuffer) destbuffer = Buffer::findOrCreate(getItem(), newlocation);
+
+    // Look for a matching operation replenishing this buffer.
+    Operation* newoper = nullptr;
+    destbuffer->getProducingOperation();
+    for (auto flowiter = destbuffer->getFlows().begin();
+         flowiter != destbuffer->getFlows().end() && !oper; ++flowiter) {
+      if (!flowiter->getOperation()->hasType<OperationItemDistribution>() ||
+          flowiter->getQuantity() <= 0)
+        continue;
+      OperationItemDistribution* opitemdist =
+          static_cast<OperationItemDistribution*>(flowiter->getOperation());
+      // Origin must match as well
+      if (getOrigin()) {
+        for (auto fl = opitemdist->getFlows().begin();
+             fl != opitemdist->getFlows().end(); ++fl) {
+          if (fl->getQuantity() < 0 &&
+              fl->getBuffer()->getLocation()->isMemberOf(
+                  static_cast<Location*>(getOrigin())) &&
+              !fl->getBuffer()->getBatch())
+            newoper = opitemdist;
+        }
+      } else if (!opitemdist->getOrigin())
+        newoper = opitemdist;
+    }
+
+    // Create a new operation
+    if (!newoper) {
+      Buffer* originbuffer = nullptr;
+      if (getOrigin()) {
+        auto bufiter = getItem()->getBufferIterator();
+        while (Buffer* tmpbuf = bufiter.next()) {
+          if (tmpbuf->getLocation() == getOrigin() && !tmpbuf->getBatch()) {
+            originbuffer = tmpbuf;
+          }
+        }
+        if (!originbuffer)
+          originbuffer = Buffer::findOrCreate(getItem(), getOrigin());
+      }
+
+      // Create itemdistribution
+      auto itemdist = new ItemDistribution();
+      if (getOrigin()) itemdist->setOrigin(getOrigin());
+      itemdist->setItem(getItem());
+      if (newlocation) itemdist->setDestination(newlocation);
+      itemdist->setPriority(0);
+
+      // Create operation
+      newoper =
+          new OperationItemDistribution(itemdist, originbuffer, destbuffer);
+    }
+
+    // Switch the operation, keeping the receipt date the same
+    if (newoper && newoper != oper) {
+      oper = newoper;
+      oper->setOperationPlanParameters(this, quantity, dates.getStart(),
+                                       dates.getEnd(), false, true);
+    }
+  } else
+    // Dummy update during input parsing
+    loc = newlocation;
 }
 
 void OperationPlan::setSupplier(Supplier* newsupplier) {

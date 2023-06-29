@@ -5996,7 +5996,7 @@ void HasHierarchy<T>::setOwner(T* fam) {
       if (parent->last_child == this) parent->last_child = i;
       i->next_brother = next_brother;
     }
-    next_brother = NULL;
+    next_brother = nullptr;
   }
 
   // Set new owner
@@ -6017,7 +6017,7 @@ void HasHierarchy<T>::setOwner(T* fam) {
 template <class T>
 HasHierarchy<T>::~HasHierarchy() {
   // All my members now point to my parent.
-  T* last_child = NULL;
+  T* last_child = nullptr;
   for (T* i = first_child; i; i = i->next_brother) {
     i->parent = parent;
     last_child = i;
@@ -6035,11 +6035,11 @@ HasHierarchy<T>::~HasHierarchy() {
     T* j;
     for (T* i = first_child; i; i = j) {
       j = i->next_brother;
-      i->next_brother = NULL;
+      i->next_brother = nullptr;
     }
   } else
     // A parent exists and I have to remove myself as a member
-    setOwner(NULL);
+    setOwner(nullptr);
 }
 
 template <class T>

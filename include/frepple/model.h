@@ -2749,11 +2749,11 @@ class OperationPlan : public Object,
   /* Hidden, static field to store the item during import. */
   static Item* itm;
 
-  void setLocation(Location* l) { loc = l; }
+  void setLocation(Location*);
 
   inline Location* getLocation() const;
 
-  void setOrigin(Location* l) { ori = l; }
+  void setOrigin(Location*);
 
   inline Location* getOrigin() const;
 
@@ -2763,7 +2763,7 @@ class OperationPlan : public Object,
 
   void setOrderType(const string& o) { ordertype = o; }
 
-  void setItem(Item* i) { itm = i; }
+  void setItem(Item*);
 
   inline Item* getItem() const;
 };

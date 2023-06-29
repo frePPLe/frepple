@@ -323,7 +323,7 @@ class ManufacturingOrderScreen(SeleniumTest):
         oldEndDate = parseLocalizedDateTime(
             enddate_inputdatefield.get_attribute("value")
         )
-        newEndDate = oldEndDate + mainDate.timedelta(days=9)
+        newEndDate = oldEndDate + mainDate.timedelta(days=7)
         table_page.enter_text_in_inputdatefield(enddate_inputdatefield, newEndDate)
 
         enddate_content = table_page.get_content_of_row_column(firstrow, "enddate")

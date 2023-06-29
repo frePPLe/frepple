@@ -165,7 +165,7 @@ class OperationplanService(AsyncHttpConsumer):
                                     name=rec["item"], action="C"
                                 )
                         elif changes["ordertype"] == "DO":
-                            if "location" in changes:
+                            if "destination" in rec:
                                 changes["location"] = frepple.location(
                                     name=rec["destination"], action="C"
                                 )

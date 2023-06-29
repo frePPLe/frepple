@@ -231,7 +231,7 @@ void Problem::clearProblems(HasProblems& p, bool setchanged,
     } else if (!keepfirst) {
       keepfirst = del;
       if (keepfirst) keepfirst->nextProblem = del;
-      del->nextProblem = NULL;
+      del->nextProblem = nullptr;
     }
   }
   p.firstProblem = keepfirst;

@@ -50,7 +50,6 @@ def printModel(filename):
     """
     # Open the output file
     with open(filename, "wt", encoding="utf-8") as output:
-
         # Global settings
         print("Echoing global settings", file=output)
         print("Plan name:", frepple.settings.name, file=output)
@@ -565,3 +564,127 @@ printExtensions()
 ###
 print("\nPrinting memory consumption estimate:")
 frepple.printsize()
+
+### Verifying PO python API
+itm1 = frepple.item(name="itm1")
+itm2 = frepple.item(name="itm2")
+loc1 = frepple.location(name="loc1")
+loc2 = frepple.location(name="loc2")
+loc3 = frepple.location(name="loc3")
+sup1 = frepple.supplier(name="sup1")
+sup2 = frepple.supplier(name="sup2")
+oper1 = frepple.operation_fixed_time(
+    name="make itm1 @ loc2 ",
+    duration=86400,
+    location=loc2,
+    item=itm1,
+)
+oper2 = frepple.operation_time_per(
+    name="make itm1 @ loc1",
+    duration=86400,
+    duration_per=86400,
+    location=loc1,
+    item=itm1,
+)
+
+replenishments = [
+    frepple.itemsupplier(item=itm1, location=loc1, supplier=sup1, leadtime=4 * 86400),
+    frepple.itemsupplier(item=itm1, location=loc2, supplier=sup1, leadtime=5 * 86400),
+    frepple.itemsupplier(item=itm1, location=loc2, supplier=sup2, leadtime=6 * 86400),
+    frepple.itemsupplier(item=itm2, location=loc2, supplier=sup2, leadtime=7 * 86400),
+    frepple.itemdistribution(item=itm1, origin=loc2, location=loc1, leadtime=7 * 86400),
+    frepple.itemdistribution(item=itm1, origin=loc3, location=loc1, leadtime=3 * 86400),
+]
+
+po = frepple.operationplan(
+    ordertype="PO",
+    reference="PO#1",
+    end=datetime.date(2024, 2, 1),
+    quantity=1,
+    location=loc1,
+    item=itm1,
+    supplier=sup1,
+)
+
+mo = frepple.operationplan(
+    reference="MO#1",
+    end=datetime.date(2024, 2, 1),
+    quantity=1,
+    operation=oper1,
+)
+
+do = frepple.operationplan(
+    ordertype="DO",
+    reference="DO#1",
+    end=datetime.date(2024, 2, 1),
+    quantity=1,
+    item=itm1,
+    location=loc1,
+    origin=loc2,
+)
+
+with open("output.4.xml", "wt") as output:
+
+    def printPO():
+        print(
+            po.reference,
+            po.item.name,
+            po.location.name,
+            po.supplier.name,
+            po.quantity,
+            po.start,
+            po.end,
+            po.status,
+            file=output,
+        )
+
+    def printMO():
+        print(
+            mo.reference,
+            mo.operation.name,
+            mo.quantity,
+            mo.start,
+            mo.end,
+            mo.status,
+            file=output,
+        )
+
+    def printDO():
+        print(
+            do.reference,
+            do.item.name,
+            do.origin.name,
+            do.location.name,
+            do.quantity,
+            do.start,
+            do.end,
+            do.status,
+            file=output,
+        )
+
+    print("\nUpdating purchase order")
+    printPO()
+    po.location = loc2
+    printPO()
+    po.supplier = sup2
+    printPO()
+    po.item = itm2
+    printPO()
+    po.supplier = sup1
+    printPO()
+
+    print("\nUpdating manufacturing order")
+    printMO()
+    mo.operation = oper2
+    printMO()
+
+    print("\nUpdating distribution order")
+    printDO()
+    do.origin = loc3
+    printDO()
+    do.location = loc2
+    printDO()
+    do.item = itm2
+    printDO()
+
+mo = po = None

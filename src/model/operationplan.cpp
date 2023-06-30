@@ -813,7 +813,7 @@ void OperationPlan::setOperation(Operation* o) {
     // Apply the change
     oper = o;
     oper->setOperationPlanParameters(this, quantity, dates.getStart(),
-                                     dates.getEnd(), false, true);
+                                     Date::infinitePast, false, true, false);
   } else
     // First initialization of the operationplan
     oper = o;
@@ -2185,7 +2185,7 @@ void OperationPlan::updatePurchaseOrder(Item* newitem, Location* newlocation,
   Operation* newoper = nullptr;
   destbuffer->getProducingOperation();
   for (auto flowiter = destbuffer->getFlows().begin();
-       flowiter != destbuffer->getFlows().end() && !oper; ++flowiter) {
+       flowiter != destbuffer->getFlows().end(); ++flowiter) {
     if (!flowiter->getOperation()->hasType<OperationItemSupplier>()) continue;
     OperationItemSupplier* opitemsupplier =
         static_cast<OperationItemSupplier*>(flowiter->getOperation());
@@ -2211,8 +2211,8 @@ void OperationPlan::updatePurchaseOrder(Item* newitem, Location* newlocation,
   // Switch the operation, keeping the receipt date the same
   if (newoper && newoper != oper) {
     oper = newoper;
-    oper->setOperationPlanParameters(this, quantity, dates.getStart(),
-                                     dates.getEnd(), false, true);
+    oper->setOperationPlanParameters(this, quantity, Date::infinitePast,
+                                     dates.getEnd(), false, true, false);
   }
 }
 
@@ -2236,7 +2236,7 @@ void OperationPlan::updateDistributionOrder(Item* newitem, Location* neworigin,
   Operation* newoper = nullptr;
   destbuffer->getProducingOperation();
   for (auto flowiter = destbuffer->getFlows().begin();
-       flowiter != destbuffer->getFlows().end() && !oper; ++flowiter) {
+       flowiter != destbuffer->getFlows().end(); ++flowiter) {
     if (!flowiter->getOperation()->hasType<OperationItemDistribution>() ||
         flowiter->getQuantity() <= 0)
       continue;
@@ -2283,8 +2283,8 @@ void OperationPlan::updateDistributionOrder(Item* newitem, Location* neworigin,
   // Switch the operation, keeping the receipt date the same
   if (newoper && newoper != oper) {
     oper = newoper;
-    oper->setOperationPlanParameters(this, quantity, dates.getStart(),
-                                     dates.getEnd(), false, true);
+    oper->setOperationPlanParameters(this, quantity, Date::infinitePast,
+                                     getEnd(), true, true, false);
   }
 }
 

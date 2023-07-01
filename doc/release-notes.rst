@@ -15,6 +15,11 @@ Release notes
     or manufacturing order from frePPLe to odoo is now a button rather than a
     dropdown. Saves you a click.
 
+.. rubric:: System architecture
+
+- | The code has been refactored to make all interactive planning more flexible and more
+    scalable.
+    
 8.0.0 (2023/06/03)
 ==================
 

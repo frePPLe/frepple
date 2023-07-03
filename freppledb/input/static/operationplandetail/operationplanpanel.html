@@ -118,6 +118,7 @@ input.ng-dirty {
         <small data-ng-if="operationplan.colmodel.operationplan__startdate">({{ operationplan.colmodel.operationplan__startdate.type|translate }})</small>
       </td>
       <td>
+        <input data-ng-if='operationplan.id === -1 && operationplan.start' class="form-control border-0 bg-white" type="datetime-local" ng-model="operationplan.start" readonly>
         <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__startdate")' class="form-control" type="datetime-local" ng-model="operationplan.start" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
         <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__startdate")' class="form-control" type="datetime-local" ng-model="operationplan.operationplan__startdate" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
       </td>
@@ -136,6 +137,7 @@ input.ng-dirty {
         <small data-ng-if="operationplan.colmodel.operationplan__enddate">({{ operationplan.colmodel.operationplan__enddate.type|translate }})</small>
       </td>
       <td>
+        <input data-ng-if='operationplan.id === -1 && operationplan.end' class="form-control border-0 bg-white" type="datetime-local" ng-model="operationplan.end" readonly>
         <input data-ng-if='operationplan.id !== -1 && !operationplan.hasOwnProperty("operationplan__enddate")' class="form-control" type="datetime-local" ng-model="operationplan.end" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
         <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__enddate")' class="form-control" type="datetime-local" ng-model="operationplan.operationplan__enddate" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
       </td>

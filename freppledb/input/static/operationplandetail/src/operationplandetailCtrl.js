@@ -194,8 +194,12 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
       });
     });
     $scope.operationplan = new OperationPlan();
-    aggregatedopplan.start = aggregatedopplan.startdate;
-    aggregatedopplan.end = aggregatedopplan.enddate;
+    aggregatedopplan.start = aggregatedopplan.startdate || aggregatedopplan.operationplan__startdate;
+    if (moment.isMoment(aggregatedopplan.start))
+      aggregatedopplan.start = aggregatedopplan.start.toDate();
+    aggregatedopplan.end = aggregatedopplan.enddate || aggregatedopplan.operationplan__enddate;
+    if (moment.isMoment(aggregatedopplan.end))
+      aggregatedopplan.end = aggregatedopplan.end.toDate();
     aggregatedopplan.id = -1;
     aggregatedopplan.count = selectionData.length;
     aggregatedopplan.type = (selectionData.length > 0) ? selectionData[0].type : "";

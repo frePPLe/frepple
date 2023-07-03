@@ -143,7 +143,8 @@ void Plan::setSuppressFlowplanCreation(bool b) {
     // Similar logic for producing flowplans.
     for (auto opplan = OperationPlan::begin(); opplan != OperationPlan::end();
          ++opplan) {
-      if (!opplan->getConsumeMaterial()) continue;
+      if (!opplan->getConsumeMaterial() && !opplan->getProduceMaterial())
+        continue;
       bool consumptionexists = false;
       bool productionexists = false;
       auto flplniter = opplan->beginFlowPlans();

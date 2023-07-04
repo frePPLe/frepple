@@ -1116,6 +1116,15 @@ class ValidateAggregatedData(PlanTask):
         # We can skip validating the measures of type "planned" when we will be replanning shortly
         frepple.aggregateMeasures(includeplanned="supply" not in os.environ)
 
+        # Reduce the forecast cache to max 500 objects to save memory.
+        # For a web service start, we do this right after this validation.
+        # When a plan is generated, we do this when the plan is generated and forecast is exported.
+        if "loadplan" in os.environ:
+            frepple.cache.flush()
+            frepple.cache.write_immediately = True
+            if frepple.cache.maximum > 500:
+                frepple.cache.maximum = 500
+
 
 @PlanTaskRegistry.register
 class CalculateForecast(PlanTask):

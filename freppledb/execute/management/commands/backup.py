@@ -24,10 +24,12 @@
 import os
 import subprocess
 from datetime import datetime
+import pkg_resources
+import platform
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db import DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS, connections
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
@@ -118,6 +120,36 @@ class Command(BaseCommand):
                 )
             task.message = "Backup to file %s" % backupfile
 
+            # Create an dump_info table
+            with connections[database].cursor() as cursor:
+                cursor.execute(
+                    """
+                    drop table if exists dump_info;
+                    create table dump_info (name varchar (256), value varchar(256));
+                """
+                )
+                # add frepple version and current time
+                cursor.execute(
+                    """
+                    insert into dump_info values ('frepple version',%s);
+                    insert into dump_info select 'time', now();
+                    insert into dump_info values ('os version',%s);
+                    insert into dump_info values ('python version',%s);
+                """,
+                    (__version__, platform.platform(), platform.python_version()),
+                )
+                # add list of installed apps
+                cursor.executemany(
+                    "insert into dump_info values ('installed app',%s)",
+                    [(i,) for i in settings.INSTALLED_APPS],
+                )
+
+                # add list of python modules
+                cursor.executemany(
+                    "insert into dump_info values ('python module',%s)",
+                    [(str(d),) for d in pkg_resources.working_set],
+                )
+
             # Run the backup command
             # Commenting the next line is a little more secure, but requires you to
             # create a .pgpass file.
@@ -144,6 +176,14 @@ class Command(BaseCommand):
                     p.kill()
                     p.wait()
                     raise Exception("Run of run pg_dump failed")
+
+            # drop installed apps table
+            with connections[database].cursor() as cursor:
+                cursor.execute(
+                    """
+                    drop table if exists dump_info;
+                """
+                )
 
             # Task update
             task.logfile = backupfile
@@ -183,14 +223,14 @@ class Command(BaseCommand):
             setattr(_thread_locals, "database", old_thread_locals)
 
     # accordion template
-    title = _("Back up the database")
-    index = 1600
+    title = _("Contact the frePPLe support")
+    index = 3100
 
     help_url = "command-reference.html#backup"
 
     @staticmethod
     def getHTML(request):
-        if request.user.username in settings.SUPPORT_USERS:
+        if request.user.is_superuser:
             return render_to_string("commands/backup.html", request=request)
         else:
             return None

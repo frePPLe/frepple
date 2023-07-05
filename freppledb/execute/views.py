@@ -205,10 +205,7 @@ class TaskReport(GridReport):
                 x
                 for x in os.listdir(settings.FREPPLE_LOGDIR)
                 if x.endswith(".log")
-                or (
-                    x.lower().endswith(".dump")
-                    and request.user.username in settings.SUPPORT_USERS
-                )
+                or (x.lower().endswith(".dump") and request.user.is_superuser)
             ]
         )
         for rec in basequery:
@@ -700,8 +697,7 @@ def CancelTask(request, taskid):
 def DownloadLogFile(request, taskid):
     filename = Task.objects.using(request.database).get(id=taskid).logfile
     if (
-        filename.lower().endswith(".dump")
-        and request.user.username not in settings.SUPPORT_USERS
+        filename.lower().endswith(".dump") and not request.user.is_superuser
     ) or not filename.lower().endswith((".log", ".dump")):
         return HttpResponseNotFound(force_str(_("Error")))
     return sendStaticFile(
@@ -724,8 +720,7 @@ def DeleteLogFile(request, taskid):
         )
     filename = Task.objects.using(request.database).get(id=taskid).logfile
     if (
-        filename.lower().endswith(".dump")
-        and request.user.username not in settings.SUPPORT_USERS
+        filename.lower().endswith(".dump") and not request.user.is_superuser
     ) or not filename.lower().endswith((".log", ".dump")):
         return HttpResponseNotFound(force_str(_("Error")))
     try:

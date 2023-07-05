@@ -248,11 +248,6 @@ INSTALLED_APPS = (
 )
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
 
-# A list of user names thatcan generate database dumps and download them.
-# Since a database dump exposes all data, enabling this functionality should only be done
-# for system administrators that know what they are doing.
-SUPPORT_USERS = []
-
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
 ODOO_PASSWORDS = {"default": "", "scenario1": "", "scenario2": "", "scenario3": ""}
 

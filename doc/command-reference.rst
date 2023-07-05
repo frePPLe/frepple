@@ -25,10 +25,10 @@ This section provides an overview of the available actions:
   * :ref:`importfromfolder`
   * :ref:`runwebservice`
   * :ref:`scenario_copy`
-  * :ref:`backup`
   * :ref:`empty`
   * :ref:`odoo_import`
   * :ref:`odoo_export`
+  * :ref:`backup`
 
 * Administrator commands
 
@@ -465,17 +465,21 @@ upper right hand corner, can also be updated here.
 
 .. _backup:
 
-Back up database
-----------------
+Contact the frePPLe support
+---------------------------
+
+This task should be used to share your data with the frePPLe support.
 
 This task dumps the contents of the current database schema to a backup file.
+
+Important: The data in this backup file is **not** obfuscated.
+
 The file is created in the log folder configured in the configuration files
-djangosettings.py. It can be downloaded from the browser.
+djangosettings.py. It can be downloaded from the browser and sent to the frePPLe support.
 
-For security reasons the command is only available to users listed in the
-setting SUPPORT_ACCOUNTS. By default this is an empty list.
+For security reasons the command is only available to frePPLe superusers.
 
-The command also removes dumps older than a month to limit the disk space usage.
+When executed, the command also removes dumps older than a month to limit the disk space usage.
 If you want to keep dumps for a longer period of time, you'll need to copy the backup files
 to a different location.
 

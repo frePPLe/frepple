@@ -111,6 +111,14 @@ if(WIN32)
   target_link_libraries(frepple PRIVATE libpq)
   target_link_libraries(frepple PRIVATE ${PYTHON_LIBRARY_RELEASE})
   set_target_properties(frepple PROPERTIES LINK_FLAGS "/ignore:4099")
+  file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/bin/frepple.exe" frepple-exe)
+  string(REPLACE "\\" "\\\\" frepple-exe-escaped "${frepple-exe}")
+  add_custom_command(
+    TARGET frepple
+    PRE_LINK
+    COMMAND WMIC PROCESS WHERE ExecutablePath='${frepple-exe-escaped}' DELETE
+    COMMENT "Kill running frepple processes"
+  )
 else()
   target_link_libraries(frepple PRIVATE pq)
   target_link_libraries(frepple PRIVATE ${PYTHON_LIBRARIES})

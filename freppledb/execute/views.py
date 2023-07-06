@@ -1112,6 +1112,12 @@ def exportWorkbook(request):
     readlonlyheaderstyle.fill = PatternFill(fill_type="solid", fgColor="d0ebfb")
     wb.add_named_style(readlonlyheaderstyle)
 
+    # retrieve value of parameter excel_duration_in_days
+    excel_duration_in_days = (
+        Parameter.getValue("excel_duration_in_days", request.database, "false").lower()
+        == "true"
+    )
+
     # Loop over all selected entity types
     exportConfig = {"anonymous": request.POST.get("anonymous", False)}
     ok = False
@@ -1286,7 +1292,10 @@ def exportWorkbook(request):
                 for f in rec:
                     cells.append(
                         _getCellValue(
-                            f, field=modelfields[fld], exportConfig=exportConfig
+                            f,
+                            field=modelfields[fld],
+                            exportConfig=exportConfig,
+                            excel_duration_in_days=excel_duration_in_days,
                         )
                     )
                     fld += 1

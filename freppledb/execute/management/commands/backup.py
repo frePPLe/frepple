@@ -223,7 +223,7 @@ class Command(BaseCommand):
             setattr(_thread_locals, "database", old_thread_locals)
 
     # accordion template
-    title = _("Contact the frePPLe support")
+    title = _("Contact frePPLe support")
     index = 3100
 
     help_url = "command-reference.html#backup"

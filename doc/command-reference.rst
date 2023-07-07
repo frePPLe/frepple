@@ -465,17 +465,19 @@ upper right hand corner, can also be updated here.
 
 .. _backup:
 
-Contact the frePPLe support
----------------------------
+Contact frePPLe support
+-----------------------
 
-This task should be used to share your data with the frePPLe support.
+This task should be used to share your data with the frePPLe support team.
 
 This task dumps the contents of the current database schema to a backup file.
 
-Important: The data in this backup file is **not** obfuscated.
+Important: The data in this backup file is **not** obfuscated. Your dataset will only
+be used by the frepple developers solely for the purpose of analysing issues. The data
+is not shared with any third party and will be destroyed after the issue analysis.
 
 The file is created in the log folder configured in the configuration files
-djangosettings.py. It can be downloaded from the browser and sent to the frePPLe support.
+djangosettings.py. It can be downloaded from the browser and sent to the frePPLe support team.
 
 For security reasons the command is only available to frePPLe superusers.
 

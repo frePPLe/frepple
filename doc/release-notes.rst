@@ -1,19 +1,8 @@
 Release notes
 -------------
 
-8.2.0 (next release)
-==================
-
-.. rubric:: System administration
-
-- | The command to `back up the database <command-reference.html#backup>`_ is renamed
-    to `contact the frePPLe support <command-reference.html#backup>`_ as this is the official way
-    for sharing a database dump with the frePPLe support.
-  | This command used to be available for users defined in the SUPPORT_USERS variable.
-    The SUPPORT_USERS variable disappears as the command is now available to all super users.
-
-8.1.0 (2023/06/13)
-==================
+8.2.0 (upcoming release)
+========================
 
 .. rubric:: Production planning
 
@@ -26,11 +15,19 @@ Release notes
     or manufacturing order from frePPLe to odoo is now a button rather than a
     dropdown. Saves you a click.
 
+.. rubric:: System administration
+
+- | The command to `back up the database <command-reference.html#backup>`_ is renamed
+    to `contact frePPLe support <command-reference.html#backup>`_ as this is the official way
+    for sharing a database dump with the frePPLe support.
+  | This command used to be available for users defined in the SUPPORT_USERS variable.
+    The SUPPORT_USERS variable disappears as the command is now available to all super users.
+
 .. rubric:: System architecture
 
 - | The code has been refactored to make all interactive planning more flexible and more
     scalable.
-    
+
 8.0.0 (2023/06/03)
 ==================
 

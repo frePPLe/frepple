@@ -735,8 +735,8 @@ class OverviewReport(GridPivot):
                 from out_constraint
                 inner join operationplan on operationplan.forecast = out_constraint.forecast
                 and operationplan.item_id = item.name and operationplan.location_id = location.name
-                and operationplan.due < operationplan.enddate
-                and  (operationplan.due , operationplan.enddate) overlaps (d.startdate, d.enddate)
+                and operationplan.enddate >= greatest(%s,d.startdate)
+                and operationplan.due < d.enddate
                 """
         net_forecast = """
         (select sum((forecastplan.value->>'forecastnet')::numeric)
@@ -795,8 +795,8 @@ class OverviewReport(GridPivot):
                 inner join operationplan on operationplan.item_id = item.name
                 and operationplan.location_id = location.name
                 and operationplan.demand_id = out_constraint.demand
-                and operationplan.due < operationplan.enddate
-                and  (operationplan.due , operationplan.enddate) overlaps (d.startdate, d.enddate)
+                and operationplan.enddate >= greatest(%%s,d.startdate)
+                and operationplan.due < d.enddate
                 %s
                 order by name limit 20
            )t ) reasons,
@@ -1068,7 +1068,11 @@ class OverviewReport(GridPivot):
             with connections[request.database].chunked_cursor() as cursor_chunked:
                 cursor_chunked.execute(
                     query,
-                    (
+                    (request.report_startdate,)
+                    * (
+                        2 if "freppledb.forecast" in settings.INSTALLED_APPS else 1
+                    )  # reasons
+                    + (
                         request.report_startdate,  # startoh
                         request.report_startdate,
                         request.report_startdate,

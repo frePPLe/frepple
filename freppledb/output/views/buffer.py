@@ -536,7 +536,6 @@ class OverviewReport(GridPivot):
 
     @classmethod
     def initialize(reportclass, request):
-
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
             reportclass.attr_sql = ""
@@ -738,10 +737,6 @@ class OverviewReport(GridPivot):
                 and operationplan.item_id = item.name and operationplan.location_id = location.name
                 and operationplan.due < operationplan.enddate
                 and  (operationplan.due , operationplan.enddate) overlaps (d.startdate, d.enddate)
-                and (
-                  out_constraint.name not in ('before current', 'before fence')
-                  or out_constraint.enddate > d.enddate
-                  )
                 """
         net_forecast = """
         (select sum((forecastplan.value->>'forecastnet')::numeric)
@@ -802,10 +797,6 @@ class OverviewReport(GridPivot):
                 and operationplan.demand_id = out_constraint.demand
                 and operationplan.due < operationplan.enddate
                 and  (operationplan.due , operationplan.enddate) overlaps (d.startdate, d.enddate)
-                and (
-                  out_constraint.name not in ('before current', 'before fence')
-                  or out_constraint.enddate > d.enddate
-                  )
                 %s
                 order by name limit 20
            )t ) reasons,
@@ -1111,7 +1102,6 @@ class OverviewReport(GridPivot):
                     numfields = len(row)
                     history = row[numfields - 4]
                     if prev_buffer != row[0] and not history:
-
                         order_backlog, forecast_backlog = startbacklogdict.get(
                             (row[1], row[2], row[22]), (0, 0)
                         )

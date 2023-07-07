@@ -45,7 +45,6 @@ from freppledb.input.models import PurchaseOrder, DistributionOrder, Manufacturi
 
 
 class Command(BaseCommand):
-
     help = "Exports frepple data to odoo."
 
     requires_system_checks = []
@@ -150,8 +149,10 @@ class Command(BaseCommand):
             counter = 1
             self.exported = []
             self.boundary = email.generator._make_boundary()
+            # Track if this is the first page we send
+            # for cleaning POs/MOs in Odoo
+            self.firstPage = True
             for page in self.generatePagesToPublish(records_per_page=100):
-
                 # Connect to the odoo URL to POST data
                 encoded = base64.encodebytes(
                     ("%s:%s" % (self.odoo_user, self.odoo_password)).encode("utf-8")
@@ -261,6 +262,10 @@ class Command(BaseCommand):
             "\r",
             "%s\r" % self.odoo_company,
             "--%s\r" % self.boundary,
+            'Content-Disposition: form-data; name="mode"\r',
+            "\r",
+            "%s\s" % (1 if self.firstPage else 2),  # 2 marks incremental export
+            "--%s\r" % self.boundary,
             'Content-Disposition: file; name="frePPLe plan"; filename="frepple_plan.xml"\r',
             "Content-Type: application/xml\r",
             "\r",
@@ -274,6 +279,7 @@ class Command(BaseCommand):
             "--%s--\r" % self.boundary,
             "\r",
         ]
+        self.firstPage = False
         return "\n".join(itertools.chain(header, output, footer)).encode("utf-8")
 
     def generateOperationPlansToPublish(self):

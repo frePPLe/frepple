@@ -1,0 +1,19 @@
+BUFFER	1. item @ factory	2024-01-01T00:00:00	-20	-20
+BUFFER	1. item @ factory	2024-02-01T00:00:00	100	80
+BUFFER	2. item @ factory	2024-01-01T00:00:00	-200	-200
+BUFFER	2. item @ factory	2024-02-01T00:00:00	100	-100
+BUFFER	2. item @ factory	2024-02-01T00:00:00	100	0
+BUFFER	3. item @ factory	2024-01-01T00:00:00	200	200
+BUFFER	3. item @ factory	2024-01-01T00:00:00	-200	0
+BUFFER	3. item @ factory	2024-09-01T00:00:00	100	100
+DEMAND	1. sales order	2024-01-01T00:00:00	20
+DEMAND	2. sales order	2024-01-01T00:00:00	200
+DEMAND	3. sales order	2024-01-01T00:00:00	200
+OPERATION	Purchase 1. item @ factory from 1. Supplier	2024-01-25T00:00:00	2024-02-01T00:00:00	100	confirmed
+OPERATION	Purchase 2. item @ factory from 2. Supplier	2024-01-25T00:00:00	2024-02-01T00:00:00	100
+OPERATION	Purchase 2. item @ factory from 2. Supplier	2024-01-25T00:00:00	2024-02-01T00:00:00	100	confirmed
+OPERATION	Purchase 3. item @ factory from 3. Supplier	2023-12-25T00:00:00	2024-01-01T00:00:00	200
+OPERATION	Purchase 3. item @ factory from 3. Supplier	2024-08-25T00:00:00	2024-09-01T00:00:00	100	confirmed
+PROBLEM	material shortage	Buffer '1. item @ factory' has material shortage of 20	2024-01-01T00:00:00 / 2024-02-01T00:00:00
+PROBLEM	material shortage	Buffer '2. item @ factory' has material shortage of 200	2024-01-01T00:00:00 / 2024-02-01T00:00:00
+PROBLEM	before current	Operation 'Purchase 3. item @ factory from 3. Supplier' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00

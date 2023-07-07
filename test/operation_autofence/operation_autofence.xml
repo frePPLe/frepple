@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<current>2024-01-01T00:00:00</current>
+	<suppliers>
+		<supplier name="1. Supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="1. item"/>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<demands>
+		<demand name="1. sales order">
+			<quantity>20</quantity>
+			<due>2024-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="1. item"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan ordertype="PO" end="2024-02-01T00:00:00" reference="PO #1" quantity="100" status="confirmed">
+			<item name="1. item"/>
+			<location name="factory"/>
+			<supplier name="1. Supplier"/>
+		</operationplan>
+	</operationplans>
+
+	<suppliers>
+		<supplier name="2. Supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="2. item"/>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<demands>
+		<demand name="2. sales order">
+			<quantity>200</quantity>
+			<due>2024-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="2. item"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan ordertype="PO" end="2024-02-01T00:00:00" reference="PO #2" quantity="100" status="confirmed">
+			<item name="2. item"/>
+			<location name="factory"/>
+			<supplier name="2. Supplier"/>
+		</operationplan>
+	</operationplans>
+	
+	<suppliers>
+		<supplier name="3. Supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="3. item"/>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<demands>
+		<demand name="3. sales order">
+			<quantity>200</quantity>
+			<due>2024-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="3. item"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan ordertype="PO" end="2024-09-01T00:00:00" reference="PO #3" quantity="100" status="confirmed">
+			<item name="3. item"/>
+			<location name="factory"/>
+			<supplier name="3. Supplier"/>
+		</operationplan>
+	</operationplans>	
+<?python
+
+frepple.settings.autofence = 90 * 86400
+
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=99).solve()
+frepple.saveplan("output.1.xml")
+
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+
+print("CREATING FULLY UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+
+?>
+</plan>

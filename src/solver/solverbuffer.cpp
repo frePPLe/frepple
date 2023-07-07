@@ -2,7 +2,7 @@
  *                                                                         *
  * Copyright (C) 2007-2015 by frePPLe bv                                   *
  *                                                                         *
-* Permission is hereby granted, free of charge, to any person obtaining   *
+ * Permission is hereby granted, free of charge, to any person obtaining   *
  * a copy of this software and associated documentation files (the         *
  * "Software"), to deal in the Software without restriction, including     *
  * without limitation the rights to use, copy, modify, merge, publish,     *
@@ -173,7 +173,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       //  - Scan forward for producer we can replace in a single batch.
       //  - Create new supply for the shortage at that date.
       bool supply_exists_already = false;
-      if (theDelta < -ROUNDING_ERROR && autofence) {
+      if (theDelta < -ROUNDING_ERROR && autofence && !data->coordination_run) {
         // Solution zero: wait for confirmed supply that is already existing
         auto free_stock = b->getOnHand(Date::infiniteFuture);
         if (free_stock > -ROUNDING_ERROR) {
@@ -213,7 +213,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             }
           }
         }
-        if (!supply_exists_already) {
+        if (!supply_exists_already && !data->coordination_run) {
           auto fence_free = b->getOnHand(
               max(theDate, Plan::instance().getCurrent()) + autofence,
               Date::infiniteFuture);
@@ -221,6 +221,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
               fabs(fence_free - theDelta) > ROUNDING_ERROR) {
             // There is confirmed supply within the fence that partially covers
             // the requirement. We reduce the allowed replenishment quantity.
+            shortage += fence_free - theDelta;
             theDelta = fence_free;
           }
         }

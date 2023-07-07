@@ -264,7 +264,7 @@ class Command(BaseCommand):
             "--%s\r" % self.boundary,
             'Content-Disposition: form-data; name="mode"\r',
             "\r",
-            "%s\s" % (1 if self.firstPage else 2),  # 2 marks incremental export
+            "%s\r" % (1 if self.firstPage else 2),  # 2 marks incremental export
             "--%s\r" % self.boundary,
             'Content-Disposition: file; name="frePPLe plan"; filename="frepple_plan.xml"\r',
             "Content-Type: application/xml\r",

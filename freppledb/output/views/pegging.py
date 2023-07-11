@@ -94,6 +94,22 @@ class ReportByDemand(GridReport):
             editable=False,
             sortable=False,
         ),
+        GridFieldNumber(
+            "quantity_proposed",
+            title=_("required quantity proposed"),
+            field_name="required_quantity_proposed",
+            editable=False,
+            sortable=False,
+            initially_hidden=True,
+        ),
+        GridFieldNumber(
+            "quantity_confirmed",
+            title=_("required quantity confirmed"),
+            field_name="required_quantity_confirmed",
+            editable=False,
+            sortable=False,
+            initially_hidden=True,
+        ),
         GridFieldText(
             "operationplans",
             width=1000,
@@ -558,7 +574,9 @@ class ReportByDemand(GridReport):
             pegging.required_quantity,
             operationplan.batch,
             item.description,
-            pegging.path
+            pegging.path,
+            case when operationplan.status = 'proposed' then pegging.required_quantity else 0 end as required_quantity_proposed,
+            case when operationplan.status in ('confirmed','approved','completed') then pegging.required_quantity else 0 end as required_quantity_confirmed
           from pegging
           inner join operationplan
             on operationplan.reference = pegging.opplan
@@ -635,6 +653,8 @@ class ReportByDemand(GridReport):
                             "expanded": "true",
                             "resource": sorted(rec[9]) if rec[9] else None,
                             "required_quantity": str(rec[21]),
+                            "required_quantity_proposed": str(rec[25]),
+                            "required_quantity_confirmed": str(rec[26]),
                             "operationplans": [
                                 {
                                     "operation": rec[1],
@@ -669,6 +689,8 @@ class ReportByDemand(GridReport):
                                     "demand": rec[19],
                                     "delay": str(rec[20]),
                                     "required_quantity": str(rec[21]),
+                                    "required_quantity_proposed": str(rec[25]),
+                                    "required_quantity_confirmed": str(rec[26]),
                                     "batch": rec[22],
                                     "item__description": rec[23],
                                 }
@@ -705,6 +727,8 @@ class ReportByDemand(GridReport):
                                 "demand": rec[19],
                                 "delay": str(rec[20]),
                                 "required_quantity": str(rec[21]),
+                                "required_quantity_proposed": str(rec[25]),
+                                "required_quantity_confirmed": str(rec[26]),
                                 "batch": rec[22],
                                 "item__description": rec[23],
                             }
@@ -712,6 +736,12 @@ class ReportByDemand(GridReport):
                         prevrec["required_quantity"] = float(
                             prevrec["required_quantity"]
                         ) + float(rec[21])
+                        prevrec["required_quantity_proposed"] = float(
+                            prevrec["required_quantity_proposed"]
+                        ) + float(rec[25])
+                        prevrec["required_quantity_confirmed"] = float(
+                            prevrec["required_quantity_confirmed"]
+                        ) + float(rec[26])
                     elif rec[9] and not rec[9] in prevrec["resource"]:
                         # Extra resource loaded by the operationplan
                         prevrec["resource"] = sorted(prevrec["resource"].append(rec[9]))
@@ -787,26 +817,34 @@ class ReportByDemand(GridReport):
                                 ]["operationplans"].pop(index2 - duplicates)
                                 duplicates += 1
                                 # update the required_quantity
-                                response[indexOfOperation[rec["operation"]]][
-                                    "operationplans"
-                                ][refdict[i["reference"]]]["required_quantity"] = float(
+                                for st in [
+                                    "required_quantity",
+                                    "required_quantity_proposed",
+                                    "required_quantity_confirmed",
+                                ]:
                                     response[indexOfOperation[rec["operation"]]][
                                         "operationplans"
-                                    ][refdict[i["reference"]]]["required_quantity"]
-                                ) + float(
-                                    deleted_opplan["required_quantity"]
-                                )
+                                    ][refdict[i["reference"]]][st] = float(
+                                        response[indexOfOperation[rec["operation"]]][
+                                            "operationplans"
+                                        ][refdict[i["reference"]]][st]
+                                    ) + float(
+                                        deleted_opplan[st]
+                                    )
                             index2 += 1
 
                         # update the required_quantity at record level
-                        response[indexOfOperation[rec["operation"]]][
-                            "required_quantity"
-                        ] = sum(
-                            float(opplan["required_quantity"])
-                            for opplan in response[indexOfOperation[rec["operation"]]][
-                                "operationplans"
-                            ]
-                        )
+                        for st in [
+                            "required_quantity",
+                            "required_quantity_proposed",
+                            "required_quantity_confirmed",
+                        ]:
+                            response[indexOfOperation[rec["operation"]]][st] = sum(
+                                float(opplan[st])
+                                for opplan in response[
+                                    indexOfOperation[rec["operation"]]
+                                ]["operationplans"]
+                            )
 
                     # A final loop to update the ids
                     for r in response:

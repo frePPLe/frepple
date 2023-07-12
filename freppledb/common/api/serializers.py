@@ -79,7 +79,6 @@ class ModelSerializer(DefaultModelSerializer):
         ]
 
     def create(self, validated_data):
-
         if self.pk in validated_data or not self.natural_key:
             # Find or create based on primary key or models without primary key
             try:
@@ -87,7 +86,7 @@ class ModelSerializer(DefaultModelSerializer):
                     self.context["request"].database
                 ).get(pk=validated_data[self.pk])
                 return super().update(instance, validated_data)
-            except self.Meta.model.DoesNotExist:
+            except (self.Meta.model.DoesNotExist, KeyError):
                 return super().create(validated_data)
         else:
             # Find or create using natural keys

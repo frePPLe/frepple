@@ -288,7 +288,8 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
                                       &Cls::setCalendar,
                                       DONT_SERIALIZE + PARENT);
     HasSource::registerFields<Cls>(m);
-    m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
+    m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
+                           BASE + COMPUTED);
   }
 
  public:

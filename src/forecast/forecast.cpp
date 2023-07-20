@@ -125,18 +125,22 @@ ForecastBase* ForecastHash::findForecast(Item* i, Customer* c, Location* l,
 bool Forecast::isLeaf() const {
   if (leaf == -1) {
     const_cast<Forecast*>(this)->leaf = 1;
-    for (Item::memberRecursiveIterator itm(getItem()); !itm.empty(); ++itm)
-      for (Customer::memberRecursiveIterator cust(getCustomer()); !cust.empty();
-           ++cust)
-        for (Location::memberRecursiveIterator loc(getLocation()); !loc.empty();
-             ++loc)
-          if ((&*itm != getItem() || &*cust != getCustomer() ||
-               &*loc != getLocation()) &&
-              findForecast(&*itm, &*cust, &*loc)) {
-            // A forecast exists for this member tuple.
-            const_cast<Forecast*>(this)->leaf = 0;
-            return false;
-          }
+    for (Item::memberRecursiveIterator itm(getItem()); !itm.empty(); ++itm) {
+      auto dmds = itm->getDemandIterator();
+      while (auto dmd = dmds.next()) {
+        if (dmd->hasType<Forecast>() && dmd->getCustomer() &&
+            dmd->getLocation() &&
+            (dmd->getCustomer() != getCustomer() ||
+             dmd->getItem() != getItem() ||
+             dmd->getLocation() != getLocation()) &&
+            dmd->getCustomer()->isMemberOf(getCustomer()) &&
+            dmd->getLocation()->isMemberOf(getLocation()) &&
+            findForecast(&*itm, dmd->getCustomer(), dmd->getLocation())) {
+          const_cast<Forecast*>(this)->leaf = 0;
+          return false;
+        }
+      }
+    }
   }
   return leaf == 1;
 }

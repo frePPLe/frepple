@@ -107,11 +107,7 @@ using namespace std;
 #endif
 #endif
 
-/* @def ROUNDING_ERROR
- * This constant defines the magnitude of what can still be considered
- * as a rounding error.
- */
-#define ROUNDING_ERROR 0.000001
+constexpr double ROUNDING_ERROR = 0.000001;
 
 /* - DECLARE_EXPORT
  *   Used to define which symbols to export from a Windows DLL.

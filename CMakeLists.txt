@@ -112,7 +112,7 @@ if(grunt)
 endif()
 
 # C++ compiler flags and features
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -275,8 +275,8 @@ add_test(NAME engine
 find_program(valgrind NAMES valgrind)
 
 if(valgrind)
-  add_custom_target(callgrind ${CMAKE_COMMAND} -E
-    env
+  add_custom_target(callgrind
+    COMMAND ${CMAKE_COMMAND} -E env
     FREPPLE_HOME=${CMAKE_SOURCE_DIR}/bin
     PYTHONPATH=${CMAKE_SOURCE_DIR}
     DJANGO_SETTINGS_MODULE=freppledb.settings
@@ -291,6 +291,10 @@ if(valgrind)
     valgrind --tool=callgrind
     ${CMAKE_SOURCE_DIR}/bin/frepple
     ${CMAKE_SOURCE_DIR}/freppledb/common/commands.py
+    COMMAND callgrind_annotate --show-percs=yes > callgrind.relative.out
+    COMMAND callgrind_annotate --show-percs=yes --inclusive=yes > callgrind.cumulative.out
+    COMMAND callgrind_annotate --show-percs=yes --inclusive=yes --tree=calling > callgrind.cumulative_with_calling.out
+    COMMAND callgrind_annotate --show-percs=yes --inclusive=yes --tree=caller > callgrind.cumulative_with_caller.out
   )
   add_custom_target(memcheck ${CMAKE_COMMAND} -E
     env

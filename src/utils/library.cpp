@@ -25,14 +25,6 @@
 
 #define FREPPLE_CORE
 
-#include <sys/stat.h>
-
-#include "frepple/utils.h"
-#include "frepple/xml.h"
-#ifdef HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
-#endif
-
 // These headers are required for the loading of dynamic libraries and the
 // detection of the number of cores.
 #ifdef WIN32
@@ -40,6 +32,14 @@
 #else
 #include <dlfcn.h>
 #include <unistd.h>
+#endif
+
+#include <sys/stat.h>
+
+#include "frepple/utils.h"
+#include "frepple/xml.h"
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
 #endif
 
 namespace frepple {

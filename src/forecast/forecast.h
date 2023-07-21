@@ -59,6 +59,10 @@ class Forecast;
 class ForecastBase;
 class ForecastSolver;
 class ForecastBucket;
+class MeasureValue;
+class MeasureList;
+class MeasurePool;
+class MeasurePagePool;
 
 /* Forecast measures represent data stored in the cube.
  * There are 3 methods that define their business logic:
@@ -78,8 +82,6 @@ class ForecastBucket;
  */
 class ForecastMeasure : public HasName<ForecastMeasure> {
  public:
-  typedef map<PooledString, ForecastMeasure*> measuremap;
-
   ForecastMeasure() {}
 
   ForecastMeasure(const char* n, double d = 0.0, bool cmptd = false,
@@ -479,10 +481,181 @@ class Measures {
   static const ForecastMeasureLocal* leaf;
 };
 
+class MeasureValue {
+  friend class MeasureList;
+  friend class MeasurePage;
+  friend class MeasurePagePool;
+
+ private:
+  PooledString msr;
+  double val;
+  MeasureValue* prev;
+  MeasureValue* next;
+
+  MeasurePagePool& getPagePool() const;
+
+  void addToFree(MeasurePagePool&);
+  void addToFree() { addToFree(getPagePool()); }
+
+ public:
+  double getValue() const { return val; }
+  void setValue(double v) { val = v; }
+  const PooledString& getMeasure() const { return msr; }
+};
+
+class MeasureList {
+  friend class MeasurePage;
+
+ private:
+  MeasureValue* first = nullptr;
+  MeasureValue* last = nullptr;
+
+  void check();
+
+ public:
+  class iterator {
+   private:
+    MeasureValue* ptr = nullptr;
+
+   public:
+    iterator(MeasureValue* i) : ptr(i) {}
+
+    iterator& operator++() {
+      if (ptr) ptr = ptr->next;
+      return *this;
+    }
+
+    bool operator!=(const iterator& t) const { return ptr != t.ptr; }
+
+    bool operator==(const iterator& t) const { return ptr == t.ptr; }
+
+    MeasureValue* operator*() { return ptr; }
+  };
+
+  iterator begin() { return iterator(first); }
+
+  iterator end() { return iterator(nullptr); }
+
+  class const_iterator {
+   private:
+    MeasureValue* ptr = nullptr;
+
+   public:
+    const_iterator(MeasureValue* i) : ptr(i) {}
+
+    const_iterator& operator++() {
+      if (ptr) ptr = ptr->next;
+      return *this;
+    }
+
+    bool operator!=(const const_iterator& t) const { return ptr != t.ptr; }
+
+    bool operator==(const const_iterator& t) const { return ptr == t.ptr; }
+
+    const MeasureValue* operator*() { return ptr; }
+  };
+
+  const_iterator begin() const { return const_iterator(first); }
+
+  const_iterator end() const { return const_iterator(nullptr); }
+
+  void insert(const PooledString&, double, bool check = true);
+  void erase(const PooledString&);
+  void erase(MeasureValue*);
+  void sort();
+
+  ~MeasureList() {
+    auto p = first;
+    while (p) {
+      auto tmp = p;
+      p = p->next;
+      tmp->addToFree();
+    }
+  }
+
+  MeasureValue* find(const PooledString& k) const {
+    for (auto p = first; p; p = p->next)
+      if (p->msr == k) return p;
+    return nullptr;
+  }
+
+  double find(const PooledString& k, double dflt) const {
+    for (auto p = first; p; p = p->next)
+      if (p->msr == k) return p->val;
+    return dflt;
+  }
+
+  pair<double, bool> findAndFound(const PooledString& k, double dflt) const {
+    for (auto p = first; p; p = p->next)
+      if (p->msr == k) return make_pair(p->val, true);
+    return make_pair(dflt, false);
+  }
+
+  size_t size() const {
+    size_t count;
+    for (auto p = first; p; p = p->next) ++count;
+    return count;
+  }
+};
+
+class MeasurePage {
+  friend class MeasureList;
+  friend class MeasurePagePool;
+
+ private:
+  static const int DATA_PER_PAGE = 2 * 1024 * 1024 / sizeof(MeasureValue);
+  MeasurePage* next;
+  MeasurePage* prev;
+  MeasureValue data[DATA_PER_PAGE];
+
+  MeasurePage(MeasurePagePool&);
+
+  bool empty() const {
+    for (auto& v : data)
+      if (v.msr) return false;
+    return true;
+  }
+
+ public:
+  short status() const;
+};
+
+class MeasurePagePool {
+  friend class MeasureValue;
+  friend class MeasurePage;
+  friend class MeasureList;
+
+ private:
+  MeasurePage* firstpage = nullptr;
+  MeasurePage* lastpage = nullptr;
+  MeasureValue* firstfree = nullptr;
+  MeasureValue* lastfree = nullptr;
+  string name;
+
+ public:
+  static MeasurePagePool measurepages_default;
+  static MeasurePagePool measurepages_temp;
+
+  MeasurePagePool(string n) : name(n) {}
+
+  void releaseEmptyPages();
+  static void check(const string& = "");
+
+  static PyObject* releaseEmptyPagesPython(PyObject* self, PyObject* args) {
+    measurepages_default.releaseEmptyPages();
+    measurepages_temp.releaseEmptyPages();
+    check("after release");
+    return Py_BuildValue("");
+  }
+};
+
+inline MeasurePagePool& MeasureValue::getPagePool() const {
+  return msr.starts_with("temp") ? MeasurePagePool::measurepages_temp
+                                 : MeasurePagePool::measurepages_default;
+}
+
 class ForecastBucketData {
  public:
-  typedef map<PooledString, double> measuremap;
-
   ForecastBucketData(const ForecastBase* f, Date s, Date e, short i, bool d);
 
   ForecastBucketData(ForecastBucketData&& other)
@@ -494,7 +667,11 @@ class ForecastBucketData {
 
   ForecastBucketData(const ForecastBucketData&) = delete;
 
-  const measuremap& getMeasures() const { return measures; }
+  const MeasureList& getMeasures() const { return measures; }
+
+  void sortMeasures() const {
+    const_cast<ForecastBucketData*>(this)->measures.sort();
+  }
 
   ForecastBucket* getForecastBucket() const { return fcstbkt; }
 
@@ -506,19 +683,14 @@ class ForecastBucketData {
 
   double getOrdersPlanned() const;
 
-  string toString(bool add_dates = false) const;
+  string toString(bool add_dates = false, bool sorted = true) const;
 
   double getValue(const ForecastMeasure& n) const {
-    auto tmp = measures.find(n.getHashedName());
-    return tmp == measures.end() ? n.getDefault() : tmp->second;
+    return measures.find(n.getHashedName(), n.getDefault());
   }
 
   pair<double, bool> getValueAndFound(const ForecastMeasure& n) const {
-    auto tmp = measures.find(n.getHashedName());
-    if (tmp == measures.end())
-      return make_pair(n.getDefault(), false);
-    else
-      return make_pair(tmp->second, true);
+    return measures.findAndFound(n.getHashedName(), n.getDefault());
   }
 
   size_t getSize() const;
@@ -568,7 +740,7 @@ class ForecastBucketData {
   DateRange dates;
   short index;
   bool dirty = false;
-  measuremap measures;
+  MeasureList measures;
 };
 
 inline double ForecastMeasure::getValue(const ForecastBucketData& f) const {

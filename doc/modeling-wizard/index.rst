@@ -7,15 +7,15 @@ That wizard guides you through a number of logical steps and contains links to t
 
 This section guides users during the creation of their first frePPLe model.
 
-.. image:: _images/wizard.png
-   :width: 100%
-   :alt: Wizard screenshot
-
   .. Important::
 
      | The wizard aims at helping you to bring up a basic model as quick and easy
        as possible.
      | It does NOT cover all possible features and functionality of frePPLe.
+
+.. image:: _images/wizard.png
+   :width: 100%
+   :alt: Wizard screenshot
 
 .. toctree::
    :maxdepth: 2

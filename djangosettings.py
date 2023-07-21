@@ -549,7 +549,7 @@ MAXCPUTIME = None  # limit in seconds, use None for unlimited
 # Specify number of objects we are allowed to cache and the number of
 # threads we create to write changed objects
 CACHE_MAXIMUM = 1000000
-CACHE_THREADS = 3
+CACHE_THREADS = 1
 
 # Max total log files size in MB, if the limit is reached deletes the oldest.
 MAXTOTALLOGFILESIZE = 200

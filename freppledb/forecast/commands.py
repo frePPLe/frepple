@@ -27,7 +27,7 @@ from psycopg2.extras import execute_batch
 import tempfile
 import logging
 import sys
-from time import time
+from time import time, sleep
 
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
@@ -1122,8 +1122,11 @@ class ValidateAggregatedData(PlanTask):
         if "loadplan" in os.environ:
             frepple.cache.flush()
             frepple.cache.write_immediately = True
-            if frepple.cache.maximum > 500:
-                frepple.cache.maximum = 500
+            if frepple.cache.maximum > 300:
+                frepple.cache.maximum = 300
+                sleep(2)
+            frepple.releaseUnusedMemory()
+            frepple.cache.printStatus()
 
 
 @PlanTaskRegistry.register
@@ -1265,9 +1268,12 @@ class ExportForecast(PlanTask):
             frepple.updatePlannedForecast()
         frepple.cache.flush()
         frepple.cache.write_immediately = True
-        if frepple.cache.maximum > 500:
+        if frepple.cache.maximum > 300:
             # Reduce the forecast cache to max 500 objects to save memory
-            frepple.cache.maximum = 500
+            frepple.cache.maximum = 300
+            sleep(2)
+        frepple.releaseUnusedMemory()
+        frepple.cache.printStatus()
 
         # refresh materialized view
         with connections[database].cursor() as cursor:

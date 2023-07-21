@@ -136,17 +136,17 @@ void ForecastMeasureComputed::compileMeasures() {
   symboltable.add_function("location", functionLocationAttribute);
   symboltable.add_function("customer", functionCustomerAttribute);
   symboltable.add_variable("newvalue", newvalue);
-  for (auto m = begin(); m != end(); ++m) {
-    if (!m->isTemporary())
-      symboltable.add_variable(m->getName(), m->expressionvalue);
-    m->alldependents.clear();
-    m->dependents.clear();
-    m->assignments.clear();
+  for (auto& m : all()) {
+    if (!m.isTemporary())
+      symboltable.add_variable(m.getName(), m.expressionvalue);
+    m.alldependents.clear();
+    m.dependents.clear();
+    m.assignments.clear();
   }
 
-  for (auto m = begin(); m != end(); ++m) {
-    if (m->isTemporary() || !m->hasType<ForecastMeasureComputed>()) continue;
-    auto c = static_cast<ForecastMeasureComputed*>(&*m);
+  for (auto& m : all()) {
+    if (m.isTemporary() || !m.hasType<ForecastMeasureComputed>()) continue;
+    auto c = static_cast<ForecastMeasureComputed*>(&m);
 
     // Compile the compute-expression
     c->compute_expression.register_symbol_table(symboltable);
@@ -189,18 +189,18 @@ void ForecastMeasureComputed::compileMeasures() {
     }
   }
 
-  for (auto m = begin(); m != end(); ++m) {
+  for (auto& m : all()) {
     // Get all recursive dependents
-    for (auto& i : m->dependents) i->appendDependents(m->alldependents);
+    for (auto& i : m.dependents) i->appendDependents(m.alldependents);
 
-    for (auto i = m->alldependents.begin(); i != m->alldependents.end(); ++i) {
+    for (auto i = m.alldependents.begin(); i != m.alldependents.end(); ++i) {
       // Remove duplicate dependents
       auto j = i;
-      for (++j; j != m->alldependents.end(); ++j) {
+      for (++j; j != m.alldependents.end(); ++j) {
         if (*j == *i) {
           auto k = j++;
-          m->alldependents.erase(k);
-          if (j == m->alldependents.end()) break;
+          m.alldependents.erase(k);
+          if (j == m.alldependents.end()) break;
         }
       }
     }
@@ -234,8 +234,7 @@ void ForecastMeasure::evalExpression(const string& formula, ForecastBase* fcst,
           (bckt->getDates().within(startdate) &&
            bckt->getDates().between(enddate))) {
         // Fill the symbol table
-        for (auto m = begin(); m != end(); ++m)
-          m->expressionvalue = bckt->getValue(*m);
+        for (auto& m : all()) m.expressionvalue = bckt->getValue(m);
 
         // Evaluate the expression
         auto result = expression.value();

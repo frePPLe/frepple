@@ -51,6 +51,9 @@ const ForecastMeasureLocal* Measures::outlier = nullptr;
 const ForecastMeasureLocal* Measures::nodata = nullptr;
 const ForecastMeasureLocal* Measures::leaf = nullptr;
 
+MeasurePagePool MeasurePagePool::measurepages_default("default");
+MeasurePagePool MeasurePagePool::measurepages_temp("temp");
+
 int ForecastMeasure::initialize() {
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<ForecastMeasure>(
@@ -306,11 +309,11 @@ void ForecastBucketData::setValue(bool propagate, const ForecastMeasure* key,
     }
   }
 
-  auto t = measures.lower_bound(key->getHashedName());
-  if (t == measures.end() || t->first != key->getHashedName()) {
+  auto t = measures.find(key->getHashedName());
+  if (!t) {
     if (val != key->getDefault()) {
       // New non-empty key
-      measures.insert(t, make_pair(key->getHashedName(), val));
+      measures.insert(key->getHashedName(), val, false);
       if (propagate && key->isAggregate()) {
         auto index = getIndex();
         for (auto p = getForecast()->getParents(); p; ++p) {
@@ -321,11 +324,11 @@ void ForecastBucketData::setValue(bool propagate, const ForecastMeasure* key,
       if (!key->isTemporary()) markDirty();
     }
   } else {
-    auto delta = val - t->second;
+    auto delta = val - t->getValue();
     if (fabs(delta) > ROUNDING_ERROR || key->getDefault()) {
       if (val != key->getDefault())
         // Updating an existing key
-        t->second = val;
+        t->setValue(val);
       else
         // Existing key becomes equal to default and is removed
         measures.erase(t);
@@ -372,20 +375,20 @@ void ForecastBucketData::incValue(bool propagate, const ForecastMeasure* key,
   }
 
   // Increment locally
-  auto t = measures.lower_bound(key->getHashedName());
-  if (t == measures.end() || t->first != key->getHashedName()) {
+  auto t = measures.find(key->getHashedName());
+  if (!t) {
     // Inserting a new key
     if (val != key->getDefault())
       // New non-empty key
-      measures.insert(t, make_pair(key->getHashedName(), val));
+      measures.insert(key->getHashedName(), val, false);
   } else {
-    auto tmp = t->second + val;
+    auto tmp = t->getValue() + val;
     if (key->getDefault() == -1.0 && fabs(tmp) < ROUNDING_ERROR)
       // Special case for override measures
       validateOverride(key);
     else if (fabs(tmp - key->getDefault()) > ROUNDING_ERROR)
       // Updating an existing key
-      t->second = tmp;
+      t->setValue(tmp);
     else
       // Existing key becomes equal to default and is removed
       measures.erase(t);
@@ -409,8 +412,8 @@ void ForecastBucketData::removeValue(bool propagate,
                                      const ForecastMeasure* key) {
   if (!key) return;
   auto t = measures.find(key->getHashedName());
-  if (t == measures.end()) return;
-  auto val = t->second;
+  if (!t) return;
+  auto val = t->getValue();
   measures.erase(t);
 
   if (key->isLeaf(getForecast())) {
@@ -1032,8 +1035,7 @@ void ForecastMeasure::computeDependentMeasures(ForecastBucketData& fcstdata,
   for (auto& i : alldependents) {
     if (initialize) {
       // Initialize symbol table
-      for (auto m = begin(); m != end(); ++m)
-        m->expressionvalue = fcstdata.getValue(*m);
+      for (auto& m : all()) m.expressionvalue = fcstdata.getValue(m);
       ForecastMeasureComputed::cost =
           fcstdata.getForecast()->getForecastItem()->getCost();
       ForecastMeasureComputed::fcstbckt = fcstdata.getForecastBucket();
@@ -1068,6 +1070,281 @@ void ForecastMeasure::computeDependentMeasures(ForecastBucketData& fcstdata,
       }
     }
   }
+}
+
+void MeasureValue::addToFree(MeasurePagePool& pool) {
+  prev = pool.lastfree;
+  next = nullptr;
+  msr = PooledString::nullstring;
+  if (pool.lastfree)
+    pool.lastfree->next = this;
+  else
+    pool.firstfree = this;
+  pool.lastfree = this;
+}
+
+MeasurePage::MeasurePage(MeasurePagePool& pool) : next(nullptr) {
+  // Insert into page list
+  if (pool.lastpage) {
+    prev = pool.lastpage;
+    pool.lastpage->next = this;
+  } else {
+    pool.firstpage = this;
+    prev = nullptr;
+  }
+  pool.lastpage = this;
+
+  // Extend the list of free pairs
+  for (auto& v : data) v.addToFree(pool);
+}
+
+short MeasurePage::status() const {
+  bool empty = true;
+  bool heads = false;
+  for (auto& v : data) {
+    if (v.msr) {
+      empty = false;
+      if (!v.prev || !v.next) heads = true;
+    }
+  }
+  if (empty)
+    return 2;
+  else if (heads)
+    return 0;  // Untouchable
+  else
+    return 1;  // can be emptied
+}
+
+void MeasurePagePool::releaseEmptyPages() {
+  unsigned int count = 0;
+  for (auto p = firstpage; p;) {
+    auto status = p->status();
+    if (status == 2) {
+      // Unlink the page
+      if (p->prev)
+        p->prev->next = p->next;
+      else
+        firstpage = p->next;
+      if (p->next)
+        p->next->prev = p->prev;
+      else
+        lastpage = p->prev;
+
+      // Unlink the free nodes
+      for (auto& v : p->data) {
+        if (v.next)
+          v.next->prev = v.prev;
+        else
+          lastfree = v.prev;
+        if (v.prev)
+          v.prev->next = v.next;
+        else
+          firstfree = v.next;
+      }
+
+      // Release the memory
+      auto tmp = p;
+      p = p->next;
+      free(tmp);
+      ++count;
+    } else
+      p = p->next;
+  }
+  logger << "Released " << count << " " << name << " memory pages" << endl;
+}
+
+void MeasureList::insert(const PooledString& k, double v, bool c) {
+  if (c) {
+    // Update if it exists already
+    for (auto p = first; p; p = p->next)
+      if (p->msr == k) {
+        p->val = v;
+        return;
+      }
+  }
+
+  // Get a free pair
+  auto& pool = k.starts_with("temp") ? MeasurePagePool::measurepages_temp
+                                     : MeasurePagePool::measurepages_default;
+  if (!pool.firstfree) {
+    new MeasurePage(pool);
+    if (!pool.firstfree) throw RuntimeException("No free memory");
+  }
+  auto n = pool.firstfree;
+  pool.firstfree = pool.firstfree->next;
+  if (pool.firstfree)
+    pool.firstfree->prev = nullptr;
+  else
+    pool.lastfree = nullptr;
+
+  // Insert a new pair
+  n->next = nullptr;
+  n->msr = k;
+  n->val = v;
+  n->prev = last;
+  if (last)
+    last->next = n;
+  else
+    first = n;
+  last = n;
+}
+
+void MeasureList::erase(const PooledString& k) {
+  for (auto p = first; p; p = p->next)
+    if (p->msr == k) {
+      // Unlink from the list
+      if (p->prev)
+        p->prev->next = p->next;
+      else
+        first = p->next;
+      if (p->next)
+        p->next->prev = p->prev;
+      else
+        last = p->prev;
+
+      // Add to free list
+      p->addToFree();
+      return;
+    }
+}
+
+void MeasureList::erase(MeasureValue* p) {
+  // Unlink from the list
+  if (p->prev)
+    p->prev->next = p->next;
+  else
+    first = p->next;
+  if (p->next)
+    p->next->prev = p->prev;
+  else
+    last = p->prev;
+
+  // Add to free list
+  p->addToFree();
+}
+
+void MeasureList::sort() {
+  // Bubble sort
+  bool ok;
+  do {
+    ok = true;
+    for (auto p = first; p && p->next; p = p->next) {
+      if (p->next->msr < p->msr) {
+        swap(p->msr, p->next->msr);
+        swap(p->val, p->next->val);
+        ok = false;
+      };
+    }
+  } while (!ok);
+}
+
+void MeasureList::check() {
+  unsigned int count_fwd = 0;
+  for (auto p = first; p; p = p->next) ++count_fwd;
+  unsigned int count_bck = 0;
+  unsigned int count_wrong_links = 0;
+  for (auto p = last; p; p = p->prev) {
+    ++count_bck;
+    if (p->prev && p->prev->next != p) ++count_wrong_links;
+  }
+  if (count_fwd != count_bck)
+    logger << "Error: Mismatch forward and backward size: " << count_fwd
+           << " vs " << count_bck << endl;
+  if (count_wrong_links)
+    logger << "Error: " << count_wrong_links << "incorrect links in list"
+           << endl;
+  if (count_fwd != count_bck || count_wrong_links)
+    throw DataException("Corrupted list");
+}
+
+void MeasurePagePool::check(const string& msg) {
+  unsigned int count_pages = 0;
+  unsigned int count_pages_free = 0;
+  unsigned int count_pages_temp = 0;
+  unsigned int count_pages_temp_free = 0;
+  unsigned int count_free = 0;
+  unsigned int count_used = 0;
+  unsigned int count_temp_free = 0;
+  unsigned int count_temp_used = 0;
+  unsigned int count_wrong_links = 0;
+  bool ok = true;
+
+  // Count temp pages
+  for (auto p = measurepages_temp.firstpage; p; p = p->next) {
+    ++count_pages_temp;
+    if (p->prev && p->prev->next != p) ++count_wrong_links;
+    bool empty = true;
+    for (auto& v : p->data)
+      if (v.msr) {
+        ++count_temp_used;
+        empty = false;
+      } else
+        ++count_temp_free;
+    if (empty) ++count_pages_temp_free;
+  }
+
+  // Count default pages
+  for (auto p = measurepages_default.firstpage; p; p = p->next) {
+    ++count_pages;
+    if (p->prev && p->prev->next != p) ++count_wrong_links;
+    bool empty = true;
+    for (auto& v : p->data)
+      if (v.msr) {
+        ++count_used;
+        empty = false;
+      } else
+        ++count_free;
+    if (empty) ++count_pages_free;
+  }
+
+  // Default free list
+  unsigned int count_freelist_fwd = 0;
+  for (auto p = measurepages_default.firstfree; p; p = p->next)
+    ++count_freelist_fwd;
+  unsigned int count_freelist_bck = 0;
+  for (auto p = measurepages_default.lastfree; p; p = p->prev)
+    ++count_freelist_bck;
+  if (count_freelist_fwd != count_free || count_freelist_bck != count_free) {
+    logger << "Error: mismatched free count " << count_freelist_fwd << " vs "
+           << count_freelist_bck << " vs " << count_free << endl;
+    ok = false;
+  }
+
+  // Temp free list
+  unsigned int count_freelist_temp_fwd = 0;
+  for (auto p = measurepages_temp.firstfree; p; p = p->next)
+    ++count_freelist_temp_fwd;
+  unsigned int count_freelist_temp_bck = 0;
+  for (auto p = measurepages_temp.lastfree; p; p = p->prev)
+    ++count_freelist_temp_bck;
+  if (count_freelist_temp_fwd != count_temp_free ||
+      count_freelist_temp_bck != count_temp_free) {
+    logger << "Error: mismatched temp free count " << count_freelist_temp_fwd
+           << " vs " << count_freelist_temp_bck << " vs " << count_temp_free
+           << endl;
+    ok = false;
+  }
+
+  // Print stats
+  if (count_wrong_links) {
+    logger << "Error: " << count_wrong_links << "incorrect links in list"
+           << endl;
+    ok = false;
+  }
+  logger << "Measure memory page stats: " << msg << endl;
+  logger << "   " << count_pages << " pages with " << count_used
+         << " pairs in use and " << count_free << " free pairs." << endl;
+  logger << "   " << count_pages_temp << " temporary pages with "
+         << count_temp_used << " pairs in use and " << count_temp_free
+         << " free pairs." << endl;
+  double util = count_free + count_used + count_temp_free + count_temp_used;
+  util = util ? round(100.0 * (count_used + count_temp_used) / util) : 0.0;
+  logger << "   " << util << "% average utilization" << endl;
+  logger << "   " << count_pages_free << " empty pages, "
+         << count_pages_temp_free << " free temporary pages." << endl;
+
+  // Abort
+  if (!ok) throw DataException("corrupted memory pages");
 }
 
 }  // namespace frepple

@@ -99,6 +99,9 @@ int Forecast::initialize() {
   PythonInterpreter::registerGlobalMethod(
       "setForecast", Forecast::setValuePython2, METH_VARARGS,
       "Update forecast values");
+  PythonInterpreter::registerGlobalMethod(
+      "releaseUnusedMemory", MeasurePagePool::releaseEmptyPagesPython,
+      METH_NOARGS, "Release memory pages with unused measure data");
 
   // Initialize the Python class
   PythonType& x = FreppleClass<Forecast, Demand>::getPythonType();
@@ -350,8 +353,9 @@ void ForecastBucket::writeProperties(Serializer& o) const {
   Object::writeProperties(o);
   auto fcstdata = getForecast()->getData();
   auto& fcstbktdata = fcstdata->getBuckets()[bucketindex];
-  for (auto& tmp : fcstbktdata.getMeasures())
-    o.writeElement(Tags::data, tmp.first, tmp.second);
+  fcstbktdata.sortMeasures();
+  for (auto tmp : fcstbktdata.getMeasures())
+    o.writeElement(Tags::data, tmp->getMeasure(), tmp->getValue());
 }
 
 double ForecastBucket::getForecastTotal() const {
@@ -1107,7 +1111,7 @@ size_t ForecastBucketData::getSize() const {
   // the size per measure is a) a pointer to a pooledstring, b) a pointer to the
   // numeric, and c) 3 pointers to maintain the tree structure.
   return sizeof(ForecastBucketData) +
-         measures.size() * (4 * sizeof(void*) + sizeof(double));
+         measures.size() * (2 * sizeof(void*) + sizeof(double));
 }
 
 void ForecastData::flush() {
@@ -1200,7 +1204,7 @@ void ForecastData::flush() {
         }
         stmt.setArgument(argcount, i.getStart());
         stmt.setArgument(argcount + 1, i.getEnd());
-        stmt.setArgument(argcount + 2, i.toString());
+        stmt.setArgument(argcount + 2, i.toString(false, false));
         if (argcount < 42)
           argcount += 3;
         else {
@@ -1244,8 +1248,9 @@ void ForecastBucketData::markDirty() {
   getForecast()->markDirty();
 }
 
-string ForecastBucketData::toString(bool add_dates) const {
+string ForecastBucketData::toString(bool add_dates, bool sorted) const {
   stringstream o;
+  if (sorted) sortMeasures();
   // Use the same precision as we use for all numbers in our postgres database
   o.precision(20);
   o << "{";
@@ -1255,14 +1260,16 @@ string ForecastBucketData::toString(bool add_dates) const {
       << "\"";
     first = false;
   }
-  for (auto tmp = measures.begin(); tmp != measures.end(); ++tmp)
-    if (tmp->first.front() != '-') {
+  for (auto tmp : measures)
+    if (tmp->getMeasure().front() != '-') {
       // Measures starting with '-' are hidden, temporary measures
       if (first) {
         first = false;
-        o << "\"" << tmp->first << "\":" << round(tmp->second * 1e8) / 1e8;
+        o << "\"" << tmp->getMeasure()
+          << "\":" << round(tmp->getValue() * 1e8) / 1e8;
       } else
-        o << ",\"" << tmp->first << "\":" << round(tmp->second * 1e8) / 1e8;
+        o << ",\"" << tmp->getMeasure()
+          << "\":" << round(tmp->getValue() * 1e8) / 1e8;
     }
   o << "}";
   return o.str();
@@ -1366,10 +1373,16 @@ void ForecastBucketData::validateOverride(const ForecastMeasure* key) {
   auto index = getIndex();
   for (auto ch = getForecast()->getLeaves(false, key); ch; ++ch) {
     auto chdata = ch->getData();
-    if (key->getValue(chdata->getBuckets()[index]) != -1.0) {
-      // Override found -> case where they are all 0
-      measures[key->getHashedName()] = 0.0;
-      return;
+    for (auto mch : chdata->getBuckets()[index].measures) {
+      if (mch->getMeasure() == key->getHashedName() &&
+          mch->getValue() != -1.0) {
+        for (auto mp : measures)
+          if (mp->getMeasure() == key->getHashedName()) {
+            mp->setValue(0.0);
+            break;
+          }
+        return;
+      }
     }
   }
   // No override found at any leaf -> case where all overrides are gone

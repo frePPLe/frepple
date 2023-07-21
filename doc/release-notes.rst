@@ -1,13 +1,17 @@
 Release notes
 -------------
 
-8.2.0 (upcoming release)
+8.1.0 (upcoming release)
 ========================
 
 .. rubric:: Production planning
 
 - | Bug fix: A corner case was corrected during safety stock planning
     when the producing flow has a offset.
+
+.. rubric:: Demand forecasting
+
+- | Significant memory usage and performance optimizations.
 
 .. rubric:: Odoo integration
 

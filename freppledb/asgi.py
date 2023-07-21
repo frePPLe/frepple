@@ -152,21 +152,24 @@ class TokenMiddleware(BaseMiddleware):
                                 ),
                             ):
                                 if secret:
-                                    decoded = jwt.decode(
-                                        auth[1],
-                                        secret,
-                                        algorithms=["HS256"],
-                                    )
-                                    if "user" in decoded:
-                                        scope["user"] = await get_user(
-                                            username=decoded["user"],
-                                            database=scope["database"],
+                                    try:
+                                        decoded = jwt.decode(
+                                            auth[1],
+                                            secret,
+                                            algorithms=["HS256"],
                                         )
-                                    elif "email" in decoded:
-                                        scope["user"] = await get_user(
-                                            email=decoded["email"],
-                                            database=scope["database"],
-                                        )
+                                        if "user" in decoded:
+                                            scope["user"] = await get_user(
+                                                username=decoded["user"],
+                                                database=scope["database"],
+                                            )
+                                        elif "email" in decoded:
+                                            scope["user"] = await get_user(
+                                                email=decoded["email"],
+                                                database=scope["database"],
+                                            )
+                                    except jwt.exceptions.InvalidSignatureError:
+                                        continue
                         elif auth[0] == "basic":
                             # Basic authentication
                             args = (

@@ -23,13 +23,13 @@
 <span data-ng-if="peg[11] == 3" class="fa fa-fw fa-circle-thin"></span>
 &nbsp;{{peg[0]}}</td>
 
-<td data-ng-if="peg[2] == 'MO'">{{peg[1]}}<a data-ng-href="{{url_prefix}}/data/input/manufacturingorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
+<td data-ng-if="peg[2] == 'MO'">{{peg[1]}}<a data-ng-href="/data/input/manufacturingorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
   <span class="fa fa-caret-right"></span></a></td>
-<td data-ng-if="peg[2] == 'DO'">{{peg[1]}}<a data-ng-href="{{url_prefix}}/data/input/distributionorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
+<td data-ng-if="peg[2] == 'DO'">{{peg[1]}}<a data-ng-href="/data/input/distributionorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
   <span class="fa fa-caret-right"></span></a></td>
-  <td data-ng-if="peg[2] == 'PO'">{{peg[1]}}<a data-ng-href="{{url_prefix}}/data/input/purchaseorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
+  <td data-ng-if="peg[2] == 'PO'">{{peg[1]}}<a data-ng-href="/data/input/purchaseorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
   <span class="fa fa-caret-right"></span></a></td>
-<td data-ng-if="peg[2] == 'DLVR'">{{peg[1]}}<a data-ng-href="{{url_prefix}}/data/input/deliveryorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
+<td data-ng-if="peg[2] == 'DLVR'">{{peg[1]}}<a data-ng-href="/data/input/deliveryorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">
   <span class="fa fa-caret-right"></span></a></td>
 
 <td>{{peg[2]}}</td>

@@ -379,7 +379,7 @@ class ReportByDemand(GridReport):
                     where operationplan.reference = t.reference
                 union all
                 select cte.level+1,
-                cte.path||'/'||coalesce(operationplan.item_id,'')||'/'||operationplan.reference,
+                cte.path||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
                 t1.upstream_reference::text,
                 greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
                 least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y
@@ -397,6 +397,7 @@ class ReportByDemand(GridReport):
                     on t2.downstream_reference = operationplan.reference and numrange(t2.x,t2.y) && numrange(cte.pegged_x,cte.pegged_y)
                 )
                 select level, reference, (pegged_y-pegged_x) as quantity, path from cte
+                where level < 25
                 order by path,level desc
           ),
            pegging_0 as (

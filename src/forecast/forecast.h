@@ -592,7 +592,7 @@ class MeasureList {
   }
 
   size_t size() const {
-    size_t count;
+    size_t count = 0;
     for (auto p = first; p; p = p->next) ++count;
     return count;
   }

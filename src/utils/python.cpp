@@ -30,6 +30,7 @@
  */
 
 #define FREPPLE_CORE
+#include "frepple/json.h"
 #include "frepple/utils.h"
 #include "frepple/xml.h"
 
@@ -789,7 +790,7 @@ PyObject* Object::getPyObjectProperty(const string& name) const {
 
 PyObject* Object::toXML(PyObject* self, PyObject* args) {
   try {
-    // Parse the argument
+    // Parse the arguments
     PyObject* filearg = nullptr;
     char* mode = nullptr;
     if (!PyArg_ParseTuple(args, "|sO:toXML", &mode, &filearg)) return nullptr;
@@ -806,13 +807,13 @@ PyObject* Object::toXML(PyObject* self, PyObject* args) {
       x.setContentType(DETAIL);
     else
       throw DataException("Invalid output mode");
-
     // The next call assumes the self argument is an instance of the Object
     // base class. We don't need to check this explicitly since we expose
     // this method only on subclasses.
     x.pushCurrentObject(static_cast<Object*>(self));
     static_cast<Object*>(self)->writeElement(
         &x, *(static_cast<Object*>(self)->getType().category->typetag));
+
     // Write the output...
     if (filearg) {
       PyObject* writer = PyObject_GetAttrString(filearg, "write");
@@ -829,6 +830,57 @@ PyObject* Object::toXML(PyObject* self, PyObject* args) {
     } else
       // ... to a string
       return PythonData(ch.str());
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
+  throw LogicException("Unreachable code reached");
+}
+
+PyObject* Object::toJSON(PyObject* self, PyObject* args) {
+  try {
+    // Parse the arguments
+    PyObject* filearg = nullptr;
+    char* mode = nullptr;
+    if (!PyArg_ParseTuple(args, "|sO:toJSON", &mode, &filearg)) return nullptr;
+
+    // Create the JSON string.
+    auto cat_tag = static_cast<Object*>(self)->getType().category->grouptag;
+    JSONSerializerString ch;
+    ch.setSaveReferences(true);
+    if (!mode || mode[0] == 'S')
+      ch.setContentType(BASE);
+    else if (mode[0] == 'P')
+      ch.setContentType(PLAN);
+    else if (mode[0] == 'D')
+      ch.setContentType(DETAIL);
+    else
+      throw DataException("Invalid output mode");
+    ch.writeString("{");
+    ch.BeginList(*cat_tag);
+    Object* tmp = ch.pushCurrentObject(static_cast<Object*>(self));
+    static_cast<Object*>(self)->writeElement(&ch, *cat_tag,
+                                             ch.getContentType());
+    ch.pushCurrentObject(tmp);
+    ch.EndList(*cat_tag);
+    ch.writeString("}");
+
+    // Write the output...
+    if (filearg) {
+      PyObject* writer = PyObject_GetAttrString(filearg, "write");
+      if (writer) {
+        // ... to a file
+        Py_DECREF(writer);
+        return PyFile_WriteString(ch.getData().c_str(), filearg)
+                   ? nullptr
+                   :  // Error writing to the file
+                   Py_BuildValue("");
+      } else
+        // The argument is not a file
+        throw LogicException("Expecting a file argument");
+    } else
+      // ... to a string
+      return PythonData(ch.getData());
   } catch (...) {
     PythonType::evalException();
     return nullptr;

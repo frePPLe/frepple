@@ -3272,12 +3272,23 @@ class Object : public PyObject {
     }
   }
 
-  /* Return an XML representation of the object.
-   * If a file object is passed as argument, the representation is directly
-   * written to it.
-   * If no argument is given the representation is returned as a string.
+  /* Return a XML representation of the object.
+   * Two arguments are optional:
+   * - mode: "S" (standard, default), "P" (plan), "D" (detail)
+   * - If a file object is passed as second argument, the representation is
+   *   directly written to it.
+   *   Without second argument the representation is returned as a string.
    */
   static PyObject* toXML(PyObject*, PyObject*);
+
+  /* Return a JSON representation of the object.
+   * Two arguments are optional:
+   * - mode: "S" (standard, default), "P" (plan), "D" (detail)
+   * - If a file object is passed as second argument, the representation is
+   *   directly written to it.
+   *   Without second argument the representation is returned as a string.
+   */
+  static PyObject* toJSON(PyObject*, PyObject*);
 
   /* A function to force an object to be destroyed by the Python garbage
    * collection.
@@ -6957,6 +6968,8 @@ class FreppleClass : public PythonExtension<FreppleClass<ME, BASE>> {
     x.setBase(BASE::metadata->pythonClass);
     x.addMethod("toXML", ME::toXML, METH_VARARGS,
                 "return a XML representation");
+    x.addMethod("toJSON", ME::toJSON, METH_VARARGS,
+                "return a JSON representation");
     ME::metadata->setPythonClass(x);
     return x.typeReady();
   }

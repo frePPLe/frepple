@@ -554,7 +554,6 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
             newqty -= f->getCumulativeProduced() - endQty;
           OperationPlan* opplan =
               dynamic_cast<const FlowPlan*>(&(*f))->getOperationPlan();
-          logger << "buffer followpegging " << opplan->getReference() << endl;
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
               (iter.getMaxLevel() > 0))
@@ -594,7 +593,6 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
             newqty -= f->getCumulativeProduced() - endQty;
           OperationPlan* opplan =
               dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
-          logger << "buffer followpegging " << opplan->getReference() << endl;
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
               (iter.getMaxLevel() > 0))

@@ -13,6 +13,7 @@ Release notes
     has extra columns "quantity required confirmed" and "quantity required proposed".
   | This split of the "quantity required" allows a planner to easily see what part
     of a sales order is already covered with existing supply.
+  | This report can also now be downloaded using the download button.
 
 .. rubric:: Demand forecasting
 

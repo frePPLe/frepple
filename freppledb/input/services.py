@@ -32,63 +32,62 @@ from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.webservice.utils import lock
 
 
+@database_sync_to_async
+def savePlan(
+    deleted_opplans,
+    related_opplans,
+    related_resources,
+    related_buffers,
+    related_demands,
+    database,
+):
+    try:
+        PlanTaskRegistry.run(
+            export=1,
+            cluster=-2,
+            database=database,
+            deleted_opplans=deleted_opplans,
+            opplans=related_opplans,
+            resources=related_resources,
+            buffers=related_buffers,
+            demands=related_demands,
+        )
+    except Exception as e:
+        print("Error saving plan:", e)
+        raise e
+
+
+def collectRelated(
+    opplan,
+    related_opplans,
+    related_resources,
+    related_buffers,
+    related_demands,
+):
+    import frepple
+
+    for d in opplan.loadplans:
+        related_resources.add(d.resource)
+    for d in opplan.flowplans:
+        related_buffers.add(d.buffer)
+        for flpln in d.buffer.flowplans:
+            if isinstance(flpln.operationplan.operation, frepple.operation_inventory):
+                # Force stck opplan to be present in the database
+                related_opplans.add(flpln.operationplan)
+            break
+    if opplan.demand:
+        related_demands.add(opplan.demand)
+    if opplan.owner:
+        collectRelated(
+            opplan.owner,
+            related_opplans,
+            related_resources,
+            related_buffers,
+            related_demands,
+        )
+
+
 class OperationplanService(AsyncHttpConsumer):
-    @database_sync_to_async
-    def savePlan(
-        self,
-        deleted_opplans,
-        related_opplans,
-        related_resources,
-        related_buffers,
-        related_demands,
-    ):
-        try:
-            PlanTaskRegistry.run(
-                export=1,
-                cluster=-2,
-                database=self.scope["database"],
-                deleted_opplans=deleted_opplans,
-                opplans=related_opplans,
-                resources=related_resources,
-                buffers=related_buffers,
-                demands=related_demands,
-            )
-        except Exception as e:
-            print("Error saving plan:", e)
-            raise e
-
-    def collectRelated(
-        self,
-        opplan,
-        related_opplans,
-        related_resources,
-        related_buffers,
-        related_demands,
-    ):
-        import frepple
-
-        for d in opplan.loadplans:
-            related_resources.add(d.resource)
-        for d in opplan.flowplans:
-            related_buffers.add(d.buffer)
-            for flpln in d.buffer.flowplans:
-                if isinstance(
-                    flpln.operationplan.operation, frepple.operation_inventory
-                ):
-                    # Force stck opplan to be present in the database
-                    related_opplans.add(flpln.operationplan)
-                break
-        if opplan.demand:
-            related_demands.add(opplan.demand)
-        if opplan.owner:
-            self.collectRelated(
-                opplan.owner,
-                related_opplans,
-                related_resources,
-                related_buffers,
-                related_demands,
-            )
-
     async def handle(self, body):
         errors = []
         try:
@@ -122,7 +121,7 @@ class OperationplanService(AsyncHttpConsumer):
                                     {"reference": d, "action": "C"}
                                 )
                                 if opplan:
-                                    self.collectRelated(
+                                    collectRelated(
                                         opplan,
                                         related_opplans,
                                         related_resources,
@@ -246,7 +245,7 @@ class OperationplanService(AsyncHttpConsumer):
                             ):
                                 if ref:
                                     # Original related objects
-                                    self.collectRelated(
+                                    collectRelated(
                                         opplan,
                                         related_opplans,
                                         related_resources,
@@ -265,7 +264,7 @@ class OperationplanService(AsyncHttpConsumer):
                                         setattr(opplan, fld, val)
                                 # New related objects
                                 related_opplans.add(opplan)
-                                self.collectRelated(
+                                collectRelated(
                                     opplan,
                                     related_opplans,
                                     related_resources,
@@ -287,12 +286,13 @@ class OperationplanService(AsyncHttpConsumer):
                     or related_demands
                 ):
                     try:
-                        await self.savePlan(
+                        await savePlan(
                             deleted_opplans,
                             related_opplans,
                             related_resources,
                             related_buffers,
                             related_demands,
+                            self.scope["database"],
                         )
                     except Exception as e:
                         print("exception " % e)

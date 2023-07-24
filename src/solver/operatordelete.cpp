@@ -42,7 +42,7 @@ int OperatorDelete::initialize() {
   x.supportgetattro();
   x.supportsetattro();
   x.supportcreate(create);
-  x.addMethod("solve", solve, METH_NOARGS, "run the solver");
+  x.addMethod("solve", solve, METH_VARARGS, "run the solver");
   metadata->setPythonClass(x);
   return x.typeReady();
 }

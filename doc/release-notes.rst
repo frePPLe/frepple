@@ -9,6 +9,11 @@ Release notes
 - | Bug fix: A corner case was corrected during safety stock planning
     when the producing flow has a offset.
 
+- | The `demand gantt report <user-interface/plan-analysis/demand-gantt-report.html>`_
+    has extra columns "quantity required confirmed" and "quantity required proposed".
+  | This split of the "quantity required" allows a planner to easily see what part
+    of a sales order is already covered with existing supply.
+
 .. rubric:: Demand forecasting
 
 - | Significant memory usage and performance optimizations.

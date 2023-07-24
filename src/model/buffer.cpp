@@ -554,11 +554,15 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
             newqty -= f->getCumulativeProduced() - endQty;
           OperationPlan* opplan =
               dynamic_cast<const FlowPlan*>(&(*f))->getOperationPlan();
+          logger << "buffer followpegging " << opplan->getReference() << endl;
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
               (iter.getMaxLevel() > 0))
             if (opplan->getOwner() &&
-                opplan->getOwner()->getOperation()->hasType<OperationRouting>())
+                opplan->getOwner()
+                    ->getOperation()
+                    ->hasType<OperationRouting>() &&
+                !(iter.getMaxLevel() > 0))
               topopplan = opplan->getOwner();
             else
               topopplan = opplan;
@@ -590,11 +594,15 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
             newqty -= f->getCumulativeProduced() - endQty;
           OperationPlan* opplan =
               dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
+          logger << "buffer followpegging " << opplan->getReference() << endl;
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
               (iter.getMaxLevel() > 0))
             if (opplan->getOwner() &&
-                opplan->getOwner()->getOperation()->hasType<OperationRouting>())
+                opplan->getOwner()
+                    ->getOperation()
+                    ->hasType<OperationRouting>() &&
+                !(iter.getMaxLevel() > 0))
               topopplan = opplan->getOwner();
             else
               topopplan = opplan;

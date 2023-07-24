@@ -495,31 +495,49 @@ class ExportOperationPlans(PlanTask):
         import frepple
 
         unavail = opplan.unavailable
-        downstream_opplans = []
-        upstream_opplans = []
 
-        # downstream
-        for j in opplan.pegging_downstream_first_level:
-            # some security
-            if j.operationplan == opplan:
-                continue
+        upstream_opplans = None
+        if (
+            opplan.owner
+            and isinstance(opplan.owner.operation, frepple.operation_routing)
+            and len(
+                [
+                    k.priority
+                    for k in opplan.owner.operation.suboperations
+                    if k.priority < opplan.operation.priority
+                ]
+            )
+            == 0
+        ):
+            upstream_opplans = [(opplan.owner.reference, opplan.quantity, 0)]
 
-            downstream_opplans.append((j.operationplan.reference, j.quantity, j.offset))
-
-        # upstream
-        for j in opplan.pegging_upstream_first_level:
-            # some security
-            if j.operationplan == opplan:
-                continue
-
-            upstream_opplans.append((j.operationplan.reference, j.quantity, j.offset))
+        if isinstance(opplan.operation, frepple.operation_routing):
+            first_subop = None
+            for i in opplan.operationplans:
+                first_subop = i
+                break
+            if first_subop:
+                upstream_opplans = [
+                    (j.operationplan.reference, j.quantity, j.offset)
+                    for j in first_subop.pegging_upstream_first_level
+                    if j.operationplan != opplan
+                ]
 
         pln = {
             "pegging": {
                 j.demand.name: round(j.quantity, 8) for j in opplan.pegging_demand
             },
-            "downstream_opplans": downstream_opplans,
-            "upstream_opplans": upstream_opplans,
+            "downstream_opplans": [
+                (j.operationplan.reference, j.quantity, j.offset)
+                for j in opplan.pegging_downstream_first_level
+                if j.operationplan != opplan
+            ],
+            "upstream_opplans": upstream_opplans
+            or [
+                (j.operationplan.reference, j.quantity, j.offset)
+                for j in opplan.pegging_upstream_first_level
+                if j.operationplan != opplan
+            ],
             "unavailable": unavail,
             "interruptions": [
                 (

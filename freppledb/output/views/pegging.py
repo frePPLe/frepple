@@ -143,6 +143,13 @@ class ReportByDemand(GridReport):
             return {}
 
     @classmethod
+    def title(cls, request, *args, **kwargs):
+        if args and args[0]:
+            return args[0]
+        else:
+            return cls.title
+
+    @classmethod
     def getBuckets(reportclass, request, *args, **kwargs):
         # Get the earliest and latest operationplan, and the demand due date
         cursor = connections[request.database].cursor()
@@ -749,5 +756,22 @@ class ReportByDemand(GridReport):
                                         i, updateParent[i]
                                     )
 
-                for r in sorted(response, key=lambda d: d["id"]):
-                    yield r
+                # The report is being downloaded, adjust the output
+                if request.GET.get("format", None) in [
+                    "spreadsheetlist",
+                    "spreadsheettable",
+                    "spreadsheet",
+                    "csvlist",
+                    "csvtable",
+                    "csv",
+                ]:
+                    for r in sorted(response, key=lambda d: d["id"]):
+                        r["operationplans"] = [
+                            "reference=%s start=%s end=%s"
+                            % (p["reference"], p["startdate"], p["enddate"])
+                            for p in r["operationplans"]
+                        ]
+                        yield r
+                else:
+                    for r in sorted(response, key=lambda d: d["id"]):
+                        yield r

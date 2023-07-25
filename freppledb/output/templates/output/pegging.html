@@ -273,7 +273,7 @@ loadComplete: function(data) {
 {% include "common/snippet_favorites.html" %}
 <button class="btn btn-sm btn-primary" onclick="gantt.zoom(0.5)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'zoom in'|capfirst|force_escape %}" ><span class="fa fa-search-plus"></span></button>
 <button class="btn btn-sm btn-primary" onclick="gantt.zoom(2.0)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'zoom out'|capfirst|force_escape %}" ><span class="fa fa-search-minus"></span></button>
-<button class="btn btn-sm btn-primary" onclick="grid.showExport(false,{{ scenario_permissions }})" >
+<button class="btn btn-sm btn-primary" onclick="grid.showExport(true,{{ scenario_permissions }})" >
   <span data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down"></span>
 </button>
 <button class="btn btn-sm btn-primary" onclick="grid.showCustomize(false);" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>

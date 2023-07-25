@@ -547,7 +547,7 @@ void Calendar::buildEventList(Date includedate) {
     struct tm* datedetail;
     curDate = Date::infiniteFuture;
     for (auto b = firstBucket; b; b = b->nextBucket) {
-      if (b->getStart() == b->getEnd()) continue;
+      if (b->getStart() == b->getEnd() || !b->getDays()) continue;
       // FIRST CASE: Bucket that is continuously effective
       if (b->isContinuouslyEffective()) {
         // Evaluate the start date of the bucket

@@ -25,6 +25,12 @@ Release notes
     or manufacturing order from frePPLe to odoo is now a button rather than a
     dropdown. Saves you a click.
 
+- | 15 & 16: Handle the corner case where a purchase order has an ordering
+    date later than its delivery date.
+
+- | 15 & 16: Bug fix where confirmed manufacturing orders are consuming materials
+    in the wrong work order.
+
 .. rubric:: System administration
 
 - | The command to `back up the database <command-reference.html#backup>`_ is renamed

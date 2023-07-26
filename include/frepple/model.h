@@ -7572,6 +7572,7 @@ class Demand : public HasHierarchy<Demand>,
     } else if (s & STATUS_CLOSED) {
       flags &= ~(STATUS_QUOTE + STATUS_INQUIRY + STATUS_OPEN + STATUS_CANCELED);
       flags |= STATUS_CLOSED;
+      deleteOperationPlans();
     } else if (s & STATUS_QUOTE) {
       flags &=
           ~(STATUS_OPEN + STATUS_INQUIRY + STATUS_CLOSED + STATUS_CANCELED);
@@ -7582,6 +7583,7 @@ class Demand : public HasHierarchy<Demand>,
     } else if (s & STATUS_CANCELED) {
       flags &= ~(STATUS_OPEN + STATUS_QUOTE + STATUS_INQUIRY + STATUS_CLOSED);
       flags |= STATUS_CANCELED;
+      deleteOperationPlans();
     } else
       throw DataException("Demand status not recognized");
     setChanged();
@@ -7612,6 +7614,7 @@ class Demand : public HasHierarchy<Demand>,
     } else if (s == "closed") {
       flags &= ~(STATUS_QUOTE + STATUS_INQUIRY + STATUS_OPEN + STATUS_CANCELED);
       flags |= STATUS_CLOSED;
+      deleteOperationPlans();
     } else if (s == "quote") {
       flags &=
           ~(STATUS_OPEN + STATUS_INQUIRY + STATUS_CLOSED + STATUS_CANCELED);
@@ -7622,6 +7625,7 @@ class Demand : public HasHierarchy<Demand>,
     } else if (s == "canceled") {
       flags &= ~(STATUS_OPEN + STATUS_QUOTE + STATUS_INQUIRY + STATUS_CLOSED);
       flags |= STATUS_CANCELED;
+      deleteOperationPlans();
     } else
       throw DataException("Demand status not recognized");
     setChanged();

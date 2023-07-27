@@ -42,7 +42,7 @@ from django.utils.encoding import force_str
 from django.utils.translation import pgettext, gettext_lazy as _
 
 from freppledb.common.auth import getWebserviceAuthorization
-from freppledb.common.models import AuditModel, BucketDetail
+from freppledb.common.models import AuditModel, BucketDetail, Parameter
 from freppledb.input.models import Customer, Item, Location, Operation
 from freppledb.webservice.utils import useWebService
 
@@ -296,7 +296,6 @@ class PropertyField:
 
 
 class ForecastPlan(models.Model):
-
     # Model managers
     objects = models.Manager()  # The default model manager
 
@@ -456,6 +455,16 @@ class ForecastPlan(models.Model):
         else:
             bounds = None
         svcdata = []
+
+        # keep a list of all forecast combinations visited
+        # This is used to add missing forecast records.
+        populateForecastTable = (
+            Parameter.getValue(
+                "forecast.populateForecastTable", database, "true"
+            ).lower()
+            == "true"
+        )
+        forecast_combinations = set()
 
         for row in data:
             rownumber += 1
@@ -665,6 +674,14 @@ class ForecastPlan(models.Model):
                         yield (DEBUG, rownumber, None, None, None)
 
                 multiplier = rowWrapper.get("multiplier") or 1
+                if populateForecastTable:
+                    forecast_combinations.add(
+                        (
+                            rowWrapper.get("item", None),
+                            rowWrapper.get("location", None),
+                            rowWrapper.get("customer", None),
+                        )
+                    )
 
                 # Call the update method
                 if pivotbuckets:
@@ -740,6 +757,79 @@ class ForecastPlan(models.Model):
         if svcdata:
             for e in sendToService(svcdata):
                 yield (ERROR, None, None, None, e)
+
+        # Add any missing forecast record
+        if populateForecastTable:
+            with connections[database].cursor() as cursor:
+                # create a temp table to process a possible new forecast combination
+                cursor.execute(
+                    """
+                            create temporary table forecast_combinations as
+                            select item_id, location_id, customer_id from forecast where false;
+                            create unique index on forecast_combinations (item_id, location_id, customer_id);
+                            """
+                )
+                # insert all combinations found in the file
+                cursor.executemany(
+                    "insert into forecast_combinations values (%s,%s,%s)",
+                    forecast_combinations,
+                )
+                # delete invalid combinations
+                cursor.execute(
+                    """
+                            delete from forecast_combinations
+                            where item_id is null
+                            or location_id is null
+                            or customer_id is null;
+                            """
+                )
+                # delete combinations where the forecast record exists
+                cursor.execute(
+                    """
+                            delete from forecast_combinations
+                            where exists (select 1 from forecasthierarchy
+                                                where item_id = forecast_combinations.item_id
+                                                and location_id = forecast_combinations.location_id
+                                                and customer_id = forecast_combinations.customer_id);
+                            """
+                )
+                # delete any non-leaf combinations
+                cursor.execute(
+                    """
+                    delete from forecast_combinations where
+                    item_id not in (select name from item where lft = rght-1)
+                    or location_id not in (select name from location where lft = rght-1)
+                    or customer_id not in (select name from customer where lft = rght-1);
+                    """
+                )
+
+                # insert the new forecast records
+                cursor.execute(
+                    """
+                        insert into forecast (name, item_id, location_id, customer_id, discrete, priority, method, planned)
+                        select item_id||' @ '||location_id||' @ '||customer_id,
+                        item_id, location_id, customer_id, true, 20, 'automatic', true from forecast_combinations
+                        on conflict (name) do nothing;
+                                    """
+                )
+                # update the forecasthierarchy table
+                cursor.execute(
+                    """
+                with cte as (
+                    select item_parent.name as item_id,
+                        location_parent.name as location_id,
+                        customer_parent.name as customer_id from forecast_combinations
+                    inner join item on item.name = forecast_combinations.item_id
+                    inner join location on location.name = forecast_combinations.location_id
+                    inner join customer on customer.name = forecast_combinations.customer_id
+                    inner join item item_parent on item.lft between item_parent.lft and item_parent.rght
+                    inner join location location_parent on location.lft between location_parent.lft and location_parent.rght
+                    inner join customer customer_parent on customer.lft between customer_parent.lft and customer_parent.rght
+                    )
+                    insert into forecasthierarchy
+                    select * from cte on conflict (item_id, location_id, customer_id) do nothing;
+                    """
+                )
 
         if session:
             Forecast.flush(session, mode="auto", database=database, token=token)
@@ -1215,7 +1305,6 @@ class Measure(AuditModel):
 
 
 class ForecastPlanView(models.Model):
-
     # Model managers
     objects = models.Manager()  # The default model manager
 

@@ -19,6 +19,14 @@ Release notes
 
 - | Significant memory usage and performance optimizations.
 
+- | Records in a forecast report file (with typically forecast overrides) were only
+    considered if the forecast combination exists in the
+    `forecast <model-reference/forecast.html>`_ table. From now on, records will be processed
+    even without forecast record, provided they are at leaf level (lowest level of hierarchy for the
+    item, location and customer specified).
+    Corresponding records will be automatically created in the forecast table with the planned flag equal
+    to true and the forecast method set to automatic.
+
 .. rubric:: Odoo integration
 
 - | The approval button to export a proposed purchase order, distribution order

@@ -122,7 +122,17 @@ ForecastBase* ForecastHash::findForecast(Item* i, Customer* c, Location* l,
     auto iter = table.find(&tmp);
     if (iter != table.end()) return static_cast<Forecast*>(*iter);
   }
-  return allow_create ? new ForecastAggregated(i, l, c) : nullptr;
+  if (allow_create) {
+    if (!i->isGroup() && !l->isGroup() && !c->isGroup()) {
+      auto f = new Forecast();
+      f->setItem(i);
+      f->setCustomer(c);
+      f->setLocation(l);
+      return f;
+    } else
+      return new ForecastAggregated(i, l, c);
+  }
+  return nullptr;
 }
 
 bool Forecast::isLeaf() const {

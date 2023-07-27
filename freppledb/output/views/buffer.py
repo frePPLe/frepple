@@ -735,7 +735,7 @@ class OverviewReport(GridPivot):
                 from out_constraint
                 inner join operationplan on operationplan.forecast = out_constraint.forecast
                 and operationplan.item_id = item.name and operationplan.location_id = location.name
-                and operationplan.enddate >= greatest(%s,d.startdate)
+                and operationplan.enddate >= greatest(arguments.report_startdate,d.startdate)
                 and operationplan.due < d.enddate
                 """
         net_forecast = """
@@ -752,6 +752,12 @@ class OverviewReport(GridPivot):
         """
 
         query = """
+        with arguments as (
+                select %%s::timestamp report_startdate,
+                %%s::timestamp report_enddate,
+                %%s::timestamp report_currentdate,
+                %%s report_bucket
+           )
            select
            opplanmat.buffer,
            item.name item_id,
@@ -795,7 +801,7 @@ class OverviewReport(GridPivot):
                 inner join operationplan on operationplan.item_id = item.name
                 and operationplan.location_id = location.name
                 and operationplan.demand_id = out_constraint.demand
-                and operationplan.enddate >= greatest(%%s,d.startdate)
+                and operationplan.enddate >= greatest(arguments.report_startdate,d.startdate)
                 and operationplan.due < d.enddate
                 %s
                 order by name limit 20
@@ -817,7 +823,7 @@ class OverviewReport(GridPivot):
              where operationplanmaterial.item_id = item.name
                and operationplanmaterial.location_id = location.name
                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
-               and flowdate < greatest(d.startdate,%%s)
+               and flowdate < greatest(d.startdate,arguments.report_startdate)
              order by flowdate desc, id desc limit 1
              ),
              (
@@ -832,7 +838,7 @@ class OverviewReport(GridPivot):
              where operationplanmaterial.item_id = item.name
                and operationplanmaterial.location_id = location.name
                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
-               and flowdate >= greatest(d.startdate,%%s)
+               and flowdate >= greatest(d.startdate,arguments.report_startdate)
                and operationplanmaterial.quantity < 0
              order by flowdate asc, id asc limit 1
              ),
@@ -848,7 +854,7 @@ class OverviewReport(GridPivot):
              where operationplanmaterial.item_id = item.name
                and operationplanmaterial.location_id = location.name
                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
-               and flowdate >= greatest(d.startdate,%%s)
+               and flowdate >= greatest(d.startdate,arguments.report_startdate)
                and operationplanmaterial.quantity >= 0
              order by flowdate asc, id asc limit 1
              )
@@ -865,7 +871,7 @@ class OverviewReport(GridPivot):
             select 1 as priority, coalesce(
               (select value from calendarbucket
                where calendar_id = 'SS for ' || opplanmat.buffer
-               and greatest(d.startdate,%%s) >= startdate and greatest(d.startdate,%%s) < enddate
+               and greatest(d.startdate,arguments.report_startdate) >= startdate and greatest(d.startdate,arguments.report_startdate) < enddate
                order by priority limit 1),
               (select defaultvalue from calendar where name = 'SS for ' || opplanmat.buffer)
               ) as safetystock
@@ -880,8 +886,8 @@ class OverviewReport(GridPivot):
                  and location_id = location.name
                  and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.opplan_batch)
                  )
-               and greatest(d.startdate,%%s) >= startdate
-               and greatest(d.startdate,%%s) < enddate
+               and greatest(d.startdate,arguments.report_startdate) >= startdate
+               and greatest(d.startdate,arguments.report_startdate) < enddate
                order by priority limit 1),
               (select defaultvalue
                from calendar
@@ -914,44 +920,44 @@ class OverviewReport(GridPivot):
                'on_order_po', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
                'on_order_po_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
                'on_order_po_proposed', sum(case when operationplan.status = 'proposed' and operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
-               'proposed_ordering', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (operationplan.startdate >= greatest(d.startdate,%%s) and operationplan.startdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'proposed_ordering', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (operationplan.startdate >= greatest(d.startdate,arguments.report_startdate) and operationplan.startdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'in_transit_do', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
                'in_transit_do_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
                'in_transit_do_proposed', sum(case when operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
                'total_in_progress', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'total_in_progress_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
                'total_in_progress_proposed', sum(case when operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'consumed', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumed_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumed_proposed', sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedMO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedMO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedFcst', sum(case when operationplan.demand_id is null and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedDO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedDO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedSO', sum(case when operationplan.demand_id is not null and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'produced', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'produced_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'produced_proposed', sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedMO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedMO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedDO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedDO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedPO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedPO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'max_delay', max(extract(epoch from case when opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate then operationplan.delay else interval '0 second' end) / 86400)
+               'consumed', sum(case when (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumed_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumed_proposed', sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedMO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedMO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedFcst', sum(case when operationplan.demand_id is null and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedDO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedDO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedSO', sum(case when operationplan.demand_id is not null and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'produced', sum(case when (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'produced_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'produced_proposed', sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedMO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedMO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedDO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedDO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedPO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedPO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'max_delay', max(extract(epoch from case when opm.flowdate >= greatest(d.startdate,arguments.report_currentdate) and opm.flowdate < d.enddate then operationplan.delay else interval '0 second' end) / 86400)
                )
              from operationplanmaterial opm
              inner join operationplan
              on operationplan.reference = opm.operationplan_id
                and ((startdate < d.enddate and enddate >= d.enddate)
-               or (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate)
-               or (operationplan.type = 'DLVR' and due < d.enddate and due >= case when %%s >= d.startdate and %%s < d.enddate then '1970-01-01'::timestamp else d.startdate end))
+               or (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate)
+               or (operationplan.type = 'DLVR' and due < d.enddate and due >= case when arguments.report_currentdate >= d.startdate and arguments.report_currentdate < d.enddate then '1970-01-01'::timestamp else d.startdate end))
              where opm.item_id = item.name
                and opm.location_id = location.name
                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
@@ -965,9 +971,9 @@ class OverviewReport(GridPivot):
                   inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
                   where operationplanmaterial.item_id = item.name and operationplanmaterial.location_id = location.name and
                     (
-                      (operationplanmaterial.flowdate >= greatest(d.startdate,%%s) and operationplanmaterial.quantity < 0 and operationplan.type = 'DLVR' and operationplan.due < greatest(d.startdate,%%s))
+                      (operationplanmaterial.flowdate >= greatest(d.startdate,arguments.report_currentdate) and operationplanmaterial.quantity < 0 and operationplan.type = 'DLVR' and operationplan.due < greatest(d.startdate,arguments.report_currentdate))
                       or ( operationplanmaterial.quantity > 0 and operationplan.status = 'closed' and operationplan.type = 'STCK')
-                      or ( operationplanmaterial.quantity > 0 and operationplan.status in ('approved','confirmed','completed') and flowdate <= greatest(d.startdate,%%s) + interval '1 second')
+                      or ( operationplanmaterial.quantity > 0 and operationplan.status in ('approved','confirmed','completed') and flowdate <= greatest(d.startdate,arguments.report_currentdate) + interval '1 second')
                     )
                   having sum(operationplanmaterial.quantity) <0
                   limit 1
@@ -978,11 +984,11 @@ class OverviewReport(GridPivot):
                     when periodofcover = 999 * 24 * 3600
                       then '999 days'::interval
                     when onhand > 0.00001
-                      then date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - greatest(d.startdate,%%s), '999 days'::interval))
+                      then date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - greatest(d.startdate,arguments.report_currentdate), '999 days'::interval))
                     else null
                     end
                   from operationplanmaterial
-                  where flowdate < greatest(d.startdate,%%s)
+                  where flowdate < greatest(d.startdate,arguments.report_currentdate)
                     and operationplanmaterial.item_id = item.name and operationplanmaterial.location_id = location.name
                   order by flowdate desc, id desc
                   limit 1
@@ -990,7 +996,7 @@ class OverviewReport(GridPivot):
                  -- No inventory and no backlog: use the date of next consumer
                  (
                  select greatest('0 days'::interval, least(
-                     date_trunc('day', justify_interval(flowdate - greatest(d.startdate,%%s) - coalesce(operationplan.delay, '0 day'::interval))),
+                     date_trunc('day', justify_interval(flowdate - greatest(d.startdate,arguments.report_currentdate) - coalesce(operationplan.delay, '0 day'::interval))),
                      '999 days'::interval
                      ))
                   from operationplanmaterial
@@ -1004,21 +1010,24 @@ class OverviewReport(GridPivot):
                  ))/86400) periodofcover
            from
            (%s) opplanmat
+           cross join arguments
            inner join item on item.name = opplanmat.item_id
            inner join location on location.name = opplanmat.location_id
            -- Multiply with buckets
            cross join (
              select name as bucket, startdate, enddate,
                min(snapshot_date) as snapshot_date,
-               enddate < %%s as history
+               enddate < arguments.report_currentdate as history
              from common_bucketdetail
+             cross join arguments
              left outer join ax_manager
                on snapshot_date >= common_bucketdetail.startdate
                and snapshot_date < common_bucketdetail.enddate
-             where common_bucketdetail.bucket_id = %%s
-               and common_bucketdetail.enddate > %%s
-               and common_bucketdetail.startdate < %%s
-             group by common_bucketdetail.name, common_bucketdetail.startdate, common_bucketdetail.enddate
+             where common_bucketdetail.bucket_id = arguments.report_bucket
+               and common_bucketdetail.enddate > arguments.report_startdate
+               and common_bucketdetail.startdate < arguments.report_enddate
+             group by common_bucketdetail.name, common_bucketdetail.startdate,
+                      common_bucketdetail.enddate, arguments.report_currentdate
              ) d
            -- join with the archive data
            left outer join ax_buffer
@@ -1053,7 +1062,9 @@ class OverviewReport(GridPivot):
            d.bucket,
            d.startdate,
            d.enddate,
-           d.history
+           d.history,
+           arguments.report_startdate,
+           arguments.report_currentdate
            order by %s, d.startdate
         """ % (
             net_forecast if "freppledb.forecast" in settings.INSTALLED_APPS else "0",
@@ -1068,31 +1079,13 @@ class OverviewReport(GridPivot):
             with connections[request.database].chunked_cursor() as cursor_chunked:
                 cursor_chunked.execute(
                     query,
-                    (request.report_startdate,)
-                    * (
-                        2 if "freppledb.forecast" in settings.INSTALLED_APPS else 1
-                    )  # reasons
-                    + (
-                        request.report_startdate,  # startoh
-                        request.report_startdate,
-                        request.report_startdate,
-                        request.report_startdate,
-                        request.report_startdate,
-                        request.report_startdate,  # safetystock
-                    )
-                    + (request.report_startdate,) * 23
-                    + (request.report_startdate,) * 1  # net forecast
-                    + (request.current_date,) * 2  # net forecast
-                    + (request.report_startdate,) * 1
-                    + (request.current_date,) * 2  # ongoing
-                    + (request.current_date,) * 6  # period of cover
-                    + baseparams
-                    + (  # opplanmat
-                        request.current_date,
-                        request.report_bucket,
+                    (
                         request.report_startdate,
                         request.report_enddate,
-                    ),  # bucket d
+                        request.current_date,
+                        request.report_bucket,
+                    )
+                    + baseparams,
                 )
                 itemattributefields = getAttributeFields(
                     Item, related_name_prefix="item"

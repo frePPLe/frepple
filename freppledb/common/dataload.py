@@ -24,11 +24,13 @@
 from datetime import timedelta, datetime
 from dateutil.parser import parse
 from decimal import Decimal
+import locale
 from logging import INFO, ERROR, WARNING, DEBUG
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.worksheet.worksheet import Worksheet
 
 from django import forms
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import EMPTY_VALUES
 from django.db import DEFAULT_DB_ALIAS
@@ -282,7 +284,7 @@ def parseCSVdata(
                         return val if val != "" else None
                 elif isinstance(idx[1], DecimalField):
                     # Automatically round to 8 digits rather than giving an error message
-                    return round(float(val), 8) if val != "" else None
+                    return round(locale.atof(val), 8) if val != "" else None
 
                 elif isinstance(idx[1], DurationField):
                     val = self.data[idx[0]]
@@ -381,6 +383,7 @@ def _parseData(
     content_type_id = ContentType.objects.get_for_model(
         model, for_concrete_model=False
     ).pk
+    locale.setlocale(locale.LC_NUMERIC, settings.LANGUAGE_CODE)
 
     # Call the beforeUpload method if it is defined
     if hasattr(model, "beforeUpload"):

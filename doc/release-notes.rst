@@ -27,6 +27,11 @@ Release notes
     Corresponding records will be automatically created in the forecast table with the planned flag equal
     to true and the forecast method set to automatic.
 
+.. rubric:: User interface
+
+- | Fixed some small bugs where the user interface, data import and data
+    export didn't work correct with European style date and number formats.
+
 .. rubric:: Odoo integration
 
 - | The approval button to export a proposed purchase order, distribution order

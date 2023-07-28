@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<current>2023-06-01T00:00:00</current>
+	<resources>
+		<resource>
+			<name>production line</name>
+			<maximum>10</maximum>
+			<location>
+				<name>Site</name>
+			</location>
+		</resource>
+	</resources>
+	<items>
+		<item>
+			<name>crude</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>FRN</name>
+					</supplier>
+					<location>
+						<name>Site</name>
+					</location>
+					<leadtime>P1D</leadtime>
+					<batchwindow>P7D</batchwindow>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+	</items>
+	<operations>
+		<operation xsi:type="operation_time_per">
+			<name>Production</name>
+			<size_multiple>1</size_multiple>
+			<item>
+				<name>PF1</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<loads>
+				<load>
+					<resource xsi:type="resource_buckets">
+						<name>production line</name>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<flows>
+				<flow>
+					<item>
+						<name>crude</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>PF2</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>PF3</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>PF4</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>PF1</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration_per>PT2H</duration_per>
+		</operation>
+	</operations>
+	<demands>
+		<demand>
+			<name>Sales PF1 1</name>
+			<quantity>5</quantity>
+			<item>
+				<name>PF1</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client1</name>
+			</customer>
+			<due>2023-06-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF1 2</name>
+			<quantity>10</quantity>
+			<item>
+				<name>PF1</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client1</name>
+			</customer>
+			<due>2023-07-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF1 3</name>
+			<quantity>50</quantity>
+			<item>
+				<name>PF1</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client1</name>
+			</customer>
+			<due>2023-08-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF1 4</name>
+			<quantity>35</quantity>
+			<item>
+				<name>PF1</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client1</name>
+			</customer>
+			<due>2023-09-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF2 1</name>
+			<quantity>10</quantity>
+			<item>
+				<name>PF2</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client2</name>
+			</customer>
+			<due>2023-06-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF2 2</name>
+			<quantity>3</quantity>
+			<item>
+				<name>PF2</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client2</name>
+			</customer>
+			<due>2023-07-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF2 3</name>
+			<quantity>70</quantity>
+			<item>
+				<name>PF2</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client2</name>
+			</customer>
+			<due>2023-08-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF2 4</name>
+			<quantity>20</quantity>
+			<item>
+				<name>PF2</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client2</name>
+			</customer>
+			<due>2023-09-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF3 1</name>
+			<quantity>5</quantity>
+			<item>
+				<name>PF3</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client3</name>
+			</customer>
+			<due>2023-06-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF3 2</name>
+			<quantity>5</quantity>
+			<item>
+				<name>PF3</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client3</name>
+			</customer>
+			<due>2023-07-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF3 3</name>
+			<quantity>5</quantity>
+			<item>
+				<name>PF3</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client3</name>
+			</customer>
+			<due>2023-08-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF3 4</name>
+			<quantity>5</quantity>
+			<item>
+				<name>PF3</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client3</name>
+			</customer>
+			<due>2023-09-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF4 1</name>
+			<quantity>5</quantity>
+			<item>
+				<name>PF4</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client4</name>
+			</customer>
+			<due>2023-06-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF4 2</name>
+			<quantity>10</quantity>
+			<item>
+				<name>PF4</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client4</name>
+			</customer>
+			<due>2023-07-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF4 3</name>
+			<quantity>20</quantity>
+			<item>
+				<name>PF4</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client4</name>
+			</customer>
+			<due>2022-08-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+		<demand>
+			<name>Sales PF4 4</name>
+			<quantity>50</quantity>
+			<item>
+				<name>PF4</name>
+			</item>
+			<location>
+				<name>Site</name>
+			</location>
+			<customer>
+				<name>Client4</name>
+			</customer>
+			<due>2023-09-25T00:00:00</due>
+			<priority>10</priority>
+		</demand>
+	</demands>
+	
+<?python
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+?>
+</plan>

@@ -342,7 +342,25 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
         ++fiter;
         continue;
       }
+
+      // Compute the excess quantity
       double cur_excess = b->getFlowPlans().getExcess(&*fiter);
+      if (fp)
+        for (auto flpln_on_opplan = fp->getOperationPlan()->beginFlowPlans();
+             flpln_on_opplan != fp->getOperationPlan()->endFlowPlans();
+             ++flpln_on_opplan) {
+          if (flpln_on_opplan->getQuantity() < ROUNDING_ERROR ||
+              flpln_on_opplan->getBuffer() == b ||
+              !flpln_on_opplan->getFlow()->getQuantity())
+            continue;
+          auto myexcess =
+              (flpln_on_opplan->getBuffer()->getFlowPlans().getExcess(
+                   &*flpln_on_opplan) -
+               flpln_on_opplan->getFlow()->getQuantityFixed()) *
+              fp->getFlow()->getQuantity() /
+              flpln_on_opplan->getFlow()->getQuantity();
+          if (myexcess >= 0.0 && myexcess < cur_excess) cur_excess = myexcess;
+        }
       if (cur_excess < ROUNDING_ERROR) {
         // It doesn't produce excess
         ++fiter;
@@ -357,7 +375,10 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
 
       double newsize_opplan;
       double newsize_flowplan;
-      if (cur_excess < fp->getOperation()->getSizeMultiple())
+
+      if (cur_excess < fp->getFlow()->getQuantityFixed() +
+                           fp->getOperation()->getSizeMultiple() *
+                               fp->getFlow()->getQuantity())
         // This excess is unavoidable...
         continue;
       else if (cur_excess >= fp->getQuantity() - ROUNDING_ERROR) {

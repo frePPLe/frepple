@@ -24,10 +24,10 @@
 from datetime import timedelta, datetime
 from dateutil.parser import parse
 from decimal import Decimal
-import locale
 from logging import INFO, ERROR, WARNING, DEBUG
 from openpyxl.worksheet.cell_range import CellRange
 from openpyxl.worksheet.worksheet import Worksheet
+import unicodedata
 
 from django import forms
 from django.conf import settings
@@ -51,11 +51,43 @@ from django.db.models.fields import (
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.utils import translation
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _
 from django.utils.encoding import force_str
+from django.utils.formats import get_format
 from django.utils.text import get_text_list
 
 from .models import Comment
+
+
+def sanitizeNumber(value):
+    """
+    Copied from https://github.com/django/django/blob/848fe70f3ee6dc151831251076dc0a4a9db5a0ec/django/utils/formats.py#L237
+    Just some changes to make it work when l10n is False.
+    """
+    if isinstance(value, str):
+        parts = []
+        decimal_separator = get_format("DECIMAL_SEPARATOR", get_language(), True)
+        if decimal_separator in value:
+            value, decimals = value.split(decimal_separator, 1)
+            parts.append(decimals)
+        if settings.USE_THOUSAND_SEPARATOR:
+            thousand_sep = get_format("THOUSAND_SEPARATOR", get_language(), True)
+            if (
+                thousand_sep == "."
+                and value.count(".") == 1
+                and len(value.split(".")[-1]) != 3
+            ):
+                # Special case where we suspect a dot meant decimal separator (see #22171)
+                pass
+            else:
+                for replacement in {
+                    thousand_sep,
+                    unicodedata.normalize("NFKD", thousand_sep),
+                }:
+                    value = value.replace(replacement, "")
+        parts.append(value)
+        value = ".".join(reversed(parts))
+    return value
 
 
 def parseExcelWorksheet(
@@ -284,7 +316,7 @@ def parseCSVdata(
                         return val if val != "" else None
                 elif isinstance(idx[1], DecimalField):
                     # Automatically round to 8 digits rather than giving an error message
-                    return round(locale.atof(val), 8) if val != "" else None
+                    return round(float(sanitizeNumber(val)), 8) if val != "" else None
 
                 elif isinstance(idx[1], DurationField):
                     val = self.data[idx[0]]
@@ -383,7 +415,6 @@ def _parseData(
     content_type_id = ContentType.objects.get_for_model(
         model, for_concrete_model=False
     ).pk
-    locale.setlocale(locale.LC_NUMERIC, settings.LANGUAGE_CODE)
 
     # Call the beforeUpload method if it is defined
     if hasattr(model, "beforeUpload"):

@@ -357,10 +357,12 @@ class ReportByDemand(GridReport):
             item.description,
             pegging.path,
             case when operationplan.status = 'proposed' then pegging.required_quantity else 0 end as required_quantity_proposed,
-            case when operationplan.status in ('confirmed','approved','completed','closed') then pegging.required_quantity else 0 end as required_quantity_confirmed
+            case when operationplan.status in ('confirmed','approved','completed','closed') then pegging.required_quantity else 0 end as required_quantity_confirmed,
+            operation.owner_id
           from pegging
           inner join operationplan
             on operationplan.reference = pegging.opplan
+          left outer join operation on operation.name = operationplan.operation_id
           left outer join item
             on operationplan.item_id = item.name
           inner join (
@@ -389,7 +391,8 @@ class ReportByDemand(GridReport):
             operationplan.supplier_id, operationplan.origin_id,
             operationplan.criticality, operationplan.demand_id,
             extract(epoch from operationplan.delay), ops.rownum, pegging.required_quantity,
-            pegging.path
+            pegging.path,
+            operation.owner_id
           order by pegging.rownum
           """
 
@@ -474,6 +477,7 @@ class ReportByDemand(GridReport):
                                     "required_quantity_confirmed": float(rec[26]),
                                     "batch": rec[22],
                                     "item__description": rec[23],
+                                    "owner": rec[27],
                                 }
                             ],
                         }
@@ -512,6 +516,7 @@ class ReportByDemand(GridReport):
                                 "required_quantity_confirmed": float(rec[26]),
                                 "batch": rec[22],
                                 "item__description": rec[23],
+                                "owner": rec[27],
                             }
                         )
                         prevrec["required_quantity"] = float(
@@ -638,6 +643,77 @@ class ReportByDemand(GridReport):
                                     r["parent"] = r["parent"].replace(
                                         i, updateParent[i]
                                     )
+
+                # The following block is to change the normal upstream path the
+                # recursive query is following.
+                # The recursive query follows the upstream path as follow:
+                # op level 1 --> op level 2 --> subop 3 --> subop 4 --> subop 5 --> routing 6--> op level 7
+                # But we want to display the routing before subop 3 and have all suboperations being
+                # children of the routing
+
+                # We need a first loop to get, for each operation, the id of that operation and the current level
+                operation_id = {}
+                index = 0
+                for rec in response:
+                    if rec["type"] == "MO":
+                        operation_id[rec["operation"]] = (rec["id"], index)
+                        index += 1
+                # This loop is to find the first step of a routing and the routing indices to swap them
+                swap = {}
+
+                for rec in response:
+                    if (
+                        "owner" in rec["operationplans"][0]
+                        and rec["operationplans"][0]["owner"]
+                    ):
+                        swap[rec["operationplans"][0]["owner"]] = (
+                            (operation_id[rec["operationplans"][0]["owner"]][1]),
+                            index,
+                        )
+                        index += 1
+
+                # We can now swap the parent, id and levels and a routing and its first step
+                for s in swap:
+                    response[swap[s][0]]["id"], response[swap[s][1]]["id"] = (
+                        response[swap[s][1]]["id"],
+                        response[swap[s][0]]["id"],
+                    )
+                    response[swap[s][0]]["parent"], response[swap[s][1]]["parent"] = (
+                        response[swap[s][1]]["parent"],
+                        response[swap[s][0]]["parent"],
+                    )
+                    response[swap[s][0]]["depth"], response[swap[s][1]]["depth"] = (
+                        response[swap[s][1]]["depth"],
+                        response[swap[s][0]]["depth"],
+                    )
+                    response[swap[s][0]], response[swap[s][1]] = (
+                        response[swap[s][1]],
+                        response[swap[s][0]],
+                    )
+
+                # This loop is to set as parent the routing for all suboperations
+                # The parents list keeps track of the parents to set further down the leaf flag
+                parents = []
+                first_subop = {}
+                for rec in response:
+                    if (
+                        rec["operationplans"][0].get("owner", None)
+                        and rec["operationplans"][0]["owner"] not in first_subop
+                    ):
+                        first_subop[rec["operationplans"][0]["owner"]] = rec["parent"]
+                    elif rec["operationplans"][0].get("owner", None):
+                        rec["parent"] = first_subop[rec["operationplans"][0]["owner"]]
+                    parents.append(rec["parent"])
+
+                # This loop is to
+                # 1) set the correct depth to be the parent depth + 1
+                # 2) set the leaf flag to true of a node is not the parent of another node
+                depth = {}
+                for rec in response:
+                    if rec.get("parent", None):
+                        rec["depth"] = depth[rec["parent"]] + 1
+                    depth[rec["id"]] = rec["depth"]
+                    rec["leaf"] = "false" if rec["id"] in parents else "true"
 
                 # The report is being downloaded, adjust the output
                 if request.GET.get("format", None) in [

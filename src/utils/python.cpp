@@ -547,18 +547,29 @@ void Object::writeProperties(Serializer& o) const {
     PythonData key(py_key);
     py_value = PyDict_GetItem(dict, py_key);  // borrowed ref
     PythonData value(py_value);
-    if (PyBool_Check(py_value))
-      o.writeElement(Tags::booleanproperty, Tags::name, key.getString(),
-                     Tags::value, value.getBool() ? "1" : "0");
-    else if (PyFloat_Check(py_value))
-      o.writeElement(Tags::doubleproperty, Tags::name, key.getString(),
-                     Tags::value, value.getString());
-    else if (PyDateTime_Check(py_value) || PyDate_Check(py_value))
-      o.writeElement(Tags::dateproperty, Tags::name, key.getString(),
-                     Tags::value, string(value.getDate()));
-    else
-      o.writeElement(Tags::stringproperty, Tags::name, key.getString(),
-                     Tags::value, value.getString());
+    if (o.getFlattenProperties()) {
+      if (PyBool_Check(py_value))
+        o.writeElement(key.getString(), value.getBool() ? "1" : "0");
+      else if (PyFloat_Check(py_value))
+        o.writeElement(key.getString(), value.getString());
+      else if (PyDateTime_Check(py_value) || PyDate_Check(py_value))
+        o.writeElement(key.getString(), string(value.getDate()));
+      else
+        o.writeElement(key.getString(), value.getString());
+    } else {
+      if (PyBool_Check(py_value))
+        o.writeElement(Tags::booleanproperty, Tags::name, key.getString(),
+                       Tags::value, value.getBool() ? "1" : "0");
+      else if (PyFloat_Check(py_value))
+        o.writeElement(Tags::doubleproperty, Tags::name, key.getString(),
+                       Tags::value, value.getString());
+      else if (PyDateTime_Check(py_value) || PyDate_Check(py_value))
+        o.writeElement(Tags::dateproperty, Tags::name, key.getString(),
+                       Tags::value, string(value.getDate()));
+      else
+        o.writeElement(Tags::stringproperty, Tags::name, key.getString(),
+                       Tags::value, value.getString());
+    }
   }
 
   // Clean up
@@ -856,14 +867,10 @@ PyObject* Object::toJSON(PyObject* self, PyObject* args) {
       ch.setContentType(DETAIL);
     else
       throw DataException("Invalid output mode");
-    ch.writeString("{");
-    ch.BeginList(*cat_tag);
     Object* tmp = ch.pushCurrentObject(static_cast<Object*>(self));
     static_cast<Object*>(self)->writeElement(&ch, *cat_tag,
                                              ch.getContentType());
     ch.pushCurrentObject(tmp);
-    ch.EndList(*cat_tag);
-    ch.writeString("}");
 
     // Write the output...
     if (filearg) {

@@ -650,10 +650,19 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
               (iter.getMaxLevel() > 0))
-            if (opplan->getOwner() &&
-                opplan->getOwner()->getOperation()->hasType<OperationRouting>())
-              topopplan = opplan->getOwner();
-            else
+            if (opplan->getOwner() && opplan->getOwner()
+                                          ->getOperation()
+                                          ->hasType<OperationRouting>()) {
+              for (OperationPlan::iterator j(opplan->getOwner());
+                   j != OperationPlan::end(); ++j) {
+                if (j->getReference() == opplan->getReference())
+                  topopplan = opplan->getOwner();
+                else
+                  topopplan = opplan;
+                break;
+              }
+
+            } else
               topopplan = opplan;
           iter.updateStack(
               topopplan, -topopplan->getQuantity() * newqty / f->getQuantity(),
@@ -684,10 +693,18 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
           OperationPlan* topopplan = opplan->getTopOwner();
           if (topopplan->getOperation()->hasType<OperationSplit>() ||
               (iter.getMaxLevel() > 0))
-            if (opplan->getOwner() &&
-                opplan->getOwner()->getOperation()->hasType<OperationRouting>())
-              topopplan = opplan->getOwner();
-            else
+            if (opplan->getOwner() && opplan->getOwner()
+                                          ->getOperation()
+                                          ->hasType<OperationRouting>()) {
+              for (OperationPlan::iterator j(opplan->getOwner());
+                   j != OperationPlan::end(); ++j) {
+                if (j->getReference() == opplan->getReference())
+                  topopplan = opplan->getOwner();
+                else
+                  topopplan = opplan;
+                break;
+              }
+            } else
               topopplan = opplan;
           iter.updateStack(
               topopplan, -topopplan->getQuantity() * newqty / f->getQuantity(),

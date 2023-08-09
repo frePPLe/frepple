@@ -68,10 +68,10 @@ Note that:
   (item,location,customer). It is possible to define a forecast override at any level of the hierarchy, frepple has the logic
   to disaggregate the quantity to the children (proportionnaly to the existing statistical forecast).
 
-- Manual forecast files can be uploaded without existing `forecast <model-reference/forecast.html>`_ records under two
+- Manual forecast files can be uploaded without existing `forecast <forecast.html>`_ records under two
   conditions. The forecast combination (item, location, customer) must be at leaf level (meaning that the item, location
   and customer are at the lowest level of the hierarchy) and the parameter forecast.populateForecastTable must be set to true.
-  If these 2 conditions are met, the `forecast <model-reference/forecast.html>`_ records will be created on the fly while
+  If these 2 conditions are met, the `forecast <forecast.html>`_ records will be created on the fly while
   uploading the file.
 
 

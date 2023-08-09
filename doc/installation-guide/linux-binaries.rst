@@ -168,7 +168,7 @@ Here are the steps to get a fully working environment.
       you also need to assign a unique port number in the FREPPLE_PORT setting.
 
       Also pay attention to the FILEUPLOADFOLDER setting of each scenario. The
-      setting is used by the `import data files <command-reference.html#importfromfolder>`_
+      setting is used by the `import data files <../command-reference.html#importfromfolder>`_
       task. By default all scenario databases use the same data folder on the server.
       By updating this setting you can configure a dedicated data folder for each
       scenario database.

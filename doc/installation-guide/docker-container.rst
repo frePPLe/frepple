@@ -22,7 +22,7 @@ docker repository:
    docker pull ghcr.io/frepple/frepple-community:latest
 
    # Enterprise Edition: download image from portal and load into your registry
-   docker pull ghcr.io/frepple/freppe-enterprise:latest
+   docker pull ghcr.io/frepple/frepple-enterprise:latest
 
 | The container includes the frePPLe planning software, plus a web server.
 | It does NOT include the required PostgreSQL database, which needs to provided
@@ -48,7 +48,7 @@ The image can be extended and customized using the following:
 
     * | POSTGRES_DBNAME:
       | Prefix to use for the database name.
-      | The default database names are "freppe", "scenario1", "scenario2", "scenario3".
+      | The default database names are "frepple", "scenario1", "scenario2", "scenario3".
       | If this argument is passed as "X", the database names will be "X0", "X1", "X2" and "X3".
 
 * The following **volumes** let you access all logs, configuration and license files:

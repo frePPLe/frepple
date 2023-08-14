@@ -21,7 +21,8 @@ docker repository:
    # Community Edition
    docker pull ghcr.io/frepple/frepple-community:latest
 
-   # Enterprise Edition: download image from portal and load into your registry
+   # Enterprise Edition: enter github token to login
+   docker login ghcr.io --username <github_user>
    docker pull ghcr.io/frepple/frepple-enterprise:latest
 
 | The container includes the frePPLe planning software, plus a web server.

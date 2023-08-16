@@ -143,13 +143,6 @@ class ReportByDemand(GridReport):
             return {}
 
     @classmethod
-    def title(cls, request, *args, **kwargs):
-        if args and args[0]:
-            return args[0]
-        else:
-            return cls.title
-
-    @classmethod
     def getBuckets(reportclass, request, *args, **kwargs):
         # Get the earliest and latest operationplan, and the demand due date
         cursor = connections[request.database].cursor()

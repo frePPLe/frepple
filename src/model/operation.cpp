@@ -2479,13 +2479,21 @@ Operation* Operation::findFromName(string nm) {
     // The operation already exists
     return oper;
   else if (nm.substr(0, 5) == "Ship ") {
-    size_t pos1 = nm.rfind(" from ");
+    size_t pos3 = nm.rfind(" valid from ");
+    size_t pos1 = nm.rfind(" from ", pos3);
     size_t pos2 = nm.rfind(" to ");
     if (pos1 != string::npos && pos2 != string::npos) {
       // Build a transfer operation: "Ship ITEM from LOCATION to LOCATION"
+      // or "Ship ITEM from LOCATION to LOCATION valid from DATETIME"
+      Date eff_start;
+      if (pos3 != string::npos) {
+        string eff_start_name = nm.substr(pos3 + 12, string::npos);
+        eff_start = Date(eff_start_name.c_str());
+      }
       string item_name = nm.substr(5, pos1 - 5);
       string orig_name = nm.substr(pos1 + 6, pos2 - pos1 - 6);
-      string dest_name = nm.substr(pos2 + 4, string::npos);
+      string dest_name = nm.substr(
+          pos2 + 4, pos3 == string::npos ? string::npos : pos3 - pos2 - 4);
       Item* item = Item::find(item_name);
       Location* origin = Location::find(orig_name);
       Location* destination = Location::find(dest_name);
@@ -2496,12 +2504,13 @@ Operation* Operation::findFromName(string nm) {
              dist != item->getDistributions().end(); ++dist) {
           if (origin == dist->getOrigin() &&
               (!dist->getDestination() ||
-               destination == dist->getDestination())) {
+               destination == dist->getDestination()) &&
+              dist->getEffectiveStart() == eff_start) {
             item_dist = &*dist;
             break;
           }
         }
-        if (!item_dist)
+        if (item_dist)
           // Create the operation
           return new OperationItemDistribution(
               const_cast<ItemDistribution*>(item_dist),
@@ -2522,10 +2531,18 @@ Operation* Operation::findFromName(string nm) {
     }
   } else if (nm.substr(0, 9) == "Purchase ") {
     // Build a purchasing operation: "Purchase ITEM @ LOCATION from SUPPLIER"
-    size_t pos = nm.rfind(" from ");
-    if (pos != string::npos) {
-      string buf_name = nm.substr(9, pos - 9);
-      string supplier_name = nm.substr(pos + 6, string::npos);
+    // or "Purchase ITEM @ LOCATION from SUPPLIER valid from DATETIME"
+    size_t pos2 = nm.rfind(" valid from ");
+    Date eff_start;
+    if (pos2 != string::npos) {
+      string eff_start_name = nm.substr(pos2 + 12, string::npos);
+      eff_start = Date(eff_start_name.c_str());
+    }
+    size_t pos1 = nm.rfind(" from ", pos2);
+    if (pos1 != string::npos) {
+      string buf_name = nm.substr(9, pos1 - 9);
+      string supplier_name = nm.substr(
+          pos1 + 6, pos2 == string::npos ? string::npos : pos2 - pos1 - 6);
       Buffer* buf = Buffer::findFromName(buf_name);
       Supplier* sup = Supplier::find(supplier_name);
       if (buf && sup && buf->getItem() && buf->getLocation()) {
@@ -2535,7 +2552,8 @@ Operation* Operation::findFromName(string nm) {
           Item::supplierlist::const_iterator supitem_iter =
               it->getSupplierIterator();
           while (ItemSupplier* i = supitem_iter.next()) {
-            if (!i->getLocation() || buf->getLocation() == i->getLocation())
+            if ((!i->getLocation() || buf->getLocation() == i->getLocation()) &&
+                i->getEffectiveStart() == eff_start)
               item_sup = i;
           }
         }

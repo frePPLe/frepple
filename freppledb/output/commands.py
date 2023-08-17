@@ -1092,6 +1092,16 @@ class ExportOperationPlans(PlanTask):
             where status in ('open','quote') and plannedquantity is null
             """
         )
+        cursor.execute(
+            """
+            update operationplan
+              set plan = null
+            where
+              type <> 'STCK'
+              and status = 'closed'
+              and plan is not null
+            """
+        )
 
 
 @PlanTaskRegistry.register

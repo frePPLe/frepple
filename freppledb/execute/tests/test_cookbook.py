@@ -21,97 +21,15 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import os.path
 import unittest
 
 from django.conf import settings
 from django.core import management
-from django.http.response import StreamingHttpResponse
-from django.test import TransactionTestCase
 
-from freppledb.common.models import User, Notification
-import freppledb.input
+from . import cookbooktest
 
 
-class cookbooktest(TransactionTestCase):
-    def setUp(self):
-        os.environ["FREPPLE_TEST"] = "YES"
-        if not User.objects.filter(username="admin").count():
-            User.objects.create_superuser("admin", "your@company.com", "admin")
-        super().setUp()
-
-    def tearDown(self):
-        Notification.wait()
-        del os.environ["FREPPLE_TEST"]
-        super().tearDown()
-
-    def loadExcel(self, *filepath, webservice=False):
-        # Login
-        if webservice:
-            os.environ["FREPPLE_TEST"] = "webservice"
-            if "nowebservice" in os.environ:
-                del os.environ["nowebservice"]
-        else:
-            os.environ["FREPPLE_TEST"] = "YES"
-        if not User.objects.filter(username="admin").count():
-            User.objects.create_superuser("admin", "your@company.com", "admin")
-        self.client.login(username="admin", password="admin")
-        try:
-            with open(os.path.join(*filepath), "rb") as myfile:
-                response = self.client.post(
-                    "/execute/launch/importworkbook/", {"spreadsheet": myfile}
-                )
-                if not isinstance(response, StreamingHttpResponse):
-                    raise Exception("expected a streaming response")
-                for rec in response.streaming_content:
-                    rec
-        except Exception as e:
-            self.fail("Can't load excel file: %s" % e)
-        self.assertEqual(response.status_code, 200)
-        self.client.logout()
-        if webservice:
-            management.call_command("stopwebservice", wait=True, force=True)
-
-    def assertOperationplans(self, *resultpath):
-        opplans = sorted(
-            [
-                "%s,%s,%s,%s%s"
-                % (
-                    i.name,
-                    i.startdate,
-                    i.enddate,
-                    round(i.quantity, 1),
-                    ",%s " % i.batch if i.batch else "",
-                )
-                for i in freppledb.input.models.OperationPlan.objects.order_by(
-                    "name", "startdate", "quantity", "batch"
-                ).only("name", "startdate", "enddate", "quantity", "batch")
-            ],
-            key=lambda s: s.lower(),
-        )
-        row = 0
-        maxrow = len(opplans)
-        with open(os.path.join(*resultpath), "r") as f:
-            for line in f:
-                if not line.strip():
-                    continue
-                if row >= maxrow or opplans[row].strip() != line.strip():
-                    print("Got:")
-                    for i in opplans:
-                        print("  ", i.strip())
-                    if row < maxrow:
-                        self.fail(
-                            "Difference in expected results on line %s" % (row + 1)
-                        )
-                    else:
-                        self.fail("Less output rows than expected")
-                row += 1
-        if row != maxrow:
-            print("Got:")
-            for i in opplans:
-                print("  ", i.strip())
-            self.fail("More output rows than expected")
-
+class cookbook_input(cookbooktest):
     def test_calendar_working_hours(self):
         self.loadExcel(
             settings.FREPPLE_HOME,
@@ -452,116 +370,6 @@ class cookbooktest(TransactionTestCase):
             "examples",
             "resource",
             "resource-alternate.expect",
-        )
-
-    @unittest.skipUnless(
-        "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
-    )
-    def test_forecast_netting(self):
-        """
-        TODO Ideally this should be moved to the forecasting app.
-        """
-        self.loadExcel(
-            settings.FREPPLE_HOME,
-            "..",
-            "doc",
-            "examples",
-            "forecasting",
-            "forecast-netting.xlsx",
-            webservice=True,
-        )
-        management.call_command(
-            "runplan", plantype=1, constraint=15, env="fcst,supply,nowebservice"
-        )
-        self.assertOperationplans(
-            settings.FREPPLE_HOME,
-            "..",
-            "doc",
-            "examples",
-            "forecasting",
-            "forecast-netting.expect",
-        )
-
-    @unittest.skipUnless(
-        "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
-    )
-    def test_middle_out_forecast(self):
-        """
-        TODO Ideally this should be moved to the forecasting app.
-        """
-        self.loadExcel(
-            settings.FREPPLE_HOME,
-            "..",
-            "doc",
-            "examples",
-            "forecasting",
-            "middle-out-forecast.xlsx",
-            webservice=True,
-        )
-        management.call_command(
-            "runplan", plantype=1, constraint=15, env="fcst,supply,nowebservice"
-        )
-        self.assertOperationplans(
-            settings.FREPPLE_HOME,
-            "..",
-            "doc",
-            "examples",
-            "forecasting",
-            "middle-out-forecast.expect",
-        )
-
-    @unittest.skipUnless(
-        "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
-    )
-    def test_forecast_method(self):
-        """
-        TODO Ideally this should be moved to the forecasting app.
-        """
-        self.loadExcel(
-            settings.FREPPLE_HOME,
-            "..",
-            "doc",
-            "examples",
-            "forecasting",
-            "forecast-method.xlsx",
-            webservice=True,
-        )
-        management.call_command(
-            "runplan", plantype=1, constraint=15, env="fcst,supply,nowebservice"
-        )
-        self.assertOperationplans(
-            settings.FREPPLE_HOME,
-            "..",
-            "doc",
-            "examples",
-            "forecasting",
-            "forecast-method.expect",
-        )
-
-    @unittest.skip("Temporarily disabled - intermittent failures")
-    def test_forecast_with_missing_data(self):
-        """
-        TODO Ideally this should be moved to the forecasting app.
-        """
-        self.loadExcel(
-            settings.FREPPLE_HOME,
-            "..",
-            "doc",
-            "examples",
-            "forecasting",
-            "forecast-with-missing-data.xlsx",
-            webservice=True,
-        )
-        management.call_command(
-            "runplan", plantype=1, constraint=15, env="fcst,supply,nowebservice"
-        )
-        self.assertOperationplans(
-            settings.FREPPLE_HOME,
-            "..",
-            "doc",
-            "examples",
-            "forecasting",
-            "forecast-with-missing-data.expect",
         )
 
     def test_operation_alternate(self):

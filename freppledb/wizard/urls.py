@@ -23,27 +23,21 @@
 
 from django.urls import path
 
-from .views import (
-    Home,
-    CheckSupplyPath,
-    FeatureDashboard,
-    WizardLoad,
-    SendSurveyMail,
-    QuickStartForecast,
-    QuickStartProduction,
-)
-
+from freppledb import mode
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-urlpatterns = [
-    path(r"", Home),
-    path(r"wizard/quickstart/forecast/", QuickStartForecast.as_view()),
-    path(r"wizard/quickstart/production/", QuickStartProduction.as_view()),
-    path(r"wizard/supplypath/", CheckSupplyPath),
-    path(r"wizard/load/", WizardLoad),
-    path(r"wizard/load/<str:mode>/", WizardLoad),
-    path(r"wizard/sendsurveymail/", SendSurveyMail.action),
-    path(r"wizard/features/", FeatureDashboard.as_view()),
-]
+if mode == "WSGI":
+    from . import views
+
+    urlpatterns = [
+        path(r"", views.Home),
+        path(r"wizard/quickstart/forecast/", views.QuickStartForecast.as_view()),
+        path(r"wizard/quickstart/production/", views.QuickStartProduction.as_view()),
+        path(r"wizard/supplypath/", views.CheckSupplyPath),
+        path(r"wizard/load/", views.WizardLoad),
+        path(r"wizard/load/<str:mode>/", views.WizardLoad),
+        path(r"wizard/sendsurveymail/", views.SendSurveyMail.action),
+        path(r"wizard/features/", views.FeatureDashboard.as_view()),
+    ]

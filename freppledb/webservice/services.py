@@ -21,9 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import os
-import signal
-
 from channels.generic.http import AsyncHttpConsumer
 from .commands import WebService
 

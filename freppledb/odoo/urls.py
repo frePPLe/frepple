@@ -23,12 +23,12 @@
 
 from django.urls import re_path
 
-from freppledb.odoo.views import Upload
+from freppledb import mode
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-urlpatterns = [
-    # Model list reports, which override standard admin screens
-    re_path(r"^erp/upload/$", Upload, name="erp_upload")
-]
+if mode == "WSGI":
+    from . import views
+
+    urlpatterns = [re_path(r"^erp/upload/$", views.Upload, name="erp_upload")]

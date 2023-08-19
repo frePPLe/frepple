@@ -30,6 +30,9 @@ except pkg_resources.DistributionNotFound:
 
 VERSION = __version__  # Old custom way, deprecated
 
+# Recognize ASGI vs WSGI mode
+mode = "WSGI"
+
 
 def runCommand(taskname, *args, **kwargs):
     """

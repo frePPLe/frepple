@@ -21,6 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import frepple
+
 from collections import OrderedDict
 import json
 
@@ -64,8 +66,6 @@ def collectRelated(
     related_buffers,
     related_demands,
 ):
-    import frepple
-
     for d in opplan.loadplans:
         related_resources.add(d.resource)
     for d in opplan.flowplans:
@@ -91,8 +91,6 @@ class OperationplanService(AsyncHttpConsumer):
     async def handle(self, body):
         errors = []
         try:
-            import frepple
-
             if self.scope["method"] != "POST":
                 self.scope["response_headers"].append((b"Content-Type", b"text/html"))
                 await self.send_response(

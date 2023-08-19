@@ -32,6 +32,7 @@ from django.db import DEFAULT_DB_ALIAS, connections
 from django.conf import settings
 from django.core import management
 
+import freppledb
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.common.models import Parameter
 from freppledb.execute.models import Task
@@ -199,6 +200,7 @@ class RunWebService(PlanTask):
 
         # Running the server
         os.environ["FREPPLE_DATABASE"] = database
+        freppledb.mode = "ASGI"
         WebService.start(*server.split(":", 1))
 
         # Exit immediately, to avoid that any more messages are printed to the log file

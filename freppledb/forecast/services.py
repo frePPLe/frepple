@@ -21,6 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import frepple
+
 from datetime import date, datetime
 from dateutil.parser import parse
 import json
@@ -102,8 +104,6 @@ class ForecastService(AsyncHttpConsumer):
         async with lock:
             errors = []
             try:
-                import frepple
-
                 if self.scope["method"] != "POST":
                     self.scope["response_headers"].append(
                         (b"Content-Type", b"text/html")
@@ -382,8 +382,6 @@ class ForecastService(AsyncHttpConsumer):
 
 class FlushService(AsyncHttpConsumer):
     async def handle(self, body):
-        import frepple
-
         self.scope["response_headers"].append((b"Content-Type", b"text/html"))
         try:
             if self.scope["method"] != "POST":

@@ -23,66 +23,65 @@
 
 from django.urls import re_path
 
-import freppledb.execute.views
+from freppledb import mode
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
-urlpatterns = [
-    re_path(
-        r"^execute/$", freppledb.execute.views.TaskReport.as_view(), name="execute"
-    ),
-    re_path(
-        r"^execute/logfrepple/(.+)/$",
-        freppledb.execute.views.logfile,
-        name="execute_view_log",
-    ),
-    re_path(
-        r"^execute/launch/(.+)/$",
-        freppledb.execute.views.LaunchTask,
-        name="execute_launch",
-    ),
-    re_path(
-        r"^execute/cancel/(.+)/$",
-        freppledb.execute.views.CancelTask,
-        name="execute_cancel",
-    ),
-    re_path(
-        r"^execute/logdownload/(.+)/$",
-        freppledb.execute.views.DownloadLogFile,
-        name="execute_download_log",
-    ),
-    re_path(
-        r"^execute/logdelete/(.+)/$",
-        freppledb.execute.views.DeleteLogFile,
-        name="execute_delete_log",
-    ),
-    re_path(
-        r"^execute/api/(.+)/$", freppledb.execute.views.APITask, name="execute_api"
-    ),
-    re_path(
-        r"^execute/uploadtofolder/(.+)/$",
-        freppledb.execute.views.FileManager.uploadFiletoFolder,
-        name="copy_file_to_folder",
-    ),
-    re_path(
-        r"^execute/downloadfromfolder/(.+)/(.+)/$",
-        freppledb.execute.views.FileManager.downloadFilefromFolder,
-        name="download_file_from_folder",
-    ),
-    re_path(
-        r"^execute/downloadfromfolder/(.+)/$",
-        freppledb.execute.views.FileManager.downloadFilefromFolder,
-        name="download_all_files_from_folder",
-    ),
-    re_path(
-        r"^execute/deletefromfolder/(.+)/(.+)/$",
-        freppledb.execute.views.FileManager.deleteFilefromFolder,
-        name="delete_file_from_folder",
-    ),
-    re_path(
-        r"^execute/scheduletasks/$",
-        freppledb.execute.views.scheduletasks,
-        name="scheduletasks",
-    ),
-]
+if mode == "WSGI":
+    from . import views
+
+    urlpatterns = [
+        re_path(r"^execute/$", views.TaskReport.as_view(), name="execute"),
+        re_path(
+            r"^execute/logfrepple/(.+)/$",
+            views.logfile,
+            name="execute_view_log",
+        ),
+        re_path(
+            r"^execute/launch/(.+)/$",
+            views.LaunchTask,
+            name="execute_launch",
+        ),
+        re_path(
+            r"^execute/cancel/(.+)/$",
+            views.CancelTask,
+            name="execute_cancel",
+        ),
+        re_path(
+            r"^execute/logdownload/(.+)/$",
+            views.DownloadLogFile,
+            name="execute_download_log",
+        ),
+        re_path(
+            r"^execute/logdelete/(.+)/$",
+            views.DeleteLogFile,
+            name="execute_delete_log",
+        ),
+        re_path(r"^execute/api/(.+)/$", views.APITask, name="execute_api"),
+        re_path(
+            r"^execute/uploadtofolder/(.+)/$",
+            views.FileManager.uploadFiletoFolder,
+            name="copy_file_to_folder",
+        ),
+        re_path(
+            r"^execute/downloadfromfolder/(.+)/(.+)/$",
+            views.FileManager.downloadFilefromFolder,
+            name="download_file_from_folder",
+        ),
+        re_path(
+            r"^execute/downloadfromfolder/(.+)/$",
+            views.FileManager.downloadFilefromFolder,
+            name="download_all_files_from_folder",
+        ),
+        re_path(
+            r"^execute/deletefromfolder/(.+)/(.+)/$",
+            views.FileManager.deleteFilefromFolder,
+            name="delete_file_from_folder",
+        ),
+        re_path(
+            r"^execute/scheduletasks/$",
+            views.scheduletasks,
+            name="scheduletasks",
+        ),
+    ]

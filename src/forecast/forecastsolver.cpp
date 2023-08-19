@@ -111,7 +111,7 @@ int ForecastSolver::initialize() {
   x.supportgetattro();
   x.supportsetattro();
   x.supportcreate(create);
-  x.addMethod("solve", PythonSolve, METH_VARARGS, "run the solver");
+  x.addMethod("solve", solve, METH_VARARGS, "run the solver");
   metadata->setPythonClass(x);
   return x.typeReady();
 }
@@ -180,60 +180,69 @@ void ForecastSolver::solve(const Demand* l, void* v) {
   }
 }
 
-PyObject* ForecastSolver::PythonSolve(PyObject* self, PyObject* args) {
+PyObject* ForecastSolver::solve(PyObject* self, PyObject* args,
+                                PyObject* kwargs) {
+  static const char* kwlist[] = {"includenetting", "cluster", nullptr};
   // Create the command
-  int* fcst_plus_netting = new int(1);
-  int ok = PyArg_ParseTuple(args, "|p:solve", fcst_plus_netting);
+  int fcst_plus_netting = 1;
+  int cluster = -1;
+  int ok = PyArg_ParseTupleAndKeywords(args, kwargs, "|pi:solve",
+                                       const_cast<char**>(kwlist),
+                                       &fcst_plus_netting, &cluster);
   if (!ok) return nullptr;
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
-    static_cast<Solver*>(self)->solve(fcst_plus_netting);
+    static_cast<ForecastSolver*>(self)->solve(fcst_plus_netting == 1, cluster);
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();
-    delete fcst_plus_netting;
     return nullptr;
   }
 
   // Reclaim Python interpreter
   Py_END_ALLOW_THREADS;
-  delete fcst_plus_netting;
   return Py_BuildValue("");
 }
 
-void ForecastSolver::solve(void* v) {
+void ForecastSolver::solve(bool includenetting, int cluster) {
   // Switch to lazy cache flushing
   auto prevCachePolicy = Cache::instance->setWriteImmediately(false);
 
-  // Reset forecastconsumed to 0 and forecastnet to forecasttotal
+  // Reset forecastconsumed to 0 and forecastnet to forecasttotal.
+  // When running for a cluster we reset the leafs and propagate.
+  // When running globablly we can skip the propagation.
   for (auto f = Forecast::getForecasts(); f; ++f) {
+    if (cluster != -1 &&
+        (!f->isLeaf() || static_cast<Forecast*>(&*f)->getCluster() != cluster))
+      continue;
     auto fcstdata = f->getData();
     for (auto& bckt : fcstdata->getBuckets()) {
       if (bckt.getValue(*Measures::forecastconsumed))
-        bckt.removeValue(false, Measures::forecastconsumed);
+        bckt.removeValue(cluster != -1, Measures::forecastconsumed);
       auto fcsttotal = bckt.getValue(*Measures::forecasttotal);
       if (bckt.getEnd() < Plan::instance().getCurrent() -
                               (ForecastSolver::getNetPastDemand()
                                    ? ForecastSolver::getNetLate()
                                    : Duration(0L)) ||
           !fcsttotal)
-        bckt.removeValue(false, Measures::forecastnet);
+        bckt.removeValue(cluster != -1, Measures::forecastnet);
       else
-        bckt.setValue(false, Measures::forecastnet, fcsttotal);
+        bckt.setValue(cluster != -1, Measures::forecastnet, fcsttotal);
     }
   }
 
-  int fcst_plus_netting = *static_cast<int*>(v);
-  if (fcst_plus_netting) {
+  if (includenetting) {
     // Time series forecasting for all leaf forecasts
     // TODO Assumes that the lowest forecasting level is a leaf forecast.
     if (getLogLevel() > 5)
-      logger << "Start forecasting for leave forecasts" << endl;
+      logger << "Start forecasting for leaf forecasts" << endl;
     for (auto x = Forecast::getForecasts(); x; ++x) {
       try {
-        if (x->getMethods() && x->isLeaf())
+        if (x->getMethods() && x->isLeaf() &&
+            (cluster == -1 ||
+             static_cast<Forecast*>(&*x)->getCluster() != cluster))
           solve(static_cast<Forecast*>(&*x), nullptr);
       } catch (...) {
         logger << "Error: Caught an exception while forecasting '"
@@ -250,14 +259,16 @@ void ForecastSolver::solve(void* v) {
       }
     }
     if (getLogLevel() > 5)
-      logger << "End forecasting for leave forecasts" << endl;
+      logger << "End forecasting for leaf forecasts" << endl;
 
     // Time series forecasting for all middle-out parent forecasts
     if (getLogLevel() > 5)
       logger << "Start forecasting for parent forecasts" << endl;
     for (auto x = Forecast::getForecasts(); x; ++x) {
       try {
-        if (x->getMethods() && !x->isLeaf())
+        if (x->getMethods() && !x->isLeaf() &&
+            (cluster == -1 ||
+             static_cast<Forecast*>(&*x)->getCluster() != cluster))
           solve(static_cast<Forecast*>(&*x), nullptr);
       } catch (...) {
         logger << "Error: Caught an exception while forecasting '"
@@ -282,7 +293,8 @@ void ForecastSolver::solve(void* v) {
   sortedDemandList l;
   for (auto& i : Demand::all())
     if (i.getType() != *Forecast::metadata &&
-        i.getType() != *ForecastBucket::metadata)
+        i.getType() != *ForecastBucket::metadata &&
+        (cluster == -1 || i.getCluster() != cluster))
       l.insert(&i);
 
   // Forecast netting loop

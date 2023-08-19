@@ -587,7 +587,7 @@ class SolverCreate : public Solver {
   PythonFunction getUserExitOperation() const { return userexit_operation; }
 
   /* Python method for running the solver. */
-  static PyObject* solve(PyObject*, PyObject*);
+  static PyObject* solve(PyObject*, PyObject*, PyObject*);
 
   /* Python method for committing the plan changes. */
   static PyObject* commit(PyObject*, PyObject*);
@@ -680,7 +680,7 @@ class SolverCreate : public Solver {
   }
 
  private:
-  typedef vector<deque<Demand*> > classified_demand;
+  typedef vector<deque<Demand*>> classified_demand;
   typedef classified_demand::iterator cluster_iterator;
   classified_demand demands_per_cluster;
 
@@ -995,7 +995,7 @@ class SolverCreate : public Solver {
     Duration hitMaxEarly;
 
     bool hitMaxSize = false;
-    
+
     /* Simplistic flag to trace the costs being considered for alternate
      * selection. */
     bool logcosts = false;  // SET TO TRUE AND RECOMPILE TO ACTIVATE EXTRA
@@ -1023,7 +1023,7 @@ class SolverCreate : public Solver {
     set<const Buffer*, order_buffers> purchase_buffers;
 
     // Structure to maintain dependency tree.
-    map<const Operation*, pair<unsigned short, Date> > dependency_list;
+    map<const Operation*, pair<unsigned short, Date>> dependency_list;
 
     // Recursively collect all dependencies.
     void populateDependencies(const Operation*);

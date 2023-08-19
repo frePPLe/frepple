@@ -704,27 +704,34 @@ void SolverCreate::solve(void* v) {
   threads.execute();
 }
 
-PyObject* SolverCreate::solve(PyObject* self, PyObject* args) {
+PyObject* SolverCreate::solve(PyObject* self, PyObject* args,
+                              PyObject* kwargs) {
   // Parse the argument
+  static const char* kwlist[] = {"object", "cluster", nullptr};
   PyObject* dem = nullptr;
-  if (args && !PyArg_ParseTuple(args, "|O:solve", &dem)) return nullptr;
+  int cluster = -1;
+  int ok = PyArg_ParseTupleAndKeywords(
+      args, kwargs, "|Oi:solve", const_cast<char**>(kwlist), &dem, &cluster);
   if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass) &&
       !PyObject_TypeCheck(dem, Buffer::metadata->pythonClass)) {
     PyErr_SetString(PythonDataException,
-                    "solve(d) argument must be a demand or a buffer");
+                    "object argument must be a demand or a buffer");
     return nullptr;
   }
 
   // Free Python interpreter for other threads
+  SolverCreate* sol = static_cast<SolverCreate*>(self);
+  auto prev_cluster = sol->getCluster();
   Py_BEGIN_ALLOW_THREADS;
   try {
-    SolverCreate* sol = static_cast<SolverCreate*>(self);
     if (!dem) {
-      // Complete replan
+      // Complete replan or cluster replan
+      sol->setCluster(cluster);
       sol->setAutocommit(true);
       sol->solve();
     } else {
-      // Incrementally plan a single demand
+      // Incrementally plan a single demand or buffer
+      sol->setCluster(-1);
       sol->setAutocommit(false);
       sol->update_user_exits();
       if (PyObject_TypeCheck(dem, Demand::metadata->pythonClass))
@@ -747,10 +754,12 @@ PyObject* SolverCreate::solve(PyObject* self, PyObject* args) {
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();
+    sol->setCluster(prev_cluster);
     return nullptr;
   }
   // Reclaim Python interpreter
   Py_END_ALLOW_THREADS;
+  sol->setCluster(prev_cluster);
   return Py_BuildValue("");
 }
 

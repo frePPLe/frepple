@@ -2603,13 +2603,12 @@ class ForecastSolver : public Solver {
    */
   void solve(const Demand*, void* = nullptr);
 
-  /* This is the main solver method that will appropriately call the other
-   * solve methods.
-   */
-  void solve(void* v = nullptr);
+  /* This is the main solver method. */
+  void solve(void* v = nullptr) { solve(true, -1); }
+  void solve(bool includenetting = true, int cluster = -1);
 
   /* Python interface for the solve method. */
-  static PyObject* PythonSolve(PyObject*, PyObject*);
+  static PyObject* solve(PyObject*, PyObject*, PyObject*);
 
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;

@@ -29,7 +29,7 @@ from django.core import management
 from freppledb.execute.tests import cookbooktest
 
 
-class cookbook_input(cookbooktest):
+class cookbook_forecast(cookbooktest):
     @unittest.skipUnless(
         "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
     )

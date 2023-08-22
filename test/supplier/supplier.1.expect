@@ -370,5 +370,25 @@
 				<name>Supplier of component B</name>
 			</supplier>
 		</operationplan>
+		<operationplan>
+			<reference>PO #2</reference>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase Component C @ warehouse from Supplier of component B</name>
+			</operation>
+			<start>2020-06-06T00:00:00</start>
+			<end>2020-06-06T00:00:00</end>
+			<quantity>100</quantity>
+			<status>confirmed</status>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>Component C</name>
+			</item>
+			<location>
+				<name>warehouse</name>
+			</location>
+			<supplier>
+				<name>Supplier of component B</name>
+			</supplier>
+		</operationplan>
 	</operationplans>
 </plan>

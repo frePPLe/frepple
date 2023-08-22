@@ -372,7 +372,11 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   if (startfld) start = startfld->getDate();
   const DataValue* endfld = in.get(Tags::end);
   Date end;
-  if (endfld) end = endfld->getDate();
+  if (endfld) {
+    end = endfld->getDate();
+    if (startfld && start > end && start && end && end != Date::infiniteFuture)
+      start = end;
+  }
   const DataValue* quantityfld = in.get(Tags::quantity);
   double quantity = quantityfld ? quantityfld->getDouble() : 0.0;
   bool statuspropagation = true;

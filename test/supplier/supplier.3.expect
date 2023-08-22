@@ -13,6 +13,7 @@ BUFFER	Component C @ warehouse	2015-01-01T00:00:00	200	210
 BUFFER	Component C @ warehouse	2015-01-01T00:00:00	-100	110
 BUFFER	Component C @ warehouse	2015-02-01T00:00:00	-100	10
 BUFFER	Component C @ warehouse	2015-06-06T00:00:00	100	110
+BUFFER	Component C @ warehouse	2020-06-06T00:00:00	100	210
 BUFFER	Component D @ warehouse	1971-01-01T00:00:00	10	10
 BUFFER	Component D @ warehouse	2015-01-01T00:00:00	-100	-90
 BUFFER	Component D @ warehouse	2015-02-01T00:00:00	-100	-190
@@ -53,6 +54,7 @@ OPERATION	Purchase Component A @ warehouse from Supplier of components A and B	2
 OPERATION	Purchase Component B @ warehouse from Supplier of component B	2014-12-18T00:00:00	2015-01-01T00:00:00	90
 OPERATION	Purchase Component B @ warehouse from Supplier of component B	2015-01-18T00:00:00	2015-02-01T00:00:00	100
 OPERATION	Purchase Component C @ warehouse from Supplier of component B	2015-06-06T00:00:00	2015-06-06T00:00:00	100	confirmed
+OPERATION	Purchase Component C @ warehouse from Supplier of component B	2020-06-06T00:00:00	2020-06-06T00:00:00	100	confirmed
 OPERATION	Purchase Component C @ warehouse from Supplier of component C	2014-12-11T00:00:00	2015-01-01T00:00:00	200
 OPERATION	Purchase Component E @ warehouse from Supplier of component E	2014-12-06T00:00:00	2014-12-27T00:00:00	100
 OPERATION	Purchase Component E @ warehouse from Supplier of component E	2014-12-10T00:00:00	2014-12-31T00:00:00	100

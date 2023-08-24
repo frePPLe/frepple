@@ -1094,6 +1094,18 @@ class ExportOperationPlans(PlanTask):
         )
         cursor.execute(
             """
+            update demand
+              set plannedquantity = null, delay=null, deliverydate=null
+            where status = 'closed' and plannedquantity is null
+              and (
+                  delay is not null
+                  or plannedquantity is not null
+                  or deliverydate is not null
+                  )
+            """
+        )
+        cursor.execute(
+            """
             update operationplan
               set plan = null
             where

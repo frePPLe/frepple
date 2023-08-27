@@ -46,29 +46,6 @@ logger = logging.getLogger(__name__)
 
 
 @PlanTaskRegistry.register
-class CheckLicense(PlanTask):
-    description = "Checking the license"
-    sequence = 1
-
-    @classmethod
-    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        try:
-            from frepple import demand_forecast
-
-            return -1
-        except ImportError:
-            return 1
-
-    @classmethod
-    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        logger.error("Forecasting module is not licensed.")
-        logger.error(
-            "Uncomment the forecasting app from your djangosettings.py file to run without this module."
-        )
-        sys.exit(1)
-
-
-@PlanTaskRegistry.register
 class PopulateForecastTable(PlanTask):
     description = "Populate forecast table and create root nodes"
     sequence = 80

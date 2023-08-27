@@ -1087,7 +1087,6 @@ def createForecastSolver(db, task=None):
                 logger.warning(
                     "Bucket dates table doesn't cover the complete forecasting horizon"
                 )
-
         return frepple.solver_forecast(**kw)
     except Exception as e:
         logger.warning("No forecasting solver can be created: %s", e)

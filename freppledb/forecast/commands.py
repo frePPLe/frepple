@@ -28,6 +28,7 @@ import tempfile
 import logging
 import sys
 from time import time, sleep
+from warnings import warn
 
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
@@ -834,7 +835,7 @@ class LoadForecast(LoadTask):
         else:
             attrsql = ""
 
-        createForecastSolver(database, cls.task)
+        createForecastSolver(database)
 
         horizon_history = int(
             Parameter.getValue("forecast.Horizon_history", database, 10000)
@@ -1002,6 +1003,9 @@ class ExportStaticForecast(PlanTask):
 def createForecastSolver(db, task=None):
     import frepple
 
+    if task:
+        warn("Deprecated: CreateForecastSolver() no longer takes a task as argument")
+
     # Initialize the solver
     horizon_future = None
     calendar = None
@@ -1150,7 +1154,7 @@ class CalculateForecast(PlanTask):
         import frepple
 
         # The argument specifies whether we run "forecasting + netting" or "netting"
-        slvr = createForecastSolver(database, cls.task)
+        slvr = createForecastSolver(database)
         if not slvr:
             raise Exception("Can't compute a statistical forecast")
         slvr.solve("fcst" in os.environ)

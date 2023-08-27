@@ -2227,7 +2227,10 @@ class GridReport(View):
     @staticmethod
     def sort_models(models):
         # Inject additional dependencies that are not reflected in database constraints
+        parameter_model = None
         for m in models:
+            if m[1] == Parameter:
+                parameter_model = m
             for e in getattr(m[1], "extra_dependencies", []):
                 for m2 in models:
                     if m2[1] == e:
@@ -2269,6 +2272,9 @@ class GridReport(View):
                         models[i], models[j] = models[j], models[i]
                         ok = False
                     j += 1
+        # Assure parameters are read first
+        if parameter_model:
+            models.insert(0, models.pop(models.index(parameter_model)))
         return models
 
     @classmethod

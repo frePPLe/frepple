@@ -108,6 +108,7 @@ class Tags {
   static const Keyword feasible;
   static const Keyword fence;
   static const Keyword filename;
+  static const Keyword first;
   static const Keyword flow;
   static const Keyword flowplan;
   static const Keyword flowplans;
@@ -200,6 +201,7 @@ class Tags {
   static const Keyword rules;
   static const Keyword safety_leadtime;
   static const Keyword search;
+  static const Keyword second;
   static const Keyword setup;
   static const Keyword setupend;
   static const Keyword setupmatrices;

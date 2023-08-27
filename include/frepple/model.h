@@ -1692,7 +1692,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
   }
 };
 
-class OperationPlanDependency {
+class OperationPlanDependency : public Object {
   friend class OperationDependency;
   friend class Operation;
 
@@ -1707,6 +1707,22 @@ class OperationPlanDependency {
   OperationPlan* getSecond() const { return second; }
 
   OperationDependency* getOperationDependency() const { return dpdcy; }
+
+  virtual const MetaClass& getType() const { return *metadata; }
+  static const MetaCategory* metacategory;
+  static const MetaClass* metadata;
+  static int initialize();
+
+  template <class Cls>
+  static inline void registerFields(MetaClass* m) {
+    m->addPointerField<Cls, OperationPlan>(Tags::first, &Cls::getFirst, nullptr,
+                                           DONT_SERIALIZE);
+    m->addPointerField<Cls, OperationPlan>(Tags::second, &Cls::getSecond,
+                                           nullptr, DONT_SERIALIZE);
+    m->addPointerField<Cls, OperationDependency>(Tags::dependency,
+                                                 &Cls::getOperationDependency,
+                                                 nullptr, DONT_SERIALIZE);
+  }
 
  private:
   OperationPlan* first = nullptr;
@@ -1773,6 +1789,44 @@ class OperationPlan : public Object,
   LoadPlanIterator endLoadPlans() const;
   int sizeLoadPlans() const;
 
+  typedef forward_list<OperationPlanDependency*> dependencylist;
+
+  class dependencyIterator {
+   private:
+    const OperationPlan* opplan;
+    dependencylist::const_iterator cur;
+    bool blckby = false;
+
+   public:
+    /* Constructor. */
+    dependencyIterator(const OperationPlan* o, bool d = false)
+        : opplan(o), blckby(d) {
+      if (o) cur = opplan->getDependencies().begin();
+    }
+
+    /* Return current value and advance the iterator. */
+    OperationPlanDependency* next() {
+      if (!opplan) return nullptr;
+      OperationPlanDependency* tmp = nullptr;
+      while (cur != opplan->getDependencies().end()) {
+        tmp = *cur;
+        ++cur;
+        if ((tmp->getFirst() == opplan && blckby) ||
+            (tmp->getSecond() == opplan && !blckby))
+          return tmp;
+      }
+      return nullptr;
+    }
+  };
+
+  dependencyIterator getBlockingIterator() const {
+    return dependencyIterator(this, true);
+  }
+
+  dependencyIterator getBlockedbyIterator() const {
+    return dependencyIterator(this, false);
+  }
+
   /* Interruption iteration. */
   inline InterruptionIterator getInterruptions() const;
 
@@ -1820,9 +1874,7 @@ class OperationPlan : public Object,
    */
   Duration getDelay() const;
 
-  const forward_list<OperationPlanDependency*>& getDependencies() const {
-    return dependencies;
-  }
+  const dependencylist& getDependencies() const { return dependencies; }
 
   /* Merge this operationplan with another one if possible.
    * The return value is true when a merge was done.
@@ -2565,6 +2617,12 @@ class OperationPlan : public Object,
                                              nullptr, DONT_SERIALIZE);
     m->addDurationField<Cls>(Tags::setupoverride, &Cls::getSetupOverride,
                              &Cls::setSetupOverride, -1L);
+    m->addIteratorField<Cls, dependencyIterator, OperationPlanDependency>(
+        Tags::blockedby, Tags::dependency, &Cls::getBlockedbyIterator,
+        DONT_SERIALIZE);
+    m->addIteratorField<Cls, dependencyIterator, OperationPlanDependency>(
+        Tags::blocking, Tags::dependency, &Cls::getBlockingIterator,
+        DONT_SERIALIZE);
   }
 
   static PyObject* createIterator(PyObject* self, PyObject* args);
@@ -2723,7 +2781,7 @@ class OperationPlan : public Object,
   /* Serial number, batch or sales order for MTO production. */
   PooledString batch;
 
-  forward_list<OperationPlanDependency*> dependencies;
+  dependencylist dependencies;
 
   /* Quantity. */
   double quantity = 0.0;

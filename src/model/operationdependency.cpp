@@ -30,6 +30,29 @@ namespace frepple {
 
 const MetaCategory* OperationDependency::metacategory;
 const MetaClass* OperationDependency::metadata;
+const MetaCategory* OperationPlanDependency::metacategory;
+const MetaClass* OperationPlanDependency::metadata;
+
+int OperationPlanDependency::initialize() {
+  // Initialize the metadata
+  metacategory = MetaCategory::registerCategory<SubOperation>(
+      "operationplandependency", "operationplandependency",
+      MetaCategory::ControllerDefault);
+  metadata = MetaClass::registerClass<OperationPlanDependency>(
+      "operationplandependency", "operationplandependency", nullptr, true);
+  registerFields<OperationPlanDependency>(
+      const_cast<MetaCategory*>(metacategory));
+
+  // Initialize the Python class
+  PythonType& x = FreppleCategory<OperationPlanDependency>::getPythonType();
+  x.setName("operationplandependency");
+  x.setDoc("frePPLe operationplan dependency");
+  x.supportgetattro();
+  x.supportsetattro();
+  x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
+  OperationPlanDependency::metadata->setPythonClass(x);
+  return x.typeReady();
+}
 
 int OperationDependency::initialize() {
   // Initialize the metadata
@@ -188,6 +211,7 @@ OperationPlanDependency::OperationPlanDependency(OperationPlan* op1,
                                                  OperationPlan* op2,
                                                  OperationDependency* d)
     : first(op1), second(op2), dpdcy(d) {
+  initType(metadata);
   if (first) {
     first->dependencies.push_front(this);
     first->setChanged();

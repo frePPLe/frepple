@@ -85,6 +85,26 @@ def collectRelated(
             related_buffers,
             related_demands,
         )
+    for i in opplan.blockedby:
+        if i.first not in related_opplans:
+            related_opplans.add(i.first)
+            collectRelated(
+                i.first,
+                related_opplans,
+                related_resources,
+                related_buffers,
+                related_demands,
+            )
+    for i in opplan.blocking:
+        if i.second not in related_opplans:
+            related_opplans.add(i.second)
+            collectRelated(
+                i.second,
+                related_opplans,
+                related_resources,
+                related_buffers,
+                related_demands,
+            )
 
 
 class OperationplanService(AsyncHttpConsumer):
@@ -142,9 +162,7 @@ class OperationplanService(AsyncHttpConsumer):
                         )
                         if ref:
                             changes["reference"] = ref
-                            opplan = frepple.operationplan(
-                                        reference=ref, action="C"
-                                    )
+                            opplan = frepple.operationplan(reference=ref, action="C")
                             changes["ordertype"] = opplan.ordertype
                         else:
                             changes["ordertype"] = rec.get("type", "MO")

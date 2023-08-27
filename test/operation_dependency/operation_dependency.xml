@@ -830,5 +830,18 @@ frepple.saveplan("output.5.xml")
 print("CREATING FULLY UNCONSTRAINED PLAN")
 frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
 frepple.saveplan("output.6.xml")
+
+with open("output.7.xml", "wt", encoding='utf-8') as output:
+  for opplan in frepple.operationplans():
+   for dpd in opplan.blockedby:
+      print("%s (%s %s - %s) is blocked by %s (%s %s - %s)" % (
+	    opplan.operation.name, opplan.quantity, opplan.start, opplan.end , 
+		dpd.first.operation.name, dpd.first.quantity, dpd.first.start, dpd.first.end
+		), file=output)
+   for dpd in opplan.blocking:
+      print("%s (%s %s - %s) is blocking %s (%s %s - %s)" % (
+	    opplan.operation.name, opplan.quantity, opplan.start, opplan.end , 
+		dpd.second.operation.name, dpd.second.quantity, dpd.second.start, dpd.second.end
+		), file=output)
 ?>
 </plan>

@@ -62,6 +62,7 @@ void LibraryModel::initialize() {
   nok += FlowPlan::initialize();
   nok += PeggingIterator::initialize();
   nok += PeggingDemandIterator::initialize();
+  nok += OperationPlanDependency::initialize();
   nok += OperationPlan::InterruptionIterator::intitialize();
   nok += OperationPlan::initialize();
   nok += Load::initialize();

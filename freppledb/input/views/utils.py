@@ -555,7 +555,7 @@ class PathReport(GridReport):
       left outer join item parentitem on parentitem.name = parentoperation.item_id
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-      where operation.priority != 0 and
+      where coalesce(operation.priority,1) != 0 and
       not exists (select 1 from operation parent_op where parent_op.name = operation.owner_id and parent_op.priority = 0)
       and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       %s
@@ -794,7 +794,7 @@ class PathReport(GridReport):
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
       where
-      operation.priority != 0 and
+      coalesce(operation.priority,1) != 0 and
       not exists (select 1 from operation parent_op where parent_op.name = operation.owner_id and parent_op.priority = 0)
       and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       and %s
@@ -1014,7 +1014,7 @@ class PathReport(GridReport):
       left outer join item parentitem on parentitem.name = parentoperation.item_id
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-      where operation.priority != 0 and
+      where coalesce(operation.priority,1) != 0 and
       not exists (select 1 from operation parent_op where parent_op.name = operation.owner_id and parent_op.priority = 0)
       and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       and (operation.name = %s or parentoperation.name = %s or grandparentoperation.name = %s)
@@ -1136,7 +1136,7 @@ class PathReport(GridReport):
       left outer join item parentitem on parentitem.name = parentoperation.item_id
       left outer join item on item.name = coalesce(operation.item_id,
                                                    (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
-      where operation.priority != 0 and
+      where coalesce(operation.priority,1) != 0 and
       not exists (select 1 from operation parent_op where parent_op.name = operation.owner_id and parent_op.priority = 0)
       and coalesce(operation.type,'fixed_time') in ('time_per','fixed_time')
       and operation.location_id = %%s

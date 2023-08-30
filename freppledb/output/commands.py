@@ -1516,7 +1516,7 @@ class ExportPegging(PlanTask):
         import frepple
 
         for i in demands if cluster == -2 else frepple.demands():
-            if cluster not in (-1, 2) and i.cluster not in cluster:
+            if cluster not in (-1, -2) and i.cluster not in cluster:
                 continue
             if i.hidden or not isinstance(i, frepple.demand_default):
                 continue

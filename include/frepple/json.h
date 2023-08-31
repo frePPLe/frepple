@@ -140,7 +140,7 @@ class JSONSerializer : public Serializer {
         *m_fp << ",\n" << indentstring;
     } else if (!first)
       *m_fp << ",";
-    if (!mode.top()) *m_fp << "\"" << t << "\":";
+    if (!mode.empty() && !mode.top()) *m_fp << "\"" << t << "\":";
     *m_fp << "{\"" << attr1 << "\":";
     escape(val1);
     first = false;
@@ -160,7 +160,7 @@ class JSONSerializer : public Serializer {
         *m_fp << ",\n" << indentstring;
     } else if (!first)
       *m_fp << ",";
-    if (!mode.top()) *m_fp << "\"" << t << "\":";
+    if (!mode.empty() && !mode.top()) *m_fp << "\"" << t << "\":";
     *m_fp << "{\"" << attr1 << "\":" << val1;
     first = false;
     mode.push(false);
@@ -179,7 +179,7 @@ class JSONSerializer : public Serializer {
         *m_fp << ",\n" << indentstring;
     } else if (!first)
       *m_fp << ",";
-    if (!mode.top()) *m_fp << "\"" << t << "\":";
+    if (!mode.empty() && !mode.top()) *m_fp << "\"" << t << "\":";
     *m_fp << "{\"" << attr1 << "\":" << val1;
     first = false;
     mode.push(false);
@@ -199,7 +199,7 @@ class JSONSerializer : public Serializer {
         *m_fp << ",\n" << indentstring;
     } else if (!first)
       *m_fp << ",";
-    if (!mode.top()) *m_fp << "\"" << t << "\":";
+    if (!mode.empty() && !mode.top()) *m_fp << "\"" << t << "\":";
     *m_fp << "{\"" << attr1 << "\":";
     escape(val1);
     *m_fp << ",\"" << attr2 << "\":";
@@ -223,7 +223,7 @@ class JSONSerializer : public Serializer {
         *m_fp << ",\n" << indentstring;
     } else if (!first)
       *m_fp << ",";
-    if (!mode.top()) *m_fp << "\"" << t << "\":";
+    if (!mode.empty() && !mode.top()) *m_fp << "\"" << t << "\":";
     *m_fp << "{\"" << attr1 << "\":" << val1 << ",\"" << attr2 << "\":";
     escape(val2);
     first = false;
@@ -245,7 +245,7 @@ class JSONSerializer : public Serializer {
         *m_fp << ",\n" << indentstring;
     } else if (!first)
       *m_fp << ",";
-    if (!mode.top()) *m_fp << "\"" << t << "\":";
+    if (!mode.empty() && !mode.top()) *m_fp << "\"" << t << "\":";
     *m_fp << "{\"" << attr1 << "\":" << val1 << ",\"" << attr2 << "\":"
           << "\"" << val2 << "\",\"" << attr3 << "\":"
           << "\"" << val3 << "\"";
@@ -392,7 +392,7 @@ class JSONSerializer : public Serializer {
    */
   void writeElement(const Keyword& u, const Keyword& t, const string& val) {
     if (val.empty()) {
-      if (!mode.top()) {
+      if (!mode.empty() && !mode.top()) {
         if (first)
           first = false;
         else if (formatted)
@@ -409,7 +409,7 @@ class JSONSerializer : public Serializer {
         *m_fp << ",\n" << indentstring;
       else
         *m_fp << ",";
-      if (!mode.top()) *m_fp << "\"" << u << "\":";
+      if (!mode.empty() && !mode.top()) *m_fp << "\"" << u << "\":";
       *m_fp << "{\"" << t << "\":";
       escape(val);
       *m_fp << "}";
@@ -426,7 +426,7 @@ class JSONSerializer : public Serializer {
       *m_fp << ",\n" << indentstring;
     else
       *m_fp << ",";
-    if (!mode.top()) *m_fp << "\"" << u << "\":";
+    if (!mode.empty() && !mode.top()) *m_fp << "\"" << u << "\":";
     *m_fp << "{\"" << t << "\":" << val << "}";
   }
 
@@ -440,7 +440,7 @@ class JSONSerializer : public Serializer {
       *m_fp << ",\n" << indentstring;
     else
       *m_fp << ",";
-    if (!mode.top()) *m_fp << "\"" << u << "\":";
+    if (!mode.empty() && !mode.top()) *m_fp << "\"" << u << "\":";
     *m_fp << "{\"" << t << "\":" << val << "}";
   }
 
@@ -450,7 +450,7 @@ class JSONSerializer : public Serializer {
   void writeElement(const Keyword& u, const Keyword& t1, const string& val1,
                     const Keyword& t2, const string& val2) {
     if (val1.empty()) {
-      if (!mode.top()) {
+      if (!mode.empty() && !mode.top()) {
         if (first)
           first = false;
         else if (formatted)
@@ -467,7 +467,7 @@ class JSONSerializer : public Serializer {
         *m_fp << ",\n" << indentstring;
       else
         *m_fp << ",";
-      if (!mode.top()) *m_fp << "\"" << u << "\":";
+      if (!mode.empty() && !mode.top()) *m_fp << "\"" << u << "\":";
       *m_fp << "{\"" << t1 << "\":";
       escape(val1);
       *m_fp << ",\"" << t2 << "\":";
@@ -487,7 +487,7 @@ class JSONSerializer : public Serializer {
       *m_fp << ",\n" << indentstring;
     else
       *m_fp << ",";
-    if (!mode.top()) *m_fp << "\"" << u << "\":";
+    if (!mode.empty() && !mode.top()) *m_fp << "\"" << u << "\":";
     *m_fp << "{\"" << t1 << "\":" << val1 << ",\"" << t2 << "\":";
     escape(val2);
     *m_fp << "}";
@@ -505,7 +505,7 @@ class JSONSerializer : public Serializer {
       *m_fp << ",\n" << indentstring;
     else
       *m_fp << ",";
-    if (!mode.top()) *m_fp << "\"" << u << "\":";
+    if (!mode.empty() && !mode.top()) *m_fp << "\"" << u << "\":";
     *m_fp << "{\"" << t1 << "\":" << val1 << ",\"" << t2 << "\":" << val2
           << ",\"" << t3 << "\":" << val3 << "}";
   }

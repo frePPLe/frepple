@@ -33,6 +33,7 @@ import copy
 import os
 from importlib import import_module
 from itertools import chain
+import sys
 
 from django.conf import settings
 from django.db import models
@@ -303,7 +304,7 @@ def addAttributesFromDatabase():
         "jsonb": ("jsonb", ""),
     }
 
-    if "FREPPLE_TEST" in os.environ:
+    if "FREPPLE_TEST" in os.environ or "test" in sys.argv:
         for db in settings.DATABASES:
             settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
 

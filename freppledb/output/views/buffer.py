@@ -787,13 +787,13 @@ class OverviewReport(GridPivot):
            from operationplan
            where item_id = item.name
            and coalesce(location_id, destination_id) = location.name) is_ip_buffer,
+           %s
            (select sum(quantity) from demand where status in ('open','quote')
            and item_id = item.name and location_id = location.name
            and due >= d.startdate and due < d.enddate
            and (item.type is distinct from 'make to order'
            or coalesce(demand.batch,'') is not distinct from opplanmat.opplan_batch)) open_orders,
            %s net_forecast,
-           %s
            (select json_agg(json_build_array(t.name, t.owner))
            from (
                select distinct out_constraint.name, out_constraint.owner
@@ -1067,8 +1067,8 @@ class OverviewReport(GridPivot):
            arguments.report_currentdate
            order by %s, d.startdate
         """ % (
-            net_forecast if "freppledb.forecast" in settings.INSTALLED_APPS else "0",
             reportclass.attr_sql,
+            net_forecast if "freppledb.forecast" in settings.INSTALLED_APPS else "0",
             reasons_forecast if "freppledb.forecast" in settings.INSTALLED_APPS else "",
             basesql,
             sortsql,
@@ -1141,8 +1141,6 @@ class OverviewReport(GridPivot):
                         "location__lastmodified": row[21],
                         "batch": row[22],
                         "is_ip_buffer": row[23],
-                        "open_orders": None if history else row[24] or 0,
-                        "net_forecast": None if history else row[25] or 0,
                         "color": None
                         if history
                         else (
@@ -1303,10 +1301,12 @@ class OverviewReport(GridPivot):
                             - float(row[numfields - 2]["consumed"] or 0)
                         ),
                         "reasons": None if history else json.dumps(row[numfields - 9]),
+                        "open_orders": None if history else row[numfields - 11] or 0,
+                        "net_forecast": None if history else row[numfields - 10] or 0,
                     }
 
                     # Add attribute fields
-                    idx = 26
+                    idx = 24
                     for f in itemattributefields:
                         res[f.field_name] = row[idx]
                         idx += 1

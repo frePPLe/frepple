@@ -1246,7 +1246,6 @@ void OperationPlan::setStart(Date d, bool force, bool preferEnd) {
 }
 
 void OperationPlan::setEnd(Date d, bool force) {
-  logger << "setting end " << this << "   " << d << "   " << force << endl;
   // Locked opplans don't move
   if (getConfirmed()) {
     if (force) setStartAndEnd(getStart() < d ? getStart() : d, d);

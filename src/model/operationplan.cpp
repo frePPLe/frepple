@@ -1220,11 +1220,33 @@ void OperationPlan::setStart(Date d, bool force, bool preferEnd) {
     }
   }
 
+  // Keep dependencies ordered
+  if (force)
+    for (auto i : dependencies) {
+      if (i->getFirst() == this) {
+        auto tmp = getEnd();
+        if (i->getOperationDependency())
+          tmp += i->getOperationDependency()->getHardSafetyLeadtime();
+        if (i->getSecond()->getStart() < tmp) {
+          i->getSecond()->setStart(tmp);
+        }
+      } else if (i->getSecond() == this) {
+        auto tmp = getStart();
+        if (i->getOperationDependency())
+          tmp -= i->getOperationDependency()->getHardSafetyLeadtime();
+        if (i->getFirst()->getEnd() > tmp) {
+          i->getFirst()->setEnd(tmp);
+        }
+      } else
+        throw LogicException("Invalid operationplan depedency data");
+    }
+
   // Update flow and loadplans
   update();
 }
 
 void OperationPlan::setEnd(Date d, bool force) {
+  logger << "setting end " << this << "   " << d << "   " << force << endl;
   // Locked opplans don't move
   if (getConfirmed()) {
     if (force) setStartAndEnd(getStart() < d ? getStart() : d, d);
@@ -1246,6 +1268,26 @@ void OperationPlan::setEnd(Date d, bool force) {
         break;
     }
   }
+
+  if (force)
+    for (auto i : dependencies) {
+      if (i->getFirst() == this) {
+        auto tmp = getEnd();
+        if (i->getOperationDependency())
+          tmp += i->getOperationDependency()->getHardSafetyLeadtime();
+        if (i->getSecond()->getStart() < tmp) {
+          i->getSecond()->setStart(tmp);
+        }
+      } else if (i->getSecond() == this) {
+        auto tmp = getStart();
+        if (i->getOperationDependency())
+          tmp -= i->getOperationDependency()->getHardSafetyLeadtime();
+        if (i->getFirst()->getEnd() > tmp) {
+          i->getFirst()->setEnd(tmp);
+        }
+      } else
+        throw LogicException("Invalid operationplan depedency data");
+    }
 
   // Update flow and loadplans
   update();

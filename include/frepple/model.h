@@ -2519,6 +2519,8 @@ class OperationPlan : public Object,
                                     &Cls::setDemand, BASE + WRITE_HIDDEN);
     m->addDateField<Cls>(Tags::start, &Cls::getStart, &Cls::setStart,
                          Date::infiniteFuture);
+    m->addDateField<Cls>(Tags::start_force, &Cls::getStart, &Cls::setStartForce,
+                         Date::infiniteFuture, DONT_SERIALIZE);
     m->addDateField<Cls>(Tags::end, &Cls::getEnd, &Cls::setEnd,
                          Date::infiniteFuture);
     m->addDateField<Cls>(Tags::end_force, &Cls::getEnd, &Cls::setEndForce,

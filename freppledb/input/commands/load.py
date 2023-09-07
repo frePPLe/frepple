@@ -1177,9 +1177,7 @@ class loadItemSuppliers(LoadTask):
                             leadtime=i[11] if i[11] else 0,
                             fence=i[14] if i[14] else 0,
                             resource_qty=i[13],
-                            batchwindow=i[15]
-                            if i[15] is not None
-                            else 7 * 86400,
+                            batchwindow=i[15] if i[15] is not None else 7 * 86400,
                             extra_safety_leadtime=i[16] if i[16] else 0,
                             hard_safety_leadtime=i[17] if i[17] else 0,
                         )
@@ -1261,9 +1259,7 @@ class loadItemDistributions(LoadTask):
                             leadtime=i[11] if i[11] else 0,
                             fence=i[14] if i[14] else 0,
                             resource_qty=i[13],
-                            batchwindow=i[15]
-                            if i[15] is not None
-                            else 7 * 86400,
+                            batchwindow=i[15] if i[15] is not None else 7 * 86400,
                         )
                         if i[2]:
                             curitemdistribution.destination = frepple.location(
@@ -1388,41 +1384,63 @@ class loadBuffers(LoadTask):
                     if i[6]:
                         b.minimum_calendar = frepple.calendar(name=i[6])
 
-                    # Try association with a safety stock calendar
-                    try:
-                        ss_calendar = frepple.calendar(
-                            name="SS for %s" % i[0], action="C"
-                        )
-                        b.minimum_calendar = ss_calendar
-                    except Exception:
-                        pass
-
-                    # Try association with a replenishment quantity calendar
-                    try:
-                        roq_calendar = frepple.calendar(
-                            name="ROQ for %s" % i[0], action="C"
-                        )
-                        if isinstance(
-                            b.producing,
-                            (
-                                frepple.operation_routing,
-                                frepple.operation_alternate,
-                            ),
-                        ):
-                            for o in b.producing.suboperations:
-                                o.operation.size_minimum_calendar = roq_calendar
-                                if isinstance(o.operation, frepple.operation_routing):
-                                    for o2 in o.operation.suboperations:
-                                        o2.operation.size_minimum_calendar = (
-                                            roq_calendar
-                                        )
-                        elif b.producing:
-                            b.producing.size_minimum_calendar = roq_calendar
-                    except Exception:
-                        pass
                 logger.info(
                     "Loaded %d buffers in %.2f seconds" % (cnt, time() - starttime)
                 )
+
+        def findOrCreateBuffer(name):
+            try:
+                # Found existing buffer
+                return frepple.buffer(name=name, action="C")
+            except Exception:
+                try:
+                    # Create new buffer
+                    p = name.rsplit(" @ ", 2)
+                    if len(p) == 2:
+                        return frepple.buffer(
+                            name=name,
+                            item=frepple.item(name=p[0], action="C"),
+                            location=frepple.location(name=p[1], action="C"),
+                        )
+                    elif len(p) == 3:
+                        return frepple.buffer(
+                            name=name,
+                            item=frepple.item(name=p[0], action="C"),
+                            location=frepple.location(name=p[1], action="C"),
+                            batch=p[2],
+                        )
+                except Exception:
+                    return None
+
+        for cal in frepple.calendars():
+            # Try linking safety stock calendar to a buffer
+            if cal.name.startswith("SS for "):
+                b = findOrCreateBuffer(cal.name[7:])
+                if b:
+                    b.minimum_calendar = cal
+
+            # Try linking safety stock calendar with a replenishment quantity calendar
+            if cal.name.startswith("ROQ for "):
+                try:
+                    b = findOrCreateBuffer(cal.name[8:])
+                    if not b:
+                        continue
+                    if isinstance(
+                        b.producing,
+                        (
+                            frepple.operation_routing,
+                            frepple.operation_alternate,
+                        ),
+                    ):
+                        for o in b.producing.suboperations:
+                            o.operation.size_minimum_calendar = cal
+                            if isinstance(o.operation, frepple.operation_routing):
+                                for o2 in o.operation.suboperations:
+                                    o2.operation.size_minimum_calendar = cal
+                    elif b.producing:
+                        b.producing.size_minimum_calendar = cal
+                except Exception:
+                    pass
 
 
 @PlanTaskRegistry.register

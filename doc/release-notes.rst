@@ -44,6 +44,8 @@ Release notes
 - | 15 & 16: Bug fix where confirmed manufacturing orders are consuming materials
     in the wrong work order.
 
+- | Bug fix: Reordering rules on zero-stock buffers were incorrectly ignored.
+
 .. rubric:: System administration
 
 - | The command to `back up the database <command-reference.html#backup>`_ is renamed

@@ -217,11 +217,11 @@ void SolverCreate::solve(const Buffer* b, void* v) {
           auto fence_free = b->getOnHand(
               max(theDate, Plan::instance().getCurrent()) + autofence,
               Date::infiniteFuture);
-          if (theDelta < fence_free && theDelta < -ROUNDING_ERROR &&
+          if (theDelta < fence_free && fence_free < 0 &&
+              theDelta < -ROUNDING_ERROR &&
               fabs(fence_free - theDelta) > ROUNDING_ERROR) {
             // There is confirmed supply within the fence that partially covers
             // the requirement. We reduce the allowed replenishment quantity.
-            shortage += fence_free - theDelta;
             theDelta = fence_free;
           }
         }

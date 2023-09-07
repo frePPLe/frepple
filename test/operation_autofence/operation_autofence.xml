@@ -56,7 +56,7 @@
 			<supplier name="2. Supplier"/>
 		</operationplan>
 	</operationplans>
-	
+
 	<suppliers>
 		<supplier name="3. Supplier">
 			<itemsuppliers>
@@ -83,7 +83,73 @@
 			<location name="factory"/>
 			<supplier name="3. Supplier"/>
 		</operationplan>
-	</operationplans>	
+	</operationplans>
+
+	<suppliers>
+		<supplier name="4. Supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="4. item"/>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<demands>
+		<demand name="4. sales order">
+			<quantity>200</quantity>
+			<due>2024-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="4. item"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan ordertype="PO" end="2024-02-01T00:00:00" reference="PO #4" quantity="100" status="confirmed">
+			<item name="4. item"/>
+			<location name="factory"/>
+			<supplier name="4. Supplier"/>
+		</operationplan>
+		<operationplan ordertype="PO" end="2024-09-01T00:00:00" reference="PO #5" quantity="50" status="confirmed">
+			<item name="4. item"/>
+			<location name="factory"/>
+			<supplier name="4. Supplier"/>
+		</operationplan>
+	</operationplans>
+
+	<suppliers>
+		<supplier name="5. Supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="5. item"/>
+					<leadtime>P7D</leadtime>
+					<priority>2</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<demands>
+		<demand name="5. sales order">
+			<quantity>200</quantity>
+			<due>2024-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="5. item"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan ordertype="PO" end="2024-02-01T00:00:00" reference="PO #6" quantity="100" status="confirmed">
+			<item name="5. item"/>
+			<location name="factory"/>
+			<supplier name="5. Supplier"/>
+		</operationplan>
+		<operationplan ordertype="PO" end="2024-09-01T00:00:00" reference="PO #7" quantity="300" status="confirmed">
+			<item name="5. item"/>
+			<location name="factory"/>
+			<supplier name="5. Supplier"/>
+		</operationplan>
+	</operationplans>
 <?python
 
 frepple.settings.autofence = 90 * 86400

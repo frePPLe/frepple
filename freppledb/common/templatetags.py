@@ -269,7 +269,7 @@ class ModelTabs(Node):
                             continue
                 # Append to the results
                 result.append(
-                    '<li class="nav-item"><a class="nav-link%s" href="%s%s?noautofilter" target="_self">%s</a></li>'
+                    '<li class="nav-item"><a class="nav-link text-reset%s" href="%s%s?noautofilter" target="_self">%s</a></li>'
                     % (
                         " active" if active_tab == tab["name"] else "",
                         context["request"].prefix,

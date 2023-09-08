@@ -280,22 +280,16 @@ class OperationplanService(AsyncHttpConsumer):
                                         related_buffers,
                                         related_demands,
                                     )
-                                    changes["action"] = "C"
-                                    opplan = frepple.operationplan(**changes)
-                                    if "end" in changes:
-                                        opplan.end_force = changes["end"]
-                                    if "start" in changes:
-                                        opplan.start_force = changes["start"]
                                 else:
                                     opplan = frepple.operationplan(**changes)
-                                    # Apply changes
-                                    for fld, val in changes.items():
-                                        if fld == "end":
-                                            setattr(opplan, "end_force", val)
-                                        elif fld == "start":
-                                            setattr(opplan, "start_force", val)
-                                        elif fld != "reference":
-                                            setattr(opplan, fld, val)
+                                # Apply changes
+                                for fld, val in changes.items():
+                                    if fld == "end":
+                                        setattr(opplan, "end_force", val)
+                                    elif fld == "start":
+                                        setattr(opplan, "start_force", val)
+                                    elif fld != "reference":
+                                        setattr(opplan, fld, val)
                                 # New related objects
                                 related_opplans.add(opplan)
                                 collectRelated(

@@ -2201,6 +2201,14 @@ Duration OperationPlan::getDelay() const {
   return maxdelay;
 }
 
+void OperationPlan::setQuantityExternal(double f) {
+  if (fabs(f - quantity) < ROUNDING_ERROR) return;
+  auto q = setQuantity(f, false, true, true);
+  if (oper)
+    oper->setOperationPlanParameters(this, q, getStart(), Date::infinitePast,
+                                     true, true, true);
+}
+
 void OperationPlan::setQuantityCompleted(double q) {
   if (fabs(q - quantity_completed) < ROUNDING_ERROR) return;
   quantity_completed = q;

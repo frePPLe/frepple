@@ -1914,6 +1914,8 @@ class OperationPlan : public Object,
   /* Update the quantity. */
   void setQuantity(double f) { setQuantity(f, false, true, true); }
 
+  void setQuantityExternal(double f);
+
   double getQuantityCompleted() const {
     if (getCompleted() || getProposed())
       return 0.0;
@@ -2532,7 +2534,7 @@ class OperationPlan : public Object,
     m->addDoubleField<Cls>(Tags::priority, &Cls::getPriority, nullptr, 999.0,
                            PLAN);
     m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity,
-                           &Cls::setQuantity);
+                           &Cls::setQuantityExternal);
     m->addIteratorField<Cls, OperationPlan::ProblemIterator, Problem>(
         Tags::problems, Tags::problem, &Cls::getProblems, PLAN + WRITE_OBJECT);
     m->addStringRefField<Cls>(Tags::batch, &Cls::getBatchString, &Cls::setBatch,

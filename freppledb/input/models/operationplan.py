@@ -36,6 +36,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, DEFAULT_DB_ALIAS, connections
+from django.db.models import Q
 from django.db.models.fields import AutoField, NOT_PROVIDED
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
@@ -675,11 +676,25 @@ class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
 class DeliveryOrder(OperationPlan):
     class DeliveryOrderManager(OperationPlan.Manager):
         def get_queryset(self):
-            return (
-                super().get_queryset().filter(demand__isnull=False, owner__isnull=True)
-            )
-            # Note: defer screws up the model name when deleting a PO
-            # .defer("operation", "owner", "supplier", "location", "origin", "destination")
+            if "freppledb.forecast" in settings.INSTALLED_APPS:
+                return (
+                    super()
+                    .get_queryset()
+                    .filter(
+                        (Q(demand__isnull=False) | Q(forecast__isnull=False))
+                        & Q(owner__isnull=True)
+                    )
+                )
+                # Note: defer screws up the model name when deleting a PO
+                # .defer("operation", "owner", "supplier", "location", "origin", "destination")
+            else:
+                return (
+                    super()
+                    .get_queryset()
+                    .filter(Q(demand__isnull=False) & Q(owner__isnull=True))
+                )
+                # Note: defer screws up the model name when deleting a PO
+                # .defer("operation", "owner", "supplier", "location", "origin", "destination")
 
     objects = DeliveryOrderManager()
 

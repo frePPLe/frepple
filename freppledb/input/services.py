@@ -75,16 +75,28 @@ def collectRelated(
                 # Force stck opplan to be present in the database
                 related_opplans.add(flpln.operationplan)
             break
+    for c in opplan.operationplans:
+        if c not in related_opplans:
+            related_opplans.add(c)
+            collectRelated(
+                c,
+                related_opplans,
+                related_resources,
+                related_buffers,
+                related_demands,
+            )
     if opplan.demand:
         related_demands.add(opplan.demand)
     if opplan.owner:
-        collectRelated(
-            opplan.owner,
-            related_opplans,
-            related_resources,
-            related_buffers,
-            related_demands,
-        )
+        if opplan.owner not in related_opplans:
+            related_opplans.add(opplan.owner)
+            collectRelated(
+                opplan.owner,
+                related_opplans,
+                related_resources,
+                related_buffers,
+                related_demands,
+            )
     for i in opplan.blockedby:
         if i.first not in related_opplans:
             related_opplans.add(i.first)
@@ -268,16 +280,22 @@ class OperationplanService(AsyncHttpConsumer):
                                         related_buffers,
                                         related_demands,
                                     )
+                                    changes["action"] = "C"
+                                    opplan = frepple.operationplan(**changes)
+                                    if "end" in changes:
+                                        opplan.end_force = changes["end"]
+                                    if "start" in changes:
+                                        opplan.start_force = changes["start"]
                                 else:
                                     opplan = frepple.operationplan(**changes)
-                                # Apply changes
-                                for fld, val in changes.items():
-                                    if fld == "end":
-                                        setattr(opplan, "end_force", val)
-                                    elif fld == "start":
-                                        setattr(opplan, "start_force", val)
-                                    elif fld != "reference":
-                                        setattr(opplan, fld, val)
+                                    # Apply changes
+                                    for fld, val in changes.items():
+                                        if fld == "end":
+                                            setattr(opplan, "end_force", val)
+                                        elif fld == "start":
+                                            setattr(opplan, "start_force", val)
+                                        elif fld != "reference":
+                                            setattr(opplan, fld, val)
                                 # New related objects
                                 related_opplans.add(opplan)
                                 collectRelated(

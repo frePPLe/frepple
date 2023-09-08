@@ -122,6 +122,7 @@ class OdooReadData(PlanTask):
 
         odoo_company = Parameter.getValue("odoo.company", database, None)
         singlecompany = Parameter.getValue("odoo.singlecompany", database, "false")
+        odoo_delta = Parameter.getValue("odoo.delta", database, "999")
         ok = True
 
         # Set the environment variable FREPPLE_ODOO_DEBUGFILE if you want frePPLe
@@ -174,6 +175,7 @@ class OdooReadData(PlanTask):
                 "mode": cls.mode,
                 "singlecompany": singlecompany,
                 "version": frepple.version,
+                "delta": odoo_delta,
             }
             if odoo_db:
                 args["database"] = odoo_db
@@ -339,3 +341,41 @@ class OdooReadData(PlanTask):
             for r in frepple.customers():
                 if r.owner is None and r != rootCustomer:
                     r.owner = rootCustomer
+
+
+@PlanTaskRegistry.register
+class OdooDeltaChangeSource(PlanTask):
+    """
+    This class updates the source field of the sales order table to
+    make sure odoo.delta parameter is handled correctly.
+    if odoo.delta >= 999, we are pulling the entire demand history and
+    the source field of the sales order table shouldn't be modified (it should be odoo_1)
+    if odoo.delta < 999, we need to modify the source field from odoo_1 to demand history
+    to make sure clean static doesn't delete the records we haven't pulled.
+    """
+
+    description = "Update sales order source"
+    sequence = 307
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        return (
+            1
+            if kwargs.get("exportstatic", False)
+            and "odoo_" in kwargs.get("source", False)
+            and float(Parameter.getValue("odoo.delta", database, "999")) < 999
+            else -1
+        )
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        with connections[database].cursor() as cursor:
+            cursor.execute(
+                """
+                update demand set source = 'demand history' where source = %s;
+                """,
+                (kwargs.get("source", None),),
+            )
+            logger.info(
+                "Updated source field of %d sales order records" % (cursor.rowcount,)
+            )

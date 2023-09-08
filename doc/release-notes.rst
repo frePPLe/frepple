@@ -44,6 +44,12 @@ Release notes
 - | 15 & 16: Bug fix where confirmed manufacturing orders are consuming materials
     in the wrong work order.
 
+- | 15 & 16: Addition of parameter odoo.delta that prevents the connectors from reading
+    the entire sales order history. The usage of this parameter should reduce
+    the duration of the odoo import task for companies with a signifiant number of sales
+    order records.
+
+
 - | Bug fix: Reordering rules on zero-stock buffers were incorrectly ignored.
 
 .. rubric:: System administration

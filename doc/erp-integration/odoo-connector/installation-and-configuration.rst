@@ -146,6 +146,16 @@ The section below describes the installation and configuration of these.
       | If this flag is set to true you can override the odoo data if the source field
         of the overridden records is also edited.
 
+    * | odoo.delta:
+      | Only sales order lines with a write date greater than current date minus odoo.delta days will be pulled.
+        Default:999 (Pull entire demand history)
+      | For the first import, this parameter should be left to its default value (999) to import all the Odoo
+        sales orders into frePPLe.
+      | The value of parameter odoo.delta can then be reduced to only import sales orders with a last modified
+        date within the last odoo.delta days.
+      | The usage of this parameter can significantly shorten the duration of the import odoo workflow for
+        companies with a significant number of sales order records.
+
 * **Configuring access rights**
 
   Out of the box, the integrated solution will grant only the root and admin users

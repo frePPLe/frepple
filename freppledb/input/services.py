@@ -42,11 +42,12 @@ def savePlan(
     related_buffers,
     related_demands,
     database,
+    cluster,
 ):
     try:
         PlanTaskRegistry.run(
             export=1,
-            cluster=-2,
+            cluster=cluster,
             database=database,
             deleted_opplans=deleted_opplans,
             opplans=related_opplans,
@@ -254,13 +255,10 @@ class OperationplanService(AsyncHttpConsumer):
                         rsrcs = rec.get("resources", rec.get("resource", None))
                         if rsrcs:
                             # Force deletion of existing loadplans (because the loadplan data isn't in delta mode)
-                            changes["resetResources"] = True
                             if isinstance(rsrcs, str):
-                                changes["loadplans"] = [{"resource": {"name": rsrcs}}]
+                                changes["resources"] = [rsrcs]
                             else:
-                                changes["loadplans"] = [
-                                    {"resource": {"name": l[0]}} for l in rsrcs
-                                ]
+                                changes["resources"] = [l[0] for l in rsrcs]
                         if "remark" in rec:
                             changes["remark"] = rec["remark"]
 
@@ -321,6 +319,7 @@ class OperationplanService(AsyncHttpConsumer):
                             related_buffers,
                             related_demands,
                             self.scope["database"],
+                            -2,
                         )
                     except Exception as e:
                         print("exception " % e)

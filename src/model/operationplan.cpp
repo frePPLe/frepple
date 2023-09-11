@@ -393,25 +393,6 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   const DataValue* batchfld = in.get(Tags::batch);
   if (batchfld) batch = batchfld->getString();
 
-  // Return the existing operationplan
-  if (opplan) {
-    if (!ordtype.empty() && ordtype == "MO" && oper &&
-        opplan->getOperation() != static_cast<Operation*>(oper))
-      // Change the operation
-      opplan->setOperation(static_cast<Operation*>(oper));
-    opplan->setForcedUpdate(true);
-    if (quantityfld && !startfld && !endfld)
-      opplan->setOperationPlanParameters(
-          quantityfld ? quantity : opplan->getQuantity(), opplan->getStart(),
-          Date::infinitePast);
-    else if (quantityfld || startfld || endfld)
-      opplan->setOperationPlanParameters(
-          quantityfld ? quantity : opplan->getQuantity(), start, end);
-    opplan->setForcedUpdate(false);
-    if (batchfld) opplan->setBatch(batch);
-    return opplan;
-  }
-
   // Get list of assigned resources
   vector<Resource*> assigned_resources;
   const DataValue* reslist = in.get(Tags::resources);
@@ -420,6 +401,29 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       auto r = Resource::find(resname);
       if (r) assigned_resources.push_back(r);
     }
+  }
+
+  // Return the existing operationplan
+  if (opplan) {
+    if (!ordtype.empty() && ordtype == "MO" && oper &&
+        opplan->getOperation() != static_cast<Operation*>(oper))
+      // Change the operation
+      opplan->setOperation(static_cast<Operation*>(oper));
+    opplan->setForcedUpdate(true);
+    if (batchfld) opplan->setBatch(batch);
+    if (!assigned_resources.empty()) {
+      opplan->setResetResources(true);
+      opplan->createFlowLoads(&assigned_resources);
+    }
+    if ((quantityfld || !assigned_resources.empty()) && !startfld && !endfld)
+      opplan->setOperationPlanParameters(
+          quantityfld ? quantity : opplan->getQuantity(), opplan->getStart(),
+          Date::infinitePast);
+    else if ((quantityfld || !assigned_resources.empty()) || startfld || endfld)
+      opplan->setOperationPlanParameters(
+          quantityfld ? quantity : opplan->getQuantity(), start, end);
+    opplan->setForcedUpdate(false);
+    return opplan;
   }
 
   // Create a new operation plan
@@ -1046,7 +1050,9 @@ bool OperationPlan::operator<(const OperationPlan& a) const {
 void OperationPlan::createFlowLoads(
     const vector<Resource*>* assigned_resources) {
   // Initialized already, or nothing to initialize
-  if (firstflowplan || firstloadplan || !oper) return;
+  if ((firstflowplan || firstloadplan || !oper) &&
+      (!assigned_resources || assigned_resources->empty()))
+    return;
 
   if (oper->getMTO() && !getBatch() && getProposed() &&
       !oper->hasType<OperationInventory>())
@@ -1091,7 +1097,7 @@ void OperationPlan::createFlowLoads(
   }
 
   // Create flowplans for flows
-  if (!Plan::instance().getSuppressFlowplanCreation())
+  if (!Plan::instance().getSuppressFlowplanCreation() && !firstflowplan)
     for (auto& h : oper->getFlows()) {
       // Only the primary flow is instantiated.
       // Also for transfer batches, we only need to create the first flowplan.

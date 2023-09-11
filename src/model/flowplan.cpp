@@ -397,6 +397,13 @@ pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
     else
       throw LogicException("Unreachable code reached");
   }
+
+  if (execute && oper->getOwner()) {
+    // Update all sibling operationplans
+    for (auto i = oper->getOwner()->firstsubopplan; i; i = i->nextsubopplan)
+      if (i != oper) i->update();
+  }
+
   if (opplan_quantity)
     return make_pair(opplan_quantity * getFlow()->getQuantity() +
                          getFlow()->getQuantityFixed(),

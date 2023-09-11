@@ -2725,4 +2725,15 @@ int SetupEvent::initialize() {
   return x.typeReady();
 }
 
+void OperationPlan::setResetResources(bool b) {
+  if (!b) return;
+  LoadPlanIterator f = beginLoadPlans();
+  while (f != endLoadPlans()) {
+    auto tmp = &*f;
+    ++f;
+    delete tmp;
+  }
+  firstloadplan = nullptr;
+}
+
 }  // namespace frepple

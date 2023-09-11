@@ -2508,6 +2508,9 @@ class OperationPlan : public Object,
    */
   bool updateSetupTime(bool report = false);
 
+  /* Delete all existing loadplans. */
+  void setResetResources(bool);
+
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
     m->addStringRefField<Cls>(Tags::reference, &Cls::getReference,

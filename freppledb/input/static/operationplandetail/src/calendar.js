@@ -749,6 +749,21 @@ angular.module('calendar', [])
           return true;
         };
 
+        scope.$on('duplicateOperationplan', function (event, card, clone) {
+          for (var row = 0; row < 6; row += 1)
+            for (var date = 0; date < 7; date += 1)
+              if (scope.rows[row][date].events) {
+                var newevents = [];
+                for (var event of scope.rows[row][date].events) {
+                  newevents.push(event);
+                  if (event.reference == card.reference)
+                    newevents.push(clone);
+                }
+                scope.rows[row][date].events = newevents;
+              }
+          scope.selectCard(clone);
+        });
+
         scope.$on('changeMode', function (event, mode) {
           ctrl.changeMode(mode);
           if (scope.editable && mode == "calendarmonth")
@@ -952,6 +967,20 @@ angular.module('calendar', [])
           return true;
         };
 
+        scope.$on('duplicateOperationplan', function (event, card, clone) {
+          for (var day = 0; day < 7; day += 1) {
+            if (!scope.dates[day].events) continue;
+            var newevents = [];
+            for (var event of scope.dates[day].events) {
+              newevents.push(event);
+              if (event.reference == card.reference)
+                newevents.push(clone);
+            }
+            scope.dates[day].events = newevents;
+          }
+          scope.selectCard(clone);
+        });
+
         scope.$on('changeMode', function (event, mode) {
           ctrl.changeMode(mode);
           if (scope.editable && mode == "calendarweek")
@@ -1049,6 +1078,17 @@ angular.module('calendar', [])
         function processCard(card, incremental) {
           // No drag and drop in the daily calendar view
         };
+
+        scope.$on('duplicateOperationplan', function (event, card, clone) {
+          var newevents = [];
+          for (var event of scope.events) {
+            newevents.push(event);
+            if (event.reference == card.reference)
+              newevents.push(clone);
+          }
+          scope.events = newevents;
+          scope.selectCard(clone);
+        });
 
         scope.$on('changeMode', function (event, mode) {
           ctrl.changeMode(mode);

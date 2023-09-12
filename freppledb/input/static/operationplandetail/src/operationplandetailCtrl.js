@@ -35,6 +35,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   $scope.detailposition = detailposition;
   $scope.operationplans = [];
   $scope.kanbanoperationplans = {};
+  $scope.deleted = [];
   $scope.kanbancolumns = preferences ? preferences.columns : undefined;
   if (!$scope.kanbancolumns)
     $scope.kanbancolumns = ["proposed", "approved", "confirmed", "completed", "closed"];
@@ -203,6 +204,8 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
     aggregatedopplan.id = -1;
     aggregatedopplan.count = selectionData.length;
     aggregatedopplan.type = (selectionData.length > 0) ? selectionData[0].type : "";
+    if (!aggregatedopplan.count)
+      angular.element(document).find("#delete_selected, #copy_selected").prop("disabled", true);
     $scope.$apply(function () { $scope.operationplan.extend(aggregatedopplan); });
   }
   $scope.processAggregatedInfo = processAggregatedInfo;
@@ -229,12 +232,18 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
       else
         rowid = row.reference;
     }
-    $scope.operationplan = new OperationPlan();
-    $scope.operationplan.id = rowid;
+
+    angular.element(document).find("#delete_selected, #copy_selected").prop("disabled", false);
 
     function callback(opplan) {
       if (row === undefined)
         return opplan;
+      if (opplan.hasOwnProperty("duplicated")) {
+        opplan.reference = opplan.id = 'Copy of ' + opplan.duplicated;
+        delete opplan.upstreamoperationplans;
+        delete opplan.downstreamoperationplans;
+        delete opplan.pegging_demand;
+      }
 
       // load previous changes from grid
       if (row.operationplan__startdate !== undefined && row.operationplan__startdate !== '')
@@ -270,10 +279,22 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         $scope.operationplan.operationplan__enddate = moment($scope.operationplan.operationplan__enddate, datetimeformat).toDate();
     }
 
-    if (typeof $scope.operationplan.id === 'undefined')
-      $scope.$apply(function () { $scope.operationplan = new OperationPlan(); });
-    else
+    if (row && row.hasOwnProperty("duplicated")) {
+      $scope.operationplan = new OperationPlan(row);
+      $scope.operationplan.id = row.duplicated;
       $scope.operationplan.get(callback);
+    }
+    else {
+      $scope.operationplan = new OperationPlan();
+      $scope.operationplan.id = rowid;
+      if (typeof $scope.operationplan.id === 'undefined')
+        $scope.$apply(function () {
+          angular.element(document).find("#delete_selected, #copy_selected").prop("disabled", true);
+          $scope.operationplan = new OperationPlan();
+        });
+      else
+        $scope.operationplan.get(callback);
+    }
   }
   $scope.displayInfo = displayInfo;
 
@@ -575,19 +596,45 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
       angular.forEach($scope.calendarevents, function (card) {
         var dirtycard = { id: card.id || card.reference };
         var dirtyfields = false;
-        if (card.hasOwnProperty("operationplan__reference"))
-          dirtycard["operationplan__reference"] = card.operationplan__reference;
-        for (var field in card) {
-          if (card.hasOwnProperty(field + "Original")) {
-            dirtyfields = true;
-            if (card[field] instanceof Date)
-              dirtycard[field] = new moment(card[field]).format('YYYY-MM-DD HH:mm:ss');
-            else
-              dirtycard[field] = card[field];
+        if (card.duplicated) {
+          var data = {
+            "quantity": card.quantity,
+            "startdate": new moment(card.operationplan__startdate || card.startdate).format('YYYY-MM-DD HH:mm:ss'),
+            "enddate": new moment(card.operationplan__enddate || card.enddate).format('YYYY-MM-DD HH:mm:ss'),
+            "status": card.status,
+            "type": card.type
+          };
+          if (card.type == "PO") {
+            data["supplier"] = card.operationplan__supplier__name || card.supplier;
+            data["location"] = card.operationplan__location__name || card.location;
+            data["item"] = card.operationplan__item__name || card.item;
           }
+          else if (card.type == "DO") {
+            data["origin"] = card.operationplan__origin__name || card.origin;
+            data["destination"] = card.operationplan__destination__name || card.destination;
+            data["item"] = card.operationplan__item__name || card.item;
+          }
+          else if (card.type == "MO")
+            data["operation"] = card.operationplan__operation__name || card.operation;
+          if (card.resource)
+            data["resource"] = card.resource
+          dirty.push(data);
         }
-        if (dirtyfields)
-          dirty.push(dirtycard);
+        else {
+          if (card.hasOwnProperty("operationplan__reference"))
+            dirtycard["operationplan__reference"] = card.operationplan__reference;
+          for (var field in card) {
+            if (card.hasOwnProperty(field + "Original")) {
+              dirtyfields = true;
+              if (card[field] instanceof Date)
+                dirtycard[field] = new moment(card[field]).format('YYYY-MM-DD HH:mm:ss');
+              else
+                dirtycard[field] = card[field];
+            }
+          }
+          if (dirtyfields)
+            dirty.push(dirtycard);
+        }
       });
     }
     else if ($scope.mode == "kanban") {
@@ -595,6 +642,30 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         angular.forEach(value.rows, function (card) {
           var dirtycard = { id: card.id || card.reference };
           var dirtyfields = false;
+          if (card.duplicated) {
+            var data = {
+              "quantity": card.quantity,
+              "startdate": new moment(card.operationplan__startdate || card.startdate).format('YYYY-MM-DD HH:mm:ss'),
+              "enddate": new moment(card.operationplan__enddate || card.enddate).format('YYYY-MM-DD HH:mm:ss'),
+              "status": card.operationplan__status || card.status,
+              "type": card.type
+            };
+            if (card.type == "PO") {
+              data["supplier"] = card.operationplan__supplier || card.supplier;
+              data["location"] = card.operationplan__location || card.location;
+              data["item"] = card.operationplan__item || card.item;
+            }
+            else if (card.type == "DO") {
+              data["origin"] = card.operationplan__origin || card.origin;
+              data["destination"] = card.operationplan__destination || card.destination;
+              data["item"] = card.operationplan__item || card.item;
+            }
+            else if (card.type == "MO") {
+              data["operation"] = card.operationplan__operation__name || card.operation;
+              console.log("dddd", data)
+            }
+            dirty.push(data);
+          }
           if (card.hasOwnProperty("operationplan__reference"))
             dirtycard["operationplan__reference"] = card.operationplan__reference;
           for (var field in card) {
@@ -619,6 +690,132 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
     return dirty;
   }
   $scope.getDirtyCards = getDirtyCards;
+
+  function duplicateOperationPlan() {
+    var duplicate = [];
+    if ($scope.mode && $scope.mode.startsWith("calendar")) {
+      $scope.$apply(function () {
+        angular.forEach($scope.calendarevents, function (card) {
+          if ($scope.operationplan.id == card.operationplan__reference ||
+            $scope.operationplan.id == card.reference) {
+            var clone = angular.copy(card);
+            if (card.operationplan__reference) {
+              if (!clone.hasOwnProperty("duplicated")) clone.duplicated = card.operationplan__reference;
+              clone.operationplan__reference = (card.operationplan__reference && card.operationplan__reference.startsWith("Copy of"))
+                ? card.operationplan__reference : ("Copy of " + card.operationplan__reference);
+            }
+            if (card.id) {
+              if (!clone.hasOwnProperty("duplicated")) clone.duplicated = card.id;
+              clone.id = (card.id && card.id.startsWith("Copy of"))
+                ? card.id : ("Copy of " + card.id);
+              clone.duplicated = card.duplicated ? card.duplicated : card.reference;
+            }
+            if (card.reference) {
+              if (!clone.hasOwnProperty("duplicated")) clone.duplicated = card.reference;
+              clone.reference = (card.reference && card.reference.startsWith("Copy of"))
+                ? card.reference : ("Copy of " + card.reference);
+            }
+            clone.dirty = true;
+            duplicate.push([card, clone]);
+            $scope.totalevents += 1;
+          }
+        });
+        for (var d of duplicate) {
+          $scope.calendarevents.push(d[1]);
+          $scope.$broadcast("duplicateOperationplan", d[0], d[1]);
+        }
+      });
+      angular.element(document).find("#save, #undo")
+        .removeClass("btn-primary btn-danger")
+        .addClass("btn-danger")
+        .prop("disabled", false);
+      $(window).off('beforeunload', upload.warnUnsavedChanges);
+      $(window).on('beforeunload', upload.warnUnsavedChanges);
+    }
+    else if ($scope.mode == "kanban") {
+      $scope.$apply(function () {
+        angular.forEach($scope.kanbanoperationplans, function (col) {
+          duplicate = [];
+          angular.forEach(col.rows, function (card) {
+            if ($scope.operationplan.id == card.operationplan__reference ||
+              $scope.operationplan.id == card.reference) {
+              var clone = angular.copy(card);
+              if (card.operationplan__reference) {
+                if (!clone.hasOwnProperty("duplicated")) clone.duplicated = card.operationplan__reference;
+                clone.operationplan__reference = (card.operationplan__reference && card.operationplan__reference.startsWith("Copy of"))
+                  ? card.operationplan__reference : ("Copy of " + card.operationplan__reference);
+              }
+              if (card.id) {
+                if (!clone.hasOwnProperty("duplicated")) clone.duplicated = card.id;
+                clone.id = (card.id && card.id.startsWith("Copy of"))
+                  ? card.id : ("Copy of " + card.id);
+              }
+              if (card.reference) {
+                if (!clone.hasOwnProperty("duplicated")) clone.duplicated = card.reference;
+                clone.reference = (card.reference && card.reference.startsWith("Copy of"))
+                  ? card.reference : ("Copy of " + card.reference);
+              }
+              duplicate.push([card, clone]);
+              clone.dirty = true;
+            }
+          });
+          for (var d of duplicate) {
+            col.rows.push(d[1]);
+            $scope.$broadcast("duplicateOperationplan", d[0], d[1]);
+          }
+        });
+        angular.element(document).find("#save, #undo")
+          .removeClass("btn-primary btn-danger")
+          .addClass("btn-danger")
+          .prop("disabled", false);
+        $(window).off('beforeunload', upload.warnUnsavedChanges);
+        $(window).on('beforeunload', upload.warnUnsavedChanges);
+      });
+    }
+  };
+  $scope.duplicateOperationPlan = duplicateOperationPlan;
+
+  function removeOperationPlan() {
+    if (!$scope.operationplan || !$scope.operationplan.reference) return;
+    if ($scope.mode && $scope.mode.startsWith("calendar")) {
+      $scope.$apply(function () {
+        $scope.calendarevents = $scope.calendarevents.filter(
+          card => card.operationplan__reference != $scope.operationplan.reference
+            && card.reference != $scope.operationplan.reference
+        );
+        $scope.deleted.push($scope.operationplan.reference);
+        $scope.operationplan = new OperationPlan();
+      });
+      angular.element(document).find("#delete_selected, #copy_selected").prop("disabled", true);
+      angular.element(document).find("#save, #undo")
+        .removeClass("btn-primary btn-danger")
+        .addClass("btn-danger")
+        .prop("disabled", false);
+      $(window).off('beforeunload', upload.warnUnsavedChanges);
+      $(window).on('beforeunload', upload.warnUnsavedChanges);
+    }
+    else if ($scope.mode && $scope.mode == "kanban") {
+      $scope.$apply(function () {
+        for (var col in $scope.kanbanoperationplans) {
+          $scope.kanbanoperationplans[col].rows =
+            $scope.kanbanoperationplans[col].rows.filter(
+              card => card.operationplan__reference != $scope.operationplan.reference
+                && card.reference != $scope.operationplan.reference
+            );
+        }
+        $scope.deleted.push($scope.operationplan.reference);
+        $scope.operationplan = new OperationPlan();
+      });
+      angular.element(document).find("#delete_selected, #copy_selected").prop("disabled", true);
+      angular.element(document).find("#save, #undo")
+        .removeClass("btn-primary btn-danger")
+        .addClass("btn-danger")
+        .prop("disabled", false);
+      $(window).off('beforeunload', upload.warnUnsavedChanges);
+      $(window).on('beforeunload', upload.warnUnsavedChanges);
+    }
+  }
+  $scope.removeOperationPlan = removeOperationPlan;
 
   // Initial display
   if (preferences && preferences.mode == "kanban") {

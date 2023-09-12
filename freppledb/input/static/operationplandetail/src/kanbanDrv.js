@@ -254,6 +254,10 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     }
     $scope.disableDragDrop = disableDragDrop;
 
+    $scope.$on('duplicateOperationplan', function (event, card, clone) {
+      $scope.selectCard(clone);
+    });
+
     $scope.$on('changeMode', function (event, mode) {
       $scope.mode = mode;
       if ($scope.editable && mode == "kanban")

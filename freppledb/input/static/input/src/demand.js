@@ -40,13 +40,7 @@ function DemandFactory($http, getURLprefix, Location, Item, Customer) {
     // REST API methods
     get: get,
     save: save,
-    remove: remove,
-    // Quoting web service API
-    quote: quote,
-    cancel: cancel,
-    inquiry: inquiry,
-    confirm: confirm,
-    info: info
+    remove: remove
   };
 
   return Demand;
@@ -171,67 +165,6 @@ function DemandFactory($http, getURLprefix, Location, Item, Customer) {
         if (debug)
           console.log("Demand delete '" + dmd.name + "': ", response.data);
         dmd.status = 'closed';
-        return dmd;
-      });
-  };
-
-  function info(name) {
-    var dmd = this;
-    return $http
-      .post(getURLprefix() + '/quote/info/', [dmd.name])
-      .then(function (response) {
-        if (debug)
-          console.log("Demand info '" + dmd.name + "': ", response.data);
-        dmd.extend(response.data.demands[0]);
-        return dmd;
-      });
-  };
-
-  function inquiry() {
-    var dmd = this;
-    dmd.status = "inquiry";
-    return $http
-      .post(getURLprefix() + '/quote/inquiry/', { demands: [dmd.getData()] })
-      .then(function (response) {
-        if (debug)
-          console.log("Demand inquiry '" + dmd.name + "': ", response.data);
-        dmd.extend(response.data.demands[0]);
-        return dmd;
-      });
-  };
-
-  function quote() {
-    var dmd = this;
-    return $http
-      .post(getURLprefix() + '/quote/quote/', { demands: [dmd.getData()] })
-      .then(function (response) {
-        if (debug)
-          console.log("Demand quote '" + dmd.name + "': ", response.data);
-        dmd.extend(response.data.demands[0]);
-        return dmd;
-      });
-  };
-
-  function cancel() {
-    var dmd = this;
-    return $http
-      .post(getURLprefix() + '/quote/cancel/?name=' + encodeURIComponent(dmd.name))
-      .then(function (response) {
-        if (debug)
-          console.log("Demand '" + dmd.name + "' canceled");
-        dmd.status = "closed";
-        return dmd;
-      });
-  };
-
-  function confirm() {
-    var dmd = this;
-    return $http
-      .post(getURLprefix() + '/quote/confirm/?name=' + encodeURIComponent(dmd.name))
-      .then(function (response) {
-        if (debug)
-          console.log("Demand '" + dmd.name + "' confirmed");
-        dmd.status = "confirmed";
         return dmd;
       });
   };

@@ -108,10 +108,12 @@ function showresourcespanelDrv($window, gettextCatalog) {
 								// TODO this code shouldn't live here...
 								var grid = angular.element(document).find("#grid");
 								var selrow = grid.jqGrid('getGridParam', 'selarrrow');
-								var colmodel = grid.jqGrid('getGridParam', 'colModel').find(function (i) { return i.name == "resource" });
-								var cell = grid.jqGrid('getCell', selrow, 'resource');
+								var colmodel = grid.jqGrid('getGridParam', 'colModel').find(function (i) { return i.name == "resources" });
+								if (!colmodel)
+									colmodel = grid.jqGrid('getGridParam', 'colModel').find(function (i) { return i.name == "resource" });
+								var cell = grid.jqGrid('getCell', selrow, colmodel.name);
 								if (colmodel.formatter == 'detail' && cell == curresource) {
-									grid.jqGrid("setCell", selrow, "resource", newresource, "dirty-cell");
+									grid.jqGrid("setCell", selrow, colmodel.name, newresource, "dirty-cell");
 									grid.jqGrid("setRowData", selrow, false, "edited");
 									angular.element(document).find("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
 									angular.element(document).find("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
@@ -123,7 +125,7 @@ function showresourcespanelDrv($window, gettextCatalog) {
 									angular.forEach(scope.operationplan.loadplans, function (theloadplan) {
 										res.push([theloadplan.resource.name, theloadplan.quantity]);
 									});
-									grid.jqGrid("setCell", selrow, "resource", res, "dirty-cell");
+									grid.jqGrid("setCell", selrow, colmodel.name, res, "dirty-cell");
 									grid.jqGrid("setRowData", selrow, false, "edited");
 									angular.element(document).find("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
 									angular.element(document).find("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);

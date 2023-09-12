@@ -177,8 +177,38 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   const DataValue* ordtypeval = in.get(Tags::ordertype);
   if (ordtypeval) ordtype = ordtypeval->getString();
 
+  // Decode the operationplan identifier
+  string id;
+  const DataValue* ref = in.get(Tags::reference);
+  if (ref) id = ref->getString();
+  if (id.empty()) {
+    const DataValue* idfier = in.get(Tags::id);
+    if (idfier) id = idfier->getString();
+  }
+  if (id.empty() && (action == Action::CHANGE || action == Action::REMOVE))
+    // Identifier is required
+    throw DataException("Missing reference or identifier field");
+
+  // If an identifier is specified, we look up this operation plan
+  OperationPlan* opplan = nullptr;
+  if (!id.empty()) {
+    opplan = OperationPlan::findReference(id);
+    if (opplan) {
+      // Check whether previous and current operations match.
+      if (ordtype.empty()) {
+        ordtype = opplan->getOrderType();
+        if (ordtype == "ALT") ordtype = "MO";
+      } else if (ordtype != opplan->getOrderType()) {
+        ostringstream ch;
+        ch << "Operationplan identifier " << id
+           << " defined multiple times for different order types";
+        throw DataException(ch.str());
+      }
+    }
+  }
+
   // Decode the attributes
-  Object* oper = nullptr;
+  Object* operval = nullptr;
   Object* itemval = nullptr;
   Object* locval = nullptr;
   Object* supval = nullptr;
@@ -190,8 +220,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     if (!val && action == Action::ADD)
       throw DataException("Missing operation field");
     if (val) {
-      oper = val->getObject();
-      if (oper && oper->getType().category != Operation::metadata)
+      operval = val->getObject();
+      if (operval && operval->getType().category != Operation::metadata)
         throw DataException(
             "Operation field on operationplan must be of type operation");
     }
@@ -294,35 +324,6 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     // Unknown order type for operationplan. We won't read it.
     return nullptr;
 
-  // Decode the operationplan identifier
-  string id;
-  const DataValue* ref = in.get(Tags::reference);
-  if (ref) id = ref->getString();
-  if (id.empty()) {
-    const DataValue* idfier = in.get(Tags::id);
-    if (idfier) id = idfier->getString();
-  }
-  if (id.empty() && (action == Action::CHANGE || action == Action::REMOVE))
-    // Identifier is required
-    throw DataException("Missing reference or identifier field");
-
-  // If an identifier is specified, we look up this operation plan
-  OperationPlan* opplan = nullptr;
-  if (!id.empty()) {
-    opplan = OperationPlan::findReference(id);
-    if (opplan) {
-      // Check whether previous and current operations match.
-      if (ordtype.empty())
-        ordtype = opplan->getOrderType();
-      else if (ordtype != opplan->getOrderType()) {
-        ostringstream ch;
-        ch << "Operationplan identifier " << id
-           << " defined multiple times for different order types";
-        throw DataException(ch.str());
-      }
-    }
-  }
-
   // Execute the proper action
   switch (action) {
     case Action::REMOVE:
@@ -408,10 +409,11 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
 
   // Return the existing operationplan
   if (opplan) {
-    if (!ordtype.empty() && ordtype == "MO" && oper &&
-        opplan->getOperation() != static_cast<Operation*>(oper))
-      // Change the operation
-      opplan->setOperation(static_cast<Operation*>(oper));
+    if (operval) opplan->setOperation(static_cast<Operation*>(operval));
+    if (locval) opplan->setLocation(dynamic_cast<Location*>(locval));
+    if (itemval) opplan->setItem(dynamic_cast<Item*>(itemval));
+    if (supval) opplan->setSupplier(dynamic_cast<Supplier*>(supval));
+    if (orival) opplan->setOrigin(dynamic_cast<Location*>(orival));
     opplan->setForcedUpdate(true);
     if (batchfld) opplan->setBatch(batch);
     if (statusfld) opplan->setStatus(status);
@@ -462,20 +464,20 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
 
     // Look for a matching operation replenishing this buffer.
     for (auto flowiter = destbuffer->getFlows().begin();
-         flowiter != destbuffer->getFlows().end() && !oper; ++flowiter) {
+         flowiter != destbuffer->getFlows().end() && !operval; ++flowiter) {
       if (!flowiter->getOperation()->hasType<OperationItemSupplier>()) continue;
       OperationItemSupplier* opitemsupplier =
           static_cast<OperationItemSupplier*>(flowiter->getOperation());
       if (supval) {
         if (static_cast<Supplier*>(supval)->isMemberOf(
                 opitemsupplier->getItemSupplier()->getSupplier()))
-          oper = opitemsupplier;
+          operval = opitemsupplier;
       } else
-        oper = opitemsupplier;
+        operval = opitemsupplier;
     }
 
     // No matching operation is found.
-    if (!oper) {
+    if (!operval) {
       // We'll create one now, but that requires that we have a supplier
       // defined.
       if (!supval)
@@ -488,9 +490,9 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       itemsupplier->setLocation(static_cast<Location*>(locval));
       itemsupplier->setHidden(true);
       itemsupplier->setPriority(0);
-      oper = new OperationItemSupplier(itemsupplier, destbuffer);
+      operval = new OperationItemSupplier(itemsupplier, destbuffer);
       // Create operation plan
-      opplan = static_cast<Operation*>(oper)->createOperationPlan(
+      opplan = static_cast<Operation*>(operval)->createOperationPlan(
           quantity, start, end, batch, nullptr, nullptr, 0, false, id);
       new ProblemInvalidData(opplan,
                              "Purchase order '" + opplan->getReference() +
@@ -498,7 +500,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
                              "operationplan", start, end, quantity);
     } else
       // Create the operationplan
-      opplan = static_cast<Operation*>(oper)->createOperationPlan(
+      opplan = static_cast<Operation*>(operval)->createOperationPlan(
           quantity, start, end, batch, nullptr, nullptr, 0, false, id);
   } else if (ordtype == "DO") {
     // Find or create the destination buffer.
@@ -538,7 +540,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
 
       // Look for a matching operation replenishing this buffer.
       for (auto flowiter = destbuffer->getFlows().begin();
-           flowiter != destbuffer->getFlows().end() && !oper; ++flowiter) {
+           flowiter != destbuffer->getFlows().end() && !operval; ++flowiter) {
         if (!flowiter->getOperation()->hasType<OperationItemDistribution>() ||
             flowiter->getQuantity() <= 0)
           continue;
@@ -552,21 +554,21 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
                 fl->getBuffer()->getLocation()->isMemberOf(
                     static_cast<Location*>(orival)) &&
                 !fl->getBuffer()->getBatch())
-              oper = opitemdist;
+              operval = opitemdist;
           }
         } else if (!opitemdist->getOrigin())
-          oper = opitemdist;
+          operval = opitemdist;
       }
     } else {
       // Use only the source location to find an operation
       stringstream o;
       o << "Ship " << static_cast<Item*>(itemval)->getName() << " from "
         << static_cast<Location*>(orival)->getName();
-      oper = Operation::find(o.str());
+      operval = Operation::find(o.str());
     }
 
     // No matching operation is found.
-    if (!oper) {
+    if (!operval) {
       // We'll create one now if an origin is defined
       Buffer* originbuffer = nullptr;
       if (orival) {
@@ -605,23 +607,23 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       }
 
       // Create operation when it doesn't exist yet
-      oper = nullptr;
+      operval = nullptr;
       auto oper_iter =
           static_cast<ItemDistribution*>(itemdistributionval)->getOperations();
       while (OperationItemDistribution* oper2 = oper_iter.next()) {
         if (oper2->getOrigin() == originbuffer &&
             oper2->getDestination() == destbuffer) {
-          oper = oper2;
+          operval = oper2;
           break;
         }
       }
-      if (!oper)
-        oper = new OperationItemDistribution(
+      if (!operval)
+        operval = new OperationItemDistribution(
             static_cast<ItemDistribution*>(itemdistributionval), originbuffer,
             destbuffer);
 
       // Create operation plan
-      opplan = static_cast<Operation*>(oper)->createOperationPlan(
+      opplan = static_cast<Operation*>(operval)->createOperationPlan(
           quantity, start, end, batch, nullptr, nullptr, 0, false, id);
 
       // Make sure no problem is reported when item distribution priority is 0
@@ -647,7 +649,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
                                "operationplan", start, end, quantity);
     } else
       // Create operation plan
-      opplan = static_cast<Operation*>(oper)->createOperationPlan(
+      opplan = static_cast<Operation*>(operval)->createOperationPlan(
           quantity, start, end, batch, nullptr, nullptr, 0, false, id);
   } else if (ordtype == "DLVR") {
     // Find or create the destination buffer.
@@ -674,31 +676,32 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
                                         static_cast<Location*>(locval));
 
     // Create new operation if not found
-    oper = Operation::find("Ship " + static_cast<Item*>(itemval)->getName() +
-                           " @ " + static_cast<Location*>(locval)->getName());
-    if (!oper) {
-      oper = new OperationDelivery();
-      static_cast<OperationDelivery*>(oper)->setBuffer(destbuffer);
+    operval =
+        Operation::find("Ship " + static_cast<Item*>(itemval)->getName() +
+                        " @ " + static_cast<Location*>(locval)->getName());
+    if (!operval) {
+      operval = new OperationDelivery();
+      static_cast<OperationDelivery*>(operval)->setBuffer(destbuffer);
     }
 
     // Create operation plan
-    opplan = static_cast<Operation*>(oper)->createOperationPlan(
+    opplan = static_cast<Operation*>(operval)->createOperationPlan(
         quantity, start, end, batch, nullptr, nullptr, 0, false, id);
     static_cast<Demand*>(dmdval)->addDelivery(opplan);
   } else {
-    if (!oper)
+    if (!operval)
       // Can't create operationplan because the operation doesn't exist
       throw DataException("Missing operation field");
 
     // Create an operationplan
-    if (static_cast<Operation*>(oper)->getItem() &&
-        static_cast<Operation*>(oper)->getLocation()) {
+    if (static_cast<Operation*>(operval)->getItem() &&
+        static_cast<Operation*>(operval)->getLocation()) {
       auto buf =
-          Buffer::findOrCreate(static_cast<Operation*>(oper)->getItem(),
-                               static_cast<Operation*>(oper)->getLocation());
-      buf->correctProducingFlow(static_cast<Operation*>(oper));
+          Buffer::findOrCreate(static_cast<Operation*>(operval)->getItem(),
+                               static_cast<Operation*>(operval)->getLocation());
+      buf->correctProducingFlow(static_cast<Operation*>(operval));
     }
-    opplan = static_cast<Operation*>(oper)->createOperationPlan(
+    opplan = static_cast<Operation*>(operval)->createOperationPlan(
         quantity, start, end, batch, nullptr, nullptr, 0, false, id,
         quantity_completed, status, &assigned_resources);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD)) {

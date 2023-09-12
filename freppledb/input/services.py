@@ -286,7 +286,6 @@ class OperationplanService(AsyncHttpConsumer):
                                         opplan.start_force = changes["start"]
                                 else:
                                     opplan = frepple.operationplan(**changes)
-                                    # Apply changes
                                     for fld, val in changes.items():
                                         if fld == "end":
                                             setattr(opplan, "end_force", val)

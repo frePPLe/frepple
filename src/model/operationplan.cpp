@@ -392,6 +392,9 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   PooledString batch;
   const DataValue* batchfld = in.get(Tags::batch);
   if (batchfld) batch = batchfld->getString();
+  const DataValue* quantityCompletedfld = in.get(Tags::quantity_completed);
+  double quantity_completed =
+      quantityCompletedfld ? quantityCompletedfld->getDouble() : 0.0;
 
   // Get list of assigned resources
   vector<Resource*> assigned_resources;
@@ -411,6 +414,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       opplan->setOperation(static_cast<Operation*>(oper));
     opplan->setForcedUpdate(true);
     if (batchfld) opplan->setBatch(batch);
+    if (statusfld) opplan->setStatus(status);
+    if (quantityCompletedfld) opplan->setQuantityCompleted(quantity_completed);
     if (!assigned_resources.empty()) {
       opplan->setResetResources(true);
       opplan->createFlowLoads(&assigned_resources);
@@ -693,9 +698,6 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
                                static_cast<Operation*>(oper)->getLocation());
       buf->correctProducingFlow(static_cast<Operation*>(oper));
     }
-    const DataValue* quantityCompletedfld = in.get(Tags::quantity_completed);
-    double quantity_completed =
-        quantityCompletedfld ? quantityCompletedfld->getDouble() : 0.0;
     opplan = static_cast<Operation*>(oper)->createOperationPlan(
         quantity, start, end, batch, nullptr, nullptr, 0, false, id,
         quantity_completed, status, &assigned_resources);

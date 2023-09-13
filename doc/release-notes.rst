@@ -15,6 +15,21 @@ Release notes
     of a sales order is already covered with existing supply.
   | This report can also now be downloaded using the download button.
 
+- | Automatic web service starts no longer modify the plan.
+  | Until now, the web service start tried to keep the plan feasible. The resulting
+    plan changes are found to confuse users.
+
+- | Approved and confirmed manufacturing orders now detect missing upstream
+    supply on operation dependencies. Any missing supply is now replenished.
+
+- | Bug fix: A corner case was corrected during safety stock planning
+    when the producing flow has an offset.
+
+- | Bug fix: A corner case was corrected when approved steps in a routing
+    manufacturing order were infeasible. They approved steps were reduced correctly
+    in size, but the material and capacity consumption on sibling manufacturing
+    orders in the routing were not updated.
+
 .. rubric:: Demand forecasting
 
 - | Significant memory usage and performance optimizations.

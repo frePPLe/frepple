@@ -334,12 +334,13 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
     auto exists = visited.find(o);
     if (exists != visited.end()) continue;
     visited.insert(o);
-    if (downstream && d->getFirst() == op)
+    if (downstream && d->getFirst() == op && (maxlevel == -1 || lvl < maxlevel))
       updateStack(d->getSecond(),
                   qty * d->getSecond()->getQuantity() / op->getQuantity(),
                   offset * d->getSecond()->getQuantity() / op->getQuantity(),
                   lvl + 1, 0L);
-    else if (!downstream && d->getSecond() == op)
+    else if (!downstream && d->getSecond() == op &&
+             (maxlevel == -1 || lvl < maxlevel))
       updateStack(d->getFirst(),
                   qty * d->getFirst()->getQuantity() / op->getQuantity(),
                   offset * d->getFirst()->getQuantity() / op->getQuantity(),

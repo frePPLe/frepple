@@ -1,6 +1,13 @@
 Release notes
 -------------
 
+8.2.0 (Upcoming release)
+========================
+
+.. rubric:: User interface
+
+- | Bug fix: filter on null values wasn't working in "report manager" custom reports.
+
 8.1.0 (2023-09-13)
 ==================
 

@@ -42,8 +42,7 @@ from django.http import (
 )
 from django.shortcuts import render
 from django.template import Template
-from django.utils.encoding import smart_str
-
+from django.utils.encoding import smart_str, force_str
 from django.utils.translation import gettext as _
 
 from freppledb.common.models import User, Parameter
@@ -278,8 +277,15 @@ class ReportManager(GridReport):
 
     @staticmethod
     def _filter_ico(reportrow, field, data):
-        # not implmented
+        # not implemented. Report manager has no hierarchy fields.
         return ""
+
+    @staticmethod
+    def _filter_isnull(reportrow, field, data):
+        if data.lower() in ["0", "false", force_str(_("false"))]:
+            return ('not "%s" is null' % field, [])
+        else:
+            return ('"%s" is null' % field, [])
 
     _filter_map_jqgrid_sql = {
         # jqgrid op: (django_lookup, use_exclude, use_extra_where)
@@ -299,6 +305,7 @@ class ReportManager(GridReport):
         "cn": _filter_cn.__func__,
         "win": _filter_win.__func__,
         "ico": _filter_ico.__func__,
+        "isnull": _filter_isnull.__func__,
     }
 
     @classmethod

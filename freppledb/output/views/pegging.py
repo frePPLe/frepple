@@ -221,7 +221,7 @@ class ReportByDemand(GridReport):
             end = due
         if due < start:
             start = due
-        end += timedelta(days=1)
+        end += timedelta(days=2)
         start -= timedelta(days=1)
         request.report_startdate = start.replace(
             hour=0, minute=0, second=0, microsecond=0

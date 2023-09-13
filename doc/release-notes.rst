@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-8.1.0 (upcoming release)
-========================
+8.1.0 (2023-09-13)
+==================
 
 .. rubric:: Production planning
 
@@ -48,7 +48,6 @@ Release notes
     the entire sales order history. The usage of this parameter should reduce
     the duration of the odoo import task for companies with a signifiant number of sales
     order records.
-
 
 - | Bug fix: Reordering rules on zero-stock buffers were incorrectly ignored.
 

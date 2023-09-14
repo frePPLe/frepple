@@ -8,6 +8,12 @@ Release notes
 
 - | Bug fix: filter on null values wasn't working in "report manager" custom reports.
 
+8.1.1 (2023-09-14)
+==================
+
+- | An ugly bug slipped through the cracks and the 8.0.0 release is no good.
+  | Sorry about this.
+
 8.1.0 (2023-09-13)
 ==================
 

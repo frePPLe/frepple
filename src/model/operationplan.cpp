@@ -1055,9 +1055,8 @@ bool OperationPlan::operator<(const OperationPlan& a) const {
 void OperationPlan::createFlowLoads(
     const vector<Resource*>* assigned_resources) {
   // Initialized already, or nothing to initialize
-  if ((firstflowplan || firstloadplan || !oper) &&
-      (!assigned_resources || assigned_resources->empty()))
-    return;
+  if (!oper) return;
+  if ((firstflowplan || firstloadplan) && !assigned_resources) return;
 
   if (oper->getMTO() && !getBatch() && getProposed() &&
       !oper->hasType<OperationInventory>())
@@ -1071,8 +1070,9 @@ void OperationPlan::createFlowLoads(
       for (auto& g : oper->getLoads()) {
         if (!g.getAlternate()) new LoadPlan(this, &g);
       }
-    else
+    else {
       // Restore previous assignments
+      setResetResources(true);
       for (auto& res : *assigned_resources) {
         Resource* backup_res = nullptr;
         const Load* backup_ld = nullptr;
@@ -1099,6 +1099,7 @@ void OperationPlan::createFlowLoads(
           logger << "Warning: Assigned resource '" << res << "' on '"
                  << getReference() << "' is invalid." << endl;
       }
+    }
   }
 
   // Create flowplans for flows

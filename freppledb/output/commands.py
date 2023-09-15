@@ -1069,8 +1069,8 @@ class ExportOperationPlans(PlanTask):
               deliverydate = cte.deliverydate
             from cte
             where cte.demand_id = demand.name
-            and demand.plannedquantity is distinct from cte.plannedquantity
-            and demand.deliverydate is distinct from cte.deliverydate
+            and (demand.plannedquantity is distinct from cte.plannedquantity
+            or demand.deliverydate is distinct from cte.deliverydate)
             """
         )
         cursor.execute(

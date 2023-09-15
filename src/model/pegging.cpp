@@ -397,7 +397,7 @@ PeggingDemandIterator::PeggingDemandIterator(const OperationPlan* opplan) {
   // Walk over all downstream operationplans till demands are found
   for (PeggingIterator p(opplan); p; ++p) {
     const OperationPlan* m = p.getOperationPlan();
-    if (!m) continue;
+    if (!m || (m != m->getTopOwner())) continue;
     Demand* dmd = m->getTopOwner()->getDemand();
     if (!dmd || p.getQuantity() < ROUNDING_ERROR) continue;
     map<Demand*, double>::iterator i = dmds.lower_bound(dmd);

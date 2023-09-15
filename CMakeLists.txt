@@ -2,7 +2,7 @@
 set(CMAKE_VERBOSE_MAKEFILE ON)
 cmake_minimum_required(VERSION 3.0)
 
-project(frepple VERSION 8.1.1)
+project(frepple VERSION 8.1.2)
 
 set(PROJECT_EDITION "Community Edition")
 set(PROJECT_BRANCH "community")

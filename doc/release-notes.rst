@@ -8,6 +8,11 @@ Release notes
 
 - | Bug fix: filter on null values wasn't working in "report manager" custom reports.
 
+8.1.2 (2023-09-15)
+==================
+
+- | Bug fix: the sales order delay field wasn't updated correctly any longer in 8.1.0.
+
 8.1.1 (2023-09-14)
 ==================
 

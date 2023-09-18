@@ -1106,13 +1106,13 @@ class OverviewReport(GridPivot):
                     if history:
                         order_backlog = None
                     else:
-                        order_backlog += (float(row[24] or 0)) - (
+                        order_backlog += (float(row[numfields - 12] or 0)) - (
                             row[numfields - 2]["consumedSO"] or 0
                         )
                     if history:
                         forecast_backlog = None
                     else:
-                        forecast_backlog += (float(row[25] or 0)) - (
+                        forecast_backlog += (float(row[numfields - 11] or 0)) - (
                             row[numfields - 2]["consumedFcst"] or 0
                         )
 
@@ -1281,7 +1281,7 @@ class OverviewReport(GridPivot):
                         else row[numfields - 2]["in_transit_do_proposed"] or 0,
                         "total_demand": None
                         if history
-                        else (row[24] or 0) + (row[25] or 0),
+                        else (row[numfields - 12] or 0) + (row[numfields - 11] or 0),
                         "order_backlog": None if history else max(0, order_backlog),
                         "forecast_backlog": None
                         if history
@@ -1301,8 +1301,8 @@ class OverviewReport(GridPivot):
                             - float(row[numfields - 2]["consumed"] or 0)
                         ),
                         "reasons": None if history else json.dumps(row[numfields - 9]),
-                        "open_orders": None if history else row[numfields - 11] or 0,
-                        "net_forecast": None if history else row[numfields - 10] or 0,
+                        "open_orders": None if history else row[numfields - 12] or 0,
+                        "net_forecast": None if history else row[numfields - 11] or 0,
                     }
 
                     # Add attribute fields

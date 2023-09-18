@@ -24,6 +24,7 @@ a2enmod -q expires
 a2ensite -q z_frepple
 a2enmod -q http2
 a2enmod -q proxy
+a2enmod -q proxy_http
 a2enmod -q proxy_wstunnel
 a2enmod -q rewrite
 

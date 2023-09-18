@@ -135,7 +135,7 @@ var currentdate="{{currentdate}}";
 var version='{% version_short %}';
 var measures = {{measures|safe}};
 
-var service_url = {% if proxied %}'/svc'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
+var service_url = {% if proxied %}'/svc/{{request.database}}/'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
 var service_token = '{{token}}';
 
 $(function() {

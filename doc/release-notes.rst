@@ -8,6 +8,11 @@ Release notes
 
 - | Bug fix: filter on null values wasn't working in "report manager" custom reports.
 
+8.1.3 (2023-09-18)
+==================
+
+- | Bug fix: interactive edits not working in docker container.
+
 8.1.2 (2023-09-15)
 ==================
 

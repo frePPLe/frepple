@@ -794,6 +794,7 @@ class OverviewReport(GridPivot):
            and (item.type is distinct from 'make to order'
            or coalesce(demand.batch,'') is not distinct from opplanmat.opplan_batch)) open_orders,
            %s net_forecast,
+		   'not implemented' expiring,
            (select json_agg(json_build_array(t.name, t.owner))
            from (
                select distinct out_constraint.name, out_constraint.owner

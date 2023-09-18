@@ -32,7 +32,7 @@
   $("#graph").width($(window).width()-55).height(h>800 || h<580 ? 280 : h-520);
 });{% endif %}
 
-var service_url = {% if proxied %}'/svc'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
+var service_url = {% if proxied %}'/svc/{{request.database}}/'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
 var service_token = '{{token}}';
 
 function saveData(rows, ok_callback) {

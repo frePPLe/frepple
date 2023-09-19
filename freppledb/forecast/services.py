@@ -209,15 +209,20 @@ class ForecastService(AsyncHttpConsumer):
                                         enddate, yearfirst=False, dayfirst=False
                                     )
                                 for key, val in bckt.items():
-                                    if key not in (
-                                        "id",
-                                        "item",
-                                        "location",
-                                        "customer",
-                                        "bucket",
-                                        "startdate",
-                                        "enddate",
-                                        "forecast",
+                                    if (
+                                        key
+                                        not in (
+                                            "id",
+                                            "item",
+                                            "location",
+                                            "customer",
+                                            "bucket",
+                                            "startdate",
+                                            "enddate",
+                                            "forecast",
+                                        )
+                                        and val is not None
+                                        and val != ""
                                     ):
                                         args[key] = float(val)
                                 frepple.setForecast(**args)
@@ -330,11 +335,16 @@ class ForecastService(AsyncHttpConsumer):
                                         enddate, yearfirst=False, dayfirst=False
                                     )
                                 for key, val in bckt.items():
-                                    if key not in (
-                                        "id",
-                                        "bucket",
-                                        "startdate",
-                                        "enddate",
+                                    if (
+                                        key
+                                        not in (
+                                            "id",
+                                            "bucket",
+                                            "startdate",
+                                            "enddate",
+                                        )
+                                        and val is not None
+                                        and val != ""
                                     ):
                                         args[key] = float(val)
                                 frepple.setForecast(**args)

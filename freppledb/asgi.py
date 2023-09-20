@@ -187,6 +187,18 @@ class TokenMiddleware(BaseMiddleware):
         return await super().__call__(scope, receive, send)
 
 
+class AuthAndPermissionMiddleware(AuthMiddleware):
+    """
+    Populates user permissions.
+    """
+
+    async def __call__(self, scope, receive, send):
+        usr = scope.get("user", None)
+        if usr and usr.is_authenticated and not usr.is_superuser:
+            await database_sync_to_async(usr.get_all_permissions)()
+        return await super().__call__(scope, receive, send)
+
+
 class AuthenticatedMiddleware(BaseMiddleware):
     """
     Disallows any unauthenticated connection with the service.
@@ -224,7 +236,11 @@ class AuthenticatedMiddleware(BaseMiddleware):
                     "more_body": False,
                 }
             )
-        if "user" not in scope or not scope["user"].is_authenticated:
+        if (
+            "user" not in scope
+            or not scope["user"].is_authenticated
+            or not scope["user"].is_active
+        ):
             scope["response_headers"].append((b"Content-Type", b"text/plain"))
             await send(
                 {
@@ -266,7 +282,7 @@ application = ProtocolTypeRouter(
         "http": CookieMiddleware(
             SessionMiddleware(
                 TokenMiddleware(
-                    AuthMiddleware(
+                    AuthAndPermissionMiddleware(
                         AuthenticatedMiddleware(
                             URLRouter(
                                 svcpatterns + [re_path(r".*", HTTPNotFound.as_asgi())]

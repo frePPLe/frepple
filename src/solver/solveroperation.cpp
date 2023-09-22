@@ -47,6 +47,7 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
   unsigned short counter = 0;
   Date orig_q_date_max = data.state->q_date_max;
   bool first_iteration = true;
+  bool delayed_reply = false;
   do {
     if (getLogLevel() > 1) {
       if (!first_iteration)
@@ -90,6 +91,7 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
           // resources are trying to pull in the operationplan again. It can
           // only be delayed from now on in this loop.
           data.state->forceLate = true;
+          delayed_reply = true;
         } else if (first)
           // First load is ok, but moved the operationplan.
           // We can continue to check the second loadplan.
@@ -124,6 +126,10 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
   // Restore original flags
   data.logConstraints = backuplogconstraints;  // restore the original value
   data.state->forceLate = backupForceLate;
+
+  // A late reply was forced, which always means a reply of 0
+  if ((delayed_reply || data.state->forceLate) && data.state->a_qty > 0.0)
+    data.state->a_qty = 0.0;
 
   // In case of a zero reply, we resize the operationplan to 0 right away.
   // This is required to make sure that the buffer inventory profile also
@@ -400,7 +406,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
       }
     } else if (opplan_strt_capacity &&
                opplan_strt_capacity != opplan->getStart() &&
-               opplan->getQuantity() > ROUNDING_ERROR)
+               opplan->getQuantity() > ROUNDING_ERROR && data.state->a_qty)
       // The start date has moved and bucketized resources need to be rechecked
       okay = false;
     else

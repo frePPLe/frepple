@@ -1391,7 +1391,7 @@ class loadBuffers(LoadTask):
 
 @PlanTaskRegistry.register
 class LinkCalendarsToBuffers(LoadTask):
-    description = "Associate the SS/ROQ calendars to the buffers"
+    description = "Associate calendars to the buffers"
     sequence = 105.5
 
     @classmethod

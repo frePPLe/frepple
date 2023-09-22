@@ -311,7 +311,7 @@ class ActivatePythonDebugger(PlanTask):
         if not os.path.exists(python_exec):
             python_exec = os.path.join(p.parents[2], "bin", "python")
             if not os.path.exists(python_exec):
-                    raise Exception("Python executable not found")
+                raise Exception("Python executable not found")
 
         debugpy.configure(python=python_exec)
         debugpy.listen(("0.0.0.0", 17999))

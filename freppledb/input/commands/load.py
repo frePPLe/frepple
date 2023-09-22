@@ -1388,6 +1388,20 @@ class loadBuffers(LoadTask):
                     "Loaded %d buffers in %.2f seconds" % (cnt, time() - starttime)
                 )
 
+
+@PlanTaskRegistry.register
+class LinkCalendarsToBuffers(LoadTask):
+    description = "Associate the SS/ROQ calendars to the buffers"
+    sequence = 110
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @staticmethod
+    def run(database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
         def findOrCreateBuffer(name):
             try:
                 # Found existing buffer

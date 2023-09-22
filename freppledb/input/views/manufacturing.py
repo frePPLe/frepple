@@ -673,7 +673,7 @@ class CalendarDetail(GridReport):
     frozenColumns = 1
     hasTimeBuckets = True
     template = "input/calendardetail.html"
-    help_url = "model-reference/calendars.html"
+    help_url = "user-interface/plan-analysis/calendar-detail.html"
     title = _("calendar buckets")
 
     @classmethod

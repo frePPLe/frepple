@@ -23,14 +23,6 @@ default      double            The default value of the calendar when no bucket 
                                effective.
 ============ ================= ===========================================================
 
-The calendar editor screen visualizes how the calendar varies over time. You can
-easily specify the value for a certain time period. The screen also allows you to
-interactively verify which calendar bucket is effective at a given time.
-
-  .. image:: _images/calendar-editor.png
-     :width: 100%
-     :alt: Calendar editor
-
 A calendar has multiple :doc:`calendar buckets <calendar-buckets>` to define the values over time.
 
 The following rules define which entry is valid at a certain time:

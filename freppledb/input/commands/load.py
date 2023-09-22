@@ -1392,7 +1392,7 @@ class loadBuffers(LoadTask):
 @PlanTaskRegistry.register
 class LinkCalendarsToBuffers(LoadTask):
     description = "Associate the SS/ROQ calendars to the buffers"
-    sequence = 110
+    sequence = 105.5
 
     @classmethod
     def getWeight(cls, **kwargs):

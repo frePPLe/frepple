@@ -129,18 +129,120 @@ class ForecastService(AsyncHttpConsumer):
 
                 data = json.loads(body.decode("utf-8"))
 
-                if isinstance(data, list):
-                    # Message format #1
-                    for bckt in data:
-                        # Validate
+                try:
+                    frepple.cache.write_immediately = False
+                    if isinstance(data, list):
+                        # Message format #1
+                        for bckt in data:
+                            # Validate
+                            item = None
+                            location = None
+                            customer = None
+                            if bckt.get("item", None):
+                                try:
+                                    item = frepple.item(name=bckt["item"], action="C")
+                                except:
+                                    errors.append("Item not found: %s" % bckt["item"])
+                            else:
+                                # Use root item
+                                for i in frepple.items():
+                                    item = i
+                                    break
+                                while item and item.owner:
+                                    item = item.owner
+                            if bckt.get("location", None):
+                                try:
+                                    location = frepple.location(
+                                        name=bckt["location"], action="C"
+                                    )
+                                except:
+                                    errors.append(
+                                        "Location not found: %s" % bckt["location"]
+                                    )
+                            else:
+                                # Use root location
+                                for i in frepple.locations():
+                                    location = i
+                                    break
+                                while location and location.owner:
+                                    location = location.owner
+                            if bckt.get("customer", None):
+                                try:
+                                    customer = frepple.customer(
+                                        name=bckt["customer"], action="C"
+                                    )
+                                except:
+                                    errors.append(
+                                        "Customer not found: %s" % bckt["customer"]
+                                    )
+                            else:
+                                # Use root customer
+                                for i in frepple.customers():
+                                    customer = i
+                                    break
+                                while customer and customer.owner:
+                                    customer = customer.owner
+                            if customer and item and location:
+                                try:
+                                    args = {
+                                        "item": item,
+                                        "location": location,
+                                        "customer": customer,
+                                    }
+                                    bucket = bckt.get("bucket", None)
+                                    if bucket:
+                                        args["bucket"] = bucket.lower()
+                                    startdate = bckt.get("startdate", None)
+                                    if startdate:
+                                        # Guess! the date format, using Month-Day-Year as preference
+                                        # to resolve ambiguity.
+                                        # This default style is also the default datestyle in Postgres
+                                        # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
+                                        args["startdate"] = parse(
+                                            startdate, yearfirst=False, dayfirst=False
+                                        )
+                                    enddate = bckt.get("enddate", None)
+                                    if enddate:
+                                        # Guess! the date format, using Month-Day-Year as preference
+                                        # to resolve ambiguity.
+                                        # This default style is also the default datestyle in Postgres
+                                        # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
+                                        args["enddate"] = parse(
+                                            enddate, yearfirst=False, dayfirst=False
+                                        )
+                                    for key, val in bckt.items():
+                                        if (
+                                            key
+                                            not in (
+                                                "id",
+                                                "item",
+                                                "location",
+                                                "customer",
+                                                "bucket",
+                                                "startdate",
+                                                "enddate",
+                                                "forecast",
+                                            )
+                                            and val is not None
+                                            and val != ""
+                                        ):
+                                            args[key] = float(val)
+                                    print("ppppp", args)
+                                    frepple.setForecast(**args)
+                                except Exception as e:
+                                    errors.append("Error processing %s" % e)
+                    else:
+                        # Message format #2
+
+                        # Pick up item, customer and location
                         item = None
                         location = None
                         customer = None
-                        if bckt.get("item", None):
+                        if data.get("item", None):
                             try:
-                                item = frepple.item(name=bckt["item"], action="C")
+                                item = frepple.item(name=data["item"], action="C")
                             except:
-                                errors.append("Item not found: %s" % bckt["item"])
+                                errors.append("Item not found: %s" % data["item"])
                         else:
                             # Use root item
                             for i in frepple.items():
@@ -148,14 +250,14 @@ class ForecastService(AsyncHttpConsumer):
                                 break
                             while item and item.owner:
                                 item = item.owner
-                        if bckt.get("location", None):
+                        if data.get("location", None):
                             try:
                                 location = frepple.location(
-                                    name=bckt["location"], action="C"
+                                    name=data["location"], action="C"
                                 )
                             except:
                                 errors.append(
-                                    "Location not found: %s" % bckt["location"]
+                                    "Location not found: %s" % data["location"]
                                 )
                         else:
                             # Use root location
@@ -164,14 +266,14 @@ class ForecastService(AsyncHttpConsumer):
                                 break
                             while location and location.owner:
                                 location = location.owner
-                        if bckt.get("customer", None):
+                        if data.get("customer", None):
                             try:
                                 customer = frepple.customer(
-                                    name=bckt["customer"], action="C"
+                                    name=data["customer"], action="C"
                                 )
                             except:
                                 errors.append(
-                                    "Customer not found: %s" % bckt["customer"]
+                                    "Customer not found: %s" % data["customer"]
                                 )
                         else:
                             # Use root customer
@@ -180,193 +282,105 @@ class ForecastService(AsyncHttpConsumer):
                                 break
                             while customer and customer.owner:
                                 customer = customer.owner
-                        if customer and item and location:
+
+                        # Update forecast method
+                        mthd = data.get("forecastmethod", None)
+                        if mthd and self.scope["user"].has_perm(
+                            "forecast.change_forecast"
+                        ):
                             try:
-                                args = {
-                                    "item": item,
-                                    "location": location,
-                                    "customer": customer,
-                                }
-                                bucket = bckt.get("bucket", None)
-                                if bucket:
-                                    args["bucket"] = bucket.lower()
-                                startdate = bckt.get("startdate", None)
-                                if startdate:
-                                    # Guess! the date format, using Month-Day-Year as preference
-                                    # to resolve ambiguity.
-                                    # This default style is also the default datestyle in Postgres
-                                    # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                    args["startdate"] = parse(
-                                        startdate, yearfirst=False, dayfirst=False
+                                if item and location and customer:
+                                    await self.updateForecastMethod(
+                                        item.name, location.name, customer.name, mthd
                                     )
-                                enddate = bckt.get("enddate", None)
-                                if enddate:
-                                    # Guess! the date format, using Month-Day-Year as preference
-                                    # to resolve ambiguity.
-                                    # This default style is also the default datestyle in Postgres
-                                    # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                    args["enddate"] = parse(
-                                        enddate, yearfirst=False, dayfirst=False
-                                    )
-                                for key, val in bckt.items():
-                                    if (
-                                        key
-                                        not in (
-                                            "id",
-                                            "item",
-                                            "location",
-                                            "customer",
-                                            "bucket",
-                                            "startdate",
-                                            "enddate",
-                                            "forecast",
+                                else:
+                                    if not item:
+                                        errors.append(
+                                            "Item not found: %s" % data["item"]
                                         )
-                                        and val is not None
-                                        and val != ""
-                                    ):
-                                        args[key] = float(val)
-                                frepple.setForecast(**args)
-                            except Exception as e:
-                                errors.append("Error processing %s" % e)
-                else:
-                    # Message format #2
-
-                    # Pick up item, customer and location
-                    item = None
-                    location = None
-                    customer = None
-                    if data.get("item", None):
-                        try:
-                            item = frepple.item(name=data["item"], action="C")
-                        except:
-                            errors.append("Item not found: %s" % data["item"])
-                    else:
-                        # Use root item
-                        for i in frepple.items():
-                            item = i
-                            break
-                        while item and item.owner:
-                            item = item.owner
-                    if data.get("location", None):
-                        try:
-                            location = frepple.location(
-                                name=data["location"], action="C"
-                            )
-                        except:
-                            errors.append("Location not found: %s" % data["location"])
-                    else:
-                        # Use root location
-                        for i in frepple.locations():
-                            location = i
-                            break
-                        while location and location.owner:
-                            location = location.owner
-                    if data.get("customer", None):
-                        try:
-                            customer = frepple.customer(
-                                name=data["customer"], action="C"
-                            )
-                        except:
-                            errors.append("Customer not found: %s" % data["customer"])
-                    else:
-                        # Use root customer
-                        for i in frepple.customers():
-                            customer = i
-                            break
-                        while customer and customer.owner:
-                            customer = customer.owner
-
-                    # Update forecast method
-                    mthd = data.get("forecastmethod", None)
-                    if mthd and self.scope["user"].has_perm("forecast.change_forecast"):
-                        try:
-                            if item and location and customer:
-                                await self.updateForecastMethod(
-                                    item.name, location.name, customer.name, mthd
-                                )
-                            else:
-                                if not item:
-                                    errors.append("Item not found: %s" % data["item"])
-                                if not location:
-                                    errors.append(
-                                        "Location not found: %s" % data["location"]
-                                    )
-                                if not customer:
-                                    errors.append(
-                                        "Customer not found: %s" % data["customer"]
-                                    )
-                        except Exception:
-                            errors.append("Exception updating forecast method")
-
-                    # Update forecast values
-                    if (
-                        "buckets" in data
-                        and item
-                        and location
-                        and customer
-                        and self.scope["user"].has_perm("forecast.change_forecast")
-                    ):
-                        for bckt in data["buckets"]:
-                            try:
-                                args = {
-                                    "item": item,
-                                    "location": location,
-                                    "customer": customer,
-                                }
-                                bucket = bckt.get("bucket", None)
-                                if bucket:
-                                    args["bucket"] = bucket.lower()
-                                startdate = bckt.get("startdate", None)
-                                if startdate:
-                                    # Guess! the date format, using Month-Day-Year as preference
-                                    # to resolve ambiguity.
-                                    # This default style is also the default datestyle in Postgres
-                                    # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                    args["startdate"] = parse(
-                                        startdate, yearfirst=False, dayfirst=False
-                                    )
-                                enddate = bckt.get("enddate", None)
-                                if enddate:
-                                    # Guess! the date format, using Month-Day-Year as preference
-                                    # to resolve ambiguity.
-                                    # This default style is also the default datestyle in Postgres
-                                    # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                    args["enddate"] = parse(
-                                        enddate, yearfirst=False, dayfirst=False
-                                    )
-                                for key, val in bckt.items():
-                                    if (
-                                        key
-                                        not in (
-                                            "id",
-                                            "bucket",
-                                            "startdate",
-                                            "enddate",
+                                    if not location:
+                                        errors.append(
+                                            "Location not found: %s" % data["location"]
                                         )
-                                        and val is not None
-                                        and val != ""
-                                    ):
-                                        args[key] = float(val)
-                                frepple.setForecast(**args)
-                            except Exception as e:
-                                errors.append("Error processing %s" % e)
+                                    if not customer:
+                                        errors.append(
+                                            "Customer not found: %s" % data["customer"]
+                                        )
+                            except Exception:
+                                errors.append("Exception updating forecast method")
 
-                    # Save a new comment
-                    if (
-                        "commenttype" in data
-                        and "comment" in data
-                        and self.scope["user"].has_perm("common.add_comment")
-                    ):
-                        try:
-                            await self.updateComment(
-                                data["commenttype"],
-                                data["comment"],
-                                item,
-                                location,
-                                customer,
-                            )
-                        except Exception:
-                            errors.append(b"Exception entering comment")
+                        # Update forecast values
+                        if (
+                            "buckets" in data
+                            and item
+                            and location
+                            and customer
+                            and self.scope["user"].has_perm("forecast.change_forecast")
+                        ):
+                            for bckt in data["buckets"]:
+                                try:
+                                    args = {
+                                        "item": item,
+                                        "location": location,
+                                        "customer": customer,
+                                    }
+                                    bucket = bckt.get("bucket", None)
+                                    if bucket:
+                                        args["bucket"] = bucket.lower()
+                                    startdate = bckt.get("startdate", None)
+                                    if startdate:
+                                        # Guess! the date format, using Month-Day-Year as preference
+                                        # to resolve ambiguity.
+                                        # This default style is also the default datestyle in Postgres
+                                        # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
+                                        args["startdate"] = parse(
+                                            startdate, yearfirst=False, dayfirst=False
+                                        )
+                                    enddate = bckt.get("enddate", None)
+                                    if enddate:
+                                        # Guess! the date format, using Month-Day-Year as preference
+                                        # to resolve ambiguity.
+                                        # This default style is also the default datestyle in Postgres
+                                        # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
+                                        args["enddate"] = parse(
+                                            enddate, yearfirst=False, dayfirst=False
+                                        )
+                                    for key, val in bckt.items():
+                                        if (
+                                            key
+                                            not in (
+                                                "id",
+                                                "bucket",
+                                                "startdate",
+                                                "enddate",
+                                            )
+                                            and val is not None
+                                            and val != ""
+                                        ):
+                                            args[key] = float(val)
+                                    print("qqqq", args)
+                                    frepple.setForecast(**args)
+                                except Exception as e:
+                                    errors.append("Error processing %s" % e)
+                finally:
+                    frepple.cache.write_immediately = True
+
+                # Save a new comment
+                if (
+                    "commenttype" in data
+                    and "comment" in data
+                    and self.scope["user"].has_perm("common.add_comment")
+                ):
+                    try:
+                        await self.updateComment(
+                            data["commenttype"],
+                            data["comment"],
+                            item,
+                            location,
+                            customer,
+                        )
+                    except Exception:
+                        errors.append(b"Exception entering comment")
 
                 # Reply
                 self.scope["response_headers"].append(

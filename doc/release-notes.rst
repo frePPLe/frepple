@@ -8,6 +8,11 @@ Release notes
 
 - | Bug fix: filter on null values wasn't working in "report manager" custom reports.
 
+.. rubric:: Odoo integration
+
+- v12: Backport of some recent developments to this older odoo version: working hour calendars,
+  resource calendars, manufacturing orders picked materials.
+
 8.1.3 (2023-09-18)
 ==================
 

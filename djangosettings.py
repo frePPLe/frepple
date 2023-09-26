@@ -274,7 +274,7 @@ except Exception:
 # TIME_ZONE = "Europe/Brussels"
 
 # tests have to be done in UTC
-if not hasattr(sys, "argv") or "test" in sys.argv:
+if not hasattr(sys, "argv") or "test" in sys.argv or "FREPPLE_TEST" in os.environ:
     TIME_ZONE = "UTC"
 
 # We provide 3 options for formatting dates (and you always add your own).

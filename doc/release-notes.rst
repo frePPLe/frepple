@@ -10,8 +10,17 @@ Release notes
 
 .. rubric:: Odoo integration
 
-- v12: Backport of some recent developments to this older odoo version: working hour calendars,
-  resource calendars, manufacturing orders picked materials.
+- | 15 & 16: Onhand inventory is now filtered.
+  | We only transfer inventory in locations on type "internal", and exclude scrap and
+    return locations.
+
+- | 15 & 16: The mapping for subcontractng has been improved.
+  | The subcontractor resupply transactions are now synced correctly.
+
+- | 15 & 16: The reference of bill of materials is now mapped into the operation description field.
+
+- | 12: Backport of some recent developments to this older odoo version: working hour calendars,
+    resource calendars, manufacturing orders material reservations.
 
 8.1.3 (2023-09-18)
 ==================

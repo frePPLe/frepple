@@ -14,7 +14,7 @@ Release notes
   | We only transfer inventory in locations on type "internal", and exclude scrap and
     return locations.
 
-- | 15 & 16: The mapping for subcontractng has been improved.
+- | 15 & 16: The mapping for subcontracting bill of materials has been improved.
   | The subcontractor resupply transactions are now synced correctly.
 
 - | 15 & 16: The reference of bill of materials is now mapped into the operation description field.

@@ -327,7 +327,7 @@ function displayGrid(load) {
   {% filter force_escape|capfirst %}{% trans "Undo" %}{% endfilter %}
 </button>
 {% if actions %}
-<form class="form-addon d-inline" method="get" action="#">
+<form class="form-addon d-inline" method="get">
 {% if actions|length == 1 %}
   <input type="hidden" name="actions" id="actions" value="{{ actions.0.name }}">
   <button class="btn btn-primary" disabled id="actions1" name="{{ actions.0.name|escape }}">

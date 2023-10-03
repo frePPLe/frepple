@@ -603,16 +603,16 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
       data.state->a_date = opplan->getEnd();
     }
 
-    // Set the quantity to 0 to make sure the buffer doesn't see any supply
-    opplan->setQuantity(0.0);
-
     // Log the constraint
     if (data.logConstraints && data.constraints)
       data.constraints->push((threshold == Plan::instance().getCurrent())
                                  ? ProblemBeforeCurrent::metadata
                                  : ProblemBeforeFence::metadata,
-                             opplan->getOperation(), original.end,
-                             data.state->a_date, original.quantity);
+                             opplan->getOperation(), original.start,
+                             opplan->getStart(), original.quantity);
+
+    // Set the quantity to 0 to make sure the buffer doesn't see any supply
+    opplan->setQuantity(0.0);
 
     // Deny creation of the operationplan
     return false;

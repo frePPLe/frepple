@@ -40,5 +40,5 @@ PROBLEM	material shortage	Buffer 'end item 3 B @ factory' has material shortage 
 PROBLEM	material shortage	Buffer 'end item 3 C @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	late	10 units of demand 'order 1 - item 1' planned up to 2.0 days after its due date	2009-01-02T00:00:00 / 2009-01-04T00:00:00
 PROBLEM	late	10 units of demand 'order 1 - item 2' planned up to 2.0 days after its due date	2009-01-02T00:00:00 / 2009-01-04T00:00:00
-DEMAND CONSTRAINT	order 1 - item 1	Operation 'delivery end item 1' planned in the past	2009-01-02T00:00:00 / 2009-01-04T00:00:00	
-DEMAND CONSTRAINT	order 1 - item 2	Operation 'delivery end item 2' planned in the past	2009-01-02T00:00:00 / 2009-01-04T00:00:00	
+DEMAND CONSTRAINT	order 1 - item 1	Operation 'delivery end item 1' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1 - item 2	Operation 'delivery end item 2' planned in the past	2008-12-30T00:00:00 / 2009-01-01T00:00:00	

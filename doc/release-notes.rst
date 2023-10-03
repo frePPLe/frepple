@@ -4,6 +4,16 @@ Release notes
 8.2.0 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- | The "why short or late" reasons for lead time constraints are improved to
+    provide more meaningful and intuitive results.
+  | A first change is that the constraint dates are now based on the required
+    start date rather than the end date.
+  | A second change is that lead time constraints that aren't on the critical
+    path of the delivery plan aren't included any longer. You get a shorter
+    and more relevant list of constraining lead times.
+
 .. rubric:: User interface
 
 - | Bug fix: filter on null values wasn't working in "report manager" custom reports.

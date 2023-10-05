@@ -67,7 +67,7 @@ RUN apt-get -y -q update && \
   curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
   echo "deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   apt-get -y -q update && \
-  DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql-client-15
+  DEBIAN_FRONTEND=noninteractive apt-get -y install postgresql-client-15 postgresql-client-16
 
 COPY --from=builder /build/*.deb .
 

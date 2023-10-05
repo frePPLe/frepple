@@ -20,6 +20,11 @@ if(docker)
     --tag "frepple-${PROJECT_BRANCH}-ubuntu-20.04:${PROJECT_VERSION}"
     --tag "frepple-${PROJECT_BRANCH}:${PROJECT_VERSION}"
     --tag "ghcr.io/frepple/frepple-${PROJECT_BRANCH}:${PROJECT_VERSION}"
+    --label "org.opencontainers.image.title=frepple Community Edition ${PROJECT_VERSION}"
+    --label "org.opencontainers.image.description=Docker image for frepple Community Edition ${PROJECT_VERSION}"
+    --label "org.opencontainers.image.url=https://github.com/frePPLe/frepple/pkgs/container/frepple-community"
+    --label "org.opencontainers.image.ref.name=frepple Community Edition"
+    --label "org.opencontainers.image.version=${PROJECT_VERSION}"
   )
   add_custom_target(
     "docker"

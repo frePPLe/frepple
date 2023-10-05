@@ -1492,7 +1492,7 @@ class exportCustomers(PlanTask):
                   subcategory=excluded.subcategory,
                   source=excluded.source,
                   lastmodified=excluded.lastmodified,
-                  owner_id=excluded.owner_id
+                  owner_id=excluded.owner_id,
                   lft=null
                   %s
                 """

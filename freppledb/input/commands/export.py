@@ -857,14 +857,17 @@ class exportLocations(PlanTask):
                   subcategory=excluded.subcategory,
                   source=excluded.source,
                   lastmodified=excluded.lastmodified,
-                  owner_id=excluded.owner_id
+                  owner_id=excluded.owner_id,
+                  lft=null
                   %s
                 """
                 % SQL4attributes(attrs),
                 getData(),
             )
             execute_batch(
-                cursor, "update location set owner_id=%s where name=%s", getOwners()
+                cursor,
+                "update location set owner_id=%s, lft=null where name=%s",
+                getOwners(),
             )
 
 
@@ -931,14 +934,17 @@ class exportItems(PlanTask):
                   volume=excluded.volume,
                   weight=excluded.weight,
                   lastmodified=excluded.lastmodified,
-                  owner_id=excluded.owner_id
+                  owner_id=excluded.owner_id,
+                  lft=null
                   %s
                 """
                 % SQL4attributes(attrs),
                 getData(),
             )
             execute_batch(
-                cursor, "update item set owner_id=%s where name=%s", getOwners()
+                cursor,
+                "update item set owner_id=%s, lft=null where name=%s",
+                getOwners(),
             )
 
 
@@ -1190,14 +1196,17 @@ class exportResources(PlanTask):
                   constrained=excluded.constrained,
                   source=excluded.source,
                   lastmodified=excluded.lastmodified,
-                  owner_id=excluded.owner_id
+                  owner_id=excluded.owner_id,
+                  lft=null
                   %s
                 """
                 % SQL4attributes(attrs),
                 getData(),
             )
             execute_batch(
-                cursor, "update resource set owner_id=%s where name=%s", getOwners()
+                cursor,
+                "update resource set owner_id=%s, lft=null where name=%s",
+                getOwners(),
             )
 
 
@@ -1484,13 +1493,16 @@ class exportCustomers(PlanTask):
                   source=excluded.source,
                   lastmodified=excluded.lastmodified,
                   owner_id=excluded.owner_id
+                  lft=null
                   %s
                 """
                 % SQL4attributes(attrs),
                 getData(),
             )
             execute_batch(
-                cursor, "update customer set owner_id=%s where name=%s", getOwners()
+                cursor,
+                "update customer set owner_id=%s, lft=null where name=%s",
+                getOwners(),
             )
 
 

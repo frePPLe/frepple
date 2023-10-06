@@ -474,9 +474,9 @@ function crosses (cellvalue, options, rowdata)
   // Cell background
   var oh = cellvalue[id_by_field['startoh']];
   var safety = cellvalue[id_by_field['safetystock']];
-  if (oh < 0)
+  if (oh < 0 && !options.colModel.history)
      var result = '<div style="margin: -5px; background: linear-gradient(white 0%, rgba(255,0,0,0.2) 40%, rgba(255,0,0,0.2) 60%, #f0f0f0 100%)">';
-  else if (oh >= safety || safety == 0)
+  else if (oh >= safety || safety == 0 || options.colModel.history)
      var result = '<div>';
   else
      var result = '<div style="margin: -5px; background: linear-gradient(white 0%, rgba(255,'

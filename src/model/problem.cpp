@@ -559,7 +559,7 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
     }
     p = new ProblemBeforeFence(
         const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd, w);
-  else if (m == ProblemAwaitSupply::metadata) {
+  } else if (m == ProblemAwaitSupply::metadata) {
     auto owner = const_cast<Buffer*>(dynamic_cast<const Buffer*>(o));
     if (owner)
       p = new ProblemAwaitSupply(owner, st, nd, w);

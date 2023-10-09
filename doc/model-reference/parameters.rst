@@ -13,116 +13,121 @@ parameters to this table.
 The table below shows the parameters that are recognized by the standard
 application.
 
-============================ =======================================================================
-Parameter                    Description
-============================ =======================================================================
-allowsplits                  | When set to true, a sales order or forecast is
-                               allowed to be planned in multiple manufacturing orders. An order of
-                               eg 100 pieces can be planned with 2 manufacturing of 50 pieces.
-                             | When the parameter is set to false (default value), this splitting is disabled. This
-                               will result in a plan with less manufacturing orders. The plan
-                               generation will be considerably faster, but can have additional
-                               delivery delays of the customer orders and forecasts.
-currentdate                  | Current date of the plan, preferred format is YYYY-MM-DD HH:MM:SS
-                               but most known formats to represent a date and/or time are accepted.
-                             | When the parameter is set to "today", we use today 00:00 / midnight
-                               as the currrent date.
-                             | When the parameter is set to "now", we use the system time as current date.
-                             | If the parameter is missing, empty or has an uncognized format, the system
-                               time is also used as current date.
-currency                     | Currency symbol.
-                             | This parameter may be only set on the default database and will be
-                               globally applied, including in all the scenarios.
-                             | If the parameter is missing or empty the currency symbol will be the $.
-                             | By default the symbol will show after the value, i.e. **123 $**.
-                             | For the symbol to show before the value a **,** should be added after the
-                              symbol, i.e. **$,**, resulting in **$ 123**.
-loading_time_units           | Time units to be used for the resource report.
-                             | Accepted values are: hours, days, weeks.
-excel_duration_in_days       | Determines whether numbers in spreadsheets are considered
-                               as days or seconds. Default is true for days.
-                             | This parameter is only useful for backward compability.
-plan.administrativeLeadtime  | Specifies an administrative lead time in days.
-                             | FrePPLe will plan the sales orders this amount of time ahead of their
-                               due date. This creates extra safety in the delivery schedule and also
-                               moves all material and capacity needs early.
+==================================== =======================================================================
+Parameter                            Description
+==================================== =======================================================================
+allowsplits                          | When set to true, a sales order or forecast is
+                                       allowed to be planned in multiple manufacturing orders. An order of
+                                       eg 100 pieces can be planned with 2 manufacturing of 50 pieces.
+                                     | When the parameter is set to false (default value), this splitting is disabled. This
+                                       will result in a plan with less manufacturing orders. The plan
+                                       generation will be considerably faster, but can have additional
+                                       delivery delays of the customer orders and forecasts.
+currentdate                          | Current date of the plan, preferred format is YYYY-MM-DD HH:MM:SS
+                                       but most known formats to represent a date and/or time are accepted.
+                                     | When the parameter is set to "today", we use today 00:00 / midnight
+                                       as the currrent date.
+                                     | When the parameter is set to "now", we use the system time as current date.
+                                     | If the parameter is missing, empty or has an uncognized format, the system
+                                       time is also used as current date.
+currency                             | Currency symbol.
+                                     | This parameter may be only set on the default database and will be
+                                       globally applied, including in all the scenarios.
+                                     | If the parameter is missing or empty the currency symbol will be the $.
+                                     | By default the symbol will show after the value, i.e. **123 $**.
+                                     | For the symbol to show before the value a **,** should be added after the
+                                      symbol, i.e. **$,**, resulting in **$ 123**.
+loading_time_units                   | Time units to be used for the resource report.
+                                     | Accepted values are: hours, days, weeks.
+excel_duration_in_days               | Determines whether numbers in spreadsheets are considered
+                                       as days or seconds. Default is true for days.
+                                     | This parameter is only useful for backward compability.
+plan.administrativeLeadtime          | Specifies an administrative lead time in days.
+                                     | FrePPLe will plan the sales orders this amount of time ahead of their
+                                       due date. This creates extra safety in the delivery schedule and also
+                                       moves all material and capacity needs early.
 
-                             | The default value is 0 days, which is a just-in-time plan, where we try
-                               to plan all demands in **backward scheduling mode** from their due date.
+                                     | The default value is 0 days, which is a just-in-time plan, where we try
+                                       to plan all demands in **backward scheduling mode** from their due date.
 
-                             | Setting this parameter to a high value (eg 999) will result in a plan
-                               where everything is planned ASAP in **forward scheduling mode**.
+                                     | Setting this parameter to a high value (eg 999) will result in a plan
+                                       where everything is planned ASAP in **forward scheduling mode**.
 
-plan.autoFenceOperations     | The number of days the solver should wait for a confirmed
-                               replenishment before generating a proposed order.
-                             | Default: 999 (wait indefinitely)
-                             | Default before release 5.0.0: 0 (don't wait)
-plan.individualPoolResources | Defines the behavior of aggregate resource.
+plan.autoFenceOperations             | The number of days the solver should wait for a confirmed
+                                       replenishment before generating a proposed order.
+                                     | Default: 999 (wait indefinitely)
+                                     | Default before release 5.0.0: 0 (don't wait)
+plan.individualPoolResources         | Defines the behavior of aggregate resource.
 
-                             | A operation-resource record with quantity N for an aggregate resource
-                               can mean either:
-                             | - Find a member resource with size N. Value false, default.
-                             | - Find N member resources of size 1. Value true.
-plan.calendar                | Name of a calendar to align the end date of new manufacturing orders,
-                               purchase orders, distribution orders and delivery orders with.
-                             | When this parameter is used, the plan results are effectively grouped
-                               in the time buckets defined in this calendar.
-                             | This feature is typically used for medium and long term plans.
-                             | Such plans are reviewed in monthly or weekly buckets rather than at
-                               individual dates.
-plan.loglevel                | Controls the verbosity of the planning log file.
-                             | Accepted values are 0 (silent – default), 1 (minimal) and 2 (verbose).
-plan.minimumdelay            | Specifies a minimum delay the algorithm applies when the requested
-                               date isn't feasible.
-                             | The default value is 3600. This value should only be changed when the
-                               planning run is taking a long time and the log file shows that demands
-                               take many iterations to be planned - where the requested delivery
-                               date for each iteration is advancing only in tiny increments.
-plan.planSafetyStockFirst    | Controls whether safety stock is planned before or after the demand.
-                             | Accepted values are false (default) and true.
-plan.fixBrokenSupplyPath     | When set to true (which is the default), frepple will scan for
-                               items that can't be replenished any longer with purchase orders,
-                               distribution orders or manufacturing orders.
+                                     | A operation-resource record with quantity N for an aggregate resource
+                                       can mean either:
+                                     | - Find a member resource with size N. Value false, default.
+                                     | - Find N member resources of size 1. Value true.
+plan.minimalBeforeCurrentConstraints | By default the "why short or late" list for a sales order can include
+                                       many operations as lead-time and release-fence constraints.
+                                     | When setting this option to true, we will limit the list to show only
+                                       the most constraining operation. This make the list easier to interpret
+                                       by users.
+plan.calendar                        | Name of a calendar to align the end date of new manufacturing orders,
+                                       purchase orders, distribution orders and delivery orders with.
+                                     | When this parameter is used, the plan results are effectively grouped
+                                       in the time buckets defined in this calendar.
+                                     | This feature is typically used for medium and long term plans.
+                                     | Such plans are reviewed in monthly or weekly buckets rather than at
+                                       individual dates.
+plan.loglevel                        | Controls the verbosity of the planning log file.
+                                     | Accepted values are 0 (silent – default), 1 (minimal) and 2 (verbose).
+plan.minimumdelay                    | Specifies a minimum delay the algorithm applies when the requested
+                                       date isn't feasible.
+                                     | The default value is 3600. This value should only be changed when the
+                                       planning run is taking a long time and the log file shows that demands
+                                       take many iterations to be planned - where the requested delivery
+                                       date for each iteration is advancing only in tiny increments.
+plan.planSafetyStockFirst            | Controls whether safety stock is planned before or after the demand.
+                                     | Accepted values are false (default) and true.
+plan.fixBrokenSupplyPath             | When set to true (which is the default), frepple will scan for
+                                       items that can't be replenished any longer with purchase orders,
+                                       distribution orders or manufacturing orders.
 
-                             | FrePPLe automatically creates a dummy/fake supplier for such items.
-                               In this way broken supply paths are automatically fixed. Planners
-                               will need to review such dummy purchase orders and update the
-                               master data to replace them with the correct replenishment method.
+                                     | FrePPLe automatically creates a dummy/fake supplier for such items.
+                                       In this way broken supply paths are automatically fixed. Planners
+                                       will need to review such dummy purchase orders and update the
+                                       master data to replace them with the correct replenishment method.
 
-                             | When this parameter is set to false, broken supply paths will result
-                               in unplanned demand. Analysing the unplanned demand is in most cases
-                               more complex than reviewing the dummy purchase orders.
-plan.rotateResources         | When set to true, the algorithm will better distribute
-                               the demand across alternate suboperations instead of using
-                               the preferred operation.
-plan.webservice              | Specifies whether we keep the plan in memory as a web service for
-                               quick incremental planning. This functionality is only available in
-                               the Enterprise and Cloud Editions.
-                             | Accepted values are false and true (default).
-COMPLETED.consume_material   | Determines whether completed manufacturing orders consume material
-                               or not.
-                             | Default is true.
-COMPLETED.allow_future       | We assume that completed operations are always ending in the past.
-                               The planning engine will automatically adjust the end date to enforce
-                               this rule, unless this parameter is set to true.
-                             | Default is false.
-WIP.consume_material         | Determines whether confirmed manufacturing orders consume material
-                               or not.
-                             | Default is true.
-WIP.consume_capacity         | Determines whether confirmed manufacturing orders, purchase orders
-                               and distribution orders consume capacity or not.
-                             | Default is true.
-WIP.produce_full_quantity    | Controls how material is produced from partially completed
-                               manufacturing orders.
-                             | When set to "false" (the default) a partially completed manufacturing
-                               order is producing only the remaining quantity of material. We assume
-                               that the on hand inventory has already been incremented to reflect
-                               the produced material.
-                             | When set to "true" a partially completed manufacturing ordre will
-                               still produce the full quantity of the material. We assume that the
-                               produced material will only be booked as inventory when the
-                               manufacturing order is fully finished.
-============================ =======================================================================
+                                     | When this parameter is set to false, broken supply paths will result
+                                       in unplanned demand. Analysing the unplanned demand is in most cases
+                                       more complex than reviewing the dummy purchase orders.
+plan.rotateResources                 | When set to true, the algorithm will better distribute
+                                       the demand across alternate suboperations instead of using
+                                       the preferred operation.
+plan.webservice                      | Specifies whether we keep the plan in memory as a web service for
+                                       quick incremental planning. This functionality is only available in
+                                       the Enterprise and Cloud Editions.
+                                     | Accepted values are false and true (default).
+COMPLETED.consume_material           | Determines whether completed manufacturing orders consume material
+                                       or not.
+                                     | Default is true.
+COMPLETED.allow_future               | We assume that completed operations are always ending in the past.
+                                       The planning engine will automatically adjust the end date to enforce
+                                       this rule, unless this parameter is set to true.
+                                     | Default is false.
+WIP.consume_material                 | Determines whether confirmed manufacturing orders consume material
+                                       or not.
+                                     | Default is true.
+WIP.consume_capacity                 | Determines whether confirmed manufacturing orders, purchase orders
+                                       and distribution orders consume capacity or not.
+                                     | Default is true.
+WIP.produce_full_quantity            | Controls how material is produced from partially completed
+                                       manufacturing orders.
+                                     | When set to "false" (the default) a partially completed manufacturing
+                                       order is producing only the remaining quantity of material. We assume
+                                       that the on hand inventory has already been incremented to reflect
+                                       the produced material.
+                                     | When set to "true" a partially completed manufacturing ordre will
+                                       still produce the full quantity of the material. We assume that the
+                                       produced material will only be booked as inventory when the
+                                       manufacturing order is fully finished.
+==================================== =======================================================================
 
 **Demand forecasting parameters**
 

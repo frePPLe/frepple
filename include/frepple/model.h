@@ -8642,6 +8642,8 @@ class Plan : public Plannable, public Object {
 
   bool suppress_flowplan_creation = false;
 
+  bool minimal_before_current_constraints = false;
+
   string timezone;
 
   /* Pointer to the singleton plan object. */
@@ -8736,6 +8738,14 @@ class Plan : public Plannable, public Object {
 
   void setSuppressFlowplanCreation(bool b);
 
+  bool getMinimalBeforeCurrentConstraints() const {
+    return minimal_before_current_constraints;
+  }
+
+  void setMinimalBeforeCurrentConstraints(bool b) {
+    minimal_before_current_constraints = b;
+  }
+
   void setLogFile(const string& s) { Environment::setLogFile(s); }
 
   const string& getLogFile() const { return Environment::getLogFile(); }
@@ -8828,6 +8838,10 @@ class Plan : public Plannable, public Object {
     m->addBoolField<Cls>(
         Tags::suppressFlowplanCreation, &Cls::getSuppressFlowplanCreation,
         &Cls::setSuppressFlowplanCreation, BOOL_FALSE, DONT_SERIALIZE);
+    m->addBoolField<Cls>(Tags::minimalBeforeCurrentConstraints,
+                         &Cls::getMinimalBeforeCurrentConstraints,
+                         &Cls::setMinimalBeforeCurrentConstraints, BOOL_FALSE,
+                         DONT_SERIALIZE);
     m->addStringField<Cls>(Tags::timezone, &Cls::getTimeZone, &Cls::setTimeZone,
                            "", DONT_SERIALIZE);
     Plannable::registerFields<Plan>(m);
@@ -8935,6 +8949,13 @@ class ProblemBeforeCurrent : public Problem {
     }
   }
 
+  void update(Operation* o, Date st, Date nd, double q) {
+    oper = o;
+    start = st;
+    end = nd;
+    qty = q;
+  }
+
   /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
@@ -8994,6 +9015,13 @@ class ProblemBeforeFence : public Problem {
       return DateRange(o->getStart(), tmp);
     else
       return o->getDates();
+  }
+
+  void update(Operation* o, Date st, Date nd, double q) {
+    oper = o;
+    start = st;
+    end = nd;
+    qty = q;
   }
 
   /* Return a reference to the metadata structure. */

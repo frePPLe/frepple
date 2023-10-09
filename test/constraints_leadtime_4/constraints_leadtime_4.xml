@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>actual plan</name>
+	<description>
+		This test verifies that before-current and before-fence constraints are only logged
+		along the critical path of a sales order.
+	</description>
+	<current>2023-01-01T00:00:00</current>
+	<operations>
+		<operation name="make end item" xsi:type="operation_fixed_time">
+			<location name="factory"/>
+			<item name="end item"/>
+			<duration>P1D</duration>
+			<flows>
+				<flow xsi:type="flow_start">
+					<item name="item 2"/>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="item 3"/>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="item 5"/>
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="item 7"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation name="make 1" xsi:type="operation_fixed_time">
+			<location name="factory"/>
+			<item name="item 1"/>
+			<duration>P1D</duration>
+		</operation>
+		<operation name="make 2" xsi:type="operation_fixed_time">
+			<location name="factory"/>
+			<item name="item 2"/>
+			<duration>P3D</duration>
+			<flows>
+				<flow xsi:type="flow_start">
+					<item name="item 1"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation name="make 3" xsi:type="operation_fixed_time">
+			<location name="factory"/>
+			<item name="item 3"/>
+			<duration>P5D</duration>
+		</operation>
+		<operation name="make 4" xsi:type="operation_fixed_time">
+			<location name="factory"/>
+			<item name="item 4"/>
+			<duration>P3D</duration>
+		</operation>
+		<operation name="make 5" xsi:type="operation_fixed_time">
+			<location name="factory"/>
+			<item name="item 5"/>
+			<duration>P4D</duration>
+			<flows>
+				<flow xsi:type="flow_start">
+					<item name="item 4"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation name="make 6" xsi:type="operation_fixed_time">
+			<location name="factory"/>
+			<item name="item 6"/>
+			<duration>P5D</duration>
+		</operation>
+		<operation name="make 7" xsi:type="operation_fixed_time">
+			<location name="factory"/>
+			<item name="item 7"/>
+			<duration>P2D</duration>
+			<flows>
+				<flow xsi:type="flow_start">
+					<item name="item 6"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+	</operations>
+	<demands>
+		<demand name="order 1">
+			<quantity>10</quantity>
+			<minshipment>10</minshipment>
+			<due>2023-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="end item"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+
+<?python
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=13, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.settings.minimalBeforeCurrentConstraints = True
+frepple.solver_mrp(plantype=1, constraints=13, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+?>
+</plan>

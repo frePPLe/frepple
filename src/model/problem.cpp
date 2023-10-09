@@ -531,10 +531,32 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
   else if (m == ProblemMaterialShortage::metadata)
     p = new ProblemMaterialShortage(
         const_cast<Buffer*>(dynamic_cast<const Buffer*>(o)), st, nd, w, false);
-  else if (m == ProblemBeforeCurrent::metadata)
+  else if (m == ProblemBeforeCurrent::metadata) {
+    if (Plan::instance().getMinimalBeforeCurrentConstraints()) {
+      // Keep only the most constraining before-current problem
+      for (auto chck = first; chck && chck->nextProblem;
+           chck = chck->nextProblem)
+        if (chck->getType() == *ProblemBeforeCurrent::metadata) {
+          static_cast<ProblemBeforeCurrent*>(chck)->update(
+              const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd,
+              w);
+          return chck;
+        }
+    }
     p = new ProblemBeforeCurrent(
         const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd, w);
-  else if (m == ProblemBeforeFence::metadata)
+  } else if (m == ProblemBeforeFence::metadata) {
+    if (Plan::instance().getMinimalBeforeCurrentConstraints()) {
+      // Keep only the most constraining before-fence problem
+      for (auto chck = first; chck && chck->nextProblem;
+           chck = chck->nextProblem)
+        if (chck->getType() == *ProblemBeforeFence::metadata) {
+          static_cast<ProblemBeforeFence*>(chck)->update(
+              const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd,
+              w);
+          return chck;
+        }
+    }
     p = new ProblemBeforeFence(
         const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd, w);
   else if (m == ProblemAwaitSupply::metadata) {

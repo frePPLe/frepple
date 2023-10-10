@@ -2,9 +2,9 @@
 Creating an custom theme
 ========================
 
-The user interface is styled using bootstrap v3. All variables documented at
-https://getbootstrap.com/docs/3.4/customize/ are available to you to design your
-look and feel.
+The user interface is styled using bootstrap v5. All variables documented at
+https://getbootstrap.com/docs/5.2/customize/overview/ are available to you to
+design your look and feel.
 
 Proceed with the following steps to compile a custom theme:
 

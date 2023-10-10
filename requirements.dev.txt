@@ -11,6 +11,7 @@ docutils == 0.16
 Sphinx == 3.5.3
 sphinx-tabs == 3.2.0
 sphinx-sitemap == 2.5.0
+sphinx-reredirects == 0.1.2
 selenium
 selenium_firefox == 2.0.7   # Issues with urllib3 on recent versions
 msedge-selenium-tools == 3.141.4 # Issues with urllib3 on recent versions

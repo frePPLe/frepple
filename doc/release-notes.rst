@@ -34,6 +34,13 @@ Release notes
 - | 12: Backport of some recent developments to this older odoo version: working hour calendars,
     resource calendars, manufacturing orders material reservations.
 
+.. rubric:: Documentation
+
+- | The use case videos section has been reworked and is expanded into a collection
+    of "a day in the life" daily workflows.
+  | These workflows are categorized for different planning roles: demand planner, inventory
+    planner, production planner and material planners.
+
 8.1.3 (2023-09-18)
 ==================
 

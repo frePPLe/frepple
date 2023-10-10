@@ -12,8 +12,8 @@ frePPLe |release| documentation
     Browse through all key functionalities
     </div>
     <div class="sphinxcolumn">
-    <a class="reference internal" href="videos/index.html"><span class="doc">Use case videos</span></a><br>
-    Browse through our collection of youtube videos
+    <a class="reference internal" href="a-day-in-the-life/index.html"><span class="doc">A day in the life</span></a><br>
+    Check out which screens and workflows you'll regularly use.
     </div>
     </div>
 
@@ -98,7 +98,7 @@ frePPLe |release| documentation
    :hidden:
 
    features
-   videos/index
+   a-day-in-the-life/index
    modeling-wizard/index
    examples/index
    user-interface/index

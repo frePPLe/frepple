@@ -29,7 +29,7 @@ sys.path.insert(0, os.path.abspath("."))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["frepple", "sphinx_tabs.tabs", "sphinx_sitemap"]
+extensions = ["frepple", "sphinx_tabs.tabs", "sphinx_sitemap", "sphinx_reredirects"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -269,3 +269,37 @@ html_baseurl = "https://your-site.com/docs/"
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 # texinfo_no_detailmenu = False
+
+# Redirecting old documentation pages to the new ones
+redirects = {
+    "videos/index": "../a-day-in-the-life/index.html",
+    "videos/demand-forecasting/check-forecast-accuracy": "../a-day-in-the-life/demand-forecasting/check-forecast-accuracy.html",
+    "videos/demand-forecasting/filter-outliers": "../a-day-in-the-life/demand-forecasting/filter-outliers.html",
+    "videos/demand-forecasting/forecast-new-item": "../a-day-in-the-life/demand-forecasting/forecast-new-item.html",
+    "videos/demand-forecasting/share-forecast": "../a-day-in-the-life/demand-forecasting/share-forecast.html",
+    "videos/demand-forecasting/compare-forecasts": "../a-day-in-the-life/demand-forecasting/compare-forecasts.html",
+    "videos/demand-forecasting/forecast-discontinued-item": "../a-day-in-the-life/demand-forecasting/forecast-discontinued-item.html",
+    "videos/demand-forecasting/index": "../a-day-in-the-life/demand-forecasting/index.html",
+    "videos/demand-forecasting/upload-forecast-values": "../a-day-in-the-life/demand-forecasting/upload-forecast-values.html",
+    "videos/inventory-planning/apply-policy-to-segment": "../a-day-in-the-life/inventory-planning/apply-policy-to-segment.html",
+    "videos/inventory-planning/identify-excess-inventory": "../a-day-in-the-life/inventory-planning/identify-excess-inventory.html",
+    "videos/inventory-planning/identify-stockout-risk": "../a-day-in-the-life/inventory-planning/identify-stockout-risk.html",
+    "videos/inventory-planning/apply-reorder-quantity-override": "../a-day-in-the-life/inventory-planning/apply-reorder-quantity-override.html",
+    "videos/inventory-planning/identify-expedite": "../a-day-in-the-life/inventory-planning/identify-expedite.html",
+    "videos/inventory-planning/index": "../a-day-in-the-life/inventory-planning/index.html",
+    "videos/inventory-planning/apply-safety-stock-override": "../a-day-in-the-life/inventory-planning/apply-safety-stock-override.html",
+    "videos/inventory-planning/identify-rebalancing": "../a-day-in-the-life/inventory-planning/identify-rebalancing.html",
+    "videos/inventory-planning/review-inventory-across-network": "../a-day-in-the-life/inventory-planning/review-inventory-across-network.html",
+    "videos/production-planning/check-impact-of-rush-orders": "../a-day-in-the-life/production-planning/check-impact-of-rush-orders.html",
+    "videos/production-planning/identify-expedite": "../a-day-in-the-life/production-planning/identify-expedite.html",
+    "videos/production-planning/prioritize-sales-order": "../a-day-in-the-life/production-planning/prioritize-sales-order.html",
+    "videos/production-planning/review-late-orders": "../a-day-in-the-life/production-planning/review-late-orders.html",
+    "videos/production-planning/define-operator-shifts": "../a-day-in-the-life/production-planning/define-operator-shifts.html",
+    "videos/production-planning/index": "../a-day-in-the-life/production-planning/index.html",
+    "videos/production-planning/quote-delivery-date": "../a-day-in-the-life/production-planning/quote-delivery-date.html",
+    "videos/production-planning/unconstrained-requirements": "../a-day-in-the-life/production-planning/unconstrained-requirements.html",
+    "videos/production-planning/identify-bottleneck-resources": "../a-day-in-the-life/production-planning/identify-bottleneck-resources.html",
+    "videos/production-planning/optimize-plan-in-gantt-chart": "../a-day-in-the-life/production-planning/optimize-plan-in-gantt-chart.html",
+    "videos/production-planning/reassign-resource": "../a-day-in-the-life/production-planning/reassign-resource.html",
+    "videos/production-planning/update-machine-breakdown": "../a-day-in-the-life/production-planning/update-machine-breakdown.html",
+}

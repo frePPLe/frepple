@@ -30,25 +30,25 @@ Production planning & scheduling
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Capacity planning**                   | FrePPLe's capacity plan provides a timely visibility of upcoming capacity  | - Doc :doc:`user-interface/plan-analysis/resource-report` screen              |
 |                                         | bottlenecks, giving you the opportunity to evaluate different scenarios.   | - Video                                                                       |
-|                                         | As such, it can be used in mid-term capacity planning processes.           |   :doc:`videos/production-planning/identify-bottleneck-resources`             |
+|                                         | As such, it can be used in mid-term capacity planning processes.           |   :doc:`a-day-in-the-life/production-planning/identify-bottleneck-resources`  |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Production scheduling**               | Use frePPLe to generate detailed short-term production schedules. You can  | - Doc :doc:`user-interface/plan-analysis/plan-editor`                         |
 |                                         | then visualize your plan in an interactive Gantt chart and make final      | - `Live demo <https://demo.frepple.com/planningboard/>`_                      |
 |                                         | adjustments.                                                               | - Video                                                                       |
-|                                         |                                                                            |   :doc:`videos/production-planning/optimize-plan-in-gantt-chart`              |
+|                                         |                                                                            |   :doc:`a-day-in-the-life/production-planning/optimize-plan-in-gantt-chart`   |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Due date quoting                      | Compute a feasible delivery date for a new order on the fly. The promised  | - Doc :doc:`user-interface/plan-analysis/quoting-screen`                      |
-| at order entry**                        | delivery date considers all capacity and material constraints as well as   | - Video :doc:`videos/production-planning/quote-delivery-date`                 |
+| at order entry**                        | delivery date considers all capacity and material constraints as well as   | - Video :doc:`a-day-in-the-life/production-planning/quote-delivery-date`      |
 |                                         | reservations for other open sales orders.                                  |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Make-to-order,                        | Make-to-order, make-to-stock and assemble-to-order products are all        | - Example :doc:`examples/buffer/make-to-order`                                |
 | make-to-stock and                       | supported.                                                                 |                                                                               |
 | assemble-to-order**                     |                                                                            |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Exception based workflows**           | Improve the planner's productivity by focussing the work on problem        | - Video :doc:`videos/production-planning/identify-expedite`                   |
+| **Exception based workflows**           | Improve the planner's productivity by focussing the work on problem        | - Video :doc:`a-day-in-the-life/production-planning/identify-expedite`        |
 |                                         | areas in the plan.                                                         | - Video                                                                       |
-|                                         |                                                                            |   :doc:`videos/production-planning/check-impact-of-rush-orders`               |
-|                                         |                                                                            |   :doc:`videos/production-planning/review-late-orders`                        |
+|                                         |                                                                            |   :doc:`a-day-in-the-life/production-planning/check-impact-of-rush-orders`    |
+|                                         |                                                                            |   :doc:`a-day-in-the-life/production-planning/review-late-orders`             |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Theory of constraints**               | A supply chain can only be as fast as the most constraining link.          |                                                                               |
 |                                         |                                                                            |                                                                               |
@@ -74,7 +74,7 @@ Production planning & scheduling
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Constrained and                       | FrePPLe can generate different plan types:                                 |  - `Plan generation <command-reference.html#runplan>`_                        |
 | unconstrained modes**                   |                                                                            |  - Video                                                                      |
-|                                         | - Simple unconstrained plan: similar to a simple MRP run in an ERP. It     |    :doc:`videos/production-planning/unconstrained-requirements`               |
+|                                         | - Simple unconstrained plan: similar to a simple MRP run in an ERP. It     |    :doc:`a-day-in-the-life/production-planning/unconstrained-requirements`    |
 |                                         |   plans all demands on time but overloads resources and plans operations   |                                                                               |
 |                                         |   in the past.                                                             |                                                                               |
 |                                         | - Fully constrained plans: all constraints are met and demand is planned   |                                                                               |
@@ -145,7 +145,7 @@ Capacity modeling
 |                                         | - unconstrained infinite-capacity resources or unconstrained)              |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Working hours and vacations**         | Define calendars based on working hours, shifts, factory shutdowns,        | - Example :doc:`examples/calendar/calendar-working-hours`                     |
-|                                         | holiday periods, etc.                                                      | - Video :doc:`videos/production-planning/define-operator-shifts`              |
+|                                         | holiday periods, etc.                                                      | - Video :doc:`a-day-in-the-life/production-planning/define-operator-shifts`   |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Resource pools**                      | Group identical/similar resources (machines or operators) in an aggegrated | - Example :doc:`examples/resource/resource-alternate`                         |
 |                                         | pool of resources.                                                         |                                                                               |

@@ -13,7 +13,7 @@ Release notes
     is a more intuitive way to interpret and evaluate the constraint.
   | An optional change is that the algorithm can now limit the before-current
     and before-fence constraints to only the most constraining operation. By
-    setting the paramter "plan.minimalBeforeCurrentConstraints" you'll get a
+    setting the parameter "plan.minimalBeforeCurrentConstraints" you'll get a
     shorter list of constraints.
 
 .. rubric:: User interface

@@ -8,9 +8,9 @@ Release notes
 
 - | The "why short or late" reasons for lead time constraints are improved to
     provide more meaningful and intuitive results.
-  | A first change is that lead time constraints that aren't on the critical
-    path of the delivery plan aren't included any longer. You get a shorter
-    and more relevant list of constraining lead times.
+  | A first change is that dates on the before-current and before-fence constraints
+    are now based on the start date rather than the end date. Using the start date
+    is a more intuitive way to interpret and evaluate the constraint.
   | An optional change is that the algorithm can now limit the before-current
     and before-fence constraints to only the most constraining operation. By
     setting the paramter "plan.minimalBeforeCurrentConstraints" you'll get a

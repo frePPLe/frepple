@@ -136,6 +136,7 @@ class Command(BaseCommand):
             # Validate the user list of tables
             if models:
                 hasDemand = True if "input.demand" in models else False
+                hasCustomer = True if "input.customer" in models else False
                 hasOperation = True if "input.operation" in models else False
                 hasPO = True if "input.purchaseorder" in models else False
                 hasDO = True if "input.distributionorder" in models else False
@@ -151,6 +152,18 @@ class Command(BaseCommand):
                         cursor.execute("delete from demand")
                         key = ContentType.objects.get_for_model(
                             inputmodels.Demand, for_concrete_model=False
+                        ).pk
+                        cursor.execute(
+                            "delete from common_comment where content_type_id = %s and type in ('add', 'change', 'delete')",
+                            (key,),
+                        )
+                    if hasCustomer:
+                        models.remove("input.customer")
+                        if "freppledb.forecast" in settings.INSTALLED_APPS:
+                            cursor.execute("truncate forecastplan, forecast")
+                        cursor.execute("delete from customer")
+                        key = ContentType.objects.get_for_model(
+                            inputmodels.Customer, for_concrete_model=False
                         ).pk
                         cursor.execute(
                             "delete from common_comment where content_type_id = %s and type in ('add', 'change', 'delete')",

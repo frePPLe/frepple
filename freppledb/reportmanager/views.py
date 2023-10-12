@@ -565,7 +565,9 @@ class ReportManager(GridReport):
             except SQLReport.DoesNotExist:
                 raise Http404("Report doesn't exist")
             if not cls.has_permission(request.user) or (
-                not request.report.public and request.report.user.id != request.user.id
+                not request.report.public
+                and request.report.user
+                and request.report.user.id != request.user.id
             ):
                 return HttpResponseForbidden("You're not the owner of this report")
         else:
@@ -628,7 +630,7 @@ class ReportManager(GridReport):
         elif "save" in request.POST:
             if "id" in request.POST:
                 m = SQLReport.objects.using(request.database).get(pk=request.POST["id"])
-                if m.user.id != request.user.id:
+                if m.user and m.user.id != request.user.id:
                     return HttpResponseForbidden("You're not the owner of this report")
                 f = SQLReportForm(request.POST, instance=m)
             else:

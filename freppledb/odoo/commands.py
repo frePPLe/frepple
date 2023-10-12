@@ -195,14 +195,19 @@ class OdooReadData(PlanTask):
                 with urlopen(request) as response:
                     if response.info().get("Content-Encoding") == "gzip":
                         frepple.readXMLdata(
-                            gzip.decompress(response.read()).decode("utf-8"),
+                            gzip.decompress(response.read()).decode(
+                                encoding="utf-8", errors="ignore"
+                            ),
                             False,
                             False,
                             loglevel,
                         )
                     else:
                         frepple.readXMLdata(
-                            response.read().decode("utf-8"), False, False, loglevel
+                            response.read().decode(encoding="utf-8", errors="ignore"),
+                            False,
+                            False,
+                            loglevel,
                         )
 
             except HTTPError as e:
@@ -224,7 +229,7 @@ class OdooReadData(PlanTask):
                                 print("Odoo:", data)
 
                     odoo_msg = OdooMsgParser()
-                    odoo_msg.feed(odoo_data.decode("utf-8"))
+                    odoo_msg.feed(odoo_data.decode("utf-8", errors="ignore"))
                 raise e
 
         else:

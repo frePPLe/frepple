@@ -12,6 +12,9 @@ The role of a XXXXXXXXXXX is:
 
    review-new-purchase-orders
    review-new-distribution-orders
+   identify-stockout-risk
+   review-inventory-across-network
+   identify-excess-inventory
    identify-expedite
    identify-rebalancing
    review-purchase-summary

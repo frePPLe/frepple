@@ -10,10 +10,7 @@ The role of an inventory planner is:
 .. toctree::
    :maxdepth: 2
 
-   identify-stockout-risk
    apply-safety-stock-override
    apply-reorder-quantity-override
    apply-policy-to-segment
-   review-inventory-across-network
-   identify-excess-inventory
 

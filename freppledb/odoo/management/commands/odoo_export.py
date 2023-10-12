@@ -264,7 +264,10 @@ class Command(BaseCommand):
             "--%s\r" % self.boundary,
             'Content-Disposition: form-data; name="mode"\r',
             "\r",
-            "%s\r" % (1 if self.firstPage else 2),  # 2 marks incremental export
+            "%s\r"
+            % (
+                1 if self.firstPage else 3
+            ),  # 3 is for incremental export with a skip of quantity aggregation in inbound.py
             "--%s\r" % self.boundary,
             'Content-Disposition: file; name="frePPLe plan"; filename="frepple_plan.xml"\r',
             "Content-Type: application/xml\r",

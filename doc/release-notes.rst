@@ -41,6 +41,10 @@ Release notes
   | These workflows are categorized for different planning roles: demand planner, inventory
     planner, production planner and material planners.
 
+.. rubric:: Data integration
+
+- | The export to folder command didn't respect the date format configured in your djangosettings.py.
+
 8.1.3 (2023-09-18)
 ==================
 

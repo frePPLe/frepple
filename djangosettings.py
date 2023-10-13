@@ -283,7 +283,7 @@ if not hasattr(sys, "argv") or "test" in sys.argv or "FREPPLE_TEST" in os.enviro
 #  - year-month-day: international format. This is the default
 DATE_STYLE = "year-month-day"
 
-if DATE_STYLE == "month-date-year":
+if DATE_STYLE == "month-day-year":
     # Option 1: US style
     DATE_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date

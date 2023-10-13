@@ -7,7 +7,7 @@ How can I forecast a new item?
 3) Navigate to Execute in the Admin menu and click on Launch plan.
 4) Navigate to Forecast Report in the Sales menu and filter for your new item.
 5) Adjust the forecast by setting customed values in the Forecast Override row.
-6) Navigate to Parameters in the Admin menu and change the value of parameter forecast.populateForecastTable from true to false.
+6) Navigate to Parameters in the Admin menu and revert the value of parameter forecast.populateForecastTable from false to true.
 7) Navigate to Execute in the Admin menu and click on Launch plan.
 
 .. raw:: html

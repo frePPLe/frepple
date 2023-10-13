@@ -303,7 +303,7 @@ Integration
 | **REST API**                            | A web-based JSON-REST API allows frePPLe to be integrated online with      | - `Live demo <https://demo.frepple.com/api/>`_                                |
 |                                         | other applications.                                                        |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Packaged connectors                   | Generic standard connectors for Odoo and Openbravo are available.          |                                                                               |
+| **Packaged connectors                   | Generic standard connectors for Odoo, Openbravo and Etendo are available.  |                                                                               |
 | with ERP systems**                      |                                                                            |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Remote automation**                   | All administrative tasks can be remotely managed through a web-based API.  |                                                                               |

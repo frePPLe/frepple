@@ -24,38 +24,38 @@ the following actions:
   | Whenever a parameter is changed, you can hit the recalculate button
     to see the impact on the plan.
 
-- A first tab show various **attributes and properties** of the selected 
+- A first tab show various **attributes and properties** of the selected
   item-location combination:
-  
+
   - Item attributes, including its cost, category, demand pattern and
     the sales metrics over the last 6 and 12 months.
-    
+
   - Top 5 customers of the item at this location.
-  
+
   - Location attributes.
-  
+
   - | Details on the inventory status.
-    | A bar chart shows the safety stock plus the replenishment quantity, 
+    | A bar chart shows the safety stock plus the replenishment quantity,
       with two indicators to compare the inventory with this expected range.
     | The arrow on the right shows today's current stock level.
     | The arrow on the left shows the expected stock level one lead time from
       today.
     | The lowest of both inventory positions is used to compute the inventory
       status of the item-location.
- 
+
   - Overview of the inventory and activity within the lead time of this
     at other locations in the network. This also includes the status of
     successor and predecessor parts.
-    
-  - | Summary of the replenishment methods, their lead time and size 
+
+  - | Summary of the replenishment methods, their lead time and size
       constraints and effectivity.
     | The replenishment method can refer to production operations,
       distribution warehouses to transport from or suppliers to buy from.
-   
+
   .. image:: ../_images/inventory-planning-attributes.png
 
   |
-  
+
 - | A second tab shows the **historical demand and the expected future forecast**.
   | The demand history in the past periods can be adjusted to remove
     exceptional demand outliers. Note that the adjustment is *added* to
@@ -89,21 +89,21 @@ the following actions:
 
   | When inventory planning parameters are highlighted with an exclamation
     triangle, it means that the value was set by a business rule.
- 
+
   .. image:: ../_images/inventory-planning-plan.png
 
   |
 
 - | The fourth tab shows the **planned and ongoing transactions** that are
     currently ongoing or proposed by frePPLe. The list shows purchase orders,
-    incoming distribution orders, outgoing distribution orders and open 
+    incoming distribution orders, outgoing distribution orders and open
     sales orders.
 
   | Date, quantity, item and supplier can be edited for proposed transactions.
   | When one or more rows are selected, the action list becomes active which is
     used to change the status of the transaction.
-  | If the Openbravo or Odoo connector app is activated, the dropdown allows 
-    the planner to immediately export the transaction immediately towards 
+  | If the Odoo, Etendo or Openbravo connector app is activated, the dropdown allows
+    the planner to immediately export the transaction immediately towards
     the ERP system.
 
   .. image:: ../_images/inventory-planning-transactions.png

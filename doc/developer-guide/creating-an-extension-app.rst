@@ -255,7 +255,7 @@ the menu "help/REST API help".
 
 .. code-block:: Python
 
-   class MyModelFilter(filters.FilterSet):
+   class MyModelFilter(FilterSet):
        class Meta:
            model = My_Model
            fields = {

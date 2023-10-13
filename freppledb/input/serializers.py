@@ -21,7 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django_filters import rest_framework as filters
 from rest_framework.serializers import SerializerMethodField
 from rest_framework_bulk.drf3.serializers import BulkListSerializer, BulkSerializerMixin
 
@@ -36,13 +35,14 @@ from freppledb.common.api.serializers import (
     getAttributeAPIFields,
     getAttributeAPIReadOnlyFields,
 )
+from freppledb.common.api.filters import FilterSet
 
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-class CalendarFilter(filters.FilterSet):
+class CalendarFilter(FilterSet):
     class Meta:
         model = models.Calendar
         fields = dict(
@@ -91,7 +91,7 @@ class CalendardetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = CalendarSerializer
 
 
-class CalendarBucketFilter(filters.FilterSet):
+class CalendarBucketFilter(FilterSet):
     class Meta:
         model = models.CalendarBucket
         fields = dict(
@@ -179,7 +179,7 @@ class CalendarBucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = CalendarBucketSerializer
 
 
-class LocationFilter(filters.FilterSet):
+class LocationFilter(FilterSet):
     class Meta:
         model = models.Location
         fields = dict(
@@ -230,7 +230,7 @@ class LocationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = LocationSerializer
 
 
-class CustomerFilter(filters.FilterSet):
+class CustomerFilter(FilterSet):
     class Meta:
         model = models.Customer
         fields = dict(
@@ -279,7 +279,7 @@ class CustomerdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = CustomerSerializer
 
 
-class ItemFilter(filters.FilterSet):
+class ItemFilter(FilterSet):
     class Meta:
         model = models.Item
         fields = dict(
@@ -341,7 +341,7 @@ class ItemdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = ItemSerializer
 
 
-class SupplierFilter(filters.FilterSet):
+class SupplierFilter(FilterSet):
     class Meta:
         model = models.Supplier
         fields = dict(
@@ -392,7 +392,7 @@ class SupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = SupplierSerializer
 
 
-class ItemSupplierFilter(filters.FilterSet):
+class ItemSupplierFilter(FilterSet):
     class Meta:
         model = models.ItemSupplier
         fields = dict(
@@ -461,7 +461,7 @@ class ItemSupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = ItemSupplierSerializer
 
 
-class ItemDistributionFilter(filters.FilterSet):
+class ItemDistributionFilter(FilterSet):
     class Meta:
         model = models.ItemDistribution
         fields = dict(
@@ -526,7 +526,7 @@ class ItemDistributiondetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = ItemDistributionSerializer
 
 
-class OperationFilter(filters.FilterSet):
+class OperationFilter(FilterSet):
     class Meta:
         model = models.Operation
         fields = dict(
@@ -606,7 +606,7 @@ class OperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = OperationSerializer
 
 
-class SubOperationFilter(filters.FilterSet):
+class SubOperationFilter(FilterSet):
     class Meta:
         model = models.SubOperation
         fields = dict(
@@ -657,7 +657,7 @@ class SubOperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = SubOperationSerializer
 
 
-class OperationDependencyFilter(filters.FilterSet):
+class OperationDependencyFilter(FilterSet):
     class Meta:
         model = models.OperationDependency
         fields = dict(
@@ -708,7 +708,7 @@ class OperationDependencydetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = OperationDependencySerializer
 
 
-class BufferFilter(filters.FilterSet):
+class BufferFilter(FilterSet):
     class Meta:
         model = models.Buffer
         fields = dict(
@@ -770,7 +770,7 @@ class BufferdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = BufferSerializer
 
 
-class SetupMatrixFilter(filters.FilterSet):
+class SetupMatrixFilter(FilterSet):
     class Meta:
         model = models.SetupMatrix
         fields = dict(
@@ -809,7 +809,7 @@ class SetupMatrixdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = SetupMatrixSerializer
 
 
-class SetupRuleFilter(filters.FilterSet):
+class SetupRuleFilter(FilterSet):
     class Meta:
         model = models.SetupRule
         fields = dict(
@@ -860,7 +860,7 @@ class SetupRuledetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = SetupRuleSerializer
 
 
-class ResourceFilter(filters.FilterSet):
+class ResourceFilter(FilterSet):
     class Meta:
         model = models.Resource
         fields = dict(
@@ -932,7 +932,7 @@ class ResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = ResourceSerializer
 
 
-class SkillFilter(filters.FilterSet):
+class SkillFilter(FilterSet):
     class Meta:
         model = models.Skill
         fields = dict(
@@ -971,7 +971,7 @@ class SkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = SkillSerializer
 
 
-class ResourceSkillFilter(filters.FilterSet):
+class ResourceSkillFilter(FilterSet):
     class Meta:
         model = models.ResourceSkill
         fields = dict(
@@ -1022,7 +1022,7 @@ class ResourceSkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = ResourceSkillSerializer
 
 
-class OperationMaterialFilter(filters.FilterSet):
+class OperationMaterialFilter(FilterSet):
     class Meta:
         model = models.OperationMaterial
         fields = dict(
@@ -1087,7 +1087,7 @@ class OperationMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = OperationMaterialSerializer
 
 
-class OperationPlanMaterialFilter(filters.FilterSet):
+class OperationPlanMaterialFilter(FilterSet):
     class Meta:
         model = models.OperationPlanMaterial
         fields = dict(
@@ -1142,7 +1142,7 @@ class OperationPlanMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = OperationPlanMaterialSerializer
 
 
-class OperationResourceFilter(filters.FilterSet):
+class OperationResourceFilter(FilterSet):
     class Meta:
         model = models.OperationResource
         fields = dict(
@@ -1204,7 +1204,7 @@ class OperationResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = OperationResourceSerializer
 
 
-class OperationPlanResourceFilter(filters.FilterSet):
+class OperationPlanResourceFilter(FilterSet):
     class Meta:
         model = models.OperationPlanResource
         fields = dict(
@@ -1266,7 +1266,7 @@ class OperationPlanResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = OperationPlanResourceSerializer
 
 
-class ManufacturingOrderFilter(filters.FilterSet):
+class ManufacturingOrderFilter(FilterSet):
     class Meta:
         model = models.ManufacturingOrder
         fields = dict(
@@ -1488,7 +1488,7 @@ class ManufacturingOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = ManufacturingOrderSerializer
 
 
-class DistributionOrderFilter(filters.FilterSet):
+class DistributionOrderFilter(FilterSet):
     class Meta:
         model = models.DistributionOrder
         fields = dict(
@@ -1551,7 +1551,7 @@ class DistributionOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = DistributionOrderSerializer
 
 
-class PurchaseOrderFilter(filters.FilterSet):
+class PurchaseOrderFilter(FilterSet):
     class Meta:
         model = models.PurchaseOrder
         fields = dict(
@@ -1615,7 +1615,7 @@ class PurchaseOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = PurchaseOrderSerializer
 
 
-class DeliveryOrderFilter(filters.FilterSet):
+class DeliveryOrderFilter(FilterSet):
     class Meta:
         model = models.DeliveryOrder
         fields = dict(
@@ -1678,7 +1678,7 @@ class DeliveryOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = DeliveryOrderSerializer
 
 
-class DemandFilter(filters.FilterSet):
+class DemandFilter(FilterSet):
     class Meta:
         model = models.Demand
         fields = dict(

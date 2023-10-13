@@ -27,8 +27,8 @@ from dateutil.parser import parse
 
 from rest_framework import serializers
 from rest_framework_bulk.drf3.serializers import BulkListSerializer, BulkSerializerMixin
-from django_filters import rest_framework as filters
 
+from freppledb.common.api.filters import FilterSet
 from freppledb.common.api.serializers import (
     ModelSerializer,
     getAttributeAPIFilterDefinition,
@@ -43,7 +43,7 @@ from freppledb.common.models import Parameter
 from freppledb.forecast.models import Forecast, Measure, ForecastPlan
 
 
-class ForecastFilter(filters.FilterSet):
+class ForecastFilter(FilterSet):
     class Meta:
         model = Forecast
         fields = dict(
@@ -121,7 +121,7 @@ class ForecastPlanSerializer(BulkSerializerMixin, ModelSerializer):
         partial = True
 
 
-class ForecastPlanFilter(filters.FilterSet):
+class ForecastPlanFilter(FilterSet):
     pass
 
 
@@ -157,7 +157,7 @@ class ForecastPlanAPI(frePPleListCreateAPIView):
     filter_class = None
 
 
-class MeasureFilter(filters.FilterSet):
+class MeasureFilter(FilterSet):
     class Meta:
         model = Measure
         fields = {

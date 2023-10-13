@@ -20,9 +20,9 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
-from django_filters import rest_framework as filters
 from rest_framework_bulk.serializers import BulkListSerializer, BulkSerializerMixin
 
+from freppledb.common.api.filters import FilterSet
 from freppledb.common.api.serializers import (
     ModelSerializer,
     getAttributeAPIFields,
@@ -36,7 +36,7 @@ from freppledb.common.api.views import (
 from . import models
 
 
-class BucketFilter(filters.FilterSet):
+class BucketFilter(FilterSet):
     class Meta:
         model = models.Bucket
         fields = {
@@ -73,7 +73,7 @@ class BucketAPI(frePPleListCreateAPIView):
     filter_class = BucketFilter
 
 
-class BucketDetailFilter(filters.FilterSet):
+class BucketDetailFilter(FilterSet):
     class Meta:
         model = models.BucketDetail
         fields = {
@@ -121,7 +121,7 @@ class BucketDetaildetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     filter_class = BucketDetailFilter
 
 
-class AttributeFilter(filters.FilterSet):
+class AttributeFilter(FilterSet):
     class Meta:
         model = models.Attribute
         fields = {
@@ -186,7 +186,7 @@ class CommentdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
 
 
-class ParameterFilter(filters.FilterSet):
+class ParameterFilter(FilterSet):
     class Meta:
         model = models.Parameter
         fields = {

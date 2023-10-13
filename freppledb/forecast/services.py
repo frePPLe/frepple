@@ -358,7 +358,6 @@ class ForecastService(AsyncHttpConsumer):
                                             and val != ""
                                         ):
                                             args[key] = float(val)
-                                    print("qqqq", args)
                                     frepple.setForecast(**args)
                                 except Exception as e:
                                     errors.append("Error processing %s" % e)

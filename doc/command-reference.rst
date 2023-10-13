@@ -753,6 +753,10 @@ Restore a database backup
 This command erases the existing content of a database and restores
 the contents of a postgresql database dump file.
 
+The database dump file can either be created with the :ref:`backup` command,
+or with the PostgreSQL `pg_dump <https://www.postgresql.org/docs/current/app-pgdump.html>`_
+command. When using pg_dump, you need to use the "custom format".
+
 .. tabs::
 
    .. tab:: Execution screen

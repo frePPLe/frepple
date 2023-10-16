@@ -169,9 +169,9 @@ input.ng-dirty {
       <td><b style="text-transform: capitalize">{{value.label|translate}}</b>&nbsp;
         <small>({{ value.type|translate }})</small>
       </td>
-      <td data-ng-if="['number', 'color', 'currency', 'currencyWithBlanks', 'duration'].includes(value['formatter'])">{{operationplan[key]|number:0}}</td>
+      <td data-ng-if="['number', 'color', 'currency', 'currencyWithBlanks'].includes(value['formatter'])">{{operationplan[key]|number:0}}</td>
       <td data-ng-if="value['formatter'] == 'date'">{{operationplan[key]|date:formatdatetime}}</td>
-      <td data-ng-if="!['date', 'number', 'color', 'currency', 'currencyWithBlanks', 'duration'].includes(value['formatter'])">xxx{{value['formatter']}}xx{{operationplan[key]}}</td>
+      <td data-ng-if="!['date', 'number', 'color', 'currency', 'currencyWithBlanks'].includes(value['formatter'])">{{operationplan[key]}}</td>
     </tr>
     <tr id="statusrow" data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize">{{'status'|translate}}</b></td>

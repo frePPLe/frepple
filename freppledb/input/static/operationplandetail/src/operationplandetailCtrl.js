@@ -194,6 +194,10 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         }
       });
     });
+    angular.forEach(aggColModel, function (field) {
+      if (field[3] === 'duration')
+        aggregatedopplan[field[1]] = formatDuration(aggregatedopplan[field[1]]);
+    });
     $scope.operationplan = new OperationPlan();
     aggregatedopplan.start = aggregatedopplan.startdate || aggregatedopplan.operationplan__startdate;
     if (moment.isMoment(aggregatedopplan.start))

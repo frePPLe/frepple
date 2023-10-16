@@ -45,6 +45,12 @@ Release notes
 
 - | The export to folder command didn't respect the date format configured in your djangosettings.py.
 
+.. rubric:: Legal
+
+- | The word frepple is now
+    `officially registered as a trade mark <https://euipo.europa.eu/eSearch/#details/trademarks/018891700>`_
+  | This provides us a more robust defence against any incorrect use of our work.
+
 8.1.3 (2023-09-18)
 ==================
 

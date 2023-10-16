@@ -4,8 +4,10 @@ Branding guidelines
 
 This page describes what we see as appropriate usage of the frepple name, logo and branding.
 
-* The official name is **frePPLe**, with PPL capitalized. Alternatively you can use
-  the name in lower case or upper case.
+* | The official name is **frePPLe**, with PPL capitalized. Alternatively you can use
+    the name in lower case or upper case.
+  | This name is also legally registered as a
+    `trade mark <https://euipo.europa.eu/eSearch/#details/trademarks/018891700>`_.
 
 * The official tag line is **the world's most advanced open source supply chain
   planning solution**.

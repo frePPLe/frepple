@@ -20,6 +20,8 @@ Release notes
 
 - | Bug fix: filter on null values wasn't working in "report manager" custom reports.
 
+- | Updated Italian translations have been contributed by Sbadux. Graie mille!
+
 .. rubric:: Odoo integration
 
 - | 15 & 16: Onhand inventory is now filtered.

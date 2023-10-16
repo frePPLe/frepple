@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-10 17:34+0100\n"
+"PO-Revision-Date: 2023-10-15 18:03+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: it\n"
@@ -23,7 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.4\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
@@ -74,7 +74,7 @@ msgstr "Continua"
 #: freppledb/forecast/static/forecast/forecast.html:79
 #: freppledb/forecast/static/forecast/src/forecast.js:878
 msgid "Customize"
-msgstr "Personalizzare"
+msgstr "Personalizza"
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
 msgid "Delivery"
@@ -151,7 +151,7 @@ msgstr "Piano operativo"
 #: freppledb/planningboard/static/planningboard/planningboard.html:818
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:235
 msgid "Plan selected demands backward from their due date"
-msgstr "Pianifica le domande selezionate a ritroso dalla loro data di scadenza"
+msgstr "Pianifica le domande selezionate a ritroso dalla loro data prevista"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1259
 #: freppledb/planningboard/static/planningboard/planningboard.html:821
@@ -185,7 +185,7 @@ msgstr "Rimuovi questa domanda dalla pianificazione"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:903
 msgid "Reset"
-msgstr "Ripristinare"
+msgstr "Ripristina"
 
 #: freppledb/forecast/static/forecast/forecast.html:153
 #: freppledb/forecast/static/forecast/forecast.html:454
@@ -297,7 +297,7 @@ msgstr "completato"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:68
 msgid "configure time buckets"
-msgstr "configurare i periodi di pianificazione"
+msgstr "configura periodi di pianificazione"
 
 #: freppledb/quoting/static/quoting/quoting.html:100
 msgid "confirm"
@@ -421,7 +421,7 @@ msgstr "scadenza"
 
 #: freppledb/quoting/static/quoting/quoting.html:79
 msgid "due date"
-msgstr "due date"
+msgstr "scadenza"
 
 #: freppledb/forecast/static/forecast/forecast.html:298
 msgid "edit"
@@ -526,7 +526,7 @@ msgstr "articoli"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:38
 msgid "lead time"
-msgstr "tempi di consegna"
+msgstr "lead time"
 
 #: freppledb/forecast/static/forecast/forecast.html:218
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:48
@@ -544,7 +544,7 @@ msgstr "sede"
 
 #: freppledb/forecast/static/forecast/forecast.html:94
 msgid "locations"
-msgstr "localizzazioni"
+msgstr "ubicazioni"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:191
 msgid "manufacturing order"
@@ -766,11 +766,11 @@ msgstr "attrezzaggio"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:42
 msgid "size minimum"
-msgstr "grandezza minima"
+msgstr "dimensione minima"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:44
 msgid "size multiple"
-msgstr "grandezza multipla"
+msgstr "multiplo del lotto"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:34
 #: freppledb/planningboard/static/planningboard/planningboard.html:1139
@@ -788,7 +788,7 @@ msgstr "inizio"
 #: freppledb/quoting/static/quoting/quoting.html:130
 #: freppledb/quoting/static/quoting/quoting.html:174
 msgid "start date"
-msgstr "data d'inizio"
+msgstr "data di inizio"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:118
 #: freppledb/planningboard/static/planningboard/planningboard.html:228

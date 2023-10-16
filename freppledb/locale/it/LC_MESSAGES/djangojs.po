@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-26 16:33+0200\n"
-"PO-Revision-Date: 2023-03-10 17:34+0100\n"
+"PO-Revision-Date: 2023-10-15 18:03+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: it\n"
@@ -23,7 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.4\n"
 
 #: common/static/js/frepple.js:195 common/static/js/frepple.min.js:11
 msgid "Connection failed"
@@ -49,13 +49,13 @@ msgstr "Chiuso"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:334
 msgid "There are unsaved changes on this page."
-msgstr "Ci sono su questa pagina delle modifiche non salvate."
+msgstr "In questa pagina ci sono modifiche non salvate."
 
 #: common/static/js/frepple.js:305 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:331
 msgid "Save or cancel your changes first"
-msgstr "Salva o cancella prima le tue modifiche"
+msgstr "Salva o cancella modifiche"
 
 #: common/static/js/frepple.js:311 common/static/js/frepple.js:2717
 #: common/static/js/frepple.min.js:11
@@ -68,7 +68,7 @@ msgstr "Salva"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:338
 msgid "Return to page"
-msgstr ""
+msgstr "Ritorna alla pagina"
 
 #: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
 msgid "select"
@@ -127,7 +127,7 @@ msgstr "Colonne congelate"
 #: forecast/static/forecast/src/forecast.js:919
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Customize"
-msgstr "Personalizzare"
+msgstr "Personalizza"
 
 #: common/static/js/frepple.js:873 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:945
@@ -150,7 +150,7 @@ msgstr "Cancella"
 #: forecast/static/forecast/src/forecast.js:947
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Reset"
-msgstr "Ripristinare"
+msgstr "Ripristina"
 
 #: common/static/js/frepple.js:1216 common/static/js/frepple.js:1266
 #: common/static/js/frepple.js:1318 common/static/js/frepple.js:1350
@@ -223,7 +223,7 @@ msgstr "Cancellare i dati"
 #: common/static/js/frepple.js:1614 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr "Stai cancellando  %s oggetti E TUTTI GLI INSERIMENTI AFFERENTI!"
+msgstr "Stai cancellando %s oggetti E TUTTI GLI INSERIMENTI COLLEGATI!"
 
 #: common/static/js/frepple.js:1617 common/static/js/frepple.js:1666
 #: common/static/js/frepple.js:2281 common/static/js/frepple.js:2371
@@ -254,7 +254,7 @@ msgstr "è figlio di"
 
 #: common/static/js/frepple.js:1881 common/static/js/frepple.min.js:11
 msgid "is null"
-msgstr ""
+msgstr "è null"
 
 #: common/static/js/frepple.js:1913 common/static/js/frepple.min.js:11
 msgid "days"
@@ -271,7 +271,7 @@ msgstr "e"
 
 #: common/static/js/frepple.js:2103 common/static/js/frepple.min.js:11
 msgid "Click ok to confirm deleting the favorite"
-msgstr ""
+msgstr "Premi ok per eliminare il preferito"
 
 #: common/static/js/frepple.js:2288 common/static/js/frepple.js:2459
 #: common/static/js/frepple.min.js:11
@@ -355,7 +355,7 @@ msgstr "Apps installate"
 
 #: common/static/js/frepple.js:3036 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
-msgstr "Importa file Excel o CSV"
+msgstr "Importa file CSV o Excel"
 
 #: common/static/js/frepple.js:3042 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
@@ -421,11 +421,11 @@ msgstr "Gestire le notifiche dei %s"
 
 #: common/static/js/frepple.js:3981 common/static/js/frepple.min.js:11
 msgid "Following"
-msgstr "Stai Seguendo"
+msgstr "Seguiti"
 
 #: common/static/js/frepple.js:4002 common/static/js/frepple.min.js:11
 msgid "Add followers"
-msgstr ""
+msgstr "Aggiungi follower"
 
 #: common/static/js/frepple.min.js:11
 msgid "OR"
@@ -438,7 +438,7 @@ msgstr "esporta"
 #: forecast/static/forecast/src/forecast.js:941
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Show descriptions"
-msgstr ""
+msgstr "Mostra descrizioni"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
@@ -448,7 +448,7 @@ msgstr "stato del scorte"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:29
 msgid "onhand at lead time"
-msgstr ""
+msgstr "disponibile a lead time"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63

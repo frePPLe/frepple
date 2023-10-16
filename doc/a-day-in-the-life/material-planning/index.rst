@@ -18,3 +18,4 @@ The role of a XXXXXXXXXXX is:
    identify-expedite
    identify-rebalancing
    review-purchase-summary
+   approve-mo-po-do

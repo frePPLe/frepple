@@ -126,7 +126,16 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
     angular.forEach(selectionData, function (opplan) {
       angular.forEach(aggColModel, function (field) {
         if (field[2] === 'sum') {
-          if (!isNaN(parseFloat(opplan[field[1]]))) {
+          if (field[3] === 'duration') {
+            temp = new moment.duration(opplan[field[1]]).asSeconds();
+            if (temp._d !== 'Invalid Date') {
+              if (aggregatedopplan[field[1]] === null)
+                aggregatedopplan[field[1]] = temp;
+              else
+                aggregatedopplan[field[1]] += temp;
+            }
+          }
+          else if (!isNaN(parseFloat(opplan[field[1]]))) {
             if (aggregatedopplan[field[1]] === null) {
               aggregatedopplan[field[1]] = parseFloat(opplan[field[1]]);
             } else {

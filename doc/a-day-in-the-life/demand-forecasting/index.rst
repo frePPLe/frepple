@@ -2,6 +2,12 @@
 A day in the life of a demand planner
 =====================================
 
+The role of a demand planner is:
+- to maintain the sales forecast
+- to collaborate with sales, marketing and production departments to collect all relevant forecast information
+- monitor demand outliers and avoid that these skew the forecast
+- monitor the forecast accuracy
+
 .. toctree::
    :maxdepth: 2
 

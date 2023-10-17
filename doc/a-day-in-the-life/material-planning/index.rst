@@ -2,20 +2,20 @@
 A day in the life of material planner
 =====================================
 
-The role of a XXXXXXXXXXX is:
+The role of a material planner is:
 - to create and follow up on purchase orders to suppliers
 - to create and follow up on distributions orders between locations
 - collaborate with suppliers on long term purchasing requirements
+- monitor critical material shortages and take corrective actions
+- monitor excess inventory situations and take corrective actions
 
 .. toctree::
    :maxdepth: 2
 
-   review-new-purchase-orders
-   review-new-distribution-orders
+   approve-mo-po-do
    identify-stockout-risk
-   review-inventory-across-network
    identify-excess-inventory
    identify-expedite
    identify-rebalancing
    review-purchase-summary
-   approve-mo-po-do
+   review-inventory-across-network

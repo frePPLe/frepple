@@ -53,9 +53,11 @@ operationplandetailapp.filter('formatdate', function () {
 operationplandetailapp.filter('formatdatetime', function () {
   return function (datestr) {
     if (moment.isMoment(datestr))
-      return datestr.format(datetimeformat);
-    else if (datestr && typeof (datestr) !== "undefined")
-      return moment(datestr, datetimeformat).format(datetimeformat);
+      return datestr.year() > 1971 ? datestr.format(datetimeformat) : "";
+    else if (datestr && typeof (datestr) !== "undefined") {
+      var tmp = moment(datestr, datetimeformat);
+      return tmp.year() > 1971 ? tmp.format(datetimeformat) : "";
+    }
   };
 });
 

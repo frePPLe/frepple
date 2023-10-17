@@ -23,6 +23,7 @@ a high level overview of the model objects and their relationships.
    distribution-orders
    forecast
    forecast-measures
+   forecast-plan
    inventory-planning-parameters
    items
    item-distributions

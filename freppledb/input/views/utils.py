@@ -647,8 +647,7 @@ class PathReport(GridReport):
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
       inner join item on item.name = %s and item.lft between i_parent.lft and i_parent.rght
-      inner join location l_parent on l_parent.name = itemsupplier.location_id
-      inner join location on location.lft between l_parent.lft and l_parent.rght
+      inner join location on location.name = itemsupplier.location_id
       union all
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
       location.name as location_id,
@@ -865,8 +864,7 @@ class PathReport(GridReport):
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
       inner join item on item.lft between i_parent.lft and i_parent.rght
-      inner join location l_parent on l_parent.name = itemsupplier.location_id
-      inner join location on location.lft between l_parent.lft and l_parent.rght
+      inner join location on location.name = itemsupplier.location_id
       where itemsupplier.resource_id = %%s
       union all
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
@@ -1232,8 +1230,7 @@ class PathReport(GridReport):
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
       inner join item on item.name = %s and item.lft between i_parent.lft and i_parent.rght
-      inner join location l_parent on l_parent.name = itemsupplier.location_id
-      inner join location on location.name = %s and location.lft between l_parent.lft and l_parent.rght
+      inner join location on location.name = %s and location.name = itemsupplier.location_id
       union all
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
       location.name as location_id,

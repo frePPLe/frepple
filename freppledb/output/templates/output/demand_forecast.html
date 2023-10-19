@@ -180,7 +180,7 @@ function drawGraphs(jsondata)
         .y(function(d) { return y(d['backlog']); });
       svg.append("svg:path")
         .attr('class', 'graphline')
-        .attr("stroke","#8BBA00")
+        .attr("stroke","#000000")
         .attr("d", line(data));
     }
 
@@ -217,7 +217,7 @@ function drawGraphs(jsondata)
     var codes = [
       [2, "{{_('demand')|capfirst}}", "#F6BD0F"],
       [3, "{{_('supply')|capfirst}}", "#2B95EC"],
-      [6, "{{_('backlog')|capfirst}}", "#8BBA00"]
+      [6, "{{_('backlog')|capfirst}}", "#000000"]
       ];
     var visible = 0;
     for (var i in codes)

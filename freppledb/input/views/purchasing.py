@@ -446,7 +446,7 @@ class PurchaseOrderList(OperationPlanMixin):
                         "title": force_str(Supplier._meta.verbose_name) + " " + args[0],
                         "post_title": _("purchase orders"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(request.database),
+                        "currentdate": getCurrentDate(request.database, lastplan=True),
                     }
                 )
             elif path == "location" or request.path.startswith(
@@ -461,7 +461,7 @@ class PurchaseOrderList(OperationPlanMixin):
                         "title": force_str(Location._meta.verbose_name) + " " + args[0],
                         "post_title": _("purchase orders"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(request.database),
+                        "currentdate": getCurrentDate(request.database, lastplan=True),
                     }
                 )
             elif path == "item" or request.path.startswith("/detail/input/item/"):
@@ -474,7 +474,7 @@ class PurchaseOrderList(OperationPlanMixin):
                         "title": force_str(Item._meta.verbose_name) + " " + args[0],
                         "post_title": _("purchase orders"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(request.database),
+                        "currentdate": getCurrentDate(request.database, lastplan=True),
                     }
                 )
             elif path == "operationplanmaterial":
@@ -490,7 +490,7 @@ class PurchaseOrderList(OperationPlanMixin):
                             % {"loc": args[1], "date": args[2]}
                         ),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(request.database),
+                        "currentdate": getCurrentDate(request.database, lastplan=True),
                     }
                 )
             elif path == "produced":
@@ -506,7 +506,7 @@ class PurchaseOrderList(OperationPlanMixin):
                             % {"loc": args[1], "date1": args[2], "date2": args[3]}
                         ),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(request.database),
+                        "currentdate": getCurrentDate(request.database, lastplan=True),
                     }
                 )
             else:
@@ -517,7 +517,7 @@ class PurchaseOrderList(OperationPlanMixin):
                         "active_tab": "edit",
                         "model": Item,
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(request.database),
+                        "currentdate": getCurrentDate(request.database, lastplan=True),
                     }
                 )
         elif "parentreference" in request.GET:
@@ -530,7 +530,7 @@ class PurchaseOrderList(OperationPlanMixin):
                     + " "
                     + request.GET["parentreference"],
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(request.database),
+                    "currentdate": getCurrentDate(request.database, lastplan=True),
                 }
             )
         else:
@@ -540,7 +540,7 @@ class PurchaseOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "purchaseorders",
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(request.database),
+                    "currentdate": getCurrentDate(request.database, lastplan=True),
                 }
             )
         return ctx

@@ -167,7 +167,7 @@ class ForecastWidget(Widget):
     @classmethod
     def render(cls, request=None):
         cursor = connections[request.database].cursor()
-        curdate = getCurrentDate(request.database)
+        curdate = getCurrentDate(request.database, lastplan=True)
         history = int(request.GET.get("history", cls.history))
         future = int(request.GET.get("future", cls.future))
         result = [
@@ -324,7 +324,7 @@ class ForecastAccuracyWidget(Widget):
     @classmethod
     def render(cls, request=None):
         cursor = connections[request.database].cursor()
-        curdate = getCurrentDate(request.database)
+        curdate = getCurrentDate(request.database, lastplan=True)
         history = int(request.GET.get("history", cls.history))
         result = [
             '<svg class="chart" id="forecast_error" style="width:100%; height: 100%"></svg>',

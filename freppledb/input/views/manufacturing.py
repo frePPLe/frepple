@@ -1657,7 +1657,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                         "title": force_str(Location._meta.verbose_name) + " " + args[0],
                         "post_title": _("manufacturing orders"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database),
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
                     }
                 )
             elif path == "operation" or request.path.startswith(
@@ -1674,7 +1674,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                         + args[0],
                         "post_title": _("manufacturing orders"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database),
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
                     }
                 )
             elif path == "item" or request.path.startswith("/detail/input/item/"):
@@ -1687,7 +1687,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                         "title": force_str(Item._meta.verbose_name) + " " + args[0],
                         "post_title": _("manufacturing orders"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database),
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
                     }
                 )
             elif path == "operationplanmaterial":
@@ -1703,7 +1703,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                             % {"loc": args[1], "date": args[2]}
                         ),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database),
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
                     }
                 )
             elif path == "produced":
@@ -1719,7 +1719,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                             % {"loc": args[1], "date1": args[2], "date2": args[3]}
                         ),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database),
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
                     }
                 )
             elif path == "consumed":
@@ -1735,7 +1735,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                             % {"loc": args[1], "date1": args[2], "date2": args[3]}
                         ),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database),
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
                     }
                 )
             else:
@@ -1746,7 +1746,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                         "active_tab": "edit",
                         "model": Item,
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database),
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
                     }
                 )
         elif "parentreference" in request.GET:
@@ -1759,7 +1759,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                     + " "
                     + request.GET["parentreference"],
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
+                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
                 }
             )
         else:
@@ -1769,7 +1769,7 @@ class ManufacturingOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "plandetail",
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
+                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
                 }
             )
         return ctx

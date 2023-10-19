@@ -839,7 +839,7 @@ class OverviewReport(GridPivot):
             with_col_aliases=False
         )
         cursor = connections[request.database].cursor()
-        currentdate = getCurrentDate(request.database)
+        currentdate = getCurrentDate(request.database, lastplan=True)
 
         # Collect backlog information
         query = (
@@ -1318,7 +1318,7 @@ class ForecastEditor:
                 """
 
         # Pick up the current date
-        current = getCurrentDate(request.database)
+        current = getCurrentDate(request.database, lastplan=True)
 
         # Execute the query
         cursor = connections[request.database].cursor()
@@ -1452,7 +1452,7 @@ class ForecastEditor:
           """
 
         # Pick up the current date
-        current = getCurrentDate(request.database)
+        current = getCurrentDate(request.database, lastplan=True)
 
         # Execute the query
         cursor = connections[request.database].cursor()
@@ -1587,7 +1587,7 @@ class ForecastEditor:
           """
 
         # Pick up the current date
-        current = getCurrentDate(request.database)
+        current = getCurrentDate(request.database, lastplan=True)
 
         # Execute the query
         cursor = connections[request.database].cursor()
@@ -1697,7 +1697,7 @@ class ForecastEditor:
             return HttpResponseNotFound("Item, customer or location aren't specified")
 
         # Pick up the current date
-        current = getCurrentDate(request.database)
+        current = getCurrentDate(request.database, lastplan=True)
 
         request.measures = list(
             itertools.chain(
@@ -2054,7 +2054,7 @@ class ForecastEditor:
             request.user.save()
 
         # Find the current date and current bucket
-        currentdate = getCurrentDate(request.database).date()
+        currentdate = getCurrentDate(request.database, lastplan=True).date()
         cursor.execute(
             """
             select name

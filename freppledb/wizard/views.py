@@ -2037,7 +2037,7 @@ class QuickStartForecast(View):
         ).delete()
         history = request.POST["history"].split()
         cal = Parameter.getValue("forecast.calendar", request.database, "month")
-        currentdate = getCurrentDate(request.database).date()
+        currentdate = getCurrentDate(request.database, lastplan=True).date()
         buckets = list(
             BucketDetail.objects.filter(bucket__name=cal, enddate__lte=currentdate)
             .order_by("-enddate")

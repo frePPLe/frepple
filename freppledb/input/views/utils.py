@@ -1813,7 +1813,7 @@ class DownstreamOperationPath(UpstreamOperationPath):
 
 class OperationPlanDetail(View):
     def getData(self, request):
-        current_date = getCurrentDate(request.database)
+        current_date = getCurrentDate(request.database, lastplan=True)
         cursor = connections[request.database].cursor()
 
         # Read the results from the database

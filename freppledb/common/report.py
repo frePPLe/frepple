@@ -200,12 +200,7 @@ def matchesModelName(name, model):
 
 def getHorizon(request, future_only=False):
     # Pick up the last current date or current date if last current date doesn't exist
-    try:
-        current = parse(
-            Parameter.objects.using(request.database).get(name="last_currentdate").value
-        )
-    except Exception:
-        current = getCurrentDate(request.database)
+    current = getCurrentDate(request.database, lastplan=True)
     horizontype = request.GET.get("horizontype", request.user.horizontype)
     horizonunit = request.GET.get("horizonunit", request.user.horizonunit)
     try:
@@ -479,8 +474,15 @@ def getCurrency():
         return ("", " $")
 
 
-def getCurrentDate(database=DEFAULT_DB_ALIAS):
-    val = Parameter.getValue("currentdate", database=database)
+def getCurrentDate(database=DEFAULT_DB_ALIAS, lastplan=False):
+    if lastplan:
+        try:
+            return parse(
+                Parameter.getValue("last_currentdate", default=None, database=database)
+            )
+        except Exception:
+            pass
+    val = Parameter.getValue("currentdate", default=None, database=database)
     try:
         return parse(val)
     except Exception:

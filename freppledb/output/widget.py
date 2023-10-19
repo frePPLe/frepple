@@ -333,7 +333,7 @@ class ManufacturingOrderWidget(Widget):
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
         except Exception:
             db = DEFAULT_DB_ALIAS
-        current = getCurrentDate(db)
+        current = getCurrentDate(db, lastplan=True)
         request.database = db
         GridReport.getBuckets(request)
         cursor = connections[db].cursor()
@@ -602,7 +602,7 @@ class DistributionOrderWidget(Widget):
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
         except Exception:
             db = DEFAULT_DB_ALIAS
-        current = getCurrentDate(db)
+        current = getCurrentDate(db, lastplan=True)
         request.database = db
         GridReport.getBuckets(request)
         cursor = connections[db].cursor()
@@ -882,7 +882,7 @@ class PurchaseOrderWidget(Widget):
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
         except Exception:
             db = DEFAULT_DB_ALIAS
-        current = getCurrentDate(db)
+        current = getCurrentDate(db, lastplan=True)
         request.database = db
         GridReport.getBuckets(request)
         supplierfilter = "and supplier_id = %s" if supplier else ""

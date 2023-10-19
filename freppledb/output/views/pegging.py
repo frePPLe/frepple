@@ -242,7 +242,7 @@ class ReportByDemand(GridReport):
         horizon = (
             request.report_enddate - request.report_startdate
         ).total_seconds() / 10000
-        current = getCurrentDate(request.database)
+        current = getCurrentDate(request.database, lastplan=True)
 
         # Collect demand due date, all operationplans and loaded resources
         query = """

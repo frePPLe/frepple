@@ -361,7 +361,7 @@ class OverviewReportWithForecast(GridPivot):
         Location.createRootObject(database=basequery.db)
         Customer.createRootObject(database=basequery.db)
 
-        current = getCurrentDate(basequery.db)
+        current = getCurrentDate(basequery.db, lastplan=True)
 
         # Execute a query to get the backlog at the start of the horizon
         startbacklogdict = {}

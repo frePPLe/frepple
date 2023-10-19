@@ -33,6 +33,7 @@ from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from freppledb.boot import getAttributes
 from freppledb.common.models import Parameter
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
+from freppledb.common.report import getCurrentDate
 from freppledb.input.models import (
     Resource,
     Item,
@@ -191,16 +192,7 @@ class checkBrokenSupplyPath(CheckTask):
         Item.rebuildHierarchy(database)
         Location.rebuildHierarchy(database)
         with_fcst_module = "freppledb.forecast" in settings.INSTALLED_APPS
-        currentdate = Parameter.getValue("currentdate", database=database)
-        try:
-            currentdate = parse(currentdate)
-        except Exception:
-            n = datetime.now()
-            currentdate = (
-                datetime(n.year, n.month, n.day)
-                if currentdate and currentdate.lower() == "today"
-                else n.replace(microsecond=0)
-            )
+        currentdate = getCurrentDate(database=database)
         param = (
             Parameter.getValue(
                 "plan.fixBrokenSupplyPath", database=database, default="true"

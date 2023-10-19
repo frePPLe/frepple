@@ -521,7 +521,7 @@ class ResourceDetail(OperationPlanMixin):
                     "title": force_str(Resource._meta.verbose_name) + " " + args[0],
                     "post_title": _("plan detail"),
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
+                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
                     "individualPoolResources": individualPoolResources,
                 }
             )
@@ -533,7 +533,7 @@ class ResourceDetail(OperationPlanMixin):
                     "active_tab": "plandetail",
                     "model": OperationPlanResource,
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
+                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
                     "individualPoolResources": individualPoolResources,
                 }
             )

@@ -661,137 +661,131 @@ class DistributionOrderList(OperationPlanMixin):
             paths = request.path.split("/")
             if paths[4] == "operationplanmaterial":
                 ctx.update(
-                        {
-                            "default_operationplan_type": "DO",
-                            "groupBy": "status",
-                            "active_tab": "distributionorders",
-                            "model": Item,
-                            "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                            "post_title": force_str(
-                                _("in transit in %(loc)s at %(date)s")
-                                % {"loc": args[1], "date": args[2]}
-                            ),
-                            "groupingcfg": groupingcfg,
-                            "currentdate": getCurrentDate(database=request.database),
-                        }
+                    {
+                        "default_operationplan_type": "DO",
+                        "groupBy": "status",
+                        "active_tab": "distributionorders",
+                        "model": Item,
+                        "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                        "post_title": force_str(
+                            _("in transit in %(loc)s at %(date)s")
+                            % {"loc": args[1], "date": args[2]}
+                        ),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    }
                 )
             elif paths[4] == "produced":
                 ctx.update(
-                        {
-                            "default_operationplan_type": "DO",
-                            "groupBy": "status",
-                            "active_tab": "distributionorders",
-                            "model": Item,
-                            "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                            "post_title": force_str(
-                                _("received in %(loc)s between %(date1)s and %(date2)s")
-                                % {"loc": args[1], "date1": args[2], "date2": args[3]}
-                            ),
-                            "groupingcfg": groupingcfg,
-                            "currentdate": getCurrentDate(database=request.database),
-                        }
+                    {
+                        "default_operationplan_type": "DO",
+                        "groupBy": "status",
+                        "active_tab": "distributionorders",
+                        "model": Item,
+                        "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                        "post_title": force_str(
+                            _("received in %(loc)s between %(date1)s and %(date2)s")
+                            % {"loc": args[1], "date1": args[2], "date2": args[3]}
+                        ),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    }
                 )
             elif paths[4] == "consumed":
                 ctx.update(
-                        {
-                            "default_operationplan_type": "DO",
-                            "groupBy": "status",
-                            "active_tab": "distributionorders",
-                            "model": Item,
-                            "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                            "post_title": force_str(
-                                _(
-                                    "shipped from %(loc)s between %(date1)s and %(date2)s"
-                                )
-                                % {"loc": args[1], "date1": args[2], "date2": args[3]}
-                            ),
-                            "groupingcfg": groupingcfg,
-                            "currentdate": getCurrentDate(database=request.database),
-                        }
-                    )
+                    {
+                        "default_operationplan_type": "DO",
+                        "groupBy": "status",
+                        "active_tab": "distributionorders",
+                        "model": Item,
+                        "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                        "post_title": force_str(
+                            _("shipped from %(loc)s between %(date1)s and %(date2)s")
+                            % {"loc": args[1], "date1": args[2], "date2": args[3]}
+                        ),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    }
+                )
             elif paths[4] == "item":
                 ctx.update(
-                        {
-                            "default_operationplan_type": "DO",
-                            "groupBy": "status",
-                            "active_tab": "distributionorders",
-                            "model": Item,
-                            "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                            "post_title": _("distribution orders"),
-                            "groupingcfg": groupingcfg,
-                            "currentdate": getCurrentDate(database=request.database),
-                        }
-                    )
+                    {
+                        "default_operationplan_type": "DO",
+                        "groupBy": "status",
+                        "active_tab": "distributionorders",
+                        "model": Item,
+                        "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                        "post_title": _("distribution orders"),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    }
+                )
             elif paths[4] == "location":
                 path = paths[-2]
                 if path == "in":
                     ctx.update(
-                            {
-                                "default_operationplan_type": "DO",
-                                "groupBy": "status",
-                                "active_tab": "inboundorders",
-                                "model": Location,
-                                "title": force_str(Location._meta.verbose_name)
-                                + " "
-                                + args[0],
-                                "post_title": _("inbound distribution"),
-                                "groupingcfg": groupingcfg,
-                                "currentdate": getCurrentDate(
-                                    database=request.database
-                                ),
-                            }
-                        )
-                elif path == "out":
-                    ctx.update(
-                            {
-                                "default_operationplan_type": "DO",
-                                "groupBy": "status",
-                                "active_tab": "outboundorders",
-                                "model": Location,
-                                "title": force_str(Location._meta.verbose_name)
-                                + " "
-                                + args[0],
-                                "post_title": _("outbound distribution"),
-                                "groupingcfg": groupingcfg,
-                                "currentdate": getCurrentDate(
-                                    database=request.database
-                                ),
-                            }
-                        )
-            else:
-                ctx.update(
                         {
                             "default_operationplan_type": "DO",
                             "groupBy": "status",
-                            "active_tab": "edit",
-                            "model": Item,
+                            "active_tab": "inboundorders",
+                            "model": Location,
+                            "title": force_str(Location._meta.verbose_name)
+                            + " "
+                            + args[0],
+                            "post_title": _("inbound distribution"),
                             "groupingcfg": groupingcfg,
-                            "currentdate": getCurrentDate(database=request.database),
+                            "currentdate": getCurrentDate(database=request.database, lastplan=True),
                         }
                     )
+                elif path == "out":
+                    ctx.update(
+                        {
+                            "default_operationplan_type": "DO",
+                            "groupBy": "status",
+                            "active_tab": "outboundorders",
+                            "model": Location,
+                            "title": force_str(Location._meta.verbose_name)
+                            + " "
+                            + args[0],
+                            "post_title": _("outbound distribution"),
+                            "groupingcfg": groupingcfg,
+                            "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        }
+                    )
+            else:
+                ctx.update(
+                    {
+                        "default_operationplan_type": "DO",
+                        "groupBy": "status",
+                        "active_tab": "edit",
+                        "model": Item,
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    }
+                )
         elif "parentreference" in request.GET:
             ctx.update(
-                    {
-                        "default_operationplan_type": "DO",
-                        "groupBy": "status",
-                        "active_tab": "edit",
-                        "title": force_str(DistributionOrder._meta.verbose_name)
-                        + " "
-                        + request.GET["parentreference"],
-                        "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database),
-                    }
-                )
+                {
+                    "default_operationplan_type": "DO",
+                    "groupBy": "status",
+                    "active_tab": "edit",
+                    "title": force_str(DistributionOrder._meta.verbose_name)
+                    + " "
+                    + request.GET["parentreference"],
+                    "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                }
+            )
         else:
             ctx.update(
-                    {
-                        "default_operationplan_type": "DO",
-                        "groupBy": "status",
-                        "active_tab": "edit",
-                        "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database),
-                    }
-                )
+                {
+                    "default_operationplan_type": "DO",
+                    "groupBy": "status",
+                    "active_tab": "edit",
+                    "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                }
+            )
         return ctx
 
     @classmethod
@@ -1482,16 +1476,18 @@ class InventoryDetail(OperationPlanMixin):
                 "/data/input/operationplanmaterial/item/"
             ) or request.path_info.startswith("/detail/input/item/"):
                 request.session["lasttab"] = "inventorydetail"
-                ctx.update({
-                    "default_operationplan_type": "MO",
-                    "groupBy": "operationplan__status",
-                    "active_tab": "inventorydetail",
-                    "model": Item,
-                    "title": force_str(Item._meta.verbose_name) + " " + args[0],
-                    "post_title": _("inventory detail"),
-                    "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                })
+                ctx.update(
+                    {
+                        "default_operationplan_type": "MO",
+                        "groupBy": "operationplan__status",
+                        "active_tab": "inventorydetail",
+                        "model": Item,
+                        "title": force_str(Item._meta.verbose_name) + " " + args[0],
+                        "post_title": _("inventory detail"),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    }
+                )
             elif request.path_info.startswith(
                 "/data/input/operationplanmaterial/buffer/"
             ):
@@ -1504,29 +1500,33 @@ class InventoryDetail(OperationPlanMixin):
                     buffer = Buffer.objects.get(id=args[0])
                     item = buffer.item.name
                     location = buffer.location.name
-                ctx.update( {
+                ctx.update(
+                    {
+                        "default_operationplan_type": "MO",
+                        "groupBy": "operationplan__status",
+                        "active_tab": "plandetail",
+                        "model": Buffer,
+                        "title": force_str(Buffer._meta.verbose_name)
+                        + " "
+                        + item
+                        + " @ "
+                        + location,
+                        "post_title": _("plan detail"),
+                        "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    }
+                )
+        else:
+            ctx.update(
+                {
                     "default_operationplan_type": "MO",
                     "groupBy": "operationplan__status",
                     "active_tab": "plandetail",
-                    "model": Buffer,
-                    "title": force_str(Buffer._meta.verbose_name)
-                    + " "
-                    + item
-                    + " @ "
-                    + location,
-                    "post_title": _("plan detail"),
+                    "model": OperationPlanMaterial,
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database),
-                })
-        else:
-            ctx.update({
-                "default_operationplan_type": "MO",
-                "groupBy": "operationplan__status",
-                "active_tab": "plandetail",
-                "model": OperationPlanMaterial,
-                "groupingcfg": groupingcfg,
-                "currentdate": getCurrentDate(database=request.database),
-            })
+                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                }
+            )
         return ctx
 
     rows = (

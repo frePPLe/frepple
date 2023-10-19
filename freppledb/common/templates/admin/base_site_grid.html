@@ -103,10 +103,10 @@ function displayGrid(load) {
       });
       var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
       tooltipList = [...tooltipTriggerList].map(
-          tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {
+          el => new bootstrap.Tooltip(el, {
             container: 'body',
             trigger : 'hover',
-            delay: { "show": 500, "hide": 100 }
+            delay: el.hasAttribute("data-bs-delay") ? JSON.parse(el.getAttribute("data-bs-delay")) : { "show": 500, "hide": 1000 }
           })
           );
       },

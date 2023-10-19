@@ -97,7 +97,7 @@ $(function() {
 				   <li class="navbar-item dropdown">
 					<a href="#" class="dropdown-toggle form-control pe-3" data-bs-toggle="dropdown"
           			   role="button" aria-haspopup="true" aria-expanded="false" id="database" name="{{ request.scenario.name }}">
-					<span data-bs-toggle="tooltip" data-bs-delay="2000" data-bs-placement="left"
+					<span data-bs-toggle="tooltip" data-bs-delay='{"show":2000, "hide":4000}' data-bs-placement="left"
 					  data-bs-title="{% trans "Select a what-if scenario.<br>Click <a class='text-decoration-underline' href='/execute/#scenario_copy'>here</a> to manage scenarios." %}"
 					  data-bs-html="true">
 						{{ request.scenario.description }}

@@ -53,7 +53,7 @@ def checkRunning(database=DEFAULT_DB_ALIAS, timeout=1.0):
     else:
         (host, port) = settings.DATABASES[database]["FREPPLE_PORT"].split(":")
     try:
-        portend.free(host, port, timeout=timeout)
+        portend.free(host.replace("0.0.0.0", "localhost"), port, timeout=timeout)
         return False
     except Exception:
         return True
@@ -68,7 +68,7 @@ def waitTillRunning(database=DEFAULT_DB_ALIAS, timeout=180):
     else:
         (host, port) = settings.DATABASES[database]["FREPPLE_PORT"].split(":")
     try:
-        portend.occupied(host, port, timeout=timeout)
+        portend.occupied(host.replace("0.0.0.0", "localhost"), port, timeout=timeout)
     except Exception:
         raise Exception("Web service not running within within %s seconds" % timeout)
 
@@ -82,6 +82,6 @@ def waitTillNotRunning(database=DEFAULT_DB_ALIAS, timeout=60):
     else:
         (host, port) = settings.DATABASES[database]["FREPPLE_PORT"].split(":")
     try:
-        portend.free(host, port, timeout=timeout)
+        portend.free(host.replace("0.0.0.0", "localhost"), port, timeout=timeout)
     except Exception:
         raise Exception("Web service not stopped within %s seconds" % timeout)

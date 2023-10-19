@@ -167,9 +167,13 @@ class Forecast(AuditModel):
     @staticmethod
     def flush(session, mode, database=DEFAULT_DB_ALIAS, token=None):
         if "FREPPLE_TEST" in os.environ:
-            server = settings.DATABASES[database]["TEST"]["FREPPLE_PORT"]
+            server = settings.DATABASES[database]["TEST"]["FREPPLE_PORT"].replace(
+                "0.0.0.0:", "localhost:"
+            )
         else:
-            server = settings.DATABASES[database]["FREPPLE_PORT"]
+            server = settings.DATABASES[database]["FREPPLE_PORT"].replace(
+                "0.0.0.0:", "localhost:"
+            )
         response = session.post(
             "http://%s/flush/%s/" % (server, mode),
             headers={
@@ -208,9 +212,13 @@ class Forecast(AuditModel):
         if forecast:
             data["forecast"] = forecast
         if "FREPPLE_TEST" in os.environ:
-            server = settings.DATABASES[database]["TEST"]["FREPPLE_PORT"]
+            server = settings.DATABASES[database]["TEST"]["FREPPLE_PORT"].replace(
+                "0.0.0.0:", "localhost:"
+            )
         else:
-            server = settings.DATABASES[database]["FREPPLE_PORT"]
+            server = settings.DATABASES[database]["FREPPLE_PORT"].replace(
+                "0.0.0.0:", "localhost:"
+            )
         if startdate:
             if isinstance(startdate, (date, datetime)):
                 data["startdate"] = startdate.strftime("%Y-%m-%dT%H:%M:%S")
@@ -648,6 +656,8 @@ class ForecastPlan(models.Model):
                     )
                 else:
                     server = settings.DATABASES[database].get("FREPPLE_PORT", None)
+                if server:
+                    server = server.replace("0.0.0.0:", "localhost:")
 
                 def sendToService(d):
                     response = session.post(

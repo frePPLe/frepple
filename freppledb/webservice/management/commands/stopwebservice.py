@@ -106,7 +106,9 @@ class Command(BaseCommand):
                     server = settings.DATABASES[database].get("FREPPLE_PORT", None)
                 if not server:
                     return
-                conn = HTTPConnection(server, timeout=10)
+                conn = HTTPConnection(
+                    server.replace("0.0.0.0", "localhost"), timeout=10
+                )
                 conn.request(
                     "POST",
                     "/stop/force/" if options["force"] else "/stop/",

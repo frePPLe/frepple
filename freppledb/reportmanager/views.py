@@ -45,6 +45,7 @@ from django.template import Template
 from django.utils.encoding import smart_str, force_str
 from django.utils.translation import gettext as _
 
+from freppledb.common.localization import parseLocalizedDate, parseLocalizedDateTime
 from freppledb.common.models import User, Parameter
 from freppledb.common.report import (
     create_connection,
@@ -169,15 +170,13 @@ class ReportManager(GridReport):
     def _filter_ne(reportrow, field, data):
         if isinstance(
             reportrow,
-            (
-                GridFieldCurrency,
-                GridFieldInteger,
-                GridFieldNumber,
-                GridFieldDate,
-                GridFieldDateTime,
-            ),
+            (GridFieldCurrency, GridFieldInteger, GridFieldNumber),
         ):
             return ('"%s" is distinct from %%s' % field, [smart_str(data).strip()])
+        elif isinstance(reportrow, GridFieldDateTime):
+            return ('"%s" is distinct from %%s' % field, [parseLocalizedDateTime(data)])
+        elif isinstance(reportrow, GridFieldDate):
+            return ('"%s" is distinct from %%s' % field, [parseLocalizedDate(data)])
         else:
             return (
                 'upper("%s"::text) is distinct from upper(%%s)' % field,
@@ -219,15 +218,13 @@ class ReportManager(GridReport):
     def _filter_eq(reportrow, field, data):
         if isinstance(
             reportrow,
-            (
-                GridFieldCurrency,
-                GridFieldInteger,
-                GridFieldNumber,
-                GridFieldDate,
-                GridFieldDateTime,
-            ),
+            (GridFieldCurrency, GridFieldInteger, GridFieldNumber),
         ):
             return ('"%s" = %%s' % field, [smart_str(data).strip()])
+        elif isinstance(reportrow, GridFieldDateTime):
+            return ('"%s" = %%s' % field, [parseLocalizedDateTime(data)])
+        elif isinstance(reportrow, GridFieldDate):
+            return ('"%s" = %%s' % field, [parseLocalizedDate(data)])
         else:
             return ('upper("%s"::text) = upper(%%s)' % field, [smart_str(data).strip()])
 
@@ -240,19 +237,39 @@ class ReportManager(GridReport):
 
     @staticmethod
     def _filter_gt(reportrow, field, data):
-        return ('"%s" > %%s' % field, [smart_str(data).strip()])
+        if isinstance(reportrow, GridFieldDateTime):
+            return ('"%s" > %%s' % field, [parseLocalizedDateTime(data)])
+        elif isinstance(reportrow, GridFieldDate):
+            return ('"%s" > %%s' % field, [parseLocalizedDate(data)])
+        else:
+            return ('"%s" > %%s' % field, [smart_str(data).strip()])
 
     @staticmethod
     def _filter_gte(reportrow, field, data):
-        return ('"%s" >= %%s' % field, [smart_str(data).strip()])
+        if isinstance(reportrow, GridFieldDateTime):
+            return ('"%s" >= %%s' % field, [parseLocalizedDateTime(data)])
+        elif isinstance(reportrow, GridFieldDate):
+            return ('"%s" >= %%s' % field, [parseLocalizedDate(data)])
+        else:
+            return ('"%s" >= %%s' % field, [smart_str(data).strip()])
 
     @staticmethod
     def _filter_lt(reportrow, field, data):
-        return ('"%s" < %%s' % field, [smart_str(data).strip()])
+        if isinstance(reportrow, GridFieldDateTime):
+            return ('"%s" < %%s' % field, [parseLocalizedDateTime(data)])
+        elif isinstance(reportrow, GridFieldDate):
+            return ('"%s" < %%s' % field, [parseLocalizedDate(data)])
+        else:
+            return ('"%s" < %%s' % field, [smart_str(data).strip()])
 
     @staticmethod
     def _filter_lte(reportrow, field, data):
-        return ('"%s" <= %%s' % field, [smart_str(data).strip()])
+        if isinstance(reportrow, GridFieldDateTime):
+            return ('"%s" <= %%s' % field, [parseLocalizedDateTime(data)])
+        elif isinstance(reportrow, GridFieldDate):
+            return ('"%s" <= %%s' % field, [parseLocalizedDate(data)])
+        else:
+            return ('"%s" <= %%s' % field, [smart_str(data).strip()])
 
     @staticmethod
     def _filter_ew(reportrow, field, data):

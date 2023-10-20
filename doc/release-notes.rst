@@ -1,8 +1,13 @@
 Release notes
 -------------
 
-8.2.0 (Upcoming release)
+8.3.0 (Upcoming release)
 ========================
+
+Check out the `preview of this release <https://demo-preview.frepple.com>`_.
+
+8.2.0 (2023-10-20)
+==================
 
 .. rubric:: Production planning
 
@@ -51,7 +56,7 @@ Release notes
 
 - | The word frepple is now
     `officially registered as a trade mark <https://euipo.europa.eu/eSearch/#details/trademarks/018891700>`_
-  | This provides us a more robust defence against any incorrect use of our work.
+  | This provides us a more robust defense against any incorrect use of our work.
 
 8.1.3 (2023-09-18)
 ==================

@@ -2,6 +2,14 @@
 How can I measure the impact of rush orders?
 ============================================
 
+Urgent and important sales orders place the production planner with a difficult
+dilemma: Accepting the rush order will make you a hero with the sales representative,
+but it can significantly delay the delivery of other sales order.
+
+Frepple allows you to simulate the new rush order and quickly evaluate its impact
+on the plan. This provides production planners with a powerful ananlysis tool
+to answer the dilemma.
+
 1) Navigate to Execute in the Admin menu.
 2) Pick the Scenario management tab in the Launch tasks menu.
 3) Select a Scenario and Copy default into selected scenarios. Then click on Copy.

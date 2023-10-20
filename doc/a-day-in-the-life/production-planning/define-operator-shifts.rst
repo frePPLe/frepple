@@ -2,6 +2,13 @@
 How can I input my operators' shifts or holidays?
 =================================================
 
+Production shifts are often flexible. During peak periods increasing the number of
+working hours on a resource is an easy way to increase the available capacity on
+a bottleneck resource.
+
+As a production planner you want to define these working hours correctly
+to get an accurate and realistic plan.
+
 1) Navigate to Calendars in the Manufacturing menu.
 2) Click on the + icon in the upper right corner and add a new calendar for your operator with default value = 0 (for instance: Calendar for Antonio).
 3) In Calendars Buckets, add another calendar bucket line with value = 1 for each availability of the operator.

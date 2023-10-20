@@ -3,7 +3,7 @@ Create long term purchase plan for a supplier
 =============================================
 
 As part of their yearly or quarterly budgetting process your supplier can
-request you to provide a long term prediction of your purchasing intentions.
+request your material planner to provide a long term prediction of your purchasing intentions.
 
 1) | Open the "purchase order summary" screen from the Purchasing menu.
 2) | Filter for a specific supplier, and select the appropriate time horizon

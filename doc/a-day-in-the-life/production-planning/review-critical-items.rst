@@ -4,6 +4,7 @@ Review critical items
 
 You want to get a good overview of all problematic end items in your
 portfolio, i.e. items for which your supply can't follow the demand.
+
 You want to see to evolution of the backlogged demand over time.
 
 1) | Open the "demand report" from the sales menu.

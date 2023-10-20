@@ -2,6 +2,12 @@
 How can I compare my own forecast with the forecast computed by frePPLe?
 ========================================================================
 
+It's a common debate whether your manual forecast overrides are more
+accurate than the statistical forecast computed by frePPLe.
+
+We're not gonna enter the debate, but will just show you how you can review
+both.
+
 1) Navigate to Forecast Report in the Sales menu.
 2) Click on the table icon in the upper right corner.
 3) The Forecast baseline row contains the forecast computed by frePPLe.

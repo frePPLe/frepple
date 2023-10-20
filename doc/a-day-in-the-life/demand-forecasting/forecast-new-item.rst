@@ -2,6 +2,11 @@
 How can I forecast a new item?
 ==============================
 
+New items don't have any sales history yet (or only a very limited one).
+FrePPLe's statistical forecast can not generate a reliable forecast yet for them.
+
+A demand planner will need to manually adjust the forecast value.
+
 1) Navigate to Parameters in the Admin menu and change the value of parameter forecast.populateForecastTable from true to false.
 2) Navigate to Forecast in the Sales menu and click on the + icon in the upper right corner to add a new forecast record.
 3) Navigate to Execute in the Admin menu and click on Launch plan.

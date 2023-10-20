@@ -2,6 +2,11 @@
 How can I upload my forecast values?
 ====================================
 
+Some of your customers will provide you a sales forecast. You'll want to plan
+with these forecasted sales, rather than any statistically generated forecast.
+
+You can easily upload a spreadsheet with these forecast data.
+
 1) Navigate to Forecast Report in the Sales menu.
 2) Export the forecast report by clicking on the down arrow icon in the upper right corner.
 3) Populate the file you have just exported with your own forecast data.

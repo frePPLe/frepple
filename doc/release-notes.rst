@@ -25,7 +25,7 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 
 - | Bug fix: filter on null values wasn't working in "report manager" custom reports.
 
-- | Updated Italian translations have been contributed by Sbadux. Graie mille!
+- | Updated Italian translations have been contributed by Sbadux. Grazie mille!
 
 .. rubric:: Odoo integration
 

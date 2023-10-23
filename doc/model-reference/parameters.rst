@@ -172,6 +172,13 @@ forecast.Net_NetEarly                                Defines how much time (expr
                                                      we are allowed to search for a forecast bucket to net from.
 forecast.Net_NetLate                                 Defines how much time (expressed in days) after the due date of an order
                                                      we are allowed to search for a forecast bucket to net from.
+forecast.Net_PastDemand                              | When this parameter is false (default) only sales orders in the current and
+                                                       future buckets net from forecast.
+                                                     | When set to true also older demands are used for netting forecast.
+forecast.Net_IgnoreLocation                          | When this parameter is true the forecasting netting doesn't need a match
+                                                       between location of the sales order and the forecast.
+                                                     | This can be useful when sales orders are often shipped from a non-standard
+                                                       location.
 forecast.Outlier_maxDeviation                        Multiple of the standard deviation used to detect outliers
 forecast.populateForecastTable                       | Populates automatically the forecast table based on the item/location
                                                        combinations found in the demand table using parent customer when available.

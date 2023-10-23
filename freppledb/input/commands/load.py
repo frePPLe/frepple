@@ -29,6 +29,7 @@ from dateutil.parser import parse
 
 from django.conf import settings
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
+from django.db.utils import OperationalError
 
 from freppledb.boot import getAttributes
 from freppledb.common.models import Parameter
@@ -184,7 +185,7 @@ class checkBrokenSupplyPath(CheckTask):
 
     @classmethod
     def getWeight(cls, **kwargs):
-        return -1 if kwargs.get("skipLoad", False) else 1
+        return -1 if kwargs.get("skipLoad", False) or "loadplan" in os.environ else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -202,90 +203,104 @@ class checkBrokenSupplyPath(CheckTask):
             == "true"
         )
 
-        with connections[database].cursor() as cursor:
-            if not param:
-                logger.info("skipping search of broken supply")
-                cursor.execute(
-                    """
-                    delete from itemsupplier where supplier_id = 'Unknown supplier';
-                    delete from operationplan where supplier_id = 'Unknown supplier';
-                    delete from supplier where name = 'Unknown supplier';
-                    """
-                )
-                return
+        try:
+            with transaction.atomic(using=database, savepoint=False):
+                with connections[database].cursor() as cursor:
+                    if not param:
+                        logger.info("skipping search of broken supply")
+                        cursor.execute(
+                            """
+                            delete from itemsupplier where supplier_id = 'Unknown supplier';
+                            delete from operationplan where supplier_id = 'Unknown supplier';
+                            delete from supplier where name = 'Unknown supplier';
+                            """
+                        )
+                        return
 
-            # cleaning previous records
-            cursor.execute(
-                """
-                delete from itemsupplier where supplier_id = 'Unknown supplier';
-                insert into supplier (name, description)
-                values
-                ('Unknown supplier', 'automatically created to resolve broken supply paths')
-                on conflict (name)
-                do nothing;
-                """
-            )
+                    # Setting a max run time to protect against bad data
+                    cursor.execute("set local statement_timeout = '300s'")
 
-            # inserting combinations with no replenishment
-            cursor.execute(
-                """
-                insert into itemsupplier (supplier_id, item_id, location_id)
-                (select distinct 'Unknown supplier', item_id, location_id from demand where status in ('open','quote')
-                union
-                select distinct 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
-                inner join operation on operation.name = operationmaterial.operation_id
-                where operationmaterial.quantity < 0
-                %s
-                )
-                except
-                (select 'Unknown supplier', item.name, location_id from itemdistribution
-                inner join item parentitem on itemdistribution.item_id = parentitem.name
-                inner join item on item.lft between parentitem.lft and parentitem.rght
-                inner join location on itemdistribution.location_id = location.name
-                where coalesce(itemdistribution.effective_end, %%s) >= %%s
-                union
-                select 'Unknown supplier', item.name, location_id from itemsupplier
-                inner join item parentitem on itemsupplier.item_id = parentitem.name
-                inner join item on item.lft between parentitem.lft and parentitem.rght
-                inner join location on itemsupplier.location_id = location.name
-                where coalesce(itemsupplier.effective_end, %%s) >= %%s
-                union
-                select 'Unknown supplier', item.name, location.name from itemsupplier
-                inner join item parentitem on itemsupplier.item_id = parentitem.name
-                inner join item on item.lft between parentitem.lft and parentitem.rght
-                cross join location
-                where itemsupplier.location_id is null and coalesce(itemsupplier.effective_end, %%s) >= %%s
-                union
-                select 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
-                inner join operation on operation.name = operationmaterial.operation_id
-                where operationmaterial.quantity > 0 and coalesce(operation.effective_end, %%s) >= %%s
-                union
-                select 'Unknown supplier', item_id, location_id from operation
-                where coalesce(operation.effective_end, %%s) >= %%s
-                )
-                """
-                % (
-                    """
-                    union
-                    select distinct 'Unknown supplier', item_id, location_id from forecast where planned
-                    """
-                    if with_fcst_module
-                    else "",
-                ),
-                ((currentdate,) * 10),
-            )
+                    # cleaning previous records
+                    cursor.execute(
+                        """
+                        delete from itemsupplier where supplier_id = 'Unknown supplier';
+                        insert into supplier (name, description)
+                        values
+                        ('Unknown supplier', 'automatically created to resolve broken supply paths')
+                        on conflict (name)
+                        do nothing;
+                        """
+                    )
 
-            # removing unknown supplier if no invalid record has been found
-            if cursor.rowcount == 0:
-                cursor.execute(
-                    """
-                    update operationplan set supplier_id = null where supplier_id = 'Unknown supplier';
-                    delete from supplier where name = 'Unknown supplier';
-                    """
-                )
-                logger.info("No broken supply path detected")
-            else:
-                logger.info("Created %d item suppliers records" % (cursor.rowcount,))
+                    # inserting combinations with no replenishment
+                    cursor.execute(
+                        """
+                        insert into itemsupplier (supplier_id, item_id, location_id)
+                        (select 'Unknown supplier', item_id, location_id from demand where status in ('open','quote')
+                        union
+                        select 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
+                        inner join operation on operation.name = operationmaterial.operation_id
+                        where operationmaterial.quantity < 0
+                        %s
+                        )
+                        except
+                        (select 'Unknown supplier', item.name, location_id from itemdistribution
+                        inner join item parentitem on itemdistribution.item_id = parentitem.name
+                        inner join item on item.lft between parentitem.lft and parentitem.rght
+                        inner join location on itemdistribution.location_id = location.name
+                        where coalesce(itemdistribution.effective_end, %%s) >= %%s
+                        and itemdistribution.priority is distinct from 0
+                        union
+                        select 'Unknown supplier', item.name, location_id from itemsupplier
+                        inner join item parentitem on itemsupplier.item_id = parentitem.name
+                        inner join item on item.lft between parentitem.lft and parentitem.rght
+                        inner join location on itemsupplier.location_id = location.name
+                        where coalesce(itemsupplier.effective_end, %%s) >= %%s
+                        and itemsupplier.priority is distinct from 0
+                        union
+                        select 'Unknown supplier', item.name, location.name from itemsupplier
+                        inner join item parentitem on itemsupplier.item_id = parentitem.name
+                        inner join item on item.lft between parentitem.lft and parentitem.rght
+                        cross join location
+                        where itemsupplier.location_id is null and coalesce(itemsupplier.effective_end, %%s) >= %%s
+                        and itemsupplier.priority is distinct from 0
+                        union
+                        select 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
+                        inner join operation on operation.name = operationmaterial.operation_id
+                        where operationmaterial.quantity > 0 and coalesce(operation.effective_end, %%s) >= %%s
+                        and operation.priority is distinct from 0
+                        union
+                        select 'Unknown supplier', item_id, location_id from operation
+                        where coalesce(operation.effective_end, %%s) >= %%s
+                        and operation.priority is distinct from 0
+                        )
+                        """
+                        % (
+                            """
+                            union
+                            select 'Unknown supplier', item_id, location_id from forecast where planned
+                            """
+                            if with_fcst_module
+                            else "",
+                        ),
+                        ((currentdate,) * 10),
+                    )
+
+                    if cursor.rowcount == 0:
+                        # removing unknown supplier if no invalid record has been found
+                        cursor.execute(
+                            """
+                            update operationplan set supplier_id = null where supplier_id = 'Unknown supplier';
+                            delete from supplier where name = 'Unknown supplier';
+                            """
+                        )
+                        logger.info("No broken supply path detected")
+                    else:
+                        logger.info(
+                            "Created %d item suppliers records" % (cursor.rowcount,)
+                        )
+        except OperationalError:
+            logger.error("Aborted creation of item supplier records after 5 minutes.")
 
 
 @PlanTaskRegistry.register

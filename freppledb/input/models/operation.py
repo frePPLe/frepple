@@ -634,7 +634,7 @@ class OperationDependency(AuditModel):
         Operation,
         verbose_name=_("blocked by operation"),
         related_name="dependents",
-        help_text=_("blocked-by operation"),
+        help_text=_("blocked by operation"),
         on_delete=models.CASCADE,
     )
     quantity = models.DecimalField(

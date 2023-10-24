@@ -2756,7 +2756,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     '</div>' +
     '<div class="modal-footer justify-content-between">' +
     '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray pull-left" data-bs-dismiss="modal" value="' + gettext('Close') + '">' +
-    '<input type="submit" id="copytoclipboard" role="button" class="btn btn-gray pull-left" value="' + gettext('Copy to Clipboard') + '" style="display: none;">' +
+    '<input type="submit" id="copytoclipboard" role="button" class="btn btn-gray pull-left" value="' + gettext('Copy to clipboard') + '" style="display: none;">' +
     '<input type="submit" id="importbutton" role="button" class="btn btn-primary pull-right" value="' + gettext('Import') + '">' +
     '<input type="submit" id="cancelimportbutton" role="button" class="btn btn-primary pull-left" value="' + gettext('Cancel Import') + '" style="display: none;">' +
     '</div>' +

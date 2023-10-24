@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-26 16:33+0200\n"
+"POT-Creation-Date: 2023-10-24 12:27+0200\n"
 "PO-Revision-Date: 2023-03-10 17:34+0100\n"
 "Last-Translator: Blago Čuljak <blago.culjak@hotmail.com>\n"
 "Language-Team: klaus\n"
@@ -29,412 +29,342 @@ msgstr ""
 "X-Generator: Poedit 2.4.1\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: common/static/js/frepple.js:195 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:201
 msgid "Connection failed"
 msgstr ""
 
-#: common/static/js/frepple.js:214 common/static/js/frepple.js:861
-#: common/static/js/frepple.js:2298 common/static/js/frepple.js:2467
-#: common/static/js/frepple.js:3078 common/static/js/frepple.js:3205
-#: common/static/js/frepple.js:3968 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:916
-#: forecast/static/js/frepple-forecast.min.js:11
+#: common/static/js/frepple.js:220 common/static/js/frepple.js:884
+#: common/static/js/frepple.js:1181 common/static/js/frepple.js:2171
+#: common/static/js/frepple.js:2788 common/static/js/frepple.js:2915
+#: common/static/js/frepple.js:3677
 msgid "Close"
 msgstr "Zatvori"
 
-#: common/static/js/frepple.js:227 common/static/js/frepple.js:308
-#: common/static/js/frepple.min.js:11
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:334
+#: common/static/js/frepple.js:234 common/static/js/frepple.js:320
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:350
 msgid "There are unsaved changes on this page."
 msgstr "Niste spremili promjene."
 
-#: common/static/js/frepple.js:305 common/static/js/frepple.min.js:11
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:331
+#: common/static/js/frepple.js:317
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:347
 msgid "Save or cancel your changes first"
 msgstr "Spremite ili odustanite od izmjena."
 
-#: common/static/js/frepple.js:311 common/static/js/frepple.js:2717
-#: common/static/js/frepple.min.js:11
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:337
+#: common/static/js/frepple.js:323 common/static/js/frepple.js:2397
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:354
 msgid "Save"
 msgstr "Spremi"
 
-#: common/static/js/frepple.js:312 common/static/js/frepple.min.js:11
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:338
+#: common/static/js/frepple.js:324
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:353
 msgid "Return to page"
 msgstr ""
 
-#: common/static/js/frepple.js:527 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:542
 msgid "select"
 msgstr "Metoda odabira željene alternative"
 
-#: common/static/js/frepple.js:562 common/static/js/frepple.min.js:11
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:406
+#: common/static/js/frepple.js:577
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:427
 msgid "days early"
 msgstr "Dana preuranjeno"
 
-#: common/static/js/frepple.js:564 common/static/js/frepple.min.js:11
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:408
+#: common/static/js/frepple.js:579
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:429
 msgid "on time"
 msgstr "na vrijeme"
 
-#: common/static/js/frepple.js:567 common/static/js/frepple.js:569
-#: common/static/js/frepple.min.js:11
-#: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:411
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:413
+#: common/static/js/frepple.js:582 common/static/js/frepple.js:584
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:432
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:434
 msgid "days late"
 msgstr "kasni dana"
 
-#: common/static/js/frepple.js:709 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:724
 msgid "Select action"
 msgstr "odaberite radnju"
 
-#: common/static/js/frepple.js:765 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:780
 msgid "Selected options"
 msgstr "Odabrane opcije"
 
-#: common/static/js/frepple.js:772 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:787
 msgid "Available options"
 msgstr "Dostupne opcije"
 
-#: common/static/js/frepple.js:810 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:925
-#: forecast/static/js/frepple-forecast.min.js:11
+#: common/static/js/frepple.js:825 forecast/static/forecast/src/forecast.js:936
 msgid "Selected Cross"
 msgstr "Izabrani križ"
 
-#: common/static/js/frepple.js:820 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:933
-#: forecast/static/js/frepple-forecast.min.js:11
+#: common/static/js/frepple.js:835 forecast/static/forecast/src/forecast.js:944
 msgid "Available Cross"
 msgstr "Dostupni križ"
 
-#: common/static/js/frepple.js:842 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:857
 msgid "Frozen columns"
 msgstr "Fiksni stupci"
 
-#: common/static/js/frepple.js:864 common/static/js/frepple.js:2809
-#: common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:919
-#: forecast/static/js/frepple-forecast.min.js:11
+#: common/static/js/frepple.js:883 common/static/js/frepple.js:2490
+#: forecast/static/forecast/src/forecast.js:929
 msgid "Customize"
 msgstr "Prilagodi"
 
-#: common/static/js/frepple.js:873 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:945
-#: forecast/static/js/frepple-forecast.min.js:11
-msgid "OK"
-msgstr "OK"
-
-#: common/static/js/frepple.js:874 common/static/js/frepple.js:1256
-#: common/static/js/frepple.js:1308 common/static/js/frepple.js:1341
-#: common/static/js/frepple.js:1374 common/static/js/frepple.js:1618
-#: common/static/js/frepple.js:1667 common/static/js/frepple.js:2282
-#: common/static/js/frepple.js:2372 common/static/js/frepple.js:2716
-#: common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:946
-#: forecast/static/js/frepple-forecast.min.js:11
+#: common/static/js/frepple.js:893 common/static/js/frepple.js:1272
+#: common/static/js/frepple.js:1489 common/static/js/frepple.js:1538
+#: common/static/js/frepple.js:2150 common/static/js/frepple.js:2396
+#: forecast/static/forecast/src/forecast.js:956
 msgid "Cancel"
 msgstr "Odustani"
 
-#: common/static/js/frepple.js:875 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:947
-#: forecast/static/js/frepple-forecast.min.js:11
+#: common/static/js/frepple.js:894 forecast/static/forecast/src/forecast.js:957
 msgid "Reset"
 msgstr "Poništi"
 
-#: common/static/js/frepple.js:1216 common/static/js/frepple.js:1266
-#: common/static/js/frepple.js:1318 common/static/js/frepple.js:1350
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:895 forecast/static/forecast/src/forecast.js:958
+msgid "OK"
+msgstr "OK"
+
+#: common/static/js/frepple.js:1180
 msgid "Export CSV or Excel file"
 msgstr "CSV- oder Excel-Datei exportieren"
 
-#: common/static/js/frepple.js:1222 common/static/js/frepple.js:1272
-#: common/static/js/frepple.js:1321 common/static/js/frepple.js:1353
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1187 common/static/js/frepple.js:1210
 msgid "Export format"
 msgstr "Format izvoza"
 
-#: common/static/js/frepple.js:1223 common/static/js/frepple.js:1273
-#: common/static/js/frepple.min.js:11
-msgid "Scenarios to export"
-msgstr ""
-
-#: common/static/js/frepple.js:1230 common/static/js/frepple.js:1281
-#: common/static/js/frepple.js:1323 common/static/js/frepple.js:1356
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1190 common/static/js/frepple.js:1217
 msgid "Spreadsheet list"
 msgstr "Popis tablica"
 
-#: common/static/js/frepple.js:1231 common/static/js/frepple.js:1283
-#: common/static/js/frepple.js:1324 common/static/js/frepple.js:1358
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1194 common/static/js/frepple.js:1225
 msgid "CSV list"
 msgstr "CSV popis"
 
-#: common/static/js/frepple.js:1233 common/static/js/frepple.js:1285
-#: common/static/js/frepple.js:1327 common/static/js/frepple.js:1361
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1196 common/static/js/frepple.js:1227
 msgid "Data source URL"
 msgstr ""
 
-#: common/static/js/frepple.js:1235 common/static/js/frepple.js:1287
-#: common/static/js/frepple.js:1329 common/static/js/frepple.js:1363
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1198 common/static/js/frepple.js:1229
 msgid "Using this link external applications can pull data from frePPLe"
 msgstr ""
 
-#: common/static/js/frepple.js:1255 common/static/js/frepple.js:1307
-#: common/static/js/frepple.js:1340 common/static/js/frepple.js:1373
-#: common/static/js/frepple.js:2275 common/static/js/frepple.js:2365
-#: common/static/js/frepple.min.js:11
-msgid "Export"
-msgstr "Izvezi"
-
-#: common/static/js/frepple.js:1280 common/static/js/frepple.js:1355
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1213
 msgid "Spreadsheet table"
 msgstr "Tablica proračunske tablice"
 
-#: common/static/js/frepple.js:1282 common/static/js/frepple.js:1357
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1221
 msgid "CSV table"
 msgstr "CSV Tablica"
 
-#: common/static/js/frepple.js:1611 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1246
+msgid "Scenarios to export"
+msgstr ""
+
+#: common/static/js/frepple.js:1273 common/static/js/frepple.js:2143
+msgid "Export"
+msgstr "Izvezi"
+
+#: common/static/js/frepple.js:1482
 msgid "Delete data"
 msgstr "Brisanje podataka"
 
-#: common/static/js/frepple.js:1614 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1486
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
 msgstr "Obrisati ćete %s objekata i sve vezane zapise!"
 
-#: common/static/js/frepple.js:1617 common/static/js/frepple.js:1666
-#: common/static/js/frepple.js:2281 common/static/js/frepple.js:2371
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1490 common/static/js/frepple.js:1539
+#: common/static/js/frepple.js:2151
 msgid "Confirm"
 msgstr "Potvrdi"
 
-#: common/static/js/frepple.js:1660 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1531
 msgid "Copy data"
 msgstr "Kopiranje podataka"
 
-#: common/static/js/frepple.js:1663 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1535
 #, javascript-format
 msgid "You are about to duplicate %s objects"
 msgstr "Spremate se duplicirati objekte %s"
 
-#: common/static/js/frepple.js:1814 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1688
 msgid "Search"
 msgstr "Pretraga"
 
-#: common/static/js/frepple.js:1877 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1751
 msgid "within"
 msgstr "unutar"
 
-#: common/static/js/frepple.js:1879 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1753
 msgid "is child of"
 msgstr ""
 
-#: common/static/js/frepple.js:1881 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1755
 msgid "is null"
 msgstr ""
 
-#: common/static/js/frepple.js:1913 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1787
 msgid "days"
 msgstr "dana"
 
-#: common/static/js/frepple.js:1943 common/static/js/frepple.js:1954
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1817 common/static/js/frepple.js:1828
 msgid "or"
 msgstr "ili"
 
-#: common/static/js/frepple.js:1945 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1819
 msgid "and"
 msgstr "i"
 
-#: common/static/js/frepple.js:2103 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1973
 msgid "Click ok to confirm deleting the favorite"
 msgstr "Kliknite OK za potvrdu brisanja favorita"
 
-#: common/static/js/frepple.js:2288 common/static/js/frepple.js:2459
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2147
+msgid "Export selected records?"
+msgstr ""
+
+#: common/static/js/frepple.js:2161
 msgid "connecting"
 msgstr "Povezivanje"
 
-#: common/static/js/frepple.js:2297 common/static/js/frepple.js:2466
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2170
 msgid "Export successful"
 msgstr "Izvoz je uspješan"
 
-#: common/static/js/frepple.js:2326 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2199
 msgid "retry"
 msgstr "pokušaj ponovo"
 
-#: common/static/js/frepple.js:2481 common/static/js/frepple.min.js:11
-msgid "Error during export"
-msgstr "Pogreška prilikom izvoza"
-
-#: common/static/js/frepple.js:2484 common/static/js/frepple.js:2522
-#: common/static/js/frepple.min.js:11
-msgid "Retry"
-msgstr "Ponovi"
-
-#: common/static/js/frepple.js:2661 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2340
 msgid "Customize a dashboard row"
 msgstr "Prilagodite red na nadzornoj ploči"
 
-#: common/static/js/frepple.js:2667 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2347
 msgid "Name"
 msgstr "Ime"
 
-#: common/static/js/frepple.js:2673 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2353
 msgid "Layout"
 msgstr "Izgled"
 
-#: common/static/js/frepple.js:2679 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2359
 msgid "Single column"
 msgstr "Jedan stupac"
 
-#: common/static/js/frepple.js:2682 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2362
 msgid "Two columns"
 msgstr "Dva stupca"
 
-#: common/static/js/frepple.js:2689 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2369
 msgid "Three columns"
 msgstr "Tri stupca"
 
-#: common/static/js/frepple.js:2693 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2373
 msgid "Four columns"
 msgstr "Četiri stupca"
 
-#: common/static/js/frepple.js:2699 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2379
 msgid "Add widget"
 msgstr "Widget dodaj"
 
-#: common/static/js/frepple.js:2718 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2398
 msgid "Add new below"
 msgstr "dodaj nove ispod"
 
-#: common/static/js/frepple.js:2719 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2399
 msgid "Add new above"
 msgstr "Dodaj novi iznad"
 
-#: common/static/js/frepple.js:2720 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2400
 msgid "Delete"
 msgstr "Ukloni"
 
-#: common/static/js/frepple.js:2871 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2553
 #, javascript-format
 msgid "%s unread messages"
 msgstr ""
 
-#: common/static/js/frepple.js:3008 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2705
 msgid "Installed apps"
 msgstr "Instalirane aplikacije"
 
-#: common/static/js/frepple.js:3036 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2751
 msgid "Import CSV or Excel file"
 msgstr "Uvezi CSV ili Excel datoteku"
 
-#: common/static/js/frepple.js:3042 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2758
 msgid "Load an Excel file or a CSV-formatted text file."
 msgstr "Učitaj Excel datoteku ili tekstualnu datoteku u formatu CSV."
 
-#: common/static/js/frepple.js:3043 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2759
 msgid "The first row should contain the field names."
 msgstr "Prvi redak treba sadržavati imena polja."
 
-#: common/static/js/frepple.js:3045 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2761
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "Prvo izbrišite sve postojeće zapise podataka i pridružene tablice."
 
-#: common/static/js/frepple.js:3052 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2767
 msgid "files selected"
 msgstr "odabrane datoteke"
 
-#: common/static/js/frepple.js:3055 common/static/js/frepple.min.js:11
-msgid "Select files"
-msgstr "Odaberite datoteke"
-
-#: common/static/js/frepple.js:3058 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2770
 msgid "or drop them here"
 msgstr "ili ih povucite ovdje"
 
-#: common/static/js/frepple.js:3067 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2779
 msgid "Data file"
 msgstr "Datoteka podataka"
 
-#: common/static/js/frepple.js:3076 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2790
 msgid "Import"
 msgstr "Uvezi"
 
-#: common/static/js/frepple.js:3077 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2791
 msgid "Cancel Import"
 msgstr "Prekini uvoz"
 
-#: common/static/js/frepple.js:3079 common/static/js/frepple.min.js:11
-msgid "Copy to Clipboard"
-msgstr "Kopiraj"
-
-#: common/static/js/frepple.js:3146 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2856
 msgid "Importing..."
 msgstr "Uvoz..."
 
-#: common/static/js/frepple.js:3165 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2875
 msgid "Canceled"
 msgstr "Otkazano"
 
-#: common/static/js/frepple.js:3220 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2930
 #, javascript-format
 msgid "%s records processed"
 msgstr ""
 
-#: common/static/js/frepple.js:3973 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:3683
 #, javascript-format
 msgid "Manage notifications of %s"
 msgstr ""
 
-#: common/static/js/frepple.js:4002 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:3712
 msgid "Add followers"
 msgstr ""
 
-#: common/static/js/frepple.min.js:11
-msgid "export"
-msgstr "Izvoz"
-
-#: forecast/static/forecast/src/forecast.js:941
-#: forecast/static/js/frepple-forecast.min.js:11
+#: forecast/static/forecast/src/forecast.js:952
 msgid "Show descriptions"
 msgstr ""
 
-#: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
 msgid "inventory status"
 msgstr "Status zaliha"
 
-#: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:29
 msgid "onhand at lead time"
 msgstr "Dostupno na lead time"
 
-#: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current inventory"
 msgstr "trenutna zaliha"
 
-#: planningboard/static/js/frepple-planningboard.min.js:11
 #: planningboard/static/planningboard/src/module.js:69
-#: planningboard/static/planningboard/src/planningboard.js:865
-#: planningboard/static/planningboard/src/planningboard.js:876
-#: planningboard/static/planningboard/src/planningboard.js:877
+#: planningboard/static/planningboard/src/planningboard.js:939
+#: planningboard/static/planningboard/src/planningboard.js:950
+#: planningboard/static/planningboard/src/planningboard.js:951
 msgid "hours"
 msgstr "Sati"

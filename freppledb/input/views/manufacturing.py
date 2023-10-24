@@ -1489,111 +1489,111 @@ class OperationDependencyList(GridReport):
         # blockedby fields
         GridFieldText(
             "blockedby__description",
-            title=format_lazy("{} - {}", _("blockedby"), _("description")),
+            title=format_lazy("{} - {}", _("blocked by"), _("description")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
             "blockedby__category",
-            title=format_lazy("{} - {}", _("blockedby"), _("category")),
+            title=format_lazy("{} - {}", _("blocked by"), _("category")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
             "blockedby__subcategory",
-            title=format_lazy("{} - {}", _("blockedby"), _("subcategory")),
+            title=format_lazy("{} - {}", _("blocked by"), _("subcategory")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldChoice(
             "blockedby__type",
-            title=format_lazy("{} - {}", _("blockedby"), _("type")),
+            title=format_lazy("{} - {}", _("blocked by"), _("type")),
             choices=Operation.types,
             initially_hidden=True,
             editable=False,
         ),
         GridFieldDuration(
             "blockedby__duration",
-            title=format_lazy("{} - {}", _("blockedby"), _("duration")),
+            title=format_lazy("{} - {}", _("blocked by"), _("duration")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldDuration(
             "blockedby__duration_per",
-            title=format_lazy("{} - {}", _("blockedby"), _("duration per unit")),
+            title=format_lazy("{} - {}", _("blocked by"), _("duration per unit")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldDuration(
             "blockedby__fence",
-            title=format_lazy("{} - {}", _("blockedby"), _("release fence")),
+            title=format_lazy("{} - {}", _("blocked by"), _("release fence")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldDuration(
             "blockedby__posttime",
-            title=format_lazy("{} - {}", _("blockedby"), _("post-op time")),
+            title=format_lazy("{} - {}", _("blocked by"), _("post-op time")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldNumber(
             "blockedby__sizeminimum",
-            title=format_lazy("{} - {}", _("blockedby"), _("size minimum")),
+            title=format_lazy("{} - {}", _("blocked by"), _("size minimum")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldNumber(
             "blockedby__sizemultiple",
-            title=format_lazy("{} - {}", _("blockedby"), _("size multiple")),
+            title=format_lazy("{} - {}", _("blocked by"), _("size multiple")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldNumber(
             "blockedby__sizemaximum",
-            title=format_lazy("{} - {}", _("blockedby"), _("size maximum")),
+            title=format_lazy("{} - {}", _("blocked by"), _("size maximum")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldInteger(
             "blockedby__priority",
-            title=format_lazy("{} - {}", _("blockedby"), _("priority")),
+            title=format_lazy("{} - {}", _("blocked by"), _("priority")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldDateTime(
             "blockedby__effective_start",
-            title=format_lazy("{} - {}", _("blockedby"), _("effective start")),
+            title=format_lazy("{} - {}", _("blocked by"), _("effective start")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldDateTime(
             "blockedby__effective_end",
-            title=format_lazy("{} - {}", _("blockedby"), _("effective end")),
+            title=format_lazy("{} - {}", _("blocked by"), _("effective end")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldCurrency(
             "blockedby__cost",
-            title=format_lazy("{} - {}", _("blockedby"), _("cost")),
+            title=format_lazy("{} - {}", _("blocked by"), _("cost")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldChoice(
             "blockedby__search",
-            title=format_lazy("{} - {}", _("blockedby"), _("search mode")),
+            title=format_lazy("{} - {}", _("blocked by"), _("search mode")),
             choices=searchmode,
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
             "blockedby__source",
-            title=format_lazy("{} - {}", _("blockedby"), _("source")),
+            title=format_lazy("{} - {}", _("blocked by"), _("source")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldLastModified(
             "blockedby__lastmodified",
-            title=format_lazy("{} - {}", _("blockedby"), _("last modified")),
+            title=format_lazy("{} - {}", _("blocked by"), _("last modified")),
             initially_hidden=True,
             editable=False,
         ),
@@ -1657,7 +1657,9 @@ class ManufacturingOrderList(OperationPlanMixin):
                         "title": force_str(Location._meta.verbose_name) + " " + args[0],
                         "post_title": _("manufacturing orders"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
             elif path == "operation" or request.path.startswith(
@@ -1674,7 +1676,9 @@ class ManufacturingOrderList(OperationPlanMixin):
                         + args[0],
                         "post_title": _("manufacturing orders"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
             elif path == "item" or request.path.startswith("/detail/input/item/"):
@@ -1687,7 +1691,9 @@ class ManufacturingOrderList(OperationPlanMixin):
                         "title": force_str(Item._meta.verbose_name) + " " + args[0],
                         "post_title": _("manufacturing orders"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
             elif path == "operationplanmaterial":
@@ -1703,7 +1709,9 @@ class ManufacturingOrderList(OperationPlanMixin):
                             % {"loc": args[1], "date": args[2]}
                         ),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
             elif path == "produced":
@@ -1719,7 +1727,9 @@ class ManufacturingOrderList(OperationPlanMixin):
                             % {"loc": args[1], "date1": args[2], "date2": args[3]}
                         ),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
             elif path == "consumed":
@@ -1735,7 +1745,9 @@ class ManufacturingOrderList(OperationPlanMixin):
                             % {"loc": args[1], "date1": args[2], "date2": args[3]}
                         ),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
             else:
@@ -1746,7 +1758,9 @@ class ManufacturingOrderList(OperationPlanMixin):
                         "active_tab": "edit",
                         "model": Item,
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
         elif "parentreference" in request.GET:
@@ -1759,7 +1773,9 @@ class ManufacturingOrderList(OperationPlanMixin):
                     + " "
                     + request.GET["parentreference"],
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    "currentdate": getCurrentDate(
+                        database=request.database, lastplan=True
+                    ),
                 }
             )
         else:
@@ -1769,7 +1785,9 @@ class ManufacturingOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "plandetail",
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    "currentdate": getCurrentDate(
+                        database=request.database, lastplan=True
+                    ),
                 }
             )
         return ctx

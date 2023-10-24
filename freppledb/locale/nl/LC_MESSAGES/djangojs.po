@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-07 14:50+0100\n"
-"PO-Revision-Date: 2023-03-07 13:59+0100\n"
+"POT-Creation-Date: 2023-10-24 12:27+0200\n"
+"PO-Revision-Date: 2023-10-24 09:59+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -28,356 +28,354 @@ msgstr ""
 msgid "Connection failed"
 msgstr "Verbinding mislukt"
 
-#: common/static/js/frepple.js:213 common/static/js/frepple.js:1510
-#: common/static/js/frepple.js:1559 common/static/js/frepple.js:2193
+#: common/static/js/frepple.js:213 common/static/js/frepple.js:1513
+#: common/static/js/frepple.js:1562 common/static/js/frepple.js:2196
+#: quoting/static/quoting/src/quoteCtrl.js:62
 msgid "Error"
 msgstr "Fout"
 
-#: common/static/js/frepple.js:220 common/static/js/frepple.js:881
-#: common/static/js/frepple.js:1178 common/static/js/frepple.js:2168
-#: common/static/js/frepple.js:2789 common/static/js/frepple.js:2919
-#: common/static/js/frepple.js:3681
+#: common/static/js/frepple.js:220 common/static/js/frepple.js:884
+#: common/static/js/frepple.js:1181 common/static/js/frepple.js:2171
+#: common/static/js/frepple.js:2788 common/static/js/frepple.js:2915
+#: common/static/js/frepple.js:3677
 msgid "Close"
 msgstr "Sluit"
 
-#: common/static/js/frepple.js:234 common/static/js/frepple.js:317
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:333
+#: common/static/js/frepple.js:234 common/static/js/frepple.js:320
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:350
 msgid "There are unsaved changes on this page."
 msgstr "Er zijn onbewaarde wijzigingen op deze pagina."
 
-#: common/static/js/frepple.js:314
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:330
+#: common/static/js/frepple.js:317
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:347
 msgid "Save or cancel your changes first"
 msgstr "Bewaar of annuleer eerst de wijzigingen"
 
-#: common/static/js/frepple.js:320 common/static/js/frepple.js:2394
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:337
+#: common/static/js/frepple.js:323 common/static/js/frepple.js:2397
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:354
 msgid "Save"
 msgstr "Bewaar"
 
-#: common/static/js/frepple.js:321
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:336
+#: common/static/js/frepple.js:324
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:353
 msgid "Return to page"
 msgstr "Terug naar pagina"
 
-#: common/static/js/frepple.js:539
+#: common/static/js/frepple.js:542
 msgid "select"
 msgstr "selecteer"
 
-#: common/static/js/frepple.js:574
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:410
+#: common/static/js/frepple.js:577
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:427
 msgid "days early"
 msgstr "dagen te vroeg"
 
-#: common/static/js/frepple.js:576
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:412
+#: common/static/js/frepple.js:579
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:429
 msgid "on time"
 msgstr "op tijd"
 
-#: common/static/js/frepple.js:579 common/static/js/frepple.js:581
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:415
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:417
+#: common/static/js/frepple.js:582 common/static/js/frepple.js:584
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:432
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:434
 msgid "days late"
 msgstr "dagen late"
 
-#: common/static/js/frepple.js:721
+#: common/static/js/frepple.js:724
 msgid "Select action"
 msgstr "Selecteer actie"
 
-#: common/static/js/frepple.js:777
+#: common/static/js/frepple.js:780
 msgid "Selected options"
 msgstr "Geselecteerde opties"
 
-#: common/static/js/frepple.js:784
+#: common/static/js/frepple.js:787
 msgid "Available options"
 msgstr "Beschikbare opties"
 
-#: common/static/js/frepple.js:822 forecast/static/forecast/src/forecast.js:929
+#: common/static/js/frepple.js:825 forecast/static/forecast/src/forecast.js:936
 msgid "Selected Cross"
 msgstr "Geselecteerde kruis"
 
-#: common/static/js/frepple.js:832 forecast/static/forecast/src/forecast.js:937
+#: common/static/js/frepple.js:835 forecast/static/forecast/src/forecast.js:944
 msgid "Available Cross"
 msgstr "Beschikbaar kruis"
 
-#: common/static/js/frepple.js:854
+#: common/static/js/frepple.js:857
 msgid "Frozen columns"
 msgstr "Vastgepinde kolommen"
 
-#: common/static/js/frepple.js:880 common/static/js/frepple.js:2487
-#: forecast/static/forecast/src/forecast.js:922
+#: common/static/js/frepple.js:883 common/static/js/frepple.js:2490
+#: forecast/static/forecast/src/forecast.js:929
 msgid "Customize"
 msgstr "Personaliseer"
 
-#: common/static/js/frepple.js:890 common/static/js/frepple.js:1269
-#: common/static/js/frepple.js:1487 common/static/js/frepple.js:1535
-#: common/static/js/frepple.js:2147 common/static/js/frepple.js:2393
-#: forecast/static/forecast/src/forecast.js:949
+#: common/static/js/frepple.js:893 common/static/js/frepple.js:1272
+#: common/static/js/frepple.js:1489 common/static/js/frepple.js:1538
+#: common/static/js/frepple.js:2150 common/static/js/frepple.js:2396
+#: forecast/static/forecast/src/forecast.js:956
 msgid "Cancel"
 msgstr "Annuleer"
 
-#: common/static/js/frepple.js:891 forecast/static/forecast/src/forecast.js:950
+#: common/static/js/frepple.js:894 forecast/static/forecast/src/forecast.js:957
 msgid "Reset"
 msgstr "Herstel"
 
-#: common/static/js/frepple.js:892 forecast/static/forecast/src/forecast.js:951
+#: common/static/js/frepple.js:895 forecast/static/forecast/src/forecast.js:958
 msgid "OK"
 msgstr "OK"
 
-#: common/static/js/frepple.js:1177
+#: common/static/js/frepple.js:1180
 msgid "Export CSV or Excel file"
 msgstr "Exporteer CSV of Excel bestand"
 
-#: common/static/js/frepple.js:1184 common/static/js/frepple.js:1207
+#: common/static/js/frepple.js:1187 common/static/js/frepple.js:1210
 msgid "Export format"
 msgstr "Export  formaat"
 
-#: common/static/js/frepple.js:1187 common/static/js/frepple.js:1214
+#: common/static/js/frepple.js:1190 common/static/js/frepple.js:1217
 msgid "Spreadsheet list"
 msgstr "Spreadsheet lijst"
 
-#: common/static/js/frepple.js:1191 common/static/js/frepple.js:1222
+#: common/static/js/frepple.js:1194 common/static/js/frepple.js:1225
 msgid "CSV list"
 msgstr "CSV Lijst"
 
-#: common/static/js/frepple.js:1193 common/static/js/frepple.js:1224
+#: common/static/js/frepple.js:1196 common/static/js/frepple.js:1227
 msgid "Data source URL"
 msgstr "URL van gegevensbron"
 
-#: common/static/js/frepple.js:1195 common/static/js/frepple.js:1226
+#: common/static/js/frepple.js:1198 common/static/js/frepple.js:1229
 msgid "Using this link external applications can pull data from frePPLe"
 msgstr ""
 "Met behulp van deze link kunnen externe toepassingen gegevens halen uit "
 "frePPLe"
 
-#: common/static/js/frepple.js:1201 common/static/js/frepple.js:1232
+#: common/static/js/frepple.js:1204 common/static/js/frepple.js:1235
+#: common/static/js/frepple.js:2789
 msgid "Copy to clipboard"
 msgstr "Kopiëren naar klembord"
 
-#: common/static/js/frepple.js:1210
+#: common/static/js/frepple.js:1213
 msgid "Spreadsheet table"
 msgstr "Spreadsheet tabel"
 
-#: common/static/js/frepple.js:1218
+#: common/static/js/frepple.js:1221
 msgid "CSV table"
 msgstr "CSV tabel"
 
-#: common/static/js/frepple.js:1243
+#: common/static/js/frepple.js:1246
 msgid "Scenarios to export"
 msgstr "Scenarios te exporteren"
 
-#: common/static/js/frepple.js:1270 common/static/js/frepple.js:2140
+#: common/static/js/frepple.js:1273 common/static/js/frepple.js:2143
 msgid "Export"
 msgstr "Exporteer"
 
-#: common/static/js/frepple.js:1479
+#: common/static/js/frepple.js:1482
 msgid "Delete data"
 msgstr "Verwijder gegevens"
 
-#: common/static/js/frepple.js:1483
+#: common/static/js/frepple.js:1486
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
 msgstr ""
 "U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
 
-#: common/static/js/frepple.js:1486 common/static/js/frepple.js:1536
-#: common/static/js/frepple.js:2148
+#: common/static/js/frepple.js:1490 common/static/js/frepple.js:1539
+#: common/static/js/frepple.js:2151
 msgid "Confirm"
 msgstr "Bevestig"
 
-#: common/static/js/frepple.js:1528
+#: common/static/js/frepple.js:1531
 msgid "Copy data"
 msgstr "Kopieer gegevens"
 
-#: common/static/js/frepple.js:1532
+#: common/static/js/frepple.js:1535
 #, javascript-format
 msgid "You are about to duplicate %s objects"
 msgstr "U staat op het punt %s objecten te kopieren"
 
-#: common/static/js/frepple.js:1685
+#: common/static/js/frepple.js:1688
 msgid "Search"
 msgstr "Zoek"
 
-#: common/static/js/frepple.js:1748
+#: common/static/js/frepple.js:1751
 msgid "within"
 msgstr "binnen"
 
-#: common/static/js/frepple.js:1750
+#: common/static/js/frepple.js:1753
 msgid "is child of"
 msgstr "is kind van"
 
-#: common/static/js/frepple.js:1752
+#: common/static/js/frepple.js:1755
 msgid "is null"
 msgstr "is blanco"
 
-#: common/static/js/frepple.js:1784
+#: common/static/js/frepple.js:1787
 msgid "days"
 msgstr "dagen"
 
-#: common/static/js/frepple.js:1814 common/static/js/frepple.js:1825
+#: common/static/js/frepple.js:1817 common/static/js/frepple.js:1828
 msgid "or"
 msgstr "of"
 
-#: common/static/js/frepple.js:1816
+#: common/static/js/frepple.js:1819
 msgid "and"
 msgstr "en"
 
-#: common/static/js/frepple.js:1970
+#: common/static/js/frepple.js:1973
 msgid "Click ok to confirm deleting the favorite"
 msgstr "Klik ok om de favoriet definitief te verwijderen"
 
-#: common/static/js/frepple.js:2144
+#: common/static/js/frepple.js:2147
 msgid "Export selected records?"
-msgstr "exporteer geselecteerde records?"
+msgstr "Exporteer geselecteerde records?"
 
-#: common/static/js/frepple.js:2158
+#: common/static/js/frepple.js:2161
 msgid "connecting"
 msgstr "connecteren"
 
-#: common/static/js/frepple.js:2167
+#: common/static/js/frepple.js:2170
 msgid "Export successful"
 msgstr "Export geslaagd"
 
-#: common/static/js/frepple.js:2196
+#: common/static/js/frepple.js:2199
 msgid "retry"
 msgstr "probeer opnieuw"
 
-#: common/static/js/frepple.js:2337
+#: common/static/js/frepple.js:2340
 msgid "Customize a dashboard row"
 msgstr "Personaliseer een dashboardrij"
 
-#: common/static/js/frepple.js:2344
+#: common/static/js/frepple.js:2347
 msgid "Name"
 msgstr "Naam"
 
-#: common/static/js/frepple.js:2350
+#: common/static/js/frepple.js:2353
 msgid "Layout"
 msgstr "Layout"
 
-#: common/static/js/frepple.js:2356
+#: common/static/js/frepple.js:2359
 msgid "Single column"
 msgstr "Enkele kolom"
 
-#: common/static/js/frepple.js:2359
+#: common/static/js/frepple.js:2362
 msgid "Two columns"
 msgstr "Twee kolommen"
 
-#: common/static/js/frepple.js:2366
+#: common/static/js/frepple.js:2369
 msgid "Three columns"
 msgstr "Drie kolommen"
 
-#: common/static/js/frepple.js:2370
+#: common/static/js/frepple.js:2373
 msgid "Four columns"
 msgstr "Vier kolommen"
 
-#: common/static/js/frepple.js:2376
+#: common/static/js/frepple.js:2379
 msgid "Add widget"
 msgstr "Voeg widget toe"
 
-#: common/static/js/frepple.js:2395
+#: common/static/js/frepple.js:2398
 msgid "Add new below"
 msgstr "Voeg onderaan toe"
 
-#: common/static/js/frepple.js:2396
+#: common/static/js/frepple.js:2399
 msgid "Add new above"
 msgstr "Voeg bovenaan toe"
 
-#: common/static/js/frepple.js:2397
+#: common/static/js/frepple.js:2400
 msgid "Delete"
 msgstr "Verwijder"
 
-#: common/static/js/frepple.js:2550
+#: common/static/js/frepple.js:2553
 #, javascript-format
 msgid "%s unread messages"
 msgstr "%s ongelezen berichten"
 
-#: common/static/js/frepple.js:2555
+#: common/static/js/frepple.js:2558
 msgid "No unread messages"
 msgstr "Geen ongelezen berichten"
 
-#: common/static/js/frepple.js:2702
+#: common/static/js/frepple.js:2705
 msgid "Installed apps"
 msgstr "Geïnstalleerde apps"
 
-#: common/static/js/frepple.js:2748
+#: common/static/js/frepple.js:2751
 msgid "Import CSV or Excel file"
 msgstr "Importeer CSV of Excel bestand"
 
-#: common/static/js/frepple.js:2755
+#: common/static/js/frepple.js:2758
 msgid "Load an Excel file or a CSV-formatted text file."
 msgstr "Laad een Excel bestand of een tekst bestand in CSV-formaat."
 
-#: common/static/js/frepple.js:2756
+#: common/static/js/frepple.js:2759
 msgid "The first row should contain the field names."
 msgstr "De eerste rij moet de veldnamen bevatten."
 
-#: common/static/js/frepple.js:2758
+#: common/static/js/frepple.js:2761
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "Verwijder eerst alle huidige records EN ALLE GERELATEERDE TABELLEN"
 
-#: common/static/js/frepple.js:2765
+#: common/static/js/frepple.js:2767
 msgid "files selected"
 msgstr "bestanden geselecteerd"
 
-#: common/static/js/frepple.js:2768
-msgid "Select files"
+#: common/static/js/frepple.js:2769
+msgid "Select files to upload"
 msgstr "Selecteer bestanden"
 
-#: common/static/js/frepple.js:2771
+#: common/static/js/frepple.js:2770
 msgid "or drop them here"
 msgstr "of drop ze hier"
 
-#: common/static/js/frepple.js:2780
+#: common/static/js/frepple.js:2779
 msgid "Data file"
 msgstr "Gegevensbestand"
 
 #: common/static/js/frepple.js:2790
-msgid "Copy to Clipboard"
-msgstr "Kopieer naar klembord"
-
-#: common/static/js/frepple.js:2791
 msgid "Import"
 msgstr "Importeer gegevens"
 
-#: common/static/js/frepple.js:2792
+#: common/static/js/frepple.js:2791
 msgid "Cancel Import"
 msgstr "Annuleer import"
 
-#: common/static/js/frepple.js:2860
+#: common/static/js/frepple.js:2856
 msgid "Importing..."
 msgstr "Importeren..."
 
-#: common/static/js/frepple.js:2879
+#: common/static/js/frepple.js:2875
 msgid "Canceled"
 msgstr "Geannuleerd"
 
-#: common/static/js/frepple.js:2934
+#: common/static/js/frepple.js:2930
 #, javascript-format
 msgid "%s records processed"
 msgstr "%s verwerkte records"
 
-#: common/static/js/frepple.js:3668
+#: common/static/js/frepple.js:3664
 msgid "Follow"
 msgstr "Volg"
 
-#: common/static/js/frepple.js:3682
+#: common/static/js/frepple.js:3678
 msgid "Update"
 msgstr "Update"
 
-#: common/static/js/frepple.js:3687
+#: common/static/js/frepple.js:3683
 #, javascript-format
 msgid "Manage notifications of %s"
 msgstr "Beheer melding van %s"
 
-#: common/static/js/frepple.js:3695
+#: common/static/js/frepple.js:3691
 msgid "Following"
 msgstr "Volgend"
 
-#: common/static/js/frepple.js:3716
+#: common/static/js/frepple.js:3712
 msgid "Add followers"
 msgstr "Voeg volgers toe"
 
-#: forecast/static/forecast/src/forecast.js:945
+#: forecast/static/forecast/src/forecast.js:952
 msgid "Show descriptions"
 msgstr "Toon omschrijvingen"
 
@@ -395,38 +393,38 @@ msgstr "huidige voorraad"
 
 #: planningboard/static/planningboard/src/module.js:63
 #: planningboard/static/planningboard/src/module.js:67
-#: planningboard/static/planningboard/src/planningboard.js:859
-#: planningboard/static/planningboard/src/planningboard.js:863
-#: planningboard/static/planningboard/src/planningboard.js:884
-#: planningboard/static/planningboard/src/planningboard.js:885
+#: planningboard/static/planningboard/src/planningboard.js:933
+#: planningboard/static/planningboard/src/planningboard.js:937
+#: planningboard/static/planningboard/src/planningboard.js:958
+#: planningboard/static/planningboard/src/planningboard.js:959
 msgid "minutes"
 msgstr "minuten"
 
 #: planningboard/static/planningboard/src/module.js:65
-#: planningboard/static/planningboard/src/planningboard.js:861
-#: planningboard/static/planningboard/src/planningboard.js:892
-#: planningboard/static/planningboard/src/planningboard.js:893
+#: planningboard/static/planningboard/src/planningboard.js:935
+#: planningboard/static/planningboard/src/planningboard.js:966
+#: planningboard/static/planningboard/src/planningboard.js:967
 msgid "seconds"
 msgstr "seconden"
 
 #: planningboard/static/planningboard/src/module.js:69
-#: planningboard/static/planningboard/src/planningboard.js:865
-#: planningboard/static/planningboard/src/planningboard.js:876
-#: planningboard/static/planningboard/src/planningboard.js:877
+#: planningboard/static/planningboard/src/planningboard.js:939
+#: planningboard/static/planningboard/src/planningboard.js:950
+#: planningboard/static/planningboard/src/planningboard.js:951
 msgid "hours"
 msgstr "uren"
 
-#: planningboard/static/planningboard/src/planningboard.js:880
-#: planningboard/static/planningboard/src/planningboard.js:881
+#: planningboard/static/planningboard/src/planningboard.js:954
+#: planningboard/static/planningboard/src/planningboard.js:955
 msgid "hour"
 msgstr "uur"
 
-#: planningboard/static/planningboard/src/planningboard.js:888
-#: planningboard/static/planningboard/src/planningboard.js:889
+#: planningboard/static/planningboard/src/planningboard.js:962
+#: planningboard/static/planningboard/src/planningboard.js:963
 msgid "minute"
 msgstr "minuten"
 
-#: planningboard/static/planningboard/src/planningboard.js:895
-#: planningboard/static/planningboard/src/planningboard.js:896
+#: planningboard/static/planningboard/src/planningboard.js:969
+#: planningboard/static/planningboard/src/planningboard.js:970
 msgid "second"
 msgstr "seconde"

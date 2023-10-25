@@ -622,6 +622,18 @@ if os.access(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py"), os.R_OK):
 MANAGERS = ADMINS
 MEDIA_ROOT = os.path.join(FREPPLE_LOGDIR, "uploads")
 
+# Change the default dashboard if the wizard is active
+if "freppledb.wizard" in INSTALLED_APPS:
+    DEFAULT_DASHBOARD.insert(
+        0,
+        {
+            "rowname": _("Welcome"),
+            "cols": [
+                {"width": 12, "widgets": [("wizard", {})]},
+            ],
+        },
+    )
+
 # Find the ERP connector module
 ERP_CONNECTOR = None
 for app in INSTALLED_APPS:

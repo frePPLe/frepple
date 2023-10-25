@@ -32,7 +32,6 @@ if mode == "WSGI":
     from . import views
 
     urlpatterns = [
-        path(r"", views.Home),
         path(r"wizard/quickstart/forecast/", views.QuickStartForecast.as_view()),
         path(r"wizard/quickstart/production/", views.QuickStartProduction.as_view()),
         path(r"wizard/supplypath/", views.CheckSupplyPath),

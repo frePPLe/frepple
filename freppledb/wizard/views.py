@@ -65,6 +65,7 @@ logger = logging.getLogger(__name__)
 if "freppledb.forecast" in settings.INSTALLED_APPS:
     from freppledb.forecast.models import ForecastPlan
 
+
 def parseDuration(v):
     d = v.strip().split(": ")
     args = len(d)
@@ -83,23 +84,6 @@ def parseDuration(v):
             )
     except Exception:
         return timedelta(0)
-
-
-@staff_member_required
-def Home(request):
-    prefs = request.user.getPreference("freppledb.wizard", database=request.database)
-    return render(
-        request,
-        "wizard/index.html",
-        context={
-            "title": _("home"),
-            "bucketnames": Bucket.objects.order_by("-level").values_list(
-                "name", flat=True
-            ),
-            "currency": getCurrency(),
-            "features": prefs.get("mode", "features") == "features" if prefs else True,
-        },
-    )
 
 
 def getWizardSteps(request, mode):

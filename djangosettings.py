@@ -583,13 +583,6 @@ DEFAULT_PAGESIZE = 100
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
     {
-        "rowname": _("Welcome"),
-        "cols": [
-            {"width": 8, "widgets": [("inbox", {"limit": 10})]},
-            {"width": 4, "widgets": [("news", {})]},
-        ],
-    },
-    {
         "rowname": _("sales"),
         "cols": [
             {

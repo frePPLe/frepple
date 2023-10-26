@@ -63,6 +63,7 @@ menu.addItem(
         isDefaultDatabase,
     ],
 )
+menu.addItem("admin", "apps", url="/apps/", label=_("Apps"), index=1160)
 menu.addItem(
     "admin",
     "bucket admin",
@@ -148,7 +149,4 @@ menu.addItem(
     label=_("frePPLe website"),
     prefix=False,
     index=500,
-)
-menu.addItem(
-    "help", "about", javascript="about_show()", label=_("About frePPLe"), index=600
 )

@@ -21,3 +21,4 @@ This section has instructions to navigate through the user interface.
    user-permissions-and-roles
    messages
    inbox
+   apps

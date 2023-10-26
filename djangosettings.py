@@ -248,6 +248,16 @@ INSTALLED_APPS = (
 )
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
 
+INSTALLABLE_APPS = (
+    "freppledb.odoo",
+    "freppledb.forecast",
+    "freppledb.wizard",
+    "freppledb.metrics",
+    "freppledb.reportmanager",
+    "freppledb.executesql",
+    "freppledb.debugreport",
+)
+
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
 ODOO_PASSWORDS = {"default": "", "scenario1": "", "scenario2": "", "scenario3": ""}
 

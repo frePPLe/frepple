@@ -27,6 +27,14 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 
 - | Updated Italian translations have been contributed by Sbadux. Grazie mille!
 
+- | A new `apps screen <user-interface/getting-around/apps.html>`_ allows superusers
+    to interactively install optional extension module apps.
+  | Until now, administrators had to edit the INSTALLED_APPS setting in the
+    /etc/frepple/djangosettings.py configuration file.
+
+- | The 'about frepple' option in the help menu is now gone.
+  | The new apps screen in the admin menu provides the same (and more) information.
+
 .. rubric:: Odoo integration
 
 - | 15 & 16: Onhand inventory is now filtered.

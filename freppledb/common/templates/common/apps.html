@@ -1,0 +1,66 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n %}
+
+{% block extrahead %}{{block.super}}
+
+<script>
+
+
+
+</script>
+{% endblock %}
+
+{% block content_title %}
+<div class="row mt-3">
+  <div class="col">
+    <h1>{{title|capfirst|force_escape}}&nbsp;&nbsp;<small>{{edition|capfirst}}</small></h1>
+  </div>
+  <div class="col-auto d-flex ms-auto align-items-center">
+	<h1>
+	<button class="btn btn-sm btn-primary ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
+	onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/apps.html');">
+	<span class="fa fa-question"></span>
+	</button>
+	</h1>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+	<div class="col">
+	From this screen you can install and uninstall extension apps.<br>
+	Extensions can be provided by the frepple team, the frepple user community
+	or developed by yourself.
+	</div>
+</div>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-4">
+	{% for app in apps %}
+	<div class="col d-flex align-items-stretch">
+	<div class="card w-100">
+		<div class="card-body">
+			<h5 class="card-title mb-2 fw-bold row align-items-center">
+			<div class="col">{{ app.summary }} {% if app.version %}&nbsp;&nbsp;<span class="fs-5 fw-normal">v{{ app.version }}{% endif %}</div>
+			{% if request.user.is_superuser %}
+				{% if app.installed and app.support_uninstall %}
+				<div class="col-auto">
+					<button type="button" class="btn btn-danger btn-sm">{% trans "uninstall"|capfirst %}</button>
+				</div>
+				{% elif not app.installed %}
+				<div class="col-auto">
+					<button type="button" class="btn btn-danger btn-sm">{% trans "install"|capfirst %}</button>
+				</div>
+				{% endif %}
+			{% endif %}
+		    </h5>
+			{% if app.description %}<div class="mb-1">{{ app.description }}</div>{% endif %}
+			<div class="row mb-0">
+			   <div class="col">{% if app.installed %}<span class="badge bg-primary">{% trans "installed"|capfirst %}</span>{% endif %}</div>
+			   {% if app.documentation_url %}<div class="col"><a role="button" href="{{ app.documentation_url|safe }}" target="_blank" class="btn btn-primary btn-sm float-end">{% trans "documentation"|capfirst %}</a></div>{% endif %}
+			</div>
+		</div>
+	</div>
+    </div>
+	{% endfor %}
+</div>
+{% endblock %}

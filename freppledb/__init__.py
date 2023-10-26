@@ -23,6 +23,8 @@
 
 import pkg_resources
 
+edition = "Community Edition"
+
 try:
     __version__ = pkg_resources.get_distribution("freppledb").version
 except pkg_resources.DistributionNotFound:

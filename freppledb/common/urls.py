@@ -148,7 +148,7 @@ if mode == "WSGI":
             freppledb.common.serializers.CommentdetailAPI.as_view(),
         ),
         re_path(r"^api/$", APIIndexView),
-        re_path(r"^about/$", freppledb.common.views.AboutView, name="about"),
+        re_path(r"^apps/$", freppledb.common.views.AppsView.as_view(), name="apps"),
         re_path(r"^scenarios/$", freppledb.common.views.ScenarioView, name="scenarios"),
         # Forgotten password
         re_path(

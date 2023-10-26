@@ -60,6 +60,7 @@ from django.shortcuts import render
 from django.views import static
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
+from django.views.generic.base import View
 
 from .models import (
     Attribute,
@@ -82,7 +83,7 @@ from .report import (
 )
 
 from freppledb.admin import data_site
-from freppledb import __version__
+from freppledb import edition, __version__
 
 import logging
 from freppledb.common.models import NotificationFactory
@@ -90,22 +91,48 @@ from freppledb.common.models import NotificationFactory
 logger = logging.getLogger(__name__)
 
 
-@staff_member_required
-def AboutView(request):
-    apps = []
-    for a in settings.INSTALLED_APPS:
-        try:
-            v = import_module(a).__version__
-            apps.append("%s %s" % (a, v) if v else a)
-        except Exception:
-            apps.append(a)
-    return JsonResponse(
-        {
-            "version": __version__,
-            "apps": apps,
-            "website": settings.DOCUMENTATION_URL,
-        }
-    )
+class AppsView(View):
+    template = "common/apps.html"
+    reportkey = "common.apps"
+
+    @classmethod
+    def get(cls, request, *args, **kwargs):
+        request.prefs = request.user.getPreference(
+            cls.reportkey, database=request.database
+        )
+        apps = []
+        for a in settings.INSTALLABLE_APPS:
+            try:
+                m = import_module(a)
+                apps.append(
+                    {
+                        "name": a,
+                        "installed": a in settings.INSTALLED_APPS,
+                        "summary": getattr(m, "summary", a),
+                        "version": getattr(m, "__version__", None),
+                        "description": getattr(m, "description", None),
+                        "documentation_url": getattr(m, "documentation_url", None),
+                        "support_uninstall": getattr(m, "support_uninstall", False),
+                    }
+                )
+            except Exception:
+                pass
+        return render(
+            request,
+            cls.template,
+            {
+                "title": _("apps"),
+                "edition": "%s %s" % (edition, __version__),
+                "reportkey": cls.reportkey,
+                "apps": apps,
+                "superuser": request.user.is_superuser,
+            },
+        )
+
+    @classmethod
+    def post(reportclass, request, *args, **kwargs):
+        # TODO
+        return JsonResponse({})
 
 
 @login_required

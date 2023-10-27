@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2023-10-24 12:30+0200\n"
+"PO-Revision-Date: 2023-10-27 14:07+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.2\n"
 
 #: common/static/js/frepple.js:201
 msgid "Connection failed"
@@ -322,7 +322,7 @@ msgstr "fichiers séléctionnés"
 
 #: common/static/js/frepple.js:2769
 msgid "Select files to upload"
-msgstr ""
+msgstr "Sélectionner les fichiers à téléverser"
 
 #: common/static/js/frepple.js:2770
 msgid "or drop them here"
@@ -1283,7 +1283,7 @@ msgstr "L'objet %(name)s « %(obj)s » a été supprimé avec succès."
 
 #: common/adminforms.py:719
 msgid "delete"
-msgstr ""
+msgstr "effacer"
 
 #: common/adminforms.py:759
 msgid "Required."
@@ -2771,10 +2771,12 @@ msgid ""
 "Compute a finite material and finite capacity plan for purchasing, "
 "distribution and manufacturing."
 msgstr ""
+"Calculer un plan fini en capacité et matériel pour l'achat, la distribution "
+"et la production."
 
 #: execute/management/commands/backup.py:213
 msgid "Contact frePPLe support"
-msgstr ""
+msgstr "Contacter le support frePPLe"
 
 #: execute/management/commands/createbuckets.py:298
 msgid "Generate buckets"
@@ -2843,7 +2845,7 @@ msgstr "Grouper et planifier des tâches"
 
 #: execute/management/commands/scheduletasks.py:377
 msgid "Group tasks"
-msgstr ""
+msgstr "Grouper les tâches"
 
 #: execute/management/commands/uploadreport.py:278
 msgid "Publish reports by FTP"
@@ -2903,6 +2905,8 @@ msgid ""
 "Your data will be written to a file that has to be sent to the frePPLe "
 "support team."
 msgstr ""
+"Vos données seront écrites dans un fichier qui devra être envoyé à l'équipe "
+"support de frePPLe"
 
 #: execute/templates/commands/createbuckets.html:10
 msgid "create time buckets for reporting."
@@ -3196,6 +3200,9 @@ msgid ""
 "\"true\" data-bs-title=\"Respect the capacity limits of your resources."
 "\">Capacity: respect capacity limits</span>"
 msgstr ""
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Respecter les limites de capacité de votre "
+"ressource.\">Capacité: respecter les limites de capacité</span>"
 
 #: execute/templates/commands/runplan.html:51
 msgid ""
@@ -3205,6 +3212,12 @@ msgid ""
 "confirmed activities are allowed to be in the past.\">Lead time: do not plan "
 "in the past</span>"
 msgstr ""
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Ne pas générer de plan avec une date de début ou de "
+"fin dans le passé.<br>Les activités proposes et approuvées doivent toutes "
+"être dans le futur.<br>Seules les activités confirmées sont autorisées dans "
+"le passé.\">Temps de réapprovisionnement: ne pas planifier dans le passé</"
+"span>"
 
 #: execute/templates/commands/runplan.html:58
 msgid ""
@@ -3214,6 +3227,12 @@ msgid ""
 "approved and confirmed activities are allowed, no new proposed activities."
 "\">Release fence: do not plan within a frozen time window</span>"
 msgstr ""
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
+"\"true\" data-bs-title=\"Ne pas proposer de plans avec une fenêtre de temps "
+"gelée (qui se configure pour chaque opération).<br>Dans la fenêtre de temps "
+"gelée, seules les activités approuvées et confirmées sont tolérées, pas les "
+"activités proposées.\">Date de libération: Ne pas planifier dans la fenêtre "
+"de temps gelée</span>"
 
 #: execute/templates/commands/scenario_copy.html:13
 msgid ""
@@ -3284,7 +3303,7 @@ msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:7
 msgid "Run a sequence of tasks."
-msgstr ""
+msgstr "Exécuter une sequence de tâches"
 
 #: execute/templates/commands/scheduletasks.html:15
 msgid "next scheduled run"
@@ -3525,6 +3544,8 @@ msgstr "Générer la prévision"
 msgid ""
 "Analyze the sales history and compute a statistical forecast for the future"
 msgstr ""
+"Analyser l'historique des ventes et calculer une prévision statistique pour "
+"le futur"
 
 #: forecast/management/commands/measure_copy.py:229
 msgid "measure management"
@@ -4034,7 +4055,7 @@ msgstr "Exception de la demande"
 #: forecast/templates/forecast/wizard.html:4 forecast/views.py:2091
 #: forecast/views.py:2109
 msgid "forecast wizard"
-msgstr ""
+msgstr "Assistant pour les prévisions"
 
 #: forecast/views.py:133
 msgid "method"
@@ -4958,11 +4979,11 @@ msgstr "activités"
 #: input/models/operation.py:630 input/models/operation.py:632
 #: input/views/manufacturing.py:1356
 msgid "blocked by operation"
-msgstr ""
+msgstr "bloqué par opération"
 
 #: input/models/operation.py:642
 msgid "Quantity relation between the operations"
-msgstr ""
+msgstr "Relation de quantité entre les opérations"
 
 #: input/models/operation.py:645 input/models/operation.py:648
 #: input/models/supplier.py:90 input/models/supplier.py:93
@@ -4978,11 +4999,11 @@ msgstr "temps d'approvisionnement contraint"
 
 #: input/models/operation.py:675
 msgid "operation dependency"
-msgstr ""
+msgstr "dépendance de l'opération"
 
 #: input/models/operation.py:676 input/views/manufacturing.py:1312
 msgid "operation dependencies"
-msgstr ""
+msgstr "dépendances de l'opération"
 
 #: input/models/operationplan.py:58 input/models/operationplan.py:1310
 #: shopfloor/views.py:113
@@ -5003,7 +5024,7 @@ msgstr "ordre de livraison"
 
 #: input/models/operationplan.py:64 shelflife/models.py:119
 msgid "scrap order"
-msgstr ""
+msgstr "ordre de rebut"
 
 #: input/models/operationplan.py:68 input/models/operationplan.py:520
 #: input/models/operationplan.py:586 input/views/capacity.py:1101
@@ -5322,7 +5343,7 @@ msgstr "fournisseurs de l'article"
 
 #: input/templates/admin/input/operation/change_form.html:30
 msgid "dependencies"
-msgstr ""
+msgstr "dépendances"
 
 #: input/templates/input/calendardetail.html:46
 msgid "monday"
@@ -5504,7 +5525,7 @@ msgstr "quantité de l'opérationplan"
 #: input/views/manufacturing.py:1571 input/views/manufacturing.py:1577
 #: input/views/manufacturing.py:1584 input/views/manufacturing.py:1590
 msgid "blocked by"
-msgstr ""
+msgstr "bloqué par"
 
 #: input/views/manufacturing.py:1711
 #, python-format
@@ -5597,6 +5618,8 @@ msgid ""
 "Compute safety stocks and reorder quantities for raw materials, intermediate "
 "items and end items."
 msgstr ""
+"Calculer les stocks de sécurité et les quantités de réapprovisionnement pour "
+"les matières premières, les produits intermédiaires et les produits finis."
 
 #: inventoryplanning/commands.py:1593
 msgid "Generate inventory rebalancing requests"
@@ -5607,6 +5630,8 @@ msgid ""
 "Scan for excess inventory and propose return shipments to the origin "
 "location."
 msgstr ""
+"Chercher les excès d'inventaire et proposer des envois retour vers "
+"l'emplacement d'origine."
 
 #: inventoryplanning/models.py:24
 #: inventoryplanning/templates/inventoryplanning/drp.html:2730
@@ -6410,7 +6435,7 @@ msgstr "total des commandes non traitées"
 #: output/templates/output/buffer.html:346
 #: output/templates/output/buffer.html:462 output/views/buffer.py:524
 msgid "expiring"
-msgstr ""
+msgstr "expirant"
 
 #: output/templates/output/buffer.html:455
 msgid "consumed"
@@ -6418,7 +6443,7 @@ msgstr "stock consommé"
 
 #: output/templates/output/buffer.html:456
 msgid "consumed confirmed"
-msgstr ""
+msgstr "consommé confirmé"
 
 #: output/templates/output/buffer.html:457
 msgid "produced"
@@ -6426,7 +6451,7 @@ msgstr "stock produit"
 
 #: output/templates/output/buffer.html:458
 msgid "produced confirmed"
-msgstr ""
+msgstr "produit confirmé"
 
 #: output/templates/output/demand.html:153
 #: output/templates/output/demand.html:215
@@ -6716,11 +6741,11 @@ msgstr "quantité requise"
 
 #: output/views/pegging.py:99
 msgid "required quantity proposed"
-msgstr ""
+msgstr "quantité requise proposée"
 
 #: output/views/pegging.py:107
 msgid "required quantity confirmed"
-msgstr ""
+msgstr "quantité requise confirmée"
 
 #: output/views/problem.py:55
 msgid "Problem report"
@@ -6999,35 +7024,35 @@ msgstr "activité"
 
 #: shelflife/attributes.py:21
 msgid "shelf life"
-msgstr ""
+msgstr "durée de vie"
 
 #: shelflife/attributes.py:34
 msgid "expiry date"
-msgstr ""
+msgstr "date d'expiration"
 
 #: shelflife/attributes.py:41
 msgid "expiring quantity"
-msgstr ""
+msgstr "quantité expirant"
 
 #: shelflife/attributes.py:54
 msgid "required shelf life"
-msgstr ""
+msgstr "durée de vie requise"
 
 #: shelflife/attributes.py:67
 msgid "reset shelf life"
-msgstr ""
+msgstr "remettre à zéro la durée de vie"
 
 #: shelflife/models.py:46
 msgid "stock order"
-msgstr ""
+msgstr "ordre d'inventaire"
 
 #: shelflife/models.py:47 shelflife/views.py:59
 msgid "stock orders"
-msgstr ""
+msgstr "ordres d'inventaire"
 
 #: shelflife/models.py:120 shelflife/views.py:375
 msgid "scrap orders"
-msgstr ""
+msgstr "ordres de rebut"
 
 #: shopfloor/attributes.py:19
 msgid "remark"
@@ -7067,11 +7092,11 @@ msgstr "fin"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:80
 msgid "No materials"
-msgstr ""
+msgstr "Pas de matériel"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:102
 msgid "Update materials"
-msgstr ""
+msgstr "Mettre à jour les matériels"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:118
 msgid "add comment"
@@ -7079,7 +7104,7 @@ msgstr "ajouter un commentaire"
 
 #: shopfloor/templates/shopfloor/resource.html:8
 msgid "Select a manufacturing order"
-msgstr ""
+msgstr "Sélectionner un order de fabrication"
 
 #: webservice/management/commands/runwebservice.py:196
 msgid "web service"
@@ -7214,7 +7239,7 @@ msgstr ""
 
 #: wizard/views.py:2833
 msgid "Import from odoo"
-msgstr ""
+msgstr "Importer depuis odoo"
 
 #: wizard/views.py:2835
 msgid "Get started - Data loading wizard"
@@ -7690,6 +7715,9 @@ msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
+"Une operation reçoit la couleur de la semaine où sa demande associée est "
+"due.\n"
+"                        <br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:321
 msgid "Apply"
@@ -7697,7 +7725,7 @@ msgstr "Appliquer"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
 msgid "Assign an extra resource"
-msgstr ""
+msgstr "Assigner une ressource supplémentaire"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:69
 msgid "Automatically resolve infeasiblities in the plan"
@@ -7715,7 +7743,7 @@ msgstr "Entrer le nom"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:76
 msgid "Remove this resource"
-msgstr ""
+msgstr "Supprimer cette ressource"
 
 #: freppledb/forecast/static/forecast/forecast.html:49
 msgid "Select panel measure"

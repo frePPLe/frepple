@@ -25,15 +25,14 @@
 # Only one such app can be active on a frePPle instance.
 ERP_module = True
 
-summary = "Odoo integration"
-
-description = """
-   This app enables two-way integration with the Odoo, a popular
-   open source ERP and business management suite.
-"""
-
-documentation_url = (
-    "https://frepple.com/docs/current/erp-integration/odoo-connector/index.php"
-)
-
-support_uninstall = True
+# Metadata as a frepple app
+frepple_app = {
+    "summary": "Odoo integration",
+    "description": """
+        <p>This app enables two-way integration with the Odoo, a popular
+        open source ERP and business management suite.</p>
+        """,
+    "documentation_url": "https://frepple.com/docs/current/erp-integration/odoo-connector/index.html",
+    "support_uninstall": True,
+    "ERP_integration": True,
+}

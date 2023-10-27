@@ -103,18 +103,19 @@ class AppsView(View):
         apps = []
         for a in settings.INSTALLABLE_APPS:
             try:
-                m = import_module(a)
-                apps.append(
-                    {
-                        "name": a,
-                        "installed": a in settings.INSTALLED_APPS,
-                        "summary": getattr(m, "summary", a),
-                        "version": getattr(m, "__version__", None),
-                        "description": getattr(m, "description", None),
-                        "documentation_url": getattr(m, "documentation_url", None),
-                        "support_uninstall": getattr(m, "support_uninstall", False),
-                    }
-                )
+                m = getattr(import_module(a), "frepple_app", None)
+                if m:
+                    apps.append(
+                        {
+                            "name": a,
+                            "installed": a in settings.INSTALLED_APPS,
+                            "summary": m.get("summary", a),
+                            "version": m.get("__version__", None),
+                            "description": m.get("description", None),
+                            "documentation_url": m.get("documentation_url", None),
+                            "support_uninstall": m.get("support_uninstall", False),
+                        }
+                    )
             except Exception:
                 pass
         return render(

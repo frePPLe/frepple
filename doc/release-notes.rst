@@ -6,6 +6,22 @@ Release notes
 
 Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | The home screen of the application has be redesigned.
+  | We've noticed that the home screen isn't commonly used as a central screen in the
+    planner's daily workflow. We're trying to improve that.
+  | Any thoughts and ideas to further improve this screen are welcome!
+
+- | A new `apps screen <user-interface/getting-around/apps.html>`_ allows superusers
+    to interactively install optional extension module apps.
+  | Until now, administrators had to edit the INSTALLED_APPS setting in the
+    /etc/frepple/djangosettings.py configuration file.
+
+- | The 'about frepple' option in the help menu is now gone.
+  | The new apps screen in the admin menu provides the same (and more) information.
+
+
 8.2.0 (2023-10-20)
 ==================
 
@@ -26,14 +42,6 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 - | Bug fix: filter on null values wasn't working in "report manager" custom reports.
 
 - | Updated Italian translations have been contributed by Sbadux. Grazie mille!
-
-- | A new `apps screen <user-interface/getting-around/apps.html>`_ allows superusers
-    to interactively install optional extension module apps.
-  | Until now, administrators had to edit the INSTALLED_APPS setting in the
-    /etc/frepple/djangosettings.py configuration file.
-
-- | The 'about frepple' option in the help menu is now gone.
-  | The new apps screen in the admin menu provides the same (and more) information.
 
 .. rubric:: Odoo integration
 

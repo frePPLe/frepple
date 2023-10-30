@@ -23,11 +23,19 @@
 
 from importlib import import_module
 import json
-import os.path
 from mimetypes import guess_type
+from multiprocessing import Process
+import os.path
+import re
 
+from django.core import management
 from django.core.paginator import Paginator
-from django.http import JsonResponse, HttpResponseNotAllowed
+from django.http import (
+    JsonResponse,
+    HttpResponseNotAllowed,
+    HttpResponseForbidden,
+    HttpResponseNotFound,
+)
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
@@ -83,7 +91,7 @@ from .report import (
 )
 
 from freppledb.admin import data_site
-from freppledb import edition, __version__
+from freppledb import edition, __version__, runCommand
 
 import logging
 from freppledb.common.models import NotificationFactory
@@ -132,8 +140,94 @@ class AppsView(View):
 
     @classmethod
     def post(reportclass, request, *args, **kwargs):
-        # TODO
-        return JsonResponse({})
+        if request.headers.get("x-requested-with") != "XMLHttpRequest":
+            return HttpResponseNotFound("Only ajax post requests allowed")
+        if request.database != DEFAULT_DB_ALIAS:
+            return HttpResponseForbidden(
+                "Apps are global and can only be updated in the main database"
+            )
+        if not request.user.is_superuser:
+            return HttpResponseForbidden("Only superusers can update apps")
+        try:
+            data = json.loads(request.body.decode(request.encoding))
+            reportclass.updateApp(**data)
+            return HttpResponse(content="OK")
+        except Exception as e:
+            logger.error("Error updating app: %s" % e)
+            return HttpResponseServerError("Error updating app: %s" % e)
+
+    @classmethod
+    def updateApp(reportclass, app=None, action=None, **kwargs):
+        if not app or action not in ("install", "uninstall"):
+            raise Exception("Missing action or app")
+
+        metadata = None
+        try:
+            metadata = getattr(import_module(app), "frepple_app", None)
+        except Exception:
+            pass
+        if not metadata:
+            raise Exception("Can't install or uninstall this app")
+
+        appname = app.rsplit(".", 1)[-1]
+        djangosettingsname = os.path.join(
+            settings.FREPPLE_CONFIGDIR, "djangosettings.py"
+        )
+
+        # Read djangosettings
+        djangosettings = ""
+        with open(djangosettingsname, "rt") as f:
+            djangosettings = f.read()
+
+        if action == "install":
+            # Validate
+            if app in settings.INSTALLED_APPS:
+                raise Exception("This app is already installed")
+
+            # Update djangosettings
+            with open("%s" % djangosettingsname, "wt+") as f:
+                status = 0
+                for l in djangosettings.splitlines():
+                    if status == 0 and "INSTALLED_APPS" in l:
+                        status = 1
+                    elif status == 1 and app in l:
+                        i = re.search("\S", l).start()
+                        l = '%s"%s",' % (l[:i], app)
+                        status = 2
+                    print(l, file=f)
+
+            # Migrate (after updating djangosettings)
+            child = Process(
+                target=runCommand,
+                args=("migrate", appname),
+            )
+            child.start()
+            # management.call_command("migrate", appname)
+
+        elif action == "uninstall":
+            # Validate
+            if not metadata.get("support_uninstall", False):
+                raise Exception("This app can't be uninstalled.")
+            if app not in settings.INSTALLED_APPS:
+                raise Exception("This app isn't installed")
+
+            # Unmigrate (before updating djangosettings)
+            management.call_command("migrate", appname, "zero")
+
+            # Update djangosettings
+            with open("%s" % djangosettingsname, "wt+") as f:
+                status = 0
+                for l in djangosettings.splitlines():
+                    if status == 0 and "INSTALLED_APPS" in l:
+                        status = 1
+                    elif status == 1 and app in l:
+                        i = re.search("\S", l).start()
+                        l = '%s# "%s",' % (l[:i], app)
+                        status = 2
+                    print(l, file=f)
+
+        # Trigger reloading of the WSGI app
+        Attribute.forceReload()
 
 
 @login_required

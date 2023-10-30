@@ -22,7 +22,7 @@
 #
 
 from django.core.management import call_command
-from django.db import migrations
+from django.db import migrations, connections
 
 
 def loadParameters(apps, schema_editor):
@@ -35,6 +35,11 @@ def loadParameters(apps, schema_editor):
         verbosity=0,
         database=schema_editor.connection.alias,
     )
+
+
+def removeParameters(apps, schema_editor):
+    with connections[schema_editor.connection.alias].cursor() as cursor:
+        cursor.execute("delete from common_parameter where name like 'odoo.%'")
 
 
 class Migration(migrations.Migration):
@@ -54,7 +59,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(
-            code=loadParameters,
-        ),
+        migrations.RunPython(loadParameters, removeParameters),
     ]

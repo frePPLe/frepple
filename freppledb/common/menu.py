@@ -63,7 +63,16 @@ menu.addItem(
         isDefaultDatabase,
     ],
 )
-menu.addItem("admin", "apps", url="/apps/", label=_("Apps"), index=1160)
+menu.addItem(
+    "admin",
+    "apps",
+    url="/apps/",
+    label=_("Apps"),
+    index=1160,
+    dependencies=[
+        isDefaultDatabase,
+    ],
+)
 menu.addItem(
     "admin",
     "bucket admin",

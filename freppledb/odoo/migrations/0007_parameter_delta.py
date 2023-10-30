@@ -35,6 +35,7 @@ class Migration(migrations.Migration):
             values
             ('odoo.delta','999','Odoo connector: Only sales order lines with a write date greater than current date minus odoo.delta days will be pulled. Default:999 (Pull entire demand history)', now())
             on conflict(name) do nothing
-            """
+            """,
+            "delete from common_parameter where name = 'odoo.delta'",
         ),
     ]

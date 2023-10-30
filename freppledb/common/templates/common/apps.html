@@ -2,10 +2,31 @@
 {% load i18n %}
 
 {% block extrahead %}{{block.super}}
-
 <script>
 
-
+function updateApp(appname, action, el) {
+   $(el).find(".fa-cog").removeClass("d-none");
+   $.ajax({
+      url: window.location.href,
+      type: 'POST',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify({
+        app: appname,
+        action: action
+        }),
+      success: function () {
+		// We need to wait a bit after success to allow the web server to restart
+		setTimeout(function(){
+			window.location.href = window.location.href;
+			$(el).find(".fa-cog").addClass("d-none");
+		}, 2000);
+	  },
+      error: function(result, stat, errorThrown) {
+		$(el).find(".fa-cog").addClass("d-none");
+		ajaxerror(result, stat, errorThrown)
+	  }
+    });
+}
 
 </script>
 {% endblock %}
@@ -44,11 +65,17 @@
 			{% if request.user.is_superuser %}
 				{% if app.installed and app.support_uninstall %}
 				<div class="col-auto">
-					<button type="button" class="btn btn-danger btn-sm">{% trans "uninstall"|capfirst %}</button>
+					<button type="button" class="btn btn-danger btn-sm" onclick="updateApp('{{ app.name }}', 'uninstall', this)">
+						<span class="fa fa-cog fa-spin d-none"></span>
+						{% trans "uninstall"|capfirst %}
+					</button>
 				</div>
 				{% elif not app.installed %}
 				<div class="col-auto">
-					<button type="button" class="btn btn-danger btn-sm">{% trans "install"|capfirst %}</button>
+					<button type="button" class="btn btn-danger btn-sm" onclick="updateApp('{{ app.name }}', 'install', this)">
+						<span class="fa fa-cog fa-spin d-none"></span>
+						{% trans "install"|capfirst %}
+					</button>
 				</div>
 				{% endif %}
 			{% endif %}

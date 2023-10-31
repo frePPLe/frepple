@@ -367,7 +367,7 @@ class Command(BaseCommand):
     help_url = "command-reference.html#runplan"
 
     @staticmethod
-    def getHTML(request):
+    def getHTML(request, widget=False):
 
         if request.user.has_perm("auth.generate_plan"):
             # Collect optional tasks
@@ -415,6 +415,8 @@ class Command(BaseCommand):
                     "leadtimeconstrained": constraint & 1,
                     "fenceconstrained": constraint & 8,
                     "plantype": plantype,
+                    "widget": widget,
+                    "lastrun": lastrun,
                 },
                 request=request,
             )

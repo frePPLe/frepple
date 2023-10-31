@@ -38,25 +38,25 @@ logger = logging.getLogger(__name__)
 
 class Dashboard:
     """
-  Widgets are UI components that can be added to the dashboard.
-  Subclasses need to follow these conventions:
-    - They can only be defined in a file "widget.py" in an application module.
-    - In the file widget.py each widget needs to register itself by calling
-      the method Widget.register().
-    - We don't expect widgets to be instantiated.
-    - Class attribute "name" needs to provide a short, unique identifier
-      for the widget. This string is also used for the URL to access the
-      widget, so keep it short and avoid special characters.
-    - Class attribute 'title' needs to a translatable title string for
-      the title bar of the widget.
-    - Class attribute 'asynchronous' is a boolean specifying whether the widget
-      is immediately rendered in the page, or asynchronously with an
-      Ajax request.
-    - Class method render(request) is called to render the widget to the
-      client browser.
-      It should return HTML content for synchronous widgets.
-      It should return a Django response object for asynchronous widgets.
-  """
+    Widgets are UI components that can be added to the dashboard.
+    Subclasses need to follow these conventions:
+        - They can only be defined in a file "widget.py" in an application module.
+        - In the file widget.py each widget needs to register itself by calling
+        the method Widget.register().
+        - We don't expect widgets to be instantiated.
+        - Class attribute "name" needs to provide a short, unique identifier
+        for the widget. This string is also used for the URL to access the
+        widget, so keep it short and avoid special characters.
+        - Class attribute 'title' needs to a translatable title string for
+        the title bar of the widget.
+        - Class attribute 'asynchronous' is a boolean specifying whether the widget
+        is immediately rendered in the page, or asynchronously with an
+        Ajax request.
+        - Class method render(request) is called to render the widget to the
+        client browser.
+        It should return HTML content for synchronous widgets.
+        It should return a Django response object for asynchronous widgets.
+    """
 
     __registry__ = {}
     __ready__ = False
@@ -125,27 +125,27 @@ class Dashboard:
 
 class Widget:
     """
-  Widgets are UI components that can be added to the dashboard.
-  Subclasses need to follow these conventions:
-    - They can only be defined in a file "widget.py" in an application module.
-    - In the file widget.py each widget needs to register itself by calling
-      the method Widget.register().
-    - We don't expect widgets to be instantiated.
-    - Class attribute 'name' defines a unique identifier for the widget.
-      This string is also used for the URL to access the widget, so keep it
-      short and avoid special characters.
-    - Class attribute 'title' defines a translatable title string for the widget.
-    - Class attribute 'asynchronous' needs to be set to true for asynchronous widgets.
-      Such widgets are rendered in 2 steps: initially the dashboard displays a
-      loading icon, and next an ajax request is launched to populate the widget
-      content.
-    - Class method render(request) is called to render the widget to the
-      client browser.
-      It returns a string for synchronous widgets.
-      It returns a HTTPResponse object for asynchronous widgets.
-    - Class attribute 'url' optionally defines a url to a report with a more
-      complete content than can be displayed in the dashboard widget.
-  """
+    Widgets are UI components that can be added to the dashboard.
+    Subclasses need to follow these conventions:
+        - They can only be defined in a file "widget.py" in an application module.
+        - In the file widget.py each widget needs to register itself by calling
+        the method Widget.register().
+        - We don't expect widgets to be instantiated.
+        - Class attribute 'name' defines a unique identifier for the widget.
+        This string is also used for the URL to access the widget, so keep it
+        short and avoid special characters.
+        - Class attribute 'title' defines a translatable title string for the widget.
+        - Class attribute 'asynchronous' needs to be set to true for asynchronous widgets.
+        Such widgets are rendered in 2 steps: initially the dashboard displays a
+        loading icon, and next an ajax request is launched to populate the widget
+        content.
+        - Class method render(request) is called to render the widget to the
+        client browser.
+        It returns a string for synchronous widgets.
+        It returns a HTTPResponse object for asynchronous widgets.
+        - Class attribute 'url' optionally defines a url to a report with a more
+        complete content than can be displayed in the dashboard widget.
+    """
 
     name = "Undefined"
     title = "Undefined"
@@ -174,8 +174,8 @@ class Widget:
     @classmethod
     def getAppLabel(cls):
         """
-    Return the name of the Django application which defines this widget.
-    """
+        Return the name of the Django application which defines this widget.
+        """
         if hasattr(cls, "app_label"):
             return cls.app_label
         s = cls.__module__.split(".")

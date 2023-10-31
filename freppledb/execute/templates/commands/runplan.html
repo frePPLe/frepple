@@ -7,7 +7,7 @@
     </td>
     <td class="ps-3 pt-3 pe-3">{% translate "Load all input data, run the planning algorithm, and export the results." %}<br><br>
     {% if planning_options %}
-    <div {% if planning_options|length <= 1 %}class="d-none"{% endif %}><b>{% filter capfirst %}{% translate "optional planning steps" %}{% endfilter %}</b><br>
+    <div {% if planning_options|length <= 1 %}class="d-none"{% endif %}><b>{% filter capfirst %}{% translate "planning steps" %}{% endfilter %}</b><br>
     {% for b in planning_options %}
     <div class="form-check">
     <label class="form-check-label" for="option_{{b.0}}"

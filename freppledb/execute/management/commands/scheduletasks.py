@@ -393,7 +393,7 @@ class Command(BaseCommand):
     help_url = "command-reference.html#scheduletasks"
 
     @classmethod
-    def getHTML(cls, request):
+    def getHTML(cls, request, widget=False):
         commands = []
         for commandname, appname in get_commands().items():
             if commandname != "scheduletasks":
@@ -422,6 +422,7 @@ class Command(BaseCommand):
                 "schedules": schedules,
                 "commands": commands,
                 "with_scheduler": cls.with_scheduler,
+                "widget": widget,
             },
             request=request,
         )

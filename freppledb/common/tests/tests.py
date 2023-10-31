@@ -21,6 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+import os
+
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
 
@@ -57,3 +59,18 @@ class UserPreferenceTest(TestCase):
         user.setPreference("test", {"a": 1, "b": "c"})
         after = user.getPreference("test")
         self.assertEqual(after, {"a": 1, "b": "c"})
+
+
+class AppsTest(TestCase):
+    def setUp(self):
+        os.environ["FREPPLE_TEST"] = "YES"
+        self.client.login(username="admin", password="admin")
+        super().setUp()
+
+    def tearDown(self):
+        del os.environ["FREPPLE_TEST"]
+        super().tearDown()
+
+    def test_app_screen(self):
+        response = self.client.get("/apps/")
+        self.assertEqual(response.status_code, 200)

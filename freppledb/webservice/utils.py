@@ -32,7 +32,10 @@ from django.db import DEFAULT_DB_ALIAS
 from freppledb.common.models import Parameter
 
 # Only a single service can be making updates at the same time
-lock = asyncio.Lock()
+try:
+    lock = asyncio.Lock()
+except Exception:
+    lock = None
 
 
 def useWebService(database=DEFAULT_DB_ALIAS):

@@ -41,6 +41,13 @@ def isDefaultDatabase(request):
     return getattr(request, "database", DEFAULT_DB_ALIAS) == DEFAULT_DB_ALIAS
 
 
+def hasInstallableApps(request):
+    return (
+        hasattr(settings, "INSTALLABLE_APPS")
+        and getattr(request, "database", DEFAULT_DB_ALIAS) == DEFAULT_DB_ALIAS
+    )
+
+
 # Settings menu
 menu.addItem(
     "admin",
@@ -70,7 +77,7 @@ menu.addItem(
     label=_("Apps"),
     index=1160,
     dependencies=[
-        isDefaultDatabase,
+        hasInstallableApps,
     ],
 )
 menu.addItem(

@@ -109,7 +109,7 @@ class AppsView(View):
             cls.reportkey, database=request.database
         )
         apps = []
-        for a in settings.INSTALLABLE_APPS:
+        for a in getattr(settings, "INSTALLABLE_APPS", []):
             try:
                 m = getattr(import_module(a), "frepple_app", None)
                 if m:

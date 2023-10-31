@@ -200,8 +200,10 @@ class Migration(migrations.Migration):
         ),
         migrations.RunSQL(
             sql="alter table reportmanager_report alter column lastmodified set default now()",
+            reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
             sql="alter table reportmanager_column alter column lastmodified set default now()",
+            reverse_sql=migrations.RunSQL.noop,
         ),
     ]

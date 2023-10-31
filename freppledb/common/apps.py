@@ -100,7 +100,6 @@ class CommonConfig(AppConfig):
             "django_filters",
             "rest_framework",
             "django.contrib.admin",
-            "freppledb.reportmanager",
         ]
         for app in required_apps:
             if app not in settings.INSTALLED_APPS:

@@ -29,5 +29,4 @@ frepple_app = {
         their first data in frepple.</p>
         """,
     "documentation_url": "https://frepple.com/docs/current/apps/wizard.html",
-    "support_uninstall": True,
 }

@@ -30,5 +30,4 @@ frepple_app = {
         <p>Recommended to use only in development environments.</p>
         """,
     "documentation_url": "https://frepple.com/docs/current/apps/reportmanager.html",
-    "support_uninstall": True,
 }

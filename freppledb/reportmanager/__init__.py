@@ -31,5 +31,4 @@ frepple_app = {
         frePPLe reports.</p>
         """,
     "documentation_url": "https://frepple.com/docs/current/apps/reportmanager.html",
-    "support_uninstall": True,
 }

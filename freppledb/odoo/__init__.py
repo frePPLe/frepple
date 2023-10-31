@@ -33,6 +33,5 @@ frepple_app = {
         open source ERP and business management suite.</p>
         """,
     "documentation_url": "https://frepple.com/docs/current/erp-integration/odoo-connector/index.html",
-    "support_uninstall": True,
     "ERP_integration": True,
 }

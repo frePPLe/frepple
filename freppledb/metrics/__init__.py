@@ -29,5 +29,4 @@ frepple_app = {
         identify critical items.</p>
         """,
     "documentation_url": "https://frepple.com/docs/current/apps/metrics.html",
-    "support_uninstall": True,
 }

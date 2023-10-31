@@ -29,5 +29,4 @@ frepple_app = {
         user interface for user to review and edit these sales forecast.</p>
         """,
     "documentation_url": "https://frepple.com/docs/current/apps/forecast.html",
-    "support_uninstall": True,
 }

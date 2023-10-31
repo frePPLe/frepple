@@ -121,7 +121,6 @@ class AppsView(View):
                             "version": m.get("__version__", None),
                             "description": m.get("description", None),
                             "documentation_url": m.get("documentation_url", None),
-                            "support_uninstall": m.get("support_uninstall", False),
                         }
                     )
             except Exception:
@@ -206,8 +205,6 @@ class AppsView(View):
 
         elif action == "uninstall":
             # Validate
-            if not metadata.get("support_uninstall", False):
-                raise Exception("This app can't be uninstalled.")
             if app not in settings.INSTALLED_APPS:
                 raise Exception("This app isn't installed")
 

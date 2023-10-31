@@ -70,21 +70,12 @@ function updateApp(appname, action, el) {
 			<h5 class="mb-2 fw-bold row align-items-center">
 			<div class="col">{{ app.summary|capfirst|safe }} {% if app.version %}&nbsp;&nbsp;<span class="fs-5 fw-normal">v{{ app.version }}{% endif %}</div>
 			{% if request.user.is_superuser %}
-				{% if app.installed and app.support_uninstall %}
 				<div class="col-auto">
 					<button type="button" class="btn btn-danger btn-sm" onclick="updateApp('{{ app.name }}', 'uninstall', this)">
 						<span class="fa fa-cog fa-spin d-none"></span>
 						{% trans "uninstall"|capfirst %}
 					</button>
 				</div>
-				{% elif not app.installed %}
-				<div class="col-auto">
-					<button type="button" class="btn btn-danger btn-sm" onclick="updateApp('{{ app.name }}', 'install', this)">
-						<span class="fa fa-cog fa-spin d-none"></span>
-						{% trans "install"|capfirst %}
-					</button>
-				</div>
-				{% endif %}
 			{% endif %}
 		    </h5>
 			{% if app.description %}<div class="row mb-1">{{ app.description|safe }}</div>{% endif %}
@@ -110,21 +101,12 @@ function updateApp(appname, action, el) {
 			<h5 class="mb-2 fw-bold row align-items-center">
 			<div class="col">{{ app.summary|capfirst|safe }} {% if app.version %}&nbsp;&nbsp;<span class="fs-5 fw-normal">v{{ app.version }}{% endif %}</div>
 			{% if request.user.is_superuser %}
-				{% if app.installed and app.support_uninstall %}
-				<div class="col-auto">
-					<button type="button" class="btn btn-danger btn-sm" onclick="updateApp('{{ app.name }}', 'uninstall', this)">
-						<span class="fa fa-cog fa-spin d-none"></span>
-						{% trans "uninstall"|capfirst %}
-					</button>
-				</div>
-				{% elif not app.installed %}
 				<div class="col-auto">
 					<button type="button" class="btn btn-danger btn-sm" onclick="updateApp('{{ app.name }}', 'install', this)">
 						<span class="fa fa-cog fa-spin d-none"></span>
 						{% trans "install"|capfirst %}
 					</button>
 				</div>
-				{% endif %}
 			{% endif %}
 		    </h5>
 			{% if app.description %}<div class="row mb-1">{{ app.description|safe }}</div>{% endif %}

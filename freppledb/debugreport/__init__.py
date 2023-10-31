@@ -28,5 +28,4 @@ frepple_app = {
         <p>This app allows superusers to view the web server log file.</p>
         """,
     "documentation_url": "https://frepple.com/docs/current/apps/reportmanager.html",
-    "support_uninstall": True,
 }

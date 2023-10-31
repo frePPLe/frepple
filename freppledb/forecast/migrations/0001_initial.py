@@ -41,6 +41,12 @@ def loadParameters(apps, schema_editor):
     )
 
 
+def removeParameters(apps, schema_editor):
+    db = schema_editor.connection.alias
+    with connections[db].cursor() as cursor:
+        cursor.execute("delete from common_parameter where name like 'forecast.%'")
+
+
 def loadParameters_measures(apps, schema_editor):
     from django.core.management.commands.loaddata import Command
 
@@ -743,18 +749,22 @@ class Migration(migrations.Migration):
         ),
         migrations.RunSQL(
             sql="alter table measure alter column lastmodified set default now()",
+            reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
             sql="alter table forecast alter column lastmodified set default now()",
+            reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunPython(
             code=loadParameters,
+            reverse_code=removeParameters,
         ),
         migrations.RunPython(
             code=loadParameters_measures,
+            reverse_code=migrations.RunPython.noop,
         ),
         migrations.RunPython(
-            code=grant_read_access,
+            code=grant_read_access, reverse_code=migrations.RunPython.noop
         ),
         migrations.RunSQL(
             sql="""
@@ -779,9 +789,13 @@ class Migration(migrations.Migration):
 
             create unique index on forecastreport_view (item_id, location_id, customer_id)
             """,
+            reverse_sql="""
+            drop materialized view forecastreport_view
+            """,
         ),
         migrations.RunSQL(
             sql="alter table forecastplan drop column id",
+            reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.AddConstraint(
             model_name="forecastplan",
@@ -792,6 +806,7 @@ class Migration(migrations.Migration):
         ),
         migrations.RunSQL(
             sql="cluster forecastplan using forecastplan_uidx",
+            reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
             sql="""
@@ -826,5 +841,6 @@ class Migration(migrations.Migration):
 
               drop table item_hierarchy, location_hierarchy, customer_hierarchy;
               """,
+            reverse_sql="drop table if exists forecasthierarchy",
         ),
     ]

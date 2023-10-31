@@ -104,13 +104,16 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            drop_varchar_pattern_like_index("forecast", "forecastplan", "item_id")
+            drop_varchar_pattern_like_index("forecast", "forecastplan", "item_id"),
+            migrations.RunPython.noop,
         ),
         migrations.RunPython(
-            drop_varchar_pattern_like_index("forecast", "forecastplan", "customer_id")
+            drop_varchar_pattern_like_index("forecast", "forecastplan", "customer_id"),
+            migrations.RunPython.noop,
         ),
         migrations.RunPython(
-            drop_varchar_pattern_like_index("forecast", "forecastplan", "location_id")
+            drop_varchar_pattern_like_index("forecast", "forecastplan", "location_id"),
+            migrations.RunPython.noop,
         ),
         migrations.AlterField(
             model_name="forecastplan",
@@ -144,5 +147,6 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(
             code=dropIndexLike,
+            reverse_code=migrations.RunPython.noop,
         ),
     ]

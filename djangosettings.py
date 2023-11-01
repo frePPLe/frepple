@@ -219,6 +219,10 @@ GOOGLE_ANALYTICS = None
 # Installed applications.
 # The order is important: urls, templates and menus of the earlier entries
 # take precedence over and override later entries.
+#
+# IMPORTANT: the apps screen updates this section of the file.
+# So, please don't change the layout of this section: just keep a separate
+# line for each app.
 INSTALLED_APPS = (
     "django.contrib.auth",
     "django.contrib.contenttypes",

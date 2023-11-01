@@ -62,31 +62,35 @@ frePPLe |release| documentation
     Description of all commands
     </div>
     <div class="sphinxcolumn">
-    <a class="reference internal" href="integration-guide/index.html"><span class="doc">Integration guide</span></a><br>
-    How to integrate with your business applications
+    <a class="reference internal" href="apps/index.html"><span class="doc">Extension apps</span></a><br>
+    Documentation of optional extension apps.
     </div>
     </div>
     <div class="sphinxrow">
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="integration-guide/index.html"><span class="doc">Integration guide</span></a><br>
+    How to integrate with your business applications
+    </div>
     <div class="sphinxcolumn">
     <a class="reference internal" href="erp-integration/index.html"><span class="doc">ERP integration</span></a><br>
     Info on the packaged connectors to ERP systems
     </div>
+    </div>
+    <div class="sphinxrow">
     <div class="sphinxcolumn">
     <a class="reference internal" href="developer-guide/index.html"><span class="doc">Developer guide</span></a><br>
     How to customize and extend
     </div>
-    </div>
-    <div class="sphinxrow">
     <div class="sphinxcolumn">
     <a class="reference internal" href="license.html"><span class="doc">License</span></a><br>
     Software license info
     </div>
+    </div>
+    <div class="sphinxrow">
     <div class="sphinxcolumn">
     <a class="reference internal" href="branding-guidelines.html"><span class="doc">Branding guidelines</span></a><br>
     Approved usage of the log and brand
     </div>
-    </div>
-    <div class="sphinxrow">
     <div class="sphinxcolumn">
     <a class="reference internal" href="release-notes.html"><span class="doc">Release notes</span></a><br>
     What's new and exciting?
@@ -104,6 +108,7 @@ frePPLe |release| documentation
    user-interface/index
    model-reference/index
    command-reference
+   apps/index
    installation-guide/index
    integration-guide/index
    erp-integration/index

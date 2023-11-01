@@ -29,5 +29,5 @@ frepple_app = {
         on the frePPLe database.</p>
         <p>Recommended to use only in development environments.</p>
         """,
-    "documentation_url": "https://frepple.com/docs/current/apps/reportmanager.html",
+    "documentation_url": "https://frepple.com/docs/current/apps/executesql.html",
 }

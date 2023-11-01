@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
             on conflict (name) do nothing
             """,
             """
-            delete from parameter where name = 'COMPLETED.consume_material'
+            delete from common_parameter where name = 'COMPLETED.consume_material'
             """,
         )
     ]

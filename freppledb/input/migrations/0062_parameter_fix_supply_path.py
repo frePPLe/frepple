@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
             on conflict (name) do nothing
             """,
             """
-            delete from parameter where name = 'plan.fixBrokenSupplyPath'
+            delete from common_parameter where name = 'plan.fixBrokenSupplyPath'
             """,
         )
     ]

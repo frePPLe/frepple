@@ -24,6 +24,9 @@ if [ -n "$POSTGRES_DBNAME" ]; then
   sed -i "s/\"NAME\": \"test_scenario\(.*\)\"/\"NAME\": \"test_${POSTGRES_DBNAME}\1\"/g" /etc/frepple/djangosettings.py
 fi
 
+# Djangosettings must be writeable by the web server to support installing&uninstalling apps
+chmod g+w /etc/frepple/djangosettings.py
+
 echo "Waiting for the database to be ready"
 retries=10
 until pg_isready --timeout=1 "${params[@]}" >/dev/null 2>&1

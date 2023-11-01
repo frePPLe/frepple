@@ -40,22 +40,6 @@ class Command(StdCommand):
         )
 
     def handle(self, *args, **options):
-        # Warn about optional apps that are not activated.
-        # freppledb.common.apps already checks for required apps.
-        missing_apps = [
-            i
-            for i in ["freppledb.wizard", "freppledb.metrics", "freppledb.debugreport"]
-            if i not in settings.INSTALLED_APPS
-        ]
-        if missing_apps:
-            print(
-                "\n"
-                "Warning:\n"
-                "  The following apps are not activated in the INSTALLED_APPS setting in your djangosettings.py file.\n"
-                "  This is fine and can be intentional, but could also be an oversight.\n"
-                "  Missing: %s\n" % ",".join(missing_apps)
-            )
-
         db = options["database"]
         if db:
             # Database was specified

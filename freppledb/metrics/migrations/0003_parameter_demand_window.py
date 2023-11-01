@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
             on conflict (name) do nothing
             """,
             """
-            delete from parameter where name = 'metrics.demand_window'
+            delete from common_parameter where name = 'metrics.demand_window'
             """,
         )
     ]

@@ -50,7 +50,7 @@ class Task(models.Model):
     submitted = models.DateTimeField(_("submitted"), editable=False)
     started = models.DateTimeField(_("started"), blank=True, null=True, editable=False)
     finished = models.DateTimeField(
-        _("submitted"), blank=True, null=True, editable=False
+        _("finished"), blank=True, null=True, editable=False
     )
     arguments = models.TextField(
         _("arguments"), max_length=200, null=True, editable=False
@@ -108,6 +108,15 @@ class ScheduledTask(models.Model):
 
     def __str__(self):
         return self.name
+
+    def lastrun(self):
+        return (
+            Task.objects.all()
+            .using(self._state.db)
+            .filter(name="scheduletasks", arguments="--schedule=%s" % self.name)
+            .order_by("-id")
+            .first()
+        )
 
     class Meta:
         db_table = "execute_schedule"

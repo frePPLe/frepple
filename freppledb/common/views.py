@@ -123,7 +123,7 @@ class AppsView(View):
                                             "name": appname,
                                             "installed": appname in settings.INSTALLED_APPS,
                                             "summary": m.get("summary", appname),
-                                            "version": m.get("__version__", None),
+                                            "version": m.get("version", None),
                                             "description": m.get("description", None),
                                             "documentation_url": m.get("documentation_url", None),
                                         }
@@ -136,7 +136,7 @@ class AppsView(View):
                                 "name": a,
                                 "installed": a in settings.INSTALLED_APPS,
                                 "summary": m.get("summary", a),
-                                "version": m.get("__version__", None),
+                                "version": m.get("version", None),
                                 "description": m.get("description", None),
                                 "documentation_url": m.get("documentation_url", None),
                             }

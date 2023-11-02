@@ -68,7 +68,7 @@ function updateApp(appname, action, el) {
 	<div class="card w-100">
 		<div class="card-body d-flex flex-column">
 			<h5 class="mb-2 fw-bold row align-items-center">
-			<div class="col">{{ app.summary|capfirst|safe }} {% if app.version %}&nbsp;&nbsp;<span class="fs-5 fw-normal">v{{ app.version }}{% endif %}</div>
+			<div class="col">{{ app.summary|capfirst|safe }} {% if app.version %}&nbsp;&nbsp;<span class="fs-6 fw-normal">v{{ app.version }}{% endif %}</div>
 			{% if request.user.is_superuser %}
 				<div class="col-auto">
 					<button type="button" class="btn btn-danger btn-sm" onclick="updateApp('{{ app.name }}', 'uninstall', this)">
@@ -99,7 +99,7 @@ function updateApp(appname, action, el) {
 	<div class="card w-100">
 		<div class="card-body d-flex flex-column">
 			<h5 class="mb-2 fw-bold row align-items-center">
-			<div class="col">{{ app.summary|capfirst|safe }} {% if app.version %}&nbsp;&nbsp;<span class="fs-5 fw-normal">v{{ app.version }}{% endif %}</div>
+			<div class="col">{{ app.summary|capfirst|safe }} {% if app.version %}&nbsp;&nbsp;<span class="fs-6 fw-normal">v{{ app.version }}{% endif %}</div>
 			{% if request.user.is_superuser %}
 				<div class="col-auto">
 					<button type="button" class="btn btn-danger btn-sm" onclick="updateApp('{{ app.name }}', 'install', this)">
@@ -111,7 +111,6 @@ function updateApp(appname, action, el) {
 		    </h5>
 			{% if app.description %}<div class="row mb-1">{{ app.description|safe }}</div>{% endif %}
 			<div class="row mt-auto mb-0">
-			   <div class="col">{% if app.installed %}<span class="badge rounded-pill bg-light">{% trans "installed"|capfirst %}</span>{% endif %}</div>
 			   {% if app.documentation_url %}<div class="col"><a role="button" href="{{ app.documentation_url|safe }}" target="_blank" class="btn btn-primary btn-sm float-end">{% trans "documentation"|capfirst %}</a></div>{% endif %}
 			</div>
 		</div>

@@ -383,7 +383,6 @@ class Command(BaseCommand):
                 .filter(name="runplan")
                 .exclude(arguments__contains="loadplan")
                 .order_by("-id")
-                .only("arguments")
                 .first()
             )
             if lastrun and lastrun.arguments:

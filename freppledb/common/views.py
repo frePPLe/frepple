@@ -26,6 +26,7 @@ import json
 from mimetypes import guess_type
 from multiprocessing import Process
 import os.path
+from pathlib import Path
 import re
 
 from django.core import management
@@ -108,21 +109,37 @@ class AppsView(View):
         request.prefs = request.user.getPreference(
             cls.reportkey, database=request.database
         )
-        apps = []
+        apps = {}
         for a in getattr(settings, "INSTALLABLE_APPS", []):
             try:
-                m = getattr(import_module(a), "frepple_app", None)
-                if m:
-                    apps.append(
-                        {
-                            "name": a,
-                            "installed": a in settings.INSTALLED_APPS,
-                            "summary": m.get("summary", a),
-                            "version": m.get("__version__", None),
-                            "description": m.get("description", None),
-                            "documentation_url": m.get("documentation_url", None),
-                        }
-                    )
+                if isinstance(a, Path):
+                    for d in a.iterdir():
+                        if d.is_dir():
+                            try:
+                                appname = d.parts[-1]
+                                m = getattr(import_module(appname), "frepple_app", None)
+                                if m:
+                                    apps[appname] ={
+                                            "name": appname,
+                                            "installed": appname in settings.INSTALLED_APPS,
+                                            "summary": m.get("summary", appname),
+                                            "version": m.get("__version__", None),
+                                            "description": m.get("description", None),
+                                            "documentation_url": m.get("documentation_url", None),
+                                        }
+                            except Exception:
+                                pass
+                else:
+                    m = getattr(import_module(a), "frepple_app", None)
+                    if m:
+                        apps[a] ={
+                                "name": a,
+                                "installed": a in settings.INSTALLED_APPS,
+                                "summary": m.get("summary", a),
+                                "version": m.get("__version__", None),
+                                "description": m.get("description", None),
+                                "documentation_url": m.get("documentation_url", None),
+                            }
             except Exception:
                 pass
         return render(
@@ -132,7 +149,7 @@ class AppsView(View):
                 "title": _("apps"),
                 "edition": "%s %s" % (edition, __version__),
                 "reportkey": cls.reportkey,
-                "apps": apps,
+                "apps": apps.values(),
                 "superuser": request.user.is_superuser,
             },
         )

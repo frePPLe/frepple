@@ -27,6 +27,7 @@ Main Django configuration file.
 """
 import os
 import sys
+import pathlib
 
 from django.utils.translation import gettext_lazy as _
 
@@ -252,6 +253,9 @@ INSTALLED_APPS = (
 )
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
 
+# This setting contains a list containing:
+#   - names of installable apps.
+#   - a Path object pointing to a folder where installable apps are found.
 INSTALLABLE_APPS = (
     "freppledb.odoo",
     "freppledb.forecast",
@@ -260,6 +264,14 @@ INSTALLABLE_APPS = (
     "freppledb.reportmanager",
     "freppledb.executesql",
     "freppledb.debugreport",
+    pathlib.Path(os.path.join(FREPPLE_APP, "apps")),
+    pathlib.Path(os.path.join(FREPPLE_APP, "freppleapps")),
+    pathlib.Path(os.path.join(FREPPLE_HOME, "apps")),
+    pathlib.Path(os.path.join(FREPPLE_HOME, "freppleapps")),
+    pathlib.Path(os.path.join(FREPPLE_CONFIGDIR, "apps")),
+    pathlib.Path(os.path.join(FREPPLE_CONFIGDIR, "freppleapps")),
+    pathlib.Path(os.path.join(FREPPLE_LOGDIR, "apps")),
+    pathlib.Path(os.path.join(FREPPLE_LOGDIR, "freppleapps")),
 )
 
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table

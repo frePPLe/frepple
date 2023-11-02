@@ -23,6 +23,7 @@ or `developed by yourself <../developer-guide/creating-an-extension-app.html>`_.
    reportmanager
    wizard
    debugreport
+   erpconnection
 
 .. image:: ../user-interface/_images/apps.png
    :alt: Extension apps

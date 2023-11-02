@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 from collections import OrderedDict
+from datetime import datetime
 
 from django.conf import settings
 from django.db.models import Q
@@ -59,6 +60,7 @@ from freppledb.common.report import (
     getCurrentDate,
     GridFieldJSON,
 )
+from freppledb.output.models import ResourceSummary
 from .utils import OperationPlanMixin
 
 import logging
@@ -485,6 +487,63 @@ class ResourceDetail(OperationPlanMixin):
             ):
                 f.editable = False
                 reportclass.rows += (f,)
+
+        # special case for bucketized resources, we need to scan for
+        # records in the complete time bucket where the filters fall in
+
+        try:
+            if "/operationplanresource/resource/" in request.path:
+                resource = request.path.strip("/").split("/")[-1]
+                res = Resource.objects.using(request.database).get(name__exact=resource)
+
+                dateformat = (
+                    settings.DATETIME_INPUT_FORMATS[0]
+                    if hasattr(settings, "DATETIME_INPUT_FORMATS")
+                    else "%Y-%m-%d %H:%M:%S"
+                )
+                if "buckets" in res.type.lower() and res.lft == res.rght - 1:
+                    if "operationplan__startdate__gte" in request.GET:
+                        startdate_filter = request.GET["operationplan__startdate__gte"]
+                        startdate = datetime.strptime(
+                            startdate_filter,
+                            dateformat,
+                        )
+                        r = (
+                            ResourceSummary.objects.using(request.database)
+                            .filter(resource=res.name)
+                            .filter(startdate__lte=startdate)
+                            .order_by("-startdate")
+                            .values("startdate")[:1]
+                        )
+                        bucketstart = (
+                            r[0]["startdate"] if len(r) == 1 else datetime(2000, 1, 1)
+                        ).strftime(dateformat)
+                        request.GET._mutable = True  # to make it editable
+                        request.GET["operationplan__startdate__gte"] = bucketstart
+                        request.GET._mutable = False
+
+                    if "operationplan__startdate__lt" in request.GET:
+                        startdate_filter = request.GET["operationplan__startdate__lt"]
+                        startdate = datetime.strptime(
+                            startdate_filter,
+                            dateformat,
+                        )
+                        r = (
+                            ResourceSummary.objects.using(request.database)
+                            .filter(resource=res.name)
+                            .filter(startdate__gte=startdate)
+                            .order_by("startdate")
+                            .values("startdate")[:1]
+                        )
+                        bucketend = (
+                            r[0]["startdate"] if len(r) == 1 else datetime(2030, 12, 31)
+                        ).strftime(dateformat)
+                        request.GET._mutable = True  # to make it editable
+                        request.GET["operationplan__startdate__lt"] = bucketend
+                        request.GET._mutable = False
+        except:
+            # silently fail
+            pass
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):

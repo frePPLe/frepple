@@ -21,6 +21,9 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 - | The 'about frepple' option in the help menu is now gone.
   | The new apps screen in the admin menu provides the same (and more) information.
 
+- | Capacity report: Clicking to get the detail of the MOs consuming from a bucketized
+    resource will now display all the MOs of the time buckets overlapping the filtering dates.
+
 
 8.2.0 (2023-10-20)
 ==================

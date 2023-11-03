@@ -2,10 +2,6 @@
 Forecast editor
 ===============
 
-  .. Important::
-
-     This module is only available in the Enterprise Edition.
-
 The forecast editor provides a convenient way to review and edit forecast values.
 
 .. image:: ../_images/forecast-editor-main.png

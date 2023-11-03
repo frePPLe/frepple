@@ -10,5 +10,4 @@ This app uses SQL queries to import data from the ERP
 and publish back results to the ERP. You can easily adapt
 the app to use a different data interface method.
 
-More details are documented
-`here <https://frepple.com/docs/current/erp-integration/generic-erp-connector.html>`_.
+More details are documented `here <../erp-integration/generic-erp-connector.html>`_.

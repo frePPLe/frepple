@@ -3,12 +3,9 @@
 <script type="text/javascript">
   function launchRunPlan(event) {
     $.ajax({
-          url: "{{request.prefix}}/execute/launch/runplan/",
+          url: "{{request.prefix}}/execute/api/runplan/",
           data: $(event.target).parents('form:first').serialize(),
           type: "POST",
-          success: function () {
-            window.location.href = window.location.href;
-          },
           error: ajaxerror
         });
     event.preventDefault();
@@ -16,17 +13,17 @@
 </script>
 {% endif %}
 <form role="form" method="post" {% if not widget %}action="{{request.prefix}}/execute/launch/runplan/"{% endif %}>{% csrf_token %}
-    <table>
+    <table class="w-100">
     <tr>
     <td style="vertical-align:top; padding: 15px">
         <button type="submit" class="btn btn-primary"{% if widget %} onclick="launchRunPlan(event)"{% endif%}>{% trans "launch"|capfirst %}</button>
     </td>
     <td class="ps-3 pt-3 pe-3">
     {% if widget and lastrun %}
-    <div class="row mb-2">
-    <div class="col-auto mb-1"><span class="fw-bold">{% trans "started"|capfirst %}</span><br>{% if lastrun.started %}{{lastrun.started|date:"DATETIME_FORMAT"}}{% endif %}</div>
-    <div class="col-auto mb-1"><span class="fw-bold">{% trans "finished"|capfirst %}</span><br>{% if lastrun.finished %}{{lastrun.finished|date:"DATETIME_FORMAT"}}{% endif %}</div>
-    <div class="col-auto mb-1"><span class="fw-bold">{% trans "status"|capfirst %}</span><br><span class="{% if lastrun.status != 'Done' %}badge bg-danger{% endif %}">{{lastrun.status}}</span></div>
+    <div class="row w-100 mb-2">
+    <div class="col mb-1"><span class="fw-bold">{% trans "started"|capfirst %}</span><br>{% if lastrun.started %}{{lastrun.started|date:"DATETIME_FORMAT"}}{% endif %}</div>
+    <div class="col mb-1"><span class="fw-bold">{% trans "finished"|capfirst %}</span><br>{% if lastrun.finished %}{{lastrun.finished|date:"DATETIME_FORMAT"}}{% endif %}</div>
+    <div class="col mb-1"><span class="fw-bold">{% trans "status"|capfirst %}</span><br><span class="{% if lastrun.status != 'Done' %}badge bg-danger{% endif %}">{{lastrun.status}}</span></div>
     </div>
     {% endif %}
     {% translate "Load all input data, run the planning algorithm, and export the results." %}<br><br>

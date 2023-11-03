@@ -21,9 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from django.middleware.csrf import get_token
+from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_str
 
 from freppledb.common.dashboard import Dashboard, Widget
 
@@ -34,14 +33,15 @@ class ExecuteWidget(Widget):
     title = _("Create a plan")
     permissions = (("auth.generate_plan", "Can generate plans"),)
     tooltip = _("Generate a constrained plan")
-    asynchronous = False
+    asynchronous = True
+    repeat = True
     url = "/execute/#runplan"
 
     def render(self, request=None):
         from freppledb.common.middleware import _thread_locals
         from freppledb.execute.management.commands.runplan import Command
 
-        return Command.getHTML(request or _thread_locals.request, widget=True)
+        return HttpResponse(Command.getHTML(request or _thread_locals.request, widget=True))
 
 
 @Dashboard.register
@@ -50,11 +50,12 @@ class ExecuteTaskGroupWidget(Widget):
     title = _("Group tasks")
     permissions = (("auth.generate_plan", "Can generate plans"),)
     tooltip = _("Run a sequence of tasks.")
-    asynchronous = False
+    asynchronous = True
+    repeat = True
     url = "/execute/#scheduletasks"
 
     def render(self, request=None):
         from freppledb.common.middleware import _thread_locals
         from freppledb.execute.management.commands.scheduletasks import Command
 
-        return Command.getHTML(request or _thread_locals.request, widget=True)
+        return HttpResponse(Command.getHTML(request or _thread_locals.request, widget=True))

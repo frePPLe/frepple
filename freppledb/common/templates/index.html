@@ -100,6 +100,21 @@
 					$("#widget_{{widget.name}}").parent().html("{% trans "failed"|capfirst %}");
 					}
 				});
+        {% if widget.repeat %}
+        setInterval( function() {
+          $.ajax({
+            url: "{{request.prefix}}/widget/{{widget.name}}/{{widget.args}}",
+            type: "GET",
+            success: function (data) {
+               $("div.card[data-cockpit-widget='{{widget.name}}'] div.card-body").html(data);
+               {{widget.javascript|safe}}
+            },
+            error: function (result, stat, errorThrown) {
+              $("div.card[data-cockpit-widget='{{widget.name}}'] div.card-body").html("{% trans "failed"|capfirst %}");
+            }
+          });
+        }, 5000);
+        {% endif %}
 			{% else %}
 			{{widget.javascript|safe}}
 			{% endif %}

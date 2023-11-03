@@ -609,6 +609,23 @@ DEFAULT_PAGESIZE = 100
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
     {
+        "rowname": _("execute"),
+        "cols": [
+            {
+                "width": 6,
+                "widgets": [
+                    ("execute", {}),
+                ],
+            },
+            {
+                "width": 6,
+                "widgets": [
+                    ("executegroup", {}),
+                ],
+            },
+        ],
+    },
+    {
         "rowname": _("sales"),
         "cols": [
             {
@@ -627,7 +644,7 @@ DEFAULT_DASHBOARD = [
                 "widgets": [
                     ("demand_alerts", {}),
                     ("delivery_performance", {"green": 90, "yellow": 80}),
-                    ("archived_demand", {"history": 12}),
+                    # ("archived_demand", {"history": 12}),
                     ("forecast_error", {"history": 12}),
                 ],
             },
@@ -637,18 +654,23 @@ DEFAULT_DASHBOARD = [
         "rowname": _("purchasing"),
         "cols": [
             {
-                "width": 9,
+                "width": 6,
                 "widgets": [
                     ("purchase_orders", {"fence1": 7, "fence2": 30}),
                     # ("purchase_queue",{"limit":20}),
-                    ("purchase_order_analysis", {"limit": 20}),
+                    # ("purchase_order_analysis", {"limit": 20}),
                 ],
             },
             {
                 "width": 3,
                 "widgets": [
-                    ("archived_purchase_order", {"history": 12}),
+                    # ("archived_purchase_order", {"history": 12}),
                     ("inventory_by_location", {"limit": 5}),
+                ],
+            },
+            {
+                "width": 3,
+                "widgets": [
                     ("inventory_by_item", {"limit": 10}),
                 ],
             },
@@ -658,10 +680,16 @@ DEFAULT_DASHBOARD = [
         "rowname": _("distribution"),
         "cols": [
             {
-                "width": 12,
+                "width": 8,
                 "widgets": [
                     ("distribution_orders", {"fence1": 7, "fence2": 30}),
                     # ("shipping_queue",{"limit":20}),
+                    #("archived_buffer", {"history": 12}),
+                ],
+            },
+            {
+                "width": 4,
+                "widgets": [
                     ("archived_buffer", {"history": 12}),
                 ],
             }
@@ -671,16 +699,16 @@ DEFAULT_DASHBOARD = [
         "rowname": _("manufacturing"),
         "cols": [
             {
-                "width": 9,
+                "width": 8,
                 "widgets": [
                     ("manufacturing_orders", {"fence1": 7, "fence2": 30}),
                     # ("resource_queue",{"limit":20}),
                 ],
             },
             {
-                "width": 3,
+                "width": 4,
                 "widgets": [
-                    ("capacity_alerts", {}),
+                    # ("capacity_alerts", {}),
                     ("resource_utilization", {"limit": 5, "medium": 80, "high": 90}),
                 ],
             },

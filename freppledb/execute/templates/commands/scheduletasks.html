@@ -1,4 +1,12 @@
 {% load i18n %}
+{% if widget and not schedules %}
+<div class="row">
+<div class="col"><p>You repeat the same sequence of tasks over and over again?<br>
+If so, <a class="text-decoration-underline" href="{{request.prefix}}/execute/#scheduletasks">define
+a task</a> to simplify running the sequence and avoid mistakes.</p>
+{% if not with_scheduler %}<p>You can also schedule the execution automatically at specific times.</p>{% endif %}
+</div>
+{% else %}
 {% if not widget %}
 <div class="row">
 <div class="col-9 offset-2"><p>
@@ -43,13 +51,13 @@
   <div class="col d-flex">
     <div class="d-flex align-items-center" data-field="name">{{ schedule.name }}</div>
   </div>
-  <div class="col">
+  <div class="col d-flex">
     <div class="d-flex align-items-center" data-field="started">{{ schedule.lastrun.started|date:"DATETIME_FORMAT" }}</div>
   </div>
-  <div class="col">
+  <div class="col d-flex">
     <div class="d-flex align-items-center" data-field="finished">{{ schedule.lastrun.finished|date:"DATETIME_FORMAT" }}</div>
   </div>
-  <div class="col">
+  <div class="col d-flex">
     <div class="d-flex align-items-center" data-field="status"><span class="{% if schedule.lastrun.status != 'Done' %}badge bg-danger{% endif %}">{{ schedule.lastrun.status }}</span></div>
   </div>
   {% endif %}
@@ -407,15 +415,13 @@ function deleteScheduledTask(el, event) {
 {% if widget %}
 function launchScheduledTask(event) {
   $.ajax({
-        url: "{{request.prefix}}/execute/launch/scheduletasks/",
+        url: "{{request.prefix}}/execute/api/scheduletasks/",
         data: $(event.target).parents('form:first').serialize(),
         type: "POST",
-        success: function () {
-          window.location.href = window.location.href;
-        },
         error: ajaxerror
       });
   event.preventDefault();
 }
 {% endif %}
 </script>
+{% endif %}

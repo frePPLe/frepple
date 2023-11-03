@@ -11,6 +11,7 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 - | The home screen of the application has be redesigned.
   | We've noticed that the home screen isn't commonly used as a central screen in the
     planner's daily workflow. We're trying to improve that.
+  | Generating a plan or executing a task group is now possible from the home screen.
   | Any thoughts and ideas to further improve this screen are welcome!
 
 - | A new `apps screen <user-interface/getting-around/apps.html>`_ allows superusers

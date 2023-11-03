@@ -128,7 +128,7 @@ class ForecastPlanFilter(FilterSet):
 class ForecastPlanAPI(frePPleListCreateAPIView):
     try:
         parameter_currentdate = parse(Parameter.objects.get(name="currentdate").value)
-    except:
+    except Exception:
         parameter_currentdate = datetime.now()
 
     queryset = ForecastPlan.objects.raw(

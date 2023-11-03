@@ -141,7 +141,7 @@ class ForecastService(AsyncHttpConsumer):
                             if bckt.get("item", None):
                                 try:
                                     item = frepple.item(name=bckt["item"], action="C")
-                                except:
+                                except Exception:
                                     errors.append("Item not found: %s" % bckt["item"])
                             else:
                                 # Use root item
@@ -155,7 +155,7 @@ class ForecastService(AsyncHttpConsumer):
                                     location = frepple.location(
                                         name=bckt["location"], action="C"
                                     )
-                                except:
+                                except Exception:
                                     errors.append(
                                         "Location not found: %s" % bckt["location"]
                                     )
@@ -171,7 +171,7 @@ class ForecastService(AsyncHttpConsumer):
                                     customer = frepple.customer(
                                         name=bckt["customer"], action="C"
                                     )
-                                except:
+                                except Exception:
                                     errors.append(
                                         "Customer not found: %s" % bckt["customer"]
                                     )
@@ -240,7 +240,7 @@ class ForecastService(AsyncHttpConsumer):
                         if data.get("item", None):
                             try:
                                 item = frepple.item(name=data["item"], action="C")
-                            except:
+                            except Exception:
                                 errors.append("Item not found: %s" % data["item"])
                         else:
                             # Use root item
@@ -254,7 +254,7 @@ class ForecastService(AsyncHttpConsumer):
                                 location = frepple.location(
                                     name=data["location"], action="C"
                                 )
-                            except:
+                            except Exception:
                                 errors.append(
                                     "Location not found: %s" % data["location"]
                                 )
@@ -270,7 +270,7 @@ class ForecastService(AsyncHttpConsumer):
                                 customer = frepple.customer(
                                     name=data["customer"], action="C"
                                 )
-                            except:
+                            except Exception:
                                 errors.append(
                                     "Customer not found: %s" % data["customer"]
                                 )

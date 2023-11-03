@@ -541,7 +541,7 @@ class ResourceDetail(OperationPlanMixin):
                         request.GET._mutable = True  # to make it editable
                         request.GET["operationplan__startdate__lt"] = bucketend
                         request.GET._mutable = False
-        except:
+        except Exception:
             # silently fail
             pass
 

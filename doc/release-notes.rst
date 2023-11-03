@@ -25,6 +25,10 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 - | Capacity report: Clicking to get the detail of the MOs consuming from a bucketized
     resource will now display all the MOs of the time buckets overlapping the filtering dates.
 
+.. rubric:: Odoo integration
+
+- | 14 & 15 & 16: Bug fix. Connector had a problem authenticating in a multi-database
+    Odoo configuration.
 
 8.2.0 (2023-10-20)
 ==================

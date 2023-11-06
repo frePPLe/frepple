@@ -197,6 +197,7 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(
             code=populateColumns,
+            reverse_code=migrations.RunPython.noop
         ),
         migrations.RunSQL(
             sql="alter table reportmanager_report alter column lastmodified set default now()",

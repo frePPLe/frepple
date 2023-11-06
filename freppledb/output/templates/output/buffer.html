@@ -467,10 +467,10 @@ function drawGraphs(jsondata)
 }
 {% endif %}
 {% if args.0 or mode == "table" %}
+var last_currentdate = new moment.utc("{{request.current_date}}");
+
 function crosses (cellvalue, options, rowdata)
 {
-  var last_currentdate = "{{request.current_date}}";
-
   // Cell background
   var oh = cellvalue[id_by_field['startoh']];
   var safety = cellvalue[id_by_field['safetystock']];
@@ -925,6 +925,8 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
         case 'open_orders':
+        var startdate = new moment.utc(options['colModel']['startdate'], datetimeformat);
+        var enddate = new moment.utc(options['colModel']['enddate'], datetimeformat);
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['open_orders']] != 0.0)
@@ -932,7 +934,7 @@ function crosses (cellvalue, options, rowdata)
             "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
             "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;due__gte=" +
-            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) +
+            (last_currentdate >= startdate && last_currentdate < enddate ? moment.utc("1970-01-01").format(datetimeformat) : options['colModel']['startdate']) +
             "&amp;due__lt=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
             "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
@@ -951,6 +953,8 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
         case 'total_demand':
+        var startdate = new moment.utc(options['colModel']['startdate'], datetimeformat);
+        var enddate = new moment.utc(options['colModel']['enddate'], datetimeformat);
         if (options.colModel.history)
           result += '<br>';
         else if (cellvalue[id_by_field['total_demand']] != 0.0)
@@ -958,7 +962,7 @@ function crosses (cellvalue, options, rowdata)
           "?noautofilter&amp;item=" + admin_escape(rowdata['item']) +
             "&amp;location=" + admin_escape(rowdata['location']) +
             "&amp;demand__due__gte=" +
-            (last_currentdate >= options['colModel']['startdate'] && last_currentdate < options['colModel']['enddate'] ? "1970-01-01" : options['colModel']['startdate']) +
+            (last_currentdate >= startdate && last_currentdate < enddate ? moment.utc("1970-01-01").format(datetimeformat) : options['colModel']['startdate']) +
             "&amp;demand__due__lt=" +  options['colModel']['enddate'] +
             (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
             "\">&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";

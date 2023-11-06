@@ -41,7 +41,6 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
-# ================= START UPDATED BLOCK BY WINDOWS INSTALLER =================
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = "%@mzit!i8b*$zc&6oev96=RANDOMSTRING"
 
@@ -224,6 +223,7 @@ GOOGLE_ANALYTICS = None
 # IMPORTANT: the apps screen updates this section of the file.
 # So, please don't change the layout of this section: just keep a separate
 # line for each app.
+# ================= START UPDATED BLOCK =================
 INSTALLED_APPS = (
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -251,7 +251,7 @@ INSTALLED_APPS = (
     "freppledb.executesql",
     "freppledb.debugreport",
 )
-# ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
+# ================= END UPDATED BLOCK =================
 
 # This setting contains a list containing:
 #   - names of installable apps.

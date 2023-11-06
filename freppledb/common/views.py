@@ -203,6 +203,8 @@ class AppsView(View):
             # Update djangosettings
             with open("%s" % djangosettingsname, "wt+") as f:
                 status = 0
+                new_file = []
+                found = False
                 for l in djangosettings.splitlines():
                     if status == 0 and "INSTALLED_APPS" in l:
                         status = 1
@@ -210,6 +212,20 @@ class AppsView(View):
                         i = re.search("\S", l).start()
                         l = '%s"%s",' % (l[:i], app)
                         status = 2
+                        found = True
+                    elif status == 1 and "END UPDATED BLOCK" in l:
+                        status = 3
+                    new_file.append(l)
+                if not found:
+                    idx = 0
+                    for l in new_file:
+                        if "freppledb.boot" in l:
+                            i = re.search("\S", l).start()
+                            l = '%s"%s",' % (l[:i], app)
+                            new_file.insert(idx+1, l)
+                            break
+                        idx += 1
+                for l in new_file:
                     print(l, file=f)
 
             # Migrate (after updating djangosettings)

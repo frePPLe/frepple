@@ -635,6 +635,14 @@ if "freppledb.wizard" in INSTALLED_APPS:
         },
     )
 
+# If a entry in INSTALLABLE_APPS points to a folder, we add this folder to the python path
+try:
+    for x in INSTALLABLE_APPS:
+        if isinstance(x, pathlib.Path) and x.exists() and x.is_dir():
+            sys.path.append(str(x.resolve()))
+except NameError:
+    pass
+
 # Find the ERP connector module
 ERP_CONNECTOR = None
 for app in INSTALLED_APPS:
@@ -648,11 +656,3 @@ for app in INSTALLED_APPS:
             raise ImproperlyConfigured(
                 "Only a single ERP connection app can be installed at a time"
             )
-
-# If a entry in INSTALLABLE_APPS points to a folder, we add this folder to the python path
-try:
-    for x in INSTALLABLE_APPS:
-        if isinstance(x, pathlib.Path) and x.exists() and x.is_dir():
-            sys.path.append(str(x.resolve()))
-except NameError:
-    pass

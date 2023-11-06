@@ -27,6 +27,9 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 
 - | More updates to the Italian translations, contributed by Sbadux. Grazie mille!
 
+- | Records in the upstream/downstream operations widgets (appearing when selecting a single PO/MO/DO)
+    are now sorted by date (they were previously sorted by item).
+
 .. rubric:: Odoo integration
 
 - | 14 & 15 & 16: Bug fix. Connector had a problem authenticating in a multi-database

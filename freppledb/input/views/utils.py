@@ -2201,7 +2201,7 @@ class OperationPlanDetail(View):
                     with recursive cte as
                 (
                 select 1 as level,
-                (coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
+                (to_char(operationplan.startdate,'YYYYMMDDHH24MISS')||'/'||coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
                 operationplan.reference::text,
                 0::numeric as pegged_x,
                 operationplan.quantity::numeric as pegged_y
@@ -2209,7 +2209,7 @@ class OperationPlanDetail(View):
                 where reference = %%s
                 union all
                 select cte.level+1,
-                cte.path||'/'||coalesce(downstream_opplan.item_id,'')||'/'||downstream_opplan.reference,
+                cte.path||'/'||to_char(downstream_opplan.startdate,'YYYYMMDDHH24MISS')||'/'||coalesce(downstream_opplan.item_id,'')||'/'||downstream_opplan.reference,
                 t1.downstream_reference::text,
                 greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
                 least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y
@@ -2281,7 +2281,7 @@ class OperationPlanDetail(View):
                     with recursive cte as
                 (
                 select 1 as level,
-                (coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
+                (to_char(operationplan.startdate,'YYYYMMDDHH24MISS')||'/'||coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
                 operationplan.reference::text,
                 0::numeric as pegged_x,
                 operationplan.quantity::numeric as pegged_y
@@ -2289,7 +2289,7 @@ class OperationPlanDetail(View):
                 where reference = %s
                 union all
                 select cte.level+1,
-                cte.path||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
+                cte.path||'/'||to_char(upstream_opplan.startdate,'YYYYMMDDHH24MISS')||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
                 t1.upstream_reference::text,
                 greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
                 least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y

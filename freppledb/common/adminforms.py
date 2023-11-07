@@ -23,6 +23,7 @@
 
 from functools import update_wrapper
 import json
+from urllib.parse import quote
 
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
@@ -44,7 +45,6 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.html import format_html
-from django.utils.http import urlquote
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import format_lazy, get_text_list
@@ -306,7 +306,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         )
         # Add a link to the object's change form if the user can edit the obj.
         if self.has_change_permission(request, obj):
-            obj_repr = format_html('<a href="{}">{}</a>', urlquote(obj_url), obj)
+            obj_repr = format_html('<a href="{}">{}</a>', quote(obj_url, safe="/"), obj)
         else:
             obj_repr = str(obj)
         msg_dict = {"name": opts.verbose_name, "obj": obj_repr}
@@ -467,7 +467,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         msg_dict = {
             "name": force_str(opts.verbose_name),
-            "obj": format_html('<a href="{}">{}</a>', urlquote(request.path), obj),
+            "obj": format_html(
+                '<a href="{}">{}</a>', quote(request.path, safe="/"), obj
+            ),
         }
         if "_continue" in request.POST:
             msg = format_html(

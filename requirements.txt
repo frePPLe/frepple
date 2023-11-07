@@ -1,6 +1,6 @@
 cheroot == 8.4.5
 portend == 2.5
-djangorestframework == 3.13.1
+djangorestframework == 3.14.0
 djangorestframework-bulk == 0.2.1
 djangorestframework-filters == 0.10.2
 django-bootstrap3 == 15.0.0
@@ -25,4 +25,4 @@ channels == 4.0.0
 attrs == 23.1.0
 daphne == 4.0.0
 Twisted[tls,http2]
-https://github.com/frePPLe/django/tarball/frepple_8.0
+https://github.com/frePPLe/django/tarball/frepple_8.3

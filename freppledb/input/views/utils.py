@@ -37,7 +37,7 @@ from django.http import HttpResponse, Http404
 from django.http.response import StreamingHttpResponse, HttpResponseServerError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ungettext
+from django.utils.translation import ngettext
 from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 from django.views.generic import View
@@ -99,7 +99,7 @@ def search(request):
                 {
                     "value": None,
                     "label": (
-                        ungettext(
+                        ngettext(
                             "%(name)s - %(count)d match",
                             "%(name)s - %(count)d matches",
                             count,
@@ -145,7 +145,7 @@ def search(request):
                     {
                         "value": None,
                         "label": (
-                            ungettext(
+                            ngettext(
                                 "%(name)s - %(count)d match",
                                 "%(name)s - %(count)d matches",
                                 count,

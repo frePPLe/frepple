@@ -21,13 +21,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote
 
 from django.db import connections
 from django.http import HttpResponse
 from django.utils.html import escape
 from django.utils.text import capfirst
-from django.utils.http import urlquote
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
@@ -422,7 +421,7 @@ class OutliersWidget(Widget):
                     escape(rec[2]),
                     rec[3],
                     request.prefix,
-                    urlquote(rec[0]),
+                    quote(rec[0], safe="/"),
                     int(rec[4]),
                 )
             )

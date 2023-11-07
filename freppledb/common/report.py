@@ -152,8 +152,7 @@ class IsChildOfLookup(Lookup):
 
 
 def create_connection(alias=DEFAULT_DB_ALIAS):
-    connections.ensure_defaults(alias)
-    connections.prepare_test_settings(alias)
+    connections.configure_settings({alias: settings.DATABASES[alias]})
     db = connections.databases[alias]
     backend = load_backend(db["ENGINE"])
     return backend.DatabaseWrapper(db, alias)

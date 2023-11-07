@@ -25,6 +25,7 @@ from datetime import time
 from decimal import Decimal
 import json
 from pathlib import Path
+from urllib.parse import quote
 
 from bootstrap3 import renderers
 from bootstrap3.utils import add_css_class
@@ -33,7 +34,7 @@ from bootstrap3.text import text_value
 
 from django.apps import apps
 from django.conf import settings
-from django.contrib.admin.utils import unquote, quote
+from django.contrib.admin.utils import unquote as django_unquote, quote as django_quote
 from django.contrib.auth.forms import ReadOnlyPasswordHashWidget
 from django.contrib.admin.widgets import (
     AdminDateWidget,
@@ -45,7 +46,6 @@ from django.db import models, connections
 from django.forms import FileInput, CheckboxInput, RadioSelect, CheckboxSelectMultiple
 from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.utils.translation import gettext as _
-from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_str
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
@@ -136,7 +136,7 @@ class CrumbsNode(Node):
                             '<li class="breadcrumb-item"><a href="%s%s%s">%s</a></li>'
                             % (
                                 req.prefix,
-                                urlquote(req.path),
+                                quote(req.path, safe="/"),
                                 args,
                                 str(escape(capfirst(title))),
                             ),
@@ -492,14 +492,14 @@ register.filter(label_lower)
 
 
 def admin_unquote(obj):
-    return unquote(obj)
+    return django_unquote(obj)
 
 
 register.filter(admin_unquote)
 
 
 def admin_quote(obj):
-    return quote(obj)
+    return django_quote(obj)
 
 
 register.filter(admin_quote)

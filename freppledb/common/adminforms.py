@@ -23,7 +23,7 @@
 
 from functools import update_wrapper
 import json
-from urllib.parse import quote
+from urllib.parse import quote as urllib_quote
 
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
@@ -306,7 +306,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         )
         # Add a link to the object's change form if the user can edit the obj.
         if self.has_change_permission(request, obj):
-            obj_repr = format_html('<a href="{}">{}</a>', quote(obj_url, safe="/"), obj)
+            obj_repr = format_html('<a href="{}">{}</a>', urllib_quote(obj_url, safe="/"), obj)
         else:
             obj_repr = str(obj)
         msg_dict = {"name": opts.verbose_name, "obj": obj_repr}
@@ -468,7 +468,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         msg_dict = {
             "name": force_str(opts.verbose_name),
             "obj": format_html(
-                '<a href="{}">{}</a>', quote(request.path, safe="/"), obj
+                '<a href="{}">{}</a>', urllib_quote(request.path, safe="/"), obj
             ),
         }
         if "_continue" in request.POST:

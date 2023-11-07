@@ -27,6 +27,7 @@ import email
 import itertools
 import json
 import jwt
+import math
 import time
 from xml.sax.saxutils import quoteattr
 from urllib.request import urlopen, Request, HTTPError, URLError
@@ -145,6 +146,12 @@ class Command(BaseCommand):
             if missing:
                 raise CommandError("Missing parameter %s" % ", ".join(missing))
 
+            # First loop with only purpose to count the records...
+            self.exported = []
+            for i in self.generateOperationPlansToPublish():
+                pass
+            total_pages = math.ceil(len(self.exported) / 100)
+
             # Collect data to send
             counter = 1
             self.exported = []
@@ -179,8 +186,8 @@ class Command(BaseCommand):
                     i.save(using=self.database, update_fields=("status", "source"))
 
                 # Progress
-                task.status = "%s%%" % counter
-                task.message = "Sent page %s of plan data to odoo" % counter
+                task.status = "%s%%" % math.ceil(counter / total_pages * 100)
+                task.message = "Sent page %s of %s with plan data to odoo" % (counter, total_pages)
                 task.save(using=self.database, update_fields=("status", "message"))
                 counter += 1
                 self.exported = []

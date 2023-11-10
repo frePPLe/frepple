@@ -153,7 +153,7 @@ menu.addItem(
     "API",
     url="/api/",
     label=_("REST API help"),
-    window=True,
+    window=False,
     prefix=True,
     index=400,
 )

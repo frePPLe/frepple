@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="{{STATIC_URL}}css/{{request.theme}}/bootstrap.min.css" />
 
 <link rel="shortcut icon" href="{{STATIC_URL}}favicon.ico"/>
+<link rel="manifest" href="{{STATIC_URL}}manifest.json">
 {% endblock %}
 {% block extrahead %}{{block.super}}
 <script src="/data/jsi18n/"></script>
@@ -27,6 +28,9 @@
   var documentation = '{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/';
   var dateformat = '{% setting "DATE_FORMAT_JS" %}';
   var datetimeformat = '{% setting "DATETIME_FORMAT_JS" %}';
+
+  if ('serviceWorker' in navigator)
+   navigator.serviceWorker.register("{{STATIC_URL}}js/serviceworker.js");
 
 $(function() {
     {% if tzoffset is None %}

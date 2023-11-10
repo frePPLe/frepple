@@ -8,6 +8,9 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface
 
+- | Frepple is now installable as an app on your tablet and smartphone.
+  | Your browser will provide a prompt to guide you through the installation.
+
 - | The home screen of the application has be redesigned.
   | We've noticed that the home screen isn't commonly used as a central screen in the
     planner's daily workflow. We're trying to improve that.

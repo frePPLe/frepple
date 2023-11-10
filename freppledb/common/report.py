@@ -2865,9 +2865,9 @@ class GridReport(View):
     @staticmethod
     def _filter_isnull(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if data.lower() in ["0", "false", force_str(_("false"))]:
-            return ~models.Q(**{"%s__isnull" % reportrow.field_name: data})
+            return models.Q(**{"%s__isnull" % reportrow.field_name: False})
         else:
-            return models.Q(**{"%s__isnull" % reportrow.field_name: data})
+            return models.Q(**{"%s__isnull" % reportrow.field_name: True})
 
     @staticmethod
     def _filter_ico(query, reportrow, data, database=DEFAULT_DB_ALIAS):

@@ -1947,6 +1947,13 @@ class GridReport(View):
             )
             response["Cache-Control"] = "no-cache, no-store"
             return response
+        elif fmt == "gantt":
+            response = StreamingHttpResponse(
+                content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
+                streaming_content=cls._generate_gantt_data(request, *args, **kwargs),
+            )
+            response["Cache-Control"] = "no-cache, no-store"
+            return response
         elif fmt == "calendar":
             response = StreamingHttpResponse(
                 content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
@@ -1960,6 +1967,10 @@ class GridReport(View):
     @classmethod
     def _generate_kanban_data(cls, request, *args, **kwargs):
         raise Http404("This report doesn't support the kanban format")
+
+    @classmethod
+    def _generate_gantt_data(cls, request, *args, **kwargs):
+        raise Http404("This report doesn't support the gantt format")
 
     @classmethod
     def _generate_calendar_data(cls, request, *args, **kwargs):

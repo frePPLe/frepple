@@ -298,6 +298,8 @@ class OperationPlanMixin(GridReport):
             )
             and "FREPPLE_TEST" not in os.environ,
         )
+        if port and not proxied:
+            port = port.replace("0.0.0.0", "localhost")
         return {
             "token": getWebserviceAuthorization(
                 user=request.user.username, sid=request.user.id, exp=3600

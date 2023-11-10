@@ -810,6 +810,8 @@ class OverviewReport(GridPivot):
             )
             and "FREPPLE_TEST" not in os.environ,
         )
+        if server and not proxied:
+            server = server.replace("0.0.0.0", "localhost")
         if args and args[0]:
             request.session["lasttab"] = "plan"
             return {
@@ -2120,6 +2122,8 @@ class ForecastEditor:
             )
             and "FREPPLE_TEST" not in os.environ,
         )
+        if server and not proxied:
+            server = server.replace("0.0.0.0", "localhost")
 
         return render(
             request,

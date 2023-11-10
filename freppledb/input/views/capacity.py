@@ -404,6 +404,15 @@ class ResourceDetail(OperationPlanMixin):
     )
 
     @classmethod
+    def _generate_gantt_data(cls, request, *args, **kwargs):
+        # Preparation of the correct filter for a column is currently done on the client side.
+        # The kanban query also doesn't know about pages.
+        request.GET = request.GET.copy()
+        request.GET["page"] = None
+        request.limit = request.pagesize
+        return cls._generate_json_data(request, *args, **kwargs)
+
+    @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         if args and args[0]:
             try:
@@ -582,6 +591,7 @@ class ResourceDetail(OperationPlanMixin):
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(database=request.database, lastplan=True),
                     "individualPoolResources": individualPoolResources,
+                    "showGantt": True
                 }
             )
         else:
@@ -594,6 +604,7 @@ class ResourceDetail(OperationPlanMixin):
                     "groupingcfg": groupingcfg,
                     "currentdate": getCurrentDate(database=request.database, lastplan=True),
                     "individualPoolResources": individualPoolResources,
+                    "showGantt": True
                 }
             )
         return ctx

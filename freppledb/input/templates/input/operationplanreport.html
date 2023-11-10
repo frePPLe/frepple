@@ -55,6 +55,7 @@
 <script src="{{STATIC_URL}}operationplandetail/src/upstreamoperationplansDrv.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/supplyinformationDrv.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/kanbanDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/ganttDrv.js"></script>
 {% else %}
 <script src="{{STATIC_URL}}js/frepple-common.min.js"></script>
 <script src="{{STATIC_URL}}js/frepple-input.min.js"></script>
@@ -110,6 +111,11 @@
   	  angular.element('#controller').scope().loadKanbanData(filter);
   	  return true;
   	}
+  	else if (preferences && preferences.mode == "gantt") {
+      initialfilter = filter;
+  	  angular.element('#controller').scope().loadGanttData(filter);
+  	  return true;
+  	}
     else if (preferences && preferences.mode && preferences.mode.startsWith("calendar")) {
       initialfilter = filter;
       angular.element('#controller').scope().loadCalendarData(filter);
@@ -139,7 +145,7 @@
   }
 
   function getDirtyData() {
-  	if (preferences && preferences.mode && (preferences.mode == "kanban" || preferences.mode.startsWith("calendar"))) {
+  	if (preferences && preferences.mode && (preferences.mode == "kanban" || preferences.mode == "gantt" || preferences.mode.startsWith("calendar"))) {
       initialfilter = thefilter;
       return angular.element('#controller').scope().getDirtyCards();
     }
@@ -210,6 +216,11 @@
     $("#calendarday").on('click', function() {
       angular.element('#controller').scope().setMode("calendarday");
     });
+    {% if showGantt %}
+    $("#ganttmode").on('click', function() {
+      angular.element('#controller').scope().setMode("gantt");
+    });
+    {% endif %}
   });
   // frepple.js will call this function to alert angular that the grid has changed
   function checkrows(grid, selection) {
@@ -286,7 +297,7 @@ function extraCustomize() {
 {% block actions %}
   <div class="btn-group" role="group">
     <button data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display table"|capfirst|force_escape %}"
-      class="btn btn-sm btn-primary{% if preferences.mode != 'kanban' and preferences.mode != 'calendarday' and preferences.mode != 'calendarweek' and preferences.mode != 'calendarmonth' or not preferences.mode %} active{% endif %}"
+      class="btn btn-sm btn-primary{% if preferences.mode != 'kanban' and preferences.mode != 'gantt' and preferences.mode != 'calendarday' and preferences.mode != 'calendarweek' and preferences.mode != 'calendarmonth' or not preferences.mode %} active{% endif %}"
       type="button" id="gridmode" name="mode">
       <span class="fa fa-table fa-lg" style="margin: 2px 0 3px 0;"></span>
     </button>
@@ -307,12 +318,17 @@ function extraCustomize() {
         <li class="dropdown-item" id="calendarday"><a href="#">{% trans "day"|capfirst %}</a></li>
       </ul>
     </div>
+    {% if showGantt %}
+    <button data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans "display Gantt chart"|capfirst|force_escape %}" class="btn btn-sm btn-primary{% if preferences.mode == 'gantt' %} active{% endif %}" type="button" id="ganttmode" name="mode">
+      <span class="fa fa-align-left fa-lg fa-lg" style="margin: 2px 0 3px 0;"></span>
+    </button>
+    {% endif %}
   </div>
 {{ block.super }}
 {% endblock %}
 
 {% block afterPageLoad %}
-displayGrid({% if preferences.mode != "kanban" and preferences.mode != "calendarday" and preferences.mode != "calendarweek" and preferences.mode != "calendarmonth" %}true{% else %}false{% endif %});
+displayGrid({% if preferences.mode != "kanban" and preferences.mode != "gantt" and preferences.mode != "calendarday" and preferences.mode != "calendarweek" and preferences.mode != "calendarmonth" %}true{% else %}false{% endif %});
 {% endblock %}
 
 {% block extra_grid %}
@@ -430,7 +446,7 @@ loadComplete: function(data) {
 
 <div id="content-main" class="col flex-grow-1">
 <div class="pb-3" style="min-height: 150px; margin-top: 0.7em">
-  <div data-ng-hide="mode == 'kanban' || mode.startsWith('calendar')" class="col-12">
+  <div data-ng-hide="mode == 'kanban' || mode == 'gantt' || mode.startsWith('calendar')" class="col-12">
     <table id="grid" class="table table-striped" style="background-color: white"></table>
     <div id="gridpager"></div>
   </div>
@@ -448,6 +464,12 @@ loadComplete: function(data) {
     data-kanbanoperationplans="kanbanoperationplans"
     data-operationplan="operationplan"
     data-kanbancolumns="kanbancolumns">
+  </div>
+  <div id="gantt" data-ng-hide="mode != 'gantt'"
+    show-gantt-drv class="row"
+    data-event-selected="displayInfo(event)"
+    data-ganttoperationplans="ganttoperationplans"
+    data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}">
   </div>
 </div>
 </div>
@@ -467,7 +489,7 @@ loadComplete: function(data) {
 
 <div class="row" style="text-align: center">
 <div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
-  <div data-ng-hide="mode == 'kanban' || mode.startsWith('calendar')">
+  <div data-ng-hide="mode == 'kanban' || mode == 'gantt' || mode.startsWith('calendar')">
     <table id="grid" class="table table-striped" style="background-color: white"></table>
     <div id="gridpager"></div>
   </div>
@@ -485,6 +507,11 @@ loadComplete: function(data) {
     data-kanbanoperationplans="kanbanoperationplans"
     data-operationplan="operationplan"
     data-kanbancolumns="kanbancolumns">
+  </div>
+  <div id="gantt" data-ng-hide="mode != 'gantt'"
+    show-gantt-drv class="row"
+    data-ganttoperationplans="ganttoperationplans"
+    data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}">
   </div>
 </div>
 <span id="resize-handle" class="fa fa-bars handle" style="display: inline-block"></span>

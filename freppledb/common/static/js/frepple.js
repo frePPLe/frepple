@@ -1606,7 +1606,6 @@ var grid = {
     c = (c !== undefined) ? c.filters : initialfilter;
     if (c && c !== "") {
       c = JSON.parse(c);
-      console.log('cccc', c);
       if (c["rules"].length > 0 || c["groups"].length > 0)
         // Add condition to existing filter
         c["rules"].push(n);

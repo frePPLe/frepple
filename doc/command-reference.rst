@@ -361,11 +361,15 @@ The following file formats are accepted:
     | The setting DATABASES / SQL_ROLE refers to this role, and your database
       administrator needs to grant appropriate access rights to that role.
 
-In this option you can see a list of files present in the specified folder, and download
-each file by clicking on the arrow down button, or delete a file by clicking on the
-red button.
+The execution screen displays the list of uploaded files. You can download
+a file (or all files) by clicking on the arrow down button. You can also delete a
+file by clicking on the red button.
 The arrow up button will give the user the possibility of selecting multiple files
 to upload to that folder.
+
+This capability requires superuser privileges. The ability to view or upload files
+bypasses the access rights configured in the application, so we need to keep the
+access to the files restricted.
 
 .. tabs::
 

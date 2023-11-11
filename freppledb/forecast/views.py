@@ -21,11 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from datetime import datetime
 import itertools
 import json
-import os
-import sys
 
 from django.conf import settings
 from django.contrib.admin.models import LogEntry
@@ -49,7 +46,6 @@ from django.views.generic.base import View
 
 from freppledb.boot import getAttributeFields, getAttributes
 from freppledb.forecast.models import Forecast, ForecastPlan, Measure, ForecastPlanView
-from freppledb.common.auth import getWebserviceAuthorization
 from freppledb.common.models import Parameter, Comment, Bucket
 from freppledb.common.report import (
     GridPivot,
@@ -69,9 +65,10 @@ from freppledb.common.report import (
     GridFieldCurrency,
 )
 from freppledb.input.views import PathReport, DemandList
-from freppledb.input.models import Buffer, Demand, Item, Location, Customer
+from freppledb.input.models import Demand, Item, Location, Customer
 from freppledb.output.models import Constraint
 from freppledb.output.views.constraint import BaseReport
+from freppledb.webservice.utils import getWebServiceContext
 
 import logging
 
@@ -794,46 +791,20 @@ class OverviewReport(GridPivot):
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
-        if "FREPPLE_TEST" in os.environ:
-            server = settings.DATABASES[request.database]["TEST"].get(
-                "FREPPLE_PORT", None
-            )
-        else:
-            server = settings.DATABASES[request.database].get("FREPPLE_PORT", None)
-        proxied = settings.DATABASES[request.database].get(
-            "FREPPLE_PORT_PROXIED",
-            not settings.DEBUG
-            and not (
-                "freppleserver" in sys.argv[0]
-                or "freppleservice" in sys.argv[0]
-                or "runwebserver" in sys.argv
-            )
-            and "FREPPLE_TEST" not in os.environ,
-        )
-        if server and not proxied:
-            server = server.replace("0.0.0.0", "localhost")
+        ctx = getWebServiceContext(request)
         if args and args[0]:
             request.session["lasttab"] = "plan"
-            return {
-                "title": force_str(Forecast._meta.verbose_name) + " " + args[0],
-                "post_title": _("plan"),
-                "currency": json.dumps(getCurrency()),
-                "active_tab": "plan",
-                "token": getWebserviceAuthorization(
-                    user=request.user.username, sid=request.user.id, exp=3600
-                ),
-                "port": server,
-                "proxied": proxied,
-            }
+            ctx.update(
+                {
+                    "title": force_str(Forecast._meta.verbose_name) + " " + args[0],
+                    "post_title": _("plan"),
+                    "currency": json.dumps(getCurrency()),
+                    "active_tab": "plan",
+                }
+            )
         else:
-            return {
-                "currency": json.dumps(getCurrency()),
-                "token": getWebserviceAuthorization(
-                    user=request.user.username, sid=request.user.id, exp=3600
-                ),
-                "port": server,
-                "proxied": proxied,
-            }
+            ctx.update({"currency": json.dumps(getCurrency())})
+        return ctx
 
     @classmethod
     def query(reportclass, request, basequery, sortsql="1 asc"):
@@ -2106,29 +2077,9 @@ class ForecastEditor:
             )
         }
 
-        if "FREPPLE_TEST" in os.environ:
-            server = settings.DATABASES[request.database]["TEST"].get(
-                "FREPPLE_PORT", None
-            )
-        else:
-            server = settings.DATABASES[request.database].get("FREPPLE_PORT", None)
-        proxied = settings.DATABASES[request.database].get(
-            "FREPPLE_PORT_PROXIED",
-            not settings.DEBUG
-            and not (
-                "freppleserver" in sys.argv[0]
-                or "freppleservice" in sys.argv[0]
-                or "runwebserver" in sys.argv
-            )
-            and "FREPPLE_TEST" not in os.environ,
-        )
-        if server and not proxied:
-            server = server.replace("0.0.0.0", "localhost")
-
-        return render(
-            request,
-            "forecast.html",
-            context={
+        ctx = getWebServiceContext(request)
+        ctx.update(
+            {
                 "bucketnames": bucketlevels,
                 "bucketsperyear": "[" + ",".join(bucketsperyear) + "]",
                 "title": "%s%s"
@@ -2139,12 +2090,12 @@ class ForecastEditor:
                 "currentbucket": currentbucket,
                 "currentdate": currentdate.strftime("%Y-%m-%d"),
                 "measures": json.dumps(measures),
-                "token": getWebserviceAuthorization(
-                    user=request.user.username, sid=request.user.id, exp=3600
-                ),
-                "port": server,
-                "proxied": proxied,
-            },
+            }
+        )
+        return render(
+            request,
+            "forecast.html",
+            context=ctx,
         )
 
 

@@ -24,12 +24,13 @@
 import asyncio
 import os
 import portend
-from datetime import datetime, timedelta
+import sys
 
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb.common.models import Parameter
+from freppledb.common.auth import getWebserviceAuthorization
 
 # Only a single service can be making updates at the same time
 try:
@@ -88,3 +89,29 @@ def waitTillNotRunning(database=DEFAULT_DB_ALIAS, timeout=60):
         portend.free(host.replace("0.0.0.0", "localhost"), port, timeout=timeout)
     except Exception:
         raise Exception("Web service not stopped within %s seconds" % timeout)
+
+
+def getWebServiceContext(request):
+    if "FREPPLE_TEST" in os.environ:
+        port = settings.DATABASES[request.database]["TEST"].get("FREPPLE_PORT", None)
+    else:
+        port = settings.DATABASES[request.database].get("FREPPLE_PORT", None)
+    proxied = settings.DATABASES[request.database].get(
+        "FREPPLE_PORT_PROXIED",
+        not settings.DEBUG
+        and not (
+            "freppleserver" in sys.argv[0]
+            or "freppleservice" in sys.argv[0]
+            or "runwebserver" in sys.argv
+        )
+        and "FREPPLE_TEST" not in os.environ,
+    )
+    if port and not proxied:
+            port = port.replace("0.0.0.0", "localhost")
+    return {
+        "token": getWebserviceAuthorization(
+            user=request.user.username, sid=request.user.id, exp=3600
+        ),
+        "port": port,
+        "proxied": proxied,
+    }

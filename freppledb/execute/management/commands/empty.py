@@ -282,7 +282,6 @@ class Command(BaseCommand):
                 if user:
                     call_command(
                         "stopwebservice",
-                        user=user,
                         database=database,
                         force=True,
                         wait=False,

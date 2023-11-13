@@ -2190,7 +2190,8 @@ var dashboard = {
         group: "widgets",
         handle: ".card-header",
         animation: 100,
-        onEnd: function (e) { dashboard.save(); }
+        onEnd: function (e) { dashboard.save(); },
+        delay: 1000
       });
     });
 
@@ -2199,7 +2200,8 @@ var dashboard = {
         group: "cockpit",
         handle: "h1",
         animation: 100,
-        onEnd: function (e) { dashboard.save(); }
+        onEnd: function (e) { dashboard.save(); },
+        delay: 1000
       });
     });
 

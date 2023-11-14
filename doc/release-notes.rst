@@ -33,6 +33,10 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 - | Records in the upstream/downstream operations widgets (appearing when selecting a single PO/MO/DO)
     are now sorted by date (they were previously sorted by item).
 
+- | Better management of the errors when copying a scenario. Sometimes, a scenario copy could
+    appear as successful in the UI but the copy didn't work properly. These silent errors are
+    now captured in the execute logs and the task will be reported as failed.
+
 .. rubric:: Odoo integration
 
 - | 14 & 15 & 16: Bug fix. Connector had a problem authenticating in a multi-database

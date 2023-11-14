@@ -28,7 +28,7 @@ from datetime import datetime
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db import DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS, connections
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
@@ -214,6 +214,20 @@ class Command(BaseCommand):
                 "reportmanager_column",
                 "execute_schedule",
             ]
+            # look for extra tables for which the user has no ownership
+            noOwnershipTables = []
+            with connections[source].cursor() as cursor:
+                cursor.execute(
+                    """
+                select tablename
+                FROM pg_catalog.pg_tables
+                WHERE schemaname='public' and tableowner != %s;
+                """,
+                    (settings.DATABASES[source]["USER"],),
+                )
+
+                for t in cursor:
+                    noOwnershipTables.append(t[0])
 
             # Copying the data
             # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
@@ -222,9 +236,9 @@ class Command(BaseCommand):
                     os.environ["PGPASSWORD"] = settings.DATABASES[source]["PASSWORD"]
                 if os.name == "nt":
                     # On windows restoring with pg_restore over a pipe is broken :-(
-                    cmd = "pg_dump -c -Fp %s%s%s%s%s | psql %s%s%s%s"
+                    cmd = "pg_dump -c -Fp %s%s%s%s%s%s | psql %s%s%s%s"
                 else:
-                    cmd = "pg_dump -Fc %s%s%s%s%s | pg_restore -n public -Fc -c --if-exists %s%s%s -d %s"
+                    cmd = "pg_dump -Fc %s%s%s%s%s%s | pg_restore -n public -Fc -c --if-exists %s%s%s -d %s"
                 commandline = cmd % (
                     settings.DATABASES[source]["USER"]
                     and ("-U %s " % settings.DATABASES[source]["USER"])
@@ -237,6 +251,9 @@ class Command(BaseCommand):
                     or "",
                     ("%s " % (" -T ".join(["", *excludedTables])))
                     if destination == DEFAULT_DB_ALIAS
+                    else "",
+                    ("%s " % (" -T ".join(["", *noOwnershipTables])))
+                    if len(noOwnershipTables) > 0
                     else "",
                     test
                     and settings.DATABASES[source]["TEST"]["NAME"]
@@ -255,7 +272,7 @@ class Command(BaseCommand):
                     or settings.DATABASES[destination]["NAME"],
                 )
             else:
-                cmd = "pg_restore -n public -Fc -c --if-exists --no-password %s%s%s -d %s %s"
+                cmd = "pg_restore --no-owner -n public -Fc -c --if-exists --no-password %s%s%s -d %s %s"
                 commandline = cmd % (
                     settings.DATABASES[destination]["USER"]
                     and ("-U %s " % settings.DATABASES[destination]["USER"])
@@ -276,12 +293,18 @@ class Command(BaseCommand):
                 commandline,
                 shell=True,
                 stdout=subprocess.DEVNULL,
-                stderr=subprocess.STDOUT,
+                stderr=subprocess.PIPE,
             ) as p:
+                error_message = None
                 try:
+                    res = p.communicate()
                     task.processid = p.pid
                     task.save(using=source)
                     p.wait()
+                    if p.returncode != 0:
+                        error_message = res[1].decode()
+                        raise Exception
+
                     if not options["dumpfile"]:
                         # Successful copy can still leave warnings and errors
                         # To confirm copy is ok, let's check that the scenario copy task exists
@@ -307,7 +330,7 @@ class Command(BaseCommand):
                             update_fields=["status", "finished", "message"],
                         )
 
-                except Exception:
+                except Exception as e:
                     p.kill()
                     p.wait()
                     # Consider the destination database free again
@@ -318,7 +341,7 @@ class Command(BaseCommand):
                             update_fields=["status", "lastrefresh"],
                             using=DEFAULT_DB_ALIAS,
                         )
-                    raise Exception("Database copy failed")
+                    raise Exception(error_message or e or "Database copy failed")
 
             # Check the permissions after restoring a backup.
             if (
@@ -472,7 +495,6 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-
         # Synchronize the scenario table with the settings
         Scenario.syncWithSettings()
 
@@ -499,7 +521,6 @@ class Command(BaseCommand):
 
         for scenario in scenarios:
             try:
-
                 user = User.objects.using(scenario.name).get(
                     username=request.user.username
                 )

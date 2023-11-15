@@ -229,6 +229,24 @@ class Command(BaseCommand):
                 for t in cursor:
                     noOwnershipTables.append(t[0])
 
+            # Cleaning of the destination scenario
+            with connections[destination].cursor() as cursor:
+                cursor.execute(
+                    """
+                select tablename
+                FROM pg_catalog.pg_tables
+                WHERE schemaname='public'
+                """
+                )
+                tables = [i[0] for i in cursor]
+                if len(tables) > 0:
+                    cursor.execute(
+                        """
+                        drop table %s cascade;
+                    """
+                        % (",".join(tables))
+                    )
+
             # Copying the data
             # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
             if not options["dumpfile"]:
@@ -236,9 +254,9 @@ class Command(BaseCommand):
                     os.environ["PGPASSWORD"] = settings.DATABASES[source]["PASSWORD"]
                 if os.name == "nt":
                     # On windows restoring with pg_restore over a pipe is broken :-(
-                    cmd = "pg_dump -c -Fp %s%s%s%s%s%s | psql %s%s%s%s"
+                    cmd = "pg_dump -Fp %s%s%s%s%s%s | psql %s%s%s%s"
                 else:
-                    cmd = "pg_dump -Fc %s%s%s%s%s%s | pg_restore -n public -Fc -c --if-exists %s%s%s -d %s"
+                    cmd = "pg_dump -Fc %s%s%s%s%s%s | pg_restore -n public -Fc %s%s%s -d %s"
                 commandline = cmd % (
                     settings.DATABASES[source]["USER"]
                     and ("-U %s " % settings.DATABASES[source]["USER"])
@@ -272,7 +290,7 @@ class Command(BaseCommand):
                     or settings.DATABASES[destination]["NAME"],
                 )
             else:
-                cmd = "pg_restore --no-owner -n public -Fc -c --if-exists --no-password %s%s%s -d %s %s"
+                cmd = "pg_restore -n public -Fc --no-password %s%s%s -d %s %s"
                 commandline = cmd % (
                     settings.DATABASES[destination]["USER"]
                     and ("-U %s " % settings.DATABASES[destination]["USER"])

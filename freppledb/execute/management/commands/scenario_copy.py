@@ -239,6 +239,8 @@ class Command(BaseCommand):
                 """
                 )
                 tables = [i[0] for i in cursor]
+                if destination == DEFAULT_DB_ALIAS:
+                    tables = [x for x in tables if x not in excludedTables]
                 if len(tables) > 0:
                     cursor.execute(
                         """

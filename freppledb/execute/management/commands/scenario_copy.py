@@ -301,9 +301,9 @@ class Command(BaseCommand):
                     task.processid = p.pid
                     task.save(using=source)
                     p.wait()
-                    if p.returncode != 0:
-                        error_message = res[1].decode()
-                        raise Exception
+                    error_message = res[1].decode().partition("\n")[0]
+                    if p.returncode != 0 or "error" in error_message.lower():
+                        raise Exception(error_message)
 
                     if not options["dumpfile"]:
                         # Successful copy can still leave warnings and errors
@@ -341,7 +341,7 @@ class Command(BaseCommand):
                             update_fields=["status", "lastrefresh"],
                             using=DEFAULT_DB_ALIAS,
                         )
-                    raise Exception(error_message or e or "Database copy failed")
+                    raise Exception(e or "Database copy failed")
 
             # Check the permissions after restoring a backup.
             if (

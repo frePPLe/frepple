@@ -790,7 +790,10 @@ class OverviewReport(GridPivot):
            %s
            (select sum(quantity) from demand where status in ('open','quote')
            and item_id = item.name and location_id = location.name
-           and due >= d.startdate and due < d.enddate
+           and due >= case when arguments.report_currentdate >= d.startdate
+                            and arguments.report_currentdate < d.enddate
+                            then '1970-01-01'::timestamp else d.startdate end
+           and due < d.enddate
            and (item.type is distinct from 'make to order'
            or coalesce(demand.batch,'') is not distinct from opplanmat.opplan_batch)) open_orders,
            %s net_forecast,

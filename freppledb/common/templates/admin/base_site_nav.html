@@ -27,6 +27,36 @@ $(function() {
           </button>
 
 		<div id="nav-menu" class="collapse navbar-collapse">
+			<div class="float-end ms-3 d-lg-none">
+			<form class="navbar-form me-start mt-3 mb-3" role="search">
+				<div class="form-group" style="width: 12em">
+				  <input id="search" class="form-control typeahead" type="text" placeholder="&#xf002; {% trans 'Search' %}">
+				</div>
+			</form>
+
+			<ul class="nav navbar-nav ms-auto" class="selectdb">
+				{% if user.scenarios|length > 1 %}
+				   <li class="navbar-item dropdown">
+					<a href="#" class="dropdown-toggle form-control pe-3" data-bs-toggle="dropdown"
+          			   role="button" aria-haspopup="true" aria-expanded="false" id="database" name="{{ request.scenario.name }}">
+					<span data-bs-toggle="tooltip" data-bs-delay='{"show":2000, "hide":4000}' data-bs-placement="left"
+					  data-bs-title="{% trans "Select a what-if scenario.<br>Click <a class='text-decoration-underline' href='/execute/#scenario_copy'>here</a> to manage scenarios." %}"
+					  data-bs-html="true">
+						{{ request.scenario.description }}
+					</span>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-end">
+					{% for sc in user.scenarios|sortList %}<li>
+					  <a class="dropdown-item" data-database="{{ sc.name }}" onclick="selectDatabase(event.target)">{{ sc.description }}
+					  {% if sc.help_url %}
+					  <span onclick="window.open('{{sc.help_url|safe}}'); event.stopPropagation()" style="float:right" class="fa fa-question-circle"></span>
+					  {% endif %}</a>
+					  </li>{% endfor %}
+					</ul>
+				    </li>
+				{% endif %}
+				</ul>
+			</div>
 			<ul class="navbar-nav">
 			  {% for group in menu %}{% if group.2 %}
 			  <li class="nav-item dropdown">
@@ -44,11 +74,6 @@ $(function() {
 			  {% endfor %}
 			</ul>
 
-			<form class="navbar-form me-start ms-1" role="search">
-				<div class="form-group" style="width: 12em">
-				  <input id="search" class="form-control typeahead" type="text" placeholder="&#xf002; {% trans 'Search' %}">
-				</div>
-			</form>
 
       {% if not request.session.navbar and user.is_authenticated and user.is_staff %}
 	  <div id="nav-menu-end" class="collapse navbar-collapse">
@@ -81,7 +106,7 @@ $(function() {
   </div>
 </nav>
 
-<nav id="nav-breadcrumb-header" class="navbar navbar-expand-lg navbar-light bg-light pt-0">
+<nav id="nav-breadcrumb-header" class="navbar navbar-expand-lg d-none d-lg-block navbar-light bg-light pt-0">
 	<div class="container-fluid">
 	  <div class="breadcrumbrow row align-items-center" aria-label="breadcrumb">
 		  <div class="col flex-grow-1">

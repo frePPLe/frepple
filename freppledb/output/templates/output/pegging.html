@@ -122,7 +122,7 @@ function ganttcell(cellvalue, options, rowdata)
   result.push( '<line x1="' + rowdata["due"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["due"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="red" stroke-width="1" />');
   result.push( '<line x1="' + rowdata["current"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["current"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="black" stroke-width="1" />');
   var scale = $("#jqgh_grid_operationplans").width() / 10000;
-  return '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="' + (gantt.rowsize*layer.length+3) + 'px">'
+  return '<svg width="100%" height="' + (gantt.rowsize*layer.length+3) + 'px">'
     + '<g class="transformer" transform="scale(' + scale + ',1) translate(0,' + ((layer.length-1)*gantt.rowsize+3) +')" title="' + layer.length +'">'
     + result.join('\n')
     + '</g></svg>';

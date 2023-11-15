@@ -425,6 +425,7 @@ class ResourceDetail(OperationPlanMixin):
         else:
             base = OperationPlanResource.objects
         base = reportclass.operationplanExtraBasequery(base, request)
+        use_default_filter = True
         if "calendarstart" in request.GET:
             base = base.filter(
                 Q(operationplan__enddate__gte=request.GET["calendarstart"])
@@ -433,6 +434,7 @@ class ResourceDetail(OperationPlanMixin):
                     & Q(operationplan__startdate__gte=request.GET["calendarstart"])
                 )
             )
+            use_default_filter = False
         if "calendarend" in request.GET:
             base = base.filter(
                 Q(operationplan__startdate__lte=request.GET["calendarend"])
@@ -441,6 +443,12 @@ class ResourceDetail(OperationPlanMixin):
                     & Q(operationplan__enddate__lte=request.GET["calendarend"])
                 )
             )
+            use_default_filter = False
+        if use_default_filter:
+            if request.report_enddate:
+                base = base.filter(startdate__lte=request.report_enddate)
+            if request.report_startdate and str(request.report_startdate) != request.current_date:
+                base = base.filter(enddate__gte=request.report_startdate)
         return base.select_related().annotate(
             opplan_duration=RawSQL(
                 "(operationplan.enddate - operationplan.startdate)", []

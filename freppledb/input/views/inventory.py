@@ -791,6 +791,7 @@ class DistributionOrderList(OperationPlanMixin):
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         q = DistributionOrder.objects.all()
+        use_default_filter = True
         if "calendarstart" in request.GET:
             q = q.filter(
                 Q(enddate__gte=request.GET["calendarstart"])
@@ -799,6 +800,7 @@ class DistributionOrderList(OperationPlanMixin):
                     & Q(startdate__gte=request.GET["calendarstart"])
                 )
             )
+            use_default_filter = False
         if "calendarend" in request.GET:
             q = q.filter(
                 Q(startdate__lte=request.GET["calendarend"])
@@ -807,6 +809,12 @@ class DistributionOrderList(OperationPlanMixin):
                     & Q(enddate__lte=request.GET["calendarend"])
                 )
             )
+            use_default_filter = False
+        if use_default_filter:
+            if request.report_enddate:
+                q = q.filter(startdate__lte=request.report_enddate)
+            if request.report_startdate and str(request.report_startdate) != request.current_date:
+                q = q.filter(enddate__gte=request.report_startdate)
         if args and args[0]:
             paths = request.path.split("/")
             if paths[4] == "operationplanmaterial":
@@ -1429,6 +1437,7 @@ class InventoryDetail(OperationPlanMixin):
         else:
             base = OperationPlanMaterial.objects
         base = reportclass.operationplanExtraBasequery(base, request)
+        use_default_filter = True
         if "calendarstart" in request.GET:
             base = base.filter(
                 Q(operationplan__enddate__gte=request.GET["calendarstart"])
@@ -1437,6 +1446,7 @@ class InventoryDetail(OperationPlanMixin):
                     & Q(operationplan__startdate__gte=request.GET["calendarstart"])
                 )
             )
+            use_default_filter = False
         if "calendarend" in request.GET:
             base = base.filter(
                 Q(operationplan__startdate__lte=request.GET["calendarend"])
@@ -1445,6 +1455,12 @@ class InventoryDetail(OperationPlanMixin):
                     & Q(operationplan__enddate__lte=request.GET["calendarend"])
                 )
             )
+            use_default_filter = False
+        if use_default_filter:
+            if request.report_enddate:
+                base = base.filter(startdate__lte=request.report_enddate)
+            if request.report_startdate and str(request.report_startdate) != request.current_date:
+                base = base.filter(enddate__gte=request.report_startdate)
         return base.select_related().annotate(
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []

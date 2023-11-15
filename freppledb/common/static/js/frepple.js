@@ -3055,13 +3055,13 @@ var gantt = {
   // Height of the blocks
   rowsize: 25,
 
-  header: function () {
+  header: function (el = "#jqgh_grid_operationplans") {
     // "scaling" stores the number of pixels available to show a day.
     var d = (viewend.getTime() - viewstart.getTime());
-    var scaling = 86400000 / d * $("#jqgh_grid_operationplans").width();
-    var total = (horizonend.getTime() - horizonstart.getTime()) / d * $("#jqgh_grid_operationplans").width();
+    var scaling = 86400000 / d * $(el).width();
+    var total = (horizonend.getTime() - horizonstart.getTime()) / d * $(el).width();
     var result = [
-      '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="' + total + 'px" height="34px">',
+      '<svg width="' + total + 'px" height="34px">',
       '<line class="time" x1="0" y1="17" x2="' + total + '" y2="17"/>'
     ];
     var x = 0;
@@ -3188,7 +3188,7 @@ var gantt = {
       }
     }
     result.push('</svg>');
-    $("#jqgh_grid_operationplans").html(result.join(''));
+    $(el).html(result.join(''));
   },
 
   redraw: function () {

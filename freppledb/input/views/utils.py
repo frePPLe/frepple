@@ -188,6 +188,8 @@ def search(request):
 class OperationPlanMixin(GridReport):
     # Hack to allow variable height depending on the detail position
     variableheight = True
+    hasTimeBuckets = True
+    hasTimeOnly = True
 
     @classmethod
     def operationplanExtraBasequery(cls, query, request):

@@ -40,7 +40,7 @@
         {% if forloop.first %}
           {% block actions %}{% endblock %}
           <button class="btn btn-sm btn-primary" onclick="grid.showBucket()" data-bs-toggle="tooltip"
-               data-bs-placement="top" data-bs-title="{% trans 'Configure time buckets'|capfirst|force_escape %}">
+               data-bs-placement="top" data-bs-title="{% trans 'set time horizon'|capfirst|force_escape %}">
              <span class="fa fa-clock-o"></span>
           </button>
         {% endif %}

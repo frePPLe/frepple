@@ -22,6 +22,10 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
   | Until now, administrators had to edit the INSTALLED_APPS setting in the
     /etc/frepple/djangosettings.py configuration file.
 
+- | In the manufacturing order, purchase order and distribution order screens you can
+    now use the familiar clock icon to set the time horizon.
+  | Just easier and simpler, isn't it?
+
 - | The 'about frepple' option in the help menu is now gone.
   | The new apps screen in the admin menu provides the same (and more) information.
 

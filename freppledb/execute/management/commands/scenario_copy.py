@@ -231,22 +231,114 @@ class Command(BaseCommand):
 
             # Cleaning of the destination scenario
             with connections[destination].cursor() as cursor:
-                cursor.execute(
-                    """
-                select tablename
-                FROM pg_catalog.pg_tables
-                WHERE schemaname='public'
-                """
-                )
-                tables = [i[0] for i in cursor]
                 if destination == DEFAULT_DB_ALIAS:
-                    tables = [x for x in tables if x not in excludedTables]
-                if len(tables) > 0:
+                    # drop tables
                     cursor.execute(
                         """
-                        drop table %s cascade;
+                    select tablename
+                    FROM pg_catalog.pg_tables
+                    WHERE schemaname='public'
                     """
-                        % (",".join(tables))
+                    )
+                    tables = [i[0] for i in cursor]
+                    tables = [x for x in tables if x not in excludedTables]
+                    if len(tables) > 0:
+                        cursor.execute(
+                            """
+                            drop table %s cascade;
+                        """
+                            % (",".join(tables))
+                        )
+                    # drop any remaining type
+                    cursor.execute(
+                        """
+                    SELECT typname
+                    from pg_type
+                    inner join pg_namespace on pg_namespace.oid = typnamespace
+                    where nspname = 'public';
+                    """
+                    )
+                    types = [i[0] for i in cursor]
+                    for i in types:
+                        try:
+                            cursor.execute(
+                                """
+                                drop type %s
+                            """
+                                % (i,)
+                            )
+                        except:
+                            # silently fail
+                            pass
+                    # drop materialzed views
+                    cursor.execute(
+                        """
+                    select
+                    matviewname
+                    from pg_matviews
+                    where schemaname = 'public'
+                    """
+                    )
+                    matviews = [i[0] for i in cursor]
+                    for i in matviews:
+                        cursor.execute(
+                            """
+                        drop materialized view %s
+                        """
+                            % (i,)
+                        )
+                    # drop routines
+                    cursor.execute(
+                        """
+                    SELECT routines.routine_name
+                    FROM information_schema.routines
+                    WHERE routines.specific_schema='public'
+                    """
+                    )
+                    routines = [i[0] for i in cursor]
+                    for i in routines:
+                        cursor.execute(
+                            """
+                        drop routine %s
+                        """
+                            % (i,)
+                        )
+
+                    # drop triggers
+                    cursor.execute(
+                        """
+                    SELECT trigger_name
+                    FROM information_schema.triggers
+                    """
+                    )
+                    triggers = [i[0] for i in cursor]
+                    for i in triggers:
+                        cursor.execute(
+                            """
+                        drop trigger %s
+                        """
+                            % (i,)
+                        )
+                    # drop views
+                    cursor.execute(
+                        """
+                     select table_name from INFORMATION_SCHEMA.views WHERE table_schema = 'public'
+                     """
+                    )
+                    views = [i[0] for i in cursor]
+                    for i in views:
+                        cursor.execute(
+                            """
+                        drop trigger %s
+                        """
+                            % (i,)
+                        )
+                else:
+                    cursor.execute(
+                        """
+                    drop owned by %s
+                    """
+                        % (settings.DATABASES[destination]["USER"],),
                     )
 
             # Copying the data

@@ -20,8 +20,8 @@ Binary installation packages are available for:
 * Suse 15 (Enterprise Edition only, deprecated in favor of containers)
 * OpenSuse 15 (Enterprise Edition only, deprecated in favor of containers)
 
-Installing on other Linux distributions is also possible. You will need to
-build from the source code with a standard CMake build sequence.
+Building from source code on other Linux distributions is technically possible, but you'll
+be off the beaten track. A better approach is to use a docker container instead.
 
 ******************************
 Installation and configuration

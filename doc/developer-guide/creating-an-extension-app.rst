@@ -2,16 +2,14 @@
 Creating an extension app
 =========================
 
-The section describes how you can create a extension app that extends and
-customizes the data model and the user interface.
-
-This page outlines the steps involved in creating a custom app and
-explore the capabilities to tailor frePPLe to your business needs and
-process.
+This page outlines the steps involved in creating a custom app.
+It walks you through the technical step and explores the capabilities
+custom apps provide to tailor frePPLe to your business needs.
 
 * :ref:`app_prerequisites`
 * :ref:`app_folder`
 * :ref:`app_registration`
+* :ref:`app_dockerstart`
 * :ref:`app_attributes`
 * :ref:`app_models`
 * :ref:`app_migrations`
@@ -38,6 +36,11 @@ You will need to be familiar with the
 Knowledge of HTML and SQL is also needed to fully understand how your
 app works within the frePPLe framework.
 
+In this tutorial we'll be using a `docker container <https://www.docker.com/>`_
+to package and deploy your customized version of frePPLe. While there are other
+methods to install and deploy, we highly recommend using a container: it's the
+maintable, clean and modern way to manage your application.
+
 .. _app_folder:
 
 Download the tutorial app
@@ -51,6 +54,7 @@ and place its contents under the freppledb folder.
 
 .. code-block:: none
 
+   dockerfile
    my-app
       |- __init__.py
       |- models.py
@@ -95,7 +99,7 @@ at the location indicated in the file.
        "django.contrib.staticfiles",
        "freppledb.boot",
        # Add any project specific apps here
-       "freppledb.myapp",  # <<<< HERE'S OUR APP
+       "myapp",  # <<<< HERE'S OUR APP
        # "freppledb.odoo",
        # "freppledb.erpconnection",
        "freppledb.input",
@@ -111,6 +115,35 @@ at the location indicated in the file.
        "freppledb.reportmanager",
        # "freppledb.executesql",
    )
+
+.. _app_dockerstart:
+
+Run your docker container
+-------------------------
+
+It's time to start your customized container a first time.
+
+After every edit in the app you'll need to rebuild your custom
+image and container. Don't worry, it lasts only a few seconds and
+you don't loose the data from the database.
+
+.. code-block:: Bash
+
+   docker build my_frepple -t -my_frepple
+
+   docker run \
+     -e POSTGRES_HOST=host.docker.internal \
+     -e POSTGRES_PORT=5432 \
+     -e POSTGRES_USER=frepple \
+     -e POSTGRES_PASSWORD=frepple \
+     -e POSTGRES_DBNAME=freppledb \
+     --name my_frepple \
+     --publish 9000:80 \
+     --detach \
+     my_frepple
+
+If all went well you can access frepple with your browser now on
+http://localhost:9000.
 
 .. _app_attributes:
 
@@ -184,20 +217,22 @@ their fields and indexes.
 This file only declares the model structure. The actual table will be created in a
 later step.
 
-You can find all details on models and fields on https://docs.djangoproject.com/en/3.2/ref/models/fields/
+You can find all details on models and fields on https://docs.djangoproject.com/en/4.2/ref/models/fields/
 
 .. _app_migrations:
 
 Create tables and fields in the database
 ----------------------------------------
 
-In the previous steps all models and attributes were defined. Now we create
-them in the PostgreSQL database. This is done by running the following statement
+In the previous steps all models and attributes were defined. The database tables
+are automatically created in the PostgreSQL database when you start the docker
+container.
+
+In exceptional situations you can run them manually with the following statement
 on the command line:
 
 .. code-block:: none
 
-   # Deployment script to apply database schema updates - run by system administrators
    frepplectl migrate
 
 This command will incrementally bring the database schema up to date. The database
@@ -240,7 +275,7 @@ need review and/or coding by developers.
            )
        ]
 
-You can find all details on migrations on https://docs.djangoproject.com/en/3.2/topics/migrations/
+You can find all details on migrations on https://docs.djangoproject.com/en/4.2/topics/migrations/
 
 .. _app_rest_api:
 
@@ -322,7 +357,7 @@ The file **admin.py** defines a form to edit objects of your models.
            },
        ]
 
-You can find all details on admin forms on https://docs.djangoproject.com/en/3.2/ref/contrib/admin/
+You can find all details on admin forms on https://docs.djangoproject.com/en/4.2/ref/contrib/admin/
 
 .. _app_views:
 
@@ -388,7 +423,7 @@ The url where the report is published is defined in the file **urls.py**.
        url(r"^api/my_app/my_model/$", MyModelSerializerAPI.as_view()),
    ]
 
-You can find more detailed information on https://docs.djangoproject.com/en/3.2/topics/http/urls/
+You can find more detailed information on https://docs.djangoproject.com/en/4.2/topics/http/urls/
 
 .. _app_menu:
 
@@ -443,7 +478,7 @@ or through a web API.
 .. image:: _images/my_fixture.png
    :alt: Loading my own dataset
 
-You can find more detailed information on https://docs.djangoproject.com/en/3.2/howto/initial-data/
+You can find more detailed information on https://docs.djangoproject.com/en/4.2/howto/initial-data/
 
 .. _app_plan_generation:
 
@@ -565,7 +600,7 @@ Simplified, the code for a command looks as follows:
            )
            return template.render(context)
 
-You can find more detailed information on https://docs.djangoproject.com/en/3.2/howto/custom-management-commands/
+You can find more detailed information on https://docs.djangoproject.com/en/4.2/howto/custom-management-commands/
 
 .. _app_unit_tests:
 
@@ -587,7 +622,7 @@ The code for a unit test looks as follows:
      def test_basic_addition(self):
          self.assertEqual(1 + 1, 2)    # Just making sure
 
-You can find more detailed information on https://docs.djangoproject.com/en/3.2/topics/testing/overview/
+You can find more detailed information on https://docs.djangoproject.com/en/4.2/topics/testing/overview/
 
 .. _app_more_info:
 

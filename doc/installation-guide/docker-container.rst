@@ -193,15 +193,16 @@ image. Here is a an example dockerfile that adds a new frePPLe app (coded as a P
 
    FROM ghcr.io/frepple/frepple-enterprise:latest
 
-   COPY my-requirements.txt /
-   COPY my-python-package /
+   # Copy the custom app. Apps in this folder are automatically detected
+   # and you can install them from the admin/apps screen.
+   COPY my-app /usr/share/frepple/venv/lib/python3.8/site-packages/
 
    # Add the license key for the Enterprise Edition to the container
    COPY license.xml /etc/frepple
 
-   # Install python dependencies and package
-   RUN python3 -m pip install -r my-requirements.txt && \
-     python3 my-python-package/setup.py install
+   # Install extra python packages
+   COPY requirements.txt /
+   RUN python3 -m pip install -r requirements.txt
 
    # Update the djangosettings.py configuration file with extra settings
    RUN echo "MYAPPSETTING=True" >> /etc/frepple/djangosettings.py

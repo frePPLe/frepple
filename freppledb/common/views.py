@@ -286,6 +286,7 @@ def cockpit(request):
                 "name", flat=True
             ),
             "currency": getCurrency(),
+            "reportclass": {"hasTimeOnly": True}
         },
     )
 

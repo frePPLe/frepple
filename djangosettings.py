@@ -629,23 +629,28 @@ DEFAULT_DASHBOARD = [
         "rowname": _("sales"),
         "cols": [
             {
-                "width": 9,
+                "width": 6,
                 "widgets": [
                     ("forecast", {"history": 36, "future": 12}),
-                    (
-                        "analysis_demand_problems",
-                        {"top": 20, "orderby": "latedemandvalue"},
-                    ),
-                    ("outliers", {"limit": 20}),
+                    # (
+                    #     "analysis_demand_problems",
+                    #     {"top": 20, "orderby": "latedemandvalue"},
+                    # ),
+                    # ("outliers", {"limit": 20}),
                 ],
             },
             {
                 "width": 3,
                 "widgets": [
-                    ("demand_alerts", {}),
+                    # ("demand_alerts", {}),
                     ("delivery_performance", {"green": 90, "yellow": 80}),
-                    # ("archived_demand", {"history": 12}),
+                ],
+            },
+            {
+                "width": 3,
+                "widgets": [
                     ("forecast_error", {"history": 12}),
+                    # ("archived_demand", {"history": 12}),
                 ],
             },
         ],
@@ -654,7 +659,7 @@ DEFAULT_DASHBOARD = [
         "rowname": _("purchasing"),
         "cols": [
             {
-                "width": 6,
+                "width": 8,
                 "widgets": [
                     ("purchase_orders", {"fence1": 7, "fence2": 30}),
                     # ("purchase_queue",{"limit":20}),
@@ -662,35 +667,11 @@ DEFAULT_DASHBOARD = [
                 ],
             },
             {
-                "width": 3,
+                "width": 4,
                 "widgets": [
                     # ("archived_purchase_order", {"history": 12}),
                     ("inventory_by_location", {"limit": 5}),
-                ],
-            },
-            {
-                "width": 3,
-                "widgets": [
-                    ("inventory_by_item", {"limit": 10}),
-                ],
-            },
-        ],
-    },
-    {
-        "rowname": _("distribution"),
-        "cols": [
-            {
-                "width": 8,
-                "widgets": [
-                    ("distribution_orders", {"fence1": 7, "fence2": 30}),
-                    # ("shipping_queue",{"limit":20}),
-                    #("archived_buffer", {"history": 12}),
-                ],
-            },
-            {
-                "width": 4,
-                "widgets": [
-                    ("archived_buffer", {"history": 12}),
+                    #("inventory_by_item", {"limit": 10}),
                 ],
             }
         ],
@@ -712,6 +693,25 @@ DEFAULT_DASHBOARD = [
                     ("resource_utilization", {"limit": 5, "medium": 80, "high": 90}),
                 ],
             },
+        ],
+    },
+    {
+        "rowname": _("distribution"),
+        "cols": [
+            {
+                "width": 8,
+                "widgets": [
+                    ("distribution_orders", {"fence1": 7, "fence2": 30}),
+                    # ("shipping_queue",{"limit":20}),
+                    #("archived_buffer", {"history": 12}),
+                ],
+            },
+            {
+                "width": 4,
+                "widgets": [
+                    ("archived_buffer", {"history": 12}),
+                ],
+            }
         ],
     },
 ]

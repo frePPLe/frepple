@@ -257,16 +257,16 @@ class OdooReadData(PlanTask):
         # Synchronize users
         if hasattr(frepple.settings, "users"):
             try:
-                odoo_group, created = Group.objects.get_or_create(name="Odoo users")
+                odoo_group, created = Group.objects.using(database).get_or_create(name="Odoo users")
                 if created:
                     # Newly odoo user group. Assign all permissions by default.
-                    for p in Permission.objects.all():
+                    for p in Permission.objects.using(database).all():
                         odoo_group.permissions.add(p)
                 odoo_users = [
                     u.username for u in odoo_group.user_set.all().only("username")
                 ]
                 users = {}
-                for u in User.objects.all():
+                for u in User.objects.using(database).all():
                     users[u.username] = u
                 for usr_data in json.loads(frepple.settings.users):
                     user = users.get(usr_data[1], None)
@@ -284,6 +284,7 @@ class OdooReadData(PlanTask):
                             # need to know.
                             password=User.objects.make_random_password(),
                         )
+                        user._state.db = database
                     if not user.is_active:
                         user.is_active = True
                         user.save()

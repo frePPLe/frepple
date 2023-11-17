@@ -540,7 +540,7 @@ class User(AbstractUser):
         # Continue with the regular save, as if nothing happened.
         self.is_active = tmp_is_active
         self.is_superuser = tmp_is_superuser
-        usr = super().save(
+        super().save(
             force_insert=force_insert,
             force_update=force_update,
             using=using,
@@ -553,7 +553,6 @@ class User(AbstractUser):
                 .get_or_create(name=settings.DEFAULT_USER_GROUP)[0]
             )
             self.groups.add(grp.id)
-        return usr
 
     def joined_age(self):
         """

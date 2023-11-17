@@ -81,13 +81,13 @@
                 </a>
             </li>
         </ul>
-        <button class="btn btn-sm btn-primary" onclick="url = url_prefix + '/forecast/'; import_show('', undefined, true)">
+        <button class="btn btn-sm d-none d-md-inline-block btn-primary" onclick="url = url_prefix + '/forecast/'; import_show('', undefined, true)">
           <span id="csvimport" data-bs-toggle="tooltip" data-bs-placement="top" title="" class="fa fa-arrow-up" data-bs-title="Import CSV or Excel file"></span>
         </button>
         <button class="btn btn-sm btn-primary" data-ng-click="showCustomizeGrid()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{'Customize'|translate}}">
           <span class="fa fa-wrench"></span>
         </button>
-        <button class="btn btn-sm btn-primary" onclick="window.open('https://frepple.com/docs/' + version + '/user-interface/plan-analysis/forecast-editor.html')" data-bs-toggle="tooltip" data-bs-placement="top" title="{{'Help'|translate}}">
+        <button class="btn btn-sm d-none d-md-inline-block btn-primary" onclick="window.open('https://frepple.com/docs/' + version + '/user-interface/plan-analysis/forecast-editor.html')" data-bs-toggle="tooltip" data-bs-placement="top" title="{{'Help'|translate}}">
           <span class="fa fa-question"></span>
         </button>
       </form>

@@ -14,7 +14,7 @@ function enableSave() {
 {% block tools %}
 {% include "common/snippet_follow.html" %}
 <h1>
-<button class="btn btn-sm btn-primary ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
+<button class="btn btn-sm d-none d-md-inline-block btn-primary ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
   onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/messages.html');">
   <span class="fa fa-question"></span>
 </button>

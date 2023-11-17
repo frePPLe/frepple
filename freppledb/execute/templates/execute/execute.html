@@ -230,7 +230,7 @@ loadComplete : function(data) {
         <h2 class="accordion-header" id="{{ forloop.counter }}Heading">
           <button class="accordion-button fs-5" data-bs-toggle="collapse" data-bs-target="#Accord{{ forloop.counter }}" aria-expanded="true" aria-controls="Accord{{ forloop.counter }}">
               {{ command.title|capfirst }}
-            {% if command.help_url %}<div class='ms-3 fa fa-question float-end' onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{ command.help_url }}')"></div>{% endif %}
+            {% if command.help_url %}<div class='ms-3 fa fa-question d-none d-md-inline-block float-end' onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{ command.help_url }}')"></div>{% endif %}
           </button>
         </h2>
         <div id="Accord{{ forloop.counter }}" data-task="#{{ command.name }}" data-bs-parent="#tasks" class="accordion-collapse collapse{% if forloop.counter == 1 %} show{% endif %}" aria-labelledby="{{ forloop.counter }}Heading">

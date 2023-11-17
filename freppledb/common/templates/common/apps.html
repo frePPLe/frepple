@@ -38,7 +38,7 @@ function updateApp(appname, action, el) {
   </div>
   <div class="col-auto d-flex ms-auto align-items-center">
 	<h1>
-	<button class="btn btn-sm btn-primary ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
+	<button class="btn btn-sm d-none d-md-inline-block btn-primary ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
 	onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/apps.html');">
 	<span class="fa fa-question"></span>
 	</button>

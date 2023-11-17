@@ -110,7 +110,7 @@ $(function() {
 <button id="executesql_cancel" class="btn btn-primary" disabled>{% trans "Cancel"|capfirst %}</button>
 </div>
 <div id="toolicons" class="col-auto ver-align-middle ms-auto">
-<button class="btn btn-sm btn-primary"
+<button class="btn btn-sm d-none d-md-inline-block btn-primary"
   onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/executesql.html');"
   data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}">
   <span class="fa fa-question"></span>

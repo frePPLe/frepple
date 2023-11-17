@@ -66,7 +66,7 @@ function markMessageRead(el, status) {
 
 {% block tools %}
 <h1>
-<button class="btn btn-sm btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top"
+<button class="btn btn-sm d-none d-md-inline-block btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top"
   onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/inbox.html')"
   data-bs-title="{% trans 'help'|capfirst|force_escape %}">
   <span class="fa fa-question"></span>

@@ -15,7 +15,7 @@ $(function() {
 
 {% block tools %}
 <h1>
-<button class="btn btn-sm btn-primary me-2" onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/integration-guide/rest-api/detail-api-from-your-browser.html');" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"><span class="fa fa-question"></span></button>
+<button class="btn btn-sm d-none d-md-inline-block btn-primary me-2" onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/integration-guide/rest-api/detail-api-from-your-browser.html');" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"><span class="fa fa-question"></span></button>
 </h1>
 {% endblock %}
 

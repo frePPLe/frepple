@@ -74,8 +74,16 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     }
     $scope.getDirtyCards = getDirtyCards;
 
+    function findOperationPlan(ref) {
+      return $scope.ganttoperationplans.rows ?
+        $scope.ganttoperationplans.rows.find(e => { return e.operationplan__reference == ref; }) :
+        null;
+    }
+    $scope.findOperationPlan = findOperationPlan;
+
     function buildtooltip() {
-      return $(this).attr("data-reference");
+      var opplan = $scope.findOperationPlan($(this).attr("data-reference"));
+      return "dddd";
       var extra = '';
       var thedelay = Math.round(parseFloat(parseInt($(this).attr("data-delay"))) / 8640) / 10;
       if (thedelay < 0.1)
@@ -172,14 +180,12 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
       var layer = [];
       var svgdata = "";
       for (var opplan of $scope.ganttoperationplans.rows) {
-        console.log("---", opplan, layer);
         if (opplan.resource != curresource) {
           curresource = opplan.resource;
           if (!first) {
             data += '<svg viewbox="0 0 1000 '
               + (layer.length * $scope.rowheight) + '" width="100%" height="'
               + (layer.length * $scope.rowheight) + 'px">' + svgdata + "</svg></td></tr>";
-            console.log(layer);
           }
           first = false;
           data += "<tr><td>" + opplan.resource + '</td><td>';
@@ -189,17 +195,12 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
 
         var row = 0;
         for (; row < layer.length; ++row) {
-          //console.log("      ", new Date(opplan["startdate"]) >= layer[row], new Date(opplan["startdate"]), layer[row])
           if (new Date(opplan["startdate"]) >= layer[row] && (opplan["enddate"] != opplan["startdate"])) {
-            //layer[row] = new Date(opplan["enddate"]);
-            console.log("-----reuse");
+            layer[row] = new Date(opplan["enddate"]);
             break;
           }
         };
-        if (row >= layer.length) {
-          //console.log("-----new");
-          layer.push(new Date(opplan["enddate"]));
-        }
+        if (row >= layer.length) layer.push(new Date(opplan["enddate"]));
 
         svgdata += '<rect x="' + time2scale(new Date(opplan.startdate))
           + '" y="' + (-row * $scope.rowheight)
@@ -220,19 +221,25 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
       angular.element(document).find('#ganttgraph').empty().append(data);
       gantt.header("#ganttheader");
 
-      $('svg rect').each(function () {
-        bootstrap.Tooltip.getOrCreateInstance($(this)[0], {
-          title: $scope.buildtooltip,
-          animation: false,
-          html: true,
-          container: 'body',
-          template: `
+      $('svg rect').on("click", function (d) {
+        console.log("ssss", $(d.target).attr("data-reference"));
+        var opplan = $scope.findOperationPlan($(d.target).attr("data-reference"));
+        console.log("ssss", opplan);
+        $scope.$parent.displayInfo(opplan);
+      }).
+        each(function () {
+          bootstrap.Tooltip.getOrCreateInstance($(this)[0], {
+            title: $scope.buildtooltip,
+            animation: false,
+            html: true,
+            container: 'body',
+            template: `
          <div class="tooltip opacity-100" role="tooltip">
            <div class="tooltip-arrow"></div>
            <div class="tooltip-inner bg-white text-start text-body fs-6 p-3"></div>
          </div>`
+          });
         });
-      });
     }
     $scope.drawGantt = drawGantt;
   }

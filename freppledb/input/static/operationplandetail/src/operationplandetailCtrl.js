@@ -330,6 +330,10 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         $scope.operationplan = null;
         $scope.mode = m;
       });
+      if (m == "gantt")
+        $("#zoomin, #zoomout").removeClass("d-none");
+      else
+        $("#zoomin, #zoomout").addClass("d-none");
       angular.element('#controller').scope().$broadcast('changeMode', m);
       if (m == 'kanban') {
         $("#gridmode, #calendarmode, #ganttmode").removeClass("active");

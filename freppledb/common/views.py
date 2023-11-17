@@ -480,10 +480,10 @@ class HorizonForm(forms.Form):
         queryset=Bucket.objects.all().values_list("name", flat=True)
     )
     horizonstart = forms.DateField(
-        required=False, input_formats=settings.DATE_INPUT_FORMATS
+        required=False, input_formats=["%Y-%m-%d"]
     )
     horizonend = forms.DateField(
-        required=False, input_formats=settings.DATE_INPUT_FORMATS
+        required=False, input_formats=["%Y-%m-%d"]
     )
     horizontype = forms.ChoiceField(choices=(("1", "1"), ("0", "0")))
     horizonbefore = forms.IntegerField(required=False, min_value=0)

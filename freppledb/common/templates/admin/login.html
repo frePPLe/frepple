@@ -26,6 +26,27 @@ $(function() {
     $("#id_password").val($.trim($("#id_password").val()));
   });
 });
+
+if (navigator && 'serviceWorker' in navigator)
+   navigator.serviceWorker.register("{{STATIC_URL}}js/serviceworker.js");
+
+let deferredInstallPrompt;
+
+window.addEventListener("beforeinstallprompt", event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+		document.getElementById("installApp").classList.push("d-none");
+		return;
+	}
+    document.getElementById("installApp").classList.remove("d-none");
+    document.getElementById("installAppButton").addEventListener('click', async () => {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt = null;
+        document.getElementById("installApp").classList.push("d-none");
+    });
+ });
+
 </script>
 {% endblock %}
 
@@ -109,4 +130,12 @@ We suggest changing this password.{% endblocktrans %}
 </div>
 </div>
 {% endif %}
+
+<div class="row gy-3 d-none" id="installApp">
+<div class="col-4 mx-auto text-center alert alert-danger" role="alert" style="min-width:13rem; max-width:20rem">
+FrePPLe also has a cool app!&nbsp;&nbsp;
+<button id="installAppButton" class="btn btn-sm btn-primary">Install the app</button>
+</div>
+</div>
+
 {% endblock %}

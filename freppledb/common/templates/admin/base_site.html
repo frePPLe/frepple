@@ -29,8 +29,8 @@
   var dateformat = '{% setting "DATE_FORMAT_JS" %}';
   var datetimeformat = '{% setting "DATETIME_FORMAT_JS" %}';
 
-  if ('serviceWorker' in navigator)
-   navigator.serviceWorker.register("{{STATIC_URL}}js/serviceworker.js");
+  if (navigator && 'serviceWorker' in navigator)
+    navigator.serviceWorker.register("{{STATIC_URL}}js/serviceworker.js");
 
 $(function() {
     {% if tzoffset is None %}

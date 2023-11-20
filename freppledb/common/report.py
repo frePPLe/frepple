@@ -1987,230 +1987,194 @@ class GridReport(View):
             return HttpResponseForbidden(_("Permission denied"))
 
         # Loop over the data records
-        with_update = hasattr(cls.model, "update")
         resp = HttpResponse()
         ok = True
         data = json.JSONDecoder().decode(
             request.read().decode(request.encoding or settings.DEFAULT_CHARSET)
         )
 
-        repeat = 5
-        while repeat > 0:
-            try:
-                with transaction.atomic(using=request.database, savepoint=False):
-                    if with_update:
-                        cursor = connection.cursor()
-                        cursor.execute(
-                            "set transaction isolation level repeatable read"
-                        )
-                    content_type_id = ContentType.objects.get_for_model(
-                        cls.model, for_concrete_model=False
-                    ).pk
-                    for rec in data:
-                        if "delete" in rec:
-                            # Deleting records
-                            for key in rec["delete"]:
-                                sid = transaction.savepoint(using=request.database)
-                                try:
-                                    obj = cls.model.objects.using(request.database).get(
-                                        pk=key
+        with transaction.atomic(using=request.database, savepoint=False):
+            content_type_id = ContentType.objects.get_for_model(
+                cls.model, for_concrete_model=False
+            ).pk
+            for rec in data:
+                if "delete" in rec:
+                    # Deleting records
+                    for key in rec["delete"]:
+                        sid = transaction.savepoint(using=request.database)
+                        try:
+                            obj = cls.model.objects.using(request.database).get(pk=key)
+                            Comment(
+                                user_id=request.user.id,
+                                content_type_id=content_type_id,
+                                object_pk=force_str(key),
+                                object_repr=force_str(obj)[:200],
+                                type="delete",
+                                comment="Deleted %s." % force_str(obj),
+                            ).save(using=request.database)
+                            obj.delete()
+                            transaction.savepoint_commit(sid)
+                        except cls.model.DoesNotExist:
+                            transaction.savepoint_rollback(sid)
+                            ok = False
+                            resp.write(escape(_("Can't find %s" % key)))
+                            resp.write("<br>")
+                        except Exception as e:
+                            transaction.savepoint_rollback(sid)
+                            ok = False
+                            resp.write(escape(e))
+                            resp.write("<br>")
+                elif "copy" in rec:
+                    # Copying records
+                    for key in rec["copy"]:
+                        sid = transaction.savepoint(using=request.database)
+                        try:
+                            obj = cls.model.objects.using(request.database).get(pk=key)
+                            orig_repr = force_str(obj)
+                            if isinstance(cls.model._meta.pk, CharField):
+                                # The primary key is a string
+                                copy_index = 1
+                                basekey = key.partition(" - copy #")[0]
+                                while True:
+                                    obj.pk = "%s - copy #%s" % (
+                                        basekey,
+                                        copy_index,
                                     )
-                                    if with_update:
-                                        obj.update(request.database, delete=True)
-                                    Comment(
-                                        user_id=request.user.id,
-                                        content_type_id=content_type_id,
-                                        object_pk=force_str(key),
-                                        object_repr=force_str(obj)[:200],
-                                        type="delete",
-                                        comment="Deleted %s." % force_str(obj),
-                                    ).save(using=request.database)
-                                    obj.delete()
-                                    transaction.savepoint_commit(sid)
-                                except cls.model.DoesNotExist:
-                                    transaction.savepoint_rollback(sid)
-                                    ok = False
-                                    resp.write(escape(_("Can't find %s" % key)))
-                                    resp.write("<br>")
-                                except Exception as e:
-                                    transaction.savepoint_rollback(sid)
-                                    ok = False
-                                    resp.write(escape(e))
-                                    resp.write("<br>")
-                        elif "copy" in rec:
-                            # Copying records
-                            for key in rec["copy"]:
-                                sid = transaction.savepoint(using=request.database)
-                                try:
-                                    obj = cls.model.objects.using(request.database).get(
-                                        pk=key
-                                    )
-                                    orig_repr = force_str(obj)
-                                    if isinstance(cls.model._meta.pk, CharField):
-                                        # The primary key is a string
-                                        copy_index = 1
-                                        basekey = key.partition(" - copy #")[0]
-                                        while True:
-                                            obj.pk = "%s - copy #%s" % (
-                                                basekey,
-                                                copy_index,
-                                            )
-                                            if (
-                                                cls.model.objects.using(
-                                                    request.database
-                                                )
-                                                .filter(pk=obj.pk)
-                                                .exists()
-                                            ):
-                                                copy_index += 1
-                                            else:
-                                                break
-                                    elif isinstance(cls.model._meta.pk, AutoField):
-                                        # The primary key is an auto-generated number
-                                        obj.pk = None
-                                    else:
-                                        raise Exception(
-                                            _("Can't copy %s")
-                                            % cls.model._meta.app_label
-                                        )
-                                    if with_update:
-                                        obj.update(request.database, create=True)
-                                    obj.save(using=request.database, force_insert=True)
-                                    Comment(
-                                        user_id=request.user.pk,
-                                        content_type_id=content_type_id,
-                                        object_pk=obj.pk,
-                                        object_repr=force_str(obj)[:200],
-                                        type="add",
-                                        comment="Copied from %s." % orig_repr,
-                                    ).save(using=request.database)
-                                    transaction.savepoint_commit(sid)
-                                except cls.model.DoesNotExist:
-                                    transaction.savepoint_rollback(sid)
-                                    ok = False
-                                    resp.write(escape(_("Can't find %s" % key)))
-                                    resp.write("<br>")
-                                except Exception as e:
-                                    transaction.savepoint_rollback(sid)
-                                    ok = False
-                                    resp.write(escape(e))
-                                    resp.write("<br>")
-                        else:
-                            # Editing records
-                            pk = rec["id"]
-                            sid = transaction.savepoint(using=request.database)
-                            try:
-                                obj = cls.model.objects.using(request.database).get(
-                                    pk=rec["id"]
-                                )
-                                del rec["id"]
-                                for i in rec:
                                     if (
-                                        rec[i] == "\xa0"
-                                    ):  # Workaround for Jqgrid issue: date field can't be set to blank
-                                        rec[i] = None
-                                # Assure all unique-together fields are included
-                                flds = set(rec.keys())
-                                for c in cls.model._meta.unique_together:
-                                    for cf in c:
-                                        if cf in flds:
-                                            for cf2 in c:
-                                                if cf2 not in flds:
-                                                    rec[cf2] = str(getattr(obj, cf2))
-                                                    flds.add(cf2)
-                                            break
-                                if hasattr(cls.model, "getModelForm"):
-                                    UploadForm = cls.model.getModelForm(
-                                        tuple(flds), database=request.database
-                                    )
-                                else:
-                                    UploadForm = modelform_factory(
-                                        cls.model,
-                                        fields=tuple(flds),
-                                        formfield_callback=lambda f: (
-                                            isinstance(f, RelatedField)
-                                            and f.formfield(using=request.database)
-                                        )
-                                        or (
-                                            isinstance(f, DateTimeField)
-                                            and f.formfield(
-                                                input_formats=settings.DATETIME_INPUT_FORMATS
-                                            )
-                                        )
-                                        or (
-                                            isinstance(f, DateField)
-                                            and f.formfield(
-                                                input_formats=settings.DATE_INPUT_FORMATS
-                                            )
-                                        )
-                                        or f.formfield(),
-                                    )
-                                form = UploadForm(rec, instance=obj)
-                                if not form.is_valid():
-                                    raise ValueError
-                                elif form.has_changed():
-                                    if with_update:
-                                        obj.update(
-                                            request.database, **form.cleaned_data
-                                        )
-                                    obj = form.save(commit=False)
-                                    if not hasattr(obj, "skipsave"):
-                                        obj.save(using=request.database)
-                                    Comment(
-                                        user_id=request.user.pk,
-                                        content_type_id=content_type_id,
-                                        object_pk=obj.pk,
-                                        object_repr=force_str(obj)[:200],
-                                        type="change",
-                                        comment="Changed %s."
-                                        % get_text_list(form.changed_data, "and"),
-                                    ).save(using=request.database)
-                                transaction.savepoint_commit(sid)
-                            except cls.model.DoesNotExist:
-                                transaction.savepoint_rollback(sid)
-                                ok = False
-                                resp.write(escape(_("Can't find %s" % pk)))
-                                resp.write("<br>")
-                            except (ValidationError, ValueError):
-                                transaction.savepoint_rollback(sid)
-                                ok = False
-                                for error in form.non_field_errors():
-                                    resp.write(escape("%s: %s" % (pk, error)))
-                                    resp.write("<br>")
-                                for field in form:
-                                    for error in field.errors:
-                                        resp.write(
-                                            escape(
-                                                "%s %s: %s: %s"
-                                                % (
-                                                    obj.pk,
-                                                    field.name,
-                                                    rec.get(
-                                                        field.name,
-                                                        getattr(obj, field.name),
-                                                    ),
-                                                    error,
-                                                )
-                                            )
-                                        )
-                                        resp.write("<br>")
-                            except Exception as e:
-                                transaction.savepoint_rollback(sid)
-                                ok = False
-                                resp.write(escape(e))
-                                resp.write("<br>")
-                repeat = 0
-            except OperationalError as e:
-                if with_update:
-                    logger.warning(
-                        "Retrying edit because of database concurrency: %s" % e
-                    )
-                    sleep(random.uniform(0, 0.1))
-                    repeat -= 1
-                    if repeat <= 0:
-                        resp.write("Database concurrency limit reached")
+                                        cls.model.objects.using(request.database)
+                                        .filter(pk=obj.pk)
+                                        .exists()
+                                    ):
+                                        copy_index += 1
+                                    else:
+                                        break
+                            elif isinstance(cls.model._meta.pk, AutoField):
+                                # The primary key is an auto-generated number
+                                obj.pk = None
+                            else:
+                                raise Exception(
+                                    _("Can't copy %s") % cls.model._meta.app_label
+                                )
+                            obj.save(using=request.database, force_insert=True)
+                            Comment(
+                                user_id=request.user.pk,
+                                content_type_id=content_type_id,
+                                object_pk=obj.pk,
+                                object_repr=force_str(obj)[:200],
+                                type="add",
+                                comment="Copied from %s." % orig_repr,
+                            ).save(using=request.database)
+                            transaction.savepoint_commit(sid)
+                        except cls.model.DoesNotExist:
+                            transaction.savepoint_rollback(sid)
+                            ok = False
+                            resp.write(escape(_("Can't find %s" % key)))
+                            resp.write("<br>")
+                        except Exception as e:
+                            transaction.savepoint_rollback(sid)
+                            ok = False
+                            resp.write(escape(e))
+                            resp.write("<br>")
                 else:
-                    repeat = 0
+                    # Editing records
+                    pk = rec["id"]
+                    sid = transaction.savepoint(using=request.database)
+                    try:
+                        obj = cls.model.objects.using(request.database).get(
+                            pk=rec["id"]
+                        )
+                        del rec["id"]
+                        for i in rec:
+                            if (
+                                rec[i] == "\xa0"
+                            ):  # Workaround for Jqgrid issue: date field can't be set to blank
+                                rec[i] = None
+                        # Assure all unique-together fields are included
+                        flds = set(rec.keys())
+                        for c in cls.model._meta.unique_together:
+                            for cf in c:
+                                if cf in flds:
+                                    for cf2 in c:
+                                        if cf2 not in flds:
+                                            rec[cf2] = str(getattr(obj, cf2))
+                                            flds.add(cf2)
+                                    break
+                        if hasattr(cls.model, "getModelForm"):
+                            UploadForm = cls.model.getModelForm(
+                                tuple(flds), database=request.database
+                            )
+                        else:
+                            UploadForm = modelform_factory(
+                                cls.model,
+                                fields=tuple(flds),
+                                formfield_callback=lambda f: (
+                                    isinstance(f, RelatedField)
+                                    and f.formfield(using=request.database)
+                                )
+                                or (
+                                    isinstance(f, DateTimeField)
+                                    and f.formfield(
+                                        input_formats=settings.DATETIME_INPUT_FORMATS
+                                    )
+                                )
+                                or (
+                                    isinstance(f, DateField)
+                                    and f.formfield(
+                                        input_formats=settings.DATE_INPUT_FORMATS
+                                    )
+                                )
+                                or f.formfield(),
+                            )
+                        form = UploadForm(rec, instance=obj)
+                        if not form.is_valid():
+                            raise ValueError
+                        elif form.has_changed():
+                            obj = form.save(commit=False)
+                            if not hasattr(obj, "skipsave"):
+                                obj.save(using=request.database)
+                            Comment(
+                                user_id=request.user.pk,
+                                content_type_id=content_type_id,
+                                object_pk=obj.pk,
+                                object_repr=force_str(obj)[:200],
+                                type="change",
+                                comment="Changed %s."
+                                % get_text_list(form.changed_data, "and"),
+                            ).save(using=request.database)
+                        transaction.savepoint_commit(sid)
+                    except cls.model.DoesNotExist:
+                        transaction.savepoint_rollback(sid)
+                        ok = False
+                        resp.write(escape(_("Can't find %s" % pk)))
+                        resp.write("<br>")
+                    except (ValidationError, ValueError):
+                        transaction.savepoint_rollback(sid)
+                        ok = False
+                        for error in form.non_field_errors():
+                            resp.write(escape("%s: %s" % (pk, error)))
+                            resp.write("<br>")
+                        for field in form:
+                            for error in field.errors:
+                                resp.write(
+                                    escape(
+                                        "%s %s: %s: %s"
+                                        % (
+                                            obj.pk,
+                                            field.name,
+                                            rec.get(
+                                                field.name,
+                                                getattr(obj, field.name),
+                                            ),
+                                            error,
+                                        )
+                                    )
+                                )
+                                resp.write("<br>")
+                    except Exception as e:
+                        transaction.savepoint_rollback(sid)
+                        ok = False
+                        resp.write(escape(e))
+                        resp.write("<br>")
 
         # Update the hierachy
         if issubclass(cls.model, HierarchyModel):

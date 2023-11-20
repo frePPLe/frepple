@@ -425,10 +425,6 @@ def _parseData(
     has_pk_field = False
     processed_header = False
     rowWrapper = rowmapper()
-    with_update = (
-        hasattr(model, "update")
-        and not ping  # No update logic during data file uploads
-    )
 
     # Detect excel autofilter data tables
     if isinstance(data, Worksheet) and data.auto_filter.ref:
@@ -621,16 +617,8 @@ def _parseData(
                 # Step 3: Validate the form and model, and save to the database
                 if form.has_changed():
                     if form.is_valid():
-                        # Call the update method before saving the model
-                        obj = form.save(commit=False)
-                        if with_update:
-                            if it:
-                                model.update(obj, database, **form.cleaned_data)
-                            else:
-                                model.update(
-                                    obj, database, create=True, **form.cleaned_data
-                                )
                         # Save the form
+                        obj = form.save(commit=False)
                         if it:
                             changed += 1
                             obj.save(using=database, force_update=True)

@@ -827,15 +827,6 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
         },
     ]
 
-    def save_model(self, request, obj: ManufacturingOrder, form, change):
-        if form.has_changed():
-            fields = {f: form.cleaned_data[f] for f in form.changed_data}
-            if change:
-                obj.update(request.database, **fields)
-            else:
-                obj.update(request.database, create=True, **fields)
-        super().save_model(request, obj, form, change)
-
 
 @admin.register(DistributionOrder, site=data_site)
 class DistributionOrder_admin(MultiDBModelAdmin):
@@ -890,15 +881,6 @@ class DistributionOrder_admin(MultiDBModelAdmin):
             "view": "admin:input_distributionorder_comment",
         },
     ]
-
-    def save_model(self, request, obj: DistributionOrder, form, change):
-        if form.has_changed():
-            fields = {f: form.cleaned_data[f] for f in form.changed_data}
-            if change:
-                obj.update(request.database, **fields)
-            else:
-                obj.update(request.database, create=True, **fields)
-        super().save_model(request, obj, form, change)
 
 
 @admin.register(PurchaseOrder, site=data_site)
@@ -955,15 +937,6 @@ class PurchaseOrder_admin(MultiDBModelAdmin):
         },
     ]
 
-    def save_model(self, request, obj: PurchaseOrder, form, change):
-        if form.has_changed():
-            fields = {f: form.cleaned_data[f] for f in form.changed_data}
-            if change:
-                obj.update(request.database, **fields)
-            else:
-                obj.update(request.database, create=True, **fields)
-        super().save_model(request, obj, form, change)
-
 
 @admin.register(DeliveryOrder, site=data_site)
 class DeliveryOrder_admin(MultiDBModelAdmin):
@@ -1012,15 +985,6 @@ class DeliveryOrder_admin(MultiDBModelAdmin):
             "view": "admin:input_deliveryorder_comment",
         },
     ]
-
-    def save_model(self, request, obj: DeliveryOrder, form, change):
-        if form.has_changed():
-            fields = {f: form.cleaned_data[f] for f in form.changed_data}
-            if change:
-                obj.update(request.database, **fields)
-            else:
-                obj.update(request.database, create=True, **fields)
-        super().save_model(request, obj, form, change)
 
 
 @admin.register(Demand, site=data_site)
@@ -1102,15 +1066,6 @@ class OperationPlanResource_admin(MultiDBModelAdmin):
         }
     ]
 
-    def save_model(self, request, obj: ManufacturingOrder, form, change):
-        if form.has_changed():
-            fields = {f: form.cleaned_data[f] for f in form.changed_data}
-            if change:
-                obj.update(request.database, **fields)
-            else:
-                obj.update(request.database, create=True, **fields)
-        super().save_model(request, obj, form, change)
-
 
 @admin.register(OperationPlanMaterial, site=data_site)
 class OperationPlanMaterial_admin(MultiDBModelAdmin):
@@ -1143,12 +1098,3 @@ class OperationPlanMaterial_admin(MultiDBModelAdmin):
             "permissions": "input.change_operationplanmaterial",
         }
     ]
-
-    def save_model(self, request, obj: ManufacturingOrder, form, change):
-        if form.has_changed():
-            fields = {f: form.cleaned_data[f] for f in form.changed_data}
-            if change:
-                obj.update(request.database, **fields)
-            else:
-                obj.update(request.database, create=True, **fields)
-        super().save_model(request, obj, form, change)

@@ -9,7 +9,7 @@ Extensions can be provided by the frepple team,
 `the frepple user community <https://github.com/frePPLe/frepple/discussions/>`_
 or `developed by yourself <../developer-guide/creating-an-extension-app.html>`_.
 
-Read more on the available extensions in `this chapter <../apps/index.html>`_.
+Read more on the available extensions in `this chapter <../../apps/index.html>`_.
 
 .. image:: ../_images/apps.png
    :alt: Extension apps

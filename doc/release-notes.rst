@@ -46,6 +46,10 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
     appear as successful in the UI but the copy didn't work properly. These silent errors are
     now captured in the execute logs and the task will be reported as failed.
 
+- | Browser sessions time out after 1 day rather than 1 hour.
+  | The setting SESSION_LOGOUT_IDLE_TIME controls this timeout. We increased the
+    default limit to improve the user experience.
+
 .. rubric:: Odoo integration
 
 - | 17: Support is added for the new Odoo version 17.

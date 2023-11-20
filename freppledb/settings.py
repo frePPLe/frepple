@@ -326,7 +326,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = (
 )
 
 # Users are automatically logged out after this period of inactivity
-SESSION_LOGOUT_IDLE_TIME = 60  # minutes
+SESSION_LOGOUT_IDLE_TIME = 60 * 24 # minutes
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.fallback.SessionStorage"
 

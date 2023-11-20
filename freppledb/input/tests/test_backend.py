@@ -323,7 +323,7 @@ class ExcelTest(TransactionTestCase):
             f.write(response.content)
 
         # Erase the database
-        management.call_command("empty")
+        management.call_command("empty", all=True)
         self.assertEqual(Buffer.objects.count(), 0)
         self.assertEqual(CalendarBucket.objects.count(), 0)
         self.assertEqual(Calendar.objects.count(), 0)

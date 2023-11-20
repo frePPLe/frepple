@@ -200,7 +200,7 @@ class Command(BaseCommand):
             if options.get("initial", None):
                 if verbosity > 0:
                     print("Erasing simulation database")
-                management.call_command("empty", database=database, verbosity=verbosity)
+                management.call_command("empty", database=database, verbosity=verbosity, all=True)
                 if verbosity > 0:
                     print("Loading initial data")
                 management.call_command(

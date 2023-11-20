@@ -61,7 +61,7 @@ class execute_with_commands(TransactionTestCase):
     def test_run_cmd(self):
         # Empty the database tables
         self.assertNotEqual(input.models.Calendar.objects.count(), 0)
-        management.call_command("empty")
+        management.call_command("empty", all=True)
         self.assertEqual(input.models.Calendar.objects.count(), 0)
         self.assertEqual(input.models.Demand.objects.count(), 0)
         self.assertEqual(output.models.Problem.objects.count(), 0)
@@ -146,7 +146,7 @@ class execute_multidb(TransactionTestCase):
         self.assertEqual(count2, 0)
         # Erase second database
         count1 = input.models.Demand.objects.all().using(db1).count()
-        management.call_command("empty", database=db2)
+        management.call_command("empty", database=db2, all=True)
         count1new = input.models.Demand.objects.all().using(db1).count()
         input.models.Demand.objects.all().using(db2).delete()
         count2 = input.models.Demand.objects.all().using(db2).count()

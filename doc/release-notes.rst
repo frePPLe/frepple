@@ -6,6 +6,11 @@ Release notes
 
 Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | Bug fix: Custom operationplan attributes couldn't be edited in the user
+    interface.
+
 .. rubric:: User interface
 
 - | Frepple is now installable as an app on your tablet and smartphone.

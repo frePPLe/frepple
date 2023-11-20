@@ -29,8 +29,10 @@ import json
 from channels.db import database_sync_to_async
 from channels.generic.http import AsyncHttpConsumer
 
+from freppledb.boot import getAttributes
 from freppledb.common.commands import PlanTaskRegistry
-from freppledb.common.localization import parseLocalizedDateTime
+from freppledb.common.localization import parseLocalizedDateTime, parseLocalizedDate
+from freppledb.input.models import OperationPlan
 from freppledb.webservice.utils import lock
 
 
@@ -118,6 +120,9 @@ def collectRelated(
                 related_buffers,
                 related_demands,
             )
+
+
+opplanAttributes = [a for a in getAttributes(OperationPlan)]
 
 
 class OperationplanService(AsyncHttpConsumer):
@@ -261,6 +266,20 @@ class OperationplanService(AsyncHttpConsumer):
                                 changes["resources"] = [l[0] for l in rsrcs]
                         if "remark" in rec:
                             changes["remark"] = rec["remark"]
+                        for attr in opplanAttributes:
+                            if attr[0] in rec and attr[3]:
+                                if attr[2] in ("integer", "number"):
+                                    changes[attr[0]] = float(rec[attr[0]])
+                                elif attr[2] == "datetime":
+                                    changes[attr[0]] = parseLocalizedDateTime(
+                                        rec[attr[0]]
+                                    ).strftime("%Y-%m-%dT%H:%M:%S")
+                                elif attr[2] == "date":
+                                    changes[attr[0]] = parseLocalizedDate(
+                                        rec[attr[0]]
+                                    ).strftime("%Y-%m-%d")
+                                else:
+                                    changes[attr[0]] = rec[attr[0]]
 
                         # Update the engine
                         if changes:

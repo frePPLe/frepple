@@ -153,6 +153,7 @@ input.ng-dirty {
         <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__quantity")' class="form-control" type="number" ng-model="operationplan.operationplan__quantity" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
       </td>
     </tr>
+    <!--
     <tr data-ng-if="operationplan.type === 'MO' || (operationplan.id === -1 && (operationplan.colmodel.quantity_completed || operationplan.colmodel.operationplan__quantity_completed))">
       <td><b style="text-transform: capitalize">{{'quantity completed'|translate}}</b>&nbsp;
         <small data-ng-if="operationplan.id === -1 && !operationplan.colmodel.operationplan__quantity_completed">({{ operationplan.colmodel.quantity_completed.type|translate }})</small>
@@ -164,6 +165,7 @@ input.ng-dirty {
         <input data-ng-if='operationplan.id !== -1 && operationplan.hasOwnProperty("operationplan__quantity_completed")' class="form-control" type="number" ng-model="operationplan.operationplan__quantity_completed" ng-model-options="{debounce: 300}" data-ng-readonly="!editable">
       </td>
     </tr>
+    -->
     <tr data-ng-repeat="(key, value) in operationplan.colmodel"
       data-ng-if="['delay', 'criticality', 'quantity', 'startdate', 'enddate', 'color', 'quantity_completed', 'operationplan__delay', 'operationplan__criticality', 'operationplan__quantity', 'operationplan__startdate', 'operationplan__enddate', 'operationplan__color', 'operationplan__quantity_completed'].indexOf(key) == -1 && operationplan.hasOwnProperty(key) && operationplan[key] != null">
       <td><b style="text-transform: capitalize">{{value.label|translate}}</b>&nbsp;

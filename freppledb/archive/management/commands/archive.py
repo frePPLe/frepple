@@ -128,7 +128,7 @@ class Command(BaseCommand):
             cursor.execute(
                 """
                 insert into ax_buffer (item, location, batch, onhand, cost, safetystock, snapshot_date_id)
-                select item_id, location_id, batch, cost, onhand, safetystock, '%s'
+                select item_id, location_id, batch, onhand, cost, safetystock, '%s'
                 from (
                   select operationplanmaterial.item_id,
                   operationplanmaterial.location_id,

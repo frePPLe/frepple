@@ -203,7 +203,7 @@ class OdooTest(TransactionTestCase):
             self.assertEqual(approved_mo.quantity, odoo_mo["product_qty"])
             self.assertEqual(
                 approved_mo.startdate.strftime("%Y-%m-%d %H:%M:%S"),
-                odoo_mo["date_planned_start"],
+                odoo_mo["date_start"],
             )
             self.assertTrue(odoo_mo["bom_id"][1] in approved_mo.operation.name)
             cnt += 1

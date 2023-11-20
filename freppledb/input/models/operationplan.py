@@ -418,9 +418,6 @@ class OperationPlan(AuditModel):
         # Call the real save() method
         super().save(*args, **kwargs)
 
-    def update(self, database, delete=False, create=False, **fields):
-        print("todo: pass to web service", self, database, delete, create, fields)
-
     @classmethod
     def getDeleteStatements(cls):
         stmts = []

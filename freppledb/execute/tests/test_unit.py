@@ -381,12 +381,12 @@ class remote_commands(TransactionTestCase):
             self.assertLess(cnt, 10, "Running task taking too long")
 
         # Empty the plan
-        response = self.client.post("/execute/api/empty/", {}, **headers)
+        response = self.client.post("/execute/api/empty/", {"all": 1}, **headers)
         self.assertEqual(response.status_code, 200)
         taskinfo = json.loads(response.content.decode())
         taskid1 = taskinfo["taskid"]
 
-        # Wait for the flush the finish
+        # Wait for the task to finish
         cnt = 0
         while cnt <= 20:
             response = self.client.get(

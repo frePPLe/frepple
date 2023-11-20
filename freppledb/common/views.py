@@ -53,6 +53,7 @@ from django.db.models.expressions import RawSQL
 from django.urls import reverse, resolve
 from django import forms
 from django.template import Template
+from django.utils.decorators import method_decorator
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
@@ -105,6 +106,7 @@ class AppsView(View):
     reportkey = "common.apps"
 
     @classmethod
+    @method_decorator(staff_member_required)
     def get(cls, request, *args, **kwargs):
         request.prefs = request.user.getPreference(
             cls.reportkey, database=request.database
@@ -155,6 +157,7 @@ class AppsView(View):
         )
 
     @classmethod
+    @method_decorator(staff_member_required)
     def post(reportclass, request, *args, **kwargs):
         if request.headers.get("x-requested-with") != "XMLHttpRequest":
             return HttpResponseNotFound("Only ajax post requests allowed")
@@ -234,7 +237,6 @@ class AppsView(View):
                 args=("migrate", appname),
             )
             child.start()
-            # management.call_command("migrate", appname)
 
         elif action == "uninstall":
             # Validate

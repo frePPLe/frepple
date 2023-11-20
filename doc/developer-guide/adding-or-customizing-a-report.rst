@@ -101,7 +101,7 @@ in your model.
 
    ::
 
-      from django.utils.translation import ugettext as _
+      from django.utils.translation import gettextlazy as _
       from freppledb.menu import menu
       menu.addItem("admin", "statistics", url="/statistics.html",
         label=_('Model statistics'), index=900)

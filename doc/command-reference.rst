@@ -533,11 +533,15 @@ tables for users, permissions, task log, etc...).
 
         frepplectl empty --models=input.demand,input.operationplan
 
+        frepplectl empty --all
+
    .. tab:: Web API
 
       .. code-block:: bash
 
         POST /execute/api/empty/?models=input.demand,input.operationplan
+
+        POST /execute/api/empty/?all=
 
 .. _odoo_import:
 

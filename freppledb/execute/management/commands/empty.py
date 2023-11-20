@@ -74,8 +74,13 @@ class Command(BaseCommand):
             help="Task identifier (generated automatically if not provided)",
         ),
         parser.add_argument("--models", help="Comma-separated list of models to erase")
+        parser.add_argument("--all", help="Deletes all tables", action="store_true",
+                            default=False)
 
     def handle(self, **options):
+        if not options["all"] and not options["models"]:
+            raise CommandError("Specify either the --all or the --models option")
+
         # Pick up options
         database = options["database"]
         if database not in settings.DATABASES:

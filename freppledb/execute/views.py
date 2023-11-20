@@ -453,6 +453,8 @@ def wrapTask(request, action):
         models = ",".join(args.getlist("models"))
         if models:
             task.arguments = "--models=%s" % (models)
+        elif "all" in args:
+            task.arguments = "--all"
         task.save(using=request.database)
     # D
     elif action == "loaddata":

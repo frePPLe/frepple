@@ -55,6 +55,12 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 - | 14 & 15 & 16: Bug fix. Connector had a problem authenticating in a multi-database
     Odoo configuration.
 
+.. rubric:: System administration
+
+- | The command "empty" now requires either the argument "--all" or the
+    argument "--models=list-of-models-to-be erased".
+  | This change avoids erasing by accident all data from the database.
+
 8.2.0 (2023-10-20)
 ==================
 

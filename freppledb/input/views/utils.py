@@ -2215,8 +2215,8 @@ class OperationPlanDetail(View):
                 operationplan.status,
                 operationplan.item_id,
                 coalesce(operationplan.location_id, operationplan.destination_id),
-                to_char(operationplan.startdate,'YYYY-MM-DD hh24:mi:ss'),
-                to_char(operationplan.enddate,'YYYY-MM-DD hh24:mi:ss'),
+                operationplan.startdate,
+                operationplan.enddate,
                 (pegged_y-pegged_x) as quantity,
                 operationplan.quantity,
                 path from cte
@@ -2242,12 +2242,16 @@ class OperationPlanDetail(View):
                                 a[0],  # level
                                 a[1],  # reference
                                 a[2],  # type
-                                a[3],  # operation
+                                a[3] or "",  # operation
                                 a[4],  # status
                                 a[5],  # item
                                 a[6],  # location
-                                a[7],  # startdate
-                                a[8],  # enddate
+                                a[7].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                if a[7]
+                                else "",  # startdate
+                                a[8].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                if a[8]
+                                else "",  # enddate
                                 float(a[9] or 0),  # quantity,
                                 float(a[10] or 0),  # opplan quantity,
                                 0 if a[0] == 1 else 2,
@@ -2294,8 +2298,8 @@ class OperationPlanDetail(View):
                 operationplan.status,
                 operationplan.item_id,
                 coalesce(operationplan.location_id, operationplan.destination_id),
-                to_char(operationplan.startdate,'YYYY-MM-DD hh24:mi:ss'),
-                to_char(operationplan.enddate,'YYYY-MM-DD hh24:mi:ss'),
+                operationplan.startdate,
+                operationplan.enddate,
                 (pegged_y-pegged_x) as quantity,
                 operationplan.quantity,
                 path from cte
@@ -2318,8 +2322,12 @@ class OperationPlanDetail(View):
                                 a[4],  # status
                                 a[5],  # item
                                 a[6],  # location
-                                a[7],  # startdate
-                                a[8],  # enddate
+                                a[7].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                if a[7]
+                                else "",  # startdate
+                                a[8].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                if a[8]
+                                else "",  # enddate
                                 float(a[9] or 0),  # quantity,
                                 float(a[10] or 0),  # opplan quantity
                                 0 if a[0] == 1 else 2,

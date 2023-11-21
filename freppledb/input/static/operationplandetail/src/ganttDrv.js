@@ -52,14 +52,6 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
       $scope.drawGantt();
     });
 
-    $scope.opptype = {
-      'MO': gettextCatalog.getString('Manufacturing Order'),
-      'PO': gettextCatalog.getString('Purchase Order'),
-      'DO': gettextCatalog.getString('Distribution Order'),
-      'STCK': gettextCatalog.getString('Stock'),
-      'DLVR': gettextCatalog.getString('Delivery'),
-    };
-
     function getHeight(gutter) {
       if (preferences && preferences['height'])
         return preferences['height'] - (gutter || 25);
@@ -83,76 +75,71 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
 
     function buildtooltip() {
       var opplan = $scope.findOperationPlan($(this).attr("data-reference"));
-      return "dddd";
       var extra = '';
-      var thedelay = Math.round(parseFloat(parseInt($(this).attr("data-delay"))) / 8640) / 10;
+      var thedelay = Math.round(opplan.operationplan__delay / 8640) / 10;
       if (thedelay < 0.1)
-        thedelay = "" + (-thedelay) + " days early";
+        thedelay = "" + (-thedelay) + " " + gettext("days early");
       else if (thedelay > 0.1)
-        thedelay = "" + thedelay + " days late";
+        thedelay = "" + thedelay + " " + gettext("days late");
       else
-        thedelay = "on time";
-      if ($(this).attr("data-description"))
-        extra += gettext('description') + ": " + $(this).attr("data-description") + '<br>';
-      if ($(this).attr("data-batch"))
-        extra += gettext('batch') + ": " + $(this).attr("data-batch") + '<br>';
-      if ($(this).attr("data-type") === 'MO') {
+        thedelay = gettext("on time");
+      if (opplan.operationplan__operation__description)
+        extra += gettext('description') + ": " + opplan.operationplan__operation__description + '<br>';
+      if (opplan.operationplan__batch)
+        extra += gettext('batch') + ": " + opplan.operationplan__batch + '<br>';
+      if (opplan.operationplan__type === 'MO') {
         return gettext('manufacturing order') + '<br>' +
-          $(this).attr("data-operation") + '<br>' +
-          gettext('reference') + ": " + $(this).attr("data-reference") + '<br>' +
+          opplan.operationplan__operation__name + '<br>' +
+          gettext('reference') + ": " + opplan.operationplan__reference + '<br>' +
           extra +
-          gettext('start') + ": " + $(this).attr("data-startdate") + '<br>' +
-          gettext('end') + ": " + $(this).attr("data-enddate") + '<br>' +
-          gettext('quantity') + ": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
-          gettext('required quantity') + ": " + grid.formatNumber($(this).attr("data-required_quantity")) + "<br>" +
-          gettext('criticality') + ": " + $(this).attr("data-criticality") + "<br>" +
+          gettext('start') + ": " + moment(opplan.operationplan__startdate).format(datetimeformat) + '<br>' +
+          gettext('end') + ": " + moment(opplan.operationplan__enddate).format(datetimeformat) + '<br>' +
+          gettext('quantity') + ": " + grid.formatNumber(opplan.operationplan__quantity) + "<br>" +
+          gettext('criticality') + ": " + opplan.operationplan__criticality + "<br>" +
           gettext('delay') + ": " + thedelay + "<br>" +
-          gettext('status') + ": " + gettext($(this).attr("data-status")) + "<br>";
+          gettext('status') + ": " + gettext(opplan.operationplan__status) + "<br>";
       }
       else if ($(this).attr("data-type") === 'PO') {
         return gettext('purchase order') + '<br>' +
-          $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
-          gettext('reference') + ": " + $(this).attr("data-reference") + '<br>' +
+          opplan.operationplan__item__name + ' @ ' + opplan.operationplan__location__name + '<br>' +
+          gettext('reference') + ": " + opplan.operationplan__reference + '<br>' +
           extra +
-          gettext('supplier') + ": " + $(this).attr("data-supplier") + '<br>' +
-          gettext('start') + ": " + $(this).attr("data-startdate") + '<br>' +
-          gettext('end') + ": " + $(this).attr("data-enddate") + '<br>' +
-          gettext('quantity') + ": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
-          gettext('required quantity') + ": " + grid.formatNumber(parseFloat($(this).attr("data-required_quantity"))) + "<br>" +
-          gettext('criticality') + ": " + $(this).attr("data-criticality") + "<br>" +
+          gettext('start') + ": " + moment(opplan.operationplan__startdate).format(datetimeformat) + '<br>' +
+          gettext('end') + ": " + moment(opplan.operationplan__enddate).format(datetimeformat) + '<br>' +
+          gettext('quantity') + ": " + grid.formatNumber(opplan.operationplan__quantity) + "<br>" +
+          gettext('criticality') + ": " + opplan.operationplan__criticality + "<br>" +
           gettext('delay') + ": " + thedelay + "<br>" +
-          gettext('status') + ": " + gettext($(this).attr("data-status")) + "<br>";
+          gettext('status') + ": " + gettext(opplan.operationplan__status) + "<br>";
       }
       else if ($(this).attr("data-type") === 'DO') {
         return gettext('distribution order') + '<br>' +
-          $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
-          gettext('origin') + ": " + $(this).attr("data-origin") + '<br>' +
-          gettext('reference') + ": " + $(this).attr("data-reference") + '<br>' +
+          opplan.operationplan__item__name + ' @ ' + opplan.operationplan__location__name + '<br>' +
+          gettext('origin') + ": " + opplan.operationplan__origin__name + '<br>' +
+          gettext('reference') + ": " + opplan.operationplan__reference + '<br>' +
           extra +
-          gettext('start') + ": " + $(this).attr("data-startdate") + '<br>' +
-          gettext('end') + ": " + $(this).attr("data-enddate") + '<br>' +
-          gettext('quantity') + ": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
-          gettext('required quantity') + ": " + grid.formatNumber(parseFloat($(this).attr("data-required_quantity"))) + "<br>" +
-          gettext('criticality') + ": " + $(this).attr("data-criticality") + "<br>" +
+          gettext('start') + ": " + moment(opplan.operationplan__startdate).format(datetimeformat) + '<br>' +
+          gettext('end') + ": " + moment(opplan.operationplan__enddate).format(datetimeformat) + '<br>' +
+          gettext('quantity') + ": " + grid.formatNumber(opplan.operationplan__quantity) + "<br>" +
+          gettext('criticality') + ": " + opplan.operationplan__criticality + "<br>" +
           gettext('delay') + ": " + thedelay + "<br>" +
-          gettext('status') + ": " + gettext($(this).attr("data-status")) + "<br>";
+          gettext('status') + ": " + gettext(opplan.operationplan__status) + "<br>";
       }
       else if ($(this).attr("data-type") === 'STCK') {
         return gettext('inventory') + '<br>' +
-          $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
-          gettext('quantity') + ": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>";
+          opplan.operationplan__item__name + ' @ ' + opplan.operationplan__location__name + '<br>' +
+          gettext('quantity') + ": " + grid.formatNumber(opplan.operationplan__quantity) + "<br>";
       }
       else if ($(this).attr("data-type") === 'DLVR') {
         return gettext('customer delivery') + '<br>' +
           extra +
-          $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
-          gettext('demand') + ": " + $(this).attr("data-demand") + '<br>' +
-          gettext('start') + ": " + $(this).attr("data-startdate") + '<br>' +
-          gettext('end') + ": " + $(this).attr("data-enddate") + '<br>' +
-          gettext('quantity') + ": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
-          gettext('criticality') + ": " + $(this).attr("data-criticality") + "<br>" +
+          opplan.operationplan__item__name + ' @ ' + opplan.operationplan__location__name + '<br>' +
+          gettext('demand') + ": " + opplan.operationplan__demand__name + '<br>' +
+          gettext('start') + ": " + moment(opplan.operationplan__startdate).format(datetimeformat) + '<br>' +
+          gettext('end') + ": " + moment(opplan.operationplan__enddate).format(datetimeformat) + '<br>' +
+          gettext('quantity') + ": " + grid.formatNumber(opplan.operationplan__quantity) + "<br>" +
+          gettext('criticality') + ": " + opplan.operationplan__criticality + "<br>" +
           gettext('delay') + ": " + thedelay + "<br>" +
-          gettext('status') + ": " + gettext($(this).attr("data-status")) + "<br>";
+          gettext('status') + ": " + gettext(opplan.operationplan__status) + "<br>";
       }
     }
     $scope.buildtooltip = buildtooltip;
@@ -185,7 +172,9 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
           if (!first) {
             data += '<svg viewbox="0 0 1000 '
               + (layer.length * $scope.rowheight) + '" width="100%" height="'
-              + (layer.length * $scope.rowheight) + 'px">' + svgdata + "</svg></td></tr>";
+              + (layer.length * $scope.rowheight) + 'px">' +
+              + '<g class="ganttrow" transform="scale(' + 1 + ',1) translate(0,' + ((layer.length - 1) * $scope.rowheight + 3) + ')" title="' + layer.length + '">'
+              + svgdata + "</g></svg></td></tr>";
           }
           first = false;
           data += "<tr><td>" + opplan.resource + '</td><td>';
@@ -202,7 +191,7 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
         };
         if (row >= layer.length) layer.push(new Date(opplan["enddate"]));
 
-        svgdata += '<rect x="' + time2scale(new Date(opplan.startdate))
+        svgdata += '<rect class="opplan" x="' + time2scale(new Date(opplan.startdate))
           + '" y="' + (-row * $scope.rowheight)
           + '" fill="' + buildcolor(opplan)
           + '" width="' + duration2scale(opplan.enddate - opplan.startdate)
@@ -216,15 +205,15 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
       if (!first)
         data += '<svg viewbox="0 0 1000 '
           + (layer.length * $scope.rowheight) + '" width="100%" height="'
-          + (layer.length * $scope.rowheight) + 'px">' + svgdata + "</svg></td></tr>";
+          + (layer.length * $scope.rowheight) + 'px">'
+          + '<g class="ganttrow" transform="scale(' + 1 + ',1) translate(0,' + ((layer.length - 1) * $scope.rowheight + 3) + ')" title="' + layer.length + '">'
+          + svgdata + "</g></svg></td></tr>";
       data += "</table>";
       angular.element(document).find('#ganttgraph').empty().append(data);
       gantt.header("#ganttheader");
 
       $('svg rect').on("click", function (d) {
-        console.log("ssss", $(d.target).attr("data-reference"));
         var opplan = $scope.findOperationPlan($(d.target).attr("data-reference"));
-        console.log("ssss", opplan);
         $scope.$parent.displayInfo(opplan);
       }).
         each(function () {

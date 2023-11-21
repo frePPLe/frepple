@@ -62,6 +62,16 @@
 <script src="{{STATIC_URL}}js/frepple-operationplandetail.min.js"></script>
 {% endif %}
 
+<style>
+  rect.opplan {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 1px;
+    stroke: rgb(0,0,0);
+    rx: 2;
+    ry: 2;
+  }
+</style>
+
 <script>
 
   var mode = preferences && preferences.mode || "table";
@@ -174,6 +184,10 @@
   var viewstart = horizonstart;
   var viewend = horizonend;
 
+  function zoom(factor) {
+    gantt.zoom(factor, "#ganttheader");
+  }
+
   $(function() {
     $("#workarea").css('overflow-x','visible');
     if (detailposition == "bottom")
@@ -221,10 +235,13 @@
     $("#calendarday").on('click', function() {
       angular.element('#controller').scope().setMode("calendarday");
     });
+    $('#zoomin').on("click", function() { zoom(0.5); });
+    $('#zoomout').on("click", function() { zoom(2); });
     {% if showGantt %}
     $("#ganttmode").on('click', function() {
       angular.element('#controller').scope().setMode("gantt");
     });
+    $("#zoomin, #zoomout").removeClass("d-none");
     {% endif %}
   });
   // frepple.js will call this function to alert angular that the grid has changed
@@ -334,9 +351,9 @@ function extraCustomize() {
 {% if not is_popup and reportclass.canDuplicate %}<button class="btn btn-sm btn-primary"  disabled id="copy_selected" onclick="grid.showCopy()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Copy selected objects'|capfirst|escape %}" ><span class="fa fa-copy"></span></button>
 {% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<button class="btn btn-sm btn-primary" id="delete_selected" disabled data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Delete selected objects'|capfirst|escape %}" onclick="grid.showDelete('{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/')" ><span class="fa fa-minus"></span></button>
 {% endif %}{% if reportclass.hasTimeBuckets %}<button class="btn btn-sm btn-primary" onclick="grid.showBucket()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'set time horizon'|capfirst|force_escape %}" id="bucketconfig"><span class="fa fa-clock-o"></span></button>
-{% endif %}{% if showGantt %}<button class="btn d-none btn-sm btn-primary" id="zoomin" onclick="gantt.zoom(0.5)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Zoom in'|capfirst|force_escape %}"><span class="fa fa-search-plus"></span></button>
-<button class="btn d-none btn-sm btn-primary" onclick="gantt.zoom(2)" id="zoomout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Zoom out'|capfirst|force_escape %}"><span class="fa fa-search-minus"></span></button>
-{% endif %}{% if hasaddperm %}<button class="btn btn-sm d-none d-md-inline-block btn-primary" id="csvimport" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show('', undefined, true)"><span class="fa fa-arrow-up"></span></button>
+{% endif %}<button class="btn d-none btn-sm btn-primary" id="zoomin" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Zoom in'|capfirst|force_escape %}"><span class="fa fa-search-plus"></span></button>
+<button class="btn d-none btn-sm btn-primary" id="zoomout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Zoom out'|capfirst|force_escape %}"><span class="fa fa-search-minus"></span></button>
+{% if hasaddperm %}<button class="btn btn-sm d-none d-md-inline-block btn-primary" id="csvimport" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Import CSV or Excel file'|capfirst|force_escape %}" onclick="import_show('', undefined, true)"><span class="fa fa-arrow-up"></span></button>
 {% endif %}<button class="btn btn-sm btn-primary" onclick="grid.showExport(true,{{ scenario_permissions }})" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}"><span class="fa fa-arrow-down"></span></button>
 <button id="customize" class="btn btn-sm btn-primary" onclick="grid.showCustomize(false);" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>
 {% endblock %}

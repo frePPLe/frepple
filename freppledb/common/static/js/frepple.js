@@ -3191,11 +3191,11 @@ var gantt = {
     $(el).html(result.join(''));
   },
 
-  redraw: function () {
+  redraw: function (el = "#jqgh_grid_operationplans") {
     // Determine the conversion between svg units and the screen
     var scale = (horizonend.getTime() - horizonstart.getTime())
       / (viewend.getTime() - viewstart.getTime())
-      * $("#jqgh_grid_operationplans").width() / 10000;
+      * $(el).width() / 10000;
     $('.transformer').each(function () {
       var layers = $(this).attr("title");
       $(this).attr("transform", "scale(" + scale + ",1) translate(0," + ((layers - 1) * gantt.rowsize + 3) + ")");
@@ -3220,7 +3220,7 @@ var gantt = {
     });
   },
 
-  zoom: function (zoom_in_or_out) {
+  zoom: function (zoom_in_or_out, el = "#jqgh_grid_operationplans") {
     // Determine the window to be shown. Min = 1 day. Max = 3 years.
     var zone = (viewend.getTime() - viewstart.getTime()) * zoom_in_or_out;
     if (zone >= horizonend.getTime() - horizonstart.getTime()) {
@@ -3236,7 +3236,7 @@ var gantt = {
       }
     }
     // Determine the conversion between svg units and the screen
-    var scale = (horizonend.getTime() - horizonstart.getTime()) / zone * $("#jqgh_grid_operationplans").width() / 10000;
+    var scale = (horizonend.getTime() - horizonstart.getTime()) / zone * $(el).width() / 10000;
     var offset = (horizonstart.getTime() - viewstart.getTime()) / (horizonend.getTime() - horizonstart.getTime()) * 10000;
     // Transform all svg elements
     $('.transformer').each(function () {
@@ -3244,7 +3244,7 @@ var gantt = {
       $(this).attr("transform", "scale(" + scale + ",1) translate(" + offset + "," + ((layers - 1) * gantt.rowsize + 3) + ")");
     });
     // Redraw the header
-    gantt.header();
+    gantt.header(el);
   }
 }
 

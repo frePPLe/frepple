@@ -322,15 +322,16 @@ class loadParameter(LoadTask):
                     SELECT name, value
                     FROM common_parameter
                     where name in (
-                       'currentdate', 'plan.calendar',
+                       %s, 'plan.calendar',
                        'COMPLETED.allow_future', 'WIP.produce_full_quantity',
                        'plan.individualPoolResources', 'plan.minimalBeforeCurrentConstraints'
                        )
-                    """
+                    """,
+                    ["last_currentdate" if "loadplan" in os.environ else "currentdate"],
                 )
                 default_current_date = True
                 for rec in cursor:
-                    if rec[0] == "currentdate":
+                    if rec[0] in ("currentdate", "last_currentdate"):
                         try:
                             frepple.settings.current = parse(rec[1])
                             default_current_date = False

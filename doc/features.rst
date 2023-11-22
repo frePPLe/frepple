@@ -125,6 +125,7 @@ Odoo integration
 | **Integrated user interface**           | The frepple user interface is integrated in odoo. Users log in odoo and    | - `Live demo odoo 14 <https://odoo14.frepple.com/>`_                          |
 |                                         | can navigate from odoo to all frepple screens.                             | - `Live demo odoo 15 <https://odoo15.frepple.com/>`_                          |
 |                                         |                                                                            | - `Live demo odoo 16 <https://odoo16.frepple.com/>`_                          |
+|                                         |                                                                            | - `Live demo odoo 17 <https://odoo17.frepple.com/>`_                          |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 
 |

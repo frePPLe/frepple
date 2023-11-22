@@ -23,7 +23,7 @@ The connector provides the following functionality:
     to your needs.
 
 * | The integration has been developed and tested with the latest versions of Odoo.
-  | We support the last 3 versions of Odoo connectors (currently the v14, v15 and v16).
+  | We support the last 3 versions of Odoo connectors (currently the v14, v15, v16 and v17).
 
 Below are the slides presented during the Odoo user conference in October 2022 where we describe how frePPLe
 solves Odoo customer business cases.

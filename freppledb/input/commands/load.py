@@ -322,26 +322,19 @@ class loadParameter(LoadTask):
                     SELECT name, value
                     FROM common_parameter
                     where name in (
-                       %s, 'plan.calendar',
+                       'currentdate', 'last_currentdate', 'plan.calendar',
                        'COMPLETED.allow_future', 'WIP.produce_full_quantity',
                        'plan.individualPoolResources', 'plan.minimalBeforeCurrentConstraints'
                        )
-                    """,
-                    ["last_currentdate" if "loadplan" in os.environ else "currentdate"],
+                    """
                 )
-                default_current_date = True
+                current_date = None
+                last_current_date = None
                 for rec in cursor:
-                    if rec[0] in ("currentdate", "last_currentdate"):
-                        try:
-                            frepple.settings.current = parse(rec[1])
-                            default_current_date = False
-                        except Exception:
-                            if rec[1] and rec[1].lower() == "today":
-                                n = datetime.now()
-                                frepple.settings.current = datetime(
-                                    n.year, n.month, n.day
-                                )
-                                default_current_date = False
+                    if rec[0] == "currentdate":
+                        current_date = rec[1]
+                    elif rec[0] == "last_currentdate":
+                        last_current_date = rec[1]
                     elif rec[0] == "plan.calendar" and rec[1]:
                         frepple.settings.calendar = frepple.calendar(name=rec[1])
                         logger.info("Bucketized planning using calendar %s" % rec[1])
@@ -361,7 +354,26 @@ class loadParameter(LoadTask):
                         frepple.settings.minimalBeforeCurrentConstraints = (
                             str(rec[1]).lower() == "true"
                         )
-                if default_current_date:
+                current_set = False
+                if "loadplan" in os.environ and last_current_date:
+                    try:
+                        frepple.settings.current = parse(last_current_date)
+                        current_set = True
+                    except Exception:
+                        if last_current_date and last_current_date.lower() == "today":
+                            n = datetime.now()
+                            frepple.settings.current = datetime(n.year, n.month, n.day)
+                            current_set = True
+                if not current_set and current_date:
+                    try:
+                        frepple.settings.current = parse(current_date)
+                        current_set = True
+                    except Exception:
+                        if current_date and current_date.lower() == "today":
+                            n = datetime.now()
+                            frepple.settings.current = datetime(n.year, n.month, n.day)
+                            current_set = True
+                if not current_set:
                     frepple.settings.current = datetime.now().replace(microsecond=0)
                 logger.info("Current date: %s" % frepple.settings.current)
 

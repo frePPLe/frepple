@@ -216,7 +216,7 @@ class AppsView(View):
                         l = '%s"%s",' % (l[:i], app)
                         status = 2
                         found = True
-                    elif status == 1 and "END UPDATED BLOCK" in l:
+                    elif status == 1 and ("END UPDATED BLOCK" in l or "INSTALLABLE_APPS" in l):
                         status = 3
                     new_file.append(l)
                 if not found:

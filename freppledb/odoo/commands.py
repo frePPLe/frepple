@@ -263,7 +263,7 @@ class OdooReadData(PlanTask):
                     for p in Permission.objects.using(database).all():
                         odoo_group.permissions.add(p)
                 odoo_users = [
-                    u.username for u in odoo_group.user_set.all().only("username")
+                    u.username for u in odoo_group.user_set.all().using(database).only("username")
                 ]
                 users = {}
                 for u in User.objects.using(database).all():
@@ -285,13 +285,14 @@ class OdooReadData(PlanTask):
                             password=User.objects.make_random_password(),
                         )
                         user._state.db = database
-                    if not user.is_active:
-                        user.is_active = True
-                        user.save()
                     if user.username in odoo_users:
                         odoo_users.remove(user.username)
                     else:
                         user.groups.add(odoo_group)
+                    user.is_active = True
+                    user.save(using=database, update_fields=["is_active"])
+                    if database != DEFAULT_DB_ALIAS:
+                        user.save(using=DEFAULT_DB_ALIAS, update_fields=["is_active"])
 
                 # Remove users that no longer have access rights
                 for o in odoo_users:

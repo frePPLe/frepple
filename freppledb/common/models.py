@@ -446,7 +446,9 @@ class User(AbstractUser):
             else:
                 from .middleware import _thread_locals
 
-                using = getattr(_thread_locals, "database", DEFAULT_DB_ALIAS)
+                using = getattr(_thread_locals, "database", None)
+                if not using:
+                    using= DEFAULT_DB_ALIAS
 
         scenarios = [
             i["name"]
@@ -533,13 +535,14 @@ class User(AbstractUser):
                                     .using(db)
                                     .get_or_create(name=settings.DEFAULT_USER_GROUP)[0]
                                 )
-                                self.groups.add(grp.id)
+                                self.groups.add(grp)
                     except Exception as e:
                         logger.warning("Can't save user in scenario '%s': %s" % (db, e))
 
         # Continue with the regular save, as if nothing happened.
         self.is_active = tmp_is_active
         self.is_superuser = tmp_is_superuser
+        self._state.db = using
         super().save(
             force_insert=force_insert,
             force_update=force_update,
@@ -552,7 +555,7 @@ class User(AbstractUser):
                 .using(using)
                 .get_or_create(name=settings.DEFAULT_USER_GROUP)[0]
             )
-            self.groups.add(grp.id)
+            self.groups.add(grp)
 
     def joined_age(self):
         """

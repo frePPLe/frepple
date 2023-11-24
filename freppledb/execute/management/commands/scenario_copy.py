@@ -353,7 +353,13 @@ class Command(BaseCommand):
                     settings.DATABASES[source]["PORT"]
                     and ("-p %s " % settings.DATABASES[source]["PORT"])
                     or "",
-                    ("%s " % (" -T ".join(["", *excludedTables])))
+                    (
+                        "%s %s "
+                        % (
+                            " -T ".join(["", *excludedTables]),
+                            " --exclude-table-data=".join(["", *excludedTables]),
+                        )
+                    )
                     if destination == DEFAULT_DB_ALIAS
                     else "",
                     ("%s " % (" -T ".join(["", *noOwnershipTables])))

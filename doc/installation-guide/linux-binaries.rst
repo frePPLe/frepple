@@ -248,6 +248,10 @@ Here are the steps to get a fully working environment.
 
      frepplectl migrate
 
+   Note that the frepplectl command is only accessible to members of the "frepple"
+   linux group. You'll need to assure you are member of that group or run the command
+   as superuser.
+
 #. **Optionally, load the demo dataset**
 
    On a first installation, you may choose to install the demo dataset.

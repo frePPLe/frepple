@@ -24,7 +24,7 @@
 from importlib import import_module
 import json
 from mimetypes import guess_type
-from multiprocessing import Process
+import multiprocessing
 import os.path
 from pathlib import Path
 import re
@@ -232,7 +232,8 @@ class AppsView(View):
                     print(l, file=f)
 
             # Migrate (after updating djangosettings)
-            child = Process(
+            ctx = multiprocessing.get_context('spawn')
+            child = ctx.Process(
                 target=runCommand,
                 args=("migrate", appname),
             )

@@ -570,8 +570,7 @@ class PurchaseOrderList(OperationPlanMixin):
         if use_default_filter and "noautofilter" not in request.GET:
             if request.report_enddate:
                 q = q.filter(startdate__lte=request.report_enddate)
-            if request.report_startdate and str(request.report_startdate) != request.current_date:
-                q = q.filter(enddate__gte=request.report_startdate)
+
         if args and args[0]:
             paths = request.path.split("/")
             path = paths[4]

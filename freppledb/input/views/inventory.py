@@ -813,8 +813,7 @@ class DistributionOrderList(OperationPlanMixin):
         if use_default_filter and "noautofilter" not in request.GET:
             if request.report_enddate:
                 q = q.filter(startdate__lte=request.report_enddate)
-            if request.report_startdate and str(request.report_startdate) != request.current_date:
-                q = q.filter(enddate__gte=request.report_startdate)
+            
         if args and args[0]:
             paths = request.path.split("/")
             if paths[4] == "operationplanmaterial":
@@ -1458,9 +1457,7 @@ class InventoryDetail(OperationPlanMixin):
             use_default_filter = False
         if use_default_filter and "noautofilter" not in request.GET:
             if request.report_enddate:
-                base = base.filter(operationplan__startdate__lte=request.report_enddate)
-            if request.report_startdate and str(request.report_startdate) != request.current_date:
-                base = base.filter(operationplan__enddate__gte=request.report_startdate)
+                base = base.filter(operationplan__startdate__lte=request.report_enddate)           
         return base.select_related().annotate(
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []

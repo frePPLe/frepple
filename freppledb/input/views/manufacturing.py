@@ -1636,10 +1636,10 @@ class ManufacturingOrderList(OperationPlanMixin):
         groupingcfg["operation__subcategory"] = force_str(
             format_lazy("{} - {}", _("operation"), _("subcategory"))
         )
-        groupingcfg["operation__item__category"] = force_str(
+        groupingcfg["item__category"] = force_str(
             format_lazy("{} - {}", _("item"), _("category"))
         )
-        groupingcfg["operation__item__subcategory"] = force_str(
+        groupingcfg["item__subcategory"] = force_str(
             format_lazy("{} - {}", _("item"), _("subcategory"))
         )
         ctx = super().extra_context(request, *args, **kwargs)
@@ -1817,7 +1817,7 @@ class ManufacturingOrderList(OperationPlanMixin):
         if use_default_filter and "noautofilter" not in request.GET:
             if request.report_enddate:
                 q = q.filter(startdate__lte=request.report_enddate)
-        
+
         if args and args[0]:
             path = request.path.split("/")[4]
             if path == "location" or request.path.startswith("/detail/input/location/"):
@@ -2260,99 +2260,99 @@ class ManufacturingOrderList(OperationPlanMixin):
         ),
         # Optional fields referencing the item
         GridFieldText(
-            "operation__item__type",
+            "item__type",
             title=format_lazy("{} - {}", _("item"), _("type")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
-            "operation__item__description",
+            "item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
-            "operation__item__category",
+            "item__category",
             title=format_lazy("{} - {}", _("item"), _("category")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
-            "operation__item__subcategory",
+            "item__subcategory",
             title=format_lazy("{} - {}", _("item"), _("subcategory")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldCurrency(
-            "operation__item__cost",
+            "item__cost",
             title=format_lazy("{} - {}", _("item"), _("cost")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldNumber(
-            "operation__item__volume",
+            "item__volume",
             title=format_lazy("{} - {}", _("item"), _("volume")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldNumber(
-            "operation__item__weight",
+            "item__weight",
             title=format_lazy("{} - {}", _("item"), _("weight")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
-            "operation__item__uom",
+            "item__uom",
             title=format_lazy("{} - {}", _("item"), _("unit of measure")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldInteger(
-            "operation__item__periodofcover",
+            "item__periodofcover",
             title=format_lazy("{} - {}", _("item"), _("period of cover")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
-            "operation__item__owner",
+            "item__owner",
             title=format_lazy("{} - {}", _("item"), _("owner")),
-            field_name="operation__item__owner__name",
+            field_name="item__owner__name",
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
-            "operation__item__source",
+            "item__source",
             title=format_lazy("{} - {}", _("item"), _("source")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldLastModified(
-            "operation__item__lastmodified",
+            "item__lastmodified",
             title=format_lazy("{} - {}", _("item"), _("last modified")),
             initially_hidden=True,
             editable=False,
         ),
         # Optional fields referencing the location
         GridFieldText(
-            "operation__location__description",
+            "location__description",
             title=format_lazy("{} - {}", _("location"), _("description")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
-            "operation__location__category",
+            "location__category",
             title=format_lazy("{} - {}", _("location"), _("category")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
-            "operation__location__subcategory",
+            "location__subcategory",
             title=format_lazy("{} - {}", _("location"), _("subcategory")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldText(
-            "operation__location__available",
+            "location__available",
             title=format_lazy("{} - {}", _("location"), _("available")),
             initially_hidden=True,
             field_name="operation__location__available__name",
@@ -2361,7 +2361,7 @@ class ManufacturingOrderList(OperationPlanMixin):
             editable=False,
         ),
         GridFieldText(
-            "operation__location__owner",
+            "location__owner",
             title=format_lazy("{} - {}", _("location"), _("owner")),
             initially_hidden=True,
             field_name="operation__location__owner__name",
@@ -2370,13 +2370,13 @@ class ManufacturingOrderList(OperationPlanMixin):
             editable=False,
         ),
         GridFieldText(
-            "operation__location__source",
+            "location__source",
             title=format_lazy("{} - {}", _("location"), _("source")),
             initially_hidden=True,
             editable=False,
         ),
         GridFieldLastModified(
-            "operation__location__lastmodified",
+            "location__lastmodified",
             title=format_lazy("{} - {}", _("location"), _("last modified")),
             initially_hidden=True,
             editable=False,

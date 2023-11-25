@@ -446,7 +446,7 @@ class ResourceDetail(OperationPlanMixin):
             use_default_filter = False
         if use_default_filter and "noautofilter" not in request.GET:
             if request.report_enddate:
-                base = base.filter(operationplan__startdate__lte=request.report_enddate)            
+                base = base.filter(operationplan__startdate__lte=request.report_enddate)
         return base.select_related().annotate(
             opplan_duration=RawSQL(
                 "(operationplan.enddate - operationplan.startdate)", []
@@ -488,7 +488,7 @@ class ResourceDetail(OperationPlanMixin):
             # Adding custom item attributes
             for f in getAttributeFields(
                 Item,
-                related_name_prefix="operationplan__operation__item",
+                related_name_prefix="operationplan__item",
                 editable=False,
             ):
                 f.editable = False

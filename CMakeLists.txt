@@ -1,15 +1,11 @@
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.16)
 
 project(frepple VERSION 8.3.0)
 
 set(PROJECT_EDITION "Community Edition")
 set(PROJECT_BRANCH "community")
-
-if(POLICY CMP0111)
-  cmake_policy(SET CMP0111 OLD)
-endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   # Detect the linux distribution
@@ -20,6 +16,11 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     if(LINUX_ISSUE MATCHES "Ubuntu 20")
       set(CPACK_GENERATOR "DEB")
       set(DISTRO "ubuntu20")
+
+    # Ubuntu development
+    elseif(LINUX_ISSUE MATCHES "Ubuntu.*development")
+      set(CPACK_GENERATOR "DEB")
+      set(DISTRO "ubuntudevel")
 
     # Debian case
     elseif(LINUX_ISSUE MATCHES "Debian GNU/Linux 10")
@@ -87,18 +88,14 @@ else()
   set(CMAKE_INSTALL_INCLUDEDIR "include")
 endif()
 
-find_package(PythonInterp 3.6 REQUIRED)
-find_package(PythonLibs 3.6 REQUIRED)
-execute_process(
-  COMMAND "${PYTHON_EXECUTABLE}" -c "import django"
-  OUTPUT_QUIET
-  ERROR_QUIET
-  RESULT_VARIABLE NO_DJANGO
-)
-
-if(NO_DJANGO)
-  message(FATAL_ERROR "Django isn't installed.")
-endif()
+# Check python and create the virtualenv
+find_package (Python3 3.6 COMPONENTS Interpreter Development REQUIRED)
+execute_process (COMMAND "${Python3_EXECUTABLE}" -m venv "${PROJECT_SOURCE_DIR}/venv")
+set (ENV{VIRTUAL_ENV} "${PROJECT_SOURCE_DIR}/venv")
+set (Python3_FIND_VIRTUALENV FIRST)
+unset (Python3_EXECUTABLE)
+find_package (Python3 COMPONENTS Interpreter Development)
+execute_process (COMMAND "${Python3_EXECUTABLE}" -m pip install -r "${PROJECT_SOURCE_DIR}/requirements.dev.txt")
 
 find_program(npm NAMES npm)
 find_program(grunt NAMES grunt)
@@ -182,7 +179,7 @@ endif()
 include_directories(
   "${CMAKE_SOURCE_DIR}/include"
   "${CMAKE_BINARY_DIR}/include"
-  "${PYTHON_INCLUDE_DIRS}"
+  "${Python3_INCLUDE_DIRS}"
 )
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/include/config.h.in"
@@ -212,24 +209,24 @@ configure_file(
   "${CMAKE_CURRENT_BINARY_DIR}/setup.py"
 )
 execute_process(
-  COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print(sys.prefix)"
+  COMMAND ${Python3_EXECUTABLE} -c "import sys; print(sys.prefix)"
   OUTPUT_VARIABLE PYTHON_PREFIX
   ERROR_QUIET
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 install(CODE "execute_process(COMMAND mkdir -p \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple)")
-install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} -m venv \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv)")
+install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} -m venv \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv)")
 install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/activate)")
 install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/pip3 install pip install --upgrade pip wheel six appdirs setuptools)")
 install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/pip3 install -r ${CMAKE_SOURCE_DIR}/requirements.txt)")
 install(CODE "execute_process(COMMAND \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin/python3 ${CMAKE_CURRENT_BINARY_DIR}/setup.py install --quiet)")
 install(CODE "execute_process(COMMAND rm \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/lib64)")
-install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv -type f -exec sed -i \"s|/usr/bin/env python$|/usr/bin/env python3|g\" {} \;)")
+install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv -type f -exec sed -i \"s|/usr/bin/env python$  |/usr/bin/env python3|g\" {} \;)")
 install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin -type f -name \"*ctivate*\" -exec sed -i \"s|\$ENV{DESTDIR}||g\" {} \\;)")
 install(CODE "execute_process(COMMAND find \$ENV{DESTDIR}/${CMAKE_INSTALL_DATADIR}/frepple/venv/bin -type f -executable -exec sed -i \"s|\$ENV{DESTDIR}||g\" {} \\;)")
 
 # Packaging of the static files
-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E env FREPPLE_STATIC=\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/frepple/static ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/frepplectl.py collectstatic --noinput --clear --ignore '*.less' --verbosity=0)")
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E env FREPPLE_STATIC=\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/frepple/static ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/frepplectl.py collectstatic --noinput --clear --ignore '*.less' --verbosity=0)")
 
 # Generic packaging
 set(CPACK_PACKAGE_VENDOR "frePPLe")
@@ -268,7 +265,7 @@ add_subdirectory(contrib/linux)
 # Test suite
 enable_testing()
 add_test(NAME engine
-  COMMAND ${PYTHON} ${CMAKE_CURRENT_SOURCE_DIR}/test/runtest.py ${TESTARGS}
+  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/runtest.py ${TESTARGS}
 )
 
 # Debugging targets

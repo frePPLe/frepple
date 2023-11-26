@@ -232,8 +232,7 @@ class AppsView(View):
                     print(l, file=f)
 
             # Migrate (after updating djangosettings)
-            ctx = multiprocessing.get_context('spawn')
-            child = ctx.Process(
+            child = multiprocessing.get_context('spawn').Process(
                 target=runCommand,
                 args=("migrate", appname),
             )

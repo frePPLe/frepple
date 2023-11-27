@@ -7,6 +7,10 @@ project(frepple VERSION 8.3.0)
 set(PROJECT_EDITION "Community Edition")
 set(PROJECT_BRANCH "community")
 
+if(POLICY CMP0111)
+  cmake_policy(SET CMP0111 OLD)
+endif()
+
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   # Detect the linux distribution
   if(EXISTS "/etc/issue")

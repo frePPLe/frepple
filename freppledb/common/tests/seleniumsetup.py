@@ -56,7 +56,7 @@ class SeleniumTest(StaticLiveServerTestCase):
             options.add_argument("--silent")
             if settings.SELENIUM_HEADLESS:
                 options.add_argument("--headless")
-            cls.driver = webdriver.Chrome(chrome_options=options)
+            cls.driver = webdriver.Chrome(options=options)
         elif settings.SELENIUM_TESTS == "edge":
             from msedge.selenium_tools import Edge, EdgeOptions
 

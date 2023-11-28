@@ -81,13 +81,17 @@ class CalendarSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class CalendarAPI(frePPleListCreateAPIView):
-    queryset = models.Calendar.objects.all()
+    def get_queryset(self):
+        return models.Calendar.objects.using(self.request.database).all()
+
     serializer_class = CalendarSerializer
     filter_class = CalendarFilter
 
 
 class CalendardetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Calendar.objects.all()
+    def get_queryset(self):
+        return models.Calendar.objects.using(self.request.database).all()
+
     serializer_class = CalendarSerializer
 
 
@@ -150,7 +154,9 @@ class CalendarBucketSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class CalendarBucketAPI(frePPleListCreateAPIView):
-    queryset = models.CalendarBucket.objects.all()
+    def get_queryset(self):
+        return models.CalendarBucket.objects.using(self.request.database).all()
+
     fields = (
         "id",
         "calendar",
@@ -175,7 +181,9 @@ class CalendarBucketAPI(frePPleListCreateAPIView):
 
 
 class CalendarBucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.CalendarBucket.objects.all()
+    def get_queryset(self):
+        return models.CalendarBucket.objects.using(self.request.database).all()
+
     serializer_class = CalendarBucketSerializer
 
 
@@ -220,13 +228,17 @@ class LocationSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class LocationAPI(frePPleListCreateAPIView):
-    queryset = models.Location.objects.all()
+    def get_queryset(self):
+        return models.Location.objects.using(self.request.database).all()
+
     serializer_class = LocationSerializer
     filter_class = LocationFilter
 
 
 class LocationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Location.objects.all()
+    def get_queryset(self):
+        return models.Location.objects.using(self.request.database).all()
+
     serializer_class = LocationSerializer
 
 
@@ -269,13 +281,17 @@ class CustomerSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class CustomerAPI(frePPleListCreateAPIView):
-    queryset = models.Customer.objects.all()
+    def get_queryset(self):
+        return models.Customer.objects.using(self.request.database).all()
+
     serializer_class = CustomerSerializer
     filter_class = CustomerFilter
 
 
 class CustomerdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Customer.objects.all()
+    def get_queryset(self):
+        return models.Customer.objects.using(self.request.database).all()
+
     serializer_class = CustomerSerializer
 
 
@@ -331,13 +347,17 @@ class ItemSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class ItemAPI(frePPleListCreateAPIView):
-    queryset = models.Item.objects.all()
+    def get_queryset(self):
+        return models.Item.objects.using(self.request.database).all()
+
     serializer_class = ItemSerializer
     filter_class = ItemFilter
 
 
 class ItemdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Item.objects.all()
+    def get_queryset(self):
+        return models.Item.objects.using(self.request.database).all()
+
     serializer_class = ItemSerializer
 
 
@@ -382,13 +402,17 @@ class SupplierSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class SupplierAPI(frePPleListCreateAPIView):
-    queryset = models.Supplier.objects.all()
+    def get_queryset(self):
+        return models.Supplier.objects.using(self.request.database).all()
+
     serializer_class = SupplierSerializer
     filter_class = SupplierFilter
 
 
 class SupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Supplier.objects.all()
+    def get_queryset(self):
+        return models.Supplier.objects.using(self.request.database).all()
+
     serializer_class = SupplierSerializer
 
 
@@ -451,13 +475,17 @@ class ItemSupplierSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class ItemSupplierAPI(frePPleListCreateAPIView):
-    queryset = models.ItemSupplier.objects.all()
+    def get_queryset(self):
+        return models.ItemSupplier.objects.using(self.request.database).all()
+
     serializer_class = ItemSupplierSerializer
     filter_class = ItemSupplierFilter
 
 
 class ItemSupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.ItemSupplier.objects.all()
+    def get_queryset(self):
+        return models.ItemSupplier.objects.using(self.request.database).all()
+
     serializer_class = ItemSupplierSerializer
 
 
@@ -516,13 +544,17 @@ class ItemDistributionSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class ItemDistributionAPI(frePPleListCreateAPIView):
-    queryset = models.ItemDistribution.objects.all()
+    def get_queryset(self):
+        return models.ItemDistribution.objects.using(self.request.database).all()
+
     serializer_class = ItemDistributionSerializer
     filter_class = ItemDistributionFilter
 
 
 class ItemDistributiondetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.ItemDistribution.objects.all()
+    def get_queryset(self):
+        return models.ItemDistribution.objects.using(self.request.database).all()
+
     serializer_class = ItemDistributionSerializer
 
 
@@ -596,13 +628,17 @@ class OperationSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class OperationAPI(frePPleListCreateAPIView):
-    queryset = models.Operation.objects.all()
+    def get_queryset(self):
+        return models.Operation.objects.using(self.request.database).all()
+
     serializer_class = OperationSerializer
     filter_class = OperationFilter
 
 
 class OperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Operation.objects.all()
+    def get_queryset(self):
+        return models.Operation.objects.using(self.request.database).all()
+
     serializer_class = OperationSerializer
 
 
@@ -647,13 +683,17 @@ class SubOperationSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class SubOperationAPI(frePPleListCreateAPIView):
-    queryset = models.SubOperation.objects.all()
+    def get_queryset(self):
+        return models.SubOperation.objects.using(self.request.database).all()
+
     serializer_class = SubOperationSerializer
     filter_class = SubOperationFilter
 
 
 class SubOperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.SubOperation.objects.all()
+    def get_queryset(self):
+        return models.SubOperation.objects.using(self.request.database).all()
+
     serializer_class = SubOperationSerializer
 
 
@@ -698,13 +738,17 @@ class OperationDependencySerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class OperationDependencyAPI(frePPleListCreateAPIView):
-    queryset = models.OperationDependency.objects.all()
+    def get_queryset(self):
+        return models.OperationDependency.objects.using(self.request.database).all()
+
     serializer_class = OperationDependencySerializer
     filter_class = OperationDependencyFilter
 
 
 class OperationDependencydetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.OperationDependency.objects.all()
+    def get_queryset(self):
+        return models.OperationDependency.objects.using(self.request.database).all()
+
     serializer_class = OperationDependencySerializer
 
 
@@ -760,13 +804,17 @@ class BufferSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class BufferAPI(frePPleListCreateAPIView):
-    queryset = models.Buffer.objects.all()
+    def get_queryset(self):
+        return models.Buffer.objects.using(self.request.database).all()
+
     serializer_class = BufferSerializer
     filter_class = BufferFilter
 
 
 class BufferdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Buffer.objects.all()
+    def get_queryset(self):
+        return models.Buffer.objects.using(self.request.database).all()
+
     serializer_class = BufferSerializer
 
 
@@ -799,13 +847,17 @@ class SetupMatrixSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class SetupMatrixAPI(frePPleListCreateAPIView):
-    queryset = models.SetupMatrix.objects.all()
+    def get_queryset(self):
+        return models.SetupMatrix.objects.using(self.request.database).all()
+
     serializer_class = SetupMatrixSerializer
     filter_class = SetupMatrixFilter
 
 
 class SetupMatrixdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.SetupMatrix.objects.all()
+    def get_queryset(self):
+        return models.SetupMatrix.objects.using(self.request.database).all()
+
     serializer_class = SetupMatrixSerializer
 
 
@@ -850,13 +902,17 @@ class SetupRuleSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class SetupRuleAPI(frePPleListCreateAPIView):
-    queryset = models.SetupRule.objects.all()
+    def get_queryset(self):
+        return models.SetupRule.objects.using(self.request.database).all()
+
     serializer_class = SetupRuleSerializer
     filter_class = SetupRuleFilter
 
 
 class SetupRuledetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.SetupRule.objects.all()
+    def get_queryset(self):
+        return models.SetupRule.objects.using(self.request.database).all()
+
     serializer_class = SetupRuleSerializer
 
 
@@ -922,13 +978,17 @@ class ResourceSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class ResourceAPI(frePPleListCreateAPIView):
-    queryset = models.Resource.objects.all()
+    def get_queryset(self):
+        return models.Resource.objects.using(self.request.database).all()
+
     serializer_class = ResourceSerializer
     filter_class = ResourceFilter
 
 
 class ResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Resource.objects.all()
+    def get_queryset(self):
+        return models.Resource.objects.using(self.request.database).all()
+
     serializer_class = ResourceSerializer
 
 
@@ -961,13 +1021,17 @@ class SkillSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class SkillAPI(frePPleListCreateAPIView):
-    queryset = models.Skill.objects.all()
+    def get_queryset(self):
+        return models.Skill.objects.using(self.request.database).all()
+
     serializer_class = SkillSerializer
     filter_class = SkillFilter
 
 
 class SkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Skill.objects.all()
+    def get_queryset(self):
+        return models.Skill.objects.using(self.request.database).all()
+
     serializer_class = SkillSerializer
 
 
@@ -1012,13 +1076,17 @@ class ResourceSkillSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class ResourceSkillAPI(frePPleListCreateAPIView):
-    queryset = models.ResourceSkill.objects.all()
+    def get_queryset(self):
+        return models.ResourceSkill.objects.using(self.request.database).all()
+
     serializer_class = ResourceSkillSerializer
     filter_class = ResourceSkillFilter
 
 
 class ResourceSkilldetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.ResourceSkill.objects.all()
+    def get_queryset(self):
+        return models.ResourceSkill.objects.using(self.request.database).all()
+
     serializer_class = ResourceSkillSerializer
 
 
@@ -1077,13 +1145,17 @@ class OperationMaterialSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class OperationMaterialAPI(frePPleListCreateAPIView):
-    queryset = models.OperationMaterial.objects.all()
+    def get_queryset(self):
+        return models.OperationMaterial.objects.using(self.request.database).all()
+
     serializer_class = OperationMaterialSerializer
     filter_class = OperationMaterialFilter
 
 
 class OperationMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.OperationMaterial.objects.all()
+    def get_queryset(self):
+        return models.OperationMaterial.objects.using(self.request.database).all()
+
     serializer_class = OperationMaterialSerializer
 
 
@@ -1132,13 +1204,17 @@ class OperationPlanMaterialSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class OperationPlanMaterialAPI(frePPleListCreateAPIView):
-    queryset = models.OperationPlanMaterial.objects.all()
+    def get_queryset(self):
+        return models.OperationPlanMaterial.objects.using(self.request.database).all()
+
     serializer_class = OperationPlanMaterialSerializer
     filter_class = OperationPlanMaterialFilter
 
 
 class OperationPlanMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.OperationPlanMaterial.objects.all()
+    def get_queryset(self):
+        return models.OperationPlanMaterial.objects.using(self.request.database).all()
+
     serializer_class = OperationPlanMaterialSerializer
 
 
@@ -1194,13 +1270,17 @@ class OperationResourceSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class OperationResourceAPI(frePPleListCreateAPIView):
-    queryset = models.OperationResource.objects.all()
+    def get_queryset(self):
+        return models.OperationResource.objects.using(self.request.database).all()
+
     serializer_class = OperationResourceSerializer
     filter_class = OperationResourceFilter
 
 
 class OperationResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.OperationResource.objects.all()
+    def get_queryset(self):
+        return models.OperationResource.objects.using(self.request.database).all()
+
     serializer_class = OperationResourceSerializer
 
 
@@ -1256,13 +1336,17 @@ class OperationPlanResourceSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class OperationPlanResourceAPI(frePPleListCreateAPIView):
-    queryset = models.OperationPlanResource.objects.all()
+    def get_queryset(self):
+        return models.OperationPlanResource.objects.using(self.request.database).all()
+
     serializer_class = OperationPlanResourceSerializer
     filter_class = OperationPlanResourceFilter
 
 
 class OperationPlanResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.OperationPlanResource.objects.all()
+    def get_queryset(self):
+        return models.OperationPlanResource.objects.using(self.request.database).all()
+
     serializer_class = OperationPlanResourceSerializer
 
 
@@ -1418,7 +1502,6 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
                                 rec["item"].name in dict[k]
                                 and opplanmat.item.name in dict[k]
                             ) or rec["item"].name == opplanmat.item.name:
-
                                 opplanmat.item = rec["item"]
                                 if "quantity" in rec:
                                     opplanmat.quantity = rec["quantity"]
@@ -1478,13 +1561,17 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class ManufacturingOrderAPI(frePPleListCreateAPIView):
-    queryset = models.ManufacturingOrder.objects.all()
+    def get_queryset(self):
+        return models.ManufacturingOrder.objects.using(self.request.database).all()
+
     serializer_class = ManufacturingOrderSerializer
     filter_class = ManufacturingOrderFilter
 
 
 class ManufacturingOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.ManufacturingOrder.objects.all()
+    def get_queryset(self):
+        return models.ManufacturingOrder.objects.using(self.request.database).all()
+
     serializer_class = ManufacturingOrderSerializer
 
 
@@ -1541,13 +1628,17 @@ class DistributionOrderSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class DistributionOrderAPI(frePPleListCreateAPIView):
-    queryset = models.DistributionOrder.objects.all()
+    def get_queryset(self):
+        return models.DistributionOrder.objects.using(self.request.database).all()
+
     serializer_class = DistributionOrderSerializer
     filter_class = DistributionOrderFilter
 
 
 class DistributionOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.DistributionOrder.objects.all()
+    def get_queryset(self):
+        return models.DistributionOrder.objects.using(self.request.database).all()
+
     serializer_class = DistributionOrderSerializer
 
 
@@ -1605,13 +1696,17 @@ class PurchaseOrderSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class PurchaseOrderAPI(frePPleListCreateAPIView):
-    queryset = models.PurchaseOrder.objects.all()
+    def get_queryset(self):
+        return models.PurchaseOrder.objects.using(self.request.database).all()
+
     serializer_class = PurchaseOrderSerializer
     filter_class = PurchaseOrderFilter
 
 
 class PurchaseOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.PurchaseOrder.objects.all()
+    def get_queryset(self):
+        return models.PurchaseOrder.objects.using(self.request.database).all()
+
     serializer_class = PurchaseOrderSerializer
 
 
@@ -1668,13 +1763,17 @@ class DeliveryOrderSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class DeliveryOrderAPI(frePPleListCreateAPIView):
-    queryset = models.DeliveryOrder.objects.all()
+    def get_queryset(self):
+        return models.DeliveryOrder.objects.using(self.request.database).all()
+
     serializer_class = DeliveryOrderSerializer
     filter_class = DeliveryOrderFilter
 
 
 class DeliveryOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.DeliveryOrder.objects.all()
+    def get_queryset(self):
+        return models.DeliveryOrder.objects.using(self.request.database).all()
+
     serializer_class = DeliveryOrderSerializer
 
 
@@ -1744,11 +1843,15 @@ class DemandSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class DemandAPI(frePPleListCreateAPIView):
-    queryset = models.Demand.objects.all()
+    def get_queryset(self):
+        return models.Demand.objects.using(self.request.database).all()
+
     serializer_class = DemandSerializer
     filter_class = DemandFilter
 
 
 class DemanddetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Demand.objects.all()
+    def get_queryset(self):
+        return models.Demand.objects.using(self.request.database).all()
+
     serializer_class = DemandSerializer

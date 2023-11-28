@@ -68,7 +68,9 @@ class BucketSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class BucketAPI(frePPleListCreateAPIView):
-    queryset = models.Bucket.objects.all()
+    def get_queryset(self):
+        return models.Bucket.objects.using(self.request.database).all()
+
     serializer_class = BucketSerializer
     filter_class = BucketFilter
 
@@ -88,7 +90,9 @@ class BucketDetailFilter(FilterSet):
 
 
 class BucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Bucket.objects.all()
+    def get_queryset(self):
+        return models.Bucket.objects.using(self.request.database).all()
+
     serializer_class = BucketSerializer
     filter_class = BucketFilter
 
@@ -110,13 +114,17 @@ class BucketDetailSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class BucketDetailAPI(frePPleListCreateAPIView):
-    queryset = models.BucketDetail.objects.all()
+    def get_queryset(self):
+        return models.BucketDetail.objects.using(self.request.database).all()
+
     serializer_class = BucketDetailSerializer
     filter_class = BucketDetailFilter
 
 
 class BucketDetaildetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.BucketDetail.objects.all()
+    def get_queryset(self):
+        return models.BucketDetail.objects.using(self.request.database).all()
+
     serializer_class = BucketDetailSerializer
     filter_class = BucketDetailFilter
 
@@ -155,13 +163,17 @@ class AttributeSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class AttributeAPI(frePPleListCreateAPIView):
-    queryset = models.Attribute.objects.all()
+    def get_queryset(self):
+        return models.Attribute.objects.all()
+
     serializer_class = AttributeSerializer
     filter_class = AttributeFilter
 
 
 class AttributedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Attribute.objects.all()
+    def get_queryset(self):
+        return models.Attribute.objects.all()
+
     serializer_class = AttributeSerializer
     filter_class = AttributeFilter
 
@@ -177,12 +189,16 @@ class CommentSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class CommentAPI(frePPleListCreateAPIView):
-    queryset = models.Comment.objects.all()
+    def get_queryset(self):
+        return models.Comment.objects.using(self.request.database).all()
+
     serializer_class = CommentSerializer
 
 
 class CommentdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Comment.objects.all()
+    def get_queryset(self):
+        return models.Comment.objects.using(self.request.database).all()
+
     serializer_class = CommentSerializer
 
 
@@ -210,12 +226,16 @@ class ParameterSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class ParameterAPI(frePPleListCreateAPIView):
-    queryset = models.Parameter.objects.all()
+    def get_queryset(self):
+        return models.Parameter.objects.using(self.request.database).all()
+
     serializer_class = ParameterSerializer
     filter_class = ParameterFilter
 
 
 class ParameterdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = models.Parameter.objects.all()
+    def get_queryset(self):
+        return models.Parameter.objects.using(self.request.database).all()
+
     serializer_class = ParameterSerializer
     filter_class = ParameterFilter

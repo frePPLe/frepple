@@ -101,13 +101,17 @@ class ForecastSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class ForecastAPI(frePPleListCreateAPIView):
-    queryset = Forecast.objects.all()
+    def get_queryset(self):
+        return Forecast.objects.using(self.request.database).all()
+
     serializer_class = ForecastSerializer
     filter_class = ForecastFilter
 
 
 class ForecastdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = Forecast.objects.all()
+    def get_queryset(self):
+        return Forecast.objects.using(self.request.database).all()
+
     serializer_class = ForecastSerializer
 
 
@@ -131,8 +135,9 @@ class ForecastPlanAPI(frePPleListCreateAPIView):
     except Exception:
         parameter_currentdate = datetime.now()
 
-    queryset = ForecastPlan.objects.raw(
-        """
+    def get_queryset(self):
+        return ForecastPlan.objects.raw(
+            """
         SELECT forecastplan.item_id||' @ '||
         forecastplan.location_id||' @ '||
         forecastplan.customer_id||' @ '||
@@ -151,8 +156,9 @@ class ForecastPlanAPI(frePPleListCreateAPIView):
         where
         forecastplan.enddate > to_date('%s','YYYY-MM-DD HH24:MI:SS')
         """
-        % (parameter_currentdate.strftime("%Y-%m-%d %H:%M:%S"),)
-    )
+            % (parameter_currentdate.strftime("%Y-%m-%d %H:%M:%S"),)
+        )
+
     serializer_class = ForecastPlanSerializer
     filter_class = None
 
@@ -205,11 +211,13 @@ class MeasureSerializer(BulkSerializerMixin, ModelSerializer):
 
 
 class MeasureAPI(frePPleListCreateAPIView):
-    queryset = Measure.objects.all()
+    def get_queryset(self):
+        return Measure.objects.using(self.request.database).all()
+
     serializer_class = MeasureSerializer
     filter_class = MeasureFilter
 
 
 class MeasuredetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-    queryset = Measure.objects.all()
-    serializer_class = MeasureSerializer
+    def get_queryset(self):
+        return Measure.objects.using(self.request.database).all()

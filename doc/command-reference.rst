@@ -340,7 +340,9 @@ The following file formats are accepted:
       will use a semicolon (;) as delimiter. Otherwise a comma (,) is used.
       See http://en.wikipedia.org/wiki/Decimal_mark
 
-    * The date format expected by frePPLe is 'YYYY-MM-DD HH\:MM\:SS'.
+    * | The date format expected by frePPLe is 'YYYY-MM-DD hh\:mm\:ss' (international style).
+      | Using the DATE_STYLE setting in the djangosettings.py file this can be changed
+        to 'DD-MM-YYYY hh\:mm\:ss' (European style) or 'MM-DD-YYYY HH\:mm\:ss' (US style).
 
     * The data file is expected to be encoded in the character encoding defined by
       the setting CSV_CHARSET (default UTF-8).

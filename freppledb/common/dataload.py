@@ -22,7 +22,6 @@
 #
 
 from datetime import timedelta, datetime
-from dateutil.parser import parse
 from decimal import Decimal
 from logging import INFO, ERROR, WARNING, DEBUG
 from openpyxl.worksheet.cell_range import CellRange
@@ -57,6 +56,7 @@ from django.utils.formats import get_format
 from django.utils.text import get_text_list
 
 from .models import Comment
+from .localization import parseLocalizedDateTime
 
 
 def sanitizeNumber(value):
@@ -187,7 +187,7 @@ def parseExcelWorksheet(
                 elif data:
                     data = str(data).strip()
                     try:
-                        data = parse(data, yearfirst=False, dayfirst=False)
+                        data = parseLocalizedDateTime(data)
                     except Exception:
                         pass
                 else:
@@ -307,11 +307,7 @@ def parseCSVdata(
                     return False
                 elif isinstance(idx[1], (DateField, DateTimeField)):
                     try:
-                        return (
-                            parse(val, yearfirst=False, dayfirst=False)
-                            if val != ""
-                            else None
-                        )
+                        return parseLocalizedDateTime(val) if val != "" else None
                     except Exception:
                         return val if val != "" else None
                 elif isinstance(idx[1], DecimalField):

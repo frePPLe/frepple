@@ -23,14 +23,13 @@
 
 import frepple
 
-from datetime import date, datetime
-from dateutil.parser import parse
 import json
 
 from channels.db import database_sync_to_async
 from channels.generic.http import AsyncHttpConsumer
 
 from freppledb.webservice.utils import lock
+from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.models import Comment
 from freppledb.forecast.models import Forecast
 from freppledb.input.models import Item, Location, Customer, Buffer
@@ -194,22 +193,10 @@ class ForecastService(AsyncHttpConsumer):
                                         args["bucket"] = bucket.lower()
                                     startdate = bckt.get("startdate", None)
                                     if startdate:
-                                        # Guess! the date format, using Month-Day-Year as preference
-                                        # to resolve ambiguity.
-                                        # This default style is also the default datestyle in Postgres
-                                        # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                        args["startdate"] = parse(
-                                            startdate, yearfirst=False, dayfirst=False
-                                        )
+                                        args["startdate"] = parseLocalizedDateTime(startdate)
                                     enddate = bckt.get("enddate", None)
                                     if enddate:
-                                        # Guess! the date format, using Month-Day-Year as preference
-                                        # to resolve ambiguity.
-                                        # This default style is also the default datestyle in Postgres
-                                        # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                        args["enddate"] = parse(
-                                            enddate, yearfirst=False, dayfirst=False
-                                        )
+                                        args["enddate"] = parseLocalizedDateTime(enddate)
                                     for key, val in bckt.items():
                                         if (
                                             key
@@ -328,22 +315,10 @@ class ForecastService(AsyncHttpConsumer):
                                         args["bucket"] = bucket.lower()
                                     startdate = bckt.get("startdate", None)
                                     if startdate:
-                                        # Guess! the date format, using Month-Day-Year as preference
-                                        # to resolve ambiguity.
-                                        # This default style is also the default datestyle in Postgres
-                                        # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                        args["startdate"] = parse(
-                                            startdate, yearfirst=False, dayfirst=False
-                                        )
+                                        args["startdate"] = parseLocalizedDateTime(startdate)
                                     enddate = bckt.get("enddate", None)
                                     if enddate:
-                                        # Guess! the date format, using Month-Day-Year as preference
-                                        # to resolve ambiguity.
-                                        # This default style is also the default datestyle in Postgres
-                                        # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                                        args["enddate"] = parse(
-                                            enddate, yearfirst=False, dayfirst=False
-                                        )
+                                        args["enddate"] = parseLocalizedDateTime(enddate)
                                     for key, val in bckt.items():
                                         if (
                                             key

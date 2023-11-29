@@ -22,7 +22,6 @@
 #
 
 from datetime import date, datetime
-from dateutil.parser import parse
 from itertools import chain
 import json
 from logging import INFO, ERROR, WARNING, DEBUG
@@ -42,6 +41,7 @@ from django.utils.encoding import force_str
 from django.utils.translation import pgettext, gettext_lazy as _
 
 from freppledb.common.auth import getWebserviceAuthorization
+from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.models import AuditModel, BucketDetail, Parameter
 from freppledb.input.models import Customer, Item, Location, Operation
 from freppledb.webservice.utils import useWebService
@@ -223,24 +223,12 @@ class Forecast(AuditModel):
             if isinstance(startdate, (date, datetime)):
                 data["startdate"] = startdate.strftime("%Y-%m-%dT%H:%M:%S")
             else:
-                # Guess! the date format, using Month-Day-Year as preference
-                # to resolve ambiguity.
-                # This default style is also the default datestyle in Postgres
-                # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                data["startdate"] = parse(
-                    startdate, yearfirst=False, dayfirst=False
-                ).strftime("%Y-%m-%dT%H:%M:%S")
+                data["startdate"] = parseLocalizedDateTime(startdate).strftime("%Y-%m-%dT%H:%M:%S")
         if enddate:
             if isinstance(enddate, (date, datetime)):
                 data["enddate"] = enddate.strftime("%Y-%m-%dT%H:%M:%S")
             else:
-                # Guess! the date format, using Month-Day-Year as preference
-                # to resolve ambiguity.
-                # This default style is also the default datestyle in Postgres
-                # https://www.postgresql.org/docs/9.1/runtime-config-client.html#GUC-DATESTYLE
-                data["enddate"] = parse(
-                    enddate, yearfirst=False, dayfirst=False
-                ).strftime("%Y-%m-%dT%H:%M:%S")
+                data["enddate"] = parseLocalizedDateTime(enddate).strftime("%Y-%m-%dT%H:%M:%S")
         for m, val in kwargs.items():
             if val is not None:
                 data[m] = float(val)

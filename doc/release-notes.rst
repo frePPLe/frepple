@@ -13,7 +13,7 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 
 - | Resource detail report: A new display mode is added to display the resource schedule as
     a Gantt chart.
-    
+
 - | Capacity report: Clicking to get the detail of the MOs consuming from a bucketized
     resource will now display all the MOs of the time buckets overlapping the filtering dates.
 
@@ -52,6 +52,12 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 - | Browser sessions time out after 1 day rather than 1 hour.
   | The setting SESSION_LOGOUT_IDLE_TIME controls this timeout. We increased the
     default limit to improve the user experience.
+
+- | Date strings in CSV or Excel uploads are now parsed according to the configured
+    date style.
+  | The default remains 'YYYY-MM-DD hh:mm\:ss' (international style). Using the
+    DATE_STYLE setting in the djangosettings.py file this can be changed
+    to 'DD-MM-YYYY hh:mm:ss' (European style) or 'MM-DD-YYYY hh:mm:ss' (US style).
 
 .. rubric:: Odoo integration
 

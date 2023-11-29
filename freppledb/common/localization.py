@@ -52,11 +52,12 @@ def parseLocalizedDateTime(data):
     else:
         data = encoding.smart_str(data).strip()
         for format in chain(
+            ["%Y-%m-%dT%H:%M:%S"],
             settings.DATETIME_INPUT_FORMATS,
             settings.DATE_INPUT_FORMATS,
         ):
             try:
                 return datetime.strptime(data, format)
-            except (ValueError, TypeError) as e:
+            except (ValueError, TypeError):
                 continue
         raise Exception(_("Invalid date format"))

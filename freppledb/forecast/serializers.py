@@ -130,13 +130,14 @@ class ForecastPlanFilter(FilterSet):
 
 
 class ForecastPlanAPI(frePPleListCreateAPIView):
-    try:
-        parameter_currentdate = parse(Parameter.objects.get(name="currentdate").value)
-    except Exception:
-        parameter_currentdate = datetime.now()
-
     def get_queryset(self):
-        return ForecastPlan.objects.raw(
+        try:
+            parameter_currentdate = parse(
+                Parameter.objects.get(name="currentdate").value
+            )
+        except Exception:
+            parameter_currentdate = datetime.now()
+        return ForecastPlan.objects.using(self.request.database).raw(
             """
         SELECT forecastplan.item_id||' @ '||
         forecastplan.location_id||' @ '||

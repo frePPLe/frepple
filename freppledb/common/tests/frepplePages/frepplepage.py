@@ -145,7 +145,7 @@ class TablePage(BasePage):
         self, targetcellElement, columnNameLocator
     ):  # method that clicks of the table cell at the targeted row and column
         ActionChains(self.driver).move_to_element_with_offset(
-            targetcellElement, 1, 1
+            targetcellElement, 2, 2
         ).click().perform()
         inputfield = targetcellElement.find_element(
             *TableLocators.tablecolumnsinput[columnNameLocator]

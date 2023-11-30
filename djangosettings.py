@@ -325,7 +325,7 @@ if DATE_STYLE == "month-day-year":
     )
     DATETIME_FORMAT_JS = (
         # see https://momentjs.com/docs/#/displaying/
-        "DD_MM_YYYY HH:mm:ss"
+        "MM-DD-YYYY HH:mm:ss"
     )
     DATE_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
@@ -333,6 +333,8 @@ if DATE_STYLE == "month-day-year":
         "%m/%d/%y",
         "%m-%d-%Y",
         "%m-%d-%y",
+        "%m.%d.%Y",
+        "%m.%d.%y",
         "%b %d %Y",
         "%b %d, %Y",
         "%d %b %Y",
@@ -351,6 +353,10 @@ if DATE_STYLE == "month-day-year":
         "%m/%d/%Y %H:%M",
         "%m/%d/%y %H:%M:%S",
         "%m/%d/%y %H:%M",
+        "%m.%d.%Y %H:%M:%S",
+        "%m.%d.%Y %H:%M",
+        "%m.%d.%y %H:%M:%S",
+        "%m.%d.%y %H:%M",
     ]
 elif DATE_STYLE == "day-month-year":
     # Option 2: European style
@@ -376,6 +382,8 @@ elif DATE_STYLE == "day-month-year":
         "%d-%m-%y",
         "%d/%m/%Y",
         "%d/%m/%y",
+        "%d.%m.%Y",
+        "%d.%m.%y",
         "%b %d %Y",
         "%b %d, %Y",
         "%d %b %Y",
@@ -395,6 +403,10 @@ elif DATE_STYLE == "day-month-year":
         "%f/%m/%Y %H:%M",
         "%d/%m/%y %H:%M:%S",
         "%d/%m/%y %H:%M",
+        "%d.%m.%Y %H:%M:%S",
+        "%d.%m.%Y %H:%M",
+        "%d.%m.%y %H:%M:%S",
+        "%d.%m.%y %H:%M",
     ]
 else:
     # Option 3: International style, default
@@ -420,6 +432,8 @@ else:
         "%y-%m-%d",
         "%Y/%m/%d",
         "%y/%m/%d",
+        "%Y.%m.%d",
+        "%y.%m.%d",
         "%b %d %Y",
         "%b %d, %Y",
         "%d %b %Y",
@@ -439,6 +453,10 @@ else:
         "%Y/%m/%d %H:%M",
         "%y/%m/%d %H:%M:%S",
         "%y/%m/%d %H:%M",
+        "%Y.%m.%d %H:%M:%S",
+        "%Y.%m.%d %H:%M",
+        "%y.%m.%d %H:%M:%S",
+        "%y.%m.%d %H:%M",
     ]
 
 

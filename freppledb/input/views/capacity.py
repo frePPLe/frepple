@@ -446,7 +446,13 @@ class ResourceDetail(OperationPlanMixin):
             use_default_filter = False
         if use_default_filter and "noautofilter" not in request.GET:
             if request.report_enddate:
-                base = base.filter(operationplan__startdate__lte=request.report_enddate)
+                base = base.filter(
+                    Q(operationplan__startdate__lte=request.report_enddate)
+                    | (
+                        Q(operationplan__startdate__isnull=True)
+                        & Q(operationplan__enddate__lte=request.report_enddate)
+                    )
+                )
         return base.select_related().annotate(
             opplan_duration=RawSQL(
                 "(operationplan.enddate - operationplan.startdate)", []
@@ -595,9 +601,11 @@ class ResourceDetail(OperationPlanMixin):
                     "title": force_str(Resource._meta.verbose_name) + " " + args[0],
                     "post_title": _("plan detail"),
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    "currentdate": getCurrentDate(
+                        database=request.database, lastplan=True
+                    ),
                     "individualPoolResources": individualPoolResources,
-                    "showGantt": True
+                    "showGantt": True,
                 }
             )
         else:
@@ -608,9 +616,11 @@ class ResourceDetail(OperationPlanMixin):
                     "active_tab": "plandetail",
                     "model": OperationPlanResource,
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    "currentdate": getCurrentDate(
+                        database=request.database, lastplan=True
+                    ),
                     "individualPoolResources": individualPoolResources,
-                    "showGantt": True
+                    "showGantt": True,
                 }
             )
         return ctx

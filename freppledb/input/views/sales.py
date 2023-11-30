@@ -839,8 +839,13 @@ class DeliveryOrderList(GridReport):
             use_default_filter = False
         if use_default_filter and "noautofilter" not in request.GET:
             if request.report_enddate:
-                q = q.filter(startdate__lte=request.report_enddate)
-
+                q = q.filter(
+                    Q(startdate__lte=request.report_enddate)
+                    | (
+                        Q(startdate__isnull=True)
+                        & Q(enddate__lte=request.report_enddate)
+                    )
+                )
 
         # special keyword superop used for search field of operationplan
         if "parentreference" in request.GET:

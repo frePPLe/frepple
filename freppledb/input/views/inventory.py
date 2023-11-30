@@ -672,7 +672,9 @@ class DistributionOrderList(OperationPlanMixin):
                             % {"loc": args[1], "date": args[2]}
                         ),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
             elif paths[4] == "produced":
@@ -688,7 +690,9 @@ class DistributionOrderList(OperationPlanMixin):
                             % {"loc": args[1], "date1": args[2], "date2": args[3]}
                         ),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
             elif paths[4] == "consumed":
@@ -704,7 +708,9 @@ class DistributionOrderList(OperationPlanMixin):
                             % {"loc": args[1], "date1": args[2], "date2": args[3]}
                         ),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
             elif paths[4] == "item":
@@ -717,7 +723,9 @@ class DistributionOrderList(OperationPlanMixin):
                         "title": force_str(Item._meta.verbose_name) + " " + args[0],
                         "post_title": _("distribution orders"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
             elif paths[4] == "location":
@@ -734,7 +742,9 @@ class DistributionOrderList(OperationPlanMixin):
                             + args[0],
                             "post_title": _("inbound distribution"),
                             "groupingcfg": groupingcfg,
-                            "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                            "currentdate": getCurrentDate(
+                                database=request.database, lastplan=True
+                            ),
                         }
                     )
                 elif path == "out":
@@ -749,7 +759,9 @@ class DistributionOrderList(OperationPlanMixin):
                             + args[0],
                             "post_title": _("outbound distribution"),
                             "groupingcfg": groupingcfg,
-                            "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                            "currentdate": getCurrentDate(
+                                database=request.database, lastplan=True
+                            ),
                         }
                     )
             else:
@@ -760,7 +772,9 @@ class DistributionOrderList(OperationPlanMixin):
                         "active_tab": "edit",
                         "model": Item,
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
         elif "parentreference" in request.GET:
@@ -773,7 +787,9 @@ class DistributionOrderList(OperationPlanMixin):
                     + " "
                     + request.GET["parentreference"],
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    "currentdate": getCurrentDate(
+                        database=request.database, lastplan=True
+                    ),
                 }
             )
         else:
@@ -783,7 +799,9 @@ class DistributionOrderList(OperationPlanMixin):
                     "groupBy": "status",
                     "active_tab": "edit",
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    "currentdate": getCurrentDate(
+                        database=request.database, lastplan=True
+                    ),
                 }
             )
         return ctx
@@ -812,8 +830,14 @@ class DistributionOrderList(OperationPlanMixin):
             use_default_filter = False
         if use_default_filter and "noautofilter" not in request.GET:
             if request.report_enddate:
-                q = q.filter(startdate__lte=request.report_enddate)
-            
+                q = q.filter(
+                    Q(startdate__lte=request.report_enddate)
+                    | (
+                        Q(startdate__isnull=True)
+                        & Q(enddate__lte=request.report_enddate)
+                    )
+                )
+
         if args and args[0]:
             paths = request.path.split("/")
             if paths[4] == "operationplanmaterial":
@@ -1457,7 +1481,13 @@ class InventoryDetail(OperationPlanMixin):
             use_default_filter = False
         if use_default_filter and "noautofilter" not in request.GET:
             if request.report_enddate:
-                base = base.filter(operationplan__startdate__lte=request.report_enddate)           
+                base = base.filter(
+                    Q(operationplan__startdate__lte=request.report_enddate)
+                    | (
+                        Q(operationplan__startdate__isnull=True)
+                        & Q(operationplan__enddate__lte=request.report_enddate)
+                    )
+                )
         return base.select_related().annotate(
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
@@ -1498,7 +1528,9 @@ class InventoryDetail(OperationPlanMixin):
                         "title": force_str(Item._meta.verbose_name) + " " + args[0],
                         "post_title": _("inventory detail"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
             elif request.path_info.startswith(
@@ -1526,7 +1558,9 @@ class InventoryDetail(OperationPlanMixin):
                         + location,
                         "post_title": _("plan detail"),
                         "groupingcfg": groupingcfg,
-                        "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                        "currentdate": getCurrentDate(
+                            database=request.database, lastplan=True
+                        ),
                     }
                 )
         else:
@@ -1537,7 +1571,9 @@ class InventoryDetail(OperationPlanMixin):
                     "active_tab": "plandetail",
                     "model": OperationPlanMaterial,
                     "groupingcfg": groupingcfg,
-                    "currentdate": getCurrentDate(database=request.database, lastplan=True),
+                    "currentdate": getCurrentDate(
+                        database=request.database, lastplan=True
+                    ),
                 }
             )
         return ctx

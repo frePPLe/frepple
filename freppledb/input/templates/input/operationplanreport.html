@@ -16,6 +16,12 @@
   border-bottom-style: solid;
   border-bottom-color: #bbb;
 }
+
+rect.opplan {
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1px;
+  stroke: rgb(0,0,0);
+}
 </style>
 {% endblock %}
 
@@ -61,17 +67,6 @@
 <script src="{{STATIC_URL}}js/frepple-input.min.js"></script>
 <script src="{{STATIC_URL}}js/frepple-operationplandetail.min.js"></script>
 {% endif %}
-
-<style>
-  rect.opplan {
-    vector-effect: non-scaling-stroke;
-    stroke-width: 1px;
-    stroke: rgb(0,0,0);
-    rx: 2;
-    ry: 2;
-  }
-</style>
-
 <script>
 
   var mode = preferences && preferences.mode || "table";

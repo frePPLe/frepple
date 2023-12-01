@@ -150,18 +150,19 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     $scope.buildcolor = buildcolor;
 
     function time2scale(d) {
-      return Math.round((d - horizonstart) / (horizonend - horizonstart) * 1000);
+      return Math.round(10000 * (d - horizonstart) / (horizonend - horizonstart));
     }
     $scope.time2scale = time2scale;
 
     function duration2scale(d) {
-      return Math.round(d / (horizonend - horizonstart) * 1000);
+      return Math.round(10000 * d / (horizonend - horizonstart));
     }
     $scope.duration2scale = duration2scale;
 
     function drawGantt() {
+      var scale = ($("#ganttgraph").width() - 200) / 10000;
       if (!$scope.ganttoperationplans.rows) return;
-      var data = '<table class="table"><tr><th>resource</th><th id="ganttheader"></th></tr>';
+      var data = '<table class="table"><tr><th class="align-middle" style="width:200px">' + gettext("resource") + '</th><th style="overflow-x: scroll" id="ganttheader"></th></tr>';
       var curresource;
       var first = true;
       var layer = [];
@@ -169,13 +170,11 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
       for (var opplan of $scope.ganttoperationplans.rows) {
         if (opplan.resource != curresource) {
           curresource = opplan.resource;
-          if (!first) {
-            data += '<svg viewbox="0 0 1000 '
-              + (layer.length * $scope.rowheight) + '" width="100%" height="'
-              + (layer.length * $scope.rowheight) + 'px">' +
-              + '<g class="ganttrow" transform="scale(' + 1 + ',1) translate(0,' + ((layer.length - 1) * $scope.rowheight + 3) + ')" title="' + layer.length + '">'
+          if (!first)
+            data += '<svg width="100%" height="'
+              + (layer.length * $scope.rowheight)
+              + 'px"><g class="ganttrow" transform="scale(' + scale + ',1) translate(0,' + ((layer.length - 1) * $scope.rowheight) + ')" title="' + layer.length + '">'
               + svgdata + "</g></svg></td></tr>";
-          }
           first = false;
           data += "<tr><td>" + opplan.resource + '</td><td>';
           layer = [];
@@ -195,7 +194,7 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
           + '" y="' + (-row * $scope.rowheight)
           + '" fill="' + buildcolor(opplan)
           + '" width="' + duration2scale(opplan.enddate - opplan.startdate)
-          + '" height="' + ($scope.rowheight - 3)
+          + '" height="' + $scope.rowheight
           + '" data-reference="' + encodeURI(opplan.operationplan__reference) + '"';
         if (opplan["status"] == "proposed")
           svgdata += ' fill-opacity="0.5"/>';
@@ -203,10 +202,9 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
           svgdata += '/>';
       }
       if (!first)
-        data += '<svg viewbox="0 0 1000 '
-          + (layer.length * $scope.rowheight) + '" width="100%" height="'
-          + (layer.length * $scope.rowheight) + 'px">'
-          + '<g class="ganttrow" transform="scale(' + 1 + ',1) translate(0,' + ((layer.length - 1) * $scope.rowheight + 3) + ')" title="' + layer.length + '">'
+        data += '<svg width = "100%" height = "'
+          + (layer.length * $scope.rowheight) + ''
+          + 'px"><g class="ganttrow" transform="scale(' + scale + ',1) translate(0,' + ((layer.length - 1) * $scope.rowheight) + ')" title="' + layer.length + '">'
           + svgdata + "</g></svg></td></tr>";
       data += "</table>";
       angular.element(document).find('#ganttgraph').empty().append(data);

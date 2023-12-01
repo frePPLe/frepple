@@ -30,10 +30,9 @@ $(function() {
 			<div class="float-end ms-3 d-lg-none">
 			<form class="navbar-form me-start mt-3 mb-3" role="search">
 				<div class="form-group" style="width: 12em">
-				  <input id="search" class="form-control typeahead" type="text" placeholder="&#xf002; {% trans 'Search' %}">
+				  <input class="form-control typeahead search-input" type="text" placeholder="&#xf002; {% trans 'Search' %}">
 				</div>
 			</form>
-
 			<ul class="nav navbar-nav ms-auto" class="selectdb">
 				{% if user.scenarios|length > 1 %}
 				   <li class="navbar-item dropdown">
@@ -73,7 +72,11 @@ $(function() {
 			  </li>{% endif %}
 			  {% endfor %}
 			</ul>
-
+			<form class="navbar-form me-start mt-3 mb-3 d-none d-lg-block" role="search">
+				<div class="form-group" style="width: 12em">
+				  <input class="form-control typeahead search-input" type="text" placeholder="&#xf002; {% trans 'Search' %}">
+				</div>
+			</form>
 
       {% if not request.session.navbar and user.is_authenticated and user.is_staff %}
 	  <div id="nav-menu-end" class="collapse navbar-collapse">

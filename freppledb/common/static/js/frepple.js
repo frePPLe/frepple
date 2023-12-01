@@ -2559,7 +2559,7 @@ $(function () {
       wildcard: '%QUERY'
     }
   });
-  $('#search').typeahead({ minLength: 2 }, {
+  $('.search-input').typeahead({ minLength: 2 }, {
     limit: 1000,
     highlight: true,
     name: 'search',

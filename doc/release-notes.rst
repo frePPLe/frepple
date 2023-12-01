@@ -64,6 +64,7 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 - | 17: Support is added for the new Odoo version 17.
   | At this stage this requires additional testing and validation. And yes, you can help
     us with this!
+  | Correction in product reservations when MOs are defined with a multi-step route.
 
 - | 14 & 15 & 16: Bug fix. Connector had a problem authenticating in a multi-database
     Odoo configuration.

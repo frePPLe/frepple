@@ -81,7 +81,6 @@ class UpdateLastCurrentDate(PlanTask):
 
 @PlanTaskRegistry.register
 class MakePlanFeasible(PlanTask):
-
     description = "Initial plan problems"
     sequence = 199
 
@@ -126,7 +125,6 @@ class MakePlanFeasible(PlanTask):
 
 @PlanTaskRegistry.register
 class SupplyPlanning(PlanTask):
-
     description = "Generate supply plan"
     sequence = 200
     label = (
@@ -275,7 +273,6 @@ class SupplyPlanning(PlanTask):
 
 @PlanTaskRegistry.register
 class EraseModel(PlanTask):
-
     description = "Erase model"
     sequence = 700
 

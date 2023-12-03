@@ -45,7 +45,6 @@ from freppledb import __version__
 
 
 class Command(BaseCommand):
-
     help = "Runs frePPLe to generate a plan"
 
     requires_system_checks = []
@@ -113,7 +112,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options):
-
         # Set the server timezone to the TIME_ZONE parameter of djangosettings
         # unsupported by windows
         if not os.name == "nt":
@@ -368,7 +366,6 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request, widget=False):
-
         if request.user.has_perm("auth.generate_plan"):
             # Collect optional tasks
             planning_options = freppledb.common.commands.PlanTaskRegistry.getLabels(

@@ -50,7 +50,6 @@ def recreateConstraintsCascade(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("common", "0020_notifications")]
 
     operations = [migrations.RunPython(recreateConstraintsCascade)]

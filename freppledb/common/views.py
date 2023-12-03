@@ -121,27 +121,29 @@ class AppsView(View):
                                 appname = d.parts[-1]
                                 m = getattr(import_module(appname), "frepple_app", None)
                                 if m:
-                                    apps[appname] ={
-                                            "name": appname,
-                                            "installed": appname in settings.INSTALLED_APPS,
-                                            "summary": m.get("summary", appname),
-                                            "version": m.get("version", None),
-                                            "description": m.get("description", None),
-                                            "documentation_url": m.get("documentation_url", None),
-                                        }
+                                    apps[appname] = {
+                                        "name": appname,
+                                        "installed": appname in settings.INSTALLED_APPS,
+                                        "summary": m.get("summary", appname),
+                                        "version": m.get("version", None),
+                                        "description": m.get("description", None),
+                                        "documentation_url": m.get(
+                                            "documentation_url", None
+                                        ),
+                                    }
                             except Exception:
                                 pass
                 else:
                     m = getattr(import_module(a), "frepple_app", None)
                     if m:
-                        apps[a] ={
-                                "name": a,
-                                "installed": a in settings.INSTALLED_APPS,
-                                "summary": m.get("summary", a),
-                                "version": m.get("version", None),
-                                "description": m.get("description", None),
-                                "documentation_url": m.get("documentation_url", None),
-                            }
+                        apps[a] = {
+                            "name": a,
+                            "installed": a in settings.INSTALLED_APPS,
+                            "summary": m.get("summary", a),
+                            "version": m.get("version", None),
+                            "description": m.get("description", None),
+                            "documentation_url": m.get("documentation_url", None),
+                        }
             except Exception:
                 pass
         return render(
@@ -216,7 +218,9 @@ class AppsView(View):
                         l = '%s"%s",' % (l[:i], app)
                         status = 2
                         found = True
-                    elif status == 1 and ("END UPDATED BLOCK" in l or "INSTALLABLE_APPS" in l):
+                    elif status == 1 and (
+                        "END UPDATED BLOCK" in l or "INSTALLABLE_APPS" in l
+                    ):
                         status = 3
                     new_file.append(l)
                 if not found:
@@ -225,14 +229,14 @@ class AppsView(View):
                         if "freppledb.boot" in l:
                             i = re.search("\S", l).start()
                             l = '%s"%s",' % (l[:i], app)
-                            new_file.insert(idx+1, l)
+                            new_file.insert(idx + 1, l)
                             break
                         idx += 1
                 for l in new_file:
                     print(l, file=f)
 
             # Migrate (after updating djangosettings)
-            child = multiprocessing.get_context('spawn').Process(
+            child = multiprocessing.get_context("spawn").Process(
                 target=runCommand,
                 args=("migrate", appname),
             )
@@ -288,7 +292,7 @@ def cockpit(request):
                 "name", flat=True
             ),
             "currency": getCurrency(),
-            "reportclass": {"hasTimeOnly": True}
+            "reportclass": {"hasTimeOnly": True},
         },
     )
 
@@ -481,12 +485,8 @@ class HorizonForm(forms.Form):
     horizonbuckets = forms.ModelChoiceField(
         queryset=Bucket.objects.all().values_list("name", flat=True)
     )
-    horizonstart = forms.DateField(
-        required=False, input_formats=["%Y-%m-%d"]
-    )
-    horizonend = forms.DateField(
-        required=False, input_formats=["%Y-%m-%d"]
-    )
+    horizonstart = forms.DateField(required=False, input_formats=["%Y-%m-%d"])
+    horizonend = forms.DateField(required=False, input_formats=["%Y-%m-%d"])
     horizontype = forms.ChoiceField(choices=(("1", "1"), ("0", "0")))
     horizonbefore = forms.IntegerField(required=False, min_value=0)
     horizonlength = forms.IntegerField(required=False, min_value=1)

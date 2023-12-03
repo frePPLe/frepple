@@ -152,7 +152,6 @@ class BaseReport(GridReport):
 
 
 class ReportByDemand(BaseReport):
-
     template = "output/constraint_demand.html"
 
     detailmodel = Demand
@@ -169,7 +168,6 @@ class ReportByDemand(BaseReport):
 
 
 class ReportByBuffer(BaseReport):
-
     template = "output/constraint_buffer.html"
 
     detailmodel = Buffer
@@ -191,7 +189,6 @@ class ReportByBuffer(BaseReport):
 
 
 class ReportByOperation(BaseReport):
-
     template = "output/constraint_operation.html"
 
     detailmodel = Operation
@@ -208,7 +205,6 @@ class ReportByOperation(BaseReport):
 
 
 class ReportByResource(BaseReport):
-
     template = "output/constraint_resource.html"
 
     detailmodel = Resource

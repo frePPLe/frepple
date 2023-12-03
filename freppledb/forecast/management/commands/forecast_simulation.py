@@ -36,7 +36,6 @@ from freppledb.execute.models import Task
 
 
 class Command(BaseCommand):
-
     help = """
       Runs a simulation to measure the historical forecast accuracy.
 

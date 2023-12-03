@@ -26,7 +26,6 @@ from .commands import WebService
 
 
 class StopService(AsyncHttpConsumer):
-
     msgtemplate = """
         <!doctype html>
         <html lang="en">

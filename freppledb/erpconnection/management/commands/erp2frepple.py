@@ -100,7 +100,6 @@ class Command(BaseCommand):
             return None
 
     def handle(self, **options):
-
         # Select the correct frePPLe scenario database
         self.database = options["database"]
         if self.database not in settings.DATABASES.keys():

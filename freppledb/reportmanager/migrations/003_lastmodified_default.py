@@ -25,7 +25,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("reportmanager", "0002_column")]
 
     operations = [

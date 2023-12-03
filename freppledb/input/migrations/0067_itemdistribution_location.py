@@ -26,7 +26,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("input", "0066_demand_index"),
     ]

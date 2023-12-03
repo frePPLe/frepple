@@ -45,7 +45,6 @@ if "freppledb.forecast" in settings.INSTALLED_APPS:
     "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
 )
 class ForecastEdit(TransactionTestCase):
-
     fixtures = ["demo"]
 
     def setUp(self):
@@ -407,7 +406,6 @@ class ForecastEdit(TransactionTestCase):
     "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
 )
 class ReportTest(TransactionTestCase):
-
     fixtures = ["distribution_demo"]
 
     def setUp(self):
@@ -573,7 +571,6 @@ class ReportTest(TransactionTestCase):
     "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
 )
 class ForecastSimulation(TransactionTestCase):
-
     fixtures = ["distribution_demo"]
 
     def setUp(self):

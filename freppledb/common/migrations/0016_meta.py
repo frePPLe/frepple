@@ -25,7 +25,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("common", "0014_squashed_60")]
 
     operations = [

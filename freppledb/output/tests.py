@@ -27,7 +27,6 @@ from freppledb.common.tests import checkResponse
 
 
 class OutputTest(TestCase):
-
     fixtures = ["demo"]
 
     def setUp(self):

@@ -43,7 +43,6 @@ def loadParameters(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [("common", "0014_squashed_60"), ("admin", "0001_initial")]

@@ -43,7 +43,6 @@ def removeParameters(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("odoo", "0001_initial"),
         ("odoo", "0002_parameters"),

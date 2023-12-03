@@ -27,7 +27,6 @@ import freppledb.common.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("common", "0023_notifications")]
 
     operations = [

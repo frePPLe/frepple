@@ -109,7 +109,6 @@ class execute_with_commands(TransactionTestCase):
 
 
 class execute_multidb(TransactionTestCase):
-
     fixtures = ["demo"]
 
     databases = settings.DATABASES.keys()
@@ -231,7 +230,6 @@ class FixtureTest(TransactionTestCase):
 
 
 class execute_simulation(TransactionTestCase):
-
     fixtures = ["demo"]
 
     def setUp(self):
@@ -270,7 +268,6 @@ class execute_simulation(TransactionTestCase):
 
 
 class remote_commands(TransactionTestCase):
-
     fixtures = ["demo"]
 
     databases = settings.DATABASES.keys()

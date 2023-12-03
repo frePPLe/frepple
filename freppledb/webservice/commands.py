@@ -107,7 +107,6 @@ class setDatabaseConnection(PlanTask):
 
 @PlanTaskRegistry.register
 class StopWebService(PlanTask):
-
     description = "Stop web service"
     sequence = 999
 
@@ -158,7 +157,6 @@ class StopWebService(PlanTask):
 
 @PlanTaskRegistry.register
 class RunWebService(PlanTask):
-
     description = "Run web service"
     sequence = 1000
 

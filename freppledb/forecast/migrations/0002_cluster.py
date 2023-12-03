@@ -99,7 +99,6 @@ def dropIndexLike(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("forecast", "0001_initial")]
 
     operations = [

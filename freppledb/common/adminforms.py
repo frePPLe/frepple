@@ -306,7 +306,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         )
         # Add a link to the object's change form if the user can edit the obj.
         if self.has_change_permission(request, obj):
-            obj_repr = format_html('<a href="{}">{}</a>', urllib_quote(obj_url, safe="/"), obj)
+            obj_repr = format_html(
+                '<a href="{}">{}</a>', urllib_quote(obj_url, safe="/"), obj
+            )
         else:
             obj_repr = str(obj)
         msg_dict = {"name": opts.verbose_name, "obj": obj_repr}

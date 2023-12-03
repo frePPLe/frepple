@@ -34,7 +34,6 @@ from freppledb.input.models import Item, Resource
 
 @PlanTaskRegistry.register
 class GetPlanMetrics(PlanTask):
-
     description = "Update item and resource metrics"
 
     sequence = 530
@@ -53,7 +52,6 @@ class GetPlanMetrics(PlanTask):
         with connections[database].cursor() as cursor:
             # Update item metrics
             try:
-
                 try:
                     window = frepple.settings.current + timedelta(
                         days=int(
@@ -166,7 +164,6 @@ class GetPlanMetrics(PlanTask):
 
             # Update resource metrics
             try:
-
                 Resource.rebuildHierarchy(database)
 
                 cursor.execute(

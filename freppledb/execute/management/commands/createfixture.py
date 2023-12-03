@@ -32,7 +32,6 @@ from freppledb import __version__
 
 
 class Command(BaseCommand):
-
     help = """
   This command dumps the content of the database in a fixture format file.
   """

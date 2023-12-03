@@ -35,7 +35,6 @@ from freppledb.execute.models import Task
 
 
 class Command(BaseCommand):
-
     help = "Loads data from an Odoo instance into the frePPLe database"
 
     requires_system_checks = []

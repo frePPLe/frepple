@@ -53,7 +53,6 @@ EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment)
 
 
 class Command(BaseCommand):
-
     # help = "Loads XLS workbook file into the frePPLe database"
     help = "command not implemented yet"
 

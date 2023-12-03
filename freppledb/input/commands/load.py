@@ -189,7 +189,6 @@ class checkBrokenSupplyPath(CheckTask):
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-
         Item.rebuildHierarchy(database)
         Location.rebuildHierarchy(database)
         with_fcst_module = "freppledb.forecast" in settings.INSTALLED_APPS
@@ -305,7 +304,6 @@ class checkBrokenSupplyPath(CheckTask):
 
 @PlanTaskRegistry.register
 class loadParameter(LoadTask):
-
     description = "Importing parameters"
     sequence = 90
 
@@ -380,7 +378,6 @@ class loadParameter(LoadTask):
 
 @PlanTaskRegistry.register
 class loadLocations(LoadTask):
-
     description = "Importing locations"
     sequence = 91
 
@@ -502,7 +499,6 @@ class loadCalendars(LoadTask):
 
 @PlanTaskRegistry.register
 class loadCalendarBuckets(LoadTask):
-
     description = "Importing calendar buckets"
     sequence = 93
 
@@ -603,7 +599,6 @@ class loadCalendarBuckets(LoadTask):
 
 @PlanTaskRegistry.register
 class loadCustomers(LoadTask):
-
     description = "Importing customers"
     sequence = 94
 
@@ -653,7 +648,6 @@ class loadCustomers(LoadTask):
 
 @PlanTaskRegistry.register
 class loadSuppliers(LoadTask):
-
     description = "Importing suppliers"
     sequence = 95
 
@@ -707,7 +701,6 @@ class loadSuppliers(LoadTask):
 
 @PlanTaskRegistry.register
 class loadOperations(LoadTask):
-
     description = "Importing operations"
     sequence = 96
 
@@ -951,7 +944,6 @@ class loadOperations(LoadTask):
 
 @PlanTaskRegistry.register
 class loadSuboperations(LoadTask):
-
     description = "Importing suboperations"
     sequence = 97
 
@@ -1021,7 +1013,6 @@ class loadSuboperations(LoadTask):
 
 @PlanTaskRegistry.register
 class loadOperationDependencies(LoadTask):
-
     description = "Importing operation dependencies"
     sequence = 97.5
 
@@ -1075,7 +1066,6 @@ class loadOperationDependencies(LoadTask):
 
 @PlanTaskRegistry.register
 class loadItems(LoadTask):
-
     description = "Importing items"
     sequence = 98
 
@@ -1150,7 +1140,6 @@ class loadItems(LoadTask):
 
 @PlanTaskRegistry.register
 class loadItemSuppliers(LoadTask):
-
     description = "Importing item suppliers"
     sequence = 99
 
@@ -1233,7 +1222,6 @@ class loadItemSuppliers(LoadTask):
 
 @PlanTaskRegistry.register
 class loadItemDistributions(LoadTask):
-
     description = "Importing item distributions"
     sequence = 100
 
@@ -1315,7 +1303,6 @@ class loadItemDistributions(LoadTask):
 
 @PlanTaskRegistry.register
 class loadBuffers(LoadTask):
-
     description = "Importing buffers"
     sequence = 101
 
@@ -1483,7 +1470,6 @@ class LinkCalendarsToBuffers(LoadTask):
 
 @PlanTaskRegistry.register
 class loadSetupMatrices(LoadTask):
-
     description = "Importing setup matrix rules"
     sequence = 102
 
@@ -1561,7 +1547,6 @@ class loadSetupMatrices(LoadTask):
 
 @PlanTaskRegistry.register
 class loadResources(LoadTask):
-
     description = "Importing resources"
     sequence = 94.5
 
@@ -1679,7 +1664,6 @@ class loadResources(LoadTask):
 
 @PlanTaskRegistry.register
 class loadResourceSkills(LoadTask):
-
     description = "Importing resources skills"
     sequence = 104
 
@@ -1732,7 +1716,6 @@ class loadResourceSkills(LoadTask):
 
 @PlanTaskRegistry.register
 class loadOperationMaterials(LoadTask):
-
     description = "Importing operation materials"
     sequence = 105
 
@@ -1829,7 +1812,6 @@ class loadOperationMaterials(LoadTask):
 
 @PlanTaskRegistry.register
 class loadOperationResources(LoadTask):
-
     description = "Importing operation resources"
     sequence = 106
 
@@ -1897,7 +1879,6 @@ class loadOperationResources(LoadTask):
 
 @PlanTaskRegistry.register
 class loadDemand(LoadTask):
-
     description = "Importing demands"
     sequence = 107
 
@@ -2002,7 +1983,6 @@ class loadDemand(LoadTask):
 
 @PlanTaskRegistry.register
 class loadOperationPlans(LoadTask):
-
     description = "Importing operationplans"
     sequence = 108
 
@@ -2461,7 +2441,6 @@ class loadOperationPlans(LoadTask):
 
 @PlanTaskRegistry.register
 class loadOperationPlanMaterials(LoadTask):
-
     description = "Importing operationplanmaterials"
     sequence = 109
 
@@ -2519,7 +2498,6 @@ class loadOperationPlanMaterials(LoadTask):
 
 @PlanTaskRegistry.register
 class PlanSize(CheckTask):
-
     description = "Plan Size"
     sequence = 120
 

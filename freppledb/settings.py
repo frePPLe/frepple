@@ -326,7 +326,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = (
 )
 
 # Users are automatically logged out after this period of inactivity
-SESSION_LOGOUT_IDLE_TIME = 60 * 24 # minutes
+SESSION_LOGOUT_IDLE_TIME = 60 * 24  # minutes
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.fallback.SessionStorage"
 
@@ -473,9 +473,9 @@ DEFAULT_DASHBOARD = [
                 "widgets": [
                     # ("archived_purchase_order", {"history": 12}),
                     ("inventory_by_location", {"limit": 5}),
-                    #("inventory_by_item", {"limit": 10}),
+                    # ("inventory_by_item", {"limit": 10}),
                 ],
-            }
+            },
         ],
     },
     {
@@ -505,7 +505,7 @@ DEFAULT_DASHBOARD = [
                 "widgets": [
                     ("distribution_orders", {"fence1": 7, "fence2": 30}),
                     # ("shipping_queue",{"limit":20}),
-                    #("archived_buffer", {"history": 12}),
+                    # ("archived_buffer", {"history": 12}),
                 ],
             },
             {
@@ -513,7 +513,7 @@ DEFAULT_DASHBOARD = [
                 "widgets": [
                     ("archived_buffer", {"history": 12}),
                 ],
-            }
+            },
         ],
     },
 ]

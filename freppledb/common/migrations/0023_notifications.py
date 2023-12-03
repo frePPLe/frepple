@@ -26,7 +26,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("common", "0022_notifications")]
 
     operations = [

@@ -26,9 +26,9 @@ from rest_framework.renderers import BrowsableAPIRenderer
 
 class freppleBrowsableAPI(BrowsableAPIRenderer):
     """
-  Customized rendered for the browsable API:
-    - added the 'title' variable to the context to make the breadcrumbs work
-  """
+    Customized rendered for the browsable API:
+      - added the 'title' variable to the context to make the breadcrumbs work
+    """
 
     def get_context(self, data, accepted_media_type, renderer_context):
         ctx = super().get_context(data, accepted_media_type, renderer_context)

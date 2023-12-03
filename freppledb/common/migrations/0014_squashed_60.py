@@ -58,7 +58,6 @@ def createAdminUser(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("common", "0001_initial"),
         ("common", "0008_squashed_41"),

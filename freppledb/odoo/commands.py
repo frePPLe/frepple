@@ -257,13 +257,16 @@ class OdooReadData(PlanTask):
         # Synchronize users
         if hasattr(frepple.settings, "users"):
             try:
-                odoo_group, created = Group.objects.using(database).get_or_create(name="Odoo users")
+                odoo_group, created = Group.objects.using(database).get_or_create(
+                    name="Odoo users"
+                )
                 if created:
                     # Newly odoo user group. Assign all permissions by default.
                     for p in Permission.objects.using(database).all():
                         odoo_group.permissions.add(p)
                 odoo_users = [
-                    u.username for u in odoo_group.user_set.all().using(database).only("username")
+                    u.username
+                    for u in odoo_group.user_set.all().using(database).only("username")
                 ]
                 users = {}
                 for u in User.objects.using(database).all():

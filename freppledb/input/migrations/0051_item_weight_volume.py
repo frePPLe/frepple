@@ -79,7 +79,6 @@ def drop_temp_columns(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("input", "0050_operationmaterial_offset"),
     ]

@@ -160,7 +160,6 @@ class ReportList(GridReport):
 
 
 class ReportManager(GridReport):
-
     template = "reportmanager/reportmanager.html"
     reportkey = "reportmanager.reportmanager"
     help_url = "user-interface/report-manager.html"

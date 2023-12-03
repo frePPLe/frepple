@@ -29,7 +29,6 @@ from freppledb import __version__
 
 
 class Command(BaseCommand):
-
     help = """
        This command exports data in a spreadsheet. It is only available only
        from the user interface.

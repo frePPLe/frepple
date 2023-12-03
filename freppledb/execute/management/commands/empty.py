@@ -43,7 +43,6 @@ from freppledb import __version__
 
 
 class Command(BaseCommand):
-
     help = """
     This command empties the contents of all data tables in the frePPLe database.
 

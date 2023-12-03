@@ -44,7 +44,6 @@ def cleanBadRecords(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("input", "0060_remove_like_indexes"),
     ]

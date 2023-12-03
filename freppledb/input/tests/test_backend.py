@@ -79,7 +79,6 @@ from freppledb.input.models import (
 
 
 class DataLoadTest(TestCase):
-
     fixtures = ["demo"]
 
     def setUp(self):
@@ -121,7 +120,9 @@ class DataLoadTest(TestCase):
         self.assertContains(response, '"records":3,')
         response = self.client.get("/data/input/suboperation/?format=json")
         self.assertContains(response, '"records":0,')
-        response = self.client.get("/data/input/calendardetail/Working%20Days/?format=json")
+        response = self.client.get(
+            "/data/input/calendardetail/Working%20Days/?format=json"
+        )
         self.assertContains(response, '"records":1,')
         response = self.client.get("/data/input/calendardetail/Working%20Days/")
         checkResponse(self, response)
@@ -234,7 +235,6 @@ class DataLoadTest(TestCase):
 
 
 class ExcelTest(TransactionTestCase):
-
     fixtures = ["demo"]
 
     def setUp(self):
@@ -430,7 +430,6 @@ class ExcelTest(TransactionTestCase):
 
 
 class freppleREST(APITestCase):
-
     fixtures = ["demo"]
 
     # Default request format is multipart
@@ -980,7 +979,6 @@ class NotificationTest(TransactionTestCase):
 
 @skipUnless("freppledb.forecast" in settings.INSTALLED_APPS, "App not activated")
 class ManufacturingDemoTest(TransactionTestCase):
-
     fixtures = ["manufacturing_demo"]
 
     def setUp(self):

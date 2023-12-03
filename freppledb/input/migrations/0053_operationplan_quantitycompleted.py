@@ -24,7 +24,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("input", "0052_item_periodofcover")]
 
     operations = [

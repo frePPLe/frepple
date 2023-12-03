@@ -41,7 +41,9 @@ class ExecuteWidget(Widget):
         from freppledb.common.middleware import _thread_locals
         from freppledb.execute.management.commands.runplan import Command
 
-        return HttpResponse(Command.getHTML(request or _thread_locals.request, widget=True))
+        return HttpResponse(
+            Command.getHTML(request or _thread_locals.request, widget=True)
+        )
 
 
 @Dashboard.register
@@ -58,4 +60,6 @@ class ExecuteTaskGroupWidget(Widget):
         from freppledb.common.middleware import _thread_locals
         from freppledb.execute.management.commands.scheduletasks import Command
 
-        return HttpResponse(Command.getHTML(request or _thread_locals.request, widget=True))
+        return HttpResponse(
+            Command.getHTML(request or _thread_locals.request, widget=True)
+        )

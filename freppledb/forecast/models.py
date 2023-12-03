@@ -223,12 +223,16 @@ class Forecast(AuditModel):
             if isinstance(startdate, (date, datetime)):
                 data["startdate"] = startdate.strftime("%Y-%m-%dT%H:%M:%S")
             else:
-                data["startdate"] = parseLocalizedDateTime(startdate).strftime("%Y-%m-%dT%H:%M:%S")
+                data["startdate"] = parseLocalizedDateTime(startdate).strftime(
+                    "%Y-%m-%dT%H:%M:%S"
+                )
         if enddate:
             if isinstance(enddate, (date, datetime)):
                 data["enddate"] = enddate.strftime("%Y-%m-%dT%H:%M:%S")
             else:
-                data["enddate"] = parseLocalizedDateTime(enddate).strftime("%Y-%m-%dT%H:%M:%S")
+                data["enddate"] = parseLocalizedDateTime(enddate).strftime(
+                    "%Y-%m-%dT%H:%M:%S"
+                )
         for m, val in kwargs.items():
             if val is not None:
                 data[m] = float(val)

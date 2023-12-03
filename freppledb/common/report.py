@@ -945,7 +945,7 @@ class GridReport(View):
                 '{"name":"select","label":gettext("Select"),"width":75,"align":"center","formatter":"selectbutton","sortable":false,"search":false}'
             )
         count = -1
-        for (index, hidden, width) in rows:
+        for index, hidden, width in rows:
             count += 1
             try:
                 result.append(
@@ -973,7 +973,6 @@ class GridReport(View):
     def _generate_spreadsheet_data(
         cls, request, scenario_list, output, *args, **kwargs
     ):
-
         # retrieve value of parameter excel_duration_in_days
         excel_duration_in_days = (
             Parameter.getValue(
@@ -1084,7 +1083,6 @@ class GridReport(View):
         original_database = request.database
         try:
             for scenario in scenario_list:
-
                 request.database = scenario
                 if hasattr(request, "query"):
                     delattr(request, "query")
@@ -1131,7 +1129,6 @@ class GridReport(View):
 
     @classmethod
     def _generate_csv_data(cls, request, scenario_list, *args, **kwargs):
-
         # retrieve value of parameter excel_duration_in_days
         excel_duration_in_days = (
             Parameter.getValue(
@@ -1688,7 +1685,6 @@ class GridReport(View):
             original_database = request.database
             for scenario in request.user.scenarios:
                 try:
-
                     # request.database needs to be changed for has_perm to work properly
                     request.database = scenario.name
                     if hasattr(request, "query"):
@@ -1717,7 +1713,6 @@ class GridReport(View):
 
     @classmethod
     def get(cls, request, *args, **kwargs):
-
         # Pick up the list of time buckets
         if cls.hasTimeBuckets:
             cls.getBuckets(request, args, kwargs)
@@ -1878,7 +1873,6 @@ class GridReport(View):
             response["Cache-Control"] = "no-cache, no-store"
             return response
         elif fmt in ("spreadsheetlist", "spreadsheettable", "spreadsheet"):
-
             scenarios = request.GET.get("scenarios", None)
             scenario_list = scenarios.split(",") if scenarios else [request.database]
             # Make sure scenarios are in the scenario_permissions list
@@ -1911,7 +1905,6 @@ class GridReport(View):
             response["Cache-Control"] = "no-cache, no-store"
             return response
         elif fmt in ("csvlist", "csvtable", "csv"):
-
             scenarios = request.GET.get("scenarios", None)
             scenario_list = scenarios.split(",") if scenarios else [request.database]
             # Make sure scenarios are in the scenario_permissions list
@@ -2278,7 +2271,6 @@ class GridReport(View):
         # Delete the data records
         cursor = connections[request.database].cursor()
         with transaction.atomic(using=request.database):
-
             sql_list = []
             containsOperationPlan = any(m.__name__ == "OperationPlan" for m in deps)
             for m in deps:
@@ -2341,7 +2333,6 @@ class GridReport(View):
         # Handle the complete upload as a single database transaction
         try:
             with transaction.atomic(using=request.database):
-
                 # Erase all records and related tables
                 if "erase" in request.POST:
                     returnvalue = cls.erase(request)
@@ -2467,7 +2458,6 @@ class GridReport(View):
         # Handle the complete upload as a single database transaction
         try:
             with transaction.atomic(using=request.database):
-
                 # Erase all records and related tables
                 if "erase" in request.POST:
                     returnvalue = cls.erase(request)
@@ -3021,7 +3011,6 @@ class GridReport(View):
 
 
 class GridPivot(GridReport):
-
     # Cross definitions.
     # Possible attributes for a cross field are:
     #   - title:
@@ -3113,7 +3102,7 @@ class GridPivot(GridReport):
                 '{"name":"select","label":gettext("Select"),"width":75,"align":"center","sortable":false,"search":false,"fixed":true}'
             )
         count = -1
-        for (index, hidden, width) in rows:
+        for index, hidden, width in rows:
             try:
                 result.append(
                     '{%s,"width":%s,"counter":%d,"frozen":true%s,"hidden":%s,"fixed":true}'
@@ -3265,7 +3254,6 @@ class GridPivot(GridReport):
 
     @classmethod
     def _generate_csv_data(cls, request, scenario_list, *args, **kwargs):
-
         # retrieve value of parameter excel_duration_in_days
         excel_duration_in_days = (
             Parameter.getValue(
@@ -3586,7 +3574,6 @@ class GridPivot(GridReport):
     def _generate_spreadsheet_data(
         cls, request, scenario_list, output, *args, **kwargs
     ):
-
         # retrieve value of parameter excel_duration_in_days
         excel_duration_in_days = (
             Parameter.getValue(

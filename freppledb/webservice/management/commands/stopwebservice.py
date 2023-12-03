@@ -38,7 +38,6 @@ from freppledb.webservice.utils import checkRunning, waitTillNotRunning
 
 
 class Command(BaseCommand):
-
     help = "This command stops the frePPLe web service if it is running."
 
     requires_model_validation = False
@@ -69,7 +68,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options):
-
         # Pick up the options
         database = options["database"]
         if database not in settings.DATABASES:

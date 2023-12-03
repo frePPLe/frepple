@@ -40,7 +40,6 @@ def grant_read_access(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("archive", "0004_truncate_archive"),
     ]

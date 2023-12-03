@@ -716,7 +716,6 @@ class DeliveryOrder(OperationPlan):
 
 
 class DistributionOrder(OperationPlan):
-
     shipping_date = AliasDateTimeField(
         db_column="startdate", verbose_name=_("shipping date"), null=True, blank=True
     )
@@ -758,7 +757,6 @@ class DistributionOrder(OperationPlan):
 
 
 class PurchaseOrder(OperationPlan):
-
     ordering_date = AliasDateTimeField(
         db_column="startdate", verbose_name=_("ordering date"), null=True, blank=True
     )
@@ -801,7 +799,6 @@ class PurchaseOrder(OperationPlan):
 
 
 class ManufacturingOrder(OperationPlan):
-
     extra_dependencies = [OperationResource]
 
     class ManufacturingOrderManager(OperationPlan.Manager):
@@ -814,7 +811,6 @@ class ManufacturingOrder(OperationPlan):
 
     @staticmethod
     def parseData(data, rowmapper, user, database, ping, excel_duration_in_days=False):
-
         selfReferencing = []
 
         def formfieldCallback(f):
@@ -1286,7 +1282,6 @@ class ManufacturingOrder(OperationPlan):
                                     dict[rec.name].append(rec.item.name)
 
                         for mat in self.cleaned_data["material"]:
-
                             Found = False
                             for opplanmat in instance.materials.all().using(database):
                                 # find lists where item is:

@@ -294,7 +294,6 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-
         database = request.database
         ftp_protocol = (
             settings.FTP_PROTOCOL[database]

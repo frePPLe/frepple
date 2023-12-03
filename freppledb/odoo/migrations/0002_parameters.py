@@ -59,7 +59,6 @@ def add_parameters(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("odoo", "0001_initial")]
 
     operations = [migrations.RunPython(add_parameters)]

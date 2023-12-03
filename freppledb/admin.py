@@ -39,7 +39,6 @@ class freppleAuthenticationForm(AuthenticationForm):
 
 
 class freppleAdminSite(AdminSite):
-
     login_form = freppleAuthenticationForm
 
     def register(self, model_or_iterable, admin_class=None, force=False, **options):

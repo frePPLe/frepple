@@ -31,7 +31,6 @@ from freppledb import __version__
 
 
 class Command(BaseCommand):
-
     help = """
       Runs a multithreaded web server for frePPLe.
       """

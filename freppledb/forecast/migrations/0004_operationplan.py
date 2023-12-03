@@ -29,7 +29,6 @@ from freppledb.common.migrate import AttributeMigration
 
 
 class Migration(AttributeMigration):
-
     dependencies = [("forecast", "0003_demand_pattern")]
 
     initial = True

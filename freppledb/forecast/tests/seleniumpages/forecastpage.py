@@ -42,7 +42,6 @@ class ForecastTablePage(TablePage):
         return all_forecast_input_cells
 
     def get_time_range(self):
-
         return len(self.get_all_forecast_override_inputs_elements())
 
     def get_value_target_override_cell(self, cellnumber):

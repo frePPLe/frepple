@@ -170,7 +170,6 @@ def dropIndexLike(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("input", "0045_opplan_cascade_delete"),
         ("input", "0046_sql_role"),

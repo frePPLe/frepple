@@ -27,7 +27,6 @@ from freppledb.common.migrate import AttributeMigration
 
 
 class Migration(AttributeMigration):
-
     extends_app_label = "input"
 
     dependencies = [("input", "0044_squashed_60")]

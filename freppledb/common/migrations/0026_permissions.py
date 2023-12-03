@@ -41,7 +41,6 @@ def remove_permissions(apps, _unused):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("common", "0025_user_horizonbefore")]
 
     operations = [migrations.RunPython(remove_permissions)]

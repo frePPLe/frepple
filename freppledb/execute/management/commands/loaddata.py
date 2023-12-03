@@ -78,7 +78,6 @@ class Command(loaddata.Command):
         parser.add_argument("--user", dest="user", help="User running the command")
 
     def handle(self, *fixture_labels, **options):
-
         # get the database object
         database = options["database"]
         if database not in settings.DATABASES:

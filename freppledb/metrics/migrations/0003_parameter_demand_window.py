@@ -24,7 +24,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("metrics", "0002_unplanned_count_integer")]
 
     operations = [

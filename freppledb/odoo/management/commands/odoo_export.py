@@ -187,7 +187,10 @@ class Command(BaseCommand):
 
                 # Progress
                 task.status = "%s%%" % math.ceil(counter / total_pages * 100)
-                task.message = "Sent page %s of %s with plan data to odoo" % (counter, total_pages)
+                task.message = "Sent page %s of %s with plan data to odoo" % (
+                    counter,
+                    total_pages,
+                )
                 task.save(using=self.database, update_fields=("status", "message"))
                 counter += 1
                 self.exported = []

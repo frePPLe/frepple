@@ -86,7 +86,6 @@ class Task(models.Model):
 
 
 class ScheduledTask(models.Model):
-
     # Database fields
     name = models.CharField("name", primary_key=True, max_length=300, db_index=True)
     next_run = models.DateTimeField("nextrun", blank=True, null=True, db_index=True)

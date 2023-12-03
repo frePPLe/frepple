@@ -27,7 +27,6 @@ from freppledb.common.migrate import AttributeMigration
 
 
 class Migration(AttributeMigration):
-
     dependencies = [("forecast", "0002_cluster")]
 
     extends_app_label = "input"

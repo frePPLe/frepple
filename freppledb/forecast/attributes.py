@@ -27,7 +27,8 @@ from django.utils.translation import gettext_lazy as _
 
 # TODO we'ld actually want this field to be a foreign key, such that it can be use in queries
 registerAttribute(
-    "freppledb.input.models.OperationPlan", [("forecast", _("forecast"), "string", False, True)]
+    "freppledb.input.models.OperationPlan",
+    [("forecast", _("forecast"), "string", False, True)],
 )
 # Average Demand Interval and Coefficient of Variation Square
 registerAttribute(

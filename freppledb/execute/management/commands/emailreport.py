@@ -268,7 +268,6 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-
         if (
             "FILEUPLOADFOLDER" not in settings.DATABASES[request.database]
             or not settings.EMAIL_HOST

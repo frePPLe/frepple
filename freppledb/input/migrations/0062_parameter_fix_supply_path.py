@@ -24,7 +24,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("input", "0061_itemsupplier_uniqueness")]
 
     operations = [

@@ -25,7 +25,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("input", "0053_operationplan_quantitycompleted"),
     ]

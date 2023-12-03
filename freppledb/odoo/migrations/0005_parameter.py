@@ -25,7 +25,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("odoo", "0004_parameter")]
 
     operations = [

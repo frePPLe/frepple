@@ -193,10 +193,14 @@ class ForecastService(AsyncHttpConsumer):
                                         args["bucket"] = bucket.lower()
                                     startdate = bckt.get("startdate", None)
                                     if startdate:
-                                        args["startdate"] = parseLocalizedDateTime(startdate)
+                                        args["startdate"] = parseLocalizedDateTime(
+                                            startdate
+                                        )
                                     enddate = bckt.get("enddate", None)
                                     if enddate:
-                                        args["enddate"] = parseLocalizedDateTime(enddate)
+                                        args["enddate"] = parseLocalizedDateTime(
+                                            enddate
+                                        )
                                     for key, val in bckt.items():
                                         if (
                                             key
@@ -315,10 +319,14 @@ class ForecastService(AsyncHttpConsumer):
                                         args["bucket"] = bucket.lower()
                                     startdate = bckt.get("startdate", None)
                                     if startdate:
-                                        args["startdate"] = parseLocalizedDateTime(startdate)
+                                        args["startdate"] = parseLocalizedDateTime(
+                                            startdate
+                                        )
                                     enddate = bckt.get("enddate", None)
                                     if enddate:
-                                        args["enddate"] = parseLocalizedDateTime(enddate)
+                                        args["enddate"] = parseLocalizedDateTime(
+                                            enddate
+                                        )
                                     for key, val in bckt.items():
                                         if (
                                             key

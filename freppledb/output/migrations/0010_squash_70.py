@@ -39,7 +39,6 @@ def grant_read_access(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("output", "0006_squashed_60"),
         ("output", "0007_meta"),

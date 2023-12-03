@@ -25,7 +25,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("input", "0046_sql_role")]
 
     operations = [

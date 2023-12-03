@@ -57,7 +57,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options):
-
         if options["user"]:
             try:
                 user = User.objects.all().get(username=options["user"])

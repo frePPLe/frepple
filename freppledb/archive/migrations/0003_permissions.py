@@ -30,7 +30,6 @@ def remove_permissions(apps, _unused):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("archive", "0002_cascade_delete")]
 
     operations = [

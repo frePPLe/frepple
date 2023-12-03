@@ -38,7 +38,6 @@ def grant_read_access(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("input", "0070_operationplanresource"),
     ]

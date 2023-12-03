@@ -59,7 +59,6 @@ def populateColumns(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("reportmanager", "0001_initial")]
 
     operations = [

@@ -81,7 +81,6 @@ def dropIndexLike(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("input", "0059_item_uom"),
     ]

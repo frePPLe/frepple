@@ -151,7 +151,7 @@ class Widget:
     title = "Undefined"
     permissions = ()
     asynchronous = False  # Asynchroneous widget
-    repeat = False # Asynchronous widgets can be set to automatically refresh
+    repeat = False  # Asynchronous widgets can be set to automatically refresh
     url = None  # URL opened when the header is clicked
     exporturl = False  # Enable or disable a download icon
     args = ""  # Arguments passed in the url for asynchronous widgets

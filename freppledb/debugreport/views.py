@@ -56,7 +56,6 @@ def logapache(request):
     )
     logdata = ""
     try:
-
         # assuming the log file is in /var/log/apache2/error.log
         filename = "error.log"
         folder = "/var/log/apache2"

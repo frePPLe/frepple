@@ -35,7 +35,6 @@ from .models import SQLReport, SQLColumn
 
 @skipUnless("freppledb.reportmanager" in settings.INSTALLED_APPS, "App not activated")
 class ReportManagerTest(TransactionTestCase):
-
     fixtures = ["demo"]
 
     def setUp(self):

@@ -1161,7 +1161,6 @@ class OrderReport(DemandList):
 
 
 class ConstraintReport(BaseReport):
-
     template = "forecast/constraint_forecast.html"
 
     detailmodel = Forecast
@@ -1336,7 +1335,6 @@ class ForecastEditor:
     @staticmethod
     @staff_member_required
     def locationtree(request):
-
         # Check permissions
         if not request.user.has_perm("auth.view_forecast_report"):
             return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
@@ -1469,7 +1467,6 @@ class ForecastEditor:
     @staticmethod
     @staff_member_required
     def customertree(request):
-
         # Check permissions
         if not request.user.has_perm("auth.view_forecast_report"):
             return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
@@ -2100,7 +2097,6 @@ class ForecastEditor:
 
 
 class ForecastWizard(View):
-
     title = _("forecast wizard")
 
     help_url = "modeling-wizard/master-data/sales-orders.html"  # TODO

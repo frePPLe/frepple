@@ -71,7 +71,6 @@ class ArchivedModel(models.Model):
 
 
 class ArchivedBuffer(ArchivedModel):
-
     item = models.CharField(_("item"), max_length=300, db_index=True)
     location = models.CharField(_("location"), max_length=300, db_index=True)
     batch = models.CharField(_("batch"), max_length=300, null=True, blank=True)
@@ -97,7 +96,6 @@ class ArchivedBuffer(ArchivedModel):
 
 
 class ArchivedDemand(ArchivedModel):
-
     name = models.CharField(_("name"), max_length=300)
     item = models.CharField(_("item"), max_length=300, db_index=True)
     cost = models.DecimalField(
@@ -126,7 +124,6 @@ class ArchivedDemand(ArchivedModel):
 
 
 class ArchivedOperationPlan(ArchivedModel):
-
     reference = models.CharField(_("reference"), max_length=300)
     status = models.CharField(_("status"), null=True, blank=True, max_length=20)
     type = models.CharField(_("type"), max_length=5, db_index=True)

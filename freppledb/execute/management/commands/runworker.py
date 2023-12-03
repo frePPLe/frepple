@@ -195,7 +195,6 @@ def runTask(task, database):
 
 
 class Command(BaseCommand):
-
     help = """Processes the job queue of a database.
     The command is intended only to be used internally by frePPLe, not by an API or user.
     """
@@ -219,7 +218,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-
         # Pick up the options
         database = options["database"]
         if database not in settings.DATABASES:

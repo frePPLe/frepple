@@ -58,7 +58,6 @@ class PurchaseOrderScreen(SeleniumTest):
 
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_single_row_modification(self):
-
         newQuantity = 800
         newSupplier = "screw supplier"
 
@@ -124,7 +123,6 @@ class PurchaseOrderScreen(SeleniumTest):
 
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_multiple_rows_modification(self):
-
         table_page = TablePage(self.driver, PurchaseOrderScreen)
         table_page.login()
 
@@ -153,7 +151,6 @@ class PurchaseOrderScreen(SeleniumTest):
 
 
 class DistributionOrderScreen(SeleniumTest):
-
     fixtures = ["manufacturing_demo"]
 
     def setUp(self):
@@ -170,7 +167,6 @@ class DistributionOrderScreen(SeleniumTest):
 
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_single_row_modification(self):
-
         newQuantity = 70
         newDestination = "shop 2"
 
@@ -240,7 +236,6 @@ class DistributionOrderScreen(SeleniumTest):
 
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_multiple_rows_modification(self):
-
         table_page = TablePage(self.driver, DistributionOrderScreen)
         table_page.login()
 
@@ -269,14 +264,15 @@ class DistributionOrderScreen(SeleniumTest):
 
 
 class ManufacturingOrderScreen(SeleniumTest):
-
     fixtures = ["manufacturing_demo"]
 
     def setUp(self):
         os.environ["FREPPLE_TEST"] = "webservice"
         if "nowebservice" in os.environ:
             del os.environ["nowebservice"]
-        management.call_command("runplan", plantype=1, constraint=15, env="supply,loadplan", background=True)
+        management.call_command(
+            "runplan", plantype=1, constraint=15, env="supply,loadplan", background=True
+        )
         waitTillRunning(timeout=180)
         super().setUp()
 
@@ -286,7 +282,6 @@ class ManufacturingOrderScreen(SeleniumTest):
 
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_single_row_modification(self):
-
         newQuantity = 20
         newOperation = "Saw chair leg"
 
@@ -354,7 +349,6 @@ class ManufacturingOrderScreen(SeleniumTest):
 
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_multiple_rows_modification(self):
-
         table_page = TablePage(self.driver, ManufacturingOrderScreen)
         table_page.login()
 

@@ -27,7 +27,6 @@ import freppledb.common.fields
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("execute", "0005_squashed_60"),
         ("execute", "0006_meta"),

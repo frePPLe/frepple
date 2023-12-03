@@ -24,7 +24,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("input", "0051_item_weight_volume")]
 
     operations = [

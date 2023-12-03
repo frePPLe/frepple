@@ -59,7 +59,6 @@ class PopulateForecastTable(PlanTask):
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-
         # Returns the parent for all customers, typically AllCustomers
         def getParentCustomer(cursor):
             cursor.execute("select name from customer c1 where lvl = 0")
@@ -78,12 +77,10 @@ class PopulateForecastTable(PlanTask):
         # missing parameter means false
         param = Parameter.getValue("forecast.populateForecastTable", database, "true")
         if param.lower() == "true":
-
             cursor = connections[database].cursor()
             parentCustomer = getParentCustomer(cursor)
 
             if parentCustomer:
-
                 # We are in the case where there is a single root customer, typically "All customers"
                 # We will add forecast records for all item/location/customer combination found in the demand
                 # with a planned = false and a method = automatic
@@ -287,7 +284,6 @@ class AggregateDemand(PlanTask):
     @classmethod
     def run_new(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         with connections[database].cursor() as cursor:
-
             fcst_calendar = Parameter.getValue("forecast.calendar", database, None)
             horizon_future = int(
                 Parameter.getValue("forecast.Horizon_future", database, 365)
@@ -886,7 +882,6 @@ class LoadForecast(LoadTask):
 
 @PlanTaskRegistry.register
 class ExportStaticForecast(PlanTask):
-
     description = ("Export static data", "Export forecast")
     sequence = (305, "exportstatic2", 5)
 

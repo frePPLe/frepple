@@ -41,7 +41,6 @@ from freppledb import __version__
 
 
 class Command(BaseCommand):
-
     help = """
       This command is a simple, generic model generator.
       It is meant as a quick way to produce models for tests on performance,

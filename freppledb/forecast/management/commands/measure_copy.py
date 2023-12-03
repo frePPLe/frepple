@@ -76,7 +76,6 @@ class Command(BaseCommand):
         parser.add_argument("destination", help="destination measure")
 
     def handle(self, **options):
-
         from freppledb.forecast.models import Measure
 
         # Make sure the debug flag is not set!
@@ -245,7 +244,6 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-
         from freppledb.forecast.models import Measure
 
         measures = Measure.objects.using(request.database)

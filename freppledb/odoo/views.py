@@ -243,7 +243,9 @@ def Upload(request):
                                             '<resource name=%s id=%s quantity="%s"/>'
                                             % (
                                                 quoteattr(wores.resource.name),
-                                                quoteattr(wores.resource.category or ""),
+                                                quoteattr(
+                                                    wores.resource.category or ""
+                                                ),
                                                 wores.quantity,
                                             )
                                         )
@@ -258,7 +260,9 @@ def Upload(request):
                                         "<resource name=%s id=%s/>"
                                         % (
                                             quoteattr(opplanres.resource.name),
-                                            quoteattr(opplanres.resource.category or ""),
+                                            quoteattr(
+                                                opplanres.resource.category or ""
+                                            ),
                                         )
                                     )
                         data_odoo.append("</operationplan>")

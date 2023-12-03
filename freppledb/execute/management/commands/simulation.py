@@ -64,7 +64,6 @@ def load_class(full_class_string):
 
 
 class Command(BaseCommand):
-
     help = """
   Runs a simulation to measure the plan performance.
 
@@ -200,7 +199,9 @@ class Command(BaseCommand):
             if options.get("initial", None):
                 if verbosity > 0:
                     print("Erasing simulation database")
-                management.call_command("empty", database=database, verbosity=verbosity, all=True)
+                management.call_command(
+                    "empty", database=database, verbosity=verbosity, all=True
+                )
                 if verbosity > 0:
                     print("Loading initial data")
                 management.call_command(

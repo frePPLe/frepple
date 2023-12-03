@@ -26,7 +26,6 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("input", "0068_squash_70"),
     ]

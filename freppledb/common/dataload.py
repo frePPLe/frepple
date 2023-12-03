@@ -390,7 +390,6 @@ def parseCSVdata(
 def _parseData(
     model, data, rowmapper, user, database, ping, excel_duration_in_days=False
 ):
-
     selfReferencing = []
 
     def formfieldCallback(f):
@@ -432,7 +431,6 @@ def _parseData(
         bounds = None
 
     for row in data:
-
         rownumber += 1
         if bounds:
             # Only process data in the excel auto-filter range

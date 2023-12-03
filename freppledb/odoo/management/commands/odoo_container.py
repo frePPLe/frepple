@@ -37,7 +37,6 @@ from ...utils import getOdooVersion
 
 
 class Command(BaseCommand):
-
     help = "Utility command for development to spin up an odoo docker container"
 
     requires_system_checks = []

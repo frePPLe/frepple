@@ -35,7 +35,6 @@ from freppledb.common.models import Notification
 
 
 class execute_with_commands(TransactionTestCase):
-
     fixtures = ["demo"]
 
     def setUp(self):

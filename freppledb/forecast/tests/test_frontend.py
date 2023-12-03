@@ -38,7 +38,6 @@ from freppledb.forecast.tests.seleniumpages.forecastpage import ForecastTablePag
     "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
 )
 class ForecastEditorScreen(SeleniumTest):
-
     fixtures = ["manufacturing_demo"]
 
     def setUp(self):
@@ -55,7 +54,6 @@ class ForecastEditorScreen(SeleniumTest):
 
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_forecast_override(self):
-
         newQuantity = 20
         month_to_override = 3
         months_to_add = 5

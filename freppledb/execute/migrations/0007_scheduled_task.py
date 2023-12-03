@@ -28,7 +28,6 @@ import freppledb.common.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("execute", "0006_meta"),

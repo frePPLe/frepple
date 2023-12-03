@@ -24,7 +24,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("input", "0055_itemdistribution_batchwindow")]
 
     operations = [

@@ -41,7 +41,6 @@ from ...utils import waitTillRunning, checkRunning
 
 
 class Command(BaseCommand):
-
     help = "This command starts the frePPLe web service."
 
     requires_system_checks = []

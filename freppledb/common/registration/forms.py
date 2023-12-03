@@ -29,9 +29,9 @@ class PasswordResetRequestForm(forms.Form):
 
 class SetPasswordForm(forms.Form):
     """
-  A form that lets a user change set their password without entering the old
-  password
-  """
+    A form that lets a user change set their password without entering the old
+    password
+    """
 
     error_messages = {"password_mismatch": ("The two password fields didn't match.")}
     new_password1 = forms.CharField(label=("New password"), widget=forms.PasswordInput)

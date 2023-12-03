@@ -51,7 +51,6 @@ def timesince(st):
 
 
 class Command(BaseCommand):
-
     help = """
     Exports tables from the frePPLe database to CSV files in a folder
     """
@@ -507,7 +506,6 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-
         if (
             "FILEUPLOADFOLDER" not in settings.DATABASES[request.database]
             or not request.user.is_superuser

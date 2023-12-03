@@ -46,7 +46,6 @@ logger = logging.getLogger(__name__)
 
 
 class ExecuteSQL(View):
-
     template = "executesql/executesql.html"
     reportkey = "executesql.executesql"
 

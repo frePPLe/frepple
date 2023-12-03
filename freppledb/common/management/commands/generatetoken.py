@@ -30,7 +30,6 @@ from freppledb import __version__
 
 
 class Command(BaseCommand):
-
     help = """
     This command generates an API authentication token for a user.
     """

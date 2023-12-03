@@ -35,7 +35,6 @@ from freppledb import __version__
 
 
 class Command(BaseCommand):
-
     help = """
     This command restores a database dump of the frePPLe database.
 
@@ -63,7 +62,6 @@ class Command(BaseCommand):
         parser.add_argument("dump", help="Database dump file to restore.")
 
     def handle(self, **options):
-
         # Pick up the options
         database = options["database"]
         if database not in settings.DATABASES:

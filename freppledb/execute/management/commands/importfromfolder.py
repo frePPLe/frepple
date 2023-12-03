@@ -56,7 +56,6 @@ def timesince(st):
 
 
 class Command(BaseCommand):
-
     help = """
     Loads CSV files from the configured FILEUPLOADFOLDER folder into the frePPLe database.
     The data files should have the extension .csv or .csv.gz, and the file name should
@@ -163,7 +162,6 @@ class Command(BaseCommand):
             if "FILEUPLOADFOLDER" in settings.DATABASES[
                 self.database
             ] and os.path.isdir(settings.DATABASES[self.database]["FILEUPLOADFOLDER"]):
-
                 # Open the logfile
                 startofall = datetime.now()
                 logger.info("Started importfromfolder\n")
@@ -324,7 +322,6 @@ class Command(BaseCommand):
         """
         cursor = connections[self.database].cursor()
         try:
-
             if ifile.lower().endswith(".gz"):
                 file_open = gzip.open
             else:
@@ -535,7 +532,6 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-
         if (
             "FILEUPLOADFOLDER" not in settings.DATABASES[request.database]
             or not request.user.is_superuser

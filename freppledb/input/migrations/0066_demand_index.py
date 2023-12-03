@@ -25,7 +25,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("input", "0065_demand_owner"),
     ]

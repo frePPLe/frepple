@@ -59,7 +59,6 @@ def populateColumns(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("reportmanager", "0001_initial"),
         ("reportmanager", "0002_column"),
@@ -196,8 +195,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.RunPython(
-            code=populateColumns,
-            reverse_code=migrations.RunPython.noop
+            code=populateColumns, reverse_code=migrations.RunPython.noop
         ),
         migrations.RunSQL(
             sql="alter table reportmanager_report alter column lastmodified set default now()",

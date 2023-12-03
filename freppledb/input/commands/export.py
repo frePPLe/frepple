@@ -78,7 +78,6 @@ def SQL4attributes(attrs, with_on_conflict=True):
 
 @PlanTaskRegistry.register
 class cleanStatic(PlanTask):
-
     description = "Clean static data"
     sequence = 308
 
@@ -91,7 +90,6 @@ class cleanStatic(PlanTask):
 
     @classmethod
     def updateNames(cls, model, database, source):
-
         cursor = connections[database].cursor()
         model_name = model._meta.verbose_name
         # detect if we have a name change
@@ -145,7 +143,6 @@ class cleanStatic(PlanTask):
         source = kwargs.get("source", None)
 
         with connections[database].cursor() as cursor:
-
             # detect if we have an item/location/customer name change
             cls.fk_relations = {}
             if source:
@@ -731,7 +728,6 @@ class cleanStatic(PlanTask):
 
 @PlanTaskRegistry.register
 class exportParameters(PlanTask):
-
     description = ("Export static data", "Export parameters")
     sequence = (301, "exportstatic1", 1)
 
@@ -758,7 +754,6 @@ class exportParameters(PlanTask):
 
 @PlanTaskRegistry.register
 class exportCalendars(PlanTask):
-
     description = ("Export static data", "Export calendars")
     sequence = (301, "exportstatic2", 1)
 
@@ -806,7 +801,6 @@ class exportCalendars(PlanTask):
 
 @PlanTaskRegistry.register
 class exportLocations(PlanTask):
-
     description = ("Export static data", "Export locations")
     sequence = (302, "exportstatic1", 1)
 
@@ -873,7 +867,6 @@ class exportLocations(PlanTask):
 
 @PlanTaskRegistry.register
 class exportItems(PlanTask):
-
     description = ("Export static data", "Export items")
     sequence = (302, "exportstatic2", 1)
 
@@ -950,7 +943,6 @@ class exportItems(PlanTask):
 
 @PlanTaskRegistry.register
 class exportOperations(PlanTask):
-
     description = ("Export static data", "Export operations")
     sequence = (303, "exportstatic1", 1)
 
@@ -1076,7 +1068,6 @@ class exportOperations(PlanTask):
 
 @PlanTaskRegistry.register
 class exportSetupMatrices(PlanTask):
-
     description = ("Export static data", "Export setup matrices")
     sequence = (303, "exportstatic2", 1)
 
@@ -1119,7 +1110,6 @@ class exportSetupMatrices(PlanTask):
 
 @PlanTaskRegistry.register
 class exportResources(PlanTask):
-
     description = ("Export static data", "Export resources")
     sequence = 304
 
@@ -1212,7 +1202,6 @@ class exportResources(PlanTask):
 
 @PlanTaskRegistry.register
 class exportSetupRules(PlanTask):
-
     description = ("Export static data", "Export setup matrix rules")
     sequence = (305, "exportstatic1", 1)
 
@@ -1271,7 +1260,6 @@ class exportSetupRules(PlanTask):
 
 @PlanTaskRegistry.register
 class exportSkills(PlanTask):
-
     description = ("Export static data", "Export skills")
     sequence = (305, "exportstatic1", 2)
 
@@ -1314,7 +1302,6 @@ class exportSkills(PlanTask):
 
 @PlanTaskRegistry.register
 class exportResourceSkills(PlanTask):
-
     description = ("Export static data", "Export resource skills")
     sequence = (305, "exportstatic1", 3)
 
@@ -1372,7 +1359,6 @@ class exportResourceSkills(PlanTask):
 
 @PlanTaskRegistry.register
 class exportOperationResources(PlanTask):
-
     description = ("Export static data", "Export operation resources")
     sequence = (305, "exportstatic1", 4)
 
@@ -1442,7 +1428,6 @@ class exportOperationResources(PlanTask):
 
 @PlanTaskRegistry.register
 class exportCustomers(PlanTask):
-
     description = ("Export static data", "Export customers")
     sequence = (305, "exportstatic2", 1)
 
@@ -1508,7 +1493,6 @@ class exportCustomers(PlanTask):
 
 @PlanTaskRegistry.register
 class exportDemands(PlanTask):
-
     description = ("Export static data", "Export sales orders")
     sequence = (305, "exportstatic2", 2)
 
@@ -1601,7 +1585,6 @@ class exportDemands(PlanTask):
 
 @PlanTaskRegistry.register
 class exportCalendarBuckets(PlanTask):
-
     description = ("Export static data", "Export calendar buckets")
     sequence = (305, "exportstatic3", 1)
 
@@ -1689,7 +1672,6 @@ class exportCalendarBuckets(PlanTask):
 
 @PlanTaskRegistry.register
 class exportBuffers(PlanTask):
-
     description = ("Export static data", "Export buffers")
     sequence = (305, "exportstatic4", 1)
 
@@ -1754,7 +1736,6 @@ class exportBuffers(PlanTask):
 
 @PlanTaskRegistry.register
 class exportOperationMaterials(PlanTask):
-
     description = ("Export static data", "Export operation material")
     sequence = (305, "exportstatic4", 2)
 
@@ -1828,7 +1809,6 @@ class exportOperationMaterials(PlanTask):
 
 @PlanTaskRegistry.register
 class exportOperationDependencies(PlanTask):
-
     description = ("Export static data", "Export operation dependency")
     sequence = (305, "exportstatic4", 2.5)
 
@@ -1888,7 +1868,6 @@ class exportOperationDependencies(PlanTask):
 
 @PlanTaskRegistry.register
 class exportSuppliers(PlanTask):
-
     description = ("Export static data", "Export suppliers")
     sequence = (305, "exportstatic4", 3)
 
@@ -1957,7 +1936,6 @@ class exportSuppliers(PlanTask):
 
 @PlanTaskRegistry.register
 class exportItemSuppliers(PlanTask):
-
     description = ("Export static data", "Export item suppliers")
     sequence = (305, "exportstatic4", 4)
 
@@ -1987,7 +1965,7 @@ class exportItemSuppliers(PlanTask):
                         i.leadtime,
                         i.size_minimum,
                         i.size_multiple,
-                        i.size_maximum if i.size_maximum < 10 ** 12 else None,
+                        i.size_maximum if i.size_maximum < 10**12 else None,
                         i.batchwindow,
                         i.hard_safety_leadtime,
                         i.extra_safety_leadtime,
@@ -2076,7 +2054,6 @@ class exportItemSuppliers(PlanTask):
 
 @PlanTaskRegistry.register
 class exportItemDistributions(PlanTask):
-
     description = ("Export static data", "Export item distributions")
     sequence = (305, "exportstatic4", 5)
 

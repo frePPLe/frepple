@@ -191,7 +191,6 @@ def dropIndexLike(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("common", "0016_meta"),
         ("common", "0017_sql_role"),

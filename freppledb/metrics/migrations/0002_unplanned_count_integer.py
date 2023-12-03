@@ -27,7 +27,6 @@ from freppledb.common.migrate import AttributeMigration
 
 
 class Migration(AttributeMigration):
-
     dependencies = [("metrics", "0001_item_resource_attributes")]
 
     operations = [

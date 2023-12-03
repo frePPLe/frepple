@@ -129,5 +129,7 @@ if mode == "WSGI":
             freppledb.output.views.constraint.ReportByResource.as_view(),
             name="output_constraint_resource",
         ),
-        re_path(r"^kpi/$", freppledb.output.views.kpi.Report.as_view(), name="output_kpi"),
+        re_path(
+            r"^kpi/$", freppledb.output.views.kpi.Report.as_view(), name="output_kpi"
+        ),
     ]

@@ -278,7 +278,6 @@ class Calendar(AuditModel):
 
 
 class CalendarBucket(AuditModel):
-
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True)
     calendar = models.ForeignKey(

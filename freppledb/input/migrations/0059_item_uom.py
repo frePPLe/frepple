@@ -70,7 +70,6 @@ def drop_temp_columns(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("input", "0058_nullable_unique_fields"),
     ]

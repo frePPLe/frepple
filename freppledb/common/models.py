@@ -109,7 +109,6 @@ class HierarchyModel(models.Model):
 
     @classmethod
     def rebuildHierarchy(cls, database=DEFAULT_DB_ALIAS):
-
         # Verify whether we need to rebuild or not.
         # We search for the first record whose lft field is null.
         if len(cls.objects.using(database).filter(lft__isnull=True)[:1]) == 0:
@@ -448,7 +447,7 @@ class User(AbstractUser):
 
                 using = getattr(_thread_locals, "database", None)
                 if not using:
-                    using= DEFAULT_DB_ALIAS
+                    using = DEFAULT_DB_ALIAS
 
         scenarios = [
             i["name"]

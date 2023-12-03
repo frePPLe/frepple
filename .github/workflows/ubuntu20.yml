@@ -52,12 +52,12 @@ jobs:
           git submodule update --remote --checkout --force
           grunt
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-          . ${{github.workspace}}/venv/bin/activate
-          echo "PATH=$PATH" >> $GITHUB_ENV
-          echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target package
           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target doc
           cp djangosettings.py djangosettings.original.py
+          . ${{github.workspace}}/venv/bin/activate
+          echo "PATH=$PATH" >> $GITHUB_ENV
+          echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
 
       - name: Test
         working-directory: ${{github.workspace}}

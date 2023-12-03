@@ -27,6 +27,7 @@ add_library(utils STATIC
   "${CMAKE_SOURCE_DIR}/include/frepple/json.h"
   "${CMAKE_BINARY_DIR}/include/config.h"
 )
+add_dependencies(utils venv)
 
 add_library(model STATIC
   "model/actions.cpp"
@@ -95,6 +96,7 @@ if(MSVC)
 endif()
 
 add_dependencies(forecast solver)
+
 # Main shared library
 add_library(frepple SHARED
   dllmain.cpp

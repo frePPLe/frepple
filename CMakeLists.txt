@@ -102,17 +102,22 @@ if(WIN32)
   set(Python3_LIBRARIES_RELEASE "${PYTHON_LIBRARY_RELEASE}")
   set(Python3_LIBRARIES "${PYTHON_LIBRARIES}")
   set(Python3_INCLUDE_DIRS "${PYTHON_INCLUDE_DIRS}")
-  execute_process(COMMAND "${Python3_EXECUTABLE}" -m venv "${PROJECT_SOURCE_DIR}/venv")
-  execute_process(COMMAND "${Python3_EXECUTABLE}" -m pip install -r "${PROJECT_SOURCE_DIR}/requirements.dev.txt")
+  set(Python3_VENV "${PROJECT_SOURCE_DIR}/venv/Scripts")
 else()
   find_package(Python3 3.6 COMPONENTS Interpreter Development REQUIRED)
-  execute_process(COMMAND "${Python3_EXECUTABLE}" -m venv "${PROJECT_SOURCE_DIR}/venv")
-  set(ENV{VIRTUAL_ENV} "${PROJECT_SOURCE_DIR}/venv")
-  set(Python3_FIND_VIRTUALENV FIRST)
-  unset(Python3_EXECUTABLE)
-  find_package(Python3 COMPONENTS Interpreter Development)
-  execute_process(COMMAND "${Python3_EXECUTABLE}" -m pip install -r "${PROJECT_SOURCE_DIR}/requirements.dev.txt")
+  set(Python3_VENV "${PROJECT_SOURCE_DIR}/venv/bin")
 endif()
+
+add_custom_command(
+  OUTPUT venv.stamp
+  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt" "${CMAKE_CURRENT_SOURCE_DIR}/requirements.dev.txt"
+  COMMAND "${Python3_EXECUTABLE}" -m venv "${PROJECT_SOURCE_DIR}/venv"
+  COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/requirements.dev.txt" requirements.dev.txt
+  COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt" requirements.txt
+  COMMAND "${Python3_VENV}/pip" install -r requirements.dev.txt
+  COMMAND ${CMAKE_COMMAND} -E touch venv.stamp
+)
+add_custom_target(venv DEPENDS venv.stamp)
 
 find_program(npm NAMES npm)
 find_program(grunt NAMES grunt)
@@ -282,14 +287,16 @@ add_subdirectory(contrib/linux)
 # Test suite
 enable_testing()
 add_test(NAME engine
-  COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/runtest.py ${TESTARGS}
+  COMMAND ${Python3_VENV} ${CMAKE_CURRENT_SOURCE_DIR}/test/runtest.py ${TESTARGS}
 )
 
 # Debugging targets
 find_program(valgrind NAMES valgrind)
 
 if(valgrind)
-  add_custom_target(callgrind
+  add_custom_target(
+    callgrind
+    DEPENDS venv
     COMMAND ${CMAKE_COMMAND} -E env
     FREPPLE_HOME=${CMAKE_SOURCE_DIR}/bin
     PYTHONPATH=${CMAKE_SOURCE_DIR}
@@ -310,7 +317,10 @@ if(valgrind)
     COMMAND callgrind_annotate --show-percs=yes --inclusive=yes --tree=calling > callgrind.cumulative_with_calling.out
     COMMAND callgrind_annotate --show-percs=yes --inclusive=yes --tree=caller > callgrind.cumulative_with_caller.out
   )
-  add_custom_target(memcheck ${CMAKE_COMMAND} -E
+  add_custom_target(
+    memcheck
+    DEPENDS venv
+    COMMAND ${CMAKE_COMMAND} -E
     env
     FREPPLE_HOME=${CMAKE_SOURCE_DIR}/bin
     PYTHONPATH=${CMAKE_SOURCE_DIR}

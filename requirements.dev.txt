@@ -6,12 +6,16 @@ tzlocal
 
 # Extra packages for development environments
 black == 21.9b0
-Jinja2 < 3.1      # Jinja 3.1 breaks sphinx
-docutils == 0.16
-Sphinx == 3.5.3
-sphinx-tabs == 3.2.0
-sphinx-sitemap == 2.5.0
-sphinx-reredirects == 0.1.2
+Jinja2 < 3.1 ; python_version < '3.10'     # Jinja 3.1 breaks sphinx
+Jinja2 == 3.1.2 ; python_version >= '3.10'
+docutils == 0.16 ; python_version < '3.10'
+docutils == 0.18.1 ; python_version >= '3.10'
+Sphinx == 3.5.3 ; python_version < '3.10'
+Sphinx == 7.2.6; python_version >= '3.10'
+sphinx-tabs == 3.2.0 ; python_version < '3.10'
+sphinx-tabs == 3.4.4 ; python_version >= '3.11'
+sphinx-sitemap == 2.5.1
+sphinx-reredirects == 0.1.3
 selenium
 selenium_firefox == 2.0.7   # Issues with urllib3 on recent versions
 msedge-selenium-tools == 3.141.4 # Issues with urllib3 on recent versions

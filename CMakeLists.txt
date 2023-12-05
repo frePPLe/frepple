@@ -7,10 +7,6 @@ project(frepple VERSION 8.3.0)
 set(PROJECT_EDITION "Community Edition")
 set(PROJECT_BRANCH "community")
 
-if(POLICY CMP0111)
-  cmake_policy(SET CMP0111 OLD)
-endif()
-
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   # Detect the linux distribution
   if(EXISTS "/etc/issue")
@@ -67,6 +63,8 @@ if(WIN32)
     set_target_properties(xerces-c PROPERTIES
       IMPORTED_LOCATION_DEBUG "${XERCESC_FOLDER}/lib/xerces-c_3D.lib"
       IMPORTED_LOCATION_RELEASE "${XERCESC_FOLDER}/lib/xerces-c_3.lib"
+      IMPORTED_LOCATION_MINSIZEREL "${XERCESC_FOLDER}/lib/xerces-c_3.lib"
+      IMPORTED_LOCATION_RELWITHDEBINFO "${XERCESC_FOLDER}/lib/xerces-c_3.lib"
     )
   endif()
 
@@ -94,20 +92,12 @@ endif()
 
 # Check python and create the virtualenv
 if(WIN32)
-  # We're using deprecated functions to find python3.
-  # Using the new cmake functions works on Linux (see below) but gives trouble on Windows.
-  find_package(PythonInterp 3.6 REQUIRED)
-  find_package(PythonLibs 3.6 REQUIRED)
-  set(Python3_EXECUTABLE "${PYTHON_EXECUTABLE}")
-  set(Python3_LIBRARIES_RELEASE "${PYTHON_LIBRARY_RELEASE}")
-  set(Python3_LIBRARIES "${PYTHON_LIBRARIES}")
-  set(Python3_INCLUDE_DIRS "${PYTHON_INCLUDE_DIRS}")
   set(Python3_VENV "${PROJECT_SOURCE_DIR}/venv/Scripts")
 else()
-  find_package(Python3 3.6 COMPONENTS Interpreter Development REQUIRED)
   set(Python3_VENV "${PROJECT_SOURCE_DIR}/venv/bin")
 endif()
 
+find_package(Python3 3.6 COMPONENTS Interpreter Development.Embed REQUIRED)
 add_custom_command(
   OUTPUT venv.stamp
   DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt" "${CMAKE_CURRENT_SOURCE_DIR}/requirements.dev.txt"
@@ -136,6 +126,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(WIN32)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MT")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /EHsc /MP8 ")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG /MTd /EHsc /MP8 ")
   add_definitions("-D_CRT_SECURE_NO_DEPRECATE")

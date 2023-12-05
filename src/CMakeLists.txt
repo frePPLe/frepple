@@ -111,7 +111,7 @@ target_link_libraries(frepple PUBLIC forecast)
 
 if(WIN32)
   target_link_libraries(frepple PRIVATE libpq)
-  target_link_libraries(frepple PRIVATE ${Python3_LIBRARIES_RELEASE})
+  target_link_libraries(frepple PRIVATE ${Python3_LIBRARIES})
   set_target_properties(frepple PROPERTIES LINK_FLAGS "/ignore:4099")
   file(TO_NATIVE_PATH "${CMAKE_SOURCE_DIR}/bin/frepple.exe" frepple-exe)
   string(REPLACE "\\" "\\\\" frepple-exe-escaped "${frepple-exe}")

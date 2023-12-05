@@ -95,7 +95,7 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
           gettext('start') + ": " + moment(opplan.operationplan__startdate).format(datetimeformat) + '<br>' +
           gettext('end') + ": " + moment(opplan.operationplan__enddate).format(datetimeformat) + '<br>' +
           gettext('quantity') + ": " + grid.formatNumber(opplan.operationplan__quantity) + "<br>" +
-          gettext('criticality') + ": " + opplan.operationplan__criticality + "<br>" +
+          gettext('criticality') + ": " + Math.round(opplan.operationplan__criticality) + "<br>" +
           gettext('delay') + ": " + thedelay + "<br>" +
           gettext('status') + ": " + gettext(opplan.operationplan__status) + "<br>";
       }
@@ -144,8 +144,42 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     }
     $scope.buildtooltip = buildtooltip;
 
-    function buildcolor(opplan) {
-      return "red";
+    function buildcolor(rowdata) {
+      if (rowdata.operationplan__reference === $scope.curselected)
+        // Currently selected
+        return "black";
+
+      // The logic here needs to be in sync with the color formatter in the frepple.js file
+      var thenumber = parseInt(rowdata['operationplan__color']);
+      if (rowdata['operationplan__inventory_item'] || rowdata['operationplan__leadtime']) {
+        if (!isNaN(thenumber)) {
+          if (thenumber >= 100 && thenumber < 999999)
+            return '#008000';
+          else if (thenumber === 0)
+            return '#f00';
+          else if (thenumber === 999999)
+            return 'white';
+          else {
+            thenumber = Math.round(thenumber / 100 * 255);
+            return 'rgb(' + 255 + ',' + thenumber + ',' + 0 + ')';
+          }
+        }
+      } else {
+        var thedelay = Math.round(parseInt(rowdata['operationplan__delay']) / 8640) / 10;
+        if (parseInt(rowdata['operationplan__criticality']) === 999)
+          return '#f00';
+        else if (thedelay < 0)
+          return '#008000';
+        else if (thedelay === 0)
+          return '#008000';
+        else if (thedelay > 0) {
+          if (thenumber > 100 || thenumber < 0)
+            return '#f00';
+          else
+            return 'rgb(' + 255 + ',' + Math.round(thenumber / 100 * 255) + ',' + 0 + ')';
+        }
+      }
+      return 'rgb(111,111,255)';
     }
     $scope.buildcolor = buildcolor;
 
@@ -211,7 +245,18 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
       gantt.header("#ganttheader");
 
       $('svg rect').on("click", function (d) {
+        var prev = $scope.findOperationPlan($scope.curselected);
+        if (prev) {
+          $scope.curselected = null;
+          $('svg rect[data-reference="' + admin_escape(prev.operationplan__reference) + '"]')
+            .attr("fill", $scope.buildcolor(prev))
+            .attr("fill-opacity", prev.operationplan__status == 'proposed' ? "0.5" : "1");
+        }
         var opplan = $scope.findOperationPlan($(d.target).attr("data-reference"));
+        if (opplan) {
+          $(d.target).attr("fill", "black").attr("fill-opacity", "1");
+        }
+        $scope.curselected = opplan ? opplan.operationplan__reference : null;
         $scope.$parent.displayInfo(opplan);
       }).
         each(function () {

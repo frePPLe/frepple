@@ -303,7 +303,8 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
       $scope.operationplan.get(callback);
     }
     else {
-      $scope.operationplan = new OperationPlan();
+      if ($scope.operationplan === null || typeof ($scope.operationplan) !== 'object')
+        $scope.operationplan = new OperationPlan();
       $scope.operationplan.id = rowid;
       if (typeof $scope.operationplan.id === 'undefined')
         $scope.$apply(function () {
@@ -379,7 +380,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         gettext("There are unsaved changes on this page.") +
         '</div>' +
         '<div class="modal-footer justify-content-between">' +
-        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" value="' + gettext('Return to page') + '">' +
+        '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary" data-bs-dismiss="modal" value="' + gettext('Return to page') + '">' +
         '<input type="submit" id="savebutton" role="button" class="btn btn-danger" value="' + gettext('Save') + '">' +
         '</div>' +
         '</div>' +

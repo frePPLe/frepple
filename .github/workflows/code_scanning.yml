@@ -2,15 +2,8 @@ name: "Code scanning"
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["master"]
-    paths-ignore:
-      - "doc/**"
-      - "*.md"
-  pull_request:
-    branches: ["master"]
-    paths-ignore:
-      - "doc/**"
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   analyze:

@@ -230,6 +230,13 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
     });
   });
 
+  function zoom() {
+    $scope.$apply(function () {
+      $scope.$broadcast('zoom');
+    });
+  };
+  $scope.zoom = zoom;
+
   function displayInfo(row) {
     if ($scope.mode == "kanban" && row === undefined) {
       $scope.loadKanbanData();

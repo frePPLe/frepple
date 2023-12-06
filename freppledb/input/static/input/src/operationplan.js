@@ -53,8 +53,10 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
               console.log("Operation get '" + operplan.id + "': ");
               console.log(response.data);
             }
-            Object.keys(operplan).forEach(key => delete operplan[key]);
+            Object.keys(operplan).forEach(key => { if (key !== "dirty") delete operplan[key] });
             operplan.extend(response.data[0]);
+            if (operplan.reference) operplan.id = operplan.reference;
+            if (operplan.operationplan__reference) operplan.id = operplan.operationplan__reference;
             if (typeof callback === 'function') {
               callback(operplan);
             }

@@ -3200,7 +3200,7 @@ var gantt = {
       var layers = $(this).attr("title");
       $(this).attr("transform", "scale(" + scale + ",1) translate(0," + ((layers - 1) * gantt.rowsize + 3) + ")");
     });
-    gantt.header();
+    gantt.header(el);
   },
 
   scroll: function (event) {
@@ -3211,7 +3211,7 @@ var gantt = {
     );
     viewend.setTime(viewstart.getTime() + zone);
     // Determine the conversion between svg units and the screen
-    var scale = (horizonend.getTime() - horizonstart.getTime()) / zone * $("#jqgh_grid_operationplans").width() / 10000;
+    var scale = (horizonend.getTime() - horizonstart.getTime()) / zone * $(event.target).width() / 10000;
     var offset = (horizonstart.getTime() - viewstart.getTime()) / (horizonend.getTime() - horizonstart.getTime()) * 10000;
     // Transform all svg elements
     $('.transformer').each(function () {

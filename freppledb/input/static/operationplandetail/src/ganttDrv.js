@@ -67,6 +67,7 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     $scope.getDirtyCards = getDirtyCards;
 
     function findOperationPlan(ref) {
+      if (ref === null) return null;
       return $scope.ganttoperationplans.rows ?
         $scope.ganttoperationplans.rows.find(e => { return e.operationplan__reference == ref; }) :
         null;
@@ -184,19 +185,20 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     $scope.buildcolor = buildcolor;
 
     function time2scale(d) {
-      return Math.round(10000 * (d - horizonstart) / (horizonend - horizonstart));
+      return Math.round(10000 * (d - viewstart) / (viewend - viewstart));
     }
     $scope.time2scale = time2scale;
 
     function duration2scale(d) {
-      return Math.round(10000 * d / (horizonend - horizonstart));
+      return Math.round(10000 * d / (viewend - viewstart));
     }
     $scope.duration2scale = duration2scale;
 
     function drawGantt() {
-      var scale = ($("#ganttgraph").width() - 200) / 10000;
+      var width = $("#ganttgraph").width();
+      var scale = (width - 200) / 10000;
       if (!$scope.ganttoperationplans.rows) return;
-      var data = '<table class="table"><tr><th class="align-middle" style="width:200px">' + gettext("resource") + '</th><th style="overflow-x: scroll" id="ganttheader"></th></tr>';
+      var data = '<table class="table" style="table-layout: fixed"><tr><th class="align-middle" style="width:200px">' + gettext("resource") + '</th><th style="overflow-x: scroll; width:' + width + 'px" id="ganttheader"></th></tr>';
       var curresource;
       var first = true;
       var layer = [];
@@ -210,7 +212,7 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
               + 'px"><g class="ganttrow" transform="scale(' + scale + ',1) translate(0,' + ((layer.length - 1) * $scope.rowheight) + ')" title="' + layer.length + '">'
               + svgdata + "</g></svg></td></tr>";
           first = false;
-          data += "<tr><td>" + opplan.resource + '</td><td>';
+          data += "<tr><td>" + opplan.resource + '</td><td style="width: ' + width + 'px">';
           layer = [];
           svgdata = "";
         }
@@ -265,14 +267,23 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
             animation: false,
             html: true,
             container: 'body',
-            template: `
-         <div class="tooltip opacity-100" role="tooltip">
-           <div class="tooltip-arrow"></div>
-           <div class="tooltip-inner bg-white text-start text-body fs-6 p-3"></div>
-         </div>`
+            trigger: 'hover',
+            template: `<div class="tooltip opacity-100" role="tooltip">
+                <div class="tooltip-arrow"></div>
+                <div class="tooltip-inner bg-white text-start text-body fs-6 p-3"></div>
+              </div>`
           });
         });
     }
     $scope.drawGantt = drawGantt;
+
+    $scope.$on('zoom', function () {
+      drawGantt();
+    });
+
+    $("#ganttheader").on("scroll", function (event) {
+      gantt.scroll(event);
+      drawGantt();
+    });
   }
 }

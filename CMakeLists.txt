@@ -97,7 +97,7 @@ else()
   set(Python3_VENV "${PROJECT_SOURCE_DIR}/venv/bin")
 endif()
 
-find_package(Python3 3.6 COMPONENTS Interpreter Development.Embed REQUIRED)
+find_package(Python3 3.6 COMPONENTS Interpreter Development REQUIRED)
 add_custom_command(
   OUTPUT venv.stamp
   DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt" "${CMAKE_CURRENT_SOURCE_DIR}/requirements.dev.txt"

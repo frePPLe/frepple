@@ -11,11 +11,12 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 - | Bug fix: Custom operationplan attributes couldn't be edited in the user
     interface.
 
-- | Resource detail report: A new display mode is added to display the resource schedule as
-    a Gantt chart.
-
 - | Capacity report: Clicking to get the detail of the MOs consuming from a bucketized
     resource will now display all the MOs of the time buckets overlapping the filtering dates.
+
+- | Resource detail report: A new display mode is added to display the resource schedule as
+    a Gantt chart.
+  | This is experimental feature that will evolve in following releases.
 
 .. rubric:: User interface
 

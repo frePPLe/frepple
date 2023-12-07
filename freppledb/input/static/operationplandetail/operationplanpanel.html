@@ -2,11 +2,11 @@
 <div class="card-header">
   <h5 class="card-title">
   <span data-ng-if="operationplan.type" style="text-transform: capitalize">{{ opptype[operationplan.type] }}</span>
-  <span data-ng-if="!operationplan.id" style="text-transform: capitalize">{{ 'no selection'|translate }}</span>
+  <span data-ng-if="!operationplan.id && !operationplan.reference && !operationplan.operationplan__reference" style="text-transform: capitalize">{{ 'no selection'|translate }}</span>
   <span data-ng-if="operationplan.id == -1" style="text-transform: capitalize">{{ 'selected' | translate }}&nbsp;{{ operationplan.count }}</span>
   </h5>
 </div>
-<div class="card-body" data-ng-if="operationplan.id">
+<div class="card-body" data-ng-if="operationplan.id || operationplan.reference || operationplan.operationplan__reference">
 <style scoped>
 input.ng-dirty {
   background: none !important;

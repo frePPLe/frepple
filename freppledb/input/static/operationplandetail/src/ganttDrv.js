@@ -254,9 +254,11 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
             .attr("fill", $scope.buildcolor(prev))
             .attr("fill-opacity", prev.operationplan__status == 'proposed' ? "0.5" : "1");
         }
-        var opplan = $scope.findOperationPlan($(d.target).attr("data-reference"));
+        var ref = $(d.target).attr("data-reference");
+        var opplan = $scope.findOperationPlan(ref);
         if (opplan) {
           $(d.target).attr("fill", "black").attr("fill-opacity", "1");
+          opplan.id = ref;
         }
         $scope.curselected = opplan ? opplan.operationplan__reference : null;
         $scope.$parent.displayInfo(opplan);

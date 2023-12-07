@@ -101,7 +101,7 @@ find_package(Python3 3.6 COMPONENTS Interpreter Development.Embed REQUIRED)
 add_custom_command(
   OUTPUT venv.stamp
   DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt" "${CMAKE_CURRENT_SOURCE_DIR}/requirements.dev.txt"
-  COMMAND "${Python3_EXECUTABLE}" -m venv "${PROJECT_SOURCE_DIR}/venv"
+  COMMAND "${Python3_EXECUTABLE}" -m venv "${PROJECT_SOURCE_DIR}/venv" || cd .
   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/requirements.dev.txt" requirements.dev.txt
   COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt" requirements.txt
   COMMAND "${Python3_VENV}/pip" install -r requirements.dev.txt

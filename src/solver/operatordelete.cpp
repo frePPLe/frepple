@@ -376,8 +376,13 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
       double newsize_opplan;
       double newsize_flowplan;
 
+      auto topopplan = fp->getOperationPlan();
+      if (topopplan->getOwner() &&
+          topopplan->getOwner()->getOperation()->hasType<OperationRouting>())
+        topopplan = topopplan->getOwner();
+
       if (cur_excess < fp->getFlow()->getQuantityFixed() +
-                           fp->getOperation()->getSizeMultiple() *
+                           topopplan->getOperation()->getSizeMultiple() *
                                fp->getFlow()->getQuantity())
         // This excess is unavoidable...
         continue;
@@ -402,14 +407,14 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
         pushBuffers(fp->getOperationPlan(), true, false);
         // Log message
         if (getLogLevel() > 0)
-          logger << "Removing excess operationplan: " << fp->getOperationPlan()
-                 << endl;
+          logger << "Removing excess operationplan: " << topopplan << endl;
         // Delete operationplan
         if (cmds)
-          cmds->add(new CommandDeleteOperationPlan(fp->getOperationPlan()));
+          cmds->add(new CommandDeleteOperationPlan(topopplan));
         else
           delete fp->getOperationPlan();
-      } else {
+      } else if (newsize_opplan <
+                 fp->getOperationPlan()->getQuantity() - ROUNDING_ERROR) {
         // Reduce the operationplan
         auto delta = fp->getQuantity() - newsize_flowplan;
         if (delta > ROUNDING_ERROR) {
@@ -419,16 +424,16 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
           excess -= fp->getQuantity() - newsize_flowplan;
           if (getLogLevel() > 0)
             logger << "Resizing excess operationplan to " << newsize_opplan
-                   << ": " << fp->getOperationPlan() << endl;
+                   << ": " << topopplan << endl;
           // Resize operationplan
           if (cmds)
             // TODO Incorrect - need to resize the flowplan intead of the the
             // operationplan!
             cmds->add(new CommandMoveOperationPlan(
-                fp->getOperationPlan(), Date::infinitePast,
-                fp->getOperationPlan()->getEnd(), newsize_opplan));
+                topopplan, Date::infinitePast, topopplan->getEnd(),
+                newsize_opplan));
           else
-            fp->getOperationPlan()->setQuantity(newsize_opplan);
+            topopplan->setQuantity(newsize_opplan);
         }
       }
     }

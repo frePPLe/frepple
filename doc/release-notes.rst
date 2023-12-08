@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-8.3.0 (Upcoming release)
-========================
+8.3.0 (2023-12-08)
+==================
 
 Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 
@@ -17,6 +17,9 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
 - | Resource detail report: A new display mode is added to display the resource schedule as
     a Gantt chart.
   | This is experimental feature that will evolve in following releases.
+
+ - | Bug fix: Safety stock solving in buffers replenished with a routing operation
+     that has a size multiple could generate excess material.
 
 .. rubric:: User interface
 

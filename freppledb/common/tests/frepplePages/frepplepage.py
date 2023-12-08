@@ -86,12 +86,6 @@ class BasePage:
         ActionChains(self.driver).move_to_element(self.submenuitem).click().perform()
         time.sleep(1)
 
-    def go_home_with_breadcrumbs(self):
-        pass
-
-    def go_back_to_page_with_breadcrumbs(self, targetPageName):
-        pass
-
     def open(self, url):
         return self.driver.get("%s%s" % (self.testclass.live_server_url, url))
 
@@ -112,22 +106,18 @@ class TablePage(BasePage):
         return self.table
 
     def get_table_row(self, rowNumber):
-        table = self.get_table()
-        rows = table.find_elements(*TableLocators.TABLE_ROWS)
-        return rows[rowNumber]
+        return self.get_table().find_elements(*TableLocators.TABLE_ROWS)[rowNumber]
 
     def get_table_multiple_rows(self, rowNumber):
-        table = self.get_table()
-        rows = table.find_elements(*TableLocators.TABLE_ROWS)
-        return rows[1 : rowNumber + 1]
+        return self.get_table().find_elements(*TableLocators.TABLE_ROWS)[
+            1 : rowNumber + 1
+        ]
 
     def get_item_reference_in_target_row(self, targetrow):
-        reference = targetrow.get_attribute("id")
-        return reference
+        return targetrow.get_attribute("id")
 
     def get_content_of_row_column(self, rowElement, columnName):
-        content = rowElement.find_element(*TableLocators.tablecolumns[columnName])
-        return content
+        return rowElement.find_element(*TableLocators.tablecolumns[columnName])
 
     def click_target_row_colum(
         self, rowElement, columnNameLocator
@@ -145,12 +135,11 @@ class TablePage(BasePage):
         self, targetcellElement, columnNameLocator
     ):  # method that clicks of the table cell at the targeted row and column
         ActionChains(self.driver).move_to_element_with_offset(
-            targetcellElement, 2, 2
+            targetcellElement, 10, 10
         ).click().perform()
-        inputfield = targetcellElement.find_element(
+        return targetcellElement.find_element(
             *TableLocators.tablecolumnsinput[columnNameLocator]
         )
-        return inputfield
 
     def enter_text_in_inputfield(self, targetinputfield, text):
         targetinputfield.clear()

@@ -23,7 +23,7 @@
 
 angular.module('operationplandetailapp').directive('showGanttDrv', showGanttDrv);
 
-showKanbanDrv.$inject = ['$window', 'gettextCatalog', 'OperationPlan', 'PreferenceSvc'];
+showGanttDrv.$inject = ['$window', 'gettextCatalog', 'OperationPlan', 'PreferenceSvc'];
 
 function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
   'use strict';

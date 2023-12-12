@@ -212,6 +212,7 @@ Object* ForecastBucket::reader(const MetaClass* cat, const DataValueDict& in,
   // Find the bucket
   {
     auto data = static_cast<Forecast*>(fcstobject)->getData();
+    lock_guard<recursive_mutex> exclusive(data->lock);
     ForecastBucket* fcstbckt = nullptr;
     for (auto& fcstbktdata : data->getBuckets()) {
       if (fcstbktdata.getDates().within(strt)) {
@@ -252,6 +253,7 @@ PyObject* ForecastBucket::create(PyTypeObject* pytype, PyObject* args,
     // Initialize the forecast.
     Forecast* fcst = static_cast<Forecast*>(pyfcst);
     auto data = fcst->getData();
+    lock_guard<recursive_mutex> exclusive(data->lock);
 
     // Find the correct forecast bucket
     // @todo This linear loop doesn't scale well when the number of buckets
@@ -362,6 +364,7 @@ ForecastBucket::ForecastBucket(Forecast* f, const DateRange& b, short i)
 void ForecastBucket::writeProperties(Serializer& o) const {
   Object::writeProperties(o);
   auto fcstdata = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   auto& fcstbktdata = fcstdata->getBuckets()[bucketindex];
   fcstbktdata.sortMeasures();
   for (auto tmp : fcstbktdata.getMeasures())
@@ -370,11 +373,13 @@ void ForecastBucket::writeProperties(Serializer& o) const {
 
 double ForecastBucket::getForecastTotal() const {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   return Measures::forecasttotal->getValue(data->getBuckets()[bucketindex]);
 }
 
 double ForecastBucket::getForecastNet() const {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   auto& bcktdata = data->getBuckets()[bucketindex];
   return Measures::forecasttotal->getValue(bcktdata) -
          Measures::forecastconsumed->getValue(bcktdata);
@@ -382,51 +387,61 @@ double ForecastBucket::getForecastNet() const {
 
 double ForecastBucket::getForecastConsumed() const {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   return Measures::forecastconsumed->getValue(data->getBuckets()[bucketindex]);
 }
 
 double ForecastBucket::getForecastBaseline() const {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   return Measures::forecastbaseline->getValue(data->getBuckets()[bucketindex]);
 }
 
 void ForecastBucket::setForecastBaseline(double v) {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   Measures::forecastbaseline->disaggregate(data->getBuckets()[bucketindex], v);
 }
 
 double ForecastBucket::getForecastOverride() const {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   return Measures::forecastoverride->getValue(data->getBuckets()[bucketindex]);
 }
 
 void ForecastBucket::setForecastOverride(double v) {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   Measures::forecastoverride->disaggregate(data->getBuckets()[bucketindex], v);
 }
 
 double ForecastBucket::getOrdersOpen() const {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   return Measures::ordersopen->getValue(data->getBuckets()[bucketindex]);
 }
 
 double ForecastBucket::getOrdersTotal() const {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   return Measures::orderstotal->getValue(data->getBuckets()[bucketindex]);
 }
 
 void ForecastBucket::setOrdersTotal(double v) {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   Measures::orderstotal->disaggregate(data->getBuckets()[bucketindex], v);
 }
 
 double ForecastBucket::getOrdersAdjustment() const {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   return Measures::ordersadjustment->getValue(data->getBuckets()[bucketindex]);
 }
 
 void ForecastBucket::setOrdersAdjustment(double v) {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   Measures::ordersadjustment->disaggregate(data->getBuckets()[bucketindex], v);
 }
 
@@ -461,6 +476,7 @@ void ForecastBase::setFields(DateRange& d, const DataValueDict& in,
                              CommandManager* mgr, bool add) {
   // Get all data, if not done yet
   auto data = getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
 
   // Find all forecast demands, and sum their weights
   double weights = 0.0;
@@ -820,6 +836,7 @@ void ForecastBase::LeaveIterator::increment() {
 
 double ForecastBucket::getOrdersAdjustmentMinus1() const {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   Date tmpdate = getDue() - Duration(365 * 86400L);
   for (auto& b : data->getBuckets()) {
     if (b.getStart() <= tmpdate && b.getEnd() > tmpdate)
@@ -830,6 +847,7 @@ double ForecastBucket::getOrdersAdjustmentMinus1() const {
 
 void ForecastBucket::setOrdersAdjustmentMinus1(double val) {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   Date tmpdate = getDue() - Duration(365 * 86400L);
   for (auto& b : data->getBuckets()) {
     if (b.getStart() <= tmpdate && b.getEnd() > tmpdate) {
@@ -841,6 +859,7 @@ void ForecastBucket::setOrdersAdjustmentMinus1(double val) {
 
 double ForecastBucket::getOrdersAdjustmentMinus2() const {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   Date tmpdate = getDue() - Duration(2 * 365 * 86400L);
   for (auto& b : data->getBuckets()) {
     if (b.getStart() <= tmpdate && b.getEnd() > tmpdate)
@@ -851,6 +870,7 @@ double ForecastBucket::getOrdersAdjustmentMinus2() const {
 
 void ForecastBucket::setOrdersAdjustmentMinus2(double val) {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   Date tmpdate = getDue() - Duration(2 * 365 * 86400L);
   for (auto& b : data->getBuckets()) {
     if (b.getStart() <= tmpdate && b.getEnd() > tmpdate) {
@@ -862,6 +882,7 @@ void ForecastBucket::setOrdersAdjustmentMinus2(double val) {
 
 double ForecastBucket::getOrdersAdjustmentMinus3() const {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   Date tmpdate = getDue() - Duration(3 * 365 * 86400L);
   for (auto& b : data->getBuckets()) {
     if (b.getStart() <= tmpdate && b.getEnd() > tmpdate)
@@ -872,6 +893,7 @@ double ForecastBucket::getOrdersAdjustmentMinus3() const {
 
 void ForecastBucket::setOrdersAdjustmentMinus3(double val) {
   auto data = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
   Date tmpdate = getDue() - Duration(3 * 365 * 86400L);
   for (auto& b : data->getBuckets()) {
     if (b.getStart() <= tmpdate && b.getEnd() > tmpdate) {
@@ -883,6 +905,7 @@ void ForecastBucket::setOrdersAdjustmentMinus3(double val) {
 
 double ForecastBucket::getOrdersPlanned() const {
   auto fcstdata = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   return fcstdata->getBuckets()[getIndex()].getOrdersPlanned();
 }
 
@@ -907,6 +930,7 @@ double ForecastBucketData::getOrdersPlanned() const {
 
 double ForecastBucket::getForecastPlanned() const {
   auto fcstdata = getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   return fcstdata->getBuckets()[getIndex()].getForecastPlanned();
 }
 
@@ -1383,6 +1407,7 @@ void ForecastBucketData::validateOverride(const ForecastMeasure* key) {
   auto index = getIndex();
   for (auto ch = getForecast()->getLeaves(false, key); ch; ++ch) {
     auto chdata = ch->getData();
+    lock_guard<recursive_mutex> exclusive(chdata->lock);
     for (auto mch : chdata->getBuckets()[index].measures) {
       if (mch->getMeasure() == key->getHashedName() &&
           mch->getValue() != -1.0) {
@@ -1522,6 +1547,7 @@ PyObject* Forecast::getValuePython(PyObject* self, PyObject* args,
     auto msr = ForecastMeasure::find(measure);
     if (!msr) throw DataException("Unknown measure");
     auto fcstdata = static_cast<Forecast*>(self)->getData();
+    lock_guard<recursive_mutex> exclusive(fcstdata->lock);
     for (auto& bckt : fcstdata->getBuckets()) {
       if (bckt.getDates().within(thedate))
         return PythonData(bckt.getValue(*msr));
@@ -1542,6 +1568,7 @@ void ForecastBase::inspect(const string& msg) const {
   logger << endl;
 
   auto fcstdata = getData();
+  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   for (auto& bckt : fcstdata->getBuckets())
     logger << "    " << bckt.getStart() << " - " << bckt.getEnd() << ": "
            << bckt.toString(false) << endl;
@@ -1617,6 +1644,7 @@ PyObject* Forecast::saveForecast(PyObject* self, PyObject* args) {
     // Write out all forecasts
     for (auto& fcst : sortedforecast) {
       auto fcstdata = fcst->getData();
+      lock_guard<recursive_mutex> exclusive(fcstdata->lock);
       for (auto& bckt : fcstdata->getBuckets())
         textoutput << fcst->getForecastItem() << "\t"
                    << fcst->getForecastLocation() << "\t"
@@ -1649,6 +1677,7 @@ PyObject* ForecastBucket::getMeasurePython(PyObject* self, PyObject* args,
     if (!msr) return nullptr;
     auto me = static_cast<ForecastBucket*>(self);
     auto fcstdata = me->getForecast()->getData();
+    lock_guard<recursive_mutex> exclusive(fcstdata->lock);
     return PythonData(
         msr->getValue(fcstdata->getBuckets()[me->getBucketIndex()]));
   } catch (...) {

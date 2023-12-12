@@ -38,13 +38,12 @@ double ForecastSolver::weight[ForecastSolver::MAXBUCKETS];
 const MetaClass* ProblemOutlier::metadata = nullptr;
 
 void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
-  auto increase_ref_count = fcst->getData();
+  // Load history data in memory
+  auto data = fcst->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
 
   // Delete previous outlier problems
   deleteOutliers(fcst);
-
-  // Load history data in memory
-  auto data = fcst->getData();
 
   // Skip all buckets till the first non-zero bucket
   auto bckt_start = data->getBuckets().begin();

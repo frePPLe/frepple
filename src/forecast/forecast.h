@@ -803,6 +803,10 @@ class ForecastData {
 
   size_t getSize() const;
 
+  recursive_mutex* getLock() { return &lock; }
+
+  recursive_mutex lock;
+
  private:
   vector<ForecastBucketData> buckets;
 };
@@ -1881,6 +1885,7 @@ class ForecastBucket::bucketiterator {
 
 inline ForecastBucket::bucketiterator Forecast::getBuckets() const {
   auto fcstdata = getData();
+  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   for (auto& b : fcstdata->getBuckets()) b.getOrCreateForecastBucket();
   sortMembers();
   return ForecastBucket::bucketiterator(this);
@@ -3238,6 +3243,7 @@ template <typename... Measures>
 void ForecastMeasure::resetMeasure(short mode, Measures*... measures) {
   for (auto f = Forecast::getForecasts(); f; ++f) {
     auto fcstdata = f->getData();
+    lock_guard<recursive_mutex> exclusive(fcstdata->lock);
     for (auto bckt = fcstdata->getBuckets().begin();
          bckt != fcstdata->getBuckets().end(); ++bckt) {
       bool do_it = false;

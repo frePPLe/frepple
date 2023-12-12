@@ -73,6 +73,8 @@ class AbstractCacheEntry {
 
   virtual size_t getSize() const = 0;
 
+  virtual recursive_mutex* getLock() const { return nullptr; }
+
  private:
   AbstractCacheEntry* prev = nullptr;
   AbstractCacheEntry* next = nullptr;
@@ -99,7 +101,19 @@ class CacheEntry : public AbstractCacheEntry {
   virtual void flush();
 
   virtual void expire() const {
-    const_cast<CacheEntry<T, U>*>(this)->val.reset();
+    auto lock = getLock();
+    if (lock) {
+      lock_guard exlusive(*lock);
+      const_cast<CacheEntry<T, U>*>(this)->val.reset();
+    } else
+      const_cast<CacheEntry<T, U>*>(this)->val.reset();
+  }
+
+  virtual recursive_mutex* getLock() const {
+    return val ? static_pointer_cast<T>(
+                     const_cast<CacheEntry<T, U>*>(this)->val)
+                     ->getLock()
+               : nullptr;
   }
 
   virtual void clearDirty() const {
@@ -260,24 +274,30 @@ inline bool AbstractCacheEntry::isDirty() const {
 
 template <class T, class U>
 void CacheEntry<T, U>::flush() {
-  if (val) {
-    ++Cache::instance->stats_writes;
+  if (!val) return;
+  auto lock = static_pointer_cast<T>(val)->getLock();
+  if (lock) {
+    lock_guard exlusive(*lock);
     static_pointer_cast<T>(val)->flush();
-  }
+  } else
+    static_pointer_cast<T>(val)->flush();
+  ++Cache::instance->stats_writes;
 }
 
 template <class T, class U>
 shared_ptr<T> CacheEntry<T, U>::getValue(const U* key) const {
-  if (val)
+  if (val) {
+    auto increase_reference_count = static_pointer_cast<T>(val);
     // Already in memory
     moveToFront();
-  else {
+    return increase_reference_count;
+  } else {
     // Not in memory yet
     ++Cache::instance->stats_reads;
     const_cast<CacheEntry<T, U>*>(this)->val = make_shared<T>(key);
     insertAtFront();
+    return static_pointer_cast<T>(val);
   }
-  return static_pointer_cast<T>(val);
 }
 
 }  // namespace utils

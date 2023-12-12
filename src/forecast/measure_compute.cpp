@@ -227,6 +227,7 @@ void ForecastMeasure::evalExpression(const string& formula, ForecastBase* fcst,
   double remainder = 0.0;
   for (auto c = fcst->getLeaves(true, this); c; ++c) {
     auto fcstdata = c->getData();
+    lock_guard<recursive_mutex> exclusive(fcstdata->lock);
     for (auto bckt = fcstdata->getBuckets().begin();
          bckt != fcstdata->getBuckets().end() && bckt->getStart() <= enddate;
          ++bckt) {

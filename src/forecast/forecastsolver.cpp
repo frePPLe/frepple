@@ -218,6 +218,7 @@ void ForecastSolver::solve(bool includenetting, int cluster) {
         (!f->isLeaf() || static_cast<Forecast*>(&*f)->getCluster() != cluster))
       continue;
     auto fcstdata = f->getData();
+    lock_guard<recursive_mutex> exclusive(fcstdata->lock);
     for (auto& bckt : fcstdata->getBuckets()) {
       if (bckt.getValue(*Measures::forecastconsumed))
         bckt.removeValue(cluster != -1, Measures::forecastconsumed);
@@ -421,6 +422,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
 
   // Load forecast data
   auto data = fcst->getData();
+  lock_guard<recursive_mutex> exclusive(data->lock);
 
   // Find the bucket with the due date
   auto zerobucket = data->getBuckets().begin();

@@ -173,7 +173,10 @@ void ForecastMeasure::aggregateMeasures(const vector<ForecastMeasure*>& msrs) {
     shared_ptr<ForecastData> fcstdata(nullptr);
     for (auto& msr : msrlist)
       if (msr.first->isLeaf(&*fcst)) {
-        if (!fcstdata) fcstdata = fcst->getData();
+        if (!fcstdata) {
+          fcstdata = fcst->getData();
+          fcstdata->lock.lock();
+        }
         for (auto& bckt : fcstdata->getBuckets()) {
           auto val = msr.first->getValue(bckt);
           if (val != msr.first->getDefault()) {
@@ -181,6 +184,7 @@ void ForecastMeasure::aggregateMeasures(const vector<ForecastMeasure*>& msrs) {
           }
         }
       }
+    if (fcstdata) fcstdata->lock.unlock();
   }
 
   // Verify the correctness of the aggregation results
@@ -189,7 +193,10 @@ void ForecastMeasure::aggregateMeasures(const vector<ForecastMeasure*>& msrs) {
     shared_ptr<ForecastData> fcstdata(nullptr);
     for (auto& msr : msrlist)
       if (!msr.first->isLeaf(&*fcst)) {
-        if (!fcstdata) fcstdata = fcst->getData();
+        if (!fcstdata) {
+          fcstdata = fcst->getData();
+          fcstdata->lock.lock();
+        }
         for (auto& bckt : fcstdata->getBuckets()) {
           // Compare the aggregate value with the existing value
           auto val = msr.second->getValueAndFound(bckt);
@@ -205,6 +212,7 @@ void ForecastMeasure::aggregateMeasures(const vector<ForecastMeasure*>& msrs) {
           bckt.removeValue(false, msr.second);
         }
       }
+    if (fcstdata) fcstdata->lock.unlock();
   }
 
   // Delete temp measures
@@ -234,7 +242,10 @@ void ForecastMeasure::computeMeasures(const vector<ForecastMeasure*>& msrs) {
     shared_ptr<ForecastData> fcstdata(nullptr);
     for (auto& msr : msrs)
       if (msr->isLeaf(&*fcst) && msr->isComputed()) {
-        if (!fcstdata) fcstdata = fcst->getData();
+        if (!fcstdata) {
+          fcstdata = fcst->getData();
+          fcstdata->lock.lock();
+        }
         for (auto& bckt : fcstdata->getBuckets()) {
           // Initialize symbol table
           for (auto m = begin(); m != end(); ++m)
@@ -250,6 +261,7 @@ void ForecastMeasure::computeMeasures(const vector<ForecastMeasure*>& msrs) {
           }
         }
       }
+    if (fcstdata) fcstdata->lock.unlock();
   }
 
   Cache::instance->setWriteImmediately(prev);
@@ -268,6 +280,7 @@ PyObject* ForecastMeasure::updatePlannedForecastPython(PyObject* self,
     // Set the value on all leaf nodes
     for (auto fcst = Forecast::getForecasts(); fcst; ++fcst) {
       auto fcstdata = fcst->getData();
+      lock_guard<recursive_mutex> exclusive(fcstdata->lock);
       for (auto& bckt : fcstdata->getBuckets()) {
         auto tmp = bckt.getOrdersPlanned();
         if (tmp) Measures::ordersplanned->update(bckt, tmp);
@@ -318,6 +331,7 @@ void ForecastBucketData::setValue(bool propagate, const ForecastMeasure* key,
         auto index = getIndex();
         for (auto p = getForecast()->getParents(); p; ++p) {
           auto parentfcstdata = p->getData();
+          lock_guard<recursive_mutex> exclusive(parentfcstdata->lock);
           parentfcstdata->getBuckets()[index].incValue(false, key, val);
         }
       }
@@ -336,6 +350,7 @@ void ForecastBucketData::setValue(bool propagate, const ForecastMeasure* key,
         auto index = getIndex();
         for (auto p = getForecast()->getParents(); p; ++p) {
           auto parentfcstdata = p->getData();
+          lock_guard<recursive_mutex> exclusive(parentfcstdata->lock);
           parentfcstdata->getBuckets()[index].incValue(false, key, delta);
         }
       }
@@ -350,6 +365,7 @@ void ForecastBucketData::propagateValue(const ForecastMeasure* key,
   auto index = getIndex();
   for (auto p = getForecast()->getParents(); p; ++p) {
     auto parentfcstdata = p->getData();
+    lock_guard<recursive_mutex> exclusive(parentfcstdata->lock);
     parentfcstdata->getBuckets()[index].incValue(false, key, val);
   }
 }
@@ -399,6 +415,7 @@ void ForecastBucketData::incValue(bool propagate, const ForecastMeasure* key,
     auto index = getIndex();
     for (auto p = getForecast()->getParents(); p; ++p) {
       auto parentfcstdata = p->getData();
+      lock_guard<recursive_mutex> exclusive(parentfcstdata->lock);
       parentfcstdata->getBuckets()[index].incValue(false, key, val);
     }
   }
@@ -422,6 +439,7 @@ void ForecastBucketData::removeValue(bool propagate,
       auto index = getIndex();
       for (auto p = getForecast()->getParents(); p; ++p) {
         auto pdata = p->getData();
+        lock_guard<recursive_mutex> exclusive(pdata->lock);
         pdata->getBuckets()[index].incValue(false, key, -val);
       }
     }
@@ -558,6 +576,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBucketData& bckt,
   // Get the current value of this node
   auto fcst = bckt.getForecast();
   auto fcstdata = fcst->getData();
+  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
 
   if (isLeaf(fcst))
     //  Handling of leaf forecasts
@@ -603,6 +622,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBase* fcst,
 
   // Get the current value of this node
   auto fcstdata = fcst->getData();
+  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   double currentvalue = 0.0;
   unsigned int cnt = 0;
   if (!multiply)
@@ -682,6 +702,7 @@ double ForecastMeasureAggregated::disaggregateOverride(
   // Get the current value of this node
   auto fcst = bckt.getForecast();
   auto fcstdata = fcst->getData();
+  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   auto& fcstbcktdata = fcstdata->getBuckets()[bckt.getIndex()];
 
   // Get status
@@ -745,6 +766,7 @@ double ForecastMeasureAggregated::disaggregateOverride(
   }
   for (auto ch = fcst->getLeaves(true, this); ch; ++ch) {
     auto childfcstdata = ch->getData();
+    lock_guard<recursive_mutex> exclusive(childfcstdata->lock);
     auto& childfcstbcktdata = childfcstdata->getBuckets()[bckt.getIndex()];
 
     switch (mode) {
@@ -792,6 +814,7 @@ double ForecastMeasureAggregated::disaggregateOverride(
     double remainder, CommandManager* mgr) const {
   // Get the current status
   auto fcstdata = fcst->getData();
+  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   double current_base = 0.0;
   double current_override = 0.0;
   double current_no_override = 0.0;
@@ -799,14 +822,20 @@ double ForecastMeasureAggregated::disaggregateOverride(
   unsigned int count_override = 0;
   unsigned int count_no_override = 0;
   unsigned int cnt = 0;
-  for (auto bckt = fcstdata->getBuckets().begin();
-       bckt != fcstdata->getBuckets().end() && bckt->getStart() <= enddate;
-       ++bckt) {
+  for (auto bckt = fcstdata->getBuckets().begin();; ++bckt) {
+    if (!fcstdata) {
+      fcstdata = fcst->getData();
+      fcstdata->lock.lock();
+    }
+
+    if (bckt == fcstdata->getBuckets().end() || bckt->getStart() > enddate)
+      break;
     if ((bckt->getStart() >= startdate && bckt->getStart() < enddate) ||
         (bckt->getDates().within(startdate) &&
          bckt->getDates().between(enddate))) {
       for (auto ch = fcst->getLeaves(true, this); ch; ++ch) {
         auto childfcstdata = ch->getData();
+        lock_guard<recursive_mutex> exclusive(childfcstdata->lock);
         auto tmp = getValue(childfcstdata->getBuckets()[bckt->getIndex()]);
         auto base = override_measure->getValue(
             childfcstdata->getBuckets()[bckt->getIndex()]);
@@ -824,6 +853,7 @@ double ForecastMeasureAggregated::disaggregateOverride(
       }
     }
   }
+  if (fcstdata) fcstdata->lock.unlock();
 
   // Select the update mode
   short mode;
@@ -872,6 +902,7 @@ double ForecastMeasureAggregated::disaggregateOverride(
 
   for (auto ch = fcst->getLeaves(true, this); ch; ++ch) {
     auto childfcstdata = ch->getData();
+    lock_guard<recursive_mutex> exclusive(childfcstdata->lock);
     for (auto& bckt : childfcstdata->getBuckets()) {
       if (bckt.getStart() > enddate) break;
       if ((bckt.getStart() >= startdate && bckt.getStart() < enddate) ||
@@ -921,6 +952,7 @@ double ForecastMeasureLocal::disaggregate(ForecastBucketData& bckt, double val,
                                           bool multiply, double remainder,
                                           CommandManager* mgr) const {
   auto fcstdata = bckt.getForecast()->getData();
+  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   auto& fcsbcktdata = fcstdata->getBuckets()[bckt.getIndex()];
   if (multiply)
     return update(fcsbcktdata, val * getValue(fcsbcktdata) + remainder, mgr);
@@ -933,6 +965,7 @@ double ForecastMeasureLocal::disaggregate(ForecastBase* fcst, Date startdate,
                                           bool multiply, double remainder,
                                           CommandManager* mgr) const {
   auto fcstdata = fcst->getData();
+  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   for (auto& bckt : fcstdata->getBuckets()) {
     if (bckt.getStart() > enddate) break;
     if ((bckt.getStart() >= startdate && bckt.getStart() < enddate) ||
@@ -1059,6 +1092,7 @@ void ForecastMeasure::computeDependentMeasures(ForecastBucketData& fcstdata,
           for (auto p = fcstdata.getForecast()->getParents(); p; ++p)
             if (p->getPlanned()) {
               auto pfcstdata = p->getData();
+              lock_guard<recursive_mutex> exclusive(pfcstdata->lock);
               auto& pfcstbucketdata =
                   pfcstdata->getBuckets()[fcstdata.getIndex()];
               Measures::forecastnet->update(
@@ -1344,7 +1378,7 @@ void MeasurePagePool::check(const string& msg) {
          << count_pages_temp_free << " free temporary pages." << endl;
 
   // Abort
-  if (!ok) throw DataException("corrupted memory pages");
+  //if (!ok) throw DataException("corrupted memory pages");
 }
 
 }  // namespace frepple

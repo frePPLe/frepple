@@ -1,10 +1,19 @@
 Release notes
 -------------
 
-8.3.0 (2023-12-08)
-==================
+8.4.0 (Upcoming release)
+========================
 
 Check out the `preview of this release <https://demo-preview.frepple.com>`_.
+
+.. rubric:: User interface
+
+- | Easier management of the membership of user groups.
+  | The group edit form now has a widget that allows you to select the users
+    belonging to that group.
+
+8.3.0 (2023-12-08)
+==================
 
 .. rubric:: Production planning
 

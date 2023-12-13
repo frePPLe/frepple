@@ -1912,7 +1912,9 @@ class OperationPlanDetail(View):
                                             "name": obj.item.name,
                                             "description": obj.item.description,
                                         },
-                                        "due": obj.due.strftime("%Y-%m-%d"),
+                                        "due": obj.due.strftime(
+                                            settings.DATE_INPUT_FORMATS[0]
+                                        ),
                                     },
                                     "quantity": q,
                                 }

@@ -363,6 +363,92 @@ class Command(BaseCommand):
         p.value = options["odoo_url"]
         p.save()
 
+        with_ip = "freppledb.inventoryplanning" in settings.INSTALLED_APPS
+        if with_ip:
+            if options["verbosity"]:
+                print("INSTALLING INVENTORY PLANNING DATA")
+
+            from freppledb.inventoryplanning.models import Segment, BusinessRule
+
+            # segment A parts
+            query = """
+            item.name in (select item_id from demand group by item_id order by sum(quantity) desc
+            limit (select round(0.6*count(*)) from item)) and location.name != 'All locations'
+            """
+            s_a = Segment.objects.get_or_create(name="A parts", query=query)[0]
+            s_a.description = "Top 60% of the most sold products"
+            s_a.save()
+
+            # segment B parts
+            query = """
+            item.name not in (select item_id from demand group by item_id order by sum(quantity) desc
+            limit (select round(0.6*count(*)) from item)) and item.name not in
+            (select item_id from demand group by item_id order by sum(quantity) asc limit
+            (select round(0.1*count(*)) from item)) and location.name != 'All locations'
+            """
+            s_b = Segment.objects.get_or_create(name="B parts", query=query)[0]
+            s_b.description = "Between 60% and 90% ordered by most sold products (anything not in A and C parts)"
+            s_b.save()
+
+            # segment C parts
+            query = """
+            item.name in (select item_id from demand group by item_id order by sum(quantity) asc limit
+            (select round(0.1*count(*)) from item)) and location.name != 'All locations'
+            """
+            s_c = Segment.objects.get_or_create(name="C parts", query=query)[0]
+            s_c.description = "Top 10% of the least sold products"
+            s_c.save()
+
+            # segment Purchased items
+            query = """
+            (item.name,location.name) in (select item_id, coalesce(location_id,location.name)
+            from itemsupplier where supplier_id != 'Unknown supplier')
+            """
+            s_p = Segment.objects.get_or_create(name="Purchased items", query=query)[0]
+            s_p.description = "Purchased items"
+            s_p.save()
+
+            # business rules
+            br = BusinessRule.objects.get_or_create(
+                segment=s_a, business_rule="service_level"
+            )[0]
+            br.priority = 10
+            br.description = "servce level of 95% for A Parts"
+            br.value = "95"
+            br.save()
+
+            br = BusinessRule.objects.get_or_create(
+                segment=s_b, business_rule="service_level"
+            )[0]
+            br.priority = 10
+            br.description = "servce level of 75% for B Parts"
+            br.value = "75"
+            br.save()
+
+            br = BusinessRule.objects.get_or_create(
+                segment=s_c, business_rule="service_level"
+            )[0]
+            br.priority = 10
+            br.description = "servce level of 50% for C Parts"
+            br.value = "50"
+            br.save()
+
+            br = BusinessRule.objects.get_or_create(
+                segment=s_p, business_rule="ss_min_poc"
+            )[0]
+            br.priority = 10
+            br.description = "Two weeks of safety stock for purchased items"
+            br.value = "14"
+            br.save()
+
+            br = BusinessRule.objects.get_or_create(
+                segment=s_p, business_rule="roq_min_poc"
+            )[0]
+            br.priority = 10
+            br.description = "Two weeks of ROQ for purchased items"
+            br.value = "14"
+            br.save()
+
         # Stop other odoo container already running on port 8069
         container = subprocess.run(
             [

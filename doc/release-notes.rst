@@ -12,6 +12,13 @@ Check out the `preview of this release <https://demo-preview.frepple.com>`_.
   | The group edit form now has a widget that allows you to select the users
     belonging to that group.
 
+.. rubric:: Odoo integration
+
+- | 16, 17: Mapping of Odoo "replenish on order" products into frepple
+    make-to-order items.
+  | For such items both Odoo and frepple maintain a hard link between
+    consumers and producers of material.
+
 8.3.0 (2023-12-08)
 ==================
 

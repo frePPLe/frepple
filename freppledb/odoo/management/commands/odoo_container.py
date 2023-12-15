@@ -382,32 +382,41 @@ class Command(BaseCommand):
 
             # business rules
             if with_abc:
-                br = BusinessRule.objects.get_or_create(
-                    segment=Segment.objects.get(name="A parts"),
-                    business_rule="service_level",
-                )[0]
-                br.priority = 10
-                br.description = "servce level of 95% for A Parts"
-                br.value = "95"
-                br.save()
+                try:
+                    br = BusinessRule.objects.get_or_create(
+                        segment=Segment.objects.get(name="A parts"),
+                        business_rule="service_level",
+                    )[0]
+                    br.priority = 10
+                    br.description = "servce level of 95% for A Parts"
+                    br.value = "95"
+                    br.save()
+                except Segment.DoesNotExist:
+                    pass
 
-                br = BusinessRule.objects.get_or_create(
-                    segment=Segment.objects.get(name="B parts"),
-                    business_rule="service_level",
-                )[0]
-                br.priority = 10
-                br.description = "servce level of 75% for B Parts"
-                br.value = "75"
-                br.save()
+                try:
+                    br = BusinessRule.objects.get_or_create(
+                        segment=Segment.objects.get(name="B parts"),
+                        business_rule="service_level",
+                    )[0]
+                    br.priority = 10
+                    br.description = "servce level of 75% for B Parts"
+                    br.value = "75"
+                    br.save()
+                except Segment.DoesNotExist:
+                    pass
 
-                br = BusinessRule.objects.get_or_create(
-                    segment=Segment.objects.get(name="C parts"),
-                    business_rule="service_level",
-                )[0]
-                br.priority = 10
-                br.description = "servce level of 50% for C Parts"
-                br.value = "50"
-                br.save()
+                try:
+                    br = BusinessRule.objects.get_or_create(
+                        segment=Segment.objects.get(name="C parts"),
+                        business_rule="service_level",
+                    )[0]
+                    br.priority = 10
+                    br.description = "servce level of 50% for C Parts"
+                    br.value = "50"
+                    br.save()
+                except Segment.DoesNotExist:
+                    pass
 
             br = BusinessRule.objects.get_or_create(
                 segment=s_p, business_rule="ss_min_poc"

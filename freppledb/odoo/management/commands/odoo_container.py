@@ -26,8 +26,8 @@ import psycopg2
 import subprocess
 
 from django.conf import settings
+from django.core import management
 from django.core.management.base import BaseCommand, CommandError
-from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb import __version__
@@ -370,6 +370,9 @@ class Command(BaseCommand):
                 print("INSTALLING INVENTORY PLANNING DATA")
 
             from freppledb.inventoryplanning.models import Segment, BusinessRule
+
+            # deploy the default_segments fixture in case it's not there
+            management.call_command("loaddata", "default_segments.json", verbosity=0)
 
             # segment Purchased items
             query = """

@@ -137,7 +137,12 @@ class Command(loaddata.Command):
             if "FREPPLE_TEST" in os.environ:
                 return
             for f in fixture_labels:
-                if "demo" not in f.lower():
+                if not any("demo" in f.lower() for f in fixture_labels):
+                    # Task update
+                    task.status = "Done"
+                    task.finished = datetime.now()
+                    task.processid = None
+                    task.save(using=database, update_fields=["status", "finished"])
                     return
 
             with transaction.atomic(using=database, savepoint=False):

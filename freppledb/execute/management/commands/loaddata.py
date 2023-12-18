@@ -136,14 +136,13 @@ class Command(loaddata.Command):
             # if the fixture doesn't contain the 'demo' word, let's not apply loaddata post-treatments
             if "FREPPLE_TEST" in os.environ:
                 return
-            for f in fixture_labels:
-                if not any("demo" in f.lower() for f in fixture_labels):
-                    # Task update
-                    task.status = "Done"
-                    task.finished = datetime.now()
-                    task.processid = None
-                    task.save(using=database, update_fields=["status", "finished"])
-                    return
+            if not any("demo" in f.lower() for f in fixture_labels):
+                # Task update
+                task.status = "Done"
+                task.finished = datetime.now()
+                task.processid = None
+                task.save(using=database, update_fields=["status", "finished"])
+                return
 
             with transaction.atomic(using=database, savepoint=False):
                 if self.verbosity > 2:

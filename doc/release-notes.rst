@@ -4,7 +4,7 @@ Release notes
 8.4.0 (Upcoming release)
 ========================
 
-Check out the `preview of this release <https://demo-preview.frepple.com>`_.
+This release is scheduled for mid January 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface
 

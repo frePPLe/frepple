@@ -86,6 +86,7 @@ from freppledb.common.report import (
 from freppledb.common.views import sendStaticFile
 from .models import Task, ScheduledTask
 from .management.commands.runworker import launchWorker
+from .management.commands.runplan import parseConstraints, constraintString
 
 import logging
 
@@ -381,20 +382,14 @@ def wrapTask(request, action):
     if action in ("runplan", "runwebservice"):
         if not request.user.has_perm("auth.generate_plan"):
             raise Exception("Missing execution privileges")
-        constraint = 0
-        for value in args.getlist("constraint"):
-            try:
-                constraint += int(value)
-            except Exception:
-                pass
-
+        constraint = parseConstraints(",".join(args.getlist("constraint")))
         task = Task(name="runplan", submitted=now, status="Waiting", user=request.user)
         background = False
         if action in ("frepple_start_web_service", "runwebservice"):
             # Load existing plan and run as a web service
             background = True
             env = []
-            constraint = 15
+            constraint = 4 + 16 + 32
             plantype = 1
             try:
                 lastrun = (
@@ -407,26 +402,26 @@ def wrapTask(request, action):
                     if "=" in i:
                         key, val = i.split("=")
                         if key == "--constraint":
-                            constraint = int(val)
+                            constraint = parseConstraints(val)
                         elif key == "--plantype":
                             plantype = int(val)
             except Exception:
                 pass
             task.arguments = "--constraint=%s --plantype=%s --background" % (
-                constraint,
+                constraintString(constraint),
                 plantype,
             )
         else:
             # Create a new plan
             task.arguments = "--constraint=%s --plantype=%s" % (
-                constraint,
+                constraintString(constraint),
                 args.get("plantype", 1),
             )
             env = []
             for value in args.getlist("env"):
                 env.append(value)
             task.arguments = "--constraint=%s --plantype=%s" % (
-                constraint,
+                constraintString(constraint),
                 args.get("plantype", 1),
             )
             if (
@@ -476,8 +471,9 @@ def wrapTask(request, action):
             task = Task(
                 name="runplan", submitted=now, status="Waiting", user=request.user
             )
-            task.arguments = "--constraint=15 --plantype=1 --env=%s --background" % (
-                active_modules,
+            task.arguments = (
+                "--constraint=capa,mfg_lt,po_lt --plantype=1 --env=%s --background"
+                % (active_modules,)
             )
             task.save(using=request.database)
     # E

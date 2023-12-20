@@ -39,7 +39,7 @@ class cookbook_input(cookbooktest):
             "calendar",
             "calendar-working-hours.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -58,7 +58,7 @@ class cookbook_input(cookbooktest):
             "resource",
             "resource-type.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -77,7 +77,7 @@ class cookbook_input(cookbooktest):
             "resource",
             "resource-skills.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -96,7 +96,7 @@ class cookbook_input(cookbooktest):
             "resource",
             "resource-tool.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -115,7 +115,7 @@ class cookbook_input(cookbooktest):
             "demand",
             "demand-priorities.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -134,7 +134,7 @@ class cookbook_input(cookbooktest):
             "demand",
             "demand-policies.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -153,7 +153,7 @@ class cookbook_input(cookbooktest):
             "operation",
             "operation-type.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -172,7 +172,7 @@ class cookbook_input(cookbooktest):
             "operation",
             "operation-posttime.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -191,7 +191,7 @@ class cookbook_input(cookbooktest):
             "operation",
             "operation-dependency.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -210,7 +210,7 @@ class cookbook_input(cookbooktest):
             "operation",
             "operation-autofence.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -229,7 +229,7 @@ class cookbook_input(cookbooktest):
             "operation",
             "operation-routing.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -248,7 +248,7 @@ class cookbook_input(cookbooktest):
             "buffer",
             "make-to-order.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -267,7 +267,7 @@ class cookbook_input(cookbooktest):
             "buffer",
             "transfer-batch.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -286,7 +286,7 @@ class cookbook_input(cookbooktest):
             "supplier",
             "supplier-capacity.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -305,7 +305,7 @@ class cookbook_input(cookbooktest):
             "buffer",
             "alternate-materials.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -324,7 +324,7 @@ class cookbook_input(cookbooktest):
             "resource",
             "resource-efficiency.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -343,7 +343,7 @@ class cookbook_input(cookbooktest):
             "operation",
             "operation-alternate.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -362,7 +362,7 @@ class cookbook_input(cookbooktest):
             "resource",
             "resource-alternate.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -381,7 +381,7 @@ class cookbook_input(cookbooktest):
             "operation",
             "operation-alternate.xlsx",
         )
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",

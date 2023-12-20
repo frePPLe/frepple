@@ -79,7 +79,7 @@ class execute_with_commands(TransactionTestCase):
         # Since the random model generator is not generating the same model
         # across different version and platforms, we can only do a rough
         # check on the output.
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         self.assertGreater(output.models.Problem.objects.count(), 8)
         self.assertGreater(input.models.OperationPlanMaterial.objects.count(), 400)
         self.assertGreater(input.models.OperationPlanResource.objects.count(), 20)
@@ -173,7 +173,7 @@ class execute_multidb(TransactionTestCase):
         # The count changes in db1 and not in db2.
         count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
         management.call_command(
-            "runplan", plantype=1, constraint=15, env="supply", database=db1
+            "runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply", database=db1
         )
         count1 = input.models.OperationPlanMaterial.objects.all().using(db1).count()
         self.assertNotEqual(count1, 0)
@@ -246,7 +246,7 @@ class execute_simulation(TransactionTestCase):
     @unittest.skip("Needs validation")
     def test_run_cmd(self):
         # Run the plan and measure the lateness
-        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        management.call_command("runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply")
         initial_planned_late = (
             output.models.Problem.objects.all()
             .filter(name="late")

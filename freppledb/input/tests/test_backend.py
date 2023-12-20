@@ -996,7 +996,7 @@ class ManufacturingDemoTest(TransactionTestCase):
         ForecastPlan.objects.all().delete()
         OperationPlan.objects.filter(status="proposed").delete()
         management.call_command(
-            "runplan", plantype=1, constraint=15, env="fcst,invplan,supply"
+            "runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="fcst,invplan,supply"
         )
         self.assertGreater(ForecastPlan.objects.all().count(), 0)
         self.assertGreater(OperationPlan.objects.filter(status="proposed").count(), 0)

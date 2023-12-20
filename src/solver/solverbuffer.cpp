@@ -582,7 +582,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   // Final evaluation of the replenishment
   if (data->constrainedPlanning && isConstrained() &&
       (b->getOnHand(Date::infiniteFuture) < -ROUNDING_ERROR ||
-       isFenceConstrained() || isLeadTimeConstrained())) {
+       isLeadTimeConstrained())) {
     // Use the constrained planning result
     data->state->a_qty = requested_qty - shortage - initial_shortage;
     if (data->state->a_qty < ROUNDING_ERROR) {
@@ -727,9 +727,8 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
           Duration autofence = getAutoFence();
           if (!b->getAutofence() && autofence > Duration(14L * 86400L))
             autofence = 14L * 86400L;
-          if (autofence &&
-              (theOnHand > -ROUNDING_ERROR || getPlanType() == 2 ||
-               (!isLeadTimeConstrained() && !isFenceConstrained()))) {
+          if (autofence && (theOnHand > -ROUNDING_ERROR || getPlanType() == 2 ||
+                            !isLeadTimeConstrained())) {
             bool exists = false;
             for (auto f = b->getFlowPlans().begin();
                  f != b->getFlowPlans().end(); ++f) {

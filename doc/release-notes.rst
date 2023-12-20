@@ -6,6 +6,20 @@ Release notes
 
 This release is scheduled for mid January 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | The solver now considers purchasing lead time and manufacturing lead time
+    as separate constraints.
+  | This is useful in situations where manufacturing orders and capacity are
+    being scheduled by the production planner(s) while the material planner(s)
+    still work on procuring the materials.
+
+- | The release fence is no longer selectable as a separate constraints.
+    Respecting the release fence is now implicitly included in the lead time
+    constraint.
+  | In practice we have never come across the need to control the fence constraint
+    separately. So, let's simplify things here.
+
 .. rubric:: User interface
 
 - | Easier management of the membership of user groups.

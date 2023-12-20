@@ -2,7 +2,7 @@
  *                                                                         *
  * Copyright (C) 2007-2015 by frePPLe bv                                   *
  *                                                                         *
-* Permission is hereby granted, free of charge, to any person obtaining   *
+ * Permission is hereby granted, free of charge, to any person obtaining   *
  * a copy of this software and associated documentation files (the         *
  * "Software"), to deal in the Software without restriction, including     *
  * without limitation the rights to use, copy, modify, merge, publish,     *
@@ -479,17 +479,14 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
                                           SolverCreate::SolverData& data,
                                           bool extra) {
   // No lead time constraints
-  if (!data.constrainedPlanning ||
-      (!isFenceConstrained() && !isLeadTimeConstrained()))
-    return true;
+  if (!data.constrainedPlanning || !isLeadTimeConstrained()) return true;
 
   // Compute offset from the current date: A fence problem uses the release
   // fence window, while a leadtimeconstrained constraint has an offset of 0.
   // If both constraints apply, we need the bigger of the two (since it is the
   // most constraining date.
   Date threshold = Plan::instance().getCurrent();
-  if (isFenceConstrained() &&
-      (!isLeadTimeConstrained() || opplan->getOperation()->getFence() > 0L))
+  if (!isLeadTimeConstrained() || opplan->getOperation()->getFence() > 0L)
     threshold = opplan->getOperation()->getFence(opplan);
 
   // Compare the operation plan start with the threshold date

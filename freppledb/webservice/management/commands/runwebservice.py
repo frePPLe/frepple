@@ -37,6 +37,7 @@ from freppledb import VERSION
 from freppledb.common.models import Parameter
 from freppledb.input.models import Item
 from freppledb.execute.models import Task
+from freppledb.execute.management.commands.runplan import parseConstraints
 from ...utils import waitTillRunning, checkRunning
 
 
@@ -157,7 +158,7 @@ class Command(BaseCommand):
 
         try:
             # Retrieve constraint and plan type from the last run
-            constraint = 15
+            constraint = 4 + 16 + 32
             plantype = 1
             try:
                 lastrun = (
@@ -171,7 +172,7 @@ class Command(BaseCommand):
                     if "=" in i:
                         key, val = i.split("=")
                         if key == "--constraint":
-                            constraint = int(val)
+                            constraint = parseConstraints(val)
                         elif key == "--plantype":
                             plantype = int(val)
             except Exception:

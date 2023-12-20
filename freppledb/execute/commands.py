@@ -222,7 +222,7 @@ class SupplyPlanning(PlanTask):
         try:
             constraint = int(os.environ["FREPPLE_CONSTRAINT"])
         except Exception:
-            constraint = 15  # Default is with all constraints enabled
+            constraint = 4 + 16 + 32  # Default is with all constraints enabled
         cls.solver = frepple.solver_mrp(
             constraints=constraint,
             plantype=plantype,

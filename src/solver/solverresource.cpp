@@ -2,7 +2,7 @@
  *                                                                         *
  * Copyright (C) 2007-2015 by frePPLe bv                                   *
  *                                                                         *
-* Permission is hereby granted, free of charge, to any person obtaining   *
+ * Permission is hereby granted, free of charge, to any person obtaining   *
  * a copy of this software and associated documentation files (the         *
  * "Software"), to deal in the Software without restriction, including     *
  * without limitation the rights to use, copy, modify, merge, publish,     *
@@ -75,7 +75,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
       prevdate = data->state->q_operationplan->getEnd();
       noRestore = data->state->forceLate;
 
-      if (isLeadTimeConstrained() || isFenceConstrained())
+      if (isLeadTimeConstrained())
         // Note that the check function can update the answered date and
         // quantity
         if (data->constrainedPlanning &&
@@ -192,8 +192,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
             // If there isn't available time in the location calendar, the move
             // can fail.
             data->state->a_qty = 0.0;
-          else if (data->constrainedPlanning &&
-                   (isLeadTimeConstrained() || isFenceConstrained()))
+          else if (data->constrainedPlanning && isLeadTimeConstrained())
             // Check the leadtime constraints after the move
             // Note that the check function can update the answered date
             // and quantity
@@ -567,7 +566,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
       prevdate = opplan->getEnd();
       noRestore = data->state->forceLate;
 
-      if (isLeadTimeConstrained() || isFenceConstrained())
+      if (isLeadTimeConstrained())
         // Note that the check function can update the answered date and
         // quantity
         if (data->constrainedPlanning &&
@@ -587,9 +586,9 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
         if (cur->getOnhand() < overloadQty) overloadQty = cur->getOnhand();
 
       // Solve the overload in the bucket by resizing the operationplan.
-      // If the complete operationplan is overload or allowsplits = false then we can skip this step.
-      // Because of operation size constraints (minimum and multiple values)
-      // it is possible that the resizing fails.
+      // If the complete operationplan is overload or allowsplits = false then
+      // we can skip this step. Because of operation size constraints (minimum
+      // and multiple values) it is possible that the resizing fails.
       if (overloadQty < -ROUNDING_ERROR &&
           orig_q_qty > -overloadQty + ROUNDING_ERROR &&
           data->state->q_loadplan->getLoad()->getQuantity() &&
@@ -761,8 +760,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
             // The new loadplan is expected to be at the requested date or
             // earlier (eg in the presence of availability calendars)
             data->state->a_qty = 0.0;
-          else if (data->constrainedPlanning &&
-                   (isLeadTimeConstrained() || isFenceConstrained())) {
+          else if (data->constrainedPlanning && isLeadTimeConstrained()) {
             // Check the leadtime constraints after the move
             // Note that the check function can update the answered date
             // and quantity

@@ -85,18 +85,17 @@ are considered during plan creation:
 * | Capacity:
   | Respect the capacity limits of your resources.
 
-* | Lead time:
-  | Don't generate any plans that start or end in the past.
-  | Only confirmed manufacturing and purchase orders are allowed in the past, as these
+* | Manufacturing lead time:
+  | Don't generate any manufacturing or distribution orders that start or end in the past.
+  | Only confirmed manufacturing and distribution orders are allowed in the past, as these
     are considered frozen.
-  | All approved and proposed manufacturing and purchase orders must start in the future.
+  | All approved and proposed manufacturing and distribution orders must start in the future.
 
-* | Release fence:
-  | Don't propose any plans within a frozen time window (which is configured
-    on each operation).
-  | Within this release fence the plan can exist only of approved and confirmed
-    manufacturing and purchase orders. The planning algorithm is no longer allowed
-    to propose new activities.
+* | Purchasing lead time:
+  | Don't generate any purchase orders that start or end in the past.
+  | Only confirmed purchase orders are allowed in the past, as these
+    are considered frozen.
+  | All approved and proposed purchase orders must start in the future.
 
 A separate page provides more details on the :doc:`/developer-guide/planning-algorithm`.
 
@@ -111,13 +110,19 @@ A separate page provides more details on the :doc:`/developer-guide/planning-alg
 
       .. code-block:: bash
 
-        frepplectl runplan --constraints=15 --plantype=1 --env=fcst,invplan,balancing,supply
+        frepplectl runplan --constraints=capa,po_lt,mfg_lt --plantype=1 --env=fcst,invplan,balancing,supply
+
+        Deprecated (sum of numbers with capa = 4, lt = 1, mfg_lt = 16, po_lt = 32):
+        frepplectl runplan --constraints=5 --plantype=1 --env=fcst,invplan,balancing,supply
 
    .. tab:: Web API
 
       .. code-block:: bash
 
-        POST /execute/api/runplan/?constraint=15&plantype=1&env=fcst,invplan,balancing,supply
+        POST /execute/api/runplan/?constraint=capa,po_lt,mfg_lt&plantype=1&env=fcst,invplan,balancing,supply
+
+        Deprecated (sum of numbers with capa = 4, lt = 1, mfg_lt = 16, po_lt = 32):
+        POST /execute/api/runplan/?constraint=5&plantype=1&env=fcst,invplan,balancing,supply
 
 .. _scheduletasks:
 

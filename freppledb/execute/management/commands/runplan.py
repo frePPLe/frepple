@@ -44,6 +44,35 @@ from freppledb.execute.models import Task
 from freppledb import __version__
 
 
+def parseConstraints(val: int | str) -> int:
+    try:
+        cstrnts = int(val)
+    except Exception:
+        cstrnts = 0
+        for v in val.split(","):
+            c = v.strip().lower()
+            if c == "capa":
+                cstrnts += 4
+            elif c == "lt":
+                cstrnts += 16 + 32
+            elif c == "mfg_lt":
+                cstrnts += 16
+            elif c == "po_lt":
+                cstrnts += 32
+    return cstrnts
+
+
+def constraintString(val: int) -> str:
+    c = []
+    if val & 4:
+        c.append("capa")
+    if val & 16 or val & 1:
+        c.append("mfg_lt")
+    if val & 32 or val & 1:
+        c.append("po_lt")
+    return ",".join(c)
+
+
 class Command(BaseCommand):
     help = "Runs frePPLe to generate a plan"
 
@@ -66,10 +95,9 @@ class Command(BaseCommand):
         parser.add_argument(
             "--constraint",
             dest="constraint",
-            type=int,
-            default=15,
-            choices=range(0, 16),
-            help="Constraints to be considered: 1=lead time, 4=capacity, 8=release fence",
+            type=str,
+            default="capa,mfg_lt,po_lt,fence",
+            help="Constraints to be considered: capa, mfg_lt, po_lt, fence, lt",
         )
         parser.add_argument(
             "--plantype",
@@ -184,11 +212,9 @@ class Command(BaseCommand):
 
             # Validate options
             if "constraint" in options:
-                constraint = int(options["constraint"])
-                if constraint < 0 or constraint > 15:
-                    raise ValueError("Invalid constraint: %s" % options["constraint"])
+                constraint = parseConstraints(options["constraint"])
             else:
-                constraint = 15
+                constraint = 4 + 16 + 32
             if "plantype" in options:
                 plantype = int(options["plantype"])
             else:
@@ -209,8 +235,8 @@ class Command(BaseCommand):
 
             # Set environment variables
             if options["env"]:
-                task.arguments = "--constraint=%d --plantype=%d --env=%s" % (
-                    constraint,
+                task.arguments = "--constraint=%s --plantype=%d --env=%s" % (
+                    constraintString(constraint),
                     plantype,
                     options["env"],
                 )
@@ -221,8 +247,8 @@ class Command(BaseCommand):
                     else:
                         os.environ[j[0]] = j[1]
             else:
-                task.arguments = "--constraint=%d --plantype=%d" % (
-                    constraint,
+                task.arguments = "--constraint=%s --plantype=%d" % (
+                    constraintString(constraint),
                     plantype,
                 )
             if options["background"]:
@@ -372,7 +398,7 @@ class Command(BaseCommand):
                 database=request.database
             )
             plantype = "2"
-            constraint = 15
+            constraint = 4 + 16 + 32
             current_options = [i[0] for i in planning_options]
             lastrun = (
                 Task.objects.all()
@@ -389,10 +415,7 @@ class Command(BaseCommand):
                         key, val = i.split("=")
                         key = key.strip("--")
                         if key == "constraint":
-                            try:
-                                constraint = int(val)
-                            except Exception:
-                                pass
+                            constraint = parseConstraints(val)
                         elif key == "plantype":
                             plantype = val
                         elif key == "env":
@@ -400,16 +423,16 @@ class Command(BaseCommand):
                                 current_options = val.split(",")
                             except Exception:
                                 pass
-
             return render_to_string(
                 "commands/runplan.html",
                 {
                     "planning_options": planning_options,
                     "current_options": current_options,
-                    "capacityconstrained": constraint & 4,
-                    "materialconstrained": constraint & 2,
-                    "leadtimeconstrained": constraint & 1,
-                    "fenceconstrained": constraint & 8,
+                    "capa_constrained": constraint & 4,
+                    "lt_constrained": constraint & 1,
+                    "mfg_lt_constrained": constraint & (16 + 1),
+                    "po_lt_constrained": constraint & (32 + 1),
+                    "fence_constrained": constraint & 8,
                     "plantype": plantype,
                     "widget": widget,
                     "lastrun": lastrun,

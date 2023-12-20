@@ -390,14 +390,11 @@ class SolverCreate : public Solver {
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;
 
-  /* Static constant for the LEADTIME constraint type. */
+  /* Static constant for constraint types. */
   static const short LEADTIME = 1;
-
-  /* Static constant for the CAPACITY constraint type. */
   static const short CAPACITY = 4;
-
-  /* Static constant for the FENCE constraint type. */
-  static const short FENCE = 8;
+  static const short MFG_LT = 16;
+  static const short PO_LT = 32;
 
   int getCluster() const { return cluster; }
 
@@ -409,12 +406,6 @@ class SolverCreate : public Solver {
 
   /* Returns the constraints considered by the solve. */
   short getConstraints() const { return constrts; }
-
-  /* Returns true if this solver respects the operation release fences.
-   * The solver isn't allowed to create any operation plans within the
-   * release fence.
-   */
-  bool isFenceConstrained() const { return (constrts & FENCE) > 0; }
 
   /* Returns true if the solver respects the current time of the plan.
    * The solver isn't allowed to create any operation plans in the past.

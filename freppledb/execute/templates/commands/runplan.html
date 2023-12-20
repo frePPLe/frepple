@@ -61,22 +61,22 @@
         <b>{% filter capfirst %}{% translate "constraints" %}{% endfilter %}</b><br>
         <div class="form-check">
         <label class="form-check-label" for="cb4">
-        <input class="form-check-input" type="checkbox" name="constraint" {% if capacityconstrained %}checked {% endif %}value="4" id="cb4"/>
+        <input class="form-check-input" type="checkbox" name="constraint" {% if capa_constrained %}checked {% endif %}value="capa" id="cb4"/>
         {% blocktrans %}<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Respect the capacity limits of your resources.">Capacity: respect capacity limits</span>{% endblocktrans %}
         <span class="fa fa-question-circle"></span>
         </label>
         </div>
         <div class="form-check">
-        <label class="form-check-label" for="cb1">
-        <input class="form-check-input" type="checkbox" name="constraint" {% if leadtimeconstrained %}checked {% endif %}value="1" id="cb1"/>
-        {% blocktrans %}<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Don't generate any plans that start or end in the past.<br>Proposed and approved activities must all be in the future.<br>Only confirmed activities are allowed to be in the past.">Lead time: do not plan in the past</span>{% endblocktrans %}
+        <label class="form-check-label" for="cb16">
+        <input class="form-check-input" type="checkbox" name="constraint" {% if mfg_lt_constrained %}checked {% endif %}value="mfg_lt" id="cb16"/>
+        {% blocktrans %}<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Don't generate manufacturing orders or distribution orders that start or end in the past.<br>Proposed and approved activities must all be in the future.<br>Only confirmed activities are allowed to be in the past.">Manufacturing lead time: do not manufacture in the past</span>{% endblocktrans %}
         <span class="fa fa-question-circle"></span>
         </label>
         </div>
         <div class="form-check">
-        <label class="form-check-label" for="cb8">
-        <input class="form-check-input" type="checkbox" name="constraint" {% if fenceconstrained %}checked {% endif %}value="8" id="cb8"/>
-        {% blocktrans %}<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Don't propose any plans within a frozen time window (which is configured on each operation).<br>Within the frozen zone only approved and confirmed activities are allowed, no new proposed activities.">Release fence: do not plan within a frozen time window</span>{% endblocktrans %}
+        <label class="form-check-label" for="cb32">
+        <input class="form-check-input" type="checkbox" name="constraint" {% if po_lt_constrained %}checked {% endif %}value="po_lt" id="cb32"/>
+        {% blocktrans %}<span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="Don't generate purchase orders that start or end in the past.<br>Proposed and approved activities must all be in the future.<br>Only confirmed activities are allowed to be in the past.">Purchasing lead time: do not purchase in the past</span>{% endblocktrans %}
           <span class="fa fa-question-circle"></span>
         </label>
         </div>

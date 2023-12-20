@@ -44,7 +44,7 @@ class cookbook_forecast(cookbooktest):
             webservice=True,
         )
         management.call_command(
-            "runplan", plantype=1, constraint=15, env="fcst,supply,nowebservice"
+            "runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="fcst,supply,nowebservice"
         )
         self.assertOperationplans(
             settings.FREPPLE_HOME,
@@ -69,7 +69,7 @@ class cookbook_forecast(cookbooktest):
             webservice=True,
         )
         management.call_command(
-            "runplan", plantype=1, constraint=15, env="fcst,supply,nowebservice"
+            "runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="fcst,supply,nowebservice"
         )
         self.assertOperationplans(
             settings.FREPPLE_HOME,
@@ -94,7 +94,7 @@ class cookbook_forecast(cookbooktest):
             webservice=True,
         )
         management.call_command(
-            "runplan", plantype=1, constraint=15, env="fcst,supply,nowebservice"
+            "runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="fcst,supply,nowebservice"
         )
         self.assertOperationplans(
             settings.FREPPLE_HOME,
@@ -117,7 +117,7 @@ class cookbook_forecast(cookbooktest):
             webservice=True,
         )
         management.call_command(
-            "runplan", plantype=1, constraint=15, env="fcst,supply,nowebservice"
+            "runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="fcst,supply,nowebservice"
         )
         self.assertOperationplans(
             settings.FREPPLE_HOME,

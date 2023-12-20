@@ -139,7 +139,7 @@ class OdooTest(TransactionTestCase):
 
         # Generate plan
         management.call_command(
-            "runplan", plantype=1, constraint=15, env="supply,fcst,invplan"
+            "runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply,fcst,invplan"
         )
 
         # Check plan results

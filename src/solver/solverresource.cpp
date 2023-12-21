@@ -75,7 +75,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
       prevdate = data->state->q_operationplan->getEnd();
       noRestore = data->state->forceLate;
 
-      if (isLeadTimeConstrained())
+      if (isLeadTimeConstrained(data->state->q_operationplan->getOperation()))
         // Note that the check function can update the answered date and
         // quantity
         if (data->constrainedPlanning &&
@@ -192,7 +192,9 @@ void SolverCreate::solve(const Resource* res, void* v) {
             // If there isn't available time in the location calendar, the move
             // can fail.
             data->state->a_qty = 0.0;
-          else if (data->constrainedPlanning && isLeadTimeConstrained())
+          else if (data->constrainedPlanning &&
+                   isLeadTimeConstrained(
+                       data->state->q_operationplan->getOperation()))
             // Check the leadtime constraints after the move
             // Note that the check function can update the answered date
             // and quantity
@@ -566,7 +568,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
       prevdate = opplan->getEnd();
       noRestore = data->state->forceLate;
 
-      if (isLeadTimeConstrained())
+      if (isLeadTimeConstrained(opplan->getOperation()))
         // Note that the check function can update the answered date and
         // quantity
         if (data->constrainedPlanning &&
@@ -760,7 +762,8 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
             // The new loadplan is expected to be at the requested date or
             // earlier (eg in the presence of availability calendars)
             data->state->a_qty = 0.0;
-          else if (data->constrainedPlanning && isLeadTimeConstrained()) {
+          else if (data->constrainedPlanning &&
+                   isLeadTimeConstrained(opplan->getOperation())) {
             // Check the leadtime constraints after the move
             // Note that the check function can update the answered date
             // and quantity

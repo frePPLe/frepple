@@ -51,7 +51,23 @@
 			<item name="subassembly" />
 			<quantity>1</quantity>
 		</flow>
+		<flow xsi:type="flow_start">
+			<operation name="make subassembly" />
+			<item name="component" />
+			<quantity>-1</quantity>
+		</flow>		
 	</flows>
+	<suppliers>
+		<supplier name="component supplier">
+			<itemsuppliers>
+			  <itemsupplier>
+			  <item name="component"/>
+			  <leadtime>P0D</leadtime>
+			  <fence>P10D</fence>
+			</itemsupplier>
+			</itemsuppliers>
+		  </supplier>
+	</suppliers>	
 	<demands>
 		<demand name="order 1">
 			<quantity>10</quantity>
@@ -72,14 +88,20 @@
 	</demands>
 
 <?python
-print("CREATING CONSTRAINED PLAN WITHOUT AVAILABILITY CALENDAR")
-# Note that lead time isn't active as constraint
-frepple.solver_mrp(plantype=1, constraints=1, loglevel=2).solve()
+print("CREATING CONSTRAINED PLAN WITH MFG FENCE WITHOUT AVAILABILITY CALENDAR")
+frepple.solver_mrp(plantype=1, constraints=16, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
-print("CREATING CONSTRAINED PLAN WITH AVAILABILITY CALENDAR")
-frepple.location(name="factory").available = frepple.calendar(name="working hours")
-frepple.solver_mrp(plantype=1, constraints=1, loglevel=2).solve()
+print("CREATING CONSTRAINED PLAN WITH PO+MFG FENCE WITHOUT AVAILABILITY CALENDAR")
+frepple.solver_mrp(plantype=1, constraints=16+32, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
+print("CREATING CONSTRAINED PLAN WITH PO+MFG FENCE WITH AVAILABILITY CALENDAR")
+frepple.location(name="factory").available = frepple.calendar(name="working hours")
+frepple.solver_mrp(plantype=1, constraints=16, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+print("CREATING CONSTRAINED PLAN WITH PO+MFG FENCE WITH AVAILABILITY CALENDAR")
+frepple.location(name="factory").available = frepple.calendar(name="working hours")
+frepple.solver_mrp(plantype=1, constraints=16+32, loglevel=2).solve()
+frepple.saveplan("output.4.xml")
 ?>
 
 </plan>

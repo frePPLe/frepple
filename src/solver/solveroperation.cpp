@@ -479,14 +479,14 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
                                           SolverCreate::SolverData& data,
                                           bool extra) {
   // No lead time constraints
-  if (!data.constrainedPlanning || !isLeadTimeConstrained()) return true;
+  if (!data.constrainedPlanning || !isLeadTimeConstrained(opplan->getOperation())) return true;
 
   // Compute offset from the current date: A fence problem uses the release
   // fence window, while a leadtimeconstrained constraint has an offset of 0.
   // If both constraints apply, we need the bigger of the two (since it is the
   // most constraining date.
   Date threshold = Plan::instance().getCurrent();
-  if (isLeadTimeConstrained())
+  if (isLeadTimeConstrained(opplan->getOperation()))
     threshold = opplan->getOperation()->getFence(opplan);
 
   // Compare the operation plan start with the threshold date

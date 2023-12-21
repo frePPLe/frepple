@@ -393,8 +393,8 @@ class SolverCreate : public Solver {
   /* Static constant for constraint types. */
   static const short LEADTIME = 1;
   static const short CAPACITY = 4;
-  static const short MFG_LT = 16;
-  static const short PO_LT = 32;
+  static const short MFG_LEADTIME = 16;
+  static const short PO_LEADTIME = 32;
 
   int getCluster() const { return cluster; }
 
@@ -402,7 +402,10 @@ class SolverCreate : public Solver {
 
   /* Update the constraints to be considered by this solver. This field may
    * not be applicable for all solvers. */
-  void setConstraints(short i) { constrts = i; }
+  void setConstraints(short i) {
+    constrts = i;
+    if (constrts & LEADTIME) constrts |= PO_LEADTIME + MFG_LEADTIME;
+  }
 
   /* Returns the constraints considered by the solve. */
   short getConstraints() const { return constrts; }
@@ -410,7 +413,12 @@ class SolverCreate : public Solver {
   /* Returns true if the solver respects the current time of the plan.
    * The solver isn't allowed to create any operation plans in the past.
    */
-  bool isLeadTimeConstrained() const { return (constrts & LEADTIME) > 0; }
+  bool isLeadTimeConstrained(Operation* oper) const {
+    if (oper && oper->hasType<OperationItemSupplier>())
+      return (constrts & PO_LEADTIME) > 0;
+    else
+      return (constrts & MFG_LEADTIME) > 0;
+  }
 
   /* Returns true if the solver respects capacity constraints. */
   bool isCapacityConstrained() const { return (constrts & CAPACITY) > 0; }

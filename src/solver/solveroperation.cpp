@@ -2133,7 +2133,9 @@ void SolverCreate::createsBatches(Operation* oper, void* v) {
                             OperationItemDistribution>())
     return;
   for (auto ld = oper->getLoads().begin(); ld != oper->getLoads().end(); ++ld)
-    if (ld->getResource()->getConstrained()) return;
+    if (!oper->hasProperty("enforceBatchWindow") &&
+        ld->getResource()->getConstrained())
+      return;
 
   SolverData* data = static_cast<SolverData*>(v);
   auto loglevel = data->getSolver()->getLogLevel();

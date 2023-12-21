@@ -74,11 +74,11 @@
 <?python
 print("CREATING CONSTRAINED PLAN WITHOUT AVAILABILITY CALENDAR")
 # Note that lead time isn't active as constraint
-frepple.solver_mrp(plantype=1, constraints=12, loglevel=2).solve()
+frepple.solver_mrp(plantype=1, constraints=1, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
 print("CREATING CONSTRAINED PLAN WITH AVAILABILITY CALENDAR")
 frepple.location(name="factory").available = frepple.calendar(name="working hours")
-frepple.solver_mrp(plantype=1, constraints=12, loglevel=2).solve()
+frepple.solver_mrp(plantype=1, constraints=1, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
 ?>
 

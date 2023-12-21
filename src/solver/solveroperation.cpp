@@ -486,7 +486,7 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
   // If both constraints apply, we need the bigger of the two (since it is the
   // most constraining date.
   Date threshold = Plan::instance().getCurrent();
-  if (!isLeadTimeConstrained() || opplan->getOperation()->getFence() > 0L)
+  if (isLeadTimeConstrained())
     threshold = opplan->getOperation()->getFence(opplan);
 
   // Compare the operation plan start with the threshold date

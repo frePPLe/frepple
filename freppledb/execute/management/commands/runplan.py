@@ -44,7 +44,7 @@ from freppledb.execute.models import Task
 from freppledb import __version__
 
 
-def parseConstraints(val: int | str) -> int:
+def parseConstraints(val):
     try:
         cstrnts = int(val)
     except Exception:
@@ -62,7 +62,7 @@ def parseConstraints(val: int | str) -> int:
     return cstrnts
 
 
-def constraintString(val: int) -> str:
+def constraintString(val):
     c = []
     if val & 4:
         c.append("capa")

@@ -69,6 +69,8 @@ int OperationPlan::initialize() {
               "add or subtract a duration of operation hours from a date");
   x.addMethod("updateFeasible", &updateFeasiblePython, METH_NOARGS,
               "updates the flag whether this operationplan is feasible or not");
+  x.addMethod("getColor", &getColorPython, METH_NOARGS,
+              "returs a pair<double color, IP buffer>");
   metadata->setPythonClass(x);
   return x.typeReady();
 }
@@ -2664,6 +2666,102 @@ double OperationPlan::getSetupCost() const {
     return setupevent->getRule() ? setupevent->getRule()->getCost() : 0.0;
   else
     return 0.0;
+}
+
+PyObject* OperationPlan::getColorPython(PyObject* self, PyObject* args) {
+  OperationPlan* opplan = static_cast<OperationPlan*>(self);
+  // No color for deivery, stock or alternate operationplans
+  if (opplan->getOrderType() == "DLVR")
+    return Py_BuildValue("(dO)", 999999.0, Py_None);
+  if (opplan->getOrderType() == "STCK")
+    return Py_BuildValue("(dO)", 999999.0, Py_None);
+  if (opplan->getOrderType() == "ALT")
+    return Py_BuildValue("(dO)", 999999.0, Py_None);
+
+  if (opplan->getConfirmed() || opplan->getApproved())
+    return Py_BuildValue("(dO)", 100.0 - opplan->getDelay() / 86400, Py_None);
+
+  // Routing suboperations are getting a color
+  // if the routing is the first proposed to produce
+  bool isRoutingSubop = false, isFirstRoutingMO = true;
+  if (opplan->getStatus() == "proposed" &&
+      opplan->getOperation()->getOwner() and
+      opplan->getOperation()->getOwner()->hasType<OperationRouting>()) {
+    isRoutingSubop = true;
+    Date end = opplan->getOwner()->getEnd();
+    for (auto rr = opplan->getOperation()->getOwner()->getOperationPlans();
+         rr != OperationPlan::end(); ++rr) {
+      if ((&*rr)->getStatus() != "proposed") continue;
+      if ((&*rr) != opplan->getOwner() && rr->getEnd() < end) {
+        isFirstRoutingMO = false;
+        break;
+      }
+    }
+  }
+
+  // This is a routing suboperation and the owner is the first MO of the plan
+  if (isRoutingSubop && isFirstRoutingMO) {
+    // Find the last step
+    OperationPlan* lastStepOpPlan;
+    for (auto rr = opplan->getOwner()->getSubOperationPlans();
+         rr != OperationPlan::end(); ++rr) {
+      lastStepOpPlan = (&*rr);
+    }
+    return Py_BuildValue("(dO)", 100.0 - lastStepOpPlan->getDelay() / 86400,
+                         Py_None);
+  }
+
+  // This is routing suboperation and the owner is NOT the first MO of the
+  // plan
+  if (isRoutingSubop && !isFirstRoutingMO) {
+    /*color less*/
+    return Py_BuildValue("(dO)", 999999.0, Py_None);
+  }
+
+  // This is a routing MO, make sure it's the first one to produce
+  isFirstRoutingMO = true;
+  if (opplan->getStatus() == "proposed" &&
+      opplan->getOperation()->hasType<OperationRouting>()) {
+    for (auto rr = opplan->getOperation()->getOperationPlans();
+         rr != OperationPlan::end(); ++rr) {
+      if ((&*rr)->getStatus() != "proposed") continue;
+      if ((&*rr) != opplan && rr->getEnd() < opplan->getEnd()) {
+        isFirstRoutingMO = false;
+        break;
+      }
+    }
+
+    if (isFirstRoutingMO) {
+      OperationPlan* lastStepOpPlan;
+      for (auto rr = opplan->getSubOperationPlans(); rr != OperationPlan::end();
+           ++rr) {
+        lastStepOpPlan = (&*rr);
+      }
+      if (lastStepOpPlan)
+        return Py_BuildValue("(dO)", 100.0 - lastStepOpPlan->getDelay() / 86400,
+                             Py_None);
+      else
+        return Py_BuildValue("(dO)", 999999.0, Py_None);
+    } else
+      return Py_BuildValue("(dO)", 999999.0, Py_None);
+  }
+
+  // Remaining possibilities now, POs, DOs and regular timer_per, fixed_time
+  // MOs, no subops
+  Date firstProposedStart;
+  for (auto rr = opplan->getOperation()->getOperationPlans();
+       rr != OperationPlan::end(); ++rr) {
+    if (!(&*rr)->getProposed()) continue;
+    if (!firstProposedStart && (&*rr) == opplan)
+      return Py_BuildValue("(dO)", 100.0 - opplan->getDelay() / 86400, Py_None);
+    else if (!firstProposedStart)
+      firstProposedStart = (&*rr)->getStart();
+    else if (firstProposedStart && opplan->getStart() <= firstProposedStart)
+      return Py_BuildValue("(dO)", 100.0 - opplan->getDelay() / 86400, Py_None);
+    else
+      return Py_BuildValue("(dO)", 999999.0, Py_None);
+  }
+  return Py_BuildValue("(dO)", 999999.0, Py_None);
 }
 
 SetupEvent::SetupEvent(OperationPlan* x)

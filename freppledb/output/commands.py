@@ -591,25 +591,14 @@ class ExportOperationPlans(PlanTask):
                 if cluster != -1 and i.cluster not in cluster:
                     continue
 
-                # variable used to make sure only first proposed operationplan has its color set.
-                proposedFound = False
-                proposedFoundDate = None
-
                 for j in i.operationplans:
                     if j.status in accepted_status:
-                        data = cls.getDataOpplan(
-                            i, j, with_fcst, timestamp, proposedFound, proposedFoundDate
-                        )
+                        data = cls.getDataOpplan(i, j, with_fcst, timestamp)
                         if data:
                             yield linetemplate % tuple(data)
-                            if j.status == "proposed":
-                                proposedFound = True
-                                proposedFoundDate = j.start
 
     @classmethod
-    def getDataOpplan(
-        cls, i, j, with_fcst, timestamp, proposedFound, proposedFoundDate
-    ):
+    def getDataOpplan(cls, i, j, with_fcst, timestamp):
         import frepple
 
         status = j.status
@@ -641,7 +630,9 @@ class ExportOperationPlans(PlanTask):
         else:
             demand = None
             forecast = None
-        color = 100 - delay / 86400
+
+        color = j.getColor()[0]
+        color = color if color != 999999 else "\\N"
 
         data = None
         if isinstance(i, frepple.operation_inventory):
@@ -713,11 +704,7 @@ class ExportOperationPlans(PlanTask):
                 else j.owner.demand.due
                 if j.owner and j.owner.demand
                 else "\\N",
-                color
-                if (proposedFound is False and status == "proposed")
-                or (status == "proposed" and j.start == proposedFoundDate)
-                or status in ("confirmed", "approved")
-                else "\\N",  # color
+                color,  # color
                 clean_value(j.reference),
                 clean_value(j.batch),
                 "\\N",
@@ -751,11 +738,7 @@ class ExportOperationPlans(PlanTask):
                 else j.owner.demand.due
                 if j.owner and j.owner.demand
                 else "\\N",
-                color
-                if (proposedFound is False and status == "proposed")
-                or (status == "proposed" and j.start == proposedFoundDate)
-                or status in ("confirmed", "approved")
-                else "\\N",  # color
+                color,  # color
                 clean_value(j.reference),
                 clean_value(j.batch),
                 "\\N",
@@ -797,11 +780,7 @@ class ExportOperationPlans(PlanTask):
                 else j.owner.demand.due
                 if j.owner and j.owner.demand
                 else "\\N",
-                color
-                if (proposedFound is False and status == "proposed")
-                or (status == "proposed" and j.start == proposedFoundDate)
-                or status in ("confirmed", "approved")
-                else "\\N",  # color
+                color,  # color
                 clean_value(j.reference),
                 clean_value(j.batch),
                 round(j.quantity_completed, 8) if j.quantity_completed else "\\N",

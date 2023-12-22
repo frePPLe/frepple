@@ -2511,6 +2511,9 @@ class OperationPlan : public Object,
   /* Delete all existing loadplans. */
   void setResetResources(bool);
 
+  /* Return the color of the operationplan. */
+  static PyObject* getColorPython(PyObject*, PyObject*);
+
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
     m->addStringRefField<Cls>(Tags::reference, &Cls::getReference,

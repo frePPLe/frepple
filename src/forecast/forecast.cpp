@@ -251,44 +251,47 @@ PyObject* ForecastBucket::create(PyTypeObject* pytype, PyObject* args,
     Date startdate = PythonData(strt).getDate();
 
     // Initialize the forecast.
-    Forecast* fcst = static_cast<Forecast*>(pyfcst);
-    auto data = fcst->getData();
-    lock_guard<recursive_mutex> exclusive(data->lock);
+    {
+      Forecast* fcst = static_cast<Forecast*>(pyfcst);
+      auto data = fcst->getData();
+      lock_guard<recursive_mutex> exclusive(data->lock);
 
-    // Find the correct forecast bucket
-    // @todo This linear loop doesn't scale well when the number of buckets
-    // increases. The loading time goes up quadratically: need to read more
-    // buckets + each bucket takes longer
-    for (auto& bckt : data->getBuckets()) {
-      auto fcstbckt = bckt.getOrCreateForecastBucket();
-      if (!fcstbckt) continue;
-      if (fcstbckt->getDueRange().within(startdate)) {
-        // Iterate over extra keywords, and set attributes.
-        PyObject *key, *value;
-        Py_ssize_t pos = 0;
-        while (PyDict_Next(kwds, &pos, &key, &value)) {
-          PythonData field(value);
-          PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
-          DataKeyword attr(PyBytes_AsString(key_utf8));
-          Py_DECREF(key_utf8);
-          if (!attr.isA(ForecastBucket::tag_forecast) &&
-              !attr.isA(Tags::start) && !attr.isA(Tags::name) &&
-              !attr.isA(Tags::type) && !attr.isA(Tags::action)) {
-            const MetaFieldBase* fmeta =
-                fcstbckt->getType().findField(attr.getHash());
-            if (!fmeta && fcstbckt->getType().category)
-              fmeta = fcstbckt->getType().category->findField(attr.getHash());
-            if (fmeta)
-              // Update the attribute
-              fmeta->setField(fcstbckt, field);
-            else
-              fcstbckt->setProperty(attr.getName(), value);
-          }
-        };
+      // Find the correct forecast bucket
+      // @todo This linear loop doesn't scale well when the number of buckets
+      // increases. The loading time goes up quadratically: need to read more
+      // buckets + each bucket takes longer
+      for (auto& bckt : data->getBuckets()) {
+        auto fcstbckt = bckt.getOrCreateForecastBucket();
+        if (!fcstbckt) continue;
+        if (fcstbckt->getDueRange().within(startdate)) {
+          // Iterate over extra keywords, and set attributes.
+          PyObject *key, *value;
+          Py_ssize_t pos = 0;
+          while (PyDict_Next(kwds, &pos, &key, &value)) {
+            PythonData field(value);
+            PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+            DataKeyword attr(PyBytes_AsString(key_utf8));
+            Py_DECREF(key_utf8);
+            if (!attr.isA(ForecastBucket::tag_forecast) &&
+                !attr.isA(Tags::start) && !attr.isA(Tags::name) &&
+                !attr.isA(Tags::type) && !attr.isA(Tags::action)) {
+              logger << "   extra " << attr.getName() << endl;
+              const MetaFieldBase* fmeta =
+                  fcstbckt->getType().findField(attr.getHash());
+              if (!fmeta && fcstbckt->getType().category)
+                fmeta = fcstbckt->getType().category->findField(attr.getHash());
+              if (fmeta)
+                // Update the attribute
+                fmeta->setField(fcstbckt, field);
+              else
+                fcstbckt->setProperty(attr.getName(), value);
+            }
+          };
 
-        // Return the object
-        Py_INCREF(fcstbckt);
-        return fcstbckt;
+          // Return the object
+          Py_INCREF(fcstbckt);
+          return fcstbckt;
+        }
       }
     }
     return nullptr;
@@ -954,8 +957,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
            << endl;
 
   // One off initialization
-  thread_local static string dbconnection =
-      Plan::instance().getStringProperty("dbconnection");
+  auto dbconnection = Plan::instance().getDBconnection();
   thread_local static DatabaseReader db(dbconnection);
   thread_local static DatabasePreparedStatement<5> stmt;
   thread_local static short mode = 0;
@@ -1158,8 +1160,7 @@ void ForecastData::flush() {
   }
 
   try {
-    thread_local static string dbconnection =
-        Plan::instance().getStringProperty("dbconnection");
+    auto dbconnection = Plan::instance().getDBconnection();
     thread_local static DatabaseReader db(dbconnection);
     thread_local static DatabasePreparedStatement<48> stmt;
     thread_local static DatabasePreparedStatement<0> stmt_begin;

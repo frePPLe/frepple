@@ -985,6 +985,8 @@ double ForecastMeasure::update(ForecastBucketData& fcstdata, double val,
   // TODO use a single setvalue call with multiple arguments to avoid
   // iterating many times over the parents
   auto fcst = fcstdata.getForecast();
+  auto fdata = fcst->getData();
+  lock_guard<recursive_mutex> exclusive(fdata->lock);
   double remainder = 0.0;
   bool initialized = false;
 

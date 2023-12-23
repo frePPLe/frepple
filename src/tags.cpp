@@ -74,6 +74,7 @@ const Keyword Tags::date("date");
 const Keyword Tags::dateproperty("dateproperty");
 const Keyword Tags::dates("dates");
 const Keyword Tags::days("days");
+const Keyword Tags::dbconnection("dbconnection");
 const Keyword Tags::deflt("default");
 const Keyword Tags::delay("delay");
 const Keyword Tags::delivery("delivery");

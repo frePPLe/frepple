@@ -260,7 +260,16 @@ class SupplyPlanning(PlanTask):
             if hasattr(cls, "nextDemand"):
                 cls.solver.userexit_nextdemand = cls.nextDemand
         logger.info("Plan type: %s" % plantype)
-        logger.info("Constraints: %s" % constraint)
+        constraint_str = []
+        if constraint & 4:
+            constraint_str.append("capa")
+        if constraint & 16:
+            constraint_str.append("mfg_lt")
+        if constraint & 32:
+            constraint_str.append("po_lt")
+        if not constraint_str:
+            constraint_str.append("-")
+        logger.info("Constraints: %s" % ",".join(constraint_str))
         try:
             if loglevel <= 2 and not settings.DEBUG:
                 # Solver output is limited to 300000 lines

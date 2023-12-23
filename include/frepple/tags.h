@@ -75,6 +75,7 @@ class Tags {
   static const Keyword dateproperty;
   static const Keyword dates;
   static const Keyword days;
+  static const Keyword dbconnection;
   static const Keyword deflt;
   static const Keyword delay;
   static const Keyword delivery;

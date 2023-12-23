@@ -8636,6 +8636,8 @@ class Plan : public Plannable, public Object {
 
   bool wip_produce_full_quantity = false;
 
+  string dbconnection;
+
   /* Defines the behavior of operator pools. A load with quantity 2 for
    * an aggregate resource pool can mean either:
    * - find a resource with size 2 in the pool. Default behavior.
@@ -8722,6 +8724,10 @@ class Plan : public Plannable, public Object {
 
   /* Updates the description of the plan. */
   void setDescription(const string& str) { descr = str; }
+
+  const string& getDBconnection() const { return dbconnection; }
+
+  void setDBconnection(const string& str) { dbconnection = str; }
 
   bool getCompletedAllowFuture() const { return completed_allow_future; }
 
@@ -8819,6 +8825,8 @@ class Plan : public Plannable, public Object {
                               &Plan::setDeliveryDuration);
     m->addStringRefField<Plan>(Tags::description, &Plan::getDescription,
                                &Plan::setDescription);
+    m->addStringRefField<Plan>(Tags::dbconnection, &Plan::getDBconnection,
+                               &Plan::setDBconnection);
     m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
     m->addStringRefField<Plan>(Tags::logfile, &Plan::getLogFile,
                                &Plan::setLogFile, "", DONT_SERIALIZE);

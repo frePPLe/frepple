@@ -157,7 +157,14 @@ class Cache : public Object {
   void setMaximum(unsigned long s) {
     if (s <= 0) throw DataException("Cache object limit must be bigger than 0");
     max_objects = s;
-    if (count > max_objects) work_to_do.notify_all();
+    if (count > max_objects) {
+      work_to_do.notify_all();
+      {
+        // Wait till the worker threads have reduced the objects in memory
+        unique_lock<mutex> l(lock);
+        master_waiting.wait(l, [this] { return this->count <= max_objects; });
+      }
+    }
   }
 
   unsigned long getMaximum() const { return max_objects; }

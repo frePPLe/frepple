@@ -1119,6 +1119,12 @@ void MeasureValue::addToFree(MeasurePagePool& pool) {
   pool.lastfree = this;
 }
 
+void MeasureValue::addToFree() {
+  auto& pool = getPagePool();
+  lock_guard<mutex> l(pool.lock);
+  addToFree(pool);
+}
+
 MeasurePage::MeasurePage(MeasurePagePool& pool) : next(nullptr) {
   // Insert into page list
   if (pool.lastpage) {
@@ -1152,6 +1158,7 @@ short MeasurePage::status() const {
 }
 
 void MeasurePagePool::releaseEmptyPages() {
+  lock_guard<mutex> l(lock);
   unsigned int count = 0;
   for (auto p = firstpage; p;) {
     auto status = p->status();
@@ -1200,18 +1207,22 @@ void MeasureList::insert(const PooledString& k, double v, bool c) {
   }
 
   // Get a free pair
-  auto& pool = k.starts_with("temp") ? MeasurePagePool::measurepages_temp
-                                     : MeasurePagePool::measurepages_default;
-  if (!pool.firstfree) {
-    new MeasurePage(pool);
-    if (!pool.firstfree) throw RuntimeException("No free memory");
+  MeasureValue* n;
+  {
+    auto& pool = k.starts_with("temp") ? MeasurePagePool::measurepages_temp
+                                       : MeasurePagePool::measurepages_default;
+    lock_guard<mutex> l(pool.lock);
+    if (!pool.firstfree) {
+      new MeasurePage(pool);
+      if (!pool.firstfree) throw RuntimeException("No free memory");
+    }
+    n = pool.firstfree;
+    pool.firstfree = pool.firstfree->next;
+    if (pool.firstfree)
+      pool.firstfree->prev = nullptr;
+    else
+      pool.lastfree = nullptr;
   }
-  auto n = pool.firstfree;
-  pool.firstfree = pool.firstfree->next;
-  if (pool.firstfree)
-    pool.firstfree->prev = nullptr;
-  else
-    pool.lastfree = nullptr;
 
   // Insert a new pair
   n->next = nullptr;
@@ -1305,6 +1316,10 @@ void MeasurePagePool::check(const string& msg) {
   unsigned int count_wrong_links = 0;
   bool ok = true;
 
+  // Exclusive access needed
+  lock_guard<mutex> l_tmp(measurepages_temp.lock);
+  lock_guard<mutex> l_default(measurepages_default.lock);
+
   // Count temp pages
   for (auto p = measurepages_temp.firstpage; p; p = p->next) {
     ++count_pages_temp;
@@ -1378,9 +1393,6 @@ void MeasurePagePool::check(const string& msg) {
   logger << "   " << util << "% average utilization" << endl;
   logger << "   " << count_pages_free << " empty pages, "
          << count_pages_temp_free << " free temporary pages." << endl;
-
-  // Abort
-  //if (!ok) throw DataException("corrupted memory pages");
 }
 
 }  // namespace frepple

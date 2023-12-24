@@ -1099,7 +1099,6 @@ class ValidateAggregatedData(PlanTask):
             frepple.cache.write_immediately = True
             if frepple.cache.maximum > 300:
                 frepple.cache.maximum = 300
-                sleep(2)
             frepple.releaseUnusedMemory()
             frepple.cache.printStatus()
 
@@ -1246,7 +1245,6 @@ class ExportForecast(PlanTask):
         if frepple.cache.maximum > 300:
             # Reduce the forecast cache to max 500 objects to save memory
             frepple.cache.maximum = 300
-            sleep(2)
         frepple.releaseUnusedMemory()
         frepple.cache.printStatus()
 

@@ -494,8 +494,9 @@ class MeasureValue {
 
   MeasurePagePool& getPagePool() const;
 
+  // Pool must be locked when calling this method
   void addToFree(MeasurePagePool&);
-  void addToFree() { addToFree(getPagePool()); }
+  void addToFree();
 
  public:
   double getValue() const { return val; }
@@ -633,6 +634,8 @@ class MeasurePagePool {
   string name;
 
  public:
+  mutex lock;
+
   static MeasurePagePool measurepages_default;
   static MeasurePagePool measurepages_temp;
 

@@ -581,9 +581,7 @@ class ExportOperationPlans(PlanTask):
         if cluster == -2:
             for j in opplans:
                 if j.status in accepted_status:
-                    data = cls.getDataOpplan(
-                        j.operation, j, with_fcst, timestamp, False, None
-                    )
+                    data = cls.getDataOpplan(j.operation, j, with_fcst, timestamp)
                     if data:
                         yield linetemplate % tuple(data)
         else:

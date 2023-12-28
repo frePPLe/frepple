@@ -1475,7 +1475,7 @@ var grid = {
           type: "POST",
           contentType: "application/json",
           success: function () {
-            $("#delete_selected, #copy_selected").prop("disabled", true);
+            $("#delete_selected, #copy_selected, #edit_selected").prop("disabled", true);
             $('.cbox, #cb_grid.cbox').prop("checked", false);
             $("#grid").trigger("reloadGrid");
             hideModal('popup');
@@ -1524,7 +1524,7 @@ var grid = {
           type: "POST",
           contentType: "application/json",
           success: function () {
-            $("#delete_selected, #copy_selected").prop("disabled", true);
+            $("#delete_selected, #copy_selected, #edit_selected").prop("disabled", true);
             $('.cbox, #cb_grid.cbox').prop("checked", false);
             $("#grid").trigger("reloadGrid");
             hideModal('popup');
@@ -1811,23 +1811,23 @@ var grid = {
 
   markSelectedRow: function (sel) {
     if (typeof sel !== 'undefined' && sel > 0) {
-      $("#delete_selected, #copy_selected").prop('disabled', false);
+      $("#delete_selected, #copy_selected, #edit_selected").prop('disabled', false);
       if ($("#actions").length) $("#actions1").prop('disabled', false);
     }
     else {
-      $("#delete_selected, #copy_selected").prop('disabled', true);
+      $("#delete_selected, #copy_selected, #edit_selected").prop('disabled', true);
       if ($("#actions").length) $("#actions1").prop('disabled', true);
     }
   },
 
   markAllRows: function () {
     if ($(this).is(':checked')) {
-      $("#copy_selected, #delete_selected").prop('disabled', false);
+      $("#copy_selected, #delete_selected, #edit_selected").prop('disabled', false);
       $("#gridactions").prop('disabled', false);
       $('.cbox').prop("checked", true);
     }
     else {
-      $("#copy_selected, #delete_selected").prop('disabled', true);
+      $("#copy_selected, #delete_selected, #edit_selected").prop('disabled', true);
       $("#gridactions").prop('disabled', true);
       $('.cbox').prop("checked", false);
     }
@@ -1893,6 +1893,124 @@ var grid = {
     thegrid.trigger('reloadGrid');
     thegrid.setGridWidth($('#content-main').width());
     grid.saveColumnConfiguration();
+  },
+
+  showUpdate: function (url) {
+    hideModal('timebuckets');
+    $.jgrid.hideModal("#searchmodfbox_grid");
+    var thegrid = $("#grid");
+    var colModel = thegrid.jqGrid('getGridParam', 'colModel');
+
+    var selectedrows = thegrid.jqGrid('getGridParam', 'selarrrow')
+    var recordcount = selectedrows.length;
+    var msg = { "update": { "fields": {} } }
+    if (!recordcount || recordcount == thegrid.jqGrid('getGridParam', "reccount")) {
+      recordcount = thegrid.jqGrid('getGridParam', "records");
+      var tmp = $('#grid').getGridParam("postData");
+      msg["update"]["filter"] = tmp ? JSON.parse(tmp.filters) : initialfilter;
+    }
+    else
+      msg["update"]["pk"] = selectedrows;
+
+    var form = '<div class="modal-dialog modal-lg">' +
+      '<div class="modal-content">';
+
+    form += '<div class="modal-header">' +
+      '<h5 class="modal-title">' + interpolate(gettext("Update %s records"), [recordcount]) + '</h5>' +
+      '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label=' + gettext("Close") + '></button>' +
+      '</div>' +
+      '<div class="modal-body">';
+
+    form += '<div class="row mb-3"><div class="col">' +
+      gettext("This form allows you update fields for many records.") +
+      '</div></div>';
+
+    form += '<div class="row d-none mb-3" id="updatefieldtemplate">' +
+      '<div class="col">' +
+      '<select class="form-select">';
+    for (var field of colModel) {
+      if (!field.editable) continue;
+      form += '<option value="' + field.name + '">' + field.label + '</option>'
+    }
+    form += '</select></div>' +
+      '<div class="col"><input class="form-control" type="text" placeholder="' + gettext("update to") + '"></div>' +
+      '<div class="col-auto">' +
+      '<button class="btn btn-sm btn-primary" onclick="grid.deleteUpdateField(event)">' +
+      '<span class="fa fa-trash-o" data-bs-toggle="tooltip" data-bs-placement="top"' +
+      'data-bs-title="' + gettext("Delete") + '"></span>' +
+      '</button>' +
+      '</div></div>';
+
+    form += '<div class="row mb-3 updatefield">' +
+      '<div class="col">' +
+      '<select class="form-select">';
+    for (var field of colModel) {
+      if (!field.editable) continue;
+      form += '<option value="' + field.name + '">' + field.label + '</option>'
+    }
+    form += '</select></div>' +
+      '<div class="col"><input class="form-control" type="text" placeholder="' + gettext("update to") + '"></div>' +
+      '<div class="col-auto">' +
+      '<button class="btn btn-sm btn-primary" onclick="grid.deleteUpdateField(event)">' +
+      '<span class="fa fa-trash-o" data-bs-toggle="tooltip" data-bs-placement="top"' +
+      'data-bs-title="' + gettext("Delete") + '"></span>' +
+      '</button>' +
+      '</div></div>';
+
+    form += '<div class="row">' +
+      '<div class="col-auto ms-auto">' +
+      '<button class="btn btn-sm btn-primary" id="addCustbutton" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Add">' +
+      '<span class="fa fa-plus"></span>' +
+      '</button>' +
+      '</div>' +
+      '</div>';
+
+    form += '</div>' +
+      '<div class="modal-footer justify-content-between">' +
+      '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-gray" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<input type="submit" id="updateCustbutton" role="button" class="btn btn-primary" value="' + gettext("Update") + '">' +
+      '</div>' +
+      '</div>' +
+      '</div>';
+
+    $('#popup').html(form);
+    showModal('popup');
+
+    $('#addCustbutton').on(
+      'click',
+      function addTask(event) {
+        var newrow = $("#updatefieldtemplate").clone();
+        newrow.removeAttr("id");
+        newrow.insertBefore($(event.target).closest(".row"));
+        newrow.toggleClass("d-none updatefield");
+        bootstrap.Tooltip.getOrCreateInstance(newrow.find('[data-bs-toggle="tooltip"]')[0]);
+        event.preventDefault();
+      });
+
+    $('#updateCustbutton').on(
+      'click',
+      function () {
+        for (var i of $("div.modal-body .updatefield")) {
+          var fld = $(i).find("select :selected").val();
+          var val = $(i).find("input.form-control").val();
+          msg["update"]["fields"][fld] = (val == "") ? null : val;
+        }
+        $.ajax({
+          url: url,
+          data: JSON.stringify(msg),
+          type: "POST",
+          contentType: "application/json",
+          success: function () {
+            window.location.href = window.location.href;
+          },
+          error: ajaxerror
+        });
+      });
+  },
+
+  deleteUpdateField: function (event) {
+    $(event.target).closest(".row").remove();
+    event.preventDefault();
   }
 }
 

@@ -22,6 +22,10 @@ This release is scheduled for mid January 2024. You can already check out a `pre
 
 .. rubric:: User interface
 
+- | A bulk update of a field on many records in a table is now much
+    easier: first select the records to be updated, click the "update"
+    icon and fill in the popup form with the fields you want to update.
+
 - | Easier management of the membership of user groups.
   | The group edit form now has a widget that allows you to select the users
     belonging to that group.

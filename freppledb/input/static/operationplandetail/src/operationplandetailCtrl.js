@@ -219,7 +219,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
     aggregatedopplan.count = selectionData.length;
     aggregatedopplan.type = (selectionData.length > 0) ? selectionData[0].type : "";
     if (!aggregatedopplan.count)
-      angular.element(document).find("#delete_selected, #copy_selected").prop("disabled", true);
+      angular.element(document).find("#delete_selected, #copy_selected, #edit_selected").prop("disabled", true);
     $scope.$apply(function () { $scope.operationplan.extend(aggregatedopplan); });
   }
   $scope.processAggregatedInfo = processAggregatedInfo;
@@ -258,7 +258,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         rowid = row.reference;
     }
 
-    angular.element(document).find("#delete_selected, #copy_selected").prop("disabled", false);
+    angular.element(document).find("#delete_selected, #copy_selected, #edit_selected").prop("disabled", false);
 
     function callback(opplan) {
       if (row === undefined)
@@ -315,7 +315,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
       $scope.operationplan.id = rowid;
       if (typeof $scope.operationplan.id === 'undefined')
         $scope.$apply(function () {
-          angular.element(document).find("#delete_selected, #copy_selected").prop("disabled", true);
+          angular.element(document).find("#delete_selected, #copy_selected, #edit_selected").prop("disabled", true);
           $scope.operationplan = new OperationPlan();
         });
       else
@@ -881,7 +881,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         $scope.deleted.push($scope.operationplan.reference);
         $scope.operationplan = new OperationPlan();
       });
-      angular.element(document).find("#delete_selected, #copy_selected").prop("disabled", true);
+      angular.element(document).find("#delete_selected, #copy_selected, #edit_selected").prop("disabled", true);
       angular.element(document).find("#save, #undo")
         .removeClass("btn-primary btn-danger")
         .addClass("btn-danger")
@@ -901,7 +901,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         $scope.deleted.push($scope.operationplan.reference);
         $scope.operationplan = new OperationPlan();
       });
-      angular.element(document).find("#delete_selected, #copy_selected").prop("disabled", true);
+      angular.element(document).find("#delete_selected, #copy_selected, #edit_selected").prop("disabled", true);
       angular.element(document).find("#save, #undo")
         .removeClass("btn-primary btn-danger")
         .addClass("btn-danger")

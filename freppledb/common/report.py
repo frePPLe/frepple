@@ -1985,13 +1985,37 @@ class GridReport(View):
         data = json.JSONDecoder().decode(
             request.read().decode(request.encoding or settings.DEFAULT_CHARSET)
         )
-
+        print("pppppp", data)
         with transaction.atomic(using=request.database, savepoint=False):
             content_type_id = ContentType.objects.get_for_model(
                 cls.model, for_concrete_model=False
             ).pk
             for rec in data:
-                if "delete" in rec:
+                if "update" in rec:
+                    # Bulk update
+                    fields = data["update"].get("fields", None)
+                    if fields:
+                        sid = transaction.savepoint(using=request.database)
+                        try:
+                            if "pk" in data["update"]:
+                                cls.model.objects.all().using(request.database).filter(
+                                    pk__in=data["update"]["pk"]
+                                ).update(**fields)
+                            else:
+                                objs = cls.model.objects.all().using(request.database)
+                                flt = cls._get_q_filter(
+                                    request, data["update"].get("filter", [])
+                                )
+                                print("oooo", flt)
+                                if flt:
+                                    objs = objs.filter(flt)
+                                objs.update(**fields)
+                            transaction.savepoint_commit(sid)
+                        except Exception as e:
+                            ok = False
+                            resp.write(escape(e))
+                            resp.write("<br>")
+                elif "delete" in rec:
                     # Deleting records
                     for key in rec["delete"]:
                         sid = transaction.savepoint(using=request.database)

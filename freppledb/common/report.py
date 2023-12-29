@@ -1985,7 +1985,6 @@ class GridReport(View):
         data = json.JSONDecoder().decode(
             request.read().decode(request.encoding or settings.DEFAULT_CHARSET)
         )
-        print("pppppp", data)
         with transaction.atomic(using=request.database, savepoint=False):
             content_type_id = ContentType.objects.get_for_model(
                 cls.model, for_concrete_model=False
@@ -1993,25 +1992,95 @@ class GridReport(View):
             for rec in data:
                 if "update" in rec:
                     # Bulk update
-                    fields = data["update"].get("fields", None)
-                    if fields:
+                    fields = {}
+                    for f, v in data["update"].get("fields", {}).items():
+                        r = cls._getRowByName(request, f)
+                        if not r.editable:
+                            continue
+                        if isinstance(r, (GridFieldCurrency, GridFieldNumber)):
+                            try:
+                                fields[f] = float(v) if v is not None else None
+                            except Exception:
+                                ok = False
+                                resp.write("Invalid number %s<br>" % v)
+                        elif isinstance(r, GridFieldInteger):
+                            try:
+                                fields[f] = int(v) if v is not None else None
+                            except Exception:
+                                ok = False
+                                resp.write("Invalid integer %s<br>" % v)
+                        elif isinstance(r, GridFieldChoice):
+                            if v is None:
+                                fields[f] = None
+                            elif v in r.choices:
+                                fields[f] = v
+                            else:
+                                ok = False
+                                resp.write(
+                                    "Invalid choice %s: expected %s<br>"
+                                    % (v, ", ".join([c[0] for c in r.choices]))
+                                )
+                        elif isinstance(r, GridFieldBool):
+                            if v is not None:
+                                fields[f] = v.lower() in [
+                                    "0",
+                                    "false",
+                                    force_str(_("false")),
+                                ]
+                            else:
+                                ok = False
+                                resp.write("Bool field can't be empty<br>")
+                        elif isinstance(r, GridFieldBoolNullable):
+                            if v is not None:
+                                fields[f] = v.lower() in [
+                                    "0",
+                                    "false",
+                                    force_str(_("false")),
+                                ]
+                            else:
+                                fields[f] = None
+                        else:
+                            # All other fields:
+                            # GridFieldTime, GridFieldDate, GridFieldDateTime, GridFieldDuration,
+                            # GridFieldLocalDateTime, GridFieldHierarchicalText, GridFieldText
+                            fields[f] = v
+                    if fields and ok:
                         sid = transaction.savepoint(using=request.database)
                         try:
+                            comment = "Changed %s." % get_text_list(list(fields.keys()), "and")
                             if "pk" in data["update"]:
                                 cls.model.objects.all().using(request.database).filter(
                                     pk__in=data["update"]["pk"]
                                 ).update(**fields)
+                                for o in data["update"]["pk"]:
+                                    Comment(
+                                        user_id=request.user.id,
+                                        content_type_id=content_type_id,
+                                        object_pk=force_str(o),
+                                        object_repr=o[:200],
+                                        type="change",
+                                        comment=comment,
+                                    ).save(using=request.database)
                             else:
                                 objs = cls.model.objects.all().using(request.database)
                                 flt = cls._get_q_filter(
                                     request, data["update"].get("filter", [])
                                 )
-                                print("oooo", flt)
                                 if flt:
                                     objs = objs.filter(flt)
                                 objs.update(**fields)
+                                for k in objs:
+                                        Comment(
+                                        user_id=request.user.id,
+                                        content_type_id=content_type_id,
+                                        object_pk=force_str(k.pk),
+                                        object_repr=force_str(k)[:200],
+                                        type="change",
+                                        comment=comment,
+                                    ).save(using=request.database)
                             transaction.savepoint_commit(sid)
                         except Exception as e:
+                            transaction.savepoint_rollback(sid)
                             ok = False
                             resp.write(escape(e))
                             resp.write("<br>")

@@ -1907,7 +1907,12 @@ var grid = {
     if (!recordcount || recordcount == thegrid.jqGrid('getGridParam', "reccount")) {
       recordcount = thegrid.jqGrid('getGridParam', "records");
       var tmp = $('#grid').getGridParam("postData");
-      msg["update"]["filter"] = tmp ? JSON.parse(tmp.filters) : initialfilter;
+      if (tmp)
+        msg["update"]["filter"] =
+          (typeof tmp.filters !== 'undefined' && tmp.filters.rules != []) ?
+            JSON.parse(tmp.filters) : {};
+      else
+        msg["update"]["filter"] = initialfilter;
     }
     else
       msg["update"]["pk"] = selectedrows;

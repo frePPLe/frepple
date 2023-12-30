@@ -37,6 +37,20 @@ This release is scheduled for mid January 2024. You can already check out a `pre
   | For such items both Odoo and frepple maintain a hard link between
     consumers and producers of material.
 
+.. rubric:: Cloud infrastructure
+
+- | Part of our cloud servers are now running in the Amazon data center in
+    Ohio (USA). Until now our cloud servers were all running in the Amazon
+    data center in Ireland.
+  | Cloud customers whose frepple infrastructure was moved will be notified.
+
+.. rubric:: Legal
+
+- | Refreshed the `privacy policy <https://frepple.com/privacy-policy-2/>`_.
+  | No real changes here, just bringing up to date the list of third party
+    applications we work with.
+
+
 8.3.0 (2023-12-08)
 ==================
 

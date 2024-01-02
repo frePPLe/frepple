@@ -21,13 +21,14 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import pkg_resources
 
 edition = "Community Edition"
 
 try:
+    import pkg_resources
+
     __version__ = pkg_resources.get_distribution("freppledb").version
-except pkg_resources.DistributionNotFound:
+except Exception:
     __version__ = "development"
 
 VERSION = __version__  # Old custom way, deprecated

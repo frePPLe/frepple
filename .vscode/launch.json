@@ -76,7 +76,7 @@
                     "value": "frepple.log"
                 },
                 {
-                    "name": "xVIRTUAL_ENV",
+                    "name": "VIRTUAL_ENV",
                     "value": "${workspaceFolder}/venv"
                 },
                 {

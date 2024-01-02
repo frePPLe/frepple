@@ -813,8 +813,6 @@ double ForecastMeasureAggregated::disaggregateOverride(
     ForecastBase* fcst, Date startdate, Date enddate, double val, bool multiply,
     double remainder, CommandManager* mgr) const {
   // Get the current status
-  auto fcstdata = fcst->getData();
-  lock_guard<recursive_mutex> exclusive(fcstdata->lock);
   double current_base = 0.0;
   double current_override = 0.0;
   double current_no_override = 0.0;
@@ -822,38 +820,36 @@ double ForecastMeasureAggregated::disaggregateOverride(
   unsigned int count_override = 0;
   unsigned int count_no_override = 0;
   unsigned int cnt = 0;
-  for (auto bckt = fcstdata->getBuckets().begin();; ++bckt) {
-    if (!fcstdata) {
-      fcstdata = fcst->getData();
-      fcstdata->lock.lock();
-    }
-
-    if (bckt == fcstdata->getBuckets().end() || bckt->getStart() > enddate)
-      break;
-    if ((bckt->getStart() >= startdate && bckt->getStart() < enddate) ||
-        (bckt->getDates().within(startdate) &&
-         bckt->getDates().between(enddate))) {
-      for (auto ch = fcst->getLeaves(true, this); ch; ++ch) {
-        auto childfcstdata = ch->getData();
-        lock_guard<recursive_mutex> exclusive(childfcstdata->lock);
-        auto tmp = getValue(childfcstdata->getBuckets()[bckt->getIndex()]);
-        auto base = override_measure->getValue(
-            childfcstdata->getBuckets()[bckt->getIndex()]);
-        current_base += base;
-        if (tmp != -1.0) {
-          current_total += tmp;
-          current_override += tmp;
-          ++count_override;
-        } else {
-          current_total += base;
-          current_no_override += base;
-          ++count_no_override;
+  {
+    auto fcstdata = fcst->getData();
+    lock_guard<recursive_mutex> exclusive(fcstdata->lock);
+    for (auto bckt = fcstdata->getBuckets().begin();; ++bckt) {
+      if (bckt == fcstdata->getBuckets().end() || bckt->getStart() > enddate)
+        break;
+      if ((bckt->getStart() >= startdate && bckt->getStart() < enddate) ||
+          (bckt->getDates().within(startdate) &&
+           bckt->getDates().between(enddate))) {
+        for (auto ch = fcst->getLeaves(true, this); ch; ++ch) {
+          auto childfcstdata = ch->getData();
+          lock_guard<recursive_mutex> exclusive(childfcstdata->lock);
+          auto tmp = getValue(childfcstdata->getBuckets()[bckt->getIndex()]);
+          auto base = override_measure->getValue(
+              childfcstdata->getBuckets()[bckt->getIndex()]);
+          current_base += base;
+          if (tmp != -1.0) {
+            current_total += tmp;
+            current_override += tmp;
+            ++count_override;
+          } else {
+            current_total += base;
+            current_no_override += base;
+            ++count_no_override;
+          }
+          ++cnt;
         }
-        ++cnt;
       }
     }
   }
-  if (fcstdata) fcstdata->lock.unlock();
 
   // Select the update mode
   short mode;

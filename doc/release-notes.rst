@@ -37,6 +37,8 @@ This release is scheduled for mid January 2024. You can already check out a `pre
   | For such items both Odoo and frepple maintain a hard link between
     consumers and producers of material.
 
+- | 15, 16, 17: Added mapping for Odoo's "Resource Time Off" model.
+
 .. rubric:: Cloud infrastructure
 
 - | Part of our cloud servers are now running in the Amazon data center in

@@ -464,10 +464,8 @@ Duration PythonData::getDuration() const {
     Py_DECREF(utf8_string);
     return t;
   } else if (obj && PyDelta_Check(obj)) {
-    auto result_py = PyObject_CallMethod(obj, "total_seconds", nullptr);
-    auto result = PyLong_AsLong(result_py);
-    Py_DECREF(result_py);
-    return result;
+    PythonData r = PyObject_CallMethod(obj, "total_seconds", nullptr);
+    return r.getDouble();
   } else {
     long result = PyLong_AsLong(obj);
     if (result == -1 && PyErr_Occurred()) throw DataException("Invalid number");

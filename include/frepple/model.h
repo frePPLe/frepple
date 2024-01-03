@@ -5213,11 +5213,14 @@ class Buffer : public HasHierarchy<Buffer>,
    * daterange. The third parameter specifies whether we return the
    * minimum (which is the default) or the maximum value.
    * The fourth parameter specifies if we need to compare against 0
-   * or against the safety stock
+   * or against the safety stock.
+   * The fifth argument allows to ignore any proposed purchase orders
+   * in the calculation.
    * The computation is INclusive the start and end dates.
    */
   double getOnHand(Date, Date, bool min = true,
-                   bool use_safetystock = false) const;
+                   bool use_safetystock = false,
+                   bool include_proposed_po = true) const;
 
   /* Returns a reference to the list of all flows of this buffer. */
   const flowlist& getFlows() const { return flows; }

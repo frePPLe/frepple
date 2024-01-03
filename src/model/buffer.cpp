@@ -300,13 +300,13 @@ double Buffer::getOnHand(Date d, bool after) const {
   return tmp;
 }
 
-double Buffer::getOnHand(Date d1, Date d2, bool min,
-                         bool use_safetystock) const {
+double Buffer::getOnHand(Date d1, Date d2, bool min, bool use_safetystock,
+                         bool include_proposed_po) const {
   // Swap parameters if required
   if (d2 < d1) swap(d1, d2);
 
   // Loop through all flowplans
-  double tmp(0.0), record(0.0), safetystock(0.0);
+  double tmp(0.0), record(0.0), safetystock(0.0), proposed_po(0.0);
   Date d, prev_Date;
   for (auto oo = flowplans.begin(); true; ++oo) {
     if (oo == flowplans.end() || oo->getDate() > d) {
@@ -331,7 +331,16 @@ double Buffer::getOnHand(Date d1, Date d2, bool min,
     // new safety stock value
     if (use_safetystock && oo->getEventType() == 3) safetystock = oo->getMin();
 
+    // Proposed purchase orders special case
+    if (oo != flowplans.end()) {
+      auto opplan = oo->getOperationPlan();
+      if (opplan && oo->getQuantity() > 0.0 && opplan->getProposed() &&
+          opplan->getOperation()->hasType<OperationItemSupplier>())
+        proposed_po += oo->getQuantity();
+    }
+
     tmp = oo->getOnhand() - (use_safetystock ? safetystock : 0);
+    if (!include_proposed_po) tmp -= proposed_po;
     prev_Date = oo->getDate();
   }
   // The above for-loop controls the exit. This line of code is never reached.

@@ -20,6 +20,9 @@ This release is scheduled for mid January 2024. You can already check out a `pre
   | In practice we have never come across the need to control the fence constraint
     separately. So, let's simplify things here.
 
+- | Bug fix: Corner case with unplanned demand when an item is consumed multiple times
+    in the same supply path.
+
 .. rubric:: User interface
 
 - | A bulk update of a field on many records in a table is now much
@@ -601,7 +604,7 @@ and ask us any questions you may have.
       a frepple upgrade. A prompt is shown to confirm whether or not you want to do this.
 
     - All python dependencies are now included as a virtual environment. You no longer
-      have to deal witht the requirements.txt file yourself.
+      have to deal with the requirements.txt file yourself.
 
     - A number of apache configurations are now done by the installer.
 

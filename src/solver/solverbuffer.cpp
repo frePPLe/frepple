@@ -93,10 +93,13 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     }
     if (getLogLevel() > 1) {
       logger << indentlevel << "Warning: " << o.str() << endl;
-      logger << indentlevel-- << "Buffer '" << b
-             << "' answers: " << data->state->a_qty;
-      if (!data->state->a_qty) logger << "  " << data->state->a_date;
-      logger << endl;
+      if (data->state->a_qty)
+        logger << indentlevel-- << "Buffer '" << b
+               << "' answers: " << data->state->a_qty << endl;
+      else
+        logger << indentlevel-- << "Buffer '" << b
+               << "' answers short: " << data->state->a_qty << "  "
+               << data->state->a_date << endl;
     }
     return;
   } else
@@ -216,7 +219,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
         if (!supply_exists_already && !data->coordination_run) {
           auto fence_free = b->getOnHand(
               max(theDate, Plan::instance().getCurrent()) + autofence,
-              Date::infiniteFuture);
+              Date::infiniteFuture, true, false, false);
           if (theDelta < fence_free && fence_free < 0 &&
               theDelta < -ROUNDING_ERROR &&
               fabs(fence_free - theDelta) > ROUNDING_ERROR) {
@@ -639,10 +642,13 @@ void SolverCreate::solve(const Buffer* b, void* v) {
 
   // Message
   if (getLogLevel() > 1) {
-    logger << indentlevel-- << "Buffer '" << b
-           << "' answers: " << data->state->a_qty;
-    if (!data->state->a_qty) logger << "  " << data->state->a_date;
-    logger << endl;
+    if (data->state->a_qty)
+      logger << indentlevel-- << "Buffer '" << b
+             << "' answers: " << data->state->a_qty << endl;
+    else
+      logger << indentlevel-- << "Buffer '" << b
+             << "' answers short: " << data->state->a_qty << "  "
+             << data->state->a_date << endl;
   }
 }
 

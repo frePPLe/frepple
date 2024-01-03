@@ -71,30 +71,17 @@ function showoperationplanDrv($window, gettextCatalog) {
       if (scope.operationplan.id == -1 || scope.operationplan.type === 'STCK') {
         // Multiple operationplans selected
         angular.element(elem).find('input').attr('disabled', 'disabled');
-        angular.element(elem).find('#statusrow .btn').removeClass('active').attr('disabled', 'disabled');
       }
       else if (typeof scope.operationplan.id !== 'undefined') {
         // Single operationplan selected
         angular.element(elem).find('input[disabled]').attr('disabled', false);
-        if (typeof actions !== 'undefined' && actions.hasOwnProperty('proposed')) {
-          angular.element(elem).find('button[disabled]').attr('disabled', false);
-        }
-        angular.element(elem).find('#statusrow .btn').removeClass('active');
-
         if (scope.operationplan.hasOwnProperty('start'))
           angular.element(elem).find("#setStart").val(moment.utc(scope.operationplan.start, datetimeformat).format(datetimeformat));
         if (scope.operationplan.hasOwnProperty('end'))
           angular.element(elem).find("#setEnd").val(moment.utc(scope.operationplan.end, datetimeformat).format(datetimeformat));
-
-        if (scope.operationplan.hasOwnProperty('status')) {
-          angular.element(elem).find('#statusrow .btn').removeClass('active');
-          angular.element(elem).find('#' + scope.operationplan.status + 'Btn').addClass('active');
-        }
       }
       else {
         // No operationplan selected
-        angular.element(elem).find('input').attr('disabled', 'disabled');
-        angular.element(elem).find('#statusrow .btn').removeClass('active').attr('disabled', 'disabled');
         angular.element(elem).find("#setStart").val('');
         angular.element(elem).find("#setEnd").val('');
       }

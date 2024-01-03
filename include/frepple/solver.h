@@ -123,7 +123,7 @@ class SolverCreate : public Solver {
  protected:
   /* This variable stores the constraint which the solver should respect.
    * By default all constraints are enabled. */
-  short constrts = 15;
+  short constrts = CAPACITY + MFG_LEADTIME + PO_LEADTIME;
 
   bool create_deliveries = true;
 
@@ -403,8 +403,8 @@ class SolverCreate : public Solver {
   /* Update the constraints to be considered by this solver. This field may
    * not be applicable for all solvers. */
   void setConstraints(short i) {
-    constrts = i;
-    if (constrts & LEADTIME) constrts |= PO_LEADTIME + MFG_LEADTIME;
+    constrts = i & (CAPACITY + PO_LEADTIME + MFG_LEADTIME);
+    if (i & LEADTIME) constrts |= PO_LEADTIME + MFG_LEADTIME;
   }
 
   /* Returns the constraints considered by the solve. */

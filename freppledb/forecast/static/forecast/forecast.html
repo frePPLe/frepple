@@ -383,7 +383,7 @@
                       &nbsp;&nbsp;
                       <span data-ng-if="!(detaildata.attributes.forecast.forecastmethod == 'aggregate')" class="caret"></span>
                     </button>
-                    <ul data-ng-if="!(detaildata.attributes.forecast.forecastmethod == 'aggregate')" class="dropdown-menu" id="forecastmethodul">
+                    <ul data-ng-class="{'dropdown-menu': true, 'd-none': detaildata.attributes.forecast.forecastmethod == 'aggregate'}" id="forecastmethodul">
                       <li>
                         <a class="dropdown-item" name="{{'Automatic'|translate}}" data-ng-click=" detaildata.attributes.forecast.forecastmethod='automatic'; changes=(initialmethod != 'automatic') ? true : changes;" translate>
 													Automatic

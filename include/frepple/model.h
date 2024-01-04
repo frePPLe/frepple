@@ -5391,13 +5391,11 @@ class OperationInventory : public OperationFixedTime {
   friend class Buffer;
 
  private:
-  /* Constructor. */
-  explicit OperationInventory(Buffer*);
-
-  /* Destructor. */
   virtual ~OperationInventory() {}
 
  public:
+  explicit OperationInventory(Buffer*);
+
   Buffer* getBuffer() const;
 
   static int initialize();

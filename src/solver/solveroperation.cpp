@@ -1272,7 +1272,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
 
   // Loop through the top level dependencies
   if (data->state->a_qty > 0.0 && !oper->getDependencies().empty()) {
-    bool tmp1;
+    bool tmp1 = false;
     double tmp2;
     DateRange tmp3;
     checkDependencies(data->state->curOwnerOpplan, *data, tmp1, tmp2, tmp3);

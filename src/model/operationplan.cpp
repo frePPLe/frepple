@@ -1794,7 +1794,9 @@ void OperationPlan::propagateStatus(bool log) {
       subopplan->propagateStatus(log);
     }
 
-  if (mystatus != "completed" && mystatus != "closed") return;
+  if (getSource().rfind("odoo", 0) == 0 ||
+      (mystatus != "completed" && mystatus != "closed"))
+    return;
 
   bool firstlog = true;
 

@@ -372,7 +372,7 @@ class GridFieldDate(GridField):
     extra = (
         '"formatoptions":{"srcformat":"Y-m-d","newformat":"%s"}' % settings.DATE_FORMAT
     )
-    searchoptions = '{"sopt":["eq","ne","lt","le","gt","ge","win"],"searchhidden":true}'
+    searchoptions = '{"sopt":["eq","ne","lt","le","gt","ge","win","isnull"],"searchhidden":true}'
     width = 140
 
 
@@ -407,7 +407,7 @@ class GridFieldLastModified(GridField):
         '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s"}'
         % settings.DATETIME_FORMAT
     )
-    searchoptions = '{"sopt":["em","nm","in","ni","eq","bw","ew","bn","nc","en","win"],"searchhidden":true}'
+    searchoptions = '{"sopt":["eq","ne","lt","le","gt","ge","win"],"searchhidden":true}'
     title = _("last modified")
     editable = False
     width = 140

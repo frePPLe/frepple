@@ -113,6 +113,12 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds) {
     if (!PyObject_TypeCheck(item, Item::metadata->pythonClass))
       throw DataException("flow item must be of type item");
 
+    // Pick up the optional location
+    PyObject* location = PyDict_GetItemString(kwds, "location");
+    if (location &&
+        !PyObject_TypeCheck(location, Location::metadata->pythonClass))
+      throw DataException("flow location must be of type location");
+
     // Pick up the quantity
     PyObject* q1 = PyDict_GetItemString(kwds, "quantity");
     double q2 = q1 ? PythonData(q1).getDouble() : 1.0;
@@ -132,7 +138,9 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds) {
 
     // Find or create a buffer for the item at the operation location
     Buffer* buf = Buffer::findOrCreate(
-        static_cast<Item*>(item), static_cast<Operation*>(oper)->getLocation());
+        static_cast<Item*>(item),
+        location ? static_cast<Location*>(location)
+                 : static_cast<Operation*>(oper)->getLocation());
 
     // Pick up the type and create the flow
     Flow* l;

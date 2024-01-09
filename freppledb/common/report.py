@@ -56,6 +56,7 @@ from openpyxl.styles import NamedStyle, PatternFill
 from dateutil.parser import parse
 from openpyxl.comments import Comment as CellComment
 
+from django.apps import apps
 from django.core.cache import cache
 from django.db import connection
 from django.db.models import Model, Lookup
@@ -78,6 +79,7 @@ from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotFoun
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseForbidden
 from django.shortcuts import render
 from django.utils import translation
+from django.utils.dateparse import parse_duration, parse_time
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str, force_str
 from django.utils.html import escape
@@ -372,7 +374,9 @@ class GridFieldDate(GridField):
     extra = (
         '"formatoptions":{"srcformat":"Y-m-d","newformat":"%s"}' % settings.DATE_FORMAT
     )
-    searchoptions = '{"sopt":["eq","ne","lt","le","gt","ge","win","isnull"],"searchhidden":true}'
+    searchoptions = (
+        '{"sopt":["eq","ne","lt","le","gt","ge","win","isnull"],"searchhidden":true}'
+    )
     width = 140
 
 
@@ -1994,6 +1998,8 @@ class GridReport(View):
                     # Bulk update
                     fields = {}
                     for f, v in data["update"].get("fields", {}).items():
+                        if v is not None:
+                            v = v.strip()
                         r = cls._getRowByName(request, f)
                         if not r.editable:
                             continue
@@ -2039,15 +2045,64 @@ class GridReport(View):
                                 ]
                             else:
                                 fields[f] = None
+                        elif r.formatter == "detail":
+                            try:
+                                modelname = json.loads("{%s}" % r)["role"].split("/")
+                                model = apps.get_model(modelname[0], modelname[1])
+                                fields[f] = model.objects.using(request.database).get(
+                                    pk=v
+                                )
+                            except Exception:
+                                ok = False
+                                resp.write(
+                                    "New value doesn't exist in related table<br>"
+                                )
+                        elif isinstance(r, (GridFieldDateTime, GridFieldLocalDateTime)):
+                            try:
+                                fields[f] = (
+                                    parseLocalizedDateTime(v) if v is not None else None
+                                )
+                            except Exception:
+                                ok = False
+                                resp.write("Invalid datetime format<br>")
+                        elif isinstance(r, GridFieldDate):
+                            try:
+                                fields[f] = (
+                                    parseLocalizedDate(v) if v is not None else None
+                                )
+                            except Exception:
+                                ok = False
+                                resp.write("Invalid date format<br>")
+                        elif isinstance(r, GridFieldTime):
+                            if v is None:
+                                fields[f] = v
+                            else:
+                                try:
+                                    fields[f] = parse_time(v)
+                                    if not fields[f]:
+                                        raise Exception
+                                except Exception:
+                                    ok = False
+                                    resp.write("Invalid time format<br>")
+                        elif isinstance(r, GridFieldDuration):
+                            if v is None:
+                                fields[f] = v
+                            else:
+                                try:
+                                    fields[f] = parse_duration(v)
+                                    if not fields[f]:
+                                        raise Exception
+                                except Exception:
+                                    ok = False
+                                    resp.write("Invalid duration format<br>")
                         else:
-                            # All other fields:
-                            # GridFieldTime, GridFieldDate, GridFieldDateTime, GridFieldDuration,
-                            # GridFieldLocalDateTime, GridFieldHierarchicalText, GridFieldText
                             fields[f] = v
                     if fields and ok:
                         sid = transaction.savepoint(using=request.database)
                         try:
-                            comment = "Changed %s." % get_text_list(list(fields.keys()), "and")
+                            comment = "Changed %s." % get_text_list(
+                                list(fields.keys()), "and"
+                            )
                             if "pk" in data["update"]:
                                 cls.model.objects.all().using(request.database).filter(
                                     pk__in=data["update"]["pk"]
@@ -2070,7 +2125,7 @@ class GridReport(View):
                                     objs = objs.filter(flt)
                                 objs.update(**fields)
                                 for k in objs:
-                                        Comment(
+                                    Comment(
                                         user_id=request.user.id,
                                         content_type_id=content_type_id,
                                         object_pk=force_str(k.pk),

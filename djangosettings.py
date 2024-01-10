@@ -489,7 +489,11 @@ LANGUAGES = (
 SESSION_COOKIE_AGE = 3600 * 24 * 3  # 3 days
 
 # Users are automatically logged out after this period of inactivity
-SESSION_LOGOUT_IDLE_TIME = 60 * 24 # minutes
+SESSION_LOGOUT_IDLE_TIME = 60 * 24  # minutes
+
+# Extra security settings for cookies when you use https
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
 
 MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -689,9 +693,9 @@ DEFAULT_DASHBOARD = [
                 "widgets": [
                     # ("archived_purchase_order", {"history": 12}),
                     ("inventory_by_location", {"limit": 5}),
-                    #("inventory_by_item", {"limit": 10}),
+                    # ("inventory_by_item", {"limit": 10}),
                 ],
-            }
+            },
         ],
     },
     {
@@ -721,7 +725,7 @@ DEFAULT_DASHBOARD = [
                 "widgets": [
                     ("distribution_orders", {"fence1": 7, "fence2": 30}),
                     # ("shipping_queue",{"limit":20}),
-                    #("archived_buffer", {"history": 12}),
+                    # ("archived_buffer", {"history": 12}),
                 ],
             },
             {
@@ -729,7 +733,7 @@ DEFAULT_DASHBOARD = [
                 "widgets": [
                     ("archived_buffer", {"history": 12}),
                 ],
-            }
+            },
         ],
     },
 ]
@@ -768,7 +772,6 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 # Alternative: allow embedding in a specific domain
 #   CONTENT_SECURITY_POLICY = "frame-ancestors 'self' mydomain.com;"
 #   X_FRAME_OPTIONS = None
-#   SESSION_COOKIE_SAMESITE = "none"
 #   CSRF_COOKIE_SAMESITE = "none"
 
 # Configuration of the ftp/sftp/ftps server where to upload reports

@@ -105,7 +105,7 @@ The section below describes the installation and configuration of these.
 
            CONTENT_SECURITY_POLICY = "frame-ancestors 'self' domain-of-your-odoo-server;"
            X_FRAME_OPTIONS = None
-           SESSION_COOKIE_SAMESITE = "none"            # NOTE: "none", not None
+           SESSION_COOKIE_SAMESITE = "Lax"
            CSRF_COOKIE_SAMESITE = "none"               # NOTE: "none", not None
 
   * **Configure parameters**

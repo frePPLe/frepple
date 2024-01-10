@@ -324,6 +324,7 @@ SESSION_SAVE_EVERY_REQUEST = True  # Whether to save the session data on every r
 SESSION_EXPIRE_AT_BROWSER_CLOSE = (
     True  # Whether sessions expire when a user closes his browser.
 )
+SESSION_COOKIE_HTTPONLY = True
 
 # Users are automatically logged out after this period of inactivity
 SESSION_LOGOUT_IDLE_TIME = 60 * 24  # minutes

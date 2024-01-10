@@ -23,6 +23,10 @@ This release is scheduled for mid January 2024. You can already check out a `pre
 - | Bug fix: Corner case with unplanned demand when an item is consumed multiple times
     in the same supply path.
 
+.. rubric:: Demand forecasting
+
+- | Reduced memory consumption.
+
 .. rubric:: User interface
 
 - | A bulk update of a field on many records in a table is now much

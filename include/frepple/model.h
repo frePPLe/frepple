@@ -2976,12 +2976,7 @@ class Operation : public HasName<Operation>,
   /* Update the operation cost.
    * The cost of executing this operation, per unit of the operation_plan.
    */
-  void setCost(const double c) {
-    if (c >= 0)
-      cost = c;
-    else
-      throw DataException("Operation cost must be positive");
-  }
+  void setCost(const double c) { cost = max(c, 0.0); }
 
   typedef Association<Operation, Buffer, Flow>::ListA flowlist;
   typedef Association<Operation, Resource, Load>::ListA loadlist;
@@ -4368,12 +4363,7 @@ class ItemDistribution
   double getCost() const { return cost; }
 
   /* Update the cost of shipping 1 unit. */
-  void setCost(const double c) {
-    if (c >= 0)
-      cost = c;
-    else
-      throw DataException("ItemDistribution cost must be positive");
-  }
+  void setCost(const double c) { cost = max(c, 0.0); }
 
   OperationIterator getOperations() const { return OperationIterator(this); }
 
@@ -4483,12 +4473,7 @@ class Item : public HasHierarchy<Item>, public HasDescription {
   double getCost() const { return cost; }
 
   /* Update the cost of the item. */
-  void setCost(const double c) {
-    if (c >= 0)
-      cost = c;
-    else
-      throw DataException("Item cost must be positive");
-  }
+  void setCost(const double c) { cost = max(c, 0.0); }
 
   /* Return the weight of the item.
    * The default value is 0.0.
@@ -4754,12 +4739,7 @@ class ItemSupplier : public Object,
   double getCost() const { return cost; }
 
   /* Update the cost of purchasing 1 unit. */
-  void setCost(const double c) {
-    if (c >= 0)
-      cost = c;
-    else
-      throw DataException("ItemSupplier cost must be positive");
-  }
+  void setCost(const double c) { cost = max(c, 0.0); }
 
   Duration getBatchWindow() const { return batchwindow; }
 
@@ -5218,8 +5198,7 @@ class Buffer : public HasHierarchy<Buffer>,
    * in the calculation.
    * The computation is INclusive the start and end dates.
    */
-  double getOnHand(Date, Date, bool min = true,
-                   bool use_safetystock = false,
+  double getOnHand(Date, Date, bool min = true, bool use_safetystock = false,
                    bool include_proposed_po = true) const;
 
   /* Returns a reference to the list of all flows of this buffer. */
@@ -6238,7 +6217,7 @@ class SetupMatrixRule : public Object, public HasSource {
   Duration getDuration() const { return duration; }
 
   /* Update the conversion cost. */
-  void setCost(double p) { cost = p; }
+  void setCost(double c) { cost = max(c, 0.0); }
 
   /* Return the conversion cost. */
   double getCost() const { return cost; }
@@ -6594,12 +6573,7 @@ class Resource : public HasHierarchy<Resource>,
   double getCost() const { return cost; }
 
   /* Update the cost of using 1 unit of this resource for 1 hour. */
-  void setCost(const double c) {
-    if (c >= 0)
-      cost = c;
-    else
-      throw DataException("Resource cost must be positive");
-  }
+  void setCost(const double c) { cost = max(c, 0.0); }
 
   typedef Association<Operation, Resource, Load>::ListB loadlist;
   typedef Association<Resource, Skill, ResourceSkill>::ListA skilllist;

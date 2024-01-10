@@ -110,7 +110,7 @@ int Forecast::initialize() {
   x.addMethod("set", setValuePython, METH_VARARGS | METH_KEYWORDS,
               "update measure data");
   x.addMethod("get", getValuePython, METH_VARARGS | METH_KEYWORDS,
-              "retrience measure data");
+              "retrieve measure data");
   return FreppleClass<Forecast, Demand>::initialize();
 }
 

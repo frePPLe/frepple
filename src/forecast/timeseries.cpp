@@ -255,7 +255,7 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
   // Apply the most appropriate forecasting method
   if (best_method >= 0) {
     const_cast<Forecast*>(fcst)->setMethod(
-        qualifiedmethods[best_method]->getName());
+        qualifiedmethods[best_method]->getCode());
     const_cast<Forecast*>(fcst)->setSMAPEerror(best_error);
     if (getLogLevel() > 0)
       logger << fcst << ": chosen method: " << fcst->getMethod()
@@ -264,7 +264,7 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
     qualifiedmethods[best_method]->applyForecast(
         const_cast<Forecast*>(fcst), data->getBuckets(), bckt_end->getIndex());
   } else {
-    const_cast<Forecast*>(fcst)->setMethod("None");
+    const_cast<Forecast*>(fcst)->setMethod(0);
     const_cast<Forecast*>(fcst)->setSMAPEerror(0.0);
   }
 }

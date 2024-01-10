@@ -1675,11 +1675,36 @@ class Forecast : public Demand, public ForecastBase {
   string getMethodsString() const;
 
   /* Return the forecast method applied to compute the forecast. */
-  const string& getMethod() const { return method; }
+  const string& getMethod() const {
+    static string constant("constant");
+    static string trend("trend");
+    static string seasonal("seasonal");
+    static string intermittent("intermittent");
+    static string movingaverage("moving average");
+    static string manual("manual");
+    static string none("none");
+    if (method == METHOD_CONSTANT)
+      return constant;
+    else if (method == METHOD_TREND)
+      return trend;
+    else if (method == METHOD_SEASONAL)
+      return seasonal;
+    else if (method == METHOD_CROSTON)
+      return intermittent;
+    else if (method == METHOD_MOVINGAVERAGE)
+      return movingaverage;
+    else if (method == METHOD_MANUAL)
+      return manual;
+    else if (method == 0)
+      return none;
+    else {
+      logger << "method" << method << endl;
+      throw LogicException("Unknown forecast method");
+    }
+  }
 
-  /* Store the selected forecast method. This method is not exposed publicly.
-   */
-  void setMethod(string n) { method = n; }
+  /* Store the selected forecast method. This method is not exposed publicly. */
+  void setMethod(unsigned int n) { method = n; }
 
   /* Returns whether forecast instance is a leaf node. */
   bool isLeaf() const;
@@ -1807,7 +1832,7 @@ class Forecast : public Demand, public ForecastBase {
   unsigned int methods = METHOD_ALL;
 
   /* Applied forecast method. */
-  string method;
+  unsigned int method = 0;
 
   /* SMAPE forecast error. */
   double smape_error = 0.0;
@@ -1954,8 +1979,7 @@ class ForecastSolver : public Solver {
     virtual void applyForecast(Forecast*, vector<ForecastBucketData>&,
                                short) = 0;
 
-    /* The name of the method. */
-    virtual string getName() = 0;
+    virtual unsigned int getCode() = 0;
   };
 
   /* A class to calculate a forecast based on a moving average. */
@@ -2001,7 +2025,7 @@ class ForecastSolver : public Solver {
 
     static int getDefaultOrder() { return defaultorder; }
 
-    string getName() { return "moving average"; }
+    unsigned int getCode() { return Forecast::METHOD_MOVINGAVERAGE; }
   };
 
   /* A class to perform single exponential smoothing on a time series.
@@ -2077,7 +2101,7 @@ class ForecastSolver : public Solver {
 
     static double getMaxAlfa() { return max_alfa; }
 
-    string getName() { return "constant"; }
+    unsigned int getCode() { return Forecast::METHOD_CONSTANT; }
   };
 
   /* A class to perform double exponential smoothing on a time
@@ -2227,7 +2251,7 @@ class ForecastSolver : public Solver {
 
     static double getDampenTrend() { return dampenTrend; }
 
-    string getName() { return "trend"; }
+    unsigned int getCode() { return Forecast::METHOD_TREND; }
   };
 
   /* A class to perform seasonal forecasting on a time
@@ -2476,7 +2500,7 @@ class ForecastSolver : public Solver {
 
     static double getDampenTrend() { return dampenTrend; }
 
-    string getName() { return "seasonal"; }
+    unsigned int getCode() { return Forecast::METHOD_SEASONAL; }
   };
 
   /* A class to calculate a forecast with Croston's method. */
@@ -2579,7 +2603,7 @@ class ForecastSolver : public Solver {
     /* Return the minimum intermittence before applying this method. */
     static double getMinIntermittence() { return min_intermittence; }
 
-    string getName() { return "intermittent"; }
+    unsigned int getCode() { return Forecast::METHOD_CROSTON; }
   };
 
   /* A dummy forecast class that generates baseline forecast of 0. */
@@ -2596,7 +2620,7 @@ class ForecastSolver : public Solver {
     /* Forecast value updating. */
     void applyForecast(Forecast*, vector<ForecastBucketData>&, short);
 
-    string getName() { return "manual"; }
+    unsigned int getCode() { return Forecast::METHOD_MANUAL; }
   };
 
   /* Default constructor. */

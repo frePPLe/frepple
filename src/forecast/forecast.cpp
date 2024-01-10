@@ -261,9 +261,9 @@ PyObject* ForecastBucket::create(PyTypeObject* pytype, PyObject* args,
       // increases. The loading time goes up quadratically: need to read more
       // buckets + each bucket takes longer
       for (auto& bckt : data->getBuckets()) {
-        auto fcstbckt = bckt.getOrCreateForecastBucket();
-        if (!fcstbckt) continue;
-        if (fcstbckt->getDueRange().within(startdate)) {
+        if (bckt.getDates().within(startdate)) {
+          auto fcstbckt = bckt.getOrCreateForecastBucket();
+          if (!fcstbckt) continue;
           // Iterate over extra keywords, and set attributes.
           PyObject *key, *value;
           Py_ssize_t pos = 0;

@@ -491,10 +491,6 @@ SESSION_COOKIE_AGE = 3600 * 24 * 3  # 3 days
 # Users are automatically logged out after this period of inactivity
 SESSION_LOGOUT_IDLE_TIME = 60 * 24  # minutes
 
-# Extra security settings for cookies when you use https
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-
 MIDDLEWARE = (
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -760,7 +756,7 @@ EMAIL_HOST = None
 EMAIL_PORT = 25
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-# Clickjacking security http headers
+# ADVANCED HTTP SECURITY SETTING: Clickjacking security http headers
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 # Default: allow content from same domain
@@ -773,6 +769,13 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 #   CONTENT_SECURITY_POLICY = "frame-ancestors 'self' mydomain.com;"
 #   X_FRAME_OPTIONS = None
 #   CSRF_COOKIE_SAMESITE = "none"
+
+# ADVANCED HTTP SECURITY SETTING: Secure cookies
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+
+# ADVANCED HTTP SECURITY SETTING: When using a proxy server in front of frepple
+# CSRF_TRUSTED_ORIGINS = ["https://yourserver", "https://*.yourdomain.com"]
 
 # Configuration of the ftp/sftp/ftps server where to upload reports
 # Note that for SFTP protocol, the host needs to be defined

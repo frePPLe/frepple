@@ -479,7 +479,9 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
                                           SolverCreate::SolverData& data,
                                           bool extra) {
   // No lead time constraints
-  if (!data.constrainedPlanning || !isLeadTimeConstrained(opplan->getOperation())) return true;
+  if (!data.constrainedPlanning ||
+      !isLeadTimeConstrained(opplan->getOperation()))
+    return true;
 
   // Compute offset from the current date: A fence problem uses the release
   // fence window, while a leadtimeconstrained constraint has an offset of 0.
@@ -1934,7 +1936,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
 
   // Message
   if (loglevel > 1)
-    logger << indentlevel << "Split operation '" << oper
+    logger << ++indentlevel << "Split operation '" << oper
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date << endl;
 
@@ -1997,12 +1999,6 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
       if (!(*iter)->getPriority() || !(*iter)->getEffective().within(origQDate))
         continue;
 
-      // Message
-      if (loglevel > 1)
-        logger << indentlevel << "Split operation '" << oper
-               << "' asks alternate '" << (*iter)->getOperation() << "' "
-               << endl;
-
       // Find the flow
       double flow_qty_per = 0.0;
       if (buf) {
@@ -2019,7 +2015,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
       if (!flow_per) {
         // Neither the top nor the sub operation have a flow in the buffer,
         // we're in trouble...
-        string msg = "Operation doesn't produce into " +
+        string msg = "  Operation doesn't produce into " +
                      data->state->curBuffer->getName();
         if (data->logConstraints && data->constraints) {
           auto j = data->constraints->begin();
@@ -2053,6 +2049,12 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
       double asked = (loop_qty - planned_quantity) * (*iter)->getPriority() /
                      (sum_percent - planned_percentages) / flow_per;
       if (asked > 0) {
+        // Message
+        if (loglevel > 1)
+          logger << indentlevel << "  Split operation '" << oper
+                 << "' asks alternate '" << (*iter)->getOperation()
+                 << "': " << asked << endl;
+
         // Due to minimum, maximum and multiple size constraints alternates can
         // plan a different quantity than requested. Asked quantity can thus go
         // negative and we skip some alternate.
@@ -2063,7 +2065,14 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
         data->state->curBuffer =
             nullptr;  // Because we already took care of it... @todo not correct
                       // if the suboperation is again a owning operation
+        ++indentlevel;
         (*iter)->getOperation()->solve(*this, v);
+        --indentlevel;
+
+        if (loglevel > 1)
+          logger << indentlevel << "  Split operation '" << oper
+                 << "' gets answer from alternate '" << (*iter)->getOperation()
+                 << "': " << data->state->a_qty << endl;
       }
 
       // Evaluate the reply

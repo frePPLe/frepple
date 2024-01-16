@@ -2150,6 +2150,12 @@ class ManufacturingOrderList(OperationPlanMixin):
             initially_hidden=True,
         ),
         GridFieldText(
+            "operation__owner",
+            title=format_lazy("{} - {}", _("operation"), _("owner")),
+            field_name="operation__owner__name",
+            initially_hidden=True,
+        ),
+        GridFieldText(
             "operation__category",
             title=format_lazy("{} - {}", _("operation"), _("category")),
             initially_hidden=True,

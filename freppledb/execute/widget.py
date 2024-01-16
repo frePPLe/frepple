@@ -37,6 +37,19 @@ class ExecuteWidget(Widget):
     repeat = True
     url = "/execute/#runplan"
 
+    javascript_before_repeat = """
+        var tmp = [];
+        $("div.card[data-cockpit-widget='execute'] div.card-body").find("input:checkbox, input:radio").each( function(i) {
+          tmp.push($(this).is(":checked"));
+        });
+        """
+
+    javascript_after_repeat = """
+        $("div.card[data-cockpit-widget='execute'] div.card-body").find("input:checkbox, input:radio").each( function(i) {
+          $(this).prop("checked", tmp[i]);
+        });
+        """
+
     def render(self, request=None):
         from freppledb.common.middleware import _thread_locals
         from freppledb.execute.management.commands.runplan import Command

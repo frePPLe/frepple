@@ -156,6 +156,8 @@ class Widget:
     exporturl = False  # Enable or disable a download icon
     args = ""  # Arguments passed in the url for asynchronous widgets
     javascript = ""  # Javascript called for rendering the widget
+    javascript_before_repeat = ""  # Javascript called before a refresh in repeat mode
+    javascript_after_repeat = ""  # Javascript called after a refresh in repeat mode
 
     def __init__(self, **options):
         # Store all options as attributes on the instance

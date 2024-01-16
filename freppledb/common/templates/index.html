@@ -106,8 +106,9 @@
             url: "{{request.prefix}}/widget/{{widget.name}}/{{widget.args}}",
             type: "GET",
             success: function (data) {
-               $("div.card[data-cockpit-widget='{{widget.name}}'] div.card-body").html(data);
-               {{widget.javascript|safe}}
+              {{widget.javascript_before_repeat|safe}};
+              $("div.card[data-cockpit-widget='{{widget.name}}'] div.card-body").html(data);
+              {{widget.javascript_after_repeat|safe}}
             },
             error: function (result, stat, errorThrown) {
               $("div.card[data-cockpit-widget='{{widget.name}}'] div.card-body").html("{% trans "failed"|capfirst %}");

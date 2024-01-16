@@ -21,6 +21,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 import socket
+import sys
+from warnings import warn
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -33,6 +35,10 @@ from freppledb import __version__
 class Command(BaseCommand):
     help = """
       Runs a multithreaded web server for frePPLe.
+
+      This command is deprecated.
+      Use the "runserver" command instead for a development web server.
+      Use the apache web server for all production usage.
       """
 
     requires_system_checks = []
@@ -54,6 +60,10 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         from cheroot import wsgi
+
+        warn(
+            "Deprecated: Use the runserver command instead for a development web server"
+        )
 
         # Determine the port number
         port = options["port"]

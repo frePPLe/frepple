@@ -1,4 +1,4 @@
-cheroot == 8.4.5
+cheroot == 8.4.5          # Used only in deprecated code and will be removed in a later release.
 portend == 2.5
 djangorestframework == 3.14.0
 djangorestframework-bulk == 0.2.1

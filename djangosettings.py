@@ -774,8 +774,9 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 # SESSION_COOKIE_SECURE = True
 # CSRF_COOKIE_SECURE = True
 
-# ADVANCED HTTP SECURITY SETTING: When using a proxy server in front of frepple
+# ADVANCED HTTP SECURITY SETTING: When using https and a proxy server in front of frepple.
 # CSRF_TRUSTED_ORIGINS = ["https://yourserver", "https://*.yourdomain.com"]
+# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Configuration of the ftp/sftp/ftps server where to upload reports
 # Note that for SFTP protocol, the host needs to be defined

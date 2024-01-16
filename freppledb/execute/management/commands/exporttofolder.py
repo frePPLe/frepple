@@ -181,7 +181,7 @@ class Command(BaseCommand):
 
         statements.append(
             {
-                "filename": "forecastreport.csv",
+                "filename": "forecastreport.csv.gz",
                 "folder": "export",
                 "report": ForecastOverviewReport,
                 "data": {

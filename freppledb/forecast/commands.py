@@ -988,6 +988,7 @@ def createForecastSolver(db, task=None):
             .using(db)
             .filter(name__startswith="forecast.")
             .exclude(name="forecast.populateForecastTable")
+            .exclude(name="forecast.runnetting")
         ):
             key = param.name[9:]
             if key == "Horizon_future":
@@ -1123,11 +1124,17 @@ class CalculateForecast(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
-        # The argument specifies whether we run "forecasting + netting" or "netting"
         slvr = createForecastSolver(database)
         if not slvr:
             raise Exception("Can't compute a statistical forecast")
-        slvr.solve("fcst" in os.environ)
+        try:
+            netting = (
+                Parameter.getValue("forecast.runnetting", database, "true").lower()
+                == "true"
+            )
+        except Exception:
+            netting = True
+        slvr.solve(run_fcst="fcst" in os.environ, run_netting=netting)
 
 
 @PlanTaskRegistry.register

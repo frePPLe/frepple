@@ -182,19 +182,21 @@ void ForecastSolver::solve(const Demand* l, void* v) {
 
 PyObject* ForecastSolver::solve(PyObject* self, PyObject* args,
                                 PyObject* kwargs) {
-  static const char* kwlist[] = {"includenetting", "cluster", nullptr};
+  static const char* kwlist[] = {"run_fcst", "cluster", "run_netting", nullptr};
   // Create the command
-  int fcst_plus_netting = 1;
+  int run_fcst = 1;
+  int run_netting = 1;
   int cluster = -1;
-  int ok = PyArg_ParseTupleAndKeywords(args, kwargs, "|pi:solve",
-                                       const_cast<char**>(kwlist),
-                                       &fcst_plus_netting, &cluster);
+  int ok = PyArg_ParseTupleAndKeywords(args, kwargs, "|pip:solve",
+                                       const_cast<char**>(kwlist), &run_fcst,
+                                       &cluster, &run_netting);
   if (!ok) return nullptr;
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
-    static_cast<ForecastSolver*>(self)->solve(fcst_plus_netting == 1, cluster);
+    static_cast<ForecastSolver*>(self)->solve(run_fcst == 1, run_netting == 1,
+                                              cluster);
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();
@@ -206,7 +208,7 @@ PyObject* ForecastSolver::solve(PyObject* self, PyObject* args,
   return Py_BuildValue("");
 }
 
-void ForecastSolver::solve(bool includenetting, int cluster) {
+void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
   // Switch to lazy cache flushing
   auto prevCachePolicy = Cache::instance->setWriteImmediately(false);
 
@@ -234,7 +236,7 @@ void ForecastSolver::solve(bool includenetting, int cluster) {
     }
   }
 
-  if (includenetting) {
+  if (run_fcst) {
     // Time series forecasting for all leaf forecasts
     // TODO Assumes that the lowest forecasting level is a leaf forecast.
     if (getLogLevel() > 5)
@@ -289,30 +291,32 @@ void ForecastSolver::solve(bool includenetting, int cluster) {
       logger << "End forecasting for parent forecasts" << endl;
   }
 
-  // Sort the demands using the same sort function as used for planning.
-  // Note: the memory consumption of the sorted list can be significant
-  sortedDemandList l;
-  for (auto& i : Demand::all())
-    if (i.getType() != *Forecast::metadata &&
-        i.getType() != *ForecastBucket::metadata &&
-        (cluster == -1 || i.getCluster() != cluster))
-      l.insert(&i);
+  if (run_netting) {
+    // Sort the demands using the same sort function as used for planning.
+    // Note: the memory consumption of the sorted list can be significant
+    sortedDemandList l;
+    for (auto& i : Demand::all())
+      if (i.getType() != *Forecast::metadata &&
+          i.getType() != *ForecastBucket::metadata &&
+          (cluster == -1 || i.getCluster() != cluster))
+        l.insert(&i);
 
-  // Forecast netting loop
-  for (auto i : l) {
-    try {
-      solve(i, nullptr);
-    } catch (...) {
-      logger << "Error: Caught an exception while netting demand '"
-             << i->getName() << "':" << endl;
+    // Forecast netting loop
+    for (auto i : l) {
       try {
-        throw;
-      } catch (const bad_exception&) {
-        logger << "  bad exception" << endl;
-      } catch (const exception& e) {
-        logger << "  " << e.what() << endl;
+        solve(i, nullptr);
       } catch (...) {
-        logger << "  Unknown type" << endl;
+        logger << "Error: Caught an exception while netting demand '"
+               << i->getName() << "':" << endl;
+        try {
+          throw;
+        } catch (const bad_exception&) {
+          logger << "  bad exception" << endl;
+        } catch (const exception& e) {
+          logger << "  " << e.what() << endl;
+        } catch (...) {
+          logger << "  Unknown type" << endl;
+        }
       }
     }
   }

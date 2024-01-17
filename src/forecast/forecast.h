@@ -2636,8 +2636,8 @@ class ForecastSolver : public Solver {
   void solve(const Demand*, void* = nullptr);
 
   /* This is the main solver method. */
-  void solve(void* v = nullptr) { solve(true, -1); }
-  void solve(bool includenetting = true, int cluster = -1);
+  void solve(void* v = nullptr) { solve(true, true, -1); }
+  void solve(bool run_fcst = true, bool run_netting = true, int cluster = -1);
 
   /* Python interface for the solve method. */
   static PyObject* solve(PyObject*, PyObject*, PyObject*);

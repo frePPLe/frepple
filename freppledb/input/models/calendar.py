@@ -100,6 +100,10 @@ class Calendar(AuditModel):
             if b.sunday:
                 b.weekdays.append(6)
             self._buckets.append(b)
+            if not b.startdate:
+                b.startdate = datetime(1971, 1, 1)
+            if not b.enddate:
+                b.enddate = datetime(2030, 12, 31)
             if not b.starttime:
                 b.starttime = time.min
             if not b.endtime:

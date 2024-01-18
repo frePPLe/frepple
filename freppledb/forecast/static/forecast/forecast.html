@@ -418,7 +418,7 @@
                 </td>
               </tr>
 
-              <tr>
+              <tr data-ng-if="detaildata.attributes.forecast.forecastmethod !== 'aggregate'">
                 <td translate style="white-space:nowrap">
                 Selected forecast method
                 </td>
@@ -427,7 +427,7 @@
                 </td>
               </tr>
 
-              <tr>
+              <tr data-ng-if="detaildata.attributes.forecast.forecastmethod !== 'aggregate'">
                 <td translate style="white-space:nowrap">
                 Estimated forecast error
                 </td>

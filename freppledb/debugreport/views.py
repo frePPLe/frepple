@@ -83,7 +83,7 @@ def logapache(request):
         request,
         "logapache.html",
         {
-            "title": "Below are the exceptions found in the apache log file",
+            "title": "Exceptions found in the apache log file",
             "logdata": logdata
             if len(logdata) > 0
             else "No exception found in the log file",

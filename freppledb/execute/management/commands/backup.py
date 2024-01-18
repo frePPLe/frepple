@@ -231,6 +231,10 @@ class Command(BaseCommand):
     @staticmethod
     def getHTML(request):
         if request.user.is_superuser:
-            return render_to_string("commands/backup.html", request=request)
+            return render_to_string(
+                "commands/backup.html",
+                {"hasdebugreport": "freppledb.debugreport" in settings.INSTALLED_APPS},
+                request=request,
+            )
         else:
             return None

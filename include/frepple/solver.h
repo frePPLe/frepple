@@ -413,12 +413,7 @@ class SolverCreate : public Solver {
   /* Returns true if the solver respects the current time of the plan.
    * The solver isn't allowed to create any operation plans in the past.
    */
-  bool isLeadTimeConstrained(const Operation* oper) const {
-    if (oper && oper->hasType<OperationItemSupplier>())
-      return (constrts & PO_LEADTIME) > 0;
-    else
-      return (constrts & MFG_LEADTIME) > 0;
-  }
+  bool isLeadTimeConstrained(const Operation* oper) const;
 
   /* Returns true if the solver respects capacity constraints. */
   bool isCapacityConstrained() const { return (constrts & CAPACITY) > 0; }

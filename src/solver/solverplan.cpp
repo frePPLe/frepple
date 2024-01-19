@@ -145,6 +145,27 @@ void SolverCreate::SolverData::setCommandManager(CommandManager* a) {
 
 SolverCreate::SolverData::~SolverData() { delete operator_delete; };
 
+bool SolverCreate::isLeadTimeConstrained(const Operation* oper) const {
+  if (oper && oper->hasType<OperationItemSupplier>())
+    return (constrts & PO_LEADTIME) > 0;
+  else if (oper && oper->hasType<OperationSplit, OperationAlternate>()) {
+    bool all_po = true;
+    for (auto alt = oper->getSubOperations().begin();
+         alt != oper->getSubOperations().end(); ++alt) {
+      if ((*alt)->getOperation()->getPriority() &&
+          !(*alt)->getOperation()->hasType<OperationItemSupplier>()) {
+        all_po = false;
+        break;
+      }
+    }
+    if (all_po)
+      return (constrts & PO_LEADTIME) > 0;
+    else
+      return (constrts & MFG_LEADTIME) > 0;
+  } else
+    return (constrts & MFG_LEADTIME) > 0;
+}
+
 bool SolverCreate::demand_comparison(const Demand* l1, const Demand* l2) {
   if (l1->getPriority() != l2->getPriority())
     return l1->getPriority() < l2->getPriority();

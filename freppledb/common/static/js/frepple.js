@@ -817,7 +817,7 @@ var grid = {
         '</div>' +
         '</div>';
       for (var j in my_cross_idx) {
-        val1s += '<li class="list-group-item" id="' + (100 + parseInt(my_cross_idx[j], 10)) + '" style="cursor: move;">' + my_cross[my_cross_idx[j]]['name'] + '</li>';
+        val1s += '<li class="list-group-item" id="' + (1000 + parseInt(my_cross_idx[j], 10)) + '" style="cursor: move;">' + my_cross[my_cross_idx[j]]['name'] + '</li>';
       }
       var fieldlist = {};
       for (var j in my_cross) {
@@ -825,7 +825,7 @@ var grid = {
         fieldlist[my_cross[j]['name']] = parseInt(j, 10);
       }
       for (var j of Object.keys(fieldlist).sort())
-        val1a += '<li class="list-group-item" id="' + (100 + fieldlist[j]) + '" style="cursor: move;">' + j + '</li>';
+        val1a += '<li class="list-group-item" id="' + (1000 + fieldlist[j]) + '" style="cursor: move;">' + j + '</li>';
     }
     else {
       // Add selection of number of frozen columns
@@ -944,7 +944,7 @@ var grid = {
 
         $('#Rows li').each(function () {
           var val = parseInt(this.id, 10);
-          if (val < 100) {
+          if (val < 1000) {
             $("#grid").jqGrid("showCol", colModel[val].name);
             perm.push(val);
           }
@@ -952,7 +952,7 @@ var grid = {
 
         $('#DroppointRows li').each(function () {
           var val = parseInt(this.id, 10);
-          if (val < 100) {
+          if (val < 1000) {
             hiddenrows.push(val);
             if (pivot)
               $("#grid").jqGrid('setColProp', colModel[val].name, { frozen: false });
@@ -962,8 +962,8 @@ var grid = {
 
         $('#Crosses li').each(function () {
           var val = parseInt(this.id, 10);
-          if (val >= 100)
-            cross_idx.push(val - 100);
+          if (val >= 1000)
+            cross_idx.push(val - 1000);
         });
 
         var numfrozen = 0;

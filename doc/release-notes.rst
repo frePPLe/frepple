@@ -1,10 +1,13 @@
 Release notes
 -------------
 
-8.4.0 (Upcoming release)
+8.5.0 (Upcoming release)
 ========================
 
-This release is scheduled for mid January 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+This release is scheduled for end Februari 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+8.4.0 (2024-01-19)
+==================
 
 .. rubric:: Production planning
 
@@ -58,7 +61,6 @@ This release is scheduled for mid January 2024. You can already check out a `pre
 - | Refreshed the `privacy policy <https://frepple.com/privacy-policy-2/>`_.
   | No real changes here, just bringing up to date the list of third party
     applications we work with.
-
 
 8.3.0 (2023-12-08)
 ==================

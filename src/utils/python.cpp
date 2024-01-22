@@ -466,8 +466,16 @@ Duration PythonData::getDuration() const {
   } else if (obj && PyDelta_Check(obj)) {
     PythonData r = PyObject_CallMethod(obj, "total_seconds", nullptr);
     return r.getDouble();
-  } else {
+  } else if (PyLong_Check(obj)) {
     long result = PyLong_AsLong(obj);
+    if (result == -1 && PyErr_Occurred()) throw DataException("Invalid number");
+    return result;
+  } else if (PyLong_Check(obj)) {
+    long result = PyLong_AsLong(obj);
+    if (result == -1 && PyErr_Occurred()) throw DataException("Invalid number");
+    return result;
+  } else {
+    double result = PyFloat_AsDouble(obj);
     if (result == -1 && PyErr_Occurred()) throw DataException("Invalid number");
     return result;
   }

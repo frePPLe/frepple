@@ -2847,10 +2847,18 @@ class PythonData : public DataValue {
       Py_DECREF(t);
       if (x < INT_MIN || x > INT_MAX) throw DataException("Invalid number");
       return static_cast<int>(x);
+    } else if (PyLong_Check(obj)) {
+      int result = PyLong_AsLong(obj);
+      if (result == -1 && PyErr_Occurred())
+        throw DataException("Invalid number");
+      return result;
+    } else {
+      double result = PyFloat_AsDouble(obj);
+      if ((result == -1 && PyErr_Occurred()) || result > INT_MAX ||
+          result < INT_MIN)
+        throw DataException("Invalid number");
+      return static_cast<int>(result);
     }
-    int result = PyLong_AsLong(obj);
-    if (result == -1 && PyErr_Occurred()) throw DataException("Invalid number");
-    return result;
   }
 
   /* Convert a Python number into a C++ long. */
@@ -2863,10 +2871,18 @@ class PythonData : public DataValue {
       Py_DECREF(t);
       if (x < LONG_MIN || x > LONG_MIN) throw DataException("Invalid number");
       return static_cast<long>(x);
+    } else if (PyLong_Check(obj)) {
+      long result = PyLong_AsLong(obj);
+      if (result == -1 && PyErr_Occurred())
+        throw DataException("Invalid number");
+      return result;
+    } else {
+      double result = PyFloat_AsDouble(obj);
+      if ((result == -1 && PyErr_Occurred()) || result > LONG_MAX ||
+          result < LONG_MIN)
+        throw DataException("Invalid number");
+      return static_cast<long>(result);
     }
-    long result = PyLong_AsLong(obj);
-    if (result == -1 && PyErr_Occurred()) throw DataException("Invalid number");
-    return result;
   }
 
   /* Convert a Python number into a C++ bool. */

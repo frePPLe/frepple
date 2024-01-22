@@ -1,24 +1,11 @@
 #
 # Copyright (C) 2022 by frePPLe bv
 #
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to
-# the following conditions:
-#
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# All information contained herein is, and remains the property of frePPLe.
+# You are allowed to use and modify the source code, as long as the software is used
+# within your company.
+# You are not allowed to distribute the software, either in the form of source code
+# or in the form of compiled binaries.
 #
 
 import json
@@ -91,6 +78,29 @@ class OdooTest(TransactionTestCase):
             {"fields": odoo_fields} if odoo_fields else {},
         )
 
+    def updateUserTimeZone(self):
+        admin = self.odooRPC(
+            "res.users",
+            [("login", "=", "admin")],
+            {},
+            [
+                "id",
+            ],
+        )[0]
+        self.models.execute_kw(
+            self.db,
+            self.uid,
+            self.password,
+            "res.users",
+            "write",
+            [
+                [
+                    admin["id"],
+                ],
+                {"tz": "UTC"},
+            ],
+        )
+
     def test_odoo_e2e(self):
         # Import odoo data
         self.assertEqual(Item.objects.all().count(), 0)
@@ -139,7 +149,10 @@ class OdooTest(TransactionTestCase):
 
         # Generate plan
         management.call_command(
-            "runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply,fcst,invplan"
+            "runplan",
+            plantype=1,
+            constraint="capa,mfg_lt,po_lt",
+            env="supply,fcst,invplan",
         )
 
         # Check plan results
@@ -160,7 +173,9 @@ class OdooTest(TransactionTestCase):
         self.assertIsNotNone(proposed_mo)
         self.assertIsNotNone(proposed_po)
 
-        # Approve proposed transactions
+        # Update user time zone to UTC Approve proposed transactions
+        self.odooRPCinit()
+        self.updateUserTimeZone()
         response = self.client.post(
             "/erp/upload/",
             json.dumps(
@@ -195,7 +210,6 @@ class OdooTest(TransactionTestCase):
         self.assertEqual(approved_po.status, "approved")
 
         # Check results in odoo
-        self.odooRPCinit()
         cnt = 0
         for odoo_mo in self.odooRPC(
             "mrp.production", [("origin", "=", "frePPLe"), ("state", "=", "draft")]
@@ -203,7 +217,7 @@ class OdooTest(TransactionTestCase):
             self.assertEqual(approved_mo.quantity, odoo_mo["product_qty"])
             self.assertEqual(
                 approved_mo.startdate.strftime("%Y-%m-%d %H:%M:%S"),
-                odoo_mo["date_start"],
+                odoo_mo["date_planned_start"],
             )
             self.assertTrue(odoo_mo["bom_id"][1] in approved_mo.operation.name)
             cnt += 1

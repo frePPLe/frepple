@@ -568,6 +568,7 @@ class UserList(GridReport):
     frozenColumns = 2
     permissions = (("change_user", "Can change user"),)
     help_url = "user-interface/getting-around/user-permissions-and-roles.html"
+    canDuplicate = False
 
     rows = (
         GridFieldInteger(
@@ -611,6 +612,7 @@ class GroupList(GridReport):
     frozenColumns = 1
     permissions = (("change_group", "Can change group"),)
     help_url = "user-interface/getting-around/user-permissions-and-roles.html"
+    canDuplicate = False
 
     rows = (
         GridFieldInteger(

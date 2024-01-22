@@ -132,7 +132,8 @@ class PopulateForecastTable(PlanTask):
                     insert into forecast
                     (name, item_id, location_id, customer_id, method, priority, discrete, planned, lastmodified)
                     select distinct
-                      item_id||' @ '||location_id||' @ '||customer_id, item_id, location_id, customer_id, 'automatic',
+                      left(item_id, 300 - 6 - length(location_id) - length(customer_id)) ||' @ '||location_id||' @ '||customer_id,
+                      item_id, location_id, customer_id, 'automatic',
                       20, true, true, now()
                     from cte
                     """,
@@ -148,7 +149,8 @@ class PopulateForecastTable(PlanTask):
                       insert into forecast
                       (name, item_id, location_id, customer_id, method, priority, discrete, planned, lastmodified)
                     select distinct
-                      item_id||' @ '||location_id||' @ '||customer_id, item_id, location_id,
+                      left(item_id, 300 - 6 - length(location_id) - length(customer_id))||' @ '||location_id||' @ '||customer_id,
+                      item_id, location_id,
                       customer_id, 'automatic', 20, true, false, now()
                     from cte
                     """

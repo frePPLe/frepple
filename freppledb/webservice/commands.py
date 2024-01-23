@@ -36,7 +36,7 @@ import freppledb
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.common.models import Parameter
 from freppledb.execute.models import Task
-from freppledb.webservice.utils import useWebService
+from freppledb.webservice.utils import useWebService, createSolvers
 
 logger = logging.getLogger(__name__)
 
@@ -180,6 +180,10 @@ class RunWebService(PlanTask):
             )
             return
 
+        # Create solvers for the replanning solvers
+        loglevel = int(Parameter.getValue("plan.loglevel", database, 0))
+        createSolvers(loglevel=loglevel, database=database)
+
         # Start the web service
         logger.info("Web service starting at %s" % datetime.now().strftime("%H:%M:%S"))
         if PlanTaskRegistry.reg.task:
@@ -189,7 +193,6 @@ class RunWebService(PlanTask):
             PlanTaskRegistry.reg.task.save(using=database)
 
         # Close all database connections.
-        loglevel = int(Parameter.getValue("plan.loglevel", database, 0))
         connections.close_all()
         if "FREPPLE_TEST" in os.environ:
             server = settings.DATABASES[database]["TEST"].get("FREPPLE_PORT", None)

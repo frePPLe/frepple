@@ -29,14 +29,20 @@ import sys
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 
-from freppledb.common.models import Parameter
 from freppledb.common.auth import getWebserviceAuthorization
+from freppledb.common.commands import PlanTaskRegistry
+from freppledb.common.models import Parameter
 
 # Only a single service can be making updates at the same time
 try:
     lock = asyncio.Lock()
 except Exception:
     lock = None
+
+# Solvers reusable for all services
+mrp_solver = None
+clean_solver = None
+fcst_solver = None
 
 
 def useWebService(database=DEFAULT_DB_ALIAS):
@@ -115,3 +121,50 @@ def getWebServiceContext(request):
         "port": port,
         "proxied": proxied,
     }
+
+
+def createSolvers(loglevel=2, database=DEFAULT_DB_ALIAS):
+    import frepple
+
+    global clean_solver, mrp_solver, fcst_solver
+
+    try:
+        constraint = int(os.environ["FREPPLE_CONSTRAINT"])
+    except Exception:
+        constraint = 4 + 16 + 32  # Default is with all constraints enabled
+    clean_solver = frepple.solver_delete(loglevel=loglevel, constraint=constraint)
+    mrp_solver = frepple.solver_mrp(
+        loglevel=loglevel,
+        constraints=constraint,
+        erasePreviousFirst=False,
+        plantype=1,
+        lazydelay=int(Parameter.getValue("lazydelay", database, "86400")),
+        allowsplits=(
+            Parameter.getValue("allowsplits", database, "true").lower() == "true"
+        ),
+        minimumdelay=int(Parameter.getValue("plan.minimumdelay", database, "3600")),
+        rotateresources=(
+            Parameter.getValue("plan.rotateResources", database, "true").lower()
+            == "true"
+        ),
+        plansafetystockfirst=(
+            Parameter.getValue("plan.planSafetyStockFirst", database, "false").lower()
+            != "false"
+        ),
+        iterationmax=int(Parameter.getValue("plan.iterationmax", database, "0")),
+    )
+    supplyplanningtask = PlanTaskRegistry.getTask(sequence=200)
+    if supplyplanningtask:
+        if hasattr(supplyplanningtask, "debugResource"):
+            mrp_solver.userexit_resource = supplyplanningtask.debugResource
+        if hasattr(supplyplanningtask, "debugDemand"):
+            mrp_solver.userexit_demand = supplyplanningtask.debugDemand
+        if hasattr(supplyplanningtask, "debugOperation"):
+            mrp_solver.userexit_operation = supplyplanningtask.debugOperation
+
+    if "freppledb.forecast" in settings.INSTALLED_APPS:
+        from freppledb.forecast.commands import createForecastSolver
+
+        fcst_solver = createForecastSolver(database)
+        if fcst_solver:
+            fcst_solver.loglevel = loglevel

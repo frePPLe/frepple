@@ -154,11 +154,9 @@ function forecastController($scope, $http, $q, $location) {
     if (!$scope.changes) {
       angular.element(document).find('#save').removeClass('btn-danger').prop('disabled', 'disabled');
       angular.element(document).find('#undo').removeClass('btn-danger').prop('disabled', 'disabled');
-      angular.element(document).find('#recalculate').removeClass('disabled').prop('disabled', 'disabled');
     } else {
       angular.element(document).find('#save').removeClass('btn-danger').addClass('btn-danger').prop('disabled', false);
       angular.element(document).find('#undo').removeClass('btn-danger').addClass('btn-danger').prop('disabled', false);
-      angular.element(document).find('#recalculate').prop('disabled', false);
     }
   });
 
@@ -861,7 +859,6 @@ function forecastController($scope, $http, $q, $location) {
     angular.element(document).find("div.tooltip").tooltip("hide");
     angular.element(document).find('#save').removeClass('btn-danger').prop('disabled', 'disabled');
     angular.element(document).find('#undo').removeClass('btn-danger').prop('disabled', 'disabled');
-    angular.element(document).find('#recalculate').removeClass('btn-danger').prop('disabled', 'disabled');
     $scope.commenttype = null;
     $scope.newcomment = '';
 

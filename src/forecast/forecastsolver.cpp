@@ -245,7 +245,7 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
       try {
         if (x->getMethods() && x->isLeaf() &&
             (cluster == -1 ||
-             static_cast<Forecast*>(&*x)->getCluster() != cluster))
+             static_cast<Forecast*>(&*x)->getCluster() == cluster))
           solve(static_cast<Forecast*>(&*x), nullptr);
       } catch (...) {
         logger << "Error: Caught an exception while forecasting '"
@@ -271,7 +271,7 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
       try {
         if (x->getMethods() && !x->isLeaf() &&
             (cluster == -1 ||
-             static_cast<Forecast*>(&*x)->getCluster() != cluster))
+             static_cast<Forecast*>(&*x)->getCluster() == cluster))
           solve(static_cast<Forecast*>(&*x), nullptr);
       } catch (...) {
         logger << "Error: Caught an exception while forecasting '"

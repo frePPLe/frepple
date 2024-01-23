@@ -1144,10 +1144,11 @@ class ExportForecastMetrics(PlanTask):
     description = "Export forecast metrics"
     sequence = 171
     label = ("fcst", _("Generate forecast"))
+    export = True
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        if "fcst" in os.environ:
+        if "fcst" in os.environ or "loadplan" in os.environ:
             if not Parameter.getValue("forecast.calendar", database, None):
                 return -1
             else:
@@ -1156,75 +1157,76 @@ class ExportForecastMetrics(PlanTask):
             return -1
 
     @classmethod
-    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    def run(cls, database=DEFAULT_DB_ALIAS, cluster=-1, **kwargs):
         import frepple
 
-        cursor = connections[database].cursor()
-        cursor.execute(
-            "update forecast set out_smape=null, out_method=null, out_deviation=null"
-        )
-        cursor.execute(
-            """
-            create temporary table forecast_tmp
-            (
-            name character varying(300),
-            out_smape numeric(20,8),
-            out_method character varying(20),
-            out_deviation numeric(20,8)
-            )
-            on commit preserve rows
-            """
-        )
-
-        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
-            for i in frepple.demands():
-                if isinstance(i, frepple.demand_forecast):
-                    print(
-                        "%s\v%s\v%s\v%s"
-                        % (
-                            clean_value(i.name),
-                            i.smape_error * 100,
-                            i.method,
-                            i.deviation,
-                        ),
-                        file=tmp,
+        with connections[database].cursor() as cursor:
+            if cluster == -1:
+                cursor.execute(
+                    "update forecast set out_smape=null, out_method=null, out_deviation=null"
+                )
+                cursor.execute(
+                    """
+                    create temporary table forecast_tmp
+                    (
+                    name character varying(300),
+                    out_smape numeric(20,8),
+                    out_method character varying(20),
+                    out_deviation numeric(20,8)
                     )
-            tmp.seek(0)
-            cursor.copy_from(file=tmp, table="forecast_tmp", sep="\v")
-            tmp.close()
+                    on commit preserve rows
+                    """
+                )
 
-        cursor.execute("create unique index forecast_tmp_idx on forecast_tmp (name)")
-        cursor.execute(
-            """
-            update forecast
-              set out_smape = tmp.out_smape,
-                  out_method = tmp.out_method,
-                  out_deviation = tmp.out_deviation
-            from forecast_tmp tmp
-            where tmp.name = forecast.name
-            """
-        )
-        cursor.execute("drop table forecast_tmp")
-        cursor.execute("vacuum analyze forecast")
+                with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
+                    for i in frepple.demands():
+                        if isinstance(i, frepple.demand_forecast):
+                            print(
+                                "%s\v%s\v%s\v%s"
+                                % (
+                                    clean_value(i.name),
+                                    i.smape_error * 100,
+                                    i.method,
+                                    i.deviation,
+                                ),
+                                file=tmp,
+                            )
+                    tmp.seek(0)
+                    cursor.copy_from(file=tmp, table="forecast_tmp", sep="\v")
+                    tmp.close()
 
-
-def exportSingleForecastMetrics(fcst_name, db=DEFAULT_DB_ALIAS):
-    """
-    Export metrics and forecast methods for a single forecast.
-
-    This method is called from the incremental replanning in the inventory
-    planning screen.
-    """
-    import frepple
-    from freppledb.forecast.models import Forecast
-
-    fcst = Forecast.objects.all().using(db).get(pk=fcst_name)
-    fcst_frepple = frepple.demand(name=fcst_name)
-    fcst.method = fcst_frepple.methods
-    fcst.out_smape = fcst_frepple.smape_error * 100
-    fcst.out_method = fcst_frepple.method
-    fcst.out_deviation = fcst_frepple.deviation
-    fcst.save(using=db)
+                cursor.execute(
+                    "create unique index forecast_tmp_idx on forecast_tmp (name)"
+                )
+                cursor.execute(
+                    """
+                    update forecast
+                    set out_smape = tmp.out_smape,
+                        out_method = tmp.out_method,
+                        out_deviation = tmp.out_deviation
+                    from forecast_tmp tmp
+                    where tmp.name = forecast.name
+                    """
+                )
+                cursor.execute("drop table forecast_tmp")
+                cursor.execute("vacuum analyze forecast")
+            elif cluster != -2:
+                # Incremental export for a single cluster
+                for i in frepple.demands():
+                    if (
+                        isinstance(i, frepple.demand_forecast)
+                        and i.item.cluster in cluster
+                    ):
+                        cursor.execute(
+                            """
+                            update forecast set
+                                out_smape = %s,
+                                out_method = %s,
+                                out_deviation = %s
+                            where name = %s
+                            """,
+                            (i.smape_error * 100, i.method, i.deviation, i.name),
+                        )
 
 
 @PlanTaskRegistry.register

@@ -33,6 +33,7 @@ from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.models import Comment
 from freppledb.forecast.models import Forecast
 from freppledb.input.models import Item, Location, Customer, Buffer
+from freppledb.webservice.utils import fcst_solver
 
 
 class ForecastService(AsyncHttpConsumer):
@@ -55,10 +56,27 @@ class ForecastService(AsyncHttpConsumer):
         """
 
     @database_sync_to_async
-    def updateForecastMethod(self, item, location, customer, method):
+    def updateForecastMethod(self, f):
         Forecast.objects.all().using(self.scope["database"]).filter(
-            item=item, location=location, customer=customer
-        ).update(method=method)
+            item=f.item.name, location=f.location.name, customer=f.customer.name
+        ).update(method=f.methods)
+
+    @database_sync_to_async
+    def replan(self, item, location):
+        from freppledb.forecast.commands import ExportForecastMetrics
+
+        cluster = frepple.buffer(
+            name="%s @ %s" % (item.name, location.name),
+            item=item,
+            location=location,
+        ).cluster
+        # Recompute the forecast
+        fcst_solver.solve(
+            cluster=cluster,
+        )
+
+        # Minimal export - full cluster replan is taking too long.
+        ExportForecastMetrics().run(database=self.scope["database"], cluster=[cluster])
 
     @database_sync_to_async
     def updateComment(self, commenttype, comment, item, location, customer):
@@ -129,6 +147,7 @@ class ForecastService(AsyncHttpConsumer):
                 data = json.loads(body.decode("utf-8"))
 
                 try:
+                    replan = False
                     frepple.cache.write_immediately = False
                     if isinstance(data, list):
                         # Message format #1
@@ -219,6 +238,7 @@ class ForecastService(AsyncHttpConsumer):
                                         ):
                                             args[key] = float(val)
                                     frepple.setForecast(**args)
+                                    replan = True
                                 except Exception as e:
                                     errors.append("Error processing %s" % e)
                     else:
@@ -274,15 +294,33 @@ class ForecastService(AsyncHttpConsumer):
                                 customer = customer.owner
 
                         # Update forecast method
-                        mthd = data.get("forecastmethod", None)
-                        if mthd and self.scope["user"].has_perm(
+                        method = data.get("forecastmethod", None)
+                        if method and self.scope["user"].has_perm(
                             "forecast.change_forecast"
                         ):
                             try:
                                 if item and location and customer:
-                                    await self.updateForecastMethod(
-                                        item.name, location.name, customer.name, mthd
-                                    )
+                                    for f in item.demands:
+                                        if (
+                                            isinstance(f, frepple.demand_forecastbucket)
+                                            and f.location
+                                            and f.location.name == location.name
+                                            and f.customer == customer
+                                            and f.owner.methods != method
+                                        ):
+                                            f.owner.methods = method
+                                            replan = True
+                                            await self.updateForecastMethod(f.owner)
+                                        elif (
+                                            isinstance(f, frepple.demand_forecast)
+                                            and f.location
+                                            and f.location.name == location.name
+                                            and f.customer == customer
+                                            and f.methods != method
+                                        ):
+                                            f.methods = method
+                                            replan = True
+                                            await self.updateForecastMethod(f)
                                 else:
                                     if not item:
                                         errors.append(
@@ -340,9 +378,18 @@ class ForecastService(AsyncHttpConsumer):
                                             and val != ""
                                         ):
                                             args[key] = float(val)
+                                            if key != "forecastoverride":
+                                                replan = True
                                     frepple.setForecast(**args)
                                 except Exception as e:
                                     errors.append("Error processing %s" % e)
+
+                        if replan:
+                            try:
+                                await self.replan(item, location)
+                            except Exception:
+                                errors.append(b"Exception during replanning")
+
                 finally:
                     frepple.cache.write_immediately = True
 

@@ -455,6 +455,19 @@ def wrapTask(request, action):
     elif action == "loaddata":
         if not request.user.has_perm("auth.run_db"):
             raise Exception("Missing execution privileges")
+
+        # Step 1: optionally empty the database
+        if args.get("emptybefore", False) == "true":
+            task = Task(
+                name="empty",
+                submitted=now,
+                status="Waiting",
+                user=request.user,
+                arguments="--all",
+            )
+            task.save(using=request.database)
+
+        # Step 2: load the fixture
         task = Task(
             name="loaddata",
             submitted=now,
@@ -463,7 +476,8 @@ def wrapTask(request, action):
             arguments=args["fixture"],
         )
         task.save(using=request.database)
-        # Also run the workflow upon loading of manufacturing_demo or distribution_demo
+
+        # Step 3: optionally run the plan
         if args.get("regenerateplan", False) == "true":
             active_modules = "supply"
             if "freppledb.forecast" in settings.INSTALLED_APPS:

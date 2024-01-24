@@ -619,9 +619,11 @@ Load a dataset in the database
 A number of demo datasets are packaged with frePPLe. Using this action you can
 load one of those in the database.
 
-The dataset is loaded incrementally in the database, **without** erasing any
-previous data. In most cases you'll want to erase the data before loading any
-of these datasets.
+By default, the dataset is loaded incrementally in the database, **without** erasing any
+previous data. A checkbox allows you to purge any existing data before loading
+the dataset.
+
+Another checkbox allows you to generate a plan after loading the dataset.
 
 You can use the dumpdata command to export a model to the appropriate format
 and create your own predefined datasets.

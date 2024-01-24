@@ -22,15 +22,20 @@
       </div>
     </td>
     <td style="padding:15px">
+      <div class="mb-2">
+        <input class="form-check-input" type="checkbox" id="loaddatacb2" onclick="checkbox_changed(this, '#emptyvar')" />
+        <label for="loaddatacb2">{% trans "Purge all data before loading" %}</label>
+      </div>
       <div>
-        <input class="form-check-input" type="checkbox" id="loaddatacb1" onclick="checkbox_changed(this)" checked />
-        <label for="loaddatacb1">{% trans "Execute plan after loading is done" %}</label>
+        <input class="form-check-input" type="checkbox" id="loaddatacb1" onclick="checkbox_changed(this, '#regeneratevar')" checked />
+        <label for="loaddatacb1">{% trans "Execute plan after loading" %}</label>
       </div>
     </td>
   </tr>
 </table>
 <input type="hidden" name="fixture" id="loaddatafile" value="">
 <input type="hidden" name="regenerateplan" id="regeneratevar" value="true">
+<input type="hidden" name="emptybefore" id="emptyvar" value="false">
 </form>
 <script>
 $(function() {
@@ -39,8 +44,8 @@ $(function() {
     $("#loaddatafile").val($(this).text());
   });
 });
-function checkbox_changed(checkbox) {
-  $("#regeneratevar").val(checkbox.checked);
+function checkbox_changed(checkbox, slctr) {
+  $(slctr).val(checkbox.checked);
 };
 </script>
 {% else %}

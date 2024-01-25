@@ -1028,9 +1028,9 @@ ForecastSolver::Metrics
   for (unsigned int i = 0; i + period <= count; i += period) {
     ++cyclecount;
     double cyclesum = 0.0;
-    for (short j = 0; j < period; ++j) cyclesum += timeseries[i + j];
+    for (unsigned short j = 0; j < period; ++j) cyclesum += timeseries[i + j];
     if (cyclesum) {
-      for (short j = 0; j < period; ++j)
+      for (unsigned short j = 0; j < period; ++j)
         initial_S_i[j] += timeseries[i + j] / cyclesum * period;
     }
   }

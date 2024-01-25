@@ -955,7 +955,7 @@ class FileManager:
             else:
                 logger.error("Failed file deletion: folder does not exist")
                 errorcount += 1
-                fileerrors = fileerrors + " / " + clean_filename
+                fileerrors = fileerrors + " / " + escape(clean_filename)
 
         for clean_filename in filelist:
             try:
@@ -967,7 +967,7 @@ class FileManager:
             except Exception as e:
                 logger.error("Failed file deletion: %s" % e)
                 errorcount += 1
-                fileerrors = fileerrors + " / " + clean_filename
+                fileerrors = fileerrors + " / " + escape(clean_filename)
 
         if errorcount > 0:
             return HttpResponseServerError(fileerrors)

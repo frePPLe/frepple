@@ -108,7 +108,11 @@ function displayForecastGrid($window, $compile, gettextCatalog) {
 					years2ago = getBucket(fctindex, 2);
 					years1ago = getBucket(fctindex, 1);
 
-					tableheader += '<th class="text-center text-nowrap" style="background-color: #aaa">' + fctdata.bucket + '</th>';
+					tableheader += '<th class="text-center text-nowrap" style="background-color: #aaa" title="'
+						+ moment(fctdata.startdate, "YYYY-MM-DD hh:mm:ss").format(dateformat)
+						+ ' - '
+						+ moment(fctdata.enddate, "YYYY-MM-DD hh:mm:ss").format(dateformat)
+						+ '">' + fctdata.bucket + '</th>';
 
 					for (var r in scope.rows) {
 						var m = scope.measures[scope.rows[r]];

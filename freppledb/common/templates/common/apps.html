@@ -80,7 +80,7 @@ function updateApp(appname, action, el) {
 		    </h5>
 			{% if app.description %}<div class="row mb-1">{{ app.description|safe }}</div>{% endif %}
 			<div class="row mt-auto mb-0">
-			   {% if app.documentation_url %}<div class="col"><a role="button" href="{{ app.documentation_url|safe }}" target="_blank" class="btn btn-primary btn-sm float-end">{% trans "documentation"|capfirst %}</a></div>{% endif %}
+			   {% if app.documentation_url %}<div class="col"><a role="button" rel="noopener" href="{{ app.documentation_url|safe }}" target="_blank" class="btn btn-primary btn-sm float-end">{% trans "documentation"|capfirst %}</a></div>{% endif %}
 			</div>
 		</div>
 	</div>
@@ -111,7 +111,7 @@ function updateApp(appname, action, el) {
 		    </h5>
 			{% if app.description %}<div class="row mb-1">{{ app.description|safe }}</div>{% endif %}
 			<div class="row mt-auto mb-0">
-			   {% if app.documentation_url %}<div class="col"><a role="button" href="{{ app.documentation_url|safe }}" target="_blank" class="btn btn-primary btn-sm float-end">{% trans "documentation"|capfirst %}</a></div>{% endif %}
+			   {% if app.documentation_url %}<div class="col"><a role="button" rel="noopener" href="{{ app.documentation_url|safe }}" target="_blank" class="btn btn-primary btn-sm float-end">{% trans "documentation"|capfirst %}</a></div>{% endif %}
 			</div>
 		</div>
 	</div>

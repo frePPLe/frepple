@@ -2,10 +2,13 @@
 Changing your password
 ======================
 
-From the top right of the screen "My Preferences" or from the menu bar a screen can be opened where you can change your password.
+You can change your password from the login screen, or from the preferences
+screen that show when you click your user name in the top right corner of
+the screen.
 
-Users often choose poor passwords. 
-We enforce a certain validation rules for passwords:
+An administrator can use the user administration screen to change passwords as well.
+
+Users often choose poor passwords. We enforce the following validation rules for passwords:
 
 * Passwords need to be at least 8 characters.
 
@@ -14,8 +17,6 @@ We enforce a certain validation rules for passwords:
 * Passwords cannot be entirely numeric.
 
 * Password cannot be part of a list of commonly used passwords.
-
-An administrator can use the user administration screen to change passwords as well.
 
 .. image:: ../_images/change-password.png
    :alt: Change password

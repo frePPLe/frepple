@@ -23,11 +23,22 @@ For each user frePPle stores a number of personal settings and preferences.
 
 * | **Avatar**:
   | A small picture of yourself.
-  | The uploaded picture must 1) be square (ie same height and width), 
+  | The uploaded picture must 1) be square (ie same height and width),
     2) be in jpeg, png or gif format and 3) be smaller than 100kB.
-  
+
 * | **Password**:
   | To change the password enter the current one and twice the new value.
+
+* | **Reset personalization**:
+  | With the wrench icon every user can personalize the layout of each screen:
+    columns displayed, column ordering, column width, favorites, filters, ...
+  | With this option you can (re-)initialize these settings in different ways:
+
+    * Erase all personalizations and restart from the default settings.
+
+    * Inherit personalizations from another user.
+
+    * Copy personalizations between scenarios.
 
 .. image:: ../_images/user-preferences.png
    :alt: User preferences

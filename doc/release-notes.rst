@@ -6,6 +6,18 @@ Release notes
 
 This release is scheduled for end Februari 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | In the `preferences screen <user-interface/getting-around/user-preferences.html>`_
+    you can now reset your screen personalization.
+  | You can restart from a clean slate. Or you can inherit them from another user.
+    Or you can copy them from another scenario.
+
+.. rubric:: Odoo integration
+
+- | 15, 16, 17: The mapping of calendars now includes the odoo identifier.
+  | This is needed to guarantuee uniquess of the calendars.
+
 8.4.0 (2024-01-19)
 ==================
 

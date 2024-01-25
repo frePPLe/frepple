@@ -477,6 +477,10 @@ def preferences(request):
             "SCENARIOS": Scenario.objects.using(DEFAULT_DB_ALIAS)
             .filter(status="In use")
             .order_by("name"),
+            "USERS": User.objects.using(DEFAULT_DB_ALIAS)
+            .order_by("username")
+            .exclude(username=request.user.username)
+            .only("username"),
         },
     )
 

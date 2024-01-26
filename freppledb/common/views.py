@@ -371,6 +371,7 @@ class PreferencesForm(forms.Form):
         widget=forms.PasswordInput(),
     )
     avatar = forms.ImageField(label="", required=False)
+    personalization = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -401,6 +402,24 @@ class PreferencesForm(forms.Form):
             )
             if newdata["new_password1"] != newdata["new_password2"]:
                 raise forms.ValidationError("The two password fields didn't match.")
+        if newdata["personalization"]:
+            tmp = newdata["personalization"].split("-", 1)
+            if tmp[0] == "scenario":
+                if (
+                    not Scenario.objects.using(DEFAULT_DB_ALIAS)
+                    .filter(name=tmp[1], status="In use")
+                    .exists()
+                ):
+                    raise forms.ValidationError("Invalid personalization argument")
+            elif tmp[0] == "user":
+                if (
+                    not User.objects.using(DEFAULT_DB_ALIAS)
+                    .filter(username=tmp[1])
+                    .exists()
+                ):
+                    raise forms.ValidationError("Invalid personalization argument")
+            elif tmp[0] not in ("nochange", "resetall"):
+                raise forms.ValidationError("Invalid personalization argument")
 
 
 @sensitive_variables("newdata")
@@ -445,6 +464,10 @@ def preferences(request):
                     messages.INFO,
                     force_str(_("Successfully updated preferences")),
                 )
+                # Update the personalization
+                if newdata["personalization"]:
+                    tmp = newdata["personalization"].split("-", 1)
+                    request.user.intializePersonalization(tmp[0], tmp[1])
             except Exception as e:
                 logger.error("Failure updating preferences: %s" % e)
                 messages.add_message(

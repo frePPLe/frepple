@@ -30,7 +30,7 @@
     });
     $("#ul_personalize li a").click(function() {
       $("#btn_personalize").text($(this).text());
-      $("#personalization").val($(this).prop('data-type') + '-' + $(this).prop('data-name'));
+      $("#personalization").val($(this).attr('data-type') + '-' + $(this).attr('data-name'));
     });
   });
 </script>
@@ -213,9 +213,9 @@
           <ul id="ul_personalize" class="dropdown-menu w-100">
             <li><a data-type="nochange" data-name="" class="dropdown-item" href="#">{% trans "no change"|capfirst %}</a></li>
             <li><a data-type="resetall" data-name="" class="dropdown-item" href="#">{% trans "reset all"|capfirst %}</a></li>
-            {% for j in SCENARIOS %}
+            {% for j in SCENARIOS %}{% if j.name != request.database %}
               <li><a data-type="scenario" data-name="{{ j.name }}" class="dropdown-item" href="#">{% trans "copy from scenario"|capfirst %} {%if j.description %}{{j.description}}{% else %}{{j.name}}{% endif %}</a></li>
-            {% endfor %}
+            {% endif %}{% endfor %}
             {% for j in USERS %}
               <li><a data-type="user" data-name="{{ j.username }}" class="dropdown-item" href="#">{% trans "copy from user"|capfirst %} {{j.username}}</a></li>
             {% endfor %}

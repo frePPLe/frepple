@@ -645,6 +645,37 @@ class User(AbstractUser):
                     t = json.dumps(val)
                     cursor.execute(sql, (self.id, prop, t, t))
 
+    def intializePersonalization(self, action, arg):
+        database = self._state.db
+        if action == "scenario":
+            if (
+                not Scenario.objects.using(DEFAULT_DB_ALIAS)
+                .filter(name=arg, status="In use")
+                .exists()
+            ):
+                raise Exception("Unknown scenario to coy personalization from")
+            self.preferences.using(database).delete()
+            for pref in UserPreference.objects.using(arg).filter(
+                user__username=self.username
+            ):
+                UserPreference(
+                    user=self, property=pref.property, value=pref.value
+                ).save(using=database)
+        elif action == "user":
+            if not User.objects.using(DEFAULT_DB_ALIAS).filter(username=arg).exists():
+                raise Exception("Unknown user to inherit personalization from")
+            self.preferences.using(database).delete()
+            for pref in UserPreference.objects.using(DEFAULT_DB_ALIAS).filter(
+                user__username=arg
+            ):
+                UserPreference(
+                    user=self, property=pref.property, value=pref.value
+                ).save(using=database)
+        elif action == "resetall":
+            self.preferences.using(database).delete()
+        elif action != "nochange":
+            raise Exception("Unknown personalization action")
+
 
 class UserPreference(models.Model):
     class UserPreferenceManager(models.Manager):

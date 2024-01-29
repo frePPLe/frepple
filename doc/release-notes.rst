@@ -13,6 +13,8 @@ This release is scheduled for end Februari 2024. You can already check out a `pr
   | You can restart from a clean slate. Or you can inherit them from another user.
     Or you can copy them from another scenario.
 
+- | Addition of the item *unit of measure* column in the supply path.
+
 .. rubric:: Odoo integration
 
 - | 15, 16, 17: The mapping of calendars now includes the odoo identifier.

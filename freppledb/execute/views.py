@@ -87,6 +87,7 @@ from freppledb.common.views import sendStaticFile
 from .models import Task, ScheduledTask
 from .management.commands.runworker import launchWorker
 from .management.commands.runplan import parseConstraints, constraintString
+from .management.commands.scheduletasks import scheduler
 
 import logging
 
@@ -1088,7 +1089,7 @@ def scheduletasks(request):
                 ).delete()
             obj.adjustForTimezone(-GridReport.getTimezoneOffset(request))
             obj.save(using=request.database)
-            call_command("scheduletasks", database=request.database)
+            scheduler.waitNextEvent(database=request.database)
             obj.adjustForTimezone(GridReport.getTimezoneOffset(request))
             return HttpResponse(
                 content=obj.next_run.strftime("%Y-%m-%d %H:%M:%S")

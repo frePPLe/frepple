@@ -42,3 +42,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
 from django.core.wsgi import get_wsgi_application
 
 application = get_wsgi_application()
+
+from freppledb.execute.management.commands.scheduletasks import scheduler
+
+scheduler.start()

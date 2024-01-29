@@ -18,6 +18,11 @@ This release is scheduled for end Februari 2024. You can already check out a `pr
 - | 15, 16, 17: The mapping of calendars now includes the odoo identifier.
   | This is needed to guarantuee uniquess of the calendars.
 
+.. rubric:: System administration
+
+- | Scheduled tasks are now also possible in docker containers.
+  | The automated scheduling of tasks on a time schedul no longer uses the at-command.
+
 8.4.0 (2024-01-19)
 ==================
 

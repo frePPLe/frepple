@@ -4,23 +4,19 @@
 <div class="col"><p>You repeat the same sequence of tasks over and over again?<br>
 If so, <a class="text-decoration-underline" href="{{request.prefix}}/execute/#scheduletasks">define
 a task</a> to simplify running the sequence and avoid mistakes.</p>
-{% if not with_scheduler %}<p>You can also schedule the execution automatically at specific times.</p>{% endif %}
+<p>You can also schedule the execution automatically at specific times.</p>
 </div>
 {% else %}
 {% if not widget %}
 <div class="row">
 <div class="col-9 offset-2"><p>
-{% if with_scheduler %}
 {% trans "Run a sequence of tasks, and schedule it to run automatically." %}
-{% else %}
-{% trans "Run a sequence of tasks." %}
-{% endif %}
 </p></div>
 </div>
 {% endif %}
 <div class="row">
 <div class="col-2"></div>
-{% if with_scheduler and not widget %}
+{% if not widget %}
 <div class="col-6 fw-bold">{% trans "name"|capfirst %}</div>
 <div class="col-3 fw-bold">{% trans "next scheduled run"|capfirst %}</div>
 {% else %}
@@ -38,7 +34,7 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
       <input type="hidden" name="schedule" value="{{schedule.name}}">
     </form>
   </div>
-  {% if with_scheduler and not widget %}
+  {% if not widget %}
   <div class="col-6 d-flex">
     <div class="d-flex align-items-center" data-field="name">{{ schedule.name }}</div>
   </div>
@@ -140,7 +136,6 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
         {% endif %}
       </div>
     </div>
-    {% if with_scheduler %}
  		<div class="row mb-3">
       <label for="schedule-{{forloop.counter}}-start" class="col-3 col-form-label">{% trans "start time"|capfirst %}</label>
       <div class="col-9">
@@ -153,29 +148,28 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
       <label class="col-3 col-form-label">{% trans "weekly schedule"|capfirst %}</label>
       <div class="col-9 d-flex justify-content-between">
         <label>
-          <input data-field="monday" type="checkbox" {% if schedule.data.monday %}checked{% endif %}>&nbsp;{% trans "Mon" %}
+          <input data-field="monday" class="form-check-input" type="checkbox" {% if schedule.data.monday %}checked{% endif %}>&nbsp;{% trans "Mon" %}
         </label>
         <label>
-          <input data-field="tuesday" type="checkbox" {% if schedule.data.tuesday %}checked{% endif %}>&nbsp;{% trans "Tue" %}
+          <input data-field="tuesday" class="form-check-input" type="checkbox" {% if schedule.data.tuesday %}checked{% endif %}>&nbsp;{% trans "Tue" %}
         </label>
         <label>
-          <input data-field="wednesday" type="checkbox" {% if schedule.data.wednesday %}checked{% endif %}>&nbsp;{% trans "Wed" %}
+          <input data-field="wednesday" class="form-check-input" type="checkbox" {% if schedule.data.wednesday %}checked{% endif %}>&nbsp;{% trans "Wed" %}
         </label>
         <label>
-          <input data-field="thursday" type="checkbox" {% if schedule.data.thursday %}checked{% endif %}>&nbsp;{% trans "Thu" %}
+          <input data-field="thursday" class="form-check-input" type="checkbox" {% if schedule.data.thursday %}checked{% endif %}>&nbsp;{% trans "Thu" %}
         </label>
         <label>
-          <input data-field="friday" type="checkbox" {% if schedule.data.friday %}checked{% endif %}>&nbsp;{% trans "Fri" %}
+          <input data-field="friday" class="form-check-input" type="checkbox" {% if schedule.data.friday %}checked{% endif %}>&nbsp;{% trans "Fri" %}
         </label>
         <label>
-          <input data-field="saturday" type="checkbox" {% if schedule.data.saturday %}checked{% endif %}>&nbsp;{% trans "Sat" %}
+          <input data-field="saturday" class="form-check-input" type="checkbox" {% if schedule.data.saturday %}checked{% endif %}>&nbsp;{% trans "Sat" %}
         </label>
         <label>
-          <input data-field="sunday" type="checkbox" {% if schedule.data.sunday %}checked{% endif %}>&nbsp;{% trans "Sun" %}
+          <input data-field="sunday" class="form-check-input" type="checkbox" {% if schedule.data.sunday %}checked{% endif %}>&nbsp;{% trans "Sun" %}
         </label>
       </div>
     </div>
-    {% endif %}
     <div class="row mb-3">
       <label for="schedule-{{forloop.counter}}-email-success" class="col-3 col-form-label">{% trans "email on success"|capfirst %}</label>
       <div class="col-9">

@@ -24,37 +24,135 @@
 from datetime import datetime, timedelta
 from importlib import import_module
 import os
+from random import uniform
 import re
-from shutil import which
-from subprocess import call
-import sys
+from threading import Lock, Timer
+import time
 
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.core.management import get_commands
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, DEFAULT_DB_ALIAS, connection
-from django.db.models import Min
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from ...models import ScheduledTask, Task
 from freppledb import __version__
 from freppledb.common.middleware import _thread_locals
-from freppledb.common.models import User
+from freppledb.common.models import User, Scenario
 from freppledb.common.report import GridReport
 from .runworker import launchWorker, runTask
 
 
-class Command(BaseCommand):
-    help = """
-    Mode 1: schedule name is passed as argument
+class TaskScheduler:
+    def __init__(self):
+        self.sched = {}
+        self.mutex = Lock()
 
-    Mode 2: no schedule name is passed
-    Creates new tasks in the task list, based on the schedule.
-    This command is normally executed automatically, scheduled with the at-command.
-    Only in rare situations would you need to run this command manually.
-    """
+    def start(self):
+        with self.mutex:
+            now = datetime.now()
+            for db in (
+                Scenario.objects.using(DEFAULT_DB_ALIAS)
+                .filter(status="In use")
+                .only("name")
+            ):
+                with transaction.atomic(using=db.name):
+                    with connection.cursor() as cursor:
+                        cursor.execute(
+                            "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ"
+                        )
+                        for s in (
+                            ScheduledTask.objects.all()
+                            .using(db.name)
+                            .order_by("name")
+                            .select_for_update(skip_locked=True)
+                        ):
+                            # Calculation of the next run is included in the save method
+                            s.save(using=db.name, update_fields=["next_run"])
+        self.waitNextEvent()
+
+    def waitNextEvent(self, database=None):
+        with self.mutex:
+            now = datetime.now()
+            dbs = (
+                Scenario.objects.using(DEFAULT_DB_ALIAS)
+                .filter(status="In use")
+                .only("name")
+            )
+            if database:
+                dbs.filter(name=database)
+            for db in dbs:
+                t = (
+                    ScheduledTask.objects.all()
+                    .using(db.name)
+                    .order_by("next_run")
+                    .only("next_run")
+                    .first()
+                )
+                if t:
+                    cur_schedule = self.sched.get(db.name, None)
+                    if cur_schedule and cur_schedule["time"] > t.next_run:
+                        cur_schedule["timer"].cancel()
+                    self.sched[db.name] = {
+                        "timer": Timer(
+                            (t.next_run - now).total_seconds(),
+                            self._tasklauncher,
+                            kwargs={"database": db.name},
+                        ),
+                        "time": t.next_run,
+                    }
+                    self.sched[db.name]["timer"].start()
+
+    @staticmethod
+    def _tasklauncher(database=DEFAULT_DB_ALIAS):
+        # Random delay to avoid races
+        time.sleep(uniform(0.0, 0.200))
+
+        # Note: use transaction and select_for_update to handle concurrent access
+        now = datetime.now()
+        created = False
+        with transaction.atomic(using=database):
+            with connection.cursor() as cursor:
+                cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
+                for schedule in (
+                    ScheduledTask.objects.all()
+                    .using(database)
+                    .filter(next_run__isnull=False, next_run__lte=now)
+                    .order_by("next_run", "name")
+                    .select_for_update(skip_locked=True)
+                ):
+                    Task(
+                        name="scheduletasks",
+                        submitted=now,
+                        status="Waiting",
+                        user=schedule.user,
+                        arguments="--schedule='%s'" % schedule.name,
+                    ).save(using=database)
+                    # Calculation of the next run is included in the save method
+                    schedule.save(using=database, update_fields=["next_run"])
+                    created = True
+
+        # Reschedule to run this task again at the next date
+        del scheduler.sched[database]
+        scheduler.waitNextEvent(database=database)
+
+        # Synchronously run the worker process
+        if created:
+            launchWorker(database)
+
+    def status(self, msg=""):
+        print("Scheduler status:", msg)
+        for db, tm in self.sched.items():
+            print("    ", tm["time"], db)
+
+
+scheduler = TaskScheduler()
+
+
+class Command(BaseCommand):
+    help = "Executes a group of tasks in sequence."
     requires_system_checks = []
 
     def get_version(self):
@@ -76,13 +174,10 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        # Dispatcher
-        if options["schedule"]:
-            self.executeScheduledTask(*args, **options)
-        else:
-            self.createScheduledTasks(*args, **options)
-
-    def executeScheduledTask(self, *args, **options):
+        if not options["schedule"]:
+            # Executing Without schedule argument is a legacy from the
+            # days the at-command was used to execute the schedule.
+            return
         database = options["database"]
         if database not in settings.DATABASES:
             raise CommandError("No database settings known for '%s'" % database)
@@ -308,86 +403,8 @@ class Command(BaseCommand):
         """
         return True
 
-    def createScheduledTasks(self, *args, **options):
-        """
-        Task scheduler that looks at the defined schedule and generates tasks
-        at the right moment.
-        """
-        database = options["database"]
-        if database not in settings.DATABASES:
-            raise CommandError("No database settings known for '%s'" % database)
-
-        # Collect tasks
-        # Note: use transaction and select_for_update to handle concurrent access
-        now = datetime.now()
-        created = False
-        with transaction.atomic(using=database):
-            cursor = connection.cursor()
-            cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
-            for schedule in (
-                ScheduledTask.objects.all()
-                .using(database)
-                .filter(next_run__isnull=False, next_run__lte=now)
-                .order_by("next_run", "name")
-                .select_for_update(skip_locked=True)
-            ):
-                Task(
-                    name="scheduletasks",
-                    submitted=now,
-                    status="Waiting",
-                    user=schedule.user,
-                    arguments="--schedule='%s'" % schedule.name,
-                ).save(using=database)
-                schedule.computeNextRun(now + timedelta(seconds=1))
-                schedule.save(using=database)
-                created = True
-
-            # Reschedule to run this task again at the next date
-            earliest_next = (
-                ScheduledTask.objects.using(database)
-                .filter(next_run__isnull=False, next_run__gt=now)
-                .aggregate(Min("next_run"))
-            )["next_run__min"]
-            if earliest_next:
-                if not self.with_scheduler:
-                    raise CommandError(
-                        "Task scheduler is only supported on Linux and needs the 'at'-command"
-                    )
-                my_env = os.environ.copy()
-                my_env["FREPPLE_CONFIGDIR"] = settings.FREPPLE_CONFIGDIR
-                try:
-                    if which("frepplectl"):
-                        retcode = call(
-                            "echo frepplectl scheduletasks --database=%s | at %s"
-                            % (database, earliest_next.strftime("%H:%M %y-%m-%d")),
-                            env=my_env,
-                            shell=True,
-                        )
-                    else:
-                        retcode = call(
-                            "echo %s scheduletasks --database=%s | at %s"
-                            % (
-                                os.path.abspath(sys.argv[0]),
-                                database,
-                                earliest_next.strftime("%H:%M %y-%m-%d"),
-                            ),
-                            env=my_env,
-                            shell=True,
-                        )
-                    if retcode < 0:
-                        raise CommandError(
-                            "Non-zero exit code when scheduling the task"
-                        )
-                except OSError as e:
-                    raise CommandError("Can't schedule the task: %s" % e)
-
-        # Synchronously run the worker process
-        if created:
-            launchWorker(database)
-
     # accordion template
-    with_scheduler = os.name != "nt" and which("at") is not None
-    title = _("Group and schedule tasks") if with_scheduler else _("Group tasks")
+    title = _("Group and schedule tasks")
     index = 500
 
     help_url = "command-reference.html#scheduletasks"
@@ -422,7 +439,6 @@ class Command(BaseCommand):
             {
                 "schedules": schedules,
                 "commands": commands,
-                "with_scheduler": cls.with_scheduler,
                 "widget": widget,
             },
             request=request,

@@ -2109,7 +2109,7 @@ class OperationPlanDetail(View):
                     cursor.execute(
                         """
                         with items as (
-                           select name from item where name = %s
+                           select name from item where name = %%s
                            )
                         select
                           items.name,
@@ -2120,7 +2120,8 @@ class OperationPlanDetail(View):
                           coalesce(orders_plus.DO, 0) - coalesce(orders_minus.DO, 0),
                           orders_plus.MO,
                           sales.BO,
-                          sales.SO
+                          sales.SO,
+                          to_char(%%s,'%s HH24:MI:SS') as current_date
                         from items
                         cross join location
                         left outer join (
@@ -2160,8 +2161,8 @@ class OperationPlanDetail(View):
                         on orders_minus.item_id = items.name and orders_minus.location_id = location.name
                         left outer join (
                           select item_id, location_id,
-                          sum(case when due < %s then quantity end) as BO,
-                          sum(case when due >= %s then quantity end) as SO
+                          sum(case when due < %%s then quantity end) as BO,
+                          sum(case when due >= %%s then quantity end) as SO
                           from demand
                           inner join items on items.name = demand.item_id
                           where status in ('open', 'quote')
@@ -2176,11 +2177,13 @@ class OperationPlanDetail(View):
                           or orders_minus.DO is not null
                           or sales.BO is not null
                           or sales.SO is not null
-                          or (items.name = %s and location.name = %s)
+                          or (items.name = %%s and location.name = %%s)
                         order by items.name, location.name
-                        """,
+                        """
+                        % (settings.DATE_FORMAT_JS,),
                         (
                             opplan.item_id,
+                            current_date,
                             current_date,
                             current_date,
                             opplan.item_id,
@@ -2200,6 +2203,7 @@ class OperationPlanDetail(View):
                                 float(a[6] or 0),
                                 float(a[7] or 0),
                                 float(a[8] or 0),
+                                a[9],
                             ]
                         )
 

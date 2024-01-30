@@ -22,6 +22,9 @@ This release is scheduled for end Februari 2024. You can already check out a `pr
 - | Addition of the item *unit of measure* column in the
     `supply path screen <user-interface/plan-analysis/supply-path-where-used.html>`_.
 
+- | Addition of hyperlinks in the network status widget to get detailed information
+    on the displayed numbers.
+
 .. rubric:: Odoo integration
 
 - | 15, 16, 17: The mapping of calendars now includes the odoo identifier.

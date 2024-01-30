@@ -80,12 +80,51 @@ function shownetworkstatusDrv($window, gettextCatalog) {
               + "<a href=\"" + url_prefix + "/detail/input/location/" + admin_escape(thenetwork[2])
               + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>"
               + '</td><td>'
-              + grid.formatNumber(thenetwork[3]) + '</td><td>'
-              + grid.formatNumber(thenetwork[4]) + '</td><td>'
-              + grid.formatNumber(thenetwork[5]) + '</td><td>'
-              + grid.formatNumber(thenetwork[6]) + '</td><td>'
-              + grid.formatNumber(thenetwork[7]) + '</td><td>'
-              + grid.formatNumber(thenetwork[8]) + '</td></tr>';
+              + grid.formatNumber(thenetwork[3])
+              + '</td><td>'
+              + grid.formatNumber(thenetwork[4]);
+
+            if (thenetwork[4] > 0) {
+              rows += "<a href=\"" + url_prefix + "/data/input/operationplanmaterial/buffer/"
+                + admin_escape(thenetwork[0] + " @ " + thenetwork[2])
+                + "/?noautofilter&operationplan__status__in=approved,confirmed&operationplan__type=PO&quantity__gt=0"
+                + "\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>";
+            }
+            rows += '</td><td>'
+              + grid.formatNumber(thenetwork[5]);
+
+            if (thenetwork[5] != 0) {
+              rows += "<a href=\"" + url_prefix + "/data/input/operationplanmaterial/buffer/"
+                + admin_escape(thenetwork[0] + " @ " + thenetwork[2])
+                + "/?noautofilter&operationplan__status__in=approved,confirmed&operationplan__type=DO"
+                + "\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>";
+            }
+            rows += '</td><td>'
+              + grid.formatNumber(thenetwork[6]);
+
+            if (thenetwork[6] > 0) {
+              rows += "<a href=\"" + url_prefix + "/data/input/operationplanmaterial/buffer/"
+                + admin_escape(thenetwork[0] + " @ " + thenetwork[2])
+                + "/?noautofilter&operationplan__status__in=approved,confirmed&operationplan__type=MO&quantity__gt=0"
+                + "\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>";
+            }
+            rows += '</td><td>'
+              + grid.formatNumber(thenetwork[7]);
+
+            if (thenetwork[7] > 0) {
+              rows += "<a href=\"" + url_prefix + "/data/input/demand/?noautofilter&status__in=open,quote&item="
+                + admin_escape(thenetwork[0]) + "&location=" + admin_escape(thenetwork[2]) + "&due__lt=" + admin_escape(thenetwork[9])
+                + "\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>";
+            }
+            rows += '</td><td>'
+              + grid.formatNumber(thenetwork[8]);
+
+            if (thenetwork[8] > 0) {
+              rows += "<a href=\"" + url_prefix + "/data/input/demand/?noautofilter&status__in=open,quote&item="
+                + admin_escape(thenetwork[0]) + "&location=" + admin_escape(thenetwork[2]) + "&due__gte=" + admin_escape(thenetwork[9])
+                + "\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right'></span></a>";
+            }
+            rows += '</td></tr>';
           });
         }
       }

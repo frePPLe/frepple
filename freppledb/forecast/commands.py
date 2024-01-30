@@ -836,7 +836,7 @@ class LoadForecast(LoadTask):
                     select
                     name, customer_id, item_id, location_id, priority,
                     minshipment, discrete, maxlateness,
-                    category, subcategory, coalesce(method,'automatic'), planned, operation_id %s
+                    category, subcategory, coalesce(method,'automatic'), planned, operation_id, out_deviation %s
                     from forecast
                     where coalesce(method,'automatic') <> 'aggregate'
                     and item_id is not null
@@ -861,6 +861,7 @@ class LoadForecast(LoadTask):
                             subcategory=i[9],
                             horizon_history=horizon_history,
                             horizon_future=horizon_future,
+                            deviation=i[13] or None,
                         )
                         if i[12]:
                             fcst.operation = frepple.operation(name=i[12])
@@ -873,7 +874,7 @@ class LoadForecast(LoadTask):
                         if i[10]:
                             fcst.methods = i[10]
                         fcst.planned = i[11]
-                        idx = 13
+                        idx = 14
                         for a in attrs:
                             setattr(fcst, a, i[idx])
                             idx += 1
@@ -1147,8 +1148,8 @@ class ExportForecastMetrics(PlanTask):
     export = True
 
     @classmethod
-    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        if "fcst" in os.environ or "loadplan" in os.environ:
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, cluster=-1, **kwargs):
+        if "fcst" in os.environ or ("loadplan" in os.environ and cluster != -1):
             if not Parameter.getValue("forecast.calendar", database, None):
                 return -1
             else:

@@ -6,6 +6,12 @@ Release notes
 
 This release is scheduled for end Februari 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Demand forecasting
+
+- | When changing the forecast method in the forecast editor or inventory planning screen,
+    the forecast is now immediately recomputed.
+  | In previous releases you had to regenerate the plan before seeing the new forecast values.
+
 .. rubric:: User interface
 
 - | In the `preferences screen <user-interface/getting-around/user-preferences.html>`_

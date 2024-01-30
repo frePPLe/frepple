@@ -276,6 +276,7 @@ class Command(BaseCommand):
                     task.message = "Failed at tasks: %s" % ", ".join(failed)
                 else:
                     task.message = task.check_message
+                raise Exception(task.message)
             else:
                 task.status = "Done"
                 task.message = ""
@@ -314,7 +315,7 @@ class Command(BaseCommand):
                             to=correctedRecipients,
                         ).send()
                     except Exception as e:
-                        task.message = "Can't send failure e-mail: %s" % e
+                        task.message = "Can't send success e-mail: %s" % e
                         task.save(
                             using=database,
                             update_fields=[

@@ -32,6 +32,8 @@ This release is scheduled for end Februari 2024. You can already check out a `pr
 - | Scheduled tasks are now also possible in docker containers.
   | The automated scheduling of tasks on a time schedul no longer uses the at-command.
 
+- | Bug fix: sending an email when executing a task group fails didn't work.
+
 8.4.0 (2024-01-19)
 ==================
 

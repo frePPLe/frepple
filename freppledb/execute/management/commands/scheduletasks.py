@@ -87,6 +87,7 @@ class TaskScheduler:
                 t = (
                     ScheduledTask.objects.all()
                     .using(db.name)
+                    .filter(next_run__isnull=False)
                     .order_by("next_run")
                     .only("next_run")
                     .first()

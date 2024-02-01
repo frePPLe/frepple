@@ -1175,6 +1175,16 @@ class loadItemSuppliers(LoadTask):
                 cursuppliername = None
                 curitemname = None
                 for i in cursor:
+                    if not i[0] or not i[2]:
+                        logger.error(
+                            "Origin and location must be defined, skipping one record"
+                        )
+                        continue
+                    if i[0] == i[2]:
+                        logger.error(
+                            "Origin and location must be different, skipping one record"
+                        )
+                        continue
                     cnt += 1
                     try:
                         if i[0] != cursuppliername:

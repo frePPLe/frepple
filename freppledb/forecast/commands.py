@@ -836,7 +836,8 @@ class LoadForecast(LoadTask):
                     select
                     name, customer_id, item_id, location_id, priority,
                     minshipment, discrete, maxlateness,
-                    category, subcategory, coalesce(method,'automatic'), planned, operation_id, out_deviation %s
+                    category, subcategory, coalesce(method,'automatic'), planned, operation_id, out_deviation,
+                    batch %s
                     from forecast
                     where coalesce(method,'automatic') <> 'aggregate'
                     and item_id is not null
@@ -874,7 +875,9 @@ class LoadForecast(LoadTask):
                         if i[10]:
                             fcst.methods = i[10]
                         fcst.planned = i[11]
-                        idx = 14
+                        if i[14]:
+                            fcst.batch = i[14]
+                        idx = 15
                         for a in attrs:
                             setattr(fcst, a, i[idx])
                             idx += 1

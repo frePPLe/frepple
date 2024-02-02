@@ -13,6 +13,12 @@ Field            Type              Description
 name             non-empty string  A unique name for this forecast record. We recommend 
                                    "Item - Location - Customer" E.g : "keyboard - factory1 - Google"
 item             non-empty string  The item to which the forecast applies.
+batch            string            | Blank/unused for make-to-stock items.
+                                   | For make-to-order items, it identifies the material
+                                     batch that can be used to satisfy the demand. This field
+                                     can be set to the forecast name (true make-to-order
+                                     production), or it can be set an item attribute (eg color
+                                     of the item).
 location         non-empty string  The location to which the forecast applies.
 customer         non-empty string  The customer to which the forecast applies.
 description      string            A description for this forecast record.

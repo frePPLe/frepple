@@ -4,13 +4,17 @@ Release notes
 8.5.0 (Upcoming release)
 ========================
 
-This release is scheduled for end Februari 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+This release is scheduled for end February 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Demand forecasting
 
 - | When changing the forecast method in the forecast editor or inventory planning screen,
     the forecast is now immediately recomputed.
   | In previous releases you had to regenerate the plan before seeing the new forecast values.
+
+- | Addition of the batch field to the `forecast <model-reference/forecast.html>`_ table.
+    The batch field was only available in the sales order table. See the
+    `make to order <examples/buffer/make-to-order.html>`_ example for more details.
 
 .. rubric:: User interface
 

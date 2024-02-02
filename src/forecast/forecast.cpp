@@ -361,6 +361,7 @@ ForecastBucket::ForecastBucket(Forecast* f, const DateRange& b, short i)
   if (tmp >= 0.0) setMinShipment(tmp);
   if (f->getOperation()) setOperation(f->getOperation());
   setLocation(f->getLocation());
+  setBatch(f->getBatch());
   initType(metadata);
 }
 

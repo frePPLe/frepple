@@ -80,6 +80,13 @@ class Forecast(AuditModel):
     location = models.ForeignKey(
         Location, verbose_name=_("location"), db_index=True, on_delete=models.CASCADE
     )
+    batch = models.CharField(
+        _("batch"),
+        max_length=300,
+        null=True,
+        blank=True,
+        help_text=_("MTO batch name"),
+    )
     method = models.CharField(
         _("Forecast method"),
         max_length=20,

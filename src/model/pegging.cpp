@@ -64,20 +64,6 @@ int PeggingDemandIterator::initialize() {
   return x.typeReady();
 }
 
-PeggingIterator::PeggingIterator(const PeggingIterator& c)
-    : downstream(c.downstream),
-      firstIteration(c.firstIteration),
-      first(c.first),
-      second_pass(c.second_pass),
-      maxlevel(c.maxlevel) {
-  initType(metadata);
-  for (auto i = c.states.begin(); i != c.states.end(); ++i)
-    states.emplace_back(i->opplan, i->quantity, i->offset, i->level, i->gap);
-  for (auto i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
-    states_sorted.emplace_back(i->opplan, i->quantity, i->offset, i->level,
-                               i->gap);
-}
-
 PeggingIterator& PeggingIterator::operator=(const PeggingIterator& c) {
   downstream = c.downstream;
   firstIteration = c.firstIteration;
@@ -245,8 +231,7 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
 
   // Did we reach the maximum depth we want to visit
   // If the operation is hidden, we allow one more level
-  if (maxlevel != -1 && lvl > maxlevel &&
-      !op->getOperation()->getHidden())
+  if (maxlevel != -1 && lvl > maxlevel && !op->getOperation()->getHidden())
     return;
 
   // For each flowplan ask the buffer to find the pegged operationplans.
@@ -385,11 +370,6 @@ void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
   } else
     // We need to create a new element on the stack
     states.emplace_back(op, qty, o, lvl, gap);
-}
-
-PeggingDemandIterator::PeggingDemandIterator(const PeggingDemandIterator& c) {
-  initType(metadata);
-  dmds.insert(c.dmds.begin(), c.dmds.end());
 }
 
 PeggingDemandIterator::PeggingDemandIterator(const OperationPlan* opplan) {

@@ -2590,19 +2590,19 @@ class OperationPlan : public Object,
         PLAN + WRITE_HIDDEN);
     m->addIteratorField<Cls, OperationPlan::LoadPlanIterator, LoadPlan>(
         Tags::loadplans, Tags::loadplan, &Cls::getLoadPlans, PLAN);
-    m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
+    m->addIteratorClassField<Cls, PeggingIterator>(
         Tags::pegging_downstream, Tags::pegging, &Cls::getPeggingDownstream,
         DONT_SERIALIZE);
-    m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
+    m->addIteratorClassField<Cls, PeggingIterator>(
         Tags::pegging_downstream_first_level, Tags::pegging,
         &Cls::getPeggingDownstreamFirstLevel, DONT_SERIALIZE);
-    m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
+    m->addIteratorClassField<Cls, PeggingIterator>(
         Tags::pegging_upstream, Tags::pegging, &Cls::getPeggingUpstream,
         DONT_SERIALIZE);
-    m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
+    m->addIteratorClassField<Cls, PeggingIterator>(
         Tags::pegging_upstream_first_level, Tags::pegging,
         &Cls::getPeggingUpstreamFirstLevel, DONT_SERIALIZE);
-    m->addIteratorField<Cls, PeggingDemandIterator, PeggingDemandIterator>(
+    m->addIteratorClassField<Cls, PeggingDemandIterator>(
         Tags::pegging_demand, Tags::pegging, &Cls::getPeggingDemand,
         PLAN + WRITE_OBJECT);
     m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(
@@ -7852,9 +7852,9 @@ class Demand : public HasHierarchy<Demand>,
                            &Cls::setStatusString, "open");
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
-    m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
+    m->addIteratorClassField<Cls, PeggingIterator>(
         Tags::pegging, Tags::pegging, &Cls::getPegging, PLAN + WRITE_OBJECT);
-    m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
+    m->addIteratorClassField<Cls, PeggingIterator>(
         Tags::pegging_first_level, Tags::pegging, &Cls::getPeggingFirstLevel,
         PLAN + WRITE_OBJECT);
     m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(
@@ -9727,11 +9727,8 @@ class CommandMoveOperationPlan : public Command {
  * the consumed raw materials.
  * The class is implemented as an STL-like iterator.
  */
-class PeggingIterator : public Object {
+class PeggingIterator : public NonCopyable, public Object {
  public:
-  /* Copy constructor. */
-  PeggingIterator(const PeggingIterator& c);
-
   /* Assignment operator. */
   PeggingIterator& operator=(const PeggingIterator&);
 
@@ -9797,6 +9794,12 @@ class PeggingIterator : public Object {
   }
 
   PeggingIterator* next();
+
+  PyObject* iternext() {
+    auto tmp = next();
+    if (tmp) Py_IncRef(this);
+    return tmp;
+  }
 
   /* Add an entry on the stack. */
   void updateStack(const OperationPlan*, double, double, short, Duration);
@@ -9879,7 +9882,7 @@ class PeggingIterator : public Object {
 };
 
 /* An iterator that shows all demands linked to an operationplan. */
-class PeggingDemandIterator : public Object {
+class PeggingDemandIterator : public NonCopyable, public Object {
  private:
   typedef map<Demand*, double> demandmap;
   demandmap dmds;
@@ -9890,11 +9893,14 @@ class PeggingDemandIterator : public Object {
   /* Constructor. */
   PeggingDemandIterator(const OperationPlan*);
 
-  /* Copy constructor. */
-  PeggingDemandIterator(const PeggingDemandIterator&);
-
   /* Advance to the next demand. */
   PeggingDemandIterator* next();
+
+  PyObject* iternext() {
+    auto tmp = next();
+    if (tmp) Py_IncRef(this);
+    return tmp;
+  }
 
   /* Initialize the class. */
   static int initialize();

@@ -1056,7 +1056,7 @@ class ForecastBucket : public Demand {
                                       MANDATORY + PARENT + WRITE_REFERENCE);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
-    m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(
+    m->addIteratorClassField<Cls, PeggingIterator>(
         Tags::pegging, Tags::pegging, &Cls::getPegging, DETAIL + WRITE_OBJECT);
     m->addIteratorField<Cls, DeliveryIterator, OperationPlan>(
         Tags::operationplans, Tags::operationplan, &Cls::getOperationPlans,

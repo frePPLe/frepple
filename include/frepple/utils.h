@@ -156,6 +156,8 @@ class DataValue;
 class PythonFunction;
 template <class T, class U>
 class PythonIterator;
+template <class T>
+class PythonIteratorClass;
 class DataValueDict;
 class MetaClass;
 class CommandManager;
@@ -184,6 +186,8 @@ template <class T>
 class MetaFieldUnsignedLong;
 template <class Cls, class Iter, class PyIter, class Ptr>
 class MetaFieldIterator;
+template <class Cls, class Iter>
+class MetaFieldIteratorClass;
 template <class T>
 class MetaFieldInt;
 template <class T>
@@ -1795,6 +1799,14 @@ class MetaClass : public NonCopyable {
     fields.push_back(
         new MetaFieldIterator<Cls, Iter, PythonIterator<Iter, Ptr>, Ptr>(
             k1, k2, getfunc, c));
+    if (c & PARENT) parent = true;
+  }
+
+  template <class Cls, class Iter>
+  inline void addIteratorClassField(const Keyword& k1, const Keyword& k2,
+                                    Iter (Cls::*getfunc)(void) const = nullptr,
+                                    unsigned int c = BASE) {
+    fields.push_back(new MetaFieldIteratorClass<Cls, Iter>(k1, k2, getfunc, c));
     if (c & PARENT) parent = true;
   }
 
@@ -3497,6 +3509,79 @@ class PythonIterator : public Object {
    */
   template <class OTHER>
   PythonIterator(const OTHER& o) : iter(o) {
+    this->initType(getPythonType().type_object());
+  }
+
+  static PyObject* create(PyObject* self, PyObject* args) {
+    return new MYCLASS();
+  }
+
+ private:
+  ITERCLASS iter;
+
+  virtual PyObject* iternext() {
+    PyObject* result = iter.next();
+    if (!result) return nullptr;
+    Py_INCREF(result);
+    return result;
+  }
+};
+
+template <class ITERCLASS>
+class PythonIteratorClass : public Object {
+  typedef PythonIteratorClass<ITERCLASS> MYCLASS;
+
+ public:
+  /* This method keeps the type information object for your extension. */
+  static PythonType& getPythonType() {
+    static PythonType* cachedTypePtr = nullptr;
+    if (cachedTypePtr) return *cachedTypePtr;
+
+    // Register a new type
+    cachedTypePtr = registerPythonType(sizeof(MYCLASS), &typeid(MYCLASS));
+
+    // Using our own memory deallocator
+    cachedTypePtr->supportdealloc(deallocator<MYCLASS>);
+
+    return *cachedTypePtr;
+  }
+
+  static int initialize() {
+    // Initialize the type
+    PythonType& x = getPythonType();
+    x.setName(ITERCLASS::metadata->type);
+    x.setDoc("frePPLe " + ITERCLASS::metadata->type);
+    x.supportiter();
+    return x.typeReady();
+  }
+
+  static int initialize(string nm, string doc) {
+    // Initialize the type
+    PythonType& x = getPythonType();
+    x.setName(nm);
+    x.setDoc(nm);
+    x.supportiter();
+    return x.typeReady();
+  }
+
+  /* Constructor from a pointer.
+   * The underlying iterator must have a matching constructor.
+   */
+  template <class OTHER>
+  PythonIteratorClass(const OTHER* o) : iter(o) {
+    this->initType(getPythonType().type_object());
+  }
+
+  /* Default constructor.
+   * The underlying iterator must have a matching constructor.
+   */
+  PythonIteratorClass() { this->initType(getPythonType().type_object()); }
+
+  /* Constructor from a reference.
+   * The underlying iterator must have a matching constructor.
+   */
+  template <class OTHER>
+  PythonIteratorClass(const OTHER& o) : iter(o) {
     this->initType(getPythonType().type_object());
   }
 
@@ -6920,6 +7005,109 @@ class MetaFieldIterator : public MetaFieldBase {
   virtual bool isGroup() const { return true; }
 
   virtual const MetaClass* getClass() const { return Ptr::metadata; }
+
+  virtual const Keyword* getKeyword() const { return &singleKeyword; }
+
+ protected:
+  /* Get function. */
+  getFunction getf;
+
+  const Keyword& singleKeyword;
+};
+
+template <class Cls, class Iter>
+class MetaFieldIteratorClass : public MetaFieldBase {
+ public:
+  typedef Iter (Cls::*getFunction)(void) const;
+
+  MetaFieldIteratorClass(const Keyword& g, const Keyword& n,
+                         getFunction getfunc = nullptr, unsigned int c = BASE)
+      : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n){};
+
+  virtual void setField(Object* me, const DataValue& el,
+                        CommandManager* cmd) const {}
+
+  virtual void getField(Object* me, DataValue& el) const {
+    // This code is Python-specific. Only from Python can we call
+    // this method. Not generic, but good enough...
+    auto tmp = new Iter((static_cast<Cls*>(me)->*getf)());
+    el.setObject(tmp);
+  }
+
+  virtual void writeField(Serializer& output) const {
+    // Check whether this field matches the intended content detail
+    switch (output.getContentType()) {
+      case MANDATORY:
+        if (!getFlag(MANDATORY)) return;
+        break;
+      case BASE:
+        if (!getFlag(BASE) && !getFlag(MANDATORY)) return;
+        break;
+      case DETAIL:
+        if (!getFlag(DETAIL)) return;
+        break;
+      case PLAN:
+        if (!getFlag(PLAN)) return;
+        break;
+      default:
+        break;
+    }
+    if (!getf) return;
+    if (output.getServiceMode()) {
+      if (getFlag(DONT_SERIALIZE_SVC)) return;
+    } else {
+      if (getFlag(DONT_SERIALIZE_DFT)) return;
+    }
+
+    // Update the serialization mode
+    bool tmp_refs = false;
+    bool tmp_hidden = false;
+    bool tmp_force_base = false;
+    if (getFlag(FORCE_BASE)) tmp_force_base = output.setForceBase(true);
+    if (output.getServiceMode()) {
+      if (getFlag(WRITE_OBJECT_SVC))
+        tmp_refs = output.setSaveReferences(false);
+      else if (getFlag(WRITE_REFERENCE_SVC))
+        tmp_refs = output.setSaveReferences(true);
+    } else {
+      if (getFlag(WRITE_OBJECT_DFT))
+        tmp_refs = output.setSaveReferences(false);
+      else if (getFlag(WRITE_REFERENCE_DFT))
+        tmp_refs = output.setSaveReferences(true);
+    }
+    if (getFlag(WRITE_HIDDEN)) tmp_hidden = output.setWriteHidden(true);
+
+    // Write all objects
+    bool first = true;
+    Iter it = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
+    while (Iter* ob = static_cast<Iter*>(it.next())) {
+      if (first) {
+        output.BeginList(getName());
+        first = false;
+      }
+      output.writeElement(singleKeyword, ob, output.getContentType());
+    }
+    if (!first) output.EndList(getName());
+
+    // Restore the original serialization mode
+    if (output.getServiceMode()) {
+      if (getFlag(WRITE_OBJECT_SVC))
+        output.setSaveReferences(tmp_refs);
+      else if (getFlag(WRITE_REFERENCE_SVC))
+        output.setSaveReferences(tmp_refs);
+    } else {
+      if (getFlag(WRITE_OBJECT_DFT))
+        output.setSaveReferences(tmp_refs);
+      else if (getFlag(WRITE_REFERENCE_DFT))
+        output.setSaveReferences(tmp_refs);
+    }
+    if (getFlag(WRITE_HIDDEN)) output.setWriteHidden(tmp_hidden);
+    if (getFlag(FORCE_BASE)) output.setForceBase(tmp_force_base);
+  }
+
+  virtual bool isGroup() const { return true; }
+
+  virtual const MetaClass* getClass() const { return Iter::metadata; }
 
   virtual const Keyword* getKeyword() const { return &singleKeyword; }
 

@@ -86,7 +86,7 @@ jobs:
           path: logs
           retention-days: 1
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Grunt to compile and minify css and javascript files
           file_pattern: "*.min.*"

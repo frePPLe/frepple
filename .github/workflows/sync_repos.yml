@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Checking out source code
         if: github.repository != 'frePPLe/frepple'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Pushing to the public repository

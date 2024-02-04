@@ -275,12 +275,14 @@ class checkBrokenSupplyPath(CheckTask):
                         )
                         """
                         % (
-                            """
+                            (
+                                """
                             union
                             select 'Unknown supplier', item_id, location_id from forecast where planned
                             """
-                            if with_fcst_module
-                            else "",
+                                if with_fcst_module
+                                else ""
+                            ),
                         ),
                         ((currentdate,) * 10),
                     )
@@ -1175,16 +1177,6 @@ class loadItemSuppliers(LoadTask):
                 cursuppliername = None
                 curitemname = None
                 for i in cursor:
-                    if not i[0] or not i[2]:
-                        logger.error(
-                            "Origin and location must be defined, skipping one record"
-                        )
-                        continue
-                    if i[0] == i[2]:
-                        logger.error(
-                            "Origin and location must be different, skipping one record"
-                        )
-                        continue
                     cnt += 1
                     try:
                         if i[0] != cursuppliername:
@@ -1266,6 +1258,16 @@ class loadItemDistributions(LoadTask):
                 curoriginname = None
                 curitemname = None
                 for i in cursor:
+                    if not i[0] or not i[2]:
+                        logger.error(
+                            "Origin and location must be defined, skipping one record"
+                        )
+                        continue
+                    if i[0] == i[2]:
+                        logger.error(
+                            "Origin and location must be different, skipping one record"
+                        )
+                        continue
                     cnt += 1
                     try:
                         if i[0] != curoriginname:
@@ -2182,9 +2184,9 @@ class loadOperationPlans(LoadTask):
                                 ordertype=i[7],
                                 reference=i[1],
                                 item=frepple.item(name=i[11]) if i[11] else None,
-                                supplier=frepple.supplier(name=i[10])
-                                if i[10]
-                                else None,
+                                supplier=(
+                                    frepple.supplier(name=i[10]) if i[10] else None
+                                ),
                                 quantity=i[2],
                                 start=i[3],
                                 end=i[4],
@@ -2222,9 +2224,9 @@ class loadOperationPlans(LoadTask):
                         elif i[7] == "DLVR":
                             cnt_dlvr += 1
                             opplan = frepple.operationplan(
-                                location=frepple.location(name=i[12])
-                                if i[12]
-                                else None,
+                                location=(
+                                    frepple.location(name=i[12]) if i[12] else None
+                                ),
                                 reference=i[1],
                                 ordertype=i[7],
                                 item=frepple.item(name=i[11]) if i[11] else None,

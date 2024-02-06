@@ -2672,7 +2672,7 @@ double OperationPlan::getSetupCost() const {
 
 PyObject* OperationPlan::getColorPython(PyObject* self, PyObject* args) {
   OperationPlan* opplan = static_cast<OperationPlan*>(self);
-  // No color for deivery, stock or alternate operationplans
+  // No color for delivery, stock or alternate operationplans
   if (opplan->getOrderType() == "DLVR")
     return Py_BuildValue("(dO)", 999999.0, Py_None);
   if (opplan->getOrderType() == "STCK")
@@ -2704,7 +2704,7 @@ PyObject* OperationPlan::getColorPython(PyObject* self, PyObject* args) {
   // This is a routing suboperation and the owner is the first MO of the plan
   if (isRoutingSubop && isFirstRoutingMO) {
     // Find the last step
-    OperationPlan* lastStepOpPlan;
+    OperationPlan* lastStepOpPlan = nullptr;
     for (auto rr = opplan->getOwner()->getSubOperationPlans();
          rr != OperationPlan::end(); ++rr) {
       lastStepOpPlan = (&*rr);
@@ -2734,7 +2734,7 @@ PyObject* OperationPlan::getColorPython(PyObject* self, PyObject* args) {
     }
 
     if (isFirstRoutingMO) {
-      OperationPlan* lastStepOpPlan;
+      OperationPlan* lastStepOpPlan = nullptr;
       for (auto rr = opplan->getSubOperationPlans(); rr != OperationPlan::end();
            ++rr) {
         lastStepOpPlan = (&*rr);

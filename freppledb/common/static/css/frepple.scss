@@ -104,6 +104,12 @@
     background: $secondary;
 }
 
+.card-header-color,
+.card-header-color:hover {
+    color: var(--bs-card-cap-color);
+}
+
+
 .red {
     color: red;
 }

@@ -2750,7 +2750,7 @@ PyObject* OperationPlan::getColorPython(PyObject* self, PyObject* args) {
 
   // Remaining possibilities now, POs, DOs and regular timer_per, fixed_time
   // MOs, no subops
-  Date firstProposedStart;
+  Date firstProposedStart = nullptr;
   for (auto rr = opplan->getOperation()->getOperationPlans();
        rr != OperationPlan::end(); ++rr) {
     if (!(&*rr)->getProposed()) continue;

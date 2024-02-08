@@ -2635,12 +2635,13 @@ function savePreference(setting, value, callback) {
 }
 
 function getUnreadMessages() {
+  var msg = $("#messages");
+  if (!msg.length) return;
   $.ajax({
     url: url_prefix + "/inbox/",
     type: "GET",
     contentType: "application/json",
     success: function (json) {
-      var msg = $("#messages");
       var tt_el = msg.parent().parent();
       if (json.unread) {
         msg.removeClass("fa-envelope-open-o").addClass("fa-envelope-o");

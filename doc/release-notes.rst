@@ -34,6 +34,9 @@ This release is scheduled for end February 2024. You can already check out a `pr
 - | 15, 16, 17: The mapping of calendars now includes the odoo identifier.
   | This is needed to guarantuee uniquess of the calendars.
 
+- | 15, 16, 17: If some product names are too long in Odoo, the connectors will use
+    instead the product internal reference as frePPLe item name.
+
 .. rubric:: System administration
 
 - | Scheduled tasks are now also possible in docker containers.

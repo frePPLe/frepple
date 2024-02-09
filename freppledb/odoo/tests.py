@@ -112,10 +112,19 @@ class OdooTest(TransactionTestCase):
         self.assertEqual(User.objects.get(username="admin").groups.all().count(), 1)
 
         # Check input data
-        self.assertEqual(Item.objects.all().exclude(name__contains="[").count(), 7)
+        self.assertEqual(
+            Item.objects.all()
+            .exclude(name__startswith="D")
+            .exclude(name__startswith="E")
+            .exclude(name__startswith="F")
+            .count(),
+            7,
+        )
         po_list = (
             PurchaseOrder.objects.all()
-            .exclude(item__name__contains="[")
+            .exclude(item__name__startswith="D")
+            .exclude(item__name__startswith="E")
+            .exclude(item__name__startswith="F")
             .filter(status="confirmed")
         )
         self.assertEqual(po_list.count(), 1)
@@ -125,7 +134,9 @@ class OdooTest(TransactionTestCase):
         # self.assertEqual(po.receipt_date, datetime.today() + timedelta)
         self.assertEqual(
             ManufacturingOrder.objects.all()
-            .exclude(item__name__contains="[")
+            .exclude(item__name__startswith="D")
+            .exclude(item__name__startswith="E")
+            .exclude(item__name__startswith="F")
             .filter(status="confirmed")
             .count(),
             0,  # TODO add draft and confirmed PO in demo dataset
@@ -158,14 +169,18 @@ class OdooTest(TransactionTestCase):
         # Check plan results
         proposed_mo = (
             ManufacturingOrder.objects.all()
-            .exclude(item__name__contains="[")
+            .exclude(item__name__startswith="D")
+            .exclude(item__name__startswith="E")
+            .exclude(item__name__startswith="F")
             .filter(status="proposed", owner__isnull=True)
             .order_by("startdate", "operation")
             .first()
         )
         proposed_po = (
             PurchaseOrder.objects.all()
-            .exclude(item__name__contains="[")
+            .exclude(item__name__startswith="D")
+            .exclude(item__name__startswith="E")
+            .exclude(item__name__startswith="F")
             .filter(status="proposed")
             .order_by("startdate", "supplier", "item")
             .first()

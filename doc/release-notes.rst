@@ -31,11 +31,18 @@ This release is scheduled for end February 2024. You can already check out a `pr
 
 .. rubric:: Odoo integration
 
+- | Switching work orders to alternate work centers in a pool is now fully supported.
+  | Existing assigment were already sent from odoo to frePPLe. When reassiging
+    in frePPLe the new assignment is communicated back to odoo.
+
 - | 15, 16, 17: The mapping of calendars now includes the odoo identifier.
   | This is needed to guarantuee uniquess of the calendars.
 
 - | 15, 16, 17: The frePPLe item name is now mapped to the Odoo product internal reference,
     unless the internal reference is not unique in Odoo.
+
+- | The XMLRPC version of the connector is deprecated.
+  | It has always been only an experimental feature, which we see now as a dead end.
 
 .. rubric:: System administration
 

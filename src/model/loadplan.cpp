@@ -75,15 +75,19 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r, Resource* assigned) {
     o->firstloadplan = this;
 
   // Insert in the resource timeline
-  res->loadplans.insert(this, ld->getLoadplanQuantity(this),
-                        ld->getLoadplanDate(this));
+  if (ld)
+    res->loadplans.insert(this, ld->getLoadplanQuantity(this),
+                          ld->getLoadplanDate(this));
+  else
+    res->loadplans.insert(this, getQuantity() ? getQuantity() : 1,
+                          isStart() ? o->getStart() : o->getEnd());
 
   // For continuous resources, create a loadplan to mark
   // the end of the operationplan.
   if (!getResource()->hasType<ResourceBuckets>()) new LoadPlan(o, r, this);
 
   // For pooled resource, create individual loadplans when activated
-  if (ld->getResource()->isGroup() && ld->getQuantity() > 1.0 &&
+  if (ld && ld->getResource()->isGroup() && ld->getQuantity() > 1.0 &&
       Plan::instance().getIndividualPoolResources() && !assigned) {
     for (auto tmp = ld->getQuantity(); tmp > 1.0; tmp -= 1.0) {
       auto n = new LoadPlan(o, r, static_cast<LoadPlan*>(nullptr));
@@ -94,7 +98,7 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r, Resource* assigned) {
   // Mark the operation and resource as being changed. This will trigger
   // the recomputation of their problems
   getResource()->setChanged();
-  r->getOperation()->setChanged();
+  o->getOperation()->setChanged();
 }
 
 LoadPlan::LoadPlan(OperationPlan* o, const Load* r, LoadPlan* lp)
@@ -121,8 +125,11 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r, LoadPlan* lp)
     o->firstloadplan = this;
 
   // Insert in the resource timeline
-  getResource()->loadplans.insert(this, ld->getLoadplanQuantity(this),
-                                  ld->getLoadplanDate(this));
+  if (ld)
+    getResource()->loadplans.insert(this, ld->getLoadplanQuantity(this),
+                                    ld->getLoadplanDate(this));
+  else
+    getResource()->loadplans.insert(this, -lp->getQuantity(), o->getEnd());
 
   // Initialize the Python type
   initType(metadata);

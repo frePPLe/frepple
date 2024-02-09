@@ -842,7 +842,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   // Subtract offset between operationplan end and flowplan date
   if (use_offset && producing_flow && producing_flow->getOffset()) {
     if (getLogLevel() > 1)
-      logger << indentlevel << "  Adjusting requirement date from "
+      logger << indentlevel << "  Adjusting requirement date for offset from "
              << data->state->q_date;
     data->state->q_date = data->state->q_date_max =
         producing_flow->computeFlowToOperationDate(z, data->state->q_date);
@@ -931,7 +931,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   if (use_offset && data->state->a_date != Date::infiniteFuture &&
       !data->state->a_qty && producing_flow && producing_flow->getOffset()) {
     if (getLogLevel() > 1)
-      logger << indentlevel << "  Adjusting answer date from "
+      logger << indentlevel << "  Adjusting answer date for offset from "
              << data->state->a_date;
     data->state->a_date =
         producing_flow->computeOperationToFlowDate(z, data->state->a_date);
@@ -1300,7 +1300,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   if (data->state->a_date != Date::infiniteFuture && !data->state->a_qty &&
       offset_flow) {
     if (getLogLevel() > 1)
-      logger << indentlevel << "  Adjusting answer date from "
+      logger << indentlevel << "  Adjusting answer date for offset from "
              << data->state->a_date;
     data->state->a_date = offset_flow->computeOperationToFlowDate(
         a->getOperationPlan(), data->state->a_date);
@@ -1551,7 +1551,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       // Subtract offset between operationplan end and flowplan date
       if (sub_flow && sub_flow->getOffset()) {
         if (getLogLevel() > 1)
-          logger << indentlevel << "  Adjusting requirement date from "
+          logger << indentlevel
+                 << "  Adjusting requirement date for offset from "
                  << data->state->q_date;
         data->state->q_date = data->state->q_date_max =
             sub_flow->computeFlowToOperationDate(nullptr, data->state->q_date);
@@ -1644,7 +1645,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       if (data->state->a_date != Date::infiniteFuture && sub_flow &&
           sub_flow->getOffset()) {
         if (getLogLevel() > 1)
-          logger << indentlevel << "  Adjusting answer date from "
+          logger << indentlevel << "  Adjusting answer date for offset from "
                  << data->state->a_date;
         data->state->a_date =
             sub_flow->computeOperationToFlowDate(nullptr, data->state->a_date);

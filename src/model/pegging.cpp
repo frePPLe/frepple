@@ -31,6 +31,8 @@ namespace frepple {
 const MetaCategory* PeggingIterator::metadata;
 const MetaCategory* PeggingDemandIterator::metadata;
 
+thread_local MemoryPool<PeggingIterator::state> PeggingIterator::peggingpool;
+
 int PeggingIterator::initialize() {
   // Initialize the pegging metadata
   PeggingIterator::metadata =
@@ -70,16 +72,15 @@ PeggingIterator& PeggingIterator::operator=(const PeggingIterator& c) {
   first = c.first;
   second_pass = c.second_pass;
   maxlevel = c.maxlevel;
-  for (auto& i : c.states)
-    states.emplace_back(i.opplan, i.quantity, i.offset, i.level, i.gap);
-  for (auto i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
-    states_sorted.emplace_back(i->opplan, i->quantity, i->offset, i->level,
-                               i->gap);
+  states = c.states;
+  states_sorted = c.states_sorted;
   return *this;
 }
 
 PeggingIterator::PeggingIterator(const Demand* d, short maxLvl)
-    : downstream(false),
+    : states(PeggingIterator::peggingpool),
+      states_sorted(PeggingIterator::peggingpool),
+      downstream(false),
       firstIteration(true),
       first(false),
       second_pass(false),
@@ -108,8 +109,8 @@ PeggingIterator::PeggingIterator(const Demand* d, short maxLvl)
       }
     if (!found)
       // New element in sorted stack
-      states_sorted.emplace_back(curtop.opplan, curtop.quantity, curtop.offset,
-                                 curtop.level, curtop.gap);
+      states_sorted.insert(curtop.opplan, curtop.quantity, curtop.offset,
+                           curtop.level, curtop.gap);
 
     if (downstream)
       ++*this;
@@ -123,7 +124,9 @@ PeggingIterator::PeggingIterator(const Demand* d, short maxLvl)
 
 PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b,
                                  short maxlevel)
-    : downstream(b),
+    : states(PeggingIterator::peggingpool),
+      states_sorted(PeggingIterator::peggingpool),
+      downstream(b),
       firstIteration(true),
       first(false),
       second_pass(false),
@@ -139,7 +142,9 @@ PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b,
 }
 
 PeggingIterator::PeggingIterator(const FlowPlan* fp, bool b)
-    : downstream(b),
+    : states(PeggingIterator::peggingpool),
+      states_sorted(PeggingIterator::peggingpool),
+      downstream(b),
       firstIteration(true),
       first(false),
       second_pass(false),
@@ -155,7 +160,9 @@ PeggingIterator::PeggingIterator(const FlowPlan* fp, bool b)
 }
 
 PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
-    : downstream(b),
+    : states(PeggingIterator::peggingpool),
+      states_sorted(PeggingIterator::peggingpool),
+      downstream(b),
       firstIteration(true),
       first(false),
       second_pass(false),
@@ -352,9 +359,9 @@ void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
   if (qty < ROUNDING_ERROR) return;
 
   // Check for loops in the pegging
-  for (auto& e : states) {
-    if (e.opplan == op && abs(e.quantity - qty) < ROUNDING_ERROR &&
-        abs(e.offset - o) < ROUNDING_ERROR)  // We've been here before...
+  for (auto e = states.begin(); e != states.end(); ++e) {
+    if (e->opplan == op && abs(e->quantity - qty) < ROUNDING_ERROR &&
+        abs(e->offset - o) < ROUNDING_ERROR)  // We've been here before...
       return;
   }
 
@@ -369,7 +376,7 @@ void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
     first = false;
   } else
     // We need to create a new element on the stack
-    states.emplace_back(op, qty, o, lvl, gap);
+    states.insert(op, qty, o, lvl, gap);
 }
 
 PeggingDemandIterator::PeggingDemandIterator(const OperationPlan* opplan) {

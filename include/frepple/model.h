@@ -9832,19 +9832,18 @@ class PeggingIterator : public NonCopyable, public Object {
     short level;
     Duration gap;
 
-    // Constructor
+    state(){};
+
     state(const OperationPlan* op, double q, double o, short l, Duration g)
         : opplan(op), quantity(q), offset(o), level(l), gap(g){};
 
-    state(state&& other)
+    state(const state& other)
         : opplan(other.opplan),
           quantity(other.quantity),
           offset(other.offset),
           level(other.level),
           gap(other.gap){};
 
-    state(const state& o) = delete;
-    state& operator=(const state& o) = delete;
 
     // Comparison operator
     bool operator<(const state& other) const {
@@ -9854,15 +9853,15 @@ class PeggingIterator : public NonCopyable, public Object {
         return other.opplan->getStart() < opplan->getStart();
     }
   };
-  typedef vector<state> statestack;
 
   /* Auxilary function to make recursive code possible. */
   void followPegging(const OperationPlan*, double, double, short);
 
-  /* Store a list of all operations still to peg. */
-  statestack states;
+  static thread_local MemoryPool<state> peggingpool;
 
-  deque<state> states_sorted;
+  /* Store a list of all operations still to peg. */
+  MemoryPool<state>::MemoryObjectList states;
+  MemoryPool<state>::MemoryObjectList states_sorted;
 
   /* Follow the pegging upstream or downstream. */
   bool downstream;

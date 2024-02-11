@@ -194,6 +194,10 @@ template <class T>
 class MetaFieldShort;
 template <class T>
 class MetaFieldCommand;
+template <class T>
+class MemoryPage;
+template <class T>
+class MemoryPagePool;
 
 // Include the list of predefined tags
 #include "frepple/tags.h"
@@ -7234,6 +7238,292 @@ class RecentlyUsed {
         out << ", " << entries[i];
         if (entries[i] == o) return;
       }
+  }
+};
+
+/* Memory allocation for small objects in pages.
+ * Properties:
+ * - The pool object needs to be declared as thread_local to assure things work
+ *   in a multithreaded environment. Each thread maintains its own pool of
+ *   objects.
+ * - Each memory page allocates 2MB of memory.
+ * - Pages in the pool are automatically added when needed.
+ * - Pages in the pool are automatically destructed when the thread exits.
+ *   We assume that all pool objects are then no longer referenced and can be
+ *   deleted.
+ */
+template <class T>
+class MemoryPool {
+ private:
+  class MemoryObject {
+   public:
+    T val;
+    MemoryObject* prev;
+    MemoryObject* next;
+  };
+
+ public:
+  class MemoryObjectList {
+   private:
+    inline void append(MemoryObject* n) {
+      n->next = nullptr;
+      n->prev = last;
+      if (last)
+        last->next = n;
+      else
+        first = n;
+      last = n;
+    }
+
+   public:
+    MemoryObject* first = nullptr;
+    MemoryObject* last = nullptr;
+    MemoryPool& pool;
+
+    MemoryObjectList(MemoryPool& m) : pool(m) {}
+
+    MemoryObjectList(const MemoryObjectList& other) : pool(other.pool) {
+      for (auto i = other.begin(); i != other.end(); ++i) insert(&*i);
+    }
+
+    MemoryObjectList& operator=(const MemoryObjectList& other) {
+      while (first) {
+        auto tmp = first;
+        first = first->next;
+        pool.addToFree(tmp);
+      }
+      last = nullptr;
+      pool = other.pool;
+      for (auto i = other.begin(); i != other.end(); ++i) insert(&*i);
+      return *this;
+    }
+
+    ~MemoryObjectList() {
+      while (first) {
+        auto tmp = first;
+        first = first->next;
+        pool.addToFree(tmp);
+      }
+    }
+
+    T& back() const { return last->val; }
+
+    T& front() const { return first->val; }
+
+    bool empty() const { return first == nullptr; }
+
+    void pop_front() {
+      if (first) {
+        auto tmp = first;
+        first = first->next;
+        if (first)
+          first->prev = nullptr;
+        else
+          last = nullptr;
+        pool.addToFree(tmp);
+      }
+    }
+
+    void pop_back() {
+      if (last) {
+        auto tmp = last;
+        last = last->prev;
+        if (last)
+          last->next = nullptr;
+        else
+          first = nullptr;
+        pool.addToFree(tmp);
+      }
+    }
+
+    void sort() {
+      // Bubble sort
+      bool ok;
+      do {
+        ok = true;
+        for (auto p = first; p && p->next; p = p->next) {
+          if (*p->next < *p) {
+            swap(p->val, p->next->val);
+            ok = false;
+          };
+        }
+      } while (!ok);
+    }
+
+    inline void insert(const T* t) {
+      auto n = pool.alloc();
+      new (&(n->val)) T(*t);
+      append(n);
+    }
+
+    template <typename T1>
+    inline void insert(T1& t1) {
+      auto n = pool.alloc();
+      new (&(n->val)) T(t1);
+      append(n);
+    }
+
+    template <typename T1, typename T2>
+    inline void insert(T1 t1, T2 t2) {
+      auto n = pool.alloc();
+      new (&(n->val)) T(t1, t2);
+      append(n);
+    }
+
+    template <typename T1, typename T2, typename T3>
+    inline void insert(T1 t1, T2 t2, T3 t3) {
+      auto n = pool.alloc();
+      new (&(n->val)) T(t1, t2, t3);
+      append(n);
+    }
+
+    template <typename T1, typename T2, typename T3, typename T4>
+    inline void insert(T1 t1, T2 t2, T3 t3, T4 t4) {
+      auto n = pool.alloc();
+      new (&(n->val)) T(t1, t2, t3, t4);
+      append(n);
+    }
+
+    template <typename T1, typename T2, typename T3, typename T4, typename T5>
+    inline void insert(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5) {
+      auto n = pool.alloc();
+      new (&(n->val)) T(t1, t2, t3, t4, t5);
+      append(n);
+    }
+
+    template <typename T1, typename T2, typename T3, typename T4, typename T5,
+              typename T6>
+    inline void insert(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6) {
+      auto n = pool.alloc();
+      new (&(n->val)) T(t1, t2, t3, t4, t5, t6);
+      append(n);
+    }
+
+    // void erase(T&) {
+    // for (auto p = first; p; p = p->next)
+    //   if (p->msr == k) {
+    //     // Unlink from the list
+    //     if (p->prev)
+    //       p->prev->next = p->next;
+    //     else
+    //       first = p->next;
+    //     if (p->next)
+    //       p->next->prev = p->prev;
+    //     else
+    //       last = p->prev;
+
+    //     // Add to free list
+    //     p->addToFree();
+    //     return;
+    //   }
+    //}
+
+    // void MeasureList::erase(MeasureValue* p) {
+    //   // Unlink from the list
+    //   if (p->prev)
+    //     p->prev->next = p->next;
+    //   else
+    //     first = p->next;
+    //   if (p->next)
+    //     p->next->prev = p->prev;
+    //   else
+    //     last = p->prev;
+
+    //   // Add to free list
+    //   p->addToFree();
+    // }
+
+    class iterator {
+     private:
+      MemoryObject* ptr = nullptr;
+
+     public:
+      iterator(MemoryObject* i) : ptr(i) {}
+
+      iterator& operator++() {
+        if (ptr) ptr = ptr->next;
+        return *this;
+      }
+
+      bool operator!=(const iterator& t) const { return ptr != t.ptr; }
+
+      bool operator==(const iterator& t) const { return ptr == t.ptr; }
+
+      T& operator*() { return ptr->val; }
+
+      T* operator->() { return &(ptr->val); }
+    };
+
+    iterator begin() const { return iterator(first); }
+
+    iterator end() const { return iterator(nullptr); }
+  };
+
+ private:
+  class MemoryPage {
+   public:
+    static const int DATA_PER_PAGE = 2 * 1024 * 1024 / sizeof(MemoryObject);
+    MemoryPage* next = nullptr;
+    MemoryPage* prev = nullptr;
+    MemoryObject data[DATA_PER_PAGE];
+
+    MemoryPage(MemoryPool& pool) : next(nullptr) {
+      // Insert into page list
+      if (pool.lastpage) {
+        prev = pool.lastpage;
+        pool.lastpage->next = this;
+      } else {
+        pool.firstpage = this;
+        prev = nullptr;
+      }
+      pool.lastpage = this;
+
+      // Extend the list of free pairs
+      for (auto& v : data) pool.addToFree(&v);
+    }
+  };
+
+  MemoryPage* firstpage = nullptr;
+  MemoryPage* lastpage = nullptr;
+  MemoryObject* firstfree = nullptr;
+  MemoryObject* lastfree = nullptr;
+
+  void addToFree(MemoryObject* o) {
+    o->prev = lastfree;
+    o->next = nullptr;
+    if (lastfree)
+      lastfree->next = o;
+    else
+      firstfree = o;
+    lastfree = o;
+  }
+
+  MemoryObject* alloc() {
+    // Get a free pair
+    if (!firstfree) {
+      new MemoryPage(*this);
+      if (!firstfree) throw RuntimeException("No free memory");
+    }
+    auto n = firstfree;
+    firstfree = firstfree->next;
+    if (firstfree)
+      firstfree->prev = nullptr;
+    else
+      lastfree = nullptr;
+    return n;
+  }
+
+ public:
+  MemoryPool() {}
+
+  ~MemoryPool() {
+    unsigned int cnt = 0;
+    while (firstpage) {
+      ++cnt;
+      auto tmp = firstpage;
+      firstpage = firstpage->next;
+      delete tmp;
+    }
   }
 };
 

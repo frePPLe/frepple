@@ -6,6 +6,10 @@ Release notes
 
 This release is scheduled for end February 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | Reduced memory consumption and improved performance.
+
 .. rubric:: Demand forecasting
 
 - | When changing the forecast method in the forecast editor or inventory planning screen,

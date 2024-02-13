@@ -52,13 +52,11 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--start",
-            default=date_format(date(2017, 1, 1), format="DATE_FORMAT", use_l10n=False),
-            help="Start date in %s format" % settings.DATE_FORMAT,
+            help="Unused deprecated argument",
         )
         parser.add_argument(
             "--end",
-            default=date_format(date(2030, 1, 1), format="DATE_FORMAT", use_l10n=False),
-            help="End date in %s format" % settings.DATE_FORMAT,
+            help="Unused deprecated argument",
         )
         parser.add_argument(
             "--weekstart",
@@ -119,8 +117,6 @@ class Command(BaseCommand):
         settings.DEBUG = False
 
         # Pick up the options
-        start = options["start"]
-        end = options["end"]
         weekstart = int(options["weekstart"])
         database = options["database"]
         if database not in settings.DATABASES:
@@ -164,21 +160,15 @@ class Command(BaseCommand):
                     started=now,
                     status="0%",
                     user=user,
-                    arguments="--start=%s --end=%s --weekstart=%s"
-                    % (start, end, weekstart),
+                    arguments="--weekstart=%s" % (weekstart),
                 )
             if task:
                 task.processid = os.getpid()
                 task.save(using=database)
 
-            # Validate the date arguments
-            try:
-                curdate = parseLocalizedDateTime(start)
-                enddate = parseLocalizedDateTime(end)
-            except Exception as e:
-                raise CommandError(
-                    "Date is not matching format %s" % settings.DATE_INPUT_FORMATS[0]
-                )
+            # Hardcoded horizon
+            curdate = datetime(2017, 1, 1)
+            enddate = datetime(2030, 1, 1)
 
             with transaction.atomic(using=database, savepoint=False):
                 # Delete previous contents

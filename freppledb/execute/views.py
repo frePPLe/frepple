@@ -566,12 +566,6 @@ def wrapTask(request, action):
             name="createbuckets", submitted=now, status="Waiting", user=request.user
         )
         arguments = []
-        start = args.get("start", None)
-        if start:
-            arguments.append("--start=%s" % start)
-        end = args.get("end", None)
-        if end:
-            arguments.append("--end=%s" % end)
         weekstart = args.get("weekstart", None)
         if weekstart:
             arguments.append("--weekstart=%s" % weekstart)

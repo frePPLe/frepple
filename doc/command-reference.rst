@@ -661,10 +661,8 @@ definitions for these granularities will be overwritten.
 
 The following arguments are used:
 
-* | Start date, end date:
-  | Definition of the horizon to generate buckets for.
-
-* Week start: Defines the first date of a week.
+* | Week start: Defines the first date of a week.
+  | Sunday=0, Monday=1, Tuesday=2, Wednesday=3, Thursday=4, Friday=5, Saturday=6
 
 * | Day name, week name, month name, quarter name, year name:
   | Template used to generate a name for the buckets.
@@ -710,13 +708,13 @@ The following arguments are used:
 
       .. code-block:: bash
 
-        frepplectl createbuckets --start=2012-01-01 --end=2020-01-01 --weekstart=1
+        frepplectl createbuckets --weekstart=1 --format-day="%Y-%m-%d" --format-week="%y W%W" --format-month="%b %y" --format-quarter="%y Q%q" --format-year="%Y"
 
    .. tab:: Web API
 
       .. code-block:: bash
 
-        POST /execute/api/createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
+        POST /execute/api/createbuckets/?weekstart=1
 
 
 .. _createdatabase:

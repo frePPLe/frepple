@@ -150,6 +150,14 @@ class OperationResourceList(GridReport):
             editable=False,
         ),
         GridFieldText(
+            "operation__item__name",
+            title=format_lazy("{} - {}", _("operation"), _("item")),
+            initially_hidden=True,
+            editable=False,
+            extra='"role":"input/item"',
+            formatter="detail",
+        ),
+        GridFieldText(
             "operation__location__name",
             title=format_lazy("{} - {}", _("operation"), _("location")),
             initially_hidden=True,

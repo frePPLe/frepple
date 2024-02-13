@@ -52,7 +52,6 @@ class TaskScheduler:
 
     def start(self):
         with self.mutex:
-            now = datetime.now()
             for db in (
                 Scenario.objects.using(DEFAULT_DB_ALIAS)
                 .filter(status="In use")

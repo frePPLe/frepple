@@ -22,6 +22,7 @@
 #
 
 from datetime import datetime, timedelta
+import shlex
 
 from django.db import models
 from django.db.models import Q
@@ -114,8 +115,8 @@ class ScheduledTask(models.Model):
             Task.objects.all()
             .using(self._state.db)
             .filter(
-                Q(arguments="--schedule=%s" % self.name)
-                | Q(arguments="--schedule='%s'" % self.name),
+                Q(arguments="--schedule=%s" % shlex.quote(self.name))
+                | Q(arguments="--schedule='%s'" % shlex.quote(self.name)),
                 name="scheduletasks",
             )
             .order_by("-id")

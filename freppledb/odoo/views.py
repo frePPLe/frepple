@@ -114,14 +114,20 @@ def Upload(request):
                     )
                     if (
                         not po.supplier.source
-                        or po.status != "proposed"
+                        or not (
+                            po.status == "proposed"
+                            or (
+                                po.status in ("approved", "confirmed")
+                                and po.source == "odoo_1"
+                            )
+                        )
                         or not po.item.source
                     ):
                         continue
                     data_ok = True
                     obj.append(po)
                     data_odoo.append(
-                        '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s/>'
+                        '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s status=%s/>'
                         % (
                             po.reference,
                             quoteattr(po.item.name),
@@ -134,6 +140,7 @@ def Upload(request):
                             quoteattr(po.item.subcategory or ""),
                             int(po.criticality),
                             quoteattr(po.batch or ""),
+                            quoteattr(po.status),
                         )
                     )
                 elif rec["type"] == "DO":
@@ -301,9 +308,10 @@ def Upload(request):
             msg = f.read()
             logger.debug("Odoo response: %s" % msg.decode("utf-8"))
         for i in obj:
-            i.status = "approved"
-            i.source = "odoo_1"
-            i.save(using=request.database)
+            if i.status == "proposed":
+                i.status = "approved"
+                i.source = "odoo_1"
+                i.save(using=request.database)
         return HttpResponse("OK")
 
     except HTTPError as e:

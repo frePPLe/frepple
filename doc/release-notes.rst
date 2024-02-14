@@ -45,6 +45,9 @@ This release is scheduled for end February 2024. You can already check out a `pr
 - | 15, 16, 17: The frePPLe item name is now mapped to the Odoo product internal reference,
     unless the internal reference is not unique in Odoo.
 
+- | 15: Allow export of approved and confirmed purchase orders from frePPLe to Odoo to
+    update various fields of the Odoo purchase order lines (quantity, receipt date, item...).
+
 - | The XMLRPC version of the connector is deprecated.
   | It has always been only an experimental feature, which we see now as a dead end.
 

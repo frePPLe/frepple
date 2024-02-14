@@ -109,6 +109,9 @@ The section below describes the installation and configuration of these.
            CSRF_COOKIE_SAMESITE = "none"               # NOTE: "none", not None
 
   * **Configure parameters**
+    | Some parameters need to be configured in the "admin / parameters" screen. The
+      first 5 parameters absolutely need editing, while the remaining parameters optionally
+      need modification.
 
     * | odoo.url:
       | URL of the Odoo server.
@@ -126,14 +129,14 @@ The section below describes the installation and configuration of these.
         setting ODOO_PASSWORDS in the djangosettings.py file rather then this
         parameter.
 
+    * | odoo.company:
+      | Company name for which to create purchase quotation and
+        manufacturing orders.
+
     * | odoo.language:
       | Language for the connection.
       | If translated names of products, items, locations, etc they will be used.
       | The default value is en_US.
-
-    * | odoo.company:
-      | Company name for which to create purchase quotation and
-        manufacturing orders.
 
     * | odoo.singlecompany:
       | When false (the default) the connector downloads all allowed companies for the odoo integration

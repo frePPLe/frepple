@@ -32,6 +32,6 @@ frepple_app = {
         <p>This app enables two-way integration with the Odoo, a popular
         open source ERP and business management suite.</p>
         """,
-    "documentation_url": "https://frepple.com/docs/current/erp-integration/odoo-connector/index.html",
+    "documentation_url": "https://frepple.com/docs/current/apps/odoo.html",
     "ERP_integration": True,
 }

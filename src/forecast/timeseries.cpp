@@ -1299,6 +1299,16 @@ ForecastSolver::Metrics ForecastSolver::Croston::generateForecast(
   }
   double periods_between_demands = count / nonzero;
 
+  if (!nonzero) {
+    // Demand history full of zeroes
+    if (solver->getLogLevel() > 0)
+      logger << (fcst ? fcst->getName() : "") << ": croston : "
+             << "alfa " << min_alfa << ", smape " << 0 << ", " << 0
+             << " iterations"
+             << ", forecast " << 0 << ", standard deviation " << 0 << endl;
+    return ForecastSolver::Metrics(0, 0, false);
+  }
+
   unsigned int iteration = 0;
   double error_smape = 0.0, error_smape_weights = 0.0, best_smape = 0.0;
   double q_i, p_i;

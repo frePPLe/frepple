@@ -143,7 +143,7 @@ class TokenMiddleware(BaseMiddleware):
                 for h in scope["headers"]:
                     if h[0] == b"authorization":
                         auth = h[1].decode("ascii").split()
-                        if auth[0] == "Bearer":
+                        if auth[0].lower() == "bearer":
                             # JWT webtoken authentication
                             for secret in (
                                 getattr(settings, "AUTH_SECRET_KEY", None),
@@ -170,7 +170,7 @@ class TokenMiddleware(BaseMiddleware):
                                             )
                                     except jwt.exceptions.InvalidSignatureError:
                                         continue
-                        elif auth[0] == "basic":
+                        elif auth[0].lower() == "basic":
                             # Basic authentication
                             args = (
                                 base64.b64decode(auth[1])

@@ -327,7 +327,6 @@ def Upload(request):
         data_odoo.append("--%s--" % boundary)
         data_odoo.append("")
         body = "\n".join(data_odoo).encode("utf-8")
-        print(body)
         size = len(body)
         encoded = base64.encodebytes(
             ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")

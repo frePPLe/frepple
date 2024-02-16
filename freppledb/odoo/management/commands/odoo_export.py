@@ -50,6 +50,8 @@ class Command(BaseCommand):
 
     requires_system_checks = []
 
+    recordsperpage = 100
+
     def get_version(self):
         return __version__
 
@@ -150,7 +152,7 @@ class Command(BaseCommand):
             self.exported = []
             for i in self.generateOperationPlansToPublish():
                 pass
-            total_pages = math.ceil(len(self.exported) / 100)
+            total_pages = math.ceil(len(self.exported) / self.recordsperpage)
 
             # Collect data to send
             counter = 1
@@ -159,7 +161,9 @@ class Command(BaseCommand):
             # Track if this is the first page we send
             # for cleaning POs/MOs in Odoo
             self.firstPage = True
-            for page in self.generatePagesToPublish(records_per_page=100):
+            for page in self.generatePagesToPublish(
+                records_per_page=self.recordsperpage
+            ):
                 # Connect to the odoo URL to POST data
                 encoded = base64.encodebytes(
                     ("%s:%s" % (self.odoo_user, self.odoo_password)).encode("utf-8")
@@ -186,7 +190,9 @@ class Command(BaseCommand):
                     i.save(using=self.database, update_fields=("status", "source"))
 
                 # Progress
-                task.status = "%s%%" % math.ceil(counter / total_pages * 100)
+                task.status = "%s%%" % math.ceil(
+                    counter / total_pages * self.recordsperpage
+                )
                 task.message = "Sent page %s of %s with plan data to odoo" % (
                     counter,
                     total_pages,
@@ -231,7 +237,9 @@ class Command(BaseCommand):
                 task.save(using=self.database)
             setattr(_thread_locals, "database", old_thread_locals)
 
-    def generatePagesToPublish(self, records_per_page=100):
+    def generatePagesToPublish(self, records_per_page=None):
+        if not records_per_page:
+            records_per_page = self.recordsperpage
         cnt = 0
         output = []
         for rec in self.generateOperationPlansToPublish():

@@ -2377,10 +2377,6 @@ class GridReport(View):
                             j += 1
                             continue
                         models.append(models.pop(i))
-                        while j < cnt:
-                            if models[i][1] == models[j][1]:
-                                models.append(models.pop(j))
-                            j += 1
                         ok = False
                         break
                     elif (

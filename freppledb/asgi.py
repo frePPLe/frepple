@@ -194,7 +194,31 @@ class AuthAndPermissionMiddleware(AuthMiddleware):
 
     async def __call__(self, scope, receive, send):
         usr = scope.get("user", None)
-        if usr and usr.is_authenticated and not usr.is_superuser:
+        if not usr:
+            await send(
+                {
+                    "type": "http.response.start",
+                    "status": 401,
+                    "headers": [
+                        (b"Access-Control-Allow-Methods", b"GET, POST, OPTIONS"),
+                        (b"Server", b"frepple"),
+                        (b"Access-Control-Allow-Credentials", b"true"),
+                        (
+                            b"Access-Control-Allow-Headers",
+                            b"authorization, content-type, x-requested-with",
+                        ),
+                        (b"Content-Type", b"text/plain"),
+                    ],
+                }
+            )
+            return await send(
+                {
+                    "type": "http.response.body",
+                    "body": b"Unauthenticated",
+                    "more_body": False,
+                }
+            )
+        if usr.is_authenticated and not usr.is_superuser:
             await database_sync_to_async(usr.get_all_permissions)()
         return await super().__call__(scope, receive, send)
 

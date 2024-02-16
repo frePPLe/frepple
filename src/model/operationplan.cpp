@@ -2142,7 +2142,7 @@ double OperationPlan::getPriority() const {
   return lowestPriority;
 }
 
-double OperationPlan::getCriticality() const {
+int OperationPlan::getCriticality() const {
   // Operationplan hasn't been set up yet
   if (!oper) return 86313600L;  // 999 days in seconds;
 
@@ -2178,7 +2178,7 @@ double OperationPlan::getCriticality() const {
       if (myslack < minslack) minslack = myslack;
     }
   }
-  return minslack / 86400.0;  // Convert to days
+  return floor(minslack / 86400.0);  // Convert to days
 }
 
 Duration OperationPlan::getDelay() const {

@@ -1849,7 +1849,7 @@ class OperationPlan : public Object,
    * path. If the criticality is 2, it means the operationplan can be
    * delayed by 2 days without impacting the delivery of any demand.
    */
-  double getCriticality() const;
+  int getCriticality() const;
 
   /* Returns the difference between:
    *  a) the end date of the this operationplan
@@ -2546,8 +2546,8 @@ class OperationPlan : public Object,
     m->addStringRefField<Cls>(Tags::batch, &Cls::getBatchString, &Cls::setBatch,
                               "");
     // Default of -999 to enforce serializing the value if it is 0
-    m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr,
-                           -999, PLAN);
+    m->addIntField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999,
+                        PLAN);
     m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus,
                            "proposed");
     m->addStringField<Cls>(Tags::statusNoPropagation, &Cls::getStatus,
@@ -9843,7 +9843,6 @@ class PeggingIterator : public NonCopyable, public Object {
           offset(other.offset),
           level(other.level),
           gap(other.gap){};
-
 
     // Comparison operator
     bool operator<(const state& other) const {

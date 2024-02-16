@@ -190,9 +190,7 @@ class Command(BaseCommand):
                     i.save(using=self.database, update_fields=("status", "source"))
 
                 # Progress
-                task.status = "%s%%" % math.ceil(
-                    counter / total_pages * self.recordsperpage
-                )
+                task.status = "%s%%" % math.ceil(counter / total_pages * 100)
                 task.message = "Sent page %s of %s with plan data to odoo" % (
                     counter,
                     total_pages,

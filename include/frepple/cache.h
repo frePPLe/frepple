@@ -101,12 +101,7 @@ class CacheEntry : public AbstractCacheEntry {
   virtual void flush();
 
   virtual void expire() const {
-    auto lock = getLock();
-    if (lock) {
-      lock_guard exlusive(*lock);
-      const_cast<CacheEntry<T, U>*>(this)->val.reset();
-    } else
-      const_cast<CacheEntry<T, U>*>(this)->val.reset();
+    const_cast<CacheEntry<T, U>*>(this)->val.reset();
   }
 
   virtual recursive_mutex* getLock() const {

@@ -16,7 +16,6 @@ if(docker)
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
     ${docker} build ubuntu-20.04
     --progress=plain
-    --squash
     --tag "frepple-${PROJECT_BRANCH}-ubuntu-20.04:${PROJECT_VERSION}"
     --tag "frepple-${PROJECT_BRANCH}:${PROJECT_VERSION}"
     --tag "ghcr.io/frepple/frepple-${PROJECT_BRANCH}:${PROJECT_VERSION}"
@@ -51,8 +50,23 @@ if(docker)
     down
   )
 
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ubuntu-devel.dockerfile" ubuntu-devel/dockerfile COPYONLY)
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh" ubuntu-devel/entrypoint.sh COPYONLY)
+  configure_file("${CMAKE_SOURCE_DIR}/requirements.txt" ubuntu-devel/requirements.txt COPYONLY)
+  add_custom_target(
+    "docker-ubuntu-devel"
+    COMMAND ${CMAKE_COMMAND} --build . --target package_source
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/ubuntu-devel/"
+    COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
+    ${docker} build --progress=plain --target package --output type=local,dest=. ubuntu-devel
+    COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
+    ${docker} build ubuntu-devel
+    --progress=plain
+    --tag "frepple-${PROJECT_BRANCH}-ubuntu-devel:${PROJECT_VERSION}"
+  )
+
   # Build-only images
-  foreach(dist opensuse-15.1 rockylinux-8 debian-10 ubuntu-devel)
+  foreach(dist opensuse-15.1 rockylinux-8 debian-10)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${dist}.dockerfile ${dist}/dockerfile COPYONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh ${dist}/entrypoint.sh COPYONLY)
     add_custom_target(

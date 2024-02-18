@@ -617,7 +617,8 @@ if __name__ == "__main__":
     finally:
         # Clear the processid
         if task:
-            task = Task.objects.all().using(database).get(pk=task.id)
-            task.processid = None
-            task.status = newstatus
-            task.save(update_fields=["processid", "status"], using=database)
+            task = Task.objects.all().using(database).filter(pk=task.id).first()
+            if task:
+                task.processid = None
+                task.status = newstatus
+                task.save(update_fields=["processid", "status"], using=database)

@@ -50,7 +50,7 @@ class SeleniumTest(StaticLiveServerTestCase):
             firefox_options = webdriver.FirefoxOptions()
             if settings.SELENIUM_HEADLESS:
                 firefox_options.add_argument("--headless")
-            cls.driver = webdriver.Firefox(firefox_options=firefox_options)
+            cls.driver = webdriver.Firefox(options=firefox_options)
         elif settings.SELENIUM_TESTS == "chrome":
             options = webdriver.ChromeOptions()
             options.add_argument("--silent")

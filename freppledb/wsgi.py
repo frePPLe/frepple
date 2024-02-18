@@ -43,6 +43,7 @@ from django.core.wsgi import get_wsgi_application
 
 application = get_wsgi_application()
 
-from freppledb.execute.management.commands.scheduletasks import scheduler
+if "FREPPLE_TEST" not in os.environ:
+    from freppledb.execute.management.commands.scheduletasks import scheduler
 
-scheduler.start()
+    scheduler.start()

@@ -63,7 +63,7 @@ function customerstable($filter) {
           $elem.children().remove(); //delete the rows
           tableRow = '<div class="d-table w-100">' +
             '<div style="float: left; overflow:hidden;">&nbsp;</div>' +
-            '<div style="text-align: center;">';
+            '<div class="ms-auto text-right">';
           var first = true;
           if ($scope.buckets) {
             // Display time buckets

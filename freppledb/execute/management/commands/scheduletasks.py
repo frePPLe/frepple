@@ -247,7 +247,7 @@ class Command(BaseCommand):
                 Task.objects.all().using(database).filter(pk=task.id).update(
                     message="Running task %s as step %s of %s"
                     % (steptask.id, idx, stepcount),
-                    status="%d%%" % int(idx * 100.0 / stepcount),
+                    status="%d%%" % int((idx - 1) * 100.0 / stepcount),
                 )
                 runTask(steptask, database)
 

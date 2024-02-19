@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import gzip
 from importlib import import_module
 from io import BytesIO
@@ -210,6 +210,19 @@ class TaskReport(GridReport):
                 or (x.lower().endswith(".dump") and request.user.is_superuser)
             ]
         )
+
+        # Cancel waiting tasks if no runworker is active
+        worker_alive = Parameter.getValue("Worker alive", request.database, None)
+        try:
+            if not worker_alive or datetime.now() - datetime.strptime(
+                worker_alive, "%Y-%m-%d %H:%M:%S"
+            ) > timedelta(0, 30):
+                Task.objects.using(request.database).filter(
+                    status__iexact="waiting"
+                ).update(status="Canceled")
+        except Exception:
+            pass
+
         for rec in basequery:
             yield {
                 "id": rec.id,
@@ -1086,9 +1099,9 @@ def scheduletasks(request):
             scheduler.waitNextEvent(database=request.database)
             obj.adjustForTimezone(GridReport.getTimezoneOffset(request))
             return HttpResponse(
-                content=obj.next_run.strftime("%Y-%m-%d %H:%M:%S")
-                if obj.next_run
-                else ""
+                content=(
+                    obj.next_run.strftime("%Y-%m-%d %H:%M:%S") if obj.next_run else ""
+                )
             )
         elif request.method == "DELETE":
             if not request.user.has_perm("execute.delete_scheduledtask"):

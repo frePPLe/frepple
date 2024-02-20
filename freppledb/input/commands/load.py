@@ -1711,7 +1711,7 @@ class loadResourceSkills(LoadTask):
                         cur = frepple.resourceskill(
                             resource=frepple.resource(name=i[0]),
                             skill=frepple.skill(name=i[1]),
-                            priority=i[4] or 1,
+                            priority=i[4] if i[4] is not None else 1,
                             source=i[5],
                         )
                         if i[2] and i[2] > datetime(1971, 1, 3):

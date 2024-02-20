@@ -170,6 +170,9 @@ void SolverCreate::chooseResource(
     if (l->getSkill() && !res->hasSkill(l->getSkill(), originalOpplan.start,
                                         originalOpplan.end, &rscSkill))
       continue;
+    if (rscSkill && !rscSkill->getPriority())
+      // Skip 0-priority alternates
+      continue;
 
     // Avoid double allocations to the same resource
     if (lplan->getLoad()->getResource()->isGroup() &&

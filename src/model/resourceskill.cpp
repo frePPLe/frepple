@@ -159,7 +159,7 @@ Object* ResourceSkill::finder(const DataValueDict& d) {
   if (!tmp) return nullptr;
   Skill* skill = static_cast<Skill*>(tmp->getObject());
 
-  // Walk over all skills of the resurce, and return
+  // Walk over all skills of the resource, and return
   // the first one with matching
   const DataValue* hasEffectiveStart = d.get(Tags::effective_start);
   Date effective_start;

@@ -78,6 +78,12 @@ This release is scheduled for end February 2024. You can already check out a `pr
 - | Bug fix: Corner case with unplanned demand when an item is consumed multiple times
     in the same supply path.
 
+- | Bug fix: Manufacturing orders were being proposed on resources with a
+    0-priority skill.
+  | Consistent with other alternates, the planning algorithm should never
+    propose replenishments on 0-priority alternates. Such alternates are
+    only selected manually.
+
 .. rubric:: Demand forecasting
 
 - | Reduced memory consumption.

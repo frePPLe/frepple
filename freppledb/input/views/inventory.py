@@ -1457,6 +1457,8 @@ class InventoryDetail(OperationPlanMixin):
                     base = OperationPlanMaterial.objects.filter(
                         item=i_b_l[0], location=i_b_l[2], operationplan__batch=i_b_l[1]
                     )
+            else:
+                base = OperationPlanMaterial.objects
         else:
             base = OperationPlanMaterial.objects
         base = reportclass.operationplanExtraBasequery(base, request)

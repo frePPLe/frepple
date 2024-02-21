@@ -52,7 +52,7 @@ jobs:
           git submodule update --remote --checkout --force
           grunt
           cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target package
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target package -- -j 4
           cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target doc
           cp djangosettings.py djangosettings.original.py
           . ${{github.workspace}}/venv/bin/activate

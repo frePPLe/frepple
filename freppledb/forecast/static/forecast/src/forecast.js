@@ -122,7 +122,7 @@ function forecastController($scope, $http, $q, $location) {
   function showSaveChange() {
     $scope.modalcallback = $q.defer();
     $scope.databaseerrormodal = false;
-    showModal('#popup2');
+    showModal('popup2');
     return $scope.modalcallback.promise;
   }
   $scope.showSaveChange = showSaveChange;
@@ -137,9 +137,9 @@ function forecastController($scope, $http, $q, $location) {
     } else {
       if (datareloaded) {
         $scope.changes = false;
-        angular.element(document).find('#save').removeClass('btn-danger').prop('disabled', 'disabled');
-        angular.element(document).find('#undo').removeClass('btn-danger').prop('disabled', 'disabled');
-        angular.element(document).find('#recalculate').removeClass('disabled').prop('disabled', 'disabled');
+        angular.element(document).find('#save').removeClass('btn-danger').prop('disabled', true);
+        angular.element(document).find('#undo').removeClass('btn-danger').prop('disabled', true);
+        angular.element(document).find('#recalculate').removeClass('disabled').prop('disabled', true);
       } else {
         $scope.changes = true;
         angular.element(document).find('#save').removeClass('btn-danger').addClass('btn-danger').prop('disabled', false);
@@ -150,10 +150,10 @@ function forecastController($scope, $http, $q, $location) {
     datareloaded = false;
   }, true); // Heavy, deep watch
 
-  $scope.$watch('changes', function () {
-    if (!$scope.changes) {
-      angular.element(document).find('#save').removeClass('btn-danger').prop('disabled', 'disabled');
-      angular.element(document).find('#undo').removeClass('btn-danger').prop('disabled', 'disabled');
+  $scope.$watch('changes', function (newvalue, oldvalue) {
+    if (!newvalue) {
+      angular.element(document).find('#save').removeClass('btn-danger').prop('disabled', true);
+      angular.element(document).find('#undo').removeClass('btn-danger').prop('disabled', true);
     } else {
       angular.element(document).find('#save').removeClass('btn-danger').addClass('btn-danger').prop('disabled', false);
       angular.element(document).find('#undo').removeClass('btn-danger').addClass('btn-danger').prop('disabled', false);
@@ -207,7 +207,7 @@ function forecastController($scope, $http, $q, $location) {
         $scope.databaseerrormodal = true;
         angular.element(document).find('#popup2 .modal-body').html('<div style="width: 100%; overflow: auto;">' +
           'No data found for specified ' + panel + '</div>');
-        showModal('#popup2');
+        showModal('popup2');
       }
       if (!$scope.buckets && response.data[0].values) {
         $scope.buckets = [];
@@ -314,7 +314,7 @@ function forecastController($scope, $http, $q, $location) {
         }
         $scope.databaseerrormodal = true;
         angular.element(document).find('#popup2 .modal-body').html('<div style="width: 100%; overflow: auto;">' + response.data + '</div>');
-        showModal('#popup2');
+        showModal('popup2');
       }
     );
   }
@@ -615,10 +615,12 @@ function forecastController($scope, $http, $q, $location) {
         function (msg) {
           if (msg === 'continue') {
             $scope.changeItem.call(newItem, currindex);
+            angular.element(document).find('#save').removeClass('btn-danger').prop('disabled', true);
+            angular.element(document).find('#undo').removeClass('btn-danger').prop('disabled', true);
           } else if (msg === 'save') {
             $scope.save(false, function () { $scope.changeItem.call(newItem, currindex); });
-            //$scope.changeItem.call(newItem, currindex);
           }
+          hideModal('popup2');
         });
     } else {
       // No changes present on the page - go forward
@@ -679,10 +681,12 @@ function forecastController($scope, $http, $q, $location) {
         function (msg) {
           if (msg === 'continue') {
             $scope.changeLocation.call(newLocation, currindex);
+            angular.element(document).find('#save').removeClass('btn-danger').prop('disabled', true);
+            angular.element(document).find('#undo').removeClass('btn-danger').prop('disabled', true);
           } else if (msg === 'save') {
             $scope.save(false, function () { $scope.changeLocation.call(newLocation, currindex); });
-            //$scope.changeLocation.call(newLocation, currindex);
           }
+          hideModal('popup2');
         });
     } else {
       // No changes present on the page - change immediately
@@ -740,10 +744,12 @@ function forecastController($scope, $http, $q, $location) {
         function (msg) {
           if (msg === 'continue') {
             $scope.changeCustomer.call(newCustomer, currindex);
+            angular.element(document).find('#save').removeClass('btn-danger').prop('disabled', true);
+            angular.element(document).find('#undo').removeClass('btn-danger').prop('disabled', true);
           } else if (msg === 'save') {
             $scope.save(false, function () { $scope.changeCustomer.call(newCustomer, currindex); });
-            //$scope.changeCustomer.call(newCustomer, currindex);
           }
+          hideModal('popup2');
         });
     } else {
       // No changes present on the page - change immediately
@@ -850,15 +856,15 @@ function forecastController($scope, $http, $q, $location) {
         }
         $scope.databaseerrormodal = true;
         angular.element(document).find('#popup2 .modal-body').html('<div style="width: 100%; overflow: auto;">' + response.data + '</div>');
-        showModal('#popup2');
+        showModal('popup2');
       });
   }
   $scope.savePreferences = savePreferences;
 
   function undo() {
     angular.element(document).find("div.tooltip").tooltip("hide");
-    angular.element(document).find('#save').removeClass('btn-danger').prop('disabled', 'disabled');
-    angular.element(document).find('#undo').removeClass('btn-danger').prop('disabled', 'disabled');
+    angular.element(document).find('#save').removeClass('btn-danger').prop('disabled', true);
+    angular.element(document).find('#undo').removeClass('btn-danger').prop('disabled', true);
     $scope.commenttype = null;
     $scope.newcomment = '';
 

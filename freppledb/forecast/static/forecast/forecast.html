@@ -385,32 +385,32 @@
                     </button>
                     <ul data-ng-class="{'dropdown-menu': true, 'd-none': detaildata.attributes.forecast.forecastmethod == 'aggregate'}" id="forecastmethodul">
                       <li>
-                        <a class="dropdown-item" name="{{'Automatic'|translate}}" data-ng-click=" detaildata.attributes.forecast.forecastmethod='automatic'; changes=(initialmethod != 'automatic') ? true : changes;" translate>
+                        <a class="dropdown-item" name="{{'Automatic'|translate}}" data-ng-click="detaildata.attributes.forecast.forecastmethod='automatic'; changes=true;" translate>
 													Automatic
 												</a>
 											</li>
                       <li>
-                        <a class="dropdown-item" name="{{'Constant'|translate}}" data-ng-click="detaildata.attributes.forecast.forecastmethod = 'constant'; changes= (initialmethod != 'constant') ? true : changes;" translate>Constant
+                        <a class="dropdown-item" name="{{'Constant'|translate}}" data-ng-click="detaildata.attributes.forecast.forecastmethod = 'constant'; changes=true;" translate>Constant
                         </a>
                       </li>
                       <li>
-                        <a class="dropdown-item" name="{{'Trend'|translate}}" data-ng-click=" detaildata.attributes.forecast.forecastmethod='trend'; changes=(initialmethod != 'trend') ? true : changes" translate>Trend
+                        <a class="dropdown-item" name="{{'Trend'|translate}}" data-ng-click="detaildata.attributes.forecast.forecastmethod = 'trend'; changes=true" translate>Trend
                         </a>
                       </li>
                       <li>
-                        <a class="dropdown-item" name="{{'Seasonal'|translate}}" data-ng-click="detaildata.attributes.forecast.forecastmethod = 'seasonal'; changes= (initialmethod != 'seasonal') ? true : changes;" translate>Seasonal
+                        <a class="dropdown-item" name="{{'Seasonal'|translate}}" data-ng-click="detaildata.attributes.forecast.forecastmethod = 'seasonal'; changes=true" translate>Seasonal
                         </a>
                       </li>
                       <li>
-                        <a class="dropdown-item" name="{{'Intermittent'|translate}}" data-ng-click=" detaildata.attributes.forecast.forecastmethod='intermittent'; changes=(initialmethod != 'intermittent') ? true : changes;" translate>Intermittent
+                        <a class="dropdown-item" name="{{'Intermittent'|translate}}" data-ng-click=" detaildata.attributes.forecast.forecastmethod='intermittent'; changes=true" translate>Intermittent
                         </a>
                       </li>
                       <li>
-                        <a class="dropdown-item" name="{{'Moving average'|translate}}" data-ng-click="detaildata.attributes.forecast.forecastmethod = 'moving average'; changes= (initialmethod != 'moving average') ? true : changes;" translate>Moving average
+                        <a class="dropdown-item" name="{{'Moving average'|translate}}" data-ng-click="detaildata.attributes.forecast.forecastmethod = 'moving average'; changes=true" translate>Moving average
                         </a>
                       </li>
                       <li>
-                        <a class="dropdown-item" name="{{'Manual'|translate}}" data-ng-click=" detaildata.attributes.forecast.forecastmethod='manual'; changes=(initialmethod != 'manual') ? true : changes" translate>Manual
+                        <a class="dropdown-item" name="{{'Manual'|translate}}" data-ng-click="detaildata.attributes.forecast.forecastmethod = 'manual'; changes=true" translate>Manual
                         </a>
                       </li>
                     </ul>

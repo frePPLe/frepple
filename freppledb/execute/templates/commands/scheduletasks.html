@@ -56,7 +56,7 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
     <div class="d-flex align-items-center" data-field="finished">{{ schedule.lastrun.finished|date:"DATETIME_FORMAT" }}</div>
   </div>
   <div class="col d-flex">
-    <div class="d-flex align-items-center" data-field="status"><span class="{% if schedule.lastrun.status != 'Done' %}badge bg-danger{% endif %}">{{ schedule.lastrun.status }}</span></div>
+    <div class="d-flex align-items-center" data-field="status">{% if widget %}<a href="{{request.prefix}}/execute/">{% endif %}<span class="{% if schedule.lastrun.status != 'Done' %}badge bg-danger{% else %}text-decoration-underline{% endif %}">{{ schedule.lastrun.status }}</span>{% if widget %}</a>{% endif %}</div>
   </div>
   {% endif %}
   {% if perms.execute.change_scheduledtask and not widget %}

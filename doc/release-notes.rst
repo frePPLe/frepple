@@ -48,6 +48,9 @@ This release is scheduled for end February 2024. You can already check out a `pr
 - | 15, 16, 17: Allow export of approved and confirmed purchase orders from frePPLe to Odoo to
     update various fields of the Odoo purchase order lines (quantity, receipt date, item...).
 
+- | 15, 16, 17: Creation of purchase orders in Odoo (upon export from frePPLe) uses generic
+    Odoo code so that fields such as tax, unit_price, description... are standard.
+
 - | The XMLRPC version of the connector is deprecated.
   | It has always been only an experimental feature, which we see now as a dead end.
 

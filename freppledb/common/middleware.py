@@ -76,8 +76,8 @@ class HTTPAuthenticationMiddleware:
                     authmethod = None
                 if authmethod == "basic":
                     # Basic authentication
-                    auth = base64.b64decode(auth[1]).decode("iso-8859-1").partition(":")
-                    user = authenticate(username=auth[0], password=auth[2])
+                    auth = base64.b64decode(auth[1]).decode("iso-8859-1").split(":", 1)
+                    user = authenticate(username=auth[0], password=auth[1])
                     if user and user.is_active:
                         # Active user
                         request.api = True  # TODO I think this is no longer used

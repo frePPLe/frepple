@@ -206,9 +206,9 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
                             auth = (
                                 base64.b64decode(auth[1])
                                 .decode("iso-8859-1")
-                                .partition(":")
+                                .split(":", 1)
                             )
-                            user = authenticate(username=auth[0], password=auth[2])
+                            user = authenticate(username=auth[0], password=auth[1])
                             if user and user.is_active:
                                 # Active user
                                 request.api = (

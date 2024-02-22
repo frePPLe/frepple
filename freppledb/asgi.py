@@ -175,7 +175,7 @@ class TokenMiddleware(BaseMiddleware):
                             args = (
                                 base64.b64decode(auth[1])
                                 .decode("iso-8859-1")
-                                .split(":")
+                                .split(":", 1)
                             )
                             scope["user"] = await get_user(
                                 username=args[0],

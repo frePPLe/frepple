@@ -108,7 +108,9 @@ def Upload(request):
         obj = []
         for rec in data:
             try:
-                if rec["type"] == "PO":
+                if not "reference" in rec:
+                    continue
+                elif rec.get("type", None) == "PO":
                     po = PurchaseOrder.objects.using(request.database).get(
                         reference=rec["reference"]
                     )
@@ -143,7 +145,7 @@ def Upload(request):
                             quoteattr(po.status),
                         )
                     )
-                elif rec["type"] == "DO":
+                elif rec.get("type", None) == "DO":
                     do = DistributionOrder.objects.using(request.database).get(
                         reference=rec["reference"]
                     )

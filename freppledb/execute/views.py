@@ -219,7 +219,7 @@ class TaskReport(GridReport):
             ) > timedelta(0, 30):
                 Task.objects.using(request.database).filter(
                     status__iexact="waiting",
-                    submitted__lte=datetime.now() - timedelta(0,30)
+                    submitted__lte=datetime.now() - timedelta(0, 30),
                 ).update(status="Canceled")
         except Exception:
             pass

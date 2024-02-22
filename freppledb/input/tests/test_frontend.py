@@ -271,7 +271,11 @@ class ManufacturingOrderScreen(SeleniumTest):
         if "nowebservice" in os.environ:
             del os.environ["nowebservice"]
         management.call_command(
-            "runplan", plantype=1, constraint="capa,mfg_lt,po_lt", env="supply,loadplan", background=True
+            "runplan",
+            plantype=1,
+            constraint="capa,mfg_lt,po_lt",
+            env="supply,loadplan",
+            background=True,
         )
         waitTillRunning(timeout=180)
         super().setUp()

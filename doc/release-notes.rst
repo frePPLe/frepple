@@ -61,6 +61,8 @@ This release is scheduled for end February 2024. You can already check out a `pr
 
 - | Bug fix: sending an email when executing a task group fails didn't work.
 
+- | Bug fix: Basic authentication on web requests failed when the password contains colons.
+
 8.4.0 (2024-01-19)
 ==================
 

@@ -292,7 +292,6 @@ def cockpit(request):
                 "name", flat=True
             ),
             "currency": getCurrency(),
-            "reportclass": {"hasTimeOnly": True},
         },
     )
 
@@ -321,9 +320,11 @@ def handler500(request):
             "500.html",
             content_type="text/html",
             context={
-                "logfile": "/var/log/apache2/error.log"
-                if "apache.version" in request.META
-                else settings.FREPPLE_LOGDIR
+                "logfile": (
+                    "/var/log/apache2/error.log"
+                    if "apache.version" in request.META
+                    else settings.FREPPLE_LOGDIR
+                )
             },
         )
         response.status_code = 500

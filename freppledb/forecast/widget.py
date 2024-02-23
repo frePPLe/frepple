@@ -31,6 +31,7 @@ from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.dashboard import Dashboard, Widget
+from freppledb.common.models import Parameter
 from freppledb.common.report import getCurrentDate
 
 
@@ -51,21 +52,21 @@ class ForecastWidget(Widget):
         return "?%s" % urlencode({"history": self.history, "future": self.future})
 
     javascript = """
-    var margin_y = 50;  // Width allocated for the Y-axis
-    var margin_x = 60;  // Height allocated for the X-axis
-    var svg = d3.select("#forecast");
-    var svgrectangle = document.getElementById("forecast").getBoundingClientRect();
+
 
     // Collect the data
     var domain_x = [];
     var data = [];
     var max_val = 0;
+    var max_length = 0;
     $("#forecast").next().find("tr").each(function() {
       var row = [];
       $("td", this).each(function() {
         if (row.length == 0) {
           domain_x.push($(this).html());
           row.push($(this).html());
+          if ($(this).html().length > max_length)
+            max_length = $(this).html().length;
         }
         else {
           var val = parseFloat($(this).html());
@@ -76,6 +77,21 @@ class ForecastWidget(Widget):
       });
       data.push(row);
     });
+
+    var margin_y = 50;  // Width allocated for the Y-axis
+    var margin_x = 9 * max_length;  // Height allocated for the X-axis
+    var svg = d3.select("#forecast");
+    var svgrectangle = document.getElementById("forecast").getBoundingClientRect();
+
+    // Reduce the number of displayed points if too many
+    var nb_of_ticks = (svgrectangle['width'] - margin_y - 10) / 20;
+
+    var visible=[]
+    var step_visible = Math.ceil(domain_x.length / nb_of_ticks);
+    for (let x=0; x < domain_x.length; x++){
+      if (x==0 || x % step_visible == 0)
+        visible.push(domain_x[x]);
+    }
 
     // Define axis
     var x = d3.scale.ordinal()
@@ -95,7 +111,7 @@ class ForecastWidget(Widget):
 
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(5);
+        .orient("bottom").tickValues(visible);
 
     svg.append("g")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
@@ -169,6 +185,12 @@ class ForecastWidget(Widget):
         curdate = getCurrentDate(request.database, lastplan=True)
         history = int(request.GET.get("history", cls.history))
         future = int(request.GET.get("future", cls.future))
+
+        # get the bucket from the user preferences
+        bucketname = request.user.horizonbuckets or Parameter.getValue(
+            "forecast.calendar", request.db
+        )
+
         result = [
             '<svg class="chart" id="forecast" style="width:100%; height: 100%"></svg>',
             '<table style="display:none">',
@@ -188,13 +210,10 @@ class ForecastWidget(Widget):
               on item_id = (select name from item where item.lvl = 0 limit 1)
               and location_id = (select name from location where location.lvl = 0 limit 1)
               and customer_id = (select name from customer where customer.lvl = 0 limit 1)
-              and common_bucketdetail.startdate = forecastplan.startdate
+              and common_bucketdetail.startdate <= forecastplan.startdate
+              and forecastplan.startdate < common_bucketdetail.enddate
             where
-              common_bucketdetail.bucket_id = (
-                select common_parameter.value
-                from common_parameter
-                where common_parameter.name = 'forecast.calendar'
-                )
+              common_bucketdetail.bucket_id = %s
               and common_bucketdetail.startdate < %s + interval '%s month'
               and common_bucketdetail.startdate > %s - interval '%s month'
               and common_bucketdetail.startdate >= (
@@ -203,7 +222,7 @@ class ForecastWidget(Widget):
             group by common_bucketdetail.name, common_bucketdetail.startdate
             order by common_bucketdetail.startdate
             """,
-            (curdate, future, curdate, history),
+            (bucketname, curdate, future, curdate, history),
         )
         for res in cursor.fetchall():
             result.append(

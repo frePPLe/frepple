@@ -172,7 +172,7 @@ def runTask(task, database):
             task.status not in ("Done", "Failed")
             or not task.finished
             or not task.started
-        ):
+        ) and task.status != "Canceled":
             now = datetime.now()
             if not task.started:
                 task.started = now

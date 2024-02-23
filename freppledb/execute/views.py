@@ -33,6 +33,7 @@ from openpyxl.styles import NamedStyle, PatternFill
 from openpyxl.comments import Comment as CellComment
 import operator
 import os
+import psutil
 import re
 import shlex
 from time import sleep
@@ -299,7 +300,23 @@ def APITask(request, action):
                     if request.user.is_superuser or t.user == request.user:
                         if t.processid:
                             # Kill the process with signal 9
+                            child_pid = [
+                                c.pid for c in psutil.Process(t.processid).children()
+                            ]
                             os.kill(t.processid, 9)
+                            for child_task in (
+                                Task.objects.all()
+                                .using(request.database)
+                                .filter(processid__in=child_pid)
+                            ):
+                                try:
+                                    os.kill(child_task.processid, 9)
+                                except Exception:
+                                    pass
+                                child_task.message = "Canceled process"
+                                child_task.processid = None
+                                child_task.status = "Canceled"
+                                child_task.save(using=request.database)
                             sleep(1)  # Wait for it to die
                             t.message = "Canceled process"
                             t.processid = None
@@ -673,7 +690,21 @@ def CancelTask(request, taskid):
         task = Task.objects.all().using(request.database).get(pk=taskid)
         if task.processid:
             # Kill the process with signal 9
+            child_pid = [c.pid for c in psutil.Process(task.processid).children()]
             os.kill(task.processid, 9)
+            for child_task in (
+                Task.objects.all()
+                .using(request.database)
+                .filter(processid__in=child_pid)
+            ):
+                try:
+                    os.kill(child_task.processid, 9)
+                except Exception:
+                    pass
+                child_task.message = "Canceled process"
+                child_task.processid = None
+                child_task.status = "Canceled"
+                child_task.save(using=request.database)
             task.message = "Canceled process"
             task.processid = None
         elif task.status != "Waiting":

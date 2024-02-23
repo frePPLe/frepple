@@ -115,6 +115,7 @@ class Command(BaseCommand):
         task = None
         errors = [0, 0]
         old_thread_locals = getattr(_thread_locals, "database", None)
+        startofall = datetime.now()
         try:
             setattr(_thread_locals, "database", self.database)
             # Initialize the task
@@ -163,7 +164,6 @@ class Command(BaseCommand):
                 self.database
             ] and os.path.isdir(settings.DATABASES[self.database]["FILEUPLOADFOLDER"]):
                 # Open the logfile
-                startofall = datetime.now()
                 logger.info("Started importfromfolder\n")
 
                 all_models = [

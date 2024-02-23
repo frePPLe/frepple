@@ -248,6 +248,7 @@ class Command(BaseCommand):
         task = None
         errors = 0
         old_thread_locals = getattr(_thread_locals, "database", None)
+        startofall = datetime.now()
         try:
             # Initialize the task
             setattr(_thread_locals, "database", self.database)
@@ -306,7 +307,6 @@ class Command(BaseCommand):
                         if exception.errno != errno.EEXIST:
                             raise
 
-                startofall = datetime.now()
                 logger.info("Started export to folder")
 
                 cursor = connections[self.database].cursor()

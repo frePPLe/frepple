@@ -18,11 +18,13 @@ docker repository:
 
 .. code-block:: none
 
-   # Community Edition
+   # Login into github with your access token
+   docker login ghcr.io --username <github_user>
+
+   # Get the Community Edition
    docker pull ghcr.io/frepple/frepple-community:latest
 
-   # Enterprise Edition: enter github token to login
-   docker login ghcr.io --username <github_user>
+   # Get the Enterprise Edition
    docker pull ghcr.io/frepple/frepple-enterprise:latest
 
 | The container includes the frePPLe planning software, plus a web server.
@@ -79,7 +81,7 @@ the Docker host server.
 The container is called frepple-community-local, and you can access it with your browser
 on the URL http://localhost:9000/
 
-.. code-block:: none
+.. code-block:: bash
 
    docker run \
      -e POSTGRES_HOST=host.docker.internal \
@@ -91,6 +93,44 @@ on the URL http://localhost:9000/
      --publish 9000:80 \
      --detach \
      ghcr.io/frepple/frepple-community:latest
+
+************************************
+Deployment of the Enterprise Edition
+************************************
+
+The Enterprise Edition needs a license file to be copied into the container.
+This is handled by inheriting from the frePPLe image.
+
+Create a new folder and copy the license file into it. Also create
+a dockerfile in it with the following content:
+
+.. code-block:: docker
+
+   FROM ghcr.io/frepple/frepple-enterprise:latest
+
+   # Add the license key for the Enterprise Edition to the container
+   COPY license.xml /etc/frepple
+
+Next, you build and your container with commands like:
+
+.. code-block:: bash
+
+   docker build my_frepple -t -my_frepple
+
+   docker run \
+     -e POSTGRES_HOST=host.docker.internal \
+     -e POSTGRES_PORT=5432 \
+     -e POSTGRES_USER=frepple \
+     -e POSTGRES_PASSWORD=frepple \
+     -e POSTGRES_DBNAME=freppledb \
+     --name my_frepple \
+     --publish 9000:80 \
+     --detach \
+     my_frepple
+
+The folder with the license file and the dockerfile are typically put under
+version control. A section below shows how this structure can be extended
+with custom apps of configurations.
 
 ******************************
 Deployment with docker compose
@@ -151,11 +191,6 @@ the max_connections setting is moved from the default 100 to eg 400).
   networks:
     backend:
 
-Another option is fork this git repository https://github.com/ursais/frepple-template
-(maintained by https://www.opensourceintegrators.com/) as a starting point for your own
-wrapper. This repository is also suited for the frepple Enterprise Edition, and it
-already accounts for any custom frepple addons.
-
 **************************
 Deployment with Kubernetes
 **************************
@@ -166,7 +201,7 @@ https://github.com/frePPLe/frepple/tree/master/contrib/kubernetes
 Create a copy of these files on your machine. Then run the following commands
 to deploy frepple.
 
-.. code-block:: none
+.. code-block:: bash
 
    kubectl apply -f frepple-deployment.yaml,frepple-postgres-deployment.yaml,frepple-networkpolicy.yaml
 
@@ -189,7 +224,7 @@ Deployment with custom extension apps
 Extending the container with your customizations is simple by inheriting from the frePPLe
 image. Here is a an example dockerfile that adds a new frePPLe app (coded as a Python package):
 
-.. code-block:: none
+.. code-block:: docker
 
    FROM ghcr.io/frepple/frepple-enterprise:latest
 
@@ -207,6 +242,10 @@ image. Here is a an example dockerfile that adds a new frePPLe app (coded as a P
    # Update the djangosettings.py configuration file with extra settings
    RUN echo "MYAPPSETTING=True" >> /etc/frepple/djangosettings.py
 
+The folder with all customizations is typically put under
+version control. This allows a clear process for maintaining your custom code
+and upgrading to new frePPLe releases.
+
 ******************************************
 Running frepplectl commands on a container
 ******************************************
@@ -214,7 +253,7 @@ Running frepplectl commands on a container
 It is possible to execute a frepplectl command (or any linux command)
 on a running container.
 
-.. code-block:: none
+.. code-block:: bash
 
    docker exec -it <container name> frepplectl importfromfolder
 

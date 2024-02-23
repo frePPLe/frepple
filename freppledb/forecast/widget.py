@@ -139,7 +139,7 @@ class ForecastWidget(Widget):
       .attr("y", function(d) {return y(d[2]-d[3]);})
       .attr("height", function(d) {return y_zero - y(d[2]-d[3]);})
       .attr("rx","1")
-      .attr("width", x_width - 2)
+      .attr("width", Math.max(1, x_width - 2))
       .style("fill", "#828915");
 
     // Draw the open orders
@@ -148,7 +148,7 @@ class ForecastWidget(Widget):
       .attr("y", function(d) {return y(d[2]);})
       .attr("height", function(d) {return y(d[2] - d[3]) - y(d[2]);})
       .attr("rx","1")
-      .attr("width", x_width - 2)
+      .attr("width", Math.max(1, x_width - 2))
       .style("fill", "#FFC000");
 
     // Draw invisible rectangles for the hoverings

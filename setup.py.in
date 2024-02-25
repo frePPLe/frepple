@@ -91,4 +91,5 @@ setup(
 It is a framework for modeling and solving production planning problems,
 targeted primarily at discrete manufacturing industries.
 """,
+    zip_safe=False,
 )

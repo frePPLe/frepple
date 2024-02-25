@@ -82,7 +82,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
     See https://docs.djangoproject.com/en/2.2/topics/db/multi-db/#exposing-multiple-databases-in-django-s-admin-interface
 
-    See the standard code in the file django\contrib\admin\options.py
+    See the standard code in the file django/contrib/admin/options.py
     The level of customization is relatively high, and this code is a bit of a
     concern for future upgrades of Django...
     """
@@ -236,10 +236,12 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                                 object_pk=m["changed"]["object"],
                                 object_repr=m["changed"]["object"],
                                 type="change",
-                                comment=message
-                                if isinstance(message, str)
-                                else "Changed %s."
-                                % get_text_list(m["changed"]["fields"], "and"),
+                                comment=(
+                                    message
+                                    if isinstance(message, str)
+                                    else "Changed %s."
+                                    % get_text_list(m["changed"]["fields"], "and")
+                                ),
                             ).save(using=request.database)
                             break
                 else:
@@ -251,10 +253,12 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                         object_pk=str(obj.pk),
                         object_repr=str(obj)[:200],
                         type="change",
-                        comment=message
-                        if isinstance(message, str)
-                        else "Changed %s."
-                        % get_text_list(m["changed"]["fields"], "and"),
+                        comment=(
+                            message
+                            if isinstance(message, str)
+                            else "Changed %s."
+                            % get_text_list(m["changed"]["fields"], "and")
+                        ),
                     ).save(using=request.database)
             elif "added" in m:
                 if "object" in m["added"] and "name" in m["added"]:

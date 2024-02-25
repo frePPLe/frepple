@@ -214,7 +214,7 @@ class AppsView(View):
                     if status == 0 and "INSTALLED_APPS" in l:
                         status = 1
                     elif status == 1 and app in l:
-                        i = re.search("\S", l).start()
+                        i = re.search(r"\S", l).start()
                         l = '%s"%s",' % (l[:i], app)
                         status = 2
                         found = True
@@ -227,7 +227,7 @@ class AppsView(View):
                     idx = 0
                     for l in new_file:
                         if "freppledb.boot" in l:
-                            i = re.search("\S", l).start()
+                            i = re.search(r"\S", l).start()
                             l = '%s"%s",' % (l[:i], app)
                             new_file.insert(idx + 1, l)
                             break
@@ -257,7 +257,7 @@ class AppsView(View):
                     if status == 0 and "INSTALLED_APPS" in l:
                         status = 1
                     elif status == 1 and app in l:
-                        i = re.search("\S", l).start()
+                        i = re.search(r"\S", l).start()
                         l = '%s# "%s",' % (l[:i], app)
                         status = 2
                     print(l, file=f)

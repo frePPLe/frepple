@@ -849,7 +849,7 @@ class PurchaseOrderWidget(Widget):
       .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) - y_value(d[3]));})
       .attr("height", function(d, i) {return y_value(0) - y_value(d[3]);})
       .attr("width", x.rangeBand())
-      .attr('fill', '#69a3b2')
+      .attr('fill', '#828915')
       .on("mouseover", function(d) {
         graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + " POs</span> / " + d[2] + ' %s / ' + currency[0] + ' <span style="color: #8BBA00;">' + d[3] + currency[1] + "</span>");
         $("#tooltip").css('background-color','black').css('color','white');

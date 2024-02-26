@@ -108,12 +108,16 @@ class LateOrdersWidget(Widget):
                     escape(rec[1]),
                     escape(rec[2]),
                     escape(rec[3]),
-                    date_format(rec[4], format="DATE_FORMAT", use_l10n=False)
-                    if rec[4]
-                    else "",
-                    date_format(rec[5], format="DATE_FORMAT", use_l10n=False)
-                    if rec[5]
-                    else "",
+                    (
+                        date_format(rec[4], format="DATE_FORMAT", use_l10n=False)
+                        if rec[4]
+                        else ""
+                    ),
+                    (
+                        date_format(rec[5], format="DATE_FORMAT", use_l10n=False)
+                        if rec[5]
+                        else ""
+                    ),
                     int(rec[6]),
                 )
             )
@@ -189,9 +193,11 @@ class ShortOrdersWidget(Widget):
                     escape(rec[1]),
                     escape(rec[2]),
                     escape(rec[3]),
-                    date_format(rec[4], format="DATE_FORMAT", use_l10n=False)
-                    if rec[4]
-                    else "",
+                    (
+                        date_format(rec[4], format="DATE_FORMAT", use_l10n=False)
+                        if rec[4]
+                        else ""
+                    ),
                     int(rec[5]),
                 )
             )
@@ -833,41 +839,24 @@ class PurchaseOrderWidget(Widget):
       }
     }
 
-    // Draw invisible rectangles for the hoverings
+    // Draw rectangles
     svg.selectAll("g>rect")
      .data(data)
      .enter()
      .append("g")
-     .attr("transform", function(d, i) { return "translate(" + Math.ceil(tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y) + ",10)"; })
      .append("rect")
-      .attr("height", svgrectangle['height'] - 10 - margin_x)
+      .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
+      .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) - y_value(d[3]));})
+      .attr("height", function(d, i) {return y_value(0) - y_value(d[3]);})
       .attr("width", x.rangeBand())
-      .attr("fill-opacity", 0)
+      .attr('fill', '#69a3b2')
       .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / ' + currency[0] + ' <span style="color: #8BBA00;">' + d[3] + currency[1] + "</span>");
+        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + " POs</span> / " + d[2] + ' %s / ' + currency[0] + ' <span style="color: #8BBA00;">' + d[3] + currency[1] + "</span>");
         $("#tooltip").css('background-color','black').css('color','white');
         })
       .on("mousemove", graph.moveTooltip)
       .on("mouseout", graph.hideTooltip);
 
-    // Draw the lines
-    var line_value = d3.svg.line()
-      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
-      .y(function(d) { return y_value(d[3]); });
-    var line_count = d3.svg.line()
-      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
-      .y(function(d) { return y_count(d[1]); });
-
-    svg.append("svg:path")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr('class', 'graphline')
-      .attr("stroke","#8BBA00")
-      .attr("d", line_value(data));
-    svg.append("svg:path")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr('class', 'graphline')
-      .attr("stroke","#FFC000")
-      .attr("d", line_count(data));
     """ % force_str(
         _("units")
     )
@@ -906,6 +895,9 @@ class PurchaseOrderWidget(Widget):
         and operationplan.location_id = itemsupplier.location_id
       where bucket_id = %%s and common_bucketdetail.enddate > %%s
         and common_bucketdetail.startdate < %%s
+      and exists (select 1 from operationplan where type = 'PO'
+       and status in ('confirmed', 'proposed', 'approved')
+       and startdate >= common_bucketdetail.startdate)
       group by common_bucketdetail.name, common_bucketdetail.startdate
       union all
       select
@@ -1099,9 +1091,11 @@ class PurchaseQueueWidget(Widget):
                     alt and ' class="altRow"' or "",
                     escape(po.item.name),
                     escape(po.supplier.name),
-                    date_format(po.enddate, format="DATE_FORMAT", use_l10n=False)
-                    if po.enddate
-                    else "",
+                    (
+                        date_format(po.enddate, format="DATE_FORMAT", use_l10n=False)
+                        if po.enddate
+                        else ""
+                    ),
                     int(po.quantity),
                     int(po.criticality),
                 )
@@ -1159,9 +1153,11 @@ class DistributionQueueWidget(Widget):
                     escape(po.item.name),
                     escape(po.origin.name if po.origin else ""),
                     escape(po.destination.name),
-                    date_format(po.enddate, format="DATE_FORMAT", use_l10n=False)
-                    if po.enddate
-                    else "",
+                    (
+                        date_format(po.enddate, format="DATE_FORMAT", use_l10n=False)
+                        if po.enddate
+                        else ""
+                    ),
                     int(po.quantity),
                     int(po.criticality),
                 )
@@ -1220,9 +1216,11 @@ class ShippingQueueWidget(Widget):
                     escape(do.origin.name),
                     escape(do.destination),
                     int(do.quantity),
-                    date_format(do.enddate, format="DATE_FORMAT", use_l10n=False)
-                    if do.enddate
-                    else "",
+                    (
+                        date_format(do.enddate, format="DATE_FORMAT", use_l10n=False)
+                        if do.enddate
+                        else ""
+                    ),
                     int(do.criticality),
                 )
             )
@@ -1284,20 +1282,24 @@ class ResourceQueueWidget(Widget):
                     quote(ldplan.resource),
                     escape(ldplan.resource),
                     escape(ldplan.operationplan.operation),
-                    date_format(
-                        ldplan.operationplan.startdate,
-                        format="DATE_FORMAT",
-                        use_l10n=False,
-                    )
-                    if ldplan.operationplan.startdate
-                    else "",
-                    date_format(
-                        ldplan.operationplan.enddate,
-                        format="DATE_FORMAT",
-                        use_l10n=False,
-                    )
-                    if ldplan.operationplan.enddate
-                    else "",
+                    (
+                        date_format(
+                            ldplan.operationplan.startdate,
+                            format="DATE_FORMAT",
+                            use_l10n=False,
+                        )
+                        if ldplan.operationplan.startdate
+                        else ""
+                    ),
+                    (
+                        date_format(
+                            ldplan.operationplan.enddate,
+                            format="DATE_FORMAT",
+                            use_l10n=False,
+                        )
+                        if ldplan.operationplan.enddate
+                        else ""
+                    ),
                     int(ldplan.operationplan.quantity),
                     int(ldplan.operationplan.criticality),
                 )
@@ -1350,9 +1352,11 @@ class PurchaseAnalysisWidget(Widget):
                     alt and ' class="altRow"' or "",
                     escape(po.item.name if po.item else ""),
                     escape(po.supplier.name if po.supplier else ""),
-                    date_format(po.enddate, format="DATE_FORMAT", use_l10n=False)
-                    if po.enddate
-                    else "",
+                    (
+                        date_format(po.enddate, format="DATE_FORMAT", use_l10n=False)
+                        if po.enddate
+                        else ""
+                    ),
                     int(po.quantity) if po.quantity else "",
                     int(po.color) if po.color is not None else "",
                 )

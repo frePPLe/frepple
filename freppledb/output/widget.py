@@ -750,7 +750,7 @@ class PurchaseOrderWidget(Widget):
     tooltip = _("Shows purchase orders by ordering date")
     permissions = (("view_problem_report", "Can view problem report"),)
     asynchronous = True
-    url = "/data/input/purchaseorder/?sord=asc&sidx=startdate&status__in=proposed,confirmed"
+    url = "/data/input/purchaseorder/?sord=asc&sidx=startdate&status__in=proposed,confirmed,approved"
     exporturl = True
     fence1 = 7
     fence2 = 30
@@ -773,6 +773,9 @@ class PurchaseOrderWidget(Widget):
     var margin_x = 60;  // Height allocated for the X-axis
     var svg = d3.select("#po_chart");
     var svgrectangle = document.getElementById("po_chart").getBoundingClientRect();
+
+    function numberWithCommas(x) {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");}
 
     // Collect the data
     var domain_x = [];
@@ -851,7 +854,7 @@ class PurchaseOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr('fill', '#828915')
       .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + " POs</span> / " + d[2] + ' %s / ' + currency[0] + ' <span style="color: #8BBA00;">' + d[3] + currency[1] + "</span>");
+        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ numberWithCommas(d[1]) + " POs</span> / " + numberWithCommas(d[2]) + ' %s / ' + currency[0] + ' <span style="color: #8BBA00;">' + numberWithCommas(d[3]) + currency[1] + "</span>");
         $("#tooltip").css('background-color','black').css('color','white');
         })
       .on("mousemove", graph.moveTooltip)
@@ -941,6 +944,21 @@ class PurchaseOrderWidget(Widget):
         and operationplan.location_id = itemsupplier.location_id
       where status = 'proposed' and operationplan.type = 'PO'
         and startdate < %%s + interval '%s day' %s
+      union all
+      select
+        4, null, null, count(*),
+        coalesce(round(sum(quantity)),0),
+        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0)
+      from operationplan
+      inner join item
+      on operationplan.item_id = item.name
+      left outer join itemsupplier
+        on operationplan.item_id = itemsupplier.item_id
+        and operationplan.supplier_id = itemsupplier.supplier_id
+        and operationplan.location_id = itemsupplier.location_id
+      where status in ('confirmed', 'approved') %s
+        and operationplan.type = 'PO'
+        and operationplan.enddate < %%s
       order by 1, 3
       """ % (
             supplierfilter,
@@ -948,6 +966,7 @@ class PurchaseOrderWidget(Widget):
             fence1,
             supplierfilter,
             fence2,
+            supplierfilter,
             supplierfilter,
         )
         if supplier:
@@ -963,6 +982,7 @@ class PurchaseOrderWidget(Widget):
                     supplier,
                     current,
                     supplier,
+                    current,
                 ),
             )
         else:
@@ -972,6 +992,7 @@ class PurchaseOrderWidget(Widget):
                     request.report_bucket,
                     request.report_startdate,
                     request.report_enddate,
+                    current,
                     current,
                     current,
                 ),
@@ -988,29 +1009,29 @@ class PurchaseOrderWidget(Widget):
                 )
             elif rec[0] == 1:
                 result.append(
-                    '</table><div class="row"><div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
-                        rec[3],
-                        rec[4],
+                        f"{rec[3]:,}",
+                        f"{rec[4]:,}",
                         force_str(_("units")),
                         currency[0],
-                        rec[5],
+                        f"{rec[5]:,}",
                         currency[1],
                         request.prefix,
                         force_str(_("Review")),
                         force_str(_("confirmed orders")),
                     )
                 )
-            elif rec[0] == 2 and fence1:
+            elif rec[0] == 2 and fence1 and rec[3] > 0:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
-                        rec[3],
-                        rec[4],
+                        f"{rec[3]:,}",
+                        f"{rec[4]:,}",
                         force_str(_("units")),
                         currency[0],
-                        rec[5],
+                        f"{rec[5]:,}",
                         currency[1],
                         request.prefix,
                         limit_fence1.strftime("%Y-%m-%d"),
@@ -1021,16 +1042,16 @@ class PurchaseOrderWidget(Widget):
                         ),
                     )
                 )
-            elif fence2:
+            elif rec[0] == 3 and fence2 and rec[3] > 0:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
-                        rec[3],
-                        rec[4],
+                        f"{rec[3]:,}",
+                        f"{rec[4]:,}",
                         force_str(_("units")),
                         currency[0],
-                        rec[5],
+                        f"{rec[5]:,}",
                         currency[1],
                         request.prefix,
                         limit_fence2.strftime("%Y-%m-%d"),
@@ -1039,6 +1060,22 @@ class PurchaseOrderWidget(Widget):
                             _("proposed orders within %(fence)s days")
                             % {"fence": fence2}
                         ),
+                    )
+                )
+            elif rec[0] == 4 and rec[3] > 0:
+                result.append(
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=enddate&enddate__lte=%s&amp;status__in=confirmed,approved" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    % (
+                        f"{rec[3]:,}",
+                        f"{rec[4]:,}",
+                        force_str(_("units")),
+                        currency[0],
+                        f"{rec[5]:,}",
+                        currency[1],
+                        request.prefix,
+                        current.strftime("%Y-%m-%d"),
+                        force_str(_("Review")),
+                        force_str(_("overdue orders")),
                     )
                 )
         result.append("</div>")

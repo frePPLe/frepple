@@ -416,16 +416,6 @@ class ManufacturingOrderWidget(Widget):
             ),
         )
         result = [
-            """
-            <div class="btn-group" role="group">
-                <button data-bs-toggle="tooltip" data-bs-placement="top" class="btn btn-sm btn-primary active" type="radio" id="valuemode" name="units" value="units" data-bs-title="display value">
-                    <span class="fa fa-dollar"></span>
-                </button>
-                <button data-bs-toggle="tooltip" data-bs-placement="top" class="btn btn-sm btn-primary" type="radio" id="unitsmode" name="units" value="value" data-bs-title="display units">
-                    <span class="fa fa-truck"></span>
-                </button>
-            </div>
-            """,
             '<svg class="chart" id="mo_chart" style="width:100%; height: 150px;"></svg>',
             '<table id="mo_overview" style="display: none">',
         ]

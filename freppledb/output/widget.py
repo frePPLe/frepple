@@ -230,6 +230,9 @@ class ManufacturingOrderWidget(Widget):
     var svg = d3.select("#mo_chart");
     var svgrectangle = document.getElementById("mo_chart").getBoundingClientRect();
 
+    function numberWithCommas(x) {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");}
+
     // Collect the data
     var domain_x = [];
     var data = [];
@@ -243,7 +246,9 @@ class ManufacturingOrderWidget(Widget):
       var count = name.next();
       var units = count.next();
       var value = units.next();
-      var el = [name.text(), parseFloat(count.text()), parseFloat(units.text()), parseFloat(value.text())];
+      var startdate = value.next();
+      var enddate = startdate.next();
+      var el = [name.text(), parseFloat(count.text()), parseFloat(units.text()), parseFloat(value.text()), startdate.text(), enddate.text()];
       data.push(el);
       domain_x.push(el[0]);
       if (el[1] > max_count) max_count = el[1];
@@ -292,41 +297,36 @@ class ManufacturingOrderWidget(Widget):
       tickposition = parseInt($("#xAxisMO").children()[0].attributes.transform.value.slice(10));
     }
 
-    // Draw invisible rectangles for the hoverings
+    // Draw rectangles
     svg.selectAll("g>rect")
      .data(data)
      .enter()
      .append("g")
-     .attr("transform", function(d, i) { return "translate(" + Math.ceil(tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y) + ",10)"; })
      .append("rect")
-      .attr("height", svgrectangle['height'] - 10 - margin_x)
+      .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
+      .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) - y_value(d[3]));})
+      .attr("height", function(d, i) {return y_value(0) - y_value(d[3]);})
       .attr("width", x.rangeBand())
-      .attr("fill-opacity", 0)
+      .attr('fill', '#828915')
       .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / ' + currency[0] + ' <span style="color: #8BBA00;">' + d[3] + currency[1] + "</span>");
+        graph.showTooltip(d[0] + '<br>'+ numberWithCommas(d[1]) + " MOs / " + numberWithCommas(d[2]) + ' %s / ' + currency[0] + ' ' + numberWithCommas(d[3]) + currency[1] );
         $("#tooltip").css('background-color','black').css('color','white');
         })
       .on("mousemove", graph.moveTooltip)
-      .on("mouseout", graph.hideTooltip);
+      .on("mouseout", graph.hideTooltip)
+      .on("click", function(d) {
+	          if (d3.event.defaultPrevented || y_value(d[3]) == 0)
+	            return;
+	          d3.select("#tooltip").style('display', 'none');
 
-    // Draw the lines
-    var line_value = d3.svg.line()
-      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
-      .y(function(d) { return y_value(d[3]); });
-    var line_count = d3.svg.line()
-      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
-      .y(function(d) { return y_count(d[1]); });
+	          window.location = url_prefix
+	            + "/data/input/manufacturingorder/"
+	            + "?noautofilter&startdate__gte=" + d[4]
+	            + "&startdate__lt=" + d[5];
 
-    svg.append("svg:path")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr('class', 'graphline')
-      .attr("stroke","#8BBA00")
-      .attr("d", line_value(data));
-    svg.append("svg:path")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr('class', 'graphline')
-      .attr("stroke","#FFC000")
-      .attr("d", line_count(data));
+	          d3.event.stopPropagation();
+	        });
+
     """ % force_str(
         _("units")
     )
@@ -348,7 +348,8 @@ class ManufacturingOrderWidget(Widget):
           select
             0, common_bucketdetail.name, common_bucketdetail.startdate,
             count(operationplan.name), coalesce(round(sum(quantity)),0),
-            coalesce(round(sum(quantity * cost)),0)
+            coalesce(round(sum(quantity * item.cost)),0),
+         to_char(common_bucketdetail.startdate, %%s), to_char(common_bucketdetail.enddate, %%s)
           from common_bucketdetail
           left outer join operationplan
             on operationplan.startdate >= common_bucketdetail.startdate
@@ -357,14 +358,19 @@ class ManufacturingOrderWidget(Widget):
             and operationplan.type = 'MO'
           left outer join operation
             on operationplan.operation_id = operation.name
+          left outer join item
+            on operationplan.item_id = item.name
           where bucket_id = %%s and common_bucketdetail.enddate > %%s
             and common_bucketdetail.startdate < %%s
-          group by common_bucketdetail.name, common_bucketdetail.startdate
+          and exists (select 1 from operationplan where type = 'MO'
+          and status in ('confirmed', 'proposed', 'approved')
+          and startdate >= common_bucketdetail.startdate)
+          group by common_bucketdetail.name, common_bucketdetail.startdate, common_bucketdetail.enddate
           union all
           select
             1, null, null, count(*),
             coalesce(round(sum(quantity)),0),
-            coalesce(round(sum(quantity * cost)),0)
+            coalesce(round(sum(quantity * cost)),0),null,null
           from operationplan
           inner join operation
             on operationplan.operation_id = operation.name
@@ -374,7 +380,7 @@ class ManufacturingOrderWidget(Widget):
           select
             2, null, null, count(*),
             coalesce(round(sum(quantity)),0),
-            coalesce(round(sum(quantity * cost)),0)
+            coalesce(round(sum(quantity * cost)),0),null,null
           from operationplan
           inner join operation
             on operationplan.operation_id = operation.name
@@ -385,7 +391,7 @@ class ManufacturingOrderWidget(Widget):
           select
             3, null, null, count(*),
             coalesce(round(sum(quantity)),0),
-            coalesce(round(sum(quantity * cost)),0)
+            coalesce(round(sum(quantity * cost)),0),null,null
           from operationplan
           inner join operation
             on operationplan.operation_id = operation.name
@@ -400,6 +406,8 @@ class ManufacturingOrderWidget(Widget):
         cursor.execute(
             query,
             (
+                "%s HH24:MI:SS" % (settings.DATE_FORMAT_JS,),
+                "%s HH24:MI:SS" % (settings.DATE_FORMAT_JS,),
                 request.report_bucket,
                 request.report_startdate,
                 request.report_enddate,
@@ -408,40 +416,52 @@ class ManufacturingOrderWidget(Widget):
             ),
         )
         result = [
+            """
+            <div class="btn-group" role="group">
+                <button data-bs-toggle="tooltip" data-bs-placement="top" class="btn btn-sm btn-primary active" type="radio" id="valuemode" name="units" value="units" data-bs-title="display value">
+                    <span class="fa fa-dollar"></span>
+                </button>
+                <button data-bs-toggle="tooltip" data-bs-placement="top" class="btn btn-sm btn-primary" type="radio" id="unitsmode" name="units" value="value" data-bs-title="display units">
+                    <span class="fa fa-truck"></span>
+                </button>
+            </div>
+            """,
             '<svg class="chart" id="mo_chart" style="width:100%; height: 150px;"></svg>',
             '<table id="mo_overview" style="display: none">',
         ]
         for rec in cursor.fetchall():
             if rec[0] == 0:
                 result.append(
-                    "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
-                    % (rec[1], rec[3], rec[4], rec[5])
+                    "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+                    % (rec[1], rec[3], rec[4], rec[5], rec[6], rec[7])
                 )
-            elif rec[0] == 1:
+            elif rec[0] == 1 and rec[3] > 0:
                 result.append(
-                    '</table><div class="row"><div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" role="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" role="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
-                        rec[3],
-                        rec[4],
+                        f"{rec[3]:,}",
+                        f"{rec[4]:,}",
                         force_str(_("units")),
                         currency[0],
-                        rec[5],
+                        f"{rec[5]:,}",
                         currency[1],
                         request.prefix,
                         force_str(_("Review")),
                         force_str(_("confirmed orders")),
                     )
                 )
-            elif rec[0] == 2 and fence1:
+            elif rec[0] == 1:
+                result.append('</table><div class="row">')
+            elif rec[0] == 2 and fence1 and rec[3] > 0:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
-                        rec[3],
-                        rec[4],
+                        f"{rec[3]:,}",
+                        f"{rec[4]:,}",
                         force_str(_("units")),
                         currency[0],
-                        rec[5],
+                        f"{rec[5]:,}",
                         currency[1],
                         request.prefix,
                         limit_fence1.strftime("%Y-%m-%d"),
@@ -452,16 +472,16 @@ class ManufacturingOrderWidget(Widget):
                         ),
                     )
                 )
-            elif fence2:
+            elif rec[0] == 3 and fence2 and rec[3] > 0:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
-                        rec[3],
-                        rec[4],
+                        f"{rec[3]:,}",
+                        f"{rec[4]:,}",
                         force_str(_("units")),
                         currency[0],
-                        rec[5],
+                        f"{rec[5]:,}",
                         currency[1],
                         request.prefix,
                         limit_fence2.strftime("%Y-%m-%d"),
@@ -499,6 +519,9 @@ class DistributionOrderWidget(Widget):
     var svg = d3.select("#do_chart");
     var svgrectangle = document.getElementById("do_chart").getBoundingClientRect();
 
+    function numberWithCommas(x) {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");}
+
     // Collect the data
     var domain_x = [];
     var data = [];
@@ -512,7 +535,9 @@ class DistributionOrderWidget(Widget):
       var count = name.next();
       var units = count.next();
       var value = units.next();
-      var el = [name.text(), parseFloat(count.text()), parseFloat(units.text()), parseFloat(value.text())];
+      var startdate = value.next();
+      var enddate = startdate.next();
+      var el = [name.text(), parseFloat(count.text()), parseFloat(units.text()), parseFloat(value.text()), startdate.text(), enddate.text()];
       data.push(el);
       domain_x.push(el[0]);
       if (el[1] > max_count) max_count = el[1];
@@ -561,41 +586,36 @@ class DistributionOrderWidget(Widget):
       tickposition = parseInt($("#xAxisDO").children()[0].attributes.transform.value.slice(10));
     }
 
-    // Draw invisible rectangles for the hoverings
+    // Draw rectangles
     svg.selectAll("g>rect")
      .data(data)
      .enter()
      .append("g")
-     .attr("transform", function(d, i) { return "translate(" + Math.ceil(tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y) + ",10)"; })
      .append("rect")
-      .attr("height", svgrectangle['height'] - 10 - margin_x)
+      .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
+      .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) - y_value(d[3]));})
+      .attr("height", function(d, i) {return y_value(0) - y_value(d[3]);})
       .attr("width", x.rangeBand())
-      .attr("fill-opacity", 0)
+      .attr('fill', '#828915')
       .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ d[1] + "</span> / " + d[2] + ' %s / '+currency[0]+' <span style="color: #8BBA00;">' + d[3] + currency[1] + "</span>");
+        graph.showTooltip(d[0] + '<br>'+ numberWithCommas(d[1]) + " DOs / " + numberWithCommas(d[2]) + ' %s / ' + currency[0] + ' ' + numberWithCommas(d[3]) + currency[1] );
         $("#tooltip").css('background-color','black').css('color','white');
         })
       .on("mousemove", graph.moveTooltip)
-      .on("mouseout", graph.hideTooltip);
+      .on("mouseout", graph.hideTooltip)
+      .on("click", function(d) {
+	          if (d3.event.defaultPrevented || y_value(d[3]) == 0)
+	            return;
+	          d3.select("#tooltip").style('display', 'none');
 
-    // Draw the lines
-    var line_value = d3.svg.line()
-      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
-      .y(function(d) { return y_value(d[3]); });
-    var line_count = d3.svg.line()
-      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
-      .y(function(d) { return y_count(d[1]); });
+	          window.location = url_prefix
+	            + "/data/input/distributionorder/"
+	            + "?noautofilter&startdate__gte=" + d[4]
+	            + "&startdate__lt=" + d[5];
 
-    svg.append("svg:path")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr('class', 'graphline')
-      .attr("stroke","#8BBA00")
-      .attr("d", line_value(data));
-    svg.append("svg:path")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr('class', 'graphline')
-      .attr("stroke","#FFC000")
-      .attr("d", line_count(data));
+	          d3.event.stopPropagation();
+	        });
+
     """ % force_str(
         _("units")
     )
@@ -617,7 +637,8 @@ class DistributionOrderWidget(Widget):
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
          count(operationplan.name), coalesce(round(sum(quantity)),0),
-         coalesce(round(sum(item.cost * quantity)),0)
+         coalesce(round(sum(item.cost * quantity)),0),
+         to_char(common_bucketdetail.startdate, %%s), to_char(common_bucketdetail.enddate, %%s)
       from common_bucketdetail
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
@@ -628,12 +649,15 @@ class DistributionOrderWidget(Widget):
         on operationplan.item_id = item.name
       where bucket_id = %%s and common_bucketdetail.enddate > %%s
         and common_bucketdetail.startdate < %%s
-      group by common_bucketdetail.name, common_bucketdetail.startdate
+      and exists (select 1 from operationplan where type = 'DO'
+       and status in ('confirmed', 'proposed', 'approved')
+       and startdate >= common_bucketdetail.startdate)
+      group by common_bucketdetail.name, common_bucketdetail.startdate, common_bucketdetail.enddate
       union all
       select
         1, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(item.cost * quantity)),0)
+        coalesce(round(sum(item.cost * quantity)),0), null, null
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -642,7 +666,7 @@ class DistributionOrderWidget(Widget):
       select
         2, null, null, count(*),
         coalesce(round(sum(item.cost)),0),
-        coalesce(round(sum(item.cost * quantity)),0)
+        coalesce(round(sum(item.cost * quantity)),0), null, null
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -652,7 +676,7 @@ class DistributionOrderWidget(Widget):
       select
         3, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(item.cost * quantity)),0)
+        coalesce(round(sum(item.cost * quantity)),0), null, null
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -666,6 +690,8 @@ class DistributionOrderWidget(Widget):
         cursor.execute(
             query,
             (
+                "%s HH24:MI:SS" % (settings.DATE_FORMAT_JS,),
+                "%s HH24:MI:SS" % (settings.DATE_FORMAT_JS,),
                 request.report_bucket,
                 request.report_startdate,
                 request.report_enddate,
@@ -680,34 +706,36 @@ class DistributionOrderWidget(Widget):
         for rec in cursor.fetchall():
             if rec[0] == 0:
                 result.append(
-                    "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
-                    % (rec[1], rec[3], rec[4], rec[5])
+                    "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+                    % (rec[1], rec[3], rec[4], rec[5], rec[6], rec[7])
                 )
-            elif rec[0] == 1:
+            elif rec[0] == 1 and rec[3] > 0:
                 result.append(
-                    '</table><div class="row"><div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
-                        rec[3],
-                        rec[4],
+                        f"{rec[3]:,}",
+                        f"{rec[4]:,}",
                         force_str(_("units")),
                         currency[0],
-                        rec[5],
+                        f"{rec[5]:,}",
                         currency[1],
                         request.prefix,
                         force_str(_("Review")),
                         force_str(_("confirmed orders")),
                     )
                 )
-            elif rec[0] == 2 and fence1:
+            elif rec[0] == 1:
+                result.append('</table><div class="row">')
+            elif rec[0] == 2 and fence1 and rec[3] > 0:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
-                        rec[3],
-                        rec[4],
+                        f"{rec[3]:,}",
+                        f"{rec[4]:,}",
                         force_str(_("units")),
                         currency[0],
-                        rec[5],
+                        f"{rec[5]:,}",
                         currency[1],
                         request.prefix,
                         limit_fence1.strftime("%Y-%m-%d"),
@@ -718,16 +746,16 @@ class DistributionOrderWidget(Widget):
                         ),
                     )
                 )
-            elif fence2:
+            elif rec[0] == 3 and fence2 and rec[3] > 0:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
-                        rec[3],
-                        rec[4],
+                        f"{rec[3]:,}",
+                        f"{rec[4]:,}",
                         force_str(_("units")),
                         currency[0],
-                        rec[5],
+                        f"{rec[5]:,}",
                         currency[1],
                         request.prefix,
                         limit_fence2.strftime("%Y-%m-%d"),
@@ -1027,7 +1055,7 @@ class PurchaseOrderWidget(Widget):
                     "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
                     % (rec[1], rec[3], rec[4], rec[5], rec[6], rec[7])
                 )
-            elif rec[0] == 1:
+            elif rec[0] == 1 and rec[3] > 0:
                 result.append(
                     '</table><div class="row"><div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
@@ -1042,6 +1070,8 @@ class PurchaseOrderWidget(Widget):
                         force_str(_("confirmed orders")),
                     )
                 )
+            elif rec[0] == 1:
+                result.append('</table><div class="row">')
             elif rec[0] == 2 and fence1 and rec[3] > 0:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(

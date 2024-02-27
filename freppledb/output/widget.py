@@ -24,6 +24,7 @@
 from datetime import timedelta
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.http import HttpResponse
@@ -510,7 +511,7 @@ class DistributionOrderWidget(Widget):
       var name = $(this).children('td').first();
       var count = name.next();
       var units = count.next();
-      var value = units.next()
+      var value = units.next();
       var el = [name.text(), parseFloat(count.text()), parseFloat(units.text()), parseFloat(value.text())];
       data.push(el);
       domain_x.push(el[0]);
@@ -790,7 +791,9 @@ class PurchaseOrderWidget(Widget):
       var count = name.next();
       var units = count.next()
       var value = units.next()
-      var el = [name.text(), parseFloat(count.text()), parseFloat(units.text()), parseFloat(value.text())];
+      var startdate = value.next();
+      var enddate = startdate.next();
+      var el = [name.text(), parseFloat(count.text()), parseFloat(units.text()), parseFloat(value.text()), startdate.text(), enddate.text()];
       data.push(el);
       domain_x.push(el[0]);
       if (el[1] > max_count) max_count = el[1];
@@ -854,11 +857,23 @@ class PurchaseOrderWidget(Widget):
       .attr("width", x.rangeBand())
       .attr('fill', '#828915')
       .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br><span style="color: #FFC000;">'+ numberWithCommas(d[1]) + " POs</span> / " + numberWithCommas(d[2]) + ' %s / ' + currency[0] + ' <span style="color: #8BBA00;">' + numberWithCommas(d[3]) + currency[1] + "</span>");
+        graph.showTooltip(d[0] + '<br>'+ numberWithCommas(d[1]) + " POs / " + numberWithCommas(d[2]) + ' %s / ' + currency[0] + ' ' + numberWithCommas(d[3]) + currency[1] );
         $("#tooltip").css('background-color','black').css('color','white');
         })
       .on("mousemove", graph.moveTooltip)
-      .on("mouseout", graph.hideTooltip);
+      .on("mouseout", graph.hideTooltip)
+      .on("click", function(d) {
+	          if (d3.event.defaultPrevented || y_value(d[3]) == 0)
+	            return;
+	          d3.select("#tooltip").style('display', 'none');
+
+	          window.location = url_prefix
+	            + "/data/input/purchaseorder/"
+	            + "?noautofilter&startdate__gte=" + d[4]
+	            + "&startdate__lt=" + d[5];
+
+	          d3.event.stopPropagation();
+	        });
 
     """ % force_str(
         _("units")
@@ -883,7 +898,8 @@ class PurchaseOrderWidget(Widget):
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
          count(operationplan.name), coalesce(round(sum(quantity)),0),
-         coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0)
+         coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0),
+         to_char(common_bucketdetail.startdate, %%s), to_char(common_bucketdetail.enddate, %%s)
       from common_bucketdetail
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
@@ -901,12 +917,12 @@ class PurchaseOrderWidget(Widget):
       and exists (select 1 from operationplan where type = 'PO'
        and status in ('confirmed', 'proposed', 'approved')
        and startdate >= common_bucketdetail.startdate)
-      group by common_bucketdetail.name, common_bucketdetail.startdate
+      group by common_bucketdetail.name, common_bucketdetail.startdate, common_bucketdetail.enddate
       union all
       select
         1, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0)
+        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0), null, null
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -920,7 +936,7 @@ class PurchaseOrderWidget(Widget):
       select
         2, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0)
+        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0), null, null
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -934,7 +950,7 @@ class PurchaseOrderWidget(Widget):
       select
         3, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0)
+        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0), null, null
       from operationplan
       inner join item
         on operationplan.item_id = item.name
@@ -948,7 +964,7 @@ class PurchaseOrderWidget(Widget):
       select
         4, null, null, count(*),
         coalesce(round(sum(quantity)),0),
-        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0)
+        coalesce(round(sum(coalesce(itemsupplier.cost,item.cost) * quantity)),0), null, null
       from operationplan
       inner join item
       on operationplan.item_id = item.name
@@ -973,6 +989,8 @@ class PurchaseOrderWidget(Widget):
             cursor.execute(
                 query,
                 (
+                    "%s HH24:MI:SS" % (settings.DATE_FORMAT_JS,),
+                    "%s HH24:MI:SS" % (settings.DATE_FORMAT_JS,),
                     request.report_bucket,
                     request.report_startdate,
                     request.report_enddate,
@@ -989,6 +1007,8 @@ class PurchaseOrderWidget(Widget):
             cursor.execute(
                 query,
                 (
+                    "%s HH24:MI:SS" % (settings.DATE_FORMAT_JS,),
+                    "%s HH24:MI:SS" % (settings.DATE_FORMAT_JS,),
                     request.report_bucket,
                     request.report_startdate,
                     request.report_enddate,
@@ -1004,8 +1024,8 @@ class PurchaseOrderWidget(Widget):
         for rec in cursor.fetchall():
             if rec[0] == 0:
                 result.append(
-                    "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
-                    % (rec[1], rec[3], rec[4], rec[5])
+                    "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+                    % (rec[1], rec[3], rec[4], rec[5], rec[6], rec[7])
                 )
             elif rec[0] == 1:
                 result.append(

@@ -253,7 +253,8 @@ class ReportByDemand(GridReport):
                 (coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
                 operationplan.reference::text,
                 0::numeric as pegged_x,
-                operationplan.quantity::numeric as pegged_y
+                operationplan.quantity::numeric as pegged_y,
+                operationplan.owner_id
                 from operationplan
                 inner join demand on demand.name = %s
                     inner join lateral
@@ -261,11 +262,12 @@ class ReportByDemand(GridReport):
                     (t->>'quantity')::numeric as quantity from jsonb_array_elements(demand.plan->'pegging') t) t on true
                     where operationplan.reference = t.reference
                 union all
-                select cte.level+1,
+                select case when upstream_opplan.owner_id = cte.owner_id then cte.level else cte.level+1 end,
                 cte.path||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
                 t1.upstream_reference::text,
                 greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
-                least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y
+                least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y,
+                upstream_opplan.owner_id
                 from operationplan
                 inner join cte on cte.reference = operationplan.reference
                 inner join lateral
@@ -324,7 +326,7 @@ class ReportByDemand(GridReport):
 						   and rownum < child.rownum)
 		)
           select
-            pegging.due,
+            pegging.due, --0
             operationplan.name,
             pegging.lvl,
             ops.pegged,
@@ -334,7 +336,7 @@ class ReportByDemand(GridReport):
             operationplan.quantity,
             operationplan.status,
             array_agg(operationplanresource.resource_id) FILTER (WHERE operationplanresource.resource_id is not null),
-            operationplan.type,
+            operationplan.type, --10
             case when operationplan.operation_id is not null then 1 else 0 end as show,
             operationplan.color,
             operationplan.reference,
@@ -344,13 +346,14 @@ class ReportByDemand(GridReport):
             operationplan.origin_id,
             operationplan.criticality,
             operationplan.demand_id,
-            extract(epoch from operationplan.delay),
+            extract(epoch from operationplan.delay), -- 20
             pegging.required_quantity,
             operationplan.batch,
             item.description,
             pegging.path,
-            case when operationplan.status = 'proposed' then pegging.required_quantity else 0 end as required_quantity_proposed,
-            case when operationplan.status in ('confirmed','approved','completed','closed') then pegging.required_quantity else 0 end as required_quantity_confirmed
+            case when operationplan.status = 'proposed' then pegging.required_quantity else 0 end as required_quantity_proposed, -- 25
+            case when operationplan.status in ('confirmed','approved','completed','closed') then pegging.required_quantity else 0 end as required_quantity_confirmed, --26
+            operationplan.owner_id --27
           from pegging
           inner join operationplan
             on operationplan.reference = pegging.opplan
@@ -420,10 +423,13 @@ class ReportByDemand(GridReport):
                                 / horizon,
                                 3,
                             ),
-                            "parent": parents.get(rec[2] - 1, None)
-                            if rec[2] and rec[2] >= 1
-                            else None,
+                            "parent": (
+                                parents.get(rec[2] - 1, None)
+                                if rec[2] and rec[2] >= 1
+                                else None
+                            ),
                             "leaf": "true",
+                            "owner": rec[27],
                             "expanded": "true",
                             "resource": sorted(rec[9]) if rec[9] else None,
                             "required_quantity": rec[21],
@@ -451,9 +457,9 @@ class ReportByDemand(GridReport):
                                     "enddate": str(rec[6]),
                                     "status": rec[8],
                                     "reference": rec[13],
-                                    "color": round(rec[12])
-                                    if rec[12] is not None
-                                    else None,
+                                    "color": (
+                                        round(rec[12]) if rec[12] is not None else None
+                                    ),
                                     "type": rec[10],
                                     "item": rec[14],
                                     "location": rec[15],
@@ -489,9 +495,9 @@ class ReportByDemand(GridReport):
                                 "enddate": str(rec[6]),
                                 "status": rec[8],
                                 "reference": rec[13],
-                                "color": round(rec[12])
-                                if rec[12] is not None
-                                else None,
+                                "color": (
+                                    round(rec[12]) if rec[12] is not None else None
+                                ),
                                 "type": rec[10],
                                 "item": rec[14],
                                 "location": rec[15],
@@ -558,18 +564,20 @@ class ReportByDemand(GridReport):
                                 response[indexOfOperation[rec["operation"]]][
                                     "resource"
                                 ] = []
-                            response[indexOfOperation[rec["operation"]]][
-                                "resource"
-                            ] = sorted(
-                                response[indexOfOperation[rec["operation"]]]["resource"]
-                                + [
-                                    r
-                                    for r in rec["resource"]
-                                    if r
-                                    not in response[indexOfOperation[rec["operation"]]][
+                            response[indexOfOperation[rec["operation"]]]["resource"] = (
+                                sorted(
+                                    response[indexOfOperation[rec["operation"]]][
                                         "resource"
                                     ]
-                                ]
+                                    + [
+                                        r
+                                        for r in rec["resource"]
+                                        if r
+                                        not in response[
+                                            indexOfOperation[rec["operation"]]
+                                        ]["resource"]
+                                    ]
+                                )
                             )
 
                         # aggregate the operationplans:

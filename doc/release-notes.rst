@@ -33,6 +33,16 @@ This release is scheduled for end February 2024. You can already check out a `pr
 - | Addition of hyperlinks in the network status widget to get detailed information
     on the displayed numbers.
 
+- | The routing suboperations now have the same level in the *upstream/downstream
+    Operations* widgets and in the demand delivery plan. This way, they will all expand/hide
+    in one click.
+
+- | The *forecast widget* was updated not to display too many values on the x-axis. The planner
+    can choose to display the data in different time buckets (month, week, day...).
+
+- | The *manufacturing/distribution/purchase orders widgets* were modified to display clickable
+    bars instead of lines. These widgets display data based on the selected time bucket.
+
 .. rubric:: Odoo integration
 
 - | Switching work orders to alternate work centers in a pool is now fully supported.

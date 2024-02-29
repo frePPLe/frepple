@@ -55,8 +55,13 @@ function showdownstreamoperationplansDrv($window, gettextCatalog) {
 					|| scope.operationplan.downstreamoperationplans[i][11] == 0)
 					scope.operationplan.downstreamoperationplans[j][11] = 2;
 				else if (j == scope.operationplan.downstreamoperationplans.length - 1 ||
-					scope.operationplan.downstreamoperationplans[j][0] >= scope.operationplan.downstreamoperationplans[j + 1][0])
-					scope.operationplan.downstreamoperationplans[j][11] = 3;
+					scope.operationplan.downstreamoperationplans[j][0] >= scope.operationplan.downstreamoperationplans[j + 1][0]) {
+					if (scope.operationplan.downstreamoperationplans[j][12] != null
+						&& scope.operationplan.downstreamoperationplans[j][12] == scope.operationplan.downstreamoperationplans[j + 1][12])
+						scope.operationplan.downstreamoperationplans[j][11] = 1;
+					else
+						scope.operationplan.downstreamoperationplans[j][11] = 3;
+				}
 				else if (scope.operationplan.downstreamoperationplans[j][0] == mylevel + 1
 					&& scope.operationplan.downstreamoperationplans[i][11] == 1)
 					scope.operationplan.downstreamoperationplans[j][11] = 0;

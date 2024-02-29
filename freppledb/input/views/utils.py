@@ -165,9 +165,9 @@ def search(request):
                                 else "/detail/%s/%s/"
                             )
                             % (cls._meta.app_label, cls._meta.object_name.lower()),
-                            "removeTrailingSlash": True
-                            if issubclass(cls, OperationPlan)
-                            else False,
+                            "removeTrailingSlash": (
+                                True if issubclass(cls, OperationPlan) else False
+                            ),
                             "value": i[0],
                             "display": "%s%s"
                             % (
@@ -439,9 +439,9 @@ class PathReport(GridReport):
             "title": force_str(reportclass.objecttype._meta.verbose_name)
             + " "
             + (buffer_name if "buffer_name" in vars() else args[0]),
-            "post_title": _("where used")
-            if reportclass.downstream
-            else _("supply path"),
+            "post_title": (
+                _("where used") if reportclass.downstream else _("supply path")
+            ),
             "downstream": reportclass.downstream,
             "active_tab": reportclass.downstream and "whereused" or "supplypath",
             "model": reportclass.objecttype,
@@ -1431,12 +1431,14 @@ class PathReport(GridReport):
                 "duration_per": None,
                 "quantity": 1,
                 "buffers": None,
-                "parent": reportclass.operation_dict[i[11]]
-                if i[11]
-                else (
-                    reportclass.operation_dict[previousOperation]
-                    if previousOperation
-                    else None
+                "parent": (
+                    reportclass.operation_dict[i[11]]
+                    if i[11]
+                    else (
+                        reportclass.operation_dict[previousOperation]
+                        if previousOperation
+                        else None
+                    )
                 ),
                 "leaf": "false",
                 "expanded": "true",
@@ -1448,12 +1450,16 @@ class PathReport(GridReport):
                 "alternate": "false",
                 "blockedby": None,
                 "blocking": None,
-                "rownb": reportclass.routing_operation_position[i[8]][0]
-                if i[8] in reportclass.routing_operation_position
-                else None,
-                "colnb": reportclass.routing_operation_position[i[8]][1]
-                if i[8] in reportclass.routing_operation_position
-                else None,
+                "rownb": (
+                    reportclass.routing_operation_position[i[8]][0]
+                    if i[8] in reportclass.routing_operation_position
+                    else None
+                ),
+                "colnb": (
+                    reportclass.routing_operation_position[i[8]][1]
+                    if i[8] in reportclass.routing_operation_position
+                    else None
+                ),
             }
             reportclass.node_count.add(i[8])
             yield parentoperation
@@ -1481,27 +1487,31 @@ class PathReport(GridReport):
                 "location": i[1],
                 "resources": tuple(json.loads(i[5]).items()) if i[5] else None,
                 "parentoper": i[8],
-                "suboperation": 0
-                if not i[8]
-                else (
-                    reportclass.parent_count_dict[i[8]]
-                    if i[9] == "routing"
-                    else -reportclass.parent_count_dict[i[8]]
+                "suboperation": (
+                    0
+                    if not i[8]
+                    else (
+                        reportclass.parent_count_dict[i[8]]
+                        if i[9] == "routing"
+                        else -reportclass.parent_count_dict[i[8]]
+                    )
                 ),
                 "duration": i[6],
                 "duration_per": i[7],
                 "quantity": abs(bom_quantity),
-                "buffers": tuple(json.loads(i[4]).items())
-                if i[4]
-                else tuple([("%s @ %s" % (i[17], i[1]), 1)])
-                if i[17]
-                else None,
-                "parent": reportclass.operation_dict[i[8]]
-                if i[8]
-                else (
-                    reportclass.operation_dict[previousOperation]
-                    if previousOperation
-                    else None
+                "buffers": (
+                    tuple(json.loads(i[4]).items())
+                    if i[4]
+                    else tuple([("%s @ %s" % (i[17], i[1]), 1)]) if i[17] else None
+                ),
+                "parent": (
+                    reportclass.operation_dict[i[8]]
+                    if i[8]
+                    else (
+                        reportclass.operation_dict[previousOperation]
+                        if previousOperation
+                        else None
+                    )
                 ),
                 "leaf": "false",
                 "expanded": "true",
@@ -1515,12 +1525,16 @@ class PathReport(GridReport):
                 "alternate_operation": (i[11] or i[8] or i[0]),
                 "blockedby": tuple(json.loads(i[21]).items()) if i[21] else None,
                 "blocking": tuple(json.loads(i[22]).items()) if i[22] else None,
-                "rownb": reportclass.routing_operation_position[i[0]][0]
-                if i[0] in reportclass.routing_operation_position
-                else None,
-                "colnb": reportclass.routing_operation_position[i[0]][1]
-                if i[0] in reportclass.routing_operation_position
-                else None,
+                "rownb": (
+                    reportclass.routing_operation_position[i[0]][0]
+                    if i[0] in reportclass.routing_operation_position
+                    else None
+                ),
+                "colnb": (
+                    reportclass.routing_operation_position[i[0]][1]
+                    if i[0] in reportclass.routing_operation_position
+                    else None
+                ),
             }
             reportclass.node_count.add(i[0])
             yield operation
@@ -1888,20 +1902,26 @@ class OperationPlanDetail(View):
                 # Base information
                 res = {
                     "reference": opplan.reference,
-                    "start": opplan.startdate.strftime("%Y-%m-%dT%H:%M:%S")
-                    if opplan.startdate
-                    else None,
-                    "end": opplan.enddate.strftime("%Y-%m-%dT%H:%M:%S")
-                    if opplan.enddate
-                    else None,
-                    "setupend": opplan.plan["setupend"].replace(" ", "T")
-                    if opplan.plan and "setupend" in opplan.plan
-                    else None,
+                    "start": (
+                        opplan.startdate.strftime("%Y-%m-%dT%H:%M:%S")
+                        if opplan.startdate
+                        else None
+                    ),
+                    "end": (
+                        opplan.enddate.strftime("%Y-%m-%dT%H:%M:%S")
+                        if opplan.enddate
+                        else None
+                    ),
+                    "setupend": (
+                        opplan.plan["setupend"].replace(" ", "T")
+                        if opplan.plan and "setupend" in opplan.plan
+                        else None
+                    ),
                     "quantity": float(opplan.quantity),
                     "quantity_completed": float(opplan.quantity_completed or 0),
-                    "criticality": float(opplan.criticality)
-                    if opplan.criticality
-                    else "",
+                    "criticality": (
+                        float(opplan.criticality) if opplan.criticality else ""
+                    ),
                     "delay": opplan.delay.total_seconds() if opplan.delay else "",
                     "status": opplan.status,
                     "type": opplan.type,
@@ -1910,13 +1930,13 @@ class OperationPlanDetail(View):
                     "location": opplan.location_id,
                     "origin": opplan.origin_id,
                     "supplier": opplan.supplier_id,
-                    "supplier__description": opplan.supplier.description
-                    if opplan.supplier
-                    else None,
+                    "supplier__description": (
+                        opplan.supplier.description if opplan.supplier else None
+                    ),
                     "item": opplan.item_id,
-                    "item__description": opplan.item.description
-                    if opplan.item
-                    else None,
+                    "item__description": (
+                        opplan.item.description if opplan.item else None
+                    ),
                     "color": float(opplan.color) if opplan.color else "",
                     "owner": opplan.owner.reference if opplan.owner else None,
                     "batch": opplan.batch,
@@ -2216,15 +2236,17 @@ class OperationPlanDetail(View):
                 (to_char(operationplan.startdate,'YYYYMMDDHH24MISS')||'/'||coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
                 operationplan.reference::text,
                 0::numeric as pegged_x,
-                operationplan.quantity::numeric as pegged_y
+                operationplan.quantity::numeric as pegged_y,
+                operationplan.owner_id
                 from operationplan
                 where reference = %%s
                 union all
-                select cte.level+1,
+                select case when downstream_opplan.owner_id = cte.owner_id then cte.level else cte.level+1 end,
                 cte.path||'/'||to_char(downstream_opplan.startdate,'YYYYMMDDHH24MISS')||'/'||coalesce(downstream_opplan.item_id,'')||'/'||downstream_opplan.reference,
                 t1.downstream_reference::text,
                 greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
-                least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y
+                least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y,
+                downstream_opplan.owner_id
                 from operationplan
                 inner join cte on cte.reference = operationplan.reference
                 inner join lateral
@@ -2252,7 +2274,9 @@ class OperationPlanDetail(View):
                 operationplan.enddate,
                 (pegged_y-pegged_x) as quantity,
                 operationplan.quantity,
-                path from cte
+                path,
+                operationplan.owner_id
+                from cte
                 inner join operationplan on operationplan.reference = cte.reference
                 where cte.level < 25
                 order by cte.path, cte.level desc
@@ -2279,15 +2303,20 @@ class OperationPlanDetail(View):
                                 a[4],  # status
                                 a[5],  # item
                                 a[6],  # location
-                                a[7].strftime(settings.DATETIME_INPUT_FORMATS[0])
-                                if a[7]
-                                else "",  # startdate
-                                a[8].strftime(settings.DATETIME_INPUT_FORMATS[0])
-                                if a[8]
-                                else "",  # enddate
+                                (
+                                    a[7].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                    if a[7]
+                                    else ""
+                                ),  # startdate
+                                (
+                                    a[8].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                    if a[8]
+                                    else ""
+                                ),  # enddate
                                 float(a[9] or 0),  # quantity,
                                 float(a[10] or 0),  # opplan quantity,
                                 0 if a[0] == 1 else 2,
+                                a[12],  # owner_id
                             ]
                         )
 
@@ -2300,15 +2329,17 @@ class OperationPlanDetail(View):
                 (to_char(operationplan.startdate,'YYYYMMDDHH24MISS')||'/'||coalesce(operationplan.item_id,'')||'/'||operationplan.reference)::varchar as path,
                 operationplan.reference::text,
                 0::numeric as pegged_x,
-                operationplan.quantity::numeric as pegged_y
+                operationplan.quantity::numeric as pegged_y,
+                operationplan.owner_id
                 from operationplan
                 where reference = %s
                 union all
-                select cte.level+1,
+                select case when upstream_opplan.owner_id = cte.owner_id then cte.level else cte.level+1 end,
                 cte.path||'/'||to_char(upstream_opplan.startdate,'YYYYMMDDHH24MISS')||'/'||coalesce(upstream_opplan.item_id,'')||'/'||upstream_opplan.reference,
                 t1.upstream_reference::text,
                 greatest(t1.x, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x)) as pegged_x,
-                least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y
+                least(t1.y, t1.x + (t1.y-t1.x)/(t2.y-t2.x)*(cte.pegged_x-t2.x) + (cte.pegged_y-cte.pegged_x)*(t1.y-t1.x)/(t2.y-t2.x)) as pegged_y,
+                upstream_opplan.owner_id
                 from operationplan
                 inner join cte on cte.reference = operationplan.reference
                 inner join lateral
@@ -2335,7 +2366,9 @@ class OperationPlanDetail(View):
                 operationplan.enddate,
                 (pegged_y-pegged_x) as quantity,
                 operationplan.quantity,
-                path from cte
+                path,
+                operationplan.owner_id
+                from cte
                 inner join operationplan on operationplan.reference = cte.reference
                 where cte.level < 25
                 order by cte.path, cte.level desc
@@ -2355,15 +2388,20 @@ class OperationPlanDetail(View):
                                 a[4],  # status
                                 a[5],  # item
                                 a[6],  # location
-                                a[7].strftime(settings.DATETIME_INPUT_FORMATS[0])
-                                if a[7]
-                                else "",  # startdate
-                                a[8].strftime(settings.DATETIME_INPUT_FORMATS[0])
-                                if a[8]
-                                else "",  # enddate
+                                (
+                                    a[7].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                    if a[7]
+                                    else ""
+                                ),  # startdate
+                                (
+                                    a[8].strftime(settings.DATETIME_INPUT_FORMATS[0])
+                                    if a[8]
+                                    else ""
+                                ),  # enddate
                                 float(a[9] or 0),  # quantity,
                                 float(a[10] or 0),  # opplan quantity
                                 0 if a[0] == 1 else 2,
+                                a[12],  # owner_id
                             ]
                         )
 

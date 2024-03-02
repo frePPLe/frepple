@@ -14,7 +14,7 @@ Supported distributions
 
 Binary installation packages are available for:
 
-* Ubuntu 20 LTS
+* Ubuntu **20** LTS
 * Red Hat Enterprise Linux 8 (Enterprise Edition only, deprecated in favor of containers)
 * Rocky Linux 8 (Enterprise Edition only, deprecated in favor of containers)
 * Suse 15 (Enterprise Edition only, deprecated in favor of containers)

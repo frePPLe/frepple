@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+. /etc/lsb-release
+if ! [ "x$DISTRIB_ID" = "xUbuntu" ] || ! [ "x$DISTRIB_RELEASE" = "x20.04" ]
+then
+  echo "\n\nYou can only use this installer on Ubuntu 20.04\n\n"
+  exit 1
+fi
+
+exit 0

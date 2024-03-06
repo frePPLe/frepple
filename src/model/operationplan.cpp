@@ -2164,7 +2164,7 @@ int OperationPlan::getCriticality() const {
   for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p) {
     const OperationPlan* m = p.getOperationPlan();
     if (opplans.find(m) != opplans.end())
-      break;
+      continue;
     else
       opplans.insert(m);
     vector<Duration>::size_type lvl = p.getLevel();
@@ -2201,7 +2201,7 @@ Duration OperationPlan::getDelay() const {
   for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p) {
     const OperationPlan* m = p.getOperationPlan();
     if (opplans.find(m) != opplans.end())
-      break;
+      continue;
     else
       opplans.insert(m);
     vector<Duration>::size_type lvl = p.getLevel();

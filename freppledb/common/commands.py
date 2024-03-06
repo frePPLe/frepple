@@ -109,8 +109,8 @@ def clean_value(value):
     """
     if value is None:
         return "\\N"
-    elif "\n" in value or "\\" in value:
-        return value.replace("\\", "\\\\").replace("\n", "\\n")
+    elif "\n" in value or "\\" in value or "\r" in value:
+        return value.replace("\\", "\\\\").replace("\n", "\\n").replace("\r", "\\r")
     else:
         return value
 

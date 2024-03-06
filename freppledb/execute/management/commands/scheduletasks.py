@@ -310,7 +310,8 @@ class Command(BaseCommand):
                 else:
                     try:
                         EmailMessage(
-                            subject="FrePPLe successfully executed %s" % schedule.name,
+                            subject="FrePPLe successfully executed %s on %s"
+                            % (schedule.name, database),
                             body="Task %s completed succesfully" % task.id,
                             to=correctedRecipients,
                         ).send()
@@ -372,7 +373,8 @@ class Command(BaseCommand):
                     else:
                         try:
                             EmailMessage(
-                                subject="FrePPLe failed executing %s" % schedule.name,
+                                subject="FrePPLe failed executing %s on %s"
+                                % (schedule.name, database),
                                 body="Task %s failed: %s" % (task.id, e),
                                 to=correctedRecipients,
                             ).send()

@@ -59,24 +59,53 @@ class ForecastWidget(Widget):
     var data = [];
     var max_val = 0;
     var max_length = 0;
-    $("#forecast").next().find("tr").each(function() {
-      var row = [];
-      $("td", this).each(function() {
-        if (row.length == 0) {
-          domain_x.push($(this).html());
-          row.push($(this).html());
-          if ($(this).html().length > max_length)
-            max_length = $(this).html().length;
-        }
-        else {
-          var val = parseFloat($(this).html());
-          row.push(val);
-          if (val > max_val)
-            max_val = val;
-        }
+
+    function getData(d) {
+
+	// Reset variables on redraw
+    domain_x = [];
+    data = [];
+    max_val = 0;
+    max_length = 0;
+
+    $("#forecast").next().find("tr").each(function(idx) {
+      var name = $(this).children('td').first();
+      var fcstvalue = name.next();
+      var orderstotalvalue = fcstvalue.next();
+      var ordersopenvalue = orderstotalvalue.next();
+      var fcst = ordersopenvalue.next();
+      var orderstotal = fcst.next();
+      var ordersopen = orderstotal.next();
+      var el = [];
+      if (d==="value")
+        el = [name.text(), parseFloat(fcstvalue.text()), parseFloat(orderstotalvalue.text()), parseFloat(ordersopenvalue.text())];
+      else
+        el = [name.text(), parseFloat(fcst.text()), parseFloat(orderstotal.text()), parseFloat(ordersopen.text())];
+      data.push(el);
+      domain_x.push(el[0]);
+      if (el[0].length > max_length)
+            max_length = el[0].length;
+
+      if (el[1] > max_val) max_val = el[1];
+      if (el[2] > max_val) max_val = el[2];
+      if (el[3] > max_val) max_val = el[3];
       });
-      data.push(row);
-    });
+    }
+
+
+    // List of groups
+    var allGroup = ["value", "unit"]
+
+    // add the options to the button
+    d3.select("#selectButton")
+      .selectAll('myOptions')
+     	.data(allGroup)
+      .enter()
+    	.append('option')
+      .text(function (d) { return d; }) // text showed in the menu
+      .attr("value", function (d) { return d; }) // corresponding value returned by the button
+
+    getData("value");
 
     var margin_y = 50;  // Width allocated for the Y-axis
     var margin_x = 9 * max_length;  // Height allocated for the X-axis
@@ -86,97 +115,126 @@ class ForecastWidget(Widget):
     // Reduce the number of displayed points if too many
     var nb_of_ticks = (svgrectangle['width'] - margin_y - 10) / 20;
 
-    var visible=[]
-    var step_visible = Math.ceil(domain_x.length / nb_of_ticks);
-    for (let x=0; x < domain_x.length; x++){
-      if (x==0 || x % step_visible == 0)
-        visible.push(domain_x[x]);
+    function draw() {
+      
+
+      var visible=[]
+      var step_visible = Math.ceil(domain_x.length / nb_of_ticks);
+      for (let x=0; x < domain_x.length; x++){
+        if (x==0 || x % step_visible == 0)
+          visible.push(domain_x[x]);
+      }
+
+      // Define axis
+      var x = d3.scale.ordinal()
+        .domain(domain_x)
+        .rangeBands([0, svgrectangle['width'] - margin_y - 10], 0);
+      var x_width = (svgrectangle['width'] - margin_y - 10) / data.length;
+      var y = d3.scale.linear()
+        .range([svgrectangle['height'] - margin_x - 10, 0])
+        .domain([0, max_val]);
+      var y_zero = y(0);
+
+      var bar = svg.selectAll("g")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("transform", function(d, i) { return "translate(" + ((i) * x.rangeBand() + margin_y) + ",10)"; });
+
+      // Draw x-axis
+      var xAxis = d3.svg.axis().scale(x)
+          .orient("bottom").tickValues(visible);
+
+      svg.append("g")
+        .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
+        .attr("class", "x axis")
+        .call(xAxis)
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.75em")
+        .attr("dy", "-.25em")
+        .attr("transform", "rotate(-90)" );
+
+      // Draw y-axis
+      var yAxis = d3.svg.axis().scale(y)
+          .orient("left")
+          .ticks(5)
+          .tickFormat(d3.format("s"));
+      svg.append("g")
+        .attr("transform", "translate(" + margin_y + ", 10 )")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+      // Draw the closed orders
+      bar.append("rect")
+        .attr("x", 2)
+        .attr("y", function(d) {return y(d[2]-d[3]);})
+        .attr("height", function(d) {return y_zero - y(d[2]-d[3]);})
+        .attr("rx","1")
+        .attr("width", Math.max(1, x_width - 2))
+        .style("fill", "#828915");
+
+      // Draw the open orders
+      bar.append("rect")
+        .attr("x", 2)
+        .attr("y", function(d) {return y(d[2]);})
+        .attr("height", function(d) {return y(d[2] - d[3]) - y(d[2]);})
+        .attr("rx","1")
+        .attr("width", Math.max(1, x_width - 2))
+        .style("fill", "#FFC000");
+
+      // Draw invisible rectangles for the hoverings
+      bar.append("rect")
+        .attr("height", svgrectangle['height'] - 10 - margin_x)
+        .attr("width", x.rangeBand())
+        .attr("fill-opacity", 0)
+        .on("mouseover", function(d) {
+          graph.showTooltip(
+            d[0]
+            + "<br>"
+            + (d3.select("#selectButton").property("value") == "value" ? currency[0]:"")
+            + d[1]
+            + " "
+            + (d3.select("#selectButton").property("value") == "value" ? currency[1]:"units")
+            + " forecast<br>"
+            + (d3.select("#selectButton").property("value") == "value" ? currency[0]:"")
+            + (d[2]-d[3])
+            + " "
+            + (d3.select("#selectButton").property("value") == "value" ? currency[1]:"units")
+            + " closed sales orders<br>"
+            + (d3.select("#selectButton").property("value") == "value" ? currency[0]:"")
+            + d[3]
+            + " "
+            + (d3.select("#selectButton").property("value") == "value" ? currency[1]:"units")
+            + " open sales orders");
+          $("#tooltip").css('background-color','black').css('color','white');
+          })
+        .on("mousemove", graph.moveTooltip)
+        .on("mouseout", graph.hideTooltip);
+
+      // Draw the forecast line
+      var line = d3.svg.line()
+        .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
+        .y(function(d) { return y(d[1]); });
+
+      svg.append("svg:path")
+        .attr("transform", "translate(" + margin_y + ", 10 )")
+        .attr('class', 'graphline')
+        .attr("stroke","#8BBA00")
+        .attr("d", line(data));
     }
+    draw();
 
-    // Define axis
-    var x = d3.scale.ordinal()
-      .domain(domain_x)
-      .rangeBands([0, svgrectangle['width'] - margin_y - 10], 0);
-    var x_width = (svgrectangle['width'] - margin_y - 10) / data.length;
-    var y = d3.scale.linear()
-      .range([svgrectangle['height'] - margin_x - 10, 0])
-      .domain([0, max_val]);
-    var y_zero = y(0);
 
-    var bar = svg.selectAll("g")
-     .data(data)
-     .enter()
-     .append("g")
-     .attr("transform", function(d, i) { return "translate(" + ((i) * x.rangeBand() + margin_y) + ",10)"; });
-
-    // Draw x-axis
-    var xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").tickValues(visible);
-
-    svg.append("g")
-      .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
-      .attr("class", "x axis")
-      .call(xAxis)
-      .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("dx", "-.75em")
-      .attr("dy", "-.25em")
-      .attr("transform", "rotate(-90)" );
-
-    // Draw y-axis
-    var yAxis = d3.svg.axis().scale(y)
-        .orient("left")
-        .ticks(5)
-        .tickFormat(d3.format("s"));
-    svg.append("g")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr("class", "y axis")
-      .call(yAxis);
-
-    // Draw the closed orders
-    bar.append("rect")
-      .attr("x", 2)
-      .attr("y", function(d) {return y(d[2]-d[3]);})
-      .attr("height", function(d) {return y_zero - y(d[2]-d[3]);})
-      .attr("rx","1")
-      .attr("width", Math.max(1, x_width - 2))
-      .style("fill", "#828915");
-
-    // Draw the open orders
-    bar.append("rect")
-      .attr("x", 2)
-      .attr("y", function(d) {return y(d[2]);})
-      .attr("height", function(d) {return y(d[2] - d[3]) - y(d[2]);})
-      .attr("rx","1")
-      .attr("width", Math.max(1, x_width - 2))
-      .style("fill", "#FFC000");
-
-    // Draw invisible rectangles for the hoverings
-    bar.append("rect")
-      .attr("height", svgrectangle['height'] - 10 - margin_x)
-      .attr("width", x.rangeBand())
-      .attr("fill-opacity", 0)
-      .on("mouseover", function(d) {
-        graph.showTooltip(
-          d[0] + "<br>" + currency[0] +
-          + d[1] + currency[1] + " forecast<br>"
-          + currency[0] + (d[2]-d[3]) + currency[1] + " closed sales orders<br>"
-          + currency[0] + d[3] + currency[1] + " open sales orders");
-        $("#tooltip").css('background-color','black').css('color','white');
-        })
-      .on("mousemove", graph.moveTooltip)
-      .on("mouseout", graph.hideTooltip);
-
-    // Draw the forecast line
-    var line = d3.svg.line()
-      .x(function(d) { return x(d[0]) + x.rangeBand() / 2; })
-      .y(function(d) { return y(d[1]); });
-
-    svg.append("svg:path")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr('class', 'graphline')
-      .attr("stroke","#8BBA00")
-      .attr("d", line(data));
+    // When the button is changed, update data and redraw()
+    d3.select("#selectButton").on("change", function(d) {
+        // recover the option that has been chosen
+        var selectedOption = d3.select(this).property("value")
+        // run the updateChart function with this selected option
+        getData(selectedOption);
+        d3.selectAll("svg > *").remove();
+        draw();
+    })
     """
 
     @classmethod
@@ -192,6 +250,7 @@ class ForecastWidget(Widget):
         )
 
         result = [
+            '<select id="selectButton"></select>',
             '<svg class="chart" id="forecast" style="width:100%; height: 100%"></svg>',
             '<table style="display:none">',
         ]
@@ -199,12 +258,18 @@ class ForecastWidget(Widget):
             """
             select
               common_bucketdetail.name,
-              round(sum(greatest((value->>'forecasttotalvalue')::numeric,0))) as fcst,
+              round(sum(greatest((value->>'forecasttotalvalue')::numeric,0))) as fcstvalue,
               round(sum(greatest(0,
                 (value->>'orderstotalvalue')::numeric +
                 coalesce((value->>'ordersadjustmentvalue')::numeric,0)
+                ))) as orderstotalvalue,
+              round(sum(greatest((value->>'ordersopenvalue')::numeric,0))) as ordersopenvalue,
+              round(sum(greatest((value->>'forecasttotal')::numeric,0))) as fcst,
+              round(sum(greatest(0,
+                (value->>'orderstotal')::numeric +
+                coalesce((value->>'ordersadjustment')::numeric,0)
                 ))) as orderstotal,
-              round(sum(greatest((value->>'ordersopenvalue')::numeric,0))) as ordersopen
+              round(sum(greatest((value->>'ordersopen')::numeric,0))) as ordersopen
             from common_bucketdetail
             left outer join forecastplan
               on item_id = (select name from item where item.lvl = 0 limit 1)
@@ -226,8 +291,8 @@ class ForecastWidget(Widget):
         )
         for res in cursor.fetchall():
             result.append(
-                '<tr><td class="name">%s</td><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>'
-                % (escape(res[0]), res[1], res[2], res[3])
+                '<tr><td class="name">%s</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>'
+                % (escape(res[0]), res[1], res[2], res[3], res[4], res[5], res[6])
             )
         result.append("</table>")
         return HttpResponse("\n".join(result))

@@ -6,6 +6,7 @@
 
 function updateApp(appname, action, el) {
    $(el).find(".fa-cog").removeClass("d-none");
+   $("#installedapps .btn-sm, #installableapps .btn-sm").prop('disabled', true);
    $.ajax({
       url: window.location.href,
       type: 'POST',
@@ -19,10 +20,12 @@ function updateApp(appname, action, el) {
 		setTimeout(function(){
 			window.location.href = window.location.href;
 			$(el).find(".fa-cog").addClass("d-none");
+			$("#installedapps .btn-sm, #installableapps .btn-sm").prop('disabled', false);
 		}, 2000);
 	  },
       error: function(result, stat, errorThrown) {
 		$(el).find(".fa-cog").addClass("d-none");
+		$("#installedapps .btn-sm, #installableapps .btn-sm").prop('disabled', false);
 		ajaxerror(result, stat, errorThrown)
 	  }
     });
@@ -62,7 +65,7 @@ function updateApp(appname, action, el) {
 		<h1>{% trans "installed apps"|capfirst %}</h1>
 	</div>
 </div>
-<div class="row mb-3 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-4">
+<div class="row mb-3 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-4" id="installedapps">
 	{% for app in apps %}{% if app.installed %}
 	<div class="col d-flex align-items-stretch">
 	<div class="card w-100">
@@ -93,7 +96,7 @@ function updateApp(appname, action, el) {
 		<h1>{% trans "optional extra apps"|capfirst %}</h1>
 	</div>
 </div>
-<div class="row mb-2 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-4">
+<div class="row mb-2 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-4" id="installableapps">
 	{% for app in apps %}{% if not app.installed %}
 	<div class="col d-flex align-items-stretch">
 	<div class="card w-100">

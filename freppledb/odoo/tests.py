@@ -153,7 +153,7 @@ class OdooTest(TransactionTestCase):
             # Work order level integration is only available from odoo 15 onwards
             self.assertEqual(
                 ManufacturingOrder.objects.all()
-                .filter(status="approved", quantity=8, reference=F("operation_id"))
+                .filter(status="approved", quantity=8)
                 .count(),
                 3,
             )

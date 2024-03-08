@@ -97,7 +97,7 @@ class ForecastWidget(Widget):
     var allGroup = ["value", "unit"]
 
     // add the options to the button
-    d3.select("#selectButton")
+    d3.select("#fcst_selectButton")
       .selectAll('myOptions')
      	.data(allGroup)
       .enter()
@@ -116,7 +116,6 @@ class ForecastWidget(Widget):
     var nb_of_ticks = (svgrectangle['width'] - margin_y - 10) / 20;
 
     function draw() {
-      
 
       var visible=[]
       var step_visible = Math.ceil(domain_x.length / nb_of_ticks);
@@ -139,6 +138,7 @@ class ForecastWidget(Widget):
       .data(data)
       .enter()
       .append("g")
+      .attr('id','fcst_bar')
       .attr("transform", function(d, i) { return "translate(" + ((i) * x.rangeBand() + margin_y) + ",10)"; });
 
       // Draw x-axis
@@ -148,6 +148,7 @@ class ForecastWidget(Widget):
       svg.append("g")
         .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
         .attr("class", "x axis")
+        .attr( 'id', 'fcst_xaxis' )
         .call(xAxis)
         .selectAll("text")
         .style("text-anchor", "end")
@@ -163,6 +164,7 @@ class ForecastWidget(Widget):
       svg.append("g")
         .attr("transform", "translate(" + margin_y + ", 10 )")
         .attr("class", "y axis")
+        .attr( 'id', 'fcst_yaxis' )
         .call(yAxis);
 
       // Draw the closed orders
@@ -192,20 +194,20 @@ class ForecastWidget(Widget):
           graph.showTooltip(
             d[0]
             + "<br>"
-            + (d3.select("#selectButton").property("value") == "value" ? currency[0]:"")
-            + d[1]
+            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[0]:"")
+            + d[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             + " "
-            + (d3.select("#selectButton").property("value") == "value" ? currency[1]:"units")
+            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[1]:"units")
             + " forecast<br>"
-            + (d3.select("#selectButton").property("value") == "value" ? currency[0]:"")
-            + (d[2]-d[3])
+            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[0]:"")
+            + (d[2]-d[3]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             + " "
-            + (d3.select("#selectButton").property("value") == "value" ? currency[1]:"units")
+            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[1]:"units")
             + " closed sales orders<br>"
-            + (d3.select("#selectButton").property("value") == "value" ? currency[0]:"")
-            + d[3]
+            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[0]:"")
+            + d[3].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             + " "
-            + (d3.select("#selectButton").property("value") == "value" ? currency[1]:"units")
+            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[1]:"units")
             + " open sales orders");
           $("#tooltip").css('background-color','black').css('color','white');
           })
@@ -220,6 +222,7 @@ class ForecastWidget(Widget):
       svg.append("svg:path")
         .attr("transform", "translate(" + margin_y + ", 10 )")
         .attr('class', 'graphline')
+        .attr('id','fcst_line')
         .attr("stroke","#8BBA00")
         .attr("d", line(data));
     }
@@ -227,12 +230,17 @@ class ForecastWidget(Widget):
 
 
     // When the button is changed, update data and redraw()
-    d3.select("#selectButton").on("change", function(d) {
+    d3.select("#fcst_selectButton").on("change", function(d) {
         // recover the option that has been chosen
         var selectedOption = d3.select(this).property("value")
         // run the updateChart function with this selected option
+
+        d3.selectAll('#fcst_bar').remove();
+        d3.selectAll('#fcst_xaxis').remove();
+        d3.selectAll('#fcst_yaxis').remove();
+        d3.selectAll('#fcst_line').remove();
         getData(selectedOption);
-        d3.selectAll("svg > *").remove();
+
         draw();
     })
     """
@@ -250,7 +258,7 @@ class ForecastWidget(Widget):
         )
 
         result = [
-            '<select id="selectButton"></select>',
+            '<select id="fcst_selectButton"></select>',
             '<svg class="chart" id="forecast" style="width:100%; height: 100%"></svg>',
             '<table style="display:none">',
         ]

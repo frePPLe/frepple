@@ -25,6 +25,7 @@ This section provides an overview of the available actions:
   * :ref:`importfromfolder`
   * :ref:`runwebservice`
   * :ref:`scenario_copy`
+  * :ref:`measure_copy`
   * :ref:`empty`
   * :ref:`odoo_import`
   * :ref:`odoo_export`
@@ -135,9 +136,6 @@ The execution of the task group can be triggered manually. Or it can be schedule
 based on a predefined schedule.
 
 Optionally, a email can be sent out upon failure or success of the execution.
-
-The automated running of a task depends on the availability of the Linux at-command. This feature
-isn't active in the frepple docker container, so the automated scheduling functionality is disabled there.
 
 .. tabs::
 
@@ -473,6 +471,36 @@ upper right hand corner, can also be updated here.
 
         # To promote a scenario named scenario1 into Production (where "default" is the Production name):
         POST /execute/api/scenario_copy/?promote=1&source=scenario1&destination=default
+
+.. _measure_copy:
+
+Measure management
+-------------------
+
+This option allows a user to copy a measure into another measure.
+
+The destination measure can be either a new measure or an existing measure (that will then be overwritten).
+
+
+.. tabs::
+
+   .. tab:: Execution screen
+
+      .. image:: /user-interface/_images/execution-measures.png
+         :alt: Execution screen - Measure Management
+
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+         frepplectl measure_copy source_measure destination_measure
+
+
+   .. tab:: Web API
+
+      .. code-block:: bash
+
+         POST /execute/api/measure_copy/?source=source_measure&destination=destination_measure
 
 .. _backup:
 

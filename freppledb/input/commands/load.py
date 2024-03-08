@@ -324,7 +324,8 @@ class loadParameter(LoadTask):
                     where name in (
                        'currentdate', 'last_currentdate', 'plan.calendar',
                        'COMPLETED.allow_future', 'WIP.produce_full_quantity',
-                       'plan.individualPoolResources', 'plan.minimalBeforeCurrentConstraints'
+                       'plan.individualPoolResources', 'plan.minimalBeforeCurrentConstraints',
+                       'plan.autoFenceOperations'
                        )
                     """
                 )
@@ -354,6 +355,8 @@ class loadParameter(LoadTask):
                         frepple.settings.minimalBeforeCurrentConstraints = (
                             str(rec[1]).lower() == "true"
                         )
+                    elif rec[0] == "plan.autoFenceOperations":
+                        frepple.settings.autofence = float(rec[1]) * 86400
                 current_set = False
                 if "loadplan" in os.environ and last_current_date:
                     try:

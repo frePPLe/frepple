@@ -241,6 +241,7 @@ class ManufacturingOrderWidget(Widget):
     var max_count = 0.0;
     var nth = Math.ceil($("#mo_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);
     var myticks = [];
+
     $("#mo_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
       var count = name.next();
@@ -257,13 +258,23 @@ class ManufacturingOrderWidget(Widget):
       if (idx %% nth == 0) myticks.push(name.text());
       });
 
+    // List of groups
+    var allGroup = ["value", "unit"]
+
+    // add the options to the button
+    d3.select("#mo_selectButton")
+      .selectAll('myOptions')
+     	.data(allGroup)
+      .enter()
+    	.append('option')
+      .text(function (d) { return d; }) // text showed in the menu
+      .attr("value", function (d) { return d; }) // corresponding value returned by the button
+
     // Define axis domains
     var x = d3.scale.ordinal()
       .domain(domain_x)
       .rangeRoundBands([0, svgrectangle['width'] - margin_y - 10], 0);
-    var y_value = d3.scale.linear()
-      .range([svgrectangle['height'] - margin_x - 10, 0])
-      .domain([0, max_value + 5]);
+
     var y_count = d3.scale.linear()
       .range([svgrectangle['height'] - margin_x - 10, 0])
       .domain([0, max_count + 5]);
@@ -281,51 +292,71 @@ class ManufacturingOrderWidget(Widget):
       .attr("dy", "-.25em")
       .attr("transform", "rotate(-90)" );
 
-    // Draw y-axis
-    var yAxis = d3.svg.axis().scale(y_value)
-        .orient("left")
-        .ticks(5)
-        .tickFormat(d3.format("s"));
-    svg.append("g")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr("class", "y axis")
-      .call(yAxis);
-
     // get position of the first tick in the graph
     var tickposition = 0;
     if (typeof $("#xAxisMO").children()[0].attributes !== 'undefined') {
-      tickposition = parseInt($("#xAxisMO").children()[0].attributes.transform.value.slice(10));
+    tickposition = parseInt($("#xAxisMO").children()[0].attributes.transform.value.slice(10));
     }
 
-    // Draw rectangles
-    svg.selectAll("g>rect")
-     .data(data)
-     .enter()
-     .append("g")
-     .append("rect")
-      .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
-      .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) - y_value(d[3]));})
-      .attr("height", function(d, i) {return y_value(0) - y_value(d[3]);})
-      .attr("width", x.rangeBand())
-      .attr('fill', '#828915')
-      .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br>'+ numberWithCommas(d[1]) + " MOs / " + numberWithCommas(d[2]) + ' %s / ' + currency[0] + ' ' + numberWithCommas(d[3]) + currency[1] );
-        $("#tooltip").css('background-color','black').css('color','white');
-        })
-      .on("mousemove", graph.moveTooltip)
-      .on("mouseout", graph.hideTooltip)
-      .on("click", function(d) {
-	          if (d3.event.defaultPrevented || y_value(d[3]) == 0)
-	            return;
-	          d3.select("#tooltip").style('display', 'none');
+    function draw() {
+        var y_value = d3.scale.linear()
+      .range([svgrectangle['height'] - margin_x - 10, 0])
+      .domain([0,
+       (d3.select("#mo_selectButton").property("value") == "value" ? max_value:max_units)
+         + 5]);
 
-	          window.location = url_prefix
-	            + "/data/input/manufacturingorder/"
-	            + "?noautofilter&startdate__gte=" + d[4]
-	            + "&startdate__lt=" + d[5];
+        // Draw y-axis
+        var yAxis = d3.svg.axis().scale(y_value)
+            .orient("left")
+            .ticks(5)
+            .tickFormat(d3.format("s"));
+        svg.append("g")
+        .attr("transform", "translate(" + margin_y + ", 10 )")
+        .attr("class", "y axis")
+        .attr("id","mo_yaxis")
+        .call(yAxis);
 
-	          d3.event.stopPropagation();
-	        });
+        // Draw rectangles
+        svg.selectAll("g>rect")
+        .data(data)
+        .enter()
+        .append("g")
+        .append("rect")
+        .attr("id","mo_bar")
+        .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
+        .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) -
+        (d3.select("#mo_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2])));})
+        .attr("height", function(d, i) {return y_value(0) -
+        (d3.select("#mo_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2]));})
+        .attr("width", x.rangeBand())
+        .attr('fill', '#828915')
+        .on("mouseover", function(d) {
+            graph.showTooltip(d[0] + '<br>'+ numberWithCommas(d[1]) + " MOs / " + numberWithCommas(d[2]) + ' %s / ' + currency[0] + ' ' + numberWithCommas(d[3]) + currency[1] );
+            $("#tooltip").css('background-color','black').css('color','white');
+            })
+        .on("mousemove", graph.moveTooltip)
+        .on("mouseout", graph.hideTooltip)
+        .on("click", function(d) {
+                if (d3.event.defaultPrevented || y_value(d[3]) == 0)
+                    return;
+                d3.select("#tooltip").style('display', 'none');
+
+                window.location = url_prefix
+                    + "/data/input/manufacturingorder/"
+                    + "?noautofilter&startdate__gte=" + d[4]
+                    + "&startdate__lt=" + d[5];
+
+                d3.event.stopPropagation();
+                });
+    }
+    draw();
+
+    // When the button is changed, update data and redraw()
+    d3.select("#mo_selectButton").on("change", function(d) {
+        d3.selectAll('#mo_yaxis').remove();
+        d3.selectAll('#mo_bar').remove();
+        draw();
+    })
 
     """ % force_str(
         _("units")
@@ -416,6 +447,7 @@ class ManufacturingOrderWidget(Widget):
             ),
         )
         result = [
+            '<select id="mo_selectButton"></select>',
             '<svg class="chart" id="mo_chart" style="width:100%; height: 150px;"></svg>',
             '<table id="mo_overview" style="display: none">',
         ]
@@ -520,6 +552,7 @@ class DistributionOrderWidget(Widget):
     var max_count = 0.0;
     var nth = Math.ceil($("#do_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);
     var myticks = [];
+
     $("#do_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
       var count = name.next();
@@ -536,13 +569,24 @@ class DistributionOrderWidget(Widget):
       if (idx %% nth == 0) myticks.push(name.text());
       });
 
+    // List of groups
+    var allGroup = ["value", "unit"]
+
+    // add the options to the button
+    d3.select("#do_selectButton")
+      .selectAll('myOptions')
+     	.data(allGroup)
+      .enter()
+    	.append('option')
+      .text(function (d) { return d; }) // text showed in the menu
+      .attr("value", function (d) { return d; }) // corresponding value returned by the button
+
+
     // Define axis domains
     var x = d3.scale.ordinal()
       .domain(domain_x)
       .rangeRoundBands([0, svgrectangle['width'] - margin_y - 10], 0);
-    var y_value = d3.scale.linear()
-      .range([svgrectangle['height'] - margin_x - 10, 0])
-      .domain([0, max_value + 5]);
+
     var y_count = d3.scale.linear()
       .range([svgrectangle['height'] - margin_x - 10, 0])
       .domain([0, max_count + 5]);
@@ -560,15 +604,7 @@ class DistributionOrderWidget(Widget):
       .attr("dy", "-.25em")
       .attr("transform", "rotate(-90)" );
 
-    // Draw y-axis
-    var yAxis = d3.svg.axis().scale(y_value)
-        .orient("left")
-        .ticks(5)
-        .tickFormat(d3.format("s"));
-    svg.append("g")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr("class", "y axis")
-      .call(yAxis);
+
 
     // get position of the first tick in the graph
     var tickposition = 0;
@@ -576,35 +612,67 @@ class DistributionOrderWidget(Widget):
       tickposition = parseInt($("#xAxisDO").children()[0].attributes.transform.value.slice(10));
     }
 
-    // Draw rectangles
-    svg.selectAll("g>rect")
-     .data(data)
-     .enter()
-     .append("g")
-     .append("rect")
-      .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
-      .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) - y_value(d[3]));})
-      .attr("height", function(d, i) {return y_value(0) - y_value(d[3]);})
-      .attr("width", x.rangeBand())
-      .attr('fill', '#828915')
-      .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br>'+ numberWithCommas(d[1]) + " DOs / " + numberWithCommas(d[2]) + ' %s / ' + currency[0] + ' ' + numberWithCommas(d[3]) + currency[1] );
-        $("#tooltip").css('background-color','black').css('color','white');
-        })
-      .on("mousemove", graph.moveTooltip)
-      .on("mouseout", graph.hideTooltip)
-      .on("click", function(d) {
-	          if (d3.event.defaultPrevented || y_value(d[3]) == 0)
-	            return;
-	          d3.select("#tooltip").style('display', 'none');
+    function draw() {
+        var y_value = d3.scale.linear()
+         .range([svgrectangle['height'] - margin_x - 10, 0])
+         .domain([0,
+         (d3.select("#do_selectButton").property("value") == "value" ? max_value:max_units)
+         + 5]);
 
-	          window.location = url_prefix
-	            + "/data/input/distributionorder/"
-	            + "?noautofilter&startdate__gte=" + d[4]
-	            + "&startdate__lt=" + d[5];
+        // Draw y-axis
+        var yAxis = d3.svg.axis().scale(y_value)
+        .orient("left")
+        .ticks(5)
+        .tickFormat(d3.format("s"));
+        svg.append("g")
+        .attr("transform", "translate(" + margin_y + ", 10 )")
+         .attr("class", "y axis")
+         .attr("id","do_yaxis")
+         .call(yAxis);
 
-	          d3.event.stopPropagation();
-	        });
+        // Draw rectangles
+        svg.selectAll("g>rect")
+        .data(data)
+        .enter()
+        .append("g")
+        .append("rect")
+        .attr("id","do_bar")
+        .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
+        .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) -
+        (d3.select("#do_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2]))
+        );})
+        .attr("height", function(d, i) {return y_value(0) -
+        (d3.select("#do_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2]))
+        ;})
+        .attr("width", x.rangeBand())
+        .attr('fill', '#828915')
+        .on("mouseover", function(d) {
+            graph.showTooltip(d[0] + '<br>'+ numberWithCommas(d[1]) + " DOs / " + numberWithCommas(d[2]) + ' %s / ' + currency[0] + ' ' + numberWithCommas(d[3]) + currency[1] );
+            $("#tooltip").css('background-color','black').css('color','white');
+            })
+        .on("mousemove", graph.moveTooltip)
+        .on("mouseout", graph.hideTooltip)
+        .on("click", function(d) {
+                if (d3.event.defaultPrevented || y_value(d[3]) == 0)
+                    return;
+                d3.select("#tooltip").style('display', 'none');
+
+                window.location = url_prefix
+                    + "/data/input/distributionorder/"
+                    + "?noautofilter&startdate__gte=" + d[4]
+                    + "&startdate__lt=" + d[5];
+
+                d3.event.stopPropagation();
+                });
+    }
+    draw();
+
+    // When the button is changed, update data and redraw()
+    d3.select("#do_selectButton").on("change", function(d) {
+        d3.selectAll('#do_yaxis').remove();
+        d3.selectAll('#do_bar').remove();
+        draw();
+    })
 
     """ % force_str(
         _("units")
@@ -690,6 +758,7 @@ class DistributionOrderWidget(Widget):
             ),
         )
         result = [
+            '<select id="do_selectButton"></select>',
             '<svg class="chart" id="do_chart" style="width:100%; height: 150px;"></svg>',
             '<table id="do_overview" style="display: none">',
         ]
@@ -804,6 +873,7 @@ class PurchaseOrderWidget(Widget):
     var max_count = 0.0;
     var nth = Math.ceil($("#po_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);
     var myticks = [];
+
     $("#po_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
       var count = name.next();
@@ -820,13 +890,23 @@ class PurchaseOrderWidget(Widget):
       if (idx %% nth == 0) myticks.push(name.text());
       });
 
+    // List of groups
+    var allGroup = ["value", "unit"]
+
+    // add the options to the button
+    d3.select("#po_selectButton")
+      .selectAll('myOptions')
+     	.data(allGroup)
+      .enter()
+    	.append('option')
+      .text(function (d) { return d; }) // text showed in the menu
+      .attr("value", function (d) { return d; }) // corresponding value returned by the button
+
     // Define axis domains
     var x = d3.scale.ordinal()
       .domain(domain_x)
       .rangeRoundBands([0, svgrectangle['width'] - margin_y - 10], 0);
-    var y_value = d3.scale.linear()
-      .range([svgrectangle['height'] - margin_x - 10, 0])
-      .domain([0, max_value + 5]);
+
     var y_count = d3.scale.linear()
       .range([svgrectangle['height'] - margin_x - 10, 0])
       .domain([0, max_count + 5]);
@@ -844,54 +924,74 @@ class PurchaseOrderWidget(Widget):
       .attr("dy", "-.25em")
       .attr("transform", "rotate(-90)" );
 
-    // Draw y-axis
-    var yAxis = d3.svg.axis().scale(y_value)
+    // get position of the first tick in the graph
+    var tickposition = 0;
+    if (typeof $("#xAxisPO").children()[0].attributes !== 'undefined') {
+      tickposition = parseInt($("#xAxisPO").children()[0].attributes.transform.value.slice(10));
+    }
+
+    function draw() {
+
+        var y_value = d3.scale.linear()
+        .range([svgrectangle['height'] - margin_x - 10, 0])
+        .domain([0,
+         (d3.select("#po_selectButton").property("value") == "value" ? max_value:max_units)
+           + 5]);
+
+        // Draw y-axis
+         var yAxis = d3.svg.axis().scale(y_value)
         .orient("left")
         .ticks(5)
         .tickFormat(d3.format("s"));
-    svg.append("g")
-      .attr("transform", "translate(" + margin_y + ", 10 )")
-      .attr("class", "y axis")
-      .call(yAxis);
+         svg.append("g")
+        .attr("transform", "translate(" + margin_y + ", 10 )")
+        .attr("class", "y axis")
+        .attr("id","po_yaxis")
+        .call(yAxis);
 
-    // get position of the first tick in the graph
-    var tickposition = 0;
-    var thistarget = $("#xAxisPO").children()[0].attributes;
-    if (typeof thistarget !== 'undefined') {
-      if (typeof thistarget.transform !== 'undefined'){
-        tickposition = parseInt(thistarget.transform.value.slice(10));
-      }
+        // Draw rectangles
+        svg.selectAll("g>rect")
+        .data(data)
+        .enter()
+        .append("g")
+        .append("rect")
+        .attr("id","po_bar")
+        .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
+        .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) -
+        (d3.select("#po_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2]))
+        );})
+        .attr("height", function(d, i) {return y_value(0) -
+        (d3.select("#po_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2]))
+        ;})
+        .attr("width", x.rangeBand())
+        .attr('fill', '#828915')
+        .on("mouseover", function(d) {
+            graph.showTooltip(d[0] + '<br>'+ numberWithCommas(d[1]) + " POs / " + numberWithCommas(d[2]) + ' %s / ' + currency[0] + ' ' + numberWithCommas(d[3]) + currency[1] );
+            $("#tooltip").css('background-color','black').css('color','white');
+            })
+        .on("mousemove", graph.moveTooltip)
+        .on("mouseout", graph.hideTooltip)
+        .on("click", function(d) {
+                if (d3.event.defaultPrevented || y_value(d[3]) == 0)
+                    return;
+                d3.select("#tooltip").style('display', 'none');
+
+                window.location = url_prefix
+                    + "/data/input/purchaseorder/"
+                    + "?noautofilter&startdate__gte=" + d[4]
+                    + "&startdate__lt=" + d[5];
+
+                d3.event.stopPropagation();
+                });
     }
+    draw();
 
-    // Draw rectangles
-    svg.selectAll("g>rect")
-     .data(data)
-     .enter()
-     .append("g")
-     .append("rect")
-      .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
-      .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) - y_value(d[3]));})
-      .attr("height", function(d, i) {return y_value(0) - y_value(d[3]);})
-      .attr("width", x.rangeBand())
-      .attr('fill', '#828915')
-      .on("mouseover", function(d) {
-        graph.showTooltip(d[0] + '<br>'+ numberWithCommas(d[1]) + " POs / " + numberWithCommas(d[2]) + ' %s / ' + currency[0] + ' ' + numberWithCommas(d[3]) + currency[1] );
-        $("#tooltip").css('background-color','black').css('color','white');
-        })
-      .on("mousemove", graph.moveTooltip)
-      .on("mouseout", graph.hideTooltip)
-      .on("click", function(d) {
-	          if (d3.event.defaultPrevented || y_value(d[3]) == 0)
-	            return;
-	          d3.select("#tooltip").style('display', 'none');
-
-	          window.location = url_prefix
-	            + "/data/input/purchaseorder/"
-	            + "?noautofilter&startdate__gte=" + d[4]
-	            + "&startdate__lt=" + d[5];
-
-	          d3.event.stopPropagation();
-	        });
+    // When the button is changed, update data and redraw()
+    d3.select("#po_selectButton").on("change", function(d) {
+        d3.selectAll('#po_yaxis').remove();
+        d3.selectAll('#po_bar').remove();
+        draw();
+    })
 
     """ % force_str(
         _("units")
@@ -1036,6 +1136,7 @@ class PurchaseOrderWidget(Widget):
                 ),
             )
         result = [
+            '<select id="po_selectButton"></select>',
             '<svg class="chart" id="po_chart" style="width:100%; height: 150px;"></svg>',
             '<table id="po_overview" style="display: none">',
         ]

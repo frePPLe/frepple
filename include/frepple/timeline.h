@@ -494,6 +494,7 @@ class TimeLine {
    */
   double getExcess(const Event* curevent,
                    bool consider_min_stock = true) const {
+    if (!curevent) return 0.0;
     double excess = DBL_MAX;
     double cur_min = consider_min_stock ? curevent->getMin(false) : 0.0;
     double cur_excess = 0.0;

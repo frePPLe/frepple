@@ -6,6 +6,11 @@ Release notes
 
 This release is scheduled for early April 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | Enhancements to improve the plan quality in the presence of temporary
+    unresolvable material shortages.
+
 8.5.0 (2024-03-02)
 ==================
 

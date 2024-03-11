@@ -245,6 +245,8 @@ void SolverCreate::SolverData::commit() {
   if (solver->getLogLevel() > 0)
     logger << "Start solving cluster " << cluster << endl;
 
+  maskTemporaryShortages();
+
   // Solve the planning problem
   try {
     if (!solver->getConstraints()) {
@@ -560,6 +562,8 @@ void SolverCreate::SolverData::commit() {
     demands->clear();
   }
 
+  unmaskTemporaryShortages();
+
   // Message
   if (solver->getLogLevel() > 0)
     logger << "End solving cluster " << cluster << endl;
@@ -623,6 +627,66 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
   if (getLogLevel() > 0)
     logger << "Finished safety stock replenishment pass" << endl;
   safety_stock_planning = false;
+}
+
+void SolverCreate::SolverData::maskTemporaryShortages() {
+  for (auto& buf : Buffer::all())
+    if ((buf.getCluster() == cluster || cluster == -1) &&
+        !buf.hasType<BufferInfinite>() && buf.getProducingOperation()) {
+      bool manipulated = false;
+      auto fence = Plan::instance().getAutoFence();
+      if (!fence)
+        // Autofence value of 0 doesn't mask any temporary shortages
+        return;
+      Operation* correction = nullptr;
+      for (auto flpln = buf.getFlowPlans().begin();
+           flpln != buf.getFlowPlans().end(); ++flpln) {
+        if (flpln->isLastOnDate() && flpln->getOnhand() < -ROUNDING_ERROR) {
+          // Scan to see the end of the shortage period
+          auto qty = -flpln->getOnhand();
+          Date shortage_ends;
+          for (Buffer::flowplanlist::const_iterator scanner = flpln;
+               scanner != buf.getFlowPlans().end(); ++scanner) {
+            if (scanner->getDate() >
+                max(flpln->getDate(), Plan::instance().getCurrent()) + fence)
+              break;
+            else if (scanner->getOnhand() > -qty && scanner->isLastOnDate()) {
+              shortage_ends = scanner->getDate();
+              break;
+            }
+          }
+
+          // Correct inventory
+          if (shortage_ends) {
+            if (!correction) {
+              correction = new OperationFixedTime();
+              correction->setName("Correction for " + buf.getName());
+              correction->setHidden(true);
+              new FlowEnd(correction, &buf, -1);
+              new FlowStart(correction, &buf, 1);
+            }
+            auto opplan = correction->createOperationPlan(
+                qty, flpln->getDate(), shortage_ends, buf.getBatch());
+            opplan->setConfirmed(true);
+            opplan->setStartAndEnd(flpln->getDate(), shortage_ends);
+            maskedShortages.push_back(opplan);
+            if (getLogLevel() > 0)
+              logger << "Warning: Masking temporary material shortage on '"
+                     << buf.getName() << "' for " << opplan->getQuantity()
+                     << " during " << opplan->getDates() << endl;
+            manipulated = true;
+          }
+        }
+      }
+    }
+}
+
+void SolverCreate::SolverData::unmaskTemporaryShortages() {
+  while (!maskedShortages.empty()) {
+    auto o = maskedShortages.back();
+    maskedShortages.pop_back();
+    delete o;
+  }
 }
 
 void SolverCreate::update_user_exits() {

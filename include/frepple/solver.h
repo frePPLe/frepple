@@ -950,6 +950,10 @@ class SolverCreate : public Solver {
      */
     void solveSafetyStock(SolverCreate*);
 
+    void maskTemporaryShortages();
+
+    void unmaskTemporaryShortages();
+
     /* Pointer to the command manager. */
     CommandManager* mgr = nullptr;
 
@@ -972,6 +976,8 @@ class SolverCreate : public Solver {
 
     /* Stack of solver status information. */
     State statestack[MAXSTATES];
+
+    vector<OperationPlan*> maskedShortages;
 
     /* Count the number of asks. */
     unsigned long iteration_count = 0;

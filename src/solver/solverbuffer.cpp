@@ -178,7 +178,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       bool supply_exists_already = false;
       if (theDelta < -ROUNDING_ERROR && autofence && !data->coordination_run) {
         // Solution zero: wait for confirmed supply that is already existing
-        auto free_stock = b->getOnHand(Date::infiniteFuture);
+        auto free_stock = b->getOnHand(Date::infiniteFuture) -
+                          b->getFlowPlans().getMin(Date::infiniteFuture);
         if (free_stock > -ROUNDING_ERROR) {
           for (Buffer::flowplanlist::const_iterator scanner = cur;
                scanner != b->getFlowPlans().end() &&
@@ -189,7 +190,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 scanner->getDate() <= requested_date)
               continue;
             auto tmp = scanner->getOperationPlan();
-            if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
+            if (tmp && (tmp->getConfirmed() || tmp->getApproved()) &&
+                !tmp->getOperation()->getName().starts_with("Correction")) {
               if (free_stock > -ROUNDING_ERROR) {
                 // Existing supply covers the complete requirement
                 if (firstmsg1 && data->logConstraints && data->constraints)
@@ -247,8 +249,9 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                   scanner->getDate() <= requested_date)
                 continue;
               auto tmp = scanner->getOperationPlan();
-              if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
-                if (firstmsg1 && data->logConstraints && data->constraints)
+              if (tmp && (tmp->getConfirmed() || tmp->getApproved()
+                && !tmp->getOperation()->getName().starts_with("Correction")) {
+        if (firstmsg1 && data->logConstraints && data->constraints)
                   data->constraints->push(
                       ProblemAwaitSupply::metadata, generic_buffer, theDate,
                       scanner->getDate(), theDelta);
@@ -328,7 +331,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                   scanner->getDate() < requested_date)
                 continue;
               auto tmp = scanner->getOperationPlan();
-              if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
+              if (tmp && (tmp->getConfirmed() || tmp->getApproved()) &&
+                  !tmp->getOperation()->getName().starts_with("Correction")) {
                 if (firstmsg3 && data->logConstraints && data->constraints)
                   data->constraints->push(ProblemAwaitSupply::metadata, b,
                                           theDate, scanner->getDate(),

@@ -254,7 +254,7 @@ class ForecastWidget(Widget):
 
         # get the bucket from the user preferences
         bucketname = request.user.horizonbuckets or Parameter.getValue(
-            "forecast.calendar", request.db
+            "forecast.calendar", request.database
         )
 
         result = [

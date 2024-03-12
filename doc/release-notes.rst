@@ -11,6 +11,13 @@ This release is scheduled for early April 2024. You can already check out a `pre
 - | Enhancements to improve the plan quality in the presence of temporary
     unresolvable material shortages.
 
+- | The planning algorithm now plans sales orders in status "quote" after
+    "open" sales orders and net forecast. The quotes thus can't steal capacity or
+    material away from regular demand.
+  | In earlier releases quotes were just ordered among the open sales orders and
+    net forecast. Depending on their priority and due date quote can take precedence
+    over regular demand.
+
 8.5.0 (2024-03-02)
 ==================
 

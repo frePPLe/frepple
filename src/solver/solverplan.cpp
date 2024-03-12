@@ -167,7 +167,17 @@ bool SolverCreate::isLeadTimeConstrained(const Operation* oper) const {
 }
 
 bool SolverCreate::demand_comparison(const Demand* l1, const Demand* l2) {
-  if (l1->getPriority() != l2->getPriority())
+  if ((l1->getStatus() == Demand::STATUS_QUOTE ||
+       l1->getStatus() == Demand::STATUS_INQUIRY) &&
+      l2->getStatus() != Demand::STATUS_QUOTE &&
+      l2->getStatus() != Demand::STATUS_INQUIRY)
+    return false;
+  else if ((l2->getStatus() == Demand::STATUS_QUOTE ||
+            l2->getStatus() == Demand::STATUS_INQUIRY) &&
+           l1->getStatus() != Demand::STATUS_QUOTE &&
+           l1->getStatus() != Demand::STATUS_INQUIRY)
+    return true;
+  else if (l1->getPriority() != l2->getPriority())
     return l1->getPriority() < l2->getPriority();
   else if (l1->getDue() != l2->getDue())
     return l1->getDue() < l2->getDue();

@@ -431,26 +431,33 @@ class ExportConstraints(PlanTask):
             if cluster != -1 and d.cluster not in cluster:
                 continue
             for i in d.constraints:
-                yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
-                    clean_value(d.name)
-                    if isinstance(d, frepple.demand_default)
-                    else "\\N",
-                    "\\N"
-                    if isinstance(d, frepple.demand_default)
-                    else clean_value(d.owner.name if d.owner else d.name),
-                    clean_value(d.item.name),
-                    clean_value(i.entity),
-                    clean_value(i.name),
-                    (
-                        isinstance(i.owner, frepple.operationplan)
-                        and clean_value(i.owner.operation.name)
-                        or clean_value(i.owner.name)
-                    )[:300],
-                    clean_value(i.description),
-                    str(i.start),
-                    str(i.end),
-                    round(i.weight, 8),
-                )
+                try:
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                        (
+                            clean_value(d.name)
+                            if isinstance(d, frepple.demand_default)
+                            else "\\N"
+                        ),
+                        (
+                            "\\N"
+                            if isinstance(d, frepple.demand_default)
+                            else clean_value(d.owner.name if d.owner else d.name)
+                        ),
+                        clean_value(d.item.name),
+                        clean_value(i.entity),
+                        clean_value(i.name),
+                        (
+                            isinstance(i.owner, frepple.operationplan)
+                            and clean_value(i.owner.operation.name)
+                            or clean_value(i.owner.name)
+                        )[:300],
+                        clean_value(i.description),
+                        str(i.start),
+                        str(i.end),
+                        round(i.weight, 8),
+                    )
+                except Exception:
+                    print("Error exporting constraint of demand '%s': %s" % (d.name, i))
 
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):

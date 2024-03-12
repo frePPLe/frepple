@@ -3318,16 +3318,16 @@ var gantt = {
     $(el).html(result.join(''));
   },
 
-  redraw: function (el = "#jqgh_grid_operationplans") {
+  redraw: function () {
     // Determine the conversion between svg units and the screen
     var scale = (horizonend.getTime() - horizonstart.getTime())
       / (viewend.getTime() - viewstart.getTime())
-      * $(el).width() / 10000;
+      * $("#jqgh_grid_operationplans").width() / 10000;
     $('.transformer').each(function () {
       var layers = $(this).attr("title");
       $(this).attr("transform", "scale(" + scale + ",1) translate(0," + ((layers - 1) * gantt.rowsize + 3) + ")");
     });
-    gantt.header(el);
+    gantt.header("#jqgh_grid_operationplans");
   },
 
   scroll: function (event) {

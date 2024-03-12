@@ -514,7 +514,10 @@ jQuery.extend($.fn.fmatter, {
     for (var i = 0; i < count; i++) {
       if (result != '')
         result += ', ';
-      result += '<span><span class="listdetailkey">' + $.jgrid.htmlEncode(cellvalue[i][0])
+      result += '<span><span class="listdetailkey"';
+      if (cellvalue[i].length > 2)
+        result += ' data-extra="' + $.jgrid.htmlEncode(cellvalue[i][2]) + '"';
+      result += '>' + $.jgrid.htmlEncode(cellvalue[i][0])
         + "</span><a href=\"" + url_prefix + "/detail/" + options.colModel.role
         + "/" + admin_escape(cellvalue[i][0])
         + "/\" onclick='event.stopPropagation()'><span class='ps-2 fa fa-caret-right' role='"
@@ -579,7 +582,7 @@ jQuery.extend($.fn.fmatter.listdetail, {
   unformat: function (cellvalue, options, cell) {
     var o = [];
     $('.listdetailkey', $(cell)).each(function (idx, val) {
-      o.push([$(val).text(), $(val).parent().next("span").text()]);
+      o.push([$(val).text(), $(val).parent().next("span").text(), $(val).attr("data-extra")]);
     });
     return o;
   }

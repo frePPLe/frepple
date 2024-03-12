@@ -123,7 +123,7 @@ function showresourcespanelDrv($window, gettextCatalog) {
 								else if (colmodel.formatter == 'listdetail') {
 									var res = [];
 									angular.forEach(scope.operationplan.loadplans, function (theloadplan) {
-										res.push([theloadplan.resource.name, theloadplan.quantity]);
+										res.push([theloadplan.resource.name, theloadplan.quantity, theloadplan.reference]);
 									});
 									grid.jqGrid("setCell", selrow, colmodel.name, res, "dirty-cell");
 									grid.jqGrid("setRowData", selrow, false, "edited");

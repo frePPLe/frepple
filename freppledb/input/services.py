@@ -170,6 +170,7 @@ class OperationplanService(AsyncHttpConsumer):
                                 errors.append("permission denied")
 
                         # Build arguments
+                        rsrcs_by_ref = None
                         changes = OrderedDict()
                         ref = rec.get(
                             "operationplan__reference",
@@ -263,7 +264,17 @@ class OperationplanService(AsyncHttpConsumer):
                             if isinstance(rsrcs, str):
                                 changes["resources"] = [rsrcs]
                             else:
-                                changes["resources"] = [l[0] for l in rsrcs]
+                                rsrcs_by_ref = {}
+                                for l in rsrcs:
+                                    if l[2] in rsrcs_by_ref:
+                                        rsrcs_by_ref[l[2]].append(l[0])
+                                    else:
+                                        rsrcs_by_ref[l[2]] = [l[0]]
+                                if changes.get("reference", None) in rsrcs_by_ref:
+                                    changes["resources"] = rsrcs_by_ref[
+                                        changes["reference"]
+                                    ]
+                                    del rsrcs_by_ref[changes["reference"]]
                         if "remark" in rec:
                             changes["remark"] = rec["remark"]
                         for attr in opplanAttributes:
@@ -282,7 +293,7 @@ class OperationplanService(AsyncHttpConsumer):
                                     changes[attr[0]] = rec[attr[0]]
 
                         # Update the engine
-                        if changes:
+                        if changes or rsrcs_by_ref:
                             if self.scope["user"].has_perm(
                                 "input.change_operationplan"
                                 if ref
@@ -297,6 +308,32 @@ class OperationplanService(AsyncHttpConsumer):
                                         related_buffers,
                                         related_demands,
                                     )
+                                    # Update children
+                                    if rsrcs_by_ref:
+                                        for child_ref, res in rsrcs_by_ref.items():
+                                            child_opplan = frepple.operationplan(
+                                                reference=child_ref, action="C"
+                                            )
+                                            collectRelated(
+                                                child_opplan,
+                                                related_opplans,
+                                                related_resources,
+                                                related_buffers,
+                                                related_demands,
+                                            )
+                                            child_opplan = frepple.operationplan(
+                                                reference=child_ref,
+                                                resources=res,
+                                                action="C",
+                                            )
+                                            collectRelated(
+                                                child_opplan,
+                                                related_opplans,
+                                                related_resources,
+                                                related_buffers,
+                                                related_demands,
+                                            )
+                                    # Update
                                     changes["action"] = "C"
                                     opplan = frepple.operationplan(**changes)
                                     if "end" in changes:

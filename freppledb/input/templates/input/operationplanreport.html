@@ -77,8 +77,8 @@ rect.opplan {
   var editable = {% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %};
   var service_url = {% if proxied %}'/svc/{{request.database}}/'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
   var service_token = '{{token}}';
-  var showChildren = "showChildren" in preferences ? preferences.showChildren : true;
-  var showTop = "showTop" in preferences ? preferences.showTop : true;
+  var showChildren = ("showChildren" in preferences) ? preferences.showChildren : true;
+  var showTop = ("showTop" in preferences) ? preferences.showTop : true;
 
   function saveData(rows, ok_callback) {
       $.ajax({

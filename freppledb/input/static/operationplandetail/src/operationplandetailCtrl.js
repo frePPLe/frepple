@@ -331,6 +331,19 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   }
   $scope.refreshstatus = refreshstatus;
 
+  function toggleShowTop(v) {
+    showTop = !showTop;
+    PreferenceSvc.save("showTop", showTop, function () { location.reload(); });
+
+  }
+  $scope.toggleShowTop = toggleShowTop;
+
+  function toggleShowChildren(v) {
+    showChildren = !showChildren;
+    PreferenceSvc.save("showChildren", showChildren, function () { location.reload(); });
+  }
+  $scope.toggleShowChildren = toggleShowChildren;
+
   function setMode(m) {
     function innerFunction() {
       PreferenceSvc.save("mode", m);

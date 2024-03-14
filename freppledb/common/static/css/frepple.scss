@@ -819,11 +819,34 @@ h1 small {
 }
 
 .fill-primary {
-    fill: $secondary;
+    fill: $primary;
+}
+
+.btn.active .fill-primary {
+    fill: var(--#{$prefix}btn-active-color);
+}
+
+.btn:hover .fill-primary {
+    fill: var(--#{$prefix}btn-hover-color);
 }
 
 .fill-primary-light {
-    fill: lighten($secondary, 20%);
+    fill: lighten($primary, 20%);
+}
+
+.stroke-primary {
+    stroke: $primary;
+    fill: none;
+}
+
+.btn.active .stroke-primary {
+    stroke: var(--#{$prefix}btn-active-color);
+    fill: none;
+}
+
+.btn:hover .stroke-primary {
+    stroke: var(--#{$prefix}btn-hover-color);
+    fill: none;
 }
 
 @mixin getBackground2Steps($color1, $color2, $color3) {

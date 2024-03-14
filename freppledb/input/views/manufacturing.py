@@ -1904,6 +1904,13 @@ class ManufacturingOrderList(OperationPlanMixin):
                 )
 
         q = reportclass.operationplanExtraBasequery(q, request)
+
+        if request.prefs:
+            if not request.prefs.get("showTop", True):
+                q = q.exclude(owner__isnull=True)
+            if not request.prefs.get("showChildren", True):
+                q = q.exclude(owner__isnull=False)
+
         return q.annotate(
             material=RawSQL(
                 "(select json_agg(json_build_array(item_id, quantity, operationplan_id)) from (select operationplanmaterial.item_id, round(operationplanmaterial.quantity,2) quantity, operationplanmaterial.operationplan_id from operationplanmaterial inner join operationplan opplan2 on opplan2.reference = operationplanmaterial.operationplan_id where operationplan.reference = opplan2.reference or operationplan.reference = opplan2.owner_id order by quantity limit 10) mat)",

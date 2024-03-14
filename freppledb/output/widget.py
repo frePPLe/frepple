@@ -448,7 +448,7 @@ class ManufacturingOrderWidget(Widget):
         )
         result = [
             '<select id="mo_selectButton"></select>',
-            '<svg class="chart" id="mo_chart" style="width:100%; height: 150px;"></svg>',
+            '<svg class="chart  mb-2" id="mo_chart" style="width:100%; height: 150px;"></svg>',
             '<table id="mo_overview" style="display: none">',
         ]
         for rec in cursor.fetchall():
@@ -459,7 +459,7 @@ class ManufacturingOrderWidget(Widget):
                 )
             elif rec[0] == 1 and rec[3] > 0:
                 result.append(
-                    '</table><div class="row"><div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" role="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" role="button" class="btn btn-primary btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         f"{rec[3]:,}",
                         f"{rec[4]:,}",
@@ -477,7 +477,7 @@ class ManufacturingOrderWidget(Widget):
             elif rec[0] == 2 and fence1 and rec[3] > 0:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-primary btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         f"{rec[3]:,}",
                         f"{rec[4]:,}",
@@ -497,7 +497,7 @@ class ManufacturingOrderWidget(Widget):
             elif rec[0] == 3 and fence2 and rec[3] > 0:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-primary btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         f"{rec[3]:,}",
                         f"{rec[4]:,}",
@@ -759,7 +759,7 @@ class DistributionOrderWidget(Widget):
         )
         result = [
             '<select id="do_selectButton"></select>',
-            '<svg class="chart" id="do_chart" style="width:100%; height: 150px;"></svg>',
+            '<svg class="chart mb-2" id="do_chart" style="width:100%; height: 150px;"></svg>',
             '<table id="do_overview" style="display: none">',
         ]
         for rec in cursor.fetchall():
@@ -770,7 +770,7 @@ class DistributionOrderWidget(Widget):
                 )
             elif rec[0] == 1 and rec[3] > 0:
                 result.append(
-                    '</table><div class="row"><div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-primary btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         f"{rec[3]:,}",
                         f"{rec[4]:,}",
@@ -788,7 +788,7 @@ class DistributionOrderWidget(Widget):
             elif rec[0] == 2 and fence1 and rec[3] > 0:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-primary btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         f"{rec[3]:,}",
                         f"{rec[4]:,}",
@@ -808,7 +808,7 @@ class DistributionOrderWidget(Widget):
             elif rec[0] == 3 and fence2 and rec[3] > 0:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-primary btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         f"{rec[3]:,}",
                         f"{rec[4]:,}",
@@ -1137,7 +1137,7 @@ class PurchaseOrderWidget(Widget):
             )
         result = [
             '<select id="po_selectButton"></select>',
-            '<svg class="chart" id="po_chart" style="width:100%; height: 150px;"></svg>',
+            '<svg class="chart mb-2" id="po_chart" style="width:100%; height: 150px;"></svg>',
             '<table id="po_overview" style="display: none">',
         ]
         for rec in cursor.fetchall():
@@ -1148,7 +1148,7 @@ class PurchaseOrderWidget(Widget):
                 )
             elif rec[0] == 1 and rec[3] > 0:
                 result.append(
-                    '</table><div class="row"><div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-primary btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         f"{rec[3]:,}",
                         f"{rec[4]:,}",
@@ -1166,7 +1166,7 @@ class PurchaseOrderWidget(Widget):
             elif rec[0] == 2 and fence1 and rec[3] > 0:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-primary btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         f"{rec[3]:,}",
                         f"{rec[4]:,}",
@@ -1186,7 +1186,7 @@ class PurchaseOrderWidget(Widget):
             elif rec[0] == 3 and fence2 and rec[3] > 0:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-primary btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         f"{rec[3]:,}",
                         f"{rec[4]:,}",
@@ -1205,7 +1205,7 @@ class PurchaseOrderWidget(Widget):
                 )
             elif rec[0] == 4 and rec[3] > 0:
                 result.append(
-                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=enddate&enddate__lte=%s&amp;status__in=confirmed,approved" class="btn btn-success btn-sm">%s</a></h2><small>%s</small></div>'
+                    '<div class="col"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=enddate&enddate__lte=%s&amp;status__in=confirmed,approved" class="btn btn-primary btn-sm">%s</a></h2><small>%s</small></div>'
                     % (
                         f"{rec[3]:,}",
                         f"{rec[4]:,}",

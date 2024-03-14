@@ -251,10 +251,6 @@ $(function() {
       <button class="btn btn-sm btn-primary" onclick="grid.showCustomize(true);">
         <span data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'customize'|capfirst|force_escape %}" class="fa fa-wrench"></span>
       </button>
-  {% if reportclass.help_url %}
-  <button class="btn d-none d-md-inline-block btn-sm btn-primary" onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{reportclass.help_url}}');" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Help'|capfirst|force_escape %}">
-  <span class="fa fa-question"></span>
-  </button>{% endif %}
 	</div>
 </div>
 

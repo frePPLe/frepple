@@ -14,7 +14,11 @@ $(function() {
 
 {% block tools %}
 <h1 class="d-inline-flex float-end">
-<button class="btn d-none d-md-inline-block btn-sm btn-primary" onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/integration-guide/rest-api/index.html');" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"><span class="fa fa-question"></span></button>
+  <a href="{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/integration-guide/rest-api/index.html"
+    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
+    target="_blank">
+    <span class="fa fa-question"></span>
+  </a>
 </h1>
 {% endblock %}
 

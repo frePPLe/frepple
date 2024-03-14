@@ -66,11 +66,11 @@ function markMessageRead(el, status) {
 
 {% block tools %}
 <h1>
-<button class="btn btn-sm d-none d-md-inline-block btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top"
-  onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/inbox.html')"
+<a href="{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/inbox.html"
+  data-bs-toggle="tooltip" data-bs-placement="top" target="_blank"
   data-bs-title="{% trans 'help'|capfirst|force_escape %}">
   <span class="fa fa-question"></span>
-</button>
+</a>
 </h1>
 {% endblock %}
 

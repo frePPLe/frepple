@@ -46,11 +46,13 @@
     {% endif %}
   </div>
   <div class="col-auto">
-    <button class="btn btn-sm d-none d-md-inline-block btn-primary"
-      onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/user-preferences.html');"
-      data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}">
-      <span class="fa fa-question"></span>
-    </button>
+    <h1>
+      <a href="{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/user-preferences.html"
+      data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"
+      target="_blank">
+        <span class="fa fa-question"></span>
+      </a>
+    </h1>
   </div>
 </div>
 {% endblock %} {% block content %}

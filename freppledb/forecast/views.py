@@ -752,9 +752,9 @@ class OverviewReport(GridPivot):
                     "mode_past": m.mode_past,
                     "formatter": m.formatter,
                     "editable": m.mode_future == "edit" or m.mode_past == "edit",
-                    "defaultvalue": float(m.defaultvalue)
-                    if m.defaultvalue is not None
-                    else 0,
+                    "defaultvalue": (
+                        float(m.defaultvalue) if m.defaultvalue is not None else 0
+                    ),
                     "initially_hidden": m.initially_hidden,
                     "visible": m.mode_future != "hide" or m.mode_past != "hide",
                 },
@@ -947,11 +947,13 @@ class OverviewReport(GridPivot):
             reportclass.attr_sql,
             ",\n".join(
                 [
-                    "coalesce(sum((forecastplan.value->>'%s')::numeric),0) as %s"
-                    % (m.name, m.name)
-                    if m.defaultvalue != -1
-                    else "sum((forecastplan.value->>'%s')::numeric) as %s"
-                    % (m.name, m.name)
+                    (
+                        "coalesce(sum((forecastplan.value->>'%s')::numeric),0) as %s"
+                        % (m.name, m.name)
+                        if m.defaultvalue != -1
+                        else "sum((forecastplan.value->>'%s')::numeric) as %s"
+                        % (m.name, m.name)
+                    )
                     for m in request.measures
                     if not m.computed
                 ]
@@ -1049,9 +1051,7 @@ class OverviewReport(GridPivot):
                             res[m.name] = (
                                 float(row[idx])
                                 if row[idx] is not None
-                                else m.defaultvalue
-                                if m.defaultvalue != -1
-                                else None
+                                else m.defaultvalue if m.defaultvalue != -1 else None
                             )
                             idx += 1
 
@@ -1178,6 +1178,8 @@ class ConstraintReport(BaseReport):
 
 
 class ForecastEditor:
+    help_url = "user-interface/plan-analysis/forecast-editor.html"
+
     @staticmethod
     def getMeasure(request):
         measurename = request.GET.get("measure", None)
@@ -1713,11 +1715,13 @@ class ForecastEditor:
               """ % (
             ",\n".join(
                 [
-                    "coalesce(sum((forecastplan.value->>'%s')::numeric),0) as %s"
-                    % (m.name, m.name)
-                    if not m.defaultvalue
-                    else "sum((forecastplan.value->>'%s')::numeric) as %s"
-                    % (m.name, m.name)
+                    (
+                        "coalesce(sum((forecastplan.value->>'%s')::numeric),0) as %s"
+                        % (m.name, m.name)
+                        if not m.defaultvalue
+                        else "sum((forecastplan.value->>'%s')::numeric) as %s"
+                        % (m.name, m.name)
+                    )
                     for m in request.measures
                     if not m.computed
                 ]
@@ -2088,6 +2092,7 @@ class ForecastEditor:
                 "currentbucket": currentbucket,
                 "currentdate": currentdate.strftime("%Y-%m-%d"),
                 "measures": json.dumps(measures),
+                "reportclass": ForecastEditor,
             }
         )
         return render(

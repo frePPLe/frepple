@@ -15,11 +15,11 @@ function objectfmt(cellvalue, options, row)
 
 {% block tools %}
 <h1>
-<button class="btn btn-sm d-none d-md-inline-block btn-primary me-2" data-bs-toggle="tooltip" data-bs-placement="top"
-  onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/inbox.html')"
-  data-bs-title="{% trans 'help'|capfirst|force_escape %}">
+<a data-bs-toggle="tooltip" data-bs-placement="top"
+  href="{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/inbox.html"
+  data-bs-title="{% trans 'help'|capfirst|force_escape %}" target="_blank">
   <span class="fa fa-question"></span>
-</button>
+</a>
 </h1>
 {% endblock %}
 

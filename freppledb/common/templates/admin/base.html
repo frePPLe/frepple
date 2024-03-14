@@ -37,7 +37,7 @@
   <div class="col-auto d-flex ms-auto align-items-top">
     {% block tools %}{% endblock %}
     {% if reportclass.help_url %}<h1>
-      <a href="{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{reportclass.help_url}}" target="_blank">
+      <a class="ms-1" href="{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{reportclass.help_url}}" target="_blank">
         <span class="fa fa-question" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'help'|capfirst|force_escape %}"/>
       </a>
     </h1>{% endif %}

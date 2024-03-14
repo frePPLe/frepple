@@ -12,6 +12,7 @@
   data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Filter editor" %}">
   <i class="fa fa-search"></i>
 </button>
+{% if reportclass.filterable and not args.0 %}{% include "common/snippet_favorites.html" with search=True %}{% endif %}
 </div>
 </span>
 {% endif %}{% endblock %}
@@ -234,7 +235,6 @@ $(function() {
 		</button>
 	</div>
 	{% endif %}
-	{% if reportclass.filterable and not args.0 %}{% include "common/snippet_favorites.html" %}{% endif %}
 	{% if reportclass.hasTimeBuckets %}
 	  <button class="btn btn-sm btn-primary" onclick="grid.showBucket()">
 	    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'set time horizon'|capfirst|force_escape %}" class="fa fa-clock-o"></span>

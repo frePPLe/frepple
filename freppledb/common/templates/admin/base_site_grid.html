@@ -12,6 +12,8 @@
   type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Filter editor" %}">
   <i class="fa fa-search"></i>
 </button>
+	{% if reportclass.filterable %}{% include "common/snippet_favorites.html" with search=True %}{% endif %}
+
 </div>
 </span>
 {% endif %}{% endblock %}
@@ -353,7 +355,6 @@ function displayGrid(load) {
 </div>
 
 <div id="toolicons" class="col-auto ms-auto ver-align-middle">{% block actions %}
-{% if reportclass.filterable %}{% include "common/snippet_favorites.html" %}{% endif %}
 {% if hasaddperm %}<button class="btn btn-sm btn-primary" onclick="location.href='{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Create new object"|escape %}" ><span class="fa fa-plus"></span></button>
 {% endif %}{% if hasaddperm and not is_popup and reportclass.canDuplicate %}<button class="btn btn-sm btn-primary"  disabled id="copy_selected" onclick="grid.showCopy()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Copy selected objects'|capfirst|escape %}" ><span class="fa fa-copy"></span></button>
 {% endif %}{% if haschangeperm and not is_popup %}<button class="btn btn-sm btn-primary" id="edit_selected" disabled onclick="grid.showUpdate('{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/')" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Update objects"|escape %}" ><span class="fa fa-edit"></span></button>

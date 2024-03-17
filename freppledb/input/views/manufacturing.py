@@ -1905,7 +1905,7 @@ class ManufacturingOrderList(OperationPlanMixin):
 
         q = reportclass.operationplanExtraBasequery(q, request)
 
-        if request.prefs:
+        if request.prefs and "noautofilter" not in request.GET:
             if not request.prefs.get("showTop", True):
                 q = q.exclude(owner__isnull=True)
             if not request.prefs.get("showChildren", True):

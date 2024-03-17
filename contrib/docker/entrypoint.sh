@@ -2,6 +2,7 @@
 set -e
 
 # Configure /etc/frepple/djangosettings
+sed -i "s/SECRET_KEY.*mzit.*i8b.*6oev96=.*/SECRET_KEY = \"$(mktemp -u XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX)\"/g" /etc/frepple/djangosettings.py
 params=(-U ${POSTGRES_USER:-frepple})
 if [ -n "$POSTGRES_HOST" ]; then
   sed -i "s/\"HOST\": \"\"/\"HOST\": \"${POSTGRES_HOST}\"/g" /etc/frepple/djangosettings.py

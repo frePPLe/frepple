@@ -40,7 +40,7 @@ if [ ! -d /var/log/frepple ]; then
 fi
 
 # Update secret key in the configuration file
-sed -i "s/RANDOMSTRING/`date`/" /etc/frepple/djangosettings.py
+sed -i "s/RANDOMSTRING/`mktemp -u XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`/" /etc/frepple/djangosettings.py
 
 # Offer to run migration during an upgrade
 if [ "$1" = "configure" ] && [ -n "$2" ]; then

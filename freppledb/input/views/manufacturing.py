@@ -1651,6 +1651,7 @@ class ManufacturingOrderList(OperationPlanMixin):
             format_lazy("{} - {}", _("item"), _("subcategory"))
         )
         ctx = super().extra_context(request, *args, **kwargs)
+        ctx["noautofilter"] = "noautofilter" in request.GET
         if args and args[0]:
             request.session["lasttab"] = "plandetail"
             paths = request.path.split("/")

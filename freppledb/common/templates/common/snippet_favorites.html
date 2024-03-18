@@ -1,10 +1,4 @@
 {% load i18n %}
-<button class="{% if search %}input-group-text{% else %}btn btn-sm btn-primary{% endif %}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
-      data-bs-title="{% trans 'Bookmark your favorite report configurations'|capfirst|force_escape %}">
-    <span class="fa fa-star"></span>
-    </div>
-</button>
 <ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
     {% if preferences.favorites %}
         {% for fav in preferences.favorites %}
@@ -18,3 +12,9 @@
         </a>
     </li>
 </ul>
+<button class="{% if search %}input-group-text{% else %}btn btn-sm btn-primary{% endif %}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
+      data-bs-title="{% trans 'Bookmark your favorite report configurations'|capfirst|force_escape %}">
+    <span class="fa fa-star"></span>
+    </div>
+</button>

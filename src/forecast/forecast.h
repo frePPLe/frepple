@@ -1127,103 +1127,17 @@ class ForecastBucket : public Demand {
   void dummySink(double d) {}
 };
 
-/* This class maintains a hashtable with all forecasts.
- * It's designed to O(1) searches for the forecast for a certain item, location
- * and customer combination.
- */
-class ForecastHash {
+class ForecastBase {
  private:
-  class ItemLocationCustomerHash;
-  virtual size_t getHash() const = 0;
-  virtual tuple<Item*, Location*, Customer*> getKey() const = 0;
-
   struct Comparator {
    public:
-    bool operator()(const ForecastHash* a, const ForecastHash* b) const {
-      return a->getKey() == b->getKey();
-    }
+    bool operator()(ForecastBase* a, ForecastBase* b) const;
   };
 
-  struct Hasher {
-   public:
-    size_t operator()(const ForecastHash* a) const { return a->getHash(); }
-  };
-
-  typedef unordered_set<ForecastHash*, Hasher, Comparator> HashTable;
+  typedef set<ForecastBase*, Comparator> HashTable;
 
   static HashTable table;
 
- protected:
-  static size_t computeHash(Item* i, Location* l, Customer* c) {
-    // Hash combination copied from boost C++ library.
-    // https://www.boost.org/doc/libs/1_71_0/doc/html/hash/reference.html#boost.hash_combine
-    auto tmp = hash<Item*>()(i);
-    tmp ^= hash<Location*>()(l) + 0x9e3779b9 + (tmp << 6) + (tmp >> 2);
-    tmp ^= hash<Customer*>()(c) + 0x9e3779b9 + (tmp << 6) + (tmp >> 2);
-    return tmp;
-  }
-
-  static void insertInHash(ForecastBase* f);
-
-  static void eraseFromHash(ForecastBase* f);
-
- public:
-  class Iterator {
-   public:
-    Iterator() : iter(table.begin()) {}
-
-    ForecastBase& operator*() const;
-
-    ForecastBase* operator->() const;
-
-    operator bool() const { return iter != table.end(); }
-
-    Iterator& operator++() {
-      ++iter;
-      return *this;
-    }
-
-   private:
-    HashTable::iterator iter;
-  };
-
-  static size_t getOverhead() {
-    if (table.empty()) return 0;
-    return ((table.bucket_count() * 2 + table.size() * 3) * sizeof(Demand*) -
-            1) /
-           table.size();
-  }
-
-  static ForecastBase* findForecast(Item*, Customer*, Location*, bool = false);
-
-  static Iterator getForecasts() { return Iterator(); }
-
-  static HashTable& getList() { return table; }
-};
-
-/* An private auxilary class nested in ForecastHash. */
-class ForecastHash::ItemLocationCustomerHash : public ForecastHash {
- public:
-  ItemLocationCustomerHash(Item* i = nullptr, Location* l = nullptr,
-                           Customer* c = nullptr)
-      : item(i), customer(c), location(l) {}
-
-  virtual size_t getHash() const {
-    return computeHash(item, location, customer);
-  }
-
-  tuple<Item*, Location*, Customer*> getKey() const {
-    return make_tuple(item, location, customer);
-  }
-
- private:
-  Item* item = nullptr;
-  Customer* customer = nullptr;
-  Location* location = nullptr;
-};
-
-class ForecastBase : public ForecastHash {
- private:
   /* Define the time horizon for which to create calendar buckets.
    * Both parameters are expressed as a number of days.
    */
@@ -1236,24 +1150,35 @@ class ForecastBase : public ForecastHash {
   /* Cached data measures. */
   CachedForecastData data;
 
+ protected:
+  static void insertInHash(ForecastBase* f);
+
+  static void eraseFromHash(ForecastBase* f);
+
  public:
-  virtual bool isAggregate() const = 0;
+  static ForecastBase* findForecast(Item*, Customer*, Location*, bool = false);
 
-  virtual bool isLeaf() const = 0;
+  static HashTable& getForecasts() { return table; }
 
-  virtual bool getDiscrete() const = 0;
+  virtual bool isAggregate() const { return true; }
 
-  virtual bool getPlanned() const = 0;
+  virtual bool isLeaf() const { return false; }
 
-  virtual const string& getForecastName() const = 0;
+  virtual bool getDiscrete() const { return false; }
+
+  virtual bool getPlanned() const { return false; }
+
+  virtual unsigned long getMethods() const { return 0; }
+
+  virtual const string& getForecastName() const {
+    return PooledString::nullstring;
+  }
 
   virtual Item* getForecastItem() const = 0;
 
   virtual Location* getForecastLocation() const = 0;
 
   virtual Customer* getForecastCustomer() const = 0;
-
-  virtual unsigned long getMethods() const = 0;
 
   inline shared_ptr<ForecastData> getData() const;
 
@@ -1314,6 +1239,27 @@ class ForecastBase : public ForecastHash {
   void setFields(DateRange&, const DataValueDict&, CommandManager* = nullptr,
                  bool = false);
 
+  /* An iterator to walk over the forecasts of a certain item. */
+  class ItemIterator {
+   public:
+    ItemIterator(Item* it = nullptr);
+
+    ForecastBase* operator*() const { return (iter != ub) ? *iter : nullptr; }
+
+    ForecastBase* operator->() const { return (iter != ub) ? *iter : nullptr; }
+
+    operator bool() const { return iter != ub; }
+
+    ItemIterator& operator++() {
+      if (iter != ub) ++iter;
+      return *this;
+    }
+
+   private:
+    HashTable::iterator iter;
+    HashTable::iterator ub;
+  };
+
   /* An iterator to walk over all parent forecasts, across all levels. */
   class ParentIterator {
    private:
@@ -1328,39 +1274,20 @@ class ForecastBase : public ForecastHash {
     CachedForecastData data;
 
    public:
-    ParentIterator(const ForecastBase* fcst) : rootforecast(fcst) {
+    ParentIterator(const ForecastBase* fcst = nullptr)
+        : rootforecast(const_cast<ForecastBase*>(fcst)) {
       if (fcst) {
         item = fcst->getForecastItem();
         location = fcst->getForecastLocation();
         customer = fcst->getForecastCustomer();
+        itmfcst = ItemIterator(item);
       }
       increment();
     }
 
-    ParentIterator() {}
+    ForecastBase* operator*() const { return forecast; }
 
-    ParentIterator(const ParentIterator& o)
-        : item(o.item),
-          location(o.location),
-          customer(o.customer),
-          forecast(o.forecast),
-          rootforecast(o.rootforecast) {}
-
-    bool operator==(const ParentIterator& o) const {
-      return item == o.item && location == o.location && customer == o.customer;
-    }
-
-    bool operator!=(const ParentIterator& o) const {
-      return item != o.item || location != o.location || customer != o.customer;
-    }
-
-    ForecastBase& operator*() const {
-      return const_cast<ForecastBase&>(*forecast);
-    }
-
-    ForecastBase* operator->() const {
-      return const_cast<ForecastBase*>(forecast);
-    }
+    ForecastBase* operator->() const { return forecast; }
 
     operator bool() const { return forecast != nullptr; }
 
@@ -1380,154 +1307,56 @@ class ForecastBase : public ForecastHash {
     Item* item = nullptr;
     Location* location = nullptr;
     Customer* customer = nullptr;
-    const ForecastBase* forecast = nullptr;
-    const ForecastBase* rootforecast = nullptr;
+    ItemIterator itmfcst;
+    ForecastBase* forecast = nullptr;
+    ForecastBase* rootforecast = nullptr;
 
     void increment();
   };
 
   ParentIterator getParents() const { return this; }
 
-  /* An iterator to walk over the child forecasts, single level.
-    TODO currently not used - remove? */
-  class ChildIterator {
-   public:
-    ChildIterator(const ForecastBase* fcst)
-        : forecast(nullptr), rootforecast(fcst) {
-      if (!fcst) return;
-      item = fcst->getForecastItem();
-      location = fcst->getForecastLocation();
-      customer = fcst->getForecastCustomer();
-      increment();
-    }
-
-    ChildIterator() {}
-
-    ChildIterator(const ChildIterator& o)
-        : item(o.item),
-          location(o.location),
-          customer(o.customer),
-          forecast(o.forecast),
-          rootforecast(o.rootforecast) {}
-
-    bool operator==(const ChildIterator& o) const {
-      return item == o.item && location == o.location && customer == o.customer;
-    }
-
-    bool operator!=(const ChildIterator& o) const {
-      return item != o.item || location != o.location || customer != o.customer;
-    }
-
-    ForecastBase& operator*() const {
-      return const_cast<ForecastBase&>(*forecast);
-    }
-
-    ForecastBase* operator->() const {
-      return const_cast<ForecastBase*>(forecast);
-    }
-
-    operator bool() const { return forecast != nullptr; }
-
-    ChildIterator& operator++() {
-      increment();
-      return *this;
-    }
-
-    /* Post-increment operator which moves the pointer to the next member. */
-    ChildIterator operator++(int) {
-      ChildIterator tmp = *this;
-      increment();
-      return tmp;
-    }
-
-   private:
-    Item* item = nullptr;
-    Location* location = nullptr;
-    Customer* customer = nullptr;
-    const ForecastBase* forecast = nullptr;
-    const ForecastBase* rootforecast = nullptr;
-    void increment();
-  };
-
-  ChildIterator getChildren() const { return this; }
-
   /* An iterator to walk over the leave forecast, across all levels.
    * The argument determines whether the starting node is also included
    * if it's a leaf.
    */
-  class LeaveIterator {
+  class LeafIterator {
    public:
-    LeaveIterator(const ForecastBase* fcst, bool inclusive,
-                  const ForecastMeasure* m = nullptr)
+    LeafIterator(const ForecastBase* fcst, bool inclus,
+                 const ForecastMeasure* m = nullptr)
         : item(fcst ? fcst->getForecastItem() : nullptr),
-          location(fcst ? fcst->getForecastLocation() : nullptr),
-          customer(fcst ? fcst->getForecastCustomer() : nullptr),
+          inclusive(inclus),
+          itmfcst(fcst ? fcst->getForecastItem() : nullptr),
           measure(m),
           rootforecast(fcst) {
-      if (inclusive) {
-        if (fcst && !(measure ? measure->isLeaf(fcst) : fcst->isLeaf()))
-          increment();
-        else
-          forecast = fcst;
-      } else {
-        forecast = nullptr;
-        if (fcst && !(measure ? measure->isLeaf(fcst) : fcst->isLeaf()))
-          increment();
-      }
+      increment(true);
     }
 
-    LeaveIterator() {}
+    LeafIterator() {}
 
-    LeaveIterator(const LeaveIterator& o)
-        : item(o.item),
-          location(o.location),
-          customer(o.customer),
-          forecast(o.forecast),
-          rootforecast(o.rootforecast) {}
+    ForecastBase* operator*() const { return *itmfcst; }
 
-    bool operator==(const LeaveIterator& o) const {
-      return forecast == o.forecast;
-    }
+    ForecastBase* operator->() const { return *itmfcst; }
 
-    bool operator!=(const LeaveIterator& o) const {
-      return forecast != o.forecast;
-    }
+    operator bool() const { return itmfcst; }
 
-    ForecastBase& operator*() const {
-      return const_cast<ForecastBase&>(*forecast);
-    }
-
-    ForecastBase* operator->() const {
-      return const_cast<ForecastBase*>(forecast);
-    }
-
-    operator bool() const { return forecast != nullptr; }
-
-    LeaveIterator& operator++() {
-      increment();
+    LeafIterator& operator++() {
+      increment(false);
       return *this;
-    }
-
-    /* Post-increment operator which moves the pointer to the next member. */
-    LeaveIterator operator++(int) {
-      LeaveIterator tmp = *this;
-      increment();
-      return tmp;
     }
 
    private:
     Item::memberRecursiveIterator item;
-    Location::memberRecursiveIterator location;
-    Customer::memberRecursiveIterator customer;
+    bool inclusive = true;
+    ItemIterator itmfcst;
     const ForecastMeasure* measure = nullptr;
-    const ForecastBase* forecast = nullptr;
     const ForecastBase* rootforecast = nullptr;
-    void increment();
+    void increment(bool);
   };
 
-  LeaveIterator getLeaves(bool inclusive,
-                          const ForecastMeasure* m = nullptr) const {
-    return LeaveIterator(this, inclusive, m);
+  LeafIterator getLeaves(bool inclusive,
+                         const ForecastMeasure* m = nullptr) const {
+    return LeafIterator(this, inclusive, m);
   }
 };
 
@@ -1562,14 +1391,6 @@ class Forecast : public Demand, public ForecastBase {
   static const unsigned long METHOD_MOVINGAVERAGE = 16;
   static const unsigned long METHOD_MANUAL = 32;
   static const unsigned long METHOD_ALL = 31;
-
-  virtual size_t getHash() const {
-    return computeHash(getItem(), getLocation(), getCustomer());
-  }
-
-  virtual tuple<Item*, Location*, Customer*> getKey() const {
-    return make_tuple(getItem(), getLocation(), getCustomer());
-  }
 
   virtual bool isAggregate() const { return false; }
 
@@ -1795,7 +1616,8 @@ class Forecast : public Demand, public ForecastBase {
 
   /* Return the memory size. */
   size_t getSize() const {
-    return Demand::getSize() + ForecastHash::getOverhead();
+    return Demand::getSize() +
+           sizeof(Forecast*) * 3;  // overhead of forecast tree
   }
 
   /* Iterator over all forecasting buckets. */
@@ -1841,6 +1663,23 @@ class Forecast : public Demand, public ForecastBase {
   double deviation = 0.0;
 };
 
+class ForecastKey : public ForecastBase {
+ public:
+  ForecastKey(Item* i = nullptr, Location* l = nullptr, Customer* c = nullptr)
+      : it(i), loc(l), cust(c) {}
+
+  Item* getForecastItem() const { return it; }
+
+  Location* getForecastLocation() const { return loc; }
+
+  Customer* getForecastCustomer() const { return cust; }
+
+ private:
+  Item* it = nullptr;
+  Location* loc = nullptr;
+  Customer* cust = nullptr;
+};
+
 class ForecastAggregated : public ForecastBase, public Object {
  private:
   Item* it = nullptr;
@@ -1848,30 +1687,10 @@ class ForecastAggregated : public ForecastBase, public Object {
   Customer* cust = nullptr;
 
  public:
-  ForecastAggregated(Item* i, Location* l, Customer* c)
+  ForecastAggregated(Item* i, Location* l = nullptr, Customer* c = nullptr)
       : it(i), loc(l), cust(c) {
     insertInHash(this);
     if (c) c->incNumberOfDemands();
-  }
-
-  virtual size_t getHash() const { return computeHash(it, loc, cust); }
-
-  virtual tuple<Item*, Location*, Customer*> getKey() const {
-    return make_tuple(it, loc, cust);
-  }
-
-  virtual bool isAggregate() const { return true; }
-
-  virtual bool isLeaf() const { return false; }
-
-  virtual bool getDiscrete() const { return false; }
-
-  virtual bool getPlanned() const { return false; }
-
-  virtual unsigned long getMethods() const { return 0; }
-
-  virtual const string& getForecastName() const {
-    return PooledString::nullstring;
   }
 
   Item* getForecastItem() const { return it; }
@@ -1885,17 +1704,9 @@ inline Forecast* ForecastBucket::getForecast() const {
   return static_cast<Forecast*>(getOwner());
 }
 
-inline void ForecastHash::insertInHash(ForecastBase* f) { table.insert(f); }
+inline void ForecastBase::insertInHash(ForecastBase* f) { table.insert(f); }
 
-inline void ForecastHash::eraseFromHash(ForecastBase* f) { table.erase(f); }
-
-inline ForecastBase& ForecastHash::Iterator::operator*() const {
-  return *static_cast<ForecastBase*>(*iter);
-}
-
-inline ForecastBase* ForecastHash::Iterator::operator->() const {
-  return static_cast<ForecastBase*>(*iter);
-}
+inline void ForecastBase::eraseFromHash(ForecastBase* f) { table.erase(f); }
 
 inline void ForecastBucket::setForecast(Forecast* f) { setOwner(f); }
 
@@ -3268,7 +3079,7 @@ shared_ptr<ForecastData> ForecastBase::getData() const {
 
 template <typename... Measures>
 void ForecastMeasure::resetMeasure(short mode, Measures*... measures) {
-  for (auto f = Forecast::getForecasts(); f; ++f) {
+  for (auto& f : Forecast::getForecasts()) {
     auto fcstdata = f->getData();
     lock_guard<recursive_mutex> exclusive(fcstdata->lock);
     for (auto bckt = fcstdata->getBuckets().begin();

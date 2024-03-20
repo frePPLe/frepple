@@ -6,6 +6,16 @@
   distribution.
   </description>
 	<current>2009-01-01T00:00:00</current>
+	<locations>
+		<location>
+			<name>All</name>
+		</location>
+	</locations>
+	<customers>
+		<customer>
+			<name>All</name>
+		</customer>
+	</customers>
 	<calendars>
 		<calendar>
 			<name>planningbuckets</name>
@@ -172,6 +182,24 @@
 		<item>
 			<name>Product 1</name>
 		</item>
+		<item>
+			<name>Product 2</name>
+		</item>
+		<item>
+			<name>Product 26</name>
+		</item>
+		<item>
+			<name>Product 27</name>
+		</item>
+		<item>
+			<name>Product 3</name>
+		</item>
+		<item>
+			<name>Product 4</name>
+		</item>
+		<item>
+			<name>Product 5</name>
+		</item>
 	</items>
 	<demands>
 		<demand xsi:type="demand_forecast">
@@ -179,6 +207,12 @@
 			<item>
 				<name>Product 1</name>
 			</item>
+			<location>
+				<name>All</name>
+			</location>
+			<customer>
+				<name>All</name>
+			</customer>
 			<priority>1</priority>
 			<calendar>
 				<name>planningbuckets</name>
@@ -376,8 +410,14 @@
 		<demand xsi:type="demand_forecast">
 			<name>Forecast 2</name>
 			<item>
-				<name>Product 1</name>
+				<name>Product 2</name>
 			</item>
+			<location>
+				<name>All</name>
+			</location>
+			<customer>
+				<name>All</name>
+			</customer>
 			<priority>1</priority>
 			<calendar>
 				<name>planningbuckets</name>
@@ -578,8 +618,14 @@
 		<demand xsi:type="demand_forecast">
 			<name>Forecast 26</name>
 			<item>
-				<name>Product 1</name>
+				<name>Product 26</name>
 			</item>
+			<location>
+				<name>All</name>
+			</location>
+			<customer>
+				<name>All</name>
+			</customer>
 			<priority>1</priority>
 			<calendar>
 				<name>planningbuckets</name>
@@ -852,8 +898,14 @@
 		<demand xsi:type="demand_forecast">
 			<name>Forecast 27</name>
 			<item>
-				<name>Product 1</name>
+				<name>Product 27</name>
 			</item>
+			<location>
+				<name>All</name>
+			</location>
+			<customer>
+				<name>All</name>
+			</customer>
 			<priority>1</priority>
 			<calendar>
 				<name>planningbuckets</name>
@@ -1129,8 +1181,14 @@
 		<demand xsi:type="demand_forecast">
 			<name>Forecast 3</name>
 			<item>
-				<name>Product 1</name>
+				<name>Product 3</name>
 			</item>
+			<location>
+				<name>All</name>
+			</location>
+			<customer>
+				<name>All</name>
+			</customer>
 			<priority>1</priority>
 			<calendar>
 				<name>planningbuckets</name>
@@ -1334,8 +1392,14 @@
 		<demand xsi:type="demand_forecast">
 			<name>Forecast 4</name>
 			<item>
-				<name>Product 1</name>
+				<name>Product 4</name>
 			</item>
+			<location>
+				<name>All</name>
+			</location>
+			<customer>
+				<name>All</name>
+			</customer>
 			<priority>1</priority>
 			<calendar>
 				<name>planningbuckets</name>
@@ -1542,8 +1606,14 @@
 		<demand xsi:type="demand_forecast">
 			<name>Forecast 5</name>
 			<item>
-				<name>Product 1</name>
+				<name>Product 5</name>
 			</item>
+			<location>
+				<name>All</name>
+			</location>
+			<customer>
+				<name>All</name>
+			</customer>
 			<priority>1</priority>
 			<calendar>
 				<name>planningbuckets</name>

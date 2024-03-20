@@ -215,7 +215,7 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
   // Reset forecastconsumed to 0 and forecastnet to forecasttotal.
   // When running for a cluster we reset the leafs and propagate.
   // When running globablly we can skip the propagation.
-  for (auto f = Forecast::getForecasts(); f; ++f) {
+  for (auto& f : Forecast::getForecasts()) {
     if (cluster != -1 &&
         (!f->isLeaf() || static_cast<Forecast*>(&*f)->getCluster() != cluster))
       continue;
@@ -241,7 +241,7 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
     // TODO Assumes that the lowest forecasting level is a leaf forecast.
     if (getLogLevel() > 5)
       logger << "Start forecasting for leaf forecasts" << endl;
-    for (auto x = Forecast::getForecasts(); x; ++x) {
+    for (auto& x : Forecast::getForecasts()) {
       try {
         if (x->getMethods() && x->isLeaf() &&
             (cluster == -1 ||
@@ -267,7 +267,7 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
     // Time series forecasting for all middle-out parent forecasts
     if (getLogLevel() > 5)
       logger << "Start forecasting for parent forecasts" << endl;
-    for (auto x = Forecast::getForecasts(); x; ++x) {
+    for (auto& x : Forecast::getForecasts()) {
       try {
         if (x->getMethods() && !x->isLeaf() &&
             (cluster == -1 ||

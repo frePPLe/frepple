@@ -18,6 +18,10 @@ This release is scheduled for early April 2024. You can already check out a `pre
     net forecast. Depending on their priority and due date quote can take precedence
     over regular demand.
 
+.. rubric:: Demand forecasting
+
+- | Performance improvements when editing in complex and sparse hierarchies.
+
 8.5.0 (2024-03-02)
 ==================
 

@@ -32,7 +32,7 @@
 
 namespace frepple {
 
-ForecastHash::HashTable ForecastHash::table;
+ForecastBase::HashTable ForecastBase::table;
 
 Calendar* Forecast::calptr = nullptr;
 long ForecastBase::horizon_future = 365L * 3L;
@@ -114,13 +114,48 @@ int Forecast::initialize() {
   return FreppleClass<Forecast, Demand>::initialize();
 }
 
-ForecastBase* ForecastHash::findForecast(Item* i, Customer* c, Location* l,
+bool ForecastBase::Comparator::operator()(ForecastBase* a,
+                                          ForecastBase* b) const {
+  auto a_item = a->getForecastItem();
+  auto a_location = a->getForecastLocation();
+  auto a_customer = a->getForecastCustomer();
+  auto b_item = b->getForecastItem();
+  auto b_location = b->getForecastLocation();
+  auto b_customer = b->getForecastCustomer();
+
+  if (!a_item)
+    return false;
+  else if (!b_item)
+    return true;
+  else if (a_item != b_item || !a_location || !b_location || !a_customer ||
+           !b_customer)
+    return a_item->getName().compare(b_item->getName()) < 0;
+  else if (a_location != b_location)
+    return a_location->getName().compare(b_location->getName()) < 0;
+  else if (a_customer != b_customer)
+    return a_customer->getName().compare(b_customer->getName()) < 0;
+  else
+    // Pointer comparison as last resort
+    return a_item < b_item;
+}
+
+ForecastBase::ItemIterator::ItemIterator(Item* it) {
+  ForecastKey tmp(it);
+  auto lb_ub = table.equal_range(&tmp);
+  iter = lb_ub.first;
+  ub = lb_ub.second;
+}
+
+ForecastBase* ForecastBase::findForecast(Item* i, Customer* c, Location* l,
                                          bool allow_create) {
   if (!i || !l || !c) return nullptr;
   if (c->getNumberOfDemands()) {
-    ItemLocationCustomerHash tmp(i, l, c);
-    auto iter = table.find(&tmp);
-    if (iter != table.end()) return static_cast<Forecast*>(*iter);
+    ForecastKey tmp(i);
+    auto [lb, ub] = table.equal_range(&tmp);
+    for (auto i = lb; i != ub; ++i) {
+      if ((*i)->getForecastLocation() == l && (*i)->getForecastCustomer() == c)
+        return *i;
+    }
   }
   if (allow_create) {
     if (!i->isGroup() && !l->isGroup() && !c->isGroup()) {
@@ -139,16 +174,12 @@ bool Forecast::isLeaf() const {
   if (leaf == -1) {
     const_cast<Forecast*>(this)->leaf = 1;
     for (Item::memberRecursiveIterator itm(getItem()); !itm.empty(); ++itm) {
-      auto dmds = itm->getDemandIterator();
-      while (auto dmd = dmds.next()) {
-        if (dmd->hasType<Forecast>() && dmd->getCustomer() &&
-            dmd->getLocation() &&
-            (dmd->getCustomer() != getCustomer() ||
-             dmd->getItem() != getItem() ||
-             dmd->getLocation() != getLocation()) &&
-            dmd->getCustomer()->isMemberOf(getCustomer()) &&
-            dmd->getLocation()->isMemberOf(getLocation()) &&
-            findForecast(&*itm, dmd->getCustomer(), dmd->getLocation())) {
+      for (ItemIterator itmfcst(&*itm); itmfcst; ++itmfcst) {
+        if ((itmfcst->getForecastItem() != getItem() ||
+             itmfcst->getForecastLocation() != getLocation() ||
+             itmfcst->getForecastCustomer() != getCustomer()) &&
+            itmfcst->getForecastCustomer()->isMemberOf(getCustomer()) &&
+            itmfcst->getForecastLocation()->isMemberOf(getLocation())) {
           const_cast<Forecast*>(this)->leaf = 0;
           return false;
         }
@@ -229,7 +260,8 @@ Object* ForecastBucket::reader(const MetaClass* cat, const DataValueDict& in,
   /** Only a start date was given, and we didn't find a matching bucket. */
   if (!nd) return nullptr;
 
-  /** A start and end date are given, and multiple buckets can be impacted. */
+  /** A start and end date are given, and multiple buckets can be impacted.
+   */
   DateRange dr(strt, nd);
   static_cast<Forecast*>(fcstobject)->setFields(dr, in, mgr);
   return nullptr;
@@ -238,8 +270,8 @@ Object* ForecastBucket::reader(const MetaClass* cat, const DataValueDict& in,
 PyObject* ForecastBucket::create(PyTypeObject* pytype, PyObject* args,
                                  PyObject* kwds) {
   try {
-    // Pick up the forecast. An error is reported if it's missing or has a wrong
-    // data type.
+    // Pick up the forecast. An error is reported if it's missing or has a
+    // wrong data type.
     PyObject* pyfcst = PyDict_GetItemString(kwds, "forecast");
     if (!pyfcst) throw DataException("missing forecast on forecastbucket");
     if (!PyObject_TypeCheck(pyfcst, Forecast::metadata->pythonClass))
@@ -257,9 +289,9 @@ PyObject* ForecastBucket::create(PyTypeObject* pytype, PyObject* args,
       lock_guard<recursive_mutex> exclusive(data->lock);
 
       // Find the correct forecast bucket
-      // @todo This linear loop doesn't scale well when the number of buckets
-      // increases. The loading time goes up quadratically: need to read more
-      // buckets + each bucket takes longer
+      // @todo This linear loop doesn't scale well when the number of
+      // buckets increases. The loading time goes up quadratically: need to
+      // read more buckets + each bucket takes longer
       for (auto& bckt : data->getBuckets()) {
         if (bckt.getDates().within(startdate)) {
           auto fcstbckt = bckt.getOrCreateForecastBucket();
@@ -755,13 +787,23 @@ void ForecastBase::ParentIterator::increment() {
       if (location) location = location->getOwner();
       if (!location) {
         location = rootforecast->getForecastLocation();
-        if (item) item = item->getOwner();
+        if (item) {
+          item = item->getOwner();
+          if (item) itmfcst = ItemIterator(item);
+        }
       }
     }
 
     // Check if a forecast exists at this combination
     if (item) {
-      forecast = Forecast::findForecast(item, customer, location);
+      forecast = nullptr;
+      for (auto i = itmfcst; i; ++i) {
+        if (i->getForecastCustomer() == customer &&
+            i->getForecastLocation() == location) {
+          forecast = *i;
+          break;
+        }
+      }
       if (!forecast)
         forecast = new ForecastAggregated(item, location, customer);
       return;
@@ -774,68 +816,31 @@ void ForecastBase::ParentIterator::increment() {
   forecast = nullptr;
 }
 
-void ForecastBase::ChildIterator::increment() {
-  do {
-    // Move to the next item, location, customer combination
-    // Increment customer
-    if (customer == rootforecast->getForecastCustomer())
-      customer = customer->getFirstChild();
-    else
-      customer = customer->getNextBrother();
-    if (!customer) {
-      // Increment location
-      customer = rootforecast->getForecastCustomer();
-      if (location == rootforecast->getForecastLocation())
-        location = location->getFirstChild();
-      else
-        location = location->getNextBrother();
-      if (!location) {
-        location = rootforecast->getForecastLocation();
-        // Increment item
-        if (item == rootforecast->getForecastItem())
-          item = item->getFirstChild();
-        else
-          item = item->getNextBrother();
-        if (!item) {
-          // End of iteration
-          item = nullptr;
-          customer = nullptr;
-          location = nullptr;
-          forecast = nullptr;
-          return;
-        }
-      }
+void ForecastBase::LeafIterator::increment(bool first) {
+  if (!first) {
+    if (itmfcst)
+      ++itmfcst;
+    else {
+      ++item;
+      if (!item.empty()) itmfcst = ItemIterator(&*item);
     }
-
-    // Check if a forecast exists at this combination
-    forecast = Forecast::findForecast(item, customer, location);
-  } while (!forecast);
-}
-
-void ForecastBase::LeaveIterator::increment() {
-  do {
-    if ((++customer).empty()) {
-      customer = Customer::memberRecursiveIterator(
-          rootforecast->getForecastCustomer());
-      if ((++location).empty()) {
-        location = Location::memberRecursiveIterator(
-            rootforecast->getForecastLocation());
-        if ((++item).empty()) {
-          // End of the iteration
-          forecast = nullptr;
-          return;
-        }
-      }
-    }
-
-    auto tmp = Forecast::findForecast(&*item, &*customer, &*location);
-    if (tmp) {
-      forecast = tmp;
-      if (measure ? measure->isLeaf(forecast) : forecast->isLeaf())
-        // A leaf forecast exists at this combination
+  }
+  while (!item.empty()) {
+    while (itmfcst) {
+      if (itmfcst->getForecastCustomer()->isMemberOf(
+              rootforecast->getForecastCustomer()) &&
+          itmfcst->getForecastLocation()->isMemberOf(
+              rootforecast->getForecastLocation()) &&
+          (inclusive || *itmfcst != rootforecast) &&
+          (measure ? measure->isLeaf(*itmfcst) : itmfcst->isLeaf()))
+        // Found a leaf forecast
         return;
+      else
+        ++itmfcst;
     }
-  } while (true);
+    ++item;
+    if (!item.empty()) itmfcst = ItemIterator(&*item);
+  }
 }
 
 double ForecastBucket::getOrdersAdjustmentMinus1() const {
@@ -971,7 +976,8 @@ ForecastData::ForecastData(const ForecastBase* f) {
       mode = 2;
       // We use a single, dedicated database connection for this
       std::string str =
-          "select extract(epoch from startdate), extract(epoch from enddate), "
+          "select extract(epoch from startdate), extract(epoch from "
+          "enddate), "
           "value from forecastplan "
           "where item_id = $1::text and location_id = $2::text "
           "and customer_id = $3::text "
@@ -1144,9 +1150,10 @@ size_t ForecastData::getSize() const {
 }
 
 size_t ForecastBucketData::getSize() const {
-  // Assuming the implementation of the measure map is a red-black binary tree,
-  // the size per measure is a) a pointer to a pooledstring, b) a pointer to the
-  // numeric, and c) 3 pointers to maintain the tree structure.
+  // Assuming the implementation of the measure map is a red-black binary
+  // tree, the size per measure is a) a pointer to a pooledstring, b) a
+  // pointer to the numeric, and c) 3 pointers to maintain the tree
+  // structure.
   return sizeof(ForecastBucketData) +
          measures.size() * (2 * sizeof(void*) + sizeof(double));
 }
@@ -1287,7 +1294,8 @@ void ForecastBucketData::markDirty() {
 string ForecastBucketData::toString(bool add_dates, bool sorted) const {
   stringstream o;
   if (sorted) sortMeasures();
-  // Use the same precision as we use for all numbers in our postgres database
+  // Use the same precision as we use for all numbers in our postgres
+  // database
   o.precision(20);
   o << "{";
   bool first = true;
@@ -1370,7 +1378,8 @@ void Forecast::parse(Object* o, const DataValueDict& in, CommandManager* mgr) {
       forecast = Forecast::findForecast(item, customer, location, true);
     if (!forecast)
       throw DataException(
-          "Required fields missing: forecast or item, location and customer");
+          "Required fields missing: forecast or item, location and "
+          "customer");
   }
 
   // Pick up the start and end date
@@ -1463,7 +1472,8 @@ PyObject* Forecast::setValuePython(PyObject* self, PyObject* args,
 PyObject* Forecast::setValuePython2(PyObject* self, PyObject* args,
                                     PyObject* kwargs) {
   // Keyword arguments are:
-  //  bucket, startdate, enddate, item, location, customer, plus measure names
+  //  bucket, startdate, enddate, item, location, customer, plus measure
+  //  names
   Item* item = nullptr;
   Location* location = nullptr;
   Customer* customer = nullptr;
@@ -1635,12 +1645,11 @@ PyObject* Forecast::saveForecast(PyObject* self, PyObject* args) {
       }
     } mysort;
 
-    // This is quite memory&cpu-intensive as we need to fill and sort a vector
-    // with pointers to all forecasts. Since we expect to call this function
-    // only small datasets we can live with this.
+    // This is quite memory&cpu-intensive as we need to fill and sort a
+    // vector with pointers to all forecasts. Since we expect to call this
+    // function only small datasets we can live with this.
     vector<ForecastBase*> sortedforecast;
-    for (auto fcst = Forecast::getForecasts(); fcst; ++fcst)
-      sortedforecast.push_back(&*fcst);
+    for (auto fcst : Forecast::getForecasts()) sortedforecast.push_back(&*fcst);
     sort(sortedforecast.begin(), sortedforecast.end(), mysort);
 
     // Write out all forecasts

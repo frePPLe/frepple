@@ -226,7 +226,7 @@ class ManufacturingOrderWidget(Widget):
 
     javascript = """
     var margin_y = 70;  // Width allocated for the Y-axis
-    var margin_x = 60;  // Height allocated for the X-axis
+
     var svg = d3.select("#mo_chart");
     var svgrectangle = document.getElementById("mo_chart").getBoundingClientRect();
 
@@ -239,11 +239,14 @@ class ManufacturingOrderWidget(Widget):
     var max_value = 0.0;
     var max_units = 0.0;
     var max_count = 0.0;
+    var max_length = 0;
     var nth = Math.ceil($("#mo_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);
     var myticks = [];
 
     $("#mo_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
+      if (name.text().length > max_length)
+            max_length = name.text().length;
       var count = name.next();
       var units = count.next();
       var value = units.next();
@@ -257,6 +260,8 @@ class ManufacturingOrderWidget(Widget):
       if (el[3] > max_value) max_value = el[3];
       if (idx %% nth == 0) myticks.push(name.text());
       });
+
+    var margin_x = 9*max_length;  // Height allocated for the X-axis depends on x-axis titles
 
     // List of groups
     var allGroup = ["value", "unit"]
@@ -448,7 +453,7 @@ class ManufacturingOrderWidget(Widget):
         )
         result = [
             '<select id="mo_selectButton"></select>',
-            '<svg class="chart  mb-2" id="mo_chart" style="width:100%; height: 150px;"></svg>',
+            '<svg class="chart  mb-2" id="mo_chart" style="width:100%; height: 170px;"></svg>',
             '<table id="mo_overview" style="display: none">',
         ]
         for rec in cursor.fetchall():
@@ -537,7 +542,6 @@ class DistributionOrderWidget(Widget):
 
     javascript = """
     var margin_y = 70;  // Width allocated for the Y-axis
-    var margin_x = 60;  // Height allocated for the X-axis
     var svg = d3.select("#do_chart");
     var svgrectangle = document.getElementById("do_chart").getBoundingClientRect();
 
@@ -550,11 +554,15 @@ class DistributionOrderWidget(Widget):
     var max_value = 0.0;
     var max_units = 0.0;
     var max_count = 0.0;
+    var max_length = 0;
+
     var nth = Math.ceil($("#do_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);
     var myticks = [];
 
     $("#do_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
+      if (name.text().length > max_length)
+            max_length = name.text().length;
       var count = name.next();
       var units = count.next();
       var value = units.next();
@@ -568,6 +576,8 @@ class DistributionOrderWidget(Widget):
       if (el[3] > max_value) max_value = el[3];
       if (idx %% nth == 0) myticks.push(name.text());
       });
+
+    var margin_x = 9*max_length;  // Height allocated for the X-axis depends on x-axis titles
 
     // List of groups
     var allGroup = ["value", "unit"]
@@ -759,7 +769,7 @@ class DistributionOrderWidget(Widget):
         )
         result = [
             '<select id="do_selectButton"></select>',
-            '<svg class="chart mb-2" id="do_chart" style="width:100%; height: 150px;"></svg>',
+            '<svg class="chart mb-2" id="do_chart" style="width:100%; height: 170px;"></svg>',
             '<table id="do_overview" style="display: none">',
         ]
         for rec in cursor.fetchall():
@@ -858,7 +868,6 @@ class PurchaseOrderWidget(Widget):
 
     javascript = """
     var margin_y = 70;  // Width allocated for the Y-axis
-    var margin_x = 60;  // Height allocated for the X-axis
     var svg = d3.select("#po_chart");
     var svgrectangle = document.getElementById("po_chart").getBoundingClientRect();
 
@@ -871,11 +880,14 @@ class PurchaseOrderWidget(Widget):
     var max_value = 0.0;
     var max_units = 0.0;
     var max_count = 0.0;
+    var max_length = 0;
     var nth = Math.ceil($("#po_overview").find("tr").length / (svgrectangle['width'] - margin_y) * 30);
     var myticks = [];
 
     $("#po_overview").find("tr").each(function(idx) {
       var name = $(this).children('td').first();
+      if (name.text().length > max_length)
+            max_length = name.text().length;
       var count = name.next();
       var units = count.next()
       var value = units.next()
@@ -889,6 +901,8 @@ class PurchaseOrderWidget(Widget):
       if (el[3] > max_value) max_value = el[3];
       if (idx %% nth == 0) myticks.push(name.text());
       });
+
+    var margin_x = 9*max_length;  // Height allocated for the X-axis depends on x-axis titles
 
     // List of groups
     var allGroup = ["value", "unit"]
@@ -1137,7 +1151,7 @@ class PurchaseOrderWidget(Widget):
             )
         result = [
             '<select id="po_selectButton"></select>',
-            '<svg class="chart mb-2" id="po_chart" style="width:100%; height: 150px;"></svg>',
+            '<svg class="chart mb-2" id="po_chart" style="width:100%; height: 170px;"></svg>',
             '<table id="po_overview" style="display: none">',
         ]
         for rec in cursor.fetchall():

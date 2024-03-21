@@ -69,6 +69,15 @@ class DateTimePickerInput(forms.DateTimeInput):
     input_type = "datetime-local"
 
 
+class DateTimeLocalField(forms.DateTimeField):
+    input_formats = [
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%dT%H:%M",
+    ]
+    widget = DateTimePickerInput(format="%Y-%m-%dT%H:%M:%S")
+
+
 class MultiDBModelAdmin(admin.ModelAdmin):
     """
     This class is an enhanced version of the django regular admin model.
@@ -94,8 +103,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         DateField: {"widget": DatePickerInput()},
         TimeField: {"widget": TimePickerInput()},
         DateTimeField: {
-            "form_class": forms.fields.DateTimeField,
-            "widget": DateTimePickerInput(),
+            "form_class": DateTimeLocalField,
+            "widget": DateTimePickerInput(format="%Y-%m-%dT%H:%M:%S"),
         },
     }
 

@@ -623,7 +623,7 @@ var grid = {
   formatNumber: function (nData, maxdecimals = 6) {
     // Number formatting function copied from free-jqgrid.
     // Adapted to show a max number of decimal places.
-    if (typeof (nData) === 'undefined')
+    if (typeof (nData) === 'undefined' || nData === '')
       return '';
     var isNumber = $.fmatter.isNumber;
     if (!isNumber(nData))

@@ -80,7 +80,7 @@ rect.opplan {
   var service_token = '{{token}}';
   var showChildren = (!urlParams.has("noautofilter") && "showChildren" in preferences) ? preferences.showChildren : true;
   var showTop = (!urlParams.has("noautofilter") && "showTop" in preferences) ? preferences.showTop : true;
-  console.log(showChildren, showTop);
+
   function saveData(rows, ok_callback) {
       $.ajax({
         url: service_url + 'operationplan/',

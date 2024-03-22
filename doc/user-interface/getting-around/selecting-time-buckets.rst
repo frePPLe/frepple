@@ -37,4 +37,4 @@ open.
 
    An administrator can update the buckets by manipulating the records in the
    buckets and bucketdetail tables: In this way you can set up the buckets that are
-   relevant for your organization, and also give the buckets the labels you prefer.
+   meaningful for your organization, and also give the buckets the labels you prefer.

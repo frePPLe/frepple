@@ -308,6 +308,12 @@ if(valgrind)
     COMMAND callgrind_annotate --show-percs=yes --inclusive=yes > callgrind.cumulative.out
     COMMAND callgrind_annotate --show-percs=yes --inclusive=yes --tree=calling > callgrind.cumulative_with_calling.out
     COMMAND callgrind_annotate --show-percs=yes --inclusive=yes --tree=caller > callgrind.cumulative_with_caller.out
+
+    # Useful callgrind commands during a profiling run:
+    # - callgrind_control: Return process id of the current callgrind rung
+    # - callgrind_control -i off <pid>: Switch off the collection of metrics
+    # - callgrind_control -i on <pid>: Switch on the collection of metrics
+    # - callgrind_control -z <pid>: Clear out all metrics collected so far
   )
   add_custom_target(
     memcheck

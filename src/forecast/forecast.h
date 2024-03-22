@@ -1244,20 +1244,22 @@ class ForecastBase {
    public:
     ItemIterator(Item* it = nullptr);
 
-    ForecastBase* operator*() const { return (iter != ub) ? *iter : nullptr; }
+    ForecastBase* operator*() const { return forecast; }
 
-    ForecastBase* operator->() const { return (iter != ub) ? *iter : nullptr; }
+    ForecastBase* operator->() const { return forecast; }
 
     operator bool() const { return iter != ub; }
 
     ItemIterator& operator++() {
-      if (iter != ub) ++iter;
+      ++iter;
+      forecast = (iter != ub) ? *iter : nullptr;
       return *this;
     }
 
    private:
     HashTable::iterator iter;
     HashTable::iterator ub;
+    ForecastBase* forecast = nullptr;
   };
 
   /* An iterator to walk over all parent forecasts, across all levels. */
@@ -1280,7 +1282,6 @@ class ForecastBase {
         item = fcst->getForecastItem();
         location = fcst->getForecastLocation();
         customer = fcst->getForecastCustomer();
-        itmfcst = ItemIterator(item);
       }
       increment();
     }
@@ -1307,7 +1308,6 @@ class ForecastBase {
     Item* item = nullptr;
     Location* location = nullptr;
     Customer* customer = nullptr;
-    ItemIterator itmfcst;
     ForecastBase* forecast = nullptr;
     ForecastBase* rootforecast = nullptr;
 

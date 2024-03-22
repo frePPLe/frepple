@@ -144,18 +144,16 @@ ForecastBase::ItemIterator::ItemIterator(Item* it) {
   auto lb_ub = table.equal_range(&tmp);
   iter = lb_ub.first;
   ub = lb_ub.second;
+  forecast = (iter != ub) ? *iter : nullptr;
 }
 
 ForecastBase* ForecastBase::findForecast(Item* i, Customer* c, Location* l,
                                          bool allow_create) {
   if (!i || !l || !c) return nullptr;
   if (c->getNumberOfDemands()) {
-    ForecastKey tmp(i);
-    auto [lb, ub] = table.equal_range(&tmp);
-    for (auto i = lb; i != ub; ++i) {
-      if ((*i)->getForecastLocation() == l && (*i)->getForecastCustomer() == c)
-        return *i;
-    }
+    ForecastKey tmp(i, l, c);
+    auto f = table.find(&tmp);
+    if (f != table.end()) return *f;
   }
   if (allow_create) {
     if (!i->isGroup() && !l->isGroup() && !c->isGroup()) {
@@ -787,23 +785,13 @@ void ForecastBase::ParentIterator::increment() {
       if (location) location = location->getOwner();
       if (!location) {
         location = rootforecast->getForecastLocation();
-        if (item) {
-          item = item->getOwner();
-          if (item) itmfcst = ItemIterator(item);
-        }
+        if (item) item = item->getOwner();
       }
     }
 
     // Check if a forecast exists at this combination
     if (item) {
-      forecast = nullptr;
-      for (auto i = itmfcst; i; ++i) {
-        if (i->getForecastCustomer() == customer &&
-            i->getForecastLocation() == location) {
-          forecast = *i;
-          break;
-        }
-      }
+      forecast = Forecast::findForecast(item, customer, location);
       if (!forecast)
         forecast = new ForecastAggregated(item, location, customer);
       return;

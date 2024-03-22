@@ -141,8 +141,7 @@ void ForecastMeasure::aggregateMeasures(const vector<ForecastMeasure*>& msrs) {
     // We need to make a copy because the forecast container is
     // getting updating during the loop.
     vector<ForecastBase*> tmp;
-    for (auto fcst = Forecast::getForecasts(); fcst; ++fcst)
-      tmp.push_back(&*fcst);
+    for (auto fcst : Forecast::getForecasts()) tmp.push_back(fcst);
     for (auto& fcst : tmp) {
       auto planned = fcst->getPlanned();
       for (auto p = fcst->getParents(); p; ++p) {
@@ -169,7 +168,7 @@ void ForecastMeasure::aggregateMeasures(const vector<ForecastMeasure*>& msrs) {
   }
 
   // Propagate the leave value as a temporary measure
-  for (auto fcst = Forecast::getForecasts(); fcst; ++fcst) {
+  for (auto fcst : Forecast::getForecasts()) {
     shared_ptr<ForecastData> fcstdata(nullptr);
     for (auto& msr : msrlist)
       if (msr.first->isLeaf(&*fcst)) {
@@ -189,7 +188,7 @@ void ForecastMeasure::aggregateMeasures(const vector<ForecastMeasure*>& msrs) {
 
   // Verify the correctness of the aggregation results
   unsigned long updated = 0;
-  for (auto fcst = Forecast::getForecasts(); fcst; ++fcst) {
+  for (auto fcst : Forecast::getForecasts()) {
     shared_ptr<ForecastData> fcstdata(nullptr);
     for (auto& msr : msrlist)
       if (!msr.first->isLeaf(&*fcst)) {
@@ -238,7 +237,7 @@ void ForecastMeasure::computeMeasures(const vector<ForecastMeasure*>& msrs) {
   for (auto& m : msrs) resetMeasure(ALL, m);
 
   // Recompute all leave forecasts
-  for (auto fcst = Forecast::getForecasts(); fcst; ++fcst) {
+  for (auto fcst : Forecast::getForecasts()) {
     shared_ptr<ForecastData> fcstdata(nullptr);
     for (auto& msr : msrs)
       if (msr->isLeaf(&*fcst) && msr->isComputed()) {
@@ -278,7 +277,7 @@ PyObject* ForecastMeasure::updatePlannedForecastPython(PyObject* self,
     resetMeasure(ALL, Measures::ordersplanned, Measures::forecastplanned);
 
     // Set the value on all leaf nodes
-    for (auto fcst = Forecast::getForecasts(); fcst; ++fcst) {
+    for (auto fcst : Forecast::getForecasts()) {
       auto fcstdata = fcst->getData();
       lock_guard<recursive_mutex> exclusive(fcstdata->lock);
       for (auto& bckt : fcstdata->getBuckets()) {
@@ -588,7 +587,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBucketData& bckt,
       // Proportionally scale all child forecasts
       double factor = val / currentvalue;
       for (auto ch = fcst->getLeaves(false, this); ch; ++ch)
-        remainder = disaggregate(&*ch, bckt.getStart(), bckt.getEnd(), factor,
+        remainder = disaggregate(*ch, bckt.getStart(), bckt.getEnd(), factor,
                                  true, remainder, mgr);
     } else {
       // Equal distribution of all child forecasts
@@ -602,7 +601,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBucketData& bckt,
       else {
         auto delta = val / cnt;
         for (auto p = fcst->getLeaves(false, this); p; ++p)
-          remainder = disaggregate(&*p, bckt.getStart(), bckt.getEnd(),
+          remainder = disaggregate(*p, bckt.getStart(), bckt.getEnd(),
                                    delta + remainder, false, 0.0, mgr);
       }
     }
@@ -674,7 +673,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBase* fcst,
       // Proportionally scale all child forecasts
       double factor = val / currentvalue;
       for (auto ch = fcst->getLeaves(false, this); ch; ++ch)
-        remainder = disaggregate(&*ch, startdate, enddate, factor, true,
+        remainder = disaggregate(*ch, startdate, enddate, factor, true,
                                  remainder, mgr);
     } else {
       // Equal distribution of all child forecasts
@@ -688,7 +687,7 @@ double ForecastMeasureAggregated::disaggregate(ForecastBase* fcst,
       else {
         auto delta = val / cnt;
         for (auto p = fcst->getLeaves(false, this); p; ++p)
-          remainder = disaggregate(&*p, startdate, enddate, delta + remainder,
+          remainder = disaggregate(*p, startdate, enddate, delta + remainder,
                                    false, 0, mgr);
       }
     }

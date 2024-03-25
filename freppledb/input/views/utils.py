@@ -1378,11 +1378,7 @@ class PathReport(GridReport):
                 "duration_per": None,
                 "quantity": 1,
                 "buffers": None,
-                "parent": (
-                    reportclass.operation_dict[previousOperation]
-                    if previousOperation
-                    else None
-                ),
+                "parent": reportclass.operation_dict.get(previousOperation, None),
                 "leaf": "false",
                 "expanded": "true",
                 "numsuboperations": reportclass.suboperations_count_dict[i[11]],
@@ -1431,14 +1427,8 @@ class PathReport(GridReport):
                 "duration_per": None,
                 "quantity": 1,
                 "buffers": None,
-                "parent": (
-                    reportclass.operation_dict[i[11]]
-                    if i[11]
-                    else (
-                        reportclass.operation_dict[previousOperation]
-                        if previousOperation
-                        else None
-                    )
+                "parent": reportclass.operation_dict.get(
+                    i[11], reportclass.operation_dict.get(previousOperation, None)
                 ),
                 "leaf": "false",
                 "expanded": "true",
@@ -1504,14 +1494,8 @@ class PathReport(GridReport):
                     if i[4]
                     else tuple([("%s @ %s" % (i[17], i[1]), 1)]) if i[17] else None
                 ),
-                "parent": (
-                    reportclass.operation_dict[i[8]]
-                    if i[8]
-                    else (
-                        reportclass.operation_dict[previousOperation]
-                        if previousOperation
-                        else None
-                    )
+                "parent": reportclass.operation_dict.get(
+                    i[8], reportclass.operation_dict.get(previousOperation, None)
                 ),
                 "leaf": "false",
                 "expanded": "true",

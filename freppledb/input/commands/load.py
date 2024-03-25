@@ -1906,7 +1906,8 @@ class loadDemand(LoadTask):
         import frepple
 
         if cls.filter:
-            filter_and = "and %s " % cls.filter
+            # Note: extra escaping of % is needed to avoid colliding with query argument
+            filter_and = "and %s " % cls.filter.replace("%", "%%")
         else:
             filter_and = ""
 

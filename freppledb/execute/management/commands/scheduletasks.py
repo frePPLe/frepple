@@ -135,7 +135,8 @@ class TaskScheduler:
                     created = True
 
         # Reschedule to run this task again at the next date
-        del scheduler.sched[database]
+        if database in scheduler:
+            del scheduler.sched[database]
         scheduler.waitNextEvent(database=database)
 
         # Synchronously run the worker process

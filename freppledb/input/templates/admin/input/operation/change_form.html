@@ -4,7 +4,7 @@
 {% block inline_field_sets %}
 {{ block.super }}
 {% if object_id %}
-<fieldset class="module container-fluid" id="fieldset-3" style="background:transparent">
+<fieldset class="module mb-3 container-fluid" id="fieldset-3" style="background:transparent">
 <h1 class="text-capitalize">{% trans "related" %}</h1>
 <div class="row">
   <div class="col-form-label col-3">
@@ -28,6 +28,12 @@
   <div class="col-form-label col-3">
      <a href="{{ request.prefix }}/data/input/operationdependency/?operation={{ object_id | urlencode }}&noautofilter">
      {% trans "dependencies"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
+  </div>
+</div>
+<div class="row">
+  <div class="col-form-label col-3">
+     <a href="{{ request.prefix }}/data/input/operationdependency/?blockedby={{ object_id | urlencode }}&noautofilter">
+     {% trans "blocked by operation"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </div>
 </div>
 </fieldset>

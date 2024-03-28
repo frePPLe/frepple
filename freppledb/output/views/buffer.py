@@ -873,7 +873,8 @@ class OverviewReport(GridPivot):
             select 1 as priority, coalesce(
               (select value from calendarbucket
                where calendar_id = 'SS for ' || opplanmat.buffer
-               and greatest(d.startdate,arguments.report_startdate) >= startdate and greatest(d.startdate,arguments.report_startdate) < enddate
+               and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
+               and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
                order by priority limit 1),
               (select defaultvalue from calendar where name = 'SS for ' || opplanmat.buffer)
               ) as safetystock
@@ -888,8 +889,8 @@ class OverviewReport(GridPivot):
                  and location_id = location.name
                  and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.opplan_batch)
                  )
-               and greatest(d.startdate,arguments.report_startdate) >= startdate
-               and greatest(d.startdate,arguments.report_startdate) < enddate
+               and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
+               and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
                order by priority limit 1),
               (select defaultvalue
                from calendar

@@ -546,15 +546,17 @@ class ExportOperationPlans(PlanTask):
                 if j.operationplan != opplan
             ],
             "unavailable": unavail,
-            "interruptions": [
-                (
-                    i.start.strftime("%Y-%m-%d %H:%M:%S"),
-                    i.end.strftime("%Y-%m-%d %H:%M:%S"),
-                )
-                for i in opplan.interruptions
-            ]
-            if unavail
-            else [],
+            "interruptions": (
+                [
+                    (
+                        i.start.strftime("%Y-%m-%d %H:%M:%S"),
+                        i.end.strftime("%Y-%m-%d %H:%M:%S"),
+                    )
+                    for i in opplan.interruptions
+                ]
+                if unavail
+                else []
+            ),
         }
         if not opplan.feasible:
             pln["feasible"] = False
@@ -636,8 +638,14 @@ class ExportOperationPlans(PlanTask):
             demand = None
             forecast = None
 
-        color = j.getColor()[0]
-        color = color if color != 999999 else "\\N"
+        if isinstance(i, frepple.operation_inventory) or (
+            j.demand or (j.owner and j.owner.demand)
+        ):
+            color = "\\N"
+        else:
+            color = j.getColor()[0]
+            if color == 999999:
+                color = "\\N"
 
         data = None
         if isinstance(i, frepple.operation_inventory):
@@ -655,20 +663,22 @@ class ExportOperationPlans(PlanTask):
                 clean_value(j.source),
                 timestamp,
                 "\\N",
-                clean_value(j.owner.reference)
-                if j.owner and not j.owner.operation.hidden
-                else "\\N",
+                (
+                    clean_value(j.owner.reference)
+                    if j.owner and not j.owner.operation.hidden
+                    else "\\N"
+                ),
                 clean_value(j.operation.buffer.item.name),
                 clean_value(j.operation.buffer.location.name),
                 "\\N",
                 clean_value(j.operation.buffer.location.name),
                 "\\N",
                 clean_value(j.demand.name) if demand else "\\N",
-                j.demand.due
-                if j.demand
-                else j.owner.demand.due
-                if j.owner and j.owner.demand
-                else "\\N",
+                (
+                    j.demand.due
+                    if j.demand
+                    else j.owner.demand.due if j.owner and j.owner.demand else "\\N"
+                ),
                 "\\N",  # color is empty for stock
                 clean_value(j.reference),
                 clean_value(j.batch),
@@ -689,26 +699,34 @@ class ExportOperationPlans(PlanTask):
                 clean_value(j.source),
                 timestamp,
                 "\\N",
-                clean_value(j.owner.reference)
-                if j.owner and not j.owner.operation.hidden
-                else "\\N",
-                clean_value(j.operation.destination.item.name)
-                if j.operation.destination
-                else j.operation.origin.item.name,
-                clean_value(j.operation.destination.location.name)
-                if j.operation.destination
-                else "\\N",
-                clean_value(j.operation.origin.location.name)
-                if j.operation.origin
-                else "\\N",
+                (
+                    clean_value(j.owner.reference)
+                    if j.owner and not j.owner.operation.hidden
+                    else "\\N"
+                ),
+                (
+                    clean_value(j.operation.destination.item.name)
+                    if j.operation.destination
+                    else j.operation.origin.item.name
+                ),
+                (
+                    clean_value(j.operation.destination.location.name)
+                    if j.operation.destination
+                    else "\\N"
+                ),
+                (
+                    clean_value(j.operation.origin.location.name)
+                    if j.operation.origin
+                    else "\\N"
+                ),
                 "\\N",
                 "\\N",
                 clean_value(j.demand.name) if demand else "\\N",
-                j.demand.due
-                if j.demand
-                else j.owner.demand.due
-                if j.owner and j.owner.demand
-                else "\\N",
+                (
+                    j.demand.due
+                    if j.demand
+                    else j.owner.demand.due if j.owner and j.owner.demand else "\\N"
+                ),
                 color,  # color
                 clean_value(j.reference),
                 clean_value(j.batch),
@@ -729,20 +747,22 @@ class ExportOperationPlans(PlanTask):
                 clean_value(j.source),
                 timestamp,
                 "\\N",
-                clean_value(j.owner.reference)
-                if j.owner and not j.owner.operation.hidden
-                else "\\N",
+                (
+                    clean_value(j.owner.reference)
+                    if j.owner and not j.owner.operation.hidden
+                    else "\\N"
+                ),
                 clean_value(j.operation.buffer.item.name),
                 "\\N",
                 "\\N",
                 clean_value(j.operation.buffer.location.name),
                 clean_value(j.operation.itemsupplier.supplier.name),
                 clean_value(j.demand.name) if demand else "\\N",
-                j.demand.due
-                if j.demand
-                else j.owner.demand.due
-                if j.owner and j.owner.demand
-                else "\\N",
+                (
+                    j.demand.due
+                    if j.demand
+                    else j.owner.demand.due if j.owner and j.owner.demand else "\\N"
+                ),
                 color,  # color
                 clean_value(j.reference),
                 clean_value(j.batch),
@@ -763,28 +783,38 @@ class ExportOperationPlans(PlanTask):
                 clean_value(j.source),
                 timestamp,
                 clean_value(i.name),
-                clean_value(j.owner.reference)
-                if j.owner and not j.owner.operation.hidden
-                else "\\N",
-                clean_value(i.item.name)
-                if i.item
-                else clean_value(i.owner.item.name)
-                if i.owner and i.owner.item
-                else clean_value(j.demand.item.name)
-                if j.demand and j.demand.item
-                else clean_value(j.owner.demand.item.name)
-                if j.owner and j.owner.demand and j.owner.demand.item
-                else "\\N",
+                (
+                    clean_value(j.owner.reference)
+                    if j.owner and not j.owner.operation.hidden
+                    else "\\N"
+                ),
+                (
+                    clean_value(i.item.name)
+                    if i.item
+                    else (
+                        clean_value(i.owner.item.name)
+                        if i.owner and i.owner.item
+                        else (
+                            clean_value(j.demand.item.name)
+                            if j.demand and j.demand.item
+                            else (
+                                clean_value(j.owner.demand.item.name)
+                                if j.owner and j.owner.demand and j.owner.demand.item
+                                else "\\N"
+                            )
+                        )
+                    )
+                ),
                 "\\N",
                 "\\N",
                 clean_value(i.location.name) if i.location else "\\N",
                 "\\N",
                 clean_value(j.demand.name) if demand and j.demand else "\\N",
-                j.demand.due
-                if j.demand
-                else j.owner.demand.due
-                if j.owner and j.owner.demand
-                else "\\N",
+                (
+                    j.demand.due
+                    if j.demand
+                    else j.owner.demand.due if j.owner and j.owner.demand else "\\N"
+                ),
                 color,  # color
                 clean_value(j.reference),
                 clean_value(j.batch),
@@ -805,9 +835,11 @@ class ExportOperationPlans(PlanTask):
                 clean_value(j.source),
                 timestamp,
                 "\\N",
-                clean_value(j.owner.reference)
-                if j.owner and not j.owner.operation.hidden
-                else "\\N",
+                (
+                    clean_value(j.owner.reference)
+                    if j.owner and not j.owner.operation.hidden
+                    else "\\N"
+                ),
                 clean_value(
                     j.owner.demand.item.name
                     if j.owner and j.owner.demand
@@ -822,11 +854,11 @@ class ExportOperationPlans(PlanTask):
                 ),
                 "\\N",
                 clean_value(j.demand.name) if demand else "\\N",
-                j.demand.due
-                if j.demand
-                else j.owner.demand.due
-                if j.owner and j.owner.demand
-                else "\\N",
+                (
+                    j.demand.due
+                    if j.demand
+                    else j.owner.demand.due if j.owner and j.owner.demand else "\\N"
+                ),
                 "\\N",  # color is empty for deliver operation
                 clean_value(j.reference),
                 clean_value(j.batch),
@@ -926,9 +958,17 @@ class ExportOperationPlans(PlanTask):
                     cls.parent.timestamp,
                     cluster=cluster,
                     opplans=opplans,
-                    accepted_status=["confirmed", "approved", "completed", "closed"]
-                    if cluster != -2
-                    else ["proposed", "confirmed", "approved", "completed", "closed"],
+                    accepted_status=(
+                        ["confirmed", "approved", "completed", "closed"]
+                        if cluster != -2
+                        else [
+                            "proposed",
+                            "confirmed",
+                            "approved",
+                            "completed",
+                            "closed",
+                        ]
+                    ),
                 )
             ),
             table="tmp_operationplan",
@@ -1290,18 +1330,26 @@ class ComputePeriodOfCover(PlanTask):
                  %s
         """
             % (
-                "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
-                if cluster != -1
-                else "",
-                "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
-                if cluster != -1
-                else "",
-                "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
-                if cluster != -1
-                else "",
-                "where name in (select name from cluster_item_tmp)"
-                if cluster != -1
-                else "",
+                (
+                    "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
+                    if cluster != -1
+                    else ""
+                ),
+                (
+                    "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
+                    if cluster != -1
+                    else ""
+                ),
+                (
+                    "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
+                    if cluster != -1
+                    else ""
+                ),
+                (
+                    "where name in (select name from cluster_item_tmp)"
+                    if cluster != -1
+                    else ""
+                ),
             ),
             ((currentdate,) * 5),
         )

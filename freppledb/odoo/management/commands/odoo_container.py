@@ -449,6 +449,7 @@ class Command(BaseCommand):
             ],
             capture_output=True,
             text=True,
+            shell=True,
         ).stdout
         if container:
             if options["verbosity"]:
@@ -498,10 +499,10 @@ class Command(BaseCommand):
             ],
             capture_output=True,
             text=True,
-        ).stdout
+        ).stdout.strip()
 
         if options["verbosity"]:
             print("CONTAINER READY: %s " % container)
             if not options["nolog"]:
                 print("Hit CTRL-C to stop displaying the container log")
-                subprocess.run(["docker", "attach", container], shell=True)
+                subprocess.run(["docker", "attach", container])

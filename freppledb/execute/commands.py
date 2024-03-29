@@ -31,6 +31,7 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.common.models import Parameter, Bucket
+from freppledb.execute.management.commands import parseConstraints
 
 logger = logging.getLogger(__name__)
 
@@ -220,7 +221,7 @@ class SupplyPlanning(PlanTask):
         except Exception:
             plantype = 1  # Default is a constrained plan
         try:
-            constraint = int(os.environ["FREPPLE_CONSTRAINT"])
+            constraint = parseConstraints(os.environ["FREPPLE_CONSTRAINT"])
         except Exception:
             constraint = 4 + 16 + 32  # Default is with all constraints enabled
         cls.solver = frepple.solver_mrp(

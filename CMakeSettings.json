@@ -14,7 +14,7 @@
       "environments": [
         {
           "FREPPLE_PLANTYPE": 1,
-          "FREPPLE_CONSTRAINT": 15,
+          "FREPPLE_CONSTRAINT": "capa,mfg_lt,po_lt",
           "FREPPLE_DATABASE": "default",
           "PYTHONPATH=": "${projectDir}",
           "DJANGO_SETTINGS_MODULE": "freppledb.settings",

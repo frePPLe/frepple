@@ -31,7 +31,7 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.common.models import Parameter, Bucket
-from freppledb.execute.management.commands import parseConstraints
+from freppledb.execute.management.commands.runplan import parseConstraints
 
 logger = logging.getLogger(__name__)
 

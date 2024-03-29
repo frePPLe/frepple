@@ -420,7 +420,10 @@ command is more an exception.
 Scenario management
 -------------------
 
-This option allows a user to either create copies of a dataset into a
+Scenarios are isolated databases that allow working with multiple datasets.
+See :doc:`/user-interface/what-if-scenarios` for an quick introduction.
+
+This action allows a user to either create copies of a dataset into a
 what-if scenario or promote the data from a scenario into *Production* database.
 
 When the data is successfully copied, the status changes from 'Free'

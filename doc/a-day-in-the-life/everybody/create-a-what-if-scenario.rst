@@ -6,6 +6,8 @@ A what-if scenario allows you to create a sandbox copy of the data, and simulate
 change to the data. You'll also want to compare the planning results in your what-if
 scenario with the original plan.
 
+See :doc:`/user-interface/what-if-scenarios` for a quick introduction.
+
 1) | Navigate to Execute screen in the Admin menu.
    | The screen shows a number of tasks, and you want to open the "scenario management" task.
 2) | You see a list scenario slots (7 by default). Each one is seperate database that can

@@ -6,9 +6,26 @@ FrePPLe allows users to easily create alternative plans. A scenario
 is complete sandbox copy of all data, such that any modification done
 in it doesn't impact the production plan.
 
+Scenarios are commonly used:
+
+- | Simulate different business scenarios:
+  | What happens if demand is increased?
+  | What is the impact of an extra machine?
+  | How will a big new customer impact other demands and resouce loading?
+
+- | Separate different planning process:
+  | Long-term planning and short-term scheduling scenarios
+  | Constrained and unconstrained planning scenarios
+  | Scenarios including or excluding forecast
+
+- | Allow different business units to manage their own plans.
+  | Each business unit can run their planning process independently.
+  | Access rights can be configured to control which users have access to
+    each scenario.
+
 .. image:: _images/whatif.png
  :alt: What-if scenarios
- 
+
 * `Selecting a scenario`_
 * `Scenario management`_
 * `Access rights and permissions`_
@@ -17,7 +34,7 @@ Selecting a scenario
 --------------------
 
 When scenarios are in use, a drop down list appears in the upper right
-corner. It allows you to select the scenario to work in. 
+corner. It allows you to select the scenario to work in.
 
 Only scenarios to which you have access rights will be shown in the list.
 
@@ -27,7 +44,7 @@ Only scenarios to which you have access rights will be shown in the list.
 Scenario management
 -------------------
 
-During the installation a number of what-if slots (3 by default) are configured 
+During the installation a number of what-if slots (3 by default) are configured
 by the administrator. See :doc:`this page </installation-guide/multi-model>` for the
 details.
 
@@ -40,7 +57,7 @@ The scenario's can have the following states:
   Data has been copied into the scenario slot. Users can freely work
   independently in the scenario, without affecting the main model.
 
-In :doc:`the execution screen <execute>`, you can change the status of a 
+In :doc:`the execution screen <execute>`, you can change the status of a
 scenario slot:
 
 * | **Copy** is used to duplicate an existing schema into a free slot.
@@ -64,13 +81,13 @@ Access rights and permissions can be managed for each scenario individually.
 When copying of a new scenario, it will initially be accessible by 1) the user
 creating the copy and 2) all superusers in the source scenario.
 
-A user must be marked active in a scenario before it will appear in the list of 
+A user must be marked active in a scenario before it will appear in the list of
 available scenarios.
 
 The superuser status of a user can be different in each scenario. Users can have
-completely different role and permissions in each scenario. 
+completely different role and permissions in each scenario.
 
-The list of users and their passwords is always identical in all scenarios. 
+The list of users and their passwords is always identical in all scenarios.
 
 .. image:: _images/user-list.png
 

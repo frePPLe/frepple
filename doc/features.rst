@@ -263,10 +263,8 @@ User interface
 | **Role-based permissions**              | Specify read, write, and view permissions per user or per user role.       | - Doc                                                                         |
 |                                         |                                                                            |   :doc:`user-interface/getting-around/user-permissions-and-roles`             |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-|                                         | planning data.                                                             |                                                                               |
-|                                         |                                                                            |                                                                               |
-|                                         | A scenario is a complete sandbox copy of the database. You can change any  |                                                                               |
-|                                         | data element in a scenario without impacting the other scenarios.          |                                                                               |
+| **What-if scenarios**                   | A scenario is a complete sandbox copy of the database. You can change any  | - Doc                                                                         |
+|                                         | data element in a scenario without impacting the other scenarios.          |   :doc:`user-interface/what-if-scenarios`                                     |
 |                                         |                                                                            |                                                                               |
 |                                         | Typical use cases:                                                         |                                                                               |
 |                                         |                                                                            |                                                                               |

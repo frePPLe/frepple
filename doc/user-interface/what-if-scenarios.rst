@@ -67,6 +67,9 @@ scenario slot:
     slot has finished.
   | After releasing the scenario slot moves from *in use* to *free* again.
 
+* | **Promote** is used to copy the contents of a what-if scenario back
+    into the production scenario.
+
 The label shown in the scenario selection dropdown can also be updated
 in this screen.
 

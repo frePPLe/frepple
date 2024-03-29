@@ -32,7 +32,6 @@ from django.db import DEFAULT_DB_ALIAS
 from freppledb.common.auth import getWebserviceAuthorization
 from freppledb.common.commands import PlanTaskRegistry
 from freppledb.common.models import Parameter
-from freppledb.execute.management.commands.runplan import parseConstraints
 
 # Only a single service can be making updates at the same time
 try:
@@ -130,6 +129,8 @@ def createSolvers(loglevel=2, database=DEFAULT_DB_ALIAS):
     global clean_solver, mrp_solver, fcst_solver
 
     try:
+        from freppledb.execute.management.commands.runplan import parseConstraints
+
         constraint = parseConstraints(os.environ["FREPPLE_CONSTRAINT"])
     except Exception:
         constraint = 4 + 16 + 32  # Default is with all constraints enabled

@@ -52,6 +52,9 @@ class SeleniumTest(StaticLiveServerTestCase):
                 firefox_options.add_argument("--headless")
             cls.driver = webdriver.Firefox(options=firefox_options)
         elif settings.SELENIUM_TESTS == "chrome":
+            import chromedriver_autoinstaller
+
+            chromedriver_autoinstaller.install()
             options = webdriver.ChromeOptions()
             options.add_argument("--silent")
             if settings.SELENIUM_HEADLESS:

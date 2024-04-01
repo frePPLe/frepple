@@ -63,6 +63,8 @@ def parseConstraints(val):
 
 
 def constraintString(val):
+    if val == 0:
+        return "0"
     c = []
     if val & 4:
         c.append("capa")
@@ -166,17 +168,21 @@ class Command(BaseCommand):
         timestamp = now.strftime("%Y%m%d%H%M%S")
         if database == DEFAULT_DB_ALIAS:
             logfile = "frepple-%s%s.log" % (
-                ""
-                if "partition" not in options
-                else "partition%s-" % options["partition"],
+                (
+                    ""
+                    if "partition" not in options
+                    else "partition%s-" % options["partition"]
+                ),
                 timestamp,
             )
         else:
             logfile = "frepple_%s-%s%s.log" % (
                 database,
-                ""
-                if "partition" not in options
-                else "partition%s-" % options["partition"],
+                (
+                    ""
+                    if "partition" not in options
+                    else "partition%s-" % options["partition"]
+                ),
                 timestamp,
             )
 

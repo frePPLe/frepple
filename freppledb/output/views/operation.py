@@ -351,23 +351,31 @@ class OverviewReport(GridPivot):
            case when operationplan.status = 'proposed'
              and d.startdate <= operationplan.startdate and d.enddate > operationplan.startdate
            then operationplan.quantity
-           else 0 end
+           end
            ), 0) proposed_start,
          coalesce(sum(
            case when d.startdate <= operationplan.startdate and d.enddate > operationplan.startdate
-           then operationplan.quantity else 0 end
+           then operationplan.quantity end
            ), 0) total_start,
          coalesce(sum(
            case when operationplan.status = 'proposed'
-             and d.startdate < operationplan.enddate and d.enddate >= operationplan.enddate
-           then operationplan.quantity else 0 end
+             and d.startdate <= operationplan.enddate and d.enddate >= operationplan.enddate
+           then operationplan.quantity end
            ), 0) proposed_end,
          coalesce(sum(
-           case when d.startdate < operationplan.enddate and d.enddate >= operationplan.enddate
-           then operationplan.quantity else 0 end
+           case when d.startdate <= operationplan.enddate and d.enddate >= operationplan.enddate
+           then operationplan.quantity end
            ), 0) total_end,
          coalesce(sum(
-           case when operationplan.status = 'proposed' then
+           case
+           when operationplan.status = 'proposed'
+            and operationplan.enddate = operationplan.startdate
+            and d.startdate <= operationplan.enddate
+            and d.enddate > operationplan.enddate
+            then
+                operationplan.quantity
+           when operationplan.status = 'proposed'
+            then
              (
              -- Total overlap
              extract (epoch from least(operationplan.enddate, d.enddate) - greatest(operationplan.startdate, d.startdate))
@@ -382,9 +390,16 @@ class OverviewReport(GridPivot):
              )
              / greatest(1, extract(epoch from operationplan.enddate - operationplan.startdate) - coalesce((plan#>>'{unavailable}')::numeric, 0))
              * operationplan.quantity
-           else 0 end
+           end
            ), 0) proposed_production,
          coalesce(sum(
+           case
+           when operationplan.enddate = operationplan.startdate
+            and d.startdate <= operationplan.enddate
+            and d.enddate > operationplan.enddate
+            then
+                operationplan.quantity
+           else
              (
              -- Total overlap
              extract (epoch from least(operationplan.enddate, d.enddate) - greatest(operationplan.startdate, d.startdate))
@@ -399,6 +414,7 @@ class OverviewReport(GridPivot):
              )
            / greatest(1, extract(epoch from operationplan.enddate - operationplan.startdate) - coalesce((plan#>>'{unavailable}')::numeric, 0))
            * operationplan.quantity
+           end
            ), 0) total_production
         from (%s) oper
         -- Multiply with buckets

@@ -22,6 +22,10 @@ This release is scheduled for early April 2024. You can already check out a `pre
     operation, the planning algorithm didn't correctly roll back and clean the plan.
   | The symptom is an error during the export of the plan.
 
+- | Bug fix: The manufacturing order summary report didn't correctly handle operations
+    with 0 duration.
+
+
 .. rubric:: Demand forecasting
 
 - | Performance improvements when disaggregating edits in sparse hierarchies.

@@ -2,10 +2,10 @@
 Planning algorithm
 ==================
 
-Different solver algorithms can be used with frePPle. 
+Different solver algorithms can be used with frePPle.
 
 FrePPLe comes with a default solver, which implements a heuristic search
-algorithm. The Enterprise Edition provides a second solver, tailored for 
+algorithm. The Enterprise Edition provides a second solver, tailored for
 distribution-oriented supply chains.
 
 The algorithm solves demand per demand. All demands are first sorted based on
@@ -23,7 +23,7 @@ ask can not -or only partially- be met: it then indicates the earliest date
 when the missing quantity might be feasible.
 
 
-**Pseudo-code of the algorithm**:
+**Pseudo-code of the algorithm**
 
     | Every demand has a certain delivery operation associated with it, either
       directly or indirectly by specifying a delivery operation for the
@@ -104,3 +104,18 @@ when the missing quantity might be feasible.
     If we’re not happy with the reply the operation plans created are undone
     again and we can go back to the first step and ask for the remaining
     material or at a later date.
+
+**Debugging the algorithm**
+
+You can trace the search of the planning algorithm by setting the parameter
+"plan.loglevel" to 2. This is will generate a (sometimes very big) log file
+during plan generation.
+
+The easiest way to review such log files is to use the excellent
+`notepad++ editor <https://notepad-plus-plus.org/>`_ and choose the YAML
+language to format the file. The editor displays collapsible sections
+which significantly facilitate reviewing big and complex log files.
+
+.. image:: _images/notepadplusplus_debugging.png
+   :alt: Debugging with Notepad++
+

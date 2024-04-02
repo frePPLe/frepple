@@ -1143,141 +1143,149 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   Duration delay;
   Date top_q_date(data->state->q_date);
   Date q_date;
-  if (useDependencies) {
-    if (data->dependency_list.empty())
-      // Starting a new dependency list.
-      data->populateDependencies(oper);
 
-    // Plan all final steps (i.e. steps without blockedby dependency)
-    // It will recursively plan into the preceding steps.
-    for (auto& e : oper->getSubOperations()) {
-      bool isblocked = false;
-      for (auto& dpd : e->getOperation()->getDependencies()) {
-        if (dpd->getBlockedBy() == e->getOperation()) {
-          isblocked = true;
+  try {
+    if (useDependencies) {
+      if (data->dependency_list.empty())
+        // Starting a new dependency list.
+        data->populateDependencies(oper);
+
+      // Plan all final steps (i.e. steps without blockedby dependency)
+      // It will recursively plan into the preceding steps.
+      for (auto& e : oper->getSubOperations()) {
+        bool isblocked = false;
+        for (auto& dpd : e->getOperation()->getDependencies()) {
+          if (dpd->getBlockedBy() == e->getOperation()) {
+            isblocked = true;
+            break;
+          }
+        }
+        if (isblocked)
+          // Not a final step
+          continue;
+
+        // Check if this is the last time it appears in the dependency list
+        data->state->q_date = top_q_date;
+        auto occurences = data->dependency_list.find(e->getOperation());
+        if (occurences != data->dependency_list.end()) {
+          if (occurences->second.first > 1) {
+            // Not ready to explore this dependency yet.
+            // We just record the requirement date.
+            --occurences->second.first;
+            if (getLogLevel() > 1) {
+              logger << indentlevel << "  Delay following dependency '"
+                     << e->getOperation();
+              if (occurences->second.second > data->state->q_date)
+                logger << "' - setting requirement date to "
+                       << data->state->q_date;
+              logger << endl;
+            }
+            if (occurences->second.second > data->state->q_date)
+              occurences->second.second = data->state->q_date;
+            continue;
+          } else {
+            // OK to to explore this dependency
+            if (occurences->second.second < data->state->q_date) {
+              if (getLogLevel() > 1) {
+                logger << indentlevel
+                       << "  Dependency updates requirement date to "
+                       << occurences->second.second << endl;
+              }
+              data->state->q_date = occurences->second.second;
+            }
+            data->dependency_list.erase(occurences);
+          }
+        }
+
+        data->state->q_qty = a_qty;
+        data->state->curOwnerOpplan = a->getOperationPlan();
+        Buffer* tmpBuf = data->state->curBuffer;
+        q_date = data->state->q_date;
+        e->getOperation()->solve(*this, v);
+        a_qty = data->state->a_qty;
+        data->state->curBuffer = tmpBuf;
+        if (a_qty <= 0.0) {
           break;
         }
       }
-      if (isblocked)
-        // Not a final step
-        continue;
+    } else {
+      // Loop through the steps in sequence
+      for (auto e = oper->getSubOperations().rbegin();
+           e != oper->getSubOperations().rend() && a_qty > 0.0; ++e) {
+        // Plan the next step
+        data->state->q_qty = a_qty;
+        data->state->q_date = data->state->curOwnerOpplan->getStart();
+        Buffer* tmpBuf = data->state->curBuffer;
+        q_date = data->state->q_date;
+        (*e)->getOperation()->solve(
+            *this, v);  // @todo if the step itself has child operations, the
+                        // curOwnerOpplan field is changed here!!!
+        a_qty = data->state->a_qty;
+        data->state->curBuffer = tmpBuf;
 
-      // Check if this is the last time it appears in the dependency list
-      data->state->q_date = top_q_date;
-      auto occurences = data->dependency_list.find(e->getOperation());
-      if (occurences != data->dependency_list.end()) {
-        if (occurences->second.first > 1) {
-          // Not ready to explore this dependency yet.
-          // We just record the requirement date.
-          --occurences->second.first;
-          if (getLogLevel() > 1) {
-            logger << indentlevel << "  Delay following dependency '"
-                   << e->getOperation();
-            if (occurences->second.second > data->state->q_date)
-              logger << "' - setting requirement date to "
-                     << data->state->q_date;
-            logger << endl;
-          }
-          if (occurences->second.second > data->state->q_date)
-            occurences->second.second = data->state->q_date;
-          continue;
-        } else {
-          // OK to to explore this dependency
-          if (occurences->second.second < data->state->q_date) {
-            if (getLogLevel() > 1) {
-              logger << indentlevel
-                     << "  Dependency updates requirement date to "
-                     << occurences->second.second << endl;
-            }
-            data->state->q_date = occurences->second.second;
-          }
-          data->dependency_list.erase(occurences);
+        // Update the top operationplan
+        data->state->curOwnerOpplan->setQuantity(a_qty, true);
+
+        // Maximum for the next date
+        if (data->state->a_date != Date::infiniteFuture) {
+          if (delay < data->state->a_date - q_date)
+            delay = data->state->a_date - q_date;
+          OperationPlanState at =
+              data->state->curOwnerOpplan->setOperationPlanParameters(
+                  0.01, data->state->a_date, Date::infinitePast, false, false);
+          if (at.end < top_q_date + (data->state->a_date - q_date))
+            // Minimum routing delay is assumed to be equal to the delay of
+            // the step.
+            // TODO this assumption is not really generic
+            at.end = top_q_date + (data->state->a_date - q_date);
+          if (at.end > max_Date) max_Date = at.end;
         }
       }
 
-      data->state->q_qty = a_qty;
-      data->state->curOwnerOpplan = a->getOperationPlan();
-      Buffer* tmpBuf = data->state->curBuffer;
-      q_date = data->state->q_date;
-      e->getOperation()->solve(*this, v);
-      a_qty = data->state->a_qty;
-      data->state->curBuffer = tmpBuf;
-      if (a_qty <= 0.0) {
-        break;
+      // Check the flows and loads on the top operationplan.
+      // This can happen only after the suboperations have been dealt with
+      // because only now we know how long the operation lasts in total.
+      // Solving for the top operationplan can resize and move the steps that
+      // are in the routing!
+      /* @todo moving routing opplan doesn't recheck for feasibility of
+       * steps...
+       */
+      data->state->curOwnerOpplan->createFlowLoads();
+      if (data->state->curOwnerOpplan->getQuantity() > 0.0) {
+        data->state->q_qty = a_qty;
+        data->state->q_date = data->state->curOwnerOpplan->getEnd();
+        q_date = data->state->q_date;
+        checkOperation(data->state->curOwnerOpplan, *data);
+        a_qty = data->state->a_qty;
+        if (a_qty == 0.0 && data->state->a_date != Date::infiniteFuture) {
+          // The reply date is the combination of the reply date of all steps
+          // and the reply date of the top operationplan.
+          if (data->state->a_date > q_date &&
+              delay < data->state->a_date - q_date)
+            delay = data->state->a_date - q_date;
+          if (data->state->a_date > max_Date ||
+              max_Date == Date::infiniteFuture)
+            max_Date = data->state->a_date;
+        }
       }
-    }
-  } else {
-    // Loop through the steps in sequence
-    for (auto e = oper->getSubOperations().rbegin();
-         e != oper->getSubOperations().rend() && a_qty > 0.0; ++e) {
-      // Plan the next step
-      data->state->q_qty = a_qty;
-      data->state->q_date = data->state->curOwnerOpplan->getStart();
-      Buffer* tmpBuf = data->state->curBuffer;
-      q_date = data->state->q_date;
-      (*e)->getOperation()->solve(
-          *this, v);  // @todo if the step itself has child operations, the
-                      // curOwnerOpplan field is changed here!!!
-      a_qty = data->state->a_qty;
-      data->state->curBuffer = tmpBuf;
+      data->state->a_date = (max_Date ? max_Date : Date::infiniteFuture);
 
-      // Update the top operationplan
-      data->state->curOwnerOpplan->setQuantity(a_qty, true);
-
-      // Maximum for the next date
-      if (data->state->a_date != Date::infiniteFuture) {
-        if (delay < data->state->a_date - q_date)
-          delay = data->state->a_date - q_date;
-        OperationPlanState at =
-            data->state->curOwnerOpplan->setOperationPlanParameters(
-                0.01, data->state->a_date, Date::infinitePast, false, false);
-        if (at.end < top_q_date + (data->state->a_date - q_date))
-          // Minimum routing delay is assumed to be equal to the delay of the
-          // step.
-          // TODO this assumption is not really generic
-          at.end = top_q_date + (data->state->a_date - q_date);
-        if (at.end > max_Date) max_Date = at.end;
-      }
+      if (data->state->a_qty > 0.0)
+        data->state->a_qty = flow_qty_fixed + a_qty * flow_qty_per;
+      else
+        data->state->a_qty = 0.0;
     }
 
-    // Check the flows and loads on the top operationplan.
-    // This can happen only after the suboperations have been dealt with
-    // because only now we know how long the operation lasts in total.
-    // Solving for the top operationplan can resize and move the steps that are
-    // in the routing!
-    /* @todo moving routing opplan doesn't recheck for feasibility of steps...
-     */
-    data->state->curOwnerOpplan->createFlowLoads();
-    if (data->state->curOwnerOpplan->getQuantity() > 0.0) {
-      data->state->q_qty = a_qty;
-      data->state->q_date = data->state->curOwnerOpplan->getEnd();
-      q_date = data->state->q_date;
-      checkOperation(data->state->curOwnerOpplan, *data);
-      a_qty = data->state->a_qty;
-      if (a_qty == 0.0 && data->state->a_date != Date::infiniteFuture) {
-        // The reply date is the combination of the reply date of all steps and
-        // the reply date of the top operationplan.
-        if (data->state->a_date > q_date &&
-            delay < data->state->a_date - q_date)
-          delay = data->state->a_date - q_date;
-        if (data->state->a_date > max_Date || max_Date == Date::infiniteFuture)
-          max_Date = data->state->a_date;
-      }
+    // Loop through the top level dependencies
+    if (data->state->a_qty > 0.0 && !oper->getDependencies().empty()) {
+      bool tmp1 = false;
+      double tmp2;
+      DateRange tmp3;
+      checkDependencies(data->state->curOwnerOpplan, *data, tmp1, tmp2, tmp3);
     }
-    data->state->a_date = (max_Date ? max_Date : Date::infiniteFuture);
-
-    if (data->state->a_qty > 0.0)
-      data->state->a_qty = flow_qty_fixed + a_qty * flow_qty_per;
-    else
-      data->state->a_qty = 0.0;
-  }
-
-  // Loop through the top level dependencies
-  if (data->state->a_qty > 0.0 && !oper->getDependencies().empty()) {
-    bool tmp1 = false;
-    double tmp2;
-    DateRange tmp3;
-    checkDependencies(data->state->curOwnerOpplan, *data, tmp1, tmp2, tmp3);
+  } catch (...) {
+    if (!prev_owner_opplan) data->getCommandManager()->add(a);
+    throw;
   }
 
   // Add to the list (even if zero-quantity!)

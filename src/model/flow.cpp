@@ -173,8 +173,9 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds) {
         Py_DECREF(key_utf8);
         if (!attr.isA(Tags::effective_end) &&
             !attr.isA(Tags::effective_start) && !attr.isA(Tags::operation) &&
-            !attr.isA(Tags::buffer) && !attr.isA(Tags::quantity) &&
-            !attr.isA(Tags::type) && !attr.isA(Tags::action)) {
+            !attr.isA(Tags::item) && !attr.isA(Tags::location) &&
+            !attr.isA(Tags::quantity) && !attr.isA(Tags::type) &&
+            !attr.isA(Tags::action)) {
           const MetaFieldBase* fmeta = l->getType().findField(attr.getHash());
           if (!fmeta && l->getType().category)
             fmeta = l->getType().category->findField(attr.getHash());

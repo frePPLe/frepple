@@ -36,6 +36,7 @@ from freppledb.execute.models import Task, ScheduledTask
 from freppledb.execute.views import FileManager
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Scenario, Parameter
+from freppledb.common.report import create_connection
 from freppledb.input.models import Item
 from freppledb import __version__
 
@@ -239,6 +240,14 @@ class Command(BaseCommand):
                         )
                     except Exception:
                         quick_drop_failed = True
+                    sql_role = settings.DATABASES[destination].get("SQL_ROLE", None)
+                    if sql_role:
+                        with create_connection(self.database).cursor() as cursor2:
+                            try:
+                                cursor2.execute("set role %s", (sql_role,))
+                                cursor2.execute("drop owned by %s" % sql_role)
+                            except Exception:
+                                quick_drop_failed = True
                 if destination == DEFAULT_DB_ALIAS or quick_drop_failed:
                     # drop tables
                     cursor.execute(
@@ -354,17 +363,21 @@ class Command(BaseCommand):
                     and ("-p %s " % settings.DATABASES[source]["PORT"])
                     or "",
                     (
-                        "%s %s "
-                        % (
-                            " -T ".join(["", *excludedTables]),
-                            " --exclude-table-data=".join(["", *excludedTables]),
+                        (
+                            "%s %s "
+                            % (
+                                " -T ".join(["", *excludedTables]),
+                                " --exclude-table-data=".join(["", *excludedTables]),
+                            )
                         )
-                    )
-                    if destination == DEFAULT_DB_ALIAS
-                    else "",
-                    ("%s " % (" -T ".join(["", *noOwnershipTables])))
-                    if len(noOwnershipTables) > 0
-                    else "",
+                        if destination == DEFAULT_DB_ALIAS
+                        else ""
+                    ),
+                    (
+                        ("%s " % (" -T ".join(["", *noOwnershipTables])))
+                        if len(noOwnershipTables) > 0
+                        else ""
+                    ),
                     test
                     and settings.DATABASES[source]["TEST"]["NAME"]
                     or settings.DATABASES[source]["NAME"],

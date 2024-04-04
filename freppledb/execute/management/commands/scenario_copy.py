@@ -242,7 +242,7 @@ class Command(BaseCommand):
                         quick_drop_failed = True
                     sql_role = settings.DATABASES[destination].get("SQL_ROLE", None)
                     if sql_role:
-                        with create_connection(self.database).cursor() as cursor2:
+                        with create_connection(destination).cursor() as cursor2:
                             try:
                                 cursor2.execute("set role %s", (sql_role,))
                                 cursor2.execute("drop owned by %s" % sql_role)

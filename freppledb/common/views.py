@@ -175,7 +175,7 @@ class AppsView(View):
             return HttpResponse(content="OK")
         except Exception as e:
             logger.error("Error updating app: %s" % e)
-            return HttpResponseServerError("Error updating app: %s" % e)
+            return HttpResponseServerError("Error updating app")
 
     @classmethod
     def updateApp(reportclass, app=None, action=None, **kwargs):

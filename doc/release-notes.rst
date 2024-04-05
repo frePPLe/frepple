@@ -1,10 +1,18 @@
 Release notes
 -------------
 
-8.6.0 (Upcoming release)
+
+8.7.0 (Upcoming release)
 ========================
 
-This release is scheduled for early April 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+This release is scheduled for early May 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+Ubuntu 24 LTS will be released on April 25th. As soon as this release is available on
+Github and on Amazon we will start using it (and the release number will jump up
+to 9.0).
+
+8.6.0 (2024-04-05)
+==================
 
 .. rubric:: Production planning
 
@@ -25,10 +33,15 @@ This release is scheduled for early April 2024. You can already check out a `pre
 - | Bug fix: The manufacturing order summary report didn't correctly handle operations
     with 0 duration.
 
-
 .. rubric:: Demand forecasting
 
 - | Performance improvements when disaggregating edits in sparse hierarchies.
+
+.. rubric:: User interface
+
+- | Bug fix: The report manager didn't work on scenario databases.
+  | This was correctly a long time already in Enterprise and Cloud Editions, but
+    we missed fixing it on the Community Edition.
 
 8.5.0 (2024-03-02)
 ==================

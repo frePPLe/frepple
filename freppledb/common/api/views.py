@@ -49,6 +49,7 @@ def APIIndexView(request):
         "rest_framework/index.html",
         context={
             "exp": exp,
+            "url": request.build_absolute_uri("/api/input/demand/"),
             "request": request,
             "title": _("REST API Help"),
             "token": getWebserviceAuthorization(

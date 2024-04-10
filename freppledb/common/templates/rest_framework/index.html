@@ -9,6 +9,13 @@ $(function() {
   	window.location.href = '{{request.prefix}}/api/?exp=' + $("#jwt").val();
   });
 });
+
+function copyToClipboard(el){
+  var t =  $(el).children().first();
+  console.log(t);
+   // Copy the text inside the text field
+  navigator.clipboard.writeText(t.html());
+}
 </script>
 {% endblock %}
 
@@ -40,16 +47,24 @@ For instance, to return the list of all sales orders in JSON format:<br><br>
 <div class="mb-2">
 Using <a class="text-decoration-underline" href="https://en.wikipedia.org/wiki/Basic_access_authentication" target="_blank">basic authentication</a>:
 </div>
-<div class="card mb-3"><div class="card-body">
-wget --http-user={{username}} --http-password=PASSWORD http://127.0.0.1:8000/api/input/demand/<br><br>
-curl -u {{username}}:PASSWORD http://127.0.0.1:8000/api/input/demand/
+<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
+<span>wget --http-user={{username}} --http-password=PASSWORD {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
+</div></div>
+<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
+<span>curl -u {{username}}:PASSWORD {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
 </div></div>
 <div class="mb-2">
 Using <a class="text-decoration-underline" href="https://jwt.io/" target="_blank">JSON Web Token authentication</a> valid for the next <input id="jwt" class="d-inline form-control p-1" type="number" value="{{exp}}" min="0" step="1" style="width:4em; background:white"/>  days:
 </div>
-<div class="card mb-3"><div class="card-body">
-wget --header 'Authorization: Bearer {{token}}' http://127.0.0.1:8000/api/input/demand/<br><br>
-curl -H 'Accept: application/json' --header 'Authorization: Bearer {{token}}' http://127.0.0.1:8000/api/input/demand/
+<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
+<span>wget --header 'Authorization: Bearer {{token}}' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
+</div></div>
+<div class="card mb-3"><div class="card-body" onclick="copyToClipboard(this)">
+<span>curl -H 'Accept: application/json' --header 'Authorization: Bearer {{token}}' {{url}}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+<span class="fa fa-clipboard" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Copy to clipboard"></span>
 </div></div>
 </div>
 {% endblocktrans %}

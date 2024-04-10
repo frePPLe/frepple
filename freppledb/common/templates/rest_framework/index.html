@@ -12,9 +12,18 @@ $(function() {
 
 function copyToClipboard(el){
   var t =  $(el).children().first();
-  console.log(t);
-   // Copy the text inside the text field
   navigator.clipboard.writeText(t.html());
+  var icon = $(el).find(".fa").first();
+  var tooltip = bootstrap.Tooltip.getInstance(icon[0]);
+  if (tooltip) tooltip.dispose();
+  icon.attr("data-bs-title", "Copied");
+  tooltip = bootstrap.Tooltip.getOrCreateInstance(icon[0]);
+  tooltip.show();
+  setTimeout(function() {
+      tooltip.dispose();
+      icon.attr("data-bs-title", "Copy to clipboard");
+      bootstrap.Tooltip.getOrCreateInstance(icon[0])
+  }, 1000)
 }
 </script>
 {% endblock %}

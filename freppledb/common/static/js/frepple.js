@@ -1271,8 +1271,7 @@ var grid = {
     $('#copybutton').on('click', function () {
       // should be up to date but let's recompute it.
       update_datasource_url();
-      $('#urladdress').select();
-      document.execCommand('copy');
+      navigator.clipboard.writeText($('#urladdress').val());
     });
 
     //Compute the power query url to display
@@ -2921,11 +2920,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     $("#animatedcog").css('visibility', 'visible');
     $('#uploadform').css('display', 'none');
     $('#copytoclipboard').on('click', function () {
-      var sometextcontent = document.createRange();
-      sometextcontent.selectNode(document.getElementById("uploadResponse"));
-      window.getSelection().removeAllRanges();
-      window.getSelection().addRange(sometextcontent);
-      document.execCommand('copy');
+      navigator.clipboard.writeText($("#uploadResponse").prop("innerText"));
     });
     $('#cancelimportbutton').show().on('click', function () {
       var theclone = $("#uploadResponse").clone();

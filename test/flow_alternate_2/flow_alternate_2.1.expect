@@ -46,3 +46,13 @@ PROBLEM	material shortage	Buffer 'C3 @ factory' has material shortage of 15	2009
 PROBLEM	material shortage	Buffer 'C4 @ factory' has material shortage of 20	2009-01-01T00:00:00 / 2009-01-11T00:00:00
 PROBLEM	short	Demand 'order 1' planned 5 units short	2009-01-04T00:00:00 / 2009-01-04T00:00:00
 DEMAND CONSTRAINT	order 1	Operation 'Purchase B3 @ factory from Component supplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'Purchase A1 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'Purchase A2 @ factory from Component supplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'Purchase A3 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'Purchase B1 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'Purchase B2 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'Purchase B4 @ factory from Component supplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'Purchase C1 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'Purchase C2 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'Purchase C3 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00	
+DEMAND CONSTRAINT	order 1	Operation 'Purchase C4 @ factory from Component supplier' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00	

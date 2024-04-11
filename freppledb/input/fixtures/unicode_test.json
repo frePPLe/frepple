@@ -1,5 +1,4 @@
 [
-{"pk": "currentdate", "model": "common.parameter", "fields": {"value": "2014-01-01 00:00:00", "description": "Current date of the plan, formatted as YYYY-MM-DD HH-MM-SS"}},
 {"pk": "\u2190\u2191\u2192\u2193\u2194\u2195", "model": "input.customer", "fields": {"description": "Arrows"}},
 {"pk": "< > \" ' & ` # = ;", "model": "input.operation", "fields": {"type": "fixed_time", "location": "\u20ac \u00a5 $ \u00a3"}},
 {"pk": "\u20ac \u00a5 $ \u00a3", "model": "input.location", "fields": {"description": "currencies"}},

@@ -2,14 +2,22 @@ Release notes
 -------------
 
 
-8.7.0 (Upcoming release)
+9.0.0 (Upcoming release)
 ========================
 
-This release is scheduled for early May 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+This release is scheduled for May 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
-Ubuntu 24 LTS will be released on April 25th. As soon as this release is available on
-Github and on Amazon we will start using it (and the release number will jump up
-to 9.0).
+.. rubric:: Production planning
+
+- | The handling of safety stocks by planning algorithm has been enhanced to
+    generate more intuitive and better plans.
+  | This may result in small differences in the plans when migrating to the new
+    release.
+
+.. rubric:: Supported operating systems
+
+- | Ubuntu 24 LTS is now the supported operating system.
+  | For all other operating systems a docker container is the way to run frepple.
 
 8.6.0 (2024-04-05)
 ==================

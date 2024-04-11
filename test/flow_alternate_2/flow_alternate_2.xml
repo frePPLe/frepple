@@ -112,64 +112,63 @@
         </itemsupplier>
       </itemsuppliers>
     </item>
-  </items>  
+  </items>
   <buffers>
     <buffer name="A1 @ factory">
       <item name="A1"/>
       <location name="factory"/>
       <onhand>0</onhand>
-      <minimum>20</minimum>
     </buffer>
     <buffer name="A2 @ factory">
       <item name="A2"/>
       <location name="factory"/>
       <onhand>0</onhand>
-      <minimum>20</minimum>    </buffer>
+	</buffer>
     <buffer name="A3 @ factory">
       <item name="A3"/>
       <location name="factory"/>
       <onhand>10</onhand>
-      <minimum>20</minimum>    </buffer>
+	</buffer>
     <buffer name="B1 @ factory">
       <item name="B1"/>
       <location name="factory"/>
       <onhand>0</onhand>
-      <minimum>20</minimum>    </buffer>
+	</buffer>
     <buffer name="B2 @ factory">
       <item name="B2"/>
       <location name="factory"/>
       <onhand>0</onhand>
-      <minimum>20</minimum>    </buffer>
+	</buffer>
     <buffer name="B3 @ factory">
       <item name="B3"/>
       <location name="factory"/>
       <onhand>5</onhand>
-      <minimum>20</minimum>    </buffer>
+	</buffer>
     <buffer name="B4 @ factory">
       <item name="B4"/>
       <location name="factory"/>
       <onhand>5</onhand>
-      <minimum>20</minimum>    </buffer>
+	</buffer>
     <buffer name="C1 @ factory">
       <item name="C1"/>
       <location name="factory"/>
       <onhand>0</onhand>
-      <minimum>20</minimum>    </buffer>
+	</buffer>
     <buffer name="C2 @ factory">
       <item name="C2"/>
       <location name="factory"/>
       <onhand>10</onhand>
-      <minimum>20</minimum>    </buffer>
+	</buffer>
     <buffer name="C3 @ factory">
       <item name="C3"/>
       <location name="factory"/>
       <onhand>5</onhand>
-      <minimum>20</minimum>    </buffer>
+	</buffer>
     <buffer name="C4 @ factory">
       <item name="C4"/>
       <location name="factory"/>
       <onhand>5</onhand>
-      <minimum>20</minimum>    </buffer>
+	</buffer>
   </buffers>
   <operations>
     <operation name="assembly" xsi:type="operation_fixed_time" duration="P1D">

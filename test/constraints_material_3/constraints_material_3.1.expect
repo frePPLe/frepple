@@ -99,7 +99,7 @@ PROBLEM	late	75 units of demand 'order for item 2' planned up to 8.0 days after 
 PROBLEM	short	Demand 'order for item 2' planned 20 units short	2009-01-10T00:00:00 / 2009-01-10T00:00:00
 PROBLEM	late	95 units of demand 'order for item 3' planned up to 6.0 days after its due date	2009-01-10T00:00:00 / 2009-01-16T00:00:00
 PROBLEM	late	95 units of demand 'order for item 4' planned up to 6.0 days after its due date	2009-01-10T00:00:00 / 2009-01-16T00:00:00
-DEMAND CONSTRAINT	order for item 1	Buffer 'constraint buffer 1' has material shortage of 10	2009-01-09T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order for item 2	Buffer 'constraint buffer 2' has material shortage of 190	2009-01-09T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order for item 3	Buffer 'constraint buffer 3' has material shortage of 190	2009-01-09T00:00:00 / 2030-12-31T00:00:00	
-DEMAND CONSTRAINT	order for item 4	Buffer 'constraint buffer 4' has material shortage of 190	2009-01-09T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order for item 1	Buffer 'constraint buffer 1' has material shortage of 14	2009-01-09T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order for item 2	Buffer 'constraint buffer 2' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order for item 3	Buffer 'constraint buffer 3' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00	
+DEMAND CONSTRAINT	order for item 4	Buffer 'constraint buffer 4' has material shortage of 194	2009-01-09T00:00:00 / 2030-12-31T00:00:00	

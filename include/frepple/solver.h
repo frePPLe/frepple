@@ -354,7 +354,6 @@ class SolverCreate : public Solver {
     userexit_buffer = other.userexit_buffer;
     userexit_resource = other.userexit_resource;
     userexit_operation = other.userexit_operation;
-    planSafetyStockFirst = other.planSafetyStockFirst;
     erasePreviousFirst = other.erasePreviousFirst;
   }
 
@@ -377,7 +376,6 @@ class SolverCreate : public Solver {
     userexit_buffer = other.userexit_buffer;
     userexit_resource = other.userexit_resource;
     userexit_operation = other.userexit_operation;
-    planSafetyStockFirst = other.planSafetyStockFirst;
     erasePreviousFirst = other.erasePreviousFirst;
     return *this;
   }
@@ -607,10 +605,6 @@ class SolverCreate : public Solver {
 
   void setPropagate(bool b) { propagate = b; }
 
-  bool getPlanSafetyStockFirst() const { return planSafetyStockFirst; }
-
-  void setPlanSafetyStockFirst(bool b) { planSafetyStockFirst = b; }
-
   Duration getAdministrativeLeadTime() const { return administrativeleadtime; }
 
   void setAdministrativeLeadTime(Duration l) {
@@ -659,9 +653,6 @@ class SolverCreate : public Solver {
                          &Cls::setAllowSplits);
     m->addBoolField<Cls>(SolverCreate::tag_rotateresources,
                          &Cls::getRotateResources, &Cls::setRotateResources);
-    m->addBoolField<Cls>(SolverCreate::tag_planSafetyStockFirst,
-                         &Cls::getPlanSafetyStockFirst,
-                         &Cls::setPlanSafetyStockFirst);
     m->addBoolField<Cls>(SolverCreate::tag_erasePreviousFirst,
                          &Cls::getErasePreviousFirst,
                          &Cls::setErasePreviousFirst);
@@ -685,7 +676,6 @@ class SolverCreate : public Solver {
   static const Keyword tag_minimumdelay;
   static const Keyword tag_allowsplits;
   static const Keyword tag_rotateresources;
-  static const Keyword tag_planSafetyStockFirst;
   static const Keyword tag_administrativeleadtime;
   static const Keyword tag_erasePreviousFirst;
   static const Keyword tag_iterationmax;
@@ -770,26 +760,6 @@ class SolverCreate : public Solver {
    * value is not used.
    */
   PythonFunction userexit_operation;
-
-  /* A flag that determines how we plan safety stock.<br/>
-   *
-   * By default the flag is FALSE and we get the following behavior:
-   *  - When planning demands, we already try to replenish towards the
-   *    safety stock level.
-   *  - After planning all demands, we do another loop over all buffers
-   *    to replenish to the safety stock level. This will replenish eg
-   *    buffers without any (direct or indirect) demand on them.
-   *
-   * If the flag is set to TRUE, replenishing to the safety stock level
-   * is more important than planning the demand on time. We get the
-   * following behavior:
-   *  - Before planning any demand, we try to replenish any buffer to its
-   *    safety stock level.
-   *    Buffers closer to the end item demand are replenished first.
-   *  - When planning demands, we try to replenish towards the safety
-   *    stock level.
-   */
-  bool planSafetyStockFirst = false;
 
   /* Flag to specify whether we erase the previous plan first or not. */
   bool erasePreviousFirst = true;
@@ -945,8 +915,6 @@ class SolverCreate : public Solver {
     /* Auxilary method to replenish safety stock in all buffers of a
      * cluster. This method is only intended to be called from the
      * commit() method.
-     * @see SolverCreate::planSafetyStockFirst
-     * @see SolverCreate::SolverData::commit
      */
     void solveSafetyStock(SolverCreate*);
 

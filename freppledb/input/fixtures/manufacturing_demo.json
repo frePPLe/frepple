@@ -366,7 +366,6 @@
 {"model":"common.parameter","fields": {"name":"currency","value":"$","description":"Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"}},
 {"model":"common.parameter","fields": {"name":"plan.calendar","description":"Specifies a calendar with dates to which the plan is aligned"}},
 {"model":"common.parameter","fields": {"name":"plan.loglevel","value":"0","description":"Controls the verbosity of the planning log file. Accepted values are 0(silent - default), 1 and 2 (verbose)"}},
-{"model":"common.parameter","fields": {"name":"plan.planSafetyStockFirst","value":"false","description":"Controls whether safety stock is planned before or after the demand. Accepted values are false (default) and true"}},
 {"model":"common.parameter","fields": {"name":"plan.rotateResources","value":"true","description":"When set to true, the algorithm will better distribute the demand across alternate suboperations instead of using the preferred operation"}},
 {"model":"common.parameter","fields": {"name":"plan.webservice","value":"true","description":"Specifies whether to use the web service or not"}},
 {"model":"common.parameter","fields": {"name":"plan.solver","value":"heuristic","description":"Selects the solver to generate the plan. Possible choices are \"heuristic\" and \"distribution\"."}},

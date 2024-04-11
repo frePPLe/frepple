@@ -38,7 +38,6 @@ const Keyword SolverCreate::tag_administrativeleadtime(
 const Keyword SolverCreate::tag_minimumdelay("minimumdelay");
 const Keyword SolverCreate::tag_allowsplits("allowsplits");
 const Keyword SolverCreate::tag_rotateresources("rotateresources");
-const Keyword SolverCreate::tag_planSafetyStockFirst("plansafetystockfirst");
 const Keyword SolverCreate::tag_iterationmax("iterationmax");
 const Keyword SolverCreate::tag_resourceiterationmax("resourceiterationmax");
 const Keyword SolverCreate::tag_erasePreviousFirst("erasePreviousFirst");
@@ -439,16 +438,13 @@ void SolverCreate::SolverData::commit() {
         stable_sort(demands->begin(), demands->end(), demand_comparison);
 
       // Solve for safety stock in buffers.
-      if (solver->getPlanSafetyStockFirst()) {
-        constrainedPlanning = (solver->getPlanType() == 1);
-        solveSafetyStock(solver);
-        buffer_solve_shortages_only = false;
-      } else
-        buffer_solve_shortages_only = true;
+      constrainedPlanning = (solver->getPlanType() == 1);
+      safety_stock_planning = true;
+      solveSafetyStock(solver);
+      buffer_solve_shortages_only = false;
 
       // Loop through the list of all demands in this planning problem
       safety_stock_planning = false;
-      constrainedPlanning = (solver->getPlanType() == 1);
       Demand* curdmd;
       auto iterdmd = demands->begin();
       do {
@@ -534,7 +530,7 @@ void SolverCreate::SolverData::commit() {
       purchase_buffers.clear();
 
       // Solve for safety stock in buffers.
-      if (!solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
+      // solveSafetyStock(solver);
     }
 
     // Operation batching postprocessing

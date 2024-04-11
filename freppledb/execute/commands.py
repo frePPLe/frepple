@@ -238,12 +238,6 @@ class SupplyPlanning(PlanTask):
                 Parameter.getValue("plan.rotateResources", database, "true").lower()
                 == "true"
             ),
-            plansafetystockfirst=(
-                Parameter.getValue(
-                    "plan.planSafetyStockFirst", database, "false"
-                ).lower()
-                != "false"
-            ),
             iterationmax=int(Parameter.getValue("plan.iterationmax", database, "0")),
             resourceiterationmax=int(
                 Parameter.getValue("plan.resourceiterationmax", database, "500")

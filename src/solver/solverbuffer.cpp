@@ -521,9 +521,6 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     // Note that these limits can be updated only after the processing of the
     // date change in the statement above. Otherwise the code above would
     // already use the new value before the intended date.
-    // If the flag getPlanSafetyStockFirst is set, then we need to replenish
-    // up to the minimum quantity. If it is not set (which is the default)
-    // then we only replenish up to 0.
     if (cur->getEventType() == 3 &&
         (!data->buffer_solve_shortages_only || data->safety_stock_planning) &&
         !getShortagesOnly())

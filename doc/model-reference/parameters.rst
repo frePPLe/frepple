@@ -83,8 +83,6 @@ plan.minimumdelay                    | Specifies a minimum delay the algorithm a
                                        planning run is taking a long time and the log file shows that demands
                                        take many iterations to be planned - where the requested delivery
                                        date for each iteration is advancing only in tiny increments.
-plan.planSafetyStockFirst            | Controls whether safety stock is planned before or after the demand.
-                                     | Accepted values are false (default) and true.
 plan.fixBrokenSupplyPath             | When set to true (which is the default), frepple will scan for
                                        items that can't be replenished any longer with purchase orders,
                                        distribution orders or manufacturing orders.

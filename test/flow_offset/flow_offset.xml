@@ -722,13 +722,13 @@
       <location name="9. factory" />
     </demand>
   </demands>
-  
+
 <?python
 print("CREATING CONSTRAINED PLAN")
-frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, plansafetystockfirst=True).solve()
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")
 print("CREATING UNCONSTRAINED PLAN")
-frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, plansafetystockfirst=True).solve()
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
 ?>
 

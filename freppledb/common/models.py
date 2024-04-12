@@ -162,7 +162,7 @@ class HierarchyModel(models.Model):
             updated = True
             while updated:
                 updated = False
-                for i in bad.keys():
+                for i in list(bad.keys()):
                     ok = True
                     for j, k in bad.items():
                         if k == i:
@@ -789,9 +789,11 @@ class Comment(models.Model):
             req = getattr(_thread_locals, "request", None)
             NotificationFactory.launchWorker(
                 database=using,
-                url="%s://%s" % ("https" if req.is_secure() else "http", req.get_host())
-                if req
-                else None,
+                url=(
+                    "%s://%s" % ("https" if req.is_secure() else "http", req.get_host())
+                    if req
+                    else None
+                ),
             )
         return tmp
 

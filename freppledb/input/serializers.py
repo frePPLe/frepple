@@ -767,6 +767,8 @@ class BufferFilter(FilterSet):
                 "onhand": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "minimum": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "minimum_calendar": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "maximum": ["exact", "in", "gt", "gte", "lt", "lte"],
+                "maximum_calendar": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "min_interval": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
@@ -791,6 +793,8 @@ class BufferSerializer(BulkSerializerMixin, ModelSerializer):
             "onhand",
             "minimum",
             "minimum_calendar",
+            "maximum",
+            "maximum_calendar",
             "min_interval",
             "source",
             "lastmodified",
@@ -1523,9 +1527,11 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
                             quantity=rec.get("quantity", 1),
                             flowdate=rec.get(
                                 "flowdate",
-                                mo.enddate
-                                if rec.get("quantity", 1) > 0
-                                else mo.startdate,
+                                (
+                                    mo.enddate
+                                    if rec.get("quantity", 1) > 0
+                                    else mo.startdate
+                                ),
                             ),
                         ).save(using=database)
                 except Exception as e:

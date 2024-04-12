@@ -98,12 +98,31 @@ class Buffer(AuditModel):
         blank=True,
         on_delete=models.SET_NULL,
         help_text=_("Calendar storing a time-dependent safety stock profile"),
+        related_name="bufferminima",
     )
     min_interval = models.DurationField(
         _("min_interval"),
         null=True,
         blank=True,
         help_text=_("Batching window for grouping replenishments in batches"),
+    )
+    maximum = models.DecimalField(
+        _("maximum"),
+        null=True,
+        blank=True,
+        max_digits=20,
+        decimal_places=8,
+        default="0.00",
+        help_text=_("maximum stock"),
+    )
+    maximum_calendar = models.ForeignKey(
+        Calendar,
+        verbose_name=_("maximum calendar"),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        help_text=_("Calendar storing a time-dependent maximum stock profile"),
+        related_name="buffermaxima",
     )
 
     class Manager(MultiDBManager):

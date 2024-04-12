@@ -25,6 +25,10 @@ This release is scheduled for May 2024. You can already check out a `preview <ht
     installation guide with advanced configuration options.
   | These topics frequently come up, so let's capture that knowledge.
 
+.. rubric:: Production planning
+
+- | The plan editor Gantt chart displays more information.
+
 8.6.0 (2024-04-05)
 ==================
 

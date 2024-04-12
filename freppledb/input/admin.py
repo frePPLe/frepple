@@ -485,7 +485,7 @@ class Buffer_admin(MultiDBModelAdmin):
     model = Buffer
     raw_id_fields = ("location", "item", "minimum_calendar")
     fieldsets = (
-        (None, {"fields": ("item", "location", "onhand", "minimum")}),
+        (None, {"fields": ("item", "location", "onhand", "minimum", "maximum")}),
         (
             _("advanced"),
             {
@@ -496,6 +496,7 @@ class Buffer_admin(MultiDBModelAdmin):
                     "subcategory",
                     "type",
                     "minimum_calendar",
+                    "maximum_calendar",
                     "min_interval",
                 ]
                 + [a[0] for a in getAttributes(Buffer) if a[3]],

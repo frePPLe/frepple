@@ -1359,7 +1359,9 @@ class loadBuffers(LoadTask):
                   min(category),
                   min(subcategory),
                   min(source),
-                  min(batch)
+                  min(batch),
+                  min(maximum),
+                  min(maximum_calendar_id)
                 from buffer
                 %s
                 group by case
@@ -1409,6 +1411,10 @@ class loadBuffers(LoadTask):
                         b.minimum = i[5]
                     if i[6]:
                         b.minimum_calendar = frepple.calendar(name=i[6])
+                    if i[13]:
+                        b.maximum = i[13]
+                    if i[14]:
+                        b.maximum_calendar = frepple.calendar(name=i[14])
 
                 logger.info(
                     "Loaded %d buffers in %.2f seconds" % (cnt, time() - starttime)

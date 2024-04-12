@@ -48,15 +48,18 @@ minimum          double            | Desired minimum inventory, aka safety stock
                                      as a time value (aka days of inventory), you can set a
                                      post-operation timeon the producing operation of the
                                      buffer.
+                                   | Default is 0, indicating no safety stock.
 minimum_calendar calendar          | Refers to a calendar storing the desired minimum inventory
                                      level, aka safety stock.
                                    | Use this field when the minimum inventory level is varying
                                      over time. Otherwise use the minimum field. If both fields
                                      are specified, the minimum field is ignored.
-maximum          double            | Refers to a calendar storing the maximum inventory level.
-                                   | This field is not used by the solver.
-                                   | A problem is reported when the inventory level is higher
-                                     than this limit.
+maximum          double            | Desired maximum inventory, aka order-up-to level.
+                                   | When the buffer needs to be replenished, the planning algorithm
+                                     tries to refill to this level.
+                                   | Default is 0, indicating replenishments of any quantity are
+                                     accepted. Note that operations can still define constraints
+                                     on the replenishment size.
 maximum_calendar calendar          | Refers to a calendar storing the maximum inventory level.
                                    | Use this field when the maximum inventory level is varying
                                      over time. Otherwise use the maximum field. If both fields

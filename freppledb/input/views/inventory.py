@@ -178,6 +178,15 @@ class BufferList(GridReport):
             extra='"role":"input/calendar"',
             initially_hidden=True,
         ),
+        GridFieldNumber("maximum", title=_("maximum")),
+        GridFieldText(
+            "maximum_calendar",
+            title=_("maximum calendar"),
+            field_name="maximum_calendar__name",
+            formatter="detail",
+            extra='"role":"input/calendar"',
+            initially_hidden=True,
+        ),
         GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item

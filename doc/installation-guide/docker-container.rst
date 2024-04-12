@@ -130,7 +130,7 @@ Next, you build and your container with commands like:
 
 The folder with the license file and the dockerfile are typically put under
 version control. A section below shows how this structure can be extended
-with custom apps of configurations.
+with custom apps or configurations.
 
 ******************************
 Deployment with docker compose

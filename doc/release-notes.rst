@@ -19,6 +19,12 @@ This release is scheduled for May 2024. You can already check out a `preview <ht
 - | Ubuntu 24 LTS is now the supported operating system.
   | For all other operating systems a docker container is the way to run frepple.
 
+.. rubric:: Documentation
+
+- | A `page <installation-guide/advanced-configuration.html>`_ was added to the
+    installation guide with advanced configuration options.
+  | These topics frequently come up, so let's capture that knowledge.
+
 8.6.0 (2024-04-05)
 ==================
 

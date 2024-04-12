@@ -6,15 +6,16 @@ The installation guide covers a standard installation. But not all installations
 are standard. You may have specific requirements that require additional
 configuration to deploy frepple.
 
-The page captures some common additional configuration tasks.
+This page captures some common additional configuration tasks.
 
 You have a topic you'd like to see covered on this page? Let us know on
 https://github.com/frePPLe/frepple/discussions or https://github.com/frePPLe/frepple/issues
 
 * :ref:`https`
+* :ref:`extra_scenarios`
 * :ref:`websocket`
 * :ref:`proxy`
-* :ref:`extra_scenarios`
+
 
 .. _https:
 
@@ -42,7 +43,7 @@ Add extra scenarios
 -------------------
 
 Frepple by default is configured for 3 (Community and Enterprise Editions)
-or 6 (Cloud Edition) scenario database.
+or 6 (Cloud Edition) scenario databases.
 
 You can change the configuration to include a different amount of database
 with the following steps:
@@ -52,7 +53,7 @@ with the following steps:
    | Note that the first database MUST have 'default' as key.
    | Normally all database are on the same PostgreSQL instance and the USER,
      PASSWORD, HOST and PORT are the same for all scenarios. The database name
-     will be different for each database.
+     will be different for each scenario.
    | The FREPPLE_PORT must be unique for each scenario database. It'll be
      used in the next step.
 
@@ -88,11 +89,11 @@ Firewall issues with "plan editor" screen
 -----------------------------------------
 
 The "plan editor" screen of the Enterprise Edition doesn't work in some corporate
-networks. The sympton is a message that the connection to the web service fails,
+networks. The symptom is a message that the connection to the web service fails,
 while the web service is up and running correctly on the server.
 
 This can be caused by the firewall configuration on your network. This screen
-uses the `websocket protocol <https://en.wikipedia.org/wiki/WebSocket>`_ which
+uses the `websocket protocol <https://en.wikipedia.org/wiki/WebSocket>`_ which might
 not be accepted by default on your firewall.
 
 .. _proxy:
@@ -101,7 +102,7 @@ Proxy server configuration
 --------------------------
 
 Some companies deploy frepple behind a proxy server. The proxy server can take
-care of https encryption, can facilitate monitoring, and can improve security on
+care of the https encryption, can facilitate monitoring, and can improve security on
 your network.
 
 Some additional configuration is needed to make the django (which is the

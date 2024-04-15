@@ -14,6 +14,11 @@ This release is scheduled for May 2024. You can already check out a `preview <ht
   | This may result in small differences in the plans when migrating to the new
     release.
 
+.. rubric:: Demand forecasting
+
+- | Bug fix: "Orders planned" row in forecast editor and forecast report wasn't
+    calculated correctly when orders aren't at the level where the forecast is planned.
+
 .. rubric:: Supported operating systems
 
 - | Ubuntu 24 LTS is now the supported operating system.

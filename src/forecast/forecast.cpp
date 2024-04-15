@@ -907,7 +907,6 @@ double ForecastBucket::getOrdersPlanned() const {
 }
 
 double ForecastBucketData::getOrdersPlanned() const {
-  if (!getForecast()->getPlanned()) return 0.0;
   double planned = 0.0;
   Item::bufferIterator bufiter(getForecast()->getForecastItem());
   while (Buffer* buf = bufiter.next()) {

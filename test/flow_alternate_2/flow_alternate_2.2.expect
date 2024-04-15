@@ -1,55 +1,19 @@
-BUFFER	A1 @ factory	2009-01-01T00:00:00	20	20
-BUFFER	A1 @ factory	2009-01-03T00:00:00	10	30
-BUFFER	A1 @ factory	2009-01-03T00:00:00	-10	20
-BUFFER	A2 @ factory	2009-01-01T00:00:00	20	20
 BUFFER	A3 @ factory	1971-01-01T00:00:00	10	10
-BUFFER	A3 @ factory	2009-01-01T00:00:00	10	20
-BUFFER	B1 @ factory	2009-01-01T00:00:00	20	20
-BUFFER	B2 @ factory	2009-01-01T00:00:00	20	20
-BUFFER	B2 @ factory	2009-01-03T00:00:00	10	30
-BUFFER	B2 @ factory	2009-01-03T00:00:00	-10	20
+BUFFER	A3 @ factory	2009-01-03T00:00:00	-5	5
+BUFFER	A3 @ factory	2009-01-03T00:00:00	-5	0
 BUFFER	B3 @ factory	1971-01-01T00:00:00	5	5
-BUFFER	B3 @ factory	2009-01-01T00:00:00	15	20
+BUFFER	B3 @ factory	2009-01-03T00:00:00	-5	0
 BUFFER	B4 @ factory	1971-01-01T00:00:00	5	5
-BUFFER	B4 @ factory	2009-01-01T00:00:00	15	20
-BUFFER	C1 @ factory	2009-01-01T00:00:00	20	20
-BUFFER	C1 @ factory	2009-01-03T00:00:00	10	30
-BUFFER	C1 @ factory	2009-01-03T00:00:00	-10	20
+BUFFER	B4 @ factory	2009-01-03T00:00:00	-5	0
 BUFFER	C2 @ factory	1971-01-01T00:00:00	10	10
-BUFFER	C2 @ factory	2009-01-01T00:00:00	10	20
 BUFFER	C3 @ factory	1971-01-01T00:00:00	5	5
-BUFFER	C3 @ factory	2009-01-01T00:00:00	15	20
 BUFFER	C4 @ factory	1971-01-01T00:00:00	5	5
-BUFFER	C4 @ factory	2009-01-01T00:00:00	15	20
-BUFFER	product @ factory	2009-01-04T00:00:00	10	10
+BUFFER	C4 @ factory	2009-01-03T00:00:00	-5	0
+BUFFER	C4 @ factory	2009-01-03T00:00:00	-5	-5
+BUFFER	product @ factory	2009-01-04T00:00:00	5	5
+BUFFER	product @ factory	2009-01-04T00:00:00	5	10
 BUFFER	product @ factory	2009-01-04T00:00:00	-10	0
 DEMAND	order 1	2009-01-04T00:00:00	10
-OPERATION	Purchase A1 @ factory from Component supplier	2008-12-25T00:00:00	2009-01-01T00:00:00	20
-OPERATION	Purchase A1 @ factory from Component supplier	2008-12-27T00:00:00	2009-01-03T00:00:00	10
-OPERATION	Purchase A2 @ factory from Component supplier	2008-12-27T00:00:00	2009-01-01T00:00:00	20
-OPERATION	Purchase A3 @ factory from Component supplier	2008-12-25T00:00:00	2009-01-01T00:00:00	10
-OPERATION	Purchase B1 @ factory from Component supplier	2008-12-25T00:00:00	2009-01-01T00:00:00	20
-OPERATION	Purchase B2 @ factory from Component supplier	2008-12-25T00:00:00	2009-01-01T00:00:00	20
-OPERATION	Purchase B2 @ factory from Component supplier	2008-12-27T00:00:00	2009-01-03T00:00:00	10
-OPERATION	Purchase B3 @ factory from Component supplier	2008-12-25T00:00:00	2009-01-01T00:00:00	15
-OPERATION	Purchase B4 @ factory from Component supplier	2008-12-27T00:00:00	2009-01-01T00:00:00	15
-OPERATION	Purchase C1 @ factory from Component supplier	2008-12-25T00:00:00	2009-01-01T00:00:00	20
-OPERATION	Purchase C1 @ factory from Component supplier	2008-12-27T00:00:00	2009-01-03T00:00:00	10
-OPERATION	Purchase C2 @ factory from Component supplier	2008-12-25T00:00:00	2009-01-01T00:00:00	10
-OPERATION	Purchase C3 @ factory from Component supplier	2008-12-25T00:00:00	2009-01-01T00:00:00	15
-OPERATION	Purchase C4 @ factory from Component supplier	2008-12-22T00:00:00	2009-01-01T00:00:00	15
-OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	10
-PROBLEM	before current	Operation 'Purchase A1 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase A1 @ factory from Component supplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase A2 @ factory from Component supplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase A3 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase B1 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase B2 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase B2 @ factory from Component supplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase B3 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase B4 @ factory from Component supplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase C1 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase C1 @ factory from Component supplier' planned in the past	2008-12-27T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase C2 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase C3 @ factory from Component supplier' planned in the past	2008-12-25T00:00:00 / 2009-01-01T00:00:00
-PROBLEM	before current	Operation 'Purchase C4 @ factory from Component supplier' planned in the past	2008-12-22T00:00:00 / 2009-01-01T00:00:00
+OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
+OPERATION	assembly	2009-01-03T00:00:00	2009-01-04T00:00:00	5
+PROBLEM	material shortage	Buffer 'C4 @ factory' has material shortage of 5	2009-01-03T00:00:00 / 2030-12-31T00:00:00

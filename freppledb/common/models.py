@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 from datetime import datetime
+import imp
 from importlib import import_module
 import inspect
 import json
@@ -1599,9 +1600,7 @@ class Attribute(AuditModel):
         if os.access(wsgi, os.W_OK):
             Path(wsgi).touch()
         else:
-            import freppledb.wsgi
-
-            wsgi = freppledb.wsgi.__file__
+            wsgi = os.path.join(imp.find_module("freppledb")[1], "wsgi.py")
             if os.access(wsgi, os.W_OK):
                 Path(wsgi).touch()
 

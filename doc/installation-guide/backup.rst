@@ -18,5 +18,5 @@ restore an environment to its original state:
 - If you have tailored the apache configuration, you may also include
   the relevant files from the /etc/apache2 folder.
 
-A daily backup of these files is sufficient for most environment. The retention
-policies for the backup depend on your planning process and IT policies.
+A daily backup of these files is sufficient. The retention policies for
+the backup depend on your planning process and IT policies.

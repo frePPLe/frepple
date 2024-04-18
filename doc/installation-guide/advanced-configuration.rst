@@ -15,6 +15,7 @@ https://github.com/frePPLe/frepple/discussions or https://github.com/frePPLe/fre
 * :ref:`extra_scenarios`
 * :ref:`websocket`
 * :ref:`proxy`
+* :ref:`moveserver`
 
 
 .. _https:
@@ -114,3 +115,24 @@ The solution is to add the parameter
 `CSRF_TRUSTED_ORIGINS <https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins>`_
 to your /etc/frepple/djangosettings.py configuration file, or to configure
 the proxy to set some http headers.
+
+.. _moveserver:
+
+Move your frepple instance to a new server
+------------------------------------------
+
+First install frepple on the new server. Next, bring across the
+following data elements from the old instance:
+
+- The postgres database of each scenario needs to be dumped and restored.
+
+- | The folder /etc/frepple contains the configuration files.
+  | If the new server uses a different version of frepple, please don't copy
+    the djangosettings.py file. Instead, reapply all configuration changes done
+    in the old file to the file coming with the new release.
+
+- The folder /var/log/frepple contains log files, data files,
+  and attachment files.
+
+- If you have tailored the apache configuration, you may also include
+  the relevant files from the /etc/apache2 folder.

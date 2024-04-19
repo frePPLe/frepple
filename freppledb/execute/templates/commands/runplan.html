@@ -21,8 +21,8 @@
     <td class="ps-3 pt-3 pe-3">
     {% if widget and lastrun %}
     <div class="row w-100 mb-2">
-    <div class="col mb-1"><span class="fw-bold">{% trans "started"|capfirst %}</span><br>{% if lastrun.started %}{{lastrun.started|date:"DATETIME_FORMAT"}}{% endif %}</div>
-    <div class="col mb-1"><span class="fw-bold">{% trans "finished"|capfirst %}</span><br>{% if lastrun.finished %}{{lastrun.finished|date:"DATETIME_FORMAT"}}{% endif %}</div>
+    <div class="col mb-1"><span class="fw-bold">{% trans "started"|capfirst %}</span><br>{% if lastrun.started %}{{lastrun.started|date:"DATE_FORMAT"}} {{lastrun.started|date:"H:i:s"}}{% endif %}</div>
+    <div class="col mb-1"><span class="fw-bold">{% trans "finished"|capfirst %}</span><br>{% if lastrun.finished %}{{lastrun.finished|date:"DATE_FORMAT"}} {{lastrun.finished|date:"H:i:s"}}{% endif %}</div>
     <div class="col mb-1"><span class="fw-bold">{% trans "status"|capfirst %}</span><br><span class="{% if lastrun.status != 'Done' %}badge bg-danger{% endif %}">{{lastrun.status}}</span></div>
     </div>
     {% endif %}

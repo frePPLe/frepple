@@ -50,10 +50,10 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
     <div class="d-flex align-items-center" data-field="name">{{ schedule.name }}</div>
   </div>
   <div class="col d-flex">
-    <div class="d-flex align-items-center" data-field="started">{{ schedule.lastrun.started|date:"DATETIME_FORMAT" }}</div>
+    <div class="d-flex align-items-center" data-field="started">{{ schedule.lastrun.started|date:"DATE_FORMAT" }} {{ schedule.lastrun.started|date:"H:i:s" }}</div>
   </div>
   <div class="col d-flex">
-    <div class="d-flex align-items-center" data-field="finished">{{ schedule.lastrun.finished|date:"DATETIME_FORMAT" }}</div>
+    <div class="d-flex align-items-center" data-field="finished">{{ schedule.lastrun.finished|date:"DATE_FORMAT" }} {{ schedule.lastrun.finished|date:"H:i:s" }}</div>
   </div>
   <div class="col d-flex">
     <div class="d-flex align-items-center" data-field="status">{% if widget %}<a href="{{request.prefix}}/execute/">{% endif %}<span class="{% if schedule.lastrun.status != 'Done' %}badge bg-danger{% else %}text-decoration-underline{% endif %}">{{ schedule.lastrun.status }}</span>{% if widget %}</a>{% endif %}</div>

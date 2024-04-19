@@ -22,7 +22,7 @@
 #
 
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import psutil
 import shlex
 import subprocess
@@ -40,6 +40,7 @@ from django.template.loader import render_to_string
 import freppledb.common.commands
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
+from freppledb.common.report import GridReport
 from freppledb.execute.models import Task
 from freppledb import __version__
 
@@ -429,6 +430,13 @@ class Command(BaseCommand):
                                 current_options = val.split(",")
                             except Exception:
                                 pass
+                offset = GridReport.getTimezoneOffset(request)
+                if lastrun.started:
+                    lastrun.started += offset
+                if lastrun.finished:
+                    lastrun.finished += offset
+                if lastrun.submitted:
+                    lastrun.submitted += offset
             return render_to_string(
                 "commands/runplan.html",
                 {

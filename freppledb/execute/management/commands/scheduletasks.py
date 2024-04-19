@@ -430,8 +430,9 @@ class Command(BaseCommand):
                 except Exception:
                     pass
         commands = [i[1] for i in sorted(commands)]
+        offset = GridReport.getTimezoneOffset(request)
         schedules = [
-            s.adjustForTimezone(GridReport.getTimezoneOffset(request))
+            s.adjustForTimezone(offset)
             for s in ScheduledTask.objects.all()
             .using(request.database)
             .order_by("name")

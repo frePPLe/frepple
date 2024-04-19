@@ -168,6 +168,14 @@ class ScheduledTask(models.Model):
             offset = int(offset.total_seconds())
         if self.next_run:
             self.next_run += timedelta(seconds=offset)
+        self.lastrun = self.lastrun()  # Hack: replacing method with attribute
+        if self.lastrun:
+            if self.lastrun.submitted:
+                self.lastrun.submitted += timedelta(seconds=offset)
+            if self.lastrun.started:
+                self.lastrun.started += timedelta(seconds=offset)
+            if self.lastrun.finished:
+                self.lastrun.finished += timedelta(seconds=offset)
         if self.data and self.data.get("starttime", None) is not None:
             self.data["starttime"] += offset
             if self.data["starttime"] < 0:

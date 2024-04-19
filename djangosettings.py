@@ -320,6 +320,8 @@ if DATE_STYLE == "month-day-year":
     DATETIME_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
         "m/d/Y H:i:s"
+        if DATE_STYLE_WITH_HOURS
+        else "m/d/Y"
     )
     DATE_FORMAT_JS = (
         # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
@@ -328,6 +330,8 @@ if DATE_STYLE == "month-day-year":
     DATETIME_FORMAT_JS = (
         # see https://momentjs.com/docs/#/displaying/
         "MM-DD-YYYY HH:mm:ss"
+        if DATE_STYLE_WITH_HOURS
+        else "MM-DD-YYYY"
     )
     DATE_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
@@ -369,6 +373,8 @@ elif DATE_STYLE == "day-month-year":
     DATETIME_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
         "d-m-Y H:i:s"
+        if DATE_STYLE_WITH_HOURS
+        else "d-m-Y"
     )
     DATE_FORMAT_JS = (
         # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
@@ -377,6 +383,8 @@ elif DATE_STYLE == "day-month-year":
     DATETIME_FORMAT_JS = (
         # see https://momentjs.com/docs/#/displaying/
         "DD-MM-YYYY HH:mm:ss"
+        if DATE_STYLE_WITH_HOURS
+        else "DD-MM-YYYY"
     )
     DATE_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
@@ -419,6 +427,8 @@ else:
     DATETIME_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
         "Y-m-d H:i:s"
+        if DATE_STYLE_WITH_HOURS
+        else "Y-m-d"
     )
     DATE_FORMAT_JS = (
         # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
@@ -427,6 +437,8 @@ else:
     DATETIME_FORMAT_JS = (
         # see https://momentjs.com/docs/#/displaying/
         "YYYY-MM-DD HH:mm:ss"
+        if DATE_STYLE_WITH_HOURS
+        else "YYYY-MM-DD"
     )
     DATE_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT

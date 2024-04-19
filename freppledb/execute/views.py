@@ -993,7 +993,6 @@ class FileManager:
             if os.path.isdir(folder):
                 filelist.append(clean_filename)
             else:
-                logger.error("Failed file deletion: folder does not exist")
                 errorcount += 1
                 fileerrors = fileerrors + " / " + escape(clean_filename)
 
@@ -1003,7 +1002,8 @@ class FileManager:
                 if cleanpath.startswith(folder):
                     os.remove(cleanpath)
             except FileNotFoundError:
-                logger.error("Failed file deletion: file does not exist")
+                # No error message needed
+                pass
             except Exception as e:
                 logger.error("Failed file deletion: %s" % e)
                 errorcount += 1

@@ -307,7 +307,9 @@ if not hasattr(sys, "argv") or "test" in sys.argv or "FREPPLE_TEST" in os.enviro
 #  - month-day-year: US format
 #  - day-month-year: European format
 #  - year-month-day: international format. This is the default
+# As option you can choose to hide the hour, minutes and seconds.
 DATE_STYLE = "year-month-day"
+DATE_STYLE_WITH_HOURS = False
 
 if DATE_STYLE == "month-day-year":
     # Option 1: US style

@@ -26,6 +26,12 @@ This release is scheduled for May 2024. You can already check out a `preview <ht
 
 .. rubric:: User interface
 
+- | You can now configure frepple to hide the hours, minutes and seconds from
+    all date fields. This is handy when you are not interested in the precise
+    timing within each day of your plan.
+  | A new flag DATE_STYLE_WITH_HOURS has been added to the djangosettings file.
+    It's true by default.
+
 - | Bug fix: Adding custom attributes was broken.
 
 .. rubric:: Documentation

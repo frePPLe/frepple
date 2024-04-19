@@ -416,8 +416,8 @@ class GridFieldBool(GridField):
 class GridFieldLastModified(GridField):
     formatter = "date"
     extra = (
-        '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s"}'
-        % settings.DATETIME_FORMAT
+        '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s H:i:s"}'
+        % settings.DATE_FORMAT
     )
     searchoptions = '{"sopt":["eq","ne","lt","le","gt","ge","win"],"searchhidden":true}'
     title = _("last modified")
@@ -432,6 +432,10 @@ class GridFieldJSON(GridField):
 
 
 class GridFieldLocalDateTime(GridFieldDateTime):
+    extra = (
+        '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"%s H:i:s"}'
+        % settings.DATE_FORMAT
+    )
     pass
 
 

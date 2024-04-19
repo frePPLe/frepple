@@ -141,9 +141,11 @@ LANGUAGES = (
 #  - month-day-year: US format
 #  - day-month-year: European format
 #  - year-month-day: international format. This is the default
+# As option you can choose to hide the hour, minutes and seconds.
 DATE_STYLE = "year-month-day"
+DATE_STYLE_WITH_HOURS = False
 
-if DATE_STYLE == "month-date-year":
+if DATE_STYLE == "month-day-year":
     # Option 1: US style
     DATE_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
@@ -152,6 +154,8 @@ if DATE_STYLE == "month-date-year":
     DATETIME_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
         "m/d/Y H:i:s"
+        if DATE_STYLE_WITH_HOURS
+        else "m/d/Y"
     )
     DATE_FORMAT_JS = (
         # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
@@ -159,7 +163,9 @@ if DATE_STYLE == "month-date-year":
     )
     DATETIME_FORMAT_JS = (
         # see https://momentjs.com/docs/#/displaying/
-        "DD_MM_YYYY HH:mm:ss"
+        "MM-DD-YYYY HH:mm:ss"
+        if DATE_STYLE_WITH_HOURS
+        else "MM-DD-YYYY"
     )
     DATE_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
@@ -167,6 +173,8 @@ if DATE_STYLE == "month-date-year":
         "%m/%d/%y",
         "%m-%d-%Y",
         "%m-%d-%y",
+        "%m.%d.%Y",
+        "%m.%d.%y",
         "%b %d %Y",
         "%b %d, %Y",
         "%d %b %Y",
@@ -185,6 +193,10 @@ if DATE_STYLE == "month-date-year":
         "%m/%d/%Y %H:%M",
         "%m/%d/%y %H:%M:%S",
         "%m/%d/%y %H:%M",
+        "%m.%d.%Y %H:%M:%S",
+        "%m.%d.%Y %H:%M",
+        "%m.%d.%y %H:%M:%S",
+        "%m.%d.%y %H:%M",
     ]
 elif DATE_STYLE == "day-month-year":
     # Option 2: European style
@@ -195,6 +207,8 @@ elif DATE_STYLE == "day-month-year":
     DATETIME_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
         "d-m-Y H:i:s"
+        if DATE_STYLE_WITH_HOURS
+        else "d-m-Y"
     )
     DATE_FORMAT_JS = (
         # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
@@ -203,6 +217,8 @@ elif DATE_STYLE == "day-month-year":
     DATETIME_FORMAT_JS = (
         # see https://momentjs.com/docs/#/displaying/
         "DD-MM-YYYY HH:mm:ss"
+        if DATE_STYLE_WITH_HOURS
+        else "DD-MM-YYYY"
     )
     DATE_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
@@ -210,6 +226,8 @@ elif DATE_STYLE == "day-month-year":
         "%d-%m-%y",
         "%d/%m/%Y",
         "%d/%m/%y",
+        "%d.%m.%Y",
+        "%d.%m.%y",
         "%b %d %Y",
         "%b %d, %Y",
         "%d %b %Y",
@@ -229,6 +247,10 @@ elif DATE_STYLE == "day-month-year":
         "%f/%m/%Y %H:%M",
         "%d/%m/%y %H:%M:%S",
         "%d/%m/%y %H:%M",
+        "%d.%m.%Y %H:%M:%S",
+        "%d.%m.%Y %H:%M",
+        "%d.%m.%y %H:%M:%S",
+        "%d.%m.%y %H:%M",
     ]
 else:
     # Option 3: International style, default
@@ -239,6 +261,8 @@ else:
     DATETIME_FORMAT = (
         # see https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#std-templatefilter-date
         "Y-m-d H:i:s"
+        if DATE_STYLE_WITH_HOURS
+        else "Y-m-d"
     )
     DATE_FORMAT_JS = (
         # see https://bootstrap-datepicker.readthedocs.io/en/latest/options.html#format
@@ -247,6 +271,8 @@ else:
     DATETIME_FORMAT_JS = (
         # see https://momentjs.com/docs/#/displaying/
         "YYYY-MM-DD HH:mm:ss"
+        if DATE_STYLE_WITH_HOURS
+        else "YYYY-MM-DD"
     )
     DATE_INPUT_FORMATS = [
         # See https://docs.djangoproject.com/en/3.2/ref/settings/#std-setting-DATE_FORMAT
@@ -254,6 +280,8 @@ else:
         "%y-%m-%d",
         "%Y/%m/%d",
         "%y/%m/%d",
+        "%Y.%m.%d",
+        "%y.%m.%d",
         "%b %d %Y",
         "%b %d, %Y",
         "%d %b %Y",
@@ -273,7 +301,12 @@ else:
         "%Y/%m/%d %H:%M",
         "%y/%m/%d %H:%M:%S",
         "%y/%m/%d %H:%M",
+        "%Y.%m.%d %H:%M:%S",
+        "%Y.%m.%d %H:%M",
+        "%y.%m.%d %H:%M:%S",
+        "%y.%m.%d %H:%M",
     ]
+
 
 # The default redirects URLs not ending with a slash.
 # This causes trouble in combination with the DatabaseSelectionMiddleware.

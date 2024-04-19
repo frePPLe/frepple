@@ -192,7 +192,9 @@ Here are the steps to get a fully working environment.
         #  - month-day-year: US format
         #  - day-month-year: European format
         #  - year-month-day: international format. This is the default
+        # As option you can choose to hide the hour, minutes and seconds.
         DATE_STYLE = "year-month-date"
+        DATE_STYLE_WITH_HOURS = True
 
    #. **/etc/frepple/djangosettings.py - INSTALLED_APPS**
 

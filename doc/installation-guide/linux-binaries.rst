@@ -6,22 +6,15 @@ Linux binary packages
 * `Installation and configuration`_
 * `Ubuntu installation script`_
 * `Ubuntu uninstallation script`_
-* `Red Hat installation script`_
 
 ***********************
 Supported distributions
 ***********************
 
-Binary installation packages are available for:
+A binary installation packages is only available for **Ubuntu 24**.
 
-* Ubuntu **20** LTS
-* Red Hat Enterprise Linux 8 (Enterprise Edition only, deprecated in favor of containers)
-* Rocky Linux 8 (Enterprise Edition only, deprecated in favor of containers)
-* Suse 15 (Enterprise Edition only, deprecated in favor of containers)
-* OpenSuse 15 (Enterprise Edition only, deprecated in favor of containers)
-
-Building from source code on other Linux distributions is technically possible, but you'll
-be off the beaten track. A better approach is to use a docker container instead.
+On all other operating systems install through a docker container (which
+is easier, simpler and more maintainable anyway).
 
 ******************************
 Installation and configuration
@@ -35,10 +28,7 @@ Here are the steps to get a fully working environment.
 
 #. **Download the installation package**
 
-   For installation on Linux you need a .deb (for
-   `debian-based distributions <https://en.wikipedia.org/wiki/Category:Debian-based_distributions>`_ )
-   or .rpm (`RPM-based based distributions <https://en.wikipedia.org/wiki/Category:RPM-based_Linux_distributions>`_ )
-   package file.
+   Download the .deb installation package.
 
    The Community Edition is a free downloaded from github at https://github.com/frePPLe/frepple/releases.
 
@@ -80,7 +70,7 @@ Here are the steps to get a fully working environment.
 #. **Tune the database**
 
    The default installation of PostgreSQL is not configured right for
-   intensive use.
+   scalable production use.
 
    We advice using pgtune http://pgtune.leopard.in.ua/ to optimize the configuration
    for your hardware. Use "data warehouse" as application type and also assure the
@@ -106,15 +96,10 @@ Here are the steps to get a fully working environment.
 
 #. **Install the frepple package**
 
-   On Ubuntu:
+   On the command line:
    ::
 
      apt install -f ./*.deb
-
-   On RHEL:
-   ::
-
-    dnf --nogpgcheck localinstall  *.rpm
 
 #. **Configure frePPLe**
 
@@ -291,7 +276,7 @@ Ubuntu installation script
 This section shows the completely automated installation script for installing
 and configuring frePPLe with a PostgreSQL database on an Ubuntu server.
 
-We use this script for our unit tests. You can use it as a guideline and
+We use this script for our unit tests and docker images. You can use it as a guideline and
 inspiration for your own deployments.
 
 ::
@@ -337,111 +322,3 @@ Uninstallation is as simple as:
 
   # Uninstall the package, including log files and configuration files
   sudo apt purge frepple
-
-
-***************************
-Red Hat installation script
-***************************
-
-This section shows the completely automated installation script for installing
-and configuring frePPLe with a PostgreSQL database on a RHEL 6 server.
-
-We use this script for our unit tests. You can use it as a guideline and
-inspiration for your own deployments.
-
-::
-
-  # Update and upgrade
-  sudo -S -n dnf -y update
-
-  # Install the PostgreSQL database
-  # For a production installation you'll need to tune the database
-  # configuration to match the available hardware.
-  sudo dnf install postgresql postgresql-server
-  sudo service postgresql initdb
-  sudo service postgresql start
-  sudo su - postgres
-  psql -dpostgres -c "create user frepple with password 'frepple' createrole"
-  psql -dpostgres -c "create database frepple encoding 'utf-8' owner frepple"
-  psql -dpostgres -c "create database scenario1 encoding 'utf-8' owner frepple"
-  psql -dpostgres -c "create database scenario2 encoding 'utf-8' owner frepple"
-  psql -dpostgres -c "create database scenario3 encoding 'utf-8' owner frepple"
-  exit
-  # The default frePPLe configuration uses md5 authentication on unix domain
-  # sockets to communicate with the PostgreSQL database.
-  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/*/main/pg_hba.conf
-  sudo service postgresql restart
-
-  # Install the frePPLe binary RPM package and the necessary dependencies.
-  sudo dnf --nogpgcheck localinstall  frepple*.rpm
-
-  # Create frepple database schema
-  sudo frepplectl migrate --noinput
-
-******************************
-Suse installation instructions
-******************************
-
-This section shows the instructions for installing
-and configuring frePPLe with a PostgreSQL database on a SLES 12 server.
-
-You can use it as a guideline and inspiration for your own deployments.
-
-::
-
-  # Update and Upgrade
-  sudo zypper refresh
-  sudo zypper update
-
-  # Install the PostgreSQL database
-  # tip: "sudo zypper se PACKAGENAME" to look for the correct package names
-  sudo zypper install postgresql94 postgresql94-server postgresql94-devel
-
-  # Note: frePPLe requires packages that may not be present in the basic Suse Enterprise Server repositories so you may need to add these repositories and install:
-  sudo zypper addrepo http://download.opensuse.org/repositories/Apache:Modules/SLE_12_SP1/Apache:Modules.repo
-  sudo zypper refresh
-  sudo zypper install apache2-mod_wsgi-python3
-  sudo zypper addrepo http://download.opensuse.org/repositories/devel:languages:python3/SLE_12_SP1/devel:languages:python3.repo
-  sudo zypper refresh
-
-  # Create user, create databases, configure access
-  sudo su
-  sudo systemctl start postgresql
-  su - postgres
-  psql
-  postgres=# ALTER USER postgres WITH PASSWORD 'postgres';
-  postgres=# \q
-  exit
-  sudo systemctl restart postgresql
-  su - postgres
-  psql -dpostgres -c "create user frepple with password 'frepple' createrole"
-  psql -dpostgres -c "create database frepple encoding 'utf-8' owner frepple"
-  psql -dpostgres -c "create database scenario1 encoding 'utf-8' owner frepple"
-  psql -dpostgres -c "create database scenario2 encoding 'utf-8' owner frepple"
-  psql -dpostgres -c "create database scenario3 encoding 'utf-8' owner frepple"
-  exit
-  # Allow local connections to the database using a username and password.
-  # The default peer authentication isn't good for frepple.
-  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /var/lib/pgsql/data/pg_hba.conf
-  sudo systemctl restart postgresql
-
-  #install Apache2 modules:
-  sudo a2enmod mod_access_compat mod_deflate
-  sudo a2enmod proxy proxy_wstunnel    # Only Enterprise Edition
-  sudo systemctl restart apache2
-  #for some reason some modules may not be loading in apache
-  #use "sudo httpd -t" to check is the syntax is ok
-  #is there are errors you may need to edit  "/etc/apache2/loadmodule.conf" and add the modules:
-  # LoadModule wsgi_module                               /usr/lib64/apache2/mod_wsgi.so
-  # LoadModule access_compat_module                 /usr/lib64/apache2/mod_access_compat.so
-  # LoadModule deflate_module                            /usr/lib64/apache2/mod_deflate.so
-  # LoadModule deflate_proxy                            /usr/lib64/apache2/mod_proxy.so
-  # LoadModule proxy_wstunnel                            /usr/lib64/apache2/mod_proxy_wstunnel.so
-
-  # Install the frePPLe binary RPM package and the necessary dependencies.
-  sudo rpm -i *.rpm
-  or
-  sudo zypper install *.rpm
-
-  # Create frepple database schema
-  sudo frepplectl migrate --noinput

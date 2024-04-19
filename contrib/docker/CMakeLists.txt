@@ -1,6 +1,5 @@
 
 find_program(docker NAMES docker)
-find_program(gpg NAMES gpg)
 
 if(docker)
   # Main build & runtime image
@@ -65,38 +64,4 @@ if(docker)
     --tag "frepple-${PROJECT_BRANCH}-ubuntu-devel:${PROJECT_VERSION}"
   )
 
-  # Build-only images
-  foreach(dist opensuse-15.1 rockylinux-8 debian-10)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${dist}.dockerfile ${dist}/dockerfile COPYONLY)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh ${dist}/entrypoint.sh COPYONLY)
-    add_custom_target(
-      "docker-${dist}"
-      COMMAND ${CMAKE_COMMAND} --build . --target package_source
-      COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/${dist}/"
-      COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-      ${docker} build --progress=plain --target package --output type=local,dest=. ${dist}
-    )
-  endforeach()
-
-  set(RHEL_USER "Red Hat user name")
-  set(RHEL_PASSWORD "Red Hat password")
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/rhel-8.dockerfile rhel-8/dockerfile COPYONLY)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh rhel-8/entrypoint.sh COPYONLY)
-  configure_file(${CMAKE_SOURCE_DIR}/requirements.txt rhel-8/requirements.txt COPYONLY)
-  # if(gpg)
-  # $(GPG) --export-secret-keys -a devops@frepple.com >gpg_key
-  # endif()
-  add_custom_target(
-    "docker-rhel-8"
-    COMMAND ${CMAKE_COMMAND} --build . --target package_source
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/rhel-8/"
-    COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-    ${docker} build
-    --progress=plain
-    --target package
-    --output type=local,dest=.
-    --build-arg RHEL_USER=${RHEL_USER}
-    --build-arg RHEL_PASSWORD=${RHEL_PASSWORD}
-    rhel-8
-  )
 endif()

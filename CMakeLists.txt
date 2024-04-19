@@ -21,28 +21,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     elseif(LINUX_ISSUE MATCHES "Ubuntu.*development")
       set(CPACK_GENERATOR "DEB")
       set(DISTRO "ubuntudevel")
-
-    # Debian case
-    elseif(LINUX_ISSUE MATCHES "Debian GNU/Linux 10")
-      set(CPACK_GENERATOR "DEB")
-      set(DISTRO "debian10")
-    elseif(EXISTS "/etc/redhat-release")
-      file(READ "/etc/redhat-release" REDHAT_RELEASE)
-
-      if(REDHAT_RELEASE MATCHES "Red Hat Enterprise Linux release 8")
-        set(CPACK_GENERATOR "RPM")
-        set(DISTRO "rhel8")
-      elseif(REDHAT_RELEASE MATCHES "Rocky Linux release 8")
-        set(CPACK_GENERATOR "RPM")
-        set(DISTRO "rockylinux8")
-      endif()
-    elseif(EXISTS "/etc/os-release")
-      file(READ "/etc/os-release" OS_RELEASE)
-
-      if(OS_RELEASE MATCHES "openSUSE Leap 15")
-        set(CPACK_GENERATOR "RPM")
-        set(DISTRO "opensuse15")
-      endif()
     endif()
   endif()
 

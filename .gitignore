@@ -15,7 +15,7 @@
 *.pyc
 *.pyo
 *.pyd
-dist 
+dist
 build
 venv
 

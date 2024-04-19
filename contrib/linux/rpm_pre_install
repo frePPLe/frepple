@@ -1,7 +1,0 @@
-# Add frepple group.
-getent group frepple >/dev/null || groupadd -r frepple
-
-# Add the apache user to the new group
-# Centos uses "wwwrun", RHEL uses "apache"...  And what does your distro use by default? :-)
-id apache >/dev/null 2>&1 && usermod -a -G frepple apache
-id wwwrun >/dev/null 2>&1 && usermod -a -G frepple wwwrun

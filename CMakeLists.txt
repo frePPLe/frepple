@@ -313,6 +313,27 @@ if(valgrind)
     ${CMAKE_SOURCE_DIR}/bin/frepple
     ${CMAKE_SOURCE_DIR}/freppledb/common/commands.py
   )
+  add_custom_target(
+    massif
+    DEPENDS venv
+    COMMAND ${CMAKE_COMMAND} -E
+    env
+    FREPPLE_HOME=${CMAKE_SOURCE_DIR}/bin
+    PYTHONPATH=${CMAKE_SOURCE_DIR}
+    DJANGO_SETTINGS_MODULE=freppledb.settings
+    FREPPLE_LOGFILE=frepple.log
+    LD_BIND_NOW=1
+    invplan=1
+    supply=1
+    nowebservice=1
+    constraint=13
+    plantype=1
+    PYTHONMALLOC=malloc
+    valgrind --tool=massif
+    ${CMAKE_SOURCE_DIR}/bin/frepple
+    ${CMAKE_SOURCE_DIR}/freppledb/common/commands.py
+    COMMAND ls -t massif.out.* | head -1 | xargs ms_print > memory_allocations.log
+  )
 endif()
 
 find_program(gdb NAMES gdb)

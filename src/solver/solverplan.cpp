@@ -788,8 +788,7 @@ void SolverCreate::solve(void* v) {
       tmp = j;
     else
       tmp = cluster;
-    threads.add(SolverData::runme,
-                new SolverData(this, tmp, &(demands_per_cluster[j])));
+    threads.add(SolverData::runme, this, tmp, &(demands_per_cluster[j]));
   }
   // Run the planning command threads and wait for them to exit
   threads.execute();

@@ -3612,7 +3612,7 @@ class PythonIteratorClass : public Object {
 class ThreadGroup : public NonCopyable {
  public:
   /* Prototype of the thread function. */
-  typedef void (*callable)(void*);
+  typedef void (*callable)(void*, int, void*);
 
   /* Constructor which defaults to have as many worker threads as there are
    * cores on the machine.
@@ -3623,7 +3623,9 @@ class ThreadGroup : public NonCopyable {
   ThreadGroup(int i) { setMaxParallel(i); };
 
   /* Add a new function to be called and its argument. */
-  void add(callable func, void* args) { callables.push(make_pair(func, args)); }
+  void add(callable func, void* arg1, int arg2 = 0, void* arg3 = nullptr) {
+    callables.push(make_tuple(func, arg1, arg2, arg3));
+  }
 
   /* Execute all functions and wait for them to finish. */
   void execute();
@@ -3642,7 +3644,7 @@ class ThreadGroup : public NonCopyable {
   }
 
  private:
-  typedef pair<callable, void*> callableWithArgument;
+  typedef tuple<callable, void*, int, void*> callableWithArgument;
 
   /* Mutex to protect the callable vector during multi-threaded execution. */
   mutex lock;
@@ -3664,9 +3666,7 @@ class ThreadGroup : public NonCopyable {
    */
   static void wrapper(ThreadGroup*);
 
-  /* This method selects the next function to be executed.
-   * @see wrapper
-   */
+  /* This method selects the next function to be executed. */
   callableWithArgument selectNextCallable();
 };
 

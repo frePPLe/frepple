@@ -850,13 +850,12 @@ class SolverCreate : public Solver {
     friend class SolverCreate;
 
    public:
-    static void runme(void* args) {
+    static void runme(void* arg1, int arg2, void* arg3) {
       CommandManager mgr;
-      SolverCreate::SolverData* x =
-          static_cast<SolverCreate::SolverData*>(args);
-      x->setCommandManager(&mgr);
-      x->commit();
-      delete x;
+      auto x = SolverData(static_cast<SolverCreate*>(arg1), arg2,
+                          static_cast<deque<Demand*>*>(arg3));
+      x.setCommandManager(&mgr);
+      x.commit();
     }
 
     /* Return the solver. */

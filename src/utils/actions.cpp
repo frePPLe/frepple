@@ -288,6 +288,7 @@ ThreadGroup::callableWithArgument ThreadGroup::selectNextCallable() {
   if (callables.empty())
     // No more functions
     return callableWithArgument(static_cast<callable>(nullptr),
+                                static_cast<void*>(nullptr), 0,
                                 static_cast<void*>(nullptr));
   callableWithArgument c = callables.top();
   callables.pop();
@@ -297,9 +298,9 @@ ThreadGroup::callableWithArgument ThreadGroup::selectNextCallable() {
 void ThreadGroup::wrapper(ThreadGroup* grp) {
   while (true) {
     auto job = grp->selectNextCallable();
-    if (!job.first) return;
+    if (!get<0>(job)) return;
     try {
-      job.first(job.second);
+      get<0>(job)(get<1>(job), get<2>(job), get<3>(job));
     } catch (...) {
       // Error message
       logger << "Error: Caught an exception while executing command:" << endl;

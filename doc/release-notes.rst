@@ -34,6 +34,12 @@ This release is scheduled for May 2024. You can already check out a `preview <ht
 
 - | Bug fix: Adding custom attributes was broken.
 
+.. rubric:: Odoo integration
+
+- | 15, 16, 17: The shipping policy on odoo sales orders is now mapped.
+  | The connector already had it for a while as an inactive option that was commented out.
+    The default behavior is changing now.
+
 .. rubric:: Documentation
 
 - | A `page <installation-guide/advanced-configuration.html>`_ was added to the

@@ -1290,7 +1290,7 @@ class DistributionOrderList(OperationPlanMixin):
             "end_items",
             title=_("end items"),
             editable=False,
-            search=False,
+            search=True,
             sortable=False,
             initially_hidden=True,
             formatter="listdetail",

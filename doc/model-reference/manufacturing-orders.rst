@@ -41,6 +41,8 @@ status             non-empty string  This field should have one of the following
 
 demands            list              | The demand(s) (and quantity) pegged to the manufacturing order.
                                      | This is a read-only computed field.
+end items          list              | The end item(s) (and quantity) pegged to the manufacturing order.
+                                     | This is a read-only computed field.
 demand             demand            | The field marks this manufacturing order as the shipment delivery
                                        of a demand.
                                      | This is only needed in very exceptional use case. 99% of frepple configurations

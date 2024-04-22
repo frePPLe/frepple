@@ -44,6 +44,8 @@ status           string            This field should have one of the following k
 
 demands          list              | The demand(s) (and quantity) pegged to the purchase order.
                                    | This is a read-only computed field.
+end items        list              | The end item(s) (and quantity) pegged to the purchase order.
+                                   | This is a read-only computed field.
 inventory status number            | The Inventory Status is a calculated field that highlights the urgency of the purchase order.
                                    | The cells have a background color that can be green, orange or red. Sorting
                                    | the purchase orders using the Inventory Status column (red ones first) allows the planner to

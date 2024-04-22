@@ -1986,7 +1986,9 @@ class OperationPlanDetail(View):
                                                     "name": rec[0],
                                                     "description": rec[1],
                                                 },
-                                                "due": rec[2].strftime("%Y-%m-%d"),
+                                                "due": rec[2].obj.due.strftime(
+                                                    settings.DATE_INPUT_FORMATS[0]
+                                                ),
                                                 "forecast": True,
                                             },
                                             "quantity": q,

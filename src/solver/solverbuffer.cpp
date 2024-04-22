@@ -704,11 +704,12 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
       // Evaluate the situation at the last flowplan before the date change.
       // Is there a shortage at that date?
       Date nextAskDate;
-      int loopcounter = 30;  // Performance protection
+      int loopcounter =
+          max(HasLevel::getNumberOfLevels() * 2, 30);  // Performance protection
       if (theDelta && b->getProducingOperation() &&
           b->getProducingOperation()->getSizeMaximum()) {
-        double tmp =
-            -theDelta / b->getProducingOperation()->getSizeMaximum() + 30;
+        double tmp = -theDelta / b->getProducingOperation()->getSizeMaximum() +
+                     loopcounter;
         if (tmp > loopcounter) loopcounter = static_cast<unsigned int>(tmp);
       }
 
@@ -821,6 +822,9 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
         } else
           break;
       } while (--loopcounter > 0);
+      if (loopcounter <= 0)
+        logger << indentlevel << "  Warning: Hitting the max number of retries"
+               << endl;
       if (b->getIPFlag())
         data->hitMaxEarly = prev_hitMaxEarly;
       else if (!data->state->a_qty && data->hitMaxEarly == Duration(-1L))

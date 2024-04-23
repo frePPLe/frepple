@@ -311,6 +311,7 @@ class Command(BaseCommand):
                 item__source__startswith="odoo",
                 startdate__lte=today + timedelta(days=7),
             )
+            .exclude(item__type="make to order")
             .order_by("startdate")
             .select_related("location", "item", "supplier")
         ):
@@ -346,6 +347,7 @@ class Command(BaseCommand):
                 item__source__startswith="odoo",
                 startdate__lte=today + timedelta(days=7),
             )
+            .exclude(item__type="make to order")
             .order_by("startdate")
             .select_related("item", "origin", "destination")
         ):
@@ -385,6 +387,7 @@ class Command(BaseCommand):
                 status="proposed",
                 startdate__lte=today + timedelta(days=7),
             )
+            .exclude(item__type="make to order")
             .order_by("startdate")
             .select_related("operation", "location", "item", "owner")
         ):

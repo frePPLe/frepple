@@ -40,6 +40,11 @@ This release is scheduled for May 2024. You can already check out a `preview <ht
   | The connector already had it for a while as an inactive option that was commented out.
     The default behavior is changing now.
 
+- | 16, 17: Support for Odoo make-to-order products.
+  | Odoo automatically creates the manufacturing orders and purchase orders for
+    such products. The frepple connector respects their links to the source sales order
+    or manufacturing order.
+
 .. rubric:: Documentation
 
 - | A `page <installation-guide/advanced-configuration.html>`_ was added to the

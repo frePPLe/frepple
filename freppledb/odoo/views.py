@@ -123,7 +123,9 @@ def Upload(request):
                                 and po.source == "odoo_1"
                             )
                         )
+                        or not po.item
                         or not po.item.source
+                        or po.item.type == "make to order"
                     ):
                         continue
                     data_ok = True
@@ -153,7 +155,9 @@ def Upload(request):
                         not do.origin.source
                         or not do.destination.source
                         or do.status != "proposed"
+                        or not do.item
                         or not do.item.source
+                        or do.item.type == "make to order"
                     ):
                         continue
                     data_ok = True
@@ -197,6 +201,10 @@ def Upload(request):
                             )
                         )
                         or op in obj
+                        or not op.item
+                        or op.item.type == "make to order"
+                        or not op.location
+                        or not op.operation
                     ):
                         continue
                     data_ok = True

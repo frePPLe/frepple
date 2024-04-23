@@ -1719,7 +1719,7 @@ class exportBuffers(PlanTask):
                 minimum,minimum_calendar_id,
                 maximum,maximum_calendar_id,
                 type,category,subcategory,source,lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
                 on conflict (location_id, item_id, batch)
                 do update set
                   description=excluded.description,

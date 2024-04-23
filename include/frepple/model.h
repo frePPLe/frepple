@@ -5267,7 +5267,7 @@ class Buffer : public HasHierarchy<Buffer>,
                                       &Cls::getMinimumCalendar,
                                       &Cls::setMinimumCalendar);
     m->addDoubleField<Cls>(Tags::maximum, &Cls::getMaximum, &Cls::setMaximum,
-                           default_max);
+                           0);
     m->addPointerField<Cls, Calendar>(Tags::maximum_calendar,
                                       &Cls::getMaximumCalendar,
                                       &Cls::setMaximumCalendar);
@@ -5296,12 +5296,6 @@ class Buffer : public HasHierarchy<Buffer>,
   void setIPFlag(bool b) { ip_data = b; }
 
  private:
-  /* A constant defining the default max inventory target.\\
-   * Theoretically we should set this to DBL_MAX, but then the results
-   * are not portable across platforms.
-   */
-  static const double default_max;
-
   /* This models the dynamic part of the plan, representing all planned
    * material flows on this buffer. */
   flowplanlist flowplans;
@@ -5334,9 +5328,8 @@ class Buffer : public HasHierarchy<Buffer>,
 
   /* Maximum inventory target.
    * If a maximum calendar is specified this field is ignored.
-   * @see max_cal
    */
-  double max_val = default_max;
+  double max_val = 0;
 
   /* Points to a calendar to store the minimum inventory level.
    * The default value is nullptr, resulting in a constant minimum level

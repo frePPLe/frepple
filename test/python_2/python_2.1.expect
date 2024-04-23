@@ -13,7 +13,7 @@ Operationplans:
 4 make end item 10.0 2009-01-02 09:00:00 2009-01-03 09:00:00 None
 
 Buffers:
-end item None None None 0.0 None end item 1e+37 0.0 make end item
+end item None None None 0.0 None end item 0.0 0.0 make end item
       3 10.0 2009-01-02 09:00:00 10.0
       1 -10.0 2009-01-03 08:00:00 0.0
       4 10.0 2009-01-03 09:00:00 10.0

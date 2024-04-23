@@ -2022,7 +2022,7 @@ class ForecastEditor:
         if request.user.horizonbuckets and request.user.horizonbuckets in bucketlevels:
             # User selected value is valid
             bucketName = request.user.horizonbuckets
-        else:
+        elif bucketlevels:
             # Default to the most detailed allowed view
             bucketName = bucketlevels[0]
             request.user.horizonbuckets = bucketlevels[0]

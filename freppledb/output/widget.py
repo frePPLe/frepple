@@ -452,7 +452,7 @@ class ManufacturingOrderWidget(Widget):
             ),
         )
         result = [
-            '<select id="mo_selectButton"></select>',
+            '<select class="form-select form-select-sm d-inline-block w-auto" id="mo_selectButton"></select>',
             '<svg class="chart  mb-2" id="mo_chart" style="width:100%; height: 170px;"></svg>',
             '<table id="mo_overview" style="display: none">',
         ]
@@ -768,7 +768,7 @@ class DistributionOrderWidget(Widget):
             ),
         )
         result = [
-            '<select id="do_selectButton"></select>',
+            '<select class="form-select form-select-sm d-inline-block w-auto" id="do_selectButton"></select>',
             '<svg class="chart mb-2" id="do_chart" style="width:100%; height: 170px;"></svg>',
             '<table id="do_overview" style="display: none">',
         ]
@@ -1150,7 +1150,7 @@ class PurchaseOrderWidget(Widget):
                 ),
             )
         result = [
-            '<select id="po_selectButton"></select>',
+            '<select class="form-select form-select-sm d-inline-block w-auto" id="po_selectButton"></select>',
             '<svg class="chart mb-2" id="po_chart" style="width:100%; height: 170px;"></svg>',
             '<table id="po_overview" style="display: none">',
         ]

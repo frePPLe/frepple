@@ -258,7 +258,7 @@ class ForecastWidget(Widget):
         )
 
         result = [
-            '<select id="fcst_selectButton"></select>',
+            '<select class="form-select form-select-sm d-inline-block w-auto" id="fcst_selectButton"></select>',
             '<svg class="chart" id="forecast" style="width:100%; height: 100%"></svg>',
             '<table style="display:none">',
         ]

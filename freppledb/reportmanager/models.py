@@ -23,7 +23,7 @@
 
 from django.conf import settings
 from django.db import models, DEFAULT_DB_ALIAS
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import AuditModel, User, MultiDBManager
 from freppledb.common.report import create_connection

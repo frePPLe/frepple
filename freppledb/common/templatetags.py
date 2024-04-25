@@ -45,7 +45,7 @@ from django.contrib.admin.widgets import (
 from django.db import models, connections
 from django.forms import FileInput, CheckboxInput, RadioSelect, CheckboxSelectMultiple
 from django.template import Library, Node, Variable, TemplateSyntaxError
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import iri_to_uri, force_str
 from django.utils.html import escape
 from django.utils.safestring import mark_safe

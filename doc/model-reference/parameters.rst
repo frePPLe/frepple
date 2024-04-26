@@ -129,9 +129,9 @@ WIP.produce_full_quantity            | Controls how material is produced from pa
 
 **Demand forecasting parameters**
 
-The recommended default parameters for the demand forecasting module are different for weekly and
-monthly time buckets. The datasets parameters_month_forecast and parameters_week_forecast allow
-you to reset the defaults values applicable to your configuration.
+The recommended default parameters for the demand forecasting module are different for daily, weekly and
+monthly time buckets. The parameters with a value "default" in the parameters screen can get a different
+value depending on the configured time bucket.
 
 ==================================================== ===========================================================================
 Parameter                                            Description

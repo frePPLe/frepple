@@ -19,6 +19,12 @@ This release is scheduled for May 2024. You can already check out a `preview <ht
 - | Bug fix: "Orders planned" row in forecast editor and forecast report wasn't
     calculated correctly when orders aren't at the level where the forecast is planned.
 
+- | The parameters for the statisctical forecast methods (alfa, beta, gamma...) will have
+    a value set to "default". The planner still has the possibility to update the value with
+    a custom value.
+  | The dataset *parameters_day_forecast, parameters_week_forecast, parameters_month_forecast* are
+    removed.
+
 .. rubric:: Supported operating systems
 
 - | Ubuntu 24 LTS is now the supported operating system.

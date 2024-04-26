@@ -452,9 +452,10 @@ def getWizardSteps(request, mode):
            type: 'POST',
            url: "'''
             + request.prefix
-            + """/execute/api/loaddata/",
+            + """/api/common/parameter/",
            data: {
-             fixture: 'parameters_' + $(this).attr("data-forecastbucketsize") + '_forecast'
+             name: "forecast.calendar",
+             value: $(this).attr("data-forecastbucketsize")
              }
            });
        });

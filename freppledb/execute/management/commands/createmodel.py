@@ -240,13 +240,6 @@ class Command(BaseCommand):
             ).save(using=database)
 
             with_forecast = "freppledb.forecast" in settings.INSTALLED_APPS
-            if with_forecast:
-                management.call_command(
-                    "loaddata",
-                    "parameters_week_forecast",
-                    database=database,
-                    verbosity=0,
-                )
 
             # Planning horizon
             if verbosity > 0:

@@ -31,6 +31,7 @@ from time import time, sleep
 from warnings import warn
 
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
+from django.db.models import Case, When, Value, IntegerField, Q
 from django.utils.translation import gettext_lazy as _
 
 from .models import Forecast
@@ -922,9 +923,11 @@ class ExportStaticForecast(PlanTask):
                     i.maxlateness,
                     i.category,
                     i.subcategory,
-                    i.operation.name
-                    if i.operation and not i.operation.hidden
-                    else None,
+                    (
+                        i.operation.name
+                        if i.operation and not i.operation.hidden
+                        else None
+                    ),
                     i.methods,
                     i.method,
                     i.source,
@@ -981,21 +984,149 @@ class ExportStaticForecast(PlanTask):
 def createForecastSolver(db, task=None):
     import frepple
 
+    default_forecast_parameters = {
+        "day": {
+            "forecast.Croston_initialAlfa": "0.1",
+            "forecast.Croston_maxAlfa": "0.3",
+            "forecast.Croston_minAlfa": "0.03",
+            "forecast.Croston_minIntermittence": "0.33",
+            "forecast.DoubleExponential_dampenTrend": "0.95",
+            "forecast.DoubleExponential_initialAlfa": "0.2",
+            "forecast.DoubleExponential_initialGamma": "0.2",
+            "forecast.DoubleExponential_maxAlfa": "0.3",
+            "forecast.DoubleExponential_maxGamma": "0.3",
+            "forecast.DoubleExponential_minAlfa": "0.02",
+            "forecast.DoubleExponential_minGamma": "0.05",
+            "forecast.Iterations": "15",
+            "forecast.MovingAverage_order": "21",
+            "forecast.Seasonal_dampenTrend": "0.9",
+            "forecast.Seasonal_initialAlfa": "0.2",
+            "forecast.Seasonal_initialBeta": "0.2",
+            "forecast.Seasonal_maxAlfa": "0.3",
+            "forecast.Seasonal_maxBeta": "0.3",
+            "forecast.Seasonal_maxPeriod": "65",
+            "forecast.Seasonal_minAlfa": "0.02",
+            "forecast.Seasonal_minBeta": "0.2",
+            "forecast.Seasonal_gamma": "0.05",
+            "forecast.Seasonal_minPeriod": "3",
+            "forecast.Seasonal_minAutocorrelation": "0.45",
+            "forecast.Seasonal_maxAutocorrelation": "0.55",
+            "forecast.Skip": "0",
+            "forecast.SingleExponential_initialAlfa": "0.2",
+            "forecast.SingleExponential_maxAlfa": "0.3",
+            "forecast.SingleExponential_minAlfa": "0.03",
+            "forecast.SmapeAlfa": "0.95",
+            "forecast.Outlier_maxDeviation": "2",
+            "forecast.DeadAfterInactivity": "365",
+        },
+        "week": {
+            "forecast.Croston_initialAlfa": "0.1",
+            "forecast.Croston_maxAlfa": "0.3",
+            "forecast.Croston_minAlfa": "0.03",
+            "forecast.Croston_minIntermittence": "0.33",
+            "forecast.DoubleExponential_dampenTrend": "0.95",
+            "forecast.DoubleExponential_initialAlfa": "0.2",
+            "forecast.DoubleExponential_initialGamma": "0.2",
+            "forecast.DoubleExponential_maxAlfa": "0.3",
+            "forecast.DoubleExponential_maxGamma": "0.3",
+            "forecast.DoubleExponential_minAlfa": "0.02",
+            "forecast.DoubleExponential_minGamma": "0.05",
+            "forecast.Iterations": "15",
+            "forecast.MovingAverage_order": "5",
+            "forecast.Seasonal_dampenTrend": "0.9",
+            "forecast.Seasonal_initialAlfa": "0.2",
+            "forecast.Seasonal_initialBeta": "0.2",
+            "forecast.Seasonal_maxAlfa": "0.3",
+            "forecast.Seasonal_maxBeta": "0.3",
+            "forecast.Seasonal_maxPeriod": "65",
+            "forecast.Seasonal_minAlfa": "0.02",
+            "forecast.Seasonal_minBeta": "0.2",
+            "forecast.Seasonal_gamma": "0.05",
+            "forecast.Seasonal_minPeriod": "3",
+            "forecast.Seasonal_minAutocorrelation": "0.45",
+            "forecast.Seasonal_maxAutocorrelation": "0.55",
+            "forecast.Skip": "0",
+            "forecast.SingleExponential_initialAlfa": "0.2",
+            "forecast.SingleExponential_maxAlfa": "0.3",
+            "forecast.SingleExponential_minAlfa": "0.03",
+            "forecast.SmapeAlfa": "0.95",
+            "forecast.Outlier_maxDeviation": "2",
+            "forecast.DeadAfterInactivity": "365",
+        },
+        "month": {
+            "forecast.Croston_initialAlfa": "0.1",
+            "forecast.Croston_maxAlfa": "0.8",
+            "forecast.Croston_minAlfa": "0.03",
+            "forecast.Croston_minIntermittence": "0.33",
+            "forecast.DoubleExponential_dampenTrend": "0.8",
+            "forecast.DoubleExponential_initialAlfa": "0.2",
+            "forecast.DoubleExponential_initialGamma": "0.2",
+            "forecast.DoubleExponential_maxAlfa": "0.6",
+            "forecast.DoubleExponential_maxGamma": "0.6",
+            "forecast.DoubleExponential_minAlfa": "0.02",
+            "forecast.DoubleExponential_minGamma": "0.05",
+            "forecast.Iterations": "15",
+            "forecast.MovingAverage_order": "5",
+            "forecast.Seasonal_dampenTrend": "0.8",
+            "forecast.Seasonal_initialAlfa": "0.2",
+            "forecast.Seasonal_initialBeta": "0.2",
+            "forecast.Seasonal_maxAlfa": "0.5",
+            "forecast.Seasonal_maxBeta": "0.5",
+            "forecast.Seasonal_maxPeriod": "14",
+            "forecast.Seasonal_minAlfa": "0.02",
+            "forecast.Seasonal_minBeta": "0.2",
+            "forecast.Seasonal_gamma": "0.05",
+            "forecast.Seasonal_minPeriod": "2",
+            "forecast.Seasonal_minAutocorrelation": "0.5",
+            "forecast.Seasonal_maxAutocorrelation": "0.8",
+            "forecast.Skip": "0",
+            "forecast.SingleExponential_initialAlfa": "0.2",
+            "forecast.SingleExponential_maxAlfa": "0.6",
+            "forecast.SingleExponential_minAlfa": "0.03",
+            "forecast.SmapeAlfa": "0.95",
+            "forecast.Outlier_maxDeviation": "2",
+            "forecast.DeadAfterInactivity": "365",
+        },
+    }
+
     if task:
         warn("Deprecated: CreateForecastSolver() no longer takes a task as argument")
 
     # Initialize the solver
     horizon_future = None
     calendar = None
+    loglevel = None
     try:
         kw = {}
         for param in (
-            Parameter.objects.all()
+            Parameter.objects.annotate(
+                custom_order=Case(
+                    When(name="forecast.calendar", then=Value(1)),
+                    When(name="forecast.loglevel", then=Value(2)),
+                    When(
+                        ~Q(name="forecast.calendar") & ~Q(name="forecast.loglevel"),
+                        then=Value(3),
+                    ),
+                    output_field=IntegerField(),
+                )
+            )
+            .all()
             .using(db)
             .filter(name__startswith="forecast.")
             .exclude(name="forecast.populateForecastTable")
             .exclude(name="forecast.runnetting")
+            .order_by("custom_order")
         ):
+            default_value = None
+            if (
+                calendar
+                and param.value.strip().lower() == "default"
+                and param.name in default_forecast_parameters.get(calendar)
+            ):
+                default_value = default_forecast_parameters.get(calendar)[param.name]
+                if loglevel:
+                    logger.info("%s=%s" % (param.name, default_value))
+
             key = param.name[9:]
             if key == "Horizon_future":
                 try:
@@ -1020,7 +1151,9 @@ def createForecastSolver(db, task=None):
                 except Exception:
                     logger.warning("Parameter forecast.calendar not configured.")
                     return None
-                calendar = param.value
+                calendar = (
+                    param.value if calendar in default_forecast_parameters else "month"
+                )
             elif key == "Net_PastDemand":
                 kw[key] = (param.value.lower() == "true") if param.value else False
             elif key == "AverageNoDataDays":
@@ -1037,9 +1170,12 @@ def createForecastSolver(db, task=None):
                 "DeadAfterInactivity",
             ):
                 try:
-                    kw[key] = int(param.value)
+                    kw[key] = int(default_value or param.value)
+                    if key == "loglevel":
+                        loglevel = int(default_value or param.value)
                 except Exception:
                     logger.error('Incorrect parameter "forecast.%s"' % key)
+
             elif key in ("Net_NetEarly", "Net_NetLate"):
                 try:
                     kw[key] = int(param.value) * 86400
@@ -1047,7 +1183,7 @@ def createForecastSolver(db, task=None):
                     logger.error('Incorrect parameter "forecast.%s"' % key)
             else:
                 try:
-                    kw[key] = float(param.value)
+                    kw[key] = float(default_value or param.value)
                 except Exception:
                     logger.error('Incorrect parameter "forecast.%s"' % key)
 

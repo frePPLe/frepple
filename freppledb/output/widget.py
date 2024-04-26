@@ -224,7 +224,7 @@ class ManufacturingOrderWidget(Widget):
     def args(self):
         return "?%s" % urlencode({"fence1": self.fence1, "fence2": self.fence2})
 
-    javascript = """
+    javascript = r"""
     var margin_y = 70;  // Width allocated for the Y-axis
 
     var svg = d3.select("#mo_chart");
@@ -540,7 +540,7 @@ class DistributionOrderWidget(Widget):
     def args(self):
         return "?%s" % urlencode({"fence1": self.fence1, "fence2": self.fence2})
 
-    javascript = """
+    javascript = r"""
     var margin_y = 70;  // Width allocated for the Y-axis
     var svg = d3.select("#do_chart");
     var svgrectangle = document.getElementById("do_chart").getBoundingClientRect();
@@ -866,7 +866,7 @@ class PurchaseOrderWidget(Widget):
         else:
             return "?%s" % urlencode({"fence1": self.fence1, "fence2": self.fence2})
 
-    javascript = """
+    javascript = r"""
     var margin_y = 70;  // Width allocated for the Y-axis
     var svg = d3.select("#po_chart");
     var svgrectangle = document.getElementById("po_chart").getBoundingClientRect();

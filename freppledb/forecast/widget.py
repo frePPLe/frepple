@@ -51,7 +51,7 @@ class ForecastWidget(Widget):
     def args(self):
         return "?%s" % urlencode({"history": self.history, "future": self.future})
 
-    javascript = """
+    javascript = r"""
 
 
     // Collect the data

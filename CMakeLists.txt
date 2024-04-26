@@ -17,6 +17,11 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
       set(CPACK_GENERATOR "DEB")
       set(DISTRO "ubuntu20")
 
+    # Ubuntu 24
+    elseif(LINUX_ISSUE MATCHES "Ubuntu 24")
+      set(CPACK_GENERATOR "DEB")
+      set(DISTRO "ubuntu24")
+
     # Ubuntu development
     elseif(LINUX_ISSUE MATCHES "Ubuntu.*development")
       set(CPACK_GENERATOR "DEB")

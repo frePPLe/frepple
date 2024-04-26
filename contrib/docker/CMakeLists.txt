@@ -49,6 +49,21 @@ if(docker)
     down
   )
 
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ubuntu-24.04.dockerfile" ubuntu-24.04/dockerfile COPYONLY)
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh" ubuntu-24.04/entrypoint.sh COPYONLY)
+  configure_file("${CMAKE_SOURCE_DIR}/requirements.txt" ubuntu-24.04/requirements.txt COPYONLY)
+  add_custom_target(
+    "docker-ubuntu-24"
+    COMMAND ${CMAKE_COMMAND} --build . --target package_source
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/ubuntu-devel/"
+    COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
+    ${docker} build --progress=plain --target package --output type=local,dest=. ubuntu-devel
+    COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
+    ${docker} build ubuntu-devel
+    --progress=plain
+    --tag "frepple-${PROJECT_BRANCH}-ubuntu-24:${PROJECT_VERSION}"
+  )
+
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/ubuntu-devel.dockerfile" ubuntu-devel/dockerfile COPYONLY)
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/entrypoint.sh" ubuntu-devel/entrypoint.sh COPYONLY)
   configure_file("${CMAKE_SOURCE_DIR}/requirements.txt" ubuntu-devel/requirements.txt COPYONLY)

@@ -3935,7 +3935,7 @@ class GridPivot(GridReport):
                     cell.comment = comment
                 fields.append(cell)
         else:
-            cell = WriteOnlyCell(ws, value=capfirst(_("data field")))
+            cell = WriteOnlyCell(ws, value=capfirst(force_str(_("data field"))))
             cell.style = "readlonlyheaderstyle"
             fields.append(cell)
             for b in request.report_bucketlist:
@@ -3944,7 +3944,7 @@ class GridPivot(GridReport):
                 fields.append(cell)
 
         if len(scenario_list) > 1:
-            cell = WriteOnlyCell(ws, value=capfirst(_("scenario")))
+            cell = WriteOnlyCell(ws, value=capfirst(force_str(_("scenario"))))
             cell.style = "readlonlyheaderstyle"
             fields.insert(0, cell)
 

@@ -133,6 +133,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
           ? 0
           : b->getFlowPlans().rbegin()->getCumulativeProduced();
   double current_minimum(0.0);
+  double current_maximum(0.0);
   double unconfirmed_supply(0.0);
   bool firstmsg1 = true;
   bool firstmsg2 = true;
@@ -165,6 +166,11 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       Date theDate = prev->getDate();
       double theOnHand = prev->getOnhand();
       double theDelta = theOnHand - current_minimum + shortage;
+
+      if (current_maximum > ROUNDING_ERROR && theDelta < -ROUNDING_ERROR &&
+          current_maximum > current_minimum) {
+        theDelta -= current_maximum - current_minimum;
+      }
 
       // Evaluate the situation at the last flowplan before the date change.
       // Is there a shortage at that date?
@@ -525,6 +531,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
         (!data->buffer_solve_shortages_only || data->safety_stock_planning) &&
         !getShortagesOnly())
       current_minimum = cur->getMin();
+    if (cur->getEventType() == 4) current_maximum = cur->getMax();
 
     // Update the pointer to the previous flowplan.
     prev = &*cur;
@@ -667,8 +674,9 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
   // Scan the complete horizon
   Date currentDate;
   const TimeLine<FlowPlan>::Event* prev = nullptr;
-  double shortage(0.0);
-  double current_minimum(0.0);
+  double shortage = 0.0;
+  double current_minimum = 0.0;
+  double current_maximum = 0.0;
   auto cur = b->getFlowPlans().begin();
   Calendar* alignment_cal = Plan::instance().getCalendar();
   while (true) {
@@ -711,6 +719,12 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
         double tmp = -theDelta / b->getProducingOperation()->getSizeMaximum() +
                      loopcounter;
         if (tmp > loopcounter) loopcounter = static_cast<unsigned int>(tmp);
+      }
+
+      // Round up the requirement to the max level
+      if (current_maximum > ROUNDING_ERROR && theDelta < -ROUNDING_ERROR &&
+          current_maximum > current_minimum) {
+        theDelta -= current_maximum - current_minimum;
       }
 
       Duration repeat_early;
@@ -842,6 +856,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
     // already use the new value before the intended date.
     if (cur->getEventType() == 3 && !shortagesonly)
       current_minimum = cur->getMin();
+    if (cur->getEventType() == 4) current_maximum = cur->getMax();
 
     // Update the pointer to the previous flowplan.
     prev = &*cur;

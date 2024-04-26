@@ -319,7 +319,8 @@ void OperatorDelete::solve(const Buffer* b, void* v) {
   // point in the horizon.
   fiter = b->getFlowPlans().rbegin();
   if (fiter == fend) return;
-  double excess = fiter->getOnhand() - fiter->getMin();
+  double excess =
+      fiter->getOnhand() - max(max(fiter->getMin(), fiter->getMax()), 0.0);
   if (excess > ROUNDING_ERROR) {
     fiter = b->getFlowPlans().begin();
     while (excess > ROUNDING_ERROR && fiter != fend) {

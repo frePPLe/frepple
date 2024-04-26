@@ -496,13 +496,19 @@ class TimeLine {
                    bool consider_min_stock = true) const {
     if (!curevent) return 0.0;
     double excess = DBL_MAX;
-    double cur_min = consider_min_stock ? curevent->getMin(false) : 0.0;
+    double cur_min =
+        consider_min_stock ? max(curevent->getMin(false), 0.0) : 0.0;
+    double cur_max =
+        consider_min_stock ? max(curevent->getMax(false), 0.0) : 0.0;
     double cur_excess = 0.0;
     for (const_iterator cur(curevent); cur != end(); ++cur) {
-      if (consider_min_stock && cur->getEventType() == 3)
-        // New minimum value
-        cur_min = cur->getMin();
-      cur_excess = cur->getOnhand() - cur_min;
+      if (consider_min_stock) {
+        if (cur->getEventType() == 3)
+          cur_min = max(cur->getMin(), 0.0);
+        else if (cur->getEventType() == 4)
+          cur_max = max(cur->getMin(), 0.0);
+      }
+      cur_excess = cur->getOnhand() - max(cur_min, cur_max);
       if (cur_excess < excess && cur->isLastOnDate())
         // New minimum excess value
         excess = cur_excess;

@@ -141,11 +141,16 @@ void Buffer::inspect(const string& msg, const short i) const {
   logger << endl;
 
   double curmin = 0.0;
+  double curmax = 0.0;
   for (auto oo = getFlowPlans().begin(); oo != getFlowPlans().end(); ++oo) {
-    if (oo->getEventType() == 3) curmin = oo->getMin();
+    if (oo->getEventType() == 3)
+      curmin = oo->getMin();
+    else if (oo->getEventType() == 4)
+      curmax = oo->getMax();
     logger << indentstring << "    " << oo->getDate()
            << " qty:" << oo->getQuantity() << ", oh:" << oo->getOnhand();
     if (curmin) logger << ", min:" << curmin;
+    if (curmax) logger << ", max:" << curmax;
     switch (oo->getEventType()) {
       case 1:
         logger << ", " << oo->getOperationPlan() << endl;
@@ -442,8 +447,8 @@ void Buffer::setMaximum(double m) {
     }
   // Create new event
   if (max_val > ROUNDING_ERROR) {
-    auto newEvent = new flowplanlist::EventMaxQuantity(Date::infinitePast,
-                                                       &flowplans, max_val);
+    auto newEvent = new flowplanlist::EventMaxQuantity(
+        Plan::instance().getCurrent(), &flowplans, max_val);
     flowplans.insert(newEvent);
   }
 }

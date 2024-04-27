@@ -36,3 +36,4 @@ venv
 *.rpm
 *.tar.gz
 *.tgz
+*.egg-info

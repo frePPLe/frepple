@@ -19,7 +19,6 @@ sphinx-reredirects == 0.1.3
 selenium
 chromedriver-autoinstaller == 0.6.4
 selenium_firefox == 2.0.7   # Issues with urllib3 on recent versions
-msedge-selenium-tools == 3.141.4 # Issues with urllib3 on recent versions
 
 # Extra package to allow python debugging of the embedded interpreter
 debugpy == 1.6.6

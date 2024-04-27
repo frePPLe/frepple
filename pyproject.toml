@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+description = "frePPLe - open source Production PLanning"
+name = "freppledb"
+authors = [{ name = "frepple.com", email = "info@frepple.com" }]
+license = { file = "COPYING" }
+readme = "README.md"
+classifiers = [
+    "License :: Other/Proprietary License",
+    "Intended Audience :: Manufacturing",
+    "Framework :: Django",
+]
+requires-python = ">=3.8"
+version = "0.0.0"
+
+[project.urls]
+Homepage = "https://frepple.com"
+"Bug Tracker" = "https://github.com/frepple/frepple/issues"
+Repository = "https://github.com/frepple/frepple.git"
+Documentation = "https://frepple.com/docs/current"
+Changelog = "https://frepple.com/docs/current/release-notes"
+
+[tool.setuptools.packages.find]
+include = ["freppledb*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+"*" = ["*"]

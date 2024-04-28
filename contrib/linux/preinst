@@ -1,10 +1,21 @@
 #!/bin/sh
 set -e
 . /etc/lsb-release
-if ! [ "x$DISTRIB_ID" = "xUbuntu" ] || ! [ "x$DISTRIB_RELEASE" = "x20.04" ]
+if [ "@Python3_VERSION_MAJOR@.@Python3_VERSION_MINOR@" == "3.8" ]
 then
+  if ! [ "x$DISTRIB_ID" = "xUbuntu" ] || ! [ "x$DISTRIB_RELEASE" = "x20.04" ]
+  then
   echo "\n\nYou can only use this installer on Ubuntu 20.04\n\n"
   exit 1
+  fi
+elif [ "@Python3_VERSION_MAJOR@.@Python3_VERSION_MINOR@" == "3.12" ]
+then
+  if ! [ "x$DISTRIB_ID" = "xUbuntu" ] || ! [ "x$DISTRIB_RELEASE" = "x24.04" ]
+  then
+  echo "\n\nYou can only use this installer on Ubuntu 24.04\n\n"
+  exit 1
+  fi
+# else: No check on matching ubuntu version
 fi
 
 exit 0

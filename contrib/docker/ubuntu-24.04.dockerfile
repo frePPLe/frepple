@@ -25,7 +25,7 @@
 # STAGE 1: Compile and build the application
 #
 
-FROM ubuntu:devel as builder
+FROM ubuntu:24.04 as builder
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
@@ -55,7 +55,7 @@ COPY --from=builder /build/*.deb .
 # STAGE 2: Build the deployment container
 #
 
-FROM ubuntu:devel
+FROM ubuntu:24.04
 
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8

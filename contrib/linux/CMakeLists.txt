@@ -1,5 +1,15 @@
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/preinst"
+    "${CMAKE_CURRENT_BINARY_DIR}/preinst"
+    @ONLY
+  )
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/httpd.conf"
+    "${CMAKE_CURRENT_BINARY_DIR}/httpd.conf"
+    @ONLY
+  )
   # Debian style packaging
   set(CPACK_DEBIAN_PACKAGE_SOURCE "frePPLe")
   set(CPACK_DEBIAN_PACKAGE_SECTION "science")
@@ -8,7 +18,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   set(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION TRUE)
   set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
     "${CMAKE_CURRENT_SOURCE_DIR}/postrm"
-    "${CMAKE_CURRENT_SOURCE_DIR}/preinst"
+    "${CMAKE_CURRENT_BINARY_DIR}/preinst"
     "${CMAKE_CURRENT_SOURCE_DIR}/postinst"
     "${CMAKE_CURRENT_SOURCE_DIR}/conffiles"
     "${CMAKE_CURRENT_SOURCE_DIR}/templates"
@@ -24,7 +34,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
 
   if(CPACK_GENERATOR STREQUAL "DEB")
     install(
-      FILES httpd.conf
+      FILES "${CMAKE_CURRENT_BINARY_DIR}/httpd.conf"
       RENAME "z_frepple.conf"
       DESTINATION "${CMAKE_INSTALL_SYSCONFDIR}/apache2/sites-available"
     )

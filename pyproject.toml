@@ -9,7 +9,7 @@ authors = [{ name = "frepple.com", email = "info@frepple.com" }]
 license = { file = "COPYING" }
 readme = "README.md"
 classifiers = [
-    "License :: Other/Proprietary License",
+    "License :: OSI Approved :: MIT License",
     "Intended Audience :: Manufacturing",
     "Framework :: Django",
 ]

@@ -72,10 +72,8 @@ class cookbooktest(TransactionTestCase):
             management.call_command("stopwebservice", wait=True, force=True)
 
     def writeResults(self, resultpath, opplans):
-        basename = resultpath[-1].replace(".xslx", "")
-        with open(
-            os.path.join(settings.FREPPLE_LOGDIR, "%s.out" % basename), "wt"
-        ) as outputfile:
+        basename = resultpath[-1].replace(".expect", ".out")
+        with open(os.path.join(settings.FREPPLE_LOGDIR, basename), "wt") as outputfile:
             print("\n  Wrote results to logs/%s.log" % basename)
             for i in opplans:
                 print(i.strip(), file=outputfile)

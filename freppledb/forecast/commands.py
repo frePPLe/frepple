@@ -1118,12 +1118,10 @@ def createForecastSolver(db, task=None):
             .order_by("custom_order")
         ):
             parameter_value = None
-            if (
-                calendar
-                and param.value.strip().lower() == "default"
-                and param.name in default_forecast_parameters.get(calendar)
-            ):
-                parameter_value = default_forecast_parameters.get(calendar)[param.name]
+            if calendar and param.value.strip().lower() == "default":
+                parameter_value = default_forecast_parameters.get(calendar, {}).get(
+                    param.name, None
+                )
 
             if parameter_value is None:
                 parameter_value = param.value
@@ -1164,7 +1162,7 @@ def createForecastSolver(db, task=None):
                     return None
                 calendar = (
                     parameter_value
-                    if calendar in default_forecast_parameters
+                    if parameter_value in default_forecast_parameters
                     else "month"
                 )
                 default_forecast_parameters_copy = default_forecast_parameters[

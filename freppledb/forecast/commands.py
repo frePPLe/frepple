@@ -46,109 +46,110 @@ from freppledb.input.models import Item, Customer, Location
 logger = logging.getLogger(__name__)
 
 default_forecast_parameters = {
-        "day": {
-            "forecast.Croston_initialAlfa": "0.1",
-            "forecast.Croston_maxAlfa": "0.3",
-            "forecast.Croston_minAlfa": "0.03",
-            "forecast.Croston_minIntermittence": "0.33",
-            "forecast.DoubleExponential_dampenTrend": "0.95",
-            "forecast.DoubleExponential_initialAlfa": "0.2",
-            "forecast.DoubleExponential_initialGamma": "0.2",
-            "forecast.DoubleExponential_maxAlfa": "0.3",
-            "forecast.DoubleExponential_maxGamma": "0.3",
-            "forecast.DoubleExponential_minAlfa": "0.02",
-            "forecast.DoubleExponential_minGamma": "0.05",
-            "forecast.Iterations": "15",
-            "forecast.MovingAverage_order": "21",
-            "forecast.Seasonal_dampenTrend": "0.9",
-            "forecast.Seasonal_initialAlfa": "0.2",
-            "forecast.Seasonal_initialBeta": "0.2",
-            "forecast.Seasonal_maxAlfa": "0.3",
-            "forecast.Seasonal_maxBeta": "0.3",
-            "forecast.Seasonal_maxPeriod": "65",
-            "forecast.Seasonal_minAlfa": "0.02",
-            "forecast.Seasonal_minBeta": "0.2",
-            "forecast.Seasonal_gamma": "0.05",
-            "forecast.Seasonal_minPeriod": "3",
-            "forecast.Seasonal_minAutocorrelation": "0.45",
-            "forecast.Seasonal_maxAutocorrelation": "0.55",
-            "forecast.Skip": "0",
-            "forecast.SingleExponential_initialAlfa": "0.2",
-            "forecast.SingleExponential_maxAlfa": "0.3",
-            "forecast.SingleExponential_minAlfa": "0.03",
-            "forecast.SmapeAlfa": "0.95",
-            "forecast.Outlier_maxDeviation": "2",
-            "forecast.DeadAfterInactivity": "365",
-        },
-        "week": {
-            "forecast.Croston_initialAlfa": "0.1",
-            "forecast.Croston_maxAlfa": "0.3",
-            "forecast.Croston_minAlfa": "0.03",
-            "forecast.Croston_minIntermittence": "0.33",
-            "forecast.DoubleExponential_dampenTrend": "0.95",
-            "forecast.DoubleExponential_initialAlfa": "0.2",
-            "forecast.DoubleExponential_initialGamma": "0.2",
-            "forecast.DoubleExponential_maxAlfa": "0.3",
-            "forecast.DoubleExponential_maxGamma": "0.3",
-            "forecast.DoubleExponential_minAlfa": "0.02",
-            "forecast.DoubleExponential_minGamma": "0.05",
-            "forecast.Iterations": "15",
-            "forecast.MovingAverage_order": "5",
-            "forecast.Seasonal_dampenTrend": "0.9",
-            "forecast.Seasonal_initialAlfa": "0.2",
-            "forecast.Seasonal_initialBeta": "0.2",
-            "forecast.Seasonal_maxAlfa": "0.3",
-            "forecast.Seasonal_maxBeta": "0.3",
-            "forecast.Seasonal_maxPeriod": "65",
-            "forecast.Seasonal_minAlfa": "0.02",
-            "forecast.Seasonal_minBeta": "0.2",
-            "forecast.Seasonal_gamma": "0.05",
-            "forecast.Seasonal_minPeriod": "3",
-            "forecast.Seasonal_minAutocorrelation": "0.45",
-            "forecast.Seasonal_maxAutocorrelation": "0.55",
-            "forecast.Skip": "0",
-            "forecast.SingleExponential_initialAlfa": "0.2",
-            "forecast.SingleExponential_maxAlfa": "0.3",
-            "forecast.SingleExponential_minAlfa": "0.03",
-            "forecast.SmapeAlfa": "0.95",
-            "forecast.Outlier_maxDeviation": "2",
-            "forecast.DeadAfterInactivity": "365",
-        },
-        "month": {
-            "forecast.Croston_initialAlfa": "0.1",
-            "forecast.Croston_maxAlfa": "0.8",
-            "forecast.Croston_minAlfa": "0.03",
-            "forecast.Croston_minIntermittence": "0.33",
-            "forecast.DoubleExponential_dampenTrend": "0.8",
-            "forecast.DoubleExponential_initialAlfa": "0.2",
-            "forecast.DoubleExponential_initialGamma": "0.2",
-            "forecast.DoubleExponential_maxAlfa": "0.6",
-            "forecast.DoubleExponential_maxGamma": "0.6",
-            "forecast.DoubleExponential_minAlfa": "0.02",
-            "forecast.DoubleExponential_minGamma": "0.05",
-            "forecast.Iterations": "15",
-            "forecast.MovingAverage_order": "5",
-            "forecast.Seasonal_dampenTrend": "0.8",
-            "forecast.Seasonal_initialAlfa": "0.2",
-            "forecast.Seasonal_initialBeta": "0.2",
-            "forecast.Seasonal_maxAlfa": "0.5",
-            "forecast.Seasonal_maxBeta": "0.5",
-            "forecast.Seasonal_maxPeriod": "14",
-            "forecast.Seasonal_minAlfa": "0.02",
-            "forecast.Seasonal_minBeta": "0.2",
-            "forecast.Seasonal_gamma": "0.05",
-            "forecast.Seasonal_minPeriod": "2",
-            "forecast.Seasonal_minAutocorrelation": "0.5",
-            "forecast.Seasonal_maxAutocorrelation": "0.8",
-            "forecast.Skip": "0",
-            "forecast.SingleExponential_initialAlfa": "0.2",
-            "forecast.SingleExponential_maxAlfa": "0.6",
-            "forecast.SingleExponential_minAlfa": "0.03",
-            "forecast.SmapeAlfa": "0.95",
-            "forecast.Outlier_maxDeviation": "2",
-            "forecast.DeadAfterInactivity": "365",
-        },
-    }
+    "day": {
+        "forecast.Croston_initialAlfa": "0.1",
+        "forecast.Croston_maxAlfa": "0.3",
+        "forecast.Croston_minAlfa": "0.03",
+        "forecast.Croston_minIntermittence": "0.33",
+        "forecast.DoubleExponential_dampenTrend": "0.95",
+        "forecast.DoubleExponential_initialAlfa": "0.2",
+        "forecast.DoubleExponential_initialGamma": "0.2",
+        "forecast.DoubleExponential_maxAlfa": "0.3",
+        "forecast.DoubleExponential_maxGamma": "0.3",
+        "forecast.DoubleExponential_minAlfa": "0.02",
+        "forecast.DoubleExponential_minGamma": "0.05",
+        "forecast.Iterations": "15",
+        "forecast.MovingAverage_order": "21",
+        "forecast.Seasonal_dampenTrend": "0.9",
+        "forecast.Seasonal_initialAlfa": "0.2",
+        "forecast.Seasonal_initialBeta": "0.2",
+        "forecast.Seasonal_maxAlfa": "0.3",
+        "forecast.Seasonal_maxBeta": "0.3",
+        "forecast.Seasonal_maxPeriod": "65",
+        "forecast.Seasonal_minAlfa": "0.02",
+        "forecast.Seasonal_minBeta": "0.2",
+        "forecast.Seasonal_gamma": "0.05",
+        "forecast.Seasonal_minPeriod": "3",
+        "forecast.Seasonal_minAutocorrelation": "0.45",
+        "forecast.Seasonal_maxAutocorrelation": "0.55",
+        "forecast.Skip": "0",
+        "forecast.SingleExponential_initialAlfa": "0.2",
+        "forecast.SingleExponential_maxAlfa": "0.3",
+        "forecast.SingleExponential_minAlfa": "0.03",
+        "forecast.SmapeAlfa": "0.95",
+        "forecast.Outlier_maxDeviation": "2",
+        "forecast.DeadAfterInactivity": "365",
+    },
+    "week": {
+        "forecast.Croston_initialAlfa": "0.1",
+        "forecast.Croston_maxAlfa": "0.3",
+        "forecast.Croston_minAlfa": "0.03",
+        "forecast.Croston_minIntermittence": "0.33",
+        "forecast.DoubleExponential_dampenTrend": "0.95",
+        "forecast.DoubleExponential_initialAlfa": "0.2",
+        "forecast.DoubleExponential_initialGamma": "0.2",
+        "forecast.DoubleExponential_maxAlfa": "0.3",
+        "forecast.DoubleExponential_maxGamma": "0.3",
+        "forecast.DoubleExponential_minAlfa": "0.02",
+        "forecast.DoubleExponential_minGamma": "0.05",
+        "forecast.Iterations": "15",
+        "forecast.MovingAverage_order": "5",
+        "forecast.Seasonal_dampenTrend": "0.9",
+        "forecast.Seasonal_initialAlfa": "0.2",
+        "forecast.Seasonal_initialBeta": "0.2",
+        "forecast.Seasonal_maxAlfa": "0.3",
+        "forecast.Seasonal_maxBeta": "0.3",
+        "forecast.Seasonal_maxPeriod": "65",
+        "forecast.Seasonal_minAlfa": "0.02",
+        "forecast.Seasonal_minBeta": "0.2",
+        "forecast.Seasonal_gamma": "0.05",
+        "forecast.Seasonal_minPeriod": "3",
+        "forecast.Seasonal_minAutocorrelation": "0.45",
+        "forecast.Seasonal_maxAutocorrelation": "0.55",
+        "forecast.Skip": "0",
+        "forecast.SingleExponential_initialAlfa": "0.2",
+        "forecast.SingleExponential_maxAlfa": "0.3",
+        "forecast.SingleExponential_minAlfa": "0.03",
+        "forecast.SmapeAlfa": "0.95",
+        "forecast.Outlier_maxDeviation": "2",
+        "forecast.DeadAfterInactivity": "365",
+    },
+    "month": {
+        "forecast.Croston_initialAlfa": "0.1",
+        "forecast.Croston_maxAlfa": "0.8",
+        "forecast.Croston_minAlfa": "0.03",
+        "forecast.Croston_minIntermittence": "0.33",
+        "forecast.DoubleExponential_dampenTrend": "0.8",
+        "forecast.DoubleExponential_initialAlfa": "0.2",
+        "forecast.DoubleExponential_initialGamma": "0.2",
+        "forecast.DoubleExponential_maxAlfa": "0.6",
+        "forecast.DoubleExponential_maxGamma": "0.6",
+        "forecast.DoubleExponential_minAlfa": "0.02",
+        "forecast.DoubleExponential_minGamma": "0.05",
+        "forecast.Iterations": "15",
+        "forecast.MovingAverage_order": "5",
+        "forecast.Seasonal_dampenTrend": "0.8",
+        "forecast.Seasonal_initialAlfa": "0.2",
+        "forecast.Seasonal_initialBeta": "0.2",
+        "forecast.Seasonal_maxAlfa": "0.5",
+        "forecast.Seasonal_maxBeta": "0.5",
+        "forecast.Seasonal_maxPeriod": "14",
+        "forecast.Seasonal_minAlfa": "0.02",
+        "forecast.Seasonal_minBeta": "0.2",
+        "forecast.Seasonal_gamma": "0.05",
+        "forecast.Seasonal_minPeriod": "2",
+        "forecast.Seasonal_minAutocorrelation": "0.5",
+        "forecast.Seasonal_maxAutocorrelation": "0.8",
+        "forecast.Skip": "0",
+        "forecast.SingleExponential_initialAlfa": "0.2",
+        "forecast.SingleExponential_maxAlfa": "0.6",
+        "forecast.SingleExponential_minAlfa": "0.03",
+        "forecast.SmapeAlfa": "0.95",
+        "forecast.Outlier_maxDeviation": "2",
+        "forecast.DeadAfterInactivity": "365",
+    },
+}
+
 
 @PlanTaskRegistry.register
 class PopulateForecastTable(PlanTask):
@@ -1097,6 +1098,8 @@ def createForecastSolver(db, task=None):
     loglevel = None
     try:
         kw = {}
+        default_forecast_parameters_copy = default_forecast_parameters.copy()
+
         for param in (
             Parameter.objects.annotate(
                 custom_order=Case(
@@ -1116,15 +1119,26 @@ def createForecastSolver(db, task=None):
             .exclude(name="forecast.runnetting")
             .order_by("custom_order")
         ):
-            default_value = None
+            parameter_value = None
             if (
                 calendar
                 and param.value.strip().lower() == "default"
                 and param.name in default_forecast_parameters.get(calendar)
             ):
-                default_value = default_forecast_parameters.get(calendar)[param.name]
-                if loglevel:
-                    logger.info("%s=%s" % (param.name, default_value))
+                parameter_value = default_forecast_parameters.get(calendar)[param.name]
+
+            if parameter_value is None:
+                parameter_value = param.value
+
+            if (
+                calendar
+                and loglevel
+                and param.name in default_forecast_parameters.get(calendar)
+            ):
+                logger.info("%s=%s" % (param.name, parameter_value))
+
+            if calendar:
+                default_forecast_parameters_copy.pop(param.name, None)
 
             key = param.name[9:]
             if key == "Horizon_future":
@@ -1153,6 +1167,9 @@ def createForecastSolver(db, task=None):
                 calendar = (
                     param.value if calendar in default_forecast_parameters else "month"
                 )
+                default_forecast_parameters_copy = default_forecast_parameters[
+                    calendar
+                ].copy()
             elif key == "Net_PastDemand":
                 kw[key] = (param.value.lower() == "true") if param.value else False
             elif key == "AverageNoDataDays":
@@ -1169,9 +1186,9 @@ def createForecastSolver(db, task=None):
                 "DeadAfterInactivity",
             ):
                 try:
-                    kw[key] = int(default_value or param.value)
+                    kw[key] = int(parameter_value)
                     if key == "loglevel":
-                        loglevel = int(default_value or param.value)
+                        loglevel = int(parameter_value)
                 except Exception:
                     logger.error('Incorrect parameter "forecast.%s"' % key)
 
@@ -1182,9 +1199,35 @@ def createForecastSolver(db, task=None):
                     logger.error('Incorrect parameter "forecast.%s"' % key)
             else:
                 try:
-                    kw[key] = float(default_value or param.value)
+                    kw[key] = float(parameter_value)
                 except Exception:
                     logger.error('Incorrect parameter "forecast.%s"' % key)
+
+        # Some default parameters are missing in the parameter table
+        for missing_param in default_forecast_parameters_copy:
+            key = param.name[9:]
+            if key in (
+                "MovingAverage_order",
+                "DeadAfterInactivity",
+            ):
+                try:
+                    kw[key] = int(default_forecast_parameters_copy.get(missing_param))
+                except Exception:
+                    logger.error('Incorrect parameter "forecast.%s"' % key)
+            else:
+                try:
+                    kw[key] = float(default_forecast_parameters_copy.get(missing_param))
+                except Exception:
+                    logger.error('Incorrect parameter "forecast.%s"' % key)
+
+            if calendar and loglevel:
+                logger.info(
+                    "%s=%s [missing in parameters]"
+                    % (
+                        missing_param,
+                        default_forecast_parameters_copy.get(missing_param),
+                    )
+                )
 
         # Check whether we have forecast buckets to cover the complete forecasting horizon
         if horizon_future and calendar:

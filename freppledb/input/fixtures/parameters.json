@@ -1,5 +1,4 @@
 [
-{"pk": "allowsplits", "model": "common.parameter", "fields": {"value": "false", "description": "Controls whether a sales order or forecast can be split across multiple manufacturing orders during planning. Default: false"}},
 {"pk": "currentdate", "model": "common.parameter", "fields": {"value": "now", "description": "Current date of the plan, preferred format is YYYY-MM-DD HH:MM:SS but most known formats to represent a date and/or time are accepted."}},
 {"pk": "currency", "model": "common.parameter", "fields": {"value":"$", "description":"Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix"}},
 {"pk": "loading_time_units", "model": "common.parameter", "fields": {"value": "hours", "description": "Time units to be used for the resource report: hours, days, weeks"}},

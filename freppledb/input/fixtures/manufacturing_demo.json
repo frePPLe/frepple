@@ -355,7 +355,6 @@
 {"model":"input.demand","fields": {"name":"Demand 08","due":"2021-01-02 00:00:00","status":"open","quantity":30,"priority":1,"customer_id":"Customer near shop 1","item_id":"square table","location_id":"shop 1"}},
 {"model":"input.demand","fields": {"name":"Demand 11","due":"2021-01-02 00:00:00","status":"open","quantity":10,"priority":1,"customer_id":"Customer near shop 2","item_id":"chair","location_id":"shop 2"}},
 {"model":"input.demand","fields": {"name":"Demand 14","due":"2021-01-02 00:00:00","status":"open","quantity":20,"priority":1,"customer_id":"Customer near shop 1","item_id":"varnished chair","location_id":"shop 1"}},
-{"model":"common.parameter","fields": {"name": "allowsplits", "value": "true", "description": "Controls whether a sales order or forecast can be split across multiple manufacturing orders during planning. Default: true"}},
 {"model":"common.parameter","fields": {"name": "WIP.consume_material", "value":"true", "description":"Determines whether confirmed manufacturing orders consume material or not. Default is true."}},
 {"model":"common.parameter","fields": {"name": "WIP.consume_capacity", "value":"true", "description":"Determines whether confirmed manufacturing orders, purchase orders and distribution orders consume capacity or not. Default is true."}},
 {"model":"common.parameter","fields": {"name": "COMPLETED.consume_material", "value":"true", "description":"Determines whether completed manufacturing orders and distribution orders consume material or not. Default is true."}},

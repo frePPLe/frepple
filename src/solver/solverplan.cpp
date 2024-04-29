@@ -36,7 +36,6 @@ const Keyword SolverCreate::tag_createdeliveries("createdeliveries");
 const Keyword SolverCreate::tag_administrativeleadtime(
     "administrativeleadtime");
 const Keyword SolverCreate::tag_minimumdelay("minimumdelay");
-const Keyword SolverCreate::tag_allowsplits("allowsplits");
 const Keyword SolverCreate::tag_rotateresources("rotateresources");
 const Keyword SolverCreate::tag_iterationmax("iterationmax");
 const Keyword SolverCreate::tag_resourceiterationmax("resourceiterationmax");

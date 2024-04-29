@@ -221,14 +221,13 @@ print("")
 for m in frepple.setupmatrices():
   print("Matrix '%s' has the following rules:" % m.name)
   for i in m.rules:
-    print("   %s: from '%s' to '%s' takes %s days and costs %s" % ( 
+    print("   %s: from '%s' to '%s' takes %s days and costs %s" % (
       i.priority, i.fromsetup, i.tosetup, i.duration / 86400, i.cost
       ))
 print("")
 
 solver = frepple.solver_mrp(
-  plantype=2, constraints=15, loglevel=1, 
-  allowsplits=False, userexit_demand=printStatus
+  plantype=2, constraints=15, loglevel=1, userexit_demand=printStatus
   )
 
 print("\n\nCREATING UNCONSTRAINED PLAN")
@@ -237,8 +236,7 @@ frepple.saveplan("output.1.xml")
 printStatus()
 
 solver = frepple.solver_mrp(
-  plantype=1, constraints=15, loglevel=1,
-  allowsplits=False, userexit_demand=printStatus
+  plantype=1, constraints=15, loglevel=1, userexit_demand=printStatus
   )
 
 print("CREATING CONSTRAINED PLAN 1")

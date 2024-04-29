@@ -141,9 +141,6 @@ def createSolvers(loglevel=2, database=DEFAULT_DB_ALIAS):
         erasePreviousFirst=False,
         plantype=1,
         lazydelay=int(Parameter.getValue("lazydelay", database, "86400")),
-        allowsplits=(
-            Parameter.getValue("allowsplits", database, "true").lower() == "true"
-        ),
         minimumdelay=int(Parameter.getValue("plan.minimumdelay", database, "3600")),
         rotateresources=(
             Parameter.getValue("plan.rotateResources", database, "true").lower()

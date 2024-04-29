@@ -308,12 +308,11 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
               OperationPlanState at =
                   g->getFlow()->hasType<FlowEnd>()
                       ? opplan->setOperationPlanParameters(
-                            getAllowSplits() ? 0.01 : orig_opplan_qty,
-                            Date::infinitePast,
+                            orig_opplan_qty, Date::infinitePast,
                             g->computeFlowToOperationDate(data.state->a_date),
                             false, false, false)
                       : opplan->setOperationPlanParameters(
-                            getAllowSplits() ? 0.01 : orig_opplan_qty,
+                            orig_opplan_qty,
                             g->computeFlowToOperationDate(data.state->a_date),
                             Date::infinitePast, false, false, false);
               if (at.end < matnext.getEnd()) {
@@ -370,40 +369,6 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
       // Echo a message
       if (getLogLevel() > 1)
         logger << indentlevel << "  Retrying new date." << endl;
-    } else if (matnext.getEnd() != Date::infiniteFuture &&
-               a_qty <= ROUNDING_ERROR && matnext.getStart() < a_date &&
-               orig_opplan_qty > opplan->getOperation()->getSizeMinimum() &&
-               (!opplan->getDemand() ||
-                orig_opplan_qty > opplan->getDemand()->getMinShipment()) &&
-               getAllowSplits() && !data.safety_stock_planning) {
-      // The reply is 0, but the next-date is not too far out.
-      // If the operationplan would fit in a smaller timeframe we can
-      // potentially create a non-zero reply... Resize the operationplan
-      opplan->setOperationPlanParameters(orig_opplan_qty, matnext.getStart(),
-                                         a_date);
-      if (opplan->getStart() >= matnext.getStart() &&
-          opplan->getEnd() <= a_date &&
-          opplan->getQuantity() > ROUNDING_ERROR &&
-          (!opplan->getDemand() ||
-           opplan->getQuantity() > opplan->getDemand()->getMinShipment())) {
-        // It worked
-        orig_dates = opplan->getDates();
-        data.state->q_date = orig_dates.getEnd();
-        data.state->q_qty = opplan->getQuantity();
-        data.state->a_date = Date::infiniteFuture;
-        data.state->a_qty = data.state->q_qty;
-        okay = false;
-        // Pop actions from the command stack in the command list
-        data.getCommandManager()->rollback(topcommand);
-        // Echo a message
-        if (getLogLevel() > 1)
-          logger << indentlevel << "Retrying with a smaller quantity: "
-                 << opplan->getQuantity() << endl;
-      } else {
-        // It didn't work
-        opplan->setQuantity(0);
-        okay = true;
-      }
     } else if (opplan_strt_capacity &&
                opplan_strt_capacity != opplan->getStart() &&
                opplan->getQuantity() > ROUNDING_ERROR && data.state->a_qty)
@@ -501,121 +466,99 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
   // available timeframe: used for e.g. time-per operations
   // Note that we allow the complete post-operation time to be eaten
   OperationPlanState original(opplan);
-  if (getAllowSplits()) {
-    if (extra)
-      // Lead time check during operation resolver
-      opplan->setOperationPlanParameters(opplan->getQuantity(), threshold,
-                                         data.state->q_date_max, false);
-    else
-      // Lead time check during capacity resolver
-      opplan->setOperationPlanParameters(opplan->getQuantity(), threshold,
-                                         original.end, true);
-  }
 
-  // Check the result of the resize
-  if (opplan->getStart() >= threshold &&
-      (!extra || opplan->getEnd() <= data.state->q_date_max) &&
-      opplan->getQuantity() > ROUNDING_ERROR && getAllowSplits()) {
-    // Resizing did work! The operation now fits within constrained limits
-    data.state->a_qty = opplan->getQuantity();
-    data.state->a_date = opplan->getEnd();
-    // Acknowledge creation of operationplan
-    return true;
+  // This operation doesn't fit at all within the constrained window.
+  data.state->a_qty = 0.0;
+  // Resize to the minimum quantity
+  double min_q = data.state->q_qty_min;
+  if (min_q < opplan->getOperation()->getSizeMinimum())
+    min_q = opplan->getOperation()->getSizeMinimum();
+  if (opplan->getQuantity() + ROUNDING_ERROR < min_q)
+    opplan->setQuantity(min_q, false);
+
+  // The earliest date may not be achieved on the current resource if the
+  // operation loads a pool:
+  // - There can be more efficient resources in the pool
+  // - Other resources in the pool can have a lower setup time
+  LoadPlan* setuploadplan = nullptr;
+  if (extra) {
+    // First, switch all pools to their most efficient resource
+    for (auto ldplan = opplan->beginLoadPlans();
+         ldplan != opplan->endLoadPlans(); ++ldplan) {
+      if (ldplan->getQuantity() < 0.0 && ldplan->getLoad() &&
+          ldplan->getLoad()->getResource()->isGroup()) {
+        auto most_efficient = ldplan->getLoad()->findPreferredResource(
+            opplan->getStart(), opplan);
+        if (!ldplan->getLoad()->getSetup().empty())
+          setuploadplan = &*ldplan;
+        else if (ldplan->getResource() != most_efficient)
+          ldplan->setResource(most_efficient, false, false);
+      }
+    }
+  }
+  if (setuploadplan) {
+    // Try out resources in the pool if setups are involved
+    Date earliest_date = Date::infiniteFuture;
+
+    // Loop over all qualified possible resources
+    stack<Resource*> res_stack;
+    res_stack.push(setuploadplan->getLoad()->getResource());
+    while (!res_stack.empty()) {
+      // Pick next resource
+      Resource* res = res_stack.top();
+      res_stack.pop();
+
+      // If it's an aggregate, push it's members on the stack
+      if (res->isGroup()) {
+        for (auto x = res->getMembers(); x != Resource::end(); ++x)
+          res_stack.push(&*x);
+        continue;
+      }
+
+      // Check if the resource has the right skill
+      if (setuploadplan->getLoad()->getSkill() &&
+          !res->hasSkill(setuploadplan->getLoad()->getSkill(), threshold,
+                         threshold))
+        continue;
+
+      // Efficiency must be higher than 0
+      auto my_eff = res->getEfficiencyCalendar()
+                        ? res->getEfficiencyCalendar()->getValue(original.start)
+                        : res->getEfficiency();
+      if (my_eff <= 0.0) continue;
+
+      // Try this resource
+      if (setuploadplan->getResource() != res) {
+        opplan->clearSetupEvent();
+        opplan->setStartEndAndQuantity(original.start, original.end,
+                                       original.quantity);
+        setuploadplan->setResource(res, false, false);
+      }
+      opplan->setStart(threshold, false, false);
+      if (opplan->getEnd() < earliest_date) earliest_date = opplan->getEnd();
+    }
+
+    // Pick up the earliest date of all qualified resources
+    data.state->a_date = earliest_date;
   } else {
-    // This operation doesn't fit at all within the constrained window.
-    data.state->a_qty = 0.0;
-    // Resize to the minimum quantity
-    double min_q = data.state->q_qty_min;
-    if (min_q < opplan->getOperation()->getSizeMinimum())
-      min_q = opplan->getOperation()->getSizeMinimum();
-    if (opplan->getQuantity() + ROUNDING_ERROR < min_q)
-      opplan->setQuantity(min_q, false);
-
-    // The earliest date may not be achieved on the current resource if the
-    // operation loads a pool:
-    // - There can be more efficient resources in the pool
-    // - Other resources in the pool can have a lower setup time
-    LoadPlan* setuploadplan = nullptr;
-    if (extra) {
-      // First, switch all pools to their most efficient resource
-      for (auto ldplan = opplan->beginLoadPlans();
-           ldplan != opplan->endLoadPlans(); ++ldplan) {
-        if (ldplan->getQuantity() < 0.0 && ldplan->getLoad() &&
-            ldplan->getLoad()->getResource()->isGroup()) {
-          auto most_efficient = ldplan->getLoad()->findPreferredResource(
-              opplan->getStart(), opplan);
-          if (!ldplan->getLoad()->getSetup().empty())
-            setuploadplan = &*ldplan;
-          else if (ldplan->getResource() != most_efficient)
-            ldplan->setResource(most_efficient, false, false);
-        }
-      }
-    }
-    if (setuploadplan) {
-      // Try out resources in the pool if setups are involved
-      Date earliest_date = Date::infiniteFuture;
-
-      // Loop over all qualified possible resources
-      stack<Resource*> res_stack;
-      res_stack.push(setuploadplan->getLoad()->getResource());
-      while (!res_stack.empty()) {
-        // Pick next resource
-        Resource* res = res_stack.top();
-        res_stack.pop();
-
-        // If it's an aggregate, push it's members on the stack
-        if (res->isGroup()) {
-          for (auto x = res->getMembers(); x != Resource::end(); ++x)
-            res_stack.push(&*x);
-          continue;
-        }
-
-        // Check if the resource has the right skill
-        if (setuploadplan->getLoad()->getSkill() &&
-            !res->hasSkill(setuploadplan->getLoad()->getSkill(), threshold,
-                           threshold))
-          continue;
-
-        // Efficiency must be higher than 0
-        auto my_eff =
-            res->getEfficiencyCalendar()
-                ? res->getEfficiencyCalendar()->getValue(original.start)
-                : res->getEfficiency();
-        if (my_eff <= 0.0) continue;
-
-        // Try this resource
-        if (setuploadplan->getResource() != res) {
-          opplan->clearSetupEvent();
-          opplan->setStartEndAndQuantity(original.start, original.end,
-                                         original.quantity);
-          setuploadplan->setResource(res, false, false);
-        }
-        opplan->setStart(threshold, false, false);
-        if (opplan->getEnd() < earliest_date) earliest_date = opplan->getEnd();
-      }
-
-      // Pick up the earliest date of all qualified resources
-      data.state->a_date = earliest_date;
-    } else {
-      // No setup is involved
-      opplan->setStart(threshold);
-      data.state->a_date = opplan->getEnd();
-    }
-
-    // Log the constraint
-    if (data.logConstraints && data.constraints)
-      data.constraints->push((threshold == Plan::instance().getCurrent())
-                                 ? ProblemBeforeCurrent::metadata
-                                 : ProblemBeforeFence::metadata,
-                             opplan->getOperation(), original.start,
-                             opplan->getStart(), original.quantity);
-
-    // Set the quantity to 0 to make sure the buffer doesn't see any supply
-    opplan->setQuantity(0.0);
-
-    // Deny creation of the operationplan
-    return false;
+    // No setup is involved
+    opplan->setStart(threshold);
+    data.state->a_date = opplan->getEnd();
   }
+
+  // Log the constraint
+  if (data.logConstraints && data.constraints)
+    data.constraints->push((threshold == Plan::instance().getCurrent())
+                               ? ProblemBeforeCurrent::metadata
+                               : ProblemBeforeFence::metadata,
+                           opplan->getOperation(), original.start,
+                           opplan->getStart(), original.quantity);
+
+  // Set the quantity to 0 to make sure the buffer doesn't see any supply
+  opplan->setQuantity(0.0);
+
+  // Deny creation of the operationplan
+  return false;
 }
 
 void SolverCreate::solve(const Operation* oper, void* v) {
@@ -1578,7 +1521,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         auto tmp_askQ = data->state->q_qty;
         auto tmp_askD = data->state->q_date;
         (*altIter)->getOperation()->solve(*this, v);
-        if (!getAllowSplits() && data->state->a_qty > ROUNDING_ERROR &&
+        if (data->state->a_qty > ROUNDING_ERROR &&
             data->state->a_qty <= tmp_askQ - ROUNDING_ERROR) {
           // Reject a partial reply
           auto maxq = (*altIter)->getOperation()->getSizeMaximum();
@@ -2278,9 +2221,6 @@ void SolverCreate::SolverData::populateDependencies(const Operation* o) {
 void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
                                      bool& incomplete, double& a_qty,
                                      DateRange& matnext) {
-  bool prev_allowsplits = getAllowSplits();
-  setAllowSplits(false);
-
   if (!opplan->getOperation()->getDependencies().empty() &&
       data.dependency_list.empty())
     // Starting a new dependency list.
@@ -2427,7 +2367,6 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
             matnext = DateRange(opplan->getEnd(), opplan->getEnd());
             incomplete = true;
             data.dependency_list.clear();
-            setAllowSplits(prev_allowsplits);
             break;
           }
         }
@@ -2436,7 +2375,6 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
       if (incomplete) break;
     }
   }
-  setAllowSplits(prev_allowsplits);
 }
 
 }  // namespace frepple

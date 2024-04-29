@@ -14,7 +14,7 @@ This release is scheduled for May 2024. You can already check out a `preview <ht
   | This may result in small differences in the plans when migrating to the new
     release.
 
-- | Removed the parameters plan.calendar and plan.planSafetyStockFirst.
+- | Removed the parameters plan.calendar, allowsplits and plan.planSafetyStockFirst.
 
 .. rubric:: Demand forecasting
 

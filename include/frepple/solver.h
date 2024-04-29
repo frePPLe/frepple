@@ -127,8 +127,6 @@ class SolverCreate : public Solver {
 
   bool create_deliveries = true;
 
-  bool allowSplits = true;
-
   bool rotateResources = true;
 
   // Used to indent the logfile in a readable way
@@ -342,7 +340,6 @@ class SolverCreate : public Solver {
     create_deliveries = other.create_deliveries;
     administrativeleadtime = other.administrativeleadtime;
     minimumdelay = other.minimumdelay;
-    allowSplits = other.allowSplits;
     rotateResources = other.rotateResources;
     iteration_threshold = other.iteration_threshold;
     iteration_accuracy = other.iteration_accuracy;
@@ -364,7 +361,6 @@ class SolverCreate : public Solver {
     create_deliveries = other.create_deliveries;
     administrativeleadtime = other.administrativeleadtime;
     minimumdelay = other.minimumdelay;
-    allowSplits = other.allowSplits;
     rotateResources = other.rotateResources;
     iteration_threshold = other.iteration_threshold;
     iteration_accuracy = other.iteration_accuracy;
@@ -597,10 +593,6 @@ class SolverCreate : public Solver {
 
   void setRotateResources(bool b) { rotateResources = b; }
 
-  bool getAllowSplits() const { return allowSplits; }
-
-  void setAllowSplits(bool b) { allowSplits = b; }
-
   bool getPropagate() const { return propagate; }
 
   void setPropagate(bool b) { propagate = b; }
@@ -649,8 +641,6 @@ class SolverCreate : public Solver {
                              &Cls::getMinimumDelay, &Cls::setMinimumDelay);
     m->addDurationField<Cls>(Tags::autofence, &Cls::getAutoFence,
                              &Cls::setAutoFence);
-    m->addBoolField<Cls>(SolverCreate::tag_allowsplits, &Cls::getAllowSplits,
-                         &Cls::setAllowSplits);
     m->addBoolField<Cls>(SolverCreate::tag_rotateresources,
                          &Cls::getRotateResources, &Cls::setRotateResources);
     m->addBoolField<Cls>(SolverCreate::tag_erasePreviousFirst,
@@ -674,7 +664,6 @@ class SolverCreate : public Solver {
   static const Keyword tag_lazydelay;
   static const Keyword tag_createdeliveries;
   static const Keyword tag_minimumdelay;
-  static const Keyword tag_allowsplits;
   static const Keyword tag_rotateresources;
   static const Keyword tag_administrativeleadtime;
   static const Keyword tag_erasePreviousFirst;

@@ -1098,8 +1098,6 @@ def createForecastSolver(db, task=None):
     loglevel = None
     try:
         kw = {}
-        default_forecast_parameters_copy = default_forecast_parameters.copy()
-
         for param in (
             Parameter.objects.annotate(
                 custom_order=Case(
@@ -1143,39 +1141,47 @@ def createForecastSolver(db, task=None):
             key = param.name[9:]
             if key == "Horizon_future":
                 try:
-                    horizon_future = int(param.value)
+                    horizon_future = int(parameter_value)
                 except Exception:
                     logger.error('Incorrect parameter "forecast.Horizon_future"')
                     return None
             elif key == "Horizon_history":
                 try:
-                    int(param.value)
+                    int(parameter_value)
                 except Exception:
                     logger.error('Incorrect parameter "forecast.Horizon_history"')
                     return None
             elif key in ("DueWithinBucket",):
                 try:
-                    kw[key] = param.value
+                    kw[key] = parameter_value
                 except Exception:
                     logger.error('Incorrect parameter "forecast.%s"' % key)
             elif key == "calendar":
                 try:
-                    kw[key] = frepple.calendar(name=param.value, action="C")
+                    kw[key] = frepple.calendar(name=parameter_value, action="C")
                 except Exception:
                     logger.warning("Parameter forecast.calendar not configured.")
                     return None
                 calendar = (
-                    param.value if calendar in default_forecast_parameters else "month"
+                    parameter_value
+                    if calendar in default_forecast_parameters
+                    else "month"
                 )
                 default_forecast_parameters_copy = default_forecast_parameters[
                     calendar
                 ].copy()
             elif key == "Net_PastDemand":
-                kw[key] = (param.value.lower() == "true") if param.value else False
+                kw[key] = (
+                    (parameter_value.lower() == "true") if parameter_value else False
+                )
             elif key == "AverageNoDataDays":
-                kw[key] = (param.value.lower() == "true") if param.value else True
+                kw[key] = (
+                    (parameter_value.lower() == "true") if parameter_value else True
+                )
             elif key == "Net_IgnoreLocation":
-                kw[key] = (param.value.lower() == "true") if param.value else False
+                kw[key] = (
+                    (parameter_value.lower() == "true") if parameter_value else False
+                )
             elif key in (
                 "Iterations",
                 "loglevel",
@@ -1194,7 +1200,7 @@ def createForecastSolver(db, task=None):
 
             elif key in ("Net_NetEarly", "Net_NetLate"):
                 try:
-                    kw[key] = int(param.value) * 86400
+                    kw[key] = int(parameter_value) * 86400
                 except Exception:
                     logger.error('Incorrect parameter "forecast.%s"' % key)
             else:

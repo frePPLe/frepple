@@ -133,10 +133,6 @@ Calendar::~Calendar() {
     if (o.getAvailable() == this) o.setAvailable(nullptr);
     if (o.getSizeMinimumCalendar() == this) o.setSizeMinimumCalendar(nullptr);
   }
-
-  // Remove reference on plan
-  if (Plan::instance().getCalendar() == this)
-    Plan::instance().setCalendar(nullptr);
 }
 
 void Calendar::removeBucket(CalendarBucket* bkt, bool del) {

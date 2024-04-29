@@ -849,17 +849,6 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
     if (getLogLevel() > 1) logger << " to " << data->state->q_date << endl;
   }
 
-  // Align the date to the specified calendar.
-  // This alignment is a soft constraint: q_date_max is already set earlier and
-  // remains unchanged at the true requirement date.
-  Calendar* alignment_cal = Plan::instance().getCalendar();
-  if (alignment_cal && !data->state->curDemand) {
-    // Find the calendar event "at" or "just before" the requirement date
-    Calendar::EventIterator evt(alignment_cal,
-                                data->state->q_date + Duration(1L), false);
-    data->state->q_date = (--evt).getDate();
-  }
-
   // Create the operation plan.
   if (!z) {
     double opplan_qty;

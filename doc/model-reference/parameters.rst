@@ -68,13 +68,6 @@ plan.minimalBeforeCurrentConstraints | By default the "why short or late" list f
                                      | When setting this option to true, we will limit the list to show only
                                        the most constraining operation. This make the list easier to interpret
                                        by users.
-plan.calendar                        | Name of a calendar to align the end date of new manufacturing orders,
-                                       purchase orders, distribution orders and delivery orders with.
-                                     | When this parameter is used, the plan results are effectively grouped
-                                       in the time buckets defined in this calendar.
-                                     | This feature is typically used for medium and long term plans.
-                                     | Such plans are reviewed in monthly or weekly buckets rather than at
-                                       individual dates.
 plan.loglevel                        | Controls the verbosity of the planning log file.
                                      | Accepted values are 0 (silent – default), 1 (minimal) and 2 (verbose).
 plan.minimumdelay                    | Specifies a minimum delay the algorithm applies when the requested

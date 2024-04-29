@@ -322,7 +322,7 @@ class loadParameter(LoadTask):
                     SELECT name, value
                     FROM common_parameter
                     where name in (
-                       'currentdate', 'last_currentdate', 'plan.calendar',
+                       'currentdate', 'last_currentdate',
                        'COMPLETED.allow_future', 'WIP.produce_full_quantity',
                        'plan.individualPoolResources', 'plan.minimalBeforeCurrentConstraints',
                        'plan.autoFenceOperations'
@@ -336,9 +336,6 @@ class loadParameter(LoadTask):
                         current_date = rec[1]
                     elif rec[0] == "last_currentdate":
                         last_current_date = rec[1]
-                    elif rec[0] == "plan.calendar" and rec[1]:
-                        frepple.settings.calendar = frepple.calendar(name=rec[1])
-                        logger.info("Bucketized planning using calendar %s" % rec[1])
                     elif rec[0] == "COMPLETED.allow_future":
                         frepple.settings.completed_allow_future = (
                             str(rec[1]).lower() == "true"

@@ -8681,12 +8681,6 @@ class Plan : public Plannable, public Object {
     OperationDelivery::setDeliveryDuration(l);
   }
 
-  /* Return the calendar to which operationplans are aligned. */
-  Calendar* getCalendar() const { return cal; }
-
-  /* Set a calendar to align operationplans to. */
-  void setCalendar(Calendar* c) { cal = c; }
-
   /* Returns the description of the plan. */
   const string& getDescription() const { return descr; }
 
@@ -8803,8 +8797,6 @@ class Plan : public Plannable, public Object {
     m->addUnsignedLongField(Tags::id, &Plan::getOperationPlanCounterMin,
                             &Plan::setOperationPlanCounterMin, 0UL,
                             DONT_SERIALIZE);
-    m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar,
-                                      &Cls::setCalendar, DONT_SERIALIZE);
     m->addBoolField<Plan>(
         Tags::completed_allow_future, &Plan::getCompletedAllowFuture,
         &Plan::setCompletedAllowFuture, BOOL_FALSE, DONT_SERIALIZE);

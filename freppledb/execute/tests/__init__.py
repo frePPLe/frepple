@@ -23,6 +23,7 @@
 
 import os
 
+from django.conf import settings
 from django.core import management
 from django.http.response import StreamingHttpResponse
 from django.test import TransactionTestCase
@@ -70,6 +71,15 @@ class cookbooktest(TransactionTestCase):
         if webservice:
             management.call_command("stopwebservice", wait=True, force=True)
 
+    def writeResults(self, resultpath, opplans):
+        basename = resultpath[-1].replace(".xslx", "")
+        with open(
+            os.path.join(settings.FREPPLE_LOGDIR, "%s.out" % basename), "wt"
+        ) as outputfile:
+            print("\n  Wrote results to logs/%s.log" % basename)
+            for i in opplans:
+                print(i.strip(), file=outputfile)
+
     def assertOperationplans(self, *resultpath):
         opplans = sorted(
             [
@@ -94,9 +104,7 @@ class cookbooktest(TransactionTestCase):
                 if not line.strip():
                     continue
                 if row >= maxrow or opplans[row].strip() != line.strip():
-                    print("Got:")
-                    for i in opplans:
-                        print("  ", i.strip())
+                    self.writeResults(resultpath, opplans)
                     if row < maxrow:
                         self.fail(
                             "Difference in expected results on line %s" % (row + 1)
@@ -105,7 +113,5 @@ class cookbooktest(TransactionTestCase):
                         self.fail("Less output rows than expected")
                 row += 1
         if row != maxrow:
-            print("Got:")
-            for i in opplans:
-                print("  ", i.strip())
+            self.writeResults(resultpath, opplans)
             self.fail("More output rows than expected")

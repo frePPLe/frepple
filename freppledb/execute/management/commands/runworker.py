@@ -143,7 +143,7 @@ def runTask(task, database):
         kwargs = {"database": database, "task": task.id, "verbosity": 0}
         background = "background" in task.arguments if task.arguments else False
         if task.arguments:
-            for i in shlex.split(task.arguments):
+            for i in shlex.split(task.arguments or ""):
                 if "=" in i:
                     key, val = i.split("=")
                     kwargs[key.strip("--").replace("-", "_")] = val

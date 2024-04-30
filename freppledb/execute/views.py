@@ -430,7 +430,7 @@ def wrapTask(request, action):
                     .filter(name="runplan")
                     .order_by("-id")[0]
                 )
-                for i in shlex.split(lastrun.arguments):
+                for i in shlex.split(lastrun.arguments or ""):
                     if "=" in i:
                         key, val = i.split("=")
                         if key == "--constraint":

@@ -417,7 +417,7 @@ class Command(BaseCommand):
             )
             if lastrun and lastrun.arguments:
                 # Copy all settings from the previous run by this user
-                for i in shlex.split(lastrun.arguments):
+                for i in shlex.split(lastrun.arguments or ""):
                     if "=" in i:
                         key, val = i.split("=")
                         key = key.strip("--")

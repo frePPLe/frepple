@@ -168,7 +168,7 @@ class ScheduledTask(models.Model):
             offset = int(offset.total_seconds())
         if self.next_run:
             self.next_run += timedelta(seconds=offset)
-        if self.lastrun:
+        if callable(self.lastrun):
             self.lastrun = self.lastrun()  # Hack: replacing method with attribute
         if self.lastrun:
             if self.lastrun.submitted:

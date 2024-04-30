@@ -84,6 +84,7 @@
 		<demand>
 			<name>Sales PF1 1</name>
 			<quantity>5</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF1</name>
 			</item>
@@ -99,6 +100,7 @@
 		<demand>
 			<name>Sales PF1 2</name>
 			<quantity>10</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF1</name>
 			</item>
@@ -114,6 +116,7 @@
 		<demand>
 			<name>Sales PF1 3</name>
 			<quantity>50</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF1</name>
 			</item>
@@ -129,6 +132,7 @@
 		<demand>
 			<name>Sales PF1 4</name>
 			<quantity>35</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF1</name>
 			</item>
@@ -144,6 +148,7 @@
 		<demand>
 			<name>Sales PF2 1</name>
 			<quantity>10</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF2</name>
 			</item>
@@ -159,6 +164,7 @@
 		<demand>
 			<name>Sales PF2 2</name>
 			<quantity>3</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF2</name>
 			</item>
@@ -174,6 +180,7 @@
 		<demand>
 			<name>Sales PF2 3</name>
 			<quantity>70</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF2</name>
 			</item>
@@ -189,6 +196,7 @@
 		<demand>
 			<name>Sales PF2 4</name>
 			<quantity>20</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF2</name>
 			</item>
@@ -204,6 +212,7 @@
 		<demand>
 			<name>Sales PF3 1</name>
 			<quantity>5</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF3</name>
 			</item>
@@ -219,6 +228,7 @@
 		<demand>
 			<name>Sales PF3 2</name>
 			<quantity>5</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF3</name>
 			</item>
@@ -234,6 +244,7 @@
 		<demand>
 			<name>Sales PF3 3</name>
 			<quantity>5</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF3</name>
 			</item>
@@ -249,6 +260,7 @@
 		<demand>
 			<name>Sales PF3 4</name>
 			<quantity>5</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF3</name>
 			</item>
@@ -264,6 +276,7 @@
 		<demand>
 			<name>Sales PF4 1</name>
 			<quantity>5</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF4</name>
 			</item>
@@ -279,6 +292,7 @@
 		<demand>
 			<name>Sales PF4 2</name>
 			<quantity>10</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF4</name>
 			</item>
@@ -294,6 +308,7 @@
 		<demand>
 			<name>Sales PF4 3</name>
 			<quantity>20</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF4</name>
 			</item>
@@ -309,6 +324,7 @@
 		<demand>
 			<name>Sales PF4 4</name>
 			<quantity>50</quantity>
+			<minshipment>1</minshipment>
 			<item>
 				<name>PF4</name>
 			</item>

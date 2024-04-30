@@ -214,20 +214,20 @@ PROBLEM	late	7 units of demand '4. order 14' planned up to 15.0 days after its d
 PROBLEM	late	7 units of demand '4. order 15' planned up to 22.0 days after its due date	2014-03-06T00:00:00 / 2014-03-28T00:00:00
 PROBLEM	late	7 units of demand '4. order 16' planned up to 22.0 days after its due date	2014-03-06T00:00:00 / 2014-03-28T00:00:00
 PROBLEM	late	7 units of demand '4. order 17' planned up to 22.0 days after its due date	2014-03-06T00:00:00 / 2014-03-28T00:00:00
-DEMAND CONSTRAINT	1. order	Resource '1. Resource' has capacity shortage of 40	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
-DEMAND CONSTRAINT	2. order 12	Resource '2. Resource' has capacity shortage of 4	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
+DEMAND CONSTRAINT	1. order	Resource '1. Resource' has capacity shortage of 120	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
+DEMAND CONSTRAINT	2. order 12	Resource '2. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	2. order 13	Resource '2. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	2. order 14	Resource '2. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	2. order 15	Resource '2. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	2. order 16	Resource '2. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	2. order 17	Resource '2. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
-DEMAND CONSTRAINT	3. order 12	Resource '3. Resource' has capacity shortage of 4	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
+DEMAND CONSTRAINT	3. order 12	Resource '3. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	3. order 13	Resource '3. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	3. order 14	Resource '3. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	3. order 15	Resource '3. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	3. order 16	Resource '3. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	3. order 17	Resource '3. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
-DEMAND CONSTRAINT	4. order 09	Resource '4. Resource' has capacity shortage of 3	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
+DEMAND CONSTRAINT	4. order 09	Resource '4. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	4. order 10	Resource '4. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	4. order 11	Resource '4. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	
 DEMAND CONSTRAINT	4. order 12	Resource '4. Resource' has capacity shortage of 7	2014-02-27T00:00:00 / 2014-03-06T00:00:00	

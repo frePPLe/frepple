@@ -246,6 +246,100 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             Date next_date = data->state->a_date;
             bool broken_path = data->broken_path;
 
+            if (data->state->a_qty < ROUNDING_ERROR && plan_qty > minshipment &&
+                minshipment > 0 && policy != Demand::POLICY_ALLTOGETHER) {
+              bool originalLogConstraints = data->logConstraints;
+              data->logConstraints = false;
+              try {
+                // The full asked quantity is not possible.
+                // Try with the minimum shipment quantity.
+                if (loglevel > 1)
+                  logger << indentlevel << "Demand '" << l
+                         << "' tries planning minimum quantity " << minshipment
+                         << endl;
+                data->getCommandManager()->rollback(loopcommand);
+                data->state->curBuffer = nullptr;
+                data->state->q_qty = minshipment;
+                data->state->q_date = plan_date;
+                data->state->curDemand = const_cast<Demand*>(l);
+                data->state->curBatch = l->getBatch();
+                data->state->dependency = nullptr;
+                data->state->blockedOpplan = nullptr;
+                data->recent_buffers.clear();
+                data->dependency_list.clear();
+                deliveryoper->solve(*this, v);
+                if (data->state->a_date < next_date)
+                  next_date = data->state->a_date;
+                if (data->state->a_qty > ROUNDING_ERROR) {
+                  // The minimum shipment quantity is feasible.
+                  // Now try iteratively different quantities to find the best
+                  // we can do.
+                  double min_qty = minshipment;
+                  double max_qty = plan_qty;
+                  double delta = fabs(max_qty - min_qty);
+                  while (delta > getIterationAccuracy() * l->getQuantity() &&
+                         delta > getIterationThreshold()) {
+                    // Note: we're kind of assuming that the demand is an
+                    // integer value here.
+                    double new_qty = floor((min_qty + max_qty) / 2);
+                    if (new_qty == min_qty) {
+                      // Required to avoid an infinite loop on the same value...
+                      new_qty += 1;
+                      if (new_qty > max_qty) break;
+                    }
+                    if (loglevel > 0)
+                      logger << indentlevel << "Demand '" << l
+                             << "' tries planning a different quantity "
+                             << new_qty << endl;
+                    data->getCommandManager()->rollback(loopcommand);
+                    data->state->curBuffer = nullptr;
+                    data->state->q_qty = new_qty;
+                    data->state->q_date = plan_date;
+                    data->state->curDemand = const_cast<Demand*>(l);
+                    data->state->curBatch = l->getBatch();
+                    data->state->dependency = nullptr;
+                    data->state->blockedOpplan = nullptr;
+                    data->recent_buffers.clear();
+                    data->dependency_list.clear();
+                    deliveryoper->solve(*this, v);
+                    if (data->state->a_date < next_date)
+                      next_date = data->state->a_date;
+                    if (data->state->a_qty > ROUNDING_ERROR)
+                      // Too small: new min
+                      min_qty = new_qty;
+                    else
+                      // Too big: new max
+                      max_qty = new_qty;
+                    delta = fabs(max_qty - min_qty);
+                  }
+                  q_qty = min_qty;  // q_qty is the biggest Q quantity giving a
+                                    // positive reply
+                  if (data->state->a_qty <= ROUNDING_ERROR) {
+                    if (loglevel > 0)
+                      logger << indentlevel << "Demand '" << l
+                             << "' restores plan for quantity " << min_qty
+                             << endl;
+                    // Restore the last feasible plan
+                    data->getCommandManager()->rollback(loopcommand);
+                    data->state->curBuffer = nullptr;
+                    data->state->q_qty = min_qty;
+                    data->state->q_date = plan_date;
+                    data->state->curDemand = const_cast<Demand*>(l);
+                    data->state->curBatch = l->getBatch();
+                    data->state->dependency = nullptr;
+                    data->state->blockedOpplan = nullptr;
+                    data->recent_buffers.clear();
+                    data->dependency_list.clear();
+                    deliveryoper->solve(*this, v);
+                  }
+                }
+              } catch (...) {
+                data->logConstraints = originalLogConstraints;
+                throw;
+              }
+              data->logConstraints = originalLogConstraints;
+            }
+
             // Message
             if (loglevel > 0) {
               logger << indentlevel << "Demand '" << l

@@ -62,6 +62,7 @@
     <!-- No mat or cap problem -->
     <demand name="order 1">
       <quantity>10</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-20T00:00:00</due>
       <priority>1</priority>
       <item name="end item" />
@@ -70,6 +71,7 @@
     <!-- No mat or cap problem -->
     <demand name="order 2">
       <quantity>5</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-17T00:00:00</due>
       <priority>2</priority>
       <item name="end item" />
@@ -78,6 +80,7 @@
     <!-- No mat or cap problem -->
     <demand name="order 3">
       <quantity>2</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-16T00:00:00</due>
       <priority>3</priority>
       <item name="end item" />
@@ -88,6 +91,7 @@
     -->
     <demand name="order 4">
       <quantity>8</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-18T00:00:00</due>
       <priority>4</priority>
       <item name="end item" />

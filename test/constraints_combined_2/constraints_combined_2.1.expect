@@ -5008,6 +5008,7 @@ PROBLEM	late	5000 units of demand 'Order 001 07' planned up to 3.7 days after it
 PROBLEM	late	5000 units of demand 'Order 001 08' planned up to 4.9 days after its due date	2012-01-01T00:00:00 / 2012-01-05T21:11:40
 PROBLEM	late	5000 units of demand 'Order 001 09' planned up to 8.0 days after its due date	2012-01-01T00:00:00 / 2012-01-09T00:58:20
 PROBLEM	late	5000 units of demand 'Order 001 10' planned up to 9.2 days after its due date	2012-01-01T00:00:00 / 2012-01-10T04:45:00
+DEMAND CONSTRAINT	Order 001 01	Operation 'Ship 05 step 07 @ Line 1' planned in the past	2011-12-31T00:00:00 / 2012-01-01T00:00:00	
 DEMAND CONSTRAINT	Order 001 01	Operation '05 step 07' planned in the past	2011-12-30T22:36:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 01	Operation '05 step 06' planned in the past	2011-12-30T23:51:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 01	Operation '05 step 05' planned in the past	2011-12-30T23:10:00 / 2012-01-02T00:00:00	
@@ -5016,6 +5017,7 @@ DEMAND CONSTRAINT	Order 001 01	Operation '05 step 03' planned in the past	2011-1
 DEMAND CONSTRAINT	Order 001 01	Operation '05 step 02' planned in the past	2011-12-30T21:46:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 01	Operation '05 step 01b' planned in the past	2011-12-30T22:45:00 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 01	Resource 'Line 1 station 7' has capacity shortage of 1	2012-01-02T09:51:40 / 2012-01-02T11:15:00	
+DEMAND CONSTRAINT	Order 001 02	Operation 'Ship 02 step 07 @ Line 1' planned in the past	2011-12-31T00:00:00 / 2012-01-01T00:00:00	
 DEMAND CONSTRAINT	Order 001 02	Operation '02 step 07' planned in the past	2011-12-30T22:36:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 02	Operation '02 step 06' planned in the past	2011-12-30T23:51:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 02	Operation '02 step 05' planned in the past	2011-12-30T23:10:00 / 2012-01-02T00:00:00	
@@ -5023,6 +5025,7 @@ DEMAND CONSTRAINT	Order 001 02	Operation '02 step 04' planned in the past	2011-1
 DEMAND CONSTRAINT	Order 001 02	Operation '02 step 03' planned in the past	2011-12-30T20:15:00 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 02	Operation '02 step 02' planned in the past	2011-12-30T21:46:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 02	Resource 'Line 1 station 7' has capacity shortage of 1	2012-01-02T08:36:40 / 2012-01-02T10:00:00	
+DEMAND CONSTRAINT	Order 001 03	Operation 'Ship 03 step 07 @ Line 1' planned in the past	2011-12-31T00:00:00 / 2012-01-01T00:00:00	
 DEMAND CONSTRAINT	Order 001 03	Operation '03 step 07' planned in the past	2011-12-30T22:36:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 03	Operation '03 step 06' planned in the past	2011-12-30T23:51:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 03	Operation '03 step 05' planned in the past	2011-12-30T23:10:00 / 2012-01-02T00:00:00	
@@ -5030,6 +5033,7 @@ DEMAND CONSTRAINT	Order 001 03	Operation '03 step 04' planned in the past	2011-1
 DEMAND CONSTRAINT	Order 001 03	Operation '03 step 03' planned in the past	2011-12-30T20:15:00 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 03	Operation '03 step 02' planned in the past	2011-12-30T21:46:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 03	Resource 'Line 1 station 7' has capacity shortage of 1	2012-01-02T08:36:40 / 2012-01-02T10:00:00	
+DEMAND CONSTRAINT	Order 001 04	Operation 'Ship 04 step 07 @ Line 1' planned in the past	2011-12-31T00:00:00 / 2012-01-01T00:00:00	
 DEMAND CONSTRAINT	Order 001 04	Operation '04 step 07' planned in the past	2011-12-30T22:36:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 04	Operation '04 step 06' planned in the past	2011-12-30T23:51:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 04	Operation '04 step 05' planned in the past	2011-12-30T23:10:00 / 2012-01-02T00:00:00	
@@ -5037,6 +5041,7 @@ DEMAND CONSTRAINT	Order 001 04	Operation '04 step 04' planned in the past	2011-1
 DEMAND CONSTRAINT	Order 001 04	Operation '04 step 03' planned in the past	2011-12-30T20:15:00 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 04	Operation '04 step 02' planned in the past	2011-12-30T21:46:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 04	Resource 'Line 1 station 7' has capacity shortage of 1	2012-01-02T08:36:40 / 2012-01-02T10:00:00	
+DEMAND CONSTRAINT	Order 001 05	Operation 'Ship 05 step 07 @ Line 1' planned in the past	2011-12-31T00:00:00 / 2012-01-01T00:00:00	
 DEMAND CONSTRAINT	Order 001 05	Operation '05 step 07' planned in the past	2011-12-30T22:36:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 05	Operation '05 step 06' planned in the past	2011-12-30T23:51:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 05	Operation '05 step 05' planned in the past	2011-12-30T23:10:00 / 2012-01-02T00:00:00	
@@ -5044,6 +5049,7 @@ DEMAND CONSTRAINT	Order 001 05	Operation '05 step 04' planned in the past	2011-1
 DEMAND CONSTRAINT	Order 001 05	Operation '05 step 03' planned in the past	2011-12-30T20:15:00 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 05	Operation '05 step 02' planned in the past	2011-12-30T21:46:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 05	Resource 'Line 1 station 7' has capacity shortage of 1	2012-01-02T08:36:40 / 2012-01-02T10:00:00	
+DEMAND CONSTRAINT	Order 001 06	Operation 'Ship 06 step 07 @ Line 1' planned in the past	2011-12-31T00:00:00 / 2012-01-01T00:00:00	
 DEMAND CONSTRAINT	Order 001 06	Operation '06 step 07' planned in the past	2011-12-30T22:36:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 06	Operation '06 step 06' planned in the past	2011-12-30T23:51:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 06	Operation '06 step 05' planned in the past	2011-12-30T23:10:00 / 2012-01-02T00:00:00	
@@ -5051,6 +5057,7 @@ DEMAND CONSTRAINT	Order 001 06	Operation '06 step 04' planned in the past	2011-1
 DEMAND CONSTRAINT	Order 001 06	Operation '06 step 03' planned in the past	2011-12-30T20:15:00 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 06	Operation '06 step 02' planned in the past	2011-12-30T21:46:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 06	Resource 'Line 1 station 7' has capacity shortage of 1	2012-01-02T08:36:40 / 2012-01-02T10:00:00	
+DEMAND CONSTRAINT	Order 001 07	Operation 'Ship 07 step 07 @ Line 1' planned in the past	2011-12-31T00:00:00 / 2012-01-01T00:00:00	
 DEMAND CONSTRAINT	Order 001 07	Operation '07 step 07' planned in the past	2011-12-30T22:36:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 07	Operation '07 step 06' planned in the past	2011-12-30T23:51:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 07	Operation '07 step 05' planned in the past	2011-12-30T23:10:00 / 2012-01-02T00:00:00	
@@ -5058,6 +5065,7 @@ DEMAND CONSTRAINT	Order 001 07	Operation '07 step 04' planned in the past	2011-1
 DEMAND CONSTRAINT	Order 001 07	Operation '07 step 03' planned in the past	2011-12-30T20:15:00 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 07	Operation '07 step 02' planned in the past	2011-12-30T21:46:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 07	Resource 'Line 1 station 7' has capacity shortage of 1	2012-01-02T08:36:40 / 2012-01-02T10:00:00	
+DEMAND CONSTRAINT	Order 001 08	Operation 'Ship 08 step 07 @ Line 1' planned in the past	2011-12-31T00:00:00 / 2012-01-01T00:00:00	
 DEMAND CONSTRAINT	Order 001 08	Operation '08 step 07' planned in the past	2011-12-30T22:36:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 08	Operation '08 step 06' planned in the past	2011-12-30T23:51:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 08	Operation '08 step 05' planned in the past	2011-12-30T23:10:00 / 2012-01-02T00:00:00	
@@ -5065,6 +5073,7 @@ DEMAND CONSTRAINT	Order 001 08	Operation '08 step 04' planned in the past	2011-1
 DEMAND CONSTRAINT	Order 001 08	Operation '08 step 03' planned in the past	2011-12-30T20:15:00 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 08	Operation '08 step 02' planned in the past	2011-12-30T21:46:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 08	Resource 'Line 1 station 7' has capacity shortage of 1	2012-01-02T08:36:40 / 2012-01-02T10:00:00	
+DEMAND CONSTRAINT	Order 001 09	Operation 'Ship 09 step 07 @ Line 1' planned in the past	2011-12-31T00:00:00 / 2012-01-01T00:00:00	
 DEMAND CONSTRAINT	Order 001 09	Operation '09 step 07' planned in the past	2011-12-30T22:36:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 09	Operation '09 step 06' planned in the past	2011-12-30T23:51:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 09	Operation '09 step 05' planned in the past	2011-12-30T23:10:00 / 2012-01-02T00:00:00	
@@ -5072,6 +5081,7 @@ DEMAND CONSTRAINT	Order 001 09	Operation '09 step 04' planned in the past	2011-1
 DEMAND CONSTRAINT	Order 001 09	Operation '09 step 03' planned in the past	2011-12-30T20:15:00 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 09	Operation '09 step 02' planned in the past	2011-12-30T21:46:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 09	Resource 'Line 1 station 7' has capacity shortage of 1	2012-01-02T08:36:40 / 2012-01-02T10:00:00	
+DEMAND CONSTRAINT	Order 001 10	Operation 'Ship 10 step 07 @ Line 1' planned in the past	2011-12-31T00:00:00 / 2012-01-01T00:00:00	
 DEMAND CONSTRAINT	Order 001 10	Operation '10 step 07' planned in the past	2011-12-30T22:36:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 10	Operation '10 step 06' planned in the past	2011-12-30T23:51:40 / 2012-01-02T00:00:00	
 DEMAND CONSTRAINT	Order 001 10	Operation '10 step 05' planned in the past	2011-12-30T23:10:00 / 2012-01-02T00:00:00	

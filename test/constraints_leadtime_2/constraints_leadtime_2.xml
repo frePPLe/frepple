@@ -108,6 +108,7 @@
   <demands>
     <demand name="order 1">
       <quantity>3</quantity>
+      <minshipment>1</minshipment>
       <due>2014-01-01T00:00:00</due>
       <priority>1</priority>
       <item name="end item" />

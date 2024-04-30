@@ -966,9 +966,11 @@ PROBLEM	late	5 units of demand '5. order 5' planned up to 3.0 days after its due
 PROBLEM	late	5 units of demand '5. order 6' planned up to 2.0 days after its due date	2015-01-06T00:00:00 / 2015-01-08T00:00:00
 PROBLEM	late	5 units of demand '5. order 7' planned up to 1.0 days after its due date	2015-01-07T00:00:00 / 2015-01-08T00:00:00
 PROBLEM	late	5 units of demand '6. order 1' planned up to 365.0 days after its due date	2017-01-01T00:00:00 / 2018-01-01T00:00:00
-DEMAND CONSTRAINT	2. order 1	Resource '2. capacity in A' has capacity shortage of 1	2015-01-01T00:00:00 / 2015-01-13T00:00:00	
-DEMAND CONSTRAINT	2. order 1	Resource '2. capacity in B' has capacity shortage of 1	2015-01-01T00:00:00 / 2015-01-30T00:00:00	
-DEMAND CONSTRAINT	3. order 1	Resource '3. capacity in B' has capacity shortage of 1	2015-01-01T00:00:00 / 2015-02-12T00:00:00	
+DEMAND CONSTRAINT	2. order 1	Operation '2. make end item in A' planned in the past	2014-08-26T00:00:00 / 2015-01-01T00:00:00	
+DEMAND CONSTRAINT	2. order 1	Operation '2. make end item in B' planned in the past	2014-11-24T00:00:00 / 2015-01-01T00:00:00	
+DEMAND CONSTRAINT	2. order 1	Resource '2. capacity in B' has capacity shortage of 1	2015-01-01T00:00:00 / 2015-02-02T00:00:00	
+DEMAND CONSTRAINT	3. order 1	Operation '3. make end item in B' planned in the past	2014-09-25T00:00:00 / 2015-01-01T00:00:00	
+DEMAND CONSTRAINT	3. order 1	Resource '3. capacity in B' has capacity shortage of 1	2015-01-05T00:00:00 / 2015-02-12T00:00:00	
 DEMAND CONSTRAINT	4. order 1	Operation '4. make end item' planned in the past	2014-12-25T00:00:00 / 2015-01-01T00:00:00	
 DEMAND CONSTRAINT	4. order 2	Operation '4. make end item' planned in the past	2014-12-26T00:00:00 / 2015-01-01T00:00:00	
 DEMAND CONSTRAINT	4. order 3	Operation '4. make end item' planned in the past	2014-12-27T00:00:00 / 2015-01-01T00:00:00	

@@ -185,6 +185,7 @@
     -->
     <demand name="order 3a">
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-02-10T00:00:00</due>
       <priority>3</priority>
       <item name="product" />
@@ -203,6 +204,7 @@
     -->
     <demand name="order 4a">
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-02-20T00:00:00</due>
       <priority>5</priority>
       <item name="product" />
@@ -210,6 +212,7 @@
     </demand>
     <demand name="order 4b">
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-02-20T00:00:00</due>
       <priority>6</priority>
       <item name="product" />
@@ -221,6 +224,7 @@
     -->
     <demand name="order 5a">
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-03-20T00:00:00</due>
       <priority>7</priority>
       <item name="product" />
@@ -228,6 +232,7 @@
     </demand>
     <demand name="order 5b">
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-03-20T00:00:00</due>
       <priority>8</priority>
       <item name="product" />
@@ -246,6 +251,7 @@
     -->
     <demand name="order 6">
       <quantity>10</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-04-20T00:00:00</due>
       <priority>10</priority>
       <item name="product" />
@@ -261,6 +267,7 @@
     -->
     <demand name="order 7">
       <quantity>10</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-07-20T00:00:00</due>
       <priority>11</priority>
       <item name="product" />
@@ -272,6 +279,7 @@
     -->
     <demand name="order 8A">
       <quantity>10</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-06T00:00:00</due>
       <priority>12</priority>
       <item name="product 8" />
@@ -301,6 +309,7 @@
     </demand>
     <demand name="order 8B">
       <quantity>10</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-09-20T00:00:00</due>
       <priority>13</priority>
       <item name="product 8" />
@@ -313,6 +322,7 @@
     -->
     <demand name="order 9A">
       <quantity>10</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-06T00:00:00</due>
       <priority>14</priority>
       <item name="product 9" />
@@ -342,6 +352,7 @@
     </demand>
     <demand name="order 9B">
       <quantity>10</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-09-20T00:00:00</due>
       <priority>15</priority>
       <item name="product 9" />

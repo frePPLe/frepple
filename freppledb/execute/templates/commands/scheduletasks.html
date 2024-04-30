@@ -56,7 +56,14 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
     <div class="d-flex align-items-center" data-field="finished">{{ schedule.lastrun.finished|date:"DATE_FORMAT" }} {{ schedule.lastrun.finished|date:"H:i:s" }}</div>
   </div>
   <div class="col d-flex">
-    <div class="d-flex align-items-center" data-field="status">{% if widget %}<a href="{{request.prefix}}/execute/">{% endif %}<span class="{% if schedule.lastrun.status != 'Done' %}badge bg-danger{% else %}text-decoration-underline{% endif %}">{{ schedule.lastrun.status }}</span>{% if widget %}</a>{% endif %}</div>
+    <div class="d-flex align-items-center" data-field="status">
+      <a href="{{request.prefix}}/execute/">
+        <span class="{% if schedule.lastrun.status != 'Done' and schedule.lastrun.status != 'Canceled' %}badge bg-danger{% else %}text-decoration-underline{% endif %}">{{ schedule.lastrun.status }}</span>
+      </a>
+      {% if schedule.lastrun.status == 'Waiting' or "%" in schedule.lastrun.status %}&nbsp;
+      <button class='btn btn-sm btn-primary' style='font-size:66%' onclick='cancelScheduledTask({{schedule.lastrun.id}})'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>
+      {% endif %}
+    </div>
   </div>
   {% endif %}
   {% if perms.execute.change_scheduledtask and not widget %}
@@ -236,6 +243,7 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
 {% endif %}
 
 <script>
+{% if not widget %}
 function setTaskType(el, event) {
 	var tgt = $(el);
 	var parent = tgt.parents("ul").prev();
@@ -408,7 +416,8 @@ function deleteScheduledTask(el, event) {
     });
 }
 
-{% if widget %}
+{% else %}
+
 function launchScheduledTask(event) {
   $.ajax({
         url: "{{request.prefix}}/execute/api/scheduletasks/",
@@ -417,6 +426,15 @@ function launchScheduledTask(event) {
         error: ajaxerror
       });
   event.preventDefault();
+}
+
+function cancelScheduledTask(taskid) {
+  if (taskid) {
+    $.ajax({
+      url: "{{request.prefix}}/execute/cancel/" + taskid + "/",
+      type: "POST",
+      });
+  }
 }
 {% endif %}
 </script>

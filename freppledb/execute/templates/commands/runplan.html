@@ -10,6 +10,13 @@
         });
     event.preventDefault();
   }
+
+  function cancelTask() {
+    $.ajax({
+      url: "{{request.prefix}}/execute/cancel/{{lastrun.id}}/",
+      type: "POST",
+      });
+  }
 </script>
 {% endif %}
 <form role="form" method="post" {% if not widget %}action="{{request.prefix}}/execute/launch/runplan/"{% endif %}>{% csrf_token %}
@@ -23,7 +30,12 @@
     <div class="row w-100 mb-2">
     <div class="col mb-1"><span class="fw-bold">{% trans "started"|capfirst %}</span><br>{% if lastrun.started %}{{lastrun.started|date:"DATE_FORMAT"}} {{lastrun.started|date:"H:i:s"}}{% endif %}</div>
     <div class="col mb-1"><span class="fw-bold">{% trans "finished"|capfirst %}</span><br>{% if lastrun.finished %}{{lastrun.finished|date:"DATE_FORMAT"}} {{lastrun.finished|date:"H:i:s"}}{% endif %}</div>
-    <div class="col mb-1"><span class="fw-bold">{% trans "status"|capfirst %}</span><br><span class="{% if lastrun.status != 'Done' %}badge bg-danger{% endif %}">{{lastrun.status}}</span></div>
+    <div class="col mb-1"><span class="fw-bold">{% trans "status"|capfirst %}</span><br>
+      <span class="{% if lastrun.status != 'Done' and lastrun.status != 'Canceled' %}badge bg-danger{% endif %}">{{lastrun.status}}</span>
+      {% if lastrun.status == 'Waiting' or "%" in lastrun.status %}&nbsp;
+         <button class='btn btn-sm btn-primary' style='font-size:66%' onclick='cancelTask()'>{% filter force_escape %}{% trans 'Cancel' %}{% endfilter %}</button>
+      {% endif %}
+    </div>
     </div>
     {% endif %}
     {% translate "Load all input data, run the planning algorithm, and export the results." %}<br><br>

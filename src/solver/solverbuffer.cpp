@@ -227,7 +227,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
         if (!supply_exists_already && !data->coordination_run) {
           auto fence_free = b->getOnHand(
               max(theDate, Plan::instance().getCurrent()) + autofence,
-              Date::infiniteFuture, true, false, false);
+              Date::infiniteFuture, true, true, false);
           if (theDelta < fence_free && fence_free < 0 &&
               theDelta < -ROUNDING_ERROR &&
               fabs(fence_free - theDelta) > ROUNDING_ERROR) {

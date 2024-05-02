@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Testing buffer replenishing with order-up-to max levels</name>
+	<description>
+    This model test the buffer replenishment code for various material
+    constraint scenario's. All cases have in common that there is no operation
+    defined to replenish the buffer, i.e. we only consume the available supply.
+    - 1: A static minimum and maximum, no demand
+	- 2: A static minimum and maximum, with demand
+  </description>
+	<current>2024-01-01T00:00:00</current>
+	
+	<!-- Case 1 -->
+	<operations>
+		<operation name="supply 1" xsi:type="operation_fixed_time">
+			<location name="factory"/>
+			<item name="item 1"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="item 1"/>
+					<quantity>2</quantity>
+					<quantity_fixed>1</quantity_fixed>
+				</flow>
+			</flows>
+			<duration>P7D</duration>
+		</operation>
+	</operations>
+	<buffers>
+		<buffer name="item 1 @ factory">
+			<location name="factory"/>
+			<item name="item 1"/>
+			<onhand>2</onhand>
+			<minimum>10</minimum>
+			<maximum>30</maximum>
+		</buffer>
+	</buffers>
+	<operationplans>
+		<operationplan id="MO #1 item 1">
+			<operation name="supply 1"/>
+			<end>2024-04-01T00:00:00</end>
+			<quantity>3</quantity>
+			<status>confirmed</status>
+		</operationplan>
+	</operationplans>
+
+	<!-- Case 2 -->
+	<operations>
+		<operation name="supply 2" xsi:type="operation_fixed_time">
+			<location name="factory"/>
+			<item name="item 2"/>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="item 2"/>
+					<quantity>2</quantity>
+					<quantity_fixed>1</quantity_fixed>
+				</flow>
+			</flows>
+			<duration>P7D</duration>
+		</operation>
+	</operations>
+	<buffers>
+		<buffer name="item 2 @ factory">
+			<location name="factory"/>
+			<item name="item 2"/>
+			<onhand>2</onhand>
+			<minimum>10</minimum>
+			<maximum>30</maximum>
+		</buffer>
+	</buffers>
+	<demands>
+		<demand name="SO #1 for item 2">
+			<quantity>10</quantity>
+			<due>2024-01-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+		<demand name="SO #2 for item 2">
+			<quantity>10</quantity>
+			<due>2024-02-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+		<demand name="SO #3 for item 2">
+			<quantity>10</quantity>
+			<due>2024-03-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+		<demand name="SO #4 for item 2">
+			<quantity>10</quantity>
+			<due>2024-04-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+		<demand name="SO #5 for item 2">
+			<quantity>10</quantity>
+			<due>2024-05-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+		<demand name="SO #6 for item 2">
+			<quantity>10</quantity>
+			<due>2024-06-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+		<demand name="SO #7 for item 2">
+			<quantity>10</quantity>
+			<due>2024-07-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+		<demand name="SO #8 for item 2">
+			<quantity>10</quantity>
+			<due>2024-08-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+		<demand name="SO #9 for item 2">
+			<quantity>10</quantity>
+			<due>2024-09-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+		<demand name="SO #10 for item 2">
+			<quantity>10</quantity>
+			<due>2024-10-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+		<demand name="SO #11 for item 2">
+			<quantity>10</quantity>
+			<due>2024-11-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+		<demand name="SO #12 for item 2">
+			<quantity>10</quantity>
+			<due>2024-12-01T00:00:00</due>
+			<item name="item 2"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan id="MO #1 item 2">
+			<operation name="supply 2"/>
+			<end>2024-04-01T00:00:00</end>
+			<quantity>3</quantity>
+			<status>confirmed</status>
+		</operationplan>
+	</operationplans>
+
+<?python
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, autofence="P999D").solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, autofence="P999D").solve()
+frepple.saveplan("output.2.xml")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, autofence="P999D").solve()
+frepple.saveplan("output.3.xml")
+for b in frepple.buffers():
+   b.inspect()
+?>
+</plan>

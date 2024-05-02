@@ -28,7 +28,7 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import FieldDoesNotExist
 from django.db import connections
-from django.db.models import Q
+from django.db.models import Q, F
 from django.db.models.expressions import RawSQL
 from django.db.models.fields import CharField
 from django.http import HttpResponse, Http404
@@ -1839,6 +1839,12 @@ class OperationPlanDetail(View):
                 for x in OperationPlanMaterial.objects.all()
                 .using(request.database)
                 .filter(Q(operationplan_id__in=ids) | Q(operationplan__owner__in=ids))
+                .annotate(
+                    consume_or_produce=RawSQL(
+                        "sign(operationplanmaterial.quantity)", ()
+                    )
+                )
+                .order_by("consume_or_produce", "item_id")
                 .values(
                     "operationplan_id",
                     "item_id",
@@ -1854,7 +1860,7 @@ class OperationPlanDetail(View):
                 for x in OperationPlanResource.objects.all()
                 .using(request.database)
                 .filter(Q(operationplan_id__in=ids) | Q(operationplan__owner__in=ids))
-                .order_by("resource__owner", "resource_id")
+                .order_by(F("resource__owner").desc(nulls_last=True), "resource_id")
                 .values(
                     "operationplan_id",
                     "quantity",

@@ -60,8 +60,14 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('flowplans')) {
           rows = '';
+          var firstproducer = true;
           angular.forEach(scope.operationplan.flowplans, function (theflow) {
-            rows += '<tr>';
+            if (theflow.quantity > 0 && firstproducer) {
+              rows += '<tr class="border-top">';
+              firstproducer = false;
+            }
+            else
+              rows += '<tr>';
             if (!theflow.hasOwnProperty('alternates')) {
               rows += '<td><span ';
               if (theflow.buffer.description)

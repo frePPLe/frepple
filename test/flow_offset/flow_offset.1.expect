@@ -41,17 +41,16 @@ BUFFER	7. raw material @ 7. factory	2019-12-01T00:00:00	100	100
 BUFFER	7. raw material @ 7. factory	2019-12-02T00:00:00	-12	88
 BUFFER	7. raw material @ 7. factory	2020-01-03T00:00:00	-12	76
 BUFFER	7. raw material @ 7. factory	2020-02-03T00:00:00	-12	64
-BUFFER	8. end item @ 8. factory	2020-01-10T00:00:00	1.5	1.5
-BUFFER	8. end item @ 8. factory	2020-01-10T00:00:00	-1.5	0
+BUFFER	8. end item @ 8. factory	2020-01-10T00:00:00	1	1
+BUFFER	8. end item @ 8. factory	2020-01-10T00:00:00	-1	0
 BUFFER	8. end item @ 8. factory	2020-01-14T00:00:00	1	1
 BUFFER	8. end item @ 8. factory	2020-01-14T00:00:00	-1	0
-BUFFER	8. end item @ 8. factory	2020-01-18T00:00:00	6.5	6.5
-BUFFER	8. end item @ 8. factory	2020-01-18T00:00:00	1	7.5
-BUFFER	8. end item @ 8. factory	2020-01-18T00:00:00	-7.5	0
-BUFFER	8. intermediate item @ 8. factory	2020-01-12T00:00:00	6.5	6.5
-BUFFER	8. intermediate item @ 8. factory	2020-01-12T00:00:00	-6.5	0
-BUFFER	8. raw material @ 8. factory	2020-01-08T00:00:00	20	20
-BUFFER	8. raw material @ 8. factory	2020-01-08T00:00:00	-19.5	0.5
+BUFFER	8. end item @ 8. factory	2020-01-18T00:00:00	8	8
+BUFFER	8. end item @ 8. factory	2020-01-18T00:00:00	-8	0
+BUFFER	8. intermediate item @ 8. factory	2020-01-12T00:00:00	8	8
+BUFFER	8. intermediate item @ 8. factory	2020-01-12T00:00:00	-8	0
+BUFFER	8. raw material @ 8. factory	2020-01-08T00:00:00	24	24
+BUFFER	8. raw material @ 8. factory	2020-01-08T00:00:00	-24	0
 BUFFER	9. component 1 @ 9. factory	2020-01-09T00:00:00	2	2
 BUFFER	9. component 1 @ 9. factory	2020-01-09T00:00:00	-2	0
 BUFFER	9. component 2 @ 9. factory	2020-01-11T00:00:00	2	2
@@ -64,9 +63,9 @@ DEMAND	3. order 1	2020-01-24T17:00:00	1
 DEMAND	4. order 1	2020-01-30T17:00:00	1
 DEMAND	5. order 1	2020-01-14T09:00:00	1
 DEMAND	6. order 1	2020-01-13T09:00:00	1
-DEMAND	8. order 1	2020-01-18T00:00:00	7.5
+DEMAND	8. order 1	2020-01-18T00:00:00	8
 DEMAND	8. order 1	2020-01-14T00:00:00	1
-DEMAND	8. order 1	2020-01-10T00:00:00	1.5
+DEMAND	8. order 1	2020-01-10T00:00:00	1
 DEMAND	9. order 1	2020-01-15T00:00:00	1
 RESOURCE	1. resource	2020-01-12T09:00:00	1	1
 RESOURCE	1. resource	2020-01-20T17:00:00	-1	0
@@ -80,12 +79,10 @@ RESOURCE	5. resource	2020-01-08T09:00:00	1	1
 RESOURCE	5. resource	2020-01-16T17:00:00	-1	0
 RESOURCE	6. resource	2020-01-07T09:00:00	1	1
 RESOURCE	6. resource	2020-01-15T17:00:00	-1	0
-RESOURCE	8. resource - alt 1	2020-01-01T00:00:00	1	1
+RESOURCE	8. resource - alt 1	2020-01-03T00:00:00	1	1
 RESOURCE	8. resource - alt 1	2020-01-07T00:00:00	1	2
 RESOURCE	8. resource - alt 1	2020-01-07T00:00:00	-1	1
-RESOURCE	8. resource - alt 1	2020-01-11T00:00:00	1	2
-RESOURCE	8. resource - alt 1	2020-01-11T00:00:00	-1	1
-RESOURCE	8. resource - alt 1	2020-01-15T00:00:00	-1	0
+RESOURCE	8. resource - alt 1	2020-01-11T00:00:00	-1	0
 RESOURCE	8. resource - alt 2	2020-01-13T00:00:00	1	1
 RESOURCE	8. resource - alt 2	2020-01-14T00:00:00	-1	0
 RESOURCE	9. resource	2020-01-09T00:00:00	1	1
@@ -105,13 +102,12 @@ OPERATION	6. produce intermediate item	2020-01-07T09:00:00	2020-01-08T09:00:00	2
 OPERATION	7. produce intermediate item	2019-12-02T00:00:00	2019-12-03T00:00:00	4	completed
 OPERATION	7. produce intermediate item	2020-01-03T00:00:00	2020-01-04T00:00:00	4	approved
 OPERATION	7. produce intermediate item	2020-02-03T00:00:00	2020-02-04T00:00:00	4	confirmed
-OPERATION	8. produce end item - alt 1	2020-01-01T00:00:00	2020-01-07T00:00:00	1.5
+OPERATION	8. produce end item - alt 1	2020-01-03T00:00:00	2020-01-07T00:00:00	1
 OPERATION	8. produce end item - alt 1	2020-01-07T00:00:00	2020-01-11T00:00:00	1
-OPERATION	8. produce end item - alt 1	2020-01-11T00:00:00	2020-01-15T00:00:00	1
-OPERATION	8. produce end item - alt 2	2020-01-12T00:00:00	2020-01-14T00:00:00	6.5
-OPERATION	8. produce end item - alt 2 - step A	2020-01-12T00:00:00	2020-01-13T00:00:00	6.5
-OPERATION	8. produce end item - alt 2 - step B	2020-01-13T00:00:00	2020-01-14T00:00:00	6.5
-OPERATION	8. produce intermediate item	2020-01-08T00:00:00	2020-01-09T00:00:00	6.5
+OPERATION	8. produce end item - alt 2	2020-01-12T00:00:00	2020-01-14T00:00:00	8
+OPERATION	8. produce end item - alt 2 - step A	2020-01-12T00:00:00	2020-01-13T00:00:00	8
+OPERATION	8. produce end item - alt 2 - step B	2020-01-13T00:00:00	2020-01-14T00:00:00	8
+OPERATION	8. produce intermediate item	2020-01-08T00:00:00	2020-01-09T00:00:00	8
 OPERATION	9. produce end item	2020-01-09T00:00:00	2020-01-12T00:00:00	1
 OPERATION	Purchase 1. raw material @ 1. factory from 1. supplier	2020-01-01T09:00:00	2020-01-08T09:00:00	6
 OPERATION	Purchase 2. raw material @ 2. factory from 2. supplier	2020-01-01T09:00:00	2020-01-08T09:00:00	6
@@ -120,7 +116,7 @@ OPERATION	Purchase 4. raw material @ 4. factory from 4. supplier	2020-01-01T09:0
 OPERATION	Purchase 5. raw material @ 5. factory from 5. supplier	2020-01-01T09:00:00	2020-01-08T09:00:00	6
 OPERATION	Purchase 6. raw material @ 6. factory from 6. supplier	2020-01-01T09:00:00	2020-01-08T09:00:00	6
 OPERATION	Purchase 7. raw material @ 7. factory from 7. supplier	2019-11-24T00:00:00	2019-12-01T00:00:00	100	completed
-OPERATION	Purchase 8. raw material @ 8. factory from 8. supplier	2020-01-01T00:00:00	2020-01-08T00:00:00	20
+OPERATION	Purchase 8. raw material @ 8. factory from 8. supplier	2020-01-01T00:00:00	2020-01-08T00:00:00	24
 OPERATION	Purchase 9. component 1 @ 9. factory from 9. supplier	2020-01-09T00:00:00	2020-01-09T00:00:00	2
 OPERATION	Purchase 9. component 2 @ 9. factory from 9. supplier	2020-01-01T00:00:00	2020-01-11T00:00:00	2
 PROBLEM	late	1 units of demand '1. order 1' planned up to 20.7 days after its due date	2020-01-03T00:00:00 / 2020-01-23T17:00:00
@@ -147,7 +143,6 @@ DEMAND CONSTRAINT	5. order 1	Operation '5. produce end item' planned in the past
 DEMAND CONSTRAINT	5. order 1	Operation 'Purchase 5. raw material @ 5. factory from 5. supplier' planned in the past	2019-12-25T09:00:00 / 2020-01-01T00:00:00	
 DEMAND CONSTRAINT	6. order 1	Operation '6. produce end item' planned in the past	2019-12-28T09:00:00 / 2020-01-01T09:00:00	
 DEMAND CONSTRAINT	6. order 1	Operation 'Purchase 6. raw material @ 6. factory from 6. supplier' planned in the past	2019-12-26T09:00:00 / 2020-01-01T00:00:00	
-DEMAND CONSTRAINT	8. order 1	Operation '8. produce end item - alt 1' planned in the past	2019-12-26T00:00:00 / 2020-01-01T00:00:00	
-DEMAND CONSTRAINT	8. order 1	Resource '8. resource - alt 1' has capacity shortage of 1	2020-01-01T00:00:00 / 2020-01-07T00:00:00	
+DEMAND CONSTRAINT	8. order 1	Operation '8. produce end item - alt 1' planned in the past	2019-11-28T00:00:00 / 2020-01-01T00:00:00	
 DEMAND CONSTRAINT	9. order 1	Operation '9. produce end item' planned in the past	2019-12-26T00:00:00 / 2020-01-01T00:00:00	
 DEMAND CONSTRAINT	9. order 1	Operation 'Purchase 9. component 2 @ 9. factory from 9. supplier' planned in the past	2019-12-24T00:00:00 / 2020-01-01T00:00:00	

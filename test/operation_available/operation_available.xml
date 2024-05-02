@@ -29,6 +29,7 @@
     <demand name="1. order 1">
       <description>After unavailable period</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>11</priority>
       <item name="1. item 1 day" />
@@ -40,6 +41,7 @@
     <demand name="1. order 2">
       <description>Would start in unavailable period</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-12T12:00:00</due>
       <priority>12</priority>
       <item name="1. item 1 day" />
@@ -48,6 +50,7 @@
     <demand name="1. order 3">
       <description>Would start and end in unavailable period</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-11T12:00:00</due>
       <priority>13</priority>
       <item name="1. item 1 day" />
@@ -56,6 +59,7 @@
     <demand name="1. order 4">
       <description>Would end unavailable period</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-10T12:00:00</due>
       <priority>14</priority>
       <item name="1. item 1 day" />
@@ -64,6 +68,7 @@
     <demand name="1. order 5">
       <description>Before unavailable period</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-08T00:00:00</due>
       <priority>15</priority>
       <item name="1. item 1 day" />
@@ -72,6 +77,7 @@
     <demand name="1. order 6">
       <description>Across unavailable period</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>16</priority>
       <item name="1. item 10 days" />
@@ -83,6 +89,7 @@
     <demand name="1. order 7">
       <description>Across 2 unavailable periods</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-28T00:00:00</due>
       <priority>17</priority>
       <item name="1. item 20 days" />
@@ -124,6 +131,7 @@
     <demand name="2. order 1">
       <description>After available period</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>21</priority>
       <item name="2. item 1 day" />
@@ -135,6 +143,7 @@
     <demand name="2. order 2">
       <description>Would start in available period</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-12T12:00:00</due>
       <priority>22</priority>
       <item name="2. item 1 day" />
@@ -143,6 +152,7 @@
     <demand name="2. order 3">
       <description>Would start and end in available period</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-11T12:00:00</due>
       <priority>23</priority>
       <item name="2. item 1 day" />
@@ -151,6 +161,7 @@
     <demand name="2. order 4">
       <description>Would end in available period</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-10T12:00:00</due>
       <priority>24</priority>
       <item name="2. item 1 day" />
@@ -159,6 +170,7 @@
     <demand name="2. order 5">
       <description>Before available period</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-08T00:00:00</due>
       <priority>25</priority>
       <item name="2. item 1 day" />
@@ -167,6 +179,7 @@
     <demand name="2. order 6">
       <description>Across all available periods</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>26</priority>
       <item name="2. item 10 days" />
@@ -178,6 +191,7 @@
     <demand name="2. order 7">
       <description>Using the 2 available periods</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-04T00:00:00</due>
       <priority>27</priority>
       <item name="2. item 3 days" />
@@ -189,6 +203,7 @@
     <demand name="2. order 8">
       <description>Using the 2 available periods</description>
       <quantity>6</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-28T00:00:00</due>
       <priority>28</priority>
       <item name="2. item 3 days" />
@@ -214,6 +229,7 @@
     <demand name="3. order 1">
       <description>After unavailable period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>31</priority>
       <item name="3. item" />
@@ -226,6 +242,7 @@
     <demand name="3. order 2">
       <description>Would start in unavailable period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-12T12:00:00</due>
       <priority>32</priority>
       <item name="3. item" />
@@ -234,6 +251,7 @@
     <demand name="3. order 3">
       <description>Would start and end in unavailable period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-11T12:00:00</due>
       <priority>33</priority>
       <item name="3. item" />
@@ -242,6 +260,7 @@
     <demand name="3. order 4">
       <description>Would end unavailable period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-10T12:00:00</due>
       <priority>34</priority>
       <item name="3. item" />
@@ -250,6 +269,7 @@
     <demand name="3. order 5">
       <description>Before unavailable period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-08T00:00:00</due>
       <priority>35</priority>
       <item name="3. item" />
@@ -258,6 +278,7 @@
     <demand name="3. order 6">
       <description>Across unavailable period</description>
       <quantity>10</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>36</priority>
       <item name="3. item" />
@@ -266,6 +287,7 @@
     <demand name="3. order 7">
       <description>Across 2 unavailable periods</description>
       <quantity>20</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-28T00:00:00</due>
       <priority>37</priority>
       <item name="3. item" />
@@ -274,6 +296,7 @@
     <demand name="3. order 8">
       <description>Across 2 unavailable periods</description>
       <quantity>20</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>38</priority>
       <item name="3. item" />
@@ -299,6 +322,7 @@
     <demand name="4. order 1">
       <description>After available period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>41</priority>
       <item name="4. item" />
@@ -311,6 +335,7 @@
     <demand name="4. order 2">
       <description>Would start in available period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-12T12:00:00</due>
       <priority>42</priority>
       <item name="4. item" />
@@ -319,6 +344,7 @@
     <demand name="4. order 3">
       <description>Would start and end in available period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-11T12:00:00</due>
       <priority>43</priority>
       <item name="4. item" />
@@ -327,6 +353,7 @@
     <demand name="4. order 4">
       <description>Would end available period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-10T12:00:00</due>
       <priority>44</priority>
       <item name="4. item" />
@@ -335,6 +362,7 @@
     <demand name="4. order 5">
       <description>Before available period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-08T00:00:00</due>
       <priority>45</priority>
       <item name="4. item" />
@@ -343,6 +371,7 @@
     <demand name="4. order 6">
       <description>Across all available periods</description>
       <quantity>10</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>46</priority>
       <item name="4. item" />
@@ -351,6 +380,7 @@
     <demand name="4. order 7">
       <description>Using the 2 available periods</description>
       <quantity>3</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-04T00:00:00</due>
       <priority>47</priority>
       <item name="4. item" />
@@ -359,6 +389,7 @@
     <demand name="4. order 8">
       <description>Using the 2 available periods</description>
       <quantity>3</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-28T00:00:00</due>
       <priority>48</priority>
       <item name="4. item" />
@@ -414,6 +445,7 @@
     <demand name="5. order 1">
       <description>After unavailable period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-14T00:00:00</due>
       <priority>51</priority>
       <item name="5. item" />
@@ -433,6 +465,7 @@
     <demand name="5. order 2">
       <description>Would start in unavailable period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-12T12:00:00</due>
       <priority>52</priority>
       <item name="5. item" />
@@ -441,6 +474,7 @@
     <demand name="5. order 3">
       <description>Would start and end in unavailable period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-11T12:00:00</due>
       <priority>53</priority>
       <item name="5. item" />
@@ -449,6 +483,7 @@
     <demand name="5. order 4">
       <description>Would end unavailable period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-10T12:00:00</due>
       <priority>54</priority>
       <item name="5. item" />
@@ -457,6 +492,7 @@
     <demand name="5. order 5">
       <description>Before unavailable period</description>
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2009-01-08T00:00:00</due>
       <priority>55</priority>
       <item name="5. item" />
@@ -555,6 +591,7 @@
   <demands>
     <demand name="6. order 1">
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2017-01-30T00:00:00</due>
       <priority>61</priority>
       <item name="6. item" />
@@ -573,6 +610,7 @@
     </demand>
     <demand name="6. order 2">
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2017-01-25T11:00:00</due>
       <priority>62</priority>
       <item name="6. item" />
@@ -580,6 +618,7 @@
     </demand>
     <demand name="6. order 3">
       <quantity>1</quantity>
+	  <minshipment>1</minshipment>
       <due>2017-01-25T00:00:00</due>
       <priority>63</priority>
       <item name="6. item" />

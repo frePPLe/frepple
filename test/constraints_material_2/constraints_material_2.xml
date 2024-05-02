@@ -41,11 +41,15 @@
         <producing name="make 5" xsi:type="operation_alternate">
           <suboperations>
             <suboperation>
-              <operation name="make 5 from 5a" />
+              <operation name="make 5 from 5a">
+                 <size_multiple>1</size_multiple>			  
+              </operation>				 
               <priority>1</priority>
             </suboperation>
             <suboperation>
-              <operation name="make 5 from 5b" />
+              <operation name="make 5 from 5b">
+			     <size_multiple>1</size_multiple>			  
+              </operation>				 
               <priority>2</priority>
             </suboperation>
           </suboperations>

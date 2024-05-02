@@ -385,7 +385,6 @@
   <demands>
     <demand name="5. order 1">
       <quantity>990</quantity>
-      <!--minshipment>990</minshipment-->
       <minshipment>990</minshipment>
       <due>2018-02-01T00:00:00</due>
       <item name="5. end item"/>

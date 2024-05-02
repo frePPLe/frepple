@@ -926,11 +926,11 @@ class LoadForecast(LoadTask):
         )
         with connections[database].cursor() as cursor:
             cursor.execute(
-                "select extract(day from %s - min(startdate)) from forecastplan",
+                "select greatest(0,extract(day from %s - min(startdate))) from forecastplan",
                 (frepple.settings.current.date(),),
             )
             oldest = cursor.fetchone()[0]
-            if oldest and oldest < horizon_history:
+            if oldest is not None and oldest < horizon_history:
                 horizon_history = oldest
 
         cnt = 0

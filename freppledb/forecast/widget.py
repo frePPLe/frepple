@@ -353,6 +353,15 @@ class ForecastAccuracyWidget(Widget):
         min_error = val;
       });
 
+    // Reduce the number of displayed points if too many
+    var nb_of_ticks = (svgrectangle['width'] - margin_y - 10) / 20;
+    var visible=[]
+    var step_visible = Math.ceil(domain_x.length / nb_of_ticks);
+    for (let x=0; x < domain_x.length; x++){
+      if (x==0 || x % step_visible == 0)
+        visible.push(domain_x[x]);
+    }
+
     var x = d3.scale.ordinal()
       .domain(domain_x)
       .rangeRoundBands([0, svgrectangle['width'] - margin_y - 10], 0);
@@ -379,7 +388,7 @@ class ForecastAccuracyWidget(Widget):
 
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(5);
+        .orient("bottom").tickValues(visible);
     svg.append("g")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
       .attr("class", "x axis")

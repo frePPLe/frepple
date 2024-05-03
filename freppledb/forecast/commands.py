@@ -1208,30 +1208,21 @@ def createForecastSolver(db, task=None):
                     logger.error('Incorrect parameter "forecast.%s"' % key)
 
         # Some default parameters are missing in the parameter table
-        for missing_param in default_forecast_parameters_copy:
-            key = param.name[9:]
-            if key in (
-                "MovingAverage_order",
-                "DeadAfterInactivity",
-            ):
+        for key_with_prefix, val in default_forecast_parameters_copy.items():
+            key = key_with_prefix[9:]
+            if key in ("MovingAverage_order", "DeadAfterInactivity"):
                 try:
-                    kw[key] = int(default_forecast_parameters_copy.get(missing_param))
+                    kw[key] = int(val)
                 except Exception:
                     logger.error('Incorrect parameter "forecast.%s"' % key)
             else:
                 try:
-                    kw[key] = float(default_forecast_parameters_copy.get(missing_param))
+                    kw[key] = float(val)
                 except Exception:
                     logger.error('Incorrect parameter "forecast.%s"' % key)
 
             if calendar and loglevel:
-                logger.info(
-                    "%s=%s [missing in parameters]"
-                    % (
-                        missing_param,
-                        default_forecast_parameters_copy.get(missing_param),
-                    )
-                )
+                logger.info("%s=%s [missing in parameters]" % (key, val))
 
         # Check whether we have forecast buckets to cover the complete forecasting horizon
         if horizon_future and calendar:
@@ -1248,6 +1239,7 @@ def createForecastSolver(db, task=None):
                 logger.warning(
                     "Bucket dates table doesn't cover the complete forecasting horizon"
                 )
+
         return frepple.solver_forecast(**kw)
     except Exception as e:
         logger.warning("No forecasting solver can be created: %s", e)

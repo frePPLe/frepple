@@ -5,7 +5,7 @@ Release notes
 9.0.0 (Upcoming release)
 ========================
 
-This release is scheduled for May 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+This release is scheduled for May/June 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Production planning
 
@@ -13,6 +13,9 @@ This release is scheduled for May 2024. You can already check out a `preview <ht
     generate more intuitive and better plans.
   | This may result in small differences in the plans when migrating to the new
     release.
+
+- | Buffers have new fields "maximum" and "maximum calendar" that specifies a
+    replenish-up-to stock level.
 
 - | Removed the parameters plan.calendar, allowsplits and plan.planSafetyStockFirst.
 
@@ -56,6 +59,9 @@ This release is scheduled for May 2024. You can already check out a `preview <ht
 - | 17: Addition of `quoting <erp-integration/odoo-connector/using-the-connector-in-odoo.html#quoting-capabilities>`_ capabilities
   | An extra button is added to get a promised date for a quote in Odoo.
   | A new *Frepple Quotes* screen is added to get a promised date for a product.
+  | Many thanks to https://e-powerinternational.com/ for this contribution!
+
+- | 16, 17: New mapping for odoo reorder points, which uses the new buffer.maximum field.
 
 .. rubric:: Documentation
 

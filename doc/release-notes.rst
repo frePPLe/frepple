@@ -53,6 +53,10 @@ This release is scheduled for May 2024. You can already check out a `preview <ht
     such products. The frepple connector respects their links to the source sales order
     or manufacturing order.
 
+- | 17: Addition of `quoting <erp-integration/odoo-connector/using-the-connector-in-odoo.html#quoting-capabilities>`_ capabilities
+  | An extra button is added to get a promised date for a quote in Odoo.
+  | A new *Frepple Quotes* screen is added to get a promised date for a product.
+
 .. rubric:: Documentation
 
 - | A `page <installation-guide/advanced-configuration.html>`_ was added to the

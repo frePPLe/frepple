@@ -83,6 +83,20 @@ The section below describes the installation and configuration of these.
       issue. If that is happening, you need to update parameters *limit_time_cpu* and *limit_time_real*
       in the odoo configuration file and increase their value.
 
+  * | **Odoo tuning**
+    | The frepple connector is an atypical addon that may require some adjustments on your
+      odoo configuration. It can run for a few minutes and return a large output to the client.
+    | To accomodate this traffic, you'll need to review:
+
+    * | Assure the limit_time_cpu and limit_time_real are configured correctly in your odoo config file.
+        If the threshold is too short, odoo will abort the connector before its done.
+
+    * | When using a nginx proxy in before your odoo server, assure that the max_response_body_size
+        allows big datasets to be returned to the client.
+
+    * | We strongly recommend using a separate PostgreSQL database cluster for frepple. This is 1)
+        because Odoo and frepple require different database tuning, and 2) you want both applications
+        to be running fully independent.
 
 * **Configuring the connector - frePPLe side**
 

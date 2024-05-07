@@ -173,24 +173,14 @@
   </demands>
 
 <?python
-print("CREATING CONSTRAINED PLAN - safety stock last")
+print("CREATING CONSTRAINED PLAN")
 solver = frepple.solver_mrp(plantype=1, constraints=15, loglevel=2)
-solver.plansafetystockfirst = False
 solver.solve()
 frepple.saveplan("output.1.xml")
-print("CREATING UNCONSTRAINED PLAN - safety stock last")
+print("CREATING UNCONSTRAINED PLAN")
 solver.plantype = 2
 solver.solve()
 frepple.saveplan("output.2.xml")
-print("CREATING CONSTRAINED PLAN - safety stock first")
-solver.plantype = 1
-solver.plansafetystockfirst = True
-solver.solve()
-frepple.saveplan("output.3.xml")
-print("CREATING UNCONSTRAINED PLAN - safety stock first")
-solver.plantype = 2
-solver.solve()
-frepple.saveplan("output.4.xml")
 ?>
 
 </plan>

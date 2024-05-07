@@ -7,15 +7,6 @@
        10 in january
        20 in february
        5 in march
-      If we plan for safety stock AFTER the demand (ie default behavior), then
-      the decrease of the safety stock doesn't get utilized and ends up as
-      excess material.
-      If we plan for safety stock BEFORE the demand, then the material freed
-      up from the decrease is correctly consumed up by the demand.
-      Solving for safety stock before the demand is however not a suitable
-      setting for every business. It can cause some customer orders to be
-      planned late when we need all available material and capacity to reach
-      the safety stock level on some other products.
     * Item 2 has time-based target, set as a post-operation time of 1 week
       on the make operation.
     * Item 3 has 2 buffers with quantity based safety stock and without

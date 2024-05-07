@@ -37,7 +37,7 @@
 	<operationplans>
 		<operationplan id="MO #1 item 1">
 			<operation name="supply 1"/>
-			<end>2024-04-01T00:00:00</end>
+			<end>2024-03-01T00:00:00</end>
 			<quantity>3</quantity>
 			<status>confirmed</status>
 		</operationplan>
@@ -51,8 +51,7 @@
 			<flows>
 				<flow xsi:type="flow_end">
 					<item name="item 2"/>
-					<quantity>2</quantity>
-					<quantity_fixed>1</quantity_fixed>
+					<quantity>1</quantity>
 				</flow>
 			</flows>
 			<duration>P7D</duration>
@@ -69,73 +68,73 @@
 	</buffers>
 	<demands>
 		<demand name="SO #1 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-01-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
 		</demand>
 		<demand name="SO #2 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-02-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
 		</demand>
 		<demand name="SO #3 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-03-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
 		</demand>
 		<demand name="SO #4 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-04-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
 		</demand>
 		<demand name="SO #5 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-05-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
 		</demand>
 		<demand name="SO #6 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-06-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
 		</demand>
 		<demand name="SO #7 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-07-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
 		</demand>
 		<demand name="SO #8 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-08-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
 		</demand>
 		<demand name="SO #9 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-09-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
 		</demand>
 		<demand name="SO #10 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-10-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
 		</demand>
 		<demand name="SO #11 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-11-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
 		</demand>
 		<demand name="SO #12 for item 2">
-			<quantity>10</quantity>
+			<quantity>11</quantity>
 			<due>2024-12-01T00:00:00</due>
 			<item name="item 2"/>
 			<location name="factory"/>
@@ -151,14 +150,24 @@
 	</operationplans>
 
 <?python
-print("CREATING CONSTRAINED PLAN")
-frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, autofence="P999D").solve()
+print("CREATING CONSTRAINED PLAN WITHOUT AUTOFENCE")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, autofence="P0D").solve()
 frepple.saveplan("output.1.xml")
-print("CREATING UNCONSTRAINED PLAN")
-frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, autofence="P999D").solve()
+print("CREATING SMART UNCONSTRAINED PLAN WITHOUT AUTOFENCE")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, autofence="P0D").solve()
 frepple.saveplan("output.2.xml")
-frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, autofence="P999D").solve()
+print("CREATING SIMPLE UNCONSTRAINED PLAN WITHOUT AUTOFENCE")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, autofence="P0D").solve()
 frepple.saveplan("output.3.xml")
+print("CREATING CONSTRAINED PLAN WITH AUTOFENCE")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, autofence="P90D").solve()
+frepple.saveplan("output.4.xml")
+print("CREATING SMART UNCONSTRAINED PLAN WITH AUTOFENCE")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, autofence="P90D").solve()
+frepple.saveplan("output.5.xml")
+print("CREATING SIMPLE UNCONSTRAINED PLAN WITH AUTOFENCE")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, autofence="P90D").solve()
+frepple.saveplan("output.6.xml")
 for b in frepple.buffers():
    b.inspect()
 ?>

@@ -1,153 +1,258 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<name>Testing buffer replenishing with order-up-to max levels</name>
-	<description>
+    <name>Testing buffer replenishing with order-up-to max levels</name>
+    <description>
     This model test the buffer replenishment code for various material
     constraint scenario's. All cases have in common that there is no operation
     defined to replenish the buffer, i.e. we only consume the available supply.
-    - 1: A static minimum and maximum, no demand
-	- 2: A static minimum and maximum, with demand
+    - 1: A static minimum and maximum, no demand, replenished by manufacturing
+    - 2: A static minimum and maximum, with demand, replenished by manufacturing
+    - 3: Same as 2, but replenished by purchasing
   </description>
-	<current>2024-01-01T00:00:00</current>
-	
-	<!-- Case 1 -->
-	<operations>
-		<operation name="supply 1" xsi:type="operation_fixed_time">
-			<location name="factory"/>
-			<item name="item 1"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<item name="item 1"/>
-					<quantity>2</quantity>
-					<quantity_fixed>1</quantity_fixed>
-				</flow>
-			</flows>
-			<duration>P7D</duration>
-		</operation>
-	</operations>
-	<buffers>
-		<buffer name="item 1 @ factory">
-			<location name="factory"/>
-			<item name="item 1"/>
-			<onhand>2</onhand>
-			<minimum>10</minimum>
-			<maximum>30</maximum>
-		</buffer>
-	</buffers>
-	<operationplans>
-		<operationplan id="MO #1 item 1">
-			<operation name="supply 1"/>
-			<end>2024-03-01T00:00:00</end>
-			<quantity>3</quantity>
-			<status>confirmed</status>
-		</operationplan>
-	</operationplans>
+    <current>2024-01-01T00:00:00</current>
 
-	<!-- Case 2 -->
-	<operations>
-		<operation name="supply 2" xsi:type="operation_fixed_time">
-			<location name="factory"/>
-			<item name="item 2"/>
-			<flows>
-				<flow xsi:type="flow_end">
-					<item name="item 2"/>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
-			<duration>P7D</duration>
-		</operation>
-	</operations>
-	<buffers>
-		<buffer name="item 2 @ factory">
-			<location name="factory"/>
-			<item name="item 2"/>
-			<onhand>2</onhand>
-			<minimum>10</minimum>
-			<maximum>30</maximum>
-		</buffer>
-	</buffers>
-	<demands>
-		<demand name="SO #1 for item 2">
-			<quantity>11</quantity>
-			<due>2024-01-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-		<demand name="SO #2 for item 2">
-			<quantity>11</quantity>
-			<due>2024-02-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-		<demand name="SO #3 for item 2">
-			<quantity>11</quantity>
-			<due>2024-03-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-		<demand name="SO #4 for item 2">
-			<quantity>11</quantity>
-			<due>2024-04-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-		<demand name="SO #5 for item 2">
-			<quantity>11</quantity>
-			<due>2024-05-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-		<demand name="SO #6 for item 2">
-			<quantity>11</quantity>
-			<due>2024-06-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-		<demand name="SO #7 for item 2">
-			<quantity>11</quantity>
-			<due>2024-07-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-		<demand name="SO #8 for item 2">
-			<quantity>11</quantity>
-			<due>2024-08-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-		<demand name="SO #9 for item 2">
-			<quantity>11</quantity>
-			<due>2024-09-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-		<demand name="SO #10 for item 2">
-			<quantity>11</quantity>
-			<due>2024-10-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-		<demand name="SO #11 for item 2">
-			<quantity>11</quantity>
-			<due>2024-11-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-		<demand name="SO #12 for item 2">
-			<quantity>11</quantity>
-			<due>2024-12-01T00:00:00</due>
-			<item name="item 2"/>
-			<location name="factory"/>
-		</demand>
-	</demands>
-	<operationplans>
-		<operationplan id="MO #1 item 2">
-			<operation name="supply 2"/>
-			<end>2024-04-01T00:00:00</end>
-			<quantity>3</quantity>
-			<status>confirmed</status>
-		</operationplan>
-	</operationplans>
+    <!-- Case 1 -->
+    <operations>
+        <operation name="supply 1" xsi:type="operation_fixed_time">
+            <location name="factory"/>
+            <item name="item 1"/>
+            <flows>
+                <flow xsi:type="flow_end">
+                    <item name="item 1"/>
+                    <quantity>1</quantity>
+                    <quantity_fixed>1</quantity_fixed>
+                </flow>
+            </flows>
+            <duration>P7D</duration>
+        </operation>
+    </operations>
+    <buffers>
+        <buffer name="item 1 @ factory">
+            <location name="factory"/>
+            <item name="item 1"/>
+            <onhand>2</onhand>
+            <minimum>10</minimum>
+            <maximum>30</maximum>
+        </buffer>
+    </buffers>
+    <operationplans>
+        <operationplan id="MO #1 item 1">
+            <operation name="supply 1"/>
+            <end>2024-03-01T00:00:00</end>
+            <quantity>3</quantity>
+            <status>confirmed</status>
+        </operationplan>
+    </operationplans>
+
+    <!-- Case 2 -->
+    <operations>
+        <operation name="supply 2" xsi:type="operation_fixed_time">
+            <location name="factory"/>
+            <item name="item 2"/>
+            <flows>
+                <flow xsi:type="flow_end">
+                    <item name="item 2"/>
+                    <quantity>1</quantity>
+                </flow>
+            </flows>
+            <duration>P7D</duration>
+        </operation>
+    </operations>
+    <buffers>
+        <buffer name="item 2 @ factory">
+            <location name="factory"/>
+            <item name="item 2"/>
+            <onhand>2</onhand>
+            <minimum>10</minimum>
+            <maximum>30</maximum>
+        </buffer>
+    </buffers>
+    <demands>
+        <demand name="SO #1 for item 2">
+            <quantity>11</quantity>
+            <due>2024-01-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #2 for item 2">
+            <quantity>11</quantity>
+            <due>2024-02-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #3 for item 2">
+            <quantity>11</quantity>
+            <due>2024-03-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #4 for item 2">
+            <quantity>11</quantity>
+            <due>2024-04-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #5 for item 2">
+            <quantity>11</quantity>
+            <due>2024-05-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #6 for item 2">
+            <quantity>11</quantity>
+            <due>2024-06-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #7 for item 2">
+            <quantity>11</quantity>
+            <due>2024-07-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #8 for item 2">
+            <quantity>11</quantity>
+            <due>2024-08-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #9 for item 2">
+            <quantity>11</quantity>
+            <due>2024-09-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #10 for item 2">
+            <quantity>11</quantity>
+            <due>2024-10-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #11 for item 2">
+            <quantity>11</quantity>
+            <due>2024-11-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #12 for item 2">
+            <quantity>11</quantity>
+            <due>2024-12-01T00:00:00</due>
+            <item name="item 2"/>
+            <location name="factory"/>
+        </demand>
+    </demands>
+    <operationplans>
+        <operationplan id="MO #1 item 2">
+            <operation name="supply 2"/>
+            <end>2024-04-01T00:00:00</end>
+            <quantity>3</quantity>
+            <status>confirmed</status>
+        </operationplan>
+    </operationplans>
+
+    <!-- Case 3 -->
+    <suppliers>
+        <supplier name="Supplier of item 3">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="item 3"/>
+                    <leadtime>P7D</leadtime>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+    <buffers>
+        <buffer name="item 3 @ factory">
+            <location name="factory"/>
+            <item name="item 3"/>
+            <onhand>2</onhand>
+            <minimum>10</minimum>
+            <maximum>30</maximum>
+        </buffer>
+    </buffers>
+    <demands>
+        <demand name="SO #1 for item 3">
+            <quantity>11</quantity>
+            <due>2024-01-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #2 for item 3">
+            <quantity>11</quantity>
+            <due>2024-02-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #3 for item 3">
+            <quantity>11</quantity>
+            <due>2024-03-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #4 for item 3">
+            <quantity>11</quantity>
+            <due>2024-04-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #5 for item 3">
+            <quantity>11</quantity>
+            <due>2024-05-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #6 for item 3">
+            <quantity>11</quantity>
+            <due>2024-06-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #7 for item 3">
+            <quantity>11</quantity>
+            <due>2024-07-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #8 for item 3">
+            <quantity>11</quantity>
+            <due>2024-08-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #9 for item 3">
+            <quantity>11</quantity>
+            <due>2024-09-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #10 for item 3">
+            <quantity>11</quantity>
+            <due>2024-10-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #11 for item 3">
+            <quantity>11</quantity>
+            <due>2024-11-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+        <demand name="SO #12 for item 3">
+            <quantity>11</quantity>
+            <due>2024-12-01T00:00:00</due>
+            <item name="item 3"/>
+            <location name="factory"/>
+        </demand>
+    </demands>
+    <operationplans>
+        <operationplan ordertype="PO" id="PO #1 item 3">
+            <item name="item 3"/>
+            <location name="factory"/>
+            <end>2024-04-01T00:00:00</end>
+            <quantity>3</quantity>
+            <status>confirmed</status>
+        </operationplan>
+    </operationplans>
 
 <?python
 print("CREATING CONSTRAINED PLAN WITHOUT AUTOFENCE")
@@ -160,15 +265,13 @@ print("CREATING SIMPLE UNCONSTRAINED PLAN WITHOUT AUTOFENCE")
 frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, autofence="P0D").solve()
 frepple.saveplan("output.3.xml")
 print("CREATING CONSTRAINED PLAN WITH AUTOFENCE")
-frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, autofence="P90D").solve()
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, autofence="P900D").solve()
 frepple.saveplan("output.4.xml")
 print("CREATING SMART UNCONSTRAINED PLAN WITH AUTOFENCE")
-frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, autofence="P90D").solve()
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, autofence="P900D").solve()
 frepple.saveplan("output.5.xml")
 print("CREATING SIMPLE UNCONSTRAINED PLAN WITH AUTOFENCE")
-frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, autofence="P90D").solve()
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, autofence="P900D").solve()
 frepple.saveplan("output.6.xml")
-for b in frepple.buffers():
-   b.inspect()
 ?>
 </plan>

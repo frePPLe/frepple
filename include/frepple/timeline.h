@@ -497,9 +497,9 @@ class TimeLine {
     if (!curevent) return 0.0;
     double excess = DBL_MAX;
     double cur_min =
-        consider_min_stock ? max(curevent->getMin(false), 0.0) : 0.0;
+        consider_min_stock ? max(curevent->getMin(true), 0.0) : 0.0;
     double cur_max =
-        consider_min_stock ? max(curevent->getMax(false), 0.0) : 0.0;
+        consider_min_stock ? max(curevent->getMax(true), 0.0) : 0.0;
     double cur_excess = 0.0;
     for (const_iterator cur(curevent); cur != end(); ++cur) {
       if (consider_min_stock) {

@@ -2859,10 +2859,10 @@ bool TimeLine<type>::Event::operator<(const Event& fl2) const {
         return o2 ? true : false;
     } else
       return getEventType() > fl2.getEventType();
-  } else if (fabs(getQuantity() - fl2.getQuantity()) > ROUNDING_ERROR)
-    return getQuantity() > fl2.getQuantity();
-  else if (getEventType() != fl2.getEventType())
+  } else if (getEventType() != fl2.getEventType())
     return getEventType() > fl2.getEventType();
+  else if (fabs(getQuantity() - fl2.getQuantity()) > ROUNDING_ERROR)
+    return getQuantity() > fl2.getQuantity();
   else {
     OperationPlan* op1 = getOperationPlan();
     OperationPlan* op2 = fl2.getOperationPlan();

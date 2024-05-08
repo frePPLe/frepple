@@ -101,7 +101,7 @@ class ArchivedBufferWidget(Widget):
 
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(5);
+        .orient("bottom");
     svg.append("g")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
       .attr("class", "x axis")
@@ -115,7 +115,7 @@ class ArchivedBufferWidget(Widget):
     // Draw y-axis
     var yAxis = d3.svg.axis().scale(y)
         .orient("left")
-        .ticks(5)
+        .ticks(Math.min(Math.floor((svgrectangle['height'] - margin_x - 20) / 20), 5))
         .tickFormat(d3.format("s"));
     svg.append("g")
       .attr("transform", "translate(" + margin_y + ", 10 )")
@@ -262,7 +262,7 @@ class ArchivedDemandWidget(Widget):
 
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(5);
+        .orient("bottom");
     svg.append("g")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
       .attr("class", "x axis")
@@ -276,7 +276,7 @@ class ArchivedDemandWidget(Widget):
     // Draw y-axis
     var yAxis = d3.svg.axis().scale(y)
         .orient("left")
-        .ticks(5)
+        .ticks(Math.min(Math.floor((svgrectangle['height'] - margin_x - 20) / 20), 5))
         .tickFormat(d3.format("s"));
     svg.append("g")
       .attr("transform", "translate(" + margin_y + ", 10 )")
@@ -427,7 +427,7 @@ class ArchivedPurchaseOrderWidget(Widget):
 
     // Draw x-axis
     var xAxis = d3.svg.axis().scale(x)
-        .orient("bottom").ticks(5);
+        .orient("bottom");
     svg.append("g")
       .attr("transform", "translate(" + margin_y  + ", " + (svgrectangle['height'] - margin_x) +" )")
       .attr("class", "x axis")
@@ -441,7 +441,7 @@ class ArchivedPurchaseOrderWidget(Widget):
     // Draw y-axis
     var yAxis = d3.svg.axis().scale(y)
         .orient("left")
-        .ticks(5)
+        .ticks(Math.min(Math.floor((svgrectangle['height'] - margin_x - 20) / 20), 5))
         .tickFormat(d3.format("s"));
     svg.append("g")
       .attr("transform", "translate(" + margin_y + ", 10 )")

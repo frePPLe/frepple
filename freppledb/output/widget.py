@@ -313,7 +313,7 @@ class ManufacturingOrderWidget(Widget):
         // Draw y-axis
         var yAxis = d3.svg.axis().scale(y_value)
             .orient("left")
-            .ticks(5)
+            .ticks(Math.min(Math.floor((svgrectangle['height'] - 10 - margin_x) / 20), 5))
             .tickFormat(d3.format("s"));
         svg.append("g")
         .attr("transform", "translate(" + margin_y + ", 10 )")
@@ -632,7 +632,7 @@ class DistributionOrderWidget(Widget):
         // Draw y-axis
         var yAxis = d3.svg.axis().scale(y_value)
         .orient("left")
-        .ticks(5)
+        .ticks(Math.min(Math.floor((svgrectangle['height'] - 10 - margin_x) / 20), 5))
         .tickFormat(d3.format("s"));
         svg.append("g")
         .attr("transform", "translate(" + margin_y + ", 10 )")
@@ -955,7 +955,7 @@ class PurchaseOrderWidget(Widget):
         // Draw y-axis
          var yAxis = d3.svg.axis().scale(y_value)
         .orient("left")
-        .ticks(5)
+        .ticks(Math.min(Math.floor((svgrectangle['height'] - 10 - margin_x) / 20), 5))
         .tickFormat(d3.format("s"));
          svg.append("g")
         .attr("transform", "translate(" + margin_y + ", 10 )")
@@ -1806,11 +1806,10 @@ class InventoryByLocationWidget(Widget):
       .style("text-anchor", "end")
       .attr("transform","rotate(90 " + (x_width/2) + " " + y_zero + ")  ");
 
-
     // Draw the Y-axis
     var yAxis = d3.svg.axis()
       .scale(y)
-      .ticks(4)
+      .ticks(Math.min(Math.floor((svgrectangle['height'] - 20) / 20), 8))
       .orient("left")
       .tickFormat(d3.format("s"));
     d3.select("#invByLoc")
@@ -1898,7 +1897,7 @@ class InventoryByItemWidget(Widget):
     // Draw the Y-axis
     var yAxis = d3.svg.axis()
       .scale(y)
-      .ticks(4)
+      .ticks(Math.min(Math.floor((svgrectangle['height'] - 20) / 20), 8))
       .orient("left")
       .tickFormat(d3.format("s"));
     d3.select("#invByItem")

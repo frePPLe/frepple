@@ -159,7 +159,7 @@ class ForecastWidget(Widget):
       // Draw y-axis
       var yAxis = d3.svg.axis().scale(y)
           .orient("left")
-          .ticks(5)
+          .ticks(Math.min(Math.floor((svgrectangle['height'] - margin_x - 10) / 20), 5))
           .tickFormat(d3.format("s"));
       svg.append("g")
         .attr("transform", "translate(" + margin_y + ", 10 )")
@@ -402,7 +402,7 @@ class ForecastAccuracyWidget(Widget):
     // Draw y-axis
     var yAxis = d3.svg.axis().scale(y)
         .orient("left")
-        .ticks(5)
+        .ticks(Math.min(Math.floor((svgrectangle['height'] - 10 - margin_x) / 20), 5))
         .tickFormat(d3.format(".0f%"));
     svg.append("g")
       .attr("transform", "translate(" + margin_y + ", 10 )")

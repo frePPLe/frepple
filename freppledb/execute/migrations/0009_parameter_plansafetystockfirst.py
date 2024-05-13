@@ -16,6 +16,9 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunSQL(
-            "delete from common_parameter where name = 'plan.planSafetyStockFirst'"
+            """
+            delete from common_parameter
+            where name in ('plan.planSafetyStockFirst', 'plan.calendar', 'allowsplits')
+            """
         )
     ]

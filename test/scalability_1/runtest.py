@@ -73,19 +73,16 @@ for counter in [5000, 10000, 15000, 20000, 25000]:
         '<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n'
         + "<current>2009-01-01T00:00:00</current>\n"
         + "<items>\n",
-        '<item name="ITEMNM_%d" category="cat1" description="DCRP_%d" >'
-        + '\n\t<operation name="Delivery ITEMNM_%d" '
-        + 'xsi:type="operation_fixed_time" duration="P0D"/>'
-        + "\n</item>",
+        '<item name="ITEMNM_%d" category="cat1" description="DCRP_%d"/>',
         "</items>\n",
-        3,
+        2,
     )
     createdata(
         outfile,
         counter,
         "<operations>\n",
         '<operation name="Make ITEMNM_%d" xsi:type="operation_fixed_time" '
-        + 'duration="P1D"/>',
+        + 'duration="P1D"><location name="factory"/></operation>',
         "</operations>\n",
         1,
     )
@@ -93,7 +90,7 @@ for counter in [5000, 10000, 15000, 20000, 25000]:
         outfile,
         counter,
         "<resources>\n",
-        '<resource name="RESNM_%d"><loads>'
+        '<resource name="RESNM_%d"><location name="factory"/><loads>'
         + '<load><operation name="Make ITEMNM_%d"/></load></loads></resource>',
         "</resources>\n",
         2,
@@ -115,13 +112,19 @@ for counter in [5000, 10000, 15000, 20000, 25000]:
         counter,
         "<demands>\n",
         '<demand name="DEMANDNM1_%d" quantity="10" due="2009-03-03T00:00:00" '
-        + 'priority="1"> <item name="ITEMNM_%d"/></demand>\n'
+        + 'priority="1"><location name="factory"/><item name="ITEMNM_%d"/>'
+        + '<operation name="Delivery ITEMNM_%d" xsi:type="operation_fixed_time" duration="P0D"/>'
+        + "</demand>\n"
         + '<demand name="DEMANDNM2_%d" quantity="10" due="2009-03-03T00:00:00" '
-        + 'priority="2"> <item name="ITEMNM_%d"/></demand>\n'
+        + 'priority="2"><location name="factory"/><item name="ITEMNM_%d"/></demand>'
+        + '<operation name="Delivery ITEMNM_%d" xsi:type="operation_fixed_time" duration="P0D"/>'
+        + "</demand>\n"
         + '<demand name="DEMANDNM3_%d" quantity="10" due="2009-03-03T00:00:00" '
-        + 'priority="1"> <item name="ITEMNM_%d"/></demand>',
+        + 'priority="1"><location name="factory"/><item name="ITEMNM_%d"/>'
+        + '<operation name="Delivery ITEMNM_%d" xsi:type="operation_fixed_time" duration="P0D"/>'
+        + "</demand>\n",
         "</demands></plan>\n",
-        6,
+        9,
     )
 
     outfile.close()
@@ -129,7 +132,7 @@ for counter in [5000, 10000, 15000, 20000, 25000]:
     # Run the execution
     starttime = os.times()
     with open(os.devnull, "w") as f:
-        subprocess.call(os.environ["EXECUTABLE"] + "  ./commands.xml", stdout=f)
+        subprocess.call([os.environ["EXECUTABLE"], "./commands.xml"], stdout=f)
 
     # Measure the time
     endtime = os.times()

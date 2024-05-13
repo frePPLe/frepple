@@ -27,21 +27,21 @@
         </div>
       </td>
     </tr>
-    {% for j in filesexported %}
-    <tr data-file="{{j.0}}">
+    {% for j in data_exports %}
+    <tr data-file="{{j.name}}">
       <td></td>
-      <td style="padding-left:15px">{{j.0}}</td>
-      <td>{{j.2}}</td>
-      <td>{{j.1}}</td>
+      <td style="padding-left:15px">{{j.name}}</td>
+      <td>{{j.size}}</td>
+      <td>{{j.timestamp}}</td>
       <td>
         <div class="btn btn-sm btn-primary downloadfile" style="margin-bottom:5px;" data-bs-toggle="tooltip"
-          data-bs-placement="top" data-bs-title="Download file" onClick="downloadExportFile(1, '{{j.0}}')">
+          data-bs-placement="top" data-bs-title="Download file" onClick="downloadExportFile(1, '{{j.name}}')">
           <span class="fa fa-arrow-down"></span>
         </div>
       </td>
       <td>
         <div class="btn btn-sm btn-danger deletefile" style="margin-bottom:5px" data-bs-toggle="tooltip"
-          data-bs-placement="top" data-bs-title="Delete file from folder" onClick="deleteExportFile(1, '{{j.0}}')">
+          data-bs-placement="top" data-bs-title="Delete file from folder" onClick="deleteExportFile(1, '{{j.name}}')">
           <span class="fa fa-close"></span>
         </div>
       </td>

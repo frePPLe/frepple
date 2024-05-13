@@ -63,6 +63,13 @@ This release is scheduled for May/June 2024. You can already check out a `previe
 
 - | 16, 17: New mapping for odoo reorder points, which uses the new buffer.maximum field.
 
+.. rubric:: System administration
+
+- | Ability to customize the "export plan results" task.
+  | Until you had to rely on the standard export logic or write a frepple app to tailor the
+    export to your needs.
+  | Now you can customize the exports from the user interface.
+
 .. rubric:: Documentation
 
 - | A `page <installation-guide/advanced-configuration.html>`_ was added to the

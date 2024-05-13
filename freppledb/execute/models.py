@@ -22,6 +22,7 @@
 #
 
 from datetime import datetime, timedelta
+import os
 import shlex
 
 from django.db import models
@@ -205,4 +206,32 @@ class ScheduledTask(models.Model):
 
     def save(self, *args, **kwargs):
         self.computeNextRun()
+        super().save(*args, **kwargs)
+
+
+class DataExport(models.Model):
+    # Database fields
+    name = models.CharField("name", primary_key=True, max_length=300, db_index=True)
+    sql = models.TextField("sql", null=True, blank=True)
+    report = models.CharField("report", max_length=300, null=True, blank=True)
+    arguments = models.JSONField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "execute_export"
+        verbose_name_plural = "execute_exports"
+        verbose_name = "execute_exports"
+
+    def save(self, *args, **kwargs):
+        name_lower = self.name.lower()
+        if not (
+            name_lower.endswith(".xlsx")
+            or name_lower.endswith(".csv.gz")
+            or name_lower.endswith(".csv")
+        ):
+            raise Exception("Exports must end with .xlsx, .csv or .csv.gz")
+        if os.sep in self.name:
+            raise Exception("Export names can't contain %s" % os.sep)
         super().save(*args, **kwargs)

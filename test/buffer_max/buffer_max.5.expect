@@ -2,12 +2,12 @@ BUFFER	item 1 @ factory	1971-01-01T00:00:00	2	2
 BUFFER	item 1 @ factory	2024-03-01T00:00:00	24	26
 BUFFER	item 1 @ factory	2024-03-01T00:00:00	4	30
 BUFFER	item 2 @ factory	1971-01-01T00:00:00	2	2
-BUFFER	item 2 @ factory	2024-01-01T00:00:00	28	30
-BUFFER	item 2 @ factory	2024-01-01T00:00:00	-11	19
-BUFFER	item 2 @ factory	2024-02-01T00:00:00	-11	8
-BUFFER	item 2 @ factory	2024-03-01T00:00:00	10	18
-BUFFER	item 2 @ factory	2024-03-01T00:00:00	-11	7
-BUFFER	item 2 @ factory	2024-04-01T00:00:00	11	18
+BUFFER	item 2 @ factory	2024-01-01T00:00:00	-11	-9
+BUFFER	item 2 @ factory	2024-02-01T00:00:00	2	-7
+BUFFER	item 2 @ factory	2024-02-01T00:00:00	-11	-18
+BUFFER	item 2 @ factory	2024-03-01T00:00:00	11	-7
+BUFFER	item 2 @ factory	2024-03-01T00:00:00	-11	-18
+BUFFER	item 2 @ factory	2024-04-01T00:00:00	36	18
 BUFFER	item 2 @ factory	2024-04-01T00:00:00	3	21
 BUFFER	item 2 @ factory	2024-04-01T00:00:00	-11	10
 BUFFER	item 2 @ factory	2024-05-01T00:00:00	11	21
@@ -27,11 +27,10 @@ BUFFER	item 2 @ factory	2024-11-01T00:00:00	-11	10
 BUFFER	item 2 @ factory	2024-12-01T00:00:00	11	21
 BUFFER	item 2 @ factory	2024-12-01T00:00:00	-11	10
 BUFFER	item 3 @ factory	1971-01-01T00:00:00	2	2
-BUFFER	item 3 @ factory	2024-01-01T00:00:00	39	41
-BUFFER	item 3 @ factory	2024-01-01T00:00:00	-11	30
-BUFFER	item 3 @ factory	2024-02-01T00:00:00	-11	19
-BUFFER	item 3 @ factory	2024-03-01T00:00:00	-11	8
-BUFFER	item 3 @ factory	2024-04-01T00:00:00	30	38
+BUFFER	item 3 @ factory	2024-01-01T00:00:00	-11	-9
+BUFFER	item 3 @ factory	2024-02-01T00:00:00	-11	-20
+BUFFER	item 3 @ factory	2024-03-01T00:00:00	-11	-31
+BUFFER	item 3 @ factory	2024-04-01T00:00:00	69	38
 BUFFER	item 3 @ factory	2024-04-01T00:00:00	3	41
 BUFFER	item 3 @ factory	2024-04-01T00:00:00	-11	30
 BUFFER	item 3 @ factory	2024-05-01T00:00:00	-11	19
@@ -70,8 +69,7 @@ DEMAND	SO #8 for item 2	2024-08-01T00:00:00	11
 DEMAND	SO #8 for item 3	2024-08-01T00:00:00	11
 DEMAND	SO #9 for item 2	2024-09-01T00:00:00	11
 DEMAND	SO #9 for item 3	2024-09-01T00:00:00	11
-OPERATION	Purchase item 3 @ factory from Supplier of item 3	2023-12-25T00:00:00	2024-01-01T00:00:00	39
-OPERATION	Purchase item 3 @ factory from Supplier of item 3	2024-03-25T00:00:00	2024-04-01T00:00:00	30
+OPERATION	Purchase item 3 @ factory from Supplier of item 3	2024-03-25T00:00:00	2024-04-01T00:00:00	69
 OPERATION	Purchase item 3 @ factory from Supplier of item 3	2024-03-25T00:00:00	2024-04-01T00:00:00	3	confirmed
 OPERATION	Purchase item 3 @ factory from Supplier of item 3	2024-05-25T00:00:00	2024-06-01T00:00:00	22
 OPERATION	Purchase item 3 @ factory from Supplier of item 3	2024-07-25T00:00:00	2024-08-01T00:00:00	22
@@ -79,9 +77,9 @@ OPERATION	Purchase item 3 @ factory from Supplier of item 3	2024-09-24T00:00:00	
 OPERATION	Purchase item 3 @ factory from Supplier of item 3	2024-11-24T00:00:00	2024-12-01T00:00:00	22
 OPERATION	supply 1	2024-02-23T00:00:00	2024-03-01T00:00:00	23
 OPERATION	supply 1	2024-02-23T00:00:00	2024-03-01T00:00:00	3	confirmed
-OPERATION	supply 2	2023-12-25T00:00:00	2024-01-01T00:00:00	28
-OPERATION	supply 2	2024-02-23T00:00:00	2024-03-01T00:00:00	10
-OPERATION	supply 2	2024-03-25T00:00:00	2024-04-01T00:00:00	11
+OPERATION	supply 2	2024-01-25T00:00:00	2024-02-01T00:00:00	2
+OPERATION	supply 2	2024-02-23T00:00:00	2024-03-01T00:00:00	11
+OPERATION	supply 2	2024-03-25T00:00:00	2024-04-01T00:00:00	36
 OPERATION	supply 2	2024-03-25T00:00:00	2024-04-01T00:00:00	3	confirmed
 OPERATION	supply 2	2024-04-24T00:00:00	2024-05-01T00:00:00	11
 OPERATION	supply 2	2024-05-25T00:00:00	2024-06-01T00:00:00	11
@@ -92,7 +90,5 @@ OPERATION	supply 2	2024-09-24T00:00:00	2024-10-01T00:00:00	11
 OPERATION	supply 2	2024-10-25T00:00:00	2024-11-01T00:00:00	11
 OPERATION	supply 2	2024-11-24T00:00:00	2024-12-01T00:00:00	11
 PROBLEM	material shortage	Buffer 'item 1 @ factory' has material shortage of 8	2024-01-01T00:00:00 / 2024-03-01T00:00:00
-PROBLEM	material shortage	Buffer 'item 2 @ factory' has material shortage of 3	2024-02-01T00:00:00 / 2024-04-01T00:00:00
-PROBLEM	material shortage	Buffer 'item 3 @ factory' has material shortage of 2	2024-03-01T00:00:00 / 2024-04-01T00:00:00
-PROBLEM	before current	Operation 'Purchase item 3 @ factory from Supplier of item 3' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00
-PROBLEM	before current	Operation 'supply 2' planned in the past	2023-12-25T00:00:00 / 2024-01-01T00:00:00
+PROBLEM	material shortage	Buffer 'item 2 @ factory' has material shortage of 28	2024-01-01T00:00:00 / 2024-04-01T00:00:00
+PROBLEM	material shortage	Buffer 'item 3 @ factory' has material shortage of 41	2024-01-01T00:00:00 / 2024-04-01T00:00:00

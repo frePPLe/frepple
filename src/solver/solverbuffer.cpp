@@ -469,7 +469,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             // When solving for safety stock or when the parameter allowsplit is
             // set to false we need to get a single replenishing operationplan.
             if (data->state->a_qty > ROUNDING_ERROR &&
-                data->state->a_qty < -theDelta - ROUNDING_ERROR && ((!data->constrainedPlanning /*&& !data->safety_stock_planning*/) || data->hitMaxSize))
+                data->state->a_qty < -theDelta - ROUNDING_ERROR)
               theDelta += data->state->a_qty;
             else
               loop = false;

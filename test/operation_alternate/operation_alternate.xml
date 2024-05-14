@@ -149,6 +149,7 @@
       </demand>
       <demand name="order prio 2 for item 1">
         <quantity>10</quantity>
+		<minshipment>10</minshipment>
         <due>2009-01-02T00:00:00</due>
         <priority>2</priority>
         <item name="item 1"/>
@@ -175,6 +176,7 @@
   <demands>
       <demand name="item 2 SO1">
         <quantity>10</quantity>
+		<minshipment>10</minshipment>
         <due>2009-01-31T00:00:00</due>
         <priority>2</priority>
         <item name="item 2"/>
@@ -198,6 +200,7 @@
   <demands>
       <demand name="item 3 SO1">
         <quantity>10</quantity>
+		<minshipment>10</minshipment>
         <due>2009-01-31T00:00:00</due>
         <priority>2</priority>
         <item name="item 3"/>
@@ -221,6 +224,7 @@
   <demands>
       <demand name="item 4 SO1">
         <quantity>10</quantity>
+		<minshipment>10</minshipment>
         <due>2009-01-31T00:00:00</due>
         <priority>2</priority>
         <item name="item 4"/>
@@ -246,6 +250,7 @@
   <demands>
       <demand name="item 5 SO1">
         <quantity>10</quantity>
+		<minshipment>10</minshipment>
         <due>2009-01-31T00:00:00</due>
         <priority>2</priority>
         <item name="item 5"/>
@@ -298,18 +303,21 @@
   <demands>
       <demand name="2. item SO1">
         <quantity>3</quantity>
+		<minshipment>3</minshipment>
         <due>2009-01-20T00:00:00</due>
         <item name="2. item"/>
       <location name="warehouse" />
       </demand>
       <demand name="2. item SO2">
         <quantity>15</quantity>
+		<minshipment>15</minshipment>
         <due>2009-02-20T00:00:00</due>
         <item name="2. item"/>
       <location name="warehouse" />
       </demand>
       <demand name="2. item SO3">
         <quantity>30</quantity>
+		<minshipment>30</minshipment>
         <due>2009-03-20T00:00:00</due>
         <item name="2. item"/>
       <location name="warehouse" />
@@ -363,6 +371,7 @@
   <demands>
     <demand name="3. SO1">
       <quantity>10</quantity>
+	  <minshipment>10</minshipment>
       <due>2009-01-21T00:00:00</due>
       <item name="3. item"/>
       <location name="warehouse" />
@@ -423,6 +432,7 @@
   <demands>
     <demand name="4. SO1">
       <quantity>10</quantity>
+	  <minshipment>10</minshipment>
       <due>2009-01-21T00:00:00</due>
       <item name="4. item"/>
       <location name="warehouse" />
@@ -431,7 +441,8 @@
 
 <?python
 print("CREATING CONSTRAINED PLAN")
-sol = frepple.solver_mrp(constraints=15, loglevel=2, allowsplits=True)
+sol = frepple.solver_mrp(constraints=15, loglevel=2)
+sol.plantype = 1
 sol.solve()
 frepple.saveplan("output.1.xml")
 print("CREATING UNCONSTRAINED PLAN")
@@ -439,20 +450,9 @@ sol.plantype = 2
 sol.solve()
 frepple.saveplan("output.2.xml")
 print("CREATING SIMPLE UNCONSTRAINED PLAN")
-frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, allowsplits=True).solve()
+sol.constraints = 0
+sol.solve()
 frepple.saveplan("output.3.xml")
-
-print("CREATING CONSTRAINED PLAN with allowsplits=False")
-sol = frepple.solver_mrp(constraints=15, loglevel=2, allowsplits=False)
-sol.solve()
-frepple.saveplan("output.4.xml")
-print("CREATING UNCONSTRAINED PLAN with allowsplits=False")
-sol.plantype = 2
-sol.solve()
-frepple.saveplan("output.5.xml")
-print("CREATING SIMPLE UNCONSTRAINED PLAN with allowsplits=False")
-frepple.solver_mrp(plantype=2, constraints=0, loglevel=2, allowsplits=False).solve()
-frepple.saveplan("output.6.xml")
 ?>
 
 </plan>

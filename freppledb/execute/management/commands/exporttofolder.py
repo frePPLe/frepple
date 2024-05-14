@@ -30,7 +30,7 @@ import logging
 from datetime import datetime
 from time import localtime, strftime
 from django.conf import settings
-from django.db import connections, DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS
 from django.core.management.base import BaseCommand, CommandError
 from django.template.loader import render_to_string
 from django.test import RequestFactory
@@ -58,6 +58,8 @@ class Command(BaseCommand):
 
     requires_system_checks = []
 
+    # The "statements" variable is only used during a transition period
+    # to give customers the time to migrate their legacy custom configuration.
     statements = [
         {
             "filename": "purchaseorder.csv.gz",
@@ -205,6 +207,15 @@ class Command(BaseCommand):
             help="Task identifier (generated automatically if not provided)",
         )
 
+    @classmethod
+    def getExports(cls, database):
+        if cls.statements == Command.statements:
+            return list(DataExport.objects.all().using(database).order_by("name"))
+        # else:
+        #     # Old customized hardcode export
+        #     tmp = []
+        #     for r in
+
     def handle(self, *args, **options):
         # Pick up the options
         now = datetime.now()
@@ -307,8 +318,8 @@ class Command(BaseCommand):
                 task.save(using=self.database)
 
                 i = 0
-                exports = DataExport.objects.all().using(self.database)
-                cnt = exports.count()
+                exports = self.getExports(self.database)
+                cnt = len(exports)
 
                 for cfg in exports:
                     # Report progress
@@ -486,9 +497,7 @@ class Command(BaseCommand):
             return "%.0f %sB" % (num, "Yi")
 
         # List available data files
-        data_exports = [
-            f for f in DataExport.objects.all().using(request.database).order_by("name")
-        ]
+        data_exports = Command.getExports(request.database)
         if "FILEUPLOADFOLDER" in settings.DATABASES[request.database]:
             exportfolder = os.path.join(
                 settings.DATABASES[request.database]["FILEUPLOADFOLDER"], "export"

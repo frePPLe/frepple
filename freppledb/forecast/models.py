@@ -30,6 +30,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 import os
 import random
 import requests
+from requests import ConnectionError
 from threading import local
 
 from django.conf import settings
@@ -205,7 +206,7 @@ class Forecast(AuditModel):
         request=None,
         session=None,
         token=None,
-        **kwargs
+        **kwargs,
     ):
         if not kwargs:
             return
@@ -726,6 +727,15 @@ class ForecastPlan(models.Model):
                                         yield (ERROR, None, None, None, e)
                                     svcdata = []
                                 changed += 1
+                        except ConnectionError:
+                            yield (
+                                ERROR,
+                                None,
+                                None,
+                                None,
+                                "The connection with the web service was lost",
+                            )
+                            raise StopIteration
                         except Exception as e:
                             errors += 1
                             yield (ERROR, rownumber, field, val, str(e))
@@ -733,10 +743,12 @@ class ForecastPlan(models.Model):
                     # Upload in list layout
                     try:
                         r = {
-                            m.name: rowWrapper.get(m.name) * multiplier
-                            if rowWrapper.get(m.name) is not None
-                            and rowWrapper.get(m.name) != ""
-                            else None
+                            m.name: (
+                                rowWrapper.get(m.name) * multiplier
+                                if rowWrapper.get(m.name) is not None
+                                and rowWrapper.get(m.name) != ""
+                                else None
+                            )
                             for m in measures
                         }
                         for f in (
@@ -759,6 +771,15 @@ class ForecastPlan(models.Model):
                                 yield (ERROR, None, None, None, e)
                             svcdata = []
                         changed += 1
+                    except ConnectionError:
+                        yield (
+                            ERROR,
+                            None,
+                            None,
+                            None,
+                            "The connection with the web service was lost",
+                        )
+                        raise StopIteration
                     except Exception as e:
                         errors += 1
                         yield (ERROR, rownumber, None, None, str(e))

@@ -211,10 +211,25 @@ class Command(BaseCommand):
     def getExports(cls, database):
         if cls.statements == Command.statements:
             return list(DataExport.objects.all().using(database).order_by("name"))
-        # else:
-        #     # Old customized hardcode export
-        #     tmp = []
-        #     for r in
+        else:
+            # Migrate old customized hardcode export on the fly
+            tmp = []
+            for r in cls.statements:
+                if "sql" in r:
+                    x = DataExport(name=r["filename"], sql=r["sql"])
+                    x.no_wrapper = True
+                elif "report" in r:
+                    x = DataExport(
+                        name=r["filename"],
+                        report="%s.%s" % (r["report"].__module__, r["report"].__name__),
+                        arguments=r.get("data", None),
+                    )
+                    if x.arguments:
+                        x.arguments.pop("format", None)
+                else:
+                    raise Exception("Unknown export format")
+                tmp.append(x)
+            return tmp
 
     def handle(self, *args, **options):
         # Pick up the options
@@ -418,7 +433,12 @@ class Command(BaseCommand):
                                     if sqlrole:
                                         cursor_sql.execute("set role %s" % (sqlrole,))
                                     cursor_sql.copy_expert(
-                                        "COPY (%s) TO STDOUT WITH CSV HEADER" % cfg.sql,
+                                        (
+                                            cfg.sql
+                                            if getattr(cfg, "no_wrapper", False)
+                                            else "COPY(select * from (%s) as t) TO STDOUT WITH CSV HEADER"
+                                            % cfg.sql
+                                        ),
                                         datafile,
                                     )
                             finally:
@@ -480,8 +500,8 @@ class Command(BaseCommand):
     index = 1200
     help_url = "command-reference.html#exporttofolder"
 
-    @staticmethod
-    def getHTML(request):
+    @classmethod
+    def getHTML(cls, request):
         if (
             "FILEUPLOADFOLDER" not in settings.DATABASES[request.database]
             or not request.user.is_superuser
@@ -497,7 +517,7 @@ class Command(BaseCommand):
             return "%.0f %sB" % (num, "Yi")
 
         # List available data files
-        data_exports = Command.getExports(request.database)
+        data_exports = cls.getExports(request.database)
         if "FILEUPLOADFOLDER" in settings.DATABASES[request.database]:
             exportfolder = os.path.join(
                 settings.DATABASES[request.database]["FILEUPLOADFOLDER"], "export"

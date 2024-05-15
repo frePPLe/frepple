@@ -42,7 +42,7 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
-from freppledb.common.report import GridReport, matchesModelName
+from freppledb.common.report import GridReport, matchesModelName, sizeof_fmt
 from freppledb import __version__
 from freppledb.common.dataload import parseCSVdata, parseExcelWorksheet
 from freppledb.common.models import User, NotificationFactory, Parameter
@@ -537,14 +537,6 @@ class Command(BaseCommand):
             or not request.user.is_superuser
         ):
             return None
-
-        # Function to convert from bytes to human readable format
-        def sizeof_fmt(num):
-            for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
-                if abs(num) < 1024.0:
-                    return "%3.0f %sB" % (num, unit)
-                num /= 1024.0
-            return "%.0f %sB" % (num, "Yi")
 
         filestoupload = []
         if "FILEUPLOADFOLDER" in settings.DATABASES[request.database]:

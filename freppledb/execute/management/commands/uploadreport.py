@@ -36,7 +36,7 @@ from django.template.loader import render_to_string
 from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
-from freppledb.common.report import GridReport
+from freppledb.common.report import GridReport, sizeof_fmt
 from freppledb import __version__
 
 
@@ -354,14 +354,6 @@ class Command(BaseCommand):
             or not request.user.is_superuser
         ):
             return None
-
-        # Function to convert from bytes to human readabl format
-        def sizeof_fmt(num):
-            for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
-                if abs(num) < 1024.0:
-                    return "%3.1f%sB" % (num, unit)
-                num /= 1024.0
-            return "%.1f%sB" % (num, "Yi")
 
         # List available data files
         filesexported = []

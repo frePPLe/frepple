@@ -38,7 +38,7 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
-from freppledb.common.report import GridReport, create_connection
+from freppledb.common.report import GridReport, create_connection, sizeof_fmt
 from freppledb import __version__
 from freppledb.execute.models import Task, DataExport
 from freppledb.output.views import resource
@@ -507,14 +507,6 @@ class Command(BaseCommand):
             or not request.user.is_superuser
         ):
             return None
-
-        # Function to convert from bytes to human readable format
-        def sizeof_fmt(num):
-            for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
-                if abs(num) < 1024.0:
-                    return "%3.0f %sB" % (num, unit)
-                num /= 1024.0
-            return "%.0f %sB" % (num, "Yi")
 
         # List available data files
         data_exports = cls.getExports(request.database)

@@ -282,6 +282,7 @@ class Command(BaseCommand):
             tables.discard("django_content_type")
             tables.discard("execute_log")
             tables.discard("execute_schedule")
+            tables.discard("execute_export")
             tables.discard("common_scenario")
 
             if "freppledb.webservice" in settings.INSTALLED_APPS:

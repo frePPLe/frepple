@@ -75,7 +75,7 @@ class Command(BaseCommand):
             if columns[1] == "interval":
                 sql = (
                     sql
-                    + "case when extract(epoch from %s)<0 then 0 else extract(epoch from %s) end as %s"
+                    + 'case when extract(epoch from "%s")<0 then 0 else extract(epoch from "%s") end as %s'
                     % (columns[0], columns[0], columns[0])
                 )
             else:

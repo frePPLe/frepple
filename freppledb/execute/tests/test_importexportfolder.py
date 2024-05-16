@@ -28,13 +28,13 @@ import tempfile
 from django.conf import settings
 from django.core import management
 from django.db import DEFAULT_DB_ALIAS
-from django.test import TransactionTestCase
+from django.test import TestCase
 
 from freppledb.input.models import ManufacturingOrder, PurchaseOrder, DistributionOrder
 from freppledb.common.models import Notification
 
 
-class execute_with_commands(TransactionTestCase):
+class execute_with_commands(TestCase):
     fixtures = ["demo"]
 
     def setUp(self):

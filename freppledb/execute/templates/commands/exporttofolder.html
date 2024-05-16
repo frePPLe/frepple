@@ -5,7 +5,7 @@
       <td style="vertical-align:top; padding-left:15px">
         <button type="submit" class="btn btn-primary" id="exporttofolder" value="{% trans "export"|capfirst %}">{% trans "export"|capfirst %}</button>
       </td>
-      <td colspan='5' style="padding-left:15px">
+      <td colspan="6" style="padding-left:15px">
         <p>{% trans "Exports the plan (purchase orders, distribution orders and manufacturing orders) as a set of CSV files." %}</p>
       </td>
     </tr>
@@ -14,15 +14,15 @@
       <td style="padding-left:15px"><strong>{% trans 'file name'|capfirst %}</strong></td>
       <td><strong>{% trans 'size'|capfirst %}</strong></td>
       <td><strong>{% trans 'changed'|capfirst %}</strong></td>
-      <td>
+      <td class="text-center">
         <div class="btn btn-sm btn-primary" style="margin-bottom: 5px" data-bs-toggle="tooltip" data-bs-placement="top"
           data-bs-title="{% trans 'Download all files' %}" onClick="downloadExportFile(1)">
           <span class="fa fa-arrow-down"></span>
         </div>
       </td>
-      <td>
+      <td class="text-center">
         <div class="btn btn-sm btn-danger deletefile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top"
-          data-bs-title="{% trans 'Delete all files' %}" onClick="deleteExportFile(1, {{filesexported}})">
+          data-bs-title="{% trans 'Delete all files' %}" onClick="deleteExportFile(1)">
           <span class="fa fa-close"></span>
         </div>
       </td>
@@ -33,27 +33,63 @@
       <td style="padding-left:15px">{{j.name}}</td>
       <td>{{j.size}}</td>
       <td>{{j.timestamp}}</td>
-      <td>
+      <td class="text-center">
         <div class="btn btn-sm btn-primary downloadfile" style="margin-bottom:5px;" data-bs-toggle="tooltip"
           data-bs-placement="top" data-bs-title="Download file" onClick="downloadExportFile(1, '{{j.name}}')">
           <span class="fa fa-arrow-down"></span>
         </div>
       </td>
-      <td>
+      <td class="text-center">
         <div class="btn btn-sm btn-danger deletefile" style="margin-bottom:5px" data-bs-toggle="tooltip"
-          data-bs-placement="top" data-bs-title="Delete file from folder" onClick="deleteExportFile(1, '{{j.name}}')">
+          data-bs-placement="top" data-bs-title="{% trans "Delete file" %}" onClick="deleteExportFile(1, '{{j.name}}')">
           <span class="fa fa-close"></span>
+        </div>
+      </td>
+      <td class="text-center">
+        <div class="btn btn-sm btn-primary" style="margin-bottom:5px;" onclick="editExport(this, event)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Edit" %}">
+        <span class="fa fa-edit"></span>
         </div>
       </td>
     </tr>
     {% endfor %}
+    <!-- row for the plus icon to add an export -->
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="text-center">
+        <div class="btn btn-sm btn-primary" onclick="addExport(this, event)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Add" %}">
+        <span class="fa fa-plus"></span>
+        </div>
+      </td>
+    </tr>
+    <!-- row to add an export -->
+    <tr id="export_template" class="d-none row mb-2"
+      style="border-style:solid; border-radius:10px; border-width:1px; margin:10px 0 10px 0">
+       <td class="text-center">
+              <button class="btn btn-primary w-100" style="margin-bottom:20px; margin-top: 15px" onclick="saveScheduledTask(this, event)">
+              {% trans "Save" %}</button>
+       </td>
+       <td colspan="6">
+          <div class="row">
+            <div class="col-auto">
+            dddd
+            </div>
+          </div>
+
+       </td>
+    </tr>
   </table>
 </form>
+
 <script>
 function deleteExportFile(folder, filename) {
   $.jgrid.hideModal("#searchmodfbox_grid");
   var dialogcontent;
-  if (typeof filename === 'object') {
+  if (typeof filename === 'undefined') {
     dialogcontent = "{% trans 'You are about to delete all files' %}";
     var oldfilename = filename;
     filename = 'AllFiles';
@@ -117,11 +153,22 @@ function deleteExportFile(folder, filename) {
     })
   })
 }
+
 function downloadExportFile(folder, filename) {
   $.jgrid.hideModal("#searchmodfbox_grid");
   if (typeof filename === 'undefined')
     window.open("{{request.prefix}}/execute/downloadfromfolder/" + folder + "/", '_blank');
   else
   	window.open("{{request.prefix}}/execute/downloadfromfolder/" + folder + "/" + filename + '/', '_blank');
+}
+
+function addExport(el, event) {
+  $(el).closest("tr").addClass("d-none");
+	$("#export_template").removeClass("d-none");
+  event.preventDefault();
+}
+
+function editExport(el, event) {
+
 }
 </script>

@@ -35,7 +35,7 @@ from freppledb.common.models import Notification
 
 
 class execute_with_commands(TransactionTestCase):
-    fixtures = ["demo"]
+    fixtures = ["demo", "initial"]
 
     def setUp(self):
         # Make sure the test database is used

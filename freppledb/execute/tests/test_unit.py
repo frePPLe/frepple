@@ -41,7 +41,7 @@ from freppledb.common.models import Parameter, User, Notification
 
 
 class execute_with_commands(TransactionTestCase):
-    fixtures = ["demo"]
+    fixtures = ["demo", "initial"]
 
     def setUp(self):
         # Make sure the test database is used
@@ -336,7 +336,7 @@ class remote_commands(TransactionTestCase):
             response = self.client.post(
                 "/execute/api/scenario_copy/",
                 {"copy": 1, "source": DEFAULT_DB_ALIAS, "destination": db2},
-                **headers
+                **headers,
             )
             self.assertEqual(response.status_code, 200)
             taskinfo = json.loads(response.content.decode())
@@ -364,7 +364,7 @@ class remote_commands(TransactionTestCase):
             response = self.client.post(
                 "/%s/execute/api/runplan/" % db2,
                 {"constraint": 1, "plantype": 1},
-                **headers
+                **headers,
             )
             self.assertEqual(response.status_code, 200)
             taskinfo = json.loads(response.content.decode())

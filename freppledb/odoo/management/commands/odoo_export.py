@@ -42,7 +42,12 @@ from freppledb import __version__
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Parameter
 from freppledb.execute.models import Task
-from freppledb.input.models import PurchaseOrder, DistributionOrder, ManufacturingOrder
+from freppledb.input.models import (
+    PurchaseOrder,
+    DistributionOrder,
+    ManufacturingOrder,
+    Demand,
+)
 
 
 class Command(BaseCommand):
@@ -153,6 +158,10 @@ class Command(BaseCommand):
             for i in self.generateOperationPlansToPublish():
                 pass
             total_pages = math.ceil(len(self.exported) / self.recordsperpage)
+            self.demand_count = 0
+            for i in self.generateDemandsToPublish():
+                self.demand_count += 1
+            total_pages += math.ceil(self.demand_count / self.recordsperpage)
 
             # Collect data to send
             counter = 1
@@ -249,6 +258,17 @@ class Command(BaseCommand):
                 cnt = 0
         if cnt:
             yield self.buildPage(output, "operationplans")
+        cnt = 0
+        output = []
+        for rec in self.generateDemandsToPublish():
+            output.append(rec)
+            cnt += 1
+            if cnt >= records_per_page:
+                yield self.buildPage(output, "demands")
+                output = []
+                cnt = 0
+        if cnt:
+            yield self.buildPage(output, "demands")
 
     def buildPage(self, output, objtype):
         token = jwt.encode(
@@ -526,6 +546,26 @@ class Command(BaseCommand):
                     )
             rec.append("</operationplan>")
             yield "".join(rec)
+
+    def generateDemandsToPublish(self):
+        """
+        Collect the delivery date of all open sales orders. This can used to populate
+        the planned delivery date as information in odoo.
+        """
+        for d in (
+            Demand.objects.using(self.database)
+            .filter(
+                source__startswith="odoo", deliverydate__isnull=False, status="open"
+            )
+            .only("name", "deliverydate")
+        ):
+            yield (
+                '<demand ordertype="SO" name=%s deliverydate="%s"/>'
+                % (
+                    quoteattr(d.name),
+                    d.deliverydate,
+                )
+            )
 
     # accordion template
     title = _("Export data to %(erp)s") % {"erp": "odoo"}

@@ -91,7 +91,6 @@ function deleteExportFile(folder, filename) {
   var dialogcontent;
   if (typeof filename === 'undefined') {
     dialogcontent = "{% trans 'You are about to delete all files' %}";
-    var oldfilename = filename;
     filename = 'AllFiles';
   } else {
     dialogcontent = interpolate("{% trans 'You are about to delete file %s' %}", [filename]);

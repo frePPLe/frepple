@@ -123,6 +123,7 @@ The section below describes the installation and configuration of these.
            CSRF_COOKIE_SAMESITE = "none"               # NOTE: "none", not None
 
   * **Configure parameters**
+
     | Some parameters need to be configured in the "admin / parameters" screen. The
       first 5 parameters absolutely need editing, while the remaining parameters optionally
       need modification.

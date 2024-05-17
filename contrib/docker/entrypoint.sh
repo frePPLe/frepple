@@ -25,6 +25,11 @@ if [ -n "$POSTGRES_DBNAME" ]; then
   sed -i "s/\"NAME\": \"test_scenario\(.*\)\"/\"NAME\": \"test_${POSTGRES_DBNAME}\1\"/g" /etc/frepple/djangosettings.py
 fi
 
+# Needend when running behind nginx and the error CSRF verification failed appears https://stackoverflow.com/questions/70501974/django-returning-csrf-verification-failed-request-aborted-behind-nginx-prox
+if [ -n "$"SECURE_PROXY_SSL_HEADER ]; then
+  sed -i 's/# SECURE_PROXY_SSL_HEADER/SECURE_PROXY_SSL_HEADER/g' /etc/frepple/djangosettings.py
+fi
+
 # Djangosettings must be writeable by the web server to support installing&uninstalling apps
 chmod g+w /etc/frepple/djangosettings.py
 

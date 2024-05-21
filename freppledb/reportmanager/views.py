@@ -525,7 +525,8 @@ class ReportManager(GridReport):
         else:
             return 0
 
-    def rows(self, request, *args, **kwargs):
+    @classmethod
+    def rows(cls, request, *args, **kwargs):
         cols = []
         if args:
             for c in (

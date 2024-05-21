@@ -30,12 +30,16 @@ import logging
 from datetime import datetime
 from time import localtime, strftime
 from django.conf import settings
-from django.db import DEFAULT_DB_ALIAS
 from django.core.management.base import BaseCommand, CommandError
+from django.db import DEFAULT_DB_ALIAS
+from django.db.models import Q
 from django.template.loader import render_to_string
 from django.test import RequestFactory
+from django.utils.encoding import force_str
+from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
+import freppledb
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb.common.report import GridReport, create_connection, sizeof_fmt
@@ -290,6 +294,8 @@ class Command(BaseCommand):
                 task.status = "0%"
                 task.started = now
                 task.logfile = logfile
+                if not self.user and task.user:
+                    self.user = task.user
             else:
                 task = Task(
                     name="exporttofolder",
@@ -353,9 +359,7 @@ class Command(BaseCommand):
 
                     try:
                         if cfg.report:
-                            # Export from report class
-                            n = cfg.report.rsplit(".", 1)
-                            reportclass = getattr(importlib.import_module(n[0]), n[1])
+                            # Export from report class (standard or custom)
 
                             # Create a dummy request
                             factory = RequestFactory()
@@ -367,17 +371,54 @@ class Command(BaseCommand):
                             request.database = self.database
                             request.LANGUAGE_CODE = settings.LANGUAGE_CODE
 
+                            # Identify the report to export
+                            n = cfg.report.rsplit(".", 1)
+                            if n[0] == "freppledb.reportmanager.models.SQLReport":
+                                if "freppledb.reportmanager" in settings.INSTALLED_APPS:
+                                    # Exporting a custom report
+                                    from freppledb.reportmanager.models import SQLReport
+                                    from freppledb.reportmanager.views import (
+                                        ReportManager,
+                                    )
+
+                                    reportclass = ReportManager
+                                    report = SQLReport.objects.using(self.database).get(
+                                        id=int(cfg.report.rsplit(".", 1)[1])
+                                    )
+                                    if (
+                                        not report.public
+                                        and self.user
+                                        and report.user != self.user
+                                    ):
+                                        raise Exception("No access to this report")
+                                    else:
+                                        request.report = report
+                                        args = [report.id]
+                                else:
+                                    # Custom export still exists, but reportmanager app is disabled
+                                    raise Exception(
+                                        "No custom reports can be export. Install the 'reportmanager' app to enable."
+                                    )
+                            else:
+                                # Exporting a standard report
+                                reportclass = getattr(
+                                    importlib.import_module(n[0]), n[1]
+                                )
+                                args = []
+
                             # Initialize the report
                             if hasattr(reportclass, "initialize"):
                                 reportclass.initialize(request)
                             if hasattr(reportclass, "rows"):
                                 if callable(reportclass.rows):
-                                    request.rows = reportclass.rows(request)
+                                    request.rows = reportclass.rows(request, *args)
                                 else:
                                     request.rows = reportclass.rows
                             if hasattr(reportclass, "crosses"):
                                 if callable(reportclass.crosses):
-                                    request.crosses = reportclass.crosses(request)
+                                    request.crosses = reportclass.crosses(
+                                        request, *args
+                                    )
                                 else:
                                     request.crosses = reportclass.crosses
                             if reportclass.hasTimeBuckets:
@@ -397,13 +438,15 @@ class Command(BaseCommand):
                                     request,
                                     [request.database],
                                     datafile,
+                                    *args,
                                     **(cfg.arguments or {}),
                                 )
-                            elif cfg.name.lower().endswith(
-                                ".csv"
-                            ) or cfg.name.lower().endswith(".csv.gz"):
+                            elif cfg.name.lower().endswith((".csv", ".csv.gz")):
                                 for r in reportclass._generate_csv_data(
-                                    request, [request.database], **(cfg.arguments or {})
+                                    request,
+                                    [request.database],
+                                    *args,
+                                    **(cfg.arguments or {}),
                                 ):
                                     datafile.write(
                                         r.encode(settings.CSV_CHARSET)
@@ -526,8 +569,43 @@ class Command(BaseCommand):
                         )
                         f.size = sizeof_fmt(stat.st_size)
 
+        if "freppledb.reportmanager" in settings.INSTALLED_APPS:
+            from freppledb.reportmanager.models import SQLReport
+
+            customreports = sorted(
+                [
+                    (r.name, r.id)
+                    for r in SQLReport.objects.using(request.database)
+                    .filter(Q(public=True) | Q(user_id=request.user.id))
+                    .only("id", "name")
+                ]
+            )
+        else:
+            customreports = []
+
         return render_to_string(
             "commands/exporttofolder.html",
-            {"data_exports": data_exports},
+            {
+                "data_exports": data_exports,
+                "reports": sorted(
+                    [
+                        [
+                            capfirst(force_str(r.title)),
+                            "%s.%s" % (r.__module__, r.__name__),
+                        ]
+                        # TODO hard coded list of possible reports should be replaced with a dynamic query
+                        for r in [
+                            freppledb.output.views.resource.OverviewReport,
+                            freppledb.output.views.demand.OverviewReport,
+                            freppledb.output.views.buffer.OverviewReport,
+                            freppledb.output.views.operation.OverviewReport,
+                            freppledb.output.views.operation.DistributionReport,
+                            freppledb.output.views.operation.PurchaseReport,
+                            freppledb.forecast.views.OverviewReport,
+                        ]
+                    ]
+                ),
+                "customreports": customreports,
+            },
             request=request,
         )

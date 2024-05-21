@@ -80,6 +80,11 @@ if mode == "WSGI":
             name="delete_file_from_folder",
         ),
         re_path(
+            r"^execute/exports/$",
+            views.exports,
+            name="exports",
+        ),
+        re_path(
             r"^execute/scheduletasks/$",
             views.scheduletasks,
             name="scheduletasks",

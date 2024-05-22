@@ -1,91 +1,70 @@
 {% load i18n %}
-<form role="form" method="post" action="{{request.prefix}}/execute/launch/exporttofolder/">{% csrf_token %}
-  <table>
-    <tr>
-      <td style="vertical-align:top; padding-left:15px">
-        <button type="submit" class="btn btn-primary" id="exporttofolder" value="{% trans "export"|capfirst %}">{% trans "export"|capfirst %}</button>
-      </td>
-      <td colspan="6" style="padding-left:15px">
-        <p>{% trans "Exports the plan (purchase orders, distribution orders and manufacturing orders) as a set of CSV files." %}</p>
-      </td>
-    </tr>
-    <tr>
-      <td></td>
-      <td style="padding-left:15px"><strong>{% trans 'file name'|capfirst %}</strong></td>
-      <td><strong>{% trans 'size'|capfirst %}</strong></td>
-      <td><strong>{% trans 'changed'|capfirst %}</strong></td>
-      <td class="text-center">
-        <div class="btn btn-sm btn-primary" style="margin-bottom: 5px" data-bs-toggle="tooltip" data-bs-placement="top"
-          data-bs-title="{% trans 'Download all files' %}" onClick="downloadExportFile(1)">
-          <span class="fa fa-arrow-down"></span>
-        </div>
-      </td>
-      <td class="text-center">
-        <div class="btn btn-sm btn-danger deletefile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top"
-          data-bs-title="{% trans 'Delete all files' %}" onClick="deleteExportFile(1)">
-          <span class="fa fa-close"></span>
-        </div>
-      </td>
-    </tr>
-    {% for j in data_exports %}
-    <tr data-file="{{j.name}}">
-      <td></td>
-      <td style="padding-left:15px">{{j.name}}</td>
-      <td>{{j.size}}</td>
-      <td>{{j.timestamp}}</td>
-      <td class="text-center">
-        <div class="btn btn-sm btn-primary downloadfile" style="margin-bottom:5px;" data-bs-toggle="tooltip"
-          data-bs-placement="top" data-bs-title="Download file" onClick="downloadExportFile(1, '{{j.name}}')">
-          <span class="fa fa-arrow-down"></span>
-        </div>
-      </td>
-      <td class="text-center">
-        <div class="btn btn-sm btn-danger deletefile" style="margin-bottom:5px" data-bs-toggle="tooltip"
-          data-bs-placement="top" data-bs-title="{% trans "Delete file" %}" onClick="deleteExportFile(1, '{{j.name}}')">
-          <span class="fa fa-close"></span>
-        </div>
-      </td>
-      <td class="text-center">
-        <div class="btn btn-sm btn-primary" style="margin-bottom:5px;" onclick="editExport(this, event)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Edit" %}">
-        <span class="fa fa-edit"></span>
-        </div>
-      </td>
-    </tr>
-    {% endfor %}
-    <!-- row for the plus icon to add an export -->
-    <tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td class="text-center">
-        <div class="btn btn-sm btn-primary" id="export_add" onclick="toggleAddExport(true)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Add" %}">
-        <span class="fa fa-plus"></span>
-        </div>
-      </td>
-    </tr>
-  </table>
-</form>
-
-<!-- Add an export -->
-<div class="row mb-3 d-none" id="export_template"
+<div class="row">
+  <div class="col-2">
+    <form role="form" method="post" action="{{request.prefix}}/execute/launch/exporttofolder/">{% csrf_token %}
+      <button type="submit" class="btn btn-primary" id="exporttofolder" value="{% trans "export"|capfirst %}">{% trans "export"|capfirst %}</button>
+    </form>
+  </div>
+  <div class="col-10">
+    <p>{% trans "Exports the plan (purchase orders, distribution orders and manufacturing orders) as a set of CSV files." %}</p>
+  </div>
+</div>
+<div class="row mb-2">
+  <div class="col flex-grow-1 offset-2"><strong>{% trans 'file name'|capfirst %}</strong></div>
+  <div class="col-1 text-center"><strong>{% trans 'size'|capfirst %}</strong></div>
+  <div class="col-2 text-center"><strong>{% trans 'changed'|capfirst %}</strong></div>
+  <div class="col-auto text-center">
+    <div class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top"
+      data-bs-title="{% trans 'Download all files' %}" onClick="downloadExportFile(1)">
+      <span class="fa fa-arrow-down"></span>
+    </div>
+    <div class="btn btn-sm btn-danger deletefile" data-bs-toggle="tooltip" data-bs-placement="top"
+      data-bs-title="{% trans 'Delete all files' %}" onClick="deleteExportFile(1)">
+      <span class="fa fa-close"></span>
+    </div>
+    <div class="btn btn-sm invisible btn-primary">
+      <span class="fa fa-edit"></span>
+    </div>
+  </div>
+</div>
+{% for j in data_exports %}
+<div class="row mb-2" data-file="{{j.name}}">
+  <div class="col flex-grow-1 offset-2">{{j.name}}</div>
+  <div class="col-1 text-center">{{j.size}}</div>
+  <div class="col-2 text-nowrap text-center">{{j.timestamp}}</div>
+  <div class="col-auto text-center">
+    <div class="btn btn-sm btn-primary downloadfile" data-bs-toggle="tooltip"
+      data-bs-placement="top" data-bs-title="Download file" onClick="downloadExportFile(1, '{{j.name}}')">
+      <span class="fa fa-arrow-down"></span>
+    </div>
+    <div class="btn btn-sm btn-danger deletefile" data-bs-toggle="tooltip"
+      data-bs-placement="top" data-bs-title="{% trans "Delete file" %}" onClick="deleteExportFile(1, '{{j.name}}')">
+      <span class="fa fa-close"></span>
+    </div>
+    <div class="btn btn-sm btn-primary" onclick="toggleAddExport(true, this)"
+      data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Edit" %}">
+      <span class="fa fa-edit" ></span>
+    </div>
+  </div>
+</div>
+<div class="row mb-3 d-none" data-file="{{j.name}}"
   style="border-style:solid; border-radius:10px; border-width:1px; margin:10px 0 10px 0">
     <div class="col-auto">
-      <button class="btn btn-primary w-100" onclick="saveExport(event)" style="margin-bottom:20px; margin-top: 15px">
+      <button class="btn btn-primary w-100" onclick="saveExport(this)" style="margin-top: 15px">
         {% trans "Save" %}
+      </button>
+      <button class="btn btn-primary w-100" onclick="deleteExport(this)" style="margin-top: 15px">
+        {% trans "delete" %}
       </button>
     </div>
     <div class="col">
         <div class="row mb-3 mt-3">
-          <div class="col-3">
-            <label for="add-export-name" class="col-3 col-form-label">Name</label>
+          <div class="col-3">{% trans "name"|capfirst %}
           </div>
           <div class="col-9">
             <div class="input-group">
-                <input type="text" class="form-control" id="add-export-name" data-field="name" value="" placeholder="Unique name">
-                <button class="btn btn-outline-primary dropdown-toggle" id="add-export-extension" type="button" data-bs-toggle="dropdown" aria-expanded="false">.csv</button>
+                <input type="text" class="form-control add-export-name" data-field="name" value="" placeholder="Unique name">
+                <button class="btn btn-outline-primary dropdown-toggle add-export-extension" type="button" data-bs-toggle="dropdown" aria-expanded="false">.csv</button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.csv')">.csv</a></li>
                   <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.csv.gz')">.csv.gz</a></li>
@@ -95,11 +74,9 @@
           </div>
         </div>
         <div class="row mb-3">
-          <div class="col-3">
-            <label for="add-export-type" class="col-3 col-form-label">Type</label>
-          </div>
+          <div class="col-3">{% trans "type"|capfirst %}</div>
           <div class="col-9">
-             <select class="form-select" id="add-export-type" aria-label="Select export type" onchange="changeExportType(this)">
+             <select class="form-select add-export-type" aria-label="Select export type" onchange="changeExportType(this)">
                <option disabled selected value>{% trans "Select export type" %}</option>
                <option value="sql">SQL query</option>
                <option value="report">Report</option>
@@ -110,41 +87,35 @@
         <div class="row mb-3 d-none optional" data-type="sql">
           <div class="col">
              <div class="form-floating">
-               <textarea class="form-control" id="add-export-sql"></textarea>
-               <label for="add-export-sql">SQL query</label>
+               <textarea class="form-control add-export-sql"></textarea>
+               <label>SQL query</label>
              </div>
           </div>
         </div>
         <div class="row mb-3 d-none optional" data-type="customreport">
-          <div class="col-3">
-            <label for="add-export-customreport" class="col-3 col-form-label text-nowrap">Custom report</label>
-          </div>
+          <div class="col-3 text-nowrap">{% trans "custom report"|capfirst%}</div>
           <div class="col-9">
-             <select id="add-export-customreport" class="form-select" aria-label="Select custom report">
+             <select class="form-select add-export-customreport" aria-label="Select custom report">
                <option disabled selected value>{% trans "Select report" %}</option>
                {% for r in customreports %}<option value="{{r.1}}">{{r.0}}</option>{% endfor %}
              </select>
           </div>
         </div>
         <div class="row mb-3 d-none optional" data-type="report">
-          <div class="col-3">
-            <label for="add-export-report" class="col-3 col-form-label">Report</label>
-          </div>
+          <div class="col-3">{% trans "report"|capfirst %}</div>
           <div class="col-9">
-             <select id="add-export-report" class="form-select" aria-label="Select custom report">
+             <select class="form-select add-export-report">
                <option disabled selected value>{% trans "Select report" %}</option>
                {% for r in reports %}<option value="{{r.1}}">{{r.0}}</option>{% endfor %}
              </select>
           </div>
         </div>
         <div class="row mb-3 d-none optional" data-type="report">
-          <div class="col-3">
-            <label for="add-export-bucket" class="col-form-label">Bucket size</label>
-          </div>
+          <div class="col-3">{% trans "bucket size"|capfirst %}</div>
           <div class="col-9">
-             <select id="add-export-bucket" class="form-select w-auto" aria-label="Select custom report">
+             <select class="form-select w-auto add-export-bucket">
                <option value="day">day</option>
-               <option value="week">week</option>
+               <option value="week" selected>week</option>
                <option value="month">month</option>
                <option value="quarter">quarter</option>
                <option value="year">year</option>
@@ -152,23 +123,123 @@
           </div>
         </div>
         <div class="row mb-3 d-none optional" data-type="report">
-          <div class="col-3">
-            <label for="add-export-horizon" class="col-3 col-form-label">Horizon</label>
-          </div>
+          <div class="col-3">{% trans "horizon"|capfirst %}</div>
           <div class="col-9">
-             <input id="add-export-horizon" style="width:4.5em" type="number" class="form-control d-inline arrows" min="0" max="99" value="0">
-             <select class="form-select d-inline w-auto" id="add-export-horizonbucket">
+             <input style="width:4.5em" type="number" class="form-control d-inline arrows add-export-horizon" min="0" max="99" value="12">
+             <select class="form-select d-inline w-auto add-export-horizonbucket">
                <option value="day">day</option>
-               <option value="week">week</option>
+               <option value="week" selected>week</option>
                <option value="month">month</option>
                <option value="quarter">quarter</option>
                <option value="year">year</option>
              </select>
           </div>
         </div>
-       </div>
+  </div>
   <div class="col-auto mt-3 mb-3">
-    <button type="button" class="btn-close float-end" onclick="toggleAddExport(false)"></button>
+    <button type="button" class="btn-close float-end" onclick="toggleAddExport(false, this)"></button>
+  </div>
+</div>
+{% endfor %}
+
+<!-- row for the plus icon to add an export -->
+<div class="row" data-file="adding-a-new-export">
+  <div class="col-auto text-center ms-auto">
+      <div class="btn btn-sm btn-primary" id="export_add" onclick="toggleAddExport(true, this)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Add" %}">
+      <span class="fa fa-plus"></span>
+      </div>
+  </div>
+</div>
+
+<!-- Add an export -->
+<div class="row d-none" data-file="adding-a-new-export"
+  style="border-style:solid; border-radius:10px; border-width:1px; margin:10px 0 10px 0">
+    <div class="col-auto">
+      <button class="btn btn-primary w-100" onclick="saveExport(this)" style="margin-top: 15px">
+        {% trans "Save" %}
+      </button>
+    </div>
+    <div class="col">
+        <div class="row mb-3 mt-3">
+          <div class="col-3">{% trans "name"|capfirst %}
+          </div>
+          <div class="col-9">
+            <div class="input-group">
+                <input type="text" class="form-control add-export-name" data-field="name" value="" placeholder="Unique name">
+                <button class="btn btn-outline-primary dropdown-toggle add-export-extension" type="button" data-bs-toggle="dropdown" aria-expanded="false">.csv</button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.csv')">.csv</a></li>
+                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.csv.gz')">.csv.gz</a></li>
+                  <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.xlsx')">.xlsx</a></li>
+                </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-3">{% trans "type"|capfirst %}</div>
+          <div class="col-9">
+             <select class="form-select add-export-type" aria-label="Select export type" onchange="changeExportType(this)">
+               <option disabled selected value>{% trans "Select export type" %}</option>
+               <option value="sql">SQL query</option>
+               <option value="report">Report</option>
+               <option value="customreport">Custom report</option>
+             </select>
+          </div>
+        </div>
+        <div class="row mb-3 d-none optional" data-type="sql">
+          <div class="col">
+             <div class="form-floating">
+               <textarea class="form-control add-export-sql"></textarea>
+               <label>SQL query</label>
+             </div>
+          </div>
+        </div>
+        <div class="row mb-3 d-none optional" data-type="customreport">
+          <div class="col-3 text-nowrap">{% trans "custom report"|capfirst%}</div>
+          <div class="col-9">
+             <select class="form-select add-export-customreport" aria-label="Select custom report">
+               <option disabled selected value>{% trans "Select report" %}</option>
+               {% for r in customreports %}<option value="{{r.1}}">{{r.0}}</option>{% endfor %}
+             </select>
+          </div>
+        </div>
+        <div class="row mb-3 d-none optional" data-type="report">
+          <div class="col-3">{% trans "report"|capfirst %}</div>
+          <div class="col-9">
+             <select class="form-select add-export-report">
+               <option disabled selected value>{% trans "Select report" %}</option>
+               {% for r in reports %}<option value="{{r.1}}">{{r.0}}</option>{% endfor %}
+             </select>
+          </div>
+        </div>
+        <div class="row mb-3 d-none optional" data-type="report">
+          <div class="col-3">{% trans "bucket size"|capfirst %}</div>
+          <div class="col-9">
+             <select class="form-select w-auto add-export-bucket">
+               <option value="day">day</option>
+               <option value="week" selected>week</option>
+               <option value="month">month</option>
+               <option value="quarter">quarter</option>
+               <option value="year">year</option>
+             </select>
+          </div>
+        </div>
+        <div class="row mb-3 d-none optional" data-type="report">
+          <div class="col-3">{% trans "horizon"|capfirst %}</div>
+          <div class="col-9">
+             <input style="width:4.5em" type="number" class="form-control d-inline arrows add-export-horizon" min="0" max="99" value="12">
+             <select class="form-select d-inline w-auto add-export-horizonbucket">
+               <option value="day">day</option>
+               <option value="week" selected>week</option>
+               <option value="month">month</option>
+               <option value="quarter">quarter</option>
+               <option value="year">year</option>
+             </select>
+          </div>
+        </div>
+  </div>
+  <div class="col-auto mt-3 mb-3">
+    <button type="button" class="btn-close float-end" onclick="toggleAddExport(false, this)"></button>
   </div>
 </div>
 
@@ -249,40 +320,59 @@ function downloadExportFile(folder, filename) {
   	window.open("{{request.prefix}}/execute/downloadfromfolder/" + folder + "/" + filename + '/', '_blank');
 }
 
-function toggleAddExport(show) {
-  if (show) {
-    $("#export_add").addClass("d-none");
-	  $("#export_template").removeClass("d-none");
+function toggleAddExport(show, el) {
+  var name = $(el).closest(".row").attr("data-file");
+  var root = $(el).closest(".accordion-body");
+  root.find("[data-file='" + name + "']").toggleClass("d-none");
+}
+
+function saveExport(el) {
+  var myform = $(el).closest(".row");
+  var data = {
+      "name": myform.find(".add-export-name").first().val()
+         + myform.find(".add-export-extension").first().html(),
+      "type": myform.find(".add-export-type").first().val()
+      };
+  if (data["type"]  == "sql") {
+    data["sql"] = myform.find(".add-export-sql").first().val();
+  } else if (data["type"]  == "report") {
+    data["report"] = myform.find(".add-export-report").first().val();
+    data["bucket"] = myform.find(".add-export-bucket").first().val();
+    data["horizon"] = myform.find(".add-export-horizon").first().val();
+    data["horizonbucket"] = myform.find(".add-export-horizonbucket").first().val();
+  } else if (data["type"] == "customreport") {
+    data["report"] = myform.find(".add-export-customreport").first().val();
   }
-  else {
-   $('#export_add').removeClass('d-none');
-   $('#export_template').addClass('d-none');
-  }
+  $.ajax({
+    url: "{{request.prefix}}/execute/exports/",
+    data: JSON.stringify(data),
+    type: "POST",
+    contentType: "application/json",
+    success: function () {
+      location.reload();
+    },
+    error: function (jqXHR, stat, errorThrown) {
+      $('#popup').html('<div class="modal-dialog">'+
+          '<div class="modal-content">'+
+            '<div class="modal-header bg-danger">'+
+              '<h5 class="modal-title">'+ gettext("Error")+'</h5>'+
+              '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans 'Close' %}"></button>' +              '</div>'+
+            '<div class="modal-body"><p>'+
+              jqXHR.responseText+
+            '</p></div>'+
+          '</div>'+
+      '</div>' );
+      showModal('popup');
+    }
+  });
   event.preventDefault();
 }
 
-function editExport(el, event) {
-
-}
-
-function saveExport(event) {
-    var data = {
-        "name": $("#add-export-name").val() + $("#add-export-extension").html(),
-        "type": $("#add-export-type").val()
-        };
-    if (data["type"]  == "sql") {
-      data["sql"] = $("#add-export-sql").val();
-    } else if (data["type"]  == "report") {
-      data["report"] = $("#add-export-report").val();
-      data["bucket"] = $("#add-export-bucket").val();
-      data["horizon"] = $("#add-export-horizon").val();
-      data["horizonbucket"] = $("#add-export-horizonbucket").val();
-    } else if (data["type"] == "customreport") {
-      data["report"] = $("#add-export-customreport").val();
-    }
-    $.ajax({
+function deleteExport(el) {
+  var name = $(el).closest(".row").attr("data-file");
+  $.ajax({
       url: "{{request.prefix}}/execute/exports/",
-      data: JSON.stringify(data),
+      data: JSON.stringify({"delete": name}),
       type: "POST",
       contentType: "application/json",
       success: function () {
@@ -301,14 +391,14 @@ function saveExport(event) {
         '</div>' );
         showModal('popup');
       }
-    });
-    event.preventDefault();
+  });
 }
 
 function changeExportType(el) {
   var t = $(el).val();
-  $("#export_template .optional[data-type!=" + t + "]").addClass("d-none");
-  $("#export_template .optional[data-type=" + t + "]").removeClass("d-none");
+  var myform = $(el).closest(".col");
+  myform.find(".optional[data-type!=" + t + "]").addClass("d-none");
+  myform.find(".optional[data-type=" + t + "]").removeClass("d-none");
 }
 
 </script>

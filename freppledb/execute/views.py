@@ -1544,8 +1544,13 @@ def exports(request):
         data = json.loads(
             request.body.decode(request.encoding or settings.DEFAULT_CHARSET)
         )
+        print("-----", data)
         errors = []
-        if data.get("name", None) in (None, ".xlsx", ".csv", ".csv.gz"):
+        if "delete" in data:
+            DataExport.objects.using(request.database).filter(
+                name=data["delete"]
+            ).delete()
+        elif data.get("name", None) in (None, ".xlsx", ".csv", ".csv.gz"):
             errors.append("Name can't be blank<br>")
         else:
             if not data["name"].endswith((".xlsx", ".csv", ".csv.gz")):
@@ -1556,6 +1561,8 @@ def exports(request):
                 .exists()
             ):
                 errors.append("Export with this name already exists<br>")
+            elif os.sep in data["name"]:
+                errors.append("Export names can't contain %s" % os.sep)
             else:
                 t = data.get("type", None)
                 if t == "sql":

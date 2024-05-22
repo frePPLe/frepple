@@ -459,13 +459,17 @@ class Command(BaseCommand):
                                 )
                         elif cfg.sql:
                             # Exporting using SQL
-                            if cfg.name.lower().endswith(".gz"):
+                            if cfg.name.lower().endswith(".csv.gz"):
                                 datafile = gzip.open(
                                     os.path.join(exportFolder, cfg.name), "wb"
                                 )
-                            else:
+                            elif cfg.name.lower().endswith(".csv"):
                                 datafile = open(
                                     os.path.join(exportFolder, cfg.name), "wb"
+                                )
+                            else:
+                                raise Exception(
+                                    "Exports based on an SQL query can only be created in .csv or .csv.gz format"
                                 )
                             try:
                                 conn = create_connection(self.database)

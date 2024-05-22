@@ -219,6 +219,34 @@ class DataExport(models.Model):
     def __str__(self):
         return self.name
 
+    def basename(self):
+        if self.name.endswith(".xlsx"):
+            return self.name[:-5]
+        elif self.name.endswith(".csv"):
+            return self.name[:-4]
+        elif self.name.endswith(".csv.gz"):
+            return self.name[:-7]
+        else:
+            return self.name
+
+    def extension(self):
+        if self.name.endswith(".xlsx"):
+            return ".xlsx"
+        elif self.name.endswith(".csv"):
+            return ".csv"
+        elif self.name.endswith(".csv.gz"):
+            return ".csv.gz"
+        else:
+            return ""
+
+    def exporttype(self):
+        if self.sql:
+            return "sql"
+        elif self.report.startswith("freppledb.reportmanager.models.SQLReport."):
+            return "customreport"
+        else:
+            return "report"
+
     class Meta:
         db_table = "execute_export"
         verbose_name_plural = "execute_exports"

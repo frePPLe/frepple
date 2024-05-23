@@ -190,7 +190,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
           for (Buffer::flowplanlist::const_iterator scanner = cur;
                scanner != b->getFlowPlans().end() &&
                scanner->getDate() <
-                   max(theDate, Plan::instance().getCurrent()) + autofence;
+                   max(requested_date, Plan::instance().getCurrent()) +
+                       autofence;
                ++scanner) {
             if (scanner->getQuantity() <= 0 ||
                 scanner->getDate() <= requested_date)

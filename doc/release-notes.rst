@@ -19,6 +19,9 @@ This release is scheduled for May/June 2024. You can already check out a `previe
 
 - | Removed the parameters plan.calendar, allowsplits and plan.planSafetyStockFirst.
 
+- | Bug fix: Unnecessary late deliveries when confirmed replenishment exist far beyond
+    the lead time.
+
 .. rubric:: Demand forecasting
 
 - | Bug fix: "Orders planned" row in forecast editor and forecast report wasn't

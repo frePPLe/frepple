@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<current>2024-01-01T00:00:00</current>
+	
+	<!-- case 1 -->
 	<suppliers>
 		<supplier name="1. Supplier">
 			<itemsuppliers>
@@ -28,7 +30,8 @@
 			<supplier name="1. Supplier"/>
 		</operationplan>
 	</operationplans>
-
+	
+    <!-- case 2 -->	
 	<suppliers>
 		<supplier name="2. Supplier">
 			<itemsuppliers>
@@ -56,7 +59,8 @@
 			<supplier name="2. Supplier"/>
 		</operationplan>
 	</operationplans>
-
+	
+	<!-- case 3 -->
 	<suppliers>
 		<supplier name="3. Supplier">
 			<itemsuppliers>
@@ -67,7 +71,7 @@
 				</itemsupplier>
 			</itemsuppliers>
 		</supplier>
-	</suppliers>
+	</suppliers>	
 	<demands>
 		<demand name="3. sales order">
 			<quantity>200</quantity>
@@ -84,7 +88,8 @@
 			<supplier name="3. Supplier"/>
 		</operationplan>
 	</operationplans>
-
+	
+	<!-- case 4 -->
 	<suppliers>
 		<supplier name="4. Supplier">
 			<itemsuppliers>
@@ -117,7 +122,8 @@
 			<supplier name="4. Supplier"/>
 		</operationplan>
 	</operationplans>
-
+	
+	<!-- case 5 -->
 	<suppliers>
 		<supplier name="5. Supplier">
 			<itemsuppliers>
@@ -150,6 +156,167 @@
 			<supplier name="5. Supplier"/>
 		</operationplan>
 	</operationplans>
+	
+	<!-- case 6 --> 
+	<operations>
+		<operation name="6. Manufacturing" xsi:type="operation_fixed_time">
+		  <item name="6. item"/>
+		  <location name="factory"/>		
+          <duration>P5D</duration>
+        </operation>		
+	</operations>
+	<demands>
+		<demand name="6. sales order">
+			<quantity>20</quantity>
+			<due>2024-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="6. item"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+	<buffers>
+		<buffer name="6. item @ factory" onhand="50">
+			<item name="6. item"/>
+			<location name="factory"/>
+		</buffer>
+	</buffers>
+	<operationplans>
+		<operationplan ordertype="MO" end="2024-08-01T00:00:00" reference="MO #61" quantity="45" status="confirmed">
+		   <operation name="6. Manufacturing"/>
+		</operationplan>
+		<operationplan ordertype="MO" end="2024-07-01T00:00:00" reference="MO #62" quantity="40" status="confirmed">
+		   <operation name="6. Consume" xsi:type="operation_fixed_time">
+		      <location name="factory"/>
+		      <flows>
+			     <flow xsi:type="flow_start">
+				    <item name="6. item"/>
+					<quantity>-1</quantity>
+				 </flow>
+			  </flows>
+		   </operation>
+		</operationplan>
+	</operationplans>	
+	
+	<!-- case 7 --> 
+	<operations>
+		<operation name="7. Manufacturing" xsi:type="operation_fixed_time">
+		  <item name="7. item"/>
+		  <location name="factory"/>		
+          <duration>P5D</duration>
+        </operation>		
+	</operations>
+	<demands>
+		<demand name="7. sales order">
+			<quantity>20</quantity>
+			<due>2024-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="7. item"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+	<buffers>
+		<buffer name="7. item @ factory" onhand="50">
+			<item name="7. item"/>
+			<location name="factory"/>
+		</buffer>
+	</buffers>
+	<operationplans>
+		<operationplan ordertype="MO" end="2024-03-01T00:00:00" reference="MO #71" quantity="45" status="confirmed">
+		   <operation name="7. Manufacturing"/>
+		</operationplan>
+		<operationplan ordertype="MO" end="2024-02-01T00:00:00" reference="MO #72" quantity="40" status="confirmed">
+		   <operation name="7. Consume" xsi:type="operation_fixed_time">
+		      <location name="factory"/>
+		      <flows>
+			     <flow xsi:type="flow_start">
+				    <item name="7. item"/>
+					<quantity>-1</quantity>
+				 </flow>
+			  </flows>
+		   </operation>
+		</operationplan>
+	</operationplans>	
+	
+	<!-- case 8 --> 
+	<operations>
+		<operation name="8. Manufacturing" xsi:type="operation_fixed_time">
+		  <item name="8. item"/>
+		  <location name="factory"/>		
+          <duration>P5D</duration>
+        </operation>		
+	</operations>
+	<demands>
+		<demand name="8. sales order">
+			<quantity>20</quantity>
+			<due>2024-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="8. item"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+	<buffers>
+		<buffer name="8. item @ factory" onhand="50">
+			<item name="8. item"/>
+			<location name="factory"/>
+		</buffer>
+	</buffers>
+	<operationplans>
+		<operationplan ordertype="MO" end="2024-08-01T00:00:00" reference="MO #81" quantity="1000" status="confirmed">
+		   <operation name="8. Manufacturing"/>
+		</operationplan>
+		<operationplan ordertype="MO" end="2024-07-01T00:00:00" reference="MO #82" quantity="40" status="confirmed">
+		   <operation name="8. Consume" xsi:type="operation_fixed_time">
+		      <location name="factory"/>
+		      <flows>
+			     <flow xsi:type="flow_start">
+				    <item name="8. item"/>
+					<quantity>-1</quantity>
+				 </flow>
+			  </flows>
+		   </operation>
+		</operationplan>
+	</operationplans>	
+	
+	<!-- case 9 --> 
+	<operations>
+		<operation name="9. Manufacturing" xsi:type="operation_fixed_time">
+		  <item name="9. item"/>
+		  <location name="factory"/>		
+          <duration>P5D</duration>
+        </operation>		
+	</operations>
+	<demands>
+		<demand name="9. sales order">
+			<quantity>20</quantity>
+			<due>2024-01-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="9. item"/>
+			<location name="factory"/>
+		</demand>
+	</demands>
+	<buffers>
+		<buffer name="9. item @ factory" onhand="50">
+			<item name="9. item"/>
+			<location name="factory"/>
+		</buffer>
+	</buffers>
+	<operationplans>
+		<operationplan ordertype="MO" end="2024-03-01T00:00:00" reference="MO #91" quantity="1000" status="confirmed">
+		   <operation name="9. Manufacturing"/>
+		</operationplan>
+		<operationplan ordertype="MO" end="2024-02-01T00:00:00" reference="MO #92" quantity="40" status="confirmed">
+		   <operation name="9. Consume" xsi:type="operation_fixed_time">
+		      <location name="factory"/>
+		      <flows>
+			     <flow xsi:type="flow_start">
+				    <item name="9. item"/>
+					<quantity>-1</quantity>
+				 </flow>
+			  </flows>
+		   </operation>
+		</operationplan>
+	</operationplans>	
+
 <?python
 
 frepple.settings.autofence = 90 * 86400

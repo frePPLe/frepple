@@ -64,6 +64,8 @@ This release is scheduled for May/June 2024. You can already check out a `previe
   | A new *Frepple Quotes* screen is added to get a promised date for a product.
   | Many thanks to https://e-powerinternational.com/ for this contribution!
 
+- | 16, 17: Correct handling of locked purchase orders.
+
 - | 16, 17: New mapping for odoo reorder points, which uses the new buffer.maximum field.
 
 - | The "odoo export" command now sends back information on the planned delivery date of every

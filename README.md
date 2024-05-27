@@ -1,4 +1,4 @@
-[![Continous integration](https://github.com/frePPLe/frepple/actions/workflows/ubuntu20.yml/badge.svg)](https://github.com/frePPLe/frepple/actions/workflows/ubuntu20.yml)
+[![Continous integration](https://github.com/frePPLe/frepple/actions/workflows/ubuntu24.yml/badge.svg)](https://github.com/frePPLe/frepple/actions/workflows/ubuntu24.yml)
 
 # frePPLe
 

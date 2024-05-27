@@ -134,7 +134,7 @@ jobs:
             Release notes are available on https://frepple.com/docs/current/release-notes.html
 
             **frepple-${{ env.frepple_version }}-doc.tgz**\: Documentation
-            **ubuntu20-frepple-${{ env.frepple_version }}.deb**\: Installer for Ubuntu 20.04 LTS
+            **ubuntu24-frepple-${{ env.frepple_version }}.deb**\: Installer for Ubuntu 20.04 LTS
             **docker container**\: Docker pull ghcr.io/frepple/frepple:${{ env.frepple_version }}
             **Source code**\: Source code in code zip or gzip format
           files: |

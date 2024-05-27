@@ -247,6 +247,14 @@ class DataExport(models.Model):
         else:
             return "report"
 
+    def reportid(self):
+        return (
+            int(self.report[41:])
+            if self.report
+            and self.report.startswith("freppledb.reportmanager.models.SQLReport.")
+            else None
+        )
+
     class Meta:
         db_table = "execute_export"
         verbose_name_plural = "execute_exports"

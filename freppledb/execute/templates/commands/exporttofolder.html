@@ -63,8 +63,8 @@
           </div>
           <div class="col-9">
             <div class="input-group">
-                <input type="text" class="form-control add-export-name" data-field="name" value="" placeholder="Unique name">
-                <button class="btn btn-outline-primary dropdown-toggle add-export-extension" type="button" data-bs-toggle="dropdown" aria-expanded="false">.csv</button>
+                <input type="text" class="form-control add-export-name" data-field="name" value="{{j.basename}}" placeholder="Unique name">
+                <button class="btn btn-outline-primary dropdown-toggle add-export-extension" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{j.extension}}</button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.csv')">.csv</a></li>
                   <li><a class="dropdown-item" onclick="$(event.target).closest('ul').prev().text('.csv.gz')">.csv.gz</a></li>
@@ -77,61 +77,61 @@
           <div class="col-3">{% trans "type"|capfirst %}</div>
           <div class="col-9">
              <select class="form-select add-export-type" aria-label="Select export type" onchange="changeExportType(this)">
-               <option disabled selected value>{% trans "Select export type" %}</option>
-               <option value="sql">SQL query</option>
-               <option value="report">Report</option>
-               <option value="customreport">Custom report</option>
+               <option disabled value>{% trans "Select export type" %}</option>
+               <option{% if j.exporttype == "sql" %} selected{% endif %} value="sql">SQL query</option>
+               <option{% if j.exporttype == "report" %} selected{% endif %} value="report">Report</option>
+               <option{% if j.exporttype == "customreport" %} selected{% endif %} value="customreport">Custom report</option>
              </select>
           </div>
         </div>
-        <div class="row mb-3 d-none optional" data-type="sql">
+        <div class="{% if j.exporttype != "sql" %}d-none {% endif %}row mb-3 optional" data-type="sql">
           <div class="col">
              <div class="form-floating">
-               <textarea class="form-control add-export-sql"></textarea>
+               <textarea class="form-control add-export-sql">{{j.sql | default:''}}</textarea>
                <label>SQL query</label>
              </div>
           </div>
         </div>
-        <div class="row mb-3 d-none optional" data-type="customreport">
+        <div class="{% if j.exporttype != "customreport" %}d-none {% endif %}row mb-3 optional" data-type="customreport">
           <div class="col-3 text-nowrap">{% trans "custom report"|capfirst%}</div>
           <div class="col-9">
              <select class="form-select add-export-customreport" aria-label="Select custom report">
-               <option disabled selected value>{% trans "Select report" %}</option>
-               {% for r in customreports %}<option value="{{r.1}}">{{r.0}}</option>{% endfor %}
+               <option disabled value>{% trans "Select report" %}</option>
+               {% for r in customreports %}<option {% if j.reportid == r.1 %}selected {% endif %}value="{{r.1}}">{{r.0}}</option>{% endfor %}
              </select>
           </div>
         </div>
-        <div class="row mb-3 d-none optional" data-type="report">
+        <div class="{% if j.exporttype != "report" %}d-none {% endif %}row mb-3 optional" data-type="report">
           <div class="col-3">{% trans "report"|capfirst %}</div>
           <div class="col-9">
              <select class="form-select add-export-report">
                <option disabled selected value>{% trans "Select report" %}</option>
-               {% for r in reports %}<option value="{{r.1}}">{{r.0}}</option>{% endfor %}
+               {% for r in reports %}<option {% if j.report == r.1 %}selected {% endif %}value="{{r.1}}">{{r.0}}</option>{% endfor %}
              </select>
           </div>
         </div>
-        <div class="row mb-3 d-none optional" data-type="report">
+        <div class="{% if j.exporttype != "report" %}d-none {% endif %}row mb-3 optional" data-type="report">
           <div class="col-3">{% trans "bucket size"|capfirst %}</div>
           <div class="col-9">
              <select class="form-select w-auto add-export-bucket">
-               <option value="day">day</option>
-               <option value="week" selected>week</option>
-               <option value="month">month</option>
-               <option value="quarter">quarter</option>
-               <option value="year">year</option>
+               <option{% if j.arguments.buckets == "day" %} selected{% endif %} value="day">day</option>
+               <option{% if j.arguments.buckets == "week" %} selected{% endif %}  value="week">week</option>
+               <option{% if j.arguments.buckets == "month" %} selected{% endif %}  value="month">month</option>
+               <option{% if j.arguments.buckets == "quarter" %} selected{% endif %}  value="quarter">quarter</option>
+               <option{% if j.arguments.buckets == "year" %} selected{% endif %}  value="year">year</option>
              </select>
           </div>
         </div>
-        <div class="row mb-3 d-none optional" data-type="report">
+        <div class="{% if j.exporttype != "report" %}d-none {% endif %}row mb-3 optional" data-type="report">
           <div class="col-3">{% trans "horizon"|capfirst %}</div>
           <div class="col-9">
-             <input style="width:4.5em" type="number" class="form-control d-inline arrows add-export-horizon" min="0" max="99" value="12">
+             <input style="width:4.5em" type="number" class="form-control d-inline arrows add-export-horizon" min="0" max="99" value="{{j.arguments.horizonlength}}">
              <select class="form-select d-inline w-auto add-export-horizonbucket">
-               <option value="day">day</option>
-               <option value="week" selected>week</option>
-               <option value="month">month</option>
-               <option value="quarter">quarter</option>
-               <option value="year">year</option>
+               <option{% if j.arguments.horizonunit == "day" %} selected{% endif %} value="day">day</option>
+               <option{% if j.arguments.horizonunit == "week" %} selected{% endif %} value="week" selected>week</option>
+               <option{% if j.arguments.horizonunit == "month" %} selected{% endif %} value="month">month</option>
+               <option{% if j.arguments.horizonunit == "quarter" %} selected{% endif %} value="quarter">quarter</option>
+               <option{% if j.arguments.horizonunit == "year" %} selected{% endif %} value="year">year</option>
              </select>
           </div>
         </div>
@@ -333,6 +333,9 @@ function saveExport(el) {
          + myform.find(".add-export-extension").first().html(),
       "type": myform.find(".add-export-type").first().val()
       };
+  if (myform.attr("data-file") != "adding-a-new-export") {
+    data["currentname"] = myform.attr("data-file");
+  }
   if (data["type"]  == "sql") {
     data["sql"] = myform.find(".add-export-sql").first().val();
   } else if (data["type"]  == "report") {

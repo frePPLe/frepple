@@ -1036,12 +1036,8 @@ class FileManager:
                     logger.warning("Failed file download: %s" % filename)
                     return HttpResponseNotFound(force_str(_("Error")))
                 if not os.path.isfile(cleanpath):
-                    if os.path.isfile("%s.gz" % cleanpath):
-                        # File exists in compressed format
-                        clean_filename = "%s.gz" % clean_filename
-                    else:
-                        logger.warning("Failed file download: %s" % filename)
-                        return HttpResponseNotFound(force_str(_("Error")))
+                    logger.warning("Failed file download: %s" % filename)
+                    return HttpResponseNotFound(force_str(_("Error")))
                 return sendStaticFile(
                     request,
                     folder,
@@ -1544,19 +1540,34 @@ def exports(request):
         data = json.loads(
             request.body.decode(request.encoding or settings.DEFAULT_CHARSET)
         )
-        print("-----", data)
         errors = []
-        if "delete" in data:
-            DataExport.objects.using(request.database).filter(
-                name=data["delete"]
-            ).delete()
+        curname = data.get("currentname", None)
+        if data.get("delete", None):
+            deleted = (
+                DataExport.objects.using(request.database)
+                .filter(name=data["delete"])
+                .delete()
+            )
+            if deleted:
+                # Remove the data file for security reasons and to save disk space
+                try:
+                    os.remove(
+                        os.path.join(
+                            settings.DATABASES[request.database]["FILEUPLOADFOLDER"],
+                            "export",
+                            data["delete"],
+                        )
+                    )
+                except FileNotFoundError:
+                    pass
         elif data.get("name", None) in (None, ".xlsx", ".csv", ".csv.gz"):
             errors.append("Name can't be blank<br>")
         else:
             if not data["name"].endswith((".xlsx", ".csv", ".csv.gz")):
                 errors.append("Export must end with .xlsx, .csv or .csv.gz<br>")
             elif (
-                DataExport.objects.using(request.database)
+                data["name"] != curname
+                and DataExport.objects.using(request.database)
                 .filter(name=data["name"])
                 .exists()
             ):
@@ -1568,9 +1579,14 @@ def exports(request):
                 if t == "sql":
                     s = data.get("sql", None)
                     if s:
-                        DataExport(name=data["name"], sql=s).save(
-                            using=request.database
-                        )
+                        if curname:
+                            DataExport.objects.using(request.database).filter(
+                                name=curname
+                            ).update(name=data["name"], sql=s)
+                        else:
+                            DataExport(name=data["name"], sql=s).save(
+                                using=request.database
+                            )
                     else:
                         errors.append("Missing sql query<br>")
                 elif t == "report":
@@ -1586,16 +1602,31 @@ def exports(request):
                     ):
                         errors.append("Invalid report<br>")
                     else:
-                        DataExport(
-                            name=data["name"],
-                            report=r,
-                            arguments={
-                                "buckets": data.get("bucket"),
-                                "horizontype": True,
-                                "horizonunit": data.get("horizonbucket", "month"),
-                                "horizonlength": int(data.get("horizon", 6)),
-                            },
-                        ).save(using=request.database)
+                        if curname:
+                            DataExport.objects.using(request.database).filter(
+                                name=curname
+                            ).update(
+                                name=data["name"],
+                                report=r,
+                                sql=None,
+                                arguments={
+                                    "buckets": data.get("bucket"),
+                                    "horizontype": True,
+                                    "horizonunit": data.get("horizonbucket", "month"),
+                                    "horizonlength": int(data.get("horizon", 6)),
+                                },
+                            )
+                        else:
+                            DataExport(
+                                name=data["name"],
+                                report=r,
+                                arguments={
+                                    "buckets": data.get("bucket"),
+                                    "horizontype": True,
+                                    "horizonunit": data.get("horizonbucket", "month"),
+                                    "horizonlength": int(data.get("horizon", 6)),
+                                },
+                            ).save(using=request.database)
                 elif t == "customreport":
                     from freppledb.reportmanager.models import SQLReport
 
@@ -1606,10 +1637,21 @@ def exports(request):
                         .filter(id=r)
                         .exists()
                     ):
-                        DataExport(
-                            name=data["name"],
-                            report="freppledb.reportmanager.models.SQLReport.%s" % r,
-                        ).save(using=request.database)
+                        if curname:
+                            DataExport.objects.using(request.database).filter(
+                                name=curname
+                            ).update(
+                                name=data["name"],
+                                report="freppledb.reportmanager.models.SQLReport.%s"
+                                % r,
+                                sql=None,
+                            )
+                        else:
+                            DataExport(
+                                name=data["name"],
+                                report="freppledb.reportmanager.models.SQLReport.%s"
+                                % r,
+                            ).save(using=request.database)
                     else:
                         errors.append("Invalid custom report<br>")
                 else:

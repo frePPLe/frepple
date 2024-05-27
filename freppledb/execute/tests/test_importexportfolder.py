@@ -31,7 +31,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.test import TransactionTestCase
 
 from freppledb.input.models import ManufacturingOrder, PurchaseOrder, DistributionOrder
-from freppledb.common.models import Notification
+from freppledb.common.models import Notification, User
 
 
 class execute_with_commands(TransactionTestCase):
@@ -44,6 +44,9 @@ class execute_with_commands(TransactionTestCase):
         # existing data files
         self.datafolder = tempfile.mkdtemp()
         settings.DATABASES[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"] = self.datafolder
+        if not User.objects.filter(username="admin").count():
+            User.objects.create_superuser("admin", "your@company.com", "admin")
+        self.client.login(username="admin", password="admin")
         super().setUp()
 
     def tearDown(self):
@@ -53,6 +56,11 @@ class execute_with_commands(TransactionTestCase):
         super().tearDown()
 
     def test_exportimportfromfolder(self):
+
+        # Try the execute screen and all task widgets
+        response = self.client.get("/execute/")
+        self.assertEqual(response.status_code, 200)
+
         self.assertEqual(ManufacturingOrder.objects.count(), 0)
         self.assertEqual(PurchaseOrder.objects.count(), 4)
         self.assertEqual(DistributionOrder.objects.count(), 0)

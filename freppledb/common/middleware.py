@@ -23,6 +23,7 @@
 
 from datetime import timedelta, datetime
 import base64
+import ipaddress
 import jwt
 import re
 import threading
@@ -400,3 +401,28 @@ class AutoLoginAsAdminUser:
             except User.DoesNotExist:
                 pass
         return self.get_response(request)
+
+
+class AllowedIpMiddleware:
+    """
+    Checks that the IP address of the request is allowed in the
+    settings.ALLOWED_IPS variable.
+    """
+
+    def __init__(self, get_response):
+        # One-time initialisation
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if hasattr(settings, "ALLOWED_IPS"):
+            found = False
+            for ip in settings.ALLOWED_IPS:
+                if ipaddress.ip_address(
+                    request.META["REMOTE_ADDR"]
+                ) in ipaddress.ip_network(ip):
+                    found = True
+                    break
+            if not found:
+                return HttpResponseForbidden("<h1>Unauthorized access</h1>")
+        response = self.get_response(request)
+        return response

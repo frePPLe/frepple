@@ -512,12 +512,21 @@ MIDDLEWARE = (
     # which can be useful for development or for demo models.
     # "freppledb.common.middleware.AutoLoginAsAdminUser",
     "freppledb.common.middleware.MultiDBMiddleware",
+    # Uncomment the next line to only allow a list of IP addresses
+    # to access the application (see variable ALLOWED_IPs) below
+    # "freppledb.common.middleware.AllowedIpMiddleware",
     # Optional: The following middleware allows authentication with HTTP headers
     "freppledb.common.middleware.HTTPAuthenticationMiddleware",
     "freppledb.common.middleware.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
 )
+
+# Variable ALLOWED_IPS defines a list of IP adresses allowed to access the application
+# AllowedIpMiddleware needs to be active. /24 mask IP address is supported.
+# ALLOWED_IPS = [
+#     "127.0.0.1",
+# ]
 
 # Custom attribute fields in the database
 # After each change of this setting, the following commands MUST be

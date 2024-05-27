@@ -2,13 +2,13 @@
 Operation materials
 ===================
 
-Operation materials are used to model the consumption and production of 
+Operation materials are used to model the consumption and production of
 material by operations.
 
 If an operation Op is consuming 2 units of part A and 1 unit of part B to produce 3 units of
 part C, then this table should contain three records:
 
-=========    ========      ====      =====  
+=========    ========      ====      =====
 operation    quantity      item      type
 =========    ========      ====      =====
 Op           -2            A         Start
@@ -19,7 +19,7 @@ Op           3             C         End
 If the same operation produces 1 units of part C you can leave out the third
 record. It's implicitly assumed from the item field in the operation table.
 
-=========    ========      ====      =====  
+=========    ========      ====      =====
 operation    quantity      item      type
 =========    ========      ====      =====
 Op           -2            A         Start
@@ -38,11 +38,15 @@ Different types are available:
   | Produce (or consume) material at the end of a manufacturing order.
   | The quantity consumed or produced is proportional to the quantity of the
     manufacturing order.
-    
+
 * | **transfer_batch**:
   | Consume (or produce) material in a number of batches of fixed size
     at various moments during the total duration of the manufacturing order
     (not including the setup time on the loaded resource).
+  | This feature is deprecated. Use
+    :doc:`operation dependencies </model-reference/operation-dependencies>`
+    or :doc:`operation material offsets </model-reference/operation-materials>`
+    instead.
 
 =============== ================= ===========================================================
 Field           Type              Description
@@ -61,17 +65,18 @@ quantity_fixed  double            | Fixed material consumption or production per
                                   | Default value is 0.0.
 transferbatch   double            | Batch size by in which material is produced or consumed.
                                   | Only relevant for flows of type batch_transfer.
-                                  | The default value is null, in which case we default to 
-                                    produce at the end when the quantity is positive, or 
+                                  | The default value is null, in which case we default to
+                                    produce at the end when the quantity is positive, or
                                     consume at the start when the quantity is negative.
-                                  | To protect against a big impact on performance and 
+                                  | To protect against a big impact on performance and
                                     memory footprint we limit the number of material transfer
                                     batches to 50 per manufacturing order.
+                                  | This field is deprecated.
 offset          duration          | Time offset relative to the start or end date of the manufacturing
                                     order for the material production or consumption.
                                   | Eg offset is 1 day for a flow of type 'end'
                                     -> Material is produced 1 day after the end of the manufacturing order
-                                    -> This can be used to model a cooldown, drying or testing time. 
+                                    -> This can be used to model a cooldown, drying or testing time.
                                   | Eg offset is -1 day for a flow of type 'start'
                                     -> Material is consumed 1 day before the start of the manufacturing order
                                     -> This can be used to model a material preparation or picking time.

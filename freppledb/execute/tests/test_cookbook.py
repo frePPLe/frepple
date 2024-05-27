@@ -282,6 +282,7 @@ class cookbook_input(cookbooktest):
             "make-to-order.expect",
         )
 
+    @unittest.skip("Feature is deprecated")
     def test_buffer_transfer_batch(self):
         self.loadExcel(
             settings.FREPPLE_HOME,

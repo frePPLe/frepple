@@ -219,8 +219,9 @@ Routing and bill of materials
 |                                         | plans with a shorter delay if that is required to deliver a customer order |                                                                               |
 |                                         | on time.                                                                   |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Transfer batching**                   | Subsequent production steps can overlap. I.e. process 2 can start as       | - Example :doc:`examples/buffer/transfer-batch`                               |
-|                                         | soon as a certain quantity of process 1 have completed.                    |                                                                               |
+| **Operation dependencies**              | Operations are chained together through bill of materials (typical for     | - Example :doc:`examples/operation/operation-dependency`                      |
+|                                         | most manufacturing environments) or through operation dependencies         |                                                                               |
+|                                         | (typical for project-oriented manufacturing environments).                 |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 
 |

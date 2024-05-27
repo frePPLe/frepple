@@ -22,6 +22,11 @@ This release is scheduled for May/June 2024. You can already check out a `previe
 - | Bug fix: Unnecessary late deliveries when confirmed replenishment exist far beyond
     the lead time.
 
+- | Flows of type "transfer" are deprecated.
+  | :doc:`Operation dependencies </model-reference/operation-dependencies>` or
+    :doc:`operation material offsets </model-reference/operation-materials>` are a much cleaner
+    and more performant alternative.
+
 .. rubric:: Demand forecasting
 
 - | Bug fix: "Orders planned" row in forecast editor and forecast report wasn't

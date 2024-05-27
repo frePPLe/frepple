@@ -2042,8 +2042,8 @@ class GridReport(View):
                         elif isinstance(r, GridFieldChoice):
                             if v is None:
                                 fields[f] = None
-                            elif v in r.choices:
-                                fields[f] = v
+                            elif v in [i[1] for i in r.choices]:
+                                fields[f] = [x for (x, y) in r.choices if y == v][0]
                             else:
                                 ok = False
                                 resp.write(
@@ -4232,6 +4232,7 @@ def _getCellValue(
             _buildMaskedNames(model, exportConfig)
         # Return the mapped value
         return exportConfig[modelname].get(data, "unknown")
+
 
 def sizeof_fmt(num):
     """

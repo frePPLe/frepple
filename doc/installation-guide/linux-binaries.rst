@@ -36,7 +36,7 @@ Here are the steps to get a fully working environment.
 
 #. **Install and tune the PostgreSQL database**
 
-   Install postgreSQL 12 or higher, the world's most advanced open source database.
+   Install postgreSQL 16, 15, 14 or 13 (in this order of preference).
 
    FrePPLe assumes that the database uses UTF-8 encoding.
 

@@ -690,6 +690,10 @@ Generate time buckets
 Many output reports are displaying the plan results aggregated into time
 buckets. These time buckets are defined with the tables dates and bucket dates.
 
+For all reports to work correctly and avoid all ambiguity you need to assure
+the expressions generate a unique name for each bucket. For instance, just using
+"%y" as day name won't work.
+
 This tasks allows you to populate these tables in an easy way with buckets
 with daily, weekly, monthly, quarterly and yearly granularity. Existing bucket
 definitions for these granularities will be overwritten.

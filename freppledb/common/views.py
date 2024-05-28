@@ -1007,6 +1007,10 @@ def sendStaticFile(request, *args, headers=None):
         response = static.serve(
             request, args[-1], document_root=os.path.join(*args[:-1])
         )
+    if response.headers.get("Content-Encoding", None) == "gzip":
+        # Avoid that gzipped files are decompressed automatically by browsers
+        del response.headers["Content-Encoding"]
+        response.headers["Content-Type"] = "application/gzip"
     if headers:
         for k, v in headers.items():
             response[k] = v

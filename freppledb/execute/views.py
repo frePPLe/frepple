@@ -1060,18 +1060,10 @@ class FileManager:
                         if filename.endswith(extensions) and os.access(
                             fullfilename, os.R_OK
                         ):
-                            if filename.endswith(".gz"):
-                                # Put the uncompressed file in the zip file
-                                with gzip.open(fullfilename, "rb") as datafile:
-                                    zf.writestr(
-                                        os.path.basename(filename[:-3]),
-                                        datafile.read(),
-                                    )
-                            else:
-                                zf.write(
-                                    filename=fullfilename,
-                                    arcname=os.path.basename(filename),
-                                )
+                            zf.write(
+                                filename=fullfilename,
+                                arcname=os.path.basename(filename),
+                            )
             response = HttpResponse(b.getvalue(), content_type="application/zip")
             response["Content-Disposition"] = 'attachment; filename="frepple.zip"'
             return response

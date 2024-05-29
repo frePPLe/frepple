@@ -3468,7 +3468,7 @@ class GridPivot(GridReport):
                 if not f[1]
             ]
         else:
-            myrows = [f for f in request.rows if f.name and not f.hidden]
+            myrows = [f for f in request.rows if f.name and not f.hidden and not f.initially_hidden]
         if request.prefs and "crosses" in request.prefs and not allColumns:
             mycrosses = [
                 request.crosses[f]

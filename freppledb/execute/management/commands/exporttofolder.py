@@ -587,6 +587,17 @@ class Command(BaseCommand):
         else:
             customreports = []
 
+        # TODO hard coded list of possible reports should be replaced with a dynamic query
+        reports = [
+            freppledb.output.views.resource.OverviewReport,
+            freppledb.output.views.demand.OverviewReport,
+            freppledb.output.views.buffer.OverviewReport,
+            freppledb.output.views.operation.OverviewReport,
+            freppledb.output.views.operation.DistributionReport,
+            freppledb.output.views.operation.PurchaseReport,
+        ]
+        if "freppledb.forecast" in settings.INSTALLED_APPS:
+            reports.append(freppledb.forecast.views.OverviewReport)
         return render_to_string(
             "commands/exporttofolder.html",
             {
@@ -597,16 +608,7 @@ class Command(BaseCommand):
                             capfirst(force_str(r.title)),
                             "%s.%s" % (r.__module__, r.__name__),
                         ]
-                        # TODO hard coded list of possible reports should be replaced with a dynamic query
-                        for r in [
-                            freppledb.output.views.resource.OverviewReport,
-                            freppledb.output.views.demand.OverviewReport,
-                            freppledb.output.views.buffer.OverviewReport,
-                            freppledb.output.views.operation.OverviewReport,
-                            freppledb.output.views.operation.DistributionReport,
-                            freppledb.output.views.operation.PurchaseReport,
-                            freppledb.forecast.views.OverviewReport,
-                        ]
+                        for r in reports
                     ]
                 ),
                 "customreports": customreports,

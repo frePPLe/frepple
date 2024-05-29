@@ -229,6 +229,8 @@ class ItemSupplier(AuditModel):
         if self.effective_start is None:
             self.effective_start = datetime(1971, 1, 1)
         if self.location is None and self._state.adding:
+            if not hasattr(self, "item") or not hasattr(self, "supplier"):
+                raise ValidationError("Some required fields are missing")
             # Django doesn't check unique partial indices
             if (
                 ItemSupplier.objects.using(self._state.db)

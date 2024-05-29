@@ -31,7 +31,7 @@ The picture below summarizes the product structure of this example.
 .. image:: _images/operation-dependency.png
     :alt: Example project plan
 
-`COMING SOON Check this feature on a live example <https://demo.frepple.com/operation-dependency/data/input/operationdependency/>`_
+`Check this feature on a live example <https://demo.frepple.com/operation-dependency/data/input/operationdependency/>`_
 
 :download:`Download an Excel spreadsheet with the data for this example<operation-dependency.xlsx>`
 

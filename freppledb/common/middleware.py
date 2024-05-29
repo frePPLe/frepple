@@ -412,17 +412,15 @@ class AllowedIpMiddleware:
     def __init__(self, get_response):
         # One-time initialisation
         self.get_response = get_response
+        self.allowed_ips = [
+            ipaddress.ip_network(ip) for ip in getattr(settings, "ALLOWED_IPS", [])
+        ]
 
     def __call__(self, request):
-        if hasattr(settings, "ALLOWED_IPS"):
-            found = False
-            for ip in settings.ALLOWED_IPS:
-                if ipaddress.ip_address(
-                    request.META["REMOTE_ADDR"]
-                ) in ipaddress.ip_network(ip):
-                    found = True
-                    break
-            if not found:
-                return HttpResponseForbidden("<h1>Unauthorized access</h1>")
-        response = self.get_response(request)
-        return response
+        if self.allowed_ips:
+            address = ipaddress.ip_address(request.META["REMOTE_ADDR"])
+            for ip in self.allowed_ips:
+                if address in ip:
+                    return self.get_response(request)
+            return HttpResponseForbidden("<h1>Unauthorized access</h1>")
+        return self.get_response(request)

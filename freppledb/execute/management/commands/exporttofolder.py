@@ -536,7 +536,10 @@ class Command(BaseCommand):
                     task.message = "Exported %s data files" % (cnt)
                 else:
                     task.status = "Failed"
-                    #  task.message = "Exported %s data files, %s failed" % (cnt-errors, errors)
+                    task.message = "Exported %s data files, %s failed" % (
+                        cnt - errors,
+                        errors,
+                    )
                 task.finished = datetime.now()
                 task.processid = None
                 task.save(using=self.database)

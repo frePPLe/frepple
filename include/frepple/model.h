@@ -3317,6 +3317,14 @@ class Operation : public HasName<Operation>,
     fence = t;
   }
 
+  /* Update the release fence, given a certain date.
+   * This method will internally convert the date into a duration (considering
+   * the available time on the operation).
+   */
+  void setFence(Date);
+
+  static PyObject* setFencePython(PyObject* self, PyObject* args);
+
   /* Return the search mode. */
   SearchMode getSearch() const { return search; }
 
@@ -8726,7 +8734,7 @@ class Plan : public Plannable, public Object {
   /* Initialize the class. */
   static int initialize();
 
-  virtual void updateProblems(){};
+  virtual void updateProblems() {};
 
   /* This method basically solves the whole planning problem. */
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }

@@ -46,6 +46,8 @@ int Operation::initialize() {
   PythonType& x = FreppleCategory<Operation>::getPythonType();
   x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
               "return the total lead time");
+  x.addMethod("setFence", &setFencePython, METH_VARARGS,
+              "Update the fence based on date");
   return FreppleCategory<Operation>::initialize();
 }
 
@@ -199,6 +201,28 @@ Date Operation::getFence(const OperationPlan* opplan) const {
         .getStart();
   else
     return Plan::instance().getCurrent();
+}
+
+void Operation::setFence(Date d) {
+  Duration tmp;
+  calculateOperationTime(nullptr, Plan::instance().getCurrent(), d, &tmp, true);
+  setFence(tmp);
+}
+
+PyObject* Operation::setFencePython(PyObject* self, PyObject* args) {
+  // Pick up the date argument
+  PyObject* pydate;
+  int ok = PyArg_ParseTuple(args, "O:setFence", &pydate);
+  if (!ok) return nullptr;
+
+  try {
+    PythonData dt(pydate);
+    static_cast<Operation*>(self)->setFence(dt.getDate());
+    return Py_BuildValue("");
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
 }
 
 Duration Operation::getMaxEarly() const {

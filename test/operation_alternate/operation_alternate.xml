@@ -1,444 +1,466 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <name>Test model for alternate selection</name>
-  <description>
+	<name>Test model for alternate selection</name>
+	<description>
     This test verifies that alternates are searched and selected correctly.
     Depending on the selection criterion this can be the alternate with the
     lowest priority number, the alternate with the lowest cost or the
     alternate with the lowest penalty value.
   </description>
-  <current>2009-01-01T00:00:00</current>
-
-  <!--
+	<current>2009-01-01T00:00:00</current>
+	<!--
     Case 1: minimum priority choice.
   -->
-  <resources>
-    <resource name="Resource 1 A">
-      <cost>1</cost>
-      <maximum_calendar name="Capacity 1 A">
-        <buckets>
-          <bucket start="2009-01-01T00:00:00">
-            <value>1</value>
-          </bucket>
-        </buckets>
-      </maximum_calendar>
-    </resource>
-    <resource name="Resource 1 B">
-      <cost>0.25</cost>
-      <maximum_calendar name="Capacity 1 B">
-        <buckets>
-          <bucket start="2009-01-01T00:00:00">
-            <value>1</value>
-          </bucket>
-        </buckets>
-      </maximum_calendar>
-    </resource>
-  </resources>
-    <operations>
-    <operation name="make item 1 with routing A" xsi:type="operation_routing">
-      <cost>13</cost>
-      <suboperations>
-        <suboperation>
-        <operation name="make item 1 with routing A step 1" xsi:type="operation_fixed_time">
-          <cost>2</cost>
-          <duration>P3D</duration>
-        </operation>
-        </suboperation>
-        <suboperation>
-        <operation name="make item 1 with routing A step 2" xsi:type="operation_time_per">
-          <cost>2</cost>
-          <loads>
-            <load>
-              <resource name="Resource 1 A" />
-            </load>
-          </loads>
-          <duration>P5D</duration>
-          <duration_per>P1D</duration_per>
-        </operation>
-        </suboperation>
-      </suboperations>
-    </operation>
-    <operation name="make item 1 with routing B" xsi:type="operation_time_per">
-      <cost>11</cost>
-      <loads>
-        <load>
-          <resource name="Resource 1 B" />
-        </load>
-      </loads>
-      <duration>P1D</duration>
-      <duration_per>P2D</duration_per>
-    </operation>
-    <operation name="buy from supplier C" xsi:type="operation_fixed_time">
-      <cost>30</cost>
-      <duration>P7D</duration>
-    </operation>
-    <operation name="buy from supplier D" xsi:type="operation_fixed_time">
-      <description>fast suplier, but expensive...</description>
-      <cost>50</cost>
-      <duration>P3D</duration>
-    </operation>
-    <operation name="alternatives for making item 1" xsi:type="operation_alternate" search="MINCOST" >
-      <suboperations>
-        <suboperation>
-          <operation name="make item 1 with routing A">
-            <flows>
-              <flow xsi:type="flow_end">
-                <buffer name="inventory item 1" />
-                <quantity>1</quantity>
-              </flow>
-            </flows>
-          </operation>
-          <priority>1</priority>
-        </suboperation>
-        <suboperation>
-          <operation name="make item 1 with routing B">
-            <flows>
-              <flow xsi:type="flow_end">
-                <buffer name="inventory item 1" />
-                <quantity>1</quantity>
-              </flow>
-            </flows>
-          </operation>
-          <priority>2</priority>
-        </suboperation>
-        <suboperation>
-          <operation name="buy from supplier C">
-            <flows>
-              <flow xsi:type="flow_end">
-                <buffer name="inventory item 1" />
-                <quantity>1</quantity>
-              </flow>
-            </flows>
-          </operation>
-          <priority>3</priority>
-        </suboperation>
-        <suboperation>
-          <operation name="buy from supplier D">
-            <flows>
-              <flow xsi:type="flow_end">
-                <buffer name="inventory item 1" />
-                <quantity>1</quantity>
-              </flow>
-            </flows>
-          </operation>
-          <priority>4</priority>
-        </suboperation>
-      </suboperations>
-    </operation>
-    </operations>
-    <buffers>
-      <buffer name="inventory item 1">
-        <item name="item 1" />
-        <producing name="alternatives for making item 1" />
-      </buffer>
-    </buffers>
-    <demands>
-      <demand name="order prio 1 for item 1">
-        <quantity>20</quantity>
-        <due>2009-01-11T00:00:00</due>
-        <priority>1</priority>
-        <item name="item 1" />
-        <operation name="delivery 1" duration="P1D" xsi:type="operation_fixed_time">
-          <flows>
-            <flow xsi:type="flow_start">
-              <buffer name="inventory item 1" />
-              <quantity>-1</quantity>
-            </flow>
-          </flows>
-        </operation>
-      </demand>
-      <demand name="order prio 2 for item 1">
-        <quantity>10</quantity>
-		<minshipment>10</minshipment>
-        <due>2009-01-02T00:00:00</due>
-        <priority>2</priority>
-        <item name="item 1"/>
-        <operation name="delivery 1"/>
-      </demand>
-    </demands>
-
-  <!--
+	<resources>
+		<resource name="Resource 1 A">
+			<cost>1</cost>
+			<maximum_calendar name="Capacity 1 A">
+				<buckets>
+					<bucket start="2009-01-01T00:00:00">
+						<value>1</value>
+					</bucket>
+				</buckets>
+			</maximum_calendar>
+		</resource>
+		<resource name="Resource 1 B">
+			<cost>0.25</cost>
+			<maximum_calendar name="Capacity 1 B">
+				<buckets>
+					<bucket start="2009-01-01T00:00:00">
+						<value>1</value>
+					</bucket>
+				</buckets>
+			</maximum_calendar>
+		</resource>
+	</resources>
+	<operations>
+		<operation name="make item 1 with routing A" xsi:type="operation_routing">
+			<cost>13</cost>
+			<suboperations>
+				<suboperation>
+					<operation name="make item 1 with routing A step 1" xsi:type="operation_fixed_time">
+						<cost>2</cost>
+						<duration>P3D</duration>
+					</operation>
+				</suboperation>
+				<suboperation>
+					<operation name="make item 1 with routing A step 2" xsi:type="operation_time_per">
+						<cost>2</cost>
+						<loads>
+							<load>
+								<resource name="Resource 1 A"/>
+							</load>
+						</loads>
+						<duration>P5D</duration>
+						<duration_per>P1D</duration_per>
+					</operation>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation name="make item 1 with routing B" xsi:type="operation_time_per">
+			<cost>11</cost>
+			<loads>
+				<load>
+					<resource name="Resource 1 B"/>
+				</load>
+			</loads>
+			<duration>P1D</duration>
+			<duration_per>P2D</duration_per>
+		</operation>
+		<operation name="buy from supplier C" xsi:type="operation_fixed_time">
+			<cost>30</cost>
+			<duration>P7D</duration>
+		</operation>
+		<operation name="buy from supplier D" xsi:type="operation_fixed_time">
+			<description>fast suplier, but expensive...</description>
+			<cost>50</cost>
+			<duration>P3D</duration>
+		</operation>
+		<operation name="alternatives for making item 1" xsi:type="operation_alternate" search="MINCOST">
+			<suboperations>
+				<suboperation>
+					<operation name="make item 1 with routing A">
+						<flows>
+							<flow xsi:type="flow_end">
+								<buffer name="inventory item 1"/>
+								<quantity>1</quantity>
+							</flow>
+						</flows>
+					</operation>
+					<priority>1</priority>
+				</suboperation>
+				<suboperation>
+					<operation name="make item 1 with routing B">
+						<flows>
+							<flow xsi:type="flow_end">
+								<buffer name="inventory item 1"/>
+								<quantity>1</quantity>
+							</flow>
+						</flows>
+					</operation>
+					<priority>2</priority>
+				</suboperation>
+				<suboperation>
+					<operation name="buy from supplier C">
+						<flows>
+							<flow xsi:type="flow_end">
+								<buffer name="inventory item 1"/>
+								<quantity>1</quantity>
+							</flow>
+						</flows>
+					</operation>
+					<priority>3</priority>
+				</suboperation>
+				<suboperation>
+					<operation name="buy from supplier D">
+						<flows>
+							<flow xsi:type="flow_end">
+								<buffer name="inventory item 1"/>
+								<quantity>1</quantity>
+							</flow>
+						</flows>
+					</operation>
+					<priority>4</priority>
+				</suboperation>
+			</suboperations>
+		</operation>
+	</operations>
+	<buffers>
+		<buffer name="inventory item 1">
+			<item name="item 1"/>
+			<producing name="alternatives for making item 1"/>
+		</buffer>
+	</buffers>
+	<demands>
+		<demand name="order prio 1 for item 1">
+			<quantity>20</quantity>
+			<due>2009-01-11T00:00:00</due>
+			<priority>1</priority>
+			<item name="item 1"/>
+			<operation name="delivery 1" duration="P1D" xsi:type="operation_fixed_time">
+				<flows>
+					<flow xsi:type="flow_start">
+						<buffer name="inventory item 1"/>
+						<quantity>-1</quantity>
+					</flow>
+				</flows>
+			</operation>
+		</demand>
+		<demand name="order prio 2 for item 1">
+			<quantity>10</quantity>
+			<minshipment>10</minshipment>
+			<due>2009-01-02T00:00:00</due>
+			<priority>2</priority>
+			<item name="item 1"/>
+			<operation name="delivery 1"/>
+		</demand>
+	</demands>
+	<!--
     Corner cases with date effective alternates
   -->
-  <items>
-    <item name="item 2" cost="1">
-        <itemsuppliers>
-          <itemsupplier>
-          <supplier name="MySupplier" />
-          <location name="warehouse" />
-          <leadtime>P2D</leadtime>
-          <priority>1</priority>
-          <effective_end>2009-01-10T00:00:00</effective_end>
-        </itemsupplier>
-        </itemsuppliers>
-    </item>
-  </items>
-  <demands>
-      <demand name="item 2 SO1">
-        <quantity>10</quantity>
-		<minshipment>10</minshipment>
-        <due>2009-01-31T00:00:00</due>
-        <priority>2</priority>
-        <item name="item 2"/>
-      <location name="warehouse" />
-      </demand>
-  </demands>
-
-  <items>
-    <item name="item 3" cost="1">
-        <itemsuppliers>
-          <itemsupplier>
-          <supplier name="MySupplier" />
-          <location name="warehouse" />
-          <leadtime>P14D</leadtime>
-          <priority>1</priority>
-          <effective_end>2009-01-10T00:00:00</effective_end>
-        </itemsupplier>
-        </itemsuppliers>
-    </item>
-  </items>
-  <demands>
-      <demand name="item 3 SO1">
-        <quantity>10</quantity>
-		<minshipment>10</minshipment>
-        <due>2009-01-31T00:00:00</due>
-        <priority>2</priority>
-        <item name="item 3"/>
-      <location name="warehouse" />
-      </demand>
-  </demands>
-
-  <items>
-    <item name="item 4" cost="1">
-        <itemsuppliers>
-          <itemsupplier>
-          <supplier name="MySupplier" />
-          <location name="warehouse" />
-          <leadtime>P14D</leadtime>
-          <priority>1</priority>
-          <effective_start>2009-02-10T00:00:00</effective_start>
-        </itemsupplier>
-        </itemsuppliers>
-    </item>
-  </items>
-  <demands>
-      <demand name="item 4 SO1">
-        <quantity>10</quantity>
-		<minshipment>10</minshipment>
-        <due>2009-01-31T00:00:00</due>
-        <priority>2</priority>
-        <item name="item 4"/>
-      <location name="warehouse" />
-      </demand>
-  </demands>
-
-  <!--
+	<items>
+		<item name="item 2" cost="1">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="MySupplier"/>
+					<location name="warehouse"/>
+					<leadtime>P2D</leadtime>
+					<priority>1</priority>
+					<effective_end>2009-01-10T00:00:00</effective_end>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+	</items>
+	<demands>
+		<demand name="item 2 SO1">
+			<quantity>10</quantity>
+			<minshipment>10</minshipment>
+			<due>2009-01-31T00:00:00</due>
+			<priority>2</priority>
+			<item name="item 2"/>
+			<location name="warehouse"/>
+		</demand>
+	</demands>
+	<items>
+		<item name="item 3" cost="1">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="MySupplier"/>
+					<location name="warehouse"/>
+					<leadtime>P14D</leadtime>
+					<priority>1</priority>
+					<effective_end>2009-01-10T00:00:00</effective_end>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+	</items>
+	<demands>
+		<demand name="item 3 SO1">
+			<quantity>10</quantity>
+			<minshipment>10</minshipment>
+			<due>2009-01-31T00:00:00</due>
+			<priority>2</priority>
+			<item name="item 3"/>
+			<location name="warehouse"/>
+		</demand>
+	</demands>
+	<items>
+		<item name="item 4" cost="1">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="MySupplier"/>
+					<location name="warehouse"/>
+					<leadtime>P14D</leadtime>
+					<priority>1</priority>
+					<effective_start>2009-02-10T00:00:00</effective_start>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+	</items>
+	<demands>
+		<demand name="item 4 SO1">
+			<quantity>10</quantity>
+			<minshipment>10</minshipment>
+			<due>2009-01-31T00:00:00</due>
+			<priority>2</priority>
+			<item name="item 4"/>
+			<location name="warehouse"/>
+		</demand>
+	</demands>
+	<!--
     Corner case of unplannable 0-priority alternate
   -->
-  <items>
-    <item name="item 5" cost="1">
-        <itemsuppliers>
-          <itemsupplier>
-          <supplier name="MySupplier" />
-          <location name="warehouse" />
-          <leadtime>P14D</leadtime>
-          <priority>0</priority>
-        </itemsupplier>
-        </itemsuppliers>
-    </item>
-  </items>
-  <demands>
-      <demand name="item 5 SO1">
-        <quantity>10</quantity>
-		<minshipment>10</minshipment>
-        <due>2009-01-31T00:00:00</due>
-        <priority>2</priority>
-        <item name="item 5"/>
-      <location name="warehouse" />
-      </demand>
-  </demands>
-
-  <!--
+	<items>
+		<item name="item 5" cost="1">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="MySupplier"/>
+					<location name="warehouse"/>
+					<leadtime>P14D</leadtime>
+					<priority>0</priority>
+				</itemsupplier>
+			</itemsuppliers>
+		</item>
+	</items>
+	<demands>
+		<demand name="item 5 SO1">
+			<quantity>10</quantity>
+			<minshipment>10</minshipment>
+			<due>2009-01-31T00:00:00</due>
+			<priority>2</priority>
+			<item name="item 5"/>
+			<location name="warehouse"/>
+		</demand>
+	</demands>
+	<!--
     Case: minimum cost choice.
     TODO
   -->
-  <!--
+	<!--
     Case: minimum penalty choice.
     TODO
   -->
-  <!--
+	<!--
     Case: minimum cost+penalty choice.
     TODO
   -->
-
-  <!-- Case: Size based alternate selection. -->
-  <operations>
-    <operation name="2. make item qty 5-10" xsi:type="operation_time_per">
-      <item name="2. item"/>
-      <location name="warehouse" />
-      <priority>1</priority>
-      <size_minimum>5</size_minimum>
-      <size_maximum>10</size_maximum>
-      <duration>PT1H</duration>
-      <duration_per>PT60M</duration_per>
-    </operation>
-    <operation name="2. make item qty 10-20" xsi:type="operation_time_per">
-      <item name="2. item"/>
-      <location name="warehouse" />
-      <priority>2</priority>
-      <size_minimum>10</size_minimum>
-      <size_maximum>20</size_maximum>
-      <duration>PT1H</duration>
-      <duration_per>PT50M</duration_per>
-    </operation>
-    <operation name="2. make item qty 20+" xsi:type="operation_time_per">
-      <item name="2. item"/>
-      <location name="warehouse" />
-      <size_minimum>20</size_minimum>
-      <priority>3</priority>
-      <duration>PT1H</duration>
-      <duration_per>PT40M</duration_per>
-    </operation>
-  </operations>
-  <demands>
-      <demand name="2. item SO1">
-        <quantity>3</quantity>
-		<minshipment>3</minshipment>
-        <due>2009-01-20T00:00:00</due>
-        <item name="2. item"/>
-      <location name="warehouse" />
-      </demand>
-      <demand name="2. item SO2">
-        <quantity>15</quantity>
-		<minshipment>15</minshipment>
-        <due>2009-02-20T00:00:00</due>
-        <item name="2. item"/>
-      <location name="warehouse" />
-      </demand>
-      <demand name="2. item SO3">
-        <quantity>30</quantity>
-		<minshipment>30</minshipment>
-        <due>2009-03-20T00:00:00</due>
-        <item name="2. item"/>
-      <location name="warehouse" />
-      </demand>
-  </demands>
-
-  <!-- Case: corner case with allowsplits=false and partial availability. -->
-  <operations>
-    <operation name="3. broken path" xsi:type="operation_fixed_time">
-      <item name="3. item"/>
-      <location name="warehouse" />
-      <priority>1</priority>
-      <flows>
-        <flow xsi:type="flow_start">
-          <item name="3. unavailable component" />
-          <quantity>-1</quantity>
-        </flow>
-        </flows>
-      <duration>PT1H</duration>
-    </operation>
-    <operation name="3. producing" xsi:type="operation_time_per">
-      <item name="3. item"/>
-      <location name="warehouse" />
-      <priority>2</priority>
-      <flows>
-        <flow xsi:type="flow_start">
-          <item name="3. component" />
-          <quantity>-1</quantity>
-        </flow>
-        </flows>
-      <duration>P1D</duration>
-      <duration_per>P1D</duration_per>
-    </operation>
-  </operations>
-  <buffers>
-    <buffer name="3. component @ warehouse" onhand="5">
-      <item name="3. component" />
-      <location name="warehouse" />
-    </buffer>
-  </buffers>
-  <suppliers>
-    <supplier name="3. Supplier">
-        <itemsuppliers>
-          <itemsupplier>
-          <item name="3. component"/>
-          <leadtime>P70D</leadtime>
-        </itemsupplier>
-        </itemsuppliers>
-      </supplier>
-  </suppliers>
-  <demands>
-    <demand name="3. SO1">
-      <quantity>10</quantity>
-	  <minshipment>10</minshipment>
-      <due>2009-01-21T00:00:00</due>
-      <item name="3. item"/>
-      <location name="warehouse" />
-    </demand>
-  </demands>
-
-  <!-- Case: corner case with mincost search across size-based alternates. -->
-  <operations>
-    <operation name="4. alternate A" xsi:type="operation_fixed_time">
-      <item name="4. item"/>
-      <location name="warehouse" />
-      <priority>1</priority>
-	  <cost>30</cost>
-	  <size_minimum>1</size_minimum>
-	  <size_maximum>1</size_maximum>
-	  <search>MINCOST</search>
-      <loads>
-        <load>
-          <resource name="4. machine" />
-          <quantity>1</quantity>
-        </load>
-      </loads>
-      <duration>PT1H</duration>
-    </operation>
-    <operation name="4. alternate B" xsi:type="operation_fixed_time">
-      <item name="4. item"/>
-      <location name="warehouse" />
-      <priority>2</priority>
-	  <cost>5</cost>
-	  <size_minimum>1</size_minimum>
-	  <size_maximum>1</size_maximum>
-	  <search>MINCOST</search>
-      <loads>
-        <load>
-          <resource name="4. machine" />
-          <quantity>1</quantity>
-        </load>
-      </loads>
-      <duration>PT1H</duration>
-    </operation>
-    <operation name="4. alternate C" xsi:type="operation_fixed_time">
-      <item name="4. item"/>
-      <location name="warehouse" />
-      <priority>3</priority>
-	  <cost>20</cost>
-	  <size_minimum>1</size_minimum>
-	  <size_maximum>1</size_maximum>
-	  <search>MINCOST</search>
-      <loads>
-        <load>
-          <resource name="4. machine" />
-          <quantity>1</quantity>
-        </load>
-      </loads>
-      <duration>PT1H</duration>
-    </operation>	
-  </operations>
-  <demands>
-    <demand name="4. SO1">
-      <quantity>10</quantity>
-	  <minshipment>10</minshipment>
-      <due>2009-01-21T00:00:00</due>
-      <item name="4. item"/>
-      <location name="warehouse" />
-    </demand>
-  </demands>
-
+	<!-- Case: Size based alternate selection. -->
+	<operations>
+		<operation name="2. make item qty 5-10" xsi:type="operation_time_per">
+			<item name="2. item"/>
+			<location name="warehouse"/>
+			<priority>1</priority>
+			<size_minimum>5</size_minimum>
+			<size_maximum>10</size_maximum>
+			<duration>PT1H</duration>
+			<duration_per>PT60M</duration_per>
+		</operation>
+		<operation name="2. make item qty 10-20" xsi:type="operation_time_per">
+			<item name="2. item"/>
+			<location name="warehouse"/>
+			<priority>2</priority>
+			<size_minimum>10</size_minimum>
+			<size_maximum>20</size_maximum>
+			<duration>PT1H</duration>
+			<duration_per>PT50M</duration_per>
+		</operation>
+		<operation name="2. make item qty 20+" xsi:type="operation_time_per">
+			<item name="2. item"/>
+			<location name="warehouse"/>
+			<size_minimum>20</size_minimum>
+			<priority>3</priority>
+			<duration>PT1H</duration>
+			<duration_per>PT40M</duration_per>
+		</operation>
+	</operations>
+	<demands>
+		<demand name="2. item SO1">
+			<quantity>3</quantity>
+			<minshipment>3</minshipment>
+			<due>2009-01-20T00:00:00</due>
+			<item name="2. item"/>
+			<location name="warehouse"/>
+		</demand>
+		<demand name="2. item SO2">
+			<quantity>15</quantity>
+			<minshipment>15</minshipment>
+			<due>2009-02-20T00:00:00</due>
+			<item name="2. item"/>
+			<location name="warehouse"/>
+		</demand>
+		<demand name="2. item SO3">
+			<quantity>30</quantity>
+			<minshipment>30</minshipment>
+			<due>2009-03-20T00:00:00</due>
+			<item name="2. item"/>
+			<location name="warehouse"/>
+		</demand>
+	</demands>
+	<!-- Case: corner case with allowsplits=false and partial availability. -->
+	<operations>
+		<operation name="3. broken path" xsi:type="operation_fixed_time">
+			<item name="3. item"/>
+			<location name="warehouse"/>
+			<priority>1</priority>
+			<flows>
+				<flow xsi:type="flow_start">
+					<item name="3. unavailable component"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>PT1H</duration>
+		</operation>
+		<operation name="3. producing" xsi:type="operation_time_per">
+			<item name="3. item"/>
+			<location name="warehouse"/>
+			<priority>2</priority>
+			<flows>
+				<flow xsi:type="flow_start">
+					<item name="3. component"/>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+			<duration_per>P1D</duration_per>
+		</operation>
+	</operations>
+	<buffers>
+		<buffer name="3. component @ warehouse" onhand="5">
+			<item name="3. component"/>
+			<location name="warehouse"/>
+		</buffer>
+	</buffers>
+	<suppliers>
+		<supplier name="3. Supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="3. component"/>
+					<leadtime>P70D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<demands>
+		<demand name="3. SO1">
+			<quantity>10</quantity>
+			<minshipment>10</minshipment>
+			<due>2009-01-21T00:00:00</due>
+			<item name="3. item"/>
+			<location name="warehouse"/>
+		</demand>
+	</demands>
+	<!-- Case: corner case with mincost search across size-based alternates. -->
+	<operations>
+		<operation name="4. alternate A" xsi:type="operation_fixed_time">
+			<item name="4. item"/>
+			<location name="warehouse"/>
+			<priority>1</priority>
+			<cost>30</cost>
+			<size_minimum>1</size_minimum>
+			<size_maximum>1</size_maximum>
+			<search>MINCOST</search>
+			<loads>
+				<load>
+					<resource name="4. machine"/>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>PT1H</duration>
+		</operation>
+		<operation name="4. alternate B" xsi:type="operation_fixed_time">
+			<item name="4. item"/>
+			<location name="warehouse"/>
+			<priority>2</priority>
+			<cost>5</cost>
+			<size_minimum>1</size_minimum>
+			<size_maximum>1</size_maximum>
+			<search>MINCOST</search>
+			<loads>
+				<load>
+					<resource name="4. machine"/>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>PT1H</duration>
+		</operation>
+		<operation name="4. alternate C" xsi:type="operation_fixed_time">
+			<item name="4. item"/>
+			<location name="warehouse"/>
+			<priority>3</priority>
+			<cost>20</cost>
+			<size_minimum>1</size_minimum>
+			<size_maximum>1</size_maximum>
+			<search>MINCOST</search>
+			<loads>
+				<load>
+					<resource name="4. machine"/>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>PT1H</duration>
+		</operation>
+	</operations>
+	<demands>
+		<demand name="4. SO1">
+			<quantity>10</quantity>
+			<minshipment>10</minshipment>
+			<due>2009-01-21T00:00:00</due>
+			<item name="4. item"/>
+			<location name="warehouse"/>
+		</demand>
+	</demands>
+	
+	<!-- Case: Corner case size based alternate selection. -->
+	<operations>
+		<operation name="5. make item qty 5-10" xsi:type="operation_time_per">
+			<item name="5. item"/>
+			<location name="warehouse"/>
+			<priority>1</priority>
+			<size_minimum>5</size_minimum>
+			<size_maximum>10</size_maximum>
+			<duration>PT1H</duration>
+			<duration_per>PT60M</duration_per>
+		</operation>
+		<operation name="5. make item qty 10-20" xsi:type="operation_time_per">
+			<item name="5. item"/>
+			<location name="warehouse"/>
+			<priority>1</priority>
+			<size_minimum>10</size_minimum>
+			<size_maximum>20</size_maximum>
+			<duration>PT1H</duration>
+			<duration_per>PT50M</duration_per>
+		</operation>
+	</operations>
+	<demands>
+		<demand name="5. item SO1">
+			<quantity>300</quantity>
+			<minshipment>300</minshipment>
+			<due>2009-01-20T00:00:00</due>
+			<item name="5. item"/>
+			<location name="warehouse"/>
+		</demand>
+	</demands>
+  
 <?python
 print("CREATING CONSTRAINED PLAN")
 sol = frepple.solver_mrp(constraints=15, loglevel=2)
@@ -454,5 +476,4 @@ sol.constraints = 0
 sol.solve()
 frepple.saveplan("output.3.xml")
 ?>
-
 </plan>

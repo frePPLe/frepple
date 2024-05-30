@@ -233,6 +233,51 @@ class ReportByDemand(GridReport):
 
     @classmethod
     def query(reportclass, request, basequery):
+
+        # pos1 is the position in the list l of the last suboperation
+        # pos2 is the id==position in the list of the routing
+        # id1 < id2
+        # swap will move the routing in front of its subops and update the depth and parent
+        # of its suboperations
+        def swap(l: list, pos1, pos2):
+
+            # store the depth
+            depth = l[pos1]["depth"]
+
+            # move the routing in front of the first suboperation
+            l.insert(pos1, l.pop(pos2))
+            # give to the routing the parent/depth of the last subop
+            l[pos1]["parent"] = l[pos1 + 1]["parent"]
+            l[pos1]["depth"] = l[pos1 + 1]["depth"]
+            # iterate over the suboperations
+            i = pos1 + 1
+            print(i, pos1, pos2)
+            while i <= pos2:
+                l[i]["parent"] = l[pos1]["id"]
+                l[i]["depth"] = depth + 1
+                l[i]["leaf"] = "true"
+                i += 1
+
+        # swap_mo_wo will move a routing operation before its suboperations
+        # in the delivery plan
+        def swap_mo_wo(l: list):
+            visited = []
+            owner = None
+            counter = 0
+            for r in l:
+                if owner and owner[0] in [l["reference"] for l in r["operationplans"]]:
+                    # ...and now we found the owner, let's make the swap
+                    swap(l, owner[2], counter)
+                    # we need to reset the variables as we may find other routings in the path
+                    owner = None
+                    visited.clear()
+                if not owner and r["owner"] and r["owner"] not in visited:
+                    # We found a suboperation before its owner...
+                    owner = (r["owner"], r["id"], counter)
+                visited.append(r["id"])
+                counter += 1
+            return l
+
         # Build the base query
         basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(
             with_col_aliases=False
@@ -657,5 +702,7 @@ class ReportByDemand(GridReport):
                         ]
                         yield r
                 else:
-                    for r in sorted(response, key=lambda d: d["id"]):
+                    # swap_mo_wo is a post-processing step to move a routing operation
+                    # before its suboperations
+                    for r in swap_mo_wo(sorted(response, key=lambda d: d["id"])):
                         yield r

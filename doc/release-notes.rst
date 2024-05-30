@@ -45,6 +45,9 @@ This release is scheduled for May/June 2024. You can already check out a `previe
 
 .. rubric:: User interface
 
+- | The `demand gantt report <user-interface/plan-analysis/demand-gantt-report.html>`_ was updated
+    to display a routing operation before its suboperations.
+
 - | You can now configure frepple to hide the hours, minutes and seconds from
     all date fields. This is handy when you are not interested in the precise
     timing within each day of your plan.

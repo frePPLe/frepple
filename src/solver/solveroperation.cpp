@@ -1527,8 +1527,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           auto maxq = (*altIter)->getOperation()->getSizeMaximum();
           auto multq = (*altIter)->getOperation()->getSizeMultiple();
           auto reject = true;
-          if (maxq && maxq != DBL_MAX && multq) {
-            maxq = floor(maxq / multq) * multq;
+          if (maxq && maxq != DBL_MAX) {
+            if (multq) maxq = floor(maxq / multq) * multq;
             if (fabs(maxq - data->state->a_qty) < ROUNDING_ERROR)
               // Answer was limited by the sizemaximum. We shouldn't reject it.
               reject = false;

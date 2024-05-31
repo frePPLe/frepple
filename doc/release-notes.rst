@@ -1,11 +1,13 @@
 Release notes
 -------------
 
-
-9.0.0 (Upcoming release)
+9.1.0 (Upcoming release)
 ========================
 
-This release is scheduled for May/June 2024. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+This release is scheduled for early July. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.0.0 (2024-06-01)
+==================
 
 .. rubric:: Production planning
 

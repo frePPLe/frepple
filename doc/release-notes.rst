@@ -34,10 +34,10 @@ This release is scheduled for early July. You can already check out a `preview <
 - | Bug fix: "Orders planned" row in forecast editor and forecast report wasn't
     calculated correctly when orders aren't at the level where the forecast is planned.
 
-- | The parameters for the statisctical forecast methods (alfa, beta, gamma...) will have
+- | The parameters for the statistical forecast methods (alfa, beta, gamma...) will have
     a value set to "default". The planner still has the possibility to update the value with
     a custom value.
-  | The dataset *parameters_day_forecast, parameters_week_forecast, parameters_month_forecast* are
+  | The datasets *parameters_day_forecast, parameters_week_forecast, parameters_month_forecast* are
     removed.
 
 .. rubric:: Supported operating systems
@@ -88,7 +88,7 @@ This release is scheduled for early July. You can already check out a `preview <
 .. rubric:: System administration
 
 - | Ability to customize the "export plan results" task.
-  | Until you had to rely on the standard export logic or write a frepple app to tailor the
+  | Until now you had to rely on the standard export logic or write a frepple app to tailor the
     export to your needs.
   | Now you can customize the exports from the user interface.
 

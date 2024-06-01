@@ -58,6 +58,9 @@ This release is scheduled for early July. You can already check out a `preview <
 
 - | Bug fix: Adding custom attributes was broken.
 
+- | Bug fix: The field "end items" in the purchase order and distribution order screen
+    wasn't searchable.
+
 .. rubric:: Odoo integration
 
 - | 15, 16, 17: The shipping policy on odoo sales orders is now mapped.

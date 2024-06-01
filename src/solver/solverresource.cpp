@@ -548,7 +548,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
         if (cur->getOnhand() < overloadQty) overloadQty = cur->getOnhand();
 
       // Solve the overload in the bucket by resizing the operationplan.
-      // If the complete operationplan is overload or allowsplits = false then
+      // If the complete operationplan is overload then
       // we can skip this step. Because of operation size constraints (minimum
       // and multiple values) it is possible that the resizing fails.
       if (overloadQty < -ROUNDING_ERROR &&

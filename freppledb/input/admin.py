@@ -637,7 +637,20 @@ class Resource_admin(MultiDBModelAdmin):
         "efficiency_calendar",
     )
     fieldsets = (
-        (None, {"fields": ("name", "location", "type", "maximum")}),
+        (
+            None,
+            {
+                "fields": (
+                    "name",
+                    "location",
+                    "type",
+                    "maximum",
+                    "maximum_calendar",
+                    "available",
+                    "constrained",
+                )
+            },
+        ),
         (
             _("advanced"),
             {
@@ -645,10 +658,7 @@ class Resource_admin(MultiDBModelAdmin):
                     "description",
                     "category",
                     "subcategory",
-                    "constrained",
                     "owner",
-                    "maximum_calendar",
-                    "available",
                     "cost",
                     "maxearly",
                     "setupmatrix",

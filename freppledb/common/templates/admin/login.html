@@ -72,12 +72,12 @@ window.addEventListener("beforeinstallprompt", event => {
 		  <div class="mb-3">
 		    {{ form.username.errors }}
 		    <label for="id_username" class="required mb-1">{{ form.username.label }}:</label>
-		    <input id="id_username" autofocus="autofocus" class="form-control" maxlength="254" name="username" type="text">
+		    <input id="id_username" autofocus="autofocus" autocomplete="username" class="form-control" maxlength="254" name="username" type="text">
 		  </div>
 		  <div class="mb-3">
 		    {{ form.password.errors }}
 		    <label for="id_password" class="required mb-1">{% trans 'Password'|capfirst %}:</label>
-		    <input id="id_password" class="form-control" name="password" type="password">
+		    <input id="id_password" class="form-control" autocomplete="current-password" name="password" type="password">
 		    <input type="hidden" name="next" value="{{ request.prefix }}{{ next }}" />
 		  </div>
 		  <div class="mb-3 text-center">

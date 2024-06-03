@@ -345,6 +345,15 @@ class OperationResourceList(GridReport):
             formatter="detail",
             extra='"role":"input/location"',
         ),
+        GridFieldText(
+            "resource__available",
+            editable=False,
+            initially_hidden=True,
+            title=format_lazy("{} - {}", _("resource"), _("available")),
+            field_name="resource__available__name",
+            formatter="detail",
+            extra='"role":"input/calendar"',
+        ),
     )
 
 

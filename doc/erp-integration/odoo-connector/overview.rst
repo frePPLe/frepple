@@ -3,10 +3,11 @@ Overview
 
 Before going into the technical details, you might want to take one step back and understand
 `what Odoo cannot do for planners <https://frepple.com/blog/five_things_odoo_mrp_doesnt_do/>`_
-and why advanced planning is required for complex production environments.
+and why advanced planning is required for complex environments.
 
 .. image:: _images/odoo_planning_complexity.png
    :alt: Import data from odoo
+   :scale: 50%
 
 
 The connector provides the following functionality:

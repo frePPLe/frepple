@@ -92,8 +92,28 @@ void Resource::inspect(const string& msg, const short i) const {
   if (!msg.empty()) logger << msg;
   logger << endl;
 
+  Date earliest = Date::infiniteFuture;
+  Date latest = Date::infinitePast;
+  Date prev;
+  unsigned int cnt;
   for (loadplanlist::const_iterator oo = getLoadPlans().begin();
        oo != getLoadPlans().end(); ++oo) {
+    if (oo->getEventType() != 1)
+      ++cnt;
+    else {
+      if (oo->getDate() > latest) latest = oo->getDate();
+      if (oo->getDate() < earliest) earliest = prev;
+    }
+    prev = oo->getDate();
+  }
+
+  for (loadplanlist::const_iterator oo = getLoadPlans().begin();
+       oo != getLoadPlans().end(); ++oo) {
+    if (cnt > 100) {
+      // Skip uninteresting events
+      if (oo->getDate() < earliest - Duration(7L * 24L * 3600L)) continue;
+      if (oo->getDate() > latest + Duration(7L * 24L * 3600L)) break;
+    }
     logger << indentstring << "    " << oo->getDate()
            << " qty:" << oo->getQuantity() << ", oh:" << oo->getOnhand();
     switch (oo->getEventType()) {

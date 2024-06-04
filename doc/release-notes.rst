@@ -6,6 +6,14 @@ Release notes
 
 This release is scheduled for early July. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | Bug fix: Planning operation dependencies could leave partially planned demands in 9.0.0.
+
+.. rubric:: Supported operating systems
+
+- | The docker image of 9.0.0 missed the root certificates required for any remote https connection.
+
 9.0.0 (2024-06-01)
 ==================
 

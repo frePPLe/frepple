@@ -2227,7 +2227,8 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
     data.populateDependencies(opplan->getOperation());
 
   for (auto dpd : opplan->getOperation()->getDependencies()) {
-    if (dpd->getOperation() != opplan->getOperation()) continue;
+    if (dpd->getOperation() != opplan->getOperation() || !dpd->getQuantity())
+      continue;
 
     // Compute ask date
     data.state->q_date = opplan->getStart();
@@ -2325,14 +2326,14 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
 
     if (data.state->q_qty > allocated + ROUNDING_ERROR) {
       // Plan net required quantity
-      data.state->q_qty -= allocated;
       auto orig_q_qty = data.state->q_qty;
       bool repeat = false;
       auto bm = data.getCommandManager()->setBookmark();
       auto prevOwnerOpplan = data.state->curOwnerOpplan;
       do {
         repeat = false;
-        data.state->q_qty = orig_q_qty;
+        data.state->q_qty = orig_q_qty - allocated;
+        double my_q_qty = data.state->q_qty;
         data.state->blockedOpplan = opplan;
         data.state->dependency = dpd;
         data.state->curOwnerOpplan =
@@ -2369,6 +2370,11 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
             data.dependency_list.clear();
             break;
           }
+        } else if (!data.state->curOwnerOpplan &&
+                   fabs(my_q_qty - data.state->a_qty) > ROUNDING_ERROR) {
+          // Partially planned across a dependency.
+          allocated += data.state->a_qty;
+          repeat = true;
         }
       } while (repeat);
       data.state->curOwnerOpplan = prevOwnerOpplan;

@@ -1823,23 +1823,64 @@ class ForecastEditor:
         customer_type = ContentType.objects.get_for_model(Customer)
         item_type = ContentType.objects.get_for_model(Item)
         location_type = ContentType.objects.get_for_model(Location)
+        item_obj = (
+            Item.objects.only("lft", "rght").using(request.database).get(name=item)
+        )
+        location_obj = (
+            Location.objects.only("lft", "rght")
+            .using(request.database)
+            .get(name=location)
+        )
+        customer_obj = (
+            Customer.objects.only("lft", "rght")
+            .using(request.database)
+            .get(name=customer)
+        )
+
         comments = (
             Comment.objects.using(request.database)
             .filter(
-                Q(content_type=customer_type.id, object_pk=customer)
-                | Q(content_type=item_type.id, object_pk=item)
-                | Q(content_type=location_type.id, object_pk=location)
+                Q(
+                    content_type=customer_type.id,
+                    object_pk__in=[
+                        i["name"]
+                        for i in Customer.objects.using(request.database)
+                        .filter(lft__gte=customer_obj.lft)
+                        .filter(lft__lt=customer_obj.rght)
+                        .values("name")
+                    ],
+                )
+                | Q(
+                    content_type=item_type.id,
+                    object_pk__in=[
+                        i["name"]
+                        for i in Item.objects.using(request.database)
+                        .filter(lft__gte=item_obj.lft)
+                        .filter(lft__lt=item_obj.rght)
+                        .values("name")
+                    ],
+                )
+                | Q(
+                    content_type=location_type.id,
+                    object_pk__in=[
+                        i["name"]
+                        for i in Location.objects.using(request.database)
+                        .filter(lft__gte=location_obj.lft)
+                        .filter(lft__lt=location_obj.rght)
+                        .values("name")
+                    ],
+                )
             )
             .order_by("-lastmodified")
         )
         result_comment = []
         for i in comments:
             if i.content_type == customer_type:
-                t = "customer"
+                t = "customer %s" % (i.object_pk,)
             elif i.content_type == item_type:
-                t = "item"
+                t = "item %s" % (i.object_pk,)
             else:
-                t = "location"
+                t = "location %s" % (i.object_pk,)
             result_comment.append(
                 {
                     "user": "%s (%s)" % (i.user.username, i.user.get_full_name()),

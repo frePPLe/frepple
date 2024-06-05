@@ -96,10 +96,16 @@ if __name__ == "__main__":
 
         Scenario.syncWithSettings()
 
-        # Run the command
-        from django.core.management import execute_from_command_line
+        if "version" in sys.argv or "--version" in sys.argv:
+            # Display the version and stop
+            import freppledb
 
-        execute_from_command_line(sys.argv)
+            sys.stdout.write(freppledb.__version__ + "\n")
+        else:
+            # Run the command
+            from django.core.management import execute_from_command_line
+
+            execute_from_command_line(sys.argv)
 
     except KeyboardInterrupt:
         print("\nInterrupted with Ctrl-C")

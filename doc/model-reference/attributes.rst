@@ -22,7 +22,7 @@ definition screen in its menus.
 Field            Type              Description
 ================ ================= ===========================================================
 name             string            | Unique name of the field.
-                                   | Only alfanumeric characters are allowed.
+                                   | Only alphanumeric characters are allowed.
 
 label            string            The string displayed in the user interface. This will be
                                    translated automatically to the language configured in

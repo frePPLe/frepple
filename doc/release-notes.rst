@@ -14,6 +14,11 @@ This release is scheduled for early July. You can already check out a `preview <
 
 - | The docker image of 9.0.0 missed the root certificates required for any remote https connection.
 
+.. rubric:: Odoo integration
+
+- | 16, 17: The connector no longer depends on the external jwt python package.
+  | Installing the dependency frequently created trouble or confusion.
+
 9.0.0 (2024-06-01)
 ==================
 

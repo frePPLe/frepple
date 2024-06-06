@@ -3,6 +3,7 @@ requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
+version = "9.1.0"
 description = "frePPLe - open source Production PLanning"
 name = "freppledb"
 authors = [{ name = "frepple.com", email = "info@frepple.com" }]
@@ -14,7 +15,6 @@ classifiers = [
     "Framework :: Django",
 ]
 requires-python = ">=3.8"
-version = "0.0.0"
 
 [project.urls]
 Homepage = "https://frepple.com"

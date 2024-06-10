@@ -221,7 +221,7 @@ class Command(BaseCommand):
                 i = 0
                 cnt = len(models)
                 for ifile, model, contenttype_id, dependencies in models:
-                    task.status = str(int(10 + i / cnt * 80)) + "%"
+                    task.status = str(int(i / cnt * 100)) + "%"
                     task.message = "Processing data file %s" % ifile
                     task.save(using=self.database)
                     i += 1

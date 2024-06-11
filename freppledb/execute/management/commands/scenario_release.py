@@ -134,9 +134,9 @@ class Command(BaseCommand):
                         """
                             % t
                         )
-            except:
+            except Exception as e:
                 # Silently continue if data cleansing failes
-                print("Warning: Failed to empty the scenario data")
+                print("Failed to empty the scenario data: %s" % (e,))
 
             # Killing webservice
             if "freppledb.webservice" in settings.INSTALLED_APPS:

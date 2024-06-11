@@ -27,7 +27,7 @@ import os
 from django.core import management
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db import DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS, connections
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User, Scenario
@@ -117,6 +117,26 @@ class Command(BaseCommand):
             releasedScenario.status = "Free"
             releasedScenario.lastrefresh = datetime.today()
             releasedScenario.save(using=DEFAULT_DB_ALIAS)
+
+            # Emptying the data of the released scenario
+            try:
+                with connections[database].cursor() as cursor:
+                    cursor.execute(
+                        """
+                    select tablename from pg_tables where schemaname='public'
+                    """
+                    )
+                    tables = [t for t in cursor]
+                    for t in tables:
+                        cursor.execute(
+                            """
+                            drop table if exists %s cascade;
+                        """
+                            % t
+                        )
+            except:
+                # Silently continue if data cleansing failes
+                print("Warning: Failed to empty the scenario data")
 
             # Killing webservice
             if "freppledb.webservice" in settings.INSTALLED_APPS:

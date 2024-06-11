@@ -14,6 +14,11 @@ This release is scheduled for early July. You can already check out a `preview <
 
 - | Bug fix: Fixes a nasty engine crash in complex multithreading situations.
 
+.. rubric:: User interface
+
+- | When releasing a scenario, the data of that scenario is now deleted to optimize the database
+    disk space.
+
 .. rubric:: Supported operating systems
 
 - | The docker image of 9.0.0 missed the root certificates required for any remote https connection.

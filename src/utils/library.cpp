@@ -46,7 +46,7 @@ namespace frepple {
 namespace utils {
 
 // Static stringpool table
-PooledString::pool_type PooledString::pool;
+set<string> PooledString::pool;
 const PooledString PooledString::emptystring;
 const string PooledString::nullstring;
 const char PooledString::nullchar = '\0';

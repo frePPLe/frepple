@@ -4307,7 +4307,7 @@ class Command {
    *   - Calling the method multiple times is harmless. Only the first
    *     call is expected to do something.
    */
-  virtual void commit(){};
+  virtual void commit() {};
 
   /* This method permanently undoes the change.
    * A couple of notes on how this method should be implemented by the
@@ -4315,7 +4315,7 @@ class Command {
    *   - Calling the rollback() method multiple times is harmless. Only
    *     the first call is expected to do something.
    */
-  virtual void rollback(){};
+  virtual void rollback() {};
 
   virtual ~Command(){};
 
@@ -5116,28 +5116,17 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
 class PooledString {
  private:
   /* Pool of strings. */
-  typedef unordered_map<string, unsigned int> pool_type;
-  static pool_type pool;
+  static set<string> pool;
 
   /* Pointer to an element in the pool. */
-  pool_type::value_type* ptr = nullptr;
-
-  void clear() {
-    if (!ptr) return;
-    if (--(ptr->second) == 0) {
-      // Remove from the pool
-      pool.erase(ptr->first);
-      ptr = nullptr;
-    }
-  }
+  string* ptr = nullptr;
 
   void insert(const string& v) {
     if (v.empty())
       ptr = nullptr;
     else {
-      auto tmp = pool.insert(pool_type::value_type(v, 1));
-      if (!tmp.second) ++(tmp.first->second);
-      ptr = &*(tmp.first);
+      auto tmp = pool.insert(v);
+      ptr = const_cast<string*>(&*(tmp.first));
     }
   }
 
@@ -5147,8 +5136,9 @@ class PooledString {
   const static char nullchar;
 
   static pair<size_t, size_t> getSize() {
-    return make_pair(pool.size(), pool.size() * (sizeof(pool_type::value_type) +
-                                                 4 * sizeof(void*)));
+    return make_pair(
+        pool.size(),
+        pool.size() * (sizeof(set<string>::value_type) + 4 * sizeof(void*)));
   }
 
   /* Default constructor with empty pointer. */
@@ -5167,40 +5157,25 @@ class PooledString {
   explicit PooledString(const char* val) { insert(string(val)); }
 
   /* Copy constructor. */
-  PooledString(const PooledString& other) : ptr(other.ptr) {
-    if (ptr) ++(ptr->second);
-  }
+  PooledString(const PooledString& other) : ptr(other.ptr) {}
 
   /* Assignment operator. */
   PooledString& operator=(const PooledString& other) {
-    if (ptr != other.ptr) {
-      clear();
-      ptr = other.ptr;
-      if (ptr) ++(ptr->second);
-    }
+    ptr = other.ptr;
     return *this;
   }
 
   /* String assignment operator. */
   PooledString& operator=(const string& val) {
-    if (ptr) {
-      if (ptr->first != val) {
-        // Different from existing value
-        clear();
-        insert(val);
-      }
-    } else if (!val.empty())
-      // Currently empty
-      insert(val);
+    insert(val);
     return *this;
   }
 
-  /* Destructor. */
-  ~PooledString() { clear(); }
+  ~PooledString() {}
 
   inline explicit operator bool() const { return ptr != nullptr; }
 
-  size_t hash() const { return Keyword::hash(ptr ? ptr->first : nullstring); }
+  size_t hash() const { return Keyword::hash(ptr ? *ptr : nullstring); }
 
   /* Equality operator. */
   inline bool operator==(const PooledString& other) const {
@@ -5213,44 +5188,39 @@ class PooledString {
   }
 
   /* Conversion to string. */
-  operator const string&() const { return ptr ? ptr->first : nullstring; }
+  operator const string&() const { return ptr ? *ptr : nullstring; }
 
   /* Return true if the string is empty. */
   inline bool empty() const { return !ptr; }
 
   /* Return the character at a certain position in the string, or \0 if not
    * found. */
-  const char& at(size_t pos) const {
-    return ptr ? ptr->first.at(pos) : nullchar;
-  }
+  const char& at(size_t pos) const { return ptr ? ptr->at(pos) : nullchar; }
 
   /* Return the first character in the string. Or \0 if the string is empty. */
-  const char& front() const { return ptr ? ptr->first.front() : nullchar; }
+  const char& front() const { return ptr ? ptr->front() : nullchar; }
 
   /* Return the last character in the string. Or \0 if the string is empty. */
-  const char& back() const { return ptr ? ptr->first.back() : nullchar; }
+  const char& back() const { return ptr ? ptr->back() : nullchar; }
 
   /* Return the length of the string. */
-  size_t size() const { return ptr ? ptr->first.size() : 0; }
+  size_t size() const { return ptr ? ptr->size() : 0; }
 
   /* Returns true if the string starts with the argument. */
   bool starts_with(const string& s) const {
-    return ptr ? (ptr->first.rfind(s, 0) == 0) : false;
+    return ptr ? (ptr->rfind(s, 0) == 0) : false;
   }
 
-  inline const string& getString() const {
-    return ptr ? ptr->first : nullstring;
-  }
+  inline const string& getString() const { return ptr ? *ptr : nullstring; }
 
   bool operator<(const PooledString& other) const {
-    return (ptr ? ptr->first : nullstring) <
-           (other.ptr ? other.ptr->first : nullstring);
+    return (ptr ? *ptr : nullstring) < (other.ptr ? *other.ptr : nullstring);
   }
 
   /* Debugging function. */
   static void print() {
     for (auto i = pool.begin(); i != pool.end(); ++i)
-      logger << "   " << i->first << "   " << i->second << endl;
+      logger << "   " << *i << endl;
   }
 };
 

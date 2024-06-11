@@ -96,6 +96,12 @@ class ForecastMeasure : public HasName<ForecastMeasure> {
     setName(n);
   }
 
+  ForecastMeasure(const string& n, double d = 0.0, bool cmptd = false,
+                  bool aggr = true, bool temp = false)
+      : dflt(d), computed(cmptd), aggregate(aggr), temporary(temp) {
+    setName(n);
+  }
+
   double getDefault() const { return dflt; }
 
   void setDefault(double v) { dflt = v; }
@@ -313,7 +319,7 @@ class ForecastMeasureAggregatedPlanned : public ForecastMeasureAggregated {
 
   ForecastMeasureAggregatedPlanned(const char* n, double d = 0.0,
                                    bool cmptd = false)
-      : ForecastMeasureAggregated(PooledString(n), d, cmptd) {
+      : ForecastMeasureAggregated(n, d, cmptd) {
     initType(metadata);
   }
 
@@ -447,8 +453,8 @@ class ForecastMeasureTemp : public ForecastMeasure {
   static int initialize();
 
   ForecastMeasureTemp(ForecastMeasure& base)
-      : ForecastMeasure(PooledString(string("temp") + base.getName()),
-                        base.getDefault(), false, base.isAggregate(), true) {
+      : ForecastMeasure(string("temp") + base.getName(), base.getDefault(),
+                        false, base.isAggregate(), true) {
     initType(metadata);
   }
 

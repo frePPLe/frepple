@@ -10,6 +10,10 @@ This release is scheduled for early July. You can already check out a `preview <
 
 - | Bug fix: Planning operation dependencies could leave partially planned demands in 9.0.0.
 
+.. rubric:: Demand forecasting
+
+- | Bug fix: Fixes a nasty engine crash in complex multithreading situations.
+
 .. rubric:: Supported operating systems
 
 - | The docker image of 9.0.0 missed the root certificates required for any remote https connection.

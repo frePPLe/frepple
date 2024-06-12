@@ -20,11 +20,11 @@ owner        location name     Hierachical parent of the location.
 
 .. Hint::
 
-   Setting up a good location hierarchy is important if you are interested in the demand forecasting functionality. 
+   Setting up a good location hierarchy is important if you are interested in the demand forecasting functionality.
    Otherwise, you can skip modeling a location hierarchy.
 
-Using the owner field the locations can be organized in a hierarhical tree structure. This allows,
-among other, reviewing the forecast at different levels in the 
+Using the owner field the locations can be organized in a hierarchical tree structure. This allows,
+among other, reviewing the forecast at different levels in the
 :doc:`../../user-interface/plan-analysis/forecast-editor`.
 
 Here is an example to model a tree structure with warehouses in multiple countries:
@@ -36,7 +36,7 @@ Here is an example to model a tree structure with warehouses in multiple countri
 ============= =============
 Name          Owner
 ============= =============
-All locations  
+All locations
 Belgium       All locations
 Warehouse 1   Belgium
 France        All locations
@@ -48,4 +48,4 @@ Warehouse 3   France
 
 * Complete table description: :doc:`../../model-reference/locations`
 
-* Example modeling working hours: :doc:`../../examples/calendar/calendar-working-hours` 
+* Example modeling working hours: :doc:`../../examples/calendar/calendar-working-hours`

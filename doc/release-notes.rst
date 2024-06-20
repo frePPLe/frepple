@@ -31,6 +31,12 @@ This release is scheduled for early July. You can already check out a `preview <
 - | 16, 17: The connector no longer depends on the external jwt python package.
   | Installing the dependency frequently created trouble or confusion.
 
+- | 15, 16, 17: Addition of the expiry dates management. Lot expiry dates and product expiration time
+    are retrieved by the connectors in frePPLe. This functionality requires the shelf life app to be
+    installed on the frePPLe side. Note that the shelf life app is only available in the enterprise
+    version of frePPLe.
+
+
 9.0.0 (2024-06-01)
 ==================
 

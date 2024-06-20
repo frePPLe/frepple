@@ -1440,3 +1440,50 @@ class ExportForecast(PlanTask):
         # refresh materialized view
         with connections[database].cursor() as cursor:
             cursor.execute("REFRESH MATERIALIZED VIEW forecastreport_view")
+
+
+@PlanTaskRegistry.register
+class ExportOutlierCount(PlanTask):
+    description = "Export outlier count"
+    sequence = (401, "export2", 4)
+    export = True
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        if "fcst" in os.environ and Parameter.getValue(
+            "forecast.calendar", database, None
+        ):
+            return 1
+        else:
+            return -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, cluster=-1, **kwargs):
+        import frepple
+
+        bucket = Parameter.getValue("forecast.calendar", database, None)
+
+        with connections[database].cursor() as cursor:
+            if cluster == -1:
+                cursor.execute(
+                    """
+                    with cte as (
+                    select forecast.item_id,
+                    sum(case when out_problem.enddate >= %s - interval %s then 1 else 0 end) as outlier_1b,
+                    sum(case when out_problem.enddate >= %s - 6 * interval %s then 1 else 0 end) as outlier_6b,
+                    sum(case when out_problem.enddate >= %s - 12 * interval %s then 1 else 0 end) as outlier_12b
+                    from out_problem
+                    inner join forecast
+                    on forecast.name||' - '||to_char(out_problem.startdate,'YYYY-MM-DD') = out_problem.owner
+                    where out_problem.name = 'outlier'
+                    group by forecast.item_id
+                    )
+                    update item
+                    set outlier_1b = case when cte.outlier_1b = 0 then null else cte.outlier_1b end,
+                    outlier_6b = case when cte.outlier_6b = 0 then null else cte.outlier_6b end,
+                    outlier_12b = case when cte.outlier_12b = 0 then null else cte.outlier_12b end
+                    from cte
+                    where cte.item_id = item.name
+                    """,
+                    (frepple.settings.current, "1 %s" % (bucket,)) * 3,
+                )

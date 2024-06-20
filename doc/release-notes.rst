@@ -14,6 +14,9 @@ This release is scheduled for early July. You can already check out a `preview <
 
 - | Bug fix: Fixes a nasty engine crash in complex multithreading situations.
 
+- | Outlier count:  Extra attributes have been added to the item object to count how many
+    outliers were found in the last bucket, last 6 buckets and last 12 buckets.
+
 .. rubric:: User interface
 
 - | When releasing a scenario, the data of that scenario is now deleted to optimize the database

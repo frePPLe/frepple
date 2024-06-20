@@ -37,5 +37,8 @@ registerAttribute(
         ("demand_pattern", _("demand_pattern"), "string", False, True),
         ("adi", _("adi"), "number", False, True),
         ("cv2", _("cv2"), "number", False, True),
+        ("outlier_1b", _("outliers last bucket"), "number", False, True),
+        ("outlier_6b", _("outliers last 6 buckets"), "number", False, True),
+        ("outlier_12b", _("outliers last 12 buckets"), "number", False, True),
     ],
 )

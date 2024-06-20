@@ -124,17 +124,20 @@ The forecast app enables the calculation of statistical forecasts based on the d
 It also includes a categorization of demand patterns, as described on
 https://frepple.com/blog/demand-classification/
 
-======================= ================= ===========================================================
-Field                   Type              Description
-======================= ================= ===========================================================
-demand_pattern          String            Demand pattern: "smooth", "intermittent", "erratic" or
+======================== ================= =============================================================
+Field                    Type              Description
+======================== ================= =============================================================
+demand_pattern           String            Demand pattern: "smooth", "intermittent", "erratic" or
                                           "lumpy".
-adi                     Number            | Average demand interval.
-                                          | It measures the demand regularity in time by computing
+adi                      Number            | Average demand interval.
+                                           | It measures the demand regularity in time by computing
                                             the average interval between two demands.
-cv2                     Number            | Square of the coefficient of variation.
-                                          | It measures the variation in quantities.
-======================= ================= ===========================================================
+cv2                      Number            | Square of the coefficient of variation.
+                                           | It measures the variation in quantities.
+outliers last bucket     Number            | Counts how many outliers were found in the last bucket.
+outliers last 6 buckets  Number            | Counts how many outliers were found in the last 6 buckets.
+outliers last 12 buckets Number            | Counts how many outliers were found in the last 12 buckets.
+======================== ================= =============================================================
 
 
 **Extra fields added by "inventory planning" app**

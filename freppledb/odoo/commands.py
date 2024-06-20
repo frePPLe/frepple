@@ -176,6 +176,11 @@ class OdooReadData(PlanTask):
                 "singlecompany": singlecompany,
                 "version": frepple.version,
                 "delta": odoo_delta,
+                "apps": (
+                    "freppledb.shelflife"
+                    if "freppledb.shelflife" in settings.INSTALLED_APPS
+                    else ""
+                ),
             }
             if odoo_db:
                 args["database"] = odoo_db

@@ -3252,10 +3252,8 @@ class Operation : public HasName<Operation>,
   /* Returns the maximum size for operationplans. */
   double getSizeMaximum() const { return size_maximum; }
 
-  /* Return the decoupled lead time of this operation.
-   * TODO the decoupled lead time could vary over time, wich we don't handle now
-   */
-  virtual Duration getDecoupledLeadTime(double qty) const = 0;
+  /* Return the decoupled lead time of this operation. */
+  virtual pair<Duration, Date> getDecoupledLeadTime(double, Date) const = 0;
 
   static PyObject* getDecoupledLeadTimePython(PyObject* self, PyObject* args);
 
@@ -3794,7 +3792,7 @@ class OperationFixedTime : public Operation {
   }
 
   /* Return the decoupled lead time of this operation. */
-  virtual Duration getDecoupledLeadTime(double qty) const;
+  virtual pair<Duration, Date> getDecoupledLeadTime(double, Date) const;
 
   static int initialize();
 
@@ -3889,7 +3887,7 @@ class OperationTimePer : public Operation {
       bool later = false) const;
 
   /* Return the decoupled lead time of this operation. */
-  virtual Duration getDecoupledLeadTime(double qty) const;
+  virtual pair<Duration, Date> getDecoupledLeadTime(double, Date) const;
 
   static int initialize();
 
@@ -3981,7 +3979,7 @@ class OperationRouting : public Operation {
   virtual void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true);
 
   /* Return the decoupled lead time of this operation. */
-  virtual Duration getDecoupledLeadTime(double qty) const;
+  virtual pair<Duration, Date> getDecoupledLeadTime(double, Date) const;
 
   static int initialize();
 
@@ -4061,7 +4059,7 @@ class OperationSplit : public Operation {
   /* Return the decoupled lead time of this operation.
    * Take the lead time of the longest operation.
    */
-  virtual Duration getDecoupledLeadTime(double qty) const;
+  virtual pair<Duration, Date> getDecoupledLeadTime(double, Date) const;
 
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 
@@ -4140,7 +4138,7 @@ class OperationAlternate : public Operation {
   /* Return the decoupled lead time of this operation:
    * Take the lead time of the preferred operation
    */
-  virtual Duration getDecoupledLeadTime(double qty) const;
+  virtual pair<Duration, Date> getDecoupledLeadTime(double, Date) const;
 
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 
@@ -5067,8 +5065,8 @@ class Buffer : public HasHierarchy<Buffer>,
   bool hasConsumingFlows() const;
 
   /* Return the decoupled lead time of this buffer. */
-  virtual Duration getDecoupledLeadTime(double qty,
-                                        bool recurse_ip_buffers = true) const;
+  virtual pair<Duration, Date> getDecoupledLeadTime(
+      double, Date, bool recurse_ip_buffers = true) const;
 
   static PyObject* getDecoupledLeadTimePython(PyObject* self, PyObject* args);
 

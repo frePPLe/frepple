@@ -2255,8 +2255,10 @@ void Operation::setItem(Item* i) {
   HasLevel::triggerLazyRecomputation();
 }
 
-Duration OperationAlternate::getDecoupledLeadTime(double qty) const {
+pair<Duration, Date> OperationAlternate::getDecoupledLeadTime(
+    double qty, Date startdate) const {
   Duration leadtime;
+  Date enddate = startdate;
 
   // Find the preferred alternate
   int curPrio = INT_MAX;
@@ -2264,21 +2266,20 @@ Duration OperationAlternate::getDecoupledLeadTime(double qty) const {
   for (auto sub = getSubOperations().begin(); sub != getSubOperations().end();
        ++sub) {
     if ((*sub)->getPriority() < curPrio &&
-        (*sub)->getEffective().within(Plan::instance().getCurrent())) {
+        (*sub)->getEffective().within(startdate)) {
       suboper = (*sub)->getOperation();
       curPrio = (*sub)->getPriority();
     }
   }
 
   // Handle the case where no sub-operation is effective at all
-  if (!suboper) return Duration(999L * 86400L);
+  if (!suboper) return make_pair(Duration(999L * 86400L), Date::infiniteFuture);
 
   // Respect the size constraint of the child operation
   double qty2 = qty;
   if (qty2 < suboper->getSizeMinimum()) qty2 = suboper->getSizeMinimum();
   if (suboper->getSizeMinimumCalendar()) {
-    double curmin = suboper->getSizeMinimumCalendar()->getValue(
-        Plan::instance().getCurrent());
+    double curmin = suboper->getSizeMinimumCalendar()->getValue(startdate);
     if (qty2 < curmin) qty2 = curmin;
   }
 
@@ -2286,56 +2287,35 @@ Duration OperationAlternate::getDecoupledLeadTime(double qty) const {
   for (auto fl = getFlows().begin(); fl != getFlows().end(); ++fl) {
     if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
       continue;
-    Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, false);
-    if (tmp > leadtime) leadtime = tmp;
+    auto tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, startdate, false);
+    if (tmp.second > enddate) {
+      leadtime = tmp.first;
+      enddate = tmp.second;
+    }
   }
 
-  // Also loop over the flows of the suboperation
-  if (!suboper->hasType<OperationRouting>())
-    for (auto fl = suboper->getFlows().begin(); fl != suboper->getFlows().end();
-         ++fl) {
-      if (fl->getQuantity() >= 0) continue;
-      Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, false);
-      if (tmp > leadtime) leadtime = tmp;
-    }
-
-  // Add the operation's own duration
-  if (suboper->hasType<OperationFixedTime, OperationItemDistribution,
-                       OperationItemSupplier>()) {
-    // Fixed duration operation types
-    OperationFixedTime* op = static_cast<OperationFixedTime*>(suboper);
-    leadtime += op->getDuration();
-  } else if (suboper->hasType<OperationTimePer>()) {
-    // Variable duration operation types
-    OperationTimePer* op = static_cast<OperationTimePer*>(suboper);
-    leadtime +=
-        op->getDuration() + static_cast<long>(op->getDurationPer() * qty2);
-  } else if (suboper->hasType<OperationRouting>()) {
-    leadtime +=
-        static_cast<OperationRouting*>(suboper)->getDecoupledLeadTime(qty2);
-  } else
-    logger << "Warning: suboperation of unsupported type for alternate "
-              "operation '"
-           << getName() << "'" << endl;
-  return leadtime;
+  // Add the suboperation's own duration
+  return suboper->getDecoupledLeadTime(qty2, enddate);
 }
 
-Duration OperationSplit::getDecoupledLeadTime(double qty) const {
+pair<Duration, Date> OperationSplit::getDecoupledLeadTime(
+    double qty, Date startdate) const {
   Duration totalmax;
+  Date enddatemax = startdate;
   for (auto sub = getSubOperations().begin(); sub != getSubOperations().end();
        ++sub) {
-    if (!(*sub)->getEffective().within(Plan::instance().getCurrent()))
+    if (!(*sub)->getEffective().within(startdate))
       // This suboperation is not effective
       continue;
 
     // Respect the size constraint of the child operation
     Operation* suboper = (*sub)->getOperation();
     Duration maxSub;
+    Date maxSubEnd = startdate;
     double qty2 = qty;
     if (qty2 < suboper->getSizeMinimum()) qty2 = suboper->getSizeMinimum();
     if (suboper->getSizeMinimumCalendar()) {
-      double curmin = suboper->getSizeMinimumCalendar()->getValue(
-          Plan::instance().getCurrent());
+      double curmin = suboper->getSizeMinimumCalendar()->getValue(startdate);
       if (qty2 < curmin) qty2 = curmin;
     }
 
@@ -2343,46 +2323,29 @@ Duration OperationSplit::getDecoupledLeadTime(double qty) const {
     for (auto fl = getFlows().begin(); fl != getFlows().end(); ++fl) {
       if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
         continue;
-      Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, false);
-      if (tmp > maxSub) maxSub = tmp;
+      auto tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, startdate, false);
+      if (tmp.second > maxSub) {
+        maxSub = tmp.first;
+        maxSubEnd = tmp.second;
+      }
     }
 
-    // Also loop over the flows of the suboperation
-    if (!suboper->hasType<OperationRouting>())
-      for (auto fl = suboper->getFlows().begin();
-           fl != suboper->getFlows().end(); ++fl) {
-        if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
-          continue;
-        Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, false);
-        if (tmp > maxSub) maxSub = tmp;
-      }
-
-    // Add the operation's own duration
-    if (suboper->hasType<OperationFixedTime, OperationItemDistribution,
-                         OperationItemSupplier>()) {
-      // Fixed duration operation types
-      OperationFixedTime* op = static_cast<OperationFixedTime*>(suboper);
-      maxSub += op->getDuration();
-    } else if (suboper->hasType<OperationTimePer>()) {
-      // Variable duration operation types
-      OperationTimePer* op = static_cast<OperationTimePer*>(suboper);
-      maxSub +=
-          op->getDuration() + static_cast<long>(op->getDurationPer() * qty2);
-    } else if (suboper->hasType<OperationRouting>()) {
-      maxSub +=
-          static_cast<OperationRouting*>(suboper)->getDecoupledLeadTime(qty2);
-    } else
-      logger
-          << "Warning: suboperation of unsupported type for split operation '"
-          << getName() << "'" << endl;
+    // Add suboperation duration
+    auto tmp = suboper->getDecoupledLeadTime(qty2, maxSubEnd);
 
     // Keep track of the longest of all suboperations
-    if (maxSub > totalmax) totalmax = maxSub;
+    if (tmp.second > enddatemax) {
+      totalmax = tmp.first;
+      enddatemax = tmp.second;
+    }
   }
-  return totalmax;
+  return make_pair(totalmax, enddatemax);
 }
 
-Duration OperationRouting::getDecoupledLeadTime(double qty) const {
+pair<Duration, Date> OperationRouting::getDecoupledLeadTime(
+    double qty, Date startdate) const {
+  // TODO Code doesn't handle dependencies
+
   // Validate the quantity
   if (qty < getSizeMinimum()) qty = getSizeMinimum();
   if (getSizeMinimumCalendar()) {
@@ -2403,6 +2366,7 @@ Duration OperationRouting::getDecoupledLeadTime(double qty) const {
   for (auto sub = getSubOperations().rbegin(); sub != getSubOperations().rend();
        ++sub) {
     Duration maxSub;
+    Date endSub = startdate;
     Operation* suboper = (*sub)->getOperation();
 
     // Find the longest supply path for all flows
@@ -2410,8 +2374,8 @@ Duration OperationRouting::getDecoupledLeadTime(double qty) const {
          ++fl) {
       if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
         continue;
-      Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty, false);
-      if (tmp > maxSub) maxSub = tmp;
+      auto tmp = fl->getBuffer()->getDecoupledLeadTime(qty, startdate, false);
+      if (tmp.first > maxSub) maxSub = tmp.first;
     }
 
     // Add the operation's own duration to the duration of all
@@ -2435,17 +2399,26 @@ Duration OperationRouting::getDecoupledLeadTime(double qty) const {
     if (maxSub + nextStepsDuration > totalmax)
       totalmax = maxSub + nextStepsDuration;
   }
-  return totalmax;
+
+  // Compute the end date of the lead time
+  Date enddate = startdate;
+  for (auto sub = getSubOperations().begin(); sub != getSubOperations().end();
+       ++sub) {
+    enddate = (*sub)->getOperation()->getDecoupledLeadTime(qty, enddate).second;
+  }
+
+  return make_pair(totalmax, enddate);
 }
 
-Duration OperationFixedTime::getDecoupledLeadTime(double qty) const {
+pair<Duration, Date> OperationFixedTime::getDecoupledLeadTime(
+    double qty, Date startdate) const {
   Duration leadtime;
+  Date enddate = startdate;
 
   // Validate the quantity
   if (qty < getSizeMinimum()) qty = getSizeMinimum();
   if (getSizeMinimumCalendar()) {
-    double curmin =
-        getSizeMinimumCalendar()->getValue(Plan::instance().getCurrent());
+    double curmin = getSizeMinimumCalendar()->getValue(startdate);
     if (qty < curmin) qty = curmin;
   }
 
@@ -2453,24 +2426,29 @@ Duration OperationFixedTime::getDecoupledLeadTime(double qty) const {
   for (auto fl = getFlows().begin(); fl != getFlows().end(); ++fl) {
     if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
       continue;
-    Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty, false);
-    if (tmp > leadtime) leadtime = tmp;
+    auto tmp = fl->getBuffer()->getDecoupledLeadTime(qty, startdate, false);
+    if (tmp.second > enddate) {
+      leadtime = tmp.first;
+      enddate = tmp.second;
+    }
   }
 
   // Add the operation's own duration
-  leadtime += getDuration();
-
-  return leadtime;
+  auto d = getDuration();
+  leadtime += d;
+  enddate = calculateOperationTime(nullptr, enddate, d, true).getEnd();
+  return make_pair(leadtime, enddate);
 }
 
-Duration OperationTimePer::getDecoupledLeadTime(double qty) const {
+pair<Duration, Date> OperationTimePer::getDecoupledLeadTime(
+    double qty, Date startdate) const {
   Duration leadtime;
+  Date enddate = startdate;
 
   // Validate the quantity
   if (qty < getSizeMinimum()) qty = getSizeMinimum();
   if (getSizeMinimumCalendar()) {
-    double curmin =
-        getSizeMinimumCalendar()->getValue(Plan::instance().getCurrent());
+    double curmin = getSizeMinimumCalendar()->getValue(startdate);
     if (qty < curmin) qty = curmin;
   }
 
@@ -2478,26 +2456,34 @@ Duration OperationTimePer::getDecoupledLeadTime(double qty) const {
   for (auto fl = getFlows().begin(); fl != getFlows().end(); ++fl) {
     if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
       continue;
-    Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty, false);
-    if (tmp > leadtime) leadtime = tmp;
+    auto tmp = fl->getBuffer()->getDecoupledLeadTime(qty, startdate, false);
+    if (tmp.second > enddate) {
+      leadtime = tmp.first;
+      enddate = tmp.second;
+    }
   }
 
   // Add the operation's own duration
-  leadtime += getDuration() + static_cast<long>(qty * getDurationPer());
-
-  return leadtime;
+  auto d = getDuration() + static_cast<long>(qty * getDurationPer());
+  leadtime += d;
+  enddate = calculateOperationTime(nullptr, enddate, d, true).getEnd();
+  return make_pair(leadtime, enddate);
 }
 
 PyObject* Operation::getDecoupledLeadTimePython(PyObject* self,
                                                 PyObject* args) {
-  // Pick up the quantity argument
+  // Pick up arguments
   double qty = 1.0;
-  int ok = PyArg_ParseTuple(args, "|d:decoupledLeadTime", &qty);
+  PyObject* py_startdate = nullptr;
+  Date startdate = Plan::instance().getCurrent();
+  int ok = PyArg_ParseTuple(args, "|dO:decoupledLeadTime", &qty, &py_startdate);
   if (!ok) return nullptr;
+  if (py_startdate) startdate = PythonData(py_startdate).getDate();
 
   try {
-    Duration lt = static_cast<Operation*>(self)->getDecoupledLeadTime(qty);
-    return PythonData(lt);
+    auto lt =
+        static_cast<Operation*>(self)->getDecoupledLeadTime(qty, startdate);
+    return PythonData(lt.first);
   } catch (...) {
     PythonType::evalException();
     return nullptr;

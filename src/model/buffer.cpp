@@ -1248,31 +1248,35 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
   }
 }
 
-Duration Buffer::getDecoupledLeadTime(double qty,
-                                      bool recurse_ip_buffers) const {
+pair<Duration, Date> Buffer::getDecoupledLeadTime(
+    double qty, Date startdate, bool recurse_ip_buffers) const {
   if (!recurse_ip_buffers || hasType<BufferInfinite>())
     // Abort the recursion
-    return Duration(0L);
+    return make_pair(Duration(0L), startdate);
 
   Operation* oper = getProducingOperation();
   if (!oper)
     // Infinite lead time if no producing operation is found.
     // Setting an extremely long lead time, which results in a huge
     // safety stock that covers the entire horizon.
-    return Duration(999L * 86400L);
+    return make_pair(Duration(999L * 86400L), Date::infiniteFuture);
   else
-    return oper->getDecoupledLeadTime(qty);
+    return oper->getDecoupledLeadTime(qty, startdate);
 }
 
 PyObject* Buffer::getDecoupledLeadTimePython(PyObject* self, PyObject* args) {
-  // Pick up the quantity argument
+  // Pick up arguments
   double qty = 1.0;
-  int ok = PyArg_ParseTuple(args, "|d:decoupledLeadTime", &qty);
+  PyObject* py_startdate = nullptr;
+  Date startdate = Plan::instance().getCurrent();
+  int ok = PyArg_ParseTuple(args, "|dO:decoupledLeadTime", &qty, &py_startdate);
   if (!ok) return nullptr;
+  if (py_startdate) startdate = PythonData(py_startdate).getDate();
 
   try {
-    Duration lt = static_cast<Buffer*>(self)->getDecoupledLeadTime(qty, true);
-    return PythonData(lt);
+    auto lt =
+        static_cast<Buffer*>(self)->getDecoupledLeadTime(qty, startdate, true);
+    return PythonData(lt.first);
   } catch (...) {
     PythonType::evalException();
     return nullptr;

@@ -1014,8 +1014,9 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
         ((get<1>(setuptime_required) || opplan->getSetupOverride() >= 0L) &&
          setup_duration != setup_wanted_duration)) {
       // Not enough time found for the setup and the operation duration
-      logger << "Warning: Couldn't find available time on operation '" << this
-             << "'" << endl;
+      if (production_dates.getStart())
+        logger << "Warning: Couldn't find available time on operation '" << this
+               << "'" << endl;
       if (!execute)
         return OperationPlanState(production_dates, setup_dates.getEnd(), 0);
       else
@@ -1547,16 +1548,18 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
                       Duration(double(duration) / efficiency) &&
                   !opplan->getQuantityCompleted())) {
         // Not feasible
-        logger << "Warning: Couldn't find available time on operation '" << this
-               << "'" << endl;
+        if (production_dates.getStart())
+          logger << "Warning: Couldn't find available time on operation '"
+                 << this << "'" << endl;
         if (!execute) return OperationPlanState(production_dates, 0.0);
         opplan->setQuantity(0, true, false);
         opplan->clearSetupEvent();
         opplan->setStartAndEnd(d, Date::infiniteFuture);
       } else {
         // Resize the quantity to be feasible
-        logger << "Warning: Couldn't find available time on operation '" << this
-               << "'" << endl;
+        if (production_dates.getStart())
+          logger << "Warning: Couldn't find available time on operation '"
+                 << this << "'" << endl;
         double max_q;
         if (opplan->getQuantityCompleted() && production_wanted_duration)
           max_q = opplan->getQuantityRemaining() * production_duration /

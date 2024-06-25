@@ -2126,7 +2126,7 @@ class ForecastEditor:
                 "bucketnames": bucketlevels,
                 "bucketsperyear": "[" + ",".join(bucketsperyear) + "]",
                 "title": "%s%s"
-                % (_("Forecast editor"), ((" %s" % (item,)) if item else "")),
+                % (_("Forecast editor"), ((" %s" % (unquote(item),)) if item else "")),
                 "preferences": request.user.getPreference(
                     "freppledb.forecast.planning", database=request.database
                 ),

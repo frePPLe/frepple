@@ -729,7 +729,9 @@ class OverviewReport(GridPivot):
             initially_hidden=True,
             editable=False,
         ),
-        GridFieldBool("hasForecastRecord", title="hasForecastRecord", hidden=True),
+        GridFieldBool(
+            "hasForecastRecord", title="hasForecastRecord", hidden=True, search=False
+        ),
     )
 
     @classmethod

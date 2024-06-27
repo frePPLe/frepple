@@ -36,6 +36,8 @@ This release is scheduled for early July. You can already check out a `preview <
     `shelf life <apps/shelflife.html>`_ app to be installed on the frePPLe side.
     Note that the shelf life app is only available in the enterprise version of frePPLe.
 
+- | 17: Fix for the lunch periods in calendars that were incorrectly considered as working time.
+
 
 9.0.0 (2024-06-01)
 ==================

@@ -259,6 +259,7 @@ INSTALLED_APPS = (
 INSTALLABLE_APPS = (
     "freppledb.odoo",
     "freppledb.forecast",
+    "freppledb.mlforecast",
     "freppledb.wizard",
     "freppledb.metrics",
     "freppledb.reportmanager",

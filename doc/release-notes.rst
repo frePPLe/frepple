@@ -12,6 +12,10 @@ This release is scheduled for early July. You can already check out a `preview <
 
 .. rubric:: Demand forecasting
 
+- | Introduction of machine learning forecasting capabilities to frePPLe with the addition of a
+    new app based on the `orbit library <https://orbit-ml.readthedocs.io/en/latest/>`_.
+
+
 - | Bug fix: Fixes a nasty engine crash in complex multithreading situations.
 
 - | Outlier count:  Extra attributes have been added to the item object to count how many

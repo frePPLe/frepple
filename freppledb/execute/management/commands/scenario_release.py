@@ -97,7 +97,6 @@ class Command(BaseCommand):
         task.save(using=database)
 
         # Validate the arguments
-
         try:
             releasedScenario = None
             try:
@@ -122,18 +121,11 @@ class Command(BaseCommand):
             try:
                 with connections[database].cursor() as cursor:
                     cursor.execute(
-                        """
-                    select tablename from pg_tables where schemaname='public'
-                    """
+                        "select tablename from pg_tables where schemaname='public'"
                     )
-                    tables = [t for t in cursor]
-                    for t in tables:
-                        cursor.execute(
-                            """
-                            drop table if exists %s cascade;
-                        """
-                            % t
-                        )
+                    for t in cursor.fetchall():
+                        cursor.execute("drop table if exists %s cascade" % t)
+                task = None
             except Exception as e:
                 # Silently continue if data cleansing failes
                 print("Failed to empty the scenario data: %s" % (e,))
@@ -141,15 +133,6 @@ class Command(BaseCommand):
             # Killing webservice
             if "freppledb.webservice" in settings.INSTALLED_APPS:
                 management.call_command("stopwebservice", force=True, database=database)
-
-            # Logging message
-            task.processid = None
-            task.status = "Done"
-            task.finished = datetime.now()
-
-            # Update the task in the destination database
-            task.message = "Scenario %s released" % (database,)
-            task.save(using=database)
 
         except Exception as e:
             if task:

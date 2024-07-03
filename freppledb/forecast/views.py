@@ -1853,6 +1853,16 @@ class ForecastEditor:
                     ],
                 )
                 | Q(
+                    content_type=customer_type.id,
+                    object_pk__in=[
+                        i["name"]
+                        for i in Customer.objects.using(request.database)
+                        .filter(lft__lte=customer_obj.lft)
+                        .filter(rght__gt=customer_obj.lft)
+                        .values("name")
+                    ],
+                )
+                | Q(
                     content_type=item_type.id,
                     object_pk__in=[
                         i["name"]
@@ -1863,12 +1873,32 @@ class ForecastEditor:
                     ],
                 )
                 | Q(
+                    content_type=item_type.id,
+                    object_pk__in=[
+                        i["name"]
+                        for i in Item.objects.using(request.database)
+                        .filter(lft__lte=item_obj.lft)
+                        .filter(rght__gt=item_obj.lft)
+                        .values("name")
+                    ],
+                )
+                | Q(
                     content_type=location_type.id,
                     object_pk__in=[
                         i["name"]
                         for i in Location.objects.using(request.database)
                         .filter(lft__gte=location_obj.lft)
                         .filter(lft__lt=location_obj.rght)
+                        .values("name")
+                    ],
+                )
+                | Q(
+                    content_type=location_type.id,
+                    object_pk__in=[
+                        i["name"]
+                        for i in Location.objects.using(request.database)
+                        .filter(lft__lte=location_obj.lft)
+                        .filter(rght__gt=location_obj.lft)
                         .values("name")
                     ],
                 )

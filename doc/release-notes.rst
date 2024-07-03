@@ -20,6 +20,10 @@ and we couldn't stay behind :-)
   | The machine learning forecast app is still in beta-testing and would require the frePPLe team to
     help to make it production ready.
 
+  | The comment window of the forecast editor screen is removed. Instead planners will enter comments
+    in the comment tab. A comment for an owner will be displayed when selecting a child and so will
+    a comment for a child when selecting an owner.
+
 
 - | Bug fix: Fixes a nasty engine crash in complex multithreading situations.
 

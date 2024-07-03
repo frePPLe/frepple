@@ -6,6 +6,9 @@ Release notes
 
 This release is scheduled for early July. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+The big news is that this release adds an AI based forecasting method. AI is a trendy and hot topic these days
+and we couldn't stay behind :-)
+
 .. rubric:: Production planning
 
 - | Bug fix: Planning operation dependencies could leave partially planned demands in 9.0.0.

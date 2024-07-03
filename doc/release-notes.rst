@@ -17,6 +17,8 @@ and we couldn't stay behind :-)
 
 - | Introduction of machine learning forecasting capabilities to frePPLe with the addition of a
     new app based on the `orbit library <https://orbit-ml.readthedocs.io/en/latest/>`_.
+  | The machine learning forecast app is still in beta-testing and would require the frePPLe team to
+    help to make it production ready.
 
 
 - | Bug fix: Fixes a nasty engine crash in complex multithreading situations.

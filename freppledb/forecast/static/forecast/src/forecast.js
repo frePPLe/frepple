@@ -345,6 +345,7 @@ function forecastController($scope, $http, $q, $location) {
       }
     });
 
+    $scope.commenttype = null;
     $scope.detaildata = angular.copy(response.data);
     for (var bckt of $scope.detaildata.forecast) {
       var p = bckt.startdate.split(/[ \-]/);

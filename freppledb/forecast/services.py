@@ -28,6 +28,8 @@ import json
 from channels.db import database_sync_to_async
 from channels.generic.http import AsyncHttpConsumer
 
+from django.conf import settings
+
 from freppledb.webservice.utils import lock
 from freppledb.common.localization import parseLocalizedDateTime
 from freppledb.common.models import Comment
@@ -446,10 +448,14 @@ class FlushService(AsyncHttpConsumer):
             if self.scope["path"] == "/flush/manual/":
                 async with lock:
                     frepple.cache.write_immediately = False
+                    if settings.CACHE_MAXIMUM > 300:
+                        frepple.cache.maximum = settings.CACHE_MAXIMUM
             elif self.scope["path"] == "/flush/auto/":
                 async with lock:
                     frepple.cache.flush()
                     frepple.cache.write_immediately = True
+                    if frepple.cache.maximum > 300:
+                        frepple.cache.maximum = 300
             else:
                 await self.send_response(
                     404,

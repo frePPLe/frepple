@@ -61,7 +61,7 @@ class ExportForecast(PlanTask):
             import pandas as pd
         except Exception:
             raise ImportError(
-                "Please install orbit-ml package to use the frepple ML forecasting module"
+                "Please install the orbit-ml python package to use the frepple ML forecasting module"
             )
 
         calendar = Parameter.getValue("forecast.calendar", database, None)

@@ -1467,6 +1467,9 @@ class ExportOutlierCount(PlanTask):
             if cluster == -1:
                 cursor.execute(
                     """
+                    update item set outlier_1b = 0, outlier_6b = 0, outlier_12b = 0
+                    where outlier_1b is distinct from 0 or outlier_6b is distinct from 0
+                    or outlier_12b is distinct from 0;
                     with cte as (
                     select forecast.item_id,
                     sum(case when out_problem.enddate >= %s - interval %s then 1 else 0 end) as outlier_1b,
@@ -1479,11 +1482,11 @@ class ExportOutlierCount(PlanTask):
                     group by forecast.item_id
                     )
                     update item
-                    set outlier_1b = case when cte.outlier_1b = 0 then null else cte.outlier_1b end,
-                    outlier_6b = case when cte.outlier_6b = 0 then null else cte.outlier_6b end,
-                    outlier_12b = case when cte.outlier_12b = 0 then null else cte.outlier_12b end
+                    set outlier_1b = cte.outlier_1b,
+                    outlier_6b = cte.outlier_6b,
+                    outlier_12b = cte.outlier_12b
                     from cte
-                    where cte.item_id = item.name
+                    where cte.item_id = item.name;
                     """,
                     (frepple.settings.current, "1 %s" % (bucket,)) * 3,
                 )

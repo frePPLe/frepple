@@ -63,6 +63,7 @@ from freppledb.common.report import (
     GridFieldNumber,
     GridFieldDuration,
     GridFieldCurrency,
+    GridFieldDateTime,
 )
 from freppledb.input.views import PathReport, DemandList
 from freppledb.input.models import Demand, Item, Location, Customer
@@ -729,8 +730,24 @@ class OverviewReport(GridPivot):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldBool("outlier", title="outlier", hidden=True, search=False),
         GridFieldBool(
             "hasForecastRecord", title="hasForecastRecord", hidden=True, search=False
+        ),
+        GridFieldText(
+            "bucket",
+            hidden=True,
+            search=False,
+        ),
+        GridFieldDateTime(
+            "startdate",
+            hidden=True,
+            search=False,
+        ),
+        GridFieldDateTime(
+            "enddate",
+            hidden=True,
+            search=False,
         ),
     )
 

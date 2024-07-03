@@ -59,7 +59,7 @@ class ExportForecast(PlanTask):
         try:
             from orbit.models import ETS, DLT, KTR, LGT
             import pandas as pd
-        except:
+        except Exception:
             raise ImportError(
                 "Please install orbit-ml package to use the frepple ML forecasting module"
             )

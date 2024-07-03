@@ -24,11 +24,15 @@ and we couldn't stay behind :-)
     in the comment tab. A comment for an owner will be displayed when selecting a child and so will
     a comment for a child when selecting an owner.
 
-
-- | Bug fix: Fixes a nasty engine crash in complex multithreading situations.
+- | The comment window of the forecast editor screen is removed. You can still enter comments
+    in the comment tab as in earlier releases.
+  | A comment for a parent will be displayed when selecting a child. Similarly comments
+    for a child when be displayed at the parent level.
 
 - | Outlier count:  Extra attributes have been added to the item object to count how many
     outliers were found in the last bucket, last 6 buckets and last 12 buckets.
+
+- | Bug fix: Fixes a nasty engine crash in complex multithreading situations.
 
 .. rubric:: User interface
 

@@ -970,7 +970,7 @@ function forecastController($scope, $http, $q, $location) {
       '</div>' +
       '</div>' +
       '<div class="modal-footer justify-content-between">' +
-      '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-gray" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-gray" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
       '<input type="submit" id="resetCustbutton" role="button" class="btn btn-primary" value="' + gettext('Reset') + '">' +
       '<input type="submit" id="okCustbutton" role="button" class="btn btn-primary" value="' + gettext("OK") + '">' +
       '</div>' +

@@ -1846,7 +1846,9 @@ class GridReport(View):
                 "sidx": sidx,
                 "default_sort": cls.defaultSortString(request),
                 "is_popup": is_popup,
-                "filters": json.loads(filters) if filters else None,
+                "filters": (
+                    json.loads(filters.replace("\\", "\\\\")) if filters else None
+                ),
                 "args": args,
                 "bucketnames": bucketnames,
                 "model": cls.model,
@@ -3468,7 +3470,11 @@ class GridPivot(GridReport):
                 if not f[1]
             ]
         else:
-            myrows = [f for f in request.rows if f.name and not f.hidden and not f.initially_hidden]
+            myrows = [
+                f
+                for f in request.rows
+                if f.name and not f.hidden and not f.initially_hidden
+            ]
         if request.prefs and "crosses" in request.prefs and not allColumns:
             mycrosses = [
                 request.crosses[f]

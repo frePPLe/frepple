@@ -51,26 +51,34 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         # Database name
-        "NAME": "frepple",
+        "NAME": (
+            "%s0" % os.environ["POSTGRES_DBNAME"]
+            if "POSTGRES_DBNAME" in os.environ
+            else "frepple"
+        ),
         # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "USER": "frepple",
+        "USER": os.environ.get("POSTGRES_USER", "frepple"),
         # Role password when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "PASSWORD": "frepple",
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "frepple"),
         # When using TCP sockets specify the hostname,
         # the ip4 address or the ip6 address here.
         # Leave as an empty string to use Unix domain
         # socket ("local" lines in pg_hba.conf).
-        "HOST": "",
+        "HOST": os.environ.get("POSTGRES_HOST", ""),
         # Specify the port number when using a TCP socket.
-        "PORT": "",
+        "PORT": os.environ.get("POSTGRES_PORT", ""),
         "OPTIONS": {},
         "CONN_MAX_AGE": 60,
         "TEST": {
-            "NAME": "test_frepple",  # Database name used when running the test suite.
+            "NAME": (
+                "test_%s0" % os.environ["POSTGRES_DBNAME"]
+                if "POSTGRES_DBNAME" in os.environ
+                else "test_frepple"
+            ),  # Database name used when running the test suite.
             "FREPPLE_PORT": "127.0.0.1:9002",
         },
         # The FILEUPLOADFOLDER setting is used by the "import data files" task.
@@ -91,26 +99,36 @@ DATABASES = {
     "scenario1": {
         "ENGINE": "django.db.backends.postgresql",
         # Database name
-        "NAME": "scenario1",
+        "NAME": (
+            "%s1" % os.environ["POSTGRES_DBNAME"]
+            if "POSTGRES_DBNAME" in os.environ
+            else "scenario1"
+        ),
         # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "USER": "frepple",
+        "USER": os.environ.get("POSTGRES_USER", "frepple"),
         # Role password when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "PASSWORD": "frepple",
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "frepple"),
         # When using TCP sockets specify the hostname,
         # the ip4 address or the ip6 address here.
         # Leave as an empty string to use Unix domain
         # socket ("local" lines in pg_hba.conf).
-        "HOST": "",
+        "HOST": os.environ.get("POSTGRES_HOST", ""),
+        # Specify the port number when using a TCP socket.
+        "PORT": os.environ.get("POSTGRES_PORT", ""),
         # Specify the port number when using a TCP socket.
         "PORT": "",
         "OPTIONS": {},
         "CONN_MAX_AGE": 60,
         "TEST": {
-            "NAME": "test_scenario1",  # Database name used when running the test suite.
+            "NAME": (
+                "test_%s1" % os.environ["POSTGRES_DBNAME"]
+                if "POSTGRES_DBNAME" in os.environ
+                else "test_scenario1"
+            ),  # Database name used when running the test suite.
             "FREPPLE_PORT": "127.0.0.1:9003",
         },
         # The FILEUPLOADFOLDER setting is used by the "import data files" task.
@@ -131,26 +149,34 @@ DATABASES = {
     "scenario2": {
         "ENGINE": "django.db.backends.postgresql",
         # Database name
-        "NAME": "scenario2",
+        "NAME": (
+            "%s2" % os.environ["POSTGRES_DBNAME"]
+            if "POSTGRES_DBNAME" in os.environ
+            else "scenario2"
+        ),
         # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "USER": "frepple",
+        "USER": os.environ.get("POSTGRES_USER", "frepple"),
         # Role password when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "PASSWORD": "frepple",
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "frepple"),
         # When using TCP sockets specify the hostname,
         # the ip4 address or the ip6 address here.
         # Leave as an empty string to use Unix domain
         # socket ("local" lines in pg_hba.conf).
-        "HOST": "",
+        "HOST": os.environ.get("POSTGRES_HOST", ""),
         # Specify the port number when using a TCP socket.
-        "PORT": "",
+        "PORT": os.environ.get("POSTGRES_PORT", ""),
         "OPTIONS": {},
         "CONN_MAX_AGE": 60,
         "TEST": {
-            "NAME": "test_scenario2",  # Database name used when running the test suite.
+            "NAME": (
+                "test_%s2" % os.environ["POSTGRES_DBNAME"]
+                if "POSTGRES_DBNAME" in os.environ
+                else "test_scenario2"
+            ),  # Database name used when running the test suite.
             "FREPPLE_PORT": "127.0.0.1:9004",
         },
         # The FILEUPLOADFOLDER setting is used by the "import data files" task.
@@ -171,26 +197,36 @@ DATABASES = {
     "scenario3": {
         "ENGINE": "django.db.backends.postgresql",
         # Database name
-        "NAME": "scenario3",
+        "NAME": (
+            "%s3" % os.environ["POSTGRES_DBNAME"]
+            if "POSTGRES_DBNAME" in os.environ
+            else "scenario3"
+        ),
         # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "USER": "frepple",
+        "USER": os.environ.get("POSTGRES_USER", "frepple"),
         # Role password when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "PASSWORD": "frepple",
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "frepple"),
         # When using TCP sockets specify the hostname,
         # the ip4 address or the ip6 address here.
         # Leave as an empty string to use Unix domain
         # socket ("local" lines in pg_hba.conf).
-        "HOST": "",
+        "HOST": os.environ.get("POSTGRES_HOST", ""),
+        # Specify the port number when using a TCP socket.
+        "PORT": os.environ.get("POSTGRES_PORT", ""),
         # Specify the port number when using a TCP socket.
         "PORT": "",
         "OPTIONS": {},
         "CONN_MAX_AGE": 60,
         "TEST": {
-            "NAME": "test_scenario3",  # Database name used when running the test suite.
+            "NAME": (
+                "test_%s3" % os.environ["POSTGRES_DBNAME"]
+                if "POSTGRES_DBNAME" in os.environ
+                else "test_scenario3"
+            ),  # Database name used when running the test suite.
             "FREPPLE_PORT": "127.0.0.1:9005",
         },
         # The FILEUPLOADFOLDER setting is used by the "import data files" task.

@@ -1846,9 +1846,7 @@ class GridReport(View):
                 "sidx": sidx,
                 "default_sort": cls.defaultSortString(request),
                 "is_popup": is_popup,
-                "filters": (
-                    json.loads(filters.replace("\\", "\\\\")) if filters else None
-                ),
+                "filters": json.loads(filters) if filters else None,
                 "args": args,
                 "bucketnames": bucketnames,
                 "model": cls.model,
@@ -3079,9 +3077,7 @@ class GridReport(View):
     @classmethod
     def getQueryString(cls, request):
         # Django-style filtering (which uses URL parameters) are converted to a jqgrid filter expression
-        filtered = False
-        filters = ['{"groupOp":"AND","rules":[']
-        first = True
+        filters = {"groupOp": "AND", "rules": []}
         for i, j in request.GET.items():
             for r in request.rows:
                 if i == r.name or (
@@ -3094,25 +3090,16 @@ class GridReport(View):
                         or i[i.rfind("__") + 2 :]
                     )
                     try:
-                        if first:
-                            first = False
-                        else:
-                            filters.append(",")
-                        filters.append(
-                            '{"field":"%s","op":"%s","data":"%s"}'
-                            % (
-                                r.field_name,
-                                cls._filter_map_django_jqgrid[operator],
-                                unquote(j).replace('"', '\\"'),
-                            )
+                        filters["rules"].append(
+                            {
+                                "field": r.field_name,
+                                "op": cls._filter_map_django_jqgrid[operator],
+                                "data": unquote(j),
+                            }
                         )
-                        filtered = True
                     except Exception:
                         pass  # Ignore invalid operators
-        if not filtered:
-            return None
-        filters.append("]}")
-        return "".join(filters)
+        return json.dumps(filters) if filters["rules"] else None
 
     @classmethod
     def _get_q_filter(cls, request, filterdata):

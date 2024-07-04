@@ -80,6 +80,8 @@ class ExportForecast(PlanTask):
         test["quantity"] = [None] * len(test["date"])
         test_pd = pd.DataFrame(test)
 
+        minimal_training_size = 52 if calendar == "week" else 12
+
         for i in frepple.demands():
             if isinstance(i, frepple.demand_forecast) and i.methods == "automatic":
                 train = {"date": [], "quantity": []}
@@ -96,12 +98,12 @@ class ExportForecast(PlanTask):
                     if not found:
                         continue
 
-                if len(train["date"]) < 2:
+                if len(train["date"]) < minimal_training_size:
                     # too small to forecast, will be forecasted with statistical methods
                     continue
 
                 try:
-                    orbit_model = KTR(
+                    orbit_model = DLT(
                         response_col="quantity",
                         date_col="date",
                         seasonality=(52 if calendar == "week" else 12),
@@ -111,8 +113,8 @@ class ExportForecast(PlanTask):
                     orbit_model.fit(train_pd)
                     predicted_df = orbit_model.predict(df=test_pd, decompose=True)
                     index = 0
-                    for j in frepple.demands():
-                        if j.owner == i and (j.start in test["date"]):
+                    for j in i.members:
+                        if j.start in test["date"]:
                             j.forecastbaseline = max(
                                 0, predicted_df.iloc[index]["prediction"]
                             )
@@ -123,4 +125,3 @@ class ExportForecast(PlanTask):
                         "skipping machine learning forecast calculation for %s: %s"
                         % (i.name, e)
                     )
-                    pass

@@ -94,6 +94,36 @@ on the URL http://localhost:9000/
      --detach \
      ghcr.io/frepple/frepple-community:latest
 
+The following environment variables can be set to configure your container:
+
+        POSTGRES_HOST: ""
+        POSTGRES_PORT: 5432
+        POSTGRES_USER: "frepple"
+        POSTGRES_PASSWORD: "frepple"
+        FREPPLE_DATE_STYLE: "year-month-day"
+        FREPPLE_DATE_STYLE_WITH_HOURS: "false"
+        FREPPLE_TIME_ZONE: "UTC"
+        FREPPLE_THEMES: "earth grass lemon odoo openbravo orange snow strawberry water"
+        FREPPLE_DEFAULT_THEME: "earth"
+        FREPPLE_EMAIL_USE_TLS: "true"
+        FREPPLE_DEFAULT_FROM_EMAIL: "your_email@domain.com"
+        FREPPLE_SERVER_EMAIL: "your_email@domain.com"
+        FREPPLE_EMAIL_HOST_USER: "your_email@domain.com"
+        FREPPLE_EMAIL_HOST_PASSWORD: "frePPLeIsTheBest"
+        FREPPLE_EMAIL_HOST: ""
+        FREPPLE_EMAIL_PORT: 25
+        FREPPLE_CONTENT_SECURITY_POLICY: "frame-ancestors 'self'"
+        FREPPLE_X_FRAME_OPTIONS: "SAMEORIGIN"
+        FREPPLE_CSRF_TRUSTED_ORIGINS: ""
+        FREPPLE_SECURE_PROXY_SSL_HEADER: ""
+        FREPPLE_SESSION_COOKIE_SECURE: "false"
+        FREPPLE_CSRF_COOKIE_SAMESITE: "lax"
+        FREPPLE_FTP_PROTOCOL: "SFTP"
+        FREPPLE_FTP_HOST: ""
+        FREPPLE_FTP_PORT: 22
+        FREPPLE_FTP_USER: ""
+        FREPPLE_FTP_PASSWORD: ""
+
 ************************************
 Deployment of the Enterprise Edition
 ************************************
@@ -167,10 +197,33 @@ the max_connections setting is moved from the default 100 to eg 400).
         - log-frepple-community:/var/log/frepple
         - config-frepple-community:/etc/frepple
       environment:
-        POSTGRES_HOST: frepple-community-postgres
+        POSTGRES_HOST: "frepple-community-postgres"
         POSTGRES_PORT: 5432
-        POSTGRES_USER: frepple
-        POSTGRES_PASSWORD: freppledb
+        POSTGRES_USER: "frepple"
+        POSTGRES_PASSWORD: "frepple"
+        FREPPLE_DATE_STYLE: "year-month-day"
+        FREPPLE_DATE_STYLE_WITH_HOURS: "false"
+        FREPPLE_TIME_ZONE: "UTC"
+        FREPPLE_THEMES: "earth grass lemon odoo openbravo orange snow strawberry water"
+        FREPPLE_DEFAULT_THEME: "earth"
+        FREPPLE_EMAIL_USE_TLS: "true"
+        FREPPLE_DEFAULT_FROM_EMAIL: "your_email@domain.com"
+        FREPPLE_SERVER_EMAIL: "your_email@domain.com"
+        FREPPLE_EMAIL_HOST_USER: "your_email@domain.com"
+        FREPPLE_EMAIL_HOST_PASSWORD: "frePPLeIsTheBest"
+        FREPPLE_EMAIL_HOST: ""
+        FREPPLE_EMAIL_PORT: 25
+        FREPPLE_CONTENT_SECURITY_POLICY: "frame-ancestors 'self'"
+        FREPPLE_X_FRAME_OPTIONS: "SAMEORIGIN"
+        FREPPLE_CSRF_TRUSTED_ORIGINS: ""
+        FREPPLE_SECURE_PROXY_SSL_HEADER: ""
+        FREPPLE_SESSION_COOKIE_SECURE: "false"
+        FREPPLE_CSRF_COOKIE_SAMESITE: "lax"
+        FREPPLE_FTP_PROTOCOL: "SFTP"
+        FREPPLE_FTP_HOST: ""
+        FREPPLE_FTP_PORT: 22
+        FREPPLE_FTP_USER: ""
+        FREPPLE_FTP_PASSWORD: ""
 
     frepple-community-postgres:
       image: "postgres:13"

@@ -1,10 +1,13 @@
 Release notes
 -------------
 
-9.1.0 (Upcoming release)
+9.2.0 (Upcoming release)
 ========================
 
-This release is scheduled for early July. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+This release is scheduled for end of August. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.1.0 (2024-07-05)
+==================
 
 The big news is that this release adds an AI based forecasting method. AI is a trendy and hot topic these days
 and we couldn't stay behind :-)
@@ -54,6 +57,12 @@ and we couldn't stay behind :-)
 
 - | 17: Fix for the lunch periods in calendars that were incorrectly considered as working time.
 
+.. rubric:: System administration
+
+- | A lot of settings in the /etc/frepple/djangosettings.py configuration file can now
+    be set through environment variables.
+  | This makes it easier to manage the runtime configuration in container-based deployments.
+    Advanced configurations will continue to require a custom dockerfile to tailor the image.
 
 9.0.0 (2024-06-01)
 ==================

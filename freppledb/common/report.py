@@ -1580,18 +1580,9 @@ class GridReport(View):
         tmp = request.query.query.get_compiler(request.database).as_sql(
             with_col_aliases=False
         )
-        if settings.CACHE_GRID_COUNT:
-            cache_key = sha1(
-                str((tmp[0], tmp[1], request.database)).encode("utf8")
-            ).hexdigest()
-            cache_val = cache.get(cache_key, None)
-            if cache_val is not None:
-                return cache_val
         with connections[request.database].cursor() as cursor:
             cursor.execute("select count(*) from (" + tmp[0] + ") t_subquery", tmp[1])
             cache_val = cursor.fetchone()[0]
-            if settings.CACHE_GRID_COUNT:
-                cache.set(cache_key, cache_val, timeout=settings.CACHE_GRID_COUNT)
             return cache_val
 
     @classmethod
@@ -3295,33 +3286,9 @@ class GridPivot(GridReport):
                 request.basequery = cls.basequeryset
             if args and args[0] and not cls.new_arg_logic:
                 request.basequery = request.basequery.filter(pk__exact=args[0])
-
-        if settings.CACHE_PIVOT_COUNT:
-            # Caching of the record count
-            tmp = (
-                cls.filter_items(request, request.basequery)
-                .query.get_compiler(request.database)
-                .as_sql(with_col_aliases=False)
-            )
-            cache_key = sha1(
-                str((request.database, tmp[0], tmp[1])).encode("utf8")
-            ).hexdigest()
-            cache_val = cache.get(cache_key, None)
-            if cache_val is None:
-                with connections[request.database].cursor() as cursor:
-                    cursor.execute(
-                        "select count(*) from (" + tmp[0] + ") t_subquery", tmp[1]
-                    )
-                    cache_val = cursor.fetchone()[0]
-                    cache.set(cache_key, cache_val, settings.CACHE_PIVOT_COUNT)
-            return cache_val
-        else:
-            # Don't cache the record count queries
-            return (
-                cls.filter_items(request, request.basequery)
-                .using(request.database)
-                .count()
-            )
+        return (
+            cls.filter_items(request, request.basequery).using(request.database).count()
+        )
 
     @classmethod
     def data_query(cls, request, *args, page=None, fields=None, **kwargs):

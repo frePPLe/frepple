@@ -113,7 +113,22 @@ ALLOWED_HOSTS = ["*"]
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = "Europe/Brussels"
+if "FREPPLE_TIME_ZONE" in os.environ:
+    # Choices can be found here http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+    TIME_ZONE = os.environ["FREPPLE_TIME_ZONE"]
+    if not TIME_ZONE:
+        # A value of None will cause Django to use the same timezone as the operating system.
+        TIME_ZONE = None
+else:
+    # Retrieve the server time zone and use it for the database
+    # we need to convert that string into iana/olson format using package tzlocal
+    try:
+        from tzlocal import get_localzone
+
+        TIME_ZONE = str(get_localzone())
+    except Exception:
+        TIME_ZONE = "Europe/Brussels"
+
 
 # Supported language codes, sorted by language code.
 # Language names and codes should match the ones in Django.
@@ -142,8 +157,10 @@ LANGUAGES = (
 #  - day-month-year: European format
 #  - year-month-day: international format. This is the default
 # As option you can choose to hide the hour, minutes and seconds.
-DATE_STYLE = "year-month-day"
-DATE_STYLE_WITH_HOURS = False
+DATE_STYLE = os.environ.get("FREPPLE_DATE_STYLE", "year-month-day")
+DATE_STYLE_WITH_HOURS = (
+    os.environ.get("FREPPLE_DATE_STYLE_WITH_HOURS", "false").lower() == "true"
+)
 
 if DATE_STYLE == "month-day-year":
     # Option 1: US style
@@ -338,8 +355,11 @@ USE_TZ = False
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
 # Default: allow content from same domain
-CONTENT_SECURITY_POLICY = "frame-ancestors 'self'"
-X_FRAME_OPTIONS = "SAMEORIGIN"
+CONTENT_SECURITY_POLICY = os.environ.get(
+    "FREPPLE_CONTENT_SECURITY_POLICY", "frame-ancestors 'self'"
+)
+X_FRAME_OPTIONS = os.environ.get("FREPPLE_X_FRAME_OPTIONS", "SAMEORIGIN")
+CSRF_COOKIE_SAMESITE = os.environ.get("FREPPLE_CSRF_COOKIE_SAMESITE", "lax")
 # Alternative: prohibit embedding in any frame
 #   CONTENT_SECURITY_POLICY = "frame-ancestors 'none'"
 #   X_FRAME_OPTIONS = "DENY"
@@ -415,17 +435,9 @@ CSV_CHARSET = "utf-8"  # locale.getdefaultlocale()[1]
 # preferences among the ones listed here.
 # If the list contains only a single value, the preferences screen will not
 # display users an option to choose the theme.
-THEMES = [
-    "earth",
-    "grass",
-    "lemon",
-    "odoo",
-    "openbravo",
-    "orange",
-    "snow",
-    "strawberry",
-    "water",
-]
+THEMES = os.environ.get(
+    "FREPPLE_THEMES", "earth grass lemon odoo openbravo orange snow strawberry water"
+).split()
 
 # Website where all documentation is available.
 # - The DOCUMENTATION_URL is used as the main URL for the about box
@@ -437,7 +449,9 @@ DOCUMENTATION_URL = "https://frepple.com"
 DEFAULT_USER_GROUP = None
 
 # The default user interface theme
-DEFAULT_THEME = "earth"
+DEFAULT_THEME = os.environ.get("FREPPLE_DEFAULT_THEME", "earth")
+if DEFAULT_THEME not in THEMES:
+    DEFAULT_THEME = THEMES[0]
 
 # The default number of records to pull from the server as a page
 DEFAULT_PAGESIZE = 100
@@ -553,8 +567,6 @@ DEFAULT_DASHBOARD = [
 ]
 
 # Memory cache
-CACHE_GRID_COUNT = None
-CACHE_PIVOT_COUNT = None
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
@@ -646,11 +658,13 @@ LOCALE_PATHS = (
 # Configuration of the ftp/sftp/ftps server where to upload reports
 # Note that for SFTP protocol, the host needs to be defined
 # in the known_hosts file
-FTP_PROTOCOL = "SFTP"  # supported protocols are SFTP, FTPS and FTP (unsecure)
-FTP_HOST = None
-FTP_PORT = 22
-FTP_USER = None
-FTP_PASSWORD = None
+FTP_PROTOCOL = os.environ.get(
+    "FREPPLE_FTP_PROTOCOL", "SFTP"
+)  # supported protocols are SFTP, FTPS and FTP (unsecure)
+FTP_HOST = os.environ.get("FREPPLE_FTP_HOST", "")
+FTP_PORT = int(os.environ.get("FREPPLE_FTP_PORT", 22))
+FTP_USER = os.environ.get("FREPPLE_FTP_USER", "")
+FTP_PASSWORD = os.environ.get("FREPPLE_FTP_PASSWORD", "")
 FTP_FOLDER = None  # folder where the files should be uploaded
 
 SILENCED_SYSTEM_CHECKS = ["admin.E408"]

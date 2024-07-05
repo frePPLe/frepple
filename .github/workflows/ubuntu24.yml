@@ -60,11 +60,12 @@ jobs:
 
       - name: Test
         working-directory: ${{github.workspace}}
+        env:
+          POSTGRES_USER: localhost
+          POSTGRES_PORT: 5432
+          FREPPLE_DATE_STYLE: "day-month-year"
         run: |
           ./test/runtest.py --regression
-          sed -i "s/\"HOST\":.\"\"/\"HOST\":\"localhost\"/g" djangosettings.py
-          sed -i "s/\"PORT\":.\"\"/\"PORT\":\"5432\"/g" djangosettings.py
-          sed -i "s/DATE_STYLE = \"year-month-date\"/DATE_STYLE = \"day-month-year\"/g" djangosettings.py
           ./frepplectl.py test freppledb --verbosity=2
 
       - name: Odoo integration test

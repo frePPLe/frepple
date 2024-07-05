@@ -5,24 +5,10 @@ set -e
 sed -i "s/SECRET_KEY.*mzit.*i8b.*6oev96=.*/SECRET_KEY = \"$(mktemp -u XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX)\"/g" /etc/frepple/djangosettings.py
 params=(-U ${POSTGRES_USER:-frepple})
 if [ -n "$POSTGRES_HOST" ]; then
-  sed -i "s/\"HOST\": \"\"/\"HOST\": \"${POSTGRES_HOST}\"/g" /etc/frepple/djangosettings.py
   params+=(-h $POSTGRES_HOST)
 fi
 if [ -n "$POSTGRES_PORT" ]; then
-  sed -i "s/\"PORT\": \"\"/\"PORT\": \"${POSTGRES_PORT}\"/g" /etc/frepple/djangosettings.py
   params+=(-p $POSTGRES_PORT)
-fi
-if [ -n "$POSTGRES_USER" ]; then
-  sed -i "s/\"USER\": \"frepple\"/\"USER\": \"${POSTGRES_USER}\"/g" /etc/frepple/djangosettings.py
-fi
-if [ -n "$POSTGRES_PASSWORD" ]; then
-  sed -i "s/\"PASSWORD\": \"frepple\"/\"PASSWORD\": \"${POSTGRES_PASSWORD}\"/g" /etc/frepple/djangosettings.py
-fi
-if [ -n "$POSTGRES_DBNAME" ]; then
-  sed -i "s/\"NAME\": \"frepple\"/\"NAME\": \"${POSTGRES_DBNAME}0\"/g" /etc/frepple/djangosettings.py
-  sed -i "s/\"NAME\": \"test_frepple\"/\"NAME\": \"test_${POSTGRES_DBNAME}0\"/g" /etc/frepple/djangosettings.py
-  sed -i "s/\"NAME\": \"scenario\(.*\)\"/\"NAME\": \"${POSTGRES_DBNAME}\1\"/g" /etc/frepple/djangosettings.py
-  sed -i "s/\"NAME\": \"test_scenario\(.*\)\"/\"NAME\": \"test_${POSTGRES_DBNAME}\1\"/g" /etc/frepple/djangosettings.py
 fi
 
 # Djangosettings must be writeable by the web server to support installing&uninstalling apps

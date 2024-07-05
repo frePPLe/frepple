@@ -136,5 +136,6 @@ jobs:
           files: |
             ${{github.workspace}}/build/contrib/docker/*.deb
             ${{github.workspace}}/build/frepple-doc-*.tgz
+          make_latest: ${{ endsWith(github.ref, '.0') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -49,6 +49,9 @@ and we couldn't stay behind :-)
     `shelf life <apps/shelflife.html>`_ app to be installed on the frePPLe side.
     Note that the shelf life app is only available in the enterprise version of frePPLe.
 
+- | 15, 16, 17: The product category in Odoo is now used to build the item hierarchy in frePPLe.
+    This is very useful in forecast editor to navigate the forecast by category.
+
 - | 17: Fix for the lunch periods in calendars that were incorrectly considered as working time.
 
 

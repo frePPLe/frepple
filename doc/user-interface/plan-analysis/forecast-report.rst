@@ -38,6 +38,14 @@ Forecast backlog     | Quantity of forecast that will be shipped late.
 Backlog              This is the sum of the order backlog and the forecast backlog.
 ==================== ==============================================================================
 
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view forecast report       |
++--------------------------------+
+| Can change forecast            |
++--------------------------------+
+
 .. image:: ../_images/forecast-report-single.png
    :alt: Forecast report for a single item
 

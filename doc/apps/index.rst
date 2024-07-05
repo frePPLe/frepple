@@ -18,6 +18,7 @@ or `developed by yourself <../developer-guide/creating-an-extension-app.html>`_.
 
    executesql
    forecast
+   mlforecast
    metrics
    odoo
    reportmanager

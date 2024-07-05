@@ -61,7 +61,7 @@ jobs:
       - name: Test
         working-directory: ${{github.workspace}}
         run: |
-          export POSTGRES_USER=localhost
+          export POSTGRES_HOST=localhost
           export POSTGRES_PORT=5432
           export FREPPLE_DATE_STYLE="day-month-year"
           ./test/runtest.py --regression

@@ -245,7 +245,6 @@ DATABASES = {
         "FREPPLE_PORT": "127.0.0.1:8005",
     },
 }
-print("DATABASES", DATABASES)
 
 LANGUAGE_CODE = "en"
 

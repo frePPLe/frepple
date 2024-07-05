@@ -2,8 +2,8 @@
 Purchase order summary
 ======================
 
-The report sumarizes the purchase for each item, location and supplier per time bucket. This 
-report is typically used to provide a purchasing forecast to suppliers. 
+The report sumarizes the purchase for each item, location and supplier per time bucket. This
+report is typically used to provide a purchasing forecast to suppliers.
 
 A drilldown report is also available to show the detailed data as a list.
 
@@ -24,6 +24,12 @@ Proposed on order  Sum of the quantity of all proposed purchase orders that are 
 Total on order     Sum of the quantity of all purchase orders that are open at the end of the
                    time bucket.
 ================== ==============================================================================
+
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view purchase order        |
++--------------------------------+
 
 .. image:: ../_images/purchase-order-summary-graph.png
    :alt: Purchase order summary as a graph

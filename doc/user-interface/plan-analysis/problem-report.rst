@@ -73,6 +73,12 @@ start        Date at which the problem starts.
 end          Date at which the problem ends.
 ============ ==============================================================================
 
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view problem report        |
++--------------------------------+
+
 .. image:: ../_images/problem-report.png
    :alt: Problem report
 

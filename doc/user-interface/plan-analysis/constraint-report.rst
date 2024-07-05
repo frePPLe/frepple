@@ -39,6 +39,12 @@ start        Date at which the constraint starts.
 end          Date at which the constraint ends.
 ============ ==============================================================================
 
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view constraint report     |
++--------------------------------+
+
 
 .. image:: ../_images/constraint-report.png
    :alt: Constraint report

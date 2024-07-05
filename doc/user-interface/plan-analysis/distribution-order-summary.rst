@@ -2,7 +2,7 @@
 Distribution order summary
 ==========================
 
-The report sumarizes the shipments between locations per time bucket. 
+The report sumarizes the shipments between locations per time bucket.
 
 A drilldown report is also available to show the detailed data as a list.
 
@@ -25,6 +25,12 @@ Proposed in transit Sum of the quantity of all proposed distribution orders in t
 Total in transit    Sum of the quantity of all distribution orders in transit at the end of
                     this time bucket.
 =================== ==============================================================================
+
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view distribution order    |
++--------------------------------+
 
 .. image:: ../_images/distribution-order-summary-graph.png
    :alt: Distribution order summary as a graph

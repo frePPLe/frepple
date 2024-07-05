@@ -16,12 +16,18 @@ If the report is opened for a single item a graph is displayed.
 Field        Description
 ============ ==============================================================================
 Item         Item name.
-Net forecast Amount of net forecast in the time bucket (only in Enterprise edition).
-Orders       Amount of customer orders (only in Enterprise edition).
+Net forecast Amount of net forecast in the time bucket.
+Orders       Amount of customer orders.
 Total demand Total demand for this item due in the time bucket.
 Total supply Satisfied deliveries for this item in the time bucket.
 Backlog      Difference between the supply and demand, accumulated across time buckets.
 ============ ==============================================================================
+
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view demand report         |
++--------------------------------+
 
 .. image:: ../_images/demand-report-single.png
    :alt: Demand report for a single item

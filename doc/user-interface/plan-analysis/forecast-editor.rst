@@ -104,3 +104,11 @@ Past Forecast              | The total forecasted quantity for past periods. It 
                            | The forecast snapshot for a certain past period was taken right before that
                              period became the current period.
 ========================== ==============================================================================
+
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view forecast report       |
++--------------------------------+
+| Can change forecast            |
++--------------------------------+

@@ -22,12 +22,18 @@ Total starts        Sum of the quantity of all manufacturing orders starting in 
 Proposed ends       Sum of the quantity of all manufacturing orders ending in this time bucket.
 Total ends          Sum of the quantity of all manufacturing orders starting in this time bucket.
 Proposed production Proposed production in this bucket, where the produced quantity is assumed to
-                    be evenly distributed between the start and end date of each manufacturing 
+                    be evenly distributed between the start and end date of each manufacturing
                     order.
 Total production    Total production in this bucket, where the produced quantity is assumed to
-                    be evenly distributed between the start and end date of each manufacturing 
+                    be evenly distributed between the start and end date of each manufacturing
                     order.
 =================== ==============================================================================
+
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view manufacturing order   |
++--------------------------------+
 
 .. image:: ../_images/operation-report-single.png
    :alt: Operation report for a single operation

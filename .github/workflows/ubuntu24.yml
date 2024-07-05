@@ -61,9 +61,9 @@ jobs:
       - name: Test
         working-directory: ${{github.workspace}}
         run: |
-          echo "POSTGRES_USER=localhost" >> $GITHUB_ENV
-          echo "POSTGRES_PORT=5432" >> $GITHUB_ENV
-          echo "FREPPLE_DATE_STYLE=day-month-year" >> $GITHUB_ENV
+          export POSTGRES_USER=localhost
+          export POSTGRES_PORT=5432
+          export FREPPLE_DATE_STYLE="day-month-year"
           ./test/runtest.py --regression
           ./frepplectl.py test freppledb --verbosity=2
 

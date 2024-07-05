@@ -202,8 +202,8 @@ class Command(BaseCommand):
             cursor.execute(
                 """
                 insert into ax_operationplan
-                (reference, status, type, quantity, startdate, enddate, item, supplier, location, item_cost, itemsupplier_cost, snapshot_date_id)
-                select op.reference, op.status, op.type, op.quantity, op.startdate, op.enddate, op.item_id, op.supplier_id, op.location_id,
+                (reference, status, type, quantity, startdate, enddate, item, operation, supplier, location, item_cost, itemsupplier_cost, snapshot_date_id)
+                select op.reference, op.status, op.type, op.quantity, op.startdate, op.enddate, op.item_id, op.operation_id, op.supplier_id, op.location_id,
                 item.cost, itemsupplier.cost, '%s'
                 from operationplan op
                 inner join item on op.item_id = item.name

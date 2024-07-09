@@ -111,7 +111,7 @@ class SQLReport(AuditModel):
         return self.name
 
 
-class SQLColumn(AuditModel):
+class SQLColumn(models.Model):
     id = models.AutoField(_("identifier"), primary_key=True)
     report = models.ForeignKey(
         SQLReport,
@@ -134,6 +134,7 @@ class SQLColumn(AuditModel):
         return "%s.%s" % (self.report.name if self.report else "", self.name)
 
     class Meta:
+        default_permissions = []
         db_table = "reportmanager_column"
         ordering = ("report", "sequence")
         unique_together = (("report", "sequence"),)

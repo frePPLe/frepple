@@ -128,6 +128,7 @@ class ScheduledTask(models.Model):
         db_table = "execute_schedule"
         verbose_name_plural = _("scheduled tasks")
         verbose_name = _("scheduled task")
+        default_permissions = ("add", "delete")
 
     def computeNextRun(self, now=None):
         if self.data:
@@ -259,6 +260,7 @@ class DataExport(models.Model):
         db_table = "execute_export"
         verbose_name_plural = "execute_exports"
         verbose_name = "execute_exports"
+        default_permissions = []
 
     def save(self, *args, **kwargs):
         name_lower = self.name.lower()

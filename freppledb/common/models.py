@@ -1071,6 +1071,7 @@ class Notification(models.Model):
         verbose_name = _("notification")
         verbose_name_plural = _("notifications")
         db_table = "common_notification"
+        default_permissions = []
 
 
 class NotificationFactory:

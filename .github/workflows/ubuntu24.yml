@@ -75,6 +75,8 @@ jobs:
           git -C freppledb/odoo/odoo_addon fetch --all
           git -C freppledb/odoo/odoo_addon checkout "remotes/origin/${{ github.event.client_payload.message.branch }}"
           sed -i 's/# "freppledb.odoo"/"freppledb.odoo"/g' djangosettings.py
+          export POSTGRES_HOST=localhost
+          export POSTGRES_PORT=5432
           ./frepplectl.py test freppledb.odoo
 
       - name: "Keep logs"

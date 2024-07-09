@@ -587,6 +587,20 @@ def wrapTask(request, action):
             sc = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=scenario)
             sc.description = args.get("description", None)
             sc.save(update_fields=["description"], using=DEFAULT_DB_ALIAS)
+            return HttpResponse(content="OK")
+        elif "theme" in args:
+            # Note: update is immediate and synchronous.
+            scenario = args.get("scenario", "").strip()
+            theme = args["theme"].strip()
+            if theme not in settings.THEMES:
+                theme = None
+            sc = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=scenario)
+            if theme:
+                request.user.scenario_themes[scenario] = theme
+            else:
+                del request.user.scenario_themes[scenario]
+            request.user.save(update_fields=["scenario_themes"], using=DEFAULT_DB_ALIAS)
+            return HttpResponse(content="OK")
         else:
             raise Exception("Invalid scenario task")
     # G

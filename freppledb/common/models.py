@@ -424,6 +424,7 @@ class User(AbstractUser):
         null=True,
         blank=True,
     )
+    scenario_themes = models.JSONField(blank=True, null=True)
 
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None

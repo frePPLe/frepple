@@ -31,12 +31,14 @@
       {% trans 'label'|capfirst %}
       <span class="fa fa-question-circle"></span>
       </span></th>
+    {% if THEMES|length > 1 %}
     <th style="padding:5px 10px 5px 10px; text-align: center">
-      <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Date of the last state change" %}">
-      {% trans 'last modified'|capfirst %}
+      <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Theme for this scenario" %}">
+      {% trans 'theme'|capfirst %}
       <span class="fa fa-question-circle"></span>
       </span>
     </th>
+    {% endif %}
   </tr>
   {% for j in scenarios %}
   {% if j.name in free_scenarios or j.name in active_scenarios %}
@@ -90,7 +92,23 @@
       <input class="form-control scenariolabel" type="text" data-bs-target="{{ j.name }}"
       value="{% if j.description %}{{j.description|escape}}{% else %}{{ j.name }}{% endif %}">
     </td>
-    <td style="padding:5px 10px 5px 10px; text-align: center">{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
+    {% if THEMES|length > 1 %}
+    <td style="padding:5px 10px 5px 10px; text-align: center">
+      <div id="themedropdown" class="dropdown" data-bs-target="{{ j.name }}">
+        <button class="form-control dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          {% for sc, th in request.user.scenario_themes.items %}
+            {% if sc == j.name %}{{ th }}{% endif %}
+          {% endfor %}
+        </button>
+        <ul class="dropdown-menu w-100">
+          <li><a class="scenario_theme dropdown-item" data-theme="">{% trans 'default' %}</a></li>
+          {% for k in THEMES %}
+            <li><a class="scenario_theme dropdown-item" data-theme="{{ k }}">{{ k }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </td>
+    {% endif %}
   </tr>
   {% endif %}
   {% endfor %}
@@ -150,7 +168,6 @@ $(".scenariocopy").on("click", function(event) {
 });
 $(".scenariolabel").on("change", function(event) {
   event.preventDefault();
-
   $.ajax({
    url: "/default/execute/launch/scenario_copy/",
    type: 'POST',
@@ -159,10 +176,22 @@ $(".scenariolabel").on("change", function(event) {
      scenario: $(this).attr("data-bs-target"),
      description: $(this).val()
      },
+   });
+});
+$(".scenario_theme").click(function() {
+  event.preventDefault();
+  var b = $(this);
+  $.ajax({
+   url: "/default/execute/launch/scenario_copy/",
+   type: 'POST',
+   data: {
+     scenario: b.closest("div").attr("data-bs-target"),
+     theme: b.attr("data-theme")
+     },
    success: function() {
-    console.log("dddd")
-     $("#scenariotoast span").text("Updated description");
-     bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0]).show();
+     b.closest("div").children("button").text(b.attr("data-theme"));
+     if (database == b.closest("div").attr("data-bs-target"))
+       location.reload();
     }
    });
 });

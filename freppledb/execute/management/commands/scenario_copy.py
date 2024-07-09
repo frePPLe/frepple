@@ -682,6 +682,7 @@ class Command(BaseCommand):
                 "active_scenarios": active_scenarios,
                 "free_scenarios": free_scenarios,
                 "dumps": dumps,
+                "THEMES": settings.THEMES,
             },
             request=request,
         )

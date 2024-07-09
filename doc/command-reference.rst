@@ -443,6 +443,9 @@ actions can only be performed from current scenario to destination scenario.
 The label of a scenario, which is displayed in the dropdown list in the
 upper right hand corner, can also be updated here.
 
+The theme of the user interface can be different for each scenario. This avoids
+confusion where changes are accidentily applied to an incorrect scenario.
+
 .. tabs::
 
    .. tab:: Execution screen

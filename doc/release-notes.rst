@@ -6,6 +6,11 @@ Release notes
 
 This release is scheduled for end of August. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | Users can now choose a separate theme for each scenario.
+  | This avoids mistakes where changes are applied to the wrong scenario.
+
 9.1.0 (2024-07-05)
 ==================
 

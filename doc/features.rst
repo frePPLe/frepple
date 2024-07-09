@@ -375,8 +375,8 @@ Pricing
 | **Free for academic                     | The Cloud Edition with all features is available for free for academic     |                                                                               |
 | use**                                   | use. Contact us to apply.                                                  |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Pricing is based on                   | See the price calculator on https//frepple.com/pricing.                    |                                                                               |
-| the model size and the                  |                                                                            |                                                                               |
+| **Pricing is based on                   | Check out the `price calculator <https://frepple.com/pricing>`_            |                                                                               |
+| the model size and the                  | on our website.                                                            |                                                                               |
 | modules chosen**                        |                                                                            |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Unlimited number of                   | The price is independent of the number of users.                           |                                                                               |

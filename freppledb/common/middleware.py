@@ -155,14 +155,13 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
             else:
                 language = request.user.language
             if request.user.scenario_themes:
-                request.theme = (
-                    request.user.scenario_themes.get(
-                        request.database, request.user.theme
-                    )
-                    or settings.DEFAULT_THEME
+                request.theme = request.user.scenario_themes.get(
+                    request.database, request.user.theme
                 )
             else:
-                request.theme = request.user.theme or settings.DEFAULT_THEME
+                request.theme = request.user.theme
+            if not request.theme or request.theme not in settings.THEMES:
+                request.theme = settings.DEFAULT_THEME
             request.pagesize = request.user.pagesize or settings.DEFAULT_PAGESIZE
         if language == "auto":
             language = translation.get_language_from_request(request)

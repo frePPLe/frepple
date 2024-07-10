@@ -12430,11 +12430,11 @@
 				this.onchange();
 			};
 			this.hideError = function () {
-				$("th." + errorClass, this).html("");
+				$("th." + errorClass.split(" ")[0], this).html("");
 				$("tr.error", this).hide();
 			};
 			this.showError = function () {
-				$("th." + errorClass, this).html(p.errmsg);
+				$("th." + errorClass.split(" ")[0], this).html(p.errmsg);
 				$("tr.error", this).show();
 			};
 			this.toUserFriendlyString = function () {

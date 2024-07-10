@@ -27,6 +27,12 @@ Utilization       | Equal to the load divided by the available time, expressed a
                     horizon is show in the cells on the right.
 ================= ==============================================================================
 
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view resource report       |
++--------------------------------+
+
 .. image:: ../_images/resource-report-single.png
    :alt: Resource report for a single resource
 

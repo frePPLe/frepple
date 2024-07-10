@@ -37,10 +37,16 @@ Status            Status of the operation:
                   - approved: approved by the planner, but not yet launched in the ERP system
                   - confirmed: ongoing transaction, controlled by the ERP system and not changeable
                     in frePPLe
-                  - closed: operation has finished 
+                  - closed: operation has finished
 Reference         Reference of the manufacturing order, distribution order, purchase order or
                   delivery ordre causing the inventory movement.
 ================= ==============================================================================
+
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view inventory report      |
++--------------------------------+
 
 .. image:: ../_images/inventory-detail-report.png
    :alt: Inventory detail report

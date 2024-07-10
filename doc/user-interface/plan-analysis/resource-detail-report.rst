@@ -31,8 +31,8 @@ Criticality                 | Indication of the urgency of the operation.
                             | A criticality of 999 indicates an operation that isn't used at all to
                               meet any demand.
 Net duration                Actual duration of the operation, which doesn't include any unavailable time
-                            between the start and end date.                     
-Inventory Status            The inventory status of the operation.          
+                            between the start and end date.
+Inventory Status            The inventory status of the operation.
 Status                      Status of the operation:
 
                             - proposed: newly proposed by the planning tool
@@ -43,6 +43,12 @@ Status                      Status of the operation:
 Setup                       Setup of the resource during this loading.
 Reference                   Reference of the manufacturing order or distribution order plan loading the resource.
 =========================== ==============================================================================
+
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view resource report       |
++--------------------------------+
 
 .. image:: ../_images/resource-detail-report.png
    :alt: Resource detail report

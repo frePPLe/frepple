@@ -186,6 +186,12 @@ Forecast backlog               | The total quantity of forecast due in the past 
 
 ============================== ==============================================================================
 
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view inventory report      |
++--------------------------------+
+
 
 .. image:: ../_images/inventory-report-single.png
    :alt: Inventory report for a single buffer

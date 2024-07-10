@@ -42,5 +42,11 @@ The metrics being reported are:
   forecast, the numbers give equal weight to inventory of a 1$ component and a
   1000$ end item, etc.
 
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view kpi report            |
++--------------------------------+
+
 .. image:: ../_images/performance-indicator-report.png
    :alt: Performance indicator report

@@ -980,18 +980,19 @@ function forecastController($scope, $http, $q, $location) {
     // Create labels
     var Crosses = popup.find("#Crosses");
     var DroppointCrosses = popup.find("#DroppointCrosses");
-    var hidden = Object.keys($scope.measures);
+    var hidden = Object.values($scope.measures);
     for (var j in $scope.rows) {
       var newli = $('<li class="list-group-item" style="cursor: move"></li>')
         .text($scope.measures[$scope.rows[j]].label)
         .attr("data-value", $scope.rows[j]);
-      hidden.splice(hidden.indexOf($scope.rows[j]), 1);
+      hidden = hidden.filter(a => a.name != $scope.rows[j]);
       Crosses.append(newli);
     }
-    for (var j in hidden) {
+    hidden.sort((a, b) => a.label.localeCompare(b.label));
+    for (var j of hidden) {
       var newli = $('<li class="list-group-item" style="cursor: move"></li>')
-        .text($scope.measures[hidden[j]].label)
-        .attr("data-value", hidden[j]);
+        .text(j.label)
+        .attr("data-value", j.name);
       DroppointCrosses.append(newli);
     }
 

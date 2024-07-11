@@ -186,8 +186,9 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
         ok = true;
     }
     if (!ok)
-      throw DataException(
-          "Resource isn't matching the resource specified on the load");
+      logger << "Warning: Resource isn't matching the resource specified on "
+                "the load"
+             << endl;
 
     // New resource must have the required skill
     if (getLoad()->getSkill()) {
@@ -199,7 +200,8 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
           break;
         }
       if (!ok)
-        throw DataException("Resource misses the skill specified on the load");
+        logger << "Warning: Resource misses the skill specified on the load"
+               << endl;
     }
   }
 

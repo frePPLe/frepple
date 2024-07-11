@@ -168,10 +168,21 @@ $(function() {
 {% endif %}
 
 	$(window).bind('resize', function() {
-	  $("#grid")
-	   .setGridWidth($('#content-main').width())
-	   .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %});
-	});
+    {% if args.0 or mode == "graph" %}
+    if ($("#grid").jqGrid('getGridParam','width') != $('#content-main').width()) {
+      // Redraw the graph when the width changes
+      var h = $(window).height();
+      $("#graph").width($(window).width()-60).height(h>800 || h<550 ? 360 : h-450);
+      clearTimeout(resizing);
+      resizing = setTimeout(function(){
+          $("#grid").trigger("reloadGrid");
+          }, 200);
+    }
+    {% endif %}
+    $("#grid")
+      .setGridWidth($('#content-main').width())
+      .setGridHeight({% if reportclass.heigth %}{{reportclass.heigth}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %});
+  });
 
 	$("#horizonbucketsul li a").click(function(){
 	  $("#horizonbuckets1").html($(this).text() + '  <span class="caret"><\/span>');

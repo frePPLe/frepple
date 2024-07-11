@@ -11,6 +11,10 @@ This release is scheduled for end of August. You can already check out a `previe
 - | Users can now choose a separate theme for each scenario.
   | This avoids mistakes where changes are applied to the wrong scenario.
 
+- | A small annoyance was resolved: Until now graphs were not updated when
+    resizing your browser window  Now the graphs are redrawn to fit the new
+    window size.
+
 9.1.0 (2024-07-05)
 ==================
 

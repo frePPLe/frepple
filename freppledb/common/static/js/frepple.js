@@ -2920,11 +2920,11 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
     $("#animatedcog").css('visibility', 'visible');
     $('#uploadform').css('display', 'none');
     $('#copytoclipboard').on('click', function () {
+      $("#uploadResponse").find("tr.hidden").remove();
       navigator.clipboard.writeText($("#uploadResponse").prop("innerText"));
     });
     $('#cancelimportbutton').show().on('click', function () {
-      var theclone = $("#uploadResponse").clone();
-      theclone.append('<div><strong>' + gettext('Canceled') + '</strong></div>');
+      $("#uploadResponse").append('<div><strong>' + gettext('Canceled') + '</strong></div>');
       xhr.abort();
       $("#animatedcog").css('visibility', 'hidden');
       $("#uploadResponse").append(theclone.contents());
@@ -2932,10 +2932,6 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped, buttonlab
       $('#cancelimportbutton').hide();
       $('#copytoclipboard').show();
     });
-
-    // Empty the csv-file field
-    //$("#csv_file").wrap('<form>').closest('form').get(0).reset();
-    //$("#csv_file").unwrap();
 
     // Prepare formdata
     filesdata = new FormData($("#uploadform")[0]);

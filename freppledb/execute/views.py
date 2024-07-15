@@ -596,7 +596,10 @@ def wrapTask(request, action):
                 theme = None
             sc = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=scenario)
             if theme:
-                request.user.scenario_themes[scenario] = theme
+                if request.user.scenario_themes:
+                    request.user.scenario_themes[scenario] = theme
+                else:
+                    request.user.scenario_themes = {scenario: theme}
             else:
                 del request.user.scenario_themes[scenario]
             request.user.save(update_fields=["scenario_themes"], using=DEFAULT_DB_ALIAS)

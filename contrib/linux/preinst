@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 . /etc/lsb-release
 if [ "@Python3_VERSION_MAJOR@.@Python3_VERSION_MINOR@" == "3.8" ]

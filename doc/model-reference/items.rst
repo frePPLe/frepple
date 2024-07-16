@@ -128,7 +128,7 @@ https://frepple.com/blog/demand-classification/
 Field                    Type              Description
 ======================== ================= =============================================================
 demand_pattern           String            Demand pattern: "smooth", "intermittent", "erratic" or
-                                          "lumpy".
+                                           "lumpy".
 adi                      Number            | Average demand interval.
                                            | It measures the demand regularity in time by computing
                                             the average interval between two demands.

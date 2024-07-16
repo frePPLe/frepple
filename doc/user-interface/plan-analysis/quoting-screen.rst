@@ -60,3 +60,13 @@ request to the quoting service. The buttons perform the following actions:
 The bottom right section of the screen displays the answer of the quoting
 service. You can see the list of planned deliveries, any problems associated
 with the order, and the constraints that resulted in a late or short promise.
+
++--------------------------------+
+| Related permissions            |
++================================+
+| Can view quote report          |
++--------------------------------+
+| Can view demand                |
++--------------------------------+
+| Can change demand              |
++--------------------------------+

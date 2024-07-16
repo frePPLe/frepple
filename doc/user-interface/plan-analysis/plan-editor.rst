@@ -12,6 +12,7 @@ where the user can visually review the plan and make changes to it.
 * `Customizing the layout`_
 * `Interactive changes to the plan`_
 * `Visualization color schemes`_
+* `Related permissions`_
 
 .. image:: ../_images/plan-editor.png
    :alt: Interactive Gantt chart report
@@ -130,4 +131,24 @@ left corner to change the color method.
 The color configuration is automatically saved when a user with superuser 
 privileges changes them. To assure that all users apply the same color 
 conventions, the settings are shared.
-     
+
+Related permissions
+-------------------
+
++--------------------------------+
+| Related permissions            |
++================================+
+| Can change operationplan       |
++--------------------------------+
+| Can create operationplan       |
++--------------------------------+
+| Can delete operationplan       |
++--------------------------------+
+| Can view resource              |
++--------------------------------+
+| Can view demand                |
++--------------------------------+
+| Can view buffer                |
++--------------------------------+
+| Can view location              |
++--------------------------------+

@@ -29,6 +29,12 @@ You can disable the refreshing by clicking on the autorefresh icon.
 | All the actions (and more) can also be performed synchronously
   from the command line with the frepplectl script: see
   :doc:`/integration-guide/batch-commands`
-  
-| It is also possible to launch tasks through a web interface: see 
+
+| It is also possible to launch tasks through a web interface: see
   :doc:`/integration-guide/remote-commands`
+
++--------------------------------+
+| Related permissions            |
++================================+
+| Related permissions            |
++--------------------------------+

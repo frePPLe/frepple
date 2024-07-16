@@ -107,6 +107,8 @@ class AppsView(View):
     @classmethod
     @method_decorator(staff_member_required)
     def get(cls, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
         request.prefs = request.user.getPreference(
             cls.reportkey, database=request.database
         )

@@ -11,5 +11,7 @@ or `developed by yourself <../developer-guide/creating-an-extension-app.html>`_.
 
 Read more on the available extensions in `this chapter <../../apps/index.html>`_.
 
+Only superusers can view the app list, and install or uninstall them.
+
 .. image:: ../_images/apps.png
    :alt: Extension apps

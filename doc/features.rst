@@ -4,6 +4,7 @@ Key features
 
 Browse the documentation by functional areas, and dig into the topics you are interested in.
 
+  * :ref:`demand_forecasting`
   * :ref:`production_planning`
   * :ref:`capacity_modeling`
   * :ref:`routing_and_bom`
@@ -13,6 +14,46 @@ Browse the documentation by functional areas, and dig into the topics you are in
   * :ref:`deployment`
   * :ref:`technology`
   * :ref:`pricing`
+
+|
+
+.. _demand_forecasting:
+
+Demand forecasting
+~~~~~~~~~~~~~~~~~~
+
++-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| Feature                                 | Description                                                                | Read more                                                                     |
++=========================================+============================================================================+===============================================================================+
+| **Statistical                           | The forecasting algorithm implements forecast methods for:                 | - Doc :doc:`user-interface/plan-analysis/forecast-report`                     |
+| forecast**                              |                                                                            | - Example :doc:`examples/forecasting/forecast-method`                         |
+|                                         | - Constant demand (single exponential smoothing)                           | - Example :doc:`examples/forecasting/middle-out-forecast`                     |
+|                                         | - Trending demand (double exponential smoothing)                           |                                                                               |
+|                                         | - Seasonal demand (Holt-Winters additive method)                           |                                                                               |
+|                                         | - Intermittent demand (Croston method)                                     |                                                                               |
+|                                         | - Moving average.                                                          |                                                                               |
+|                                         |                                                                            |                                                                               |
+|                                         | The system automatically selects and tunes the best method that gives      |                                                                               |
+|                                         | the lowest forecast error.                                                 |                                                                               |
++-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| **Outlier detection                     | Automatic detect and to exceptionally low or high demands:                 | - Video :doc:`a-day-in-the-life/demand-forecasting/filter-outliers`           |
+| and correction**                        |                                                                            |                                                                               |
+|                                         | The algorithm also implements a filter to reduce the impact of outliers    |                                                                               |
+|                                         | on the generated statistical forecast (net forecast).                      |                                                                               |
++-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| **Multi-dimensional and                 | Review forecast and demand history at any level of item, location,         | - Doc :doc:`user-interface/plan-analysis/forecast-editor`                     |
+| hierarchical review**                   | customer, and time hierarchies.                                            | - `Live demo <https://demo.frepple.com/Distribution/forecast/editor/>`__      |
++-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| **Automatic disaggregation of edits**   | Enter values at higher levels of the item, location, customer,             | - Doc :doc:`user-interface/plan-analysis/forecast-editor`                     |
+|                                         | and time hierarchies. The values are automatically distributed to lower    | - `Live demo <https://demo.frepple.com/Distribution/forecast/editor/>`__      |
+|                                         | levels.                                                                    | - Video :doc:`a-day-in-the-life/demand-forecasting/share-forecast`            |
+|                                         |                                                                            | - Video :doc:`a-day-in-the-life/demand-forecasting/upload-forecast-values`    |
++-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| **Forecast consumption**                | Sales orders consume from the gross forecast.                              | - Example :doc:`examples/forecasting/forecast-netting`                        |
+|                                         |                                                                            |                                                                               |
+|                                         | The sales orders and the remaining net forecast make up a complete and     |                                                                               |
+|                                         | consistent demand for the complete planning horizon.                       |                                                                               |
++-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 
 |
 
@@ -33,7 +74,7 @@ Production planning & scheduling
 |                                         | As such, it can be used in mid-term capacity planning processes.           |   :doc:`a-day-in-the-life/production-planning/identify-bottleneck-resources`  |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Production scheduling**               | Use frePPLe to generate detailed short-term production schedules. You can  | - Doc :doc:`user-interface/plan-analysis/plan-editor`                         |
-|                                         | then visualize your plan in an interactive Gantt chart and make final      | - `Live demo <https://demo.frepple.com/planningboard/>`_                      |
+|                                         | then visualize your plan in an interactive Gantt chart and make final      | - `Live demo <https://demo.frepple.com/planningboard/>`__                     |
 |                                         | adjustments.                                                               | - Video                                                                       |
 |                                         |                                                                            |   :doc:`a-day-in-the-life/production-planning/optimize-plan-in-gantt-chart`   |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
@@ -122,10 +163,10 @@ Odoo integration
 | and purchase orders**                   | With a simple click the planners can create manufacturing orders and       |                                                                               |
 |                                         | purchase orders in odoo.                                                   |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Integrated user interface**           | The frepple user interface is integrated in odoo. Users log in odoo and    | - `Live demo odoo 14 <https://odoo14.frepple.com/>`_                          |
-|                                         | can navigate from odoo to all frepple screens.                             | - `Live demo odoo 15 <https://odoo15.frepple.com/>`_                          |
-|                                         |                                                                            | - `Live demo odoo 16 <https://odoo16.frepple.com/>`_                          |
-|                                         |                                                                            | - `Live demo odoo 17 <https://odoo17.frepple.com/>`_                          |
+| **Integrated user interface**           | The frepple user interface is integrated in odoo. Users log in odoo and    | - `Live demo odoo 14 <https://odoo14.frepple.com/>`__                         |
+|                                         | can navigate from odoo to all frepple screens.                             | - `Live demo odoo 15 <https://odoo15.frepple.com/>`__                         |
+|                                         |                                                                            | - `Live demo odoo 16 <https://odoo16.frepple.com/>`__                         |
+|                                         |                                                                            | - `Live demo odoo 17 <https://odoo17.frepple.com/>`__                         |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 
 |
@@ -239,7 +280,7 @@ User interface
 |                                         | FrePPLe supports Chrome, Firefox, Edge, Safari and other modern            |                                                                               |
 |                                         | web browsers.                                                              |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Multi-lingual**                       | Available in English, French, German, Hebrew, Italian, Japanese, Dutch,    | - `Live demo <https://demo.frepple.com/preferences/>`_                        |
+| **Multi-lingual**                       | Available in English, French, German, Hebrew, Italian, Japanese, Dutch,    | - `Live demo <https://demo.frepple.com/preferences/>`__                       |
 |                                         | Portuguese, Brazilian Portuguese, Russian, Spanish, simplified and         | - Doc :doc:`developer-guide/translating-the-user-interface`                   |
 |                                         | traditional Chinese.                                                       |                                                                               |
 |                                         |                                                                            |                                                                               |
@@ -300,7 +341,7 @@ Integration
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **CSV import and export**               | Import and export CSV data files for all reports.                          | - Doc :doc:`user-interface/getting-around/importing-data`                     |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **REST API**                            | A web-based JSON-REST API allows frePPLe to be integrated online with      | - `Live demo <https://demo.frepple.com/api/>`_                                |
+| **REST API**                            | A web-based JSON-REST API allows frePPLe to be integrated online with      | - `Live demo <https://demo.frepple.com/api/>`__                               |
 |                                         | other applications.                                                        |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Packaged connectors                   | Generic standard connectors for Odoo, Openbravo and Etendo are available.  |                                                                               |

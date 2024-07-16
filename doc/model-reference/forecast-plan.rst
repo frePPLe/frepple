@@ -68,18 +68,17 @@ Note that:
   (item,location,customer). It is possible to define a forecast override at any level of the hierarchy, frepple has the logic
   to disaggregate the quantity to the children (proportionnaly to the existing statistical forecast).
 
-- Manual forecast files can be uploaded without existing `forecast <forecast.html>`_ records under two
+- Manual forecast files can be uploaded without existing `forecast <forecast.html>`__ records under two
   conditions. The forecast combination (item, location, customer) must be at leaf level (meaning that the item, location
   and customer are at the lowest level of the hierarchy) and the parameter forecast.populateForecastTable must be set to true.
-  If these 2 conditions are met, the `forecast <forecast.html>`_ records will be created on the fly while
+  If these 2 conditions are met, the `forecast <forecast.html>`__ records will be created on the fly while
   uploading the file.
 
 
 Some important notes on the format of the uploaded file:
 
 - An Excel file downloaded from the forecast report screen will have the bucket names specified as strings.
-  These bucket names are the ones defined in the
-  `Bucket Dates <https://frepple.com/docs/current/model-reference/bucket-dates.php>`_ table.
+  These bucket names are the ones defined in the `bucket dates <bucket-dates.html>`__ table.
   It is possible to replace in Excel the bucket names with a date format, frepple will pick the bucket
   that contains that date in the default forecasting bucket (defined in the forecast.calendar parameter).
 
@@ -94,7 +93,7 @@ Some important notes on the format of the uploaded file:
      :alt: Forecast upload with dates
 
 
-- In the `forecast <https://frepple.com/docs/current/model-reference/forecast.php>`_ table, the name is unique
+- In the `forecast <forecast.html>`__ table, the name is unique
   for an item, location, customer combination. In the uploaded Excel file, it is therefore possible to only define
   the forecast column or to omit this column and define instead the 3 columns item, location and customer.
   Note that the uploaded forecast file can also contain the four columns: forecast, item, location and customer.

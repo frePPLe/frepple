@@ -49,6 +49,10 @@ Reference                   Reference of the manufacturing order or distribution
 +================================+
 | Can view resource report       |
 +--------------------------------+
+| Can change operationplan       |
++--------------------------------+
+| Can delete operationplan       |
++--------------------------------+
 
 .. image:: ../_images/resource-detail-report.png
    :alt: Resource detail report

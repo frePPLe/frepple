@@ -43,7 +43,8 @@ def isDefaultDatabase(request):
 
 def hasInstallableApps(request):
     return (
-        hasattr(settings, "INSTALLABLE_APPS")
+        request.user.is_superuser
+        and hasattr(settings, "INSTALLABLE_APPS")
         and getattr(request, "database", DEFAULT_DB_ALIAS) == DEFAULT_DB_ALIAS
     )
 

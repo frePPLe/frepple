@@ -558,11 +558,11 @@ This release brings two exciting changes:
 
 - | The license of the Community Edition changes from `AGPL <https://wikipedia.org/wiki/Affero_General_Public_License>`_ to
     `MIT <https://wikipedia.org/wiki/MIT_License>`_.
-  | Read `this post <https://frepple.com/blog/why-we-are-changing-our-license-from-agpl-to-mit/>`_ to learn more.
+  | Read `this post <https://frepple.com/blog/why-we-are-changing-our-license-from-agpl-to-mit/>`__ to learn more.
 
 - | The forecasting module is moving into the Community Edition.
   | So far, it was available only in the Enterprise and Cloud Editions.
-  | Read `this post <https://frepple.com/blog/the-forecast-module-goes-open-source/>`_ to learn more.
+  | Read `this post <https://frepple.com/blog/the-forecast-module-goes-open-source/>`__ to learn more.
 
 Join the `webinar on Thursday June 8 at 4 PM Central European Time <https://frepple.com/webinar_frepple_8.ics>`_ to hear the full story
 and ask us any questions you may have.
@@ -1203,7 +1203,7 @@ and ask us any questions you may have.
 
 .. rubric:: User interface
 
-- | The popular `data source url <user-interface/getting-around/exporting-data>`_
+- | The popular `data source url <user-interface/getting-around/exporting-data>`__
     feature has been enhanced.
   | The column selection, filtering, sorting and language of the web page are now
     all included in the URL. What you extract in your excel sheet will match what
@@ -1717,7 +1717,7 @@ and ask us any questions you may have.
     The search expression editor is still available, but a simple search for a value in a text
     field can now be performed with less clicks.
 
-- | Addition of the `data source URL <user-interface/getting-around/exporting-data.html>`_ in the export dialog
+- | Addition of the `data source URL <user-interface/getting-around/exporting-data.html>`__ in the export dialog
     for easier export of frePPLe data into Excel. External applications can now directly pull frePPLe
     data online from a URL, which bypasses the export-import steps you do manually now.
 

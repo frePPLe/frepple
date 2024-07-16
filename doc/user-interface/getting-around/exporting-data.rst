@@ -47,21 +47,17 @@ into a single Excel workbook.
 If the user has permissions on other scenarios for the view he/she is trying to export,
 another window dialog will be displayed with these scenarios.
 
-By default only current
-scenario will be selected and the user cannot disable this selection.
+By default only current scenario will be selected and the user cannot disable this selection.
 
 If the user selects extra scenarios then the generated spreadsheet or CSV file will contain
 data for all selected scenarios. An extra column "scenario" is added in the file to clearly
 identify to which scenario a data row belongs to.
 
-.. image:: ../_images/exporting-data-scenarios.png
-   :alt: Exporting data
-
 ===============
 Data source URL
 ===============
 
-With this option we provide a URL where external applications have on line access to the report data. 
+With this option we provide a URL where external applications have on line access to the report data.
 
 The data source URL can be pasted in any kind of reporting software supporting this format (Excel, Google sheets...).
 This is pretty convenient if you are exporting the page you are visiting on a regular basis as refreshing your data in your software

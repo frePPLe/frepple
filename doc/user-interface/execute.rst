@@ -36,5 +36,19 @@ You can disable the refreshing by clicking on the autorefresh icon.
 +--------------------------------+
 | Related permissions            |
 +================================+
-| Related permissions            |
+| Can view task                  |
++--------------------------------+
+| Can run database operations    |
++--------------------------------+
+| Can copy scenario              |
++--------------------------------+
+| Can promote scenario           |
++--------------------------------+
+| Can release scenario           |
++--------------------------------+
+| Can generate plans             |
++--------------------------------+
+| Can add scheduled task         |
++--------------------------------+
+| Can delete scheduled task      |
 +--------------------------------+

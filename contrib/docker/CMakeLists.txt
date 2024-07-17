@@ -29,11 +29,11 @@ if(docker)
   add_custom_target(
     "docker-ubuntu-24.04"
     COMMAND ${CMAKE_COMMAND} --build . --target package_source
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/ubuntu-devel/"
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_BINARY_DIR}/frepple-${PROJECT_VERSION}-Source.tar.gz" "${CMAKE_CURRENT_BINARY_DIR}/ubuntu-24.04/"
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-    ${docker} build --progress=plain --target package --output type=local,dest=. ubuntu-devel
+    ${docker} build --progress=plain --target package --output type=local,dest=. ubuntu-24.04
     COMMAND ${CMAKE_COMMAND} -E env DOCKER_BUILDKIT=1
-    ${docker} build ubuntu-devel
+    ${docker} build ubuntu-24.04
     --progress=plain
     --tag "frepple-${PROJECT_BRANCH}-ubuntu-24.04:${PROJECT_VERSION}"
     --tag "frepple-${PROJECT_BRANCH}:${PROJECT_VERSION}"

@@ -15,6 +15,10 @@ This release is scheduled for end of August. You can already check out a `previe
     resizing your browser window  Now the graphs are redrawn to fit the new
     window size.
 
+.. rubric:: Odoo integration
+
+- | 17: Added support for multi-database odoo configurations.
+
 9.1.0 (2024-07-05)
 ==================
 

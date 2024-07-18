@@ -60,6 +60,13 @@ class Command(BaseCommand):
             help="Use this option to clean up all docker objects",
         )
         parser.add_argument(
+            "--multidb",
+            action="store_true",
+            dest="multidb",
+            default=False,
+            help="Use this option to run the odoo container in multi-database mode",
+        )
+        parser.add_argument(
             "--nolog",
             action="store_true",
             dest="nolog",
@@ -160,16 +167,11 @@ class Command(BaseCommand):
 
         if options["verbosity"]:
             print("BUILDING DOCKER IMAGE")
+        args = ["docker", "build", "-f", dockerfile, "-t", name, "."]
+        if options["multidb"]:
+            args += ["--build-arg", "MULTIDB=true"]
         subprocess.run(
-            [
-                "docker",
-                "build",
-                "-f",
-                dockerfile,
-                "-t",
-                name,
-                ".",
-            ],
+            args,
             cwd=options["odoo_addon_path"],
         )
 
@@ -247,8 +249,16 @@ class Command(BaseCommand):
                     name,
                     name,
                     "odoo",
-                    "--init=base,frepple,freppledata,autologin,sale_management",
-                    "--load=web,autologin",
+                    (
+                        "--init=base,frepple,freppledata,sale_management"
+                        if options["multidb"]
+                        else "--init=base,frepple,freppledata,autologin,sale_management"
+                    ),
+                    (
+                        "--load=web,frepple"
+                        if options["multidb"]
+                        else "--load=web,autologin"
+                    ),
                     "--database=%s" % name,
                     "--stop-after-init",
                 ]
@@ -495,7 +505,7 @@ class Command(BaseCommand):
                 "-t",
                 name,
                 "odoo",
-                "--database=%s" % name,
+                "--load=web,frepple" if options["multidb"] else "--database=%s" % name,
             ],
             capture_output=True,
             text=True,

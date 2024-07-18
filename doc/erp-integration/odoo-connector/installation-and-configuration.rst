@@ -24,9 +24,10 @@ The section below describes the installation and configuration of these.
     | The addon is also available from the `odoo app store <https://apps.odoo.com/apps/modules/16.0/frepple/>`_
 
   * | **Configure the Odoo server**
-    | FrePPLe needs to be loaded as a server wide module. This is achieved
-      by updating an option in the Odoo configuration file odoo.conf:
-      "server_wide_modules = base,web,frepple"
+    | If your odoo instance is running in multi-database mode you need to
+      add the frePPLe addon as a server wide module. This is achieved by updating an
+      option in the Odoo configuration file odoo.conf: "server_wide_modules = web,frepple"
+    | You can skip this step for single-database odoo configurations.
 
   * | **Configure the Odoo addon**
     | The module adds some configuration on the company. You can edit these

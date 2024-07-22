@@ -139,10 +139,12 @@ class Command(BaseCommand):
                         processid__isnull=False,
                     )
                     .order_by("-id")
-                    .only("processid")[0]
+                    .only("processid")
+                    .first()
                 )
                 if (
-                    psutil.Process(startingsvc.processid).status()
+                    startingsvc
+                    and psutil.Process(startingsvc.processid).status()
                     != psutil.STATUS_ZOMBIE
                 ):
                     # We found a process of a starting web service!

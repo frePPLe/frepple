@@ -2371,10 +2371,10 @@ void SolverCreate::checkDependencies(OperationPlan* opplan, SolverData& data,
             break;
           }
         } else if (!data.state->curOwnerOpplan &&
-                   fabs(my_q_qty - data.state->a_qty) > ROUNDING_ERROR) {
+                   my_q_qty - data.state->a_qty > ROUNDING_ERROR) {
           // Partially planned across a dependency.
           allocated += data.state->a_qty;
-          repeat = true;
+          if (allocated < orig_q_qty - ROUNDING_ERROR) repeat = true;
         }
       } while (repeat);
       data.state->curOwnerOpplan = prevOwnerOpplan;

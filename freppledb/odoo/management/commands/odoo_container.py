@@ -203,9 +203,11 @@ class Command(BaseCommand):
                     options["odoo_db_user"],
                     "--force",
                     "--if-exists",
-                    name,
                 ]
                 + extraargs
+                + [
+                    name,
+                ],
             )
             subprocess.run(
                 [

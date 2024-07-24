@@ -268,14 +268,16 @@ class MultiDBMiddleware:
             else:
                 request.session["last_request"] = now.strftime("%y-%m-%d %H:%M:%S")
 
-        # Keep last_login date up to date
-        if not request.user.is_anonymous:
-            last_login = getattr(request.user, "last_login", None)
-            now = timezone.now()
-            if not last_login or now - last_login > timedelta(hours=1):
-                user_logged_in.send(
-                    sender=request.user.__class__, request=request, user=request.user
-                )
+        # # Keep last_login date up to date for user than have rememember-me checked.
+        # # Disabled on cloud because: a) no remember-me functionality there, and b)
+        # # avoid sending out bogus login requests.
+        # if not request.user.is_anonymous:
+        #     last_login = getattr(request.user, "last_login", None)
+        #     now = timezone.now()
+        #     if not last_login or now - last_login > timedelta(hours=1):
+        #         user_logged_in.send(
+        #             sender=request.user.__class__, request=request, user=request.user
+        #         )
 
         if not hasattr(request.user, "scenarios"):
             # A scenario list is not available on the request

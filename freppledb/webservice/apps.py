@@ -22,7 +22,9 @@
 #
 
 import logging
+import random
 from threading import Thread
+from time import sleep
 
 from django.apps import AppConfig
 from django.conf import settings
@@ -43,6 +45,9 @@ def startWebService(request, **kwargs):
 
     # Loop over active scenarios
     from freppledb.common.models import Scenario, Parameter
+
+    # Random delay to avoid simultaneous web service starts
+    sleep(random.uniform(0.0, 0.5))
 
     active_scenarios = {
         i["name"]

@@ -144,14 +144,16 @@ void SolverCreate::SolverData::setCommandManager(CommandManager* a) {
 SolverCreate::SolverData::~SolverData() { delete operator_delete; };
 
 bool SolverCreate::isLeadTimeConstrained(const Operation* oper) const {
-  if (oper && oper->hasType<OperationItemSupplier>())
+  if (oper && (oper->hasType<OperationItemSupplier>() ||
+               oper->getCategory() == "subcontractor"))
     return (constrts & PO_LEADTIME) > 0;
   else if (oper && oper->hasType<OperationSplit, OperationAlternate>()) {
     bool all_po = true;
     for (auto alt = oper->getSubOperations().begin();
          alt != oper->getSubOperations().end(); ++alt) {
       if ((*alt)->getOperation()->getPriority() &&
-          !(*alt)->getOperation()->hasType<OperationItemSupplier>()) {
+          !((*alt)->getOperation()->hasType<OperationItemSupplier>() ||
+           (*alt)->getOperation()->getCategory() == "subcontractor")) {
         all_po = false;
         break;
       }

@@ -15,6 +15,13 @@ This release is scheduled for end of August. You can already check out a `previe
     resizing your browser window  Now the graphs are redrawn to fit the new
     window size.
 
+.. rubric:: Production planning
+
+- | Subcontractor operations (ie operations with category "subcontractor") are
+    now respecting the purchasing lead time constraint rather than the
+    manufacturing lead time constraint.
+  | The new behavior fits the user expectations better.
+
 .. rubric:: Odoo integration
 
 - | 17: Added support for multi-database odoo configurations.

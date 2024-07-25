@@ -53,6 +53,13 @@ class Command(BaseCommand):
             help="Complete rebuild of image and database",
         )
         parser.add_argument(
+            "--populate",
+            action="store_true",
+            dest="populate",
+            default=False,
+            help="Populate the database with a medium size random dataset",
+        )
+        parser.add_argument(
             "--destroy",
             action="store_true",
             dest="destroy",
@@ -265,6 +272,56 @@ class Command(BaseCommand):
                     "--stop-after-init",
                 ]
             )
+
+            if options["populate"]:
+                if options["verbosity"]:
+                    print("POPULATE ODOO DATABASE WITH A MEDIUM-SIZE DATASET")
+                    print("THIS WILL TAKE A WHILE...")
+                subprocess.run(
+                    [
+                        "docker",
+                        "run",
+                        "--rm",
+                    ]
+                    + (
+                        ["--add-host", "host.docker.internal:host-gateway"]
+                        if os.name != "nt"
+                        else []
+                    )
+                    + [
+                        "-v",
+                        "%s:/var/lib/odoo" % name,
+                        "-e",
+                        "HOST=%s"
+                        % (
+                            "host.docker.internal"
+                            if not options["odoo_db_host"]
+                            or options["odoo_db_host"] == "localhost"
+                            else options["odoo_db_host"]
+                        ),
+                        "-e",
+                        "USER=%s" % options["odoo_db_user"],
+                        "-e",
+                        "PASSWORD=%s" % options["odoo_db_password"],
+                        "--name",
+                        name,
+                        name,
+                        "odoo",
+                        "populate",
+                        "-d",
+                        name,
+                        "--size=medium",
+                        "--db_host=%s"
+                        % (
+                            "host.docker.internal"
+                            if not options["odoo_db_host"]
+                            or options["odoo_db_host"] == "localhost"
+                            else options["odoo_db_host"]
+                        ),
+                        "--db_user=%s" % options["odoo_db_user"],
+                        "--db_password=%s" % options["odoo_db_password"],
+                    ]
+                )
         else:
             if options["verbosity"]:
                 print("UPGRADE FREPPLE ADDON")
@@ -384,7 +441,10 @@ class Command(BaseCommand):
             from freppledb.inventoryplanning.models import Segment, BusinessRule
 
             # deploy the default_segments fixture in case it's not there
-            management.call_command("loaddata", "default_segments.json", verbosity=0)
+            if with_abc:
+                management.call_command(
+                    "loaddata", "default_segments.json", verbosity=0
+                )
 
             # segment Purchased items
             query = """
@@ -508,6 +568,7 @@ class Command(BaseCommand):
                 name,
                 "odoo",
                 "--load=web,frepple" if options["multidb"] else "--database=%s" % name,
+                # "--log-sql",    # Debugging option: log the odoo SQL queries
             ],
             capture_output=True,
             text=True,

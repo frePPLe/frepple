@@ -112,7 +112,7 @@
     </div>
 
     {% if THEMES|length > 1 %}
-    <div class="row pb-3">
+    <div class="row pb-3 align-items-center">
       <div class="col-3" style="max-width:200px; text-align: right">
         <label class="col-form-label" for="id_theme" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
           data-bs-title="Choose a styling theme.<br>Note that this setting can be overridden per scenario.">
@@ -132,6 +132,13 @@
         </ul>
         </div>
       </div>
+      {% if theme_is_overriden %}
+      <div class="col-3 col">
+        <div>
+        This choice has been overridden in this scenario.
+        </div>
+      </div>
+      {% endif %}
     </div>
     {% endif %}
 

@@ -457,7 +457,13 @@ def preferences(request):
                 request.user.save()
                 # Switch to the new theme and language immediately
                 if "theme" in newdata:
-                    request.theme = newdata["theme"]
+                    request.theme = (
+                        request.user.scenario_themes.get(
+                            request.database, newdata["theme"]
+                        )
+                        if request.user.scenario_themes
+                        else newdata["theme"]
+                    )
                 if newdata["language"] == "auto":
                     newdata["language"] = translation.get_language_from_request(request)
                 if translation.get_language() != newdata["language"]:
@@ -499,6 +505,11 @@ def preferences(request):
         context={
             "title": _("My preferences"),
             "form": form,
+            "theme_is_overriden": (
+                request.database in request.user.scenario_themes
+                if request.user.scenario_themes
+                else False
+            ),
             "THEMES": settings.THEMES,
             "LANGUAGE": LANGUAGE,
             "SCENARIOS": Scenario.objects.using(DEFAULT_DB_ALIAS)

@@ -1467,18 +1467,19 @@ class ExportOutlierCount(PlanTask):
             if cluster == -1:
                 cursor.execute(
                     """
-                    update item set outlier_1b = 0, outlier_6b = 0, outlier_12b = 0
-                    where outlier_1b is distinct from 0 or outlier_6b is distinct from 0
-                    or outlier_12b is distinct from 0;
+                    create temp table outlier_tmp as
+                    select substring(owner,1,length(owner)-13) as forecast, enddate
+                    from out_problem where name = 'outlier'
+                    and enddate >= %s - 12 * interval %s;
+                    create index on outlier_tmp (forecast);
                     with cte as (
                     select forecast.item_id,
-                    sum(case when out_problem.enddate >= %s - interval %s then 1 else 0 end) as outlier_1b,
-                    sum(case when out_problem.enddate >= %s - 6 * interval %s then 1 else 0 end) as outlier_6b,
-                    sum(case when out_problem.enddate >= %s - 12 * interval %s then 1 else 0 end) as outlier_12b
-                    from out_problem
+                    sum(case when outlier_tmp.enddate >= %s - interval %s then 1 else 0 end) as outlier_1b,
+                    sum(case when outlier_tmp.enddate >= %s - 6 * interval %s then 1 else 0 end) as outlier_6b,
+                    sum(case when outlier_tmp.enddate >= %s - 12 * interval %s then 1 else 0 end) as outlier_12b
+                    from outlier_tmp
                     inner join forecast
-                    on forecast.name||' - '||to_char(out_problem.startdate,'YYYY-MM-DD') = out_problem.owner
-                    where out_problem.name = 'outlier'
+                    on forecast.name = outlier_tmp.forecast
                     group by forecast.item_id
                     )
                     update item
@@ -1487,6 +1488,7 @@ class ExportOutlierCount(PlanTask):
                     outlier_12b = cte.outlier_12b
                     from cte
                     where cte.item_id = item.name;
+                    drop table outlier_tmp;
                     """,
-                    (frepple.settings.current, "1 %s" % (bucket,)) * 3,
+                    (frepple.settings.current, "1 %s" % (bucket,)) * 4,
                 )

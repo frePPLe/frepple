@@ -80,6 +80,9 @@ and we couldn't stay behind :-)
 
 - | 17: Fix for the lunch periods in calendars that were incorrectly considered as working time.
 
+- | 15, 16, 17: Addition of a new command *Pull demand history from Odoo*. This command uses the
+    XML RPC interface of Odoo and pulls all the sales history in the frepple database.
+
 .. rubric:: System administration
 
 - | A lot of settings in the /etc/frepple/djangosettings.py configuration file can now

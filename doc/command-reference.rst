@@ -28,6 +28,7 @@ This section provides an overview of the available actions:
   * :ref:`measure_copy`
   * :ref:`empty`
   * :ref:`odoo_import`
+  * :ref:`odoo_pull_so_history`
   * :ref:`odoo_export`
   * :ref:`backup`
 
@@ -616,6 +617,35 @@ See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`
       .. code-block:: bash
 
         POST /execute/api/odoo_import/
+
+.. _odoo_pull_so_history:
+
+Pull demand history from odoo
+-----------------------------
+
+This command is only active when the odoo integration app is installed. It pulls all
+the demand history in Odoo into the frePPLe database using the XML RPC API of Odoo.
+
+See :doc:`/erp-integration/odoo-connector/using-the-connector-in-frepple`
+
+.. tabs::
+
+   .. tab:: Execution screen
+
+      .. image:: /erp-integration/odoo-connector/_images/odoo_pull_so_history.png
+         :alt: Execution screen - pull demand history from odoo
+
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl odoo_pull_so_history
+
+   .. tab:: Web API
+
+      .. code-block:: bash
+
+        POST /execute/api/odoo_pull_so_history/
 
 .. _odoo_export:
 

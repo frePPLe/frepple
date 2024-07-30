@@ -21,6 +21,21 @@ The odoo integration brings new functionality to the user interface.
     It requires customization of the Odoo addon to define for which
     data elements you want to use mode 2.
 
+* | **Task "Pull all demand history from Odoo"**
+  | The execute screen has a *pull all demand history from odoo* command that
+    allows to import all the demand history from Odoo. This command uses the
+    XML RPC API of Odoo and is a one-off command
+    that can be used from a fresh frepple database to pull all the demand history
+    from Odoo. Note that the above *Import data from Odoo* command will also pull all
+    the demand history among all other master and transactional data. As the demand
+    history can be a very large dataset, it could be convinient to first use the
+    *Pull all demand history from Odoo* command and then use the *odoo.delta* parameter
+    with the regular *Import data from Odoo* command.
+
+  .. image:: _images/odoo_pull_so_history.png
+   :alt: Pull all demand history from Odoo
+
+
 * | **Task "Export data to Odoo"**
 
   | The execute screen has an *import data from odoo* command that

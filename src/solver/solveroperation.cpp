@@ -906,9 +906,21 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
 
 void SolverCreate::solve(const OperationItemSupplier* o, void* v) {
   SolverData* data = static_cast<SolverData*>(v);
-  if (data && data->state->curBuffer &&
-      data->state->curBuffer->getProducingOperation() == o)
-    data->purchase_buffers.insert(data->state->curBuffer);
+  if (o->getPriority() && o->getBuffer()) {
+    bool all_po = true;
+    if (o->getOwner() &&
+        o->getOwner()->hasType<OperationSplit, OperationAlternate>()) {
+      for (auto alt = o->getOwner()->getSubOperations().begin();
+           alt != o->getOwner()->getSubOperations().end(); ++alt) {
+        if ((*alt)->getOperation()->getPriority() &&
+            !(*alt)->getOperation()->hasType<OperationItemSupplier>()) {
+          all_po = false;
+          break;
+        }
+      }
+    }
+    if (all_po) data->purchase_buffers.insert(o->getBuffer());
+  }
 
   // Manage global replenishment
   Item* item = o->getBuffer()->getItem();

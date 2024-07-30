@@ -22,6 +22,9 @@ This release is scheduled for end of August. You can already check out a `previe
     manufacturing lead time constraint.
   | The new behavior fits the user expectations better.
 
+- | Buffer max inventory not always correctly respected if a buffer
+    is replenished through multiple or date-effective suppliers.
+
 .. rubric:: Odoo integration
 
 - | 17: Added support for multi-database odoo configurations.

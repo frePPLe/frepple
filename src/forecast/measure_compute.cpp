@@ -63,6 +63,10 @@ struct ForecastMeasureComputed::ItemAttribute
     auto attr = to_str(string_t(parameters[0]));
     if (attr == "cost")
       return fcstbckt->getItem()->getCost();
+    else if (attr == "volume")
+      return fcstbckt->getItem()->getVolume();
+    else if (attr == "weight")
+      return fcstbckt->getItem()->getWeight();
     else
       return fcstbckt->getItem()->getDoubleProperty(attr, 0);
   }

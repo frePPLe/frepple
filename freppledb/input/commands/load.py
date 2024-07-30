@@ -2498,13 +2498,16 @@ class loadOperationPlanMaterials(LoadTask):
                     inner join operationplan
                     on operationplan.reference = opplanmat.operationplan_id
                     where operationplan.type = 'MO'
-                    %s
+                    %s %s
                     order by operationplan_id
                     """
                     % (
-                        "and operationplan.status in ('approved', 'confirmed', 'completed')"
-                        if "supply" in os.environ
-                        else ""
+                        (
+                            "and operationplan.status in ('approved', 'confirmed', 'completed')"
+                            if "supply" in os.environ
+                            else ""
+                        ),
+                        "and %s " % cls.filter if cls.filter else "",
                     )
                 )
                 for i in cursor:

@@ -36,7 +36,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
-from django.template import Template, RequestContext
+from django.template.loader import render_to_string
 
 from freppledb import __version__
 from freppledb.common.middleware import _thread_locals
@@ -574,19 +574,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-        return Template(
-            """
-            {% load i18n %}
-            <form role="form" method="post" action="{{request.prefix}}/execute/launch/odoo_export/">{% csrf_token %}
-            <table>
-              <tr>
-                <td style="vertical-align:top; padding: 15px">
-                   <button  class="btn btn-primary"  type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
-                </td>
-                <td  style="padding: 0px 15px;">{% trans "Export frePPLe data to odoo." %}
-                </td>
-              </tr>
-            </table>
-            </form>
-          """
-        ).render(RequestContext(request))
+        return render_to_string(
+            "commands/odoo_export.html",
+            request=request,
+        )

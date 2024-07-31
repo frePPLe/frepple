@@ -32,6 +32,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.template import Template, RequestContext
+from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from freppledb import __version__
@@ -367,7 +368,7 @@ class Command(BaseCommand):
 
     # accordion template
     title = _("Pull all demand history from %(erp)s") % {"erp": "odoo"}
-    index = 1425
+    index = 2500
     help_url = "command-reference.html#odoo_pull_so_history"
 
     @staticmethod
@@ -376,22 +377,9 @@ class Command(BaseCommand):
             request.user.has_perm("auth.run_db")
             and "freppledb.odoo" in settings.INSTALLED_APPS
         ):
-            context = RequestContext(request)
-
-            template = Template(
-                """
-        {% load i18n %}
-        <form role="form" method="post" action="{{request.prefix}}/execute/launch/odoo_pull_so_history/">{% csrf_token %}
-        <table>
-          <tr>
-            <td style="vertical-align:top; padding: 10px">
-               <button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
-            </td>
-          </tr>
-        </table>
-        </form>
-        """
+            return render_to_string(
+                "commands/odoo_pull_so_history.html",
+                request=request,
             )
-            return template.render(context)
         else:
             return None

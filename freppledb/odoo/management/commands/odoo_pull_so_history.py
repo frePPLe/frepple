@@ -73,6 +73,59 @@ class Command(BaseCommand):
             help="Task identifier (generated automatically if not provided)",
         )
 
+    def getCustomers(self, models, uid):
+        customers = {}
+        res = models.execute_kw(
+            self.odoo_db,
+            uid,
+            self.odoo_password,
+            "res.partner",
+            "search_read",
+            [["|", ("parent_id", "=", False), ("parent_id.active", "=", True)]],
+            {
+                "fields": ["name", "parent_id", "is_company"],
+                "order": "parent_id desc",
+            },
+        )
+        for i in res:
+            if i["is_company"]:
+                name = "%s %s" % (i["name"], i["id"])
+            elif i["parent_id"] == False or i["id"] == i["parent_id"][0]:
+                name = "Individuals"
+            else:
+                if i["parent_id"][0] in customers:
+                    name = customers[i["parent_id"][0]]
+                else:
+                    continue
+
+            customers[i["id"]] = name
+
+        # Sync the customer list with the frepple database
+        missing_customers = list(
+            set([customers[i] for i in customers])
+            - set(
+                [
+                    i["name"]
+                    for i in Customer.objects.using(self.database)
+                    .filter(source="odoo_1")
+                    .values("name")
+                ]
+            )
+        )
+        if missing_customers:
+            with connections[self.database].cursor() as cursor:
+                psycopg2.extras.execute_batch(
+                    cursor,
+                    """
+                        insert into customer
+                        (name, source)
+                        values (%s,'odoo_1')
+                        """,
+                    [(i,) for i in missing_customers],
+                )
+
+        return customers
+
     def handle(self, **options):
         self.verbosity = int(options["verbosity"])
         self.database = options["database"]
@@ -210,15 +263,9 @@ class Command(BaseCommand):
                     locations[int(i["subcategory"])] = i["name"]
 
                 # read the customers
-                customers = {}
-                for i in (
-                    Customer.objects.using(self.database)
-                    .filter(source="odoo_1")
-                    .exclude(name="Individuals")
-                    .exclude(name="All customers")
-                    .values("name")
-                ):
-                    customers[int(i["name"].split()[-1])] = i["name"]
+                task.message = "Pulling the customers from Odoo"
+                task.save(using=self.database)
+                customers = self.getCustomers(models, uid)
                 startdate = min_date
                 # number of days in the moving window we are pulling the data from
                 step = 1
@@ -228,8 +275,8 @@ class Command(BaseCommand):
                     task.status = "%s%%" % (round(percent),)
                     percent += step_percent
                     task.message = "Working on period [%s,%s]" % (
-                        startdate,
-                        startdate + timedelta(days=step),
+                        startdate.strftime("%Y-%m-%d"),
+                        (startdate + timedelta(days=step)).strftime("%Y-%m-%d"),
                     )
                     task.save(using=self.database)
                     res_sol = models.execute_kw(

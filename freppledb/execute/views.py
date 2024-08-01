@@ -83,6 +83,7 @@ from freppledb.common.report import (
     EXCLUDE_FROM_BULK_OPERATIONS,
     _getCellValue,
     matchesModelName,
+    sizeof_fmt,
 )
 from freppledb.common.views import sendStaticFile
 from .models import Task, ScheduledTask, DataExport
@@ -788,6 +789,7 @@ def logfile(request, taskid):
     """
     This view shows the frePPLe log file of the last planning run in this database.
     """
+    filesize = None
     try:
         filename = Task.objects.using(request.database).get(id=taskid).logfile
         if not filename.lower().endswith(".log"):
@@ -799,7 +801,8 @@ def logfile(request, taskid):
     else:
         try:
             f.seek(-1, os.SEEK_END)
-            if f.tell() >= 50000:
+            filesize = f.tell()
+            if filesize >= 50000:
                 # Too big to display completely
                 f.seek(-50000, os.SEEK_END)
                 d = f.read(50000)
@@ -823,6 +826,7 @@ def logfile(request, taskid):
             "title": " ".join([force_str(capfirst(_("log file"))), taskid]),
             "logdata": logdata,
             "taskid": taskid,
+            "filesize": sizeof_fmt(filesize),
         },
     )
 

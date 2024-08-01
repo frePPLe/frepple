@@ -3,7 +3,7 @@
 {% block tools %}
 <h1 class="float-end">
 <button class="btn btn-sm btn-primary float-end" style="margin-bottom: 10px" onclick="location.href='{{request.prefix}}/execute/logdownload/{{taskid}}/'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'download complete log file'|capfirst %}">
-  <span class="fa fa-arrow-down"></span>
+  {{ filesize }}&nbsp;<span class="fa fa-arrow-down"></span>
 </button>
 </h1>
 {% endblock %}

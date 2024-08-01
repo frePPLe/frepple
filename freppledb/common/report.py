@@ -2094,7 +2094,7 @@ class GridReport(View):
                             else:
                                 try:
                                     fields[f] = parse_time(v)
-                                    if not fields[f]:
+                                    if fields[f] is None:
                                         raise Exception
                                 except Exception:
                                     ok = False
@@ -2105,7 +2105,7 @@ class GridReport(View):
                             else:
                                 try:
                                     fields[f] = parse_duration(v)
-                                    if not fields[f]:
+                                    if fields[f] is None:
                                         raise Exception
                                 except Exception:
                                     ok = False

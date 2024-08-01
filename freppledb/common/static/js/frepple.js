@@ -1901,7 +1901,7 @@ var grid = {
     hideModal('timebuckets');
     $.jgrid.hideModal("#searchmodfbox_grid");
     var thegrid = $("#grid");
-    var colModel = thegrid.jqGrid('getGridParam', 'colModel').sort((a, b) => a.label.localeCompare(b.label));
+    var colModel = thegrid.jqGrid('getGridParam', 'colModel').sort((a, b) => (a.label || "").localeCompare(b.label || ""));
 
     var selectedrows = thegrid.jqGrid('getGridParam', 'selarrrow')
     var recordcount = selectedrows.length;

@@ -66,7 +66,7 @@ from freppledb.common.report import (
     GridFieldDateTime,
 )
 from freppledb.input.views import PathReport, DemandList
-from freppledb.input.models import Demand, Item, Location, Customer
+from freppledb.input.models import Demand, Item, Location, Customer, Buffer
 from freppledb.output.models import Constraint
 from freppledb.output.views.constraint import BaseReport
 from freppledb.webservice.utils import getWebServiceContext
@@ -1842,6 +1842,7 @@ class ForecastEditor:
         customer_type = ContentType.objects.get_for_model(Customer)
         item_type = ContentType.objects.get_for_model(Item)
         location_type = ContentType.objects.get_for_model(Location)
+        buffer_type = ContentType.objects.get_for_model(Buffer)
         item_obj = (
             Item.objects.only("lft", "rght").using(request.database).get(name=item)
         )
@@ -1855,6 +1856,9 @@ class ForecastEditor:
             .using(request.database)
             .get(name=customer)
         )
+
+        # No hierarchy for the itemlocation comments
+        buffer_pk = "%s @ %s" % (item, location)
 
         comments = (
             Comment.objects.using(request.database)
@@ -1919,6 +1923,10 @@ class ForecastEditor:
                         .values("name")
                     ],
                 )
+                | Q(
+                    content_type=buffer_type.id,
+                    object_pk=buffer_pk,
+                )
             )
             .filter(type="comment")
             .order_by("-lastmodified")
@@ -1929,6 +1937,8 @@ class ForecastEditor:
                 t = "customer %s" % (i.object_pk,)
             elif i.content_type == item_type:
                 t = "item %s" % (i.object_pk,)
+            elif i.content_type == buffer_type:
+                t = "itemlocation %s" % (i.object_pk,)
             else:
                 t = "location %s" % (i.object_pk,)
             result_comment.append(

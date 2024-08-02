@@ -29,6 +29,8 @@ from channels.db import database_sync_to_async
 from channels.generic.http import AsyncHttpConsumer
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+
 
 from freppledb.webservice.utils import lock
 from freppledb.common.localization import parseLocalizedDateTime
@@ -110,14 +112,16 @@ class ForecastService(AsyncHttpConsumer):
                 type="comment",
             ).save(using=self.scope["database"])
         elif commenttype == "itemlocation" and item and location:
-            # TODO buffer object may not exist
+
+            b = Buffer(
+                id="%s %s",
+            )
+            b.pk = "%s @ %s" % (item.name, location.name)
             Comment(
-                content_object=Buffer.objects.all()
-                .using(self.scope["database"])
-                .filter(item__name=item.name, location__name=location.name)
-                .first(),
+                content_object=b,
                 user=self.scope["user"],
                 comment=comment,
+                type="comment",
             ).save(using=self.scope["database"])
         else:
             raise Exception("Invalid comment type")

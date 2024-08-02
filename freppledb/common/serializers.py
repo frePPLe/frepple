@@ -181,7 +181,15 @@ class AttributedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class CommentSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
         model = models.Comment
-        fields = ("id", "object_pk", "comment", "lastmodified", "content_type", "user")
+        fields = (
+            "id",
+            "object_pk",
+            "comment",
+            "lastmodified",
+            "content_type",
+            "user",
+            "type",
+        )
         read_only_fields = ("lastmodified",)
         list_serializer_class = BulkListSerializer
         update_lookup_field = "id"

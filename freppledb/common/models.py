@@ -959,7 +959,15 @@ class SystemMessage(models.Model):
             )
             c.save(using=db)
             for u in User.objects.all().using(db):
-                Notification(comment=c, user=u).save(using=db)
+                try:
+                    Notification(comment=c, user=u).save(using=db)
+                except Exception:
+                    # Workaround to recover from sequence not matching the table contents any longer
+                    with connections[db].cursor() as cursor:
+                        cursor.execute(
+                            "select setval('common_notification_id_seq',(SELECT max(id) FROM common_notification))"
+                        )
+                    Notification(comment=c, user=u).save(using=db)
 
 
 class Follower(models.Model):

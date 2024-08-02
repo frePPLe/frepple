@@ -89,6 +89,7 @@ class ForecastService(AsyncHttpConsumer):
                 ),
                 user=self.scope["user"],
                 comment=comment,
+                type="comment",
             ).save(using=self.scope["database"])
         elif commenttype == "location" and location:
             Comment(
@@ -97,6 +98,7 @@ class ForecastService(AsyncHttpConsumer):
                 ),
                 user=self.scope["user"],
                 comment=comment,
+                type="comment",
             ).save(using=self.scope["database"])
         elif commenttype == "customer" and customer:
             Comment(
@@ -105,6 +107,7 @@ class ForecastService(AsyncHttpConsumer):
                 ),
                 user=self.scope["user"],
                 comment=comment,
+                type="comment",
             ).save(using=self.scope["database"])
         elif commenttype == "itemlocation" and item and location:
             # TODO buffer object may not exist
@@ -410,7 +413,7 @@ class ForecastService(AsyncHttpConsumer):
                             customer,
                         )
                     except Exception:
-                        errors.append(b"Exception entering comment")
+                        errors.append("Exception entering comment")
 
                 # Reply
                 self.scope["response_headers"].append(

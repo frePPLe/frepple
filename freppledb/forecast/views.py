@@ -1920,8 +1920,7 @@ class ForecastEditor:
                     ],
                 )
             )
-            .filter(type="add")
-            .exclude(comment__startswith="Added")
+            .filter(type="comment")
             .order_by("-lastmodified")
         )
         result_comment = []

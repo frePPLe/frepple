@@ -178,6 +178,21 @@ class AttributedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     filter_class = AttributeFilter
 
 
+class CommentFilter(FilterSet):
+    class Meta:
+        model = models.Comment
+        fields = {
+            "id": ["exact", "in", "gt", "gte", "lt", "lte"],
+            "object_pk": ["exact", "in", "contains"],
+            "comment": ["exact", "contains"],
+            "type": ["exact", "in", "contains"],
+            "user": ["exact", "gt", "gte", "lt", "lte"],
+            "content_type": ["exact", "gt", "gte", "lt", "lte"],
+            "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
+        }
+        filter_fields = fields.keys()
+
+
 class CommentSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
         model = models.Comment
@@ -201,6 +216,7 @@ class CommentAPI(frePPleListCreateAPIView):
         return models.Comment.objects.using(self.request.database).all()
 
     serializer_class = CommentSerializer
+    filter_class = CommentFilter
 
 
 class CommentdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -208,6 +224,7 @@ class CommentdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
         return models.Comment.objects.using(self.request.database).all()
 
     serializer_class = CommentSerializer
+    filter_class = CommentFilter
 
 
 class ParameterFilter(FilterSet):

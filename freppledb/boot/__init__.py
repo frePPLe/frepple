@@ -293,14 +293,14 @@ def addAttributesFromDatabase():
     from django.conf import settings
 
     database_type_mapping = {
-        "string": ("character varying", "(300)"),
-        "boolean": ("boolean", ""),
+        "string": ("varchar", "(300)"),
+        "boolean": ("bool", ""),
         "number": ("numeric", "(15,6)"),
-        "integer": ("integer", ""),
+        "integer": ("int4", ""),
         "date": ("date", ""),
-        "datetime": ("timestamp with time zone", ""),
+        "datetime": ("timestamptz", ""),
         "duration": ("interval", ""),
-        "time": ("time without time zone", ""),
+        "time": ("time", ""),
         "jsonb": ("jsonb", ""),
     }
 
@@ -351,16 +351,16 @@ def addAttributesFromDatabase():
                     # Pick up all existing attribute fields
                     cursor2.execute(
                         """
-                        select c.table_name, c.column_name,
-                        c.data_type
-                        from pg_catalog.pg_statio_all_tables as st
-                        inner join pg_catalog.pg_description pgd
-                        on pgd.objoid=st.relid
-                        inner join information_schema.columns c
-                        on pgd.objsubid=c.ordinal_position
-                        and  c.table_schema=st.schemaname and c.table_name=st.relname
-                        where st.schemaname = 'public'
-                        and pgd.description = 'Custom attribute'
+                        select
+                          tbl.relname, col.attname, pg_type.typname
+                        from pg_catalog.pg_description pgd
+                        inner join pg_catalog.pg_attribute col
+                          on col.attrelid = pgd.objoid and col.attnum = pgd.objsubid
+                        inner join pg_catalog.pg_statio_all_tables tbl
+                          on pgd.objoid = tbl.relid
+                        inner join pg_type
+                          on col.atttypid = pg_type.oid
+                        where pgd.description = 'Custom attribute'
                         """
                     )
                     attr_existing = {}

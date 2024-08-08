@@ -2494,20 +2494,20 @@ class loadOperationPlanMaterials(LoadTask):
                     operationplan_id, opplanmat.item_id,
                     coalesce(opplanmat.status, 'confirmed'), opplanmat.quantity,
                     opplanmat.flowdate
-                    from operationplanmaterial as opplanmat
+                    from (select * from operationplanmaterial %s) as opplanmat
                     inner join operationplan
                     on operationplan.reference = opplanmat.operationplan_id
                     where operationplan.type = 'MO'
-                    %s %s
+                    %s
                     order by operationplan_id
                     """
                     % (
+                        "where %s" % cls.filter if cls.filter else "",
                         (
                             "and operationplan.status in ('approved', 'confirmed', 'completed')"
                             if "supply" in os.environ
                             else ""
                         ),
-                        "and %s " % cls.filter if cls.filter else "",
                     )
                 )
                 for i in cursor:

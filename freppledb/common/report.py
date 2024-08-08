@@ -986,6 +986,20 @@ class GridReport(View):
         return ",\n".join(result)
 
     @classmethod
+    def _sanitize_excel_tab(cls, t):
+        # Excel worksheet names are limited to 31 characters.
+        # And they can't contain the characters \ * ? : / [ ]
+        return (
+            force_str(t)
+            .replace(":", "")
+            .replace("\\", "")
+            .replace("?", "")
+            .replace("[", "")
+            .replace("]", "")
+            .replace("/", "")[:31]
+        )
+
+    @classmethod
     def _generate_spreadsheet_data(
         cls, request, scenario_list, output, *args, **kwargs
     ):
@@ -1004,8 +1018,7 @@ class GridReport(View):
         else:
             title = cls.model._meta.verbose_name_plural if cls.model else cls.title
         wb.properties.creator = "frepple %s" % __version__
-        # Excel can't have longer worksheet names
-        ws = wb.create_sheet(title=force_str(title)[:31])
+        ws = wb.create_sheet(title=cls._sanitize_excel_tab(title))
 
         # Create a named style for the header row
         headerstyle = NamedStyle(name="headerstyle")
@@ -3735,8 +3748,7 @@ class GridPivot(GridReport):
         else:
             title = cls.model._meta.verbose_name_plural if cls.model else cls.title
         wb.properties.creator = "frepple %s" % __version__
-        # Excel can't have longer worksheet names
-        ws = wb.create_sheet(title=force_str(title)[:31])
+        ws = wb.create_sheet(title=cls._sanitize_excel_tab(title))
 
         # Create a named style for the header row
         headerstyle = NamedStyle(name="headerstyle")

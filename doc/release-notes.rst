@@ -536,6 +536,9 @@ and we couldn't stay behind :-)
 - | Fixed some small bugs where the user interface, data import and data
     export didn't work correct with European style date and number formats.
 
+- | Bug fix: Exporting custom reports that contain any of the characters [ ] : ? / \
+    resulted in an error. These characters aren't accepted by Excel.
+
 .. rubric:: Odoo integration
 
 - | The approval button to export a proposed purchase order, distribution order

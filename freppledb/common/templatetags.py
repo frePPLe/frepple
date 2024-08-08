@@ -531,16 +531,16 @@ class MenuNode(Node):
         with connections[req.database].cursor() as cursor:
             cursor.execute(
                 """
-                select table_name from (
-                  select table_name,
+                select tablename from (
+                  select tablename,
                     query_to_xml(
-                      format('select 1 as cnt from %I.%I limit 1', table_schema, table_name),
+                      format('select 1 as cnt from %I.%I limit 1', schemaname, tablename),
                       false, true, ''
                       ) as xml_count
-                  from information_schema.tables
-                  where table_schema = 'public' and table_type = 'BASE TABLE'
+                  from pg_catalog.pg_tables
+                  where schemaname = 'public'
                   ) s
-                where xml_count is document
+                where xml_count is document;
                 """
             )
             present = set([i[0] for i in cursor])

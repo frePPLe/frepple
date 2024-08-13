@@ -44,8 +44,8 @@ Only scenarios to which you have access rights will be shown in the list.
 Scenario management
 -------------------
 
-During the installation a number of what-if slots (3 by default) are configured
-by the administrator. See :doc:`this page </installation-guide/multi-model>` for the
+During the installation a number of what-if slots (3 by default for on-premise installations,
+6 on Cloud Edition) are configured by the administrator. See :doc:`this page </installation-guide/multi-model>` for the
 details.
 
 The scenario's can have the following states:
@@ -70,8 +70,12 @@ scenario slot:
 * | **Promote** is used to copy the contents of a what-if scenario back
     into the production scenario.
 
+* | **Restore** is used to restore a previous backup file into a what-if scenario.
+
 The label shown in the scenario selection dropdown can also be updated
 in this screen.
+
+Users can also choose a different theme for each scenario.
 
 .. image:: _images/execution-scenarios.png
 

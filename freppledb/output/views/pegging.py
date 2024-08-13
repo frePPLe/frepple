@@ -574,7 +574,7 @@ class ReportByDemand(GridReport):
                     response.append(prevrec)
 
                 # group by operation
-                if request.requires_grouping:
+                if getattr(request, "requires_grouping", False):
                     indexOfOperation = {}
                     updateParent = {}
                     index = 0

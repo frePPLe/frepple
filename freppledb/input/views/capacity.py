@@ -417,6 +417,11 @@ class ResourceDetail(OperationPlanMixin):
         if args and args[0]:
             try:
                 res = Resource.objects.using(request.database).get(name__exact=args[0])
+                if not res.lft or not res.rght:
+                    Resource.rebuildHierarchy(database=request.database)
+                    res = Resource.objects.using(request.database).get(
+                        name__exact=args[0]
+                    )
                 base = OperationPlanResource.objects.filter(
                     resource__lft__gte=res.lft, resource__rght__lte=res.rght
                 )

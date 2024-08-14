@@ -29,6 +29,9 @@ This release is scheduled for end of August. You can already check out a `previe
 
 - | 17: Added support for multi-database odoo configurations.
 
+- | 15, 16, 17: Subcontracting should respect the purchasing minimum quantity
+    rather than the bill of material minimum quantity.
+
 9.1.0 (2024-07-05)
 ==================
 

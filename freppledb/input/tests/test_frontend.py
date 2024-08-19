@@ -26,6 +26,7 @@ import os
 import time
 import unittest
 
+from django.conf import settings
 from django.db.models import Q
 from django.core import management
 from django.utils.formats import date_format
@@ -122,6 +123,7 @@ class PurchaseOrderScreen(SeleniumTest):
         )
 
     @unittest.skipIf(noSelenium, "selenium not installed")
+    @unittest.skipIf(settings.ERP_CONNECTOR, "ERP connector app active")
     def test_table_multiple_rows_modification(self):
         table_page = TablePage(self.driver, PurchaseOrderScreen)
         table_page.login()
@@ -235,6 +237,7 @@ class DistributionOrderScreen(SeleniumTest):
         )
 
     @unittest.skipIf(noSelenium, "selenium not installed")
+    @unittest.skipIf(settings.ERP_CONNECTOR, "ERP connector app active")
     def test_table_multiple_rows_modification(self):
         table_page = TablePage(self.driver, DistributionOrderScreen)
         table_page.login()
@@ -352,6 +355,7 @@ class ManufacturingOrderScreen(SeleniumTest):
         )
 
     @unittest.skipIf(noSelenium, "selenium not installed")
+    @unittest.skipIf(settings.ERP_CONNECTOR, "ERP connector app active")
     def test_table_multiple_rows_modification(self):
         table_page = TablePage(self.driver, ManufacturingOrderScreen)
         table_page.login()

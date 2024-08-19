@@ -581,6 +581,10 @@ MAXMEMORYSIZE = None  # limit in MB, minimum around 230, use None for unlimited
 # Maximum allowed memory size for the planning engine. Only used on Linux!
 MAXCPUTIME = None  # limit in seconds, use None for unlimited
 
+# Maximum allowed storage.
+# The storage counts database storage, data files, engine log files, database dump files, plan export files.
+MAXSTORAGE = None  # limit in MB, use None for unlimited.
+
 # Max total log files size in MB, if the limit is reached deletes the oldest.
 MAXTOTALLOGFILESIZE = 200
 

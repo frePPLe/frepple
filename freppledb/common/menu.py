@@ -167,3 +167,6 @@ menu.addItem(
     prefix=False,
     index=500,
 )
+menu.addItem(
+    "help", "about", javascript="about_show()", label=_("About frePPLe"), index=600
+)

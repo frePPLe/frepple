@@ -4212,7 +4212,7 @@ def sizeof_fmt(num):
     """
     if num == None:
         return ""
-    for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
+    for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
         if abs(num) < 1024.0:
             return "%3.0f %sB" % (num, unit)
         num /= 1024.0

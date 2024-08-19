@@ -2762,6 +2762,39 @@ function sameOrigin(url) {
 //Display About dialog
 //----------------------------------------------------------------------------
 
+function about_show() {
+  $.ajax({
+    url: "/about/",
+    type: "GET",
+    contentType: "application/json",
+    success: function (data) {
+      hideModal('timebuckets');
+      $.jgrid.hideModal("#searchmodfbox_grid");
+      content = '<div class="modal-dialog">' +
+        '<div class="modal-content">' +
+        '<div class="modal-header">' +
+        '<h5 class="modal-title">About frePPLe</h5>' +
+        '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
+        '</div>' +
+        '<div class="modal-body">' +
+        '<div class="row mb-3"><div class="col-3 fw-bold">Version</div>' +
+        '<div class="col-auto">' + data.version + ' ' + data.edition + '</div></div>' +
+        '<div class="row mb-3"><div class="col-3 fw-bold">Storage</div>' +
+        '<div class="col-auto' + (data.storage_exceeded ? " text-danger" : "") + '">' + data.storage_used + ' used';
+      if (data.storage_allocation)
+        content += ' of ' + data.storage_allocation + ' allocated';
+      content += '</div ></div > ' +
+        '<div class="row mb-3"><div class="col-3 fw-bold">Installed apps</div><div class="col-auto">';
+      for (var i of data.apps)
+        content += i + '<br>';
+      content += '</div></div></div></div></div>';
+      $('#popup').html(content);
+      showModal('popup', false);
+    },
+    error: ajaxerror
+  });
+}
+
 function containsObject(obj, list) {
   var i;
   for (i = 0; i < list.length; i++) {

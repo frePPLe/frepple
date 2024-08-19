@@ -82,7 +82,13 @@ from .models import (
     Notification,
     Follower,
 )
-from .report import GridReport, GridFieldLastModified, GridFieldText, GridFieldBool
+from .report import (
+    GridReport,
+    GridFieldLastModified,
+    GridFieldText,
+    GridFieldBool,
+    sizeof_fmt,
+)
 from .report import (
     GridFieldDateTime,
     GridFieldInteger,
@@ -90,6 +96,7 @@ from .report import (
     GridFieldChoice,
     GridFieldJSON,
 )
+from .utils import getStorageUsage
 
 from freppledb.admin import data_site
 from freppledb import edition, __version__, runCommand
@@ -98,6 +105,27 @@ import logging
 from freppledb.common.models import NotificationFactory
 
 logger = logging.getLogger(__name__)
+
+
+@staff_member_required
+def AboutView(request):
+    maxstorage = getattr(settings, "MAXSTORAGE", 0) or 0
+    usedstorage = getStorageUsage()
+    return JsonResponse(
+        {
+            "version": __version__,
+            "edition": edition,
+            "storage_used": sizeof_fmt(usedstorage),
+            "storage_allocation": (
+                sizeof_fmt(maxstorage * 1024 * 1024) if maxstorage else None
+            ),
+            "storage_exceeded": usedstorage > maxstorage,
+            "apps": [
+                i for i in settings.INSTALLED_APPS if i in settings.INSTALLABLE_APPS
+            ],
+            "website": settings.DOCUMENTATION_URL,
+        }
+    )
 
 
 class AppsView(View):

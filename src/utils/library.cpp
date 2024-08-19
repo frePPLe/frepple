@@ -47,6 +47,7 @@ namespace utils {
 
 // Static stringpool table
 set<string> PooledString::pool;
+mutex PooledString::pool_lock;
 const PooledString PooledString::emptystring;
 const string PooledString::nullstring;
 const char PooledString::nullchar = '\0';

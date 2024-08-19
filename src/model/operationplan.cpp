@@ -768,9 +768,9 @@ OperationPlan* OperationPlan::findReference(string const& l) {
 bool OperationPlan::assignReference() {
   // Need to assure that ids are unique!
   static mutex onlyOne;
+  lock_guard<mutex> l(onlyOne);
   if (!getName().empty()) {
     // An identifier was read in from input
-    lock_guard<mutex> l(onlyOne);
     if (getName() < referenceMax) {
       // The assigned id potentially clashes with an existing operationplan.
       // Check whether it clashes with existing operationplans
@@ -793,7 +793,6 @@ bool OperationPlan::assignReference() {
     }
   } else {
     // Fresh operationplan with blank id
-    lock_guard<mutex> l(onlyOne);  // Need to assure that ids are unique!
     setName(to_string(counterMin++));
     if (counterMin >= ULONG_MAX)
       throw RuntimeException(

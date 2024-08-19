@@ -25,6 +25,8 @@ This release is scheduled for end of August. You can already check out a `previe
 - | Buffer max inventory not always correctly respected if a buffer
     is replenished through multiple or date-effective suppliers.
 
+- | Fix multithreading crash when using make-to-order items.
+
 .. rubric:: Odoo integration
 
 - | 17: Added support for multi-database odoo configurations.

@@ -50,7 +50,6 @@ def startWebService(request, **kwargs):
     # Random delay to avoid simultaneous web service starts
     sleep(random.uniform(0.0, 0.5))
     close_old_connections()
-    print("async web service start starting")
 
     active_scenarios = {
         i["name"]
@@ -68,11 +67,9 @@ def startWebService(request, **kwargs):
             except Exception as e:
                 logger.warning("Can't launch webservice in scenario '%s': %s" % (i, e))
     connections.close_all()
-    print("async web service start done")
 
 
 def startWebServiceAsync(request, **kwargs):
-    print("async web service start triggered")
     Thread(target=startWebService, args=(request,), kwargs=kwargs, daemon=True).start()
 
 
@@ -83,7 +80,6 @@ class WebServiceConfig(AppConfig):
     def ready(self):
         # Register a signal handler when somebody logs in
         if "test" not in sys.argv:
-            print("async web service start check", sys.argv)
             user_logged_in.connect(
                 startWebServiceAsync, dispatch_uid=startWebServiceAsync
             )

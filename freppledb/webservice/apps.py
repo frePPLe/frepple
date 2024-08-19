@@ -22,6 +22,7 @@
 #
 
 import logging
+import sys
 import random
 from threading import Thread
 from time import sleep
@@ -30,7 +31,7 @@ from django.apps import AppConfig
 from django.conf import settings
 from django.contrib.auth.signals import user_logged_in
 from django.core import management
-from django.db import DEFAULT_DB_ALIAS, connections
+from django.db import DEFAULT_DB_ALIAS, connections, close_old_connections
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +49,7 @@ def startWebService(request, **kwargs):
 
     # Random delay to avoid simultaneous web service starts
     sleep(random.uniform(0.0, 0.5))
+    close_old_connections()
 
     active_scenarios = {
         i["name"]
@@ -68,8 +70,7 @@ def startWebService(request, **kwargs):
 
 
 def startWebServiceAsync(request, **kwargs):
-    thread = Thread(target=startWebService, args=(request,), kwargs=kwargs, daemon=True)
-    thread.start()
+    Thread(target=startWebService, args=(request,), kwargs=kwargs, daemon=True).start()
 
 
 class WebServiceConfig(AppConfig):
@@ -78,4 +79,7 @@ class WebServiceConfig(AppConfig):
 
     def ready(self):
         # Register a signal handler when somebody logs in
-        user_logged_in.connect(startWebServiceAsync, dispatch_uid=startWebServiceAsync)
+        if "test" not in sys.argv:
+            user_logged_in.connect(
+                startWebServiceAsync, dispatch_uid=startWebServiceAsync
+            )

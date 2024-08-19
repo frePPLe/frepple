@@ -26,7 +26,7 @@ import os
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase
 
-from freppledb.common.models import User
+from freppledb.common.models import User, Scenario
 
 
 def checkResponse(testcase, response):
@@ -61,9 +61,10 @@ class UserPreferenceTest(TestCase):
         self.assertEqual(after, {"a": 1, "b": "c"})
 
 
-class AppsTest(TestCase):
+class AppsAndAboutTest(TestCase):
     def setUp(self):
         os.environ["FREPPLE_TEST"] = "YES"
+        Scenario.syncWithSettings()
         self.client.login(username="admin", password="admin")
         super().setUp()
 
@@ -71,6 +72,8 @@ class AppsTest(TestCase):
         del os.environ["FREPPLE_TEST"]
         super().tearDown()
 
-    def test_app_screen(self):
+    def test_app_and_about_screen(self):
         response = self.client.get("/apps/")
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get("/about/")
         self.assertEqual(response.status_code, 200)

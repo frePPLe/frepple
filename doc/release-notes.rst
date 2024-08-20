@@ -34,6 +34,8 @@ This release is scheduled for end of August. You can already check out a `previe
 - | 15, 16, 17: Subcontracting should respect the purchasing minimum quantity
     rather than the bill of material minimum quantity.
 
+- | 17: Performance improvements of about 20% to 30% when importing odoo data into frepple.
+
 9.1.0 (2024-07-05)
 ==================
 

@@ -17,7 +17,7 @@ FrePPLe implements production planning and scheduling algorithms based on best p
 
 The software can be downloaded in the following formats:
 
-* Ubuntu 20 .deb package on https://github.com/frePPLe/frepple/releases/
+* Ubuntu 24 .deb package on https://github.com/frePPLe/frepple/releases/
 * Docker container on https://github.com/orgs/frePPLe/packages/container/package/frepple-community
 * Source tarball or zip file from https://github.com/frePPLe/frepple/releases/
 * Documentation zip file from https://github.com/frePPLe/frepple/releases/

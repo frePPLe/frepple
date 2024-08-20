@@ -15,13 +15,8 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   if(EXISTS "/etc/issue")
     file(READ "/etc/issue" LINUX_ISSUE)
 
-    # Ubuntu 20
-    if(LINUX_ISSUE MATCHES "Ubuntu 20")
-      set(CPACK_GENERATOR "DEB")
-      set(DISTRO "ubuntu20")
-
     # Ubuntu 24
-    elseif(LINUX_ISSUE MATCHES "Ubuntu 24")
+    if(LINUX_ISSUE MATCHES "Ubuntu 24")
       set(CPACK_GENERATOR "DEB")
       set(DISTRO "ubuntu24")
 

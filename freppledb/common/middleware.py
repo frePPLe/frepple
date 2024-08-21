@@ -35,7 +35,7 @@ from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages import info
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
-from django.db import DEFAULT_DB_ALIAS, close_old_connections
+from django.db import connection, DEFAULT_DB_ALIAS, close_old_connections
 from django.db.models import Q
 from django.http import HttpResponseNotFound
 from django.http.response import (
@@ -234,7 +234,8 @@ class MultiDBMiddleware:
         setattr(_thread_locals, "request", request)
 
         if not hasattr(request, "user"):
-            close_old_connections()
+            if not connection.in_atomic_block:
+                close_old_connections()
             request.user = auth.get_user(request)
 
         # Log out automatically after inactivity

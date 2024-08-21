@@ -1269,9 +1269,7 @@ class NotificationFactory:
                                 # down the worker.
                                 time.sleep(5)
         finally:
-            for db in settings.DATABASES:
-                if hasattr(connections._connections, db):
-                    connections[db].close()
+            connections.close_all()
 
     @classmethod
     def join(cls):

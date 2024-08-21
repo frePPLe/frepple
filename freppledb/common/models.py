@@ -31,6 +31,7 @@ import os
 from pathlib import Path
 from psycopg2.extras import execute_batch
 import sys
+from threading import local
 import time
 
 from django.conf import settings
@@ -1022,8 +1023,7 @@ class Follower(models.Model):
                     self.data["content_type"] = ContentType.objects.get(
                         model=self.data["content_type"]
                     ).pk
-                except Exception as e:
-                    print(e)
+                except Exception:
                     raise forms.ValidationError("Invalid content type")
                 return super().clean()
 
@@ -1150,6 +1150,7 @@ class NotificationFactory:
             from .middleware import _thread_locals
 
             setattr(_thread_locals, "database", database)
+            connections._connections = local()
             followers = list(
                 Follower.objects.all()
                 .using(database)

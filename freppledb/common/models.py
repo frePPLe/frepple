@@ -31,7 +31,6 @@ import os
 from pathlib import Path
 from psycopg2.extras import execute_batch
 import sys
-from threading import local
 import time
 
 from django.conf import settings
@@ -1150,7 +1149,7 @@ class NotificationFactory:
             from .middleware import _thread_locals
 
             setattr(_thread_locals, "database", database)
-            connections._connections = local()
+
             followers = list(
                 Follower.objects.all()
                 .using(database)
@@ -1271,8 +1270,9 @@ class NotificationFactory:
                                 # down the worker.
                                 time.sleep(5)
         finally:
-            for db in settings.DATABASES:
-                connections[db].close()
+            print("koko")
+            # for db in settings.DATABASES:
+            #     connections[db].close()
 
     @classmethod
     def join(cls):

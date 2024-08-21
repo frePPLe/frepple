@@ -37,6 +37,7 @@ from freppledb.execute.views import FileManager
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Scenario, Parameter
 from freppledb.common.report import create_connection
+from freppledb.common.utils import getStorageUsage
 from freppledb.input.models import Item
 from freppledb import __version__
 
@@ -191,6 +192,17 @@ class Command(BaseCommand):
                 os.path.join(settings.FREPPLE_LOGDIR, options["dumpfile"])
             ):
                 raise CommandError("Cannot find dump file %s" % options["dumpfile"])
+
+            # confirm there is enough storage to proceed
+            maxstorage = getattr(settings, "MAXSTORAGE", 0) or 0
+            storageUsage = round(getStorageUsage() / 1024 / 1024)
+            if maxstorage and storageUsage > maxstorage:
+                raise CommandError(
+                    _(
+                        "Storage quota exceeded %sMB used out of %sMB available: please free some disk space and try again"
+                        % (storageUsage, maxstorage)
+                    )
+                )
 
             # Logging message - always logging in the default database
             destinationscenario.status = "Busy"

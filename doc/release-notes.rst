@@ -6,6 +6,11 @@ Release notes
 
 This release is scheduled for end of August. You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: System administration
+
+- | Administrators can now set a quota to limit the `disk space usage <installation-guide/setting-disk-space-quotas.html>`_
+    of frePPLe.
+
 .. rubric:: User interface
 
 - | Users can now choose a separate theme for each scenario.

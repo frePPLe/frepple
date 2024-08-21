@@ -103,6 +103,7 @@ from freppledb.common.models import (
 )
 from freppledb.common.dataload import parseExcelWorksheet, parseCSVdata
 from freppledb.common.localization import parseLocalizedDate, parseLocalizedDateTime
+from freppledb.common.utils import getStorageUsage
 
 
 logger = logging.getLogger(__name__)
@@ -1652,6 +1653,18 @@ class GridReport(View):
     @classmethod
     def post(cls, request, *args, **kwargs):
         if len(request.FILES) > 0:
+
+            # confirm there is enough storage to proceed
+            maxstorage = getattr(settings, "MAXSTORAGE", 0) or 0
+            storageUsage = round(getStorageUsage() / 1024 / 1024)
+            if maxstorage and storageUsage > maxstorage:
+                return HttpResponseNotFound(
+                    _(
+                        "Storage quota exceeded %sMB used out of %sMB available: please free some disk space and try again"
+                        % (storageUsage, maxstorage)
+                    )
+                )
+
             # Note: the detection of the type of uploaded file depends on the
             # browser setting the right mime type of the file.
             csvcount = 0

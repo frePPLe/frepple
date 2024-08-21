@@ -14,3 +14,4 @@ This part of the manual covers all topics related to installation and deployment
    docker-container
    multi-model
    backup
+   setting-disk-space-quotas

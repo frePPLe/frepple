@@ -47,6 +47,7 @@ from freppledb import __version__
 from freppledb.common.dataload import parseCSVdata, parseExcelWorksheet
 from freppledb.common.models import User, NotificationFactory, Parameter
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS, create_connection
+from freppledb.common.utils import getStorageUsage
 
 logger = logging.getLogger(__name__)
 
@@ -158,6 +159,17 @@ class Command(BaseCommand):
             self.SQLrole = settings.DATABASES[self.database].get(
                 "SQL_ROLE", "report_role"
             )
+
+            # confirm there is enough storage to proceed
+            maxstorage = getattr(settings, "MAXSTORAGE", 0) or 0
+            storageUsage = round(getStorageUsage() / 1024 / 1024)
+            if maxstorage and storageUsage > maxstorage:
+                raise CommandError(
+                    _(
+                        "Storage quota exceeded %sMB used out of %sMB available: please free some disk space and try again"
+                        % (storageUsage, maxstorage)
+                    )
+                )
 
             # Execute
             if "FILEUPLOADFOLDER" in settings.DATABASES[

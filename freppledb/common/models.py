@@ -469,17 +469,17 @@ class User(AbstractUser):
             self.id = 0
             cur_seq = {}
             for db in scenarios:
-                cursor = connections[db].cursor()
-                cursor.execute("select nextval('common_user_id_seq')")
-                cur_seq[db] = cursor.fetchone()[0]
-                if cur_seq[db] > self.id:
-                    self.id = cur_seq[db]
+                with connections[db].cursor() as cursor:
+                    cursor.execute("select nextval('common_user_id_seq')")
+                    cur_seq[db] = cursor.fetchone()[0]
+                    if cur_seq[db] > self.id:
+                        self.id = cur_seq[db]
             for db in scenarios:
                 if cur_seq[db] != self.id:
-                    cursor = connections[db].cursor()
-                    cursor.execute(
-                        "select setval('common_user_id_seq', %s)", [self.id - 1]
-                    )
+                    with connections[db].cursor() as cursor:
+                        cursor.execute(
+                            "select setval('common_user_id_seq', %s)", [self.id - 1]
+                        )
             self.is_active = False
             self.is_superuser = False
 

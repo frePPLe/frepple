@@ -1149,7 +1149,6 @@ class NotificationFactory:
             from .middleware import _thread_locals
 
             setattr(_thread_locals, "database", database)
-
             followers = list(
                 Follower.objects.all()
                 .using(database)
@@ -1270,9 +1269,9 @@ class NotificationFactory:
                                 # down the worker.
                                 time.sleep(5)
         finally:
-            print("koko")
-            # for db in settings.DATABASES:
-            #     connections[db].close()
+            for db in settings.DATABASES:
+                if hasattr(connections._connections, db):
+                    connections[db].close()
 
     @classmethod
     def join(cls):

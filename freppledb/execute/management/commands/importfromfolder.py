@@ -162,14 +162,13 @@ class Command(BaseCommand):
 
             # confirm there is enough storage to proceed
             maxstorage = getattr(settings, "MAXSTORAGE", 0) or 0
-            storageUsage = round(getStorageUsage() / 1024 / 1024)
-            if maxstorage and storageUsage > maxstorage:
-                raise CommandError(
-                    _(
+            if maxstorage:
+                storageUsage = round(getStorageUsage() / 1024 / 1024)
+                if storageUsage > maxstorage:
+                    raise CommandError(
                         "Storage quota exceeded %sMB used out of %sMB available: please free some disk space and try again"
                         % (storageUsage, maxstorage)
                     )
-                )
 
             # Execute
             if "FILEUPLOADFOLDER" in settings.DATABASES[

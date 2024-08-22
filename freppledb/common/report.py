@@ -1656,14 +1656,13 @@ class GridReport(View):
 
             # confirm there is enough storage to proceed
             maxstorage = getattr(settings, "MAXSTORAGE", 0) or 0
-            storageUsage = round(getStorageUsage() / 1024 / 1024)
-            if maxstorage and storageUsage > maxstorage:
-                return HttpResponseNotFound(
-                    _(
+            if maxstorage:
+                storageUsage = round(getStorageUsage() / 1024 / 1024)
+                if storageUsage > maxstorage:
+                    return HttpResponseNotFound(
                         "Storage quota exceeded %sMB used out of %sMB available: please free some disk space and try again"
                         % (storageUsage, maxstorage)
                     )
-                )
 
             # Note: the detection of the type of uploaded file depends on the
             # browser setting the right mime type of the file.

@@ -41,6 +41,11 @@ This release is scheduled for end of August. You can already check out a `previe
 
 - | 17: Performance improvements of about 20% to 30% when importing odoo data into frepple.
 
+- | 17: Support for multi-warehouse odoo configurations.
+  | In previous connector version we handled it through customization.
+  | Now we map the stock routes into item distributions and place the BOMs in
+    the correct manufacturing locations.
+
 9.1.0 (2024-07-05)
 ==================
 

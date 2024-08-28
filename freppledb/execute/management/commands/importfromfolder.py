@@ -166,7 +166,7 @@ class Command(BaseCommand):
                 storageUsage = round(getStorageUsage() / 1024 / 1024)
                 if storageUsage > maxstorage:
                     raise CommandError(
-                        "Storage quota exceeded %sMB used out of %sMB available: please free some disk space and try again"
+                        "Storage quota exceeded: %sMB used out of %sMB available. Please free some disk space and try again"
                         % (storageUsage, maxstorage)
                     )
 

@@ -1659,9 +1659,13 @@ class GridReport(View):
             if maxstorage:
                 storageUsage = round(getStorageUsage() / 1024 / 1024)
                 if storageUsage > maxstorage:
-                    return HttpResponseNotFound(
-                        "Storage quota exceeded %sMB used out of %sMB available: please free some disk space and try again"
-                        % (storageUsage, maxstorage)
+                    return HttpResponseForbidden(
+                        """
+                        Storage quota exceeded: %sMB used out of %sMB available.<br>
+                        Please <a class="text-decoration-underline" href="%s/docs/current/doc/installation-guide/setting-disk-space-quotas.html" target="_blank">free some disk space</a>
+                        and try again.
+                        """
+                        % (storageUsage, maxstorage, settings.DOCUMENTATION_URL)
                     )
 
             # Note: the detection of the type of uploaded file depends on the

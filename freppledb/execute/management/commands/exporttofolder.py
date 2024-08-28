@@ -43,6 +43,7 @@ import freppledb
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb.common.report import GridReport, create_connection, sizeof_fmt
+from freppledb.common.utils import getStorageUsage
 from freppledb import __version__
 from freppledb.execute.models import Task, DataExport
 from freppledb.output.views import resource
@@ -269,6 +270,18 @@ class Command(BaseCommand):
             logger.propagate = False
         except Exception as e:
             print("Failed to open logfile %s: %s" % (logfile, e))
+
+        # confirm there is enough storage to proceed
+        maxstorage = getattr(settings, "MAXSTORAGE", 0) or 0
+        if maxstorage:
+            storageUsage = round(getStorageUsage() / 1024 / 1024)
+            if storageUsage > maxstorage:
+                raise CommandError(
+                    """
+                    Storage quota exceeded: %sMB <a href="/" class="text-decoration-underline">used out</a> of %sMB available. Please free some disk space and try again
+                    """
+                    % (storageUsage, maxstorage)
+                )
 
         task = None
         errors = 0

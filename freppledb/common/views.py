@@ -119,7 +119,7 @@ def AboutView(request):
             "storage_allocation": (
                 sizeof_fmt(maxstorage * 1024 * 1024) if maxstorage else None
             ),
-            "storage_exceeded": usedstorage > maxstorage,
+            "storage_exceeded": maxstorage and usedstorage > maxstorage,
             "apps": [
                 i for i in settings.INSTALLED_APPS if i in settings.INSTALLABLE_APPS
             ],

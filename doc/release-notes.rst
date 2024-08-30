@@ -1,10 +1,14 @@
 Release notes
 -------------
 
-9.2.0 (Upcoming release)
+9.3.0 (Upcoming release)
 ========================
 
-This release is scheduled for end of August. You can already check out a `preview <https://demo-preview.frepple.com>`_.
+This release is scheduled for end of September.
+You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.2.0 (2024-08-30)
+==================
 
 .. rubric:: System administration
 
@@ -27,7 +31,7 @@ This release is scheduled for end of August. You can already check out a `previe
     manufacturing lead time constraint.
   | The new behavior fits the user expectations better.
 
-- | Buffer max inventory not always correctly respected if a buffer
+- | Bug fix: Buffer max inventory was not always correctly respected if a buffer
     is replenished through multiple or date-effective suppliers.
 
 - | Fix multithreading crash when using make-to-order items.

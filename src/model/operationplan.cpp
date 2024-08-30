@@ -1066,12 +1066,12 @@ void OperationPlan::createFlowLoads(
 
   // Create loadplans
   if (getConsumeCapacity()) {
-    if (!assigned_resources)
+    if (!assigned_resources) {
       // No previous assignments to restore
       for (auto& g : oper->getLoads()) {
-        if (!g.getAlternate()) new LoadPlan(this, &g);
+        if (!g.getAlternate() && !g.getHiddenLoad()) new LoadPlan(this, &g);
       }
-    else {
+    } else {
       // Restore previous assignments
       setResetResources(true);
       for (auto& res : *assigned_resources) {
@@ -1096,9 +1096,12 @@ void OperationPlan::createFlowLoads(
         }
         if (!found && backup_res)
           new LoadPlan(this, backup_ld, backup_res);
-        else if (!found)
-          logger << "Warning: Assigned resource '" << res << "' on '"
-                 << getReference() << "' is invalid." << endl;
+        else if (!found) {
+          // Operation has no load for this resource yet.
+          auto hanging_load = new Load(oper, res, 1.0);
+          hanging_load->setHidden(true);
+          new LoadPlan(this, backup_ld, res);
+        }
       }
     }
   }

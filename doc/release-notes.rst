@@ -32,6 +32,10 @@ This release is scheduled for end of August. You can already check out a `previe
 
 - | Fix multithreading crash when using make-to-order items.
 
+- | Bug fix: When manufacturing orders were assigned to completely unexpected
+    resources, these assignments were ignored.
+  | Now we respect and preserve that assigned resource.
+
 .. rubric:: Odoo integration
 
 - | 17: Added support for multi-database odoo configurations.

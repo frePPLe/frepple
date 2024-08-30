@@ -765,7 +765,7 @@ class HasProblems {
 class Problem::List {
  public:
   /* Constructor. */
-  List(){};
+  List() {};
 
   /* Destructor. */
   ~List() { clear(); }
@@ -7164,9 +7164,14 @@ class Load : public Object,
   static int initialize();
 
   bool getHidden() const {
-    return (getResource() && getResource()->getHidden()) ||
+    return hidden || (getResource() && getResource()->getHidden()) ||
            (getOperation() && getOperation()->getHidden());
   }
+
+  bool getHiddenLoad() const { return hidden; }
+
+  void setHidden(bool b) { hidden = b; }
+
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -7227,6 +7232,8 @@ class Load : public Object,
 
   /* Mode to select the preferred alternates. */
   SearchMode search = SearchMode::MINPENALTY;
+
+  bool hidden = false;
 
  protected:
   /* Factory method. */
@@ -9825,17 +9832,17 @@ class PeggingIterator : public NonCopyable, public Object {
     short level;
     Duration gap;
 
-    state(){};
+    state() {};
 
     state(const OperationPlan* op, double q, double o, short l, Duration g)
-        : opplan(op), quantity(q), offset(o), level(l), gap(g){};
+        : opplan(op), quantity(q), offset(o), level(l), gap(g) {};
 
     state(const state& other)
         : opplan(other.opplan),
           quantity(other.quantity),
           offset(other.offset),
           level(other.level),
-          gap(other.gap){};
+          gap(other.gap) {};
 
     // Comparison operator
     bool operator<(const state& other) const {

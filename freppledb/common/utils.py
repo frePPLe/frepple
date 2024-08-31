@@ -56,5 +56,7 @@ def getStorageUsage():
         cursor.execute(
             "select %s" % " + ".join(["pg_database_size(%s)"] * len(dblist)), dblist
         )
-        total_size += cursor.fetchone()[0]
+        dbsizevalue = cursor.fetchone()
+        if len(dbsizevalue) > 0:
+            total_size += dbsizevalue[0]
     return total_size

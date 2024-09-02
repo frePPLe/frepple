@@ -29,6 +29,9 @@
 namespace frepple {
 namespace utils {
 
+const MetaCategory* CommandManager::metacategory;
+const MetaClass* CommandManager::metadata;
+
 //
 // COMMAND LIST
 //
@@ -94,6 +97,21 @@ CommandList::~CommandList() {
 //
 // COMMAND MANAGER
 //
+
+int CommandManager::initialize() {
+  // Initialize the metadata
+  metacategory = MetaCategory::registerCategory<CommandManager>(
+      "commandmanager", "commandmanagers");
+  metadata = MetaClass::registerClass<CommandManager>(
+      "commandmanager", "commandmanager", Object::create<CommandManager>, true);
+
+  // Initialize the Python class
+  PythonType& x = FreppleCategory<CommandManager>::getPythonType();
+  x.setName(metadata->type);
+  x.setDoc("frePPLe " + metadata->type);
+  metadata->setPythonClass(x);
+  return x.typeReady();
+}
 
 CommandManager::Bookmark* CommandManager::setBookmark() {
   Bookmark* n = new Bookmark(currentBookmark);

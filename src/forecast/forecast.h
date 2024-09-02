@@ -1778,7 +1778,7 @@ class ForecastSolver : public Solver {
     bool force;
 
     Metrics(double a, double b, bool c)
-        : smape(a), standarddeviation(b), force(c){};
+        : smape(a), standarddeviation(b), force(c) {};
   };
 
   /* Abstract base class for all forecasting methods. */
@@ -2441,7 +2441,14 @@ class ForecastSolver : public Solver {
   };
 
   /* Default constructor. */
-  explicit ForecastSolver() { initType(metadata); }
+  explicit ForecastSolver() {
+    initType(metadata);
+    commands = new CommandManager();
+  }
+
+  ~ForecastSolver() {
+    if (commands) commands->commit();
+  }
 
   /* There are two different calculations implemented in this method.
    *  1) When called for a forecast, we first compute the statistical
@@ -2867,6 +2874,10 @@ class ForecastSolver : public Solver {
     m->addDoubleField<Cls>(ForecastSolver::tag_Croston_decayRate,
                            &Cls::getCrostonDecayRate,
                            &Cls::setCrostonDecayRate);
+
+    // Command manager
+    m->addPointerField<Cls, CommandManager>(
+        Tags::manager, &Cls::getCommandManager, &Cls::setCommandManager);
   }
 
  private:
@@ -2947,6 +2958,13 @@ class ForecastSolver : public Solver {
   /* Threshold for detecting outliers. */
   static double Forecast_maxDeviation;
 
+  // Used when autocommit is false
+  CommandManager* commands;
+
+  static PyObject* commit(PyObject*, PyObject*);
+
+  static PyObject* rollback(PyObject*, PyObject*);
+
   /* Given a demand, this function will identify the forecast model it
    * links to.
    */
@@ -2964,6 +2982,12 @@ class ForecastSolver : public Solver {
   static void deleteOutliers(
       const Forecast* forecast,
       ForecastSolver::ForecastMethod* appliedMethod = nullptr);
+
+  /* Update the command manager used to track all changes. */
+  void setCommandManager(CommandManager* c) { commands = c; }
+
+  /* Return the command manager used to track all changes. */
+  CommandManager* getCommandManager() const { return commands; }
 
   /* Used for sorting demands during netting. */
   struct sorter {

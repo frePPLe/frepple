@@ -94,9 +94,9 @@ void LibraryUtils::initialize() {
 
   // Initialize Xerces parser
   xercesc::XMLPlatformUtils::Initialize();
-
-  // Initialize the Python interpreter
   PythonInterpreter::initialize();
+  if (CommandManager::initialize())
+    throw RuntimeException("Error registering command manager");
 }
 
 string Environment::searchFile(const string filename) {

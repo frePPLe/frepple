@@ -142,6 +142,7 @@ const Keyword Tags::locked("locked");
 const Keyword Tags::logfile("logfile");
 const Keyword Tags::loglimit("loglimit");
 const Keyword Tags::loglevel("loglevel");
+const Keyword Tags::manager("manager");
 const Keyword Tags::maxearly("maxearly");
 const Keyword Tags::maximum("maximum");
 const Keyword Tags::maximum_calendar("maximum_calendar");

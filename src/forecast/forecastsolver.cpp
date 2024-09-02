@@ -521,4 +521,34 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
     logger << "    Remains " << remaining << " that can't be netted" << endl;
 }
 
+PyObject* ForecastSolver::commit(PyObject* self, PyObject* args) {
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+  try {
+    static_cast<ForecastSolver*>(self)->commands->commit();
+  } catch (...) {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return nullptr;
+  }
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
+}
+
+PyObject* ForecastSolver::rollback(PyObject* self, PyObject* args) {
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+  try {
+    static_cast<ForecastSolver*>(self)->commands->rollback();
+  } catch (...) {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return nullptr;
+  }
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
+}
+
 }  // namespace frepple

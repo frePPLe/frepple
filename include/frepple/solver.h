@@ -652,6 +652,8 @@ class SolverCreate : public Solver {
                                  &Cls::getResourceIterationMax,
                                  &Cls::setResourceIterationMax);
     m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, &Cls::setCluster);
+    m->addPointerField<Cls, CommandManager>(
+        Tags::manager, &Cls::getCommandManager, &Cls::setCommandManager);
   }
 
  private:

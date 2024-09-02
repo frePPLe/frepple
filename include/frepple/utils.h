@@ -4578,7 +4578,7 @@ class CommandList : public Command {
 /* This class allows management of tasks with supporting commiting them,
  * rolling them back, and setting bookmarks which can be undone and redone.
  */
-class CommandManager {
+class CommandManager : public Object {
  public:
   /* A bookmark that keeps track of commands that can be undone and redone. */
   class Bookmark : public CommandList {
@@ -4713,8 +4713,14 @@ class CommandManager {
   Bookmark* currentBookmark;
 
  public:
+  static const MetaCategory* metacategory;
+  static const MetaClass* metadata;
+
+  static int initialize();
+
   /* Constructor. */
   CommandManager() {
+    initType(metadata);
     lastBookmark = &firstBookmark;
     currentBookmark = &firstBookmark;
   }

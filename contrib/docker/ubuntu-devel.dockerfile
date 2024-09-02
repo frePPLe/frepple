@@ -48,6 +48,9 @@ RUN src=`basename --suffix=.tar.gz frepple-*` && \
   cmake -B /build -DCMAKE_BUILD_TYPE=Release && \
   cmake --build /build --config Release --target package -- -j 2
 
+FROM scratch as package
+COPY --from=builder /build/*.deb .
+
 #
 # STAGE 2: Build the deployment container
 #

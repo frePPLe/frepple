@@ -1,0 +1,17 @@
+#You only need to start this if you have no Postgres already available
+#This will launch a Postgres container with local data persistence. 
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=frepple
+      - POSTGRES_PASSWORD=frepple
+      - POSTGRES_DB=frepple
+      - PGHOST=127.0.0.1
+      - PGPORT=5432
+    ports:
+      - 5432:5432
+    command: ["postgres", "-c", "log_statement=all"]
+    volumes:
+       - ~/frepple_data:/var/lib/postgresql/data

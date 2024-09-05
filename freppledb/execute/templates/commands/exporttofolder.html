@@ -30,7 +30,7 @@
 {% for j in data_exports %}
 <div class="row mb-2" data-file="{{j.name}}">
   <div class="col flex-grow-1 offset-2">{{j.name}}</div>
-  <div class="col-1 text-center">{{j.size}}</div>
+  <div class="col-1 text-nowrap text-center">{{j.size}}</div>
   <div class="col-2 text-nowrap text-center">{{j.timestamp}}</div>
   <div class="col-auto text-center">
     <div class="btn btn-sm btn-primary downloadfile" data-bs-toggle="tooltip"

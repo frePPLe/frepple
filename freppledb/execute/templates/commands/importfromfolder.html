@@ -1,53 +1,47 @@
 {% load i18n %}
-<form role="form" method="post" action="{{request.prefix}}/execute/launch/importfromfolder/">{% csrf_token %}
-  <table>
-    <tr>
-      <td style="vertical-align:top; padding-left: 15px">
+<div class="row">
+  <div class="col-2">
+     <form role="form" method="post" action="{{request.prefix}}/execute/launch/importfromfolder/">{% csrf_token %}
+
         <button type="submit" class="btn btn-primary" id="importfromfolder" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
-      </td>
-      <td colspan="6" style="padding-left:15px">
-        <p>{% trans "Import CSV or Excel files. The file names must match the names of data objects and the first line in the file must contain the field names." %}</p>
-      </td>
-    </tr>
-    <tr>
-      <td></td>
-      <td style="padding-left:15px"><strong>{% trans 'file name'|capfirst %}</strong></td>
-      <td><strong>{% trans 'size'|capfirst %}</strong></td>
-      <td><strong>{% trans 'changed'|capfirst %}</strong></td>
-      <td>
-        <span class="btn btn-sm btn-primary" style="margin-bottom:5px" data-bs-toggle="tooltip"
+     </form>
+  </div>
+  <div class="col-10">
+    <p>{% trans "Import CSV or Excel files. The file names must match the names of data objects and the first line in the file must contain the field names." %}</p>
+  </div>
+</div>
+<div class="row mb-2">
+    <div class="col flex-grow-1 offset-2"><strong>{% trans 'file name'|capfirst %}</strong></div>
+    <div class="col-1 text-center"><strong>{% trans 'size'|capfirst %}</strong></div>
+    <div class="col-2 text-center"><strong>{% trans 'changed'|capfirst %}</strong></div>
+    <div class="col-auto text-center">
+        <div class="btn btn-sm btn-primary" style="margin-bottom:5px" data-bs-toggle="tooltip"
            data-bs-placement="top" data-bs-title="{% trans "Download all files" %}"
            onClick="downloadImportFile(0)">
           <span class="fa fa-arrow-down"></span>
-        </span>
-      </td>
-      <td>
+        </div>
         <div class="btn btn-sm btn-danger deletefile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans 'Delete all files' %}" onClick="deleteImportFile(0, {{filestoupload}})">
           <span class="fa fa-close"></span>
         </div>
-      </td>
-    </tr>
+    </div>
+</div>
     {% for j in filestoupload %}
-    <tr data-file="{{j.0}}">
-      <td></td>
-      <td style="padding-left:15px">{{j.0}}</td>
-      <td>{{j.2}}</td>
-      <td>{{j.1}}</td>
-      <td>
+    <div class="row mb-2" data-file="{{j.0}}">
+      <div class="col flex-grow-1 offset-2 text-nowrap">{{j.0}}</div>
+      <div class="col-1 text-nowrap text-center">{{j.2}}</div>
+      <div class="col-2 text-nowrap text-center">{{j.1}}</div>
+      <div class="col-auto text-center">
         <div class="btn btn-sm btn-primary downloadfile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Download file" %}" onClick="downloadImportFile(0, '{{j.0}}')">
           <span class="fa fa-arrow-down"></span>
         </div>
-      </td>
-      <td>
         <div class="btn btn-sm btn-danger deletefile" style="margin-bottom:5px" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Delete file" %}" onClick="deleteImportFile(0, '{{j.0}}')">
           <span class="fa fa-close"></span>
         </div>
-      </td>
-    </tr>
+      </div>
+    </div>
     {% endfor %}
-    <tr>
-      <td></td>
-      <td colspan="5">
+    <div class="row mb-2">
+    <div class="col-10 offset-2">
       <div id="addfiles2import" style="outline: 2px dashed black; outline-offset: -1em">
       <div class="text-center box__input" style="text-align: center; padding: 20px;">
       <form id="fileuploadform">
@@ -69,10 +63,8 @@
       </div>
       </div>
       </div>
-    </td>
-  </tr>
-  </table>
-</form>
+    </div>
+  </div>
 <script>
 
 var filesdropped = null;

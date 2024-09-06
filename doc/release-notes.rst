@@ -7,6 +7,21 @@ Release notes
 This release is scheduled for end of September.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Documentation
+
+- | Added support to use external authentication methods using OAuth, SAML, OpenID, ...
+    More and more companies are moving towards these protocols with multi-factor authentication
+    to securely manage users, passwords and their access rights.
+  | The procedure to enable OAuth2 is included in the documentation. Other methods
+    can be enabled with minimal coding and configuration.
+
+.. rubric:: Development
+
+- | The development container have been improved and this is now the easy, simple
+    and recommended method to do any development on frepple or frepple addons.
+  | Within 5 minutes any developer can now have a complete development
+    environment ready.
+
 9.2.0 (2024-08-30)
 ==================
 

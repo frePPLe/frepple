@@ -16,6 +16,7 @@ https://github.com/frePPLe/frepple/discussions or https://github.com/frePPLe/fre
 * :ref:`websocket`
 * :ref:`proxy`
 * :ref:`moveserver`
+* :ref:`external_authentication`
 
 
 .. _https:
@@ -136,3 +137,119 @@ following data elements from the old instance:
 
 - If you have tailored the apache configuration, you may also include
   the relevant files from the /etc/apache2 folder.
+
+.. _external_authentication:
+
+Integrate external authentication with OAuth2
+---------------------------------------------
+
+Enterprises are moving towards authentication methods like OAuth, SAML,
+OpenID, ... with multi-factor authentication to protect data access,
+manage users and control their access rights.
+
+And, yes, frePPLe can be configured to support these tools. FrePPLe uses the
+django web application framework, and the `django-allauth <https://docs.allauth.org/en/latest/>`_
+library provides a code to authenticate with a large number of authentication protocols
+and social accounts.
+
+The steps to authenticate using OAuth2 are as follows. Other methods supported by
+django-allauth will have pretty similar instructions.
+
+#. | Set up your Oauth provider.
+   | You will need its CLIENT_ID and the CLIENT_SECRET later on in this process.
+   | Assure that you have set the callback URL of the provider to
+     https://<DOMAIN-OF-YOUR-FREPPLE-INSTALL>/accounts/auth0/login/callback/
+
+#. | Install the django-allauth python package.
+   | In recent frepple release you install it in the frepple python venv. In older releases
+     you install the package system-wide.
+
+   .. code-block:: bash
+
+      . /usr/share/frepple/venv/bin/activate
+      pip3 install django-allauth
+
+#. | Update your /etc/frepple/djangosettings.py file.
+
+     .. code-block:: python
+
+        INSTALLED_APPS = (
+          ...
+          # Add these lines.
+          "freppledb.external_auth",
+          "django.contrib.sites",
+          "allauth",
+          "allauth.account",
+          "allauth.socialaccount",
+          "allauth.socialaccount.providers.auth0",
+        )
+
+        AUTHENTICATION_BACKENDS = (
+          "freppledb.common.auth.MultiDBBackend",
+          # Add the the following line.
+          "freppledb.external_auth.auth.CustomAuthenticationBackend",
+          )
+
+        # Add new settings at the end of the file
+        SITE_ID = 1
+        LOGIN_URL = "/accounts/auth0/login/"
+        LOGIN_REDIRECT_URL = "/accounts/auth0/login/"
+        LOGOUT_REDIRECT_URL = "/accounts/auth0/login/"
+        ACCOUNT_LOGOUT_ON_GET = True
+        ACCOUNT_EMAIL_VERIFICATION = "none"
+        SOCIALACCOUNT_AUTO_SIGNUP = True
+        SOCIALACCOUNT_ADAPTER = 'freppledb.external_auth.auth.CustomAccountAdapter'
+        ACCOUNT_ADAPTER = 'freppledb.external_auth.auth.CustomAdapter'
+        SOCIALACCOUNT_PROVIDERS = {
+              "auth0": {
+                  "AUTH0_URL": "<URL-OF-YOUR-OAUTH-PROVIDER>", # UPDATE!!!
+              }
+            }
+        DEFAULT_USER_GROUP = "Planner" # New users are automatically added to this group
+
+       # The following settings may be needed to satisfy the CORS
+       # requirements with the authentication provider. Don't copy these
+       # lines blindly but carefully review what is really needed.
+        CONTENT_SECURITY_POLICY = "frame-ancestors 'self' <URL-OF-EXTERNAL-APP>;"
+        X_FRAME_OPTIONS = None
+        SESSION_COOKIE_SAMESITE = "none"
+        CSRF_COOKIE_SAMESITE = "none"
+
+#. Migrate the database structure for the new apps.
+
+   .. code-block:: bash
+
+      frepplectl migrate
+
+#. | Configure the authentication.
+   | A few database records need to be created.
+
+   .. code-block:: bash
+
+      frepplectl dbshell
+
+      sql> insert into django_site
+        (id, domain, name)
+        values(1, '<DOMAIN-OF-YOUR-FREPPLE-INSTALL>', '<DOMAIN-OF-YOUR-FREPPLE-INSTALL>')    -- UPDATE !!!
+        on conflict (id)
+        do update set domain=excluded.domain, name=excluded.name;
+
+        insert into socialaccount_socialapp
+        (id, provider, name, client_id, secret, key)
+        values
+        (1, 'auth0', 'auth0',
+        '<OAUTH-CLIENT>',   -- UPDATE !!!
+        '<OAUTH-CLIENT-SECRET>', -- UPDATE !!!
+        'frepple2'
+        );
+
+        insert into socialaccount_socialapp_sites
+        (socialapp_id, site_id)
+        values (1, 1);
+
+#. | Define which access rights you want to assign to newly added users.
+   | Use the "admin/groups" screen to define a group called "Planner", and
+     assign the correct permissions to the group.
+   | Hint: Define only a minimal set of permissions to the group. You can
+     always grant additional permissions later on to the handful of
+     super-users that need those.

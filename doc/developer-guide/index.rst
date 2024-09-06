@@ -8,6 +8,7 @@ extending, customizing or maintaining frePPLe.
    :maxdepth: 3
 
    architecture
+   using-a-dev-container
    linux-compiling
    creating-an-extension-app
    creating-a-custom-theme

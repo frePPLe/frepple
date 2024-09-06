@@ -140,17 +140,16 @@ following data elements from the old instance:
 
 .. _external_authentication:
 
-Integrate external authentication with OAuth2
----------------------------------------------
+Integrate external OAuth2 authentication
+----------------------------------------
 
 Enterprises are moving towards authentication methods like OAuth, SAML,
 OpenID, ... with multi-factor authentication to protect data access,
 manage users and control their access rights.
 
-And, yes, frePPLe can be configured to support these tools. FrePPLe uses the
-django web application framework, and the `django-allauth <https://docs.allauth.org/en/latest/>`_
-library provides a code to authenticate with a large number of authentication protocols
-and social accounts.
+Using the `django-allauth <https://docs.allauth.org/en/latest/>`_
+library frepple can be configured to authenticate using a large number of
+authentication protocols and social accounts.
 
 The steps to authenticate using OAuth2 are as follows. Other methods supported by
 django-allauth will have pretty similar instructions.
@@ -234,7 +233,7 @@ django-allauth will have pretty similar instructions.
         on conflict (id)
         do update set domain=excluded.domain, name=excluded.name;
 
-        insert into socialaccount_socialapp
+      sql> insert into socialaccount_socialapp
         (id, provider, name, client_id, secret, key)
         values
         (1, 'auth0', 'auth0',
@@ -243,9 +242,10 @@ django-allauth will have pretty similar instructions.
         'frepple2'
         );
 
-        insert into socialaccount_socialapp_sites
+      sql> insert into socialaccount_socialapp_sites
         (socialapp_id, site_id)
         values (1, 1);
+
 
 #. | Define which access rights you want to assign to newly added users.
    | Use the "admin/groups" screen to define a group called "Planner", and

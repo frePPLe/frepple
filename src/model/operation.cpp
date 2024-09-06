@@ -1671,9 +1671,12 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
       }
     }
     return OperationPlanState(y, x.end, x.quantity);
-  } else
-    throw LogicException(
-        "Updating a routing operationplan without start or end date argument");
+  } else {
+    logger << "Warning: Updating a routing operationplan without start or end "
+              "date argument"
+           << endl;
+    return OperationPlanState(opplan);
+  }
 }
 
 bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans,

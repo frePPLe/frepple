@@ -67,6 +67,19 @@ jobs:
           ./test/runtest.py --regression
           ./frepplectl.py test freppledb --verbosity=2
 
+      - name: Test uninstalling apps
+        working-directory: ${{github.workspace}}
+        run: |
+          export POSTGRES_HOST=localhost
+          export POSTGRES_PORT=5432
+          ./frepplectl.py createdatabase --noinput
+          ./frepplectl.py migrate
+          ./frepplectl.py migrate forecast zero
+          ./frepplectl.py migrate wizard zero
+          ./frepplectl.py migrate metrics zero
+          ./frepplectl.py migrate reportmanager zero
+          ./frepplectl.py migrate executesql zero
+
       - name: Odoo integration test
         if: github.event.client_payload.message.branch
         run: |

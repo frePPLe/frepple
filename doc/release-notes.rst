@@ -22,6 +22,12 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | Within 5 minutes any developer can now have a complete development
     environment ready.
 
+.. rubric:: Odoo integration
+
+- | 17: To keep the names shorter in frepple we now a) use the warehouse short code
+    (instead of its full name) and b) use only the item code in the operation names
+    (instead of including also the much longer item name).
+
 9.2.0 (2024-08-30)
 ==================
 

@@ -191,7 +191,7 @@ PyObject* ForecastSolver::solve(PyObject* self, PyObject* args,
   int run_netting = 1;
   int cluster = -1;
   PyObject* dem = nullptr;
-  int ok = PyArg_ParseTupleAndKeywords(args, kwargs, "|pip:solve",
+  int ok = PyArg_ParseTupleAndKeywords(args, kwargs, "|pipO:solve",
                                        const_cast<char**>(kwlist), &run_fcst,
                                        &cluster, &run_netting, &dem);
   if (!ok) return nullptr;

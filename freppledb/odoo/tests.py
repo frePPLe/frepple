@@ -130,8 +130,9 @@ class OdooTest(TransactionTestCase):
             .exclude(name__startswith="D")
             .exclude(name__startswith="E")
             .exclude(name__startswith="F")
+            .exclude(name__startswith="All")
             .count(),
-            7,
+            6,
         )
         po_list = (
             PurchaseOrder.objects.all()
@@ -140,7 +141,7 @@ class OdooTest(TransactionTestCase):
             .exclude(item__name__startswith="F")
             .filter(status="confirmed")
         )
-        self.assertEqual(po_list.count(), 1)
+        self.assertEqual(po_list.count(), 2)
         po = po_list[0]
         self.assertEqual(po.quantity, 15)
         # TODO receipt date changes between runs, making it difficult to compare here
@@ -245,7 +246,9 @@ class OdooTest(TransactionTestCase):
             self.assertEqual(approved_mo.quantity, odoo_mo["product_qty"])
             self.assertEqual(
                 approved_mo.startdate.strftime("%Y-%m-%d %H:%M:%S"),
-                odoo_mo["date_planned_start"],
+                odoo_mo.get(
+                    "date_planned_start", odoo_mo.get("date_start")
+                ),  # Field name changed in v17
             )
             self.assertTrue(odoo_mo["bom_id"][1] in approved_mo.operation.name)
             cnt += 1

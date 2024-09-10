@@ -1073,20 +1073,12 @@ function forecastController($scope, $http, $q, $location) {
           if ($scope.edit_mode == 0)
             $scope.detaildata.forecast[bckt][$scope.edit_measure] = $scope.edit_set;
           else if ($scope.edit_mode == 1) {
-            if ($scope.detaildata.forecast[bckt]["forecastoverride"] != -1
-              && $scope.detaildata.forecast[bckt]["forecastoverride"] != null)
-              $scope.detaildata.forecast[bckt][$scope.edit_measure] += $scope.edit_inc;
-            else
-              $scope.detaildata.forecast[bckt][$scope.edit_measure] =
-                $scope.detaildata.forecast[bckt]["forecastbaseline"] + $scope.edit_inc;
+            $scope.detaildata.forecast[bckt][$scope.edit_measure] =
+              $scope.detaildata.forecast[bckt]["forecasttotal"] + $scope.edit_inc;
           }
           else if ($scope.edit_mode == 2) {
-            if ($scope.detaildata.forecast[bckt]["forecastoverride"] != -1
-              && $scope.detaildata.forecast[bckt]["forecastoverride"] != null)
-              $scope.detaildata.forecast[bckt][$scope.edit_measure] *= factor;
-            else
-              $scope.detaildata.forecast[bckt][$scope.edit_measure] =
-                $scope.detaildata.forecast[bckt]["forecastbaseline"] * factor;
+            $scope.detaildata.forecast[bckt][$scope.edit_measure] =
+              $scope.detaildata.forecast[bckt]["forecasttotal"] * factor;
           }
           $scope.detaildata.forecast[bckt]["forecasttotal"] =
             ($scope.detaildata.forecast[bckt]["forecastoverride"] != -1

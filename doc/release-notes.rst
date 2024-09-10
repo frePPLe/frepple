@@ -7,6 +7,11 @@ Release notes
 This release is scheduled for end of September.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Demand forecasting
+
+- | Bug fix: Form for increasing forecast by a fixed value or percentages is now working
+    more intuitively at aggregate levels.
+
 .. rubric:: Documentation
 
 - | Added support to use external authentication methods using OAuth, SAML, OpenID, ...

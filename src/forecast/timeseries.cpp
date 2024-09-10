@@ -262,7 +262,8 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
              << ", standard deviation: " << fcst->getDeviation()
              << ", smape error: " << fcst->getSMAPEerror() << endl;
     qualifiedmethods[best_method]->applyForecast(
-        const_cast<Forecast*>(fcst), data->getBuckets(), bckt_end->getIndex());
+        const_cast<Forecast*>(fcst), data->getBuckets(), bckt_end->getIndex(),
+        !getAutocommit() ? commands : nullptr);
   } else {
     const_cast<Forecast*>(fcst)->setMethod(0);
     const_cast<Forecast*>(fcst)->setSMAPEerror(0.0);
@@ -368,8 +369,8 @@ ForecastSolver::Metrics ForecastSolver::MovingAverage::generateForecast(
 }
 
 void ForecastSolver::MovingAverage::applyForecast(
-    Forecast* forecast, vector<ForecastBucketData>& bucketdata,
-    short bcktstart) {
+    Forecast* forecast, vector<ForecastBucketData>& bucketdata, short bcktstart,
+    CommandManager* mgr) {
   // Loop over all buckets and set the forecast to a constant value
   if (forecast->getDiscrete()) {
     double carryover = 0.0;
@@ -379,13 +380,15 @@ void ForecastSolver::MovingAverage::applyForecast(
       carryover += avg;
       double val = ceil(carryover - 0.5);
       carryover -= val;
-      Measures::forecastbaseline->disaggregate(*bckt, val > 0.0 ? val : 0.0);
+      Measures::forecastbaseline->disaggregate(*bckt, val > 0.0 ? val : 0.0,
+                                               mgr);
     }
   } else {
     for (auto bckt = bucketdata.begin() + bcktstart;
          bckt != bucketdata.end() && bckt->getEnd() != Date::infiniteFuture;
          ++bckt)
-      Measures::forecastbaseline->disaggregate(*bckt, avg > 0.0 ? avg : 0.0);
+      Measures::forecastbaseline->disaggregate(*bckt, avg > 0.0 ? avg : 0.0,
+                                               mgr);
   }
 
   deleteOutliers(forecast, this);
@@ -575,8 +578,8 @@ ForecastSolver::Metrics ForecastSolver::SingleExponential::generateForecast(
 }
 
 void ForecastSolver::SingleExponential::applyForecast(
-    Forecast* forecast, vector<ForecastBucketData>& bucketdata,
-    short bcktstart) {
+    Forecast* forecast, vector<ForecastBucketData>& bucketdata, short bcktstart,
+    CommandManager* mgr) {
   // Loop over all buckets and set the forecast to a constant value
   if (forecast->discrete) {
     double carryover = 0.0;
@@ -586,13 +589,15 @@ void ForecastSolver::SingleExponential::applyForecast(
       carryover += f_i;
       double val = ceil(carryover - 0.5);
       carryover -= val;
-      Measures::forecastbaseline->disaggregate(*bckt, val > 0.0 ? val : 0.0);
+      Measures::forecastbaseline->disaggregate(*bckt, val > 0.0 ? val : 0.0,
+                                               mgr);
     }
   } else {
     for (auto bckt = bucketdata.begin() + bcktstart;
          bckt != bucketdata.end() && bckt->getEnd() != Date::infiniteFuture;
          ++bckt)
-      Measures::forecastbaseline->disaggregate(*bckt, f_i > 0.0 ? f_i : 0.0);
+      Measures::forecastbaseline->disaggregate(*bckt, f_i > 0.0 ? f_i : 0.0,
+                                               mgr);
   }
 
   deleteOutliers(forecast, this);
@@ -872,8 +877,8 @@ ForecastSolver::Metrics ForecastSolver::DoubleExponential::generateForecast(
 }
 
 void ForecastSolver::DoubleExponential::applyForecast(
-    Forecast* forecast, vector<ForecastBucketData>& bucketdata,
-    short bcktstart) {
+    Forecast* forecast, vector<ForecastBucketData>& bucketdata, short bcktstart,
+    CommandManager* mgr) {
   // Loop over all buckets and set the forecast to a linearly changing value
   if (forecast->discrete) {
     double carryover = 0.0;
@@ -885,7 +890,8 @@ void ForecastSolver::DoubleExponential::applyForecast(
       carryover += constant_i;
       double val = ceil(carryover - 0.5);
       carryover -= val;
-      Measures::forecastbaseline->disaggregate(*bckt, val > 0.0 ? val : 0.0);
+      Measures::forecastbaseline->disaggregate(*bckt, val > 0.0 ? val : 0.0,
+                                               mgr);
     }
   } else {
     for (auto bckt = bucketdata.begin() + bcktstart;
@@ -894,7 +900,7 @@ void ForecastSolver::DoubleExponential::applyForecast(
       constant_i += trend_i;
       trend_i *= dampenTrend;  // Reduce slope in the future
       Measures::forecastbaseline->disaggregate(
-          *bckt, constant_i > 0.0 ? constant_i : 0.0);
+          *bckt, constant_i > 0.0 ? constant_i : 0.0, mgr);
     }
   }
 
@@ -1242,8 +1248,8 @@ ForecastSolver::Metrics
 }
 
 void ForecastSolver::Seasonal::applyForecast(
-    Forecast* forecast, vector<ForecastBucketData>& bucketdata,
-    short bcktstart) {
+    Forecast* forecast, vector<ForecastBucketData>& bucketdata, short bcktstart,
+    CommandManager* mgr) {
   // Loop over all buckets and set the forecast to a linearly changing value
   if (forecast->discrete) {
     double carryover = 0.0;
@@ -1256,7 +1262,8 @@ void ForecastSolver::Seasonal::applyForecast(
       double val = ceil(carryover - 0.5);
       carryover -= val;
       if (++cycleindex >= period) cycleindex = 0;
-      Measures::forecastbaseline->disaggregate(*bckt, val > 0.0 ? val : 0.0);
+      Measures::forecastbaseline->disaggregate(*bckt, val > 0.0 ? val : 0.0,
+                                               mgr);
     }
   } else
     for (auto bckt = bucketdata.begin() + bcktstart;
@@ -1266,7 +1273,8 @@ void ForecastSolver::Seasonal::applyForecast(
       T_i *= dampenTrend;  // Reduce slope in the future
       double fcst = L_i * S_i[cycleindex];
       if (++cycleindex >= period) cycleindex = 0;
-      Measures::forecastbaseline->disaggregate(*bckt, fcst > 0.0 ? fcst : 0.0);
+      Measures::forecastbaseline->disaggregate(*bckt, fcst > 0.0 ? fcst : 0.0,
+                                               mgr);
     }
 
   deleteOutliers(forecast, this);
@@ -1438,8 +1446,8 @@ ForecastSolver::Metrics ForecastSolver::Croston::generateForecast(
 }
 
 void ForecastSolver::Croston::applyForecast(
-    Forecast* forecast, vector<ForecastBucketData>& bucketdata,
-    short bcktstart) {
+    Forecast* forecast, vector<ForecastBucketData>& bucketdata, short bcktstart,
+    CommandManager* mgr) {
   // Loop over all buckets and set the forecast to a constant value
   if (forecast->discrete) {
     double carryover = 0.0;
@@ -1449,13 +1457,15 @@ void ForecastSolver::Croston::applyForecast(
       carryover += f_i;
       double val = ceil(carryover - 0.5);
       carryover -= val;
-      Measures::forecastbaseline->disaggregate(*bckt, val > 0.0 ? val : 0.0);
+      Measures::forecastbaseline->disaggregate(*bckt, val > 0.0 ? val : 0.0,
+                                               mgr);
     }
   } else {
     for (auto bckt = bucketdata.begin() + bcktstart;
          bckt != bucketdata.end() && bckt->getEnd() != Date::infiniteFuture;
          ++bckt)
-      Measures::forecastbaseline->disaggregate(*bckt, f_i > 0.0 ? f_i : 0.0);
+      Measures::forecastbaseline->disaggregate(*bckt, f_i > 0.0 ? f_i : 0.0,
+                                               mgr);
   }
 
   deleteOutliers(forecast, this);
@@ -1474,13 +1484,13 @@ ForecastSolver::Metrics ForecastSolver::Manual::generateForecast(
 }
 
 void ForecastSolver::Manual::applyForecast(
-    Forecast* forecast, vector<ForecastBucketData>& bucketdata,
-    short bcktstart) {
+    Forecast* forecast, vector<ForecastBucketData>& bucketdata, short bcktstart,
+    CommandManager* mgr) {
   // Loop over all buckets and set the forecast to 0
   for (auto bckt = bucketdata.begin() + bcktstart;
        bckt != bucketdata.end() && bckt->getEnd() != Date::infiniteFuture;
        ++bckt)
-    Measures::forecastbaseline->disaggregate(*bckt, 0.0);
+    Measures::forecastbaseline->disaggregate(*bckt, 0.0, mgr);
 
   deleteOutliers(forecast, this);
 }

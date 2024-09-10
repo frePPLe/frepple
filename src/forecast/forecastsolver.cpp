@@ -112,6 +112,8 @@ int ForecastSolver::initialize() {
   x.supportsetattro();
   x.supportcreate(create);
   x.addMethod("solve", solve, METH_VARARGS, "run the solver");
+  x.addMethod("commit", commit, METH_NOARGS, "commit the plan changes");
+  x.addMethod("rollback", rollback, METH_NOARGS, "rollback the plan changes");
   metadata->setPythonClass(x);
   return x.typeReady();
 }
@@ -182,21 +184,37 @@ void ForecastSolver::solve(const Demand* l, void* v) {
 
 PyObject* ForecastSolver::solve(PyObject* self, PyObject* args,
                                 PyObject* kwargs) {
-  static const char* kwlist[] = {"run_fcst", "cluster", "run_netting", nullptr};
+  static const char* kwlist[] = {"run_fcst", "cluster", "run_netting", "demand",
+                                 nullptr};
   // Create the command
   int run_fcst = 1;
   int run_netting = 1;
   int cluster = -1;
+  PyObject* dem = nullptr;
   int ok = PyArg_ParseTupleAndKeywords(args, kwargs, "|pip:solve",
                                        const_cast<char**>(kwlist), &run_fcst,
-                                       &cluster, &run_netting);
+                                       &cluster, &run_netting, &dem);
   if (!ok) return nullptr;
+  if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass) &&
+      !PyObject_TypeCheck(dem, Forecast::metadata->pythonClass)) {
+    PyErr_SetString(PythonDataException,
+                    "demand argument must be a demand or forecast");
+    return nullptr;
+  }
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
   try {
-    static_cast<ForecastSolver*>(self)->solve(run_fcst == 1, run_netting == 1,
-                                              cluster);
+    auto sol = static_cast<ForecastSolver*>(self);
+    if (!dem) {
+      // Run for all or a single cluster
+      sol->setAutocommit(true);
+      sol->solve(run_fcst == 1, run_netting == 1, cluster);
+    } else {
+      // Run for a single forecast or run netting for a sales order
+      sol->setAutocommit(false);
+      sol->solve(static_cast<Demand*>(dem));
+    }
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();
@@ -466,7 +484,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
          (dmd->getDue() + netLate >= curbucket->getStart())) {
     // Net from the current bucket
     auto available = Measures::forecastnet->getValue(*curbucket);
-    if (available > 0) {
+    if (available > ROUNDING_ERROR) {
       if (available >= remaining) {
         // Partially consume a bucket
         if (getLogLevel() > 1)
@@ -475,8 +493,11 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
                  << endl;
         Measures::forecastconsumed->disaggregate(
             *curbucket,
-            remaining + Measures::forecastconsumed->getValue(*curbucket));
-        Measures::forecastnet->disaggregate(*curbucket, available - remaining);
+            remaining + Measures::forecastconsumed->getValue(*curbucket),
+            !getAutocommit() ? commands : nullptr);
+        Measures::forecastnet->disaggregate(
+            *curbucket, available - remaining,
+            !getAutocommit() ? commands : nullptr);
         remaining = 0;
       } else {
         // Completely consume a bucket
@@ -487,8 +508,10 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
         remaining -= available;
         Measures::forecastconsumed->disaggregate(
             *curbucket,
-            available + Measures::forecastconsumed->getValue(*curbucket));
-        Measures::forecastnet->disaggregate(*curbucket, 0.0);
+            available + Measures::forecastconsumed->getValue(*curbucket),
+            !getAutocommit() ? commands : nullptr);
+        Measures::forecastnet->disaggregate(
+            *curbucket, 0.0, !getAutocommit() ? commands : nullptr);
       }
     } else if (getLogLevel() > 1)
       logger << "    Nothing available in bucket " << curbucket->getDates()

@@ -1793,8 +1793,8 @@ class ForecastSolver : public Solver {
     /* This method is called when this forecast method has generated the
      * lowest forecast error and now needs to set the forecast values.
      */
-    virtual void applyForecast(Forecast*, vector<ForecastBucketData>&,
-                               short) = 0;
+    virtual void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
+                               CommandManager*) = 0;
 
     virtual unsigned int getCode() = 0;
   };
@@ -1830,7 +1830,8 @@ class ForecastSolver : public Solver {
                              ForecastSolver*);
 
     /* Forecast value updating. */
-    void applyForecast(Forecast*, vector<ForecastBucketData>&, short);
+    void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
+                       CommandManager*);
 
     /* Update the initial value for the alfa parameter. */
     static void setDefaultOrder(int x) {
@@ -1886,7 +1887,8 @@ class ForecastSolver : public Solver {
                              ForecastSolver*);
 
     /* Forecast value updating. */
-    void applyForecast(Forecast*, vector<ForecastBucketData>&, short);
+    void applyForecast(Forecast*, vector<ForecastBucketData>&,
+                       short, CommandManager*);
 
     /* Update the initial value for the alfa parameter. */
     static void setInitialAlfa(double x) {
@@ -1990,7 +1992,8 @@ class ForecastSolver : public Solver {
                              ForecastSolver*);
 
     /* Forecast value updating. */
-    void applyForecast(Forecast*, vector<ForecastBucketData>&, short);
+    void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
+                       CommandManager*);
 
     /* Update the initial value for the alfa parameter. */
     static void setInitialAlfa(double x) {
@@ -2186,7 +2189,8 @@ class ForecastSolver : public Solver {
                              ForecastSolver*);
 
     /* Forecast value updating. */
-    void applyForecast(Forecast*, vector<ForecastBucketData>&, short);
+    void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
+                       CommandManager*);
 
     /* Update the minimum period that can be detected. */
     static void setMinPeriod(int x) {
@@ -2367,7 +2371,8 @@ class ForecastSolver : public Solver {
                              ForecastSolver*);
 
     /* Forecast value updating. */
-    void applyForecast(Forecast*, vector<ForecastBucketData>&, short);
+    void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
+                       CommandManager*);
 
     /* Update the initial value for the alfa parameter. */
     static void setInitialAlfa(double x) {
@@ -2435,7 +2440,8 @@ class ForecastSolver : public Solver {
                              ForecastSolver*);
 
     /* Forecast value updating. */
-    void applyForecast(Forecast*, vector<ForecastBucketData>&, short);
+    void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
+                       CommandManager*);
 
     unsigned int getCode() { return Forecast::METHOD_MANUAL; }
   };
@@ -2443,7 +2449,7 @@ class ForecastSolver : public Solver {
   /* Default constructor. */
   explicit ForecastSolver() {
     initType(metadata);
-    commands = new CommandManager();
+    commands = &default_commands;
   }
 
   ~ForecastSolver() {
@@ -2960,6 +2966,7 @@ class ForecastSolver : public Solver {
 
   // Used when autocommit is false
   CommandManager* commands;
+  CommandManager default_commands;
 
   static PyObject* commit(PyObject*, PyObject*);
 

@@ -183,7 +183,7 @@ def runTask(task, database):
                     task.status = "Done"
             task.save(using=database)
         if "FREPPLE_TEST" not in os.environ:
-            logger.info(
+            logger.debug(
                 "Worker %s for database '%s' finished task %d at %s: success"
                 % (
                     os.getpid(),
@@ -233,7 +233,7 @@ class Command(BaseCommand):
         # Check if a worker already exists
         if checkActive(database):
             if "FREPPLE_TEST" not in os.environ:
-                logger.info(
+                logger.debug(
                     "Worker for database '%s' already active"
                     % settings.DATABASES[database]["NAME"]
                 )
@@ -244,7 +244,7 @@ class Command(BaseCommand):
 
         # Process the queue
         if "FREPPLE_TEST" not in os.environ:
-            logger.info(
+            logger.debug(
                 "Worker %s for database '%s' starting to process jobs"
                 % (os.getpid(), settings.DATABASES[database]["NAME"])
             )
@@ -277,7 +277,7 @@ class Command(BaseCommand):
                         continue
             try:
                 if "FREPPLE_TEST" not in os.environ:
-                    logger.info(
+                    logger.debug(
                         "Worker %s for database '%s' starting task %d at %s"
                         % (
                             os.getpid(),
@@ -298,7 +298,7 @@ class Command(BaseCommand):
                 task.message = str(e)
                 task.save(using=database)
                 if "FREPPLE_TEST" not in os.environ:
-                    logger.info(
+                    logger.debug(
                         "Worker %s for database '%s' finished task %d at %s: failed"
                         % (
                             os.getpid(),
@@ -344,7 +344,7 @@ class Command(BaseCommand):
 
         # Exit
         if "FREPPLE_TEST" not in os.environ:
-            logger.info(
+            logger.debug(
                 "Worker %s for database '%s' finished all jobs in the queue and exits"
                 % (os.getpid(), settings.DATABASES[database]["NAME"])
             )

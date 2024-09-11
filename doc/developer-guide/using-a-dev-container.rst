@@ -35,6 +35,9 @@ This file points to a Dockerfile where the container image is defined.
    When you open the project folder VS Code should prompt you to start the Dev-Container.
    This should trigger a series of steps and can take a couple of minutes.
 
+   If VS Code does not prompt you to use the Dev Container you may need to run the
+   VS Code command "reopen in container".
+
    If you are starting from a fresh image the C++ code compilation will be triggered.
    The CMakeLists.txt file has some logic to detect your Linux distribution
    and configure the build script.
@@ -42,7 +45,7 @@ This file points to a Dockerfile where the container image is defined.
    The initialization step will also check for all required build software and
    report any missing packages.
 
-#. Build the software
+#. Optional, Build the software
 
    The previous step should have already done the compilation but,
    in case you need to do it yourself, the instructions are simple.
@@ -68,7 +71,7 @@ This file points to a Dockerfile where the container image is defined.
    ::
 
      cd <project_directory>
-     frepplectl.py migrate
+     ./frepplectl.py migrate
 
    If the DB cannot be found you should check the IP address of your Dev-Container.
    It should be something like 172.17.0.2 and, in this case, for the
@@ -83,10 +86,14 @@ This file points to a Dockerfile where the container image is defined.
    ::
 
      cd <project_directory>
-     frepplectl.py runserver
+     ./frepplectl.py runserver
 
    At this point you should be able to open http://127.0.0.1:8000 from a browser
    in the host machine.
 
-   You are now ready to start developing.
+   If you get an error like django is missing, this means that probably the
+   Python venv did not start or that dependencies are missing.
+   To solve this issue please refer to "Build the software" step.
+   The "./frepplectl.py runserver" command should now work.
 
+   You are ready to start developing.

@@ -1747,9 +1747,9 @@ class InventoryDetail(OperationPlanMixin):
             initially_hidden=True,
         ),
         GridFieldText(
-            "operationplan__supplier",
+            "operationplan__supplier__name",
             title=_("supplier"),
-            field_name="operationplan__supplier",
+            field_name="operationplan__supplier__name",
             formatter="detail",
             extra="role:'input/supplier'",
             initially_hidden=True,

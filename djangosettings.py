@@ -72,7 +72,8 @@ DATABASES = {
         # Specify the port number when using a TCP socket.
         "PORT": os.environ.get("POSTGRES_PORT", ""),
         "OPTIONS": {},
-        "CONN_MAX_AGE": 60,
+        "CONN_MAX_AGE": 600,
+        "CONN_HEALTH_CHECKS": True,
         "TEST": {
             "NAME": (
                 "test_%s0" % os.environ["POSTGRES_DBNAME"]
@@ -122,7 +123,8 @@ DATABASES = {
         # Specify the port number when using a TCP socket.
         "PORT": "",
         "OPTIONS": {},
-        "CONN_MAX_AGE": 60,
+        "CONN_MAX_AGE": 600,
+        "CONN_HEALTH_CHECKS": True,
         "TEST": {
             "NAME": (
                 "test_%s1" % os.environ["POSTGRES_DBNAME"]
@@ -170,7 +172,8 @@ DATABASES = {
         # Specify the port number when using a TCP socket.
         "PORT": os.environ.get("POSTGRES_PORT", ""),
         "OPTIONS": {},
-        "CONN_MAX_AGE": 60,
+        "CONN_MAX_AGE": 600,
+        "CONN_HEALTH_CHECKS": True,
         "TEST": {
             "NAME": (
                 "test_%s2" % os.environ["POSTGRES_DBNAME"]
@@ -220,7 +223,8 @@ DATABASES = {
         # Specify the port number when using a TCP socket.
         "PORT": "",
         "OPTIONS": {},
-        "CONN_MAX_AGE": 60,
+        "CONN_MAX_AGE": 600,
+        "CONN_HEALTH_CHECKS": True,
         "TEST": {
             "NAME": (
                 "test_%s3" % os.environ["POSTGRES_DBNAME"]

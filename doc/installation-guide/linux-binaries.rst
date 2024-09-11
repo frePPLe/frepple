@@ -135,7 +135,8 @@ Here are the steps to get a fully working environment.
             'PORT': '',            # Leave to empty string when using Unix domain sockets.
                                    # Specify the port number when using a TCP socket.
             'OPTIONS': {},         # Backend specific configuration parameters.
-            'CONN_MAX_AGE': 60,
+            'CONN_MAX_AGE': 600,
+            'CONN_HEALTH_CHECKS': True,
             'FILEUPLOADFOLDER": os.path.normpath(
                 os.path.join(FREPPLE_LOGDIR, 'data', 'default')
             ),

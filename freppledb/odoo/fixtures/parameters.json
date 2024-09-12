@@ -8,6 +8,5 @@
 {"pk": "odoo.company", "model": "common.parameter", "fields": {"value": "My Company (San Francisco)", "description": "Odoo connector: Company name for which to create PO, MOs and WOs"}},
 {"pk": "odoo.singlecompany", "model": "common.parameter", "fields": {"value": "false", "description": "Odoo connector: When false (the default) the connector downloads all allowed companies. When true the connector only downloads the data of the configured odoo.company."}},
 {"pk": "odoo.allowSharedOwnership", "model": "common.parameter", "fields": {"value": "false", "description": "Odoo connector: By default records read from odoo aren't editable in frepple. If this flag is set to true you can override the odoo data if the source field of the records is blanked."}},
-{"pk": "odoo.production_location", "model": "common.parameter", "fields": {"value": "San Francisco", "description": "Odoo connector: Default location for production boms whose location isn't specified in Odoo"}},
 {"pk": "odoo.calendar", "model": "common.parameter", "fields": {"value": "", "description": "Odoo connector: Calendar to be applied to all locations"}}
 ]

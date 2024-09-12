@@ -1101,33 +1101,17 @@ class ExportOperationPlans(PlanTask):
             """
             update demand set
               delay = null,
-              plannedquantity = null,
+              plannedquantity = case when demand.status in ('open','quote') then 0 else null end,
               deliverydate = null
-            where (delay is not null or plannedquantity is not null or deliverydate is not null)
+            where (delay is not null
+                   or plannedquantity is distinct from (case when demand.status in ('open','quote') then 0 else null end)
+                   or deliverydate is not null)
             and not exists(
               select 1 from operationplan where owner_id is null and operationplan.demand_id = demand.name
               )
             """
         )
-        cursor.execute(
-            """
-            update demand
-              set plannedquantity = 0
-            where status in ('open','quote') and plannedquantity is null
-            """
-        )
-        cursor.execute(
-            """
-            update demand
-              set plannedquantity = null, delay=null, deliverydate=null
-            where status = 'closed' and plannedquantity is null
-              and (
-                  delay is not null
-                  or plannedquantity is not null
-                  or deliverydate is not null
-                  )
-            """
-        )
+
         cursor.execute(
             """
             update operationplan

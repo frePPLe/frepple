@@ -962,6 +962,8 @@ class ForecastBucket : public Demand {
 
   void setBucketIndex(short i) { bucketindex = i; }
 
+  void reduceDeliveries(double);
+
   /* A flag to mark at which date with a forecasting bucket the forecast
    * is due.
    * Possible values are:
@@ -1887,8 +1889,8 @@ class ForecastSolver : public Solver {
                              ForecastSolver*);
 
     /* Forecast value updating. */
-    void applyForecast(Forecast*, vector<ForecastBucketData>&,
-                       short, CommandManager*);
+    void applyForecast(Forecast*, vector<ForecastBucketData>&, short,
+                       CommandManager*);
 
     /* Update the initial value for the alfa parameter. */
     static void setInitialAlfa(double x) {

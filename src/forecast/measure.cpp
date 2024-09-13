@@ -313,6 +313,9 @@ void ForecastBucketData::setValue(bool propagate, const ForecastMeasure* key,
       auto b1 = getForecastBucket();
       if (val || b1) {
         auto tmp = getOrCreateForecastBucket();
+        auto current_quantity = tmp->getQuantity();
+        if (current_quantity > val + ROUNDING_ERROR)
+          tmp->reduceDeliveries(current_quantity - val);
         tmp->setQuantity(val);
       }
     } else {
@@ -673,8 +676,8 @@ double ForecastMeasureAggregated::disaggregate(ForecastBase* fcst,
       // Proportionally scale all child forecasts
       double factor = val / currentvalue;
       for (auto ch = fcst->getLeaves(false, this); ch; ++ch)
-        remainder = disaggregate(*ch, startdate, enddate, factor, true,
-                                 remainder, mgr);
+        remainder =
+            disaggregate(*ch, startdate, enddate, factor, true, remainder, mgr);
     } else {
       // Equal distribution of all child forecasts
       unsigned int cnt = 0;

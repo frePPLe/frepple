@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <name>Test forecast netting APIs with commit and rollback</name>
+    <current>2025-01-01T00:00:00</current>
+    <calendars>
+        <calendar name="Months">
+            <buckets>
+                <bucket start="2025-01-01T00:00:00" end="2025-02-01T00:00:00" value="1"/>
+                <bucket start="2025-02-01T00:00:00" end="2025-03-01T00:00:00" value="1"/>
+                <bucket start="2025-03-01T00:00:00" end="2025-04-01T00:00:00" value="1"/>
+                <bucket start="2025-04-01T00:00:00" end="2025-05-01T00:00:00" value="1"/>
+                <bucket start="2025-05-01T00:00:00" end="2025-06-01T00:00:00" value="1"/>
+                <bucket start="2025-06-01T00:00:00" end="2025-07-01T00:00:00" value="1"/>
+            </buckets>
+        </calendar>
+    </calendars>
+
+    <!-- Define a hierarchical tree of customers:
+         "grandparent customer" -> "parent customer" -> "customer"
+    -->
+    <customers>
+        <customer name="parent customer">
+            <owner name="grandparent customer"/>
+            <members>
+                <customer name="customer"/>
+            </members>
+        </customer>
+    </customers>
+
+    <!-- Define a hierarchical tree of items:
+         "grandparent item" -> "parent item" -> "item"
+    -->
+    <items>
+        <item name="parent item" cost="10">
+            <owner name="grandparent item" cost="10"/>
+            <members>
+                <item name="item" cost="10"/>
+            </members>
+        </item>
+    </items>
+
+    <suppliers>
+        <supplier name="My supplier">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="item"/>
+                    <leadtime>P7D</leadtime>
+                    <priority>2</priority>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+
+    <operations>
+        <operation name="Shipping forecast" xsi:type="operation_fixed_time">
+            <duration>P1D</duration>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="item"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+        </operation>
+        <operation name="Shipping closed sales order" xsi:type="operation_fixed_time">
+            <duration>P1D</duration>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="item"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+        </operation>
+        <operation name="Shipping open sales order" xsi:type="operation_fixed_time">
+            <duration>P1D</duration>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="item"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+        </operation>
+        <operation name="Shipping quote" xsi:type="operation_fixed_time">
+            <duration>P1D</duration>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="item"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+        </operation>
+        <operation name="Shipping inquiry" xsi:type="operation_fixed_time">
+            <duration>P1D</duration>
+            <location name="factory"/>
+            <flows>
+                <flow xsi:type="flow_start">
+                    <item name="item"/>
+                    <quantity>-1</quantity>
+                </flow>
+            </flows>
+        </operation>
+    </operations>
+
+    <demands>
+        <!-- Forecasts -->
+        <demand name="forecast" xsi:type="demand_forecast">
+            <item name="item"/>
+            <customer name="customer"/>
+            <location name="factory"/>
+            <operation name="Shipping forecast"/>
+            <calendar name="Months"/>
+            <buckets>
+                <bucket>
+                    <start>2025-01-01T00:00:00</start>
+                    <forecastoverride>100</forecastoverride>
+                </bucket>
+                <bucket>
+                    <start>2025-02-01T00:00:00</start>
+                    <forecastoverride>100</forecastoverride>
+                </bucket>
+                <bucket>
+                    <start>2025-03-01T00:00:00</start>
+                    <forecastoverride>100</forecastoverride>
+                </bucket>
+                <bucket>
+                    <start>2025-04-01T00:00:00</start>
+                    <forecastoverride>100</forecastoverride>
+                </bucket>
+            </buckets>
+        </demand>
+        <demand name="A closed sales order">
+            <status>closed</status>
+            <item name="item"/>
+            <customer name="customer"/>
+            <location name="factory"/>
+            <quantity>10</quantity>
+            <operation name="Shipping closed sales order"/>
+            <due>2025-02-01T00:00:00</due>
+        </demand>
+        <demand name="An open sales order">
+            <status>open</status>
+            <item name="item"/>
+            <customer name="customer"/>
+            <location name="factory"/>
+            <quantity>10</quantity>
+            <operation name="Shipping open sales order"/>
+            <due>2025-02-01T00:00:00</due>
+        </demand>
+        <demand name="A quote">
+            <status>quote</status>
+            <item name="item"/>
+            <customer name="customer"/>
+            <location name="factory"/>
+            <operation name="Shipping quote"/>
+            <quantity>10</quantity>
+            <due>2025-02-10T00:00:00</due>
+        </demand>
+        <demand name="An inquiry">
+            <status>inquiry</status>
+            <item name="item"/>
+            <customer name="customer"/>
+            <location name="factory"/>
+            <operation name="Shipping inquiry"/>
+            <quantity>10</quantity>
+            <due>2025-02-20T00:00:00</due>
+        </demand>
+    </demands>
+
+<?python
+
+solver_fcst = frepple.solver_forecast(
+  loglevel=2,
+  Net_CustomerThenItemHierarchy=True,
+  Net_MatchUsingDeliveryOperation=False
+  )
+solver_supply = frepple.solver_mrp(plantype=1, constraints=15, loglevel=2)
+
+print("\n### Starting plan")
+frepple.aggregateMeasures()
+solver_fcst.solve()
+solver_supply.solve()
+frepple.updatePlannedForecast()
+frepple.saveplan("output.1.xml")
+frepple.saveforecast("output.2.xml")
+
+print("\n### Net and plan the inquiry")
+inquiry = frepple.demand(name="An inquiry")
+solver_fcst.solve(demand=inquiry)
+solver_supply.solve(object=inquiry)
+frepple.updatePlannedForecast()
+frepple.saveplan("output.3.xml")
+frepple.saveforecast("output.4.xml")
+
+print("\n### Roll back the inquiry plan")
+solver_fcst.rollback()
+solver_supply.rollback()
+frepple.updatePlannedForecast()
+frepple.saveplan("output.5.xml")
+frepple.saveforecast("output.6.xml")
+
+print("\n### Increase the quantity of the inquiry, net, plan and commit")
+inquiry.quantity = 100
+solver_fcst.solve(demand=inquiry)
+solver_supply.solve(object=inquiry)
+frepple.updatePlannedForecast()
+solver_fcst.commit()
+solver_supply.commit()
+frepple.saveplan("output.7.xml")
+frepple.saveforecast("output.8.xml")
+
+?>
+</plan>

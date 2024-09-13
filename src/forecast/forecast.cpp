@@ -943,6 +943,67 @@ double ForecastBucketData::getForecastPlanned() const {
   return planned;
 }
 
+void ForecastBucket::reduceDeliveries(double qty_to_free) {
+  // Reduce delivery plans of this forecast bucket.
+  // By reducing the delivery plans we free up the planned supply for new
+  // orders.
+  auto fcst = getForecast();
+  if (!fcst->getPlanned() || qty_to_free < ROUNDING_ERROR) return;
+
+  // Collect all deliveries
+  list<OperationPlan*> deliveries;
+  for (auto m = fcst->getMembers(); m != Demand::end(); ++m) {
+    auto dlvryIter = m->getOperationPlans();
+    while (OperationPlan* dlvry = dlvryIter.next()) deliveries.push_back(dlvry);
+  }
+  if (deliveries.empty()) return;
+  deliveries.sort([](OperationPlan*& a, OperationPlan*& b) { return *a < *b; });
+
+  // First, try to find deliveries in the due date bucket
+  for (auto dlvry = deliveries.begin();
+       qty_to_free > ROUNDING_ERROR && dlvry != deliveries.end(); ++dlvry) {
+    if (getDueRange().within((*dlvry)->getEnd())) {
+      if ((*dlvry)->getQuantity() > qty_to_free + ROUNDING_ERROR) {
+        (*dlvry)->setQuantity((*dlvry)->getQuantity() - qty_to_free, true);
+        return;
+      } else {
+        (*dlvry)->setQuantity(0, true);
+        qty_to_free -= (*dlvry)->getQuantity();
+      }
+    }
+  }
+  if (qty_to_free < ROUNDING_ERROR) return;
+
+  // Second, search backward for deliveries in earlier buckets
+  for (auto dlvry = deliveries.rbegin();
+       qty_to_free > ROUNDING_ERROR && dlvry != deliveries.rend(); ++dlvry) {
+    if ((*dlvry)->getEnd() < getDueRange().getStart()) {
+      if ((*dlvry)->getQuantity() > qty_to_free + ROUNDING_ERROR) {
+        (*dlvry)->setQuantity((*dlvry)->getQuantity() - qty_to_free, true);
+        return;
+      } else {
+        (*dlvry)->setQuantity(0, true);
+        qty_to_free -= (*dlvry)->getQuantity();
+      }
+    }
+  }
+  if (qty_to_free < ROUNDING_ERROR) return;
+
+  // Thirdly, search forward for deliveries in later buckets
+  for (auto dlvry = deliveries.begin();
+       qty_to_free > ROUNDING_ERROR && dlvry != deliveries.end(); ++dlvry) {
+    if ((*dlvry)->getEnd() >= getDueRange().getEnd()) {
+      if ((*dlvry)->getQuantity() > qty_to_free + ROUNDING_ERROR) {
+        (*dlvry)->setQuantity((*dlvry)->getQuantity() - qty_to_free, true);
+        return;
+      } else {
+        (*dlvry)->setQuantity(0, true);
+        qty_to_free -= (*dlvry)->getQuantity();
+      }
+    }
+  }
+}
+
 ForecastData::ForecastData(const ForecastBase* f) {
   if (Cache::instance->getLogLevel() > 0)
     logger << "Cache reads forecast " << f->getForecastItem() << "   "

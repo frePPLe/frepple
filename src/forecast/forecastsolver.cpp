@@ -153,12 +153,10 @@ PyObject* ForecastSolver::create(PyTypeObject* pytype, PyObject* args,
 }
 
 void ForecastSolver::solve(const Demand* l, void* v) {
-  auto tmp_status = l->getStatus();
   if (l->hasType<Forecast>())
     // Compute the baseline forecast
     computeBaselineForecast(static_cast<const Forecast*>(l));
-  else if (tmp_status != Demand::STATUS_CANCELED &&
-           tmp_status != Demand::STATUS_INQUIRY) {
+  else {
     // Message
     if (getLogLevel() > 0)
       logger << "  Netting of demand '" << l << "'  ('" << l->getCustomer()
@@ -316,6 +314,8 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
     for (auto& i : Demand::all())
       if (i.getType() != *Forecast::metadata &&
           i.getType() != *ForecastBucket::metadata &&
+          i.getStatus() != Demand::STATUS_INQUIRY &&
+          i.getStatus() != Demand::STATUS_CANCELED &&
           (cluster == -1 || i.getCluster() != cluster))
         l.insert(&i);
 

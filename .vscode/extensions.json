@@ -12,6 +12,6 @@
     // "ms-vscode-remote.remote-wsl"
     // Git
     "mhutchie.git-graph",
-    "eamodio.gitlens"
+    "waderyan.gitblame"
   ],
 }

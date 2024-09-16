@@ -39,7 +39,7 @@ int LoadPlan::initialize() {
   metadata = MetaClass::registerClass<LoadPlan>("loadplan", "loadplan", true);
 
   // Initialize the Python type
-  PythonType& x = FreppleCategory<LoadPlan>::getPythonType();
+  auto& x = FreppleCategory<LoadPlan>::getPythonType();
   x.setName("loadplan");
   x.setDoc("frePPLe loadplan");
   x.supportgetattro();
@@ -608,7 +608,7 @@ tuple<double, Date, double> LoadPlan::getBucketStart() const {
 
 int LoadPlanIterator::initialize() {
   // Initialize the type
-  PythonType& x = PythonExtension<LoadPlanIterator>::getPythonType();
+  auto& x = PythonExtension<LoadPlanIterator>::getPythonType();
   x.setName("loadplanIterator");
   x.setDoc("frePPLe iterator for loadplan");
   x.supportiter();

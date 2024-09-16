@@ -3476,7 +3476,7 @@ class PythonIterator : public Object {
 
   static int initialize() {
     // Initialize the type
-    PythonType& x = getPythonType();
+    auto& x = getPythonType();
     if (!DATACLASS::metadata)
       throw LogicException("Iterator for " + string(typeid(DATACLASS).name()) +
                            " initialized before its data class");
@@ -3488,7 +3488,7 @@ class PythonIterator : public Object {
 
   static int initialize(string nm, string doc) {
     // Initialize the type
-    PythonType& x = getPythonType();
+    auto& x = getPythonType();
     x.setName(nm);
     x.setDoc(nm);
     x.supportiter();
@@ -3552,7 +3552,7 @@ class PythonIteratorClass : public Object {
 
   static int initialize() {
     // Initialize the type
-    PythonType& x = getPythonType();
+    auto& x = getPythonType();
     x.setName(ITERCLASS::metadata->type);
     x.setDoc("frePPLe " + ITERCLASS::metadata->type);
     x.supportiter();
@@ -3561,7 +3561,7 @@ class PythonIteratorClass : public Object {
 
   static int initialize(string nm, string doc) {
     // Initialize the type
-    PythonType& x = getPythonType();
+    auto& x = getPythonType();
     x.setName(nm);
     x.setDoc(nm);
     x.supportiter();
@@ -7125,7 +7125,7 @@ class FreppleCategory : public PythonExtension<FreppleCategory<T>> {
   /* Initialization method. */
   static int initialize() {
     // Initialize the type
-    PythonType& x = PythonExtension<FreppleCategory<T>>::getPythonType();
+    auto& x = PythonExtension<FreppleCategory<T>>::getPythonType();
     x.setName(T::metadata->type);
     x.setDoc("frePPLe " + T::metadata->type);
     x.supportgetattro();

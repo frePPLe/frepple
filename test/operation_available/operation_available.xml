@@ -623,7 +623,7 @@
       <priority>63</priority>
       <item name="6. item" />
       <operation name="6. Deliver item"/>
-    </demand>    
+    </demand>
   </demands>
 
 <?python

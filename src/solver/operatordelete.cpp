@@ -2,7 +2,7 @@
  *                                                                         *
  * Copyright (C) 2007-2015 by frePPLe bv                                   *
  *                                                                         *
-* Permission is hereby granted, free of charge, to any person obtaining   *
+ * Permission is hereby granted, free of charge, to any person obtaining   *
  * a copy of this software and associated documentation files (the         *
  * "Software"), to deal in the Software without restriction, including     *
  * without limitation the rights to use, copy, modify, merge, publish,     *
@@ -36,7 +36,7 @@ int OperatorDelete::initialize() {
       "solver", "solver_delete", Object::create<OperatorDelete>);
 
   // Initialize the Python class
-  PythonType& x = FreppleClass<OperatorDelete, Solver>::getPythonType();
+  auto& x = FreppleClass<OperatorDelete, Solver>::getPythonType();
   x.setName("solver_delete");
   x.setDoc("frePPLe solver_delete");
   x.supportgetattro();

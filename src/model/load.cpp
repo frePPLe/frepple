@@ -42,7 +42,7 @@ int Load::initialize() {
       "load", "load", Object::create<LoadDefault>, true);
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<Load>::getPythonType();
+  auto& x = FreppleCategory<Load>::getPythonType();
   x.setName("load");
   x.setDoc("frePPLe load");
   x.supportgetattro();

@@ -40,7 +40,7 @@ int Plan::initialize() {
   registerFields<Plan>(const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python type
-  PythonType& x = FreppleCategory<Plan>::getPythonType();
+  auto& x = FreppleCategory<Plan>::getPythonType();
   x.setName("parameters");
   x.setDoc("frePPLe global settings");
   x.supportgetattro();

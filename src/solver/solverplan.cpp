@@ -66,7 +66,7 @@ int SolverCreate::initialize() {
   registerFields<SolverCreate>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleClass<SolverCreate, Solver>::getPythonType();
+  auto& x = FreppleClass<SolverCreate, Solver>::getPythonType();
   x.setName("solver_mrp");
   x.setDoc("frePPLe solver_mrp");
   x.supportgetattro();
@@ -153,7 +153,7 @@ bool SolverCreate::isLeadTimeConstrained(const Operation* oper) const {
          alt != oper->getSubOperations().end(); ++alt) {
       if ((*alt)->getOperation()->getPriority() &&
           !((*alt)->getOperation()->hasType<OperationItemSupplier>() ||
-           (*alt)->getOperation()->getCategory() == "subcontractor")) {
+            (*alt)->getOperation()->getCategory() == "subcontractor")) {
         all_po = false;
         break;
       }
@@ -943,7 +943,7 @@ int SolverPropagateStatus::initialize() {
   registerFields<SolverPropagateStatus>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleClass<SolverPropagateStatus, Solver>::getPythonType();
+  auto& x = FreppleClass<SolverPropagateStatus, Solver>::getPythonType();
   x.setName("solver_propagateStatus");
   x.setDoc("frePPLe solver_propagateStatus");
   x.supportgetattro();

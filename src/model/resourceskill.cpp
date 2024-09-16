@@ -43,7 +43,7 @@ int ResourceSkill::initialize() {
           Object::create<ResourceSkillDefault>, true);
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<ResourceSkill>::getPythonType();
+  auto& x = FreppleCategory<ResourceSkill>::getPythonType();
   x.setName("resourceskill");
   x.setDoc("frePPLe resourceskill");
   x.supportgetattro();

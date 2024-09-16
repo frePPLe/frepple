@@ -48,7 +48,7 @@ int Cache::initialize() {
   registerFields<Cache>(const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python type
-  PythonType& x = FreppleCategory<Cache>::getPythonType();
+  auto& x = FreppleCategory<Cache>::getPythonType();
   x.setName("cache");
   x.setDoc("frePPLe object cache");
   x.supportgetattro();
@@ -346,7 +346,6 @@ void AbstractCacheEntry::clearDirty() const {
 }
 
 void Cache::workerthread(Cache* me, int index) {
-
   while (index < me->threads) {
     // Wait until are notified about work to do
     {

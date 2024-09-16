@@ -40,7 +40,7 @@ int PeggingIterator::initialize() {
   registerFields<PeggingIterator>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python type
-  PythonType& x = PythonExtension<PeggingIterator>::getPythonType();
+  auto& x = PythonExtension<PeggingIterator>::getPythonType();
   x.setName("peggingIterator");
   x.setDoc("frePPLe iterator for operationplan pegging");
   x.supportgetattro();
@@ -57,7 +57,7 @@ int PeggingDemandIterator::initialize() {
   registerFields<PeggingDemandIterator>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python type
-  PythonType& x = PythonExtension<PeggingDemandIterator>::getPythonType();
+  auto& x = PythonExtension<PeggingDemandIterator>::getPythonType();
   x.setName("peggingDemandIterator");
   x.setDoc("frePPLe iterator for demand pegging");
   x.supportgetattro();

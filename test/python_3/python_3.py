@@ -28,7 +28,6 @@ create objects, access existing objects and change objects.
 
 All other tests are running the Python interpreter embedded in the frePPLe
 executable.
-This test however runs frePPLe as Python extension module.
 """
 
 # Add the frePPLe directory to the Python module search path
@@ -688,3 +687,18 @@ with open("output.4.xml", "wt") as output:
     printDO()
 
 mo = po = None
+
+# Test the API to manipulate fences
+print("Update fence to 5 days")
+oper1.fence = datetime.timedelta(days=5)
+print("fence duration: ", oper1.fence)
+print("fence fence date: ", oper1.getFence())
+if oper1.fence != 5 * 3600 * 24 or oper1.getFence() != datetime.datetime(2009, 1, 6):
+    raise AssertionError("Wrong fence")
+d = frepple.settings.current + datetime.timedelta(days=7)
+print("Update fence to %s" % d)
+oper1.setFence(d)
+print("fence duration: ", oper1.fence)
+print("fence fence date: ", oper1.getFence())
+if oper1.fence != 7 * 3600 * 24 or oper1.getFence() != datetime.datetime(2009, 1, 8):
+    raise AssertionError("Wrong fence")

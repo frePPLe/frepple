@@ -43,7 +43,7 @@ int SubOperation::initialize() {
   registerFields<SubOperation>(const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<SubOperation>::getPythonType();
+  auto& x = FreppleCategory<SubOperation>::getPythonType();
   x.setName("suboperation");
   x.setDoc("frePPLe suboperation");
   x.supportgetattro();

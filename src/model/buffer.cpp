@@ -47,7 +47,7 @@ int Buffer::initialize() {
   uninitializedProducing = new OperationFixedTime();
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<Buffer>::getPythonType();
+  auto& x = FreppleCategory<Buffer>::getPythonType();
   x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
               "return the decoupled lead time");
   x.addMethod("availableonhand", &availableOnhandPython, METH_VARARGS,
@@ -82,11 +82,17 @@ int OperationInventory::initialize() {
   registerFields<OperationInventory>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<OperationInventory>::getPythonType();
+  auto& x = FreppleCategory<OperationInventory>::getPythonType();
   x.setName("operation_inventory");
   x.setDoc("frePPLe operation_inventory");
   x.supportgetattro();
   x.supportsetattro();
+  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
+              "return the total lead time");
+  x.addMethod("setFence", &setFencePython, METH_VARARGS,
+              "Update the fence based on date");
+  x.addMethod("getFence", &getFencePython, METH_NOARGS,
+              "Retrieve the fence date");
   metadata->setPythonClass(x);
   return x.typeReady();
 }
@@ -98,6 +104,14 @@ int OperationDelivery::initialize() {
   registerFields<OperationDelivery>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
+  auto& x = PythonExtension<
+      FreppleClass<OperationDelivery, Operation>>::getPythonType();
+  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
+              "return the total lead time");
+  x.addMethod("setFence", &setFencePython, METH_VARARGS,
+              "Update the fence based on date");
+  x.addMethod("getFence", &getFencePython, METH_NOARGS,
+              "Retrieve the fence date");
   return FreppleClass<OperationDelivery, Operation>::initialize();
 }
 

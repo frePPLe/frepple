@@ -104,7 +104,7 @@ int Forecast::initialize() {
       METH_NOARGS, "Release memory pages with unused measure data");
 
   // Initialize the Python class
-  PythonType& x = FreppleClass<Forecast, Demand>::getPythonType();
+  auto& x = FreppleClass<Forecast, Demand>::getPythonType();
   x.addMethod("inspect", inspectPython, METH_VARARGS,
               "debugging function to print the forecast information");
   x.addMethod("set", setValuePython, METH_VARARGS | METH_KEYWORDS,
@@ -200,7 +200,7 @@ int ForecastBucket::initialize() {
       MetaClass::registerClass<ProblemOutlier>("problem", "outlier", true);
 
   // Initialize the Python class
-  PythonType& x = FreppleClass<ForecastBucket, Demand>::getPythonType();
+  auto& x = FreppleClass<ForecastBucket, Demand>::getPythonType();
   x.setName("demand_forecastbucket");
   x.setDoc("frePPLe forecastbucket");
   x.supportgetattro();

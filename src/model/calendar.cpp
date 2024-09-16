@@ -43,7 +43,7 @@ int Calendar::initialize() {
   registerFields<Calendar>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<Calendar>::getPythonType();
+  auto& x = FreppleCategory<Calendar>::getPythonType();
   x.addMethod("setValue", setPythonValue, METH_VARARGS | METH_KEYWORDS,
               "update the value in a date range");
   x.addMethod("events", getEvents, METH_VARARGS, "return an event iterator");
@@ -61,7 +61,7 @@ int CalendarBucket::initialize() {
       "bucket", "bucket", Object::create<CalendarBucket>, true);
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<CalendarBucket>::getPythonType();
+  auto& x = FreppleCategory<CalendarBucket>::getPythonType();
   x.setName(metadata->type);
   x.setDoc("frePPLe " + metadata->type);
   x.supportgetattro();
@@ -706,7 +706,7 @@ PyObject* Calendar::getEvents(PyObject* self, PyObject* args) {
 
 int CalendarEventIterator::initialize() {
   // Initialize the type
-  PythonType& x = PythonExtension<CalendarEventIterator>::getPythonType();
+  auto& x = PythonExtension<CalendarEventIterator>::getPythonType();
   x.setName("calendarEventIterator");
   x.setDoc("frePPLe iterator for calendar events");
   x.supportiter();

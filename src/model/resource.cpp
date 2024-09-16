@@ -44,7 +44,7 @@ int Resource::initialize() {
   registerFields<Resource>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<Resource>::getPythonType();
+  auto& x = FreppleCategory<Resource>::getPythonType();
   x.addMethod("plan", Resource::plan, METH_VARARGS,
               "Return an iterator with tuples representing the resource plan "
               "in each time bucket");
@@ -375,7 +375,7 @@ extern "C" PyObject* Resource::plan(PyObject* self, PyObject* args) {
 
 int Resource::PlanIterator::initialize() {
   // Initialize the type
-  PythonType& x = PythonExtension<Resource::PlanIterator>::getPythonType();
+  auto& x = PythonExtension<Resource::PlanIterator>::getPythonType();
   x.setName("resourceplanIterator");
   x.setDoc("frePPLe iterator for resourceplan");
   x.supportiter();

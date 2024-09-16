@@ -43,7 +43,7 @@ int Demand::initialize() {
   registerFields<Demand>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<Demand>::getPythonType();
+  auto& x = FreppleCategory<Demand>::getPythonType();
   x.addMethod("addConstraint", addConstraint, METH_VARARGS,
               "add a constraint to the demand");
 

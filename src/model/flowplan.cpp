@@ -38,7 +38,7 @@ int FlowPlan::initialize() {
   registerFields<FlowPlan>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python type
-  PythonType& x = FreppleCategory<FlowPlan>::getPythonType();
+  auto& x = FreppleCategory<FlowPlan>::getPythonType();
   x.setName("flowplan");
   x.setDoc("frePPLe flowplan");
   x.supportgetattro();
@@ -414,7 +414,7 @@ pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
 
 int FlowPlanIterator::initialize() {
   // Initialize the type
-  PythonType& x = PythonExtension<FlowPlanIterator>::getPythonType();
+  auto& x = PythonExtension<FlowPlanIterator>::getPythonType();
   x.setName("flowplanIterator");
   x.setDoc("frePPLe iterator for flowplan");
   x.supportiter();

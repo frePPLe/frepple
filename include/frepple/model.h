@@ -3323,6 +3323,8 @@ class Operation : public HasName<Operation>,
 
   static PyObject* setFencePython(PyObject* self, PyObject* args);
 
+  static PyObject* getFencePython(PyObject* self, PyObject* args);
+
   /* Return the search mode. */
   SearchMode getSearch() const { return search; }
 

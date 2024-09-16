@@ -82,7 +82,7 @@ int Problem::initialize() {
                                                         true);
 
   // Initialize the Python type
-  PythonType& x = PythonExtension<Problem>::getPythonType();
+  auto& x = PythonExtension<Problem>::getPythonType();
   x.setName("problem");
   x.setDoc("frePPLe problem");
   x.supportgetattro();

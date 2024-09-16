@@ -56,7 +56,7 @@ int OperationPlan::initialize() {
   registerFields<OperationPlan>(const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python type
-  PythonType& x = FreppleCategory<OperationPlan>::getPythonType();
+  auto& x = FreppleCategory<OperationPlan>::getPythonType();
   x.setName("operationplan");
   x.setDoc("frePPLe operationplan");
   x.supportgetattro();
@@ -2457,7 +2457,7 @@ int OperationPlan::InterruptionIterator::intitialize() {
       const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python type
-  PythonType& x =
+  auto& x =
       PythonExtension<OperationPlan::InterruptionIterator>::getPythonType();
   x.setName("interruption");
   x.setDoc("frePPLe operationplan interruption");
@@ -2824,7 +2824,7 @@ int SetupEvent::initialize() {
   registerFields<SetupEvent>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python type
-  PythonType& x = FreppleCategory<SetupEvent>::getPythonType();
+  auto& x = FreppleCategory<SetupEvent>::getPythonType();
   x.setName("setupevent");
   x.setDoc("frePPLe setup event");
   x.supportgetattro();

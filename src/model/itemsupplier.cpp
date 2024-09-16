@@ -42,7 +42,7 @@ int ItemSupplier::initialize() {
   registerFields<ItemSupplier>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<ItemSupplier>::getPythonType();
+  auto& x = FreppleCategory<ItemSupplier>::getPythonType();
   x.setName("itemsupplier");
   x.setDoc("frePPLe itemsupplier");
   x.supportgetattro();
@@ -176,13 +176,17 @@ int OperationItemSupplier::initialize() {
   registerFields<OperationItemSupplier>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<OperationItemSupplier>::getPythonType();
+  auto& x = FreppleCategory<OperationItemSupplier>::getPythonType();
   x.setName("operation_itemsupplier");
   x.setDoc("frePPLe operation_itemsupplier");
   x.supportgetattro();
   x.supportsetattro();
   x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
               "return the total lead time");
+  x.addMethod("setFence", &setFencePython, METH_VARARGS,
+              "Update the fence based on date");
+  x.addMethod("getFence", &getFencePython, METH_NOARGS,
+              "Retrieve the fence date");
   metadata->setPythonClass(x);
   return x.typeReady();
 }

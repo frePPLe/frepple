@@ -48,7 +48,7 @@ int Flow::initialize() {
       const_cast<MetaClass*>(FlowTransferBatch::metadata));
 
   // Initialize the FlowTransferBatch type
-  PythonType& t = FreppleClass<FlowTransferBatch, Flow>::getPythonType();
+  auto& t = FreppleClass<FlowTransferBatch, Flow>::getPythonType();
   t.setName(FlowTransferBatch::metadata->type);
   t.setDoc("frePPLe " + FlowTransferBatch::metadata->type);
   t.supportgetattro();
@@ -63,7 +63,7 @@ int Flow::initialize() {
   ok += t.typeReady();
 
   // Initialize the Flow type
-  PythonType& x = FreppleCategory<Flow>::getPythonType();
+  auto& x = FreppleCategory<Flow>::getPythonType();
   x.setName("flow");
   x.setDoc("frePPLe flow");
   x.supportgetattro();

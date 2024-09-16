@@ -39,7 +39,7 @@ int Solver::initialize() {
   registerFields<Solver>(const_cast<MetaCategory *>(metadata));
 
   // Initialize the Python class
-  PythonType &x = FreppleCategory<Solver>::getPythonType();
+  auto &x = FreppleCategory<Solver>::getPythonType();
   x.setName("solver");
   x.setDoc("frePPLe solver");
   x.supportgetattro();

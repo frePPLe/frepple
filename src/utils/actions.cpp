@@ -106,7 +106,7 @@ int CommandManager::initialize() {
       "commandmanager", "commandmanager", Object::create<CommandManager>, true);
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<CommandManager>::getPythonType();
+  auto& x = FreppleCategory<CommandManager>::getPythonType();
   x.setName(metadata->type);
   x.setDoc("frePPLe " + metadata->type);
   metadata->setPythonClass(x);

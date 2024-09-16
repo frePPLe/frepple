@@ -105,7 +105,7 @@ int ForecastSolver::initialize() {
   registerFields<ForecastSolver>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleClass<ForecastSolver, Solver>::getPythonType();
+  auto& x = FreppleClass<ForecastSolver, Solver>::getPythonType();
   x.setName("solver_forecast");
   x.setDoc("frePPLe solver_forecast");
   x.supportgetattro();

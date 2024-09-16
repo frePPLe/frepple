@@ -43,11 +43,13 @@ int Operation::initialize() {
   registerFields<Operation>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<Operation>::getPythonType();
+  auto& x = FreppleCategory<Operation>::getPythonType();
   x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
               "return the total lead time");
   x.addMethod("setFence", &setFencePython, METH_VARARGS,
               "Update the fence based on date");
+  x.addMethod("getFence", &getFencePython, METH_NOARGS,
+              "Retrieve the fence date");
   return FreppleCategory<Operation>::initialize();
 }
 
@@ -59,6 +61,14 @@ int OperationFixedTime::initialize() {
   registerFields<OperationFixedTime>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
+  auto& x = PythonExtension<
+      FreppleClass<OperationFixedTime, Operation>>::getPythonType();
+  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
+              "return the total lead time");
+  x.addMethod("setFence", &setFencePython, METH_VARARGS,
+              "Update the fence based on date");
+  x.addMethod("getFence", &getFencePython, METH_NOARGS,
+              "Retrieve the fence date");
   return FreppleClass<OperationFixedTime, Operation>::initialize();
 }
 
@@ -69,6 +79,14 @@ int OperationTimePer::initialize() {
   registerFields<OperationTimePer>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
+  auto& x = PythonExtension<
+      FreppleClass<OperationTimePer, Operation>>::getPythonType();
+  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
+              "return the total lead time");
+  x.addMethod("setFence", &setFencePython, METH_VARARGS,
+              "Update the fence based on date");
+  x.addMethod("getFence", &getFencePython, METH_NOARGS,
+              "Retrieve the fence date");
   return FreppleClass<OperationTimePer, Operation>::initialize();
 }
 
@@ -79,6 +97,14 @@ int OperationSplit::initialize() {
   registerFields<OperationSplit>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
+  auto& x =
+      PythonExtension<FreppleClass<OperationSplit, Operation>>::getPythonType();
+  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
+              "return the total lead time");
+  x.addMethod("setFence", &setFencePython, METH_VARARGS,
+              "Update the fence based on date");
+  x.addMethod("getFence", &getFencePython, METH_NOARGS,
+              "Retrieve the fence date");
   return FreppleClass<OperationSplit, Operation>::initialize();
 }
 
@@ -89,6 +115,13 @@ int OperationAlternate::initialize() {
   registerFields<OperationAlternate>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
+  auto& x = FreppleClass<OperationAlternate, Operation>::getPythonType();
+  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
+              "return the total lead time");
+  x.addMethod("setFence", &setFencePython, METH_VARARGS,
+              "Update the fence based on date");
+  x.addMethod("getFence", &getFencePython, METH_NOARGS,
+              "Retrieve the fence date");
   return FreppleClass<OperationAlternate, Operation>::initialize();
 }
 
@@ -99,6 +132,14 @@ int OperationRouting::initialize() {
   registerFields<OperationRouting>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
+  auto& x = PythonExtension<
+      FreppleClass<OperationRouting, Operation>>::getPythonType();
+  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
+              "return the total lead time");
+  x.addMethod("setFence", &setFencePython, METH_VARARGS,
+              "Update the fence based on date");
+  x.addMethod("getFence", &getFencePython, METH_NOARGS,
+              "Retrieve the fence date");
   return FreppleClass<OperationRouting, Operation>::initialize();
 }
 
@@ -219,6 +260,22 @@ PyObject* Operation::setFencePython(PyObject* self, PyObject* args) {
     PythonData dt(pydate);
     static_cast<Operation*>(self)->setFence(dt.getDate());
     return Py_BuildValue("");
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
+}
+
+PyObject* Operation::getFencePython(PyObject* self, PyObject* args) {
+  try {
+    auto oper = static_cast<Operation*>(self);
+    auto result = oper->getFence()
+                      ? oper->calculateOperationTime(
+                                nullptr, Plan::instance().getCurrent(),
+                                oper->getFence(), true, nullptr, true)
+                            .getEnd()
+                      : Plan::instance().getCurrent();
+    return PythonData(result);
   } catch (...) {
     PythonType::evalException();
     return nullptr;

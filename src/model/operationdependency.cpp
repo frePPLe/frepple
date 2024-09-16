@@ -44,7 +44,7 @@ int OperationPlanDependency::initialize() {
       const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<OperationPlanDependency>::getPythonType();
+  auto& x = FreppleCategory<OperationPlanDependency>::getPythonType();
   x.setName("operationplandependency");
   x.setDoc("frePPLe operationplan dependency");
   x.supportgetattro();
@@ -65,7 +65,7 @@ int OperationDependency::initialize() {
   registerFields<OperationDependency>(const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<OperationDependency>::getPythonType();
+  auto& x = FreppleCategory<OperationDependency>::getPythonType();
   x.setName("operationdependency");
   x.setDoc("frePPLe operation dependency");
   x.supportgetattro();

@@ -65,7 +65,7 @@ class TruncatePlan(PlanTask):
         resources=None,
         buffers=None,
         demands=None,
-        **kwargs
+        **kwargs,
     ):
         import frepple
 
@@ -1079,38 +1079,79 @@ class ExportOperationPlans(PlanTask):
             )
 
         # update demand table specific fields
-        cursor.execute(
-            """
-            with cte as (
-              select demand_id, sum(quantity) plannedquantity, max(enddate) deliverydate, max(enddate)-due as delay
-              from operationplan
-              where demand_id is not null and owner_id is null
-              group by demand_id, due
+        if cluster != -2:
+            cursor.execute(
+                """
+                with cte as (
+                select demand_id, sum(quantity) plannedquantity, max(enddate) deliverydate, max(enddate)-due as delay
+                from operationplan
+                where demand_id is not null and owner_id is null
+                group by demand_id, due
+                )
+                update demand
+                set delay = cte.delay,
+                plannedquantity = cte.plannedquantity,
+                deliverydate = cte.deliverydate
+                from cte
+                where cte.demand_id = demand.name
+                and (demand.plannedquantity is distinct from cte.plannedquantity
+                or demand.deliverydate is distinct from cte.deliverydate)
+                """
             )
-            update demand
-              set delay = cte.delay,
-              plannedquantity = cte.plannedquantity,
-              deliverydate = cte.deliverydate
-            from cte
-            where cte.demand_id = demand.name
-            and (demand.plannedquantity is distinct from cte.plannedquantity
-            or demand.deliverydate is distinct from cte.deliverydate)
-            """
-        )
-        cursor.execute(
-            """
-            update demand set
-              delay = null,
-              plannedquantity = case when demand.status in ('open','quote') then 0 else null end,
-              deliverydate = null
-            where (delay is not null
-                   or plannedquantity is distinct from (case when demand.status in ('open','quote') then 0 else null end)
-                   or deliverydate is not null)
-            and not exists(
-              select 1 from operationplan where owner_id is null and operationplan.demand_id = demand.name
-              )
-            """
-        )
+            cursor.execute(
+                """
+                update demand set
+                delay = null,
+                plannedquantity = case when demand.status in ('open','quote') then 0 else null end,
+                deliverydate = null
+                where (delay is not null
+                    or plannedquantity is distinct from (case when demand.status in ('open','quote') then 0 else null end)
+                    or deliverydate is not null)
+                and not exists(
+                select 1 from operationplan where owner_id is null and operationplan.demand_id = demand.name
+                )
+                """
+            )
+        else:
+            # interactive planning
+            demands_to_update = [j.demand.name for j in opplans if j.demand]
+            cursor.execute(
+                """
+                with cte as (
+                select demand_id, sum(quantity) plannedquantity, max(enddate) deliverydate, max(enddate)-due as delay
+                from operationplan
+                where
+                demand_id = any(%s) and owner_id is null
+                group by demand_id, due
+                )
+                update demand
+                set delay = cte.delay,
+                plannedquantity = cte.plannedquantity,
+                deliverydate = cte.deliverydate
+                from cte
+                where cte.demand_id = demand.name
+                and (demand.plannedquantity is distinct from cte.plannedquantity
+                or demand.deliverydate is distinct from cte.deliverydate)
+                """,
+                (demands_to_update,),
+            )
+            cursor.execute(
+                """
+                update demand set
+                delay = null,
+                plannedquantity = case when demand.status in ('open','quote') then 0 else null end,
+                deliverydate = null
+                where
+                name = any(%s)
+                and (delay is not null
+                    or plannedquantity is distinct from (case when demand.status in ('open','quote') then 0 else null end)
+                    or deliverydate is not null)
+                and not exists(
+                select 1 from operationplan where owner_id is null and operationplan.demand_id = demand.name
+                )
+                """,
+                (demands_to_update,),
+            )
 
         cursor.execute(
             """
@@ -1178,7 +1219,7 @@ class ExportOperationPlanMaterials(PlanTask):
         buffers=None,
         database=DEFAULT_DB_ALIAS,
         timestamp=None,
-        **kwargs
+        **kwargs,
     ):
         if cluster == -2 and not buffers:
             return
@@ -1392,7 +1433,7 @@ class ExportOperationPlanResources(PlanTask):
         database=DEFAULT_DB_ALIAS,
         timestamp=None,
         resources=None,
-        **kwargs
+        **kwargs,
     ):
         if cluster == -2 and not resources:
             return
@@ -1403,7 +1444,7 @@ class ExportOperationPlanResources(PlanTask):
                         timestamp=timestamp or cls.parent.timestamp,
                         cluster=cluster,
                         resources=resources,
-                        **kwargs
+                        **kwargs,
                     )
                 ),
                 "operationplanresource",

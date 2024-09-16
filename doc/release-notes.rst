@@ -12,6 +12,12 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug fix: Form for increasing forecast by a fixed value or percentages is now working
     more intuitively at aggregate levels.
 
+.. rubric:: User interface
+
+- | Optimization of the response time when doing interactive planning with the PO/MO/DO screens.
+  | With large datasets, it could take time to complete a save after updating the dates
+  | or the quantity of a PO/MO/DO. The response time has been significantly improved.
+
 .. rubric:: Documentation
 
 - | Added support to use external authentication methods using OAuth, SAML, OpenID, ...

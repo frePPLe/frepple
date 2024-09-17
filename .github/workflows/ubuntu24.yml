@@ -5,6 +5,13 @@ on:
     paths-ignore:
       - "doc/**"
       - "*.md"
+      - ".vscode/**"
+      - ".devcontainer/**"
+      - ".gitignore"
+      - ".gitattributes"
+      - ".gitmodules"
+      - ".clang-format"
+      - "translations.sh"
   pull_request:
   repository_dispatch:
     types: [odoo_connector]

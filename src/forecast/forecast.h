@@ -707,15 +707,16 @@ class ForecastBucketData {
   void propagateValue(const ForecastMeasure* key, double val);
 
   template <typename... Args>
-  void setValue(bool propagate, const ForecastMeasure* key, double val,
-                Args&&... args);
+  void setValue(bool propagate, CommandManager*, const ForecastMeasure* key,
+                double val, Args&&... args);
 
   template <typename... Args>
-  void incValue(bool propagate, const ForecastMeasure* key, double val,
-                Args&&... args);
+  void incValue(bool propagate, CommandManager*, const ForecastMeasure* key,
+                double val, Args&&... args);
 
   template <typename... Args>
-  void removeValue(bool propagate, const ForecastMeasure* key, Args&... args);
+  void removeValue(bool propagate, CommandManager*, const ForecastMeasure* key,
+                   Args&... args);
 
   Date getStart() const { return dates.getStart(); }
 
@@ -762,39 +763,42 @@ inline pair<double, bool> ForecastMeasure::getValueAndFound(
 }
 
 template <>
-void ForecastBucketData::setValue(bool propagate, const ForecastMeasure* key,
-                                  const double val);
+void ForecastBucketData::setValue(bool propagate, CommandManager* mgr,
+                                  const ForecastMeasure* key, const double val);
 
 template <typename... Args>
-void ForecastBucketData::setValue(bool propagate, const ForecastMeasure* key,
-                                  double val, Args&&... args) {
+void ForecastBucketData::setValue(bool propagate, CommandManager* mgr,
+                                  const ForecastMeasure* key, double val,
+                                  Args&&... args) {
   // Recursive template that finally will call the above specialization
-  setValue(propagate, key, val);
-  setValue(propagate, args...);
+  setValue(propagate, mgr, key, val);
+  setValue(propagate, mgr, args...);
 }
 
 template <>
-void ForecastBucketData::incValue(bool propagate, const ForecastMeasure* key,
-                                  const double val);
+void ForecastBucketData::incValue(bool propagate, CommandManager* mgr,
+                                  const ForecastMeasure* key, const double val);
 
 template <typename... Args>
-void ForecastBucketData::incValue(bool propagate, const ForecastMeasure* key,
-                                  double val, Args&&... args) {
+void ForecastBucketData::incValue(bool propagate, CommandManager* mgr,
+                                  const ForecastMeasure* key, double val,
+                                  Args&&... args) {
   // Recursive template that finally will call the above specialization
-  incValue(propagate, key, val);
-  incValue(propagate, args...);
+  incValue(propagate, mgr, key, val);
+  incValue(propagate, mgr, args...);
 }
 
 template <>
-void ForecastBucketData::removeValue(bool propagate,
+void ForecastBucketData::removeValue(bool propagate, CommandManager* mgr,
                                      const ForecastMeasure* key);
 
 template <typename... Args>
-void ForecastBucketData::removeValue(bool propagate, const ForecastMeasure* key,
+void ForecastBucketData::removeValue(bool propagate, CommandManager* mgr,
+                                     const ForecastMeasure* key,
                                      Args&... args) {
   // Recursive template that finally will call the above specialization
-  removeValue(propagate, key);
-  removeValue(propagate, args...);
+  removeValue(propagate, mgr, key);
+  removeValue(propagate, mgr, args...);
 }
 
 class ForecastData {
@@ -962,7 +966,7 @@ class ForecastBucket : public Demand {
 
   void setBucketIndex(short i) { bucketindex = i; }
 
-  void reduceDeliveries(double);
+  void reduceDeliveries(double, CommandManager* = nullptr);
 
   /* A flag to mark at which date with a forecasting bucket the forecast
    * is due.
@@ -3134,7 +3138,7 @@ void ForecastMeasure::resetMeasure(short mode, Measures*... measures) {
         do_it = bckt->getEnd() > Plan::instance().getCurrent();
       else if (mode & FUTURE)
         do_it = bckt->getStart() > Plan::instance().getCurrent();
-      if (do_it) bckt->removeValue(false, measures...);
+      if (do_it) bckt->removeValue(false, nullptr, measures...);
     }
   }
 }

@@ -206,9 +206,9 @@ void ForecastMeasure::aggregateMeasures(const vector<ForecastMeasure*>& msrs) {
             if (Cache::instance->getLogLevel() > 2)
               logger << "Correcting " << msr.first << ": found " << cur
                      << " but expected " << val.first << " on " << bckt << endl;
-            bckt.setValue(false, msr.first, val.first);
+            bckt.setValue(false, nullptr, msr.first, val.first);
           }
-          bckt.removeValue(false, msr.second);
+          bckt.removeValue(false, nullptr, msr.second);
         }
       }
     if (fcstdata) fcstdata->lock.unlock();
@@ -254,9 +254,9 @@ void ForecastMeasure::computeMeasures(const vector<ForecastMeasure*>& msrs) {
           auto val = static_cast<ForecastMeasureComputed*>(msr)->compute();
           if (val != bckt.getValue(*msr)) {
             if (val == msr->getDefault())
-              bckt.removeValue(true, msr);
+              bckt.removeValue(true, nullptr, msr);
             else
-              bckt.setValue(true, msr, val);
+              bckt.setValue(true, nullptr, msr, val);
           }
         }
       }
@@ -302,8 +302,8 @@ PyObject* ForecastMeasure::updatePlannedForecastPython(PyObject* self,
 }
 
 template <>
-void ForecastBucketData::setValue(bool propagate, const ForecastMeasure* key,
-                                  double val) {
+void ForecastBucketData::setValue(bool propagate, CommandManager* mgr,
+                                  const ForecastMeasure* key, double val) {
   if (!key) return;
   if (key == Measures::forecastnet &&
       getEnd() > Plan::instance().getCurrent()) {
@@ -315,7 +315,7 @@ void ForecastBucketData::setValue(bool propagate, const ForecastMeasure* key,
         auto tmp = getOrCreateForecastBucket();
         auto current_quantity = tmp->getQuantity();
         if (current_quantity > val + ROUNDING_ERROR)
-          tmp->reduceDeliveries(current_quantity - val);
+          tmp->reduceDeliveries(current_quantity - val, mgr);
         tmp->setQuantity(val);
       }
     } else {
@@ -334,7 +334,7 @@ void ForecastBucketData::setValue(bool propagate, const ForecastMeasure* key,
         for (auto p = getForecast()->getParents(); p; ++p) {
           auto parentfcstdata = p->getData();
           lock_guard<recursive_mutex> exclusive(parentfcstdata->lock);
-          parentfcstdata->getBuckets()[index].incValue(false, key, val);
+          parentfcstdata->getBuckets()[index].incValue(false, mgr, key, val);
         }
       }
       if (!key->isTemporary()) markDirty();
@@ -353,7 +353,7 @@ void ForecastBucketData::setValue(bool propagate, const ForecastMeasure* key,
         for (auto p = getForecast()->getParents(); p; ++p) {
           auto parentfcstdata = p->getData();
           lock_guard<recursive_mutex> exclusive(parentfcstdata->lock);
-          parentfcstdata->getBuckets()[index].incValue(false, key, delta);
+          parentfcstdata->getBuckets()[index].incValue(false, mgr, key, delta);
         }
       }
       if (!key->isTemporary()) markDirty();
@@ -368,13 +368,13 @@ void ForecastBucketData::propagateValue(const ForecastMeasure* key,
   for (auto p = getForecast()->getParents(); p; ++p) {
     auto parentfcstdata = p->getData();
     lock_guard<recursive_mutex> exclusive(parentfcstdata->lock);
-    parentfcstdata->getBuckets()[index].incValue(false, key, val);
+    parentfcstdata->getBuckets()[index].incValue(false, nullptr, key, val);
   }
 }
 
 template <>
-void ForecastBucketData::incValue(bool propagate, const ForecastMeasure* key,
-                                  double val) {
+void ForecastBucketData::incValue(bool propagate, CommandManager* mgr,
+                                  const ForecastMeasure* key, double val) {
   if (!key || (!val && !key->getDefault())) return;
   if (key == Measures::forecastnet &&
       getEnd() > Plan::instance().getCurrent()) {
@@ -418,7 +418,7 @@ void ForecastBucketData::incValue(bool propagate, const ForecastMeasure* key,
     for (auto p = getForecast()->getParents(); p; ++p) {
       auto parentfcstdata = p->getData();
       lock_guard<recursive_mutex> exclusive(parentfcstdata->lock);
-      parentfcstdata->getBuckets()[index].incValue(false, key, val);
+      parentfcstdata->getBuckets()[index].incValue(false, mgr, key, val);
     }
   }
 
@@ -427,7 +427,7 @@ void ForecastBucketData::incValue(bool propagate, const ForecastMeasure* key,
 }
 
 template <>
-void ForecastBucketData::removeValue(bool propagate,
+void ForecastBucketData::removeValue(bool propagate, CommandManager* mgr,
                                      const ForecastMeasure* key) {
   if (!key) return;
   auto t = measures.find(key->getHashedName());
@@ -442,7 +442,7 @@ void ForecastBucketData::removeValue(bool propagate,
       for (auto p = getForecast()->getParents(); p; ++p) {
         auto pdata = p->getData();
         lock_guard<recursive_mutex> exclusive(pdata->lock);
-        pdata->getBuckets()[index].incValue(false, key, -val);
+        pdata->getBuckets()[index].incValue(false, mgr, key, -val);
       }
     }
   }
@@ -999,7 +999,7 @@ double ForecastMeasure::update(ForecastBucketData& fcstdata, double val,
       remainder = val - qty;
     } else
       qty = val;
-    fcstdata.setValue(true, Measures::forecastbaseline, qty);
+    fcstdata.setValue(true, nullptr, Measures::forecastbaseline, qty);
   }
   // FORECAST OVERRIDE
   else if (this == Measures::forecastoverride) {
@@ -1007,7 +1007,7 @@ double ForecastMeasure::update(ForecastBucketData& fcstdata, double val,
       // TODO We shouldn't need this special case. However a unit test fails
       // if we remove it. Looks like removevalue and setvalue do something
       // different somewhere.
-      fcstdata.removeValue(true, Measures::forecastoverride);
+      fcstdata.removeValue(true, nullptr, Measures::forecastoverride);
     else {
       double qty;
       if (fcst->getDiscrete()) {
@@ -1015,12 +1015,12 @@ double ForecastMeasure::update(ForecastBucketData& fcstdata, double val,
         remainder = val - qty;
       } else
         qty = val;
-      fcstdata.setValue(true, Measures::forecastoverride, qty);
+      fcstdata.setValue(true, nullptr, Measures::forecastoverride, qty);
     }
   }
   // FORECAST CONSUMED
   else if (this == Measures::forecastconsumed) {
-    fcstdata.setValue(true, Measures::forecastconsumed, val);
+    fcstdata.setValue(true, nullptr, Measures::forecastconsumed, val);
     auto new_net = Measures::forecasttotal->getValue(fcstdata) - val;
     Measures::forecastnet->update(fcstdata, new_net);
   }
@@ -1042,9 +1042,9 @@ double ForecastMeasure::update(ForecastBucketData& fcstdata, double val,
     // Copy from formula back to the measures
     for (auto& a : me->assignments)
       if (a != this)
-        a->update(fcstdata, a->expressionvalue);
+        a->update(fcstdata, a->expressionvalue, nullptr);
       else
-        fcstdata.setValue(true, a, a->expressionvalue);
+        fcstdata.setValue(true, nullptr, a, a->expressionvalue);
   }
   // OTHERS - SIMPLE, UNRELATED AGGREGATION
   else {
@@ -1053,9 +1053,9 @@ double ForecastMeasure::update(ForecastBucketData& fcstdata, double val,
     if (getDiscrete()) {
       auto qty = floor(val + ROUNDING_ERROR);
       remainder = val - qty;
-      fcstdata.setValue(true, this, qty);
+      fcstdata.setValue(true, nullptr, this, qty);
     } else
-      fcstdata.setValue(true, this, val);
+      fcstdata.setValue(true, nullptr, this, val);
   }
 
   computeDependentMeasures(fcstdata, !initialized);
@@ -1077,13 +1077,13 @@ void ForecastMeasure::computeDependentMeasures(ForecastBucketData& fcstdata,
         i->getDiscrete() ? floor(i->compute() + ROUNDING_ERROR) : i->compute();
     double val = i->expressionvalue;
     if (i->getDefault() == -1 && val == -1.0)
-      fcstdata.removeValue(true, i);
+      fcstdata.removeValue(true, nullptr, i);
     else
-      fcstdata.setValue(true, i, val);
+      fcstdata.setValue(true, nullptr, i, val);
 
     // Process changes of the computed total forecast
     if (i == Measures::forecasttotal) {
-      fcstdata.setValue(true, i, val);
+      fcstdata.setValue(true, nullptr, i, val);
       if (fcstdata.getEnd() > Plan::instance().getCurrent()) {
         if (fcstdata.getForecast()->getPlanned())
           Measures::forecastnet->update(

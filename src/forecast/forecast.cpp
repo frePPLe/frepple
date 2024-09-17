@@ -943,7 +943,7 @@ double ForecastBucketData::getForecastPlanned() const {
   return planned;
 }
 
-void ForecastBucket::reduceDeliveries(double qty_to_free) {
+void ForecastBucket::reduceDeliveries(double qty_to_free, CommandManager* mgr) {
   // Reduce delivery plans of this forecast bucket.
   // By reducing the delivery plans we free up the planned supply for new
   // orders.
@@ -1122,41 +1122,42 @@ ForecastData::ForecastData(const ForecastBase* f) {
           if (itr->value.IsDouble()) {
             auto val = itr->value.GetDouble();
             if (val != msr->getDefault())
-              bckiter->setValue(false, msr, val);
+              bckiter->setValue(false, nullptr, msr, val);
             else
-              bckiter->removeValue(false, msr);
+              bckiter->removeValue(false, nullptr, msr);
           } else if (itr->value.IsInt()) {
             auto val = itr->value.GetInt();
             if (val != msr->getDefault())
-              bckiter->setValue(false, msr, val);
+              bckiter->setValue(false, nullptr, msr, val);
             else
-              bckiter->removeValue(false, msr);
+              bckiter->removeValue(false, nullptr, msr);
           } else if (itr->value.IsInt64()) {
             auto val = itr->value.GetInt64();
             if (val != msr->getDefault())
-              bckiter->setValue(false, msr, static_cast<double>(val));
+              bckiter->setValue(false, nullptr, msr, static_cast<double>(val));
             else
-              bckiter->removeValue(false, msr);
+              bckiter->removeValue(false, nullptr, msr);
           } else if (itr->value.IsUint()) {
             auto val = itr->value.GetUint();
             if (val != msr->getDefault())
-              bckiter->setValue(false, msr, val);
+              bckiter->setValue(false, nullptr, msr, val);
             else
-              bckiter->removeValue(false, msr);
+              bckiter->removeValue(false, nullptr, msr);
           } else if (itr->value.IsUint64()) {
             auto val = itr->value.GetUint64();
             if (val != msr->getDefault())
-              bckiter->setValue(false, msr, static_cast<double>(val));
+              bckiter->setValue(false, nullptr, msr, static_cast<double>(val));
             else
-              bckiter->removeValue(false, msr);
+              bckiter->removeValue(false, nullptr, msr);
           } else if (itr->value.IsBool()) {
             auto val = itr->value.GetBool();
             if (val)
-              bckiter->setValue(false, msr, 1);
+              bckiter->setValue(false, nullptr, msr, 1);
             else
-              bckiter->removeValue(false, msr);
+              bckiter->removeValue(false, nullptr, msr);
           } else if (itr->value.IsNull()) {
-            if (msr->getValue(buckets.back())) bckiter->removeValue(false, msr);
+            if (msr->getValue(buckets.back()))
+              bckiter->removeValue(false, nullptr, msr);
           }
         }
 

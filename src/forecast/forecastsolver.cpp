@@ -239,16 +239,19 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
     lock_guard<recursive_mutex> exclusive(fcstdata->lock);
     for (auto& bckt : fcstdata->getBuckets()) {
       if (bckt.getValue(*Measures::forecastconsumed))
-        bckt.removeValue(cluster != -1, Measures::forecastconsumed);
+        bckt.removeValue(cluster != -1, !getAutocommit() ? commands : nullptr,
+                         Measures::forecastconsumed);
       auto fcsttotal = bckt.getValue(*Measures::forecasttotal);
       if (bckt.getEnd() < Plan::instance().getCurrent() -
                               (ForecastSolver::getNetPastDemand()
                                    ? ForecastSolver::getNetLate()
                                    : Duration(0L)) ||
           !fcsttotal)
-        bckt.removeValue(cluster != -1, Measures::forecastnet);
+        bckt.removeValue(cluster != -1, !getAutocommit() ? commands : nullptr,
+                         Measures::forecastnet);
       else
-        bckt.setValue(cluster != -1, Measures::forecastnet, fcsttotal);
+        bckt.setValue(cluster != -1, !getAutocommit() ? commands : nullptr,
+                      Measures::forecastnet, fcsttotal);
     }
   }
 

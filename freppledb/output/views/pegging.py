@@ -251,7 +251,6 @@ class ReportByDemand(GridReport):
             l[pos1]["depth"] = l[pos1 + 1]["depth"]
             # iterate over the suboperations
             i = pos1 + 1
-            print(i, pos1, pos2)
             while i <= pos2:
                 l[i]["parent"] = l[pos1]["id"]
                 l[i]["depth"] = depth + 1

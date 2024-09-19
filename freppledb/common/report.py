@@ -1395,7 +1395,10 @@ class GridReport(View):
                 stripped = s.strip()
                 if not stripped:
                     continue
-                sortfield, direction = stripped.split(" ", 1)
+                try:
+                    sortfield, direction = stripped.split(" ", 1)
+                except ValueError:
+                    continue
                 try:
                     query.order_by(sortfield).query.__str__()
                     if direction.strip() != "desc":

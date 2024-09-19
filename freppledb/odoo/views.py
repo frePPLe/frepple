@@ -202,7 +202,7 @@ def Upload(request):
                         )
                         or op in obj
                         or not op.item
-                        or op.item.type == "make to order"
+                        or (op.item.type == "make to order" and op.status == "proposed")
                         or not op.location
                         or not op.operation
                     ):

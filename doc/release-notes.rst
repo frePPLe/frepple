@@ -39,6 +39,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     (instead of its full name) and b) use only the item code in the operation names
     (instead of including also the much longer item name).
 
+- | Bug fix: Manufacturing orders for make-to-order products couldn't be updated
+    with new dates from frepple.
+
 9.2.0 (2024-08-30)
 ==================
 

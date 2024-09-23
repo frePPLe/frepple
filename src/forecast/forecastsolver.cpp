@@ -496,10 +496,10 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
                  << endl;
         Measures::forecastconsumed->disaggregate(
             *curbucket,
-            remaining + Measures::forecastconsumed->getValue(*curbucket),
-            !getAutocommit() ? commands : nullptr);
+            remaining + Measures::forecastconsumed->getValue(*curbucket), false,
+            0, !getAutocommit() ? commands : nullptr);
         Measures::forecastnet->disaggregate(
-            *curbucket, available - remaining,
+            *curbucket, available - remaining, false, 0,
             !getAutocommit() ? commands : nullptr);
         remaining = 0;
       } else {

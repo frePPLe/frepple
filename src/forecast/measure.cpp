@@ -999,7 +999,7 @@ double ForecastMeasure::update(ForecastBucketData& fcstdata, double val,
       remainder = val - qty;
     } else
       qty = val;
-    fcstdata.setValue(true, nullptr, Measures::forecastbaseline, qty);
+    fcstdata.setValue(true, mgr, Measures::forecastbaseline, qty);
   }
   // FORECAST OVERRIDE
   else if (this == Measures::forecastoverride) {
@@ -1007,7 +1007,7 @@ double ForecastMeasure::update(ForecastBucketData& fcstdata, double val,
       // TODO We shouldn't need this special case. However a unit test fails
       // if we remove it. Looks like removevalue and setvalue do something
       // different somewhere.
-      fcstdata.removeValue(true, nullptr, Measures::forecastoverride);
+      fcstdata.removeValue(true, mgr, Measures::forecastoverride);
     else {
       double qty;
       if (fcst->getDiscrete()) {
@@ -1015,14 +1015,14 @@ double ForecastMeasure::update(ForecastBucketData& fcstdata, double val,
         remainder = val - qty;
       } else
         qty = val;
-      fcstdata.setValue(true, nullptr, Measures::forecastoverride, qty);
+      fcstdata.setValue(true, mgr, Measures::forecastoverride, qty);
     }
   }
   // FORECAST CONSUMED
   else if (this == Measures::forecastconsumed) {
     fcstdata.setValue(true, nullptr, Measures::forecastconsumed, val);
     auto new_net = Measures::forecasttotal->getValue(fcstdata) - val;
-    Measures::forecastnet->update(fcstdata, new_net);
+    Measures::forecastnet->update(fcstdata, new_net, mgr);
   }
   // UPDATING A COMPUTED MEASURES
   else if (hasType<ForecastMeasureComputed>()) {
@@ -1042,9 +1042,9 @@ double ForecastMeasure::update(ForecastBucketData& fcstdata, double val,
     // Copy from formula back to the measures
     for (auto& a : me->assignments)
       if (a != this)
-        a->update(fcstdata, a->expressionvalue, nullptr);
+        a->update(fcstdata, a->expressionvalue, mgr);
       else
-        fcstdata.setValue(true, nullptr, a, a->expressionvalue);
+        fcstdata.setValue(true, mgr, a, a->expressionvalue);
   }
   // OTHERS - SIMPLE, UNRELATED AGGREGATION
   else {
@@ -1053,9 +1053,9 @@ double ForecastMeasure::update(ForecastBucketData& fcstdata, double val,
     if (getDiscrete()) {
       auto qty = floor(val + ROUNDING_ERROR);
       remainder = val - qty;
-      fcstdata.setValue(true, nullptr, this, qty);
+      fcstdata.setValue(true, mgr, this, qty);
     } else
-      fcstdata.setValue(true, nullptr, this, val);
+      fcstdata.setValue(true, mgr, this, val);
   }
 
   computeDependentMeasures(fcstdata, !initialized);

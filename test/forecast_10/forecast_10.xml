@@ -191,6 +191,7 @@ inquiry = frepple.demand(name="An inquiry")
 solver_fcst.solve(demand=inquiry)
 solver_supply.solve(object=inquiry)
 frepple.updatePlannedForecast()
+# Note: Output 3 show material consumptions, but not the (draft) operationplans that cause it
 frepple.saveplan("output.3.xml")
 frepple.saveforecast("output.4.xml")
 
@@ -205,9 +206,9 @@ print("\n### Increase the quantity of the inquiry, net, plan and commit")
 inquiry.quantity = 100
 solver_fcst.solve(demand=inquiry)
 solver_supply.solve(object=inquiry)
-frepple.updatePlannedForecast()
 solver_fcst.commit()
 solver_supply.commit()
+frepple.updatePlannedForecast()
 frepple.saveplan("output.7.xml")
 frepple.saveforecast("output.8.xml")
 

@@ -964,10 +964,19 @@ void ForecastBucket::reduceDeliveries(double qty_to_free, CommandManager* mgr) {
        qty_to_free > ROUNDING_ERROR && dlvry != deliveries.end(); ++dlvry) {
     if (getDueRange().within((*dlvry)->getEnd())) {
       if ((*dlvry)->getQuantity() > qty_to_free + ROUNDING_ERROR) {
-        (*dlvry)->setQuantity((*dlvry)->getQuantity() - qty_to_free, true);
+        if (mgr)
+          mgr->add(new CommandMoveOperationPlan(
+              *dlvry, Date::infinitePast, (*dlvry)->getEnd(),
+              (*dlvry)->getQuantity() - qty_to_free, true));
+        else
+          (*dlvry)->setQuantity((*dlvry)->getQuantity() - qty_to_free, true);
         return;
       } else {
-        (*dlvry)->setQuantity(0, true);
+        if (mgr)
+          mgr->add(new CommandMoveOperationPlan(*dlvry, Date::infinitePast,
+                                                (*dlvry)->getEnd(), 0, true));
+        else
+          (*dlvry)->setQuantity(0, true);
         qty_to_free -= (*dlvry)->getQuantity();
       }
     }

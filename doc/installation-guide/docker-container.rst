@@ -4,6 +4,7 @@ Docker container
 
 * `Basic installation`_
 * `Deployment with external PostgreSQL database`_
+* `Deployment of the Enterprise Edition`_
 * `Deployment with docker compose`_
 * `Deployment with Kubernetes`_
 * `Deployment with custom extension apps`_
@@ -95,6 +96,8 @@ on the URL http://localhost:9000/
      ghcr.io/frepple/frepple-community:latest
 
 The following environment variables can be set to configure your container:
+
+.. code-block:: bash
 
         POSTGRES_HOST: ""
         POSTGRES_PORT: 5432

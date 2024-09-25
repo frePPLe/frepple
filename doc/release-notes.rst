@@ -42,6 +42,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug fix: Manufacturing orders for make-to-order products couldn't be updated
     with new dates from frepple.
 
+.. rubric:: System performance
+
+- | Various performance improvements for frePPLe server under heavy load.
+
 9.2.0 (2024-08-30)
 ==================
 

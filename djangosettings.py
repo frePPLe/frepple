@@ -49,7 +49,7 @@ SECRET_KEY = "%@mzit!i8b*$zc&6oev96=RANDOMSTRING"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "freppledb.common.postgresql",
         # Database name
         "NAME": (
             "%s0" % os.environ["POSTGRES_DBNAME"]
@@ -98,7 +98,7 @@ DATABASES = {
         "FREPPLE_PORT": "127.0.0.1:8002",
     },
     "scenario1": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "freppledb.common.postgresql",
         # Database name
         "NAME": (
             "%s1" % os.environ["POSTGRES_DBNAME"]
@@ -149,7 +149,7 @@ DATABASES = {
         "FREPPLE_PORT": "127.0.0.1:8003",
     },
     "scenario2": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "freppledb.common.postgresql",
         # Database name
         "NAME": (
             "%s2" % os.environ["POSTGRES_DBNAME"]
@@ -198,7 +198,7 @@ DATABASES = {
         "FREPPLE_PORT": "127.0.0.1:8004",
     },
     "scenario3": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "freppledb.common.postgresql",
         # Database name
         "NAME": (
             "%s3" % os.environ["POSTGRES_DBNAME"]

@@ -21,7 +21,6 @@ class DatabaseWrapper(BuiltinPostgresDatabaseWrapper):
         try:
             return super().create_cursor(name=name)
         except InterfaceError:
-            print("Recovering from connection failure")
             django.db.close_old_connections()
             django.db.connection.connect()
             return super().create_cursor(name=name)

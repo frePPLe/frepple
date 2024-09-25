@@ -1969,7 +1969,7 @@ class DeliveryPerformanceWidget(Widget):
               select
                 demand_id, max(case when enddate > operationplan.due then 1 else 0 end) late
               from operationplan
-              left outer join demand
+              inner join demand
                 on operationplan.demand_id = demand.name
               where demand.due < '%s'
               group by demand_id

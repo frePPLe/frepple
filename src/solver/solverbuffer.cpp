@@ -709,113 +709,121 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
 
       Duration repeat_early;
       Duration prev_hitMaxEarly = data->hitMaxEarly;
-      do {
-        if (b->getIPFlag())
-          // Detect whether any resource did hit its max-early limit
-          data->hitMaxEarly = -1L;
 
-        while (theDelta < -ROUNDING_ERROR && b->getProducingOperation() &&
-               loop && --loopcounter > 0) {
-          // Create supply
-          data->state->curBuffer = const_cast<Buffer*>(b);
-          data->state->q_qty = -theDelta;
-          data->state->q_date = nextAskDate ? nextAskDate : prev->getDate();
-          data->state->q_date -= repeat_early;
+      if (!b->getProducingOperation()) {
+        if (getLogLevel())
+          logger << indentlevel << "   Warning: Can't replenish" << endl;
+        break;
+      } else {
+        do {
+          if (b->getIPFlag())
+            // Detect whether any resource did hit its max-early limit
+            data->hitMaxEarly = -1L;
 
-          // Validate whether confirmed/approved supply exists within the
-          // autofence window.
-          // Note: no check for overall shortage here, just checking whether
-          // stock stays positive in a constrained plan.
-          Duration autofence = getAutoFence();
-          if (!b->getAutofence() && autofence > Duration(14L * 86400L))
-            autofence = 14L * 86400L;
-          if (autofence &&
-              (theOnHand > -ROUNDING_ERROR || getPlanType() == 2 ||
-               (getConstraints() & (MFG_LEADTIME + PO_LEADTIME)) == 0)) {
-            bool exists = false;
-            for (auto f = b->getFlowPlans().begin();
-                 f != b->getFlowPlans().end(); ++f) {
-              if (f->getQuantity() <= 0 || f->getDate() < data->state->q_date)
+          while (theDelta < -ROUNDING_ERROR && loop && --loopcounter > 0) {
+            // Create supply
+            data->state->curBuffer = const_cast<Buffer*>(b);
+            data->state->q_qty = -theDelta;
+            data->state->q_date = nextAskDate ? nextAskDate : prev->getDate();
+            data->state->q_date -= repeat_early;
+
+            // Validate whether confirmed/approved supply exists within the
+            // autofence window.
+            // Note: no check for overall shortage here, just checking whether
+            // stock stays positive in a constrained plan.
+            Duration autofence = getAutoFence();
+            if (!b->getAutofence() && autofence > Duration(14L * 86400L))
+              autofence = 14L * 86400L;
+            if (autofence &&
+                (theOnHand > -ROUNDING_ERROR || getPlanType() == 2 ||
+                 (getConstraints() & (MFG_LEADTIME + PO_LEADTIME)) == 0)) {
+              bool exists = false;
+              for (auto f = b->getFlowPlans().begin();
+                   f != b->getFlowPlans().end(); ++f) {
+                if (f->getQuantity() <= 0 || f->getDate() < data->state->q_date)
+                  continue;
+                if (f->getDate() >
+                    max(data->state->q_date, Plan::instance().getCurrent()) +
+                        autofence)
+                  break;
+                auto tmp = f->getOperationPlan();
+                if (tmp && (tmp->getConfirmed() || tmp->getApproved()) &&
+                    f->getDate() > data->state->q_date) {
+                  exists = true;
+                  break;
+                }
+              }
+              if (exists) {
+                // Not allowed to create extra supply at this moment
+                loop = false;
                 continue;
-              if (f->getDate() >
-                  max(data->state->q_date, Plan::instance().getCurrent()) +
-                      autofence)
-                break;
-              auto tmp = f->getOperationPlan();
-              if (tmp && (tmp->getConfirmed() || tmp->getApproved()) &&
-                  f->getDate() > data->state->q_date) {
-                exists = true;
-                break;
               }
             }
-            if (exists) {
-              // Not allowed to create extra supply at this moment
-              loop = false;
-              continue;
+
+            // Make sure the new operationplans don't inherit an owner.
+            // When an operation calls the solve method of suboperations, this
+            // field is used to pass the information about the owner
+            // operationplan down. When solving for buffers we must make sure
+            // NOT to pass owner information. At the end of solving for a buffer
+            // we need to restore the original settings...
+            data->state->curOwnerOpplan = nullptr;
+
+            // Note that the supply created with the next line changes the
+            // onhand value at all later dates!
+            auto topcommand = data->getCommandManager()->setBookmark();
+            auto cur_q_date = data->state->q_date;
+            data->state->q_qty_min = 1.0;
+            data->recent_buffers.clear();
+            data->recent_buffers.push(b);
+            auto data_safety_stock_planning = data->safety_stock_planning;
+            data->safety_stock_planning = false;
+            auto data_buffer_solve_shortages_only =
+                data->buffer_solve_shortages_only;
+            data->buffer_solve_shortages_only = true;
+            data->state->curBatch = b->getBatch();
+            data->state->blockedOpplan = nullptr;
+            data->state->dependency = nullptr;
+            b->getProducingOperation()->solve(*this, v);
+            data->safety_stock_planning = data_safety_stock_planning;
+            data->buffer_solve_shortages_only =
+                data_buffer_solve_shortages_only;
+
+            if (data->state->a_qty > ROUNDING_ERROR) {
+              // If we got some extra supply, we retry to get some more supply.
+              // Only when no extra material is obtained, we give up.
+              theDelta += data->state->a_qty;
+              theOnHand += data->state->a_qty;
+            } else {
+              data->getCommandManager()->rollback(topcommand);
+              if ((cur != b->getFlowPlans().end() &&
+                   data->state->a_date < cur->getDate()) ||
+                  (cur == b->getFlowPlans().end() &&
+                   data->state->a_date < Date::infiniteFuture)) {
+                if (data->state->a_date > cur_q_date) {
+                  auto earliestNext = cur_q_date + getMinimumDelay();
+                  nextAskDate = (data->state->a_date > earliestNext)
+                                    ? data->state->a_date
+                                    : earliestNext;
+                } else
+                  loop = false;
+              } else
+                loop = false;
             }
           }
 
-          // Make sure the new operationplans don't inherit an owner.
-          // When an operation calls the solve method of suboperations, this
-          // field is used to pass the information about the owner operationplan
-          // down. When solving for buffers we must make sure NOT to pass owner
-          // information. At the end of solving for a buffer we need to restore
-          // the original settings...
-          data->state->curOwnerOpplan = nullptr;
-
-          // Note that the supply created with the next line changes the
-          // onhand value at all later dates!
-          auto topcommand = data->getCommandManager()->setBookmark();
-          auto cur_q_date = data->state->q_date;
-          data->state->q_qty_min = 1.0;
-          data->recent_buffers.clear();
-          data->recent_buffers.push(b);
-          auto data_safety_stock_planning = data->safety_stock_planning;
-          data->safety_stock_planning = false;
-          auto data_buffer_solve_shortages_only =
-              data->buffer_solve_shortages_only;
-          data->buffer_solve_shortages_only = true;
-          data->state->curBatch = b->getBatch();
-          data->state->blockedOpplan = nullptr;
-          data->state->dependency = nullptr;
-          b->getProducingOperation()->solve(*this, v);
-          data->safety_stock_planning = data_safety_stock_planning;
-          data->buffer_solve_shortages_only = data_buffer_solve_shortages_only;
-
-          if (data->state->a_qty > ROUNDING_ERROR) {
-            // If we got some extra supply, we retry to get some more supply.
-            // Only when no extra material is obtained, we give up.
-            theDelta += data->state->a_qty;
-            theOnHand += data->state->a_qty;
-          } else {
-            data->getCommandManager()->rollback(topcommand);
-            if ((cur != b->getFlowPlans().end() &&
-                 data->state->a_date < cur->getDate()) ||
-                (cur == b->getFlowPlans().end() &&
-                 data->state->a_date < Date::infiniteFuture)) {
-              if (data->state->a_date > cur_q_date) {
-                auto earliestNext = cur_q_date + getMinimumDelay();
-                nextAskDate = (data->state->a_date > earliestNext)
-                                  ? data->state->a_date
-                                  : earliestNext;
-              } else
-                loop = false;
-            } else
-              loop = false;
-          }
-        }
-
-        if (b->getIPFlag() && data->hitMaxEarly >= 0L && !data->state->a_qty) {
-          if (data->hitMaxEarly == Duration::MAX) break;
-          if (data->hitMaxEarly > getMinimumDelay())
-            repeat_early += data->hitMaxEarly;
-          else if (getMinimumDelay())
-            repeat_early += getMinimumDelay();
-          else
-            repeat_early += Duration(86400L);
-        } else
-          break;
-      } while (--loopcounter > 0);
+          if (b->getIPFlag() && data->hitMaxEarly >= 0L &&
+              !data->state->a_qty) {
+            if (data->hitMaxEarly == Duration::MAX) break;
+            if (data->hitMaxEarly > getMinimumDelay())
+              repeat_early += data->hitMaxEarly;
+            else if (getMinimumDelay())
+              repeat_early += getMinimumDelay();
+            else
+              repeat_early += Duration(86400L);
+          } else
+            break;
+        } while (--loopcounter > 0);
+      }
       if (loopcounter <= 0)
         logger << indentlevel << "  Warning: Hitting the max number of retries"
                << endl;

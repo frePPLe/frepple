@@ -153,8 +153,7 @@ jobs:
 
             **docker container**\: Docker pull ghcr.io/frepple/frepple:${{ env.frepple_version }}
             **ubuntu24-frepple-${{ env.frepple_version }}.deb**\: Installer for Ubuntu 24.04 LTS
-            **frepple-${{ env.frepple_version }}-doc.tgz**\: Documentation
-            **Source code**\: Source code in code zip or gzip format
+            **frepple-doc-${{ env.frepple_version }}.tgz**\: Documentation
           files: |
             ${{github.workspace}}/build/contrib/docker/*.deb
             ${{github.workspace}}/build/frepple-doc-*.tgz

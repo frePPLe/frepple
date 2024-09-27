@@ -1,11 +1,14 @@
 Release notes
 -------------
 
-9.3.0 (Upcoming release)
+9.4.0 (Upcoming release)
 ========================
 
 This release is scheduled for end of September.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.3.0 (2024-09-27)
+==================
 
 .. rubric:: Demand forecasting
 

@@ -89,69 +89,65 @@ if locust_installed:
             gevent.spawn_later(30, locust.stats.stats_printer(env.stats))
             env.runner.greenlet.join()
 
-    @staticmethod
-    def getHTML(request):
-        return None
+        @staticmethod
+        def getHTML(request):
+            return None
 
+    class freppleUser(FastHttpUser):
+        host = "http://localhost:8000"
+        wait_time = between(1, 5)
+        default_headers = {
+            "accept-encoding": "gzip, deflate, br, zstd",
+            "accept-language": "en",
+        }
 
-class freppleUser(FastHttpUser):
-    host = "http://localhost:8000"
-    wait_time = between(1, 5)
-    default_headers = {
-        "accept-encoding": "gzip, deflate, br, zstd",
-        "accept-language": "en",
-    }
+    class MaterialPlanner(freppleUser):
+        @task(10)
+        def common(self):
+            self.client.get("/inbox/")
 
+        @task(10)
+        def materialplannner(self):
+            self.client.get("/buffer/")
+            self.client.get(
+                "/buffer/?format=json&rows=100&page=1", name="/buffer/?format=json"
+            )
 
-class MaterialPlanner(freppleUser):
-    @task(10)
-    def common(self):
-        self.client.get("/inbox/")
+    class ProductionPlanner(freppleUser):
+        @task(10)
+        def SalesOrderList(self):
+            self.client.get("/data/input/demand/")
+            self.client.get(
+                "/data/input/demand/?format=json&rows=100&page=1",
+                name="/data/input/demand/?format=json",
+            )
 
-    @task(10)
-    def materialplannner(self):
-        self.client.get("/buffer/")
-        self.client.get(
-            "/buffer/?format=json&rows=100&page=1", name="/buffer/?format=json"
-        )
+        @task(10)
+        def ResourceReport(self):
+            self.client.get("/resource/")
+            self.client.get(
+                "/resource/?format=json&rows=100&page=1", name="/resource/?format=json"
+            )
 
+        @task(1)
+        def ExecutionScreen(self):
+            self.client.get("/execute/")
+            self.client.get(
+                "/execute/?format=json&rows=100&page=1", name="/execute/?format=json"
+            )
 
-class ProductionPlanner(freppleUser):
-    @task(10)
-    def SalesOrderList(self):
-        self.client.get("/data/input/demand/")
-        self.client.get(
-            "/data/input/demand/?format=json&rows=100&page=1",
-            name="/data/input/demand/?format=json",
-        )
-
-    @task(10)
-    def ResourceReport(self):
-        self.client.get("/resource/")
-        self.client.get(
-            "/resource/?format=json&rows=100&page=1", name="/resource/?format=json"
-        )
-
-    @task(1)
-    def ExecutionScreen(self):
-        self.client.get("/execute/")
-        self.client.get(
-            "/execute/?format=json&rows=100&page=1", name="/execute/?format=json"
-        )
-
-
-class DemandPlanner(freppleUser):
-    @task(1)
-    def Forecastditor(self):
-        self.client.get("/forecast/")
-        self.client.get(
-            "/forecast/?format=json&rows=100&page=1", name="/forecast/?format=json"
-        )
-        self.client.get("/forecast/editor/")
-        self.client.get("/forecast/locationtree/?measure=forecasttotal")
-        self.client.get("/forecast/customertree/?measure=forecasttotal")
-        self.client.get("/forecast/itemtree/?measure=forecasttotal")
-        self.client.get(
-            "/forecast/detail/?measure=forecasttotal&item=&location=&customer=",
-            name="/forecast/detail/",
-        )
+    class DemandPlanner(freppleUser):
+        @task(1)
+        def Forecastditor(self):
+            self.client.get("/forecast/")
+            self.client.get(
+                "/forecast/?format=json&rows=100&page=1", name="/forecast/?format=json"
+            )
+            self.client.get("/forecast/editor/")
+            self.client.get("/forecast/locationtree/?measure=forecasttotal")
+            self.client.get("/forecast/customertree/?measure=forecasttotal")
+            self.client.get("/forecast/itemtree/?measure=forecasttotal")
+            self.client.get(
+                "/forecast/detail/?measure=forecasttotal&item=&location=&customer=",
+                name="/forecast/detail/",
+            )

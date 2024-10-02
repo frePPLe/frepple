@@ -197,6 +197,7 @@ django-allauth will have pretty similar instructions.
         ACCOUNT_LOGOUT_ON_GET = True
         ACCOUNT_EMAIL_VERIFICATION = "none"
         SOCIALACCOUNT_AUTO_SIGNUP = True
+        SOCIALACCOUNT_LOGIN_ON_GET = True
         SOCIALACCOUNT_ADAPTER = 'freppledb.external_auth.auth.CustomAccountAdapter'
         ACCOUNT_ADAPTER = 'freppledb.external_auth.auth.CustomAdapter'
         SOCIALACCOUNT_PROVIDERS = {
@@ -234,12 +235,13 @@ django-allauth will have pretty similar instructions.
         do update set domain=excluded.domain, name=excluded.name;
 
       sql> insert into socialaccount_socialapp
-        (id, provider, name, client_id, secret, key)
+        (id, provider, provider_id, name, client_id, secret, key, settings)
         values
-        (1, 'auth0', 'auth0',
+        (1, 'auth0', 'auth0' 'auth0',
         '<OAUTH-CLIENT>',   -- UPDATE !!!
         '<OAUTH-CLIENT-SECRET>', -- UPDATE !!!
-        'frepple2'
+        'frepple2',
+        '{}'
         );
 
       sql> insert into socialaccount_socialapp_sites

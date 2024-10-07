@@ -28,16 +28,22 @@ The standard installation uses unencrypted web traffic over HTTP. The IT policy
 of many companies requires encrypting all web traffic of all web applications
 over HTTPS.
 
-This is pretty easy to configure in frePPLe. FrePPLe uses a standard
-`Apache <https://httpd.apache.org/>`_ web server. A google search will
-provide a lot of info on how to achieve this.
+#. | Activate HTTPS encryption on your web server.
+   | FrePPLe uses a standard `Apache <https://httpd.apache.org/>`_ web server. 
+     A google search will provide a lot of info on the required configuration steps.
 
-The basic steps for the ubuntu operating system we use are:
+   .. code-block:: bash
 
-.. code-block:: bash
+      a2enmod ssl       # Enable the ssl module
+      a2ensite default-ssl    # Configure the module. Adjust this step to use your own ssl certificate!
 
-   a2enmod ssl       # Enable the ssl module
-   a2ensite default-ssl    # Configure the module. Adjust this step to use your own ssl certificate!
+   | You can also use a proxy server in front of frepple. Typically you will do
+     the HTTPS encryption on the proxy server then, and you can thus skip this first step.
+
+#. | Update the settings SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE to true. You do this 
+     by editing the /etc/frepple/djangosettings.py file or by setting these variables in
+     a docker deployment.
+   | This step is required regardless of where the HTTPS encryption is done.
 
 .. _extra_scenarios:
 

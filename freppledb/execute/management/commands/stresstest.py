@@ -33,65 +33,67 @@ try:
     import locust.stats
 
     locust_installed = True
-except ImportError:
+except (ImportError, ValueError):
     # Skip of locust isn't installed
     locust_installed = False
 
 from django.conf import settings
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS
 
 from freppledb import __version__
 
 
-if locust_installed:
-
-    class Command(BaseCommand):
-        help = """
+class Command(BaseCommand):
+    help = """
         This command generates a stress test load on the frepple webserver.
 
-        You need to have the locust python library installed
+        You need to have the locust python library installed.
         """
 
-        requires_system_checks = []
+    requires_system_checks = []
 
-        def get_version(self):
-            return __version__
+    def get_version(self):
+        return __version__
 
-        def add_arguments(self, parser):
-            parser.add_argument(
-                "--users", help="Number of users", type=int, default=10
-            ),
-            parser.add_argument(
-                "--server",
-                help="URL of the server to test.",
-                default="http://localhost:8000",
-            )
+    def add_arguments(self, parser):
+        parser.add_argument("--users", help="Number of users", type=int, default=10),
+        parser.add_argument(
+            "--server",
+            help="URL of the server to test.",
+            default="http://localhost:8000",
+        )
 
-        def handle(self, **options):
-            locust.stats.CONSOLE_STATS_INTERVAL_SEC = 30
+    def handle(self, **options):
+        if not locust_installed:
+            raise CommandError("The locust python libaray isn't available")
 
-            user_classes = [MaterialPlanner, ProductionPlanner]
-            if "freppledb.forecast" in settings.INSTALLED_APPS:
-                user_classes.append(DemandPlanner)
-            setup_logging("INFO")
-            env = Environment(user_classes=user_classes)
-            runner = env.create_local_runner()
-            web_ui = env.create_web_ui("127.0.0.1", 8089)
+        locust.stats.CONSOLE_STATS_INTERVAL_SEC = 30
 
-            print("")
-            print("Open your browser on http://127.0.0.1:8089/ to control your test.")
-            print("")
+        user_classes = [MaterialPlanner, ProductionPlanner]
+        if "freppledb.forecast" in settings.INSTALLED_APPS:
+            user_classes.append(DemandPlanner)
+        setup_logging("INFO")
+        env = Environment(user_classes=user_classes)
+        runner = env.create_local_runner()
+        web_ui = env.create_web_ui("127.0.0.1", 8089)
 
-            env.events.init.fire(environment=env, runner=runner, web_ui=web_ui)
-            env.runner.start(options["users"], spawn_rate=100)
-            gevent.spawn(locust.stats.stats_history, env.runner)
-            gevent.spawn_later(30, locust.stats.stats_printer(env.stats))
-            env.runner.greenlet.join()
+        print("")
+        print("Open your browser on http://127.0.0.1:8089/ to control your test.")
+        print("")
 
-        @staticmethod
-        def getHTML(request):
-            return None
+        env.events.init.fire(environment=env, runner=runner, web_ui=web_ui)
+        env.runner.start(options["users"], spawn_rate=100)
+        gevent.spawn(locust.stats.stats_history, env.runner)
+        gevent.spawn_later(30, locust.stats.stats_printer(env.stats))
+        env.runner.greenlet.join()
+
+    @staticmethod
+    def getHTML(request):
+        return None
+
+
+if locust_installed:
 
     class freppleUser(FastHttpUser):
         host = "http://localhost:8000"

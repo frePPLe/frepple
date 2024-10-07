@@ -7,6 +7,10 @@ Release notes
 This release is scheduled for end of September.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Odoo integration
+
+- | 18: Initial support for odoo 18. This is still experimental and for testing purposes only.
+
 9.3.0 (2024-09-27)
 ==================
 

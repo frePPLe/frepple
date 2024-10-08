@@ -11,6 +11,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 18: Initial support for odoo 18. This is still experimental and for testing purposes only.
 
+.. rubric:: User interface
+
+- | Bug fix in scenario promotion. When promoting a scenario as the production
+    scenario the user preferences and group permissions where copied into
+    the production scenario, which isn't right.
+  | There was also an issue with custom reports after a scenario promotion.
+
 9.3.0 (2024-09-27)
 ==================
 

@@ -212,7 +212,7 @@ class Command(BaseCommand):
                 "common_user",
                 "common_scenario",
                 "auth_group",
-                "auth_group_permission",
+                "auth_group_permissions",
                 "auth_permission",
                 "django_content_type",
                 "common_comment",
@@ -221,7 +221,7 @@ class Command(BaseCommand):
                 "common_user_groups",
                 "common_attribute",
                 "common_user_user_permissions",
-                "common_preferences",
+                "common_preference",
                 "reportmanager_report",
                 "reportmanager_column",
                 "execute_schedule",
@@ -476,6 +476,65 @@ class Command(BaseCommand):
                             using=DEFAULT_DB_ALIAS,
                         )
                     raise Exception(e or "Database copy failed")
+
+            # Assure the identity sequences are bigger than the id values
+            with connections[destination].cursor() as cursor:
+                cursor.execute(
+                    """
+                    with cte as (
+                        select 'common_user_id_seq' as seq,
+                        (select last_value from common_user_id_seq) as last_val,
+                        coalesce((select max(id) from common_user),1) as max_id
+                        union all
+                        select 'auth_group_id_seq' as seq,
+                        (select last_value from auth_group_id_seq) as last_val,
+                        coalesce((select max(id) from auth_group),1) as max_id
+                        union all
+                        select 'auth_group_permissions_id_seq' as seq,
+                        (select last_value from auth_group_permissions_id_seq) as last_val,
+                        coalesce((select max(id) from auth_group_permissions),1) as max_id
+                        union all
+                        select 'django_content_type_id_seq' as seq,
+                        (select last_value from django_content_type_id_seq) as last_val,
+                        coalesce((select max(id) from django_content_type),1) as max_id
+                        union all
+                        select 'common_comment_id_seq' as seq,
+                        (select last_value from common_comment_id_seq) as last_val,
+                        coalesce((select max(id) from common_comment),1) as max_id
+                        union all
+                        select 'common_notification_id_seq' as seq,
+                        (select last_value from common_notification_id_seq) as last_val,
+                        coalesce((select max(id) from common_notification),1) as max_id
+                        union all
+                        select 'common_follower_id_seq' as seq,
+                        (select last_value from common_follower_id_seq) as last_val,
+                        coalesce((select max(id) from common_follower),1) as max_id
+                        union all
+                        select 'common_user_groups_id_seq' as seq,
+                        (select last_value from common_user_groups_id_seq) as last_val,
+                        coalesce((select max(id) from common_user_groups),1) as max_id
+                        union all
+                        select 'common_user_user_permissions_id_seq' as seq,
+                        (select last_value from common_user_user_permissions_id_seq) as last_val,
+                        coalesce((select max(id) from common_user_user_permissions),1) as max_id
+                        union all
+                        select 'common_preference_id_seq' as seq,
+                        (select last_value from common_preference_id_seq) as last_val,
+                        coalesce((select max(id) from common_preference),1) as max_id
+                        union all
+                        select 'reportmanager_report_id_seq' as seq,
+                        (select last_value from reportmanager_report_id_seq) as last_val,
+                        coalesce((select max(id) from reportmanager_report),1) as max_id
+                        union all
+                        select 'reportmanager_column_id_seq' as seq,
+                        (select last_value from reportmanager_column_id_seq) as last_val,
+                        coalesce((select max(id) from reportmanager_column),1) as max_id
+                        )
+                    select setval(seq, max_id, true), seq
+                    from cte
+                    where last_val < max_id
+                    """
+                )
 
             # Check the permissions after restoring a backup.
             if (

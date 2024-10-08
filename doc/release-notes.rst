@@ -11,6 +11,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 18: Initial support for odoo 18. This is still experimental and for testing purposes only.
 
+- | 17: Improvements for multi-warehouse odoo configurations.
+
 .. rubric:: User interface
 
 - | Bug fix in scenario promotion. When promoting a scenario as the production

@@ -13,6 +13,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 17: Improvements for multi-warehouse odoo configurations.
 
+- | Extra robustness to deal with control characters in the odoo data.
+
 .. rubric:: User interface
 
 - | Bug fix in scenario promotion. When promoting a scenario as the production

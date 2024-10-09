@@ -11,7 +11,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 18: Initial support for odoo 18. This is still experimental and for testing purposes only.
 
-- | 17: Improvements for multi-warehouse odoo configurations.
+- | 17, 18: Improvements for multi-warehouse odoo configurations.
+
+- | 17, 18: Ability to export a remark from frepple into odoo on 
+    manufacturing orders, distribution orders or purchase orders.
+  | The remark shows up in the "source" field in odoo.
 
 - | Extra robustness to deal with control characters in the odoo data.
 

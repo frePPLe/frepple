@@ -131,7 +131,7 @@ def Upload(request):
                     data_ok = True
                     obj.append(po)
                     data_odoo.append(
-                        '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s status=%s/>'
+                        '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s status=%s remark=%s/>'
                         % (
                             po.reference,
                             quoteattr(po.item.name),
@@ -145,6 +145,7 @@ def Upload(request):
                             int(po.criticality),
                             quoteattr(po.batch or ""),
                             quoteattr(po.status),
+                            quoteattr(getattr(po, "remark", None) or ""),
                         )
                     )
                 elif rec.get("type", None) == "DO":
@@ -163,7 +164,7 @@ def Upload(request):
                     data_ok = True
                     obj.append(do)
                     data_odoo.append(
-                        '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d" batch=%s/>'
+                        '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d" batch=%s remark=%s/>'
                         % (
                             do.status,
                             do.reference,
@@ -178,6 +179,7 @@ def Upload(request):
                             quoteattr(do.item.subcategory or ""),
                             int(do.criticality or 0),
                             quoteattr(do.batch or ""),
+                            quoteattr(getattr(do, "remark", None) or ""),
                         )
                     )
                 else:
@@ -211,7 +213,7 @@ def Upload(request):
                     obj.append(op)
                     if op.operation.category == "subcontractor":
                         data_odoo.append(
-                            '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s/>'
+                            '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s remark=%s/>'
                             % (
                                 op.reference,
                                 quoteattr(op.item.name),
@@ -224,11 +226,12 @@ def Upload(request):
                                 quoteattr(op.item.subcategory or ""),
                                 int(op.criticality or 0),
                                 quoteattr(op.batch or ""),
+                                quoteattr(getattr(op, "remark", None) or ""),
                             )
                         )
                     else:
                         data_odoo.append(
-                            '<operationplan ordertype="MO" reference="%s" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s status=%s>'
+                            '<operationplan ordertype="MO" reference="%s" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s status=%s remark=%s>'
                             % (
                                 op.reference,
                                 quoteattr(op.operation.item.name),
@@ -242,6 +245,7 @@ def Upload(request):
                                 int(op.criticality or 0),
                                 quoteattr(op.batch or ""),
                                 quoteattr(op.status),
+                                quoteattr(getattr(op, "remark", None) or ""),
                             )
                         )
                         wolist = [
@@ -253,11 +257,12 @@ def Upload(request):
                         if wolist:
                             for wo in wolist:
                                 data_odoo.append(
-                                    '<workorder operation=%s start="%s" end="%s">'
+                                    '<workorder operation=%s start="%s" end="%s" remark=%s>'
                                     % (
                                         quoteattr(wo.operation.name),
                                         wo.startdate,
                                         wo.enddate,
+                                        quoteattr(getattr(wo, "remark", None) or ""),
                                     )
                                 )
                                 for wores in wo.resources.using(request.database).all():

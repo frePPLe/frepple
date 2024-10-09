@@ -234,13 +234,22 @@ class OdooReadData(PlanTask):
                                 print("Odoo:", data)
 
                     odoo_msg = OdooMsgParser()
-                    odoo_msg.feed(odoo_data.decode("utf-8", errors="ignore"))
+                    odoo_msg.feed(
+                        odoo_data.decode("utf-8", errors="ignore").translate(
+                            {ord(i): None for i in "\f\v\b"}
+                        )
+                    )
                 raise e
 
         else:
             # Parse XML data file
             with open(debugFile, encoding="utf-8") as f:
-                frepple.readXMLdata(f.read(), False, False, loglevel)
+                frepple.readXMLdata(
+                    f.read().translate({ord(i): None for i in "\f\v\b"}),
+                    False,
+                    False,
+                    loglevel,
+                )
 
         # All predefined inventory detail records are now loaded.
         # We now create any missing ones.

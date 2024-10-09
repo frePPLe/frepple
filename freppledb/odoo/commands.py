@@ -200,16 +200,18 @@ class OdooReadData(PlanTask):
                 with urlopen(request) as response:
                     if response.info().get("Content-Encoding") == "gzip":
                         frepple.readXMLdata(
-                            gzip.decompress(response.read()).decode(
-                                encoding="utf-8", errors="ignore"
-                            ),
+                            gzip.decompress(response.read())
+                            .decode(encoding="utf-8", errors="ignore")
+                            .translate({ord(i): None for i in "\f\v\b"}),
                             False,
                             False,
                             loglevel,
                         )
                     else:
                         frepple.readXMLdata(
-                            response.read().decode(encoding="utf-8", errors="ignore"),
+                            response.read()
+                            .decode(encoding="utf-8", errors="ignore")
+                            .translate({ord(i): None for i in "\f\v\b"}),
                             False,
                             False,
                             loglevel,

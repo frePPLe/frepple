@@ -162,7 +162,7 @@ function deleteImportFile(folder, filename) {
     dialogcontent = "{% trans 'You are about to delete all files' %}";
     filename = 'AllFiles';
   } else {
-    dialogcontent = interpolate("{% trans 'You are about to delete file %s' %}", [filename]);
+    dialogcontent = interpolate(gettext("You are about to delete file %s"), [filename]);
   }
 
   $("#popup").html('<div class="modal-dialog">'+
@@ -189,7 +189,7 @@ function deleteImportFile(folder, filename) {
         if (filename === 'AllFiles') {
           $("#popup .modal-body>p").text("{% trans 'All data files were deleted' %}");
         } else {
-          $("#popup .modal-body>p").text(interpolate("{% trans 'File %s was deleted' %}", [filename]));
+          $("#popup .modal-body>p").text(interpolate(gettext("File %s was deleted"), [filename]));
         }
         $('#confirmbutton').hide();
         $('#cancelbutton').attr('value', "{% trans 'Close' %}");
@@ -204,13 +204,13 @@ function deleteImportFile(folder, filename) {
         var filelist = result.responseText.split(' / ');
         var elem = $("#popup .modal-body>p");
         if (filelist.length === 1) {
-          elem.text(interpolate("{% trans 'File %s was not deleted' %}", [filename]));
+          elem.text(interpolate(gettext("File %s was not deleted"), [filename]));
         } else {
           for (var i = 1; i < filelist.length; i++) {
             if (i === 1) {
-              elem.text(interpolate("{% trans 'File %s was not deleted' %}", [filelist[i]]));
+              elem.text(interpolate(gettext("File %s was not deleted"), [filelist[i]]));
             } else {
-              elem.parent().append('<p>'+interpolate("{% trans "File %s was not deleted" %}", [filelist[i]])+'</p>');
+              elem.parent().append('<p>'+interpolate(gettext("File %s was not deleted"), [filelist[i]])+'</p>');
             }
           }
         }

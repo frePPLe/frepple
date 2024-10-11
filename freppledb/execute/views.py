@@ -994,9 +994,6 @@ class FileManager:
             clean_filename = re.split(r"/|:|\\", files)[-1]
             if os.path.isdir(folder):
                 filelist.append(clean_filename)
-            else:
-                errorcount += 1
-                fileerrors = fileerrors + " / " + escape(clean_filename)
 
         for clean_filename in filelist:
             try:

@@ -313,7 +313,7 @@ function drawFocusGraph() {
               if (d[4]) jQuery("#grid").jqGrid('setSelection', d[4], false);
               if (d[4])
                 graph.showTooltip(interpolate(
-                  "Between %s<br>and %s<br>the entry %s<br>sets value %s",
+                  gettext("Between %s<br>and %s<br>the entry %s<br>sets value %s"),
                   [
                     moment(d[0]).format(datetimeformat),
                     moment(d[1]).format(datetimeformat),
@@ -323,7 +323,7 @@ function drawFocusGraph() {
                   ));
               else
                   graph.showTooltip(interpolate(
-                  "Between %s<br>and %s<br>the default value %s is set",
+                  gettext("Between %s<br>and %s<br>the default value %s is set"),
                   [
                     moment(d[0]).format(datetimeformat),
                     moment(d[1]).format(datetimeformat),

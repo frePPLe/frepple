@@ -37,10 +37,10 @@
       data-bs-placement="top" data-bs-title="Download file" onClick="downloadExportFile(1, '{{j.name}}')">
       <span class="fa fa-arrow-down"></span>
     </div>
-    <div class="btn btn-sm btn-danger deletefile" data-bs-toggle="tooltip"
+    <button class="btn btn-sm btn-danger deletefile" data-bs-toggle="tooltip"{% if not j.timestamp %} disabled{% endif %}
       data-bs-placement="top" data-bs-title="{% trans "Delete file" %}" onClick="deleteExportFile(1, '{{j.name}}')">
       <span class="fa fa-close"></span>
-    </div>
+    </button>
     <div class="btn btn-sm btn-primary" onclick="toggleAddExport(true, this)"
       data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Edit" %}">
       <span class="fa fa-edit" ></span>
@@ -251,7 +251,7 @@ function deleteExportFile(folder, filename) {
     dialogcontent = "{% trans 'You are about to delete all files' %}";
     filename = 'AllFiles';
   } else {
-    dialogcontent = interpolate("{% trans 'You are about to delete file %s' %}", [filename]);
+    dialogcontent = interpolate(gettext("You are about to delete file %s"), [filename]);
   }
 
   $("#popup").html('<div class="modal-dialog">'+
@@ -279,7 +279,7 @@ function deleteExportFile(folder, filename) {
         if (filename === 'AllFiles') {
           $("#popup .modal-body>p").text("{% trans 'All data files were deleted' %}");
         } else {
-          $("#popup .modal-body>p").text(interpolate("{% trans 'File %s was deleted' %}", [filename]));
+          $("#popup .modal-body>p").text(interpolate(gettext("File %s was deleted"), [filename]));
         }
         $('#confirmbutton').hide();
         $('#cancelbutton').attr('value', "{% trans 'Close' %}");
@@ -293,13 +293,13 @@ function deleteExportFile(folder, filename) {
         var filelist = result.responseText.split(' / ');
         var elem = $("#popup .modal-body>p");
         if (filelist.length === 1) {
-          elem.text(interpolate("{% trans 'File %s was not deleted' %}", [filename]));
+          elem.text(interpolate(gettext("File %s was not deleted"), [filename]));
         } else {
           for (var i = 1; i < filelist.length; i++) {
             if (i === 1) {
-              elem.text(interpolate("{% trans 'File %s was not deleted' }", [filelist[i]]));
+              elem.text(interpolate(gettext("File %s was not deleted"), [filelist[i]]));
             } else {
-              elem.parent().append('<p>'+interpolate("{% trans "File %s was not deleted" %}", [filelist[i]])+'</p>');
+              elem.parent().append('<p>'+interpolate(gettext("File %s was not deleted"), [filelist[i]])+'</p>');
             }
           }
         }

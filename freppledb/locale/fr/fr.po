@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2024-03-15 12:13+0100\n"
+"PO-Revision-Date: 2024-10-17 13:33+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.5\n"
 
 #: common/static/js/frepple.js:201
 msgid "Connection failed"
@@ -2737,7 +2737,7 @@ msgstr "Messages non lus de votre boîte de réception"
 #: demandhits/attributes.py:21 demandhits/attributes.py:42
 #, python-format
 msgid "sales orders last %(num)d months"
-msgstr "demandes client ces %(num)d mois"
+msgstr "Commandes ces %(num)d mois"
 
 #: demandhits/attributes.py:28 demandhits/attributes.py:49
 #, python-format
@@ -2747,7 +2747,7 @@ msgstr "unités vendues ces %(num)d mois"
 #: demandhits/attributes.py:35 demandhits/attributes.py:56
 #, python-format
 msgid "sales value last %(num)d months"
-msgstr "valeur des ventes ces %(num)d mois"
+msgstr "valeur des commandes ces %(num)d mois"
 
 #: erpconnection/management/commands/erp2frepple.py:41
 #: odoo/management/commands/odoo_import.py:86
@@ -3545,8 +3545,8 @@ msgstr "Générer la prévision"
 msgid ""
 "Analyze the sales history and compute a statistical forecast for the future"
 msgstr ""
-"Analyser l'historique des ventes et calculer une prévision statistique pour "
-"le futur"
+"Analyser l'historique des commandes et calculer une prévision statistique "
+"pour le futur"
 
 #: forecast/management/commands/measure_copy.py:229
 msgid "measure management"
@@ -4175,7 +4175,7 @@ msgstr "méthode de prévisoin sélectionnée"
 #: output/templates/output/demand_forecast.html:145 output/views/demand.py:77
 #: output/views/demand.py:302
 msgid "sales orders"
-msgstr "demandes client"
+msgstr "Commandes"
 
 #: forecast/widget.py:32
 msgid "Show the value of all sales order and forecast"
@@ -4387,7 +4387,7 @@ msgstr "Date d’échéance de la commande"
 #: input/models/demand.py:79
 msgid "Status of the demand. Only \"open\" and \"quote\" demands are planned"
 msgstr ""
-"Statut de la demande. Seules les demandes \"ouvertes\" et \"citation\" sont "
+"Statut de la commande. Seules les commandes \"ouvertes\" et \"devis\" sont "
 "planifiées"
 
 #: input/models/demand.py:116 input/views/sales.py:357
@@ -4420,7 +4420,7 @@ msgstr "Date de livraison de la demande"
 
 #: input/models/demand.py:157
 msgid "sales order"
-msgstr "demande client"
+msgstr "commande"
 
 #: input/models/item.py:19
 msgid "make to stock"
@@ -5847,7 +5847,7 @@ msgstr "commandes en retard"
 #: inventoryplanning/models.py:434 inventoryplanning/views.py:591
 #: output/views/buffer.py:497
 msgid "open sales orders"
-msgstr "commandes ouverts"
+msgstr "commandes ouvertes"
 
 #: inventoryplanning/models.py:437 inventoryplanning/views.py:606
 msgid "proposed purchase orders"
@@ -6243,7 +6243,7 @@ msgstr "Affiche les emplacements avec la plus grande valeur de stock"
 
 #: menu.py:23 settings.py:407
 msgid "sales"
-msgstr "demandes"
+msgstr "Ventes"
 
 #: menu.py:25 output/views/constraint.py:30
 msgid "capacity"
@@ -6914,7 +6914,7 @@ msgstr "Editeur de plan"
 
 #: quoting/views.py:36
 msgid "quotes"
-msgstr "citations"
+msgstr "devis"
 
 #: reportmanager/models.py:22
 #: reportmanager/templates/reportmanager/reportmanager.html:211
@@ -7214,7 +7214,7 @@ msgstr "temps de transport (en jours)"
 
 #: wizard/templates/wizard/quickstart_production.html:375
 msgid "unique sales order name"
-msgstr "nom unique de la commande de vente"
+msgstr "nom de commande unique"
 
 #: wizard/templates/wizard/quickstart_production.html:430
 #: wizard/templates/wizard/quickstart_production.html:435
@@ -7223,7 +7223,7 @@ msgstr "date d'échéance"
 
 #: wizard/templates/wizard/quickstart_production.html:441
 msgid "Create sales order"
-msgstr "Créer la commande"
+msgstr "Créer une commande"
 
 #: wizard/views.py:2827
 msgid "Data loading wizard for forecasting"
@@ -7647,7 +7647,7 @@ msgstr "sous-catégorie"
 
 #: freppledb/quoting/static/quoting/quoting.html:8
 msgid "quote form"
-msgstr "citation"
+msgstr "formulaire de devis"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:59
 msgid "remove row"

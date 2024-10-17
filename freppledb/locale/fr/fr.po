@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2024-10-17 14:05+0200\n"
+"PO-Revision-Date: 2024-10-17 22:20+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -4408,7 +4408,7 @@ msgstr "Nom du lot MTO"
 #: input/views/purchasing.py:945 input/views/sales.py:323
 #: input/views/sales.py:631 output/widget.py:79 shelflife/views.py:246
 msgid "delay"
-msgstr "délai"
+msgstr "retard"
 
 #: input/models/demand.py:140
 msgid "Quantity planned for delivery"
@@ -4748,7 +4748,7 @@ msgstr "temps de post-opération"
 #: input/models/operation.py:112
 msgid ""
 "A delay time to be respected as a soft constraint after ending the operation"
-msgstr "Délai à respecter comme contrainte légère après la fin des opérations"
+msgstr "Délai à respecter comme contrainte molle après la fin des opérations"
 
 #: input/models/operation.py:122
 msgid "Minimum production quantity"

@@ -768,9 +768,7 @@ class CalendarDetail(GridReport):
         GridFieldBool("sunday", title=_("Sunday")),
         GridFieldTime("starttime", title=_("start time")),
         GridFieldTime("endtime", title=_("end time")),
-        GridFieldText(
-            "source", title=_("source"), initially_hidden=True
-        ),  # Not really right, since the engine doesn't read or store it
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 
@@ -794,6 +792,20 @@ class CalendarBucketList(GridReport):
         <br>
         """
     )
+
+    @classmethod
+    def initialize(reportclass, request):
+        if reportclass._attributes_added != 2:
+            reportclass._attributes_added = 2
+            reportclass.attr_sql = ""
+            # Adding custom calendar attributes
+            for f in getAttributeFields(
+                Calendar,
+                related_name_prefix="calendar",
+                editable=False,
+                initially_hidden=True,
+            ):
+                reportclass.rows += (f,)
 
     rows = (
         GridFieldInteger(
@@ -823,9 +835,21 @@ class CalendarBucketList(GridReport):
         GridFieldBool("sunday", title=_("Sunday")),
         GridFieldTime("starttime", title=_("start time")),
         GridFieldTime("endtime", title=_("end time")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldText(
-            "source", title=_("source"), initially_hidden=True
-        ),  # Not really right, since the engine doesn't read or store it
+            "calendar__description",
+            title=format_lazy("{} - {}", _("calendar"), _("description")),
+            field_name="calendar__description",
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "calendar__source",
+            title=format_lazy("{} - {}", _("calendar"), _("source")),
+            field_name="calendar__source",
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldNumber(
             "calendar__defaultvalue", title=_("default value"), initially_hidden=True
         ),
@@ -860,9 +884,7 @@ class OperationList(GridReport):
             reportclass._attributes_added = 2
             reportclass.attr_sql = ""
             # Adding custom operation attributes
-            for f in getAttributeFields(
-                Operation,
-            ):
+            for f in getAttributeFields(Operation):
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "operation.%s, " % f.name.split("__")[-1]
             # Adding custom item attributes

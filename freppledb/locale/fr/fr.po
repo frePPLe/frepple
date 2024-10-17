@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2024-10-17 13:33+0200\n"
+"PO-Revision-Date: 2024-10-17 14:05+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -384,7 +384,7 @@ msgstr "statut de stock"
 
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:29
 msgid "onhand at lead time"
-msgstr "stock au temps d'approvisionnement"
+msgstr "stock au délai de livraison"
 
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current inventory"
@@ -468,7 +468,7 @@ msgstr "Cet utilisateur est inactif."
 #: inventoryplanning/views.py:221 reportmanager/models.py:20
 #: reportmanager/models.py:103 reportmanager/views.py:119
 msgid "identifier"
-msgstr "numéro"
+msgstr "identifiant"
 
 #: archive/models.py:62 archive/models.py:89 archive/models.py:132
 #: forecast/models.py:65 forecast/models.py:326 forecast/views.py:111
@@ -1681,22 +1681,22 @@ msgstr ""
 #: common/report.py:3691 common/views.py:665 forecast/models.py:379
 #: forecast/models.py:509
 msgid "bucket"
-msgstr "maille temporelle"
+msgstr "maille de temps"
 
 #: common/models.py:1430 common/views.py:627 input/models/resource.py:43
 #: input/models/resource.py:44 input/models/resource.py:45
 #: input/models/resource.py:46
 msgid "buckets"
-msgstr "mailles temporelles"
+msgstr "mailles de temps"
 
 #: common/models.py:1459
 msgid "bucket date"
-msgstr "période temporelle"
+msgstr "date de la maille de temps"
 
 #: common/models.py:1460
 #: common/templates/admin/common/bucket/change_form.html:12 common/views.py:648
 msgid "bucket dates"
-msgstr "périodes temporelles"
+msgstr "dates des mailles de temps"
 
 #: common/models.py:1469
 msgid "string"
@@ -1957,7 +1957,7 @@ msgstr "Avertissement: Aucune donnée trouvée"
 #: common/templates/admin/base_site_grid.html:249
 #: common/templates/admin/base_site_gridpivot.html:50
 msgid "Error: Missing time buckets or bucket dates"
-msgstr "Erreur : mailles temporelles ou dates manquantes"
+msgstr "Erreur : mailles de temps  ou dates manquantes"
 
 #: common/templates/admin/base_site_grid.html:333
 #: common/templates/admin/base_site_gridpivot.html:221
@@ -2008,7 +2008,7 @@ msgstr "Supprimer les objets sélectionnés"
 #: common/templates/index.html:42
 #: inventoryplanning/templates/inventoryplanning/drp.html:2558
 msgid "Configure time buckets"
-msgstr "Configure les périodes temporelles"
+msgstr "Configure les mailles de temps"
 
 #: common/templates/admin/base_site_grid.html:389
 #: common/templates/admin/base_site_gridpivot.html:249
@@ -2052,7 +2052,7 @@ msgstr "afficher le graphique"
 
 #: common/templates/admin/base_site_gridpivot.html:240
 msgid "configure time buckets"
-msgstr "configure les périodes temporelles"
+msgstr "configure les mailles de temps"
 
 #: common/templates/admin/base_site_gridpivot.html:255
 msgid "Help"
@@ -2231,11 +2231,11 @@ msgstr "stock actuel"
 
 #: common/templates/admin/subtemplate_timebuckets.html:7
 msgid "time buckets"
-msgstr "période temporelle"
+msgstr "mailles de temps"
 
 #: common/templates/admin/subtemplate_timebuckets.html:18
 msgid "bucket size"
-msgstr "taille de la maille temporelle"
+msgstr "taille de la maille de temps"
 
 #: common/templates/admin/subtemplate_timebuckets.html:35
 #: common/templates/admin/subtemplate_timebuckets.html:45
@@ -2781,7 +2781,7 @@ msgstr "Contacter le support frePPLe"
 
 #: execute/management/commands/createbuckets.py:298
 msgid "Generate buckets"
-msgstr "Creation des périodes temporelles"
+msgstr "Creation des mailles de temps"
 
 #: execute/management/commands/emailreport.py:252
 msgid "Publish reports by email"
@@ -2858,11 +2858,11 @@ msgstr "Exécuter"
 
 #: execute/models.py:37 execute/models.py:40 execute/views.py:111
 msgid "submitted"
-msgstr "envoyé"
+msgstr "date de soumission"
 
 #: execute/models.py:38 execute/views.py:114
 msgid "started"
-msgstr "commencé"
+msgstr "date d'exécution"
 
 #: execute/models.py:43 execute/templates/commands/scheduletasks.html:86
 #: execute/templates/commands/scheduletasks.html:196 execute/views.py:142
@@ -2911,7 +2911,7 @@ msgstr ""
 
 #: execute/templates/commands/createbuckets.html:10
 msgid "create time buckets for reporting."
-msgstr "créer des mailles temporelles pour les rapports."
+msgstr "créer des mailles de temps pour les rapports."
 
 #: execute/templates/commands/createbuckets.html:24
 msgid "week starts on"
@@ -3217,8 +3217,8 @@ msgstr ""
 "html=\"true\" data-bs-title=\"Ne pas générer de plan avec une date de début "
 "ou de fin dans le passé.<br>Les activités proposes et approuvées doivent "
 "toutes être dans le futur.<br>Seules les activités confirmées sont "
-"autorisées dans le passé.\">Temps de réapprovisionnement: ne pas planifier "
-"dans le passé</span>"
+"autorisées dans le passé.\">Délai de livraison: ne pas planifier dans le "
+"passé</span>"
 
 #: execute/templates/commands/runplan.html:58
 msgid ""
@@ -3431,7 +3431,7 @@ msgstr "Statut de la tâche"
 
 #: execute/views.py:117
 msgid "finished"
-msgstr "terminé"
+msgstr "date de fin"
 
 #: execute/views.py:350
 msgid "Failure launching task"
@@ -4335,13 +4335,13 @@ msgstr "heure de fin"
 
 #: input/models/calendar.py:333
 msgid "calendar bucket"
-msgstr "détail d'une période temporelle"
+msgstr "calendrier des mailles de temps"
 
 #: input/models/calendar.py:334
 #: input/templates/admin/input/calendar/change_form.html:12
 #: input/views/manufacturing.py:668 input/views/manufacturing.py:745
 msgid "calendar buckets"
-msgstr "détails des périodes temporelles"
+msgstr "calendriers des mailles de temps"
 
 #: input/models/customer.py:35 input/views/sales.py:100
 msgid "customers"
@@ -4468,7 +4468,7 @@ msgstr "Emplacement source d’expédition de l’article"
 #: inventoryplanning/views.py:541 output/views/operation.py:623
 #: wizard/templates/wizard/quickstart_production.html:135
 msgid "lead time"
-msgstr "délai d'obtention"
+msgstr "délai de livraison"
 
 #: input/models/itemdistribution.py:54
 msgid "Transport lead time"
@@ -4903,7 +4903,7 @@ msgstr "quantité fixée"
 msgid "Constant part of the capacity consumption (bucketized resources only)"
 msgstr ""
 "Partie constante de la consommation de capacité (seulement pour les "
-"ressources de type maille temporelle)"
+"ressources de type maille de temps)"
 
 #: input/models/operation.py:433
 msgid "Name of this operation resource to identify alternates"
@@ -4990,13 +4990,13 @@ msgstr "Relation de quantité entre les opérations"
 #: input/models/supplier.py:90 input/models/supplier.py:93
 #: input/views/manufacturing.py:1363 input/views/purchasing.py:160
 msgid "soft safety lead time"
-msgstr "temps d'approvisionnement non-contraint"
+msgstr "délai de livraison de sécurité non-contraint"
 
 #: input/models/operation.py:651 input/models/operation.py:654
 #: input/models/supplier.py:96 input/models/supplier.py:99
 #: input/views/manufacturing.py:1367 input/views/purchasing.py:155
 msgid "hard safety lead time"
-msgstr "temps d'approvisionnement contraint"
+msgstr "délai de livraison de sécurité contraint"
 
 #: input/models/operation.py:675
 msgid "operation dependency"
@@ -5681,7 +5681,7 @@ msgstr "réapprovisionnement maximal période de couverture"
 
 #: inventoryplanning/models.py:76 inventoryplanning/views.py:275
 msgid "lead time deviation"
-msgstr "déviation du temps de réapprovisionnement"
+msgstr "déviation du délai de livraison"
 
 #: inventoryplanning/models.py:79 inventoryplanning/views.py:278
 msgid "demand deviation"

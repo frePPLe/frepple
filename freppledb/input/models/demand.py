@@ -101,9 +101,7 @@ class Demand(AuditModel):
         on_delete=models.SET_NULL,
         help_text=_("Operation used to satisfy this demand"),
     )
-    quantity = models.DecimalField(
-        _("quantity"), max_digits=20, decimal_places=8, default=1
-    )
+    quantity = models.DecimalField(_("quantity"), max_digits=20, decimal_places=8)
     priority = models.IntegerField(
         _("priority"),
         default=10,

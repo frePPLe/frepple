@@ -68,7 +68,7 @@ class Task(models.Model):
         null=True,
         editable=False,
         related_name="tasks",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
     )
     processid = models.IntegerField("processid", editable=False, null=True)
 
@@ -98,7 +98,7 @@ class ScheduledTask(models.Model):
         null=True,
         editable=False,
         related_name="schedules",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
     )
     email_failure = models.CharField(
         "email_failure", max_length=300, null=True, blank=True

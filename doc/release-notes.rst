@@ -21,6 +21,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: User interface
 
+- | Ability to delete users.
+  | Until now you could not delete users. You could already mark them inactive
+    to prevent them from logging in, but that's not good enough.
+
 - | Bug fix in scenario promotion. When promoting a scenario as the production
     scenario the user preferences and group permissions where copied into
     the production scenario, which isn't right.

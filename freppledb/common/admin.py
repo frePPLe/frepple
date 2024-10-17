@@ -80,8 +80,8 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
         return self.readonly_fields
 
     def has_delete_permission(self, request, obj=None):
-        # Users can't be deleted. Just mark them as inactive instead
-        return False
+        # Admin user can't be deleted.
+        return not obj or obj.username != "admin"
 
 
 class MyGroupAdminForm(forms.ModelForm):

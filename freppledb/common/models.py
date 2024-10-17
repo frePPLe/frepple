@@ -712,7 +712,8 @@ class UserPreference(models.Model):
 
 @receiver(pre_delete, sender=User)
 def delete_user(sender, instance, **kwargs):
-    raise PermissionDenied
+    if instance.username == "admin":
+        raise PermissionDenied
 
 
 class Comment(models.Model):

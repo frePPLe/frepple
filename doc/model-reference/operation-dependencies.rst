@@ -25,11 +25,11 @@ blockedby             operation         This operation needs to be completed bef
 quantity              double            | Defines the quantity relation between both operations.
                                         | Default value is 1, i.e. the quantity of both
                                           operations is identical.
-safety_leadtime       duration          | Defined a desired time gap between both operations.
-                                        | This time gap can be compressed in case this allows
+safety_leadtime       duration          | Defines a desired time gap between both operations.
+                                        | This time gap is a soft constraint. It can be compressed 
                                           to deliver an order faster.
                                         | Default is 0 seconds.
-hard_safety_leadtime  duration          | Defined a minimum time gap between both operations.
+hard_safety_leadtime  duration          | Shortest time that must pass between both operations.
                                         | This time gap is a hard constraint.
                                         | Default is 0 seconds.
 ===================== ================= ===========================================================

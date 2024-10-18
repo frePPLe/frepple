@@ -146,8 +146,8 @@ following data elements from the old instance:
 
 .. _external_authentication:
 
-Integrate external OAuth2 authentication
-----------------------------------------
+Integrate external authentication (Oauth2, Microsoft)
+-----------------------------------------------------
 
 Enterprises are moving towards authentication methods like OAuth, SAML,
 OpenID, ... with multi-factor authentication to protect data access,
@@ -199,7 +199,7 @@ django-allauth will have pretty similar instructions.
         SITE_ID = 1
         LOGIN_URL = "/accounts/auth0/login/"
         LOGIN_REDIRECT_URL = "/accounts/auth0/login/"
-        LOGOUT_REDIRECT_URL = "/accounts/auth0/login/"
+        LOGOUT_REDIRECT_URL = "/accounts/logout/"
         ACCOUNT_LOGOUT_ON_GET = True
         ACCOUNT_EMAIL_VERIFICATION = "none"
         SOCIALACCOUNT_AUTO_SIGNUP = True
@@ -261,3 +261,10 @@ django-allauth will have pretty similar instructions.
    | Hint: Define only a minimal set of permissions to the group. You can
      always grant additional permissions later on to the handful of
      super-users that need those.
+
+#. | Authorization is a different topic, closely related to authentication.
+   | Authentication determines whether users are who they claim to be.
+   | Authorization determines what users can and cannot access.
+   | Authorization can be handled externally or in frePPLe. The file
+     https://github.com/frePPLe/frepple/blob/master/freppledb/external_auth/auth.py
+     may need to be tailored to handle your requirements. 

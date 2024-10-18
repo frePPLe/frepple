@@ -54,6 +54,20 @@ class CustomAdapter(DefaultAccountAdapter):
         # Disable default behavior of displaying a message upon login
         return
 
+    # def is_open_for_signup(self, request):
+    #     """
+    #     If the external authentication also handles authorization, you leave
+    #     this function commented out.
+
+    #     If you'll manage authorization in frepple, you need to:
+    #     - Uncomment this function
+    #     - Assure the setting SOCIALACCOUNT_AUTO_SIGNUP is set to False
+    #       in your djangosettings.py
+    #     Note that external accounts will be linked to the frepple users by
+    #     their email. Make sure each frepple user has a unique email.
+    #     """
+    #     return False
+
 
 class CustomAccountAdapter(DefaultSocialAccountAdapter):
     def pre_social_login(self, request, sociallogin):

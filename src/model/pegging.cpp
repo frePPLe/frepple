@@ -381,37 +381,19 @@ void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
 
 PeggingDemandIterator::PeggingDemandIterator(const OperationPlan* opplan) {
   initType(metadata);
-
-  map<Demand*, vector<pair<double, double>>&> mapvar;
-  vector<pair<double, double>> pairvect;
-
   // Walk over all downstream operationplans till demands are found
   for (PeggingIterator p(opplan); p; ++p) {
     const OperationPlan* m = p.getOperationPlan();
     if (!m || (m != m->getTopOwner())) continue;
     Demand* dmd = m->getTopOwner()->getDemand();
     if (!dmd || p.getQuantity() < ROUNDING_ERROR) continue;
-    auto elem = mapvar.find(dmd);
-
-    if (elem == mapvar.end()) {
-      // This is a new demand
-      pairvect.clear();
-      pairvect.emplace_back(
-          make_pair(p.getOffset(), p.getOffset() + p.getQuantity()));
-      mapvar.insert({dmd, pairvect});
-    } else {
-      // We already saw that demand, let's add the offset/quantity to the vector
-      elem->second.push_back(
-          make_pair(p.getOffset(), p.getOffset() + p.getQuantity()));
-    }
-  }
-
-  // iterate over all demands and compute the pegged quantity
-  // based on each delivery order offset and quantity
-  map<Demand*, vector<pair<double, double>>&>::iterator it;
-  for (it = mapvar.begin(); it != mapvar.end(); it++) {
-    double quantity = sumOfIntervals(it->second);
-    dmds.insert({it->first, quantity});
+    map<Demand*, double>::iterator i = dmds.lower_bound(dmd);
+    if (i != dmds.end() && i->first == dmd)
+      // Pegging to the same demand multiple times
+      i->second += p.getQuantity();
+    else
+      // Adding demand
+      dmds.insert(i, make_pair(dmd, p.getQuantity()));
   }
 }
 

@@ -9914,35 +9914,6 @@ class PeggingDemandIterator : public NonCopyable, public Object {
 
   double getQuantity() const { return iter != dmds.end() ? iter->second : 0.0; }
 
-  double sumOfIntervals(vector<pair<double, double>>& intervals) {
-    if (intervals.empty()) return 0;
-
-    // Sort intervals by their starting point
-    sort(intervals.begin(), intervals.end());
-
-    double totalSum = 0;
-    double currentStart = intervals[0].first;
-    double currentEnd = intervals[0].second;
-
-    for (size_t i = 1; i < intervals.size(); ++i) {
-      double start = intervals[i].first;
-      double end = intervals[i].second;
-
-      if (start <= currentEnd) {  // Overlapping intervals
-        currentEnd = max(currentEnd, end);
-      } else {  // Non-overlapping interval
-        totalSum += (currentEnd - currentStart);
-        currentStart = start;
-        currentEnd = end;
-      }
-    }
-
-    // Add the last merged interval
-    totalSum += (currentEnd - currentStart);
-
-    return totalSum;
-  }
-
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
     m->addPointerField<Cls, Demand>(Tags::demand, &Cls::getDemand, nullptr,

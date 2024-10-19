@@ -381,19 +381,52 @@ void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
 
 PeggingDemandIterator::PeggingDemandIterator(const OperationPlan* opplan) {
   initType(metadata);
+
+  // a map to track the demands pegged to that opplan
+  // for every demand we are also tracking the different delivery orders
+  // in another map with the pegged offet and qty from that delivery order
+  map<Demand*, map<const OperationPlan*, vector<pair<double, double>>>> mapvar;
+
   // Walk over all downstream operationplans till demands are found
   for (PeggingIterator p(opplan); p; ++p) {
     const OperationPlan* m = p.getOperationPlan();
     if (!m || (m != m->getTopOwner())) continue;
     Demand* dmd = m->getTopOwner()->getDemand();
+
     if (!dmd || p.getQuantity() < ROUNDING_ERROR) continue;
-    map<Demand*, double>::iterator i = dmds.lower_bound(dmd);
-    if (i != dmds.end() && i->first == dmd)
-      // Pegging to the same demand multiple times
-      i->second += p.getQuantity();
-    else
-      // Adding demand
-      dmds.insert(i, make_pair(dmd, p.getQuantity()));
+    double x = p.getOffset();
+    double y = p.getOffset() + p.getQuantity();
+    auto elem = mapvar.find(dmd);
+
+    if (elem == mapvar.end()) {
+      // 1) This is a new demand
+      vector<pair<double, double>> vec{{x, y}};
+      map<const OperationPlan*, vector<pair<double, double>>> dlvr_map;
+      dlvr_map.insert({m, vec});
+      mapvar.insert({dmd, dlvr_map});
+    } else {
+      // 2) We already saw that demand
+      map<const OperationPlan*, vector<pair<double, double>>> dlvr_map =
+          elem->second;
+      auto elem2 = dlvr_map.find(m);
+      // 2.a) We already saw that demand but we never saw that delivery order
+      if (elem2 == dlvr_map.end()) {
+        vector<pair<double, double>> vec{{x, y}};
+        dlvr_map.insert({m, vec});
+      } else {
+        // 2.b) We already saw that demand and we also saw that delivery order
+        elem2->second.emplace_back(make_pair(x, y));
+      }
+    }
+  }
+  // iterate over all demands and compute the pegged quantity
+  // by excluding overlapping intervals
+  for (const auto& it : mapvar) {
+    double quantity = 0;
+    for (const auto& it2 : it.second) {
+      quantity += sumOfIntervals(it2.second);
+    }
+    dmds.insert({it.first, quantity});
   }
 }
 

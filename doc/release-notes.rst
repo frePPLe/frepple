@@ -30,6 +30,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     the production scenario, which isn't right.
   | There was also an issue with custom reports after a scenario promotion.
 
+.. rubric:: System administration
+
+- | The support for external authentication (introduced in the previous release)
+    has now been validated with Microsoft Entra ID (formerly known as Azure AD).
+
 9.3.0 (2024-09-27)
 ==================
 

@@ -423,7 +423,7 @@ PeggingDemandIterator::PeggingDemandIterator(const OperationPlan* opplan) {
   // by excluding overlapping intervals
   for (const auto& it : mapvar) {
     double quantity = 0;
-    for (const auto& it2 : it.second) {
+    for (auto& it2 : it.second) {
       quantity += sumOfIntervals(it2.second);
     }
     dmds.insert({it.first, quantity});
@@ -438,6 +438,36 @@ PeggingDemandIterator* PeggingDemandIterator::next() {
     ++iter;
   if (iter == dmds.end()) return nullptr;
   return this;
+}
+
+double PeggingDemandIterator::sumOfIntervals(
+    const vector<pair<double, double>>& intervals) {
+  if (intervals.empty()) return 0;
+
+  // Sort intervals by their starting point
+  sort(intervals.begin(), intervals.end());
+
+  double totalSum = 0;
+  double currentStart = intervals[0].first;
+  double currentEnd = intervals[0].second;
+
+  for (auto& i : intervals) {
+    double start = i.first;
+    double end = i.second;
+
+    if (start <= currentEnd) {  // Overlapping intervals
+      currentEnd = max(currentEnd, end);
+    } else {  // Non-overlapping interval
+      totalSum += (currentEnd - currentStart);
+      currentStart = start;
+      currentEnd = end;
+    }
+  }
+
+  // Add the last merged interval
+  totalSum += (currentEnd - currentStart);
+
+  return totalSum;
 }
 
 }  // namespace frepple

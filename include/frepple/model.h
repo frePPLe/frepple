@@ -765,7 +765,7 @@ class HasProblems {
 class Problem::List {
  public:
   /* Constructor. */
-  List() {};
+  List(){};
 
   /* Destructor. */
   ~List() { clear(); }
@@ -9834,17 +9834,17 @@ class PeggingIterator : public NonCopyable, public Object {
     short level;
     Duration gap;
 
-    state() {};
+    state(){};
 
     state(const OperationPlan* op, double q, double o, short l, Duration g)
-        : opplan(op), quantity(q), offset(o), level(l), gap(g) {};
+        : opplan(op), quantity(q), offset(o), level(l), gap(g){};
 
     state(const state& other)
         : opplan(other.opplan),
           quantity(other.quantity),
           offset(other.offset),
           level(other.level),
-          gap(other.gap) {};
+          gap(other.gap){};
 
     // Comparison operator
     bool operator<(const state& other) const {
@@ -9889,6 +9889,8 @@ class PeggingDemandIterator : public NonCopyable, public Object {
   demandmap::const_iterator iter;
   bool first = true;
 
+  double sumOfIntervals(const vector<pair<double, double>>& intervals);
+
  public:
   /* Constructor. */
   PeggingDemandIterator(const OperationPlan*);
@@ -9913,35 +9915,6 @@ class PeggingDemandIterator : public NonCopyable, public Object {
   }
 
   double getQuantity() const { return iter != dmds.end() ? iter->second : 0.0; }
-
-  double sumOfIntervals(vector<pair<double, double>> intervals) {
-    if (intervals.empty()) return 0;
-
-    // Sort intervals by their starting point
-    sort(intervals.begin(), intervals.end());
-
-    double totalSum = 0;
-    double currentStart = intervals[0].first;
-    double currentEnd = intervals[0].second;
-
-    for (size_t i = 1; i < intervals.size(); ++i) {
-      double start = intervals[i].first;
-      double end = intervals[i].second;
-
-      if (start <= currentEnd) {  // Overlapping intervals
-        currentEnd = max(currentEnd, end);
-      } else {  // Non-overlapping interval
-        totalSum += (currentEnd - currentStart);
-        currentStart = start;
-        currentEnd = end;
-      }
-    }
-
-    // Add the last merged interval
-    totalSum += (currentEnd - currentStart);
-
-    return totalSum;
-  }
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {

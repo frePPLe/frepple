@@ -241,23 +241,27 @@ class Command(BaseCommand):
                     os.environ[label[0]] = "1"
 
             # Set environment variables
-            if options["env"]:
-                task.arguments = "--constraint=%s --plantype=%d --env=%s" % (
-                    constraintString(constraint),
-                    plantype,
-                    options["env"],
-                )
-                for i in options["env"].split(","):
-                    j = i.split("=")
-                    if len(j) == 1:
-                        os.environ[j[0]] = "1"
-                    else:
-                        os.environ[j[0]] = j[1]
-            else:
-                task.arguments = "--constraint=%s --plantype=%d" % (
-                    constraintString(constraint),
-                    plantype,
-                )
+            if task.name != "odoo_import":
+                if options["env"]:
+                    task.arguments = (
+                        "--constraint=%s --plantype=%d --env=%s"
+                        % (
+                            constraintString(constraint),
+                            plantype,
+                            options["env"],
+                        )                    
+                    )
+                    for i in options["env"].split(","):
+                        j = i.split("=")
+                        if len(j) == 1:
+                            os.environ[j[0]] = "1"
+                        else:
+                            os.environ[j[0]] = j[1]
+                else:
+                    task.arguments = "--constraint=%s --plantype=%d" % (
+                        constraintString(constraint),
+                        plantype,
+                    )
             if options["background"]:
                 task.arguments += " --background"
             if options["daemon"]:

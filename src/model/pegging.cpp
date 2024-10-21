@@ -424,7 +424,8 @@ PeggingDemandIterator::PeggingDemandIterator(const OperationPlan* opplan) {
   for (const auto& it : mapvar) {
     double quantity = 0;
     for (auto& it2 : it.second) {
-      quantity += sumOfIntervals(it2.second);
+      quantity +=
+          sumOfIntervals(const_cast<vector<pair<double, double>>&>(it2.second));
     }
     dmds.insert({it.first, quantity});
   }
@@ -441,7 +442,7 @@ PeggingDemandIterator* PeggingDemandIterator::next() {
 }
 
 double PeggingDemandIterator::sumOfIntervals(
-    const vector<pair<double, double>>& intervals) {
+    vector<pair<double, double>>& intervals) {
   if (intervals.empty()) return 0;
 
   // Sort intervals by their starting point

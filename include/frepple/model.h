@@ -9889,7 +9889,7 @@ class PeggingDemandIterator : public NonCopyable, public Object {
   demandmap::const_iterator iter;
   bool first = true;
 
-  double sumOfIntervals(const vector<pair<double, double>>& intervals);
+  double sumOfIntervals(vector<pair<double, double>>& intervals);
 
  public:
   /* Constructor. */

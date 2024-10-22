@@ -392,37 +392,15 @@ PeggingDemandIterator::PeggingDemandIterator(const OperationPlan* opplan) {
     const OperationPlan* m = p.getOperationPlan();
     if (!m || (m != m->getTopOwner())) continue;
     Demand* dmd = m->getTopOwner()->getDemand();
-
-    if (!dmd || p.getQuantity() < ROUNDING_ERROR) continue;
-    double x = p.getOffset();
-    double y = p.getOffset() + p.getQuantity();
-    auto elem = mapvar.find(dmd);
-
-    if (elem == mapvar.end()) {
-      // 1) This is a new demand
-      vector<pair<double, double>> vec{{x, y}};
-      map<const OperationPlan*, vector<pair<double, double>>> dlvr_map;
-      dlvr_map.insert({m, vec});
-      mapvar.insert({dmd, dlvr_map});
-    } else {
-      // 2) We already saw that demand
-      map<const OperationPlan*, vector<pair<double, double>>> dlvr_map =
-          elem->second;
-      auto elem2 = dlvr_map.find(m);
-      // 2.a) We already saw that demand but we never saw that delivery order
-      if (elem2 == dlvr_map.end()) {
-        vector<pair<double, double>> vec{{x, y}};
-        dlvr_map.insert({m, vec});
-      } else {
-        // 2.b) We already saw that demand and we also saw that delivery order
-        elem2->second.emplace_back(make_pair(x, y));
-      }
-    }
+    if (dmd && p.getQuantity() > ROUNDING_ERROR)
+      mapvar[dmd][m].emplace_back(
+          make_pair(p.getOffset(), p.getOffset() + p.getQuantity()));
   }
-  // iterate over all demands and compute the pegged quantity
+
+  // Iterate over all demands and compute the pegged quantity
   // by excluding overlapping intervals
   for (const auto& it : mapvar) {
-    double quantity = 0;
+    double quantity = 0.0;
     for (auto& it2 : it.second) {
       quantity +=
           sumOfIntervals(const_cast<vector<pair<double, double>>&>(it2.second));
@@ -443,30 +421,29 @@ PeggingDemandIterator* PeggingDemandIterator::next() {
 
 double PeggingDemandIterator::sumOfIntervals(
     vector<pair<double, double>>& intervals) {
-  if (intervals.empty()) return 0;
+  if (intervals.empty()) return 0.0;
 
   // Sort intervals by their starting point
   sort(intervals.begin(), intervals.end());
 
-  double totalSum = 0;
+  double totalSum = 0.0;
   double currentStart = intervals[0].first;
   double currentEnd = intervals[0].second;
 
-  for (auto& i : intervals) {
-    double start = i.first;
-    double end = i.second;
-
+  for (size_t i = 1; i < intervals.size(); ++i) {
+    double start = intervals[i].first;
+    double end = intervals[i].second;
     if (start <= currentEnd) {  // Overlapping intervals
       currentEnd = max(currentEnd, end);
     } else {  // Non-overlapping interval
-      totalSum += (currentEnd - currentStart);
+      totalSum += currentEnd - currentStart;
       currentStart = start;
       currentEnd = end;
     }
   }
 
   // Add the last merged interval
-  totalSum += (currentEnd - currentStart);
+  totalSum += currentEnd - currentStart;
 
   return totalSum;
 }

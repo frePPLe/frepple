@@ -20,7 +20,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
  */
 
-const sass = require('node-sass');
+const sass = require('sass');
 
 function themeconfig(themefolder, themename) {
   // Auxilary function to generate the task configuration for a single theme.

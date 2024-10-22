@@ -1117,7 +1117,7 @@ function forecastController($scope, $http, $q, $location) {
 
   function changeEdit() {
     var disabled = $scope.edit_measure == ''
-      || ($scope.edit_mode == 0 && $scope.edit_set == '')
+      || ($scope.edit_mode == 0 && ($scope.edit_set === '' || $scope.edit_set === null))
       || ($scope.edit_mode == 1 && !$scope.edit_inc)
       || ($scope.edit_mode == 2 && !$scope.edit_inc_perc);
 

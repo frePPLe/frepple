@@ -4299,7 +4299,7 @@ class Command {
    * command yet. The execute() method needs to be called explicitly to
    * do so.
    */
-  Command() {};
+  Command(){};
 
   /* This method makes the change permanent.
    * A couple of notes on how this method should be implemented by the
@@ -4317,7 +4317,7 @@ class Command {
    */
   virtual void rollback() {};
 
-  virtual ~Command() {};
+  virtual ~Command(){};
 
   Command* getNext() const { return next; }
 
@@ -5617,7 +5617,7 @@ class Association {
     C* last = nullptr;
 
    public:
-    List() {};
+    List(){};
 
     bool empty() const { return first == nullptr; }
   };
@@ -5627,7 +5627,7 @@ class Association {
   class ListA : public List {
    public:
     /* Constructor. */
-    ListA() {};
+    ListA(){};
 
     /* An iterator over the associated objects. */
     class iterator {
@@ -5635,7 +5635,7 @@ class Association {
       C* nodeptr;
 
      public:
-      iterator(C* n) : nodeptr(n) {};
+      iterator(C* n) : nodeptr(n){};
 
       C& operator*() const { return *nodeptr; }
 
@@ -5669,7 +5669,7 @@ class Association {
       C* nodeptr;
 
      public:
-      const_iterator(C* n) : nodeptr(n) {};
+      const_iterator(C* n) : nodeptr(n){};
 
       const C& operator*() const { return *nodeptr; }
 
@@ -5759,7 +5759,7 @@ class Association {
   class ListB : public List {
    public:
     /* Constructor. */
-    ListB() {};
+    ListB(){};
 
     /* An iterator over the associated objects. */
     class iterator {
@@ -5767,7 +5767,7 @@ class Association {
       C* nodeptr;
 
      public:
-      iterator(C* n) : nodeptr(n) {};
+      iterator(C* n) : nodeptr(n){};
 
       C& operator*() const { return *nodeptr; }
 
@@ -5801,7 +5801,7 @@ class Association {
       C* nodeptr;
 
      public:
-      const_iterator(C* n) : nodeptr(n) {};
+      const_iterator(C* n) : nodeptr(n){};
 
       const C& operator*() const { return *nodeptr; }
 
@@ -5902,7 +5902,7 @@ class Association {
 
    public:
     /* Constructor. */
-    Node() {};
+    Node(){};
 
     /* Constructor. */
     Node(A* a, B* b, const ListA& al, const ListB& bl) : ptrA(a), ptrB(b) {
@@ -6068,10 +6068,12 @@ void HasHierarchy<T>::setOwner(T* fam) {
   // Avoid loops in the hierarchy. For instance, HasHierarchy A points to B
   // as its owner, and B points to A.
   for (T* t = fam; t; t = t->parent)
-    if (t == this)
-      throw DataException("Invalid hierarchy relation between \"" +
-                          this->getName() + "\" and \"" + fam->getName() +
-                          "\"");
+    if (t == this) {
+      logger << "Warning: Ignoring invalid hierarchy relation between \""
+             << this->getName() << "\" and \"" << fam->getName() << "\""
+             << endl;
+      return;
+    }
 
   // Clean up previous owner, if any
   if (parent) {
@@ -6878,7 +6880,7 @@ class MetaFieldFunction : public MetaFieldBase {
  public:
   MetaFieldFunction(const Keyword& n, HandlerFunction f,
                     unsigned int c = DONT_SERIALIZE)
-      : MetaFieldBase(n, c), thefunction(f) {};
+      : MetaFieldBase(n, c), thefunction(f){};
 
   virtual void setField(Object* me, const DataValue& el,
                         CommandManager* cmd) const {}
@@ -6900,7 +6902,7 @@ class MetaFieldIterator : public MetaFieldBase {
 
   MetaFieldIterator(const Keyword& g, const Keyword& n,
                     getFunction getfunc = nullptr, unsigned int c = BASE)
-      : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n) {};
+      : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n){};
 
   virtual void setField(Object* me, const DataValue& el,
                         CommandManager* cmd) const {}
@@ -7005,7 +7007,7 @@ class MetaFieldIteratorClass : public MetaFieldBase {
 
   MetaFieldIteratorClass(const Keyword& g, const Keyword& n,
                          getFunction getfunc = nullptr, unsigned int c = BASE)
-      : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n) {};
+      : MetaFieldBase(g, c), getf(getfunc), singleKeyword(n){};
 
   virtual void setField(Object* me, const DataValue& el,
                         CommandManager* cmd) const {}

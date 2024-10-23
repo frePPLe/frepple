@@ -804,6 +804,18 @@ def extensionfilter(val):
     return Path(val).suffix[1:].lower()
 
 
+#
+# A filter to order a dictionary by key
+#
+@register.filter(name="sort_dictionary_by_key")
+def sort_dictionary_by_key(input_dictionary):
+    return dict(sorted(input_dictionary.items()))
+
+
+sort_dictionary_by_key.is_safe = True
+
+
+
 @register.simple_tag(name="render_field_bootstrap")
 def render_field_bootstrap(field, **kwargs):
     class BootstrapFieldRenderer(renderers.FieldRenderer):

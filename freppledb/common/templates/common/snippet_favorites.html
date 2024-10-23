@@ -1,6 +1,6 @@
 {% load i18n %}
 <ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
-    {% if preferences.favorites %}
+    {% if preferences.favorites|sort_dictionary_by_key %}
         {% for fav in preferences.favorites %}
         <li><a class="dropdown-item" onclick="favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
         {% endfor %}

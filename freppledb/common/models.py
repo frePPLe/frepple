@@ -385,7 +385,7 @@ class User(AbstractUser):
         [("auto", _("Detect automatically"))] + list(settings.LANGUAGES)
     )
     language = models.CharField(
-        _("language"), max_length=10, choices=languageList, default="auto"
+        _("language"), max_length=10, choices=languageList, default=languageList[1][0]
     )
     theme = models.CharField(
         _("theme"),

@@ -13,9 +13,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 17, 18: Improvements for multi-warehouse odoo configurations.
 
-- | 17, 18: Ability to export a remark from frepple into odoo on 
+- | 17, 18: Ability to export a remark from frepple into odoo on
     manufacturing orders, distribution orders or purchase orders.
   | The remark shows up in the "source" field in odoo.
+
+- | 17, 18: Blanket order is now populated in odoo when exporting purchase orders from frePPLe.
 
 - | Extra robustness to deal with control characters in the odoo data.
 

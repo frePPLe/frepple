@@ -798,6 +798,9 @@ class CalendarBucketList(GridReport):
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
             reportclass.attr_sql = ""
+            # Adding custom calendar bucket attributes
+            for f in getAttributeFields(CalendarBucket):
+                reportclass.rows += (f,)
             # Adding custom calendar attributes
             for f in getAttributeFields(
                 Calendar,

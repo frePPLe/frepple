@@ -304,6 +304,8 @@ class Command(BaseCommand):
             os.environ["PGTZ"] = settings.TIME_ZONE
 
             # Prepare environment
+            if task.name == "odoo_import":
+                os.environ["nowebservice"] = "1"
             os.environ["FREPPLE_PLANTYPE"] = str(plantype)
             os.environ["FREPPLE_CONSTRAINT"] = str(constraint)
             os.environ["FREPPLE_TASKID"] = str(task.id)

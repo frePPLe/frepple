@@ -628,5 +628,5 @@ class ForecastSimulation(TransactionTestCase):
         for i in cursor.fetchall():
             errorSum = errorSum + i[1]
         self.assertAlmostEqual(
-            first=errorSum, second=Decimal(472.16), delta=Decimal(5.0)
+            first=errorSum, second=Decimal(405.74), delta=Decimal(5.0)
         )

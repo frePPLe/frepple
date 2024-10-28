@@ -477,7 +477,7 @@ jQuery.extend($.fn.fmatter, {
         result += ', ';
       if (cellvalue[i][2] == 'F') {
         result += cellvalue[i][0] + " : " + $.jgrid.htmlEncode(cellvalue[i][1])
-          + "<a href=\"" + url_prefix + "/detail/forecast/forecast/" + admin_escape(cellvalue[i][1])
+          + "<a href=\"" + url_prefix + "/detail/forecast/forecast/" + admin_escape(cellvalue[i][1]).substring(0, admin_escape(cellvalue[i][1]).length - 13) + "/"
           + "\" onclick='event.stopPropagation()' objectid='" + $.jgrid.htmlEncode(cellvalue[i][1]).substring(0, $.jgrid.htmlEncode(cellvalue[i][1]).length - 13) + "'>"
           + "<span class='ps-2 fa fa-caret-right' role='forecast/forecast'></span></a>";
       }

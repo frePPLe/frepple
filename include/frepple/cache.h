@@ -150,7 +150,10 @@ class Cache : public Object {
   void printStatus();
 
   void setMaximum(unsigned long s) {
-    if (s <= 0) throw DataException("Cache object limit must be bigger than 0");
+    if (s <= 0) {
+      logger << "Warning: Cache object limit must be bigger than 0" << endl;
+      return;
+    }
     max_objects = s;
     if (count > max_objects) {
       work_to_do.notify_all();

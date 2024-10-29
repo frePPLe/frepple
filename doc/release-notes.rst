@@ -21,6 +21,12 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | Extra robustness to deal with control characters in the odoo data.
 
+.. rubric:: Production planning
+
+- | A lot of bad data condititions that used to abort the planning run are now replaced
+    with warnings instead. Ignoring such data errors will make the planning more robust
+    and resilient.
+
 .. rubric:: User interface
 
 - | Ability to delete users.

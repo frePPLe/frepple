@@ -2,7 +2,7 @@
  *                                                                         *
  * Copyright (C) 2007-2015 by frePPLe bv                                   *
  *                                                                         *
-* Permission is hereby granted, free of charge, to any person obtaining   *
+ * Permission is hereby granted, free of charge, to any person obtaining   *
  * a copy of this software and associated documentation files (the         *
  * "Software"), to deal in the Software without restriction, including     *
  * without limitation the rights to use, copy, modify, merge, publish,     *
@@ -180,24 +180,21 @@ CalendarBucket::~CalendarBucket() {
 }
 
 void CalendarBucket::setEnd(const Date d) {
-  // Check
   if (d < startdate)
-    throw DataException("Calendar bucket end must be later than its start");
-
-  // Update
-  enddate = d;
+    logger << "Warning: Calendar bucket end must be later than its start"
+           << endl;
+  else
+    enddate = d;
 }
 
 void CalendarBucket::setStart(const Date d) {
-  // Check
   if (d > enddate)
-    throw DataException("Calendar bucket start must be earlier than its end");
-
-  // Update the field
-  startdate = d;
-
-  // Keep the list in sorted order
-  updateSort();
+    logger << "Warning: Calendar bucket start must be earlier than its end"
+           << endl;
+  else {
+    startdate = d;
+    updateSort();
+  }
 }
 
 void CalendarBucket::updateSort() {

@@ -209,16 +209,17 @@ class PopulateForecastTable(PlanTask):
                 # Removing any forecast record for leaf combinations where (item,location,customer) in the demand
                 cursor.execute(
                     """
-                    with cte as (select item_id, location_id from forecastplan
-                      where value ?| array['ordersadjustment','forecastoverride'])
                     delete from forecast
-                    using (select item_id, location_id, customer_id from forecast
-                          except select distinct item_id, location_id, customer_id from demand) d, cte
-                    where forecast.customer_id != %s
-                    and forecast.item_id = d.item_id
-                    and forecast.location_id = d.location_id
-                    and forecast.customer_id = d.customer_id
-                    and (forecast.item_id, forecast.location_id) not in (select * from cte)
+                    where customer_id != %s
+                    and not exists (select 1 from demand
+                                    where demand.item_id = forecast.item_id
+                                    and demand.location_id =forecast.location_id
+                                and demand.customer_id = forecast.customer_id)
+                    and not exists (select 1 from forecastplan
+                                    where forecastplan.item_id = forecast.item_id
+                                    and forecastplan.location_id =forecast.location_id
+                                    and forecastplan.customer_id =forecast.customer_id
+                                    and forecastplan.value ?| array['ordersadjustment','forecastoverride'])
                     """,
                     (parentCustomer,),
                 )

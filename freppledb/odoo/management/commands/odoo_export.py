@@ -125,29 +125,44 @@ class Command(BaseCommand):
             task.save(using=self.database)
 
             # Get parameters
+            self.odoo_user = getattr(settings, "ODOO_USER", {}).get(
+                self.database, None
+            ) or Parameter.getValue("odoo.user", self.database)
+            self.odoo_password = getattr(settings, "ODOO_PASSWORDS", {}).get(
+                self.database, None
+            ) or Parameter.getValue("odoo.password", self.database)
+            self.odoo_db = getattr(settings, "ODOO_DB", {}).get(
+                self.database, None
+            ) or Parameter.getValue("odoo.db", self.database, None)
+            self.odoo_url = (
+                getattr(settings, "ODOO_URL", {}).get(self.database, None)
+                or Parameter.getValue("odoo.url", self.database, "")
+            ).strip()
+            if not self.odoo_url.endswith("/"):
+                self.odoo_url = self.odoo_url + "/"
+            self.odoo_company = getattr(settings, "ODOO_COMPANY", {}).get(
+                self.database, None
+            ) or Parameter.getValue("odoo.company", self.database, None)
+            self.singlecompany = getattr(settings, "ODOO_SINGLECOMPANY", {}).get(
+                self.database, None
+            ) or Parameter.getValue("odoo.singlecompany", self.database, "false")
+            self.odoo_language = getattr(settings, "ODOO_SINGLECOMPANY", {}).get(
+                self.database, None
+            ) or Parameter.getValue("odoo.language", self.database, "en_US")
+            self.odoo_delta = Parameter.getValue("odoo.delta", self.database, "999")
+
+            # Check parameters
             missing = []
-            self.odoo_user = Parameter.getValue("odoo.user", self.database)
             if not self.odoo_user:
                 missing.append("odoo_user")
-            self.odoo_password = settings.ODOO_PASSWORDS.get(self.database, None)
-            if not self.odoo_password:
-                self.odoo_password = Parameter.getValue("odoo.password", self.database)
             if not self.odoo_password:
                 missing.append("odoo_password")
-            self.odoo_db = Parameter.getValue("odoo.db", self.database)
             if not self.odoo_db:
                 missing.append("odoo_db")
-            self.odoo_url = Parameter.getValue("odoo.url", self.database)
             if not self.odoo_url:
                 missing.append("odoo_url")
-            if not self.odoo_url.endswith("/"):
-                self.odoo_url += "/"
-            self.odoo_company = Parameter.getValue("odoo.company", self.database)
             if not self.odoo_company:
                 missing.append("odoo_company")
-            self.odoo_language = Parameter.getValue(
-                "odoo.language", self.database, "en_US"
-            )
             if not self.odoo_language:
                 missing.append("odoo_language")
             if missing:

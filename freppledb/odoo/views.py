@@ -52,14 +52,38 @@ def Upload(request):
     try:
         # Prepare a message for odoo
         boundary = email.generator._make_boundary()
-        odoo_db = Parameter.getValue("odoo.db", request.database)
-        odoo_company = Parameter.getValue("odoo.company", request.database)
-        odoo_user = Parameter.getValue("odoo.user", request.database)
-        odoo_password = settings.ODOO_PASSWORDS.get(request.database, None)
-        if not odoo_password:
-            odoo_password = Parameter.getValue("odoo.password", request.database)
-        if not odoo_db or not odoo_company or not odoo_user or not odoo_password:
+
+        odoo_db = (
+            getattr(settings, "ODOO_DB", {}).get(request.database, None)
+            or Parameter.getValue("odoo.db", request.database, None)
+        ).strip()
+        odoo_company = (
+            getattr(settings, "ODOO_COMPANY", {}).get(request.database, None)
+            or Parameter.getValue("odoo.company", request.database, None)
+        ).strip()
+        odoo_user = (
+            getattr(settings, "ODOO_USER", {}).get(request.database, None)
+            or Parameter.getValue("odoo.user", request.database)
+        ).strip()
+        odoo_password = (
+            getattr(settings, "ODOO_PASSWORDS", {}).get(request.database, None)
+            or Parameter.getValue("odoo.password", request.database)
+        ).strip()
+        odoo_url = (
+            getattr(settings, "ODOO_URL", {}).get(request.database, None)
+            or Parameter.getValue("odoo.url", request.database, "")
+        ).strip()
+        if not odoo_url.endswith("/"):
+            odoo_url = odoo_url + "/"
+        if (
+            not odoo_db
+            or not odoo_company
+            or not odoo_user
+            or not odoo_password
+            or not odoo_url
+        ):
             return HttpResponseServerError(_("Invalid configuration parameters"))
+
         token = jwt.encode(
             {"exp": round(time.time()) + 600, "user": odoo_user},
             settings.DATABASES[request.database].get(
@@ -313,13 +337,8 @@ def Upload(request):
             ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
         )
         logger.debug("Uploading %d bytes of planning results to Odoo" % size)
-        url = Parameter.getValue("odoo.url", request.database)
         req = Request(
-            "%s%sfrepple/xml/"
-            % (
-                url,
-                "/" if not url.endswith("/") else "",
-            ),
+            "%sfrepple/xml/" % odoo_url,
             data=body,
             headers={
                 "Authorization": "Basic %s" % encoded.decode("ascii")[:-1],

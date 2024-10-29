@@ -315,11 +315,18 @@ INSTALLABLE_APPS = (
     pathlib.Path(os.path.join(FREPPLE_LOGDIR, "freppleapps")),
 )
 
-# If passwords are set in this file they will be used instead of the ones set in the database parameters table
-ODOO_PASSWORDS = {"default": "", "scenario1": "", "scenario2": "", "scenario3": ""}
+# Odoo connection parameters in this file they override the ones set in the database parameters table.
+# Configuring them here is more secure and eases automated deployments.
+ODOO_URL = { i : os.environ.get("ODOO_URL", None) for i in DATABASES.keys()}
+ODOO_DB = { i : os.environ.get("ODOO_DB", None) for i in DATABASES.keys()}
+ODOO_USER = { i : os.environ.get("ODOO_USER", None) for i in DATABASES.keys()}
+ODOO_COMPANY = { i : os.environ.get("ODOO_COMPANY", None) for i in DATABASES.keys()}
+ODOO_SINGLECOMPANY = { i : os.environ.get("ODOO_SINGLECOMPANY", None) for i in DATABASES.keys()}
+ODOO_PASSWORDS = { i : os.environ.get("ODOO_PASSWORD", None) for i in DATABASES.keys()}
+ODOO_LANGUAGE = { i : os.environ.get("ODOO_LANGUAGE", None) for i in DATABASES.keys()}
 
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table
-OPENBRAVO_PASSWORDS = {"default": "", "scenario1": "", "scenario2": "", "scenario3": ""}
+OPENBRAVO_PASSWORDS = { i : os.environ.get("OPENBRAVO_PASSWORD", "") for i in DATABASES.keys()}
 
 if "FREPPLE_TIME_ZONE" in os.environ:
     # Choices can be found here http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

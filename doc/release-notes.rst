@@ -19,8 +19,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 17, 18: Blanket order is now populated in odoo when exporting purchase orders from frePPLe.
 
-- | Extra robustness to deal with control characters in the odoo data.
+- | The odoo database, company, user can now be configured in the djangosettings configuration
+    file.
+  | This improves security and also eases configuration and deployments.
 
+- | Extra robustness to deal with control characters in the odoo data.
+  | Amazing what strange data one finds in an ERP system...
+  
 .. rubric:: Production planning
 
 - | A lot of bad data condititions that used to abort the planning run are now replaced

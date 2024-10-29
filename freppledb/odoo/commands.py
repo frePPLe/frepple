@@ -111,24 +111,43 @@ class OdooReadData(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
-        odoo_user = Parameter.getValue("odoo.user", database)
-        odoo_password = settings.ODOO_PASSWORDS.get(database, None)
-        if not settings.ODOO_PASSWORDS.get(database):
-            odoo_password = Parameter.getValue("odoo.password", database)
-        odoo_db = Parameter.getValue("odoo.db", database, None)
-        odoo_url = Parameter.getValue("odoo.url", database, "").strip()
+        odoo_user = (
+            getattr(settings, "ODOO_USER", {}).get(database, None)
+            or Parameter.getValue("odoo.user", database)
+        ).strip()
+        odoo_password = (
+            getattr(settings, "ODOO_PASSWORDS", {}).get(database, None)
+            or Parameter.getValue("odoo.password", database)
+        ).strip()
+        odoo_db = (
+            getattr(settings, "ODOO_DB", {}).get(database, None)
+            or Parameter.getValue("odoo.db", database, None)
+        ).strip()
+        odoo_url = (
+            getattr(settings, "ODOO_URL", {}).get(database, None)
+            or Parameter.getValue("odoo.url", database, "")
+        ).strip()
         if not odoo_url.endswith("/"):
             odoo_url = odoo_url + "/"
-
-        odoo_company = Parameter.getValue("odoo.company", database, None)
-        singlecompany = Parameter.getValue("odoo.singlecompany", database, "false")
+        odoo_company = (
+            getattr(settings, "ODOO_COMPANY", {}).get(database, None)
+            or Parameter.getValue("odoo.company", database, None)
+        ).strip()
+        singlecompany = (
+            getattr(settings, "ODOO_SINGLECOMPANY", {}).get(database, None)
+            or Parameter.getValue("odoo.singlecompany", database, "false")
+        ).strip()
+        odoo_language = (
+            getattr(settings, "ODOO_SINGLECOMPANY", {}).get(database, None)
+            or Parameter.getValue("odoo.language", database, "en_US")
+        ).strip()
         odoo_delta = Parameter.getValue("odoo.delta", database, "999")
-        ok = True
 
         # Set the environment variable FREPPLE_ODOO_DEBUGFILE if you want frePPLe
         # to read that file rather than the data at url.
         debugFile = os.environ.get("FREPPLE_ODOO_DEBUGFILE", False)
 
+        ok = True
         if not odoo_user and not debugFile:
             logger.error("Missing or invalid parameter odoo.user")
             ok = False
@@ -141,7 +160,6 @@ class OdooReadData(PlanTask):
         if not odoo_company and not debugFile:
             logger.error("Missing or invalid parameter odoo.company")
             ok = False
-        odoo_language = Parameter.getValue("odoo.language", database, "en_US")
         if not ok and not debugFile:
             raise Exception("Odoo connector not configured correctly")
 

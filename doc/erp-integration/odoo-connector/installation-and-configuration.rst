@@ -128,6 +128,8 @@ The section below describes the installation and configuration of these.
     | Some parameters need to be configured in the "admin / parameters" screen. The
       first 5 parameters absolutely need editing, while the remaining parameters optionally
       need modification.
+    | To ease deployments and improved security these settings can be configurated in the
+      djangosettings.py file or passed as environment environments to the docker container.
 
     * | odoo.url:
       | URL of the Odoo server.
@@ -141,9 +143,6 @@ The section below describes the installation and configuration of these.
 
     * | odoo.password:
       | Password for the connection.
-      | For improved security it is recommended to specify this password in the
-        setting ODOO_PASSWORDS in the djangosettings.py file rather then this
-        parameter.
 
     * | odoo.company:
       | Company name for which to create purchase quotation and

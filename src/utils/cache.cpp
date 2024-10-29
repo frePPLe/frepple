@@ -273,8 +273,10 @@ PyObject* Cache::pythonPrintStatus(PyObject* self, PyObject* args) {
 }
 
 void Cache::setThreads(int i) {
-  if (i < 0)
-    throw DataException("Cache thread must be bigger than or equal to 0");
+  if (i < 0) {
+    logger << "Warning: Cache thread must be bigger than or equal to 0" << endl;
+    return;
+  }
   if (i > threads) {
     // Create extra threads
     auto extra = i - threads;

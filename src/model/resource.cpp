@@ -177,9 +177,11 @@ void Resource::setToolPerPiece(bool b) {
 }
 
 void Resource::setMaximum(double m) {
-  if (m < 0)
-    throw DataException("Maximum capacity for resource '" + getName() +
-                        "' must be postive");
+  if (m < 0) {
+    logger << "Warning: Maximum capacity for resource '" << getName()
+           << "' must be postive" << endl;
+    return;
+  }
 
   // There is already a maximum calendar.
   if (size_max_cal) {

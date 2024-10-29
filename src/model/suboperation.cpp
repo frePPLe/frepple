@@ -64,10 +64,12 @@ void SubOperation::setOwner(Operation* o) {
     // No change
     return;
 
-  if (o && !o->hasSubOperations())
+  if (o && !o->hasSubOperations()) {
     // Some operation types don't have suboperations
-    throw DataException("Operation '" + o->getName() +
-                        "' can't have suboperations");
+    logger << "Warning: Operation '" << o << "' can't have suboperations"
+           << endl;
+    return;
+  }
 
   // Remove from previous owner
   if (oper && owner) oper->owner = nullptr;

@@ -212,8 +212,10 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
   /* Update the days on which the entry is valid. */
   void setDays(short p) {
     if (p < 0 || p > 127)
-      throw DataException("Calendar bucket days must be between 0 and 127");
-    days = p;
+      logger << "Warning: Calendar bucket days must be between 0 and 127"
+             << endl;
+    else
+      days = p;
   }
 
   /* Return the time of the day when the entry becomes valid.
@@ -223,9 +225,12 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
 
   /* Update the time of the day when the entry becomes valid. */
   void setStartTime(Duration t) {
-    if (t > 86400L || t < 0L)
-      throw DataException(
-          "Calendar bucket start time must be between 0 and 86400 seconds");
+    if (t > 86400L || t < 0L) {
+      logger << "Warning: Calendar bucket start time must be between 0 and "
+                "86400 seconds"
+             << endl;
+      return;
+    }
     starttime = t;
     if (starttime > endtime) swap(starttime, endtime);
   }
@@ -237,9 +242,12 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
 
   /* Update the time of the day when the entry becomes invalid. */
   void setEndTime(Duration t) {
-    if (t > 86400L || t < 0L)
-      throw DataException(
-          "Calendar bucket end time must be between 0 and 86400 seconds");
+    if (t > 86400L || t < 0L) {
+      logger << "Warning: Calendar bucket end time must be between 0 and 86400 "
+                "seconds"
+             << endl;
+      return;
+    }
     endtime = t;
     if (starttime > endtime) swap(starttime, endtime);
   }
@@ -1505,8 +1513,9 @@ class OperationDependency : public Object, public HasSource {
 
   void setQuantity(double q) {
     if (q < 0.0)
-      throw DataException("Dependency quantity must be greater than 1");
-    quantity = q;
+      logger << "Warning: Dependency quantity must be greater than 1" << endl;
+    else
+      quantity = q;
   }
 
   Duration getSafetyLeadtime() const { return safety_leadtime; }
@@ -1515,14 +1524,16 @@ class OperationDependency : public Object, public HasSource {
 
   void setSafetyLeadtime(Duration d) {
     if (d < Duration(0L))
-      throw DataException("No negative safety lead time allowed");
-    safety_leadtime = d;
+      logger << "Warning: No negative safety lead time allowed" << endl;
+    else
+      safety_leadtime = d;
   }
 
   void setHardSafetyLeadtime(Duration d) {
     if (d < Duration(0L))
-      throw DataException("No negative hard safety lead time allowed");
-    hard_safety_leadtime = d;
+      logger << "Warning: No negative hard safety lead time allowed" << endl;
+    else
+      hard_safety_leadtime = d;
   }
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -2963,9 +2974,11 @@ class Operation : public HasName<Operation>,
    */
   void setPostTime(Duration t) {
     if (t < Duration(0L))
-      throw DataException("No negative post-operation time allowed");
-    post_time = t;
-    setChanged();
+      logger << "Warning: No negative post-operation time allowed" << endl;
+    else {
+      post_time = t;
+      setChanged();
+    }
   }
 
   /* Return the operation cost.
@@ -3210,9 +3223,11 @@ class Operation : public HasName<Operation>,
    */
   void setSizeMinimum(double f) {
     if (f < 0)
-      throw DataException("Operation can't have a negative minimum size");
-    size_minimum = f;
-    setChanged();
+      logger << "Warning: Operation can't have a negative minimum size" << endl;
+    else {
+      size_minimum = f;
+      setChanged();
+    }
   }
 
   /* Returns the minimum size for operationplans. */
@@ -3224,9 +3239,12 @@ class Operation : public HasName<Operation>,
   /* Sets the multiple size of operationplans. */
   void setSizeMultiple(double f) {
     if (f < 0)
-      throw DataException("Operation can't have a negative multiple size");
-    size_multiple = f;
-    setChanged();
+      logger << "Warning: Operation can't have a negative multiple size"
+             << endl;
+    else {
+      size_multiple = f;
+      setChanged();
+    }
   }
 
   /* Sets a calendar to defining the minimum size of operationplans. */
@@ -3241,12 +3259,16 @@ class Operation : public HasName<Operation>,
   /* Sets the maximum size of operationplans. */
   void setSizeMaximum(double f) {
     if (f < size_minimum)
-      throw DataException(
-          "Operation maximum size must be higher than the minimum size");
-    if (f <= 0)
-      throw DataException("Operation maximum size must be greater than 0");
-    size_maximum = f;
-    setChanged();
+      logger << "Warning: Operation maximum size must be higher than the "
+                "minimum size"
+             << endl;
+    else if (f <= 0)
+      logger << "Warning: Operation maximum size must be greater than 0"
+             << endl;
+    else {
+      size_maximum = f;
+      setChanged();
+    }
   }
 
   /* Returns the maximum size for operationplans. */
@@ -3789,8 +3811,10 @@ class OperationFixedTime : public Operation {
    * operation are not automatically refreshed to reflect the change. */
   void setDuration(Duration t) {
     if (t < 0L)
-      throw DataException("FixedTime operation can't have a negative duration");
-    duration = t;
+      logger << "Warning: FixedTime operation can't have a negative duration"
+             << endl;
+    else
+      duration = t;
   }
 
   /* Return the decoupled lead time of this operation. */
@@ -3850,8 +3874,10 @@ class OperationTimePer : public Operation {
   /* Sets the constant part of the operation time. */
   void setDuration(Duration t) {
     if (t < 0L)
-      throw DataException("TimePer operation can't have a negative duration");
-    duration = t;
+      logger << "Warning: TimePer operation can't have a negative duration"
+             << endl;
+    else
+      duration = t;
   }
 
   /* Returns the time per unit of the operation time. */
@@ -3860,9 +3886,10 @@ class OperationTimePer : public Operation {
   /* Sets the time per unit of the operation time. */
   void setDurationPer(double t) {
     if (t < 0.0)
-      throw DataException(
-          "TimePer operation can't have a negative duration-per");
-    duration_per = t;
+      logger << "Warning: TimePer operation can't have a negative duration-per"
+             << endl;
+    else
+      duration_per = t;
   }
 
   /* A operation of this type enforces the following rules on its
@@ -4309,8 +4336,10 @@ class ItemDistribution
 
   /* Update the resource capacity used per distributed unit. */
   void setResourceQuantity(double d) {
-    if (d < 0) throw DataException("Resource_quantity must be positive");
-    res_qty = d;
+    if (d < 0)
+      logger << "Warning: Resource_quantity must be positive" << endl;
+    else
+      res_qty = d;
   }
 
   /* Return the resource capacity used per distributed unit. */
@@ -4325,8 +4354,10 @@ class ItemDistribution
    */
   void setLeadTime(Duration p) {
     if (p < 0L)
-      throw DataException("ItemDistribution can't have a negative lead time");
-    leadtime = p;
+      logger << "Warning: ItemDistribution can't have a negative lead time"
+             << endl;
+    else
+      leadtime = p;
   }
 
   /* Sets the minimum size for shipments.
@@ -4334,9 +4365,10 @@ class ItemDistribution
    */
   void setSizeMinimum(double f) {
     if (f < 0)
-      throw DataException(
-          "ItemDistribution can't have a negative minimum size");
-    size_minimum = f;
+      logger << "Warning: ItemDistribution can't have a negative minimum size"
+             << endl;
+    else
+      size_minimum = f;
   }
 
   /* Returns the minimum size for shipments. */
@@ -4345,9 +4377,10 @@ class ItemDistribution
   /* Sets the multiple size for shipments. */
   void setSizeMultiple(double f) {
     if (f < 0)
-      throw DataException(
-          "ItemDistribution can't have a negative multiple size");
-    size_multiple = f;
+      logger << "Warning: ItemDistribution can't have a negative multiple size"
+             << endl;
+    else
+      size_multiple = f;
   }
 
   /* Returns the mutiple size for shipments. */
@@ -4356,12 +4389,14 @@ class ItemDistribution
   /* Sets the maximum size for shipments. */
   void setSizeMaximum(double f) {
     if (f < size_minimum)
-      throw DataException(
-          "ItemDistribution maximum size must be higher than the minimum size");
-    if (f < 0)
-      throw DataException(
-          "ItemDistribution can't have a negative maximum size");
-    size_maximum = f;
+      logger << "Warning: ItemDistribution maximum size must be higher than "
+                "the minimum size"
+             << endl;
+    else if (f < 0)
+      logger << "Warning: ItemDistribution can't have a negative maximum size"
+             << endl;
+    else
+      size_maximum = f;
   }
 
   /* Returns the mutiple size for shipments. */
@@ -4495,7 +4530,7 @@ class Item : public HasHierarchy<Item>, public HasDescription {
     if (w >= 0)
       weight = w;
     else
-      throw DataException("Item weight must be positive");
+      logger << "Warning: Item weight must be positive" << endl;
   }
 
   /* Return the volume of the item.
@@ -4508,7 +4543,7 @@ class Item : public HasHierarchy<Item>, public HasDescription {
     if (v >= 0)
       volume = v;
     else
-      throw DataException("Item volume must be positive");
+      logger << "Warning: Item volume must be positive" << endl;
   }
 
   /* Returns the unit of measure. */
@@ -4713,8 +4748,10 @@ class ItemSupplier : public Object,
    */
   void setSizeMinimum(double f) {
     if (f < 0)
-      throw DataException("ItemSupplier can't have a negative minimum size");
-    size_minimum = f;
+      logger << "Warning: ItemSupplier can't have a negative minimum size"
+             << endl;
+    else
+      size_minimum = f;
   }
 
   /* Returns the minimum size for procurements. */
@@ -4723,8 +4760,10 @@ class ItemSupplier : public Object,
   /* Sets the multiple size for procurements. */
   void setSizeMultiple(double f) {
     if (f < 0)
-      throw DataException("ItemSupplier can't have a negative multiple size");
-    size_multiple = f;
+      logger << "Warning: ItemSupplier can't have a negative multiple size"
+             << endl;
+    else
+      size_multiple = f;
   }
 
   /* Returns the mutiple size for procurements. */
@@ -4733,11 +4772,14 @@ class ItemSupplier : public Object,
   /* Sets the maximum size for procurements. */
   void setSizeMaximum(double f) {
     if (f < size_minimum)
-      throw DataException(
-          "ItemSupplier maximum size must be higher than the minimum size");
-    if (f < 0)
-      throw DataException("ItemSupplier can't have a negative maximum size");
-    size_maximum = f;
+      logger << "Warning: ItemSupplier maximum size must be higher than the "
+                "minimum size"
+             << endl;
+    else if (f < 0)
+      logger << "Warning: ItemSupplier can't have a negative maximum size"
+             << endl;
+    else
+      size_maximum = f;
   }
 
   /* Returns the maximum size for procurements. */
@@ -4786,8 +4828,10 @@ class ItemSupplier : public Object,
 
   /* Update the resource capacity used per purchased unit. */
   void setResourceQuantity(double d) {
-    if (d < 0) throw DataException("Resource_quantity must be positive");
-    res_qty = d;
+    if (d < 0)
+      logger << "Warning: Resource_quantity must be positive" << endl;
+    else
+      res_qty = d;
   }
 
   /* Return the resource capacity used per purchased unit. */
@@ -4806,8 +4850,9 @@ class ItemSupplier : public Object,
    */
   void setLeadTime(Duration p) {
     if (p < 0L)
-      throw DataException("ItemSupplier can't have a negative lead time");
-    leadtime = p;
+      logger << "Warning: ItemSupplier can't have a negative lead time" << endl;
+    else
+      leadtime = p;
   }
 
   /* Remove all purchasing operationplans. */
@@ -5430,8 +5475,10 @@ class OperationDelivery : public OperationFixedTime {
   static Duration getDeliveryDuration() { return deliveryduration; }
 
   static void setDeliveryDuration(Duration d) {
-    if (d < 0L) throw DataException("Delivery duration must be >= 0.");
-    deliveryduration = d;
+    if (d < 0L)
+      logger << "Warning: Delivery duration must be >= 0." << endl;
+    else
+      deliveryduration = d;
   }
 
  private:
@@ -5630,10 +5677,12 @@ class Flow : public Object,
    * value.
    */
   void setQuantity(double f) {
-    quantity = f;
     if ((quantity > 0.0 && quantity_fixed < 0) ||
         (quantity < 0.0 && quantity_fixed > 0))
-      throw DataException("Quantity and quantity_fixed must have equal sign");
+      logger << "Warning: Quantity and quantity_fixed must have equal sign"
+             << endl;
+    else
+      quantity = f;
   }
 
   /* Returns the CONSTANT material flow PER UNIT of the operationplan. */
@@ -5645,10 +5694,12 @@ class Flow : public Object,
    * value.
    */
   void setQuantityFixed(double f) {
-    quantity_fixed = f;
     if ((quantity > 0.0 && quantity_fixed < 0) ||
         (quantity < 0.0 && quantity_fixed > 0))
-      throw DataException("Quantity and quantity_fixed must have equal sign");
+      logger << "Warning: Quantity and quantity_fixed must have equal sign"
+             << endl;
+    else
+      quantity_fixed = f;
   }
 
   Duration getOffset() const { return offset; }
@@ -5871,9 +5922,11 @@ class FlowTransferBatch : public Flow {
 
   void setTransferBatch(double d) {
     if (d < 0.0)
-      throw DataException(
-          "Transfer batch size must be greater than or equal to 0");
-    transferbatch = d;
+      logger
+          << "Warning: Transfer batch size must be greater than or equal to 0"
+          << endl;
+    else
+      transferbatch = d;
   }
 
   virtual Date computeFlowToOperationDate(const OperationPlan*, Date);
@@ -6550,7 +6603,7 @@ class Resource : public HasHierarchy<Resource>,
     if (c > 0)
       efficiency = c;
     else
-      throw DataException("Resource efficiency must be positive");
+      logger << "Warning: Resource efficiency must be positive" << endl;
   }
 
   bool getConstrained() const { return is_constrained; }
@@ -6674,7 +6727,7 @@ class Resource : public HasHierarchy<Resource>,
     if (c >= 0L)
       maxearly = c;
     else
-      throw DataException("MaxEarly must be positive");
+      logger << "Warning: MaxEarly must be positive" << endl;
   }
 
   /* Returns the available time between the two dates. */
@@ -7093,16 +7146,19 @@ class Load : public Object,
   /* Updates the quantity of the load. */
   void setQuantity(double f) {
     if (f < 0)
-      throw DataException("OperationResource quantity can't be negative");
-    qty = f;
+      logger << "Warning: OperationResource quantity can't be negative" << endl;
+    else
+      qty = f;
   }
 
   double getQuantityFixed() const { return qtyfixed; }
 
   void setQuantityFixed(double f) {
     if (f < 0)
-      throw DataException("OperationResource quantity_fixed can't be negative");
-    qtyfixed = f;
+      logger << "Warning: OperationResource quantity_fixed can't be negative"
+             << endl;
+    else
+      qtyfixed = f;
   }
 
   /* Return the leading load of this group.
@@ -7290,18 +7346,20 @@ class LoadBucketizedPercentage : public Load {
 
   void setResource(Resource* r) {
     if (r && !r->hasType<ResourceBuckets>())
-      throw DataException(
-          "LoadBucketizedPercentage can only be associated with "
-          "ResourceBuckets");
-    Load::setResource(r);
+      logger << "Warning: LoadBucketizedPercentage can only be associated with "
+                "ResourceBuckets"
+             << endl;
+    else
+      Load::setResource(r);
   }
 
   double getOffset() const { return offset; }
 
   void setOffset(double d) {
     if (d < 0 || d > 100)
-      throw DataException("load offset must be between 0 and 100");
-    offset = d;
+      logger << "Warning: Load offset must be between 0 and 100" << endl;
+    else
+      offset = d;
   }
 
   Date getLoadplanDate(const LoadPlan*) const;
@@ -7356,10 +7414,11 @@ class LoadBucketizedFromStart : public Load {
 
   void setResource(Resource* r) {
     if (r && !r->hasType<ResourceBuckets>())
-      throw DataException(
-          "LoadBucketizedFromStart can only be associated with "
-          "ResourceBuckets");
-    Load::setResource(r);
+      logger << "Warning: LoadBucketizedFromStart can only be associated with "
+                "ResourceBuckets"
+             << endl;
+    else
+      Load::setResource(r);
   }
 
   Date getLoadplanDate(const LoadPlan*) const;
@@ -7381,8 +7440,10 @@ class LoadBucketizedFromStart : public Load {
   Duration getOffset() const { return offset; }
 
   void setOffset(Duration d) {
-    if (d < Duration(0L)) throw DataException("load offset must be positive");
-    offset = d;
+    if (d < Duration(0L))
+      logger << "Warning: Load offset must be positive" << endl;
+    else
+      offset = d;
   }
 
  private:
@@ -7421,9 +7482,11 @@ class LoadBucketizedFromEnd : public Load {
 
   void setResource(Resource* r) {
     if (r && !r->hasType<ResourceBuckets>())
-      throw DataException(
-          "LoadBucketizedFromEnd can only be associated with ResourceBuckets");
-    Load::setResource(r);
+      logger << "Warning: LoadBucketizedFromEnd can only be associated with "
+                "ResourceBuckets"
+             << endl;
+    else
+      Load::setResource(r);
   }
 
   Date getLoadplanDate(const LoadPlan*) const;
@@ -7445,8 +7508,10 @@ class LoadBucketizedFromEnd : public Load {
   Duration getOffset() const { return offset; }
 
   void setOffset(Duration d) {
-    if (d < Duration(0L)) throw DataException("load offset must be positive");
-    offset = d;
+    if (d < Duration(0L))
+      logger << "Warning: Load offset must be positive" << endl;
+    else
+      offset = d;
   }
 
  private:
@@ -7637,8 +7702,10 @@ class Demand : public HasHierarchy<Demand>,
       flags &= ~(STATUS_OPEN + STATUS_QUOTE + STATUS_INQUIRY + STATUS_CLOSED);
       flags |= STATUS_CANCELED;
       deleteOperationPlans();
-    } else
-      throw DataException("Demand status not recognized");
+    } else {
+      logger << "Warning: Demand status not recognized" << endl;
+      return;
+    }
     setChanged();
   }
 
@@ -7679,8 +7746,10 @@ class Demand : public HasHierarchy<Demand>,
       flags &= ~(STATUS_OPEN + STATUS_QUOTE + STATUS_INQUIRY + STATUS_CLOSED);
       flags |= STATUS_CANCELED;
       deleteOperationPlans();
-    } else
-      throw DataException("Demand status not recognized");
+    } else {
+      logger << "Warning: Demand status not recognized" << endl;
+      return;
+    }
     setChanged();
   }
 
@@ -7770,8 +7839,9 @@ class Demand : public HasHierarchy<Demand>,
    */
   virtual void setMaxLateness(Duration m) {
     if (m < 0L)
-      throw DataException("The maximum demand lateness must be positive");
-    maxLateness = m;
+      logger << "Warning: The maximum demand lateness must be positive" << endl;
+    else
+      maxLateness = m;
   }
 
   /* Return the minimum shipment quantity allowed in satisfying this
@@ -7798,9 +7868,10 @@ class Demand : public HasHierarchy<Demand>,
    */
   virtual void setMinShipment(double m) {
     if (m < 0.0 && m != -1.0)
-      throw DataException(
-          "The minimum demand shipment quantity must be positive");
-    minShipment = m;
+      logger << "Warning: The minimum demand shipment quantity must be positive"
+             << endl;
+    else
+      minShipment = m;
   }
 
   /* Recompute the problems. */
@@ -8032,8 +8103,10 @@ class DemandGroup : public Demand {
     } else if (s == "inratio") {
       flags &= ~(POLICY_ALLTOGETHER + POLICY_INDEPENDENT);
       flags |= POLICY_INRATIO;
-    } else
-      throw DataException("Demand policy not recognized");
+    } else {
+      logger << "Warning: Demand policy not recognized" << endl;
+      return;
+    }
     setChanged();
   }
 
@@ -8193,7 +8266,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
 
   void setOperationPlan(OperationPlan* o) {
     if (oper && oper != o)
-      throw DataException("Can't change the operationplan of a loadplan");
+      logger << "Warning: Can't change the operationplan of a loadplan" << endl;
     else
       oper = o;
   }
@@ -8686,8 +8759,10 @@ class Plan : public Plannable, public Object {
    * triggering a new replenishment.
    */
   void setAutoFence(Duration l) {
-    if (l < 0L) throw DataException("Invalid autofence");
-    autofence = l;
+    if (l < 0L)
+      logger << "Warning: Invalid autofence" << endl;
+    else
+      autofence = l;
   }
 
   Duration getDeliveryDuration() const {

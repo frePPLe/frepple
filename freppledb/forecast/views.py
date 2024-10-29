@@ -37,6 +37,7 @@ from django.http import (
     HttpResponseForbidden,
     HttpResponseNotFound,
     HttpResponseNotAllowed,
+    HttpResponseServerError,
 )
 from django.shortcuts import render
 from django.utils.encoding import force_str
@@ -2128,6 +2129,10 @@ class ForecastEditor:
             bucketName = bucketlevels[0]
             request.user.horizonbuckets = bucketlevels[0]
             request.user.save()
+        else:
+            return HttpResponseServerError(
+                "No time buckets found. Please generate the forecast first."
+            )
 
         # Find the current date and current bucket
         currentdate = getCurrentDate(request.database, lastplan=True).date()

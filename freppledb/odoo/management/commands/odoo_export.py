@@ -370,7 +370,7 @@ class Command(BaseCommand):
                 i.quantity,
                 quoteattr(i.location.subcategory),
                 quoteattr(i.item.subcategory),
-                int(i.criticality),
+                int(i.criticality or 0),
                 quoteattr(i.batch or ""),
             )
 
@@ -408,7 +408,7 @@ class Command(BaseCommand):
                 quoteattr(i.origin.subcategory),
                 quoteattr(i.destination.subcategory),
                 quoteattr(i.item.subcategory),
-                int(i.criticality),
+                int(i.criticality or 0),
                 quoteattr(i.batch or ""),
             )
 
@@ -448,7 +448,7 @@ class Command(BaseCommand):
                     i.quantity,
                     quoteattr(i.location.subcategory or ""),
                     quoteattr(i.item.subcategory or ""),
-                    int(i.criticality),
+                    int(i.criticality or 0),
                     quoteattr(i.batch or ""),
                 )
             else:
@@ -464,7 +464,7 @@ class Command(BaseCommand):
                         i.quantity,
                         quoteattr(i.operation.location.subcategory),
                         quoteattr(i.operation.item.subcategory),
-                        int(i.criticality),
+                        int(i.criticality or 0),
                         quoteattr(demand_str),
                         quoteattr(i.batch or ""),
                     )

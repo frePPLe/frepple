@@ -3115,7 +3115,7 @@ class GridReport(View):
                     try:
                         filters["rules"].append(
                             {
-                                "field": r.field_name,
+                                "field": r.name,
                                 "op": cls._filter_map_django_jqgrid[operator],
                                 "data": unquote(j),
                             }

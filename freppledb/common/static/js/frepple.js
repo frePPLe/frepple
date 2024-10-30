@@ -1564,7 +1564,7 @@ var grid = {
       multipleGroup: true,
       overlay: 0,
       resize: false,
-      sopt: ['eq', 'ne', 'lt', 'le', 'gt', 'ge', 'bw', 'bn', 'in', 'ni', 'ew', 'en', 'cn', 'nc'],
+      sopt: ['eq', 'ne', 'lt', 'le', 'gt', 'ge', 'bw', 'bn', 'in', 'ni', 'ew', 'en', 'cn', 'nc', 'ico'],
       onSearch: function () {
         var c = $("#fbox_" + thegridid).jqFilter('filterData');
         grid.saveColumnConfiguration();

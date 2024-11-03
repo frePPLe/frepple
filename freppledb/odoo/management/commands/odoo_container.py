@@ -543,6 +543,8 @@ class Command(BaseCommand):
                 "%s:8072" % (options["container_port"] + 3,),
                 "-v",
                 "%s:/var/lib/odoo" % name,
+                "--restart",
+                "always",
             ]
             + (
                 ["--add-host", "host.docker.internal:host-gateway"]

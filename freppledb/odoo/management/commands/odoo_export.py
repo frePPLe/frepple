@@ -181,7 +181,7 @@ class Command(BaseCommand):
             # Collect data to send
             counter = 1
             self.exported = []
-            self.boundary = email.generator._make_boundary()
+            self.boundary = "**MessageBoundary**"
             # Track if this is the first page we send
             # for cleaning POs/MOs in Odoo
             self.firstPage = True

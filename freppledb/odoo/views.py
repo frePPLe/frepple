@@ -51,7 +51,7 @@ def Upload(request):
         return HttpResponseNotAllowed("Only POST requests are allowed")
     try:
         # Prepare a message for odoo
-        boundary = email.generator._make_boundary()
+        boundary = "**MessageBoundary**"
 
         odoo_db = (
             getattr(settings, "ODOO_DB", {}).get(request.database, None)

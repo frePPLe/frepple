@@ -19,8 +19,8 @@
     "grunt-contrib-uglify-es": ">=3.3.0",
     "grunt-contrib-watch": ">=1.1.0",
     "grunt-exec": "^3.0.0",
-    "sass": ">=1.8.3",
-    "grunt-sass": ">=3.1.0"
+    "grunt-sass": ">=3.1.0",
+    "sass": "1.77.6"
   },
   "repository": {
     "type": "git",

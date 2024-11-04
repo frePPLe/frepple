@@ -166,7 +166,7 @@ def Upload(request):
                             po.quantity,
                             quoteattr(po.location.subcategory or ""),
                             quoteattr(po.item.subcategory or ""),
-                            int(po.criticality),
+                            int(po.criticality or 0),
                             quoteattr(po.batch or ""),
                             quoteattr(po.status),
                             quoteattr(getattr(po, "remark", None) or ""),

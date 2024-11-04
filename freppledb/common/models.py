@@ -558,6 +558,22 @@ class User(AbstractUser):
             )
             self.groups.add(grp)
 
+    def delete(self, *args, **kwargs):
+        cur_db = self._state.db
+        cur_id = self.id
+
+        # Delete in all other scenarios
+        for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(status="In use").values("name"):
+            if db["name"] in settings.DATABASES:
+                self._state.db = db["name"]
+                self.id = cur_id
+                super().delete(*args, using=db["name"], **kwargs)
+
+        # Delete in current scenario
+        self._state.db = cur_db
+        self.id = cur_id
+        return super().delete(*args, using=cur_db, **kwargs)
+
     def joined_age(self):
         """
         Returns the number of days since the user joined

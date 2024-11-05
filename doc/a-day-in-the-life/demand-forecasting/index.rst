@@ -21,4 +21,3 @@ Here are some activities a demand planner will perform in frepple:
    compare-forecasts
    share-forecast
    check-forecast-accuracy
-   quote-delivery-date

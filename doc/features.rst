@@ -78,10 +78,6 @@ Production planning & scheduling
 |                                         | adjustments.                                                               | - Video                                                                       |
 |                                         |                                                                            |   :doc:`a-day-in-the-life/production-planning/optimize-plan-in-gantt-chart`   |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Due date quoting                      | Compute a feasible delivery date for a new order on the fly. The promised  | - Doc :doc:`user-interface/plan-analysis/quoting-screen`                      |
-| at order entry**                        | delivery date considers all capacity and material constraints as well as   | - Video :doc:`a-day-in-the-life/production-planning/quote-delivery-date`      |
-|                                         | reservations for other open sales orders.                                  |                                                                               |
-+-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Make-to-order,                        | Make-to-order, make-to-stock and assemble-to-order products are all        | - Example :doc:`examples/buffer/make-to-order`                                |
 | make-to-stock and                       | supported.                                                                 |                                                                               |
 | assemble-to-order**                     |                                                                            |                                                                               |

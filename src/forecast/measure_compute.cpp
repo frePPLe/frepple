@@ -52,14 +52,14 @@ int ForecastMeasureComputed::initialize() {
 }
 
 struct ForecastMeasureComputed::ItemAttribute
-    : public exprtk::igeneric_function<double> {
+  final : public exprtk::igeneric_function<double> {
   typedef exprtk::igeneric_function<double> igenfunct_t;
   typedef typename igenfunct_t::parameter_list_t parameter_list_t;
   typedef typename igenfunct_t::generic_type::string_view string_t;
 
   ItemAttribute() : igenfunct_t("S") {}
 
-  inline double operator()(parameter_list_t parameters) {
+  inline double operator()(parameter_list_t parameters) override {
     auto attr = to_str(string_t(parameters[0]));
     if (attr == "cost")
       return fcstbckt->getItem()->getCost();
@@ -76,14 +76,14 @@ ForecastMeasureComputed::ItemAttribute
     ForecastMeasureComputed::functionItemAttribute;
 
 struct ForecastMeasureComputed::LocationAttribute
-    : public exprtk::igeneric_function<double> {
+  final : public exprtk::igeneric_function<double> {
   typedef exprtk::igeneric_function<double> igenfunct_t;
   typedef typename igenfunct_t::parameter_list_t parameter_list_t;
   typedef typename igenfunct_t::generic_type::string_view string_t;
 
   LocationAttribute() : igenfunct_t("S") {}
 
-  inline double operator()(parameter_list_t parameters) {
+  inline double operator()(parameter_list_t parameters) override {
     auto attr = to_str(string_t(parameters[0]));
     return fcstbckt->getLocation()->getDoubleProperty(attr, 0);
   }
@@ -93,14 +93,14 @@ ForecastMeasureComputed::LocationAttribute
     ForecastMeasureComputed::functionLocationAttribute;
 
 struct ForecastMeasureComputed::CustomerAttribute
-    : public exprtk::igeneric_function<double> {
+  final : public exprtk::igeneric_function<double> {
   typedef exprtk::igeneric_function<double> igenfunct_t;
   typedef typename igenfunct_t::parameter_list_t parameter_list_t;
   typedef typename igenfunct_t::generic_type::string_view string_t;
 
   CustomerAttribute() : igenfunct_t("S") {}
 
-  inline double operator()(parameter_list_t parameters) {
+  inline double operator()(parameter_list_t parameters) override {
     auto attr = to_str(string_t(parameters[0]));
     return fcstbckt->getCustomer()->getDoubleProperty(attr, 0);
   }

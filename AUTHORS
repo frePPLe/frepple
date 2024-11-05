@@ -126,7 +126,7 @@ FrePPLe redistributes parts of the following third party software components:
     Free use of the C++ Mathematical Expression Toolkit Library is
     permitted under the guidelines and in accordance with the most
     current version of the MIT License.
-    See http://www.partow.net/programming/exprtk/index.html
+    See https://www.partow.net/programming/exprtk/index.html
 
 * include\rapidjson\*
     Redistributed http://rapidjson.org/

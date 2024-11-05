@@ -2065,8 +2065,14 @@ class GridReport(View):
                         elif isinstance(r, GridFieldChoice):
                             if v is None:
                                 fields[f] = None
-                            elif False and v.lower() in [force_str(i[1]).lower() for i in r.choices]:
-                                fields[f] = [x for (x, y) in r.choices if force_str(y).lower() == v.lower()][0]
+                            elif False and v.lower() in [
+                                force_str(i[1]).lower() for i in r.choices
+                            ]:
+                                fields[f] = [
+                                    x
+                                    for (x, y) in r.choices
+                                    if force_str(y).lower() == v.lower()
+                                ][0]
                             else:
                                 ok = False
                                 resp.write(
@@ -2096,8 +2102,10 @@ class GridReport(View):
                             try:
                                 modelname = json.loads("{%s}" % r)["role"].split("/")
                                 model = apps.get_model(modelname[0], modelname[1])
-                                fields[f] = model.objects.using(request.database).get(
-                                    pk=v
+                                fields[f] = (
+                                    model.objects.using(request.database).get(pk=v)
+                                    if v
+                                    else None
                                 )
                             except Exception:
                                 ok = False

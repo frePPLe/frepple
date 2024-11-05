@@ -1455,6 +1455,7 @@ class exportOperationResources(PlanTask):
                         i.effective_start,
                         i.effective_end if i.effective_end != default_end else None,
                         round(i.quantity, 8),
+                        round(i.quantity_fixed, 8),
                         i.setup,
                         i.name,
                         i.priority,
@@ -1477,12 +1478,13 @@ class exportOperationResources(PlanTask):
                 """
                 insert into operationresource
                 (operation_id,resource_id,effective_start,effective_end,
-                quantity,setup,name,priority,search,source,skill_id,lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                quantity,quantity_fixed,setup,name,priority,search,source,skill_id,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
                 on conflict (operation_id, resource_id, effective_start)
                 do update set
                   effective_end=excluded.effective_end,
                   quantity=excluded.quantity,
+                  quantity_fixed=excluded.quantity_fixed,
                   setup=excluded.setup,
                   name=excluded.name,
                   priority=excluded.priority,
@@ -1841,6 +1843,7 @@ class exportOperationMaterials(PlanTask):
                         i.buffer.item.name,
                         i.effective_start,
                         round(i.quantity, 8),
+                        round(i.quantity_fixed, 8),
                         i.type[5:],
                         i.effective_end if i.effective_end != default_end else None,
                         i.name,
@@ -1868,12 +1871,13 @@ class exportOperationMaterials(PlanTask):
                 cursor,
                 """
                 insert into operationmaterial
-                (operation_id,item_id,effective_start,quantity,type,effective_end,
+                (operation_id,item_id,effective_start,quantity,quantity_fixed,type,effective_end,
                 name,priority,search,source,transferbatch,"offset",lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s%s)
                 on conflict (operation_id, item_id, effective_start)
                 do update set
                   quantity=excluded.quantity,
+                  quantity_fixed=excluded.quantity_fixed,
                   type=excluded.type,
                   effective_end=excluded.effective_end,
                   name=excluded.name,

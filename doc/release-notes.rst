@@ -19,6 +19,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 17, 18: Blanket order is now populated in odoo when exporting purchase orders from frePPLe.
 
+- | 17, 18: Various bug fixes to support configurations where odoo schedules work orders, 
+    while frepple only plans at the manufacturing order level.
+
 - | The odoo database, company, user can now be configured in the djangosettings configuration
     file.
   | This improves security and also eases configuration and deployments.

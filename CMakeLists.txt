@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 # The version is defined in 2 places:
 #  - pyproject.toml
 #  - this file, next line
-project(frepple VERSION 9.4.0)
+project(frepple VERSION 9.5.0)
 
 set(PROJECT_EDITION "Community Edition")
 set(PROJECT_BRANCH "community")

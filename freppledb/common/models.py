@@ -540,9 +540,22 @@ class User(AbstractUser):
                     except Exception as e:
                         logger.warning("Can't save user in scenario '%s': %s" % (db, e))
 
+        grp = (
+            (
+                Group.objects.all()
+                .using(using)
+                .get_or_create(name=settings.DEFAULT_USER_GROUP)[0]
+            )
+            if newuser and settings.DEFAULT_USER_GROUP
+            else None
+        )
+
         # Continue with the regular save, as if nothing happened.
         self.is_active = tmp_is_active
-        self.is_superuser = tmp_is_superuser
+        if newuser and not (grp and grp.permissions.exists()):
+            self.is_superuser = True
+        else:
+            self.is_superuser = tmp_is_superuser
         self._state.db = using
         super().save(
             force_insert=force_insert,
@@ -550,12 +563,7 @@ class User(AbstractUser):
             using=using,
             update_fields=update_fields,
         )
-        if settings.DEFAULT_USER_GROUP and newuser:
-            grp = (
-                Group.objects.all()
-                .using(using)
-                .get_or_create(name=settings.DEFAULT_USER_GROUP)[0]
-            )
+        if newuser and grp:
             self.groups.add(grp)
 
     def delete(self, *args, **kwargs):
@@ -563,7 +571,11 @@ class User(AbstractUser):
         cur_id = self.id
 
         # Delete in all other scenarios
-        for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(status="In use").values("name"):
+        for db in (
+            Scenario.objects.using(DEFAULT_DB_ALIAS)
+            .filter(status="In use")
+            .values("name")
+        ):
             if db["name"] in settings.DATABASES:
                 self._state.db = db["name"]
                 self.id = cur_id

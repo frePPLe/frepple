@@ -113,9 +113,22 @@ class HTTPAuthenticationMiddleware:
                             logger.error("No user or email in webtoken")
                             return HttpResponseForbidden("No user or email in webtoken")
                     except User.DoesNotExist:
-                        logger.error("Invalid user in webtoken")
-                        messages.add_message(request, messages.ERROR, "Unknown user")
-                        return HttpResponseRedirect("/data/login/")
+                        if getattr(settings, "SOCIALACCOUNT_AUTO_SIGNUP", True):
+                            # Autocreate new user
+                            user_args = {}
+                            if "user" in decoded:
+                                user_args["username"] = decoded["user"]
+                                user_args["email"] = decoded["user"]
+                            if "email" in decoded:
+                                user_args["email"] = decoded["email"]
+                            user = User.objects.create_user(**user_args)
+                            user.save(using=request.database)
+                        else:
+                            logger.error("Invalid user in webtoken")
+                            messages.add_message(
+                                request, messages.ERROR, "Unknown user"
+                            )
+                            return HttpResponseRedirect("/data/login/")
                     user.backend = settings.AUTHENTICATION_BACKENDS[0]
                     login(request, user)
                     MultiDBBackend.getScenarios(user)

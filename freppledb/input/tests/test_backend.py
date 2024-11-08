@@ -879,7 +879,7 @@ class NotificationTest(TransactionTestCase):
         # Check what notifications we got
         Notification.wait()
         NotificationFactory.start()
-        self.assertEqual(Notification.objects.count(), 4)
+        self.assertEqual(Notification.objects.count(), 5)
 
     def test_performance(self):
         # Admin user follows all items

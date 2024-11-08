@@ -680,7 +680,9 @@ THEMES = os.environ.get(
     "FREPPLE_THEMES", "earth grass lemon odoo openbravo orange snow strawberry water"
 ).split()
 
-# A default user-group to which new users are automatically added
+# A default user-group to which new users are automatically added.
+# If this setting is left unspecified or when the group has no assigned permissions,
+# then new users will be marked super-users by default.
 DEFAULT_USER_GROUP = None
 
 # The default user interface theme

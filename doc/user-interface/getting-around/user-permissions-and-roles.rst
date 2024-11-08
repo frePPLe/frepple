@@ -15,6 +15,15 @@ The active flag, superuser flag, assigned groups and user permissions can
 be defined per scenario. When the user is marked active in a scenario, the scenario
 will appear in the dropdown list on the top right of the screen.
 
+New users are automatically assigned privileges according to the following rules:
+
+- If a) DEFAULT_USER_GROUP setting is specified in your djangosettings.py file and 
+  b) the permissions of this group aren't empty, then a new user will automatically
+  become a member of this group upon creation.
+
+- When there are no default permissions defined with the previous rule, the user 
+  is automatically marked as a superuser.
+
 .. image:: ../_images/user.png
    :alt: User
 

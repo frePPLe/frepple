@@ -41,6 +41,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | Until now you could not delete users. You could already mark them inactive
     to prevent them from logging in, but that's not good enough.
 
+- | Updated rules for default permissions of new users.
+  | If no default permissions are defined (using the "DEFAULT_USER_GROUP" setting in
+    your djangosettings.py file), new users are automatically marked as superusers.
+  | The new behavior makes the first steps in frepple after an initial intallation 
+    easier and smoother. For broader deployments, the configuration of the correct
+    default permissions remains important.
+
 - | Bug fix in scenario promotion. When promoting a scenario as the production
     scenario the user preferences and group permissions where copied into
     the production scenario, which isn't right.

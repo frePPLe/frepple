@@ -340,7 +340,7 @@ class ManufacturingOrderScreen(SeleniumTest):
 
         # checking if data has been saved into database after saving data
         table_page.click_save_button()
-        time.sleep(1)
+        time.sleep(3)
 
         self.assertEqual(
             ManufacturingOrder.objects.all()

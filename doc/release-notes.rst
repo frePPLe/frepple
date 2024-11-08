@@ -1,11 +1,14 @@
 Release notes
 -------------
 
-9.4.0 (Upcoming release)
+9.5.0 (Upcoming release)
 ========================
 
-This release is scheduled for end of September.
+This release is scheduled for end of December.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.4.0 (2024-11-08)
+==================
 
 .. rubric:: Odoo integration
 

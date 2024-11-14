@@ -27,6 +27,10 @@ $body-bg: #F0F0F0;
 $table-color: #333;
 $table-color-state: #333;
 
+// Override background colors
+$table-bg: inherit;
+$card-bg: #fff;
+$dropdown-bg: #fff;
 
 // Logo height
 $navbar-brand-height: 3rem;

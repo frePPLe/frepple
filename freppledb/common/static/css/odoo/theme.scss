@@ -27,6 +27,16 @@ $body-bg: white;
 $table-color: #333;
 $table-color-state: #333;
 
+// Override background colors
+$table-bg: inherit;
+$card-bg: #fff;
+$dropdown-bg: #fff;
+
+// Only for this theme
+.bg-light {
+    color:#fff;
+}
+
 // Logo height
 $navbar-brand-height: 3rem;
 

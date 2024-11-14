@@ -306,7 +306,7 @@ void ForecastBucketData::setValue(bool propagate, CommandManager* mgr,
                                   const ForecastMeasure* key, double val) {
   if (!key) return;
   if (key == Measures::forecastnet &&
-      getEnd() > Plan::instance().getCurrent()) {
+      getEnd() > Plan::instance().getFcstCurrent()) {
     // This is the connection between the supply chain and the forecast
     // data structures
     if (getForecast()->getPlanned()) {
@@ -377,7 +377,7 @@ void ForecastBucketData::incValue(bool propagate, CommandManager* mgr,
                                   const ForecastMeasure* key, double val) {
   if (!key || (!val && !key->getDefault())) return;
   if (key == Measures::forecastnet &&
-      getEnd() > Plan::instance().getCurrent()) {
+      getEnd() > Plan::instance().getFcstCurrent()) {
     // This is the connection between the supply chain and the forecast
     // data structures
     if (getForecast()->getPlanned()) {
@@ -1084,7 +1084,7 @@ void ForecastMeasure::computeDependentMeasures(ForecastBucketData& fcstdata,
     // Process changes of the computed total forecast
     if (i == Measures::forecasttotal) {
       fcstdata.setValue(true, nullptr, i, val);
-      if (fcstdata.getEnd() > Plan::instance().getCurrent()) {
+      if (fcstdata.getEnd() > Plan::instance().getFcstCurrent()) {
         if (fcstdata.getForecast()->getPlanned())
           Measures::forecastnet->update(
               fcstdata, val - fcstdata.getValue(*Measures::forecastconsumed));

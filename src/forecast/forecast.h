@@ -1786,7 +1786,7 @@ class ForecastSolver : public Solver {
     bool force;
 
     Metrics(double a, double b, bool c)
-        : smape(a), standarddeviation(b), force(c){};
+        : smape(a), standarddeviation(b), force(c) {};
   };
 
   /* Abstract base class for all forecasting methods. */
@@ -3188,15 +3188,15 @@ void ForecastMeasure::resetMeasure(short mode, Measures*... measures) {
          bckt != fcstdata->getBuckets().end(); ++bckt) {
       bool do_it = false;
       if (mode & PAST)
-        do_it = bckt->getEnd() <= Plan::instance().getCurrent();
+        do_it = bckt->getEnd() <= Plan::instance().getFcstCurrent();
       else if (mode & PAST_CURRENT)
-        do_it = bckt->getStart() <= Plan::instance().getCurrent();
+        do_it = bckt->getStart() <= Plan::instance().getFcstCurrent();
       else if (mode & ALL)
         do_it = true;
       else if (mode & FUTURE_CURRENT)
-        do_it = bckt->getEnd() > Plan::instance().getCurrent();
+        do_it = bckt->getEnd() > Plan::instance().getFcstCurrent();
       else if (mode & FUTURE)
-        do_it = bckt->getStart() > Plan::instance().getCurrent();
+        do_it = bckt->getStart() > Plan::instance().getFcstCurrent();
       if (do_it) bckt->removeValue(false, nullptr, measures...);
     }
   }

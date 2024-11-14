@@ -51,7 +51,7 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
   auto end = data->getBuckets().end();
   unsigned bucket_count = 1;
   while (bckt_start != end &&
-         bckt_start->getEnd() <= Plan::instance().getCurrent()) {
+         bckt_start->getEnd() <= Plan::instance().getFcstCurrent()) {
     if (Measures::orderstotal->getValue(*bckt_start) +
             Measures::ordersadjustment->getValue(*bckt_start) !=
         0.0)
@@ -63,7 +63,8 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
   // Count the number of history buckets
   unsigned int historycount = 0;
   for (auto bckt_cnt = bckt_start;
-       bckt_cnt != end && bckt_cnt->getEnd() <= Plan::instance().getCurrent();
+       bckt_cnt != end &&
+       bckt_cnt->getEnd() <= Plan::instance().getFcstCurrent();
        ++bckt_cnt) {
     ++historycount;
     ++bucket_count;
@@ -77,7 +78,7 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
   unsigned int count = 0;
   auto bckt_end = bckt_start;
   while (bckt_end != end &&
-         bckt_end->getEnd() <= Plan::instance().getCurrent()) {
+         bckt_end->getEnd() <= Plan::instance().getFcstCurrent()) {
     if (getAverageNoDataDays() ||
         Measures::nodata->getValue(*bckt_end) == 0.0) {
       timeseries.push_back(Measures::orderstotal->getValue(*bckt_end) +
@@ -1501,7 +1502,7 @@ void ForecastSolver::deleteOutliers(
   for (auto bckt = forecast->getMembers(); bckt != forecast->end(); ++bckt) {
     if (bckt->hasType<ForecastBucket>() &&
         static_cast<ForecastBucket*>(&*bckt)->getDueRange().getEnd() <=
-            Plan::instance().getCurrent()) {
+            Plan::instance().getFcstCurrent()) {
       // Find existing outlier problems
       for (auto j = Problem::begin(&*bckt, false); j != Problem::end();) {
         if (typeid(*j) != typeid(ProblemOutlier)) {

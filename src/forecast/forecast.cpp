@@ -361,7 +361,7 @@ ForecastBucket::ForecastBucket(Forecast* f, const DateRange& b, short i)
   setHidden(true);  // Avoid the subdemands show up in the list of demands
   setItem(f->getItem());
   setCustomer(f->getCustomer());
-  auto currentdate = Plan::instance().getCurrent();
+  auto currentdate = Plan::instance().getFcstCurrent();
   Date due;
   switch (DueWithinBucket) {
     case 0:  // Start
@@ -1055,7 +1055,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
       try {
         stmt =
             DatabasePreparedStatement<5>(db, "Read forecastplan values", str);
-        auto currentdate = Plan::instance().getCurrent();
+        auto currentdate = Plan::instance().getFcstCurrent();
         stmt.setArgument(
             3, currentdate - Duration(86400L * f->getHorizonHistory()));
         stmt.setArgument(
@@ -1071,9 +1071,9 @@ ForecastData::ForecastData(const ForecastBase* f) {
   if (dates.empty()) {
     Date prevDate;
     Date hrzn_start =
-        Plan::instance().getCurrent() -
+        Plan::instance().getFcstCurrent() -
         Duration(ForecastBase::getHorizonHistoryStatic() * 86400L);
-    Date hrzn_end = Plan::instance().getCurrent() +
+    Date hrzn_end = Plan::instance().getFcstCurrent() +
                     Duration(ForecastBase::getHorizonFutureStatic() * 86400L);
     for (Calendar::EventIterator i(Forecast::getCalendar_static());
          prevDate <= hrzn_end; prevDate = i.getDate(), ++i) {
@@ -1171,7 +1171,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
         }
 
         // Update the supply side
-        if (bckiter->getEnd() > Plan::instance().getCurrent() &&
+        if (bckiter->getEnd() > Plan::instance().getFcstCurrent() &&
             f->getPlanned()) {
           auto tmp = Measures::forecastnet->getValue(*bckiter);
           if (tmp)

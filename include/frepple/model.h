@@ -8679,6 +8679,9 @@ class Plan : public Plannable, public Object {
   /* Current Date of this plan. */
   Date cur_Date;
 
+  /* Current Date for the forecast of this plan. */
+  Date fcst_cur_Date;
+
   /* A name for this plan. */
   string name;
 
@@ -8748,6 +8751,13 @@ class Plan : public Plannable, public Object {
    * detection for BeforeCurrent problems needs to be rerun.
    */
   void setCurrent(Date);
+
+  /* Returns the current date of the plan for the forecast solver. */
+  Date getFcstCurrent() const { return fcst_cur_Date; }
+
+  /* Updates the current date of the forecast plan
+   */
+  void setFcstCurrent(Date);
 
   string getTimeZone() const { return timezone; }
 
@@ -8882,6 +8892,8 @@ class Plan : public Plannable, public Object {
     m->addStringRefField<Plan>(Tags::dbconnection, &Plan::getDBconnection,
                                &Plan::setDBconnection);
     m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
+    m->addDateField<Plan>(Tags::fcst_current, &Plan::getFcstCurrent,
+                          &Plan::setFcstCurrent);
     m->addStringRefField<Plan>(Tags::logfile, &Plan::getLogFile,
                                &Plan::setLogFile, "", DONT_SERIALIZE);
     m->addUnsignedLongField(Tags::loglimit, &Plan::getloglimit,

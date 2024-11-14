@@ -96,6 +96,8 @@ void Plan::setCurrent(Date l) {
   for (auto& i : Operation::all()) i.setChanged();
 }
 
+void Plan::setFcstCurrent(Date l) { fcst_cur_Date = l; }
+
 void Plan::erase(const string& e) {
   if (e == "item")
     Item::clear();

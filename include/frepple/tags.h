@@ -106,6 +106,7 @@ class Tags {
   static const Keyword erase;
   static const Keyword extra_safety_leadtime;
   static const Keyword factor;
+  static const Keyword fcst_current;
   static const Keyword feasible;
   static const Keyword fence;
   static const Keyword filename;

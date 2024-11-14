@@ -1097,6 +1097,33 @@ def createForecastSolver(db, task=None):
     horizon_future = None
     calendar = None
     loglevel = None
+
+    # Detect if some demand history is missing in the last few buckets
+    forecast_currentdate = frepple.settings.current
+    with connections[db].cursor() as cursor:
+        cursor.execute(
+            """
+        select max(due) from demand;
+        """
+        )
+        max_due = cursor.fetchone()[0]
+
+        if max_due:
+            # The forecast solver current date is the end date of the
+            # bucket of the most recent sales order
+            forecastCalendar = Parameter.getValue("forecast.calendar", db, "month")
+            cursor.execute(
+                """
+            select enddate from common_bucketdetail where bucket_id = %s
+            and startdate <= %s and %s < enddate;
+            """,
+                (forecastCalendar, max_due, max_due),
+            )
+            enddate = cursor.fetchone()[0]
+            if enddate < forecast_currentdate:
+                forecast_currentdate = enddate
+    frepple.settings.fcst_current = forecast_currentdate
+
     try:
         kw = {}
         for param in (
@@ -1194,6 +1221,11 @@ def createForecastSolver(db, task=None):
                     kw[key] = int(parameter_value)
                     if key == "loglevel":
                         loglevel = int(parameter_value)
+                        if loglevel > 0:
+                            logger.info(
+                                "forecast current date is %s"
+                                % (frepple.settings.fcst_current,)
+                            )
                 except Exception:
                     logger.error('Incorrect parameter "forecast.%s"' % key)
 

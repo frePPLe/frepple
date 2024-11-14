@@ -105,6 +105,7 @@ const Keyword Tags::entity("entity");
 const Keyword Tags::erase("erase");
 const Keyword Tags::extra_safety_leadtime("extra_safety_leadtime");
 const Keyword Tags::factor("factor");
+const Keyword Tags::fcst_current("fcst_current");
 const Keyword Tags::feasible("feasible");
 const Keyword Tags::fence("fence");
 const Keyword Tags::filename("filename");

@@ -242,7 +242,7 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
         bckt.removeValue(cluster != -1, !getAutocommit() ? commands : nullptr,
                          Measures::forecastconsumed);
       auto fcsttotal = bckt.getValue(*Measures::forecasttotal);
-      if (bckt.getEnd() < Plan::instance().getCurrent() -
+      if (bckt.getEnd() < Plan::instance().getFcstCurrent() -
                               (ForecastSolver::getNetPastDemand()
                                    ? ForecastSolver::getNetLate()
                                    : Duration(0L)) ||
@@ -464,7 +464,7 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
                          ? Duration(dmd->getDoubleProperty("net_late") * 86400)
                          : getNetLate();
   if (zerobucket->getEnd() <=
-      Plan::instance().getCurrent() -
+      Plan::instance().getFcstCurrent() -
           (getNetPastDemand() ? netLate : Duration(0L))) {
     // The order is due in a bucket in the past.
     // Such orders shouldn't be considered for netting, as we can assume

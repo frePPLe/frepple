@@ -2493,10 +2493,11 @@ msgid ""
 "curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
 "</div></div>\n"
 "<div class=\"mb-2\">\n"
-"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" target="
-"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
-"\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" value=\"%(exp)s"
-"\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/>  days:\n"
+"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" "
+"target=\"_blank\">JSON Web Token authentication</a> valid for the next "
+"<input id=\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" "
+"value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/"
+">  days:\n"
 "</div>\n"
 "<div class=\"card mb-3\"><div class=\"card-body\">\n"
 "wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
@@ -2932,6 +2933,11 @@ msgstr ""
 msgid "plan history"
 msgstr ""
 
+#: execute/templates/commands/exporttofolder.html:6
+#: execute/templates/commands/exportworkbook.html:7
+msgid "export"
+msgstr "エクスポート"
+
 #: execute/templates/commands/exporttofolder.html:9
 msgid ""
 "Exports the plan (purchase orders, distribution orders and manufacturing "
@@ -3047,16 +3053,16 @@ msgstr ""
 
 #: execute/templates/commands/runplan.html:28
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:35
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that shows material, "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that shows material, "
 "capacity and operation problems that prevent the demand from being planned "
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
@@ -3071,27 +3077,27 @@ msgstr "制約"
 
 #: execute/templates/commands/runplan.html:44
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Respect the capacity limits of your resources."
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Respect the capacity limits of your resources."
 "\">Capacity: respect capacity limits</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:51
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't generate any plans that start or end in the "
-"past.<br>Proposed and approved activities must all be in the future.<br>Only "
-"confirmed activities are allowed to be in the past.\">Lead time: do not plan "
-"in the past</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't generate any plans that start or end in "
+"the past.<br>Proposed and approved activities must all be in the future."
+"<br>Only confirmed activities are allowed to be in the past.\">Lead time: do "
+"not plan in the past</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:58
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't propose any plans within a frozen time window "
-"(which is configured on each operation).<br>Within the frozen zone only "
-"approved and confirmed activities are allowed, no new proposed activities."
-"\">Release fence: do not plan within a frozen time window</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't propose any plans within a frozen time "
+"window (which is configured on each operation).<br>Within the frozen zone "
+"only approved and confirmed activities are allowed, no new proposed "
+"activities.\">Release fence: do not plan within a frozen time window</span>"
 msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:13
@@ -5971,9 +5977,9 @@ msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2956
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to "
+"1.<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
 
@@ -5984,8 +5990,8 @@ msgstr "真"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2975
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"In push mode, any excess inventory will be "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
 
@@ -6868,15 +6874,7 @@ msgstr ""
 msgid "dates"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:34
-#: freppledb/planningboard/static/planningboard/planningboard.html:1139
-#: freppledb/planningboard/static/planningboard/planningboard.html:202
-#: freppledb/planningboard/static/planningboard/planningboard.html:374
-#: freppledb/planningboard/static/planningboard/planningboard.html:504
-#: freppledb/planningboard/static/planningboard/planningboard.html:624
-#: freppledb/planningboard/static/planningboard/planningboard.html:768
-#: freppledb/planningboard/static/planningboard/planningboard.html:989
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1091
+#: shopfloor/templates/shopfloor/manufacturingorder.html:50
 msgid "start"
 msgstr "開始"
 
@@ -6884,15 +6882,7 @@ msgstr "開始"
 msgid "pause"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:36
-#: freppledb/planningboard/static/planningboard/planningboard.html:1144
-#: freppledb/planningboard/static/planningboard/planningboard.html:211
-#: freppledb/planningboard/static/planningboard/planningboard.html:391
-#: freppledb/planningboard/static/planningboard/planningboard.html:519
-#: freppledb/planningboard/static/planningboard/planningboard.html:639
-#: freppledb/planningboard/static/planningboard/planningboard.html:777
-#: freppledb/planningboard/static/planningboard/planningboard.html:992
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1092
+#: shopfloor/templates/shopfloor/manufacturingorder.html:56
 msgid "end"
 msgstr "終了"
 
@@ -7115,6 +7105,10 @@ msgstr "選択された需要を現在日付からフォワード方式で計画
 msgid "Purchase Order"
 msgstr "購入注文"
 
+#: freppledb/forecast/static/forecast/forecast.html:156
+msgid "Recalculate"
+msgstr "再計算"
+
 #: freppledb/planningboard/static/planningboard/planningboard.html:815
 msgid "Remove this demand from planning"
 msgstr "この需要を計画から削除"
@@ -7190,13 +7184,13 @@ msgstr "{{ aggregatedoperationplans.count }} が選択されました"
 msgid "{{m.label}}"
 msgstr "{{m.label}}"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1364
-#: freppledb/planningboard/static/planningboard/planningboard.html:1393
-#: freppledb/planningboard/static/planningboard/planningboard.html:1419
+#: freppledb/planningboard/static/planningboard/planningboard.html:1405
+#: freppledb/planningboard/static/planningboard/planningboard.html:1434
+#: freppledb/planningboard/static/planningboard/planningboard.html:1460
 msgid "Add to the graph"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1632
+#: freppledb/planningboard/static/planningboard/planningboard.html:1673
 msgid ""
 "An operation gets the color of its category.<br>\n"
 "                        The operation categories should be filled in the "
@@ -7204,7 +7198,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1664
+#: freppledb/planningboard/static/planningboard/planningboard.html:1705
 msgid ""
 "An operation gets the color of its subcategory.<br>\n"
 "                        The operation subcategories should be filled in the "
@@ -7212,7 +7206,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1568
+#: freppledb/planningboard/static/planningboard/planningboard.html:1609
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
@@ -7220,7 +7214,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1600
+#: freppledb/planningboard/static/planningboard/planningboard.html:1641
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
@@ -7228,64 +7222,64 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1510
+#: freppledb/planningboard/static/planningboard/planningboard.html:1551
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:321
+#: freppledb/forecast/static/forecast/forecast.html:318
 msgid "Apply"
-msgstr "適用"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
 msgid "Assign an extra resource"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:69
+#: freppledb/planningboard/static/planningboard/planningboard.html:66
 msgid "Automatically resolve infeasiblities in the plan"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1367
+#: freppledb/planningboard/static/planningboard/planningboard.html:1408
 msgid "Clear the plan of selected demands"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:460
+#: freppledb/forecast/static/forecast/forecast.html:457
 #: freppledb/input/static/operationplandetail/operationplandetail.html:56
-#: freppledb/planningboard/static/planningboard/planningboard.html:162
+#: freppledb/planningboard/static/planningboard/planningboard.html:157
 #: freppledb/quoting/static/quoting/quoting.html:198
 msgid "Continue"
-msgstr "続ける"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1442
+#: freppledb/planningboard/static/planningboard/planningboard.html:1483
 msgid "Criticality color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1473
+#: freppledb/planningboard/static/planningboard/planningboard.html:1514
 msgid "Delay color setup"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:45
 msgid "Delivery"
-msgstr "配信"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1503
+#: freppledb/planningboard/static/planningboard/planningboard.html:1544
 msgid "Due date color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:291
-#: freppledb/planningboard/static/planningboard/planningboard.html:364
-#: freppledb/planningboard/static/planningboard/planningboard.html:548
-#: freppledb/planningboard/static/planningboard/planningboard.html:674
-#: freppledb/planningboard/static/planningboard/planningboard.html:800
+#: freppledb/planningboard/static/planningboard/planningboard.html:314
+#: freppledb/planningboard/static/planningboard/planningboard.html:387
+#: freppledb/planningboard/static/planningboard/planningboard.html:578
+#: freppledb/planningboard/static/planningboard/planningboard.html:712
+#: freppledb/planningboard/static/planningboard/planningboard.html:841
 msgid "Duplicate"
-msgstr "複製"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1351
-#: freppledb/planningboard/static/planningboard/planningboard.html:1386
-#: freppledb/planningboard/static/planningboard/planningboard.html:1413
+#: freppledb/planningboard/static/planningboard/planningboard.html:1392
+#: freppledb/planningboard/static/planningboard/planningboard.html:1427
+#: freppledb/planningboard/static/planningboard/planningboard.html:1454
 msgid "Enter name"
-msgstr "名前を入力"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:30
 #: freppledb/quoting/static/quoting/quoting.html:43
@@ -7293,11 +7287,11 @@ msgstr "名前を入力"
 msgid "Enter your search terms"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1561
+#: freppledb/planningboard/static/planningboard/planningboard.html:1602
 msgid "Item category color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1593
+#: freppledb/planningboard/static/planningboard/planningboard.html:1634
 msgid "Item subcategory color setup"
 msgstr ""
 
@@ -7305,24 +7299,24 @@ msgstr ""
 msgid "No plan yet"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1625
+#: freppledb/planningboard/static/planningboard/planningboard.html:1666
 msgid "Operation category color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1657
+#: freppledb/planningboard/static/planningboard/planningboard.html:1698
 msgid "Operation subcategory color setup"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:52
-#: freppledb/planningboard/static/planningboard/planningboard.html:157
+#: freppledb/planningboard/static/planningboard/planningboard.html:153
 msgid "Please be patient, the chart may take some time to complete."
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1531
+#: freppledb/planningboard/static/planningboard/planningboard.html:1572
 msgid "Priority color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1538
+#: freppledb/planningboard/static/planningboard/planningboard.html:1579
 msgid ""
 "Priority is a demand property, available in the demands table. The priority "
 "value will have effect in the plan results.<br>\n"
@@ -7339,15 +7333,15 @@ msgstr ""
 msgid "Remove this resource"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:163
+#: freppledb/forecast/static/forecast/forecast.html:160
 msgid "Save changes to the database"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:173
+#: freppledb/planningboard/static/planningboard/planningboard.html:168
 msgid "Save plan from memory to the database"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:381
+#: freppledb/forecast/static/forecast/forecast.html:378
 msgid ""
 "Select forecast method, only possible at single item/location/customer level"
 msgstr ""
@@ -7360,24 +7354,24 @@ msgstr ""
 msgid "Select panel sequence"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:297
-#: freppledb/planningboard/static/planningboard/planningboard.html:370
-#: freppledb/planningboard/static/planningboard/planningboard.html:554
-#: freppledb/planningboard/static/planningboard/planningboard.html:680
-#: freppledb/planningboard/static/planningboard/planningboard.html:806
+#: freppledb/planningboard/static/planningboard/planningboard.html:320
+#: freppledb/planningboard/static/planningboard/planningboard.html:393
+#: freppledb/planningboard/static/planningboard/planningboard.html:584
+#: freppledb/planningboard/static/planningboard/planningboard.html:718
+#: freppledb/planningboard/static/planningboard/planningboard.html:847
 msgid "Split in half"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:44
 msgid "Stock"
-msgstr "ストック"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:51
-#: freppledb/planningboard/static/planningboard/planningboard.html:156
+#: freppledb/planningboard/static/planningboard/planningboard.html:152
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1449
+#: freppledb/planningboard/static/planningboard/planningboard.html:1490
 msgid ""
 "The criticality of an operationplan measures the slack time available till "
 "the delivery of the customer demand.<br>\n"
@@ -7388,7 +7382,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1480
+#: freppledb/planningboard/static/planningboard/planningboard.html:1521
 msgid ""
 "The delay of an operationplan compares its end date with the delivery due "
 "date of the customer demand(s) it feeds.<br>\n"
@@ -7417,23 +7411,24 @@ msgstr ""
 msgid "color by"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:194
+#: freppledb/planningboard/static/planningboard/planningboard.html:189
 msgid "colors"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:221
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:121
+#: freppledb/planningboard/static/planningboard/planningboard.html:216
 msgid "customer delivery"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:451
+#: freppledb/forecast/static/forecast/forecast.html:448
 #: freppledb/input/static/operationplandetail/operationplandetail.html:44
-#: freppledb/planningboard/static/planningboard/planningboard.html:149
+#: freppledb/planningboard/static/planningboard/planningboard.html:144
 msgid "database transaction failed"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:35
 msgid "delivery"
-msgstr "delivery"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:145
 msgid "delivery quantity"
@@ -7443,8 +7438,12 @@ msgstr ""
 msgid "downstream operations"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:87
+#: freppledb/planningboard/static/planningboard/planningboard.html:84
 msgid "export as Excel file"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:145
+msgid "export to {{erp}} failed"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:15
@@ -7452,19 +7451,19 @@ msgid "feasibility"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:43
-#: freppledb/planningboard/static/planningboard/planningboard.html:148
+#: freppledb/planningboard/static/planningboard/planningboard.html:143
 msgid "gantt chart rows limit"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:188
+#: freppledb/forecast/static/forecast/forecast.html:185
 msgid "history"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:33
+#: freppledb/planningboard/static/planningboard/planningboard.html:30
 msgid "item category"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:36
+#: freppledb/planningboard/static/planningboard/planningboard.html:33
 msgid "item subcategory"
 msgstr ""
 
@@ -7476,7 +7475,7 @@ msgstr ""
 msgid "network status"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:262
+#: freppledb/forecast/static/forecast/forecast.html:259
 msgid "new customer comment"
 msgstr ""
 
@@ -7501,7 +7500,7 @@ msgid "no resources"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:5
-#: freppledb/planningboard/static/planningboard/planningboard.html:208
+#: freppledb/planningboard/static/planningboard/planningboard.html:203
 msgid "no selection"
 msgstr ""
 
@@ -7513,33 +7512,42 @@ msgstr ""
 msgid "no upstream operationplans information"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:39
+#: freppledb/planningboard/static/planningboard/planningboard.html:36
 msgid "operation category"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:42
+#: freppledb/planningboard/static/planningboard/planningboard.html:39
 msgid "operation subcategory"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:230
+msgid "plus"
 msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:8
 msgid "quote form"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:84
+#: freppledb/planningboard/static/planningboard/planningboard.html:81
 msgid "remove all rows"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:81
+#: freppledb/planningboard/static/planningboard/planningboard.html:78
 msgid "remove row"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:6
 msgid "selected"
-msgstr "選択済み"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:446
-#: freppledb/planningboard/static/planningboard/planningboard.html:598
-#: freppledb/planningboard/static/planningboard/planningboard.html:720
+#: freppledb/forecast/static/forecast/forecast.html:62
+#: freppledb/planningboard/static/planningboard/planningboard.html:87
+msgid "set time horizon"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:472
+#: freppledb/planningboard/static/planningboard/planningboard.html:632
+#: freppledb/planningboard/static/planningboard/planningboard.html:761
 msgid "setup end"
 msgstr ""
 
@@ -7550,7 +7558,7 @@ msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
 msgid "stock"
-msgstr "stock"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:28
 msgid "supply information"
@@ -7558,7 +7566,7 @@ msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:33
 msgid "types"
-msgstr "タイプ"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:2
 msgid "upstream operations"
@@ -7567,490 +7575,3 @@ msgstr ""
 #: freppledb/input/static/operationplandetail/month.html:13
 msgid "week number"
 msgstr ""
-
-#~ msgid "Copy to Clipboard"
-#~ msgstr "クリップボードにコピー"
-
-#~ msgid "Error during export"
-#~ msgstr "エクスポート中にエラー発生"
-
-#~ msgid "Retry"
-#~ msgstr "リトライ"
-
-#~ msgid "OR"
-#~ msgstr "または"
-
-#~ msgid "export"
-#~ msgstr "エクスポート"
-
-#, fuzzy
-#~ msgid "blocked-by operation"
-#~ msgstr "子作業"
-
-#~ msgid "Cannot delete %(name)s"
-#~ msgstr "%(name)s が削除できません"
-
-#~ msgid "Are you sure?"
-#~ msgstr "よろしいですか？"
-
-#~ msgid "Submit"
-#~ msgstr "送信"
-
-#~ msgid "Back up the database"
-#~ msgstr "データベースをバックアップする"
-
-#~ msgid "Capacity: respect capacity limits"
-#~ msgstr "能力: 能力上の限度を考慮する"
-
-#~ msgid "Lead time: do not plan in the past"
-#~ msgstr "リードタイム: 過去は計画しない"
-
-#~ msgid "Release fence: do not plan within the release time window"
-#~ msgstr "フェンスを解放: 解放された時間ウインドウの中で計画しない"
-
-#~ msgid "Bucket '%(name)s' not found"
-#~ msgstr "バケット '%(name)s' が見つかりません"
-
-#~ msgid "filter data"
-#~ msgstr "データをフィルタ"
-
-#~ msgid "Recalculate"
-#~ msgstr "再計算"
-
-#~ msgid "simulate changes without saving"
-#~ msgstr "保存せずに変更をシミュレート"
-
-#~ msgid "No forecast found"
-#~ msgstr "予測がありません"
-
-#, fuzzy
-#~ msgid "Upload"
-#~ msgstr "アップロード"
-
-#, fuzzy
-#~ msgid "states.select"
-#~ msgstr "選択"
-
-#, fuzzy
-#~ msgid "gridError"
-#~ msgstr "エラー"
-
-#, fuzzy
-#~ msgid "Forecast wizard"
-#~ msgstr "予測エディタ"
-
-#, fuzzy
-#~ msgid "Operation"
-#~ msgstr "作業"
-
-#, fuzzy
-#~ msgid "Segment detail"
-#~ msgstr "計画の詳細"
-
-#, fuzzy
-#~ msgid "Resource"
-#~ msgstr "リソース"
-
-#, fuzzy
-#~ msgid "Manufacturing order"
-#~ msgstr "製造オーダー"
-
-#, fuzzy
-#~ msgid "gView"
-#~ msgstr "表示"
-
-#, fuzzy
-#~ msgid "overlay"
-#~ msgstr "過負荷"
-
-#, fuzzy
-#~ msgid "loading"
-#~ msgstr "負荷"
-
-#, fuzzy
-#~ msgid "colHeaders"
-#~ msgstr "受注"
-
-#, fuzzy
-#~ msgid "hTable"
-#~ msgstr "テーブル"
-
-#, fuzzy
-#~ msgid "resizer"
-#~ msgstr "サイズ"
-
-#, fuzzy
-#~ msgid "top"
-#~ msgstr "停止"
-
-#, fuzzy
-#~ msgid "titleButton"
-#~ msgstr "タイトル"
-
-#, fuzzy
-#~ msgid "add"
-#~ msgstr "と"
-
-#, fuzzy
-#~ msgid "is_ip_buffer"
-#~ msgstr "バッファ"
-
-#~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
-#~ msgstr "正しくない日付: 入力すべき形式 YYYY-MM-DD HH:MM:SS"
-
-#~ msgid "favorites"
-#~ msgstr "お気に入り"
-
-#~ msgid "Too many objects to display"
-#~ msgstr "オブジェクトが多過ぎて表示できません"
-
-#~ msgid "material excess"
-#~ msgstr "材料の過剰"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "                        Files in the old .XLS excel format can't be read."
-#~ "<br>\n"
-#~ "                        Please convert them to the new .XLSX format.\n"
-#~ "                        "
-#~ msgstr ""
-#~ "古いファイル.XLS Excel 形式を読み取ることができません。<br>それらを新しい"
-#~ "に変換してください.XLSX 形式。"
-
-#, fuzzy
-#~ msgid "Choose a what-if scenario"
-#~ msgstr "What-If シナリオを選択する"
-
-#, fuzzy
-#~ msgid "Copy files to folder"
-#~ msgstr "ファイルをフォルダにコピーする"
-
-#, fuzzy
-#~ msgid "setup time"
-#~ msgstr "セットアップ時間"
-
-#~ msgid "to"
-#~ msgstr "へ"
-
-#~ msgid "Read Odoo data"
-#~ msgstr "Odooからデータを読み込み"
-
-#~ msgid "Write results to Odoo"
-#~ msgstr "Odooへデータを書き込み"
-
-#, fuzzy
-#~ msgid "Following "
-#~ msgstr ""
-#~ "%(object_name)s '%(escaped_object)s' の削除時に関連づけられたオブジェクト"
-#~ "も削除しようとしましたが、あなたのアカウントには以下のタイプのオブジェクト"
-#~ "を削除するパーミッションがありません:"
-
-#, fuzzy
-#~ msgid "Unfollow"
-#~ msgstr "フォロー解除"
-
-#, fuzzy
-#~ msgid "Stop getting notifications in your inbox when there is activity"
-#~ msgstr "アクティビティがある場合は受信トレイで通知を受け取るのを停止する"
-
-#, fuzzy
-#~ msgid "Email exported reports"
-#~ msgstr "エクスポートされたレポートを電子メールで送信する"
-
-#, fuzzy
-#~ msgid "email"
-#~ msgstr "メールアドレス"
-
-#, fuzzy
-#~ msgid "report editor"
-#~ msgstr "レポート エディター"
-
-#, fuzzy
-#~ msgid "multiple selected"
-#~ msgstr "複数選択"
-
-#~ msgid "Filtered where"
-#~ msgstr "場所でフィルタ"
-
-#, fuzzy
-#~ msgid "change"
-#~ msgstr "変更"
-
-#~ msgid "Arguments"
-#~ msgstr "引数"
-
-#, fuzzy
-#~ msgid "Due date"
-#~ msgstr "期日"
-
-#, fuzzy
-#~ msgid "Advanced"
-#~ msgstr "詳細設定"
-
-#, fuzzy
-#~ msgid "Quantity"
-#~ msgstr "数量"
-
-#, fuzzy
-#~ msgid "Show the evolution of the demand history"
-#~ msgstr "SMAPE 予測誤差の変遷を表示する"
-
-#, fuzzy
-#~ msgid "Change history"
-#~ msgstr "変更履歴: %s"
-
-#~ msgid "cockpit"
-#~ msgstr "コクピット"
-
-#~ msgid "User"
-#~ msgstr "ユーザー"
-
-#~ msgid "Action"
-#~ msgstr "操作"
-
-#~ msgid ""
-#~ "This object doesn't have a change history. It probably wasn't added via "
-#~ "this admin site."
-#~ msgstr ""
-#~ "このオブジェクトには変更履歴がありません。おそらくこの管理サイトで追加した"
-#~ "ものではありません。"
-
-#~ msgid "Display a list of the entities you recently changed"
-#~ msgstr "最近変更したエンティティのリストを表示する"
-
-#~ msgid "Unknown content"
-#~ msgstr "不明なコンテンツ"
-
-#~ msgid "None available"
-#~ msgstr "利用不可"
-
-#~ msgid "Display a list of recent comments"
-#~ msgstr "最近のコメントを一覧表示する"
-
-#~ msgid "Planning parameters"
-#~ msgstr "計画パラメーター"
-
-#~ msgid "planning parameters"
-#~ msgstr "計画パラメーター"
-
-#~ msgid "alternates"
-#~ msgstr "代理"
-
-#~ msgid "A minimum quantity for operationplans"
-#~ msgstr "作業計画に対する最小数量"
-
-#~ msgid "A multiple quantity for operationplans"
-#~ msgstr "作業計画の倍数量"
-
-#~ msgid "A maximum quantity for operationplans"
-#~ msgstr "作業計画に対する最大数量"
-
-#~ msgid "A fixed duration for the operation"
-#~ msgstr "作業に対して固定でかかる時間"
-
-#~ msgid "Optional name of this operation material"
-#~ msgstr "この作業材料の補助名"
-
-#~ msgid "Optional name of this load"
-#~ msgstr "この負荷の任意の名前"
-
-#~ msgid "Priority of this load in a group of alternates"
-#~ msgstr "この負荷の代替グループ内での優先度"
-
-#~ msgid "proposed transfers"
-#~ msgstr "提案された譲渡"
-
-#~ msgid "open purchases"
-#~ msgstr "購入を開く"
-
-#~ msgid "open transfers"
-#~ msgstr "譲渡を開く"
-
-#~ msgid "proposed transfers value"
-#~ msgstr "提案された譲渡価格"
-
-#~ msgid "open transfers value"
-#~ msgstr "譲渡価格を開く"
-
-#~ msgctxt "Gantt"
-#~ msgid "earlier"
-#~ msgstr "前"
-
-#~ msgctxt "Gantt"
-#~ msgid "later"
-#~ msgstr "後"
-
-#~ msgctxt "Gantt"
-#~ msgid "reset"
-#~ msgstr "リセット"
-
-#, fuzzy
-#~ msgid "out_method"
-#~ msgstr "メソッド"
-
-#, fuzzy
-#~ msgid "forecastreport_view"
-#~ msgstr "予測レポート"
-
-#, fuzzy
-#~ msgid "forecastreports_view"
-#~ msgstr "予測レポート"
-
-#, fuzzy
-#~ msgid "report"
-#~ msgstr "エクスポート"
-
-#, fuzzy
-#~ msgid "sequence"
-#~ msgstr "フェンス"
-
-#, fuzzy
-#~ msgid "Archive manager report"
-#~ msgstr "需要レポート"
-
-#, fuzzy
-#~ msgid "snapshot date"
-#~ msgstr "開始日"
-
-#, fuzzy
-#~ msgid "total records"
-#~ msgstr "注文の合計"
-
-#, fuzzy
-#~ msgid "buffer records"
-#~ msgstr "バッファ"
-
-#, fuzzy
-#~ msgid "demand records"
-#~ msgstr "需要レポート"
-
-#, fuzzy
-#~ msgid "operationplan records"
-#~ msgstr "作業計画"
-
-#, fuzzy
-#~ msgid "distribution Order"
-#~ msgstr "配信順序"
-
-#, fuzzy
-#~ msgid "manufacturing Order"
-#~ msgstr "製造オーダー"
-
-#, fuzzy
-#~ msgid "purchase Order"
-#~ msgstr "購入注文"
-
-#~ msgid "import CSV or Excel file"
-#~ msgstr "CSVまたはExcelファイルをインポート"
-
-#, fuzzy
-#~ msgid "No unread messages!"
-#~ msgstr "変更メッセージ"
-
-#, fuzzy
-#~ msgid "report column"
-#~ msgstr "4カラム"
-
-#, fuzzy
-#~ msgid "report columns"
-#~ msgstr "4カラム"
-
-#, fuzzy
-#~ msgid "total_records"
-#~ msgstr "注文の合計"
-
-#, fuzzy
-#~ msgid "buffer_records"
-#~ msgstr "バッファ"
-
-#, fuzzy
-#~ msgid "demand_records"
-#~ msgstr "需要"
-
-#, fuzzy
-#~ msgid "operationplan_records"
-#~ msgstr "作業計画"
-
-#, fuzzy
-#~ msgid "archived buffers"
-#~ msgstr "バッファ"
-
-#, fuzzy
-#~ msgid "archived sales order"
-#~ msgstr "納期超過のオーダー"
-
-#, fuzzy
-#~ msgid "archived sales orders"
-#~ msgstr "納期超過のオーダー"
-
-#~ msgid "Error saving data"
-#~ msgstr "データの保存に失敗しました"
-
-#~ msgid "Error saving report settings"
-#~ msgstr "レポート設定の保存でエラー"
-
-#~ msgid "Error deleting data"
-#~ msgstr "データ削除エラー"
-
-#~ msgid "Error copying data"
-#~ msgstr "データのコピー中にエラー発生"
-
-#~ msgid "Error getting data"
-#~ msgstr "データ取得中にエラー発生"
-
-#~ msgid "Error reading version information"
-#~ msgstr "バージョン情報読み込み中のエラー"
-
-#~ msgid "Error retrieving report data"
-#~ msgstr "レポートデータ取得に失敗しました"
-
-#~ msgid "Download all input data in a single spreadsheet."
-#~ msgstr "単一の表計算シートで入力データをダウンロードする"
-
-#, fuzzy
-#~ msgid "New password "
-#~ msgstr "新しいパスワード"
-
-#, fuzzy
-#~ msgid "Size Minimum"
-#~ msgstr "最小サイズ"
-
-#, fuzzy
-#~ msgid "Size Multiple"
-#~ msgstr "サイズ倍数"
-
-#, fuzzy
-#~ msgid "Size Maximum"
-#~ msgstr "最大サイズ"
-
-#~ msgid "copy"
-#~ msgstr "複製"
-
-#~ msgid "release selected scenarios"
-#~ msgstr "選択したシナリオを解除"
-
-#~ msgid "into selected scenarios"
-#~ msgstr "選択したシナリオへ"
-
-#~ msgid "Update description of selected scenarios"
-#~ msgstr "選択したシナリオの記述をアップデート"
-
-#, fuzzy
-#~ msgid "log out"
-#~ msgstr "ログアウト"
-
-#, fuzzy
-#~ msgid " Old password "
-#~ msgstr "元のパスワード"
-
-#, fuzzy
-#~ msgid " New password confirmation "
-#~ msgstr "新しいパスワード(確認用)"
-
-#, fuzzy
-#~ msgid "Old password:"
-#~ msgstr "元のパスワード"
-
-#~ msgid "New password:"
-#~ msgstr "新しいパスワード:"

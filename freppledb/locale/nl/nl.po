@@ -2506,10 +2506,11 @@ msgid ""
 "curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
 "</div></div>\n"
 "<div class=\"mb-2\">\n"
-"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" target="
-"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
-"\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" value=\"%(exp)s"
-"\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/>  days:\n"
+"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" "
+"target=\"_blank\">JSON Web Token authentication</a> valid for the next "
+"<input id=\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" "
+"value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/"
+">  days:\n"
 "</div>\n"
 "<div class=\"card mb-3\"><div class=\"card-body\">\n"
 "wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
@@ -2552,9 +2553,10 @@ msgstr ""
 "</div></div>\n"
 "<div class=\"mb-2\">\n"
 "Met een <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" "
-"target=\"_blank\">JSON Web Token</a> geldig voor de volgende <input id=\"jwt"
-"\" class=\"d-inline form-control p-1\" type=\"number\" value=\"%(exp)s\" min="
-"\"0\" step=\"1\" style=\"width:4em; background:white\"/>  dagen:<br>\n"
+"target=\"_blank\">JSON Web Token</a> geldig voor de volgende <input "
+"id=\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" "
+"value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/"
+">  dagen:<br>\n"
 "</div>\n"
 "<div class=\"card mb-3\"><div class=\"card-body\">\n"
 "wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
@@ -3153,29 +3155,29 @@ msgstr "Type plan"
 
 #: execute/templates/commands/runplan.html:28
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Genereer een plan dat alle constraints respecteert."
-"<br>In geval van tekorten wordt de vraag te laat of te weinig ingepland."
-"\">Constrained plan</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Genereer een plan dat alle constraints "
+"respecteert.<br>In geval van tekorten wordt de vraag te laat of te weinig "
+"ingepland.\">Constrained plan</span>"
 
 #: execute/templates/commands/runplan.html:35
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that shows material, "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that shows material, "
 "capacity and operation problems that prevent the demand from being planned "
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Genereer een plan dat material, capacity en lead "
-"time problemen toont die beletten dat de vraag op tijd kan worden geleverd."
-"<br>De vraag wordt steeds volledig en op de gewenste leverdatum ingepland."
-"\">Unconstrained plan</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Genereer een plan dat material, capacity en "
+"lead time problemen toont die beletten dat de vraag op tijd kan worden "
+"geleverd.<br>De vraag wordt steeds volledig en op de gewenste leverdatum "
+"ingepland.\">Unconstrained plan</span>"
 
 #: execute/templates/commands/runplan.html:40 output/models.py:56
 #: output/templates/output/buffer.html:353
@@ -3186,42 +3188,42 @@ msgstr "constraints"
 
 #: execute/templates/commands/runplan.html:44
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Respect the capacity limits of your resources."
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Respect the capacity limits of your resources."
 "\">Capacity: respect capacity limits</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Respecteer de capateitslimiet van alle machines."
-"\">Capaciteit: respecteer capaciteitslimieten</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Respecteer de capateitslimiet van alle "
+"machines.\">Capaciteit: respecteer capaciteitslimieten</span>"
 
 #: execute/templates/commands/runplan.html:51
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't generate any plans that start or end in the "
-"past.<br>Proposed and approved activities must all be in the future.<br>Only "
-"confirmed activities are allowed to be in the past.\">Lead time: do not plan "
-"in the past</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't generate any plans that start or end in "
+"the past.<br>Proposed and approved activities must all be in the future."
+"<br>Only confirmed activities are allowed to be in the past.\">Lead time: do "
+"not plan in the past</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Genereer geen plannen in het "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Genereer geen plannen in het "
 "verleden<br>Goedgekeurde en voorgestelde orders moeten in de toekomst liggen."
 "<br>Enkel bevestigde orders kunnen in het verleden liggen.\">Doorlooptijd: "
 "plan niet in het verleden</span>"
 
 #: execute/templates/commands/runplan.html:58
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't propose any plans within a frozen time window "
-"(which is configured on each operation).<br>Within the frozen zone only "
-"approved and confirmed activities are allowed, no new proposed activities."
-"\">Release fence: do not plan within a frozen time window</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't propose any plans within a frozen time "
+"window (which is configured on each operation).<br>Within the frozen zone "
+"only approved and confirmed activities are allowed, no new proposed "
+"activities.\">Release fence: do not plan within a frozen time window</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Stel geen plan voor in het release tijdsvenster "
-"(dat instelbaar is op elke operatie).<br>In het release tijdsvenste enkel "
-"goedgekeurde en bevestigde orders zijn toegelaten, en nieuwe voorgestelde "
-"orders.\">Release tijdsvenster: plan niet in het bevroren release "
-"tijdsvenster</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Stel geen plan voor in het release "
+"tijdsvenster (dat instelbaar is op elke operatie).<br>In het release "
+"tijdsvenste enkel goedgekeurde en bevestigde orders zijn toegelaten, en "
+"nieuwe voorgestelde orders.\">Release tijdsvenster: plan niet in het "
+"bevroren release tijdsvenster</span>"
 
 #: execute/templates/commands/scenario_copy.html:13
 msgid ""
@@ -6128,15 +6130,15 @@ msgstr "Stockage policy"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2956
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to "
+"1.<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"Zet de safety stock op 0 en reorderhoeveelheid op 1."
-"<br>Deze product-locatie wordt dan ingepland met een 1-op-1 matching tussen "
-"de vraag en supply.\" >Stockeer niet</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"Zet de safety stock op 0 en reorderhoeveelheid "
+"op 1.<br>Deze product-locatie wordt dan ingepland met een 1-op-1 matching "
+"tussen de vraag en supply.\" >Stockeer niet</span>"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2966
 #: inventoryplanning/templates/inventoryplanning/drp.html:2985
@@ -6145,13 +6147,13 @@ msgstr "waar"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2975
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"In push mode, any excess inventory will be "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"In push mode wordt alle stock meteen downstream "
-"doorgezonden naar andere locaties.\">Activeer push mode</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"In push mode wordt alle stock meteen "
+"downstream doorgezonden naar andere locaties.\">Activeer push mode</span>"
 
 #: inventoryplanning/views.py:117
 msgid "segments"
@@ -7410,6 +7412,10 @@ msgstr "Aankooporder"
 msgid "Quoting error"
 msgstr "Quoting error"
 
+#: freppledb/forecast/static/forecast/forecast.html:156
+msgid "Recalculate"
+msgstr "Herbereken"
+
 #: freppledb/planningboard/static/planningboard/planningboard.html:815
 msgid "Remove this demand from planning"
 msgstr "Verwijder deze order uit het plan"
@@ -7684,741 +7690,108 @@ msgstr "{{ aggregatedoperationplans.count }} geselecteerd"
 msgid "{{m.label}}"
 msgstr "{{m.label}}"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1568
+#: freppledb/planningboard/static/planningboard/planningboard.html:1609
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"Een operatie krijgt de kleur van de categorie van het item die het "
-"produceert.<br>\n"
-"De item categorie wordt ingevuld in de item tabel\n"
-"<br><br>"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1600
+#: freppledb/planningboard/static/planningboard/planningboard.html:1641
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"Een operatie krijgt de kleur van de subcategorie van het item die het "
-"produceert.<br>\n"
-"De item subcategorie wordt ingevuld in de item tabel\n"
-"<br><br>"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1510
+#: freppledb/planningboard/static/planningboard/planningboard.html:1551
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
-"Een operatie krijgt een kleur volgens de week waarin de levertijd valt.\n"
-"<br><br>"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
 msgid "Assign an extra resource"
-msgstr "Ken een extra resource toe"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1503
+#: freppledb/planningboard/static/planningboard/planningboard.html:1544
 msgid "Due date color setup"
-msgstr "Setup voor kleur per leverdatum"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1351
-#: freppledb/planningboard/static/planningboard/planningboard.html:1386
-#: freppledb/planningboard/static/planningboard/planningboard.html:1413
+#: freppledb/planningboard/static/planningboard/planningboard.html:1392
+#: freppledb/planningboard/static/planningboard/planningboard.html:1427
+#: freppledb/planningboard/static/planningboard/planningboard.html:1454
 msgid "Enter name"
-msgstr "Geef naam"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:76
 msgid "Remove this resource"
-msgstr "Verwijder deze machine"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:75
 msgid "View end events"
-msgstr "Toon einde"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:77
 msgid "View full duration"
-msgstr "Toon volledige duur"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:76
 msgid "View start and end events"
-msgstr "Toon start en einde"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:74
 msgid "View start events"
-msgstr "Toon start"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:35
 msgid "delivery"
-msgstr "levering"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:2
 msgid "downstream operations"
-msgstr "downstream operaties"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:145
+msgid "export to {{erp}} failed"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
 msgid "no downstream operationplans information"
-msgstr "geen informatie over downstream operaties"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:18
 msgid "no upstream operationplans information"
-msgstr "geen informatie over upstream operaties"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:230
+msgid "plus"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:6
 msgid "selected"
-msgstr "geselecteerd"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:62
+#: freppledb/planningboard/static/planningboard/planningboard.html:87
+msgid "set time horizon"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/calendar.html:24
 #: freppledb/input/static/operationplandetail/kanban.html:16
 msgid "shown"
-msgstr "weergegeven"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
 msgid "stock"
-msgstr "voorraad"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:2
 msgid "upstream operations"
-msgstr "upstream operaties"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/month.html:13
 msgid "week number"
-msgstr "weeknumer"
-
-#~ msgid "Copy to Clipboard"
-#~ msgstr "Kopieer naar klembord"
-
-#~ msgid "blocked-by operation"
-#~ msgstr "geblokkeerd door operatie"
-
-#~ msgid "Cannot delete %(name)s"
-#~ msgstr "%(name)s kan niet worden verwijderd"
-
-#~ msgid "About to delete!"
-#~ msgstr "Op het punt om te verwijderen!"
-
-#~ msgid "Are you sure?"
-#~ msgstr "Weet u het zeker?"
-
-#~ msgid "Back up the database"
-#~ msgstr "Databank backup maken"
-
-#~ msgid "Capacity: respect capacity limits"
-#~ msgstr "Capaciteit: respecteer beschikbare capaciteit"
-
-#~ msgid "Lead time: do not plan in the past"
-#~ msgstr "Lead time: creëer geen plannen in het verleden"
-
-#~ msgid "Release fence: do not plan within the release time window"
-#~ msgstr "Vrijgave window: creëer geen plannen in het vrijgave window"
-
-#~ msgid "Dump the database contents to a file."
-#~ msgstr "Dump the databank gegevens naar een bestand."
-
-#~ msgid "Upload data files"
-#~ msgstr "Upload databestanden"
-
-#~ msgid "Upload"
-#~ msgstr "Upload"
-
-#~ msgid "Bucket '%(name)s' not found"
-#~ msgstr "Bucket '%(name)s' niet gevonden"
-
-#~ msgid "computed fields"
-#~ msgstr "berekende velden"
-
-#~ msgid "simulate changes without saving"
-#~ msgstr "simuleer aanpassing zonder ze op te slaan"
-
-#~ msgid "Recalculate"
-#~ msgstr "Herbereken"
-
-#~ msgid "Changed %s."
-#~ msgstr "%s gewijzigd."
-
-#~ msgid "No forecast found"
-#~ msgstr "Geen forecast gevonden"
-
-#~ msgid "OR"
-#~ msgstr "OF"
-
-#, fuzzy
-#~ msgid "states.select"
-#~ msgstr "selecteer"
-
-#, fuzzy
-#~ msgid "gridError"
-#~ msgstr "Fout"
-
-#~ msgid "Error during export"
-#~ msgstr "Fout tijdens exporteren"
-
-#~ msgid "Retry"
-#~ msgstr "Probeer opnieuw"
-
-#, fuzzy
-#~ msgid "Forecast wizard"
-#~ msgstr "Forecast editor"
-
-#, fuzzy
-#~ msgid "Operation"
-#~ msgstr "operatie"
-
-#, fuzzy
-#~ msgid "Segment detail"
-#~ msgstr "voorraaddetail"
-
-#, fuzzy
-#~ msgid "Resource"
-#~ msgstr "resource"
-
-#, fuzzy
-#~ msgid "Manufacturing order"
-#~ msgstr "productieorder"
-
-#~ msgid "Submit"
-#~ msgstr "Submit"
-
-#~ msgid "filter data"
-#~ msgstr "filter gegevens"
-
-#, fuzzy
-#~ msgid "gView"
-#~ msgstr "Weergeven"
-
-#, fuzzy
-#~ msgid "overlay"
-#~ msgstr "overbelasting"
-
-#, fuzzy
-#~ msgid "loading"
-#~ msgstr "load"
-
-#, fuzzy
-#~ msgid "states.disabled"
-#~ msgstr "aanpasbaar"
-
-#, fuzzy
-#~ msgid "hTable"
-#~ msgstr "tabel"
-
-#, fuzzy
-#~ msgid "resizer"
-#~ msgstr "grootte"
-
-#, fuzzy
-#~ msgid "top"
-#~ msgstr "Stop"
-
-#, fuzzy
-#~ msgid "titleButton"
-#~ msgstr "titel"
-
-#~ msgid "add"
-#~ msgstr "toevoegen"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "                        Files in the old .XLS excel format can't be read."
-#~ "<br>\n"
-#~ "                        Please convert them to the new .XLSX format.\n"
-#~ "                        "
-#~ msgstr ""
-#~ "Bestanden in het oude .XLS excel format kunnen niet worden ingelezen."
-#~ "<br>Gebruik het nieuwe .XLSX formaat."
-
-#, fuzzy
-#~ msgid "is_ip_buffer"
-#~ msgstr "buffer"
-
-#~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
-#~ msgstr "Incorrecte datum: verwachte JJJJ-MM-DD UU:MM:SS"
-
-#~ msgid "Choose a what-if scenario"
-#~ msgstr "Kies een what-if scenario"
-
-#~ msgid "Copy files to folder"
-#~ msgstr "Importeer databestanden"
-
-#~ msgid "Too many objects to display"
-#~ msgstr "Teveel objecten om te tonen"
-
-#~ msgid "setup time"
-#~ msgstr "omsteltijd"
-
-#~ msgid "material excess"
-#~ msgstr "materiaal overschot"
-
-#~ msgid "Remark"
-#~ msgstr "Opmerking"
-
-#~ msgid "Unfollow"
-#~ msgstr "Niet meer volgen"
-
-#~ msgid "Stop getting notifications in your inbox when there is activity"
-#~ msgstr ""
-#~ "Geen meldingen meer ontvangen in je postvak IN wanneer er activiteit is"
-
-#~ msgid "to"
-#~ msgstr "tot"
-
-#~ msgid "Email exported reports"
-#~ msgstr "Email geëxporteerde bestanden"
-
-#~ msgid "email"
-#~ msgstr "email"
-
-#~ msgid "Read Odoo data"
-#~ msgstr "Lees Odoo data"
-
-#~ msgid "Write results to Odoo"
-#~ msgstr "Zend resultaten naar Odoo"
-
-#~ msgid "report editor"
-#~ msgstr "rapport editor"
-
-#~ msgid "Filtered where"
-#~ msgstr "Gefilterd waar"
-
-#~ msgid "Execute SQL statements"
-#~ msgstr "SQL commandos uitvoeren"
-
-#~ msgid "efficiency %% calendar"
-#~ msgstr "efficientie %% kalender"
-
-#~ msgid "change"
-#~ msgstr "wijzig"
-
-#~ msgid "Arguments"
-#~ msgstr "Argumenten"
-
-#, fuzzy
-#~ msgid "Due date"
-#~ msgstr "leverdatum"
-
-#, fuzzy
-#~ msgid "Advanced"
-#~ msgstr "geavanceerd"
-
-#, fuzzy
-#~ msgid "Quantity"
-#~ msgstr "hoeveelheid"
-
-#~ msgid "Show the evolution of the demand history"
-#~ msgstr "Toon de evolutie van de open klantenorders"
-
-#~ msgid "Change history"
-#~ msgstr "Wijzigingsgeschiedenis"
-
-#~ msgid "cockpit"
-#~ msgstr "cockpit"
-
-#~ msgid "User"
-#~ msgstr "Gebruiker"
-
-#~ msgid "Action"
-#~ msgstr "Actie"
-
-#~ msgid ""
-#~ "This object doesn't have a change history. It probably wasn't added via "
-#~ "this admin site."
-#~ msgstr ""
-#~ "Dit object heeft geen wijzigingsgeschiedenis. Het is mogelijk niet via de "
-#~ "beheersite toegevoegd."
-
-#~ msgid "My Actions"
-#~ msgstr "Mijn Acties"
-
-#~ msgid "Display a list of the entities you recently changed"
-#~ msgstr "Toon een lijst van recent aangepaste objecten"
-
-#~ msgid "Unknown content"
-#~ msgstr "Onbekende inhoud"
-
-#~ msgid "None available"
-#~ msgstr "Geen beschikbaar"
-
-#~ msgid "Display a list of recent comments"
-#~ msgstr "Toon een lijst van recente commentaren"
-
-#~ msgid "Planning parameters"
-#~ msgstr "Planning parameters"
-
-#~ msgid "child operation"
-#~ msgstr "sub-operatie"
-
-#~ msgid "child suboperations"
-#~ msgstr "sub-operaties"
-
-#~ msgid "planning parameters"
-#~ msgstr "planning parameters"
-
-#~ msgid "alternate selection"
-#~ msgstr "selectie van alternatieven"
-
-#~ msgid "alternates"
-#~ msgstr "alternatieven"
-
-#~ msgid "A minimum quantity for operationplans"
-#~ msgstr "Minimum lotgrootte voor operaties"
-
-#~ msgid "A multiple quantity for operationplans"
-#~ msgstr "Veelvoud lottgrootte voor operaties"
-
-#~ msgid "A maximum quantity for operationplans"
-#~ msgstr "Minimum lotgrootte voor operaties"
-
-#~ msgid "A fixed duration for the operation"
-#~ msgstr "Vaste duur van de operatie"
-
-#~ msgid "Optional name of this operation material"
-#~ msgstr "Optionele naam van dit operatie material"
-
-#~ msgid "Optional name of this load"
-#~ msgstr "Optionele naam van de load"
-
-#~ msgid "Priority of this load in a group of alternates"
-#~ msgstr "Prioriteit van deze load in een groep alternatieven"
-
-#~ msgid "proposed transfers"
-#~ msgstr "voorgestelde transfer orders"
-
-#~ msgid "open purchases"
-#~ msgstr "open aankooporders"
-
-#~ msgid "open transfers"
-#~ msgstr "open transfer orders"
-
-#~ msgid "proposed transfers value"
-#~ msgstr "waarde voorgestelde transfer orders"
-
-#~ msgid "open transfers value"
-#~ msgstr "waarde open transferorders"
-
-#~ msgctxt "Gantt"
-#~ msgid "earlier"
-#~ msgstr "vroeger"
-
-#~ msgctxt "Gantt"
-#~ msgid "later"
-#~ msgstr "later"
-
-#~ msgctxt "Gantt"
-#~ msgid "reset"
-#~ msgstr "reset"
-
-#, fuzzy
-#~ msgid "out_method"
-#~ msgstr "methode"
-
-#, fuzzy
-#~ msgid "forecastreport_view"
-#~ msgstr "forecast rapport"
-
-#, fuzzy
-#~ msgid "forecastreports_view"
-#~ msgstr "forecast rapport"
-
-#~ msgid "report"
-#~ msgstr "rapport"
-
-#~ msgid "sequence"
-#~ msgstr "sequentie"
-
-#~ msgid "report column"
-#~ msgstr "rapportkolom"
-
-#, fuzzy
-#~ msgid "Archive manager report"
-#~ msgstr "Vraagrapport"
-
-#~ msgid "snapshot date"
-#~ msgstr "snapshotdatum"
-
-#, fuzzy
-#~ msgid "total records"
-#~ msgstr "totale orders"
-
-#, fuzzy
-#~ msgid "buffer records"
-#~ msgstr "buffers"
-
-#, fuzzy
-#~ msgid "demand records"
-#~ msgstr "Vraagrapport"
-
-#, fuzzy
-#~ msgid "operationplan records"
-#~ msgstr "ingeplande operaties"
-
-#~ msgid "import CSV or Excel file"
-#~ msgstr "importeer CSV of Excel bestand"
-
-#, fuzzy
-#~ msgid "No unread messages!"
-#~ msgstr "wijzigingsbericht"
-
-#~ msgid "Ukranian"
-#~ msgstr "Oekraïens"
-
-#, fuzzy
-#~ msgid "archive manager"
-#~ msgstr "beheer measures"
-
-#, fuzzy
-#~ msgid "archived sales order"
-#~ msgstr "klantenorders over tijd"
-
-#, fuzzy
-#~ msgid "archived sales orders"
-#~ msgstr "klantenorders over tijd"
-
-#~ msgid "Error saving data"
-#~ msgstr "Foutmelding tijdens wegschrijven gegevens"
-
-#~ msgid "Error saving report settings"
-#~ msgstr "Foutmelding tijdens wegschrijven rapportconfiguratie"
-
-#~ msgid "Error deleting data"
-#~ msgstr "Foutmelding tijdens verwijderen gegevens"
-
-#~ msgid "Error copying data"
-#~ msgstr "Foutmelding tijdens kopieren gegevens"
-
-#~ msgid "Export Plan"
-#~ msgstr "Exporteer plan"
-
-#~ msgid "Error getting data"
-#~ msgstr "Fout tijdens ophalen van gegevens"
-
-#~ msgid "Error reading version information"
-#~ msgstr "Fout tijdens lezen versie informatie"
-
-#~ msgid "Error retrieving report data"
-#~ msgstr "Fout tijdens ophalen van rapport data"
-
-#~ msgid ""
-#~ "<p>Create time buckets for reporting.</p>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Start date</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"vDateField form-control\" id=\"start\" name="
-#~ "\"start\" type=\"text\" size=\"12\" value=\"2014-01-01\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">End date</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"vDateField form-control\" id=\"end\" name=\"end"
-#~ "\" type=\"text\" size=\"12\" value=\"2022-01-01\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\" for=\"weekstart1\">Week "
-#~ "starts on</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <div class=\"dropdown dropdown-submit-input\">\n"
-#~ "            <button class=\"btn btn-default dropdown-toggle form-control"
-#~ "\"  id=\"weekstart1\" value=\"1\" type=\"button\" data-toggle=\"dropdown"
-#~ "\">Monday&nbsp;&nbsp;<span class=\"caret\"></span></button>\n"
-#~ "            <ul class=\"dropdown-menu col-xs-12\" aria-labelledby="
-#~ "\"weekstart1\" id=\"weekstartul\">\n"
-#~ "              <li><a>Sunday</a></li>\n"
-#~ "              <li><a>Monday</a></li>\n"
-#~ "              <li><a>Tuesday</a></li>\n"
-#~ "              <li><a>Wednesday</a></li>\n"
-#~ "              <li><a>Thursday</a></li>\n"
-#~ "              <li><a>Friday</a></li>\n"
-#~ "              <li><a>Saturday</a></li>\n"
-#~ "            </ul>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Day name</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"form-control\" name=\"format-day\" type=\"text\" "
-#~ "size=\"12\" value=\"%Y-%m-%d\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Week name</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"form-control\" name=\"format-week\" type=\"text"
-#~ "\" size=\"12\" value=\"%y W%W\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Month name</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"form-control\" name=\"format-month\" type=\"text"
-#~ "\" size=\"12\" value=\"%b %y\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Quarter name</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"form-control\" name=\"format-quarter\" type="
-#~ "\"text\" size=\"12\" value=\"%y Q%q\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Year name</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"form-control\" name=\"format-year\" type=\"text"
-#~ "\" size=\"12\" value=\"%Y\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          "
-#~ msgstr ""
-#~ "<p>Genereer tijdsbuckets voor de raporten.</p>\n"
-#~ "<div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Startdatum</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"vDateField form-control\" id=\"start\" name="
-#~ "\"start\" type=\"text\" size=\"12\" value=\"2014-01-01\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Enddatum</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"vDateField form-control\" id=\"end\" name=\"end"
-#~ "\" type=\"text\" size=\"12\" value=\"2022-01-01\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\" for=\"weekstart1\">Week "
-#~ "begint op</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <div class=\"dropdown dropdown-submit-input\">\n"
-#~ "            <button class=\"btn btn-default dropdown-toggle form-control"
-#~ "\"  id=\"weekstart1\" value=\"1\" type=\"button\" data-toggle=\"dropdown"
-#~ "\">Maandag&nbsp;&nbsp;<span class=\"caret\"></span></button>\n"
-#~ "            <ul class=\"dropdown-menu col-xs-12\" aria-labelledby="
-#~ "\"weekstart1\" id=\"weekstartul\">\n"
-#~ "              <li><a>Zondag</a></li>\n"
-#~ "              <li><a>Maandag</a></li>\n"
-#~ "              <li><a>Dinsdag</a></li>\n"
-#~ "              <li><a>Woensdag</a></li>\n"
-#~ "              <li><a>Donderdag</a></li>\n"
-#~ "              <li><a>Vrijdag</a></li>\n"
-#~ "              <li><a>Zaterdag</a></li>\n"
-#~ "            </ul>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Label&nbsp;voor&nbsp;"
-#~ "dag</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"form-control\" name=\"format-day\" type=\"text\" "
-#~ "size=\"12\" value=\"%Y-%m-%d\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Label&nbsp;voor&nbsp;"
-#~ "week</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"form-control\" name=\"format-week\" type=\"text"
-#~ "\" size=\"12\" value=\"%y W%W\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Label&nbsp;voor&nbsp;"
-#~ "maand</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"form-control\" name=\"format-month\" type=\"text"
-#~ "\" size=\"12\" value=\"%b %y\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Label&nbsp;voor&nbsp;"
-#~ "kwartaal</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"form-control\" name=\"format-quarter\" type="
-#~ "\"text\" size=\"12\" value=\"%y Q%q\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          <div class=\"form-group\">\n"
-#~ "          <label class=\"col-sm-3 control-label\">Label&nbsp;voor&nbsp;"
-#~ "jaar</label>\n"
-#~ "          <div class=\"col-sm-9\">\n"
-#~ "          <input class=\"form-control\" name=\"format-year\" type=\"text"
-#~ "\" size=\"12\" value=\"%Y\"/>\n"
-#~ "          </div>\n"
-#~ "          </div>\n"
-#~ "          "
-
-#~ msgid "Download all input data in a single spreadsheet."
-#~ msgstr "Exporteer alle input data in een enkele spreadsheet."
-
-#~ msgid "next run"
-#~ msgstr "volgende run"
-
-#~ msgid "Error downloading file"
-#~ msgstr "Fout bij downloaden van bestand"
-
-#~ msgid "The report was saved successfully."
-#~ msgstr "Het rapport werd opgeslagen."
-
-#~ msgid "test"
-#~ msgstr "test"
-
-#~ msgid "Click to select record"
-#~ msgstr "Klik om een record te selecteren"
-
-#, fuzzy
-#~ msgid "New password "
-#~ msgstr "Nieuw wachtwoord"
-
-#, fuzzy
-#~ msgid "Size Minimum"
-#~ msgstr "minimum lotgrootte"
-
-#, fuzzy
-#~ msgid "Size Multiple"
-#~ msgstr "multiple lotgrootte"
-
-#, fuzzy
-#~ msgid "Size Maximum"
-#~ msgstr "maximum lotgrootte"
-
-#~ msgid "copy"
-#~ msgstr "kopieer"
-
-#~ msgid "promote"
-#~ msgstr "promoveer"
-
-#~ msgid "release selected scenarios"
-#~ msgstr "vrijgave geselecteerde scenarios"
-
-#~ msgid "into selected scenarios"
-#~ msgstr "in de geselecteerde scenarios"
-
-#~ msgid "Update description of selected scenarios"
-#~ msgstr "Update omschrijving van geselecteerde scenarios"
-
-#, fuzzy
-#~ msgid "log out"
-#~ msgstr "Afmelden"
-
-#, fuzzy
-#~ msgid " Old password "
-#~ msgstr "Oud wachtwoord"
-
-#, fuzzy
-#~ msgid " New password confirmation "
-#~ msgstr "Nieuw wachtwoord bevestigen"
-
-#, fuzzy
-#~ msgid "Old password:"
-#~ msgstr "Oud wachtwoord"
-
-#~ msgid "New password:"
-#~ msgstr "Nieuw wachtwoord:"
-
-#~ msgid "chat history"
-#~ msgstr "chat historiek"
+msgstr ""

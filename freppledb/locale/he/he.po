@@ -2482,10 +2482,11 @@ msgid ""
 "curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
 "</div></div>\n"
 "<div class=\"mb-2\">\n"
-"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" target="
-"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
-"\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" value=\"%(exp)s"
-"\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/>  days:\n"
+"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" "
+"target=\"_blank\">JSON Web Token authentication</a> valid for the next "
+"<input id=\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" "
+"value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/"
+">  days:\n"
 "</div>\n"
 "<div class=\"card mb-3\"><div class=\"card-body\">\n"
 "wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
@@ -2921,6 +2922,11 @@ msgstr "טבלאות מנהל"
 msgid "plan history"
 msgstr ""
 
+#: execute/templates/commands/exporttofolder.html:6
+#: execute/templates/commands/exportworkbook.html:7
+msgid "export"
+msgstr "ייצא"
+
 #: execute/templates/commands/exporttofolder.html:9
 msgid ""
 "Exports the plan (purchase orders, distribution orders and manufacturing "
@@ -3039,29 +3045,29 @@ msgstr "סוג תכנון"
 
 #: execute/templates/commands/runplan.html:28
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Genereer een supply plan dat alle constraints "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Genereer een supply plan dat alle constraints "
 "respecteer.<br>In geval van tekorten wordt de vraag te laat of te weinig "
 "ingepland.\">תוכנית מאולצת</span>"
 
 #: execute/templates/commands/runplan.html:35
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that shows material, "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that shows material, "
 "capacity and operation problems that prevent the demand from being planned "
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Genereer een supply plan dat material, capacity en "
-"lead time problemen toont die beletten dat de vraag op tijd kan worden "
-"geleveld.<br>De vraag wordt steeds volledig en op de gewenste leverdatum "
-"ingepland.\">תוכנית לא מאולצת</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Genereer een supply plan dat material, "
+"capacity en lead time problemen toont die beletten dat de vraag op tijd kan "
+"worden geleveld.<br>De vraag wordt steeds volledig en op de gewenste "
+"leverdatum ingepland.\">תוכנית לא מאולצת</span>"
 
 #: execute/templates/commands/runplan.html:40 output/models.py:56
 #: output/templates/output/buffer.html:353
@@ -3072,27 +3078,27 @@ msgstr "אילוצים"
 
 #: execute/templates/commands/runplan.html:44
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Respect the capacity limits of your resources."
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Respect the capacity limits of your resources."
 "\">Capacity: respect capacity limits</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:51
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't generate any plans that start or end in the "
-"past.<br>Proposed and approved activities must all be in the future.<br>Only "
-"confirmed activities are allowed to be in the past.\">Lead time: do not plan "
-"in the past</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't generate any plans that start or end in "
+"the past.<br>Proposed and approved activities must all be in the future."
+"<br>Only confirmed activities are allowed to be in the past.\">Lead time: do "
+"not plan in the past</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:58
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't propose any plans within a frozen time window "
-"(which is configured on each operation).<br>Within the frozen zone only "
-"approved and confirmed activities are allowed, no new proposed activities."
-"\">Release fence: do not plan within a frozen time window</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't propose any plans within a frozen time "
+"window (which is configured on each operation).<br>Within the frozen zone "
+"only approved and confirmed activities are allowed, no new proposed "
+"activities.\">Release fence: do not plan within a frozen time window</span>"
 msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:13
@@ -5976,15 +5982,15 @@ msgstr "מדיניות מלאי"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2956
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to "
+"1.<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"Zet de safety stock op 0 en reorderhoeveelheid op 1."
-"<br>Deze product-locatie wordt dan ingepland met een 1-op-1 matching tussen "
-"de vraag en supply.\" >לא להכניס למלאי</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"Zet de safety stock op 0 en reorderhoeveelheid "
+"op 1.<br>Deze product-locatie wordt dan ingepland met een 1-op-1 matching "
+"tussen de vraag en supply.\" >לא להכניס למלאי</span>"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2966
 #: inventoryplanning/templates/inventoryplanning/drp.html:2985
@@ -5993,13 +5999,13 @@ msgstr "אמת"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2975
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"In push mode, any excess inventory will be "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"In push mode wordt alle stock meteen downstream "
-"doorgezonden naar andere locaties.\">הפעל מצב הכנסה</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"In push mode wordt alle stock meteen "
+"downstream doorgezonden naar andere locaties.\">הפעל מצב הכנסה</span>"
 
 #: inventoryplanning/views.py:117
 msgid "segments"
@@ -6880,15 +6886,7 @@ msgstr ""
 msgid "dates"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:34
-#: freppledb/planningboard/static/planningboard/planningboard.html:1139
-#: freppledb/planningboard/static/planningboard/planningboard.html:202
-#: freppledb/planningboard/static/planningboard/planningboard.html:374
-#: freppledb/planningboard/static/planningboard/planningboard.html:504
-#: freppledb/planningboard/static/planningboard/planningboard.html:624
-#: freppledb/planningboard/static/planningboard/planningboard.html:768
-#: freppledb/planningboard/static/planningboard/planningboard.html:989
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1091
+#: shopfloor/templates/shopfloor/manufacturingorder.html:50
 msgid "start"
 msgstr "start"
 
@@ -6896,15 +6894,7 @@ msgstr "start"
 msgid "pause"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:36
-#: freppledb/planningboard/static/planningboard/planningboard.html:1144
-#: freppledb/planningboard/static/planningboard/planningboard.html:211
-#: freppledb/planningboard/static/planningboard/planningboard.html:391
-#: freppledb/planningboard/static/planningboard/planningboard.html:519
-#: freppledb/planningboard/static/planningboard/planningboard.html:639
-#: freppledb/planningboard/static/planningboard/planningboard.html:777
-#: freppledb/planningboard/static/planningboard/planningboard.html:992
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1092
+#: shopfloor/templates/shopfloor/manufacturingorder.html:56
 msgid "end"
 msgstr "eind"
 
@@ -7262,6 +7252,10 @@ msgstr "Aankooporder"
 msgid "Quoting error"
 msgstr "שגיאת ציטוט"
 
+#: freppledb/forecast/static/forecast/forecast.html:156
+msgid "Recalculate"
+msgstr "חישוב מחדש"
+
 #: freppledb/planningboard/static/planningboard/planningboard.html:815
 msgid "Remove this demand from planning"
 msgstr "הסר את הדרישה הזו מהתכנון"
@@ -7483,35 +7477,29 @@ msgstr "יש שינויים שאינם נשמרו"
 msgid "{{m.label}}"
 msgstr "{{m.label}}"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1568
+#: freppledb/planningboard/static/planningboard/planningboard.html:1609
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"הפעולה מקבלת את הצבע בקטגוריה של הפריט שהיא מייצרת. <br>\n"
-"יש למלא את קטגוריות הפריטים בטבלת הפריטים\n"
-"<br><br>"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1600
+#: freppledb/planningboard/static/planningboard/planningboard.html:1641
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"הפעולה מקבלת את צבע קטגוריית המשנה של הפריט שהיא מייצרת<br>\n"
-"יש למלא את קטגוריות המשנה של הפריט בטבלת הפריטים.\n"
-"<br><br>"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1510
+#: freppledb/planningboard/static/planningboard/planningboard.html:1551
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:321
+#: freppledb/forecast/static/forecast/forecast.html:318
 msgid "Apply"
 msgstr ""
 
@@ -7519,17 +7507,17 @@ msgstr ""
 msgid "Assign an extra resource"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:69
+#: freppledb/planningboard/static/planningboard/planningboard.html:66
 msgid "Automatically resolve infeasiblities in the plan"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1503
+#: freppledb/planningboard/static/planningboard/planningboard.html:1544
 msgid "Due date color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1351
-#: freppledb/planningboard/static/planningboard/planningboard.html:1386
-#: freppledb/planningboard/static/planningboard/planningboard.html:1413
+#: freppledb/planningboard/static/planningboard/planningboard.html:1392
+#: freppledb/planningboard/static/planningboard/planningboard.html:1427
+#: freppledb/planningboard/static/planningboard/planningboard.html:1454
 msgid "Enter name"
 msgstr ""
 
@@ -7557,19 +7545,19 @@ msgstr ""
 msgid "View start events"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:262
+#: freppledb/planningboard/static/planningboard/planningboard.html:284
 msgid "approved: {{aggregatedoperationplans.status.approved }}"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:271
+#: freppledb/planningboard/static/planningboard/planningboard.html:293
 msgid "closed: {{aggregatedoperationplans.status.closed }}"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:268
+#: freppledb/planningboard/static/planningboard/planningboard.html:290
 msgid "completed: {{aggregatedoperationplans.status.completed }}"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:265
+#: freppledb/planningboard/static/planningboard/planningboard.html:287
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
 msgstr ""
 
@@ -7581,8 +7569,12 @@ msgstr ""
 msgid "downstream operations"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:87
+#: freppledb/planningboard/static/planningboard/planningboard.html:84
 msgid "export as Excel file"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:145
+msgid "export to {{erp}} failed"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
@@ -7590,7 +7582,7 @@ msgid "no downstream operationplans information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:5
-#: freppledb/planningboard/static/planningboard/planningboard.html:208
+#: freppledb/planningboard/static/planningboard/planningboard.html:203
 msgid "no selection"
 msgstr ""
 
@@ -7598,16 +7590,25 @@ msgstr ""
 msgid "no upstream operationplans information"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:259
+#: freppledb/planningboard/static/planningboard/planningboard.html:230
+msgid "plus"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:281
 msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:84
+#: freppledb/planningboard/static/planningboard/planningboard.html:81
 msgid "remove all rows"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:6
 msgid "selected"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:62
+#: freppledb/planningboard/static/planningboard/planningboard.html:87
+msgid "set time horizon"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/calendar.html:24
@@ -7627,494 +7628,6 @@ msgstr ""
 msgid "week number"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:222
+#: freppledb/planningboard/static/planningboard/planningboard.html:217
 msgid "{{ aggregatedoperationplans.count }} selected"
 msgstr ""
-
-#~ msgid "Copy to Clipboard"
-#~ msgstr "העתק ללוח"
-
-#~ msgid "Error during export"
-#~ msgstr "שגיאה בייצוא"
-
-#~ msgid "Retry"
-#~ msgstr "נסה שוב"
-
-#~ msgid "export"
-#~ msgstr "ייצא"
-
-#, fuzzy
-#~ msgid "blocked-by operation"
-#~ msgstr "פעולת בן"
-
-#~ msgid "Cannot delete %(name)s"
-#~ msgstr "לא ניתן למחוק %(name)s"
-
-#~ msgid "Are you sure?"
-#~ msgstr "האם את/ה בטוח/ה ?"
-
-#~ msgid "Back up the database"
-#~ msgstr "גיבוי בסיס הנתונים"
-
-#~ msgid "Capacity: respect capacity limits"
-#~ msgstr "קיבולת: כבד את גבולות היכולת"
-
-#~ msgid "Lead time: do not plan in the past"
-#~ msgstr "זמן אספקה: לא מתכננים בעבר"
-
-#~ msgid "Release fence: do not plan within the release time window"
-#~ msgstr "מגבלת שחרור: אל תתכנן בחלון זמן השחרור"
-
-#~ msgid "Dump the database contents to a file."
-#~ msgstr "רוקן את התוכן ממסד הנתונים לקובץ."
-
-#~ msgid "Upload data files"
-#~ msgstr "העלה קבצי נתונים"
-
-#~ msgid "Bucket '%(name)s' not found"
-#~ msgstr "לא נמצא '%(name)s' משך זמן"
-
-#~ msgid "filter data"
-#~ msgstr "סנן נתונים"
-
-#~ msgid "Recalculate"
-#~ msgstr "חישוב מחדש"
-
-#~ msgid "simulate changes without saving"
-#~ msgstr "לדמות שינויים מבלי לשמור"
-
-#~ msgid "Changed %s."
-#~ msgstr "השתנתי %s."
-
-#~ msgid "No forecast found"
-#~ msgstr "תחזית לא נמצאה"
-
-#, fuzzy
-#~ msgid "Upload"
-#~ msgstr "העלאה"
-
-#, fuzzy
-#~ msgid "gridError"
-#~ msgstr "שגיאה"
-
-#, fuzzy
-#~ msgid "Forecast wizard"
-#~ msgstr "עורך תחזית"
-
-#, fuzzy
-#~ msgid "Operation"
-#~ msgstr "פעולה"
-
-#, fuzzy
-#~ msgid "Segment detail"
-#~ msgstr "תכנון פירוט"
-
-#, fuzzy
-#~ msgid "Resource"
-#~ msgstr "resource"
-
-#, fuzzy
-#~ msgid "Manufacturing order"
-#~ msgstr "הזמנת ייצור"
-
-#, fuzzy
-#~ msgid "OR"
-#~ msgstr "או"
-
-#, fuzzy
-#~ msgid "gView"
-#~ msgstr "צפיה"
-
-#, fuzzy
-#~ msgid "overlay"
-#~ msgstr "העמסת יתר"
-
-#, fuzzy
-#~ msgid "loading"
-#~ msgstr "טען"
-
-#, fuzzy
-#~ msgid "colHeaders"
-#~ msgstr "הזמנות"
-
-#, fuzzy
-#~ msgid "hTable"
-#~ msgstr "טבלה"
-
-#, fuzzy
-#~ msgid "states.select"
-#~ msgstr "בחר"
-
-#, fuzzy
-#~ msgid "resizer"
-#~ msgstr "גודל"
-
-#, fuzzy
-#~ msgid "top"
-#~ msgstr "עצור"
-
-#, fuzzy
-#~ msgid "titleButton"
-#~ msgstr "כותרת"
-
-#, fuzzy
-#~ msgid "Submit"
-#~ msgstr "שלח"
-
-#, fuzzy
-#~ msgid "add"
-#~ msgstr "ו"
-
-#, fuzzy
-#~ msgid "is_ip_buffer"
-#~ msgstr "buffer"
-
-#~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
-#~ msgstr ""
-#~ "YYYY-MM-DD HH: MM: SS- תאריך לא חוקי: יש להוסיף תאריך לפי התבנית הבאה"
-
-#~ msgid "Choose a what-if scenario"
-#~ msgstr "בחר תרחיש"
-
-#~ msgid "Too many objects to display"
-#~ msgstr "יותר מדי אובייקטים להצגה"
-
-#~ msgid "setup time"
-#~ msgstr "זמן התקנה"
-
-#~ msgid "material excess"
-#~ msgstr "עודף חומר"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "                        Files in the old .XLS excel format can't be read."
-#~ "<br>\n"
-#~ "                        Please convert them to the new .XLSX format.\n"
-#~ "                        "
-#~ msgstr ""
-#~ "קבצים ב. אין אפשרות לקרוא את תבנית EXCEL של XLS.<br>נא המר אותם ל . תבנית "
-#~ "XLSX."
-
-#, fuzzy
-#~ msgid "favorites"
-#~ msgstr "מועדפים"
-
-#, fuzzy
-#~ msgid "Copy files to folder"
-#~ msgstr "העתק קבצים לתיקיה"
-
-#, fuzzy
-#~ msgid "multiple selected"
-#~ msgstr "נבחרו מרובים"
-
-#~ msgid "Unfollow"
-#~ msgstr "ביטול מעקב"
-
-#~ msgid "to"
-#~ msgstr "-ל"
-
-#~ msgid "Read Odoo data"
-#~ msgstr "Odoo קרא את נתוני"
-
-#~ msgid "Write results to Odoo"
-#~ msgstr "Odoo כתוב תוצאות ל"
-
-#~ msgid "Filtered where"
-#~ msgstr "סונן איפה"
-
-#~ msgid "efficiency %% calendar"
-#~ msgstr "לוח שנה %% יעילות"
-
-#, fuzzy
-#~ msgid "change"
-#~ msgstr "השתנה"
-
-#~ msgid "Arguments"
-#~ msgstr "פרמטרים"
-
-#, fuzzy
-#~ msgid "Due date"
-#~ msgstr "תאריך יעד"
-
-#, fuzzy
-#~ msgid "Advanced"
-#~ msgstr "אפשרויות מתקדמות"
-
-#, fuzzy
-#~ msgid "Quantity"
-#~ msgstr "hoeveelheid"
-
-#, fuzzy
-#~ msgid "Show the evolution of the demand history"
-#~ msgstr "SMAPE הצג את ההתפתחות של שגיאת התחזית"
-
-#, fuzzy
-#~ msgid "Change history"
-#~ msgstr "היסטוריית שינוי: %s"
-
-#~ msgid "cockpit"
-#~ msgstr "cockpit"
-
-#~ msgid "User"
-#~ msgstr "משתמש"
-
-#~ msgid "Action"
-#~ msgstr "פעולה"
-
-#~ msgid ""
-#~ "This object doesn't have a change history. It probably wasn't added via "
-#~ "this admin site."
-#~ msgstr ""
-#~ "לאובייקט זה אין היסטוריית שינוי. כנראה לא השתמשו בממשק הניהול הזה להוספתו."
-
-#~ msgid "My Actions"
-#~ msgstr "הפעולות שלי"
-
-#~ msgid "Display a list of the entities you recently changed"
-#~ msgstr "הצג רשימה של הישויות ששונו לאחרונה"
-
-#~ msgid "Unknown content"
-#~ msgstr "תוכן לא ידוע"
-
-#~ msgid "None available"
-#~ msgstr "לא נמצאו"
-
-#~ msgid "Display a list of recent comments"
-#~ msgstr "הצג רשימת תגובות אחרונות"
-
-#~ msgid "Planning parameters"
-#~ msgstr "תכנון פרמטרים"
-
-#~ msgid "planning parameters"
-#~ msgstr "תכנון הפרמטרים"
-
-#~ msgid "alternates"
-#~ msgstr "החלף"
-
-#~ msgid "A minimum quantity for operationplans"
-#~ msgstr "כמות מינימלית לתוכניות פעולה"
-
-#~ msgid "A multiple quantity for operationplans"
-#~ msgstr "כמות מרובה לתוכניות פעולה"
-
-#~ msgid "A maximum quantity for operationplans"
-#~ msgstr "כמות מקסימאלית לתוכניות פעולה"
-
-#~ msgid "A fixed duration for the operation"
-#~ msgstr "משך קבוע לפעולה"
-
-#~ msgid "Optional name of this operation material"
-#~ msgstr "שם אופציונלי של חומר פעולה זה"
-
-#~ msgid "Optional name of this load"
-#~ msgstr "שם אופציונלי של העמסה זו"
-
-#~ msgid "Priority of this load in a group of alternates"
-#~ msgstr "עדיפות של העמסה זו בקבוצת חלופות"
-
-#~ msgid "proposed transfers"
-#~ msgstr "העברות מוצעות"
-
-#~ msgid "open purchases"
-#~ msgstr "רכישות פתוחות"
-
-#~ msgid "open transfers"
-#~ msgstr "הזמנות הפצה פתוחות"
-
-#~ msgid "proposed transfers value"
-#~ msgstr "ערך הצעות העברות"
-
-#~ msgid "open transfers value"
-#~ msgstr "ערך הזמנות הפצה פתוחות"
-
-#~ msgctxt "Gantt"
-#~ msgid "earlier"
-#~ msgstr "מוקדם"
-
-#~ msgctxt "Gantt"
-#~ msgid "later"
-#~ msgstr "מאוחר"
-
-#~ msgctxt "Gantt"
-#~ msgid "reset"
-#~ msgstr "אתחל"
-
-#, fuzzy
-#~ msgid "out_method"
-#~ msgstr "שיטה"
-
-#, fuzzy
-#~ msgid "forecastreport_view"
-#~ msgstr "דוח תחזית"
-
-#, fuzzy
-#~ msgid "forecastreports_view"
-#~ msgstr "דוח תחזית"
-
-#, fuzzy
-#~ msgid "report"
-#~ msgstr "ייצא"
-
-#, fuzzy
-#~ msgid "sequence"
-#~ msgstr "לְהַקִים מְחִיצָה"
-
-#, fuzzy
-#~ msgid "Archive manager report"
-#~ msgstr "דוח ביקושים"
-
-#, fuzzy
-#~ msgid "snapshot date"
-#~ msgstr "תאריך התחלה"
-
-#, fuzzy
-#~ msgid "total records"
-#~ msgstr "סה\"כ הזמנות"
-
-#, fuzzy
-#~ msgid "buffer records"
-#~ msgstr "חוצצים"
-
-#, fuzzy
-#~ msgid "demand records"
-#~ msgstr "דוח ביקושים"
-
-#, fuzzy
-#~ msgid "operationplan records"
-#~ msgstr "תוכניות פעולה"
-
-#, fuzzy
-#~ msgid "distribution Order"
-#~ msgstr "Distributieorder"
-
-#, fuzzy
-#~ msgid "manufacturing Order"
-#~ msgstr "Productieorder"
-
-#, fuzzy
-#~ msgid "purchase Order"
-#~ msgstr "Aankooporder"
-
-#~ msgid "import CSV or Excel file"
-#~ msgstr "import CSV or Excel file"
-
-#, fuzzy
-#~ msgid "No unread messages!"
-#~ msgstr "הערה לשינוי"
-
-#, fuzzy
-#~ msgid "report column"
-#~ msgstr "ארבעה עמודות"
-
-#, fuzzy
-#~ msgid "report columns"
-#~ msgstr "ארבעה עמודות"
-
-#, fuzzy
-#~ msgid "total_records"
-#~ msgstr "סה\"כ הזמנות"
-
-#, fuzzy
-#~ msgid "buffer_records"
-#~ msgstr "חוצצים"
-
-#, fuzzy
-#~ msgid "demand_records"
-#~ msgstr "ביקוש"
-
-#, fuzzy
-#~ msgid "operationplan_records"
-#~ msgstr "תוכניות פעולה"
-
-#, fuzzy
-#~ msgid "archived buffers"
-#~ msgstr "חוצצים"
-
-#, fuzzy
-#~ msgid "archived sales order"
-#~ msgstr "איחור בהזמנות מכירה"
-
-#, fuzzy
-#~ msgid "archived sales orders"
-#~ msgstr "איחור בהזמנות מכירה"
-
-#~ msgid "Error saving data"
-#~ msgstr "שגיאה בשמירת נתונים"
-
-#~ msgid "Error saving report settings"
-#~ msgstr "שגיאה בשמירת הגדרות הדוח"
-
-#~ msgid "Error deleting data"
-#~ msgstr "שגיאה במחיקת נתונית"
-
-#~ msgid "Error copying data"
-#~ msgstr "שגיאה בהעתקת נתונים"
-
-#~ msgid "Export Plan"
-#~ msgstr "ייצא תוכנית"
-
-#~ msgid "Error getting data"
-#~ msgstr "שגיאה בקבלת נתונים"
-
-#~ msgid "Error reading version information"
-#~ msgstr "שגיאה בקריאת פרטי הגרסה"
-
-#~ msgid "Error retrieving report data"
-#~ msgstr "שגיאה באחזור נתוני הדוח"
-
-#~ msgid "Download all input data in a single spreadsheet."
-#~ msgstr "הורד את כל נתוני הקלט בגיליון אלקטרוני יחיד."
-
-#~ msgid "Error downloading file"
-#~ msgstr "שגיאה בהורדת הקובץ"
-
-#~ msgid "Click to select record"
-#~ msgstr "לחץ לבחירת הרשומה"
-
-#, fuzzy
-#~ msgid "New password "
-#~ msgstr "סיסמה חדשה"
-
-#, fuzzy
-#~ msgid "Size Minimum"
-#~ msgstr "גודל מינימלי"
-
-#, fuzzy
-#~ msgid "Size Multiple"
-#~ msgstr "גודל מרובה"
-
-#, fuzzy
-#~ msgid "Size Maximum"
-#~ msgstr "גודל מקסימאלי"
-
-#~ msgid "copy"
-#~ msgstr "העתק"
-
-#~ msgid "release selected scenarios"
-#~ msgstr "שחרר תרחישים שנבחרו"
-
-#~ msgid "into selected scenarios"
-#~ msgstr "לתרחישים נבחרים"
-
-#~ msgid "Update description of selected scenarios"
-#~ msgstr "עדכן תיאור של תרחישים שנבחרו"
-
-#, fuzzy
-#~ msgid "log out"
-#~ msgstr "יציאה"
-
-#, fuzzy
-#~ msgid " Old password "
-#~ msgstr "סיסמה ישנה"
-
-#, fuzzy
-#~ msgid " New password confirmation "
-#~ msgstr "אימות סיסמה חדשה"
-
-#, fuzzy
-#~ msgid "Old password:"
-#~ msgstr "סיסמה ישנה"
-
-#~ msgid "New password:"
-#~ msgstr "סיסמה חדשה:"

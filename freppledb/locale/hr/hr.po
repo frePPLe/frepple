@@ -33,13 +33,6 @@ msgstr ""
 msgid "Connection failed"
 msgstr ""
 
-#: common/static/js/frepple.js:213 common/static/js/frepple.js:1513
-#: common/static/js/frepple.js:1562 common/static/js/frepple.js:2196
-#: quoting/static/quoting/src/quoteCtrl.js:62
-#, fuzzy
-msgid "Error"
-msgstr "Greška"
-
 #: common/static/js/frepple.js:220 common/static/js/frepple.js:884
 #: common/static/js/frepple.js:1181 common/static/js/frepple.js:2171
 #: common/static/js/frepple.js:2788 common/static/js/frepple.js:2915
@@ -154,12 +147,6 @@ msgstr ""
 #: common/static/js/frepple.js:1198 common/static/js/frepple.js:1229
 msgid "Using this link external applications can pull data from frePPLe"
 msgstr ""
-
-#: common/static/js/frepple.js:1204 common/static/js/frepple.js:1235
-#: common/static/js/frepple.js:2789
-#, fuzzy
-msgid "Copy to clipboard"
-msgstr "Kopirati u međupohranu"
 
 #: common/static/js/frepple.js:1213
 msgid "Spreadsheet table"
@@ -297,11 +284,6 @@ msgstr "Ukloni"
 msgid "%s unread messages"
 msgstr ""
 
-#: common/static/js/frepple.js:2558
-#, fuzzy
-msgid "No unread messages"
-msgstr "Nema nepročitanih poruka"
-
 #: common/static/js/frepple.js:2705
 msgid "Installed apps"
 msgstr "Instalirane aplikacije"
@@ -325,11 +307,6 @@ msgstr "Prvo izbrišite sve postojeće zapise podataka i pridružene tablice."
 #: common/static/js/frepple.js:2767
 msgid "files selected"
 msgstr "odabrane datoteke"
-
-#: common/static/js/frepple.js:2769
-#, fuzzy
-msgid "Select files to upload"
-msgstr "Odaberite datoteke"
 
 #: common/static/js/frepple.js:2770
 msgid "or drop them here"
@@ -360,25 +337,10 @@ msgstr "Otkazano"
 msgid "%s records processed"
 msgstr ""
 
-#: common/static/js/frepple.js:3664
-#, fuzzy
-msgid "Follow"
-msgstr "Prati"
-
-#: common/static/js/frepple.js:3678
-#, fuzzy
-msgid "Update"
-msgstr "Ažuriraj"
-
 #: common/static/js/frepple.js:3683
 #, javascript-format
 msgid "Manage notifications of %s"
 msgstr ""
-
-#: common/static/js/frepple.js:3691
-#, fuzzy
-msgid "Following"
-msgstr "Praćenja"
 
 #: common/static/js/frepple.js:3712
 msgid "Add followers"
@@ -400,48 +362,12 @@ msgstr "Dostupno na lead time"
 msgid "current inventory"
 msgstr "trenutna zaliha"
 
-#: planningboard/static/planningboard/src/module.js:63
-#: planningboard/static/planningboard/src/module.js:67
-#: planningboard/static/planningboard/src/planningboard.js:933
-#: planningboard/static/planningboard/src/planningboard.js:937
-#: planningboard/static/planningboard/src/planningboard.js:958
-#: planningboard/static/planningboard/src/planningboard.js:959
-#, fuzzy
-msgid "minutes"
-msgstr "minute"
-
-#: planningboard/static/planningboard/src/module.js:65
-#: planningboard/static/planningboard/src/planningboard.js:935
-#: planningboard/static/planningboard/src/planningboard.js:966
-#: planningboard/static/planningboard/src/planningboard.js:967
-#, fuzzy
-msgid "seconds"
-msgstr "sekundi"
-
 #: planningboard/static/planningboard/src/module.js:69
 #: planningboard/static/planningboard/src/planningboard.js:939
 #: planningboard/static/planningboard/src/planningboard.js:950
 #: planningboard/static/planningboard/src/planningboard.js:951
 msgid "hours"
 msgstr "Sati"
-
-#: planningboard/static/planningboard/src/planningboard.js:954
-#: planningboard/static/planningboard/src/planningboard.js:955
-#, fuzzy
-msgid "hour"
-msgstr "sat"
-
-#: planningboard/static/planningboard/src/planningboard.js:962
-#: planningboard/static/planningboard/src/planningboard.js:963
-#, fuzzy
-msgid "minute"
-msgstr "minuta"
-
-#: planningboard/static/planningboard/src/planningboard.js:969
-#: planningboard/static/planningboard/src/planningboard.js:970
-#, fuzzy
-msgid "second"
-msgstr "sekunda"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
@@ -1209,41 +1135,6 @@ msgstr "Berechtigungen"
 msgid "Important dates"
 msgstr "Wichtige Termine"
 
-#: common/admin.py:52 common/admin.py:86 common/admin.py:106
-#: common/admin.py:139 common/admin.py:159 common/admin.py:179
-#: common/adminforms.py:531 forecast/admin.py:59 forecast/admin.py:97
-#: forecast/models.py:1188 input/admin.py:82 input/admin.py:112
-#: input/admin.py:148 input/admin.py:199 input/admin.py:230 input/admin.py:267
-#: input/admin.py:323 input/admin.py:366 input/admin.py:426 input/admin.py:498
-#: input/admin.py:532 input/admin.py:552 input/admin.py:578 input/admin.py:609
-#: input/admin.py:660 input/admin.py:718 input/admin.py:759 input/admin.py:813
-#: input/admin.py:877 input/admin.py:941 input/admin.py:999 input/admin.py:1063
-#: input/admin.py:1093 input/admin.py:1135 inventoryplanning/admin.py:63
-#: inventoryplanning/admin.py:84 inventoryplanning/admin.py:131
-#: reportmanager/admin.py:39
-#: reportmanager/templates/reportmanager/reportmanager.html:155
-#: shelflife/admin.py:60 shelflife/admin.py:123
-#, fuzzy
-msgid "edit"
-msgstr "uredi"
-
-#: common/admin.py:58 common/admin.py:92 common/admin.py:112
-#: common/admin.py:145 common/admin.py:165 common/admin.py:185
-#: common/adminforms.py:595 common/views.py:484 forecast/admin.py:76
-#: forecast/admin.py:103 input/admin.py:88 input/admin.py:123
-#: input/admin.py:174 input/admin.py:205 input/admin.py:241 input/admin.py:285
-#: input/admin.py:329 input/admin.py:372 input/admin.py:449 input/admin.py:517
-#: input/admin.py:538 input/admin.py:564 input/admin.py:584 input/admin.py:615
-#: input/admin.py:683 input/admin.py:724 input/admin.py:765 input/admin.py:819
-#: input/admin.py:883 input/admin.py:947 input/admin.py:1005
-#: input/admin.py:1076 inventoryplanning/admin.py:69
-#: inventoryplanning/admin.py:95 inventoryplanning/admin.py:137
-#: reportmanager/admin.py:45 shelflife/admin.py:66 shelflife/admin.py:129
-#: shopfloor/templates/shopfloor/manufacturingorder.html:113
-#, fuzzy
-msgid "messages"
-msgstr "poruke"
-
 #: common/adminforms.py:329 common/adminforms.py:358
 #, python-brace-format
 msgid "The {name} \"{obj}\" was added successfully."
@@ -1288,11 +1179,6 @@ msgstr ""
 #, python-format
 msgid "The %(name)s \"%(obj)s\" was deleted successfully."
 msgstr "%(name)s \"%(obj)s\" uspješno izbrisan."
-
-#: common/adminforms.py:719
-#, fuzzy
-msgid "delete"
-msgstr "Ukloni"
 
 #: common/adminforms.py:759
 msgid "Required."
@@ -1742,11 +1628,6 @@ msgstr ""
 msgid "duration"
 msgstr "trajanje"
 
-#: common/models.py:1476
-#, fuzzy
-msgid "time"
-msgstr "jednom"
-
 #: common/models.py:1477
 msgid "JSON"
 msgstr "JSON"
@@ -1819,13 +1700,6 @@ msgstr ""
 #, python-format
 msgid "Accepted values are: %s"
 msgstr ""
-
-#: common/report.py:1061 common/report.py:3686 common/report.py:3715
-#: common/report.py:3744 execute/views.py:1181 execute/views.py:1227
-#: execute/views.py:1247
-#, fuzzy
-msgid "Read only"
-msgstr "Samo čitanje"
 
 #: common/report.py:1631 execute/views.py:1339
 msgid ""
@@ -2075,11 +1949,6 @@ msgstr ""
 msgid "Your license expires in %(x)s days"
 msgstr ""
 
-#: common/templates/admin/base_site_nav.html:81
-#, fuzzy
-msgid "days left"
-msgstr "dana prije"
-
 #: common/templates/admin/base_site_nav.html:95
 msgid "preferences"
 msgstr "postavke"
@@ -2087,12 +1956,6 @@ msgstr "postavke"
 #: common/templates/admin/base_site_nav.html:96
 msgid "Log out"
 msgstr "Odjava"
-
-#: common/templates/admin/base_site_nav.html:111 common/templatetags.py:94
-#: common/views.py:119 wizard/views.py:99
-#, fuzzy
-msgid "home"
-msgstr "home"
 
 #: common/templates/admin/base_site_nav.html:123
 msgid ""
@@ -2197,16 +2060,6 @@ msgstr "Lozinka"
 msgid "Log in"
 msgstr "Prijavi se"
 
-#: common/templates/admin/login.html:69
-#, fuzzy
-msgid "Remember Me"
-msgstr "Zapamti me"
-
-#: common/templates/admin/login.html:73
-#, fuzzy
-msgid "Forgot your password?"
-msgstr "Zaboravljena lozinka?"
-
 #: common/templates/admin/login.html:107
 msgid ""
 "The user \"admin\" has password \"admin\".<br>\n"
@@ -2288,13 +2141,6 @@ msgstr ""
 msgid "inbox"
 msgstr ""
 
-#: common/templates/common/follower.html:34
-#: common/templates/common/inbox.html:95 common/views.py:535
-#: common/views.py:620
-#, fuzzy
-msgid "following"
-msgstr "sljedeće"
-
 #: common/templates/common/inbox.html:85
 msgid "Unread"
 msgstr "Nepročitane"
@@ -2343,12 +2189,6 @@ msgstr "Potvrda nove lozinke"
 #: common/templates/common/snippet_favorites.html:4
 msgid "Bookmark your favorite report configurations"
 msgstr ""
-
-#: common/templates/common/snippet_favorites.html:16
-#: reportmanager/templates/reportmanager/reportmanager.html:167
-#, fuzzy
-msgid "save"
-msgstr "uštedi"
 
 #: common/templates/common/snippet_follow.html:8
 msgid "Manage notifications in your inbox"
@@ -2510,10 +2350,11 @@ msgid ""
 "curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
 "</div></div>\n"
 "<div class=\"mb-2\">\n"
-"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" target="
-"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
-"\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" value=\"%(exp)s"
-"\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/>  days:\n"
+"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" "
+"target=\"_blank\">JSON Web Token authentication</a> valid for the next "
+"<input id=\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" "
+"value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/"
+">  days:\n"
 "</div>\n"
 "<div class=\"card mb-3\"><div class=\"card-body\">\n"
 "wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
@@ -2555,11 +2396,6 @@ msgstr "Greška kod promjene postavki"
 #: common/views.py:301
 msgid "My preferences"
 msgstr "Moje postavke"
-
-#: common/views.py:407 output/views/constraint.py:89 output/views/problem.py:66
-#, fuzzy
-msgid "id"
-msgstr "id"
 
 #: common/views.py:420
 msgid "username"
@@ -2691,11 +2527,6 @@ msgid ""
 "Compute a finite material and finite capacity plan for purchasing, "
 "distribution and manufacturing."
 msgstr ""
-
-#: execute/management/commands/backup.py:213
-#, fuzzy
-msgid "Contact frePPLe support"
-msgstr "Izvješće o ograničenju"
 
 #: execute/management/commands/createbuckets.py:298
 msgid "Generate buckets"
@@ -2951,6 +2782,11 @@ msgstr "Tablice administratora"
 msgid "plan history"
 msgstr ""
 
+#: execute/templates/commands/exporttofolder.html:6
+#: execute/templates/commands/exportworkbook.html:7
+msgid "export"
+msgstr "Izvoz"
+
 #: execute/templates/commands/exporttofolder.html:9
 msgid ""
 "Exports the plan (purchase orders, distribution orders and manufacturing "
@@ -2984,13 +2820,6 @@ msgstr "U vezi s brisanjem svih datoteka"
 #, python-format
 msgid "You are about to delete file %%s"
 msgstr "Vi ste o brisanju datoteke %%s"
-
-#: execute/templates/commands/exporttofolder.html:67
-#: execute/templates/commands/importfromfolder.html:42
-#: execute/templates/commands/importfromfolder.html:180
-#, fuzzy
-msgid "Delete file"
-msgstr "Izbriši datoteku"
 
 #: execute/templates/commands/exporttofolder.html:86
 #: execute/templates/commands/importfromfolder.html:199
@@ -3072,26 +2901,26 @@ msgstr "Tip plana"
 
 #: execute/templates/commands/runplan.html:28
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Ograničeni plan</span>"
 
 #: execute/templates/commands/runplan.html:35
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that shows material, "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that shows material, "
 "capacity and operation problems that prevent the demand from being planned "
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that shows material, "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that shows material, "
 "capacity and operation problems that prevent the demand from being planned "
 "in time.<br>The demand is always met completely and on time.\">Neograničeni "
 "plan</span>"
@@ -3103,38 +2932,13 @@ msgstr ""
 msgid "constraints"
 msgstr "Ograničenja"
 
-#: execute/templates/commands/runplan.html:44
-#, fuzzy
-msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Respect the capacity limits of your resources."
-"\">Capacity: respect capacity limits</span>"
-msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-original-title=\"In push mode, any excess inventory will be "
-"distributed downstream to child locations.\">Aktivira način guranja</span>"
-
-#: execute/templates/commands/runplan.html:51
-#, fuzzy
-msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't generate any plans that start or end in the "
-"past.<br>Proposed and approved activities must all be in the future.<br>Only "
-"confirmed activities are allowed to be in the past.\">Lead time: do not plan "
-"in the past</span>"
-msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that respects all "
-"constraints.<br>In case of shortages the demand is planned late or short."
-"\">Ograničeni plan</span>"
-
 #: execute/templates/commands/runplan.html:58
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't propose any plans within a frozen time window "
-"(which is configured on each operation).<br>Within the frozen zone only "
-"approved and confirmed activities are allowed, no new proposed activities."
-"\">Release fence: do not plan within a frozen time window</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't propose any plans within a frozen time "
+"window (which is configured on each operation).<br>Within the frozen zone "
+"only approved and confirmed activities are allowed, no new proposed "
+"activities.\">Release fence: do not plan within a frozen time window</span>"
 msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:13
@@ -3176,11 +2980,6 @@ msgstr ""
 msgid "Copy from"
 msgstr ""
 
-#: execute/templates/commands/scenario_copy.html:58
-#, fuzzy
-msgid "Restore from backup"
-msgstr "Obnovi iz sigurnosne kopije"
-
 #: execute/templates/commands/scenario_copy.html:71
 msgid "Release: You will lose ALL data in this scenario!"
 msgstr ""
@@ -3188,11 +2987,6 @@ msgstr ""
 #: execute/templates/commands/scenario_copy.html:76
 msgid "Promote: All data will be copied to Production"
 msgstr ""
-
-#: execute/templates/commands/scenario_copy.html:85
-#, fuzzy
-msgid "Free"
-msgstr "Besplatno"
 
 #: execute/templates/commands/scheduletasks.html:5
 msgid "Run a sequence of tasks, and schedule it to run automatically."
@@ -3206,11 +3000,6 @@ msgstr ""
 msgid "next scheduled run"
 msgstr ""
 
-#: execute/templates/commands/scheduletasks.html:45
-#, fuzzy
-msgid "Edit"
-msgstr "Uredi"
-
 #: execute/templates/commands/scheduletasks.html:70
 msgid "unique name"
 msgstr "jedinstveno ime"
@@ -3219,18 +3008,6 @@ msgstr "jedinstveno ime"
 #: execute/templates/commands/scheduletasks.html:200
 msgid "abort on failure"
 msgstr ""
-
-#: execute/templates/commands/scheduletasks.html:99
-#: execute/templates/commands/scheduletasks.html:208
-#, fuzzy
-msgid "Move down"
-msgstr "Pomakni dolje"
-
-#: execute/templates/commands/scheduletasks.html:103
-#: execute/templates/commands/scheduletasks.html:212
-#, fuzzy
-msgid "Move up"
-msgstr "Pomakni gore"
 
 #: execute/templates/commands/scheduletasks.html:121
 #: input/models/calendar.py:295 input/templates/input/calendardetail.html:76
@@ -3305,11 +3082,6 @@ msgstr "otkazano"
 #: execute/templates/execute/execute.html:65
 msgid "download"
 msgstr ""
-
-#: execute/templates/execute/execute.html:69 forecast/models.py:1188
-#, fuzzy
-msgid "view"
-msgstr "pregled"
 
 #: execute/templates/execute/execute.html:212
 msgid "autorefresh"
@@ -4911,11 +4683,6 @@ msgstr "nalog za distribuciju"
 msgid "delivery order"
 msgstr ""
 
-#: input/models/operationplan.py:64 shelflife/models.py:119
-#, fuzzy
-msgid "scrap order"
-msgstr "potvrde narudžbe"
-
 #: input/models/operationplan.py:68 input/models/operationplan.py:520
 #: input/models/operationplan.py:586 input/views/capacity.py:1101
 #: input/views/inventory.py:1346 input/views/inventory.py:2020
@@ -4938,13 +4705,6 @@ msgstr "odobreno"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2596
 msgid "confirmed"
 msgstr "potvrđeno"
-
-#: input/models/operationplan.py:71 input/views/capacity.py:1122
-#: input/views/inventory.py:1367 input/views/inventory.py:2041
-#: input/views/manufacturing.py:2461 input/views/purchasing.py:1250
-#, fuzzy
-msgid "completed"
-msgstr "završeno"
 
 #: input/models/operationplan.py:89
 msgid "Status of the order"
@@ -5229,11 +4989,6 @@ msgstr "dobavljač artikla"
 msgid "item suppliers"
 msgstr "dobavljači artikla"
 
-#: input/templates/admin/input/operation/change_form.html:30
-#, fuzzy
-msgid "dependencies"
-msgstr "ovisna potražnja"
-
 #: input/templates/input/calendardetail.html:46
 msgid "monday"
 msgstr ""
@@ -5403,19 +5158,6 @@ msgstr "količina po planu"
 #: input/views/inventory.py:1832
 msgid "operationplan quantity completed"
 msgstr ""
-
-#: input/views/manufacturing.py:1486 input/views/manufacturing.py:1492
-#: input/views/manufacturing.py:1498 input/views/manufacturing.py:1504
-#: input/views/manufacturing.py:1511 input/views/manufacturing.py:1517
-#: input/views/manufacturing.py:1523 input/views/manufacturing.py:1529
-#: input/views/manufacturing.py:1535 input/views/manufacturing.py:1541
-#: input/views/manufacturing.py:1547 input/views/manufacturing.py:1553
-#: input/views/manufacturing.py:1559 input/views/manufacturing.py:1565
-#: input/views/manufacturing.py:1571 input/views/manufacturing.py:1577
-#: input/views/manufacturing.py:1584 input/views/manufacturing.py:1590
-#, fuzzy
-msgid "blocked by"
-msgstr "podređena operacija"
 
 #: input/views/manufacturing.py:1711
 #, python-format
@@ -5876,12 +5618,6 @@ msgstr "Želite li najprije spremiti promjene?"
 msgid "Error retrieving data"
 msgstr ""
 
-#: inventoryplanning/templates/inventoryplanning/drp.html:1456
-#: output/templates/output/buffer.html:272
-#, fuzzy
-msgid "Archived"
-msgstr "Arhivirano"
-
 #: inventoryplanning/templates/inventoryplanning/drp.html:2185
 msgid "superseded"
 msgstr ""
@@ -6035,14 +5771,14 @@ msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2956
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to "
+"1.<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to "
+"1.<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Nemojte skladištiti</span>"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2966
@@ -6052,13 +5788,13 @@ msgstr "istina"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2975
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"In push mode, any excess inventory will be "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-original-title=\"In push mode, any excess inventory will be "
-"distributed downstream to child locations.\">Aktivira način guranja</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-original-title=\"In push mode, any excess inventory will "
+"be distributed downstream to child locations.\">Aktivira način guranja</span>"
 
 #: inventoryplanning/views.py:117
 msgid "segments"
@@ -6617,16 +6353,6 @@ msgstr ""
 msgid "required quantity"
 msgstr ""
 
-#: output/views/pegging.py:99
-#, fuzzy
-msgid "required quantity proposed"
-msgstr "premostavanje količine narudžbe"
-
-#: output/views/pegging.py:107
-#, fuzzy
-msgid "required quantity confirmed"
-msgstr "premostavanje količine narudžbe"
-
 #: output/views/problem.py:55
 msgid "Problem report"
 msgstr "Izvješće problema"
@@ -6814,12 +6540,6 @@ msgstr ""
 msgid "format SQL query"
 msgstr ""
 
-#: reportmanager/templates/reportmanager/reportmanager.html:198
-#: reportmanager/views.py:132
-#, fuzzy
-msgid "public"
-msgstr "javno"
-
 #: reportmanager/templates/reportmanager/reportmanager.html:218
 msgid "schema"
 msgstr ""
@@ -6900,24 +6620,9 @@ msgstr "Tradicionalni kineski"
 msgid "Ukrainian"
 msgstr "Ukrajinski"
 
-#: settings.py:486
-#, fuzzy
-msgid "activity"
-msgstr "aktivnost"
-
 #: shelflife/attributes.py:21
 msgid "shelf life"
 msgstr ""
-
-#: shelflife/attributes.py:34
-#, fuzzy
-msgid "expiry date"
-msgstr "ističe na datum"
-
-#: shelflife/attributes.py:41
-#, fuzzy
-msgid "expiring quantity"
-msgstr "količina potražnje"
 
 #: shelflife/attributes.py:54
 msgid "required shelf life"
@@ -6926,21 +6631,6 @@ msgstr ""
 #: shelflife/attributes.py:67
 msgid "reset shelf life"
 msgstr ""
-
-#: shelflife/models.py:46
-#, fuzzy
-msgid "stock order"
-msgstr "ukupno narudžbi"
-
-#: shelflife/models.py:47 shelflife/views.py:59
-#, fuzzy
-msgid "stock orders"
-msgstr "ukupno narudžbi"
-
-#: shelflife/models.py:120 shelflife/views.py:375
-#, fuzzy
-msgid "scrap orders"
-msgstr "potvrde narudžbi"
 
 #: shopfloor/attributes.py:19
 msgid "remark"
@@ -6953,16 +6643,6 @@ msgstr ""
 #: shopfloor/templates/shopfloor/manufacturingorder.html:50
 msgid "start"
 msgstr ""
-
-#: shopfloor/templates/shopfloor/manufacturingorder.html:53
-#, fuzzy
-msgid "pause"
-msgstr "pauza"
-
-#: shopfloor/templates/shopfloor/manufacturingorder.html:56
-#, fuzzy
-msgid "end"
-msgstr "kraj"
 
 #: shopfloor/templates/shopfloor/manufacturingorder.html:80
 msgid "No materials"
@@ -7001,12 +6681,6 @@ msgstr "Zaustavite web uslugu."
 #: wizard/templates/wizard/index.html:9
 msgid "explore features"
 msgstr ""
-
-#: wizard/templates/wizard/features.html:19
-#: wizard/templates/wizard/index.html:17
-#, fuzzy
-msgid "dashboard"
-msgstr "dashboard"
 
 #: wizard/templates/wizard/quickstart_forecast.html:61
 #: wizard/templates/wizard/quickstart_production.html:387
@@ -7131,22 +6805,26 @@ msgstr ""
 msgid "quarters"
 msgstr ""
 
+#: freppledb/forecast/static/forecast/forecast.html:156
+msgid "Recalculate"
+msgstr "Preračunaj"
+
 #: freppledb/quoting/static/quoting/quoting.html:98
 msgid "cancel"
 msgstr "odustani"
 
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:523
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:557
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:606
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:641
 msgid "%s allocated out of %s"
-msgstr "%s dodijeljeno iz %s"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1364
-#: freppledb/planningboard/static/planningboard/planningboard.html:1393
-#: freppledb/planningboard/static/planningboard/planningboard.html:1419
+#: freppledb/planningboard/static/planningboard/planningboard.html:1405
+#: freppledb/planningboard/static/planningboard/planningboard.html:1434
+#: freppledb/planningboard/static/planningboard/planningboard.html:1460
 msgid "Add to the graph"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1632
+#: freppledb/planningboard/static/planningboard/planningboard.html:1673
 msgid ""
 "An operation gets the color of its category.<br>\n"
 "                        The operation categories should be filled in the "
@@ -7154,7 +6832,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1664
+#: freppledb/planningboard/static/planningboard/planningboard.html:1705
 msgid ""
 "An operation gets the color of its subcategory.<br>\n"
 "                        The operation subcategories should be filled in the "
@@ -7162,7 +6840,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1568
+#: freppledb/planningboard/static/planningboard/planningboard.html:1609
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
@@ -7170,7 +6848,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1600
+#: freppledb/planningboard/static/planningboard/planningboard.html:1641
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
@@ -7178,78 +6856,72 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1510
+#: freppledb/planningboard/static/planningboard/planningboard.html:1551
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:321
-#, fuzzy
+#: freppledb/forecast/static/forecast/forecast.html:318
 msgid "Apply"
-msgstr "Primjeni"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
 msgid "Assign an extra resource"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:69
+#: freppledb/planningboard/static/planningboard/planningboard.html:66
 msgid "Automatically resolve infeasiblities in the plan"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1367
+#: freppledb/planningboard/static/planningboard/planningboard.html:1408
 msgid "Clear the plan of selected demands"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:393
-#, fuzzy
+#: freppledb/forecast/static/forecast/forecast.html:390
 msgid "Constant"
-msgstr "Stalno"
+msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:460
+#: freppledb/forecast/static/forecast/forecast.html:457
 #: freppledb/input/static/operationplandetail/operationplandetail.html:56
-#: freppledb/planningboard/static/planningboard/planningboard.html:162
+#: freppledb/planningboard/static/planningboard/planningboard.html:157
 #: freppledb/quoting/static/quoting/quoting.html:198
-#, fuzzy
 msgid "Continue"
-msgstr "Nastavi"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1442
+#: freppledb/planningboard/static/planningboard/planningboard.html:1483
 msgid "Criticality color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1473
+#: freppledb/planningboard/static/planningboard/planningboard.html:1514
 msgid "Delay color setup"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:45
-#, fuzzy
 msgid "Delivery"
-msgstr "Dostava"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:43
 msgid "Distribution Order"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1503
+#: freppledb/planningboard/static/planningboard/planningboard.html:1544
 msgid "Due date color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:291
-#: freppledb/planningboard/static/planningboard/planningboard.html:364
-#: freppledb/planningboard/static/planningboard/planningboard.html:548
-#: freppledb/planningboard/static/planningboard/planningboard.html:674
-#: freppledb/planningboard/static/planningboard/planningboard.html:800
-#, fuzzy
+#: freppledb/planningboard/static/planningboard/planningboard.html:314
+#: freppledb/planningboard/static/planningboard/planningboard.html:387
+#: freppledb/planningboard/static/planningboard/planningboard.html:578
+#: freppledb/planningboard/static/planningboard/planningboard.html:712
+#: freppledb/planningboard/static/planningboard/planningboard.html:841
 msgid "Duplicate"
-msgstr "Dupliciraj"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1351
-#: freppledb/planningboard/static/planningboard/planningboard.html:1386
-#: freppledb/planningboard/static/planningboard/planningboard.html:1413
-#, fuzzy
+#: freppledb/planningboard/static/planningboard/planningboard.html:1392
+#: freppledb/planningboard/static/planningboard/planningboard.html:1427
+#: freppledb/planningboard/static/planningboard/planningboard.html:1454
 msgid "Enter name"
-msgstr "Unesite naziv"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:30
 #: freppledb/quoting/static/quoting/quoting.html:43
@@ -7257,20 +6929,23 @@ msgstr "Unesite naziv"
 msgid "Enter your search terms"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:431
+#: freppledb/quoting/static/quoting/src/quoteCtrl.js:62
+msgid "Error"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:428
 msgid "Estimated forecast error"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:405
-#, fuzzy
+#: freppledb/forecast/static/forecast/forecast.html:402
 msgid "Intermittent"
-msgstr "Isprekidano"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1561
+#: freppledb/planningboard/static/planningboard/planningboard.html:1602
 msgid "Item category color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1593
+#: freppledb/planningboard/static/planningboard/planningboard.html:1634
 msgid "Item subcategory color setup"
 msgstr ""
 
@@ -7278,12 +6953,11 @@ msgstr ""
 msgid "Manufacturing Order"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:409
-#, fuzzy
+#: freppledb/forecast/static/forecast/forecast.html:406
 msgid "Moving average"
-msgstr "Pomični prosjek"
+msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:264
+#: freppledb/forecast/static/forecast/forecast.html:261
 msgid "No comments yet"
 msgstr ""
 
@@ -7291,40 +6965,40 @@ msgstr ""
 msgid "No plan yet"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1625
+#: freppledb/planningboard/static/planningboard/planningboard.html:1666
 msgid "Operation category color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1657
+#: freppledb/planningboard/static/planningboard/planningboard.html:1698
 msgid "Operation subcategory color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:329
+#: freppledb/planningboard/static/planningboard/planningboard.html:352
 msgid "Operationplan"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1358
-#: freppledb/planningboard/static/planningboard/planningboard.html:889
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:260
+#: freppledb/planningboard/static/planningboard/planningboard.html:1399
+#: freppledb/planningboard/static/planningboard/planningboard.html:930
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:262
 msgid "Plan selected demands backward from their due date"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1361
-#: freppledb/planningboard/static/planningboard/planningboard.html:892
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:261
+#: freppledb/planningboard/static/planningboard/planningboard.html:1402
+#: freppledb/planningboard/static/planningboard/planningboard.html:933
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:263
 msgid "Plan selected demands forward from the current date"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:52
-#: freppledb/planningboard/static/planningboard/planningboard.html:157
+#: freppledb/planningboard/static/planningboard/planningboard.html:153
 msgid "Please be patient, the chart may take some time to complete."
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1531
+#: freppledb/planningboard/static/planningboard/planningboard.html:1572
 msgid "Priority color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1538
+#: freppledb/planningboard/static/planningboard/planningboard.html:1579
 msgid ""
 "Priority is a demand property, available in the demands table. The priority "
 "value will have effect in the plan results.<br>\n"
@@ -7334,37 +7008,34 @@ msgid ""
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:42
-#, fuzzy
 msgid "Purchase Order"
-msgstr "Narudžbenica"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:193
 msgid "Quoting error"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:886
+#: freppledb/planningboard/static/planningboard/planningboard.html:927
 msgid "Remove this demand from planning"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:76
-#, fuzzy
 msgid "Remove this resource"
-msgstr "Veličina resursa"
+msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:163
+#: freppledb/forecast/static/forecast/forecast.html:160
 msgid "Save changes to the database"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:173
+#: freppledb/planningboard/static/planningboard/planningboard.html:168
 msgid "Save plan from memory to the database"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:401
-#, fuzzy
+#: freppledb/forecast/static/forecast/forecast.html:398
 msgid "Seasonal"
-msgstr "Sezonski"
+msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:381
+#: freppledb/forecast/static/forecast/forecast.html:378
 msgid ""
 "Select forecast method, only possible at single item/location/customer level"
 msgstr ""
@@ -7377,33 +7048,32 @@ msgstr ""
 msgid "Select panel sequence"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:422
+#: freppledb/forecast/static/forecast/forecast.html:419
 msgid "Selected forecast method"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:171
+#: freppledb/forecast/static/forecast/forecast.html:168
 msgid "Simulate changes without saving"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:297
-#: freppledb/planningboard/static/planningboard/planningboard.html:370
-#: freppledb/planningboard/static/planningboard/planningboard.html:554
-#: freppledb/planningboard/static/planningboard/planningboard.html:680
-#: freppledb/planningboard/static/planningboard/planningboard.html:806
+#: freppledb/planningboard/static/planningboard/planningboard.html:320
+#: freppledb/planningboard/static/planningboard/planningboard.html:393
+#: freppledb/planningboard/static/planningboard/planningboard.html:584
+#: freppledb/planningboard/static/planningboard/planningboard.html:718
+#: freppledb/planningboard/static/planningboard/planningboard.html:847
 msgid "Split in half"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/kanbanDrv.js:44
-#, fuzzy
 msgid "Stock"
-msgstr "Lager"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:51
-#: freppledb/planningboard/static/planningboard/planningboard.html:156
+#: freppledb/planningboard/static/planningboard/planningboard.html:152
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1449
+#: freppledb/planningboard/static/planningboard/planningboard.html:1490
 msgid ""
 "The criticality of an operationplan measures the slack time available till "
 "the delivery of the customer demand.<br>\n"
@@ -7414,7 +7084,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1480
+#: freppledb/planningboard/static/planningboard/planningboard.html:1521
 msgid ""
 "The delay of an operationplan compares its end date with the delivery due "
 "date of the customer demand(s) it feeds.<br>\n"
@@ -7423,12 +7093,11 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:397
-#, fuzzy
+#: freppledb/forecast/static/forecast/forecast.html:394
 msgid "Trend"
-msgstr "Trend"
+msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:167
+#: freppledb/forecast/static/forecast/forecast.html:164
 msgid "Undo changes"
 msgstr ""
 
@@ -7448,11 +7117,11 @@ msgstr ""
 msgid "View start events"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:262
+#: freppledb/planningboard/static/planningboard/planningboard.html:284
 msgid "approved: {{aggregatedoperationplans.status.approved }}"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:271
+#: freppledb/planningboard/static/planningboard/planningboard.html:293
 msgid "closed: {{aggregatedoperationplans.status.closed }}"
 msgstr ""
 
@@ -7460,11 +7129,18 @@ msgstr ""
 msgid "color by"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:194
+#: freppledb/planningboard/static/planningboard/planningboard.html:189
 msgid "colors"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:268
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:186
+#: freppledb/planningboard/static/planningboard/planningboard.html:543
+#: freppledb/planningboard/static/planningboard/planningboard.html:688
+#: freppledb/planningboard/static/planningboard/planningboard.html:816
+msgid "completed"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:290
 msgid "completed: {{aggregatedoperationplans.status.completed }}"
 msgstr ""
 
@@ -7472,17 +7148,18 @@ msgstr ""
 msgid "confirm"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:265
+#: freppledb/planningboard/static/planningboard/planningboard.html:287
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:221
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:121
+#: freppledb/planningboard/static/planningboard/planningboard.html:216
 msgid "customer delivery"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:451
+#: freppledb/forecast/static/forecast/forecast.html:448
 #: freppledb/input/static/operationplandetail/operationplandetail.html:44
-#: freppledb/planningboard/static/planningboard/planningboard.html:149
+#: freppledb/planningboard/static/planningboard/planningboard.html:144
 msgid "database transaction failed"
 msgstr ""
 
@@ -7498,8 +7175,32 @@ msgstr ""
 msgid "downstream operations"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:87
+#: freppledb/forecast/static/forecast/forecast.html:312
+msgid "edit"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:109
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:126
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:84
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:96
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:35
+#: freppledb/planningboard/static/planningboard/planningboard.html:1103
+#: freppledb/planningboard/static/planningboard/planningboard.html:1271
+#: freppledb/planningboard/static/planningboard/planningboard.html:258
+#: freppledb/planningboard/static/planningboard/planningboard.html:481
+#: freppledb/planningboard/static/planningboard/planningboard.html:638
+#: freppledb/planningboard/static/planningboard/planningboard.html:767
+#: freppledb/planningboard/static/planningboard/planningboard.html:895
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1317
+msgid "end"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:84
 msgid "export as Excel file"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:145
+msgid "export to {{erp}} failed"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:15
@@ -7507,19 +7208,24 @@ msgid "feasibility"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:43
-#: freppledb/planningboard/static/planningboard/planningboard.html:148
+#: freppledb/planningboard/static/planningboard/planningboard.html:143
 msgid "gantt chart rows limit"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:188
+#: freppledb/forecast/static/forecast/forecast.html:185
 msgid "history"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:33
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1037
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1038
+msgid "hour"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:30
 msgid "item category"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:36
+#: freppledb/planningboard/static/planningboard/planningboard.html:33
 msgid "item subcategory"
 msgstr ""
 
@@ -7527,11 +7233,25 @@ msgstr ""
 msgid "maximum lateness (in days)"
 msgstr ""
 
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1045
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1046
+msgid "minute"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/src/module.js:63
+#: freppledb/planningboard/static/planningboard/src/module.js:67
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1016
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1020
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1041
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1042
+msgid "minutes"
+msgstr ""
+
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:28
 msgid "network status"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:262
+#: freppledb/forecast/static/forecast/forecast.html:259
 msgid "new customer comment"
 msgstr ""
 
@@ -7560,7 +7280,7 @@ msgid "no resources"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:5
-#: freppledb/planningboard/static/planningboard/planningboard.html:208
+#: freppledb/planningboard/static/planningboard/planningboard.html:203
 msgid "no selection"
 msgstr ""
 
@@ -7572,15 +7292,19 @@ msgstr ""
 msgid "no upstream operationplans information"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:39
+#: freppledb/planningboard/static/planningboard/planningboard.html:36
 msgid "operation category"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:42
+#: freppledb/planningboard/static/planningboard/planningboard.html:39
 msgid "operation subcategory"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:259
+#: freppledb/planningboard/static/planningboard/planningboard.html:230
+msgid "plus"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:281
 msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
 msgstr ""
 
@@ -7588,26 +7312,47 @@ msgstr ""
 msgid "quote form"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:84
+#: freppledb/planningboard/static/planningboard/planningboard.html:81
 msgid "remove all rows"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:81
+#: freppledb/planningboard/static/planningboard/planningboard.html:78
 msgid "remove row"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:259
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:261
 msgid "remove this demand from planning"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:6
-#, fuzzy
-msgid "selected"
-msgstr "odabrane"
+#: freppledb/forecast/static/forecast/forecast.html:79
+#: freppledb/planningboard/static/planningboard/planningboard.html:59
+msgid "save"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:446
-#: freppledb/planningboard/static/planningboard/planningboard.html:598
-#: freppledb/planningboard/static/planningboard/planningboard.html:720
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1052
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1053
+msgid "second"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/src/module.js:65
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1018
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1049
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1050
+msgid "seconds"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:6
+msgid "selected"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:62
+#: freppledb/planningboard/static/planningboard/planningboard.html:87
+msgid "set time horizon"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:472
+#: freppledb/planningboard/static/planningboard/planningboard.html:632
+#: freppledb/planningboard/static/planningboard/planningboard.html:761
 msgid "setup end"
 msgstr ""
 
@@ -7617,9 +7362,8 @@ msgid "shown"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
-#, fuzzy
 msgid "stock"
-msgstr "zaliha"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:28
 msgid "supply information"
@@ -7629,9 +7373,9 @@ msgstr ""
 msgid "types"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:450
+#: freppledb/forecast/static/forecast/forecast.html:447
 #: freppledb/input/static/operationplandetail/operationplandetail.html:42
-#: freppledb/planningboard/static/planningboard/planningboard.html:147
+#: freppledb/planningboard/static/planningboard/planningboard.html:142
 msgid "unsaved changes"
 msgstr ""
 
@@ -7643,430 +7387,10 @@ msgstr ""
 msgid "week number"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:222
+#: freppledb/planningboard/static/planningboard/planningboard.html:217
 msgid "{{ aggregatedoperationplans.count }} selected"
-msgstr "{{ aggregatedoperationplans.count }} selected"
+msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:333
+#: freppledb/forecast/static/forecast/forecast.html:330
 msgid "{{m.label}}"
-msgstr "{{m.label}}"
-
-#~ msgid "Copy to Clipboard"
-#~ msgstr "Kopiraj"
-
-#~ msgid "Error during export"
-#~ msgstr "Pogreška prilikom izvoza"
-
-#~ msgid "Retry"
-#~ msgstr "Ponovi"
-
-#~ msgid "export"
-#~ msgstr "Izvoz"
-
-#, fuzzy
-#~ msgid "blocked-by operation"
-#~ msgstr "podređena operacija"
-
-#~ msgid "Cannot delete %(name)s"
-#~ msgstr "Nije moguće izbrisati %(name)s"
-
-#~ msgid "Are you sure?"
-#~ msgstr "Jeste li sigurni?"
-
-#~ msgid "Back up the database"
-#~ msgstr "Backup baza"
-
-#~ msgid "Capacity: respect capacity limits"
-#~ msgstr "Kapacitet: poštujte ograničenja kapaciteta"
-
-#~ msgid "Lead time: do not plan in the past"
-#~ msgstr "Lead time: ne planirajte u prošlosti"
-
-#~ msgid "Dump the database contents to a file."
-#~ msgstr "Sadržaj baze u file"
-
-#~ msgid "Bucket '%(name)s' not found"
-#~ msgstr "Skup '%(name)s' nije pronađen"
-
-#~ msgid "filter data"
-#~ msgstr "filtriranje podataka"
-
-#~ msgid "Recalculate"
-#~ msgstr "Preračunaj"
-
-#~ msgid "simulate changes without saving"
-#~ msgstr "simuliraj promjene bez spremanja"
-
-#~ msgid "No forecast found"
-#~ msgstr "Nije pronađena prognoza"
-
-#, fuzzy
-#~ msgid "Upload"
-#~ msgstr "Učitaj"
-
-#, fuzzy
-#~ msgid "states.select"
-#~ msgstr "Metoda odabira željene alternative"
-
-#, fuzzy
-#~ msgid "Forecast wizard"
-#~ msgstr "Uređivač prognoze"
-
-#, fuzzy
-#~ msgid "Operation"
-#~ msgstr "operacija"
-
-#, fuzzy
-#~ msgid "Segment detail"
-#~ msgstr "plan detaljno"
-
-#, fuzzy
-#~ msgid "Resource"
-#~ msgstr "resurs"
-
-#, fuzzy
-#~ msgid "Manufacturing order"
-#~ msgstr "radni nalog"
-
-#, fuzzy
-#~ msgid "OR"
-#~ msgstr "ILI"
-
-#, fuzzy
-#~ msgid "gView"
-#~ msgstr "Prikaz"
-
-#, fuzzy
-#~ msgid "overlay"
-#~ msgstr "preopterećenje"
-
-#, fuzzy
-#~ msgid "loading"
-#~ msgstr "opterećenje"
-
-#, fuzzy
-#~ msgid "colHeaders"
-#~ msgstr "Nalozi"
-
-#, fuzzy
-#~ msgid "resizer"
-#~ msgstr "veličina"
-
-#, fuzzy
-#~ msgid "top"
-#~ msgstr "Zaustavi"
-
-#, fuzzy
-#~ msgid "titleButton"
-#~ msgstr "naslov"
-
-#, fuzzy
-#~ msgid "gridError"
-#~ msgstr "Greška"
-
-#, fuzzy
-#~ msgid "Submit"
-#~ msgstr "Pošalji"
-
-#, fuzzy
-#~ msgid "add"
-#~ msgstr "i"
-
-#, fuzzy
-#~ msgid "is_ip_buffer"
-#~ msgstr "međuspremnik"
-
-#~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
-#~ msgstr "Nevažeći format (Format: JJJJ-MM-TT HH:MM:SS)"
-
-#~ msgid "Too many objects to display"
-#~ msgstr "Previše objekata za prikaz"
-
-#~ msgid "setup time"
-#~ msgstr "vrijeme postavljanja"
-
-#~ msgid "material excess"
-#~ msgstr "Višak materijala"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "                        Files in the old .XLS excel format can't be read."
-#~ "<br>\n"
-#~ "                        Please convert them to the new .XLSX format.\n"
-#~ "                        "
-#~ msgstr ""
-#~ "Datoteke u starom . XLS excel format ne može se čitati.<br>Molimo vas da "
-#~ "ih pretvorite u novo . XLSX format."
-
-#, fuzzy
-#~ msgid "favorites"
-#~ msgstr "Favorite"
-
-#, fuzzy
-#~ msgid "Choose a what-if scenario"
-#~ msgstr "Odaberite scenarij što-ako"
-
-#, fuzzy
-#~ msgid "Copy files to folder"
-#~ msgstr "Kopiranje datoteka u mapu"
-
-#~ msgid "Stop getting notifications in your inbox when there is activity"
-#~ msgstr ""
-#~ "Prestanite primati obavijesti u pristiglu poštu kada postoji aktivnost"
-
-#~ msgid "to"
-#~ msgstr "do"
-
-#~ msgid "Read Odoo data"
-#~ msgstr "Pročitajte Odoo podatke"
-
-#~ msgid "Write results to Odoo"
-#~ msgstr "Napiši rezultate u Odoo"
-
-#, fuzzy
-#~ msgid "Following "
-#~ msgstr "sljedeće"
-
-#, fuzzy
-#~ msgid "Unfollow"
-#~ msgstr "Prestati pratiti"
-
-#, fuzzy
-#~ msgid "Email exported reports"
-#~ msgstr "Izvješća o izvozu e-pošte"
-
-#, fuzzy
-#~ msgid "email"
-#~ msgstr "e-pošta"
-
-#, fuzzy
-#~ msgid "report editor"
-#~ msgstr "urednik izvješća"
-
-#~ msgid "Error saving data"
-#~ msgstr "Pogreška prilikom spremanja podataka"
-
-#~ msgid "Error saving report settings"
-#~ msgstr "Pogreška pri dobivanju podataka izvješća"
-
-#~ msgid "Error deleting data"
-#~ msgstr "Pogreška prilikom brisanja"
-
-#~ msgid "Error copying data"
-#~ msgstr "Pogreška prilikom kopiranja podataka"
-
-#~ msgid "Export Plan"
-#~ msgstr "Izvoz Plana"
-
-#~ msgid "Filtered where"
-#~ msgstr "Filtrirano gdje"
-
-#~ msgid "Error getting data"
-#~ msgstr "Pogreška pri učitavanju podataka"
-
-#~ msgid "Error reading version information"
-#~ msgstr "Pogreška prilikom čitanja informacija o verziji"
-
-#, fuzzy
-#~ msgid "change"
-#~ msgstr "promjenjeno"
-
-#, fuzzy
-#~ msgid "Arguments"
-#~ msgstr "Argumenti"
-
-#, fuzzy
-#~ msgid "Due date"
-#~ msgstr "krajnji datum"
-
-#, fuzzy
-#~ msgid "Advanced"
-#~ msgstr "Napredne opcije"
-
-#, fuzzy
-#~ msgid "Quantity"
-#~ msgstr "količina"
-
-#~ msgid "cockpit"
-#~ msgstr "Cockpit"
-
-#~ msgid "Display a list of the entities you recently changed"
-#~ msgstr "Lista posljednjih promjena"
-
-#~ msgid "Unknown content"
-#~ msgstr "Nepoznat sadržaj"
-
-#~ msgid "Display a list of recent comments"
-#~ msgstr "Prikaži popis najnovijih komentara"
-
-#~ msgid "Download all input data in a single spreadsheet."
-#~ msgstr "Preuzmite sve podatke kao jedna tablica"
-
-#~ msgid "Planning parameters"
-#~ msgstr "Parametri planiranja"
-
-#~ msgid "planning parameters"
-#~ msgstr "parametri planiranja"
-
-#~ msgid "alternates"
-#~ msgstr "alternativa"
-
-#~ msgid "A minimum quantity for operationplans"
-#~ msgstr "Minimalna količina za operativne planove"
-
-#~ msgid "A multiple quantity for operationplans"
-#~ msgstr "Vielfachmenge für Tätigkeitsplan"
-
-#~ msgid "A maximum quantity for operationplans"
-#~ msgstr "Maksimalna količina za operativne planove"
-
-#~ msgid "A fixed duration for the operation"
-#~ msgstr "Fiksno trajanje operacije"
-
-#~ msgid "Optional name of this operation material"
-#~ msgstr "Izborni naziv ovog operativnog materijala"
-
-#~ msgid "Optional name of this load"
-#~ msgstr "Drugo ime ovog opterećenja"
-
-#~ msgid "Priority of this load in a group of alternates"
-#~ msgstr "Prioritet ovog opterećenja u grupi alternativa"
-
-#~ msgid "open purchases"
-#~ msgstr "otvorene nabave"
-
-#~ msgid "proposed transfers value"
-#~ msgstr "vrijednost predloženih prijenosa"
-
-#~ msgid "open transfers value"
-#~ msgstr "vrijednost otvorenih prijenosa"
-
-#~ msgctxt "Gantt"
-#~ msgid "earlier"
-#~ msgstr "ranije"
-
-#~ msgctxt "Gantt"
-#~ msgid "later"
-#~ msgstr "kasnije"
-
-#~ msgctxt "Gantt"
-#~ msgid "reset"
-#~ msgstr "ponovno postavi"
-
-#, fuzzy
-#~ msgid "Execute SQL statements"
-#~ msgstr "Izvrši SQL"
-
-#, fuzzy
-#~ msgid "efficiency %% calendar"
-#~ msgstr "učinkovitost %% kalendara"
-
-#, fuzzy
-#~ msgid "distribution Order"
-#~ msgstr "nalog za distribuciju"
-
-#, fuzzy
-#~ msgid "manufacturing Order"
-#~ msgstr "radni nalog"
-
-#, fuzzy
-#~ msgid "purchase Order"
-#~ msgstr "narudžbenica"
-
-#~ msgid "import CSV or Excel file"
-#~ msgstr "CSV- ili Excel uvoz"
-
-#, fuzzy
-#~ msgid "No unread messages!"
-#~ msgstr "promijeni poruku"
-
-#~ msgid "Error retrieving report data"
-#~ msgstr "Pogreška pri dohvaćanju podataka izvješća"
-
-#, fuzzy
-#~ msgid "User"
-#~ msgstr "korisnik"
-
-#, fuzzy
-#~| msgid "location"
-#~ msgid "Action"
-#~ msgstr "radnja"
-
-#, fuzzy
-#~ msgid ""
-#~ "This object doesn't have a change history. It probably wasn't added via "
-#~ "this admin site."
-#~ msgstr ""
-#~ "Ovaj objekt nema povijest promjena. Možda nije biostvoreno putem ovih "
-#~ "stranica administracije."
-
-#, fuzzy
-#~ msgid "My Actions"
-#~ msgstr "Moje radnje"
-
-#, fuzzy
-#~| msgid "unavailable"
-#~ msgid "None available"
-#~ msgstr "Nije dostupno"
-
-#, fuzzy
-#~ msgid "Error downloading file"
-#~ msgstr "Pogreška pri preuzimanju datoteke"
-
-#, fuzzy
-#~ msgid "child operation"
-#~ msgstr "podređena operacija"
-
-#, fuzzy
-#~ msgid "child suboperations"
-#~ msgstr "podređena podoperacija"
-
-#, fuzzy
-#~ msgid "alternate selection"
-#~ msgstr "alternativna selekcija"
-
-#~ msgid "proposed transfers"
-#~ msgstr "predloženi transferi"
-
-#~ msgid "open transfers"
-#~ msgstr "otvoreni transferi"
-
-#, fuzzy
-#~ msgid "The report was saved successfully."
-#~ msgstr "Izvještaj je uspješno spremljen."
-
-#, fuzzy
-#~| msgid "confirmed orders"
-#~ msgid "New password "
-#~ msgstr "bestätigte Lieferung"
-
-#, fuzzy
-#~| msgid "size minimum"
-#~ msgid "Size Minimum"
-#~ msgstr "Mindest Menge"
-
-#, fuzzy
-#~| msgid "size multiple"
-#~ msgid "Size Multiple"
-#~ msgstr "Mehrfach Menge"
-
-#, fuzzy
-#~| msgid "size maximum"
-#~ msgid "Size Maximum"
-#~ msgstr "Maximal Menge"
-
-#~ msgid "copy"
-#~ msgstr "kopieren"
-
-#~ msgid "release selected scenarios"
-#~ msgstr "Ausgewählte Szenarien freigeben"
-
-#~ msgid "into selected scenarios"
-#~ msgstr "in ausgewählte Szenarien"
-
-#~ msgid "Update description of selected scenarios"
-#~ msgstr "Beschreibung der ausgewählten Szenarien aktualisieren"
-
-#~ msgid "Click to select record"
-#~ msgstr "Zum Bearbeiten klicken"
+msgstr ""

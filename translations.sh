@@ -7,11 +7,13 @@
 # 2) Translate all strings local/<LANGUAGE>/<LANGUAGE>.po file. The real work!
 # 3) Run "./translations.sh compile" to merge the translations into the right places.
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 translations_extract () {
   # extract django
-  cd freppledb
-  django-admin.py makemessages --ignore node_modules --no-wrap -a -d django
-  django-admin.py makemessages --ignore node_modules "--ignore=*bootstrap.js" "--ignore=*.min.js" --no-wrap -a -d djangojs
+  cd "$SCRIPT_DIR/freppledb"
+  "$SCRIPT_DIR/frepplectl.py" makemessages --ignore node_modules --no-wrap -a -d django
+  "$SCRIPT_DIR/frepplectl.py" makemessages --ignore node_modules "--ignore=*bootstrap.js" "--ignore=*.min.js" --no-wrap -a -d djangojs
   cd -
 
   # extract angular

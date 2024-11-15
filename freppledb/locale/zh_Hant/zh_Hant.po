@@ -66,11 +66,6 @@ msgstr "保存"
 msgid "Return to page"
 msgstr ""
 
-#: common/static/js/frepple.js:542
-#, fuzzy
-msgid "select"
-msgstr "選取"
-
 #: common/static/js/frepple.js:577
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:427
 msgid "days early"
@@ -86,11 +81,6 @@ msgstr "準時"
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:434
 msgid "days late"
 msgstr "延遲的天數"
-
-#: common/static/js/frepple.js:724
-#, fuzzy
-msgid "Select action"
-msgstr "選取動作"
 
 #: common/static/js/frepple.js:780
 msgid "Selected options"
@@ -156,12 +146,6 @@ msgstr ""
 msgid "Using this link external applications can pull data from frePPLe"
 msgstr ""
 
-#: common/static/js/frepple.js:1204 common/static/js/frepple.js:1235
-#: common/static/js/frepple.js:2789
-#, fuzzy
-msgid "Copy to clipboard"
-msgstr "複製到剪貼簿"
-
 #: common/static/js/frepple.js:1213
 msgid "Spreadsheet table"
 msgstr "電子表格表"
@@ -204,11 +188,6 @@ msgstr "你將會複製% s對象"
 #: common/static/js/frepple.js:1688
 msgid "Search"
 msgstr "搜索"
-
-#: common/static/js/frepple.js:1751
-#, fuzzy
-msgid "within"
-msgstr "之中"
 
 #: common/static/js/frepple.js:1753
 msgid "is child of"
@@ -299,11 +278,6 @@ msgstr "刪除"
 msgid "%s unread messages"
 msgstr ""
 
-#: common/static/js/frepple.js:2558
-#, fuzzy
-msgid "No unread messages"
-msgstr "沒有未讀的訊息"
-
 #: common/static/js/frepple.js:2705
 msgid "Installed apps"
 msgstr "已安裝的應用程序"
@@ -323,11 +297,6 @@ msgstr "第一行包含了欄位名。"
 #: common/static/js/frepple.js:2761
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "首先刪除所有存在的記錄和所有相關的表"
-
-#: common/static/js/frepple.js:2767
-#, fuzzy
-msgid "files selected"
-msgstr "所選文件"
 
 #: common/static/js/frepple.js:2769
 msgid "Select files to upload"
@@ -362,11 +331,6 @@ msgstr "已取消"
 msgid "%s records processed"
 msgstr ""
 
-#: common/static/js/frepple.js:3664
-#, fuzzy
-msgid "Follow"
-msgstr "關注"
-
 #: common/static/js/frepple.js:3678
 msgid "Update"
 msgstr ""
@@ -375,11 +339,6 @@ msgstr ""
 #, javascript-format
 msgid "Manage notifications of %s"
 msgstr ""
-
-#: common/static/js/frepple.js:3691
-#, fuzzy
-msgid "Following"
-msgstr "追蹤中"
 
 #: common/static/js/frepple.js:3712
 msgid "Add followers"
@@ -401,48 +360,12 @@ msgstr "在交貨期的現有量"
 msgid "current inventory"
 msgstr "目前存貨"
 
-#: planningboard/static/planningboard/src/module.js:63
-#: planningboard/static/planningboard/src/module.js:67
-#: planningboard/static/planningboard/src/planningboard.js:933
-#: planningboard/static/planningboard/src/planningboard.js:937
-#: planningboard/static/planningboard/src/planningboard.js:958
-#: planningboard/static/planningboard/src/planningboard.js:959
-#, fuzzy
-msgid "minutes"
-msgstr "分鐘"
-
-#: planningboard/static/planningboard/src/module.js:65
-#: planningboard/static/planningboard/src/planningboard.js:935
-#: planningboard/static/planningboard/src/planningboard.js:966
-#: planningboard/static/planningboard/src/planningboard.js:967
-#, fuzzy
-msgid "seconds"
-msgstr "秒"
-
 #: planningboard/static/planningboard/src/module.js:69
 #: planningboard/static/planningboard/src/planningboard.js:939
 #: planningboard/static/planningboard/src/planningboard.js:950
 #: planningboard/static/planningboard/src/planningboard.js:951
 msgid "hours"
 msgstr "小時"
-
-#: planningboard/static/planningboard/src/planningboard.js:954
-#: planningboard/static/planningboard/src/planningboard.js:955
-#, fuzzy
-msgid "hour"
-msgstr "小時"
-
-#: planningboard/static/planningboard/src/planningboard.js:962
-#: planningboard/static/planningboard/src/planningboard.js:963
-#, fuzzy
-msgid "minute"
-msgstr "分鐘"
-
-#: planningboard/static/planningboard/src/planningboard.js:969
-#: planningboard/static/planningboard/src/planningboard.js:970
-#, fuzzy
-msgid "second"
-msgstr "秒"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
@@ -729,17 +652,6 @@ msgstr "對象"
 #: wizard/templates/wizard/quickstart_production.html:394
 msgid "location"
 msgstr "地點"
-
-#: archive/models.py:64 archive/models.py:130 input/models/buffer.py:61
-#: input/models/demand.py:125 input/models/operationplan.py:148
-#: input/views/capacity.py:607 input/views/inventory.py:158
-#: input/views/inventory.py:1092 input/views/inventory.py:1622
-#: input/views/manufacturing.py:1984 input/views/purchasing.py:934
-#: input/views/sales.py:302 input/views/sales.py:585 output/views/buffer.py:253
-#: shelflife/views.py:178 shelflife/views.py:478
-#, fuzzy
-msgid "batch"
-msgstr "批次"
 
 #: archive/models.py:66 archive/models.py:91 forecast/views.py:206
 #: forecast/views.py:616 forecast/views.py:1936 input/models/item.py:34
@@ -1210,24 +1122,6 @@ msgstr "這個情形的權限"
 msgid "Important dates"
 msgstr "重要日期"
 
-#: common/admin.py:52 common/admin.py:86 common/admin.py:106
-#: common/admin.py:139 common/admin.py:159 common/admin.py:179
-#: common/adminforms.py:531 forecast/admin.py:59 forecast/admin.py:97
-#: forecast/models.py:1188 input/admin.py:82 input/admin.py:112
-#: input/admin.py:148 input/admin.py:199 input/admin.py:230 input/admin.py:267
-#: input/admin.py:323 input/admin.py:366 input/admin.py:426 input/admin.py:498
-#: input/admin.py:532 input/admin.py:552 input/admin.py:578 input/admin.py:609
-#: input/admin.py:660 input/admin.py:718 input/admin.py:759 input/admin.py:813
-#: input/admin.py:877 input/admin.py:941 input/admin.py:999 input/admin.py:1063
-#: input/admin.py:1093 input/admin.py:1135 inventoryplanning/admin.py:63
-#: inventoryplanning/admin.py:84 inventoryplanning/admin.py:131
-#: reportmanager/admin.py:39
-#: reportmanager/templates/reportmanager/reportmanager.html:155
-#: shelflife/admin.py:60 shelflife/admin.py:123
-#, fuzzy
-msgid "edit"
-msgstr "編輯"
-
 #: common/admin.py:58 common/admin.py:92 common/admin.py:112
 #: common/admin.py:145 common/admin.py:165 common/admin.py:185
 #: common/adminforms.py:595 common/views.py:484 forecast/admin.py:76
@@ -1289,16 +1183,6 @@ msgstr "{name} \"{obj}\" 已成功變更。"
 msgid "The %(name)s \"%(obj)s\" was deleted successfully."
 msgstr "%(name)s \"%(obj)s\" 已成功刪除。"
 
-#: common/adminforms.py:719
-#, fuzzy
-msgid "delete"
-msgstr "刪除"
-
-#: common/adminforms.py:759
-#, fuzzy
-msgid "Required."
-msgstr "必要"
-
 #: common/adminforms.py:761 common/adminforms.py:764
 msgid "Required. Max 30 characters."
 msgstr ""
@@ -1336,11 +1220,6 @@ msgstr ""
 #: common/dataload.py:722 common/dataload.py:731
 msgid "Select a valid choice. That choice is not one of the available choices."
 msgstr "選擇有效的選項： 此選擇不在可用的選項中。"
-
-#: common/localization.py:31 common/localization.py:49
-#, fuzzy
-msgid "Invalid date format"
-msgstr "無效日期格式"
 
 #: common/menu.py:117
 msgid "Documentation"
@@ -1643,11 +1522,6 @@ msgstr ""
 msgid "object name"
 msgstr ""
 
-#: common/models.py:984
-#, fuzzy
-msgid "followers"
-msgstr "關注"
-
 #: common/models.py:1023
 msgid "notification"
 msgstr ""
@@ -1708,24 +1582,9 @@ msgstr "段的日期"
 msgid "bucket dates"
 msgstr "段日期"
 
-#: common/models.py:1469
-#, fuzzy
-msgid "string"
-msgstr "串"
-
 #: common/models.py:1470
 msgid "boolean"
 msgstr ""
-
-#: common/models.py:1471 forecast/models.py:1189
-#, fuzzy
-msgid "number"
-msgstr "數字"
-
-#: common/models.py:1472
-#, fuzzy
-msgid "integer"
-msgstr "整數"
 
 #: common/models.py:1473 forecast/widget.py:396
 #: input/models/operationplan.py:615 input/views/inventory.py:1760
@@ -1748,16 +1607,6 @@ msgstr ""
 #: input/views/utils.py:411 output/views/operation.py:85
 msgid "duration"
 msgstr "持續時間"
-
-#: common/models.py:1476
-#, fuzzy
-msgid "time"
-msgstr "時間"
-
-#: common/models.py:1477
-#, fuzzy
-msgid "JSON"
-msgstr "JSON"
 
 #: common/models.py:1512 common/views.py:506 common/views.py:707
 msgid "model"
@@ -1801,22 +1650,6 @@ msgstr "否"
 msgid "Yes"
 msgstr "是"
 
-#: common/report.py:849 common/report.py:1966 common/report.py:1969
-#: common/report.py:2257 common/report.py:2311 common/report.py:2434
-#: common/templates/403.html:4 common/templates/403.html:7
-#: executesql/views.py:60 forecast/views.py:1190 forecast/views.py:1329
-#: forecast/views.py:1462 forecast/views.py:1604 forecast/views.py:1986
-#: forecast/views.py:2104 forecast/views.py:2121 input/views/capacity.py:1257
-#: inventoryplanning/services.py:68 inventoryplanning/services.py:85
-#: inventoryplanning/services.py:118 inventoryplanning/services.py:268
-#: inventoryplanning/services.py:283 inventoryplanning/services.py:302
-#: output/views/demand.py:573 planningboard/views.py:174
-#: reportmanager/views.py:580 reportmanager/views.py:619 retail/views.py:30
-#: retail/views.py:122 retail/views.py:210 shopfloor/views.py:43
-#, fuzzy
-msgid "Permission denied"
-msgstr "權限遭拒"
-
 #: common/report.py:1044 common/report.py:3669 common/report.py:3698
 #: execute/views.py:1164 execute/views.py:1207
 #, python-format
@@ -1828,13 +1661,6 @@ msgstr ""
 #, python-format
 msgid "Accepted values are: %s"
 msgstr ""
-
-#: common/report.py:1061 common/report.py:3686 common/report.py:3715
-#: common/report.py:3744 execute/views.py:1181 execute/views.py:1227
-#: execute/views.py:1247
-#, fuzzy
-msgid "Read only"
-msgstr "唯讀"
 
 #: common/report.py:1631 execute/views.py:1339
 msgid ""
@@ -1888,19 +1714,6 @@ msgstr "字段"
 #: execute/views.py:1426
 msgid "error"
 msgstr "錯誤"
-
-#: common/report.py:2364 common/report.py:2383 common/report.py:2508
-#: common/report.py:2531 execute/management/commands/importworkbook.py:212
-#: execute/management/commands/importworkbook.py:250 execute/views.py:1417
-#: execute/views.py:1436
-#, fuzzy
-msgid "warning"
-msgstr "警告"
-
-#: common/report.py:2471
-#, fuzzy
-msgid "file"
-msgstr "檔案"
 
 #: common/report.py:2814
 #: inventoryplanning/templates/inventoryplanning/drp.html:2967
@@ -2086,11 +1899,6 @@ msgstr "許可證已過期"
 msgid "Your license expires in %(x)s days"
 msgstr ""
 
-#: common/templates/admin/base_site_nav.html:81
-#, fuzzy
-msgid "days left"
-msgstr "剩餘天數"
-
 #: common/templates/admin/base_site_nav.html:95
 msgid "preferences"
 msgstr "首選項"
@@ -2098,12 +1906,6 @@ msgstr "首選項"
 #: common/templates/admin/base_site_nav.html:96
 msgid "Log out"
 msgstr "登出"
-
-#: common/templates/admin/base_site_nav.html:111 common/templatetags.py:94
-#: common/views.py:119 wizard/views.py:99
-#, fuzzy
-msgid "home"
-msgstr "首頁"
 
 #: common/templates/admin/base_site_nav.html:123
 msgid ""
@@ -2122,22 +1924,6 @@ msgstr "請更正下面的錯誤。"
 #: common/templates/auth/change_password.html:18
 msgid "Please correct the errors below."
 msgstr "請修正以下錯誤."
-
-#: common/templates/admin/common/bucket/change_form.html:8
-#: input/templates/admin/input/calendar/change_form.html:8
-#: input/templates/admin/input/customer/change_form.html:8
-#: input/templates/admin/input/item/change_form.html:8
-#: input/templates/admin/input/itemdistribution/change_form.html:8
-#: input/templates/admin/input/itemsupplier/change_form.html:8
-#: input/templates/admin/input/location/change_form.html:8
-#: input/templates/admin/input/operation/change_form.html:8
-#: input/templates/admin/input/resource/change_form.html:8
-#: input/templates/admin/input/setupmatrix/change_form.html:8
-#: input/templates/admin/input/skill/change_form.html:8
-#: input/templates/admin/input/supplier/change_form.html:8
-#, fuzzy
-msgid "related"
-msgstr "相關的"
 
 #: common/templates/admin/delete_confirmation.html:24
 #, python-format
@@ -2291,25 +2077,6 @@ msgstr "變更密碼"
 msgid "Add an attachment"
 msgstr ""
 
-#: common/templates/common/follower.html:31
-#: common/templates/common/inbox.html:92 common/views.py:889
-#: common/widget.py:98
-#, fuzzy
-msgid "inbox"
-msgstr "收件箱"
-
-#: common/templates/common/follower.html:34
-#: common/templates/common/inbox.html:95 common/views.py:535
-#: common/views.py:620
-#, fuzzy
-msgid "following"
-msgstr "關注中"
-
-#: common/templates/common/inbox.html:85
-#, fuzzy
-msgid "Unread"
-msgstr "未讀"
-
 #: common/templates/common/inbox.html:111
 msgid "Select/unselect all messages"
 msgstr ""
@@ -2325,11 +2092,6 @@ msgstr ""
 #: common/templates/common/preferences.html:89
 msgid "Number of records per page"
 msgstr "每頁的記錄數"
-
-#: common/templates/common/preferences.html:134 common/views.py:417
-#, fuzzy
-msgid "avatar"
-msgstr "大頭照"
 
 #: common/templates/common/preferences.html:144
 msgid ""
@@ -2355,12 +2117,6 @@ msgstr "新密碼確認"
 #: common/templates/common/snippet_favorites.html:4
 msgid "Bookmark your favorite report configurations"
 msgstr ""
-
-#: common/templates/common/snippet_favorites.html:16
-#: reportmanager/templates/reportmanager/reportmanager.html:167
-#, fuzzy
-msgid "save"
-msgstr "保存"
 
 #: common/templates/common/snippet_follow.html:8
 msgid "Manage notifications in your inbox"
@@ -2520,10 +2276,11 @@ msgid ""
 "curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
 "</div></div>\n"
 "<div class=\"mb-2\">\n"
-"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" target="
-"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
-"\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" value=\"%(exp)s"
-"\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/>  days:\n"
+"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" "
+"target=\"_blank\">JSON Web Token authentication</a> valid for the next "
+"<input id=\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" "
+"value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/"
+">  days:\n"
 "</div>\n"
 "<div class=\"card mb-3\"><div class=\"card-body\">\n"
 "wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
@@ -2565,11 +2322,6 @@ msgstr "更新個人參數失敗"
 #: common/views.py:301
 msgid "My preferences"
 msgstr "我的首選項"
-
-#: common/views.py:407 output/views/constraint.py:89 output/views/problem.py:66
-#, fuzzy
-msgid "id"
-msgstr "id"
 
 #: common/views.py:420
 msgid "username"
@@ -2905,12 +2657,6 @@ msgstr ""
 msgid "year name"
 msgstr ""
 
-#: execute/templates/commands/emailreport.html:6
-#: execute/templates/commands/uploadreport.html:6
-#, fuzzy
-msgid "publish"
-msgstr "發布"
-
 #: execute/templates/commands/emailreport.html:9
 msgid ""
 "Emails the selected reports to a comma separated list of recipients. Files "
@@ -2930,11 +2676,6 @@ msgstr ""
 #: execute/templates/commands/uploadreport.html:18
 msgid "size"
 msgstr "大小"
-
-#: execute/templates/commands/emailreport.html:34
-#, fuzzy
-msgid "emails"
-msgstr "電子郵箱"
 
 #: execute/templates/commands/emailreport.html:67
 msgid "please correct invalid email addresses"
@@ -2961,6 +2702,11 @@ msgstr ""
 #: execute/templates/commands/empty.html:30
 msgid "plan history"
 msgstr ""
+
+#: execute/templates/commands/exporttofolder.html:6
+#: execute/templates/commands/exportworkbook.html:7
+msgid "export"
+msgstr "導出"
 
 #: execute/templates/commands/exporttofolder.html:9
 msgid ""
@@ -2993,13 +2739,6 @@ msgstr ""
 #, python-format
 msgid "You are about to delete file %%s"
 msgstr ""
-
-#: execute/templates/commands/exporttofolder.html:67
-#: execute/templates/commands/importfromfolder.html:42
-#: execute/templates/commands/importfromfolder.html:180
-#, fuzzy
-msgid "Delete file"
-msgstr "刪除檔案"
 
 #: execute/templates/commands/exporttofolder.html:86
 #: execute/templates/commands/importfromfolder.html:199
@@ -3038,11 +2777,6 @@ msgid ""
 "objects and the first line in the file must contain the field names."
 msgstr ""
 
-#: execute/templates/commands/importfromfolder.html:37
-#, fuzzy
-msgid "Download file"
-msgstr "下載檔案"
-
 #: execute/templates/commands/importworkbook.html:8
 msgid ""
 "Import input data from a spreadsheet.</p><p>The spreadsheet must match the "
@@ -3079,16 +2813,16 @@ msgstr ""
 
 #: execute/templates/commands/runplan.html:28
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:35
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that shows material, "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that shows material, "
 "capacity and operation problems that prevent the demand from being planned "
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
@@ -3103,27 +2837,27 @@ msgstr "約束條件"
 
 #: execute/templates/commands/runplan.html:44
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Respect the capacity limits of your resources."
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Respect the capacity limits of your resources."
 "\">Capacity: respect capacity limits</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:51
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't generate any plans that start or end in the "
-"past.<br>Proposed and approved activities must all be in the future.<br>Only "
-"confirmed activities are allowed to be in the past.\">Lead time: do not plan "
-"in the past</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't generate any plans that start or end in "
+"the past.<br>Proposed and approved activities must all be in the future."
+"<br>Only confirmed activities are allowed to be in the past.\">Lead time: do "
+"not plan in the past</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:58
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't propose any plans within a frozen time window "
-"(which is configured on each operation).<br>Within the frozen zone only "
-"approved and confirmed activities are allowed, no new proposed activities."
-"\">Release fence: do not plan within a frozen time window</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't propose any plans within a frozen time "
+"window (which is configured on each operation).<br>Within the frozen zone "
+"only approved and confirmed activities are allowed, no new proposed "
+"activities.\">Release fence: do not plan within a frozen time window</span>"
 msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:13
@@ -3161,11 +2895,6 @@ msgstr ""
 msgid "manage"
 msgstr ""
 
-#: execute/templates/commands/scenario_copy.html:55
-#, fuzzy
-msgid "Copy from"
-msgstr "複製自"
-
 #: execute/templates/commands/scenario_copy.html:58
 msgid "Restore from backup"
 msgstr ""
@@ -3177,11 +2906,6 @@ msgstr ""
 #: execute/templates/commands/scenario_copy.html:76
 msgid "Promote: All data will be copied to Production"
 msgstr ""
-
-#: execute/templates/commands/scenario_copy.html:85
-#, fuzzy
-msgid "Free"
-msgstr "免費"
 
 #: execute/templates/commands/scheduletasks.html:5
 msgid "Run a sequence of tasks, and schedule it to run automatically."
@@ -3195,11 +2919,6 @@ msgstr ""
 msgid "next scheduled run"
 msgstr ""
 
-#: execute/templates/commands/scheduletasks.html:45
-#, fuzzy
-msgid "Edit"
-msgstr "編輯"
-
 #: execute/templates/commands/scheduletasks.html:70
 msgid "unique name"
 msgstr ""
@@ -3208,18 +2927,6 @@ msgstr ""
 #: execute/templates/commands/scheduletasks.html:200
 msgid "abort on failure"
 msgstr ""
-
-#: execute/templates/commands/scheduletasks.html:99
-#: execute/templates/commands/scheduletasks.html:208
-#, fuzzy
-msgid "Move down"
-msgstr "向下移動"
-
-#: execute/templates/commands/scheduletasks.html:103
-#: execute/templates/commands/scheduletasks.html:212
-#, fuzzy
-msgid "Move up"
-msgstr "向上移動"
 
 #: execute/templates/commands/scheduletasks.html:121
 #: input/models/calendar.py:295 input/templates/input/calendardetail.html:76
@@ -3291,16 +2998,6 @@ msgstr "完成"
 msgid "canceled"
 msgstr "已取消"
 
-#: execute/templates/execute/execute.html:65
-#, fuzzy
-msgid "download"
-msgstr "下載"
-
-#: execute/templates/execute/execute.html:69 forecast/models.py:1188
-#, fuzzy
-msgid "view"
-msgstr "檢視"
-
 #: execute/templates/execute/execute.html:212
 msgid "autorefresh"
 msgstr "自動更新"
@@ -3338,11 +3035,6 @@ msgstr "只顯示最後50K的日誌檔"
 msgid "Filename extension must be among %(ext)s"
 msgstr ""
 
-#: execute/views.py:895
-#, fuzzy
-msgid "Upload failed"
-msgstr "上傳失敗"
-
 #: execute/views.py:917
 msgid "Error deleting file"
 msgstr ""
@@ -3371,14 +3063,6 @@ msgstr ""
 #: executesql/menu.py:22 executesql/views.py:52
 msgid "Execute SQL"
 msgstr ""
-
-#: forecast/admin.py:40 input/admin.py:101 input/admin.py:137
-#: input/admin.py:188 input/admin.py:219 input/admin.py:256 input/admin.py:299
-#: input/admin.py:343 input/admin.py:399 input/admin.py:478 input/admin.py:598
-#: input/admin.py:635 input/admin.py:698 input/admin.py:739 input/admin.py:1042
-#, fuzzy
-msgid "advanced"
-msgstr "進階"
 
 #: forecast/admin.py:65 input/admin.py:271 input/admin.py:432
 #: input/admin.py:502 input/admin.py:666 input/admin.py:1067
@@ -3796,11 +3480,6 @@ msgstr "已計畫的訂單"
 msgid "planned net forecast"
 msgstr "已計畫淨预报"
 
-#: forecast/models.py:1087 output/views/buffer.py:507
-#, fuzzy
-msgid "order backlog"
-msgstr "訂單積壓"
-
 #: forecast/models.py:1096 output/templates/output/demand_forecast.html:156
 #: output/views/buffer.py:510 output/views/demand.py:311
 msgid "forecast backlog"
@@ -3850,19 +3529,9 @@ msgstr ""
 msgid "aggregate"
 msgstr "總計"
 
-#: forecast/models.py:1185
-#, fuzzy
-msgid "local"
-msgstr "本地端"
-
 #: forecast/models.py:1186
 msgid "computed"
 msgstr ""
-
-#: forecast/models.py:1188
-#, fuzzy
-msgid "hide"
-msgstr "隱藏"
 
 #: forecast/models.py:1189
 msgid "currency"
@@ -3899,11 +3568,6 @@ msgstr ""
 #: forecast/models.py:1247
 msgid "controls whether or not this measure is visible by default"
 msgstr ""
-
-#: forecast/models.py:1250 forecast/views.py:363
-#, fuzzy
-msgid "format"
-msgstr "格式"
 
 #: forecast/models.py:1259 forecast/views.py:365 input/models/calendar.py:33
 #: input/views/manufacturing.py:656 input/views/manufacturing.py:796
@@ -4208,12 +3872,6 @@ msgstr "庫存"
 #: input/models/calendar.py:39
 msgid "Value to be used when no entry is effective"
 msgstr "當輸入無效值時使用的值"
-
-#: input/models/calendar.py:47 input/models/calendar.py:273
-#: input/views/manufacturing.py:719 input/views/manufacturing.py:774
-#, fuzzy
-msgid "calendar"
-msgstr "日曆"
 
 #: input/models/calendar.py:48 input/views/manufacturing.py:619
 msgid "calendars"
@@ -4745,11 +4403,6 @@ msgstr ""
 msgid "Batch size by in which material is produced or consumed"
 msgstr ""
 
-#: input/models/operation.py:322 input/views/manufacturing.py:421
-#, fuzzy
-msgid "offset"
-msgstr "偏移"
-
 #: input/models/operation.py:325
 msgid "Time offset from the start or end to consume or produce material"
 msgstr ""
@@ -4928,13 +4581,6 @@ msgstr "經核准的"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2596
 msgid "confirmed"
 msgstr "已確定"
-
-#: input/models/operationplan.py:71 input/views/capacity.py:1122
-#: input/views/inventory.py:1367 input/views/inventory.py:2041
-#: input/views/manufacturing.py:2461 input/views/purchasing.py:1250
-#, fuzzy
-msgid "completed"
-msgstr "已完成"
 
 #: input/models/operationplan.py:89
 msgid "Status of the order"
@@ -5222,41 +4868,6 @@ msgstr "產品供應商"
 #: input/templates/admin/input/operation/change_form.html:30
 msgid "dependencies"
 msgstr ""
-
-#: input/templates/input/calendardetail.html:46
-#, fuzzy
-msgid "monday"
-msgstr "星期一"
-
-#: input/templates/input/calendardetail.html:50
-#, fuzzy
-msgid "tuesday"
-msgstr "星期二"
-
-#: input/templates/input/calendardetail.html:54
-#, fuzzy
-msgid "wednesday"
-msgstr "星期三"
-
-#: input/templates/input/calendardetail.html:58
-#, fuzzy
-msgid "thursday"
-msgstr "星期四"
-
-#: input/templates/input/calendardetail.html:62
-#, fuzzy
-msgid "friday"
-msgstr "星期五"
-
-#: input/templates/input/calendardetail.html:66
-#, fuzzy
-msgid "saturday"
-msgstr "星期六"
-
-#: input/templates/input/calendardetail.html:70
-#, fuzzy
-msgid "sunday"
-msgstr "星期日"
 
 #: input/templates/input/operationplanreport.html:326
 msgid "display kanban cards"
@@ -5870,12 +5481,6 @@ msgstr "你要保存更改嗎?"
 msgid "Error retrieving data"
 msgstr "恢復數據錯誤"
 
-#: inventoryplanning/templates/inventoryplanning/drp.html:1456
-#: output/templates/output/buffer.html:272
-#, fuzzy
-msgid "Archived"
-msgstr "已封存"
-
 #: inventoryplanning/templates/inventoryplanning/drp.html:2185
 msgid "superseded"
 msgstr ""
@@ -6029,9 +5634,9 @@ msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2956
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to "
+"1.<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
 
@@ -6042,8 +5647,8 @@ msgstr "真實"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2975
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"In push mode, any excess inventory will be "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
 
@@ -6797,22 +6402,6 @@ msgstr ""
 msgid "format SQL query"
 msgstr ""
 
-#: reportmanager/templates/reportmanager/reportmanager.html:198
-#: reportmanager/views.py:132
-#, fuzzy
-msgid "public"
-msgstr "公开"
-
-#: reportmanager/templates/reportmanager/reportmanager.html:218
-#, fuzzy
-msgid "schema"
-msgstr "模式,規劃,基模"
-
-#: reportmanager/templates/reportmanager/schema.html:8
-#, fuzzy
-msgid "table"
-msgstr "表格"
-
 #: reportmanager/views.py:324
 msgid "Add custom report"
 msgstr ""
@@ -6885,11 +6474,6 @@ msgstr "繁體中文"
 msgid "Ukrainian"
 msgstr "烏克蘭語"
 
-#: settings.py:486
-#, fuzzy
-msgid "activity"
-msgstr "動態"
-
 #: shelflife/attributes.py:21
 msgid "shelf life"
 msgstr ""
@@ -6926,20 +6510,7 @@ msgstr ""
 msgid "remark"
 msgstr ""
 
-#: shopfloor/templates/shopfloor/manufacturingorder.html:33
-#, fuzzy
-msgid "dates"
-msgstr "日期"
-
-#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:34
-#: freppledb/planningboard/static/planningboard/planningboard.html:1139
-#: freppledb/planningboard/static/planningboard/planningboard.html:202
-#: freppledb/planningboard/static/planningboard/planningboard.html:374
-#: freppledb/planningboard/static/planningboard/planningboard.html:504
-#: freppledb/planningboard/static/planningboard/planningboard.html:624
-#: freppledb/planningboard/static/planningboard/planningboard.html:768
-#: freppledb/planningboard/static/planningboard/planningboard.html:989
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1091
+#: shopfloor/templates/shopfloor/manufacturingorder.html:50
 msgid "start"
 msgstr "開始"
 
@@ -6947,15 +6518,7 @@ msgstr "開始"
 msgid "pause"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:36
-#: freppledb/planningboard/static/planningboard/planningboard.html:1144
-#: freppledb/planningboard/static/planningboard/planningboard.html:211
-#: freppledb/planningboard/static/planningboard/planningboard.html:391
-#: freppledb/planningboard/static/planningboard/planningboard.html:519
-#: freppledb/planningboard/static/planningboard/planningboard.html:639
-#: freppledb/planningboard/static/planningboard/planningboard.html:777
-#: freppledb/planningboard/static/planningboard/planningboard.html:992
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1092
+#: shopfloor/templates/shopfloor/manufacturingorder.html:56
 msgid "end"
 msgstr "結束"
 
@@ -6966,11 +6529,6 @@ msgstr ""
 #: shopfloor/templates/shopfloor/manufacturingorder.html:102
 msgid "Update materials"
 msgstr ""
-
-#: shopfloor/templates/shopfloor/manufacturingorder.html:118
-#, fuzzy
-msgid "add comment"
-msgstr "發表留言"
 
 #: shopfloor/templates/shopfloor/resource.html:8
 msgid "Select a manufacturing order"
@@ -6984,11 +6542,6 @@ msgstr "web服務"
 msgid "Start the web service."
 msgstr "開啟網絡服務."
 
-#: webservice/templates/commands/runwebservice.html:14
-#, fuzzy
-msgid "Stop"
-msgstr "停止"
-
 #: webservice/templates/commands/runwebservice.html:17
 msgid "Stop the web service."
 msgstr "停止web服務."
@@ -6998,12 +6551,6 @@ msgstr "停止web服務."
 #: wizard/templates/wizard/index.html:9
 msgid "explore features"
 msgstr ""
-
-#: wizard/templates/wizard/features.html:19
-#: wizard/templates/wizard/index.html:17
-#, fuzzy
-msgid "dashboard"
-msgstr "狀態總覽"
 
 #: wizard/templates/wizard/quickstart_forecast.html:61
 #: wizard/templates/wizard/quickstart_production.html:387
@@ -7307,6 +6854,10 @@ msgstr "採購訂單"
 msgid "Quoting error"
 msgstr "報價錯誤"
 
+#: freppledb/forecast/static/forecast/forecast.html:156
+msgid "Recalculate"
+msgstr "重新計算"
+
 #: freppledb/planningboard/static/planningboard/planningboard.html:815
 msgid "Remove this demand from planning"
 msgstr "從規劃中刪除這種需求"
@@ -7508,7 +7059,7 @@ msgstr "{{ aggregatedoperationplans.count }} 已選擇"
 msgid "{{m.label}}"
 msgstr "{{m.label}}"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1568
+#: freppledb/planningboard/static/planningboard/planningboard.html:1609
 msgid ""
 "An operation gets the color of the category of the item it produces.<br>\n"
 "                        The item categories should be filled in the item "
@@ -7516,7 +7067,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1600
+#: freppledb/planningboard/static/planningboard/planningboard.html:1641
 msgid ""
 "An operation gets the color of the subcategory of the item it produces.<br>\n"
 "                        The item subcategories should be filled in the item "
@@ -7524,35 +7075,33 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1510
+#: freppledb/planningboard/static/planningboard/planningboard.html:1551
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:321
-#, fuzzy
+#: freppledb/forecast/static/forecast/forecast.html:318
 msgid "Apply"
-msgstr "套用"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
 msgid "Assign an extra resource"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:69
+#: freppledb/planningboard/static/planningboard/planningboard.html:66
 msgid "Automatically resolve infeasiblities in the plan"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1503
+#: freppledb/planningboard/static/planningboard/planningboard.html:1544
 msgid "Due date color setup"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1351
-#: freppledb/planningboard/static/planningboard/planningboard.html:1386
-#: freppledb/planningboard/static/planningboard/planningboard.html:1413
-#, fuzzy
+#: freppledb/planningboard/static/planningboard/planningboard.html:1392
+#: freppledb/planningboard/static/planningboard/planningboard.html:1427
+#: freppledb/planningboard/static/planningboard/planningboard.html:1454
 msgid "Enter name"
-msgstr "輸入名字"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:30
 #: freppledb/quoting/static/quoting/quoting.html:43
@@ -7584,11 +7133,25 @@ msgstr ""
 msgid "View start events"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:271
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:89
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:77
+#: freppledb/planningboard/static/planningboard/planningboard.html:237
+#: freppledb/planningboard/static/planningboard/planningboard.html:428
+msgid "batch"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:293
 msgid "closed: {{aggregatedoperationplans.status.closed }}"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:265
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:186
+#: freppledb/planningboard/static/planningboard/planningboard.html:543
+#: freppledb/planningboard/static/planningboard/planningboard.html:688
+#: freppledb/planningboard/static/planningboard/planningboard.html:816
+msgid "completed"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:287
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
 msgstr ""
 
@@ -7600,8 +7163,39 @@ msgstr ""
 msgid "downstream operations"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:87
+#: freppledb/forecast/static/forecast/forecast.html:312
+msgid "edit"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:84
 msgid "export as Excel file"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:145
+msgid "export to {{erp}} failed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/kanban.html:10
+msgid "hide"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1037
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1038
+msgid "hour"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1045
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1046
+msgid "minute"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/src/module.js:63
+#: freppledb/planningboard/static/planningboard/src/module.js:67
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1016
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1020
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1041
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1042
+msgid "minutes"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:28
@@ -7617,7 +7211,7 @@ msgid "no network information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:5
-#: freppledb/planningboard/static/planningboard/planningboard.html:208
+#: freppledb/planningboard/static/planningboard/planningboard.html:203
 msgid "no selection"
 msgstr ""
 
@@ -7629,7 +7223,11 @@ msgstr ""
 msgid "no upstream operationplans information"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:259
+#: freppledb/planningboard/static/planningboard/planningboard.html:230
+msgid "plus"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:281
 msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
 msgstr ""
 
@@ -7637,18 +7235,39 @@ msgstr ""
 msgid "quote form"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:84
+#: freppledb/planningboard/static/planningboard/planningboard.html:81
 msgid "remove all rows"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:6
-#, fuzzy
-msgid "selected"
-msgstr "已選取"
+#: freppledb/forecast/static/forecast/forecast.html:79
+#: freppledb/planningboard/static/planningboard/planningboard.html:59
+msgid "save"
+msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:446
-#: freppledb/planningboard/static/planningboard/planningboard.html:598
-#: freppledb/planningboard/static/planningboard/planningboard.html:720
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1052
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1053
+msgid "second"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/src/module.js:65
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1018
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1049
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:1050
+msgid "seconds"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:6
+msgid "selected"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:62
+#: freppledb/planningboard/static/planningboard/planningboard.html:87
+msgid "set time horizon"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:472
+#: freppledb/planningboard/static/planningboard/planningboard.html:632
+#: freppledb/planningboard/static/planningboard/planningboard.html:761
 msgid "setup end"
 msgstr ""
 
@@ -7658,9 +7277,8 @@ msgid "shown"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
-#, fuzzy
 msgid "stock"
-msgstr "在庫"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:28
 msgid "supply information"
@@ -7677,495 +7295,3 @@ msgstr ""
 #: freppledb/input/static/operationplandetail/month.html:13
 msgid "week number"
 msgstr ""
-
-#~ msgid "Copy to Clipboard"
-#~ msgstr "複製到剪貼板"
-
-#~ msgid "Error during export"
-#~ msgstr "误差在输出时候"
-
-#~ msgid "Retry"
-#~ msgstr "重審"
-
-#~ msgid "export"
-#~ msgstr "導出"
-
-#, fuzzy
-#~ msgid "blocked-by operation"
-#~ msgstr "子類操作"
-
-#~ msgid "Cannot delete %(name)s"
-#~ msgstr "無法刪除 %(name)s"
-
-#~ msgid "Are you sure?"
-#~ msgstr "你確定嗎？"
-
-#~ msgid "Back up the database"
-#~ msgstr "備份資料庫"
-
-#~ msgid "Capacity: respect capacity limits"
-#~ msgstr "生能：遵循生能限制"
-
-#~ msgid "Lead time: do not plan in the past"
-#~ msgstr "交付週期：不在已過去的安排計畫"
-
-#~ msgid "Release fence: do not plan within the release time window"
-#~ msgstr "釋放圍欄：不在釋放的時間窗口安排計劃"
-
-#~ msgid "Dump the database contents to a file."
-#~ msgstr "將資料庫的內容轉儲到一個檔。"
-
-#~ msgid "Bucket '%(name)s' not found"
-#~ msgstr "段名 '%(name)s' 沒有找到"
-
-#~ msgid "filter data"
-#~ msgstr "篩選數據"
-
-#~ msgid "Recalculate"
-#~ msgstr "重新計算"
-
-#~ msgid "simulate changes without saving"
-#~ msgstr "不保存的模擬改變"
-
-#~ msgid "No forecast found"
-#~ msgstr "找不到預報"
-
-#, fuzzy
-#~ msgid "Upload"
-#~ msgstr "上傳"
-
-#, fuzzy
-#~ msgid "gridError"
-#~ msgstr "錯誤"
-
-#, fuzzy
-#~ msgid "Forecast wizard"
-#~ msgstr "預報編輯器"
-
-#, fuzzy
-#~ msgid "Operation"
-#~ msgstr "操作"
-
-#, fuzzy
-#~ msgid "Segment detail"
-#~ msgstr "計劃的細節"
-
-#, fuzzy
-#~ msgid "Resource"
-#~ msgstr "資源"
-
-#, fuzzy
-#~ msgid "Manufacturing order"
-#~ msgstr "生產單"
-
-#, fuzzy
-#~ msgid "OR"
-#~ msgstr "或"
-
-#, fuzzy
-#~ msgid "gView"
-#~ msgstr "視圖"
-
-#, fuzzy
-#~ msgid "overlay"
-#~ msgstr "超负荷"
-
-#, fuzzy
-#~ msgid "loading"
-#~ msgstr "負荷"
-
-#, fuzzy
-#~ msgid "colHeaders"
-#~ msgstr "訂單"
-
-#, fuzzy
-#~ msgid "hTable"
-#~ msgstr "表格"
-
-#, fuzzy
-#~ msgid "states.select"
-#~ msgstr "選取"
-
-#, fuzzy
-#~ msgid "resizer"
-#~ msgstr "大小"
-
-#, fuzzy
-#~ msgid "top"
-#~ msgstr "停止"
-
-#, fuzzy
-#~ msgid "titleButton"
-#~ msgstr "標題"
-
-#, fuzzy
-#~ msgid "Submit"
-#~ msgstr "送出"
-
-#, fuzzy
-#~ msgid "add"
-#~ msgstr "和"
-
-#, fuzzy
-#~ msgid "is_ip_buffer"
-#~ msgstr "庫存"
-
-#~ msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
-#~ msgstr "無效日期：支持格式為YYYY-MM-DD HH:MM:SS"
-
-#~ msgid "Too many objects to display"
-#~ msgstr "显示对象过多"
-
-#~ msgid "material excess"
-#~ msgstr "物料超額"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "                        Files in the old .XLS excel format can't be read."
-#~ "<br>\n"
-#~ "                        Please convert them to the new .XLSX format.\n"
-#~ "                        "
-#~ msgstr "舊中的檔。無法讀取 XLS Excel 格式。<br>請轉換新 。XLSX 格式。"
-
-#, fuzzy
-#~ msgid "favorites"
-#~ msgstr "最愛"
-
-#, fuzzy
-#~ msgid "Choose a what-if scenario"
-#~ msgstr "選擇假設方案"
-
-#, fuzzy
-#~ msgid "Copy files to folder"
-#~ msgstr "將檔案複製到資料夾"
-
-#, fuzzy
-#~ msgid "setup time"
-#~ msgstr "設置時間"
-
-#~ msgid "to"
-#~ msgstr "到"
-
-#~ msgid "Read Odoo data"
-#~ msgstr "讀取Odoo的數據"
-
-#~ msgid "Write results to Odoo"
-#~ msgstr "將結果寫到Odoo"
-
-#, fuzzy
-#~ msgid "Following "
-#~ msgstr "關注中"
-
-#, fuzzy
-#~ msgid "Unfollow"
-#~ msgstr "取消關注"
-
-#, fuzzy
-#~ msgid "Stop getting notifications in your inbox when there is activity"
-#~ msgstr "活動活動時停止在收件箱中接收通知"
-
-#, fuzzy
-#~ msgid "Email exported reports"
-#~ msgstr "電子郵件匯出的報告"
-
-#, fuzzy
-#~ msgid "email"
-#~ msgstr "電子郵件"
-
-#, fuzzy
-#~ msgid "report editor"
-#~ msgstr "報表編輯器"
-
-#, fuzzy
-#~ msgid "multiple selected"
-#~ msgstr "多個選定"
-
-#~ msgid "Filtered where"
-#~ msgstr "過濾哪裡"
-
-#, fuzzy
-#~ msgid "change"
-#~ msgstr "變更"
-
-#~ msgid "Arguments"
-#~ msgstr "參數"
-
-#, fuzzy
-#~ msgid "Due date"
-#~ msgstr "交期日"
-
-#, fuzzy
-#~ msgid "Advanced"
-#~ msgstr "進階選項"
-
-#, fuzzy
-#~ msgid "Quantity"
-#~ msgstr "數量"
-
-#, fuzzy
-#~ msgid "Show the evolution of the demand history"
-#~ msgstr "顯示演變的SMAPE预报錯誤"
-
-#, fuzzy
-#~ msgid "Change history"
-#~ msgstr "變更歷史: %s"
-
-#~ msgid "cockpit"
-#~ msgstr "駕駛艙"
-
-#~ msgid "User"
-#~ msgstr "使用者"
-
-#~ msgid "Action"
-#~ msgstr "動作"
-
-#~ msgid ""
-#~ "This object doesn't have a change history. It probably wasn't added via "
-#~ "this admin site."
-#~ msgstr "這個物件沒有變更的歷史。它可能不是透過這個管理網站新增的。"
-
-#~ msgid "My Actions"
-#~ msgstr "我的动作"
-
-#~ msgid "Display a list of the entities you recently changed"
-#~ msgstr "列表顯示你最近改變了的實體"
-
-#~ msgid "Unknown content"
-#~ msgstr "未知內容"
-
-#~ msgid "None available"
-#~ msgstr "無可用的"
-
-#~ msgid "Display a list of recent comments"
-#~ msgstr "顯示最近的評論列表"
-
-#~ msgid "Planning parameters"
-#~ msgstr "計畫參數"
-
-#~ msgid "planning parameters"
-#~ msgstr "計劃參數"
-
-#~ msgid "alternates"
-#~ msgstr "替換項"
-
-#~ msgid "A minimum quantity for operationplans"
-#~ msgstr "工序計劃的最低量"
-
-#~ msgid "A multiple quantity for operationplans"
-#~ msgstr "操作計劃的倍數數量"
-
-#~ msgid "A maximum quantity for operationplans"
-#~ msgstr "操作計劃的最大量"
-
-#~ msgid "A fixed duration for the operation"
-#~ msgstr "對於操作的固定持續時間"
-
-#~ msgid "Optional name of this operation material"
-#~ msgstr "這個操作材料的可選的名稱"
-
-#~ msgid "Optional name of this load"
-#~ msgstr "可選負載的名稱"
-
-#~ msgid "Priority of this load in a group of alternates"
-#~ msgstr "在一組交替中的這個負載的優先"
-
-#~ msgid "proposed transfers"
-#~ msgstr "建議的轉移"
-
-#~ msgid "open purchases"
-#~ msgstr "開放的購買"
-
-#~ msgid "open transfers"
-#~ msgstr "開放的轉移"
-
-#~ msgid "proposed transfers value"
-#~ msgstr "建議的傳輸值"
-
-#~ msgid "open transfers value"
-#~ msgstr "開放的值轉移"
-
-#~ msgctxt "Gantt"
-#~ msgid "earlier"
-#~ msgstr "提前"
-
-#~ msgctxt "Gantt"
-#~ msgid "later"
-#~ msgstr "隨後"
-
-#~ msgctxt "Gantt"
-#~ msgid "reset"
-#~ msgstr "重置"
-
-#, fuzzy
-#~ msgid "out_method"
-#~ msgstr "方法"
-
-#, fuzzy
-#~ msgid "forecastreport_view"
-#~ msgstr "預報報告"
-
-#, fuzzy
-#~ msgid "forecastreports_view"
-#~ msgstr "預報報告"
-
-#, fuzzy
-#~ msgid "report"
-#~ msgstr "導出"
-
-#, fuzzy
-#~ msgid "sequence"
-#~ msgstr "圍欄"
-
-#, fuzzy
-#~ msgid "Archive manager report"
-#~ msgstr "需求報告"
-
-#, fuzzy
-#~ msgid "snapshot date"
-#~ msgstr "開始日期"
-
-#, fuzzy
-#~ msgid "total records"
-#~ msgstr "訂單總數"
-
-#, fuzzy
-#~ msgid "buffer records"
-#~ msgstr "庫存"
-
-#, fuzzy
-#~ msgid "demand records"
-#~ msgstr "需求報告"
-
-#, fuzzy
-#~ msgid "operationplan records"
-#~ msgstr "操作計劃"
-
-#, fuzzy
-#~ msgid "distribution Order"
-#~ msgstr "配送訂單"
-
-#, fuzzy
-#~ msgid "manufacturing Order"
-#~ msgstr "生產單"
-
-#, fuzzy
-#~ msgid "purchase Order"
-#~ msgstr "採購訂單"
-
-#~ msgid "import CSV or Excel file"
-#~ msgstr "導入CSV或Excel文件"
-
-#, fuzzy
-#~ msgid "No unread messages!"
-#~ msgstr "變更訊息"
-
-#~ msgid "Ukranian"
-#~ msgstr "烏克蘭語"
-
-#, fuzzy
-#~ msgid "report column"
-#~ msgstr "四列"
-
-#, fuzzy
-#~ msgid "report columns"
-#~ msgstr "四列"
-
-#, fuzzy
-#~ msgid "total_records"
-#~ msgstr "訂單總數"
-
-#, fuzzy
-#~ msgid "buffer_records"
-#~ msgstr "庫存"
-
-#, fuzzy
-#~ msgid "demand_records"
-#~ msgstr "需求"
-
-#, fuzzy
-#~ msgid "operationplan_records"
-#~ msgstr "操作計劃"
-
-#, fuzzy
-#~ msgid "archived buffers"
-#~ msgstr "庫存"
-
-#, fuzzy
-#~ msgid "archived sales order"
-#~ msgstr "過期的銷售訂單"
-
-#, fuzzy
-#~ msgid "archived sales orders"
-#~ msgstr "過期的銷售訂單"
-
-#~ msgid "Error saving data"
-#~ msgstr "保存資料出錯。"
-
-#~ msgid "Error saving report settings"
-#~ msgstr "保存報表設置出錯"
-
-#~ msgid "Error deleting data"
-#~ msgstr "刪除數據錯誤"
-
-#~ msgid "Error copying data"
-#~ msgstr "複製數據出錯"
-
-#~ msgid "Export Plan"
-#~ msgstr "導出計劃"
-
-#~ msgid "Error getting data"
-#~ msgstr "獲取數據錯誤"
-
-#~ msgid "Error retrieving report data"
-#~ msgstr "錯誤檢索报告資料"
-
-#~ msgid "Download all input data in a single spreadsheet."
-#~ msgstr "下載所有內容到一個電子表格"
-
-#, fuzzy
-#~ msgid "New password "
-#~ msgstr "新密碼"
-
-#, fuzzy
-#~ msgid "Size Minimum"
-#~ msgstr "最小量"
-
-#, fuzzy
-#~ msgid "Size Multiple"
-#~ msgstr "大小的倍數"
-
-#, fuzzy
-#~ msgid "Size Maximum"
-#~ msgstr "大小的最大量"
-
-#~ msgid "copy"
-#~ msgstr "复制"
-
-#~ msgid "release selected scenarios"
-#~ msgstr "發布選擇的清影"
-
-#~ msgid "into selected scenarios"
-#~ msgstr "到已選擇的清影中"
-
-#~ msgid "Update description of selected scenarios"
-#~ msgstr "更新已選擇清影的描述"
-
-#, fuzzy
-#~ msgid "log out"
-#~ msgstr "登出"
-
-#, fuzzy
-#~ msgid " Old password "
-#~ msgstr "舊密碼"
-
-#, fuzzy
-#~ msgid " New password confirmation "
-#~ msgstr "新密碼確認"
-
-#, fuzzy
-#~ msgid "Old password:"
-#~ msgstr "舊密碼"
-
-#~ msgid "New password:"
-#~ msgstr "新密碼："

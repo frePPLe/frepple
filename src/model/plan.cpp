@@ -91,6 +91,9 @@ void Plan::setCurrent(Date l) {
   // Update the time
   cur_Date = l;
 
+  // Also update the forecast current date if not set
+  if (!fcst_cur_Date) fcst_cur_Date = l;
+
   // Let all operationplans check for new ProblemBeforeCurrent and
   // ProblemBeforeFence problems.
   for (auto& i : Operation::all()) i.setChanged();

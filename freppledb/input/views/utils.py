@@ -2563,8 +2563,15 @@ class OperationPlanDetail(View):
             limit 1)
             end as safetystock
 
-                from operationplanmaterial
-                inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
+                from (select distinct operationplanmaterial.item_id,
+                operationplanmaterial.location_id,
+                operationplan.batch
+                        from operationplanmaterial
+                        cross join arguments
+                        inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
+                      where operationplanmaterial.item_id = arguments.item_id
+                      and operationplanmaterial.location_id = arguments.location_id
+                      and coalesce(operationplan.batch,'') is not distinct from arguments.batch) operationplanmaterial
                 cross join arguments
                 inner join item on item.name = operationplanmaterial.item_id
 
@@ -2591,11 +2598,6 @@ class OperationPlanDetail(View):
                     and ax_buffer.item =  operationplanmaterial.item_id
                     and ax_buffer.location =  operationplanmaterial.location_id
                     and (ax_buffer.batch is not distinct from arguments.batch)
-
-                where operationplanmaterial.item_id = arguments.item_id
-                and operationplanmaterial.location_id = arguments.location_id
-                and (case when item.type is distinct from 'make to order' then '' else operationplan.batch end)
-                is not distinct from arguments.batch
 
                 group by d.history,
                 arguments.item_id,

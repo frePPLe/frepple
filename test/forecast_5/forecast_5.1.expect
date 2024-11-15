@@ -6,6 +6,7 @@
   historical demand, and use it to create future forecasted demand quantities.
   </description>
 	<current>2016-01-18T00:00:00</current>
+	<fcst_current>2016-01-18T00:00:00</fcst_current>
 	<locations>
 		<location>
 			<name>all locations</name>

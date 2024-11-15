@@ -5,6 +5,7 @@
   This test checks for the aggregation/disaggregation feature
 	</description>
 	<current>2016-02-01T00:00:00</current>
+	<fcst_current>2016-02-01T00:00:00</fcst_current>
 	<locations>
 		<location>
 			<name>All locations</name>

@@ -6,6 +6,7 @@
   It shows netting from earlier and later time buckets.
   </description>
 	<current>2022-01-01T00:00:00</current>
+	<fcst_current>2022-01-01T00:00:00</fcst_current>
 	<locations>
 		<location>
 			<name>All locations</name>

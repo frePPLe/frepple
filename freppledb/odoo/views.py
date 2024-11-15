@@ -54,23 +54,23 @@ def Upload(request):
         boundary = "**MessageBoundary**"
 
         odoo_db = (
-            getattr(settings, "ODOO_DB", {}).get(request.database, None)
-            or Parameter.getValue("odoo.db", request.database, None)
+            getattr(settings, "ODOO_DB", {}).get(request.database, "")
+            or Parameter.getValue("odoo.db", request.database, "")
         ).strip()
         odoo_company = (
-            getattr(settings, "ODOO_COMPANY", {}).get(request.database, None)
-            or Parameter.getValue("odoo.company", request.database, None)
+            getattr(settings, "ODOO_COMPANY", {}).get(request.database, "")
+            or Parameter.getValue("odoo.company", request.database, "")
         ).strip()
         odoo_user = (
-            getattr(settings, "ODOO_USER", {}).get(request.database, None)
-            or Parameter.getValue("odoo.user", request.database)
+            getattr(settings, "ODOO_USER", {}).get(request.database, "")
+            or Parameter.getValue("odoo.user", request.database, "")
         ).strip()
         odoo_password = (
-            getattr(settings, "ODOO_PASSWORDS", {}).get(request.database, None)
-            or Parameter.getValue("odoo.password", request.database)
+            getattr(settings, "ODOO_PASSWORDS", {}).get(request.database, "")
+            or Parameter.getValue("odoo.password", request.database, "")
         ).strip()
         odoo_url = (
-            getattr(settings, "ODOO_URL", {}).get(request.database, None)
+            getattr(settings, "ODOO_URL", {}).get(request.database, "")
             or Parameter.getValue("odoo.url", request.database, "")
         ).strip()
         if not odoo_url.endswith("/"):

@@ -2256,7 +2256,8 @@ var ERPconnection = {
     }, { once: true });
 
     $('#button_export').on('click', function () {
-      $('#popup .modal-body p').html(gettext('connecting') + '...');
+      var tmp = gettext('connecting');
+      $('#popup .modal-body p').html(String(tmp).charAt(0).toUpperCase() + String(tmp).slice(1) + '...');
       $.ajax({
         url: url_prefix + "/erp/upload/",
         data: JSON.stringify(data),

@@ -568,6 +568,7 @@ jQuery.extend($.fn.fmatter, {
   },
 
   number: function (nData, opts) {
+    if (window.SKIP_FORMATER) return nData;
     return grid.formatNumber(nData);
   }
 });

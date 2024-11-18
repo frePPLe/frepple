@@ -26,10 +26,12 @@ quantity              double            | Defines the quantity relation between 
                                         | Default value is 1, i.e. the quantity of both
                                           operations is identical.
 safety_leadtime       duration          | Defines a desired time gap between both operations.
-                                        | This time gap is a soft constraint. It can be compressed 
-                                          to deliver an order faster.
+                                        | This time gap is a soft constraint and is expressed in 
+                                          calendar time. It can be compressed to deliver an order
+                                          faster.
                                         | Default is 0 seconds.
-hard_safety_leadtime  duration          | Shortest time that must pass between both operations.
-                                        | This time gap is a hard constraint.
+hard_safety_leadtime  duration          | Shortest time that must pass between both operations.                                          .
+                                        | This time gap is a hard constraint and is expressed in 
+                                          calendar time.
                                         | Default is 0 seconds.
 ===================== ================= ===========================================================

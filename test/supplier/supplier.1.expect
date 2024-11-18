@@ -6,6 +6,7 @@
   item supplier definitions.
   </description>
 	<current>2015-01-01T00:00:00</current>
+	<fcst_current>2015-01-01T00:00:00</fcst_current>
 	<locations>
 		<location>
 			<name>warehouse</name>

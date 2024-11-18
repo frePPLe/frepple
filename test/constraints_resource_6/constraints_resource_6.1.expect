@@ -16,6 +16,7 @@
   objects created or updated from the file is set to this value.
   </description>
 	<current>2014-01-01T00:00:00</current>
+	<fcst_current>2014-01-01T00:00:00</fcst_current>
 	<locations>
 		<location>
 			<name>1. factory</name>

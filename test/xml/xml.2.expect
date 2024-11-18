@@ -3,6 +3,7 @@
 	<name>plan</name>
 	<description>XML structure test model</description>
 	<current>2009-01-01T00:00:00</current>
+	<fcst_current>2009-01-01T00:00:00</fcst_current>
 	<locations>
 		<location>
 			<name>location 1</name>

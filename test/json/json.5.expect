@@ -1,5 +1,6 @@
 {
 	"current":"2012-01-01T00:00:00",
+	"fcst_current":"2012-01-01T00:00:00",
 	"locations":[{
 			"name":"Factory 1",
 			"available":{

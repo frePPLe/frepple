@@ -3,6 +3,7 @@
 	<name>demo model</name>
 	<description>unicode А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь</description>
 	<current>2009-01-01T00:00:00</current>
+	<fcst_current>2009-01-01T00:00:00</fcst_current>
 	<locations>
 		<location>
 			<name>locA</name>

@@ -7,6 +7,7 @@
   The values are also saved in the XML output file.
   </description>
 	<current>2010-01-01T00:00:00</current>
+	<fcst_current>2010-01-01T00:00:00</fcst_current>
 	<items>
 		<item>
 			<name>test</name>

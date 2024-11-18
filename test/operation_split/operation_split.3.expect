@@ -20,6 +20,7 @@
     TODO Criticality computation is flawed for cases 2, 3 and 4. They have the outgoing flow on the parent operation.
   </description>
 	<current>2014-01-01T00:00:00</current>
+	<fcst_current>2014-01-01T00:00:00</fcst_current>
 	<locations>
 		<location>
 			<name>location 1</name>

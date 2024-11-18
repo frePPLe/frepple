@@ -664,6 +664,7 @@ class UserList(GridReport):
         GridFieldText("last_name", title=_("last name")),
         GridFieldBool("is_active", title=_("active")),
         GridFieldBool("is_superuser", title=_("superuser status"), width=120),
+        GridFieldChoice("language", title=_("language"), choices=User.languageList),
         GridFieldJSON(
             "group_dict",
             title=_("groups"),

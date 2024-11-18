@@ -34,6 +34,7 @@ from django.db import DEFAULT_DB_ALIAS, connections
 from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.utils.http import urlencode
+from django.utils.translation import get_supported_language_variant
 
 from freppledb.common.models import Parameter, User
 from freppledb.common.commands import (
@@ -327,9 +328,28 @@ class OdooReadData(PlanTask):
                     else:
                         user.groups.add(odoo_group)
                     user.is_active = True
-                    user.save(using=database, update_fields=["is_active"])
-                    if database != DEFAULT_DB_ALIAS:
-                        user.save(using=DEFAULT_DB_ALIAS, update_fields=["is_active"])
+                    if len(usr_data) >= 2:
+                        # Only the odoo addon for odoo >= 18 sends the user information
+                        try:
+                            user.language = get_supported_language_variant(
+                                str(usr_data[2]).lower().replace("_", "-")
+                            )
+                        except Exception:
+                            user.language = settings.LANGUAGE_CODE
+                        user.save(
+                            using=database, update_fields=["is_active", "language"]
+                        )
+                        if database != DEFAULT_DB_ALIAS:
+                            user.save(
+                                using=DEFAULT_DB_ALIAS,
+                                update_fields=["is_active", "language"],
+                            )
+                    else:
+                        user.save(using=database, update_fields=["is_active"])
+                        if database != DEFAULT_DB_ALIAS:
+                            user.save(
+                                using=DEFAULT_DB_ALIAS, update_fields=["is_active"]
+                            )
 
                 # Remove users that no longer have access rights
                 for o in odoo_users:

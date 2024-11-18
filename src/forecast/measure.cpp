@@ -1302,7 +1302,7 @@ void MeasureList::check() {
     throw DataException("Corrupted list");
 }
 
-void MeasurePagePool::check(const string& msg) {
+pair<double, double> MeasurePagePool::check(const string& msg) {
   unsigned int count_pages = 0;
   unsigned int count_pages_free = 0;
   unsigned int count_pages_temp = 0;
@@ -1391,6 +1391,7 @@ void MeasurePagePool::check(const string& msg) {
   logger << "   " << util << "% average utilization" << endl;
   logger << "   " << count_pages_free << " empty pages, "
          << count_pages_temp_free << " free temporary pages." << endl;
+  return make_pair(util, static_cast<double>(count_pages + count_pages_temp));
 }
 
 }  // namespace frepple

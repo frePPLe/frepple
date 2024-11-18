@@ -648,13 +648,13 @@ class MeasurePagePool {
   MeasurePagePool(string n) : name(n) {}
 
   void releaseEmptyPages();
-  static void check(const string& = "");
+  static pair<double, double> check(const string& = "");
 
   static PyObject* releaseEmptyPagesPython(PyObject* self, PyObject* args) {
     measurepages_default.releaseEmptyPages();
     measurepages_temp.releaseEmptyPages();
-    check("after release");
-    return Py_BuildValue("");
+    auto stats = check("after release");
+    return Py_BuildValue("dd", stats.first, stats.second);
   }
 };
 
@@ -1786,7 +1786,7 @@ class ForecastSolver : public Solver {
     bool force;
 
     Metrics(double a, double b, bool c)
-        : smape(a), standarddeviation(b), force(c) {};
+        : smape(a), standarddeviation(b), force(c){};
   };
 
   /* Abstract base class for all forecasting methods. */

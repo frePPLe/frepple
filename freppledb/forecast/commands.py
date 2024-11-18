@@ -1313,7 +1313,12 @@ class ValidateAggregatedData(PlanTask):
             frepple.cache.write_immediately = True
             if frepple.cache.maximum > 300:
                 frepple.cache.maximum = 300
-            frepple.releaseUnusedMemory()
+            stats = frepple.releaseUnusedMemory()
+            if stats[0] < 25 and stats[1] > 1:
+                # Still inefficient use of memory, squeeze a bit more
+                frepple.cache.maximum = 10
+                frepple.releaseUnusedMemory()
+                frepple.cache.maximum = 300
             frepple.cache.printStatus()
 
 
@@ -1465,9 +1470,14 @@ class ExportForecast(PlanTask):
         frepple.cache.flush()
         frepple.cache.write_immediately = True
         if frepple.cache.maximum > 300:
-            # Reduce the forecast cache to max 500 objects to save memory
+            # Reduce the forecast cache to save memory
             frepple.cache.maximum = 300
-        frepple.releaseUnusedMemory()
+        stats = frepple.releaseUnusedMemory()
+        if stats[0] < 25 and stats[1] > 1:
+            # Still inefficient use of memory, squeeze a bit more
+            frepple.cache.maximum = 10
+            frepple.releaseUnusedMemory()
+            frepple.cache.maximum = 300
         frepple.cache.printStatus()
 
         # refresh materialized view

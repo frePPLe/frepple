@@ -8829,7 +8829,9 @@
 							}
 
 							// Skip formating numbers so that backend receives the number the user inputed
-							if (Number.isFinite(v*1)) window.SKIP_FORMATER = true;
+							if (Number.isFinite(v * 1)) {
+								window.SKIP_FORMATER = true;
+							}
 
 							if ($("input.hasDatepicker", $td).length > 0) {
 								$("input.hasDatepicker", $td).datepicker("hide");
@@ -12564,21 +12566,21 @@
 
 	/**
 		The below work is licensed under Creative Commons GNU LGPL License.
-
+	
 		Original work:
-
+	
 		License:     http://creativecommons.org/licenses/LGPL/2.1/
 		Author:      Stefan Goessner/2006
 		Web:         http://goessner.net/
-
+	
 		Modifications made:
-
+	
 		Version:     0.9-p5
 		Description: Restructured code, JSLint validated (no strict whitespaces),
 					 added handling of empty arrays, empty strings, and int/floats values.
 		Author:      Michael Schøler/2008-01-29
 		Web:         http://michael.hinnerup.net/blog/2008/01/26/converting-json-to-xml-and-xml-to-json/
-
+	
 		Description: json2xml added support to convert functions as CDATA
 					 so it will be easy to write characters that cause some problems when convert
 		Author:      Tony Tomov

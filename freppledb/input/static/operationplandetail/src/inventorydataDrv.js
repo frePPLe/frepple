@@ -26,7 +26,7 @@
 
 angular.module('operationplandetailapp').directive('showinventorydataDrv', showinventorydataDrv);
 
-showinventorydataDrv.$inject = ['$window', 'gettextCatalog', $filter];
+showinventorydataDrv.$inject = ['$window', 'gettextCatalog', '$filter'];
 
 function showinventorydataDrv($window, gettextCatalog) {
 
@@ -43,7 +43,7 @@ function showinventorydataDrv($window, gettextCatalog) {
       '<div class="card-body"><table class="table table-sm table-hover table-borderless"><thead></thead></thead><tbody></tbody></table></div>';
 
     scope.$watchGroup(['operationplan.id', 'operationplan.inventoryreport.length'], function (newValue, oldValue) {
-      console.log(46, scope.operationplan);
+      // console.log(46, scope.operationplan);
       angular.element(document).find('#attributes-inventorydata').empty().append(template);
       var rows = ['<tr><td colspan="1">' + gettextCatalog.getString('no inventory information') + '</td></tr>'];
       var columnHeaders = ['<tr></tr>'];
@@ -64,10 +64,12 @@ function showinventorydataDrv($window, gettextCatalog) {
             '<tr><td><span class="text-capitalize">' + gettextCatalog.getString("end on-hand") + '</span></td>',
           ];
           angular.forEach(scope.operationplan.inventoryreport, function (inventoryData) {
-              console.log(68, inventoryData);
-            columnHeaders.push('<td><b class="text-capitalize text-center">' + inventoryData[0] + '</b></td>');
+              // console.log(68, inventoryData);
+            columnHeaders.push('<td id="' + inventoryData[0] +
+              '" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="'+inventoryData[1]+' - '+inventoryData[2]+'"><b class="text-capitalize text-center">' + inventoryData[0] + '</b></td>');
+
             for (const i in inventoryData.slice(4)) {
-              console.log(72, rows[i], inventoryData.slice(4)[i]);
+              // console.log(72, rows[i], inventoryData.slice(4)[i]);
               rows[i] += '<td>' + inventoryData.slice(4)[i] + '</td>';
             }
           });
@@ -75,9 +77,11 @@ function showinventorydataDrv($window, gettextCatalog) {
           rows = rows.map(x => x + '</tr>');
         }
       }
-      console.log(80, columnHeaders, rows);
+
       angular.element(document).find('#attributes-inventorydata thead').append(columnHeaders.join(""));
       angular.element(document).find('#attributes-inventorydata tbody').append(rows.join(""));
+      window.tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      window.tooltipList = [...window.tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
     }); //watch end
 
   } //link end

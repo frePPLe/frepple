@@ -4,6 +4,9 @@
       <div class="card mb-3" id="attributes-operationplan" showoperationplan-drv></div>
     </div>
     <div data-ng-class="{'col-md-6': detailposition=='bottom', 'col-md-12': detailposition!='bottom'}">
+      <div class="card mb-3" id="attributes-inventorydata" data-ng-if="operationplan.id !== -1 && operationplan.inventoryreport != undefined" data="operationplan" showinventorydata-drv></div>
+    </div>
+    <div data-ng-class="{'col-md-6': detailposition=='bottom', 'col-md-12': detailposition!='bottom'}">
       <div class="card mb-3" id="attributes-operationproblems" data-ng-if="operationplan.id !== -1 && operationplan.problems != undefined" data="operationplan" showproblemspanel-drv></div>
       <div class="card mb-3" id="attributes-operationresources" data-ng-if="operationplan.id !== -1 && operationplan.loadplans != undefined" data="operationplan" data-mode="mode" showresourcespanel-drv></div>
       <div class="card mb-3" id="attributes-operationflowplans" data-ng-if="operationplan.id !== -1 && operationplan.flowplans != undefined" data="operationplan" showbufferspanel-drv></div>

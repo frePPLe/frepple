@@ -1073,7 +1073,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
     Date hrzn_start =
         Plan::instance().getFcstCurrent() -
         Duration(ForecastBase::getHorizonHistoryStatic() * 86400L);
-    Date hrzn_end = Plan::instance().getFcstCurrent() +
+    Date hrzn_end = Plan::instance().getCurrent() +
                     Duration(ForecastBase::getHorizonFutureStatic() * 86400L);
     for (Calendar::EventIterator i(Forecast::getCalendar_static());
          prevDate <= hrzn_end; prevDate = i.getDate(), ++i) {

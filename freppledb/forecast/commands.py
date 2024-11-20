@@ -23,6 +23,7 @@
 
 import os
 from datetime import datetime, timedelta
+from dateutil.parser import parse
 from psycopg2.extras import execute_batch
 import tempfile
 import logging
@@ -1099,29 +1100,37 @@ def createForecastSolver(db, task=None):
     loglevel = None
 
     # Detect if some demand history is missing in the last few buckets
-    forecast_currentdate = frepple.settings.current
-    with connections[db].cursor() as cursor:
-        cursor.execute(
-            """
-        select max(due) from demand;
-        """
-        )
-        max_due = cursor.fetchone()[0]
-
-        if max_due:
-            # The forecast solver current date is the end date of the
-            # bucket of the most recent sales order
-            forecastCalendar = Parameter.getValue("forecast.calendar", db, "month")
+    # undocumented parameter to force the forecast current date
+    p = Parameter.getValue("forecast.currentdate", db)
+    if p:
+        try:
+            forecast_currentdate = parse(p)
+        except Exception:
+            forecast_currentdate = getCurrentDate(db)
+    else:
+        forecast_currentdate = frepple.settings.current
+        with connections[db].cursor() as cursor:
             cursor.execute(
                 """
-            select enddate from common_bucketdetail where bucket_id = %s
-            and startdate <= %s and %s < enddate;
-            """,
-                (forecastCalendar, max_due, max_due),
+            select max(due) from demand;
+            """
             )
-            enddate = cursor.fetchone()[0]
-            if enddate < forecast_currentdate:
-                forecast_currentdate = enddate
+            max_due = cursor.fetchone()[0]
+
+            if max_due:
+                # The forecast solver current date is the end date of the
+                # bucket of the most recent sales order
+                forecastCalendar = Parameter.getValue("forecast.calendar", db, "month")
+                cursor.execute(
+                    """
+                select enddate from common_bucketdetail where bucket_id = %s
+                and startdate <= %s and %s < enddate;
+                """,
+                    (forecastCalendar, max_due, max_due),
+                )
+                enddate = cursor.fetchone()[0]
+                if enddate < forecast_currentdate:
+                    forecast_currentdate = enddate
     frepple.settings.fcst_current = forecast_currentdate
 
     try:

@@ -26,9 +26,9 @@
 
 angular.module('operationplandetailapp').directive('showinventorydataDrv', showinventorydataDrv);
 
-showinventorydataDrv.$inject = ['$window', 'gettextCatalog', '$filter'];
+showinventorydataDrv.$inject = ['$window', '$filter', 'gettextCatalog'];
 
-function showinventorydataDrv($window, gettextCatalog) {
+function showinventorydataDrv($window, $filter, gettextCatalog) {
 
   var directive = {
     restrict: 'EA',
@@ -66,11 +66,14 @@ function showinventorydataDrv($window, gettextCatalog) {
           angular.forEach(scope.operationplan.inventoryreport, function (inventoryData) {
               // console.log(68, inventoryData);
             columnHeaders.push('<td id="' + inventoryData[0] +
-              '" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip" data-bs-title="'+inventoryData[1]+' - '+inventoryData[2]+'"><b class="text-capitalize text-center">' + inventoryData[0] + '</b></td>');
+              '" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip"' +
+                'data-bs-title="' + $filter('formatdate')(inventoryData[1]) + ' - ' + $filter('formatdate')(inventoryData[2])+'">' +
+                '<b class="text-capitalize text-center">' + inventoryData[0] + '</b></td>'
+            );
 
             for (const i in inventoryData.slice(4)) {
               // console.log(72, rows[i], inventoryData.slice(4)[i]);
-              rows[i] += '<td>' + inventoryData.slice(4)[i] + '</td>';
+              rows[i] += '<td>' + $filter('number')(inventoryData.slice(4)[i]) + '</td>';
             }
           });
           columnHeaders.push('</tr>');

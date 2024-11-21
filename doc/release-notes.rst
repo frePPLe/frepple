@@ -7,6 +7,13 @@ Release notes
 This release is scheduled for end of December.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Demand forecasting
+
+- | Missing sales order data in the recent past was considered by the forecast engine as buckets
+    with no demand history. That was leading to a lower forecast than expected. A new enhancement
+    detects this situation and ignores the last buckets with no demand history when generating a
+    statistical forecast.
+
 .. rubric:: Odoo integration
 
 - | 18: Keep the language selection of a user identical in odoo and frepple.
@@ -27,7 +34,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | 17, 18: Blanket order is now populated in odoo when exporting purchase orders from frePPLe.
 
-- | 17, 18: Various bug fixes to support configurations where odoo schedules work orders, 
+- | 17, 18: Various bug fixes to support configurations where odoo schedules work orders,
     while frepple only plans at the manufacturing order level.
 
 - | The odoo database, company, user can now be configured in the djangosettings configuration
@@ -36,7 +43,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | Extra robustness to deal with control characters in the odoo data.
   | Amazing what strange data one finds in an ERP system...
-  
+
 .. rubric:: Production planning
 
 - | A lot of bad data condititions that used to abort the planning run are now replaced
@@ -52,7 +59,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Updated rules for default permissions of new users.
   | If no default permissions are defined (using the "DEFAULT_USER_GROUP" setting in
     your djangosettings.py file), new users are automatically marked as superusers.
-  | The new behavior makes the first steps in frepple after an initial intallation 
+  | The new behavior makes the first steps in frepple after an initial intallation
     easier and smoother. For broader deployments, the configuration of the correct
     default permissions remains important.
 

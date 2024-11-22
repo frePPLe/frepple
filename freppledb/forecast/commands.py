@@ -1471,10 +1471,10 @@ class ExportForecast(PlanTask):
             return -1
 
     @classmethod
-    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
-        if "supply" in os.environ:
+        if cluster == -1:
             frepple.updatePlannedForecast()
         frepple.cache.flush()
         frepple.cache.write_immediately = True

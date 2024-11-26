@@ -58,6 +58,17 @@ function admin_unescape(n) {
     .replace(/_23/g, '#').replace(/_2F/g, '/').replace(/_3A/g, ':').replace(/_5F/g, '_');
 }
 
+function escapeAttribute(val) {
+  if (typeof val === 'string' || val instanceof String)
+    return val.replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+  else
+    return val;
+}
+
 
 /// <reference path="jquery.js" />
 /*
@@ -1231,7 +1242,7 @@ var grid = {
               '<div class="form-check" style="white-space: nowrap">' +
               '<input class="form-check-input" type="checkbox" value="" id="' + scenario_permissions[i][0] + '" checked disabled>' +
               '&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="' + scenario_permissions[i][0] + '">' +
-              gettext(scenario_permissions[i][1]) +
+              escapeAttribute(scenario_permissions[i][1]) +
               '</label>' +
               '</div>';
         }
@@ -1241,7 +1252,7 @@ var grid = {
               '<div class="form-check" style="white-space: nowrap">' +
               '<input class="form-check-input" type="checkbox" value="" id="' + scenario_permissions[i][0] + '">' +
               '&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="' + scenario_permissions[i][0] + '">' +
-              gettext(scenario_permissions[i][1]) +
+              escapeAttribute(scenario_permissions[i][1]) +
               '</label>' +
               '</div>';
         }

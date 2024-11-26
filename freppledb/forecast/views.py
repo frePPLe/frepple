@@ -410,6 +410,30 @@ class OverviewReport(GridPivot):
         else:
             # All attributes need to be explicitly added since django doesn't see a foreign key relation
             attr = {
+                "method": RawSQL(
+                    """
+                    coalesce((select method from forecast where item_id=forecastreport_view.item_id
+                      and location_id = forecastreport_view.location_id and customer_id =
+                      forecastreport_view.customer_id), 'aggregate')
+                      """,
+                    (),
+                ),
+                "out_method": RawSQL(
+                    """
+                    coalesce((select out_method from forecast where item_id=forecastreport_view.item_id
+                      and location_id = forecastreport_view.location_id and customer_id =
+                      forecastreport_view.customer_id), 'aggregate')
+                      """,
+                    (),
+                ),
+                "out_smape": RawSQL(
+                    """
+                    (select out_smape from forecast where item_id=forecastreport_view.item_id
+                      and location_id = forecastreport_view.location_id and customer_id =
+                      forecastreport_view.customer_id)
+                    """,
+                    (),
+                ),
                 "item__description": RawSQL(
                     "(select description from item where name=forecastreport_view.item_id)",
                     (),

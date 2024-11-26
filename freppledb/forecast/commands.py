@@ -1490,8 +1490,9 @@ class ExportForecast(PlanTask):
         frepple.cache.printStatus()
 
         # refresh materialized view
-        with connections[database].cursor() as cursor:
-            cursor.execute("REFRESH MATERIALIZED VIEW forecastreport_view")
+        if cluster == -1:
+            with connections[database].cursor() as cursor:
+                cursor.execute("REFRESH MATERIALIZED VIEW forecastreport_view")
 
 
 @PlanTaskRegistry.register

@@ -1345,11 +1345,6 @@ class ForecastPlanView(models.Model):
     item_id = models.CharField("item", max_length=300, null=False, blank=False)
     location_id = models.CharField("location", max_length=300, null=False, blank=False)
     customer_id = models.CharField("customer", max_length=300, null=False, blank=False)
-    method = models.CharField("method", max_length=64, null=False, blank=False)
-    out_method = models.CharField("out_method", max_length=64, null=False, blank=False)
-    out_smape = models.DecimalField(
-        "out_smape", null=True, blank=True, max_digits=20, decimal_places=8
-    )
 
     class Meta(AuditModel.Meta):
         db_table = "forecastreport_view"

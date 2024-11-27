@@ -653,7 +653,7 @@ class MeasurePagePool {
   static PyObject* releaseEmptyPagesPython(PyObject* self, PyObject* args) {
     measurepages_default.releaseEmptyPages();
     measurepages_temp.releaseEmptyPages();
-    auto stats = check("after release");
+    auto stats = check();
     return Py_BuildValue("dd", stats.first, stats.second);
   }
 };

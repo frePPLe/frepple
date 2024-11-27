@@ -131,6 +131,7 @@ module.exports = function (grunt) {
           'freppledb/input/static/operationplandetail/src/supplyinformationDrv.js',
           'freppledb/input/static/operationplandetail/src/downstreamoperationplansDrv.js',
           'freppledb/input/static/operationplandetail/src/upstreamoperationplansDrv.js',
+          'freppledb/input/static/operationplandetail/src/inventorydataDrv.js',
           'freppledb/input/static/operationplandetail/src/kanbanDrv.js',
           'freppledb/input/static/operationplandetail/src/ganttDrv.js',
         ],

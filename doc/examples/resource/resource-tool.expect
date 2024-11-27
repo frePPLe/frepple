@@ -227,5 +227,6 @@ Ship produce_with_mo_tool @ factory,2023-01-11 17:00:00,2023-01-11 17:00:00,20.0
 Ship produce_with_mo_tool @ factory,2023-01-11 17:00:00,2023-01-11 17:00:00,5.0,produce_with_mo_tool #2
 Ship produce_with_piece_tool @ factory,2023-01-11 17:00:00,2023-01-11 17:00:00,1.0,produce_with_piece_tool #1
 Ship produce_with_piece_tool @ factory,2023-01-11 17:00:00,2023-01-11 17:00:00,10.0,produce_with_piece_tool #3
-Ship produce_with_piece_tool @ factory,2023-01-11 17:00:00,2023-01-11 17:00:00,20.0,produce_with_piece_tool #4
+Ship produce_with_piece_tool @ factory,2023-01-11 17:00:00,2023-01-11 17:00:00,10.0,produce_with_piece_tool #4
+Ship produce_with_piece_tool @ factory,2023-01-11 17:00:00,2023-01-11 17:00:00,10.0,produce_with_piece_tool #4
 Ship produce_with_piece_tool @ factory,2023-01-11 17:00:00,2023-01-11 17:00:00,5.0,produce_with_piece_tool #2

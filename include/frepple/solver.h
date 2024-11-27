@@ -946,7 +946,17 @@ class SolverCreate : public Solver {
     /* Flags whether or not constraints are being tracked. */
     bool logConstraints = true;
 
+    /* Flags when we are in a plan coordination loop. */
     bool coordination_run = false;
+
+    /* This flag is set to true when we hit a situation where repeating an ask
+       to the buffer is acceptable:
+       - A full supply is not possible at all. Eg a broken supply path.
+       - An operationplan hit the maximum operation quantity, and we have no
+         other choice than splitting.
+       - When multiple capacity buckets of bucketized resources are needed.
+    */
+    bool accept_partial_reply = false;
 
     /* Flags whether a resource in the supply path did hit its max_earlylimit.
      * This is then used to replan at a different date. */

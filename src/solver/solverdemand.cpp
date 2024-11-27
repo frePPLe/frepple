@@ -240,6 +240,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
             data->state->dependency = nullptr;
             data->state->blockedOpplan = nullptr;
             data->coordination_run = false;
+            data->accept_partial_reply = false;
             data->recent_buffers.clear();
             data->dependency_list.clear();
             deliveryoper->solve(*this, v);
@@ -462,6 +463,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                     data->state->dependency = nullptr;
                     data->state->blockedOpplan = nullptr;
                     data->coordination_run = true;
+                    data->accept_partial_reply = false;
                     data->recent_buffers.clear();
                     data->dependency_list.clear();
                     deliveryoper->solve(*this, v);
@@ -557,6 +559,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
               data->state->dependency = nullptr;
               data->state->blockedOpplan = nullptr;
               data->coordination_run = true;
+              data->accept_partial_reply = false;
               data->recent_buffers.clear();
               data->dependency_list.clear();
               deliveryoper->solve(*this, v);

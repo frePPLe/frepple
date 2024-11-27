@@ -7,6 +7,21 @@ Release notes
 This release is scheduled for end of December.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | The inventory report got a segment dropdown to allow easier filtering.
+  | This applies to Enterprise and Cloud Editions only.
+
+- | A corner case has been resolved in the ABC classification.
+  | Items with a cost equal to 0 were not getting a classification. They will now
+    be classified in the last group (C if the ABC parameters were not updated).
+  | This applies to Enterprise and Cloud Editions only.
+
+.. rubric:: Production planning
+
+- | The planning algorithm has been refined to avoid corner cases where a
+    large amount of small manufacturing orders are being generated.
+
 .. rubric:: Demand forecasting
 
 - | Missing sales order data in the recent past was considered by the forecast engine as buckets

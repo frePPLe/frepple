@@ -914,6 +914,9 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
                             originalOpplan.start, originalOpplan.end,
                             orig_q_qty);
 
+  if (data->state->a_qty < orig_q_qty - ROUNDING_ERROR)
+    data->accept_partial_reply = true;
+
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0) {
     logger << indentlevel-- << "Bucketized resource '" << res

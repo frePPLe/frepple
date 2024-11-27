@@ -377,6 +377,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
         if (!b->getProducingOperation()) {
           if (b->getOnHand(Date::infiniteFuture) < -ROUNDING_ERROR) {
             data->broken_path = true;
+            data->accept_partial_reply = true;
             if (getLogLevel() > 1)
               logger << indentlevel << "  Supply path is broken here" << endl;
           }
@@ -464,13 +465,12 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                                  ? Date::infinitePast
                                  : data->state->a_date;
 
-            //&& theDate >= noSupplyBefore
             // If we got some extra supply, we retry to get some more supply.
-            // Only when no extra material is obtained, we give up.
-            // When solving for safety stock or when the parameter allowsplit is
-            // set to false we need to get a single replenishing operationplan.
+            // Repeating is only allowed when we hit a condition that allows
+            // such a repeat.
             if (data->state->a_qty > ROUNDING_ERROR &&
-                data->state->a_qty < -theDelta - ROUNDING_ERROR)
+                data->state->a_qty < -theDelta - ROUNDING_ERROR &&
+                data->accept_partial_reply)
               theDelta += data->state->a_qty;
             else
               loop = false;

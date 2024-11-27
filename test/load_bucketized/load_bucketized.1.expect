@@ -150,7 +150,7 @@ PROBLEM	late	90 units of demand '4. order 2' planned up to 21.0 days after its d
 PROBLEM	late	90 units of demand '5. order 2' planned up to 16.0 days after its due date	2018-01-01T00:00:00 / 2018-01-17T00:00:00
 PROBLEM	late	90 units of demand '6. order 2' planned up to 17.0 days after its due date	2018-01-01T00:00:00 / 2018-01-18T00:00:00
 DEMAND CONSTRAINT	1. order 2	Operation '1. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
-DEMAND CONSTRAINT	1. order 2	Resource '1. Resource' has capacity shortage of 60	2018-01-11T00:00:00 / 2018-01-17T00:00:00	
+DEMAND CONSTRAINT	1. order 2	Resource '1. Resource' has capacity shortage of 12	2018-01-16T00:00:00 / 2018-01-18T00:00:00	
 DEMAND CONSTRAINT	2. order 2	Operation '2. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	
 DEMAND CONSTRAINT	2. order 2	Resource '2. Resource' has capacity shortage of 120	2018-01-06T00:00:00 / 2018-01-17T00:00:00	
 DEMAND CONSTRAINT	3. order 2	Operation '3. make end item' planned in the past	2017-12-15T00:00:00 / 2018-01-01T00:00:00	

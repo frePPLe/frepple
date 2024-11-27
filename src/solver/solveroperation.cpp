@@ -628,6 +628,10 @@ void SolverCreate::solve(const Operation* oper, void* v) {
   } while (repeat);
   if (!oper->getOwner() || !oper->getOwner()->hasType<OperationRouting>())
     data->hitMaxSize = data->state->a_qty == oper->getSizeMaximum();
+    if (data->hitMaxSize &&
+        data->state->a_qty < original_q_qty - ROUNDING_ERROR)
+      data->accept_partial_reply = true;
+  }
 
   // Message
   if (getLogLevel() > 1) {
@@ -703,6 +707,9 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
 
   if (qty_per) *qty_per = flow_qty_per;
   if (qty_fixed) *qty_fixed = flow_qty_fixed;
+
+  // Split operations are unavoidable in this case
+  if (flow_qty_fixed && !flow_qty_per) data->accept_partial_reply = true;
 
   // If transferbatch, then recompute the operation quantity and date here
   if (transferbatch_flow) {
@@ -1055,6 +1062,9 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
     a_qty = 0.001;
   else
     a_qty = (data->state->q_qty - flow_qty_fixed) / flow_qty_per;
+
+  // Split operations are unavoidable in this case
+  if (flow_qty_fixed && !flow_qty_per) data->accept_partial_reply = true;
 
   // Create the top operationplan
   CommandCreateOperationPlan* a = new CommandCreateOperationPlan(

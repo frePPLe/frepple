@@ -5,8 +5,8 @@
   This test verifies the solver behavior with flows of fixed quantity:
     - case 1: fixed consuming flow with date effectivity
     - case 2: fixed producing flow with date effectivity
-    - case 3: fixed producing flow on routing operation
-    - case 4: fixed producing flow on routing operation, with flows on top- and suboperation
+    - case 3: fixed producing flow with flow on last step
+    - case 4: fixed producing flows on multiple suboperations
     - case 5: fixed producing flow on alternate suboperations
   </description>
   <current>2013-01-01T00:00:00</current>
@@ -158,19 +158,13 @@
   </demands>
 
   <!--
-    Case 3: fixed flow on a routing operation.
+    Case 3: fixed flow on a the last step of a routing operation
   -->
   <buffers>
     <buffer name="3. end item">
       <item name="3. end item"/>
       <onhand>3</onhand>
       <producing name="3. make end item" xsi:type="operation_routing">
-        <flows>
-          <flow xsi:type="flow_end">
-            <buffer name="3. end item"/>
-            <quantity_fixed>3</quantity_fixed>
-          </flow>
-        </flows>
         <suboperations>
           <suboperation>
             <operation name="3. make end item - step 1" xsi:type="operation_fixed_time" duration="P1D"/>
@@ -179,7 +173,14 @@
             <operation name="3. make end item - step 2" xsi:type="operation_time_per" duration="P1D" duration_per="P1D"/>
           </suboperation>
           <suboperation>
-            <operation name="3. make end item - step 3" xsi:type="operation_fixed_time" duration="P1D"/>
+            <operation name="3. make end item - step 3" xsi:type="operation_fixed_time" duration="P1D">
+              <flows>
+                <flow xsi:type="flow_end">
+                  <buffer name="3. end item"/>
+                  <quantity_fixed>3</quantity_fixed>
+                </flow>
+              </flows>
+            </operation>
           </suboperation>
         </suboperations>
       </producing>
@@ -218,19 +219,13 @@
   </demands>
 
   <!--
-    Case 4: fixed flow on a routing operation and each of its steps.
+    Case 4: fixed flow on different steps of a routing operation
   -->
   <buffers>
     <buffer name="4. end item">
       <item name="4. end item"/>
       <onhand>3</onhand>
       <producing name="4. make end item" xsi:type="operation_routing">
-        <flows>
-          <flow xsi:type="flow_end">
-            <buffer name="4. end item"/>
-            <quantity_fixed>1</quantity_fixed>
-          </flow>
-        </flows>
         <suboperations>
           <suboperation>
           <operation name="4. make end item - step 1" xsi:type="operation_fixed_time" duration="P1D">
@@ -257,7 +252,7 @@
             <flows>
               <flow xsi:type="flow_end">
                 <buffer name="4. end item"/>
-                <quantity_fixed>1</quantity_fixed>
+                <quantity_fixed>2</quantity_fixed>
               </flow>
             </flows>
           </operation>

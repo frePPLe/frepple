@@ -132,6 +132,7 @@ void SolverCreate::solve(const Flow* fl,
         if (data->state->a_qty > ROUNDING_ERROR) {
           data->constrainedPlanning = originalPlanningMode;
           data->logConstraints = originalLogConstraints;
+          data->accept_partial_reply = true;
           data->state->q_qty_min = orig_q_qty_min;
           // Optimization for detection of broken supply paths is disabled when
           // we have alternate flows. Only when all alternates report a broken
@@ -198,7 +199,8 @@ void SolverCreate::solve(const Flow* fl,
     // CASE II: Not an alternate flow.
     // In this case, this method is passing control on to the buffer.
     double orig_q_qty_min = data->state->q_qty_min;
-    data->state->q_qty = -data->state->q_flowplan->getQuantity();
+    double orig_q_qty = -data->state->q_flowplan->getQuantity();
+    data->state->q_qty = orig_q_qty;
     data->state->q_qty_min =
         -fl->getQuantityFixed() - data->state->q_qty_min * fl->getQuantity();
     data->state->q_date = data->state->q_flowplan->getDate();

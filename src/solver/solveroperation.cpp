@@ -577,6 +577,7 @@ void SolverCreate::solve(const Operation* oper, void* v) {
 
   auto asked_date = data->state->q_date;
   auto asked_qty = data->state->q_qty;
+  auto original_q_qty = asked_qty;
   bool repeat;
   auto ask_early = oper->getPostTime();
   bool hard_posttime = false;
@@ -626,7 +627,7 @@ void SolverCreate::solve(const Operation* oper, void* v) {
       }
     }
   } while (repeat);
-  if (!oper->getOwner() || !oper->getOwner()->hasType<OperationRouting>())
+  if (!oper->getOwner() || !oper->getOwner()->hasType<OperationRouting>()) {
     data->hitMaxSize = data->state->a_qty == oper->getSizeMaximum();
     if (data->hitMaxSize &&
         data->state->a_qty < original_q_qty - ROUNDING_ERROR)

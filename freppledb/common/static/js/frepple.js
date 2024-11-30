@@ -1598,6 +1598,16 @@ var grid = {
     $("#searchmodfbox_grid").detach().appendTo("#content-main");
   },
 
+  resetFilter: function() {
+    var curfilter = $((typeof curfilterid !== 'undefined') ? curfilterid : "#curfilter");
+    curfilter.html("");
+    $("#grid").setGridParam({
+      postData: {filters: ''},
+      search: true
+    }).trigger('reloadGrid');
+    grid.saveColumnConfiguration();
+  },
+
   countFilters: 0,
 
   handlerinstalled: false,

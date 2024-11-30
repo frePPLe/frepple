@@ -13,7 +13,10 @@
   <i class="fa fa-search"></i>
 </button>
 	{% if reportclass.filterable %}{% include "common/snippet_favorites.html" with search=True %}{% endif %}
-
+</div>
+<div class="align-middle d-inline-flex" data-bs-toggle="tooltip" data-bs-placement="top"
+  data-bs-title="{% trans 'reset filters'|capfirst|force_escape %}">
+   <span id="resetfilter" onclick="grid.resetFilter()" class="fa fa-times fs-6" ></span>
 </div>
 </span>
 {% endif %}{% endblock %}

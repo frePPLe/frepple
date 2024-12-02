@@ -567,21 +567,15 @@ class Command(BaseCommand):
                             ".sql.gz",
                         )
                     ):
+                        stat = os.stat(os.path.join(uploadfolder, file))
                         filestoupload.append(
                             [
                                 file,
                                 strftime(
                                     "%Y-%m-%d %H:%M:%S",
-                                    localtime(
-                                        os.stat(
-                                            os.path.join(uploadfolder, file)
-                                        ).st_mtime
-                                        + tzoffset.total_seconds()
-                                    ),
+                                    localtime(stat.st_mtime + tzoffset.total_seconds()),
                                 ),
-                                sizeof_fmt(
-                                    os.stat(os.path.join(uploadfolder, file)).st_size
-                                ),
+                                sizeof_fmt(stat.st_size),
                             ]
                         )
 

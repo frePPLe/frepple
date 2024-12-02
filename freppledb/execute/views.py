@@ -36,7 +36,7 @@ import os
 import psutil
 import re
 import shlex
-from time import sleep
+from time import sleep, localtime, strftime
 from zipfile import ZipFile, ZIP_DEFLATED
 
 from django.apps import apps
@@ -60,8 +60,9 @@ from django.http import (
     HttpResponse,
     HttpResponseNotFound,
     HttpResponseForbidden,
-    StreamingHttpResponse,
     HttpResponseNotAllowed,
+    JsonResponse,
+    StreamingHttpResponse,
 )
 from django.contrib import messages
 from django.utils.encoding import force_str
@@ -897,73 +898,103 @@ class FileManager:
     @staff_member_required
     @never_cache
     def uploadFiletoFolder(request, foldercode):
-        if request.method != "POST":
-            return HttpResponseNotAllowed(
-                ["post"], content="Only POST request method is allowed"
-            )
 
-        if len(list(request.FILES.items())) == 0:
-            return HttpResponseNotFound("Missing file selection in request")
-        errorcount = 0
-        response = HttpResponse()
-        folder, extensions = FileManager.getFolderInfo(request, foldercode)
-
-        # Try to create the upload if doesn't exist yet
-        if not os.path.isdir(settings.DATABASES[request.database]["FILEUPLOADFOLDER"]):
-            try:
-                os.makedirs(settings.DATABASES[request.database]["FILEUPLOADFOLDER"])
-            except Exception:
-                errorcount += 1
-                response.write("Upload folder doesn't exist")
-
-        if not errorcount:
-            # Directory exists and we can upload files into it
-            for filename, content in request.FILES.items():
-                try:
-                    # Validate file name
+        if request.method == "GET":
+            # Return a list of available data files
+            folder, extensions = FileManager.getFolderInfo(request, foldercode)
+            filelist = {}
+            if os.path.isdir(settings.DATABASES[request.database]["FILEUPLOADFOLDER"]):
+                for filename in os.listdir(folder):
                     clean_filename = re.split(r"/|:|\\", filename)[-1]
-                    cleanpath = os.path.normpath(os.path.join(folder, clean_filename))
                     if (
-                        not cleanpath.startswith(folder)
-                        or not extensions
-                        or not clean_filename.lower().endswith(extensions)
-                    ):
-                        logger.error(
-                            "Failed file upload: incorrect file name '%s'" % filename
+                        not extensions or clean_filename.lower().endswith(extensions)
+                    ) and not clean_filename.lower().endswith(".log"):
+                        stat = os.stat(os.path.join(folder, clean_filename))
+                        filelist[clean_filename] = {
+                            "size_bytes": stat.st_size,
+                            "timestamp_utc": strftime(
+                                "%Y-%m-%d %H:%M:%S", localtime(stat.st_mtime)
+                            ),
+                        }
+
+            return JsonResponse(filelist)
+        elif request.method == "POST":
+            # Upload a new data file
+            if len(list(request.FILES.items())) == 0:
+                return HttpResponseNotFound("Missing file selection in request")
+            errorcount = 0
+            response = HttpResponse()
+            folder, extensions = FileManager.getFolderInfo(request, foldercode)
+
+            # Try to create the upload if doesn't exist yet
+            if not os.path.isdir(
+                settings.DATABASES[request.database]["FILEUPLOADFOLDER"]
+            ):
+                try:
+                    os.makedirs(
+                        settings.DATABASES[request.database]["FILEUPLOADFOLDER"]
+                    )
+                except Exception:
+                    errorcount += 1
+                    response.write("Upload folder doesn't exist")
+
+            if not errorcount:
+                # Directory exists and we can upload files into it
+                for filename, content in request.FILES.items():
+                    try:
+                        # Validate file name
+                        clean_filename = re.split(r"/|:|\\", filename)[-1]
+                        cleanpath = os.path.normpath(
+                            os.path.join(folder, clean_filename)
                         )
+                        if (
+                            not cleanpath.startswith(folder)
+                            or not extensions
+                            or not clean_filename.lower().endswith(extensions)
+                        ):
+                            logger.error(
+                                "Failed file upload: incorrect file name '%s'"
+                                % filename
+                            )
+                            response.write(
+                                "%s: <strong>Error</strong> %s<br>\n"
+                                % (
+                                    escape(clean_filename),
+                                    _("Filename extension must be among %(ext)s")
+                                    % {"ext": ", ".join(extensions)},
+                                )
+                            )
+                            errorcount += 1
+                            continue
+
+                        # Write to a file
+                        with open(cleanpath, "wb") as thetarget:
+                            for chunk in content.chunks():
+                                thetarget.write(chunk)
+
                         response.write(
-                            "%s: <strong>Error</strong> %s<br>\n"
-                            % (
-                                escape(clean_filename),
-                                _("Filename extension must be among %(ext)s")
-                                % {"ext": ", ".join(extensions)},
+                            force_str(
+                                "%s: <strong>%s</strong><br>"
+                                % (escape(clean_filename), _("OK"))
                             )
                         )
-                        errorcount += 1
-                        continue
-
-                    # Write to a file
-                    with open(cleanpath, "wb") as thetarget:
-                        for chunk in content.chunks():
-                            thetarget.write(chunk)
-
-                    response.write(
-                        force_str(
-                            "%s: <strong>%s</strong><br>"
-                            % (escape(clean_filename), _("OK"))
+                    except Exception as e:
+                        logger.error("Failed file upload: %s" % e)
+                        response.write(
+                            "%s: <strong>Error</strong> %s<br>"
+                            % (escape(clean_filename), _("Upload failed"))
                         )
-                    )
-                except Exception as e:
-                    logger.error("Failed file upload: %s" % e)
-                    response.write(
-                        "%s: <strong>Error</strong> %s<br>"
-                        % (escape(clean_filename), _("Upload failed"))
-                    )
-                    errorcount += 1
-        if errorcount:
-            response.status_code = 400
-            response.reason_phrase = "%s files failed to upload correctly" % errorcount
-        return response
+                        errorcount += 1
+            if errorcount:
+                response.status_code = 400
+                response.reason_phrase = (
+                    "%s files failed to upload correctly" % errorcount
+                )
+            return response
+        else:
+            return HttpResponseNotAllowed(
+                ["post", "get"], content="Only GET and POST request methods are allowed"
+            )
 
     @staticmethod
     @csrf_exempt

@@ -34,6 +34,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 18: Keep the language selection of a user identical in odoo and frepple.
   | Displaying both user interfaces in a different language isn't very nice, isn't it?
 
+.. rubric:: Integration
+
+- | The API for uploading data files to the "import data files" task has extra URLs for
+    retrieving the list of all data files, with their timestamp and file size.
+
 9.4.0 (2024-11-08)
 ==================
 

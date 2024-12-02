@@ -33,10 +33,10 @@
   <div class="col-1 text-nowrap text-center">{{j.size}}</div>
   <div class="col-2 text-nowrap text-center">{{j.timestamp}}</div>
   <div class="col-auto text-center">
-    <div class="btn btn-sm btn-primary downloadfile" data-bs-toggle="tooltip"
+    <button class="btn btn-sm btn-primary downloadfile" data-bs-toggle="tooltip"{% if not j.timestamp %} disabled{% endif %}
       data-bs-placement="top" data-bs-title="Download file" onClick="downloadExportFile(1, '{{j.name}}')">
       <span class="fa fa-arrow-down"></span>
-    </div>
+    </button>
     <button class="btn btn-sm btn-danger deletefile" data-bs-toggle="tooltip"{% if not j.timestamp %} disabled{% endif %}
       data-bs-placement="top" data-bs-title="{% trans "Delete file" %}" onClick="deleteExportFile(1, '{{j.name}}')">
       <span class="fa fa-close"></span>

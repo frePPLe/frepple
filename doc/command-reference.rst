@@ -244,6 +244,12 @@ HTTP(S) web interface.
         # Retrieve one of the exported files:
         GET /execute/downloadfromfolder/1/<filename>/
 
+        # Retrieve all exported files:
+        GET /execute/downloadfromfolder/1/
+
+        # Retrieve the list of all available files, with their size and timestamp
+        GET /execute/uploadtofolder/1/
+
 .. _emailreport:
 
 Publish reports by email
@@ -400,6 +406,15 @@ access to the files restricted.
 
         # Upload a data file:
         POST /execute/uploadtofolder/0/ with data files in multipart/form-data format
+
+        # Get an list of available data files with their size and timestamp:
+        GET /execute/uploadtofolder/0/
+
+        # Download all your data files:
+        GET /execute/downloadfromfolder/0/
+
+        # Download one of your data files:
+        GET /execute/downloadfromfolder/0/<filename>/
 
         # Import the data files:
         POST /execute/api/importfromfolder/

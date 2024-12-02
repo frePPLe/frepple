@@ -33,6 +33,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import EMPTY_VALUES
 from django.db import DEFAULT_DB_ALIAS
+from django.db.models import ForeignKey
 from django.db.models.fields import (
     IntegerField,
     AutoField,
@@ -470,6 +471,10 @@ def _parseData(
                     # Try with translated field names
                     if (
                         col == i.name.lower()
+                        or (
+                            isinstance(i, ForeignKey)
+                            and col == "%s_id" % i.name.lower()
+                        )
                         or col == i.verbose_name.lower()
                         or col == ("%s - %s" % (model.__name__, i.verbose_name)).lower()
                     ):
@@ -485,6 +490,10 @@ def _parseData(
                         with translation.override("en"):
                             if (
                                 col == i.name.lower()
+                                or (
+                                    isinstance(i, ForeignKey)
+                                    and col == "%s_id" % i.name.lower()
+                                )
                                 or col == i.verbose_name.lower()
                                 or col
                                 == (
@@ -690,7 +699,7 @@ class BulkForeignKeyFormField(forms.fields.Field):
         label=None,
         help_text="",
         *args,
-        **kwargs
+        **kwargs,
     ):
         forms.fields.Field.__init__(
             self,
@@ -698,7 +707,7 @@ class BulkForeignKeyFormField(forms.fields.Field):
             required=required if required is not None else not field.null,
             label=label,
             help_text=help_text,
-            **kwargs
+            **kwargs,
         )
 
         # Build a cache with the list of values - as long as it reasonable fits in memory

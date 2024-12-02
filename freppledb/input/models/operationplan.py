@@ -36,7 +36,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.db import models, DEFAULT_DB_ALIAS, connections
-from django.db.models import Q
+from django.db.models import Q, ForeignKey
 from django.db.models.fields import AutoField, NOT_PROVIDED
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
@@ -701,9 +701,9 @@ class DeliveryOrder(OperationPlan):
 
     def save(self, *args, **kwargs):
         self.type = "DLVR"
-        self.supplier = (
-            self.origin
-        ) = self.destination = self.operation = self.owner = None
+        self.supplier = self.origin = self.destination = self.operation = self.owner = (
+            None
+        )
         if self.demand:
             self.item = self.demand.item
             self.location = self.demand.location
@@ -907,6 +907,10 @@ class ManufacturingOrder(OperationPlan):
                         # Try with translated field names
                         if (
                             col == i.name.lower()
+                            or (
+                                isinstance(i, ForeignKey)
+                                and col == "%s_id" % i.name.lower()
+                            )
                             or col == i.verbose_name.lower()
                             or col
                             == (
@@ -926,6 +930,10 @@ class ManufacturingOrder(OperationPlan):
                             with translation.override("en"):
                                 if (
                                     col == i.name.lower()
+                                    or (
+                                        isinstance(i, ForeignKey)
+                                        and col == "%s_id" % i.name.lower()
+                                    )
                                     or col == i.verbose_name.lower()
                                     or col
                                     == (

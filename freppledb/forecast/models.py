@@ -304,6 +304,8 @@ class PropertyField:
 
 
 class ForecastPlan(models.Model):
+    allow_report_manager_access = True
+
     # Model managers
     objects = models.Manager()  # The default model manager
 

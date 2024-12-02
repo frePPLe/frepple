@@ -273,6 +273,9 @@ class AuditModel(models.Model):
         _("last modified"), editable=False, db_index=True, default=timezone.now
     )
 
+    # Controls access through report manager to the table
+    allow_report_manager_access = True
+
     objects = MultiDBManager()  # The default manager.
 
     @classmethod
@@ -745,6 +748,9 @@ def delete_user(sender, instance, **kwargs):
 
 
 class Comment(models.Model):
+
+    allow_report_manager_access = True
+
     type_list = (
         ("add", _("Add")),
         ("change", _("Change")),
@@ -1000,6 +1006,9 @@ class SystemMessage(models.Model):
 
 
 class Follower(models.Model):
+
+    allow_report_manager_access = True
+
     type_list = (("M", "email"), ("O", "online"))
 
     id = models.AutoField(_("identifier"), primary_key=True)
@@ -1072,6 +1081,9 @@ class Follower(models.Model):
 
 
 class Notification(models.Model):
+
+    allow_report_manager_access = True
+
     type_list = (("M", "email"), ("O", "online"))
     status_list = (("U", "unread"), ("R", "read"))
 
@@ -1549,6 +1561,7 @@ class BucketDetail(AuditModel):
 
 
 class Attribute(AuditModel):
+    allow_report_manager_access = False
     obfuscate = False
     types = (
         ("string", _("string")),

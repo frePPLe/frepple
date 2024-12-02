@@ -26,6 +26,8 @@ from django.db import models
 
 
 class Problem(models.Model):
+    allow_report_manager_access = True
+
     # Database fields
     entity = models.CharField(_("entity"), max_length=15, db_index=True)
     owner = models.CharField(_("owner"), max_length=300, db_index=True)
@@ -47,6 +49,8 @@ class Problem(models.Model):
 
 
 class Constraint(models.Model):
+    allow_report_manager_access = True
+
     # Database fields
     demand = models.CharField(_("demand"), max_length=300, null=True, db_index=True)
     forecast = models.CharField(_("forecast"), max_length=300, null=True, db_index=True)
@@ -71,6 +75,8 @@ class Constraint(models.Model):
 
 
 class ResourceSummary(models.Model):
+    allow_report_manager_access = True
+
     resource = models.CharField(_("resource"), max_length=300)
     startdate = models.DateTimeField(_("startdate"))
     available = models.DecimalField(

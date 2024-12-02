@@ -53,6 +53,8 @@ class ArchivedModel(models.Model):
     This is an abstract base model used to archive data
     """
 
+    allow_report_manager_access = True
+
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True)
     snapshot_date = models.ForeignKey(

@@ -27,6 +27,7 @@ rect.opplan {
 {% endblock %}
 
 {% block extrahead %}{{block.super}}
+<script src="{{STATIC_URL}}js/d3.min.js"></script>
 <script src="{{STATIC_URL}}js/angular.min.js"></script>
 <script src="{{STATIC_URL}}js/angular-cookies.min.js"></script>
 <script src="{{STATIC_URL}}js/angular-gettext.min.js"></script>
@@ -50,6 +51,7 @@ rect.opplan {
 <script src="{{STATIC_URL}}input/src/model.js"></script>
 
 <script src="{{STATIC_URL}}operationplandetail/src/calendar.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/d3service.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/module.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/operationplandetailCtrl.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/problemspanelDrv.js"></script>

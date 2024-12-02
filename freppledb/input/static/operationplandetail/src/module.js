@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 by frePPLe bv
+ * Copyright (C) 2024 by frePPLe bv
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,7 +25,7 @@
 'use strict';
 
 var operationplandetailapp = angular.module('operationplandetailapp',
-  ['ngCookies', 'gettext', 'ngWebSocket', 'frepple.input', 'frepple.common', 'calendar'],
+  ['ngCookies', 'gettext', 'ngWebSocket', 'frepple.input', 'frepple.common', 'calendar', 'd3'],
   ['$locationProvider', function ($locationProvider) {
     $locationProvider.html5Mode({ enabled: true, requireBase: false });
   }]);

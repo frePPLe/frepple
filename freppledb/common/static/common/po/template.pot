@@ -4,82 +4,28 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: \n"
 
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:606
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:641
-msgid "%s allocated out of %s"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1405
-#: freppledb/planningboard/static/planningboard/planningboard.html:1434
-#: freppledb/planningboard/static/planningboard/planningboard.html:1460
-msgid "Add to the graph"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1673
-msgid ""
-"An operation gets the color of its category.<br>\n"
-"                        The operation categories should be filled in the operation table.\n"
-"                        <br><br>"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1705
-msgid ""
-"An operation gets the color of its subcategory.<br>\n"
-"                        The operation subcategories should be filled in the operation table.\n"
-"                        <br><br>"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1609
-msgid ""
-"An operation gets the color of the category of the item it produces.<br>\n"
-"                        The item categories should be filled in the item table.\n"
-"                        <br><br>"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1641
-msgid ""
-"An operation gets the color of the subcategory of the item it produces.<br>\n"
-"                        The item subcategories should be filled in the item table.\n"
-"                        <br><br>"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1551
-msgid ""
-"An operation gets the color of the week where the pegged demand is due in.\n"
-"                        <br><br>"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:318
 msgid "Apply"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
-msgid "Assign an extra resource"
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:206
+msgid "Archived"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:385
 msgid "Automatic"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:66
-msgid "Automatically resolve infeasiblities in the plan"
-msgstr ""
-
-#: freppledb/forecast/static/forecast/src/forecast.js:948
+#: freppledb/forecast/static/forecast/src/forecast.js:961
 msgid "Available Cross"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:67
-#: freppledb/planningboard/static/planningboard/planningboard.html:47
 msgid "Bookmark your favorite report configurations"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/forecast.js:960
+#: freppledb/forecast/static/forecast/src/forecast.js:973
 msgid "Cancel"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1408
-msgid "Clear the plan of selected demands"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:390
@@ -87,69 +33,30 @@ msgid "Constant"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:457
-#: freppledb/input/static/operationplandetail/operationplandetail.html:56
-#: freppledb/planningboard/static/planningboard/planningboard.html:157
-#: freppledb/quoting/static/quoting/quoting.html:198
+#: freppledb/input/static/operationplandetail/operationplandetail.html:61
 msgid "Continue"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1483
-msgid "Criticality color setup"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:87
-#: freppledb/forecast/static/forecast/src/forecast.js:933
+#: freppledb/forecast/static/forecast/src/forecast.js:946
 msgid "Customize"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1514
-msgid "Delay color setup"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/kanbanDrv.js:45
+#: freppledb/input/static/operationplandetail/src/kanbanDrv.js:58
 msgid "Delivery"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/forecastgridDrv.js:36
+#: freppledb/forecast/static/forecast/src/forecastgridDrv.js:49
 msgid "Demand outlier"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/kanbanDrv.js:43
+#: freppledb/input/static/operationplandetail/src/kanbanDrv.js:56
 msgid "Distribution Order"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:452
-#: freppledb/input/static/operationplandetail/operationplandetail.html:48
-#: freppledb/planningboard/static/planningboard/planningboard.html:149
+#: freppledb/input/static/operationplandetail/operationplandetail.html:53
 msgid "Do you want to save your changes first?"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1544
-msgid "Due date color setup"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:314
-#: freppledb/planningboard/static/planningboard/planningboard.html:387
-#: freppledb/planningboard/static/planningboard/planningboard.html:578
-#: freppledb/planningboard/static/planningboard/planningboard.html:712
-#: freppledb/planningboard/static/planningboard/planningboard.html:841
-msgid "Duplicate"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1392
-#: freppledb/planningboard/static/planningboard/planningboard.html:1427
-#: freppledb/planningboard/static/planningboard/planningboard.html:1454
-msgid "Enter name"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/quoting.html:30
-#: freppledb/quoting/static/quoting/quoting.html:43
-#: freppledb/quoting/static/quoting/quoting.html:56
-msgid "Enter your search terms"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/src/quoteCtrl.js:62
-msgid "Error"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:428
@@ -164,19 +71,11 @@ msgstr ""
 msgid "Intermittent"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1602
-msgid "Item category color setup"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1634
-msgid "Item subcategory color setup"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:410
 msgid "Manual"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/kanbanDrv.js:41
+#: freppledb/input/static/operationplandetail/src/kanbanDrv.js:54
 msgid "Manufacturing Order"
 msgstr ""
 
@@ -188,96 +87,34 @@ msgstr ""
 msgid "No comments yet"
 msgstr ""
 
-#: freppledb/quoting/static/quoting/quoting.html:140
-msgid "No plan yet"
-msgstr ""
-
-#: freppledb/forecast/static/forecast/src/forecast.js:962
+#: freppledb/forecast/static/forecast/src/forecast.js:975
 msgid "OK"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1666
-msgid "Operation category color setup"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1698
-msgid "Operation subcategory color setup"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:352
-msgid "Operationplan"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1399
-#: freppledb/planningboard/static/planningboard/planningboard.html:930
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:262
-msgid "Plan selected demands backward from their due date"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1402
-#: freppledb/planningboard/static/planningboard/planningboard.html:933
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:263
-msgid "Plan selected demands forward from the current date"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/operationplandetail.html:52
-#: freppledb/planningboard/static/planningboard/planningboard.html:153
+#: freppledb/input/static/operationplandetail/operationplandetail.html:57
 msgid "Please be patient, the chart may take some time to complete."
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1572
-msgid "Priority color setup"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1579
-msgid ""
-"Priority is a demand property, available in the demands table. The priority value will have effect in the plan results.<br>\n"
-"                        The highest priority value is 0, and the greater the value the lower the priority.\n"
-"                        <br><br>"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/kanbanDrv.js:42
+#: freppledb/input/static/operationplandetail/src/kanbanDrv.js:55
 msgid "Purchase Order"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/quoting.html:193
-msgid "Quoting error"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:168
 msgid "Recalculate"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:317
-#: freppledb/planningboard/static/planningboard/planningboard.html:390
-#: freppledb/planningboard/static/planningboard/planningboard.html:581
-#: freppledb/planningboard/static/planningboard/planningboard.html:715
-#: freppledb/planningboard/static/planningboard/planningboard.html:844
-msgid "Remove"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:927
-msgid "Remove this demand from planning"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:76
-msgid "Remove this resource"
-msgstr ""
-
-#: freppledb/forecast/static/forecast/src/forecast.js:961
+#: freppledb/forecast/static/forecast/src/forecast.js:974
 msgid "Reset"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:389
+#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:403
 msgid "Return to page"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:162
 #: freppledb/forecast/static/forecast/forecast.html:456
-#: freppledb/input/static/operationplandetail/operationplandetail.html:57
-#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:390
-#: freppledb/planningboard/static/planningboard/planningboard.html:156
-#: freppledb/planningboard/static/planningboard/planningboard.html:170
+#: freppledb/input/static/operationplandetail/operationplandetail.html:62
+#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:404
 msgid "Save"
 msgstr ""
 
@@ -285,16 +122,8 @@ msgstr ""
 msgid "Save changes to the database"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:383
+#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:397
 msgid "Save or cancel your changes first"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:168
-msgid "Save plan from memory to the database"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1453
-msgid "Search"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:398
@@ -313,7 +142,7 @@ msgstr ""
 msgid "Select panel sequence"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/forecast.js:940
+#: freppledb/forecast/static/forecast/src/forecast.js:953
 msgid "Selected Cross"
 msgstr ""
 
@@ -321,7 +150,7 @@ msgstr ""
 msgid "Selected forecast method"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/forecast.js:956
+#: freppledb/forecast/static/forecast/src/forecast.js:969
 msgid "Show descriptions"
 msgstr ""
 
@@ -329,39 +158,15 @@ msgstr ""
 msgid "Simulate changes without saving"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:320
-#: freppledb/planningboard/static/planningboard/planningboard.html:393
-#: freppledb/planningboard/static/planningboard/planningboard.html:584
-#: freppledb/planningboard/static/planningboard/planningboard.html:718
-#: freppledb/planningboard/static/planningboard/planningboard.html:847
-msgid "Split in half"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/kanbanDrv.js:44
+#: freppledb/input/static/operationplandetail/src/kanbanDrv.js:57
 msgid "Stock"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:51
-#: freppledb/planningboard/static/planningboard/planningboard.html:152
+#: freppledb/input/static/operationplandetail/operationplandetail.html:56
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1490
-msgid ""
-"The criticality of an operationplan measures the slack time available till the delivery of the customer demand.<br>\n"
-"                        A criticality of 0 indicates that the order is on the critical path of one or more demands.<br>\n"
-"                        Higher criticality values indicate that a delay will not immediately impact the delivery of any demand.\n"
-"                        <br><br>"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1521
-msgid ""
-"The delay of an operationplan compares its end date with the delivery due date of the customer demand(s) it feeds.<br>\n"
-"                        This also consider the duration of the follow-up operations still required to produce the finished end item.\n"
-"                        <br><br>"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:386
+#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:400
 msgid "There are unsaved changes on this page."
 msgstr ""
 
@@ -393,68 +198,25 @@ msgstr ""
 msgid "View start events"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/src/grid.js:51
-msgid "action"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:377
 msgid "aggregate"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:184
-#: freppledb/planningboard/static/planningboard/planningboard.html:529
-#: freppledb/planningboard/static/planningboard/planningboard.html:680
-#: freppledb/planningboard/static/planningboard/planningboard.html:807
 msgid "approved"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:284
-msgid "approved: {{aggregatedoperationplans.status.approved }}"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:176
-#: freppledb/planningboard/static/planningboard/planningboard.html:177
 msgid "attributes"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:89
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:77
-#: freppledb/planningboard/static/planningboard/planningboard.html:237
-#: freppledb/planningboard/static/planningboard/planningboard.html:428
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:90
 msgid "batch"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:186
-#: freppledb/planningboard/static/planningboard/planningboard.html:211
-msgid "buffer"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/quoting.html:98
-msgid "cancel"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/src/grid.js:269
-#: freppledb/planningboard/static/planningboard/src/grid.js:329
-msgid "category"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:187
-#: freppledb/planningboard/static/planningboard/planningboard.html:550
-#: freppledb/planningboard/static/planningboard/planningboard.html:693
-#: freppledb/planningboard/static/planningboard/planningboard.html:821
 msgid "closed"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:293
-msgid "closed: {{aggregatedoperationplans.status.closed }}"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:11
-msgid "color by"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:189
-msgid "colors"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:182
@@ -462,56 +224,46 @@ msgid "comments"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:186
-#: freppledb/planningboard/static/planningboard/planningboard.html:543
-#: freppledb/planningboard/static/planningboard/planningboard.html:688
-#: freppledb/planningboard/static/planningboard/planningboard.html:816
 msgid "completed"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:290
-msgid "completed: {{aggregatedoperationplans.status.completed }}"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/quoting.html:100
-msgid "confirm"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:185
-#: freppledb/planningboard/static/planningboard/planningboard.html:536
-#: freppledb/planningboard/static/planningboard/planningboard.html:684
-#: freppledb/planningboard/static/planningboard/planningboard.html:812
 msgid "confirmed"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:287
-msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:60
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:251
+msgid "consumed confirmed"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:39
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:59
+msgid "consumed proposed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:243
+msgid "consumed total"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:247
+msgid "consumed_proposed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:53
 msgid "cost"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/ganttDrv.js:111
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:128
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:86
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:98
-#: freppledb/planningboard/static/planningboard/planningboard.html:18
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:124
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:141
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:99
 msgid "criticality"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:63
-msgid "current inventory"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:216
-#: freppledb/planningboard/static/planningboard/planningboard.html:950
-#: freppledb/planningboard/static/planningboard/src/grid.js:95
-#: freppledb/quoting/static/quoting/quoting.html:40
 msgid "customer"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:121
-#: freppledb/planningboard/static/planningboard/planningboard.html:216
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:134
 msgid "customer delivery"
 msgstr ""
 
@@ -520,81 +272,42 @@ msgid "customers"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:448
-#: freppledb/input/static/operationplandetail/operationplandetail.html:44
-#: freppledb/planningboard/static/planningboard/planningboard.html:144
+#: freppledb/input/static/operationplandetail/operationplandetail.html:49
 msgid "database transaction failed"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:37
-#: freppledb/planningboard/static/planningboard/planningboard.html:1218
-#: freppledb/planningboard/static/planningboard/planningboard.html:1269
-#: freppledb/planningboard/static/planningboard/planningboard.html:1270
-#: freppledb/planningboard/static/planningboard/planningboard.html:329
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1320
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:51
 msgid "date"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:69
-#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:463
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:82
+#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:477
 msgid "days early"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:71
-#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:468
-#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:470
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:84
+#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:482
+#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:484
 msgid "days late"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1620
-#: freppledb/planningboard/static/planningboard/planningboard.html:1652
-#: freppledb/planningboard/static/planningboard/planningboard.html:1684
-#: freppledb/planningboard/static/planningboard/planningboard.html:1716
-msgid "default"
-msgstr ""
-
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:100
 #: freppledb/input/static/operationplandetail/src/ganttDrv.js:112
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:129
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:87
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:99
-#: freppledb/planningboard/static/planningboard/planningboard.html:21
-#: freppledb/planningboard/static/planningboard/planningboard.html:508
-#: freppledb/planningboard/static/planningboard/planningboard.html:665
-#: freppledb/planningboard/static/planningboard/planningboard.html:790
-#: freppledb/planningboard/static/planningboard/planningboard.html:913
-#: freppledb/planningboard/static/planningboard/src/grid.js:168
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:125
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:142
 msgid "delay"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:35
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:49
 msgid "delivery"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/src/grid.js:155
-msgid "delivery date"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/src/grid.js:145
-msgid "delivery quantity"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:28
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:124
-#: freppledb/planningboard/static/planningboard/planningboard.html:180
-#: freppledb/planningboard/static/planningboard/planningboard.html:209
-#: freppledb/planningboard/static/planningboard/planningboard.html:880
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:41
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:137
 msgid "demand"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1334
-msgid "demands"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:75
-#: freppledb/planningboard/static/planningboard/planningboard.html:1097
-#: freppledb/planningboard/static/planningboard/planningboard.html:422
-#: freppledb/planningboard/static/planningboard/planningboard.html:603
-#: freppledb/planningboard/static/planningboard/planningboard.html:739
-#: freppledb/quoting/static/quoting/quoting.html:21
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:88
 msgid "description"
 msgstr ""
 
@@ -602,13 +315,12 @@ msgstr ""
 msgid "destination"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:103
-#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:33
-#: freppledb/planningboard/static/planningboard/planningboard.html:214
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:116
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:47
 msgid "distribution order"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:39
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:53
 msgid "distribution orders"
 msgstr ""
 
@@ -616,69 +328,42 @@ msgstr ""
 msgid "downstream operations"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:36
-#: freppledb/planningboard/static/planningboard/planningboard.html:1347
-#: freppledb/planningboard/static/planningboard/planningboard.html:960
-#: freppledb/planningboard/static/planningboard/src/grid.js:132
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:49
 msgid "due"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:24
-#: freppledb/quoting/static/quoting/quoting.html:79
-msgid "due date"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:312
 msgid "edit"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:47
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:61
 msgid "effective end"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:45
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:59
 msgid "effective start"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/ganttDrv.js:109
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:126
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:84
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:96
-#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:35
-#: freppledb/planningboard/static/planningboard/planningboard.html:1103
-#: freppledb/planningboard/static/planningboard/planningboard.html:1271
-#: freppledb/planningboard/static/planningboard/planningboard.html:258
-#: freppledb/planningboard/static/planningboard/planningboard.html:481
-#: freppledb/planningboard/static/planningboard/planningboard.html:638
-#: freppledb/planningboard/static/planningboard/planningboard.html:767
-#: freppledb/planningboard/static/planningboard/planningboard.html:895
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1317
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:122
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:139
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:97
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:49
 msgid "end"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:14
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:131
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:14
-#: freppledb/quoting/static/quoting/quoting.html:134
 msgid "end date"
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:64
+msgid "end on-hand"
+msgstr ""
+
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:188
-#: freppledb/planningboard/static/planningboard/planningboard.html:297
-#: freppledb/planningboard/static/planningboard/planningboard.html:554
 msgid "export"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:84
-msgid "export as Excel file"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:145
-msgid "export to {{erp}} failed"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:15
-msgid "feasibility"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:138
@@ -686,28 +371,27 @@ msgstr ""
 msgid "forecast"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:198
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:211
 msgid "forecast baseline"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:206
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:219
 msgid "forecast consumed"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:204
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:217
 msgid "forecast net"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:200
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:213
 msgid "forecast override"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:202
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:215
 msgid "forecast total"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:43
-#: freppledb/planningboard/static/planningboard/planningboard.html:143
+#: freppledb/input/static/operationplandetail/operationplandetail.html:48
 msgid "gantt chart rows limit"
 msgstr ""
 
@@ -719,66 +403,28 @@ msgstr ""
 msgid "history"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1037
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1038
-msgid "hour"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/src/module.js:69
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1022
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1033
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1034
-msgid "hours"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:593
-msgid "identifier"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/quoting.html:94
-msgid "inquiry"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:116
-#: freppledb/planningboard/static/planningboard/planningboard.html:215
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:129
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:42
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:40
 msgid "inventory"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:22
-msgid "inventory status"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:200
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:11
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:46
-#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:31
-#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:34
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:31
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:45
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:47
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:45
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:11
-#: freppledb/planningboard/static/planningboard/planningboard.html:1054
-#: freppledb/planningboard/static/planningboard/planningboard.html:1344
-#: freppledb/planningboard/static/planningboard/planningboard.html:434
-#: freppledb/planningboard/static/planningboard/planningboard.html:969
-#: freppledb/planningboard/static/planningboard/src/grid.js:318
-#: freppledb/planningboard/static/planningboard/src/grid.js:84
-#: freppledb/quoting/static/quoting/quoting.html:27
 msgid "item"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:30
-msgid "item category"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:33
-msgid "item subcategory"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:109
-#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:28
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:42
 msgid "items"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:37
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:51
 msgid "lead time"
 msgstr ""
 
@@ -791,15 +437,8 @@ msgstr ""
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:12
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:103
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:81
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:33
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:47
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:12
-#: freppledb/planningboard/static/planningboard/planningboard.html:1028
-#: freppledb/planningboard/static/planningboard/planningboard.html:1064
-#: freppledb/planningboard/static/planningboard/planningboard.html:979
-#: freppledb/planningboard/static/planningboard/src/grid.js:258
-#: freppledb/planningboard/static/planningboard/src/grid.js:347
-#: freppledb/planningboard/static/planningboard/src/grid.js:73
-#: freppledb/quoting/static/quoting/quoting.html:53
 msgid "location"
 msgstr ""
 
@@ -807,67 +446,23 @@ msgstr ""
 msgid "locations"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:79
-#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:31
-#: freppledb/planningboard/static/planningboard/planningboard.html:212
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:92
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:45
 msgid "manufacturing order"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:41
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:55
 msgid "manufacturing orders"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1202
-#: freppledb/planningboard/static/planningboard/planningboard.html:208
-msgid "material"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/quoting.html:85
-msgid "maximum lateness (in days)"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/quoting.html:73
-msgid "minimum shipment"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1045
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1046
-msgid "minute"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/src/module.js:63
-#: freppledb/planningboard/static/planningboard/src/module.js:67
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1016
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1020
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1041
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1042
-msgid "minutes"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:19
-#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:32
-#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:31
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:31
-#: freppledb/planningboard/static/planningboard/planningboard.html:1015
-#: freppledb/planningboard/static/planningboard/planningboard.html:1042
-#: freppledb/planningboard/static/planningboard/planningboard.html:1130
-#: freppledb/planningboard/static/planningboard/planningboard.html:1209
-#: freppledb/planningboard/static/planningboard/planningboard.html:1341
-#: freppledb/planningboard/static/planningboard/planningboard.html:306
-#: freppledb/planningboard/static/planningboard/planningboard.html:363
-#: freppledb/planningboard/static/planningboard/planningboard.html:573
-#: freppledb/planningboard/static/planningboard/planningboard.html:706
-#: freppledb/planningboard/static/planningboard/planningboard.html:835
-#: freppledb/planningboard/static/planningboard/planningboard.html:870
-#: freppledb/planningboard/static/planningboard/planningboard.html:923
-#: freppledb/planningboard/static/planningboard/src/grid.js:246
-#: freppledb/planningboard/static/planningboard/src/grid.js:306
-#: freppledb/planningboard/static/planningboard/src/grid.js:61
-#: freppledb/quoting/static/quoting/quoting.html:15
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:45
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:45
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:45
 msgid "name"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:28
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:42
 msgid "network status"
 msgstr ""
 
@@ -887,7 +482,7 @@ msgstr ""
 msgid "new location comment"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:46
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:59
 msgid "no demands"
 msgstr ""
 
@@ -895,28 +490,32 @@ msgstr ""
 msgid "no downstream operationplans information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:44
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:48
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:52
+msgid "no inventory information"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:58
 msgid "no movements"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:52
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:66
 msgid "no network information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:42
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:56
 msgid "no problems"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:40
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:54
 msgid "no resources"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:5
-#: freppledb/planningboard/static/planningboard/planningboard.html:203
 msgid "no selection"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:54
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:68
 msgid "no supply information"
 msgstr ""
 
@@ -924,75 +523,46 @@ msgstr ""
 msgid "no upstream operationplans information"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:73
-#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:465
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:86
+#: freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js:479
 msgid "on time"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:35
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:35
-#: freppledb/planningboard/static/planningboard/planningboard.html:1074
-#: freppledb/planningboard/static/planningboard/planningboard.html:1215
-#: freppledb/planningboard/static/planningboard/planningboard.html:1264
-#: freppledb/planningboard/static/planningboard/planningboard.html:1265
-#: freppledb/planningboard/static/planningboard/planningboard.html:345
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1319
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:49
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:49
 msgid "onhand"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:29
-msgid "onhand at lead time"
-msgstr ""
-
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:194
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:215
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:207
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:228
 msgid "open orders"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:9
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:9
-#: freppledb/planningboard/static/planningboard/planningboard.html:1258
 msgid "operation"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:36
-msgid "operation category"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:39
-msgid "operation subcategory"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1248
-msgid "operationplans"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/quoting.html:117
-msgid "operations"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:113
 msgid "ordering date"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:196
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:217
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:209
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:230
 msgid "orders adjustment"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:93
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:105
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:35
-#: freppledb/planningboard/static/planningboard/planningboard.html:727
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:118
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:49
 msgid "origin"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:43
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:57
 msgid "overdue sales orders"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:38
-#: freppledb/planningboard/static/planningboard/planningboard.html:412
 msgid "owner"
 msgstr ""
 
@@ -1000,89 +570,61 @@ msgstr ""
 msgid "parameters"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:219
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:232
 msgid "past forecast"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:230
-msgid "plus"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:31
-#: freppledb/planningboard/static/planningboard/planningboard.html:27
-#: freppledb/planningboard/static/planningboard/planningboard.html:989
-#: freppledb/planningboard/static/planningboard/src/grid.js:106
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:45
 msgid "priority"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:28
-#: freppledb/planningboard/static/planningboard/planningboard.html:1090
-#: freppledb/quoting/static/quoting/quoting.html:167
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:42
 msgid "problems"
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:63
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:239
+msgid "produced confirmed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:62
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:235
+msgid "produced proposed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+msgid "produced total"
+msgstr ""
+
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:183
-#: freppledb/planningboard/static/planningboard/planningboard.html:232
-#: freppledb/planningboard/static/planningboard/planningboard.html:522
-#: freppledb/planningboard/static/planningboard/planningboard.html:675
-#: freppledb/planningboard/static/planningboard/planningboard.html:802
 msgid "proposed"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:281
-msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:91
-#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:32
-#: freppledb/planningboard/static/planningboard/planningboard.html:213
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:104
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:46
 msgid "purchase order"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:37
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:51
 msgid "purchase orders"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:15
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:146
-#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:33
-#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:38
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:47
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:51
 #: freppledb/input/static/operationplandetail/src/ganttDrv.js:110
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:118
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:127
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:85
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:97
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:33
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:123
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:131
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:140
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:98
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:47
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:15
-#: freppledb/planningboard/static/planningboard/planningboard.html:1000
-#: freppledb/planningboard/static/planningboard/planningboard.html:1133
-#: freppledb/planningboard/static/planningboard/planningboard.html:1212
-#: freppledb/planningboard/static/planningboard/planningboard.html:1261
-#: freppledb/planningboard/static/planningboard/planningboard.html:1350
-#: freppledb/planningboard/static/planningboard/planningboard.html:269
-#: freppledb/planningboard/static/planningboard/planningboard.html:337
-#: freppledb/planningboard/static/planningboard/planningboard.html:498
-#: freppledb/planningboard/static/planningboard/planningboard.html:655
-#: freppledb/planningboard/static/planningboard/planningboard.html:780
-#: freppledb/planningboard/static/planningboard/planningboard.html:856
-#: freppledb/planningboard/static/planningboard/planningboard.html:904
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1318
-#: freppledb/planningboard/static/planningboard/src/grid.js:119
-#: freppledb/quoting/static/quoting/quoting.html:128
-#: freppledb/quoting/static/quoting/quoting.html:67
 msgid "quantity"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:158
 msgid "quantity completed"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/quoting.html:96
-msgid "quote"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/quoting.html:8
-msgid "quote form"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:132
@@ -1093,64 +635,33 @@ msgstr ""
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:7
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:34
 #: freppledb/input/static/operationplandetail/src/ganttDrv.js:106
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:81
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:93
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:119
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:94
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:7
-#: freppledb/planningboard/static/planningboard/planningboard.html:1255
-#: freppledb/planningboard/static/planningboard/planningboard.html:224
-#: freppledb/planningboard/static/planningboard/planningboard.html:402
-#: freppledb/planningboard/static/planningboard/planningboard.html:733
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1315
 msgid "reference"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:193
-#: freppledb/planningboard/static/planningboard/planningboard.html:559
 msgid "remark"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:81
-msgid "remove all rows"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:78
-msgid "remove row"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:261
-msgid "remove this demand from planning"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:188
-#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:28
-#: freppledb/planningboard/static/planningboard/planningboard.html:183
-#: freppledb/planningboard/static/planningboard/planningboard.html:210
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:201
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:42
 msgid "resource"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1123
-msgid "resources"
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:57
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:213
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:227
+msgid "safety stock"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:45
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:59
 msgid "sales orders"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:79
-#: freppledb/planningboard/static/planningboard/planningboard.html:59
 msgid "save"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1052
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1053
-msgid "second"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/src/module.js:65
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1018
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1049
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:1050
-msgid "seconds"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:6
@@ -1158,18 +669,7 @@ msgid "selected"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:62
-#: freppledb/planningboard/static/planningboard/planningboard.html:87
 msgid "set time horizon"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1136
-msgid "setup"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:472
-#: freppledb/planningboard/static/planningboard/planningboard.html:632
-#: freppledb/planningboard/static/planningboard/planningboard.html:761
-msgid "setup end"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:127
@@ -1185,77 +685,74 @@ msgstr ""
 msgid "shown"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:41
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:55
 msgid "size minimum"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:43
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:57
 msgid "size multiple"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/ganttDrv.js:108
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:125
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:83
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:95
-#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:33
-#: freppledb/planningboard/static/planningboard/planningboard.html:1100
-#: freppledb/planningboard/static/planningboard/planningboard.html:1266
-#: freppledb/planningboard/static/planningboard/planningboard.html:247
-#: freppledb/planningboard/static/planningboard/planningboard.html:455
-#: freppledb/planningboard/static/planningboard/planningboard.html:615
-#: freppledb/planningboard/static/planningboard/planningboard.html:745
-#: freppledb/planningboard/static/planningboard/planningboard.html:886
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1316
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:121
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:138
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:96
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:47
 msgid "start"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:13
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:112
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:13
-#: freppledb/quoting/static/quoting/quoting.html:131
 msgid "start date"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:209
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:223
+msgid "start inventory"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:56
+msgid "start on-hand"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:10
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:179
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:100
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:101
 #: freppledb/input/static/operationplandetail/src/ganttDrv.js:113
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:130
-#: freppledb/input/static/operationplandetail/src/ganttDrv.js:88
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:126
+#: freppledb/input/static/operationplandetail/src/ganttDrv.js:143
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:10
-#: freppledb/planningboard/static/planningboard/planningboard.html:277
-#: freppledb/planningboard/static/planningboard/planningboard.html:514
-#: freppledb/planningboard/static/planningboard/planningboard.html:671
-#: freppledb/planningboard/static/planningboard/planningboard.html:798
-#: freppledb/quoting/static/quoting/quoting.html:91
 msgid "status"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:48
 msgid "stock"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/src/grid.js:278
-#: freppledb/planningboard/static/planningboard/src/grid.js:338
-msgid "subcategory"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:62
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:76
 msgid "superseded"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:64
-#: freppledb/planningboard/static/planningboard/planningboard.html:609
 msgid "supplier"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:28
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:42
 msgid "supply information"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:192
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:213
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:58
+msgid "total consumed"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:205
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:226
 msgid "total orders"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:61
+msgid "total produced"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:8
@@ -1263,13 +760,12 @@ msgstr ""
 msgid "type"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:33
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:47
 msgid "types"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:447
-#: freppledb/input/static/operationplandetail/operationplandetail.html:42
-#: freppledb/planningboard/static/planningboard/planningboard.html:142
+#: freppledb/input/static/operationplandetail/operationplandetail.html:47
 msgid "unsaved changes"
 msgstr ""
 
@@ -1277,24 +773,8 @@ msgstr ""
 msgid "upstream operations"
 msgstr ""
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1561
-msgid "week"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/month.html:13
 msgid "week number"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:72
-msgid "zoom in"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:75
-msgid "zoom out"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:217
-msgid "{{ aggregatedoperationplans.count }} selected"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:330

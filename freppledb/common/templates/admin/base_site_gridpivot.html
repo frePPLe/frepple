@@ -251,20 +251,24 @@ $(function() {
 	</div>
 	{% endif %}
 	{% if reportclass.hasTimeBuckets %}
-	  <button class="btn btn-sm btn-primary" onclick="grid.showBucket()">
-	    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'set time horizon'|capfirst|force_escape %}" class="fa fa-clock-o"></span>
+	  <button class="btn btn-sm btn-primary" onclick="grid.showBucket()"
+      data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'set time horizon'|capfirst|force_escape %}">
+	    <span class="fa fa-clock-o"></span>
 	  </button>
   {% endif %}
   {% if reportclass.editable and haschangeperm %}
-	    <button class="btn btn-sm d-none d-md-inline-block btn-primary" onclick="import_show('', undefined, true)" >
-        <span id="csvimport" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'Import CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-up"></span>
+	    <button class="btn btn-sm d-none d-md-inline-block btn-primary" onclick="import_show('', undefined, true)"
+        data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'Import CSV or Excel file'|capfirst|force_escape %}">
+        <span id="csvimport" class="fa fa-arrow-up"></span>
 	    </button>
   {% endif %}
-		  <button class="btn btn-sm btn-primary" onclick="grid.showExport(false,{{ scenario_permissions }})" >
-		    <span data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down"></span>
+		  <button class="btn btn-sm btn-primary" onclick="grid.showExport(false,{{ scenario_permissions }})"
+        data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" >
+		    <span class="fa fa-arrow-down"></span>
 		  </button>
-      <button class="btn btn-sm btn-primary" onclick="grid.showCustomize(true);">
-        <span data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'customize'|capfirst|force_escape %}" class="fa fa-wrench"></span>
+      <button class="btn btn-sm btn-primary" onclick="grid.showCustomize(true);"
+        data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'customize'|capfirst|force_escape %}" >
+        <span class="fa fa-wrench"></span>
       </button>
 	</div>
 </div>

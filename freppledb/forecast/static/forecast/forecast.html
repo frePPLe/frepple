@@ -81,8 +81,9 @@
                 </a>
             </li>
         </ul>
-        <button class="btn btn-sm d-none d-md-inline-block btn-primary" onclick="url = url_prefix + '/forecast/'; import_show('', undefined, true)">
-          <span id="csvimport" data-bs-toggle="tooltip" data-bs-placement="top" title="" class="fa fa-arrow-up" data-bs-title="Import CSV or Excel file"></span>
+        <button class="btn btn-sm d-none d-md-inline-block btn-primary" onclick="url = url_prefix + '/forecast/'; import_show('', undefined, true)"
+          data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-title="Import CSV or Excel file">
+          <span id="csvimport" class="fa fa-arrow-up"></span>
         </button>
         <button class="btn btn-sm btn-primary" data-ng-click="showCustomizeGrid()" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{'Customize'|translate}}">
           <span class="fa fa-wrench"></span>

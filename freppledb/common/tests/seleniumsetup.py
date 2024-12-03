@@ -76,6 +76,11 @@ class SeleniumTest(StaticLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
+        browser_log = cls.driver.get_log("browser")
+        if browser_log:
+            print("Browser console:")
+            for l in browser_log:
+                print(l["message"])
         cls.driver.quit()
         time.sleep(2)
         del os.environ["FREPPLE_TEST"]

@@ -581,7 +581,7 @@ class DeliveryOrderList(GridReport):
     model = DeliveryOrder
     frozenColumns = 0
     hasTimeBuckets = True
-    hasTimeOnly = True
+    hasTimeOnly = False
     editable = True
     multiselect = True
     help_url = "model-reference/delivery-orders.html"

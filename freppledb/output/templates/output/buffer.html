@@ -259,76 +259,76 @@ function drawGraphs(jsondata)
           if (timebuckets[d['bucket']]['history']) {
 	          var tiptext = '<div style="text-align:center; font-style:italic">{{_('Archived')}} '
 	            + timebuckets[d['bucket']]['name'] + '</div>'
-              + '<table><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
+              + '<table><tr><td>{{_('start inventory')|capfirst}}</td><td class="text-end">'
               + grid.formatNumber(d['startinv'])
-              + '</td></tr><tr><td>{{_('safety stock')|capfirst}}</td><td style="text-align:right">'
+              + '</td></tr><tr><td>{{_('safety stock')|capfirst}}</td><td class="text-end">'
               + grid.formatNumber(d['safetystock']);
           }
           else {
             var tiptext = '<div style="text-align:center; font-weight:bold">'
               + timebuckets[d['bucket']]['name'] + '</div>'
-	            + '<table><tr><td>{{_('start inventory days of cover')|capfirst}}</td><td style="text-align:right">'
+	            + '<table><tr><td>{{_('start inventory days of cover')|capfirst}}</td><td class="text-end">'
 	            + d['startohdoc'] + " {{_('days')}}"
-	            + '</td></tr><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
+	            + '</td></tr><tr><td>{{_('start inventory')|capfirst}}</td><td class="text-end">'
 	            + grid.formatNumber(d['startinv']);
   	        if (d['producedPO_confirmed'])
-  	          tiptext += '</td></tr><tr><td>{{_('produced by PO confirmed')|capfirst}}</td><td style="text-align:right">+ '
+  	          tiptext += '</td></tr><tr><td>{{_('produced by PO confirmed')|capfirst}}</td><td class="text-end">+ '
   	            + grid.formatNumber(d['producedPO_confirmed']);
   	        if (d['producedPO_proposed'])
-  	          tiptext += '</td></tr><tr><td>{{_('produced by PO proposed')|capfirst}}</td><td style="text-align:right">+ '
+  	          tiptext += '</td></tr><tr><td>{{_('produced by PO proposed')|capfirst}}</td><td class="text-end">+ '
   	            + grid.formatNumber(d['producedPO_proposed']);
   	        if (d['producedMO_confirmed'])
-  	          tiptext += '</td></tr><tr><td>{{_('produced by MO confirmed')|capfirst}}</td><td style="text-align:right">+ '
+  	          tiptext += '</td></tr><tr><td>{{_('produced by MO confirmed')|capfirst}}</td><td class="text-end">+ '
   	            + grid.formatNumber(d['producedMO_confirmed']);
   	        if (d['producedMO_proposed'])
-  	          tiptext += '</td></tr><tr><td>{{_('produced by MO proposed')|capfirst}}</td><td style="text-align:right">+ '
+  	          tiptext += '</td></tr><tr><td>{{_('produced by MO proposed')|capfirst}}</td><td class="text-end">+ '
   	            + grid.formatNumber(d['producedMO_proposed']);
             if (d['producedDO_confirmed'])
-  	          tiptext += '</td></tr><tr><td>{{_('produced by DO confirmed')|capfirst}}</td><td style="text-align:right">+ '
+  	          tiptext += '</td></tr><tr><td>{{_('produced by DO confirmed')|capfirst}}</td><td class="text-end">+ '
   	            + grid.formatNumber(d['producedDO_confirmed']);
             if (d['producedDO_proposed'])
-  	          tiptext += '</td></tr><tr><td>{{_('produced by DO proposed')|capfirst}}</td><td style="text-align:right">+ '
+  	          tiptext += '</td></tr><tr><td>{{_('produced by DO proposed')|capfirst}}</td><td class="text-end">+ '
   	            + grid.formatNumber(d['producedDO_proposed']);
   	        if (d['consumedMO_confirmed'])
-  	          tiptext += '</td></tr><tr><td>{{_('consumed by MO confirmed')|capfirst}}</td><td style="text-align:right">- '
+  	          tiptext += '</td></tr><tr><td>{{_('consumed by MO confirmed')|capfirst}}</td><td class="text-end">- '
   	            + grid.formatNumber(d['consumedMO_confirmed']);
   	        if (d['consumedMO_proposed'])
-  	          tiptext += '</td></tr><tr><td>{{_('consumed by MO proposed')|capfirst}}</td><td style="text-align:right">- '
+  	          tiptext += '</td></tr><tr><td>{{_('consumed by MO proposed')|capfirst}}</td><td class="text-end">- '
   	            + grid.formatNumber(d['consumedMO_proposed']);
   	        if (d['consumedSO'])
-  	          tiptext += '</td></tr><tr><td>{{_('consumed by SO')|capfirst}}</td><td style="text-align:right">- '
+  	          tiptext += '</td></tr><tr><td>{{_('consumed by SO')|capfirst}}</td><td class="text-end">- '
   	            + grid.formatNumber(d['consumedSO']);
   	        if (d['consumedFcst'])
-  	          tiptext += '</td></tr><tr><td>{{_('consumed by Fcst')|capfirst}}</td><td style="text-align:right">- '
+  	          tiptext += '</td></tr><tr><td>{{_('consumed by Fcst')|capfirst}}</td><td class="text-end">- '
   	            + grid.formatNumber(d['consumedFcst']);
   	        if (d['consumedDO_confirmed'])
-  	          tiptext += '</td></tr><tr><td>{{_('consumed by DO confirmed')|capfirst}}</td><td style="text-align:right">- '
+  	          tiptext += '</td></tr><tr><td>{{_('consumed by DO confirmed')|capfirst}}</td><td class="text-end">- '
   	            + grid.formatNumber(d['consumedDO_confirmed']);
   	        if (d['consumedDO_proposed'])
-  	          tiptext += '</td></tr><tr><td>{{_('consumed by DO proposed')|capfirst}}</td><td style="text-align:right">- '
+  	          tiptext += '</td></tr><tr><td>{{_('consumed by DO proposed')|capfirst}}</td><td class="text-end">- '
   	            + grid.formatNumber(d['consumedDO_proposed']);
-  	        tiptext += '</td></tr><tr><td>{{_('end inventory')|capfirst}}</td><td style="text-align:right">= '
+  	        tiptext += '</td></tr><tr><td>{{_('end inventory')|capfirst}}</td><td class="text-end">= '
   	          + grid.formatNumber(d['startinv']+d['produced']-d['consumed']);
   	        if (d['safetystock'])
-  	          tiptext += '</td></tr><tr><td>{{_('safety stock')|capfirst}}</td><td style="text-align:right">'
+  	          tiptext += '</td></tr><tr><td>{{_('safety stock')|capfirst}}</td><td class="text-end">'
   	            + grid.formatNumber(d['safetystock']);
   	        if (d['total_in_progress'])
-  	          tiptext += '</td></tr><tr><td>{{_('total in progress')|capfirst}}</td><td style="text-align:right">'
+  	          tiptext += '</td></tr><tr><td>{{_('total in progress')|capfirst}}</td><td class="text-end">'
   	            + grid.formatNumber(d['total_in_progress']);
   	        if (d['work_in_progress_mo'])
-  	          tiptext += '</td></tr><tr><td>{{_('work in progress MO')|capfirst}}</td><td style="text-align:right">'
+  	          tiptext += '</td></tr><tr><td>{{_('work in progress MO')|capfirst}}</td><td class="text-end">'
   	            + grid.formatNumber(d['work_in_progress_mo']);
   	        if (d['on_order_po'])
-  	          tiptext += '</td></tr><tr><td>{{_('on order PO')|capfirst}}</td><td style="text-align:right">'
+  	          tiptext += '</td></tr><tr><td>{{_('on order PO')|capfirst}}</td><td class="text-end">'
   	            + grid.formatNumber(d['on_order_po']);
   	        if (d['in_transit_do'])
-  	          tiptext += '</td></tr><tr><td>{{_('in transit DO')|capfirst}}</td><td style="text-align:right">'
+  	          tiptext += '</td></tr><tr><td>{{_('in transit DO')|capfirst}}</td><td class="text-end">'
   	            + grid.formatNumber(d['in_transit_do']);
             if (d['total_demand'])
-                tiptext += '</td></tr><tr><td>{{_('total demand')|capfirst}}</td><td style="text-align:right">'
+                tiptext += '</td></tr><tr><td>{{_('total demand')|capfirst}}</td><td class="text-end">'
                   + grid.formatNumber(d['total_demand']);
             if (d['total_backlog'])
-              tiptext += '</td></tr><tr><td>{{_('total backlog')|capfirst}}</td><td style="text-align:right">'
+              tiptext += '</td></tr><tr><td>{{_('total backlog')|capfirst}}</td><td class="text-end">'
                 + grid.formatNumber(d['total_backlog']);
 
             tiptext += '</td></tr></table>';

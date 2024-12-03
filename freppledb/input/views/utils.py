@@ -190,7 +190,7 @@ class OperationPlanMixin(GridReport):
     # Hack to allow variable height depending on the detail position
     variableheight = True
     hasTimeBuckets = True
-    hasTimeOnly = True
+    hasTimeOnly = False
 
     @classmethod
     def operationplanExtraBasequery(cls, query, request):
@@ -2496,10 +2496,10 @@ class OperationPlanDetail(View):
             case when d.history then json_build_object()
             else (
              select json_build_object(
-               'consumed_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumed_proposed', sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'produced_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'produced_proposed', sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end)
+               'consumed_confirmed', coalesce(sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end), 0),
+               'consumed_proposed', coalesce(sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end), 0),
+               'produced_confirmed', coalesce(sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end), 0),
+               'produced_proposed', coalesce(sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end), 0)
                )
              from operationplanmaterial opm
              inner join operationplan

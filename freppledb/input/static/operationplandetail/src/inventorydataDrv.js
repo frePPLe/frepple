@@ -40,7 +40,10 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
   function linkfunc(scope, elem, attrs) {
     var template = '<div class="card-header"><h5 class="card-title text-capitalize">' +
       gettextCatalog.getString("inventory") + '</h5></div>' +
-      '<div class="card-body"><table class="table table-sm table-hover table-borderless"><thead></thead></thead><tbody></tbody></table></div>';
+      '<div class="card-body"><div class="table-responsive">' +
+      '<table class="table table-sm table-hover table-borderless">' + 
+      '<thead class="text-nowrap"></thead><tbody></tbody></table>' +
+      '</div></div>';
 
     scope.$watchGroup(['operationplan.id', 'operationplan.inventoryreport.length'], function (newValue, oldValue) {
       // console.log(46, scope.operationplan);
@@ -53,18 +56,17 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
           columnHeaders = ['<tr><td></td>' ];
           rows = [
             // '<tr><td><b class="text-capitalize">' + gettextCatalog.getString("bucket") + '</b></td>',
-            '<tr><td><span class="text-capitalize">' + gettextCatalog.getString("start on-hand") + '</span></td>',
-            '<tr><td><span class="text-capitalize">' + gettextCatalog.getString("safety stock") + '</span></td>',
-            '<tr><td><span class="text-capitalize">' + gettextCatalog.getString("total consumed") + '</span></td>',
-            '<tr><td><span class="px-3 text-capitalize">' + gettextCatalog.getString("consumed proposed") + '</span></td>',
-            '<tr><td><span class="px-3 text-capitalize">' + gettextCatalog.getString("consumed confirmed") + '</span></td>',
-            '<tr><td><span class="text-capitalize">' + gettextCatalog.getString("total produced") + '</span></td>',
-            '<tr><td><span class="px-3 text-capitalize">' + gettextCatalog.getString("produced proposed") + '</span></td>',
-            '<tr><td><span class="px-3 text-capitalize">' + gettextCatalog.getString("produced confirmed") + '</span></td>',
-            '<tr><td><span class="text-capitalize">' + gettextCatalog.getString("end on-hand") + '</span></td>',
+            '<tr><td><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("start on-hand") + '</span></td>',
+            '<tr><td><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("safety stock") + '</span></td>',
+            '<tr><td><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("total consumed") + '</span></td>',
+            '<tr><td><span class="px-3 text-capitalize text-nowrap">' + gettextCatalog.getString("consumed proposed") + '</span></td>',
+            '<tr><td><span class="px-3 text-capitalize text-nowrap">' + gettextCatalog.getString("consumed confirmed") + '</span></td>',
+            '<tr><td><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("total produced") + '</span></td>',
+            '<tr><td><span class="px-3 text-capitalize text-nowrap">' + gettextCatalog.getString("produced proposed") + '</span></td>',
+            '<tr><td><span class="px-3 text-capitalize text-nowrap">' + gettextCatalog.getString("produced confirmed") + '</span></td>',
+            '<tr><td><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("end on-hand") + '</span></td>',
           ];
           angular.forEach(scope.operationplan.inventoryreport, function (inventoryData) {
-              // console.log(68, inventoryData);
             columnHeaders.push('<td id="' + inventoryData[0] +
               '" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip"' +
                 'data-bs-title="' + $filter('formatdate')(inventoryData[1]) + ' - ' + $filter('formatdate')(inventoryData[2])+'">' +
@@ -72,8 +74,7 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
             );
 
             for (const i in inventoryData.slice(4)) {
-              // console.log(72, rows[i], inventoryData.slice(4)[i]);
-              rows[i] += '<td>' + $filter('number')(inventoryData.slice(4)[i]) + '</td>';
+              rows[i] += '<td class="text-center">' + $filter('number')(inventoryData.slice(4)[i]) + '</td>';
             }
           });
           columnHeaders.push('</tr>');

@@ -371,6 +371,7 @@ class Command(BaseCommand):
                         os.makedirs(exportFolder)
 
                     try:
+                        filename = os.path.join(exportFolder, cfg.name)
                         if cfg.report:
                             # Export from report class (standard or custom)
 
@@ -439,13 +440,9 @@ class Command(BaseCommand):
 
                             # Write the report file
                             if cfg.name.lower().endswith(".gz"):
-                                datafile = gzip.open(
-                                    os.path.join(exportFolder, cfg.name), "wb"
-                                )
+                                datafile = gzip.open(filename, "wb")
                             else:
-                                datafile = open(
-                                    os.path.join(exportFolder, cfg.name), "wb"
-                                )
+                                datafile = open(filename, "wb")
                             if cfg.name.lower().endswith(".xlsx"):
                                 reportclass._generate_spreadsheet_data(
                                     request,
@@ -473,13 +470,9 @@ class Command(BaseCommand):
                         elif cfg.sql:
                             # Exporting using SQL
                             if cfg.name.lower().endswith(".csv.gz"):
-                                datafile = gzip.open(
-                                    os.path.join(exportFolder, cfg.name), "wb"
-                                )
+                                datafile = gzip.open(filename, "wb")
                             elif cfg.name.lower().endswith(".csv"):
-                                datafile = open(
-                                    os.path.join(exportFolder, cfg.name), "wb"
-                                )
+                                datafile = open(filename, "wb")
                             else:
                                 raise Exception(
                                     "Exports based on an SQL query can only be created in .csv or .csv.gz format"
@@ -507,23 +500,24 @@ class Command(BaseCommand):
                             raise Exception("Unknown export type for %s" % cfg.name)
                         datafile.close()
                         i += 1
+                        logger.info(
+                            f"Finished export of {cfg.name} ({os.stat(filename).st_size} bytes) in {timesince(starting)}"
+                        )
                     except (ImportError, AttributeError):
                         # The export configuration can refer to non-existing reports.
                         # For instance after an app is uninstalled.
                         errors += 1
                         logger.error(
-                            "Failed to export %s: Unknown report %s"
-                            % (cfg.name, cfg.report)
+                            f"Failed to export {cfg.name}: Unknown report {cfg.report}"
                         )
                     except Exception as e:
                         errors += 1
-                        logger.error("Failed to export %s: %s" % (cfg.name, e))
+                        logger.error(
+                            f"Failed to export {cfg.name} after {timesince(starting)}: {e}"
+                        )
                         if task:
                             task.message = "Failed to export %s" % cfg.name
 
-                    logger.info(
-                        "Finished export of %s in %s" % (cfg.name, timesince(starting))
-                    )
                     task.status = str(int(i / cnt * 100)) + "%"
                     task.save(using=self.database)
 

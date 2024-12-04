@@ -243,7 +243,7 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
                       '</td><td class="text-end">-&nbsp;',
                       $filter('number')(d['consumed_total']),
                       '</td></tr><tr><td class="text-capitalize pe-3 px-3">',
-                      gettextCatalog.getString('consumed_proposed'),
+                      gettextCatalog.getString('consumed proposed'),
                       '</td><td class="text-end">',
                       $filter('number')(d['consumed_proposed']),
                       '</td></tr><tr><td class="text-capitalize pe-3 px-3">',
@@ -305,9 +305,9 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
                 .attr('data-bucket', i)
                 .text(timebuckets[i][0])
                 .on("mouseenter", function (d) {
-                  const bucket = parseInt($(this).attr("data-bucket"));
-                  const tiptext = "&nbsp;" + timebuckets[i][1] + ' - ' + timebuckets[i][2] + "&nbsp;";
-                  graph.showTooltip(tiptext.replaceAll(" 00:00:00", ""));
+                  graph.showTooltip(
+                    $filter('formatdate')(timebuckets[i][1]) + ' - ' + $filter('formatdate')(timebuckets[i][2])
+                  );
                 })
                 .on("mouseleave", graph.hideTooltip)
                 .on("mousemove", graph.moveTooltip);

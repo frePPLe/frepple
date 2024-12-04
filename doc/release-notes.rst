@@ -34,6 +34,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 18: Keep the language selection of a user identical in odoo and frepple.
   | Displaying both user interfaces in a different language isn't very nice, isn't it?
 
+- | 18: Synchronize products tags from odoo into the item category in frepple.
+
 .. rubric:: Integration
 
 - | The API for uploading data files to the "import data files" task has extra URLs for

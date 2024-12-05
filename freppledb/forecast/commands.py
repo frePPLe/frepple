@@ -1098,6 +1098,7 @@ def createForecastSolver(db, task=None):
     horizon_future = None
     calendar = None
     loglevel = None
+    default_forecast_parameters_copy = {}
 
     # Detect if some demand history is missing in the last few buckets
     # undocumented parameter to force the forecast current date

@@ -1281,6 +1281,9 @@ def createForecastSolver(db, task=None):
                 logger.warning(
                     "Bucket dates table doesn't cover the complete forecasting horizon"
                 )
+        else:
+            logger.warning("Parameter forecast.calendar or forecast.horizon_future not configured.")
+            return None
 
         return frepple.solver_forecast(**kw)
     except Exception as e:

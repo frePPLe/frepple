@@ -41,7 +41,7 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
     var template = '<div class="card-header"><h5 class="card-title text-capitalize">' +
       gettextCatalog.getString("inventory") + '</h5></div>' +
       '<div class="card-body"><div class="table-responsive">' +
-      '<table class="table table-sm table-hover table-borderless">' + 
+      '<table class="table table-sm table-hover table-borderless">' +
       '<thead class="text-nowrap"></thead><tbody></tbody></table>' +
       '</div></div>';
 
@@ -53,7 +53,7 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('inventoryreport')) {
-          columnHeaders = ['<tr><td></td>' ];
+          columnHeaders = ['<tr class="text-center"><td></td>' ];
           rows = [
             // '<tr><td><b class="text-capitalize">' + gettextCatalog.getString("bucket") + '</b></td>',
             '<tr><td><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("start on-hand") + '</span></td>',
@@ -70,7 +70,7 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
             columnHeaders.push('<td id="' + inventoryData[0] +
               '" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip"' +
                 'data-bs-title="' + $filter('formatdate')(inventoryData[1]) + ' - ' + $filter('formatdate')(inventoryData[2])+'">' +
-                '<b class="text-capitalize text-center">' + inventoryData[0] + '</b></td>'
+                '<b class="text-capitalize">' + inventoryData[0] + '</b></td>'
             );
 
             for (const i in inventoryData.slice(4)) {

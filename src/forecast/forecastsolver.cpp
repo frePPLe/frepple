@@ -319,7 +319,7 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
           i.getType() != *ForecastBucket::metadata &&
           i.getStatus() != Demand::STATUS_INQUIRY &&
           i.getStatus() != Demand::STATUS_CANCELED &&
-          (cluster == -1 || i.getCluster() != cluster))
+          (cluster == -1 || i.getCluster() == cluster))
         l.insert(&i);
 
     // Forecast netting loop

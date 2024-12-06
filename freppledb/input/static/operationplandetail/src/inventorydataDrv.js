@@ -67,7 +67,7 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
             '<tr><td><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("end on-hand") + '</span></td>',
           ];
           angular.forEach(scope.operationplan.inventoryreport, function (inventoryData) {
-            columnHeaders.push('<td id="' + inventoryData[0] +
+            columnHeaders.push('<td id="inventorydata' + inventoryData[0].replace(" ", "") +
               '" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip"' +
                 'data-bs-title="' + $filter('formatdate')(inventoryData[1]) + ' - ' + $filter('formatdate')(inventoryData[2])+'">' +
                 '<b class="text-capitalize">' + inventoryData[0] + '</b></td>'
@@ -84,8 +84,10 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
 
       angular.element(document).find('#attributes-inventorydata thead').append(columnHeaders.join(""));
       angular.element(document).find('#attributes-inventorydata tbody').append(rows.join(""));
-      window.tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-      window.tooltipList = [...window.tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+      let widgetTooltipTriggerList = document.querySelectorAll('#attributes-inventorydata [data-bs-toggle="tooltip"]');
+
+      let widgetTooltipList = [...widgetTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {container: 'body', offset: '[0,5]'}));
     }); //watch end
 
   } //link end

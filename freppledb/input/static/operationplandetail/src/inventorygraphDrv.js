@@ -323,8 +323,8 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
             }
           }
 
-          window.tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-          window.tooltipList = [...window.tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+          let widgetTooltipTriggerList = document.querySelectorAll('#attributegraph [data-bs-toggle="tooltip"]');
+          let widgetTooltipList = [...widgetTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
         }
       }
     })//watch end

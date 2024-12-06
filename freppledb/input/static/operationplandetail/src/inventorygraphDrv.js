@@ -49,14 +49,13 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
 
     scope.$watchGroup(['operationplan.id', 'operationplan.inventoryreport.length'], function (newValue, oldValue) {
       angular.element(document).find('#attributes-inventorygraph').empty().append(template.join("\n"));
-      let rows = ['<tr><td>', gettextCatalog.getString('no inventory information'), '</td></tr>'];
       let domain_x = [];
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('inventoryreport')) {
           const timebuckets = scope.operationplan.inventoryreport;
 
-          let margin = {top: 10, right: 10, bottom: 0, left: 10};
+          let margin = {top: 10, right: 10, bottom: 0, left: 40};
           let width = Math.max($("#attributes-operationplan .card-body").width() - margin.left - margin.right, 0);
           let height = $("#attributes-operationplan .card-body").height() - margin.top - margin.bottom;
 
@@ -267,6 +266,15 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
                 .on("mousemove", graph.moveTooltip)
             })
           
+          // Draw axis
+          var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .tickFormat(d3.format("s"));          
+          svg.append("g")
+            .attr("class", "miniaxis")
+            .call(graph.miniAxis.bind(yAxis));
+
           // Draw startoh line
           var line = d3.svg.line()
             .x(function(d) { return x(d['bucket']) + x_width / 2; })

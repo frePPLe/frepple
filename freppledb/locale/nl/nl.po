@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2023-10-24 09:59+0200\n"
+"PO-Revision-Date: 2024-12-09 14:36+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: common/static/js/frepple.js:201
 msgid "Connection failed"
@@ -3701,7 +3701,7 @@ msgstr "subcategorie"
 #: forecast/models.py:71
 #: inventoryplanning/templates/inventoryplanning/drp.html:2724
 msgid "Forecast method"
-msgstr "Forecast methode"
+msgstr "Forecastmethode"
 
 #: forecast/models.py:77
 msgid "Method used to generate a base forecast"
@@ -3746,7 +3746,7 @@ msgstr "geschatte forecast error"
 
 #: forecast/models.py:111 forecast/views.py:159
 msgid "calculated forecast method"
-msgstr "gebruikte forecast methode"
+msgstr "gebruikte forecastmethode"
 
 #: forecast/models.py:114
 msgid "calculated standard deviation"
@@ -4147,7 +4147,7 @@ msgstr "forecast methode"
 #: forecast/views.py:575
 #: inventoryplanning/templates/inventoryplanning/drp.html:2742
 msgid "selected forecast method"
-msgstr "geselecteerde forecast methode"
+msgstr "geselecteerde forecastmethode"
 
 #: forecast/views.py:1125 forecast/views.py:1147 input/models/demand.py:158
 #: input/templates/admin/input/customer/change_form.html:12
@@ -7449,7 +7449,7 @@ msgstr "Selecteer panel sequentie"
 
 #: freppledb/forecast/static/forecast/forecast.html:417
 msgid "Selected forecast method"
-msgstr "Geselecteerde forecast methode"
+msgstr "Geselecteerde forecastmethode"
 
 #: freppledb/forecast/static/forecast/forecast.html:156
 msgid "Simulate changes without saving"

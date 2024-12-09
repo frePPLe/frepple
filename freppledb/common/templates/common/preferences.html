@@ -115,7 +115,7 @@
     <div class="row pb-3 align-items-center">
       <div class="col-3" style="max-width:200px; text-align: right">
         <label class="col-form-label" for="id_theme" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
-          data-bs-title="Choose a styling theme.<br>Note that this setting can be overridden per scenario.">
+          data-bs-title={% trans 'Choose a styling theme.<br>Note that this setting can be overridden per scenario.' %}">
           {% trans 'theme'|capfirst%}
           <span class="fa fa-question-circle"></span>
         </label>
@@ -189,7 +189,7 @@
     <div class="row pb-3">
       <div class="col-3" style="max-width:200px; text-align: right">
         <label class="col-form-label" for="id_cur_password" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="right"
-          data-bs-title="Change your password.<br>You can also do this on the login page.">
+          data-bs-title="{% trans "Change your password.<br>You can also do this on the login page." %}">
           {% trans 'Change password'|capfirst%}
           <span class="fa fa-question-circle"></span>
         </label>

@@ -825,8 +825,9 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
         } while (--loopcounter > 0);
       }
       if (loopcounter <= 0)
-        logger << indentlevel << "  Warning: Hitting the max number of retries"
-               << endl;
+        logger << indentlevel
+               << "  Warning: Hitting the max number of retries replenishing "
+               << b << endl;
       if (b->getIPFlag())
         data->hitMaxEarly = prev_hitMaxEarly;
       else if (!data->state->a_qty && data->hitMaxEarly == Duration(-1L))

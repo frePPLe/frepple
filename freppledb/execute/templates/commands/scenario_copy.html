@@ -41,13 +41,13 @@
     {% endif %}
   </tr>
   {% for j in scenarios %}
-  {% if j.name in free_scenarios or j.name in active_scenarios %}
+  {% if j.status == "Free" or j.name in active_scenarios %}
   <tr>
     <td style="padding:5px">
       <strong>{{j.name|capfirst}}</strong>
     </td>
     <td style="padding:5px 10px 5px 10px">
-       {% if j.name != DEFAULT_DB_ALIAS and j.name in free_scenarios and perms.common.copy_scenario %}
+       {% if j.name != DEFAULT_DB_ALIAS and j.status == "Free" and perms.common.copy_scenario %}
        <div class="btn-group btn-block">
        <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
          {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
@@ -62,18 +62,16 @@
        </ul>
        </div>
        {% elif j.name != DEFAULT_DB_ALIAS and j.status == 'In use'%}
-       {% if j.name in release_perm or j.name in promote_perm  %}
+       {% if j.name in active_scenarios  %}
        <div class="btn-group btn-block">
        <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
          {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
        </button>
        <ul class="dropdown-menu" role="menu">
-         {% if j.name in release_perm %}
          <li><a class="dropdown-item scenariorelease" href="#" data-bs-target="{{ j.name }}">
          {% trans "Release: You will lose ALL data in this scenario!" %}
          </a></li>
-         {% endif %}
-         {% if j.name in promote_perm and current_database == j.name %}
+         {% if current_database == j.name %}
          <li><a class="dropdown-item scenariopromote" href="#" data-source="{{ j.name }}" data-bs-target="{{ DEFAULT_DB_ALIAS }}" >
          {% trans "Promote: All data will be copied to Production" %}
          </a></li>
@@ -83,14 +81,10 @@
        {% endif %}
        {% endif %}
     </td>
-    {% if j.name in free_scenarios %}
-    <td style="padding:5px 10px 5px 10px; text-align: center">{% trans 'Free' %}</td>
-    {% else %}
     <td style="padding:5px 10px 5px 10px; text-align: center">{% trans j.status|lower|capfirst %}</td>
-    {% endif %}
     <td style="padding:5px 10px 5px 10px">
       <input class="form-control scenariolabel" type="text" data-bs-target="{{ j.name }}"
-      value="{% if j.description %}{{j.description|escape}}{% else %}{{ j.name }}{% endif %}">
+      value="{{j.tag|escape}}">
     </td>
     {% if THEMES|length > 1 %}
     <td style="padding:5px 10px 5px 10px; text-align: center">
@@ -124,12 +118,14 @@ $(".scenariorelease").on("click", function(event) {
   $.ajax({
    url: target + "/execute/launch/scenario_copy/",
    type: 'POST',
-   data: {release: 1, database:releasedScenario},
-   complete: function() {
+   data: {release: 1, database:releasedScenario},   
+   success: function() {
      $("#scenariotoast span").text("Launched releasing task");
      bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0]).show();
-     if (target == url_prefix) window.location.href = "/"; }
-   });
+     if (target == url_prefix) window.location.href = "/"; },
+   fail: function() {
+    console.log("FAILED");
+   }});   
 });
 $(".scenariopromote").on("click", function(event) {
   event.preventDefault();
@@ -145,6 +141,9 @@ $(".scenariopromote").on("click", function(event) {
    success: function() {
      $("#scenariotoast span").text("Launched promotion task");
      bootstrap.Toast.getOrCreateInstance($("#scenariotoast")[0]).show();
+   },
+   fail: function() {
+    console.log("FAILED");
    }});
 });
 $(".scenariocopy").on("click", function(event) {

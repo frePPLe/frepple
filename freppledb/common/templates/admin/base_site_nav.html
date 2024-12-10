@@ -127,13 +127,11 @@ $(function() {
           			   role="button" aria-haspopup="true" aria-expanded="false" id="database" name="{{ request.scenario.name }}">
 					<span data-bs-toggle="tooltip" data-bs-delay='{"show":2000, "hide":4000}' data-bs-placement="left"
 					  data-bs-title="{% trans "Select a what-if scenario.<br>Click <a class='text-decoration-underline' href='/execute/#scenario_copy'>here</a> to manage scenarios." %}"
-					  data-bs-html="true">
-						{{ request.scenario.description }}
-					</span>
+					  data-bs-html="true">{{ request.scenario.tag }}</span>
 					</a>
 					<ul class="dropdown-menu dropdown-menu-end">
 					{% for sc in user.scenarios|sortList %}<li>
-					  <a class="dropdown-item" data-database="{{ sc.name }}" onclick="selectDatabase(event.target)">{{ sc.description }}
+					  <a class="dropdown-item" data-database="{{ sc.name }}" onclick="selectDatabase(event.target)">{{ sc.tag }}
 					  {% if sc.help_url %}
 					  <span onclick="window.open('{{sc.help_url|safe}}'); event.stopPropagation()" style="float:right" class="fa fa-question-circle"></span>
 					  {% endif %}</a>

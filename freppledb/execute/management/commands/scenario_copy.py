@@ -581,16 +581,25 @@ class Command(BaseCommand):
             #  b) all active superusers from the source schema
             # unless it's a promotion
             if destination != DEFAULT_DB_ALIAS:
-                User.objects.using(destination).filter(
-                    is_superuser=True, is_active=True
-                ).update(is_active=True)
-                User.objects.using(destination).filter(is_superuser=False).update(
-                    is_active=False
-                )
-                if user:
-                    User.objects.using(destination).filter(
-                        username=user.username
-                    ).update(is_active=True)
+                for u in User.objects.using(source).filter(is_superuser=True):
+                    if not u.databases or destination not in u.databases:
+                        if u.databases:
+                            u.databases.append(destination)
+                        else:
+                            u.databases = [destination]
+                        u.save(using=DEFAULT_DB_ALIAS, update_fields=["databases"])
+                        User.synchronize(user=u.pk)
+                if (
+                    user
+                    and not user.is_superuser
+                    and (not user.databases or destination not in user.databases)
+                ):
+                    if u.databases:
+                        user.databases.append(destination)
+                    else:
+                        user.databases = [destination]
+                    user.save(using=DEFAULT_DB_ALIAS, update_fields=["databases"])
+                    User.synchronize(user=user.pk)
 
             # Delete data files present in the scenario folders
             if destination != DEFAULT_DB_ALIAS and settings.DATABASES[destination][
@@ -668,10 +677,7 @@ class Command(BaseCommand):
                 else:
                     destinationscenario.status = "Free"
                 destinationscenario.save(
-                    update_fields=[
-                        "status",
-                    ],
-                    using=DEFAULT_DB_ALIAS,
+                    update_fields=["status"], using=DEFAULT_DB_ALIAS
                 )
             raise e
 
@@ -691,54 +697,30 @@ class Command(BaseCommand):
         # Synchronize the scenario table with the settings
         Scenario.syncWithSettings()
 
-        scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS)
-        if scenarios.count() <= 1:
+        # Collect scenario status
+        scenarios = []
+        active_scenarios = []
+        free_scenarios = 0
+        for i in Scenario.objects.using(DEFAULT_DB_ALIAS):
+            scenarios.append(i)
+            if i.name in (request.user.databases or []):
+                active_scenarios.append(i.name)
+            if i.status == "Free":
+                free_scenarios += 1
+
+        # Deactivate this task when either:
+        # - There is only 1 scenario
+        # - All scenarios are in use and this user is active in only a single one
+        if len(scenarios) <= 1 or (not free_scenarios and len(active_scenarios) == 1):
             return None
 
-        release_perm = []
-        copy_perm = []
-        promote_perm = []
-        active_scenarios = []
-        free_scenarios = []
-        in_use_scenarios = []
+        # Look for dump files in the log folder of production
         dumps = []
-
-        default_db_not_empty = Item.objects.using(DEFAULT_DB_ALIAS).count() > 0
-
-        # look for dump files in the log folder of production
         for f in sorted(os.listdir(settings.FREPPLE_LOGDIR)):
             if os.path.isfile(
                 os.path.join(settings.FREPPLE_LOGDIR, f)
             ) and f.lower().endswith(".dump"):
                 dumps.append(f)
-
-        for scenario in scenarios:
-            try:
-                user = User.objects.using(scenario.name).get(
-                    username=request.user.username
-                )
-
-                if scenario.status != "Free":
-                    in_use_scenarios.append(scenario.name)
-                else:
-                    free_scenarios.append(scenario.name)
-
-                if user.has_perm("common.release_scenario"):
-                    release_perm.append(scenario.name)
-                if default_db_not_empty and user.has_perm("common.promote_scenario"):
-                    promote_perm.append(scenario.name)
-                if user.has_perm("common.copy_scenario"):
-                    copy_perm.append(scenario.name)
-                if user.is_active:
-                    active_scenarios.append(scenario.name)
-            except Exception:
-                # database schema is not properly created, scenario is free
-                free_scenarios.append(scenario.name)
-                active_scenarios.append(scenario.name)
-
-        # If all scenarios are in use and user is inactive in all of them then he won't see the scenario management menu
-        if len(free_scenarios) == 0 and len(active_scenarios) == 1:
-            return None
 
         return render_to_string(
             "commands/scenario_copy.html",
@@ -746,11 +728,7 @@ class Command(BaseCommand):
                 "scenarios": scenarios,
                 "DEFAULT_DB_ALIAS": DEFAULT_DB_ALIAS,
                 "current_database": request.database,
-                "release_perm": release_perm,
-                "copy_perm": copy_perm,
-                "promote_perm": promote_perm,
                 "active_scenarios": active_scenarios,
-                "free_scenarios": free_scenarios,
                 "dumps": dumps,
                 "THEMES": settings.THEMES,
             },

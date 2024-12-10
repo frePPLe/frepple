@@ -35,11 +35,7 @@ from freppledb.common.models import User
 
 
 class CustomAuthenticationBackend(AuthenticationBackend):
-    def get_user(self, user_id):
-        dflt = super().get_user(user_id)
-        if dflt:
-            MultiDBBackend.getScenarios(dflt)
-        return dflt
+    pass
 
 
 class CustomAdapter(DefaultAccountAdapter):

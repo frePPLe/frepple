@@ -44,18 +44,12 @@ ADMINS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = "%@mzit!i8b*$zc&6oev96=RANDOMSTRING"
 
-# FrePPLe only supports the postgresql database.
-# Create additional entries in this dictionary to define scenario schemas.
-
+# Configuration of the frepple database
 DATABASES = {
-    "default": {
+    "default" if i == 0 else f"scenario{i}": {
         "ENGINE": "freppledb.common.postgresql",
         # Database name
-        "NAME": (
-            "%s0" % os.environ["POSTGRES_DBNAME"]
-            if "POSTGRES_DBNAME" in os.environ
-            else "frepple"
-        ),
+        "NAME": f"{os.environ.get("POSTGRES_DBNAME","frepple")}{i}",
         # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
@@ -75,19 +69,19 @@ DATABASES = {
         "CONN_MAX_AGE": 600,
         "CONN_HEALTH_CHECKS": True,
         "TEST": {
-            "NAME": (
-                "test_%s0" % os.environ["POSTGRES_DBNAME"]
-                if "POSTGRES_DBNAME" in os.environ
-                else "test_frepple"
-            ),  # Database name used when running the test suite.
-            "FREPPLE_PORT": "127.0.0.1:9002",
+            # Database name used when running the test suite.
+            "NAME": (f"{os.environ.get("POSTGRES_DBNAME","frepple")}_test{i}"),
+            # Port for web service when running the test suite
+            "FREPPLE_PORT": f"127.0.0.1:{i+9002}",
         },
         # The FILEUPLOADFOLDER setting is used by the "import data files" task.
         # By default all scenario databases use the same data folder on the server.
         # By configuring this setting you can configure a dedicated data folder for each
         # scenario database.
         "FILEUPLOADFOLDER": os.path.normpath(
-            os.path.join(FREPPLE_LOGDIR, "data", "default")
+            os.path.join(
+                FREPPLE_LOGDIR, "data", "default" if i == 0 else f"scenario{i}"
+            )
         ),
         # Role name for executing custom reports and processing sql data files.
         # Make sure this role has properly restricted permissions!
@@ -95,159 +89,12 @@ DATABASES = {
         # permissions of the user specified above. Which can be handy, but is not secure.
         "SQL_ROLE": "report_role",
         "SECRET_WEBTOKEN_KEY": SECRET_KEY,
-        "FREPPLE_PORT": "127.0.0.1:8002",
-    },
-    "scenario1": {
-        "ENGINE": "freppledb.common.postgresql",
-        # Database name
-        "NAME": (
-            "%s1" % os.environ["POSTGRES_DBNAME"]
-            if "POSTGRES_DBNAME" in os.environ
-            else "scenario1"
-        ),
-        # Role name when using md5 authentication.
-        # Leave as an empty string when using peer or
-        # ident authencation.
-        "USER": os.environ.get("POSTGRES_USER", "frepple"),
-        # Role password when using md5 authentication.
-        # Leave as an empty string when using peer or
-        # ident authencation.
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "frepple"),
-        # When using TCP sockets specify the hostname,
-        # the ip4 address or the ip6 address here.
-        # Leave as an empty string to use Unix domain
-        # socket ("local" lines in pg_hba.conf).
-        "HOST": os.environ.get("POSTGRES_HOST", ""),
-        # Specify the port number when using a TCP socket.
-        "PORT": os.environ.get("POSTGRES_PORT", ""),
-        # Specify the port number when using a TCP socket.
-        "PORT": "",
-        "OPTIONS": {},
-        "CONN_MAX_AGE": 600,
-        "CONN_HEALTH_CHECKS": True,
-        "TEST": {
-            "NAME": (
-                "test_%s1" % os.environ["POSTGRES_DBNAME"]
-                if "POSTGRES_DBNAME" in os.environ
-                else "test_scenario1"
-            ),  # Database name used when running the test suite.
-            "FREPPLE_PORT": "127.0.0.1:9003",
-        },
-        # The FILEUPLOADFOLDER setting is used by the "import data files" task.
-        # By default all scenario databases use the same data folder on the server.
-        # By configuring this setting you can configure a dedicated data folder for each
-        # scenario database.
-        "FILEUPLOADFOLDER": os.path.normpath(
-            os.path.join(FREPPLE_LOGDIR, "data", "scenario1")
-        ),
-        # Role name for executing custom reports and processing sql data files.
-        # Make sure this role has properly restricted permissions!
-        # When left unspecified, SQL statements run with the full read-write
-        # permissions of the user specified above. Which can be handy, but is not secure.
-        "SQL_ROLE": "report_role",
-        "SECRET_WEBTOKEN_KEY": SECRET_KEY,
-        "FREPPLE_PORT": "127.0.0.1:8003",
-    },
-    "scenario2": {
-        "ENGINE": "freppledb.common.postgresql",
-        # Database name
-        "NAME": (
-            "%s2" % os.environ["POSTGRES_DBNAME"]
-            if "POSTGRES_DBNAME" in os.environ
-            else "scenario2"
-        ),
-        # Role name when using md5 authentication.
-        # Leave as an empty string when using peer or
-        # ident authencation.
-        "USER": os.environ.get("POSTGRES_USER", "frepple"),
-        # Role password when using md5 authentication.
-        # Leave as an empty string when using peer or
-        # ident authencation.
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "frepple"),
-        # When using TCP sockets specify the hostname,
-        # the ip4 address or the ip6 address here.
-        # Leave as an empty string to use Unix domain
-        # socket ("local" lines in pg_hba.conf).
-        "HOST": os.environ.get("POSTGRES_HOST", ""),
-        # Specify the port number when using a TCP socket.
-        "PORT": os.environ.get("POSTGRES_PORT", ""),
-        "OPTIONS": {},
-        "CONN_MAX_AGE": 600,
-        "CONN_HEALTH_CHECKS": True,
-        "TEST": {
-            "NAME": (
-                "test_%s2" % os.environ["POSTGRES_DBNAME"]
-                if "POSTGRES_DBNAME" in os.environ
-                else "test_scenario2"
-            ),  # Database name used when running the test suite.
-            "FREPPLE_PORT": "127.0.0.1:9004",
-        },
-        # The FILEUPLOADFOLDER setting is used by the "import data files" task.
-        # By default all scenario databases use the same data folder on the server.
-        # By configuring this setting you can configure a dedicated data folder for each
-        # scenario database.
-        "FILEUPLOADFOLDER": os.path.normpath(
-            os.path.join(FREPPLE_LOGDIR, "data", "scenario2")
-        ),
-        # Role name for executing custom reports and processing sql data files.
-        # Make sure this role has properly restricted permissions!
-        # When left unspecified, SQL statements run with the full read-write
-        # permissions of the user specified above. Which can be handy, but is not secure.
-        "SQL_ROLE": "report_role",
-        "SECRET_WEBTOKEN_KEY": SECRET_KEY,
-        "FREPPLE_PORT": "127.0.0.1:8004",
-    },
-    "scenario3": {
-        "ENGINE": "freppledb.common.postgresql",
-        # Database name
-        "NAME": (
-            "%s3" % os.environ["POSTGRES_DBNAME"]
-            if "POSTGRES_DBNAME" in os.environ
-            else "scenario3"
-        ),
-        # Role name when using md5 authentication.
-        # Leave as an empty string when using peer or
-        # ident authencation.
-        "USER": os.environ.get("POSTGRES_USER", "frepple"),
-        # Role password when using md5 authentication.
-        # Leave as an empty string when using peer or
-        # ident authencation.
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "frepple"),
-        # When using TCP sockets specify the hostname,
-        # the ip4 address or the ip6 address here.
-        # Leave as an empty string to use Unix domain
-        # socket ("local" lines in pg_hba.conf).
-        "HOST": os.environ.get("POSTGRES_HOST", ""),
-        # Specify the port number when using a TCP socket.
-        "PORT": os.environ.get("POSTGRES_PORT", ""),
-        # Specify the port number when using a TCP socket.
-        "PORT": "",
-        "OPTIONS": {},
-        "CONN_MAX_AGE": 600,
-        "CONN_HEALTH_CHECKS": True,
-        "TEST": {
-            "NAME": (
-                "test_%s3" % os.environ["POSTGRES_DBNAME"]
-                if "POSTGRES_DBNAME" in os.environ
-                else "test_scenario3"
-            ),  # Database name used when running the test suite.
-            "FREPPLE_PORT": "127.0.0.1:9005",
-        },
-        # The FILEUPLOADFOLDER setting is used by the "import data files" task.
-        # By default all scenario databases use the same data folder on the server.
-        # By configuring this setting you can configure a dedicated data folder for each
-        # scenario database.
-        "FILEUPLOADFOLDER": os.path.normpath(
-            os.path.join(FREPPLE_LOGDIR, "data", "scenario3")
-        ),
-        # Role name for executing custom reports and processing sql data files.
-        # Make sure this role has properly restricted permissions!
-        # When left unspecified, SQL statements run with the full read-write
-        # permissions of the user specified above. Which can be handy, but is not secure.
-        "SQL_ROLE": "report_role",
-        "SECRET_WEBTOKEN_KEY": SECRET_KEY,
-        "FREPPLE_PORT": "127.0.0.1:8005",
-    },
+        # Port for the frepple web service
+        "FREPPLE_PORT": f"127.0.0.1:{i+8002}",
+    }
+    # Adjust the range to include extra scenarios in the list.
+    # When changing this, your apache configuration file also needs a matching adjustment. 
+    for i in range(3)
 }
 
 # Google analytics code to report usage statistics to.
@@ -567,8 +414,6 @@ MIDDLEWARE = (
     # Uncomment the next line to only allow a list of IP addresses
     # to access the application (see variable ALLOWED_IPs) below
     # "freppledb.common.middleware.AllowedIpMiddleware",
-    # Optional: The following middleware allows authentication with HTTP headers
-    "freppledb.common.middleware.HTTPAuthenticationMiddleware",
     "freppledb.common.middleware.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

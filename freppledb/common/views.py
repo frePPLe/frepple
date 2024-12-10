@@ -642,6 +642,11 @@ class UserList(GridReport):
     help_url = "user-interface/getting-around/user-permissions-and-roles.html"
     canDuplicate = False
 
+    @classmethod
+    def initialize(reportclass, request):
+        if request.database != DEFAULT_DB_ALIAS:
+            User.synchronize(database=request.database)
+
     rows = (
         GridFieldInteger(
             "id",

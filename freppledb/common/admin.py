@@ -22,6 +22,7 @@
 #
 
 from django import forms
+from django.db import DEFAULT_DB_ALIAS
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
@@ -73,6 +74,12 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
             "view": "admin:common_user_comment",
         },
     ]
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        if request.database != DEFAULT_DB_ALIAS:
+            # Copy the lastlogin field from the main scenario
+            User.synchronize(user=object_id, database=request.database)
+        return super().change_view(request, object_id, form_url, extra_context)
 
     def get_readonly_fields(self, request, obj=None):
         if obj:

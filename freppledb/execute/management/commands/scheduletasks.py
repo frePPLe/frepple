@@ -104,6 +104,7 @@ class TaskScheduler:
                         "time": t.next_run,
                     }
                     self.sched[db.name]["timer"].start()
+            connections.close_all()
 
     @staticmethod
     def _tasklauncher(database=DEFAULT_DB_ALIAS):

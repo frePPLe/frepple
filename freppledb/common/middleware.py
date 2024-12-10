@@ -27,6 +27,7 @@ import ipaddress
 import jwt
 import re
 import threading
+from warnings import warn
 
 from django.conf import settings
 from django.contrib import auth, messages
@@ -35,7 +36,7 @@ from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages import info
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
-from django.db import connection, DEFAULT_DB_ALIAS, close_old_connections
+from django.db import connection, connections, DEFAULT_DB_ALIAS, close_old_connections
 from django.db.models import Q
 from django.http import HttpResponseNotFound
 from django.http.response import (
@@ -61,86 +62,13 @@ _thread_locals = threading.local()
 
 class HTTPAuthenticationMiddleware:
     def __init__(self, get_response):
-        # One-time initialisation
+        warn(
+            "The HTTPAuthenticationMiddleware class is deprecated. You can safely remove it from your djangosettings.py file without loss of functionality",
+            DeprecationWarning,
+        )
         self.get_response = get_response
 
     def __call__(self, request):
-        auth_header = request.META.get("HTTP_AUTHORIZATION", None)
-        webtoken = request.GET.get("webtoken", None)
-        if auth_header or webtoken:
-            try:
-                if auth_header:
-                    auth = auth_header.split()
-                    authmethod = auth[0].lower()
-                else:
-                    authmethod = None
-                if authmethod == "basic":
-                    # Basic authentication
-                    auth = base64.b64decode(auth[1]).decode("iso-8859-1").split(":", 1)
-                    user = authenticate(username=auth[0], password=auth[1])
-                    if user and user.is_active:
-                        # Active user
-                        request.api = True  # TODO I think this is no longer used
-                        login(request, user)
-                        request.user = user
-                elif authmethod == "bearer" or webtoken:
-                    # JWT webtoken authentication
-                    decoded = None
-                    for secret in (
-                        getattr(settings, "AUTH_SECRET_KEY", None),
-                        settings.DATABASES[request.database].get(
-                            "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
-                        ),
-                    ):
-                        if secret:
-                            try:
-                                decoded = jwt.decode(
-                                    webtoken or auth[1],
-                                    secret,
-                                    algorithms=["HS256"],
-                                )
-                            except jwt.exceptions.InvalidTokenError:
-                                pass
-                    if not decoded:
-                        logger.error("Missing or invalid webtoken")
-                        return HttpResponseForbidden("Missing or invalid webtoken")
-                    try:
-                        if "user" in decoded:
-                            user = User.objects.get(username=decoded["user"])
-                        elif "email" in decoded:
-                            user = User.objects.get(email=decoded["email"])
-                        else:
-                            logger.error("No user or email in webtoken")
-                            return HttpResponseForbidden("No user or email in webtoken")
-                    except User.DoesNotExist:
-                        if getattr(settings, "SOCIALACCOUNT_AUTO_SIGNUP", True):
-                            # Autocreate new user
-                            user_args = {}
-                            if "user" in decoded:
-                                user_args["username"] = decoded["user"]
-                                user_args["email"] = decoded["user"]
-                            if "email" in decoded:
-                                user_args["email"] = decoded["email"]
-                            user = User.objects.create_user(**user_args)
-                            user.save(using=request.database)
-                        else:
-                            logger.error("Invalid user in webtoken")
-                            messages.add_message(
-                                request, messages.ERROR, "Unknown user"
-                            )
-                            return HttpResponseRedirect("/data/login/")
-                    user.backend = settings.AUTHENTICATION_BACKENDS[0]
-                    login(request, user)
-                    MultiDBBackend.getScenarios(user)
-                    request.user = user
-                    if "navbar" in decoded:
-                        request.session["navbar"] = decoded["navbar"] == True
-                    if decoded.get("xframe_options_exempt", True):
-                        request.session["xframe_options_exempt"] = True
-            except Exception as e:
-                logger.warning(
-                    "silently ignoring exception in http authentication: %s" % e
-                )
         response = self.get_response(request)
         return response
 
@@ -246,6 +174,91 @@ class MultiDBMiddleware:
         # Make request information available throughout the application
         setattr(_thread_locals, "request", request)
 
+        # Authentication through the header
+        auth_header = request.META.get("HTTP_AUTHORIZATION", None)
+        webtoken = request.GET.get("webtoken", None)
+        if auth_header or webtoken:
+            try:
+                if auth_header:
+                    auth_header_split = auth_header.split()
+                    authmethod = auth_header_split[0].lower()
+                else:
+                    authmethod = None
+                if authmethod == "basic":
+                    # Basic authentication
+                    auth_header_split = (
+                        base64.b64decode(auth_header_split[1])
+                        .decode("iso-8859-1")
+                        .split(":", 1)
+                    )
+                    user = authenticate(
+                        username=auth_header_split[0], password=auth_header_split[1]
+                    )
+                    if user and user.is_active:
+                        # Active user
+                        request.api = True  # TODO I think this is no longer used
+                        login(request, user)
+                        request.user = user
+                elif authmethod == "bearer" or webtoken:
+                    # JWT webtoken authentication
+                    decoded = None
+                    for secret in (
+                        getattr(settings, "AUTH_SECRET_KEY", None),
+                        settings.DATABASES[request.database].get(
+                            "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
+                        ),
+                    ):
+                        if secret:
+                            try:
+                                decoded = jwt.decode(
+                                    webtoken or auth_header_split[1],
+                                    secret,
+                                    algorithms=["HS256"],
+                                )
+                            except jwt.exceptions.InvalidTokenError:
+                                pass
+                    if not decoded:
+                        logger.error("Missing or invalid webtoken")
+                        return HttpResponseForbidden("Missing or invalid webtoken")
+                    try:
+                        if "user" in decoded:
+                            user = User.objects.get(username=decoded["user"])
+                        elif "email" in decoded:
+                            user = User.objects.get(email=decoded["email"])
+                        else:
+                            logger.error("No user or email in webtoken")
+                            return HttpResponseForbidden("No user or email in webtoken")
+                    except User.DoesNotExist:
+                        if getattr(settings, "SOCIALACCOUNT_AUTO_SIGNUP", True):
+                            # Autocreate new user
+                            user_args = {}
+                            if "user" in decoded:
+                                user_args["username"] = decoded["user"]
+                                user_args["email"] = decoded["user"]
+                            if "email" in decoded:
+                                user_args["email"] = decoded["email"]
+                            user = User.objects.create_user(**user_args)
+                            user.save(using=request.database)
+                        else:
+                            logger.error("Invalid user in webtoken")
+                            messages.add_message(
+                                request, messages.ERROR, "Unknown user"
+                            )
+                            return HttpResponseRedirect("/data/login/")
+                    user.backend = settings.AUTHENTICATION_BACKENDS[0]
+                    login(request, user)
+                    request.user = user
+                    if "navbar" in decoded:
+                        request.session["navbar"] = decoded["navbar"] == True
+                    if "branding" in decoded:
+                        request.session["branding"] = decoded["branding"] == True
+                    if decoded.get("xframe_options_exempt", True):
+                        request.session["xframe_options_exempt"] = True
+            except Exception as e:
+                logger.warning(
+                    "silently ignoring exception in http authentication: %s" % e
+                )
+
         if not hasattr(request, "user"):
             if not connection.in_atomic_block:
                 close_old_connections()
@@ -283,82 +296,58 @@ class MultiDBMiddleware:
             else:
                 request.session["last_request"] = now.strftime("%y-%m-%d %H:%M:%S")
 
-        # Keep last_login date up to date and start web service if needed
-        if not request.user.is_anonymous:
+        # Keep last_login date up to date and start web service if needed.
+        # The user object is ALWAYS on default database at this stage, and we save the last login
+        # only in that database. It's lazily replicated to other databases when needed.
+        if request.user.is_anonymous:
+            request.user.scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
+                name=DEFAULT_DB_ALIAS
+            )
+        else:
+            state = getattr(request.user, "_state", None)
+            if state and state.db != DEFAULT_DB_ALIAS:
+                raise Exception("Expected only the default database here")
             last_login = getattr(request.user, "last_login", None)
             now = timezone.now()
             if not last_login or now - last_login > timedelta(hours=1):
-                user_logged_in.send(
-                    sender=request.user.__class__, request=request, user=request.user
-                )
+                request.user.last_login = now
+                request.user.save(update_fields=["last_login"])
 
-        if not hasattr(request.user, "scenarios"):
-            # A scenario list is not available on the request
-            for i in settings.DATABASES:
-                try:
-                    if settings.DATABASES[i]["regexp"].match(request.path):
-                        scenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=i)
-                        if scenario.status != "In use":
-                            return HttpResponseNotFound("Scenario not in use")
-                        request.prefix = "/%s" % i
-                        request.path_info = request.path_info[len(request.prefix) :]
-                        request.path = request.path[len(request.prefix) :]
-                        request.database = i
-                        if hasattr(request.user, "_state"):
-                            request.user._state.db = i.name
-                        response = self.get_response(request)
-                        if not response.streaming:
-                            # Note: Streaming response get the request field cleared in the
-                            # request_finished signal handler
-                            setattr(_thread_locals, "request", None)
-                        return response
-                except Exception:
-                    pass
-            request.prefix = ""
-            request.database = DEFAULT_DB_ALIAS
-            if hasattr(request.user, "_state"):
-                request.user._state.db = DEFAULT_DB_ALIAS
-        else:
-            # A list of scenarios is already available
-            if request.user.is_anonymous:
-                return self.get_response(request)
-            default_scenario = None
-            for i in request.user.scenarios:
-                if i.name == DEFAULT_DB_ALIAS:
-                    default_scenario = i
-                try:
-                    if settings.DATABASES[i.name]["regexp"].match(request.path):
-                        request.prefix = "/%s" % i.name
-                        request.path_info = request.path_info[len(request.prefix) :]
-                        request.path = request.path[len(request.prefix) :]
-                        request.database = i.name
-                        request.scenario = i
-                        if hasattr(request.user, "_state"):
-                            request.user._state.db = i.name
-                        request.user.is_superuser = i.is_superuser
-                        request.user.horizonlength = i.horizonlength
-                        request.user.horizontype = i.horizontype
-                        request.user.horizonbefore = i.horizonbefore
-                        request.user.horizonbuckets = i.horizonbuckets
-                        request.user.horizonstart = i.horizonstart
-                        request.user.horizonend = i.horizonend
-                        request.user.horizonunit = i.horizonunit
-                        response = self.get_response(request)
-                        if not response.streaming:
-                            # Note: Streaming response get the request field cleared in the
-                            # request_finished signal handler
-                            setattr(_thread_locals, "request", None)
-                        return response
-                except Exception:
-                    pass
-            request.prefix = ""
-            request.database = DEFAULT_DB_ALIAS
-            if hasattr(request.user, "_state"):
-                request.user._state.db = DEFAULT_DB_ALIAS
-            if default_scenario:
-                request.scenario = default_scenario
-            else:
-                request.scenario = Scenario(name=DEFAULT_DB_ALIAS)
+        allowed_scenarios = {i.name: i for i in request.user.scenarios}
+
+        for i in settings.DATABASES:
+            try:
+                if settings.DATABASES[i]["regexp"].match(request.path):
+                    if i not in allowed_scenarios:
+                        return HttpResponseNotFound(
+                            "Scenario not in use, or access is denied"
+                        )
+                    request.prefix = "/%s" % i
+                    request.path_info = request.path_info[len(request.prefix) :]
+                    request.path = request.path[len(request.prefix) :]
+                    request.database = i
+                    request.scenario = allowed_scenarios[i]
+                    if i != DEFAULT_DB_ALIAS:
+                        request.user.switchDatabase(i)
+                    response = self.get_response(request)
+                    if not response.streaming:
+                        # Note: Streaming response get the request field cleared in the
+                        # request_finished signal handler
+                        setattr(_thread_locals, "request", None)
+                        for c in connections.all(initialized_only=True):
+                            if (
+                                c.alias not in connections_before
+                                and c.alias != request.database
+                            ):
+                                print("NEW CONNECTION ", request.path, c.alias)
+                    return response
+            except Exception:
+                pass
+        request.prefix = ""
+        request.database = DEFAULT_DB_ALIAS
+        request.scenario = allowed_scenarios[DEFAULT_DB_ALIAS]
+        if hasattr(request.user, "_state"):
+            request.user._state.db = DEFAULT_DB_ALIAS
         response = self.get_response(request)
         if not response.streaming:
             # Note: Streaming response get the request field cleared in the
@@ -385,41 +374,6 @@ class AutoLoginAsAdminUser:
                 user = User.objects.get(username="admin")
                 user.backend = settings.AUTHENTICATION_BACKENDS[0]
                 login(request, user)
-                request.user.scenarios = []
-                for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
-                    Q(status="In use") | Q(name=DEFAULT_DB_ALIAS)
-                ):
-                    if not db.description:
-                        db.description = db.name
-                    if db.name == DEFAULT_DB_ALIAS:
-                        if request.user.is_active:
-                            db.is_superuser = request.user.is_superuser
-                            db.horizonlength = request.user.horizonlength
-                            db.horizonbefore = request.user.horizonbefore
-                            db.horizontype = request.user.horizontype
-                            db.horizonbuckets = request.user.horizonbuckets
-                            db.horizonstart = request.user.horizonstart
-                            db.horizonend = request.user.horizonend
-                            db.horizonunit = request.user.horizonunit
-                            request.user.scenarios.append(db)
-                    else:
-                        try:
-                            user2 = User.objects.using(db.name).get(
-                                username=request.user.username
-                            )
-                            if user2.is_active:
-                                db.is_superuser = user2.is_superuser
-                                db.horizonlength = user2.horizonlength
-                                db.horizonbefore = user2.horizonbefore
-                                db.horizontype = user2.horizontype
-                                db.horizonbuckets = user2.horizonbuckets
-                                db.horizonstart = user2.horizonstart
-                                db.horizonend = user2.horizonend
-                                db.horizonunit = user2.horizonunit
-                                request.user.scenarios.append(db)
-                        except Exception:
-                            # Silently ignore errors. Eg user doesn't exist in scenario
-                            pass
             except User.DoesNotExist:
                 pass
         return self.get_response(request)

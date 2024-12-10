@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from django.db import connections
 from django.urls import re_path
 from django.views.generic.base import RedirectView
 
@@ -163,3 +164,15 @@ if mode == "WSGI":
             name="reset_password",
         ),
     ]
+
+
+# Monkeypatching to work around a DRF inefficiency
+def _drf_set_rollback():
+    for db in connections.all(initialized_only=True):
+        if db.settings_dict["ATOMIC_REQUESTS"] and db.in_atomic_block:
+            db.set_rollback(True)
+
+
+from rest_framework import views
+
+views.set_rollback = _drf_set_rollback

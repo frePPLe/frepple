@@ -54,51 +54,12 @@ class MultiDBBackend(ModelBackend):
     to assure that the user object refers to the correct database.
     """
 
-    @staticmethod
-    def getScenarios(user):
-        # Populate a dictionary with scenarios in which the user is active, and
-        # whether he's a superuser in them.
-        user.scenarios = []
-        for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
-            Q(status="In use") | Q(name=DEFAULT_DB_ALIAS)
-        ):
-            if not db.description:
-                db.description = db.name
-            if db.name == DEFAULT_DB_ALIAS:
-                if user.is_active:
-                    db.is_superuser = user.is_superuser
-                    db.horizonlength = user.horizonlength
-                    db.horizonbefore = user.horizonbefore
-                    db.horizontype = user.horizontype
-                    db.horizonbuckets = user.horizonbuckets
-                    db.horizonstart = user.horizonstart
-                    db.horizonend = user.horizonend
-                    db.horizonunit = user.horizonunit
-                    user.scenarios.append(db)
-            else:
-                try:
-                    user2 = User.objects.using(db.name).get(username=user.username)
-                    if user2.is_active:
-                        db.is_superuser = user2.is_superuser
-                        db.horizonlength = user2.horizonlength
-                        db.horizonbefore = user2.horizonbefore
-                        db.horizontype = user2.horizontype
-                        db.horizonbuckets = user2.horizonbuckets
-                        db.horizonstart = user2.horizonstart
-                        db.horizonend = user2.horizonend
-                        db.horizonunit = user2.horizonunit
-                        user.scenarios.append(db)
-                except Exception:
-                    # Silently ignore errors. Eg user doesn't exist in scenario
-                    pass
-
     def authenticate(self, request, username=None, password=None):
         try:
             validate_email(username)
             # The user name looks like an email address
             user = User.objects.get(email__iexact=username)
             if user.check_password(password):
-                self.getScenarios(user)
                 return user
         except User.DoesNotExist:
             # Run the default password hasher once to reduce the timing
@@ -110,7 +71,6 @@ class MultiDBBackend(ModelBackend):
             try:
                 user = User.objects.get(username__iexact=username)
                 if user.check_password(password):
-                    self.getScenarios(user)
                     return user
             except User.DoesNotExist:
                 User().set_password(password)
@@ -118,7 +78,6 @@ class MultiDBBackend(ModelBackend):
                 try:
                     user = User.objects.get(username__exact=username)
                     if user.check_password(password):
-                        self.getScenarios(user)
                         return user
                 except User.DoesNotExist:
                     User().set_password(password)
@@ -167,7 +126,6 @@ class MultiDBBackend(ModelBackend):
     def get_user(self, user_id):
         try:
             user = User.objects.get(pk=user_id)
-            self.getScenarios(user)
             return user
         except User.DoesNotExist:
             return None

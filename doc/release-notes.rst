@@ -12,10 +12,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The inventory report got a segment dropdown to allow easier filtering.
   | This applies to Enterprise and Cloud Editions only.
 
-- | A corner case has been resolved in the ABC classification.
-  | Items with a cost equal to 0 were not getting a classification. They will now
-    be classified in the last group (C if the ABC parameters were not updated).
-  | This applies to Enterprise and Cloud Editions only.
+- | Performance optimization for configurations with a high number of scenarios.
+  | When many scenarios are active we noticed the user interface performance
+    is impacted, and frepple also needed an increasing number of database connections.
+  | These bottlenecks have now been resolved, and extra scenarios no longer
+    impact scalability and performance.
 
 .. rubric:: Production planning
 
@@ -28,6 +29,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     with no demand history. That was leading to a lower forecast than expected. A new enhancement
     detects this situation and ignores the last buckets with no demand history when generating a
     statistical forecast.
+
+.. rubric:: Inventory planning
+
+- | A corner case has been resolved in the ABC classification.
+  | Items with a cost equal to 0 were not getting a classification. They will now
+    be classified in the last group (C if the ABC parameters were not updated).
+  | This applies to Enterprise and Cloud Editions only.
 
 .. rubric:: Odoo integration
 

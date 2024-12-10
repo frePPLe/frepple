@@ -521,12 +521,11 @@ class ResourceDetail(OperationPlanMixin):
             if "/operationplanresource/resource/" in request.path:
                 resource = request.path.strip("/").split("/")[-1]
                 res = Resource.objects.using(request.database).get(name__exact=resource)
-
                 dateformat = (
-                    settings.DATETIME_INPUT_FORMATS[0]
-                    if hasattr(settings, "DATETIME_INPUT_FORMATS")
-                    else "%Y-%m-%d %H:%M:%S"
-                )
+                    settings.DATETIME_INPUT_FORMATS
+                    if settings.DATE_STYLE_WITH_HOURS
+                    else settings.DATE_INPUT_FORMATS
+                )[0]
                 if "buckets" in res.type.lower() and res.lft == res.rght - 1:
                     if "operationplan__startdate__gte" in request.GET:
                         startdate_filter = request.GET["operationplan__startdate__gte"]

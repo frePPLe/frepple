@@ -334,12 +334,6 @@ class MultiDBMiddleware:
                         # Note: Streaming response get the request field cleared in the
                         # request_finished signal handler
                         setattr(_thread_locals, "request", None)
-                        for c in connections.all(initialized_only=True):
-                            if (
-                                c.alias not in connections_before
-                                and c.alias != request.database
-                            ):
-                                print("NEW CONNECTION ", request.path, c.alias)
                     return response
             except Exception:
                 pass

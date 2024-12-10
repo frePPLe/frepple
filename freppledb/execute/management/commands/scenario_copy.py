@@ -586,7 +586,7 @@ class Command(BaseCommand):
                         if u.databases:
                             u.databases.append(destination)
                         else:
-                            u.databases = [destination]
+                            u.databases = [source, destination]
                         u.save(using=DEFAULT_DB_ALIAS, update_fields=["databases"])
                         User.synchronize(user=u.pk)
                 if (
@@ -597,7 +597,7 @@ class Command(BaseCommand):
                     if u.databases:
                         user.databases.append(destination)
                     else:
-                        user.databases = [destination]
+                        user.databases = [source, destination]
                     user.save(using=DEFAULT_DB_ALIAS, update_fields=["databases"])
                     User.synchronize(user=user.pk)
 

@@ -299,10 +299,8 @@ class MultiDBMiddleware:
         # Keep last_login date up to date and start web service if needed.
         # The user object is ALWAYS on default database at this stage, and we save the last login
         # only in that database. It's lazily replicated to other databases when needed.
-        if request.user.is_anonymous:
-            request.user.scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
-                name=DEFAULT_DB_ALIAS
-            )
+        if request.user.is_anonymous:            
+            allowed_scenarios = {DEFAULT_DB_ALIAS: None}
         else:
             state = getattr(request.user, "_state", None)
             if state and state.db != DEFAULT_DB_ALIAS:
@@ -312,8 +310,7 @@ class MultiDBMiddleware:
             if not last_login or now - last_login > timedelta(hours=1):
                 request.user.last_login = now
                 request.user.save(update_fields=["last_login"])
-
-        allowed_scenarios = {i.name: i for i in request.user.scenarios}
+            allowed_scenarios = {i.name: i for i in request.user.scenarios}
 
         for i in settings.DATABASES:
             try:

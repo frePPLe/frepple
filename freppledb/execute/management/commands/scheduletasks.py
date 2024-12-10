@@ -33,7 +33,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.core.management import get_commands
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction, DEFAULT_DB_ALIAS, connection
+from django.db import transaction, DEFAULT_DB_ALIAS, connection, connections
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
@@ -103,6 +103,8 @@ class TaskScheduler:
                         ),
                         "time": t.next_run,
                     }
+                    # Close the database connections of this thread while we wait
+                    connections.close_all()
                     self.sched[db.name]["timer"].start()
             connections.close_all()
 

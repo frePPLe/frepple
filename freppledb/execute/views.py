@@ -134,6 +134,13 @@ class TaskReport(GridReport):
         GridFieldLocalDateTime(
             "finished", title=_("finished"), editable=False, align="center"
         ),
+        GridFieldDuration(
+            "duration",
+            title=_("duration"),
+            search=False,
+            editable=False,
+            align="center",
+        ),
         GridFieldText(
             "status",
             title=_("status"),

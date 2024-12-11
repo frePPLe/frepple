@@ -1938,6 +1938,7 @@ class DeliveryPerformanceWidget(Widget):
     tooltip = _(
         "Shows the percentage of demands that are planned to be shipped completely on time"
     )
+    permissions = (("view_demand", "Can view sales order"),)
     asynchronous = True
     green = 90
     yellow = 80

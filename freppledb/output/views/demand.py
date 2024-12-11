@@ -588,74 +588,46 @@ def OperationPlans(request):
     # Collect list of selected sales orders
     so_list = request.GET.getlist("demand")
 
-    # Collect operationplans associated with the sales order(s)
-    id_list = []
-    for dm in (
-        Demand.objects.all().using(request.database).filter(pk__in=so_list).only("plan")
-    ):
-        for op in dm.plan["pegging"]:
-            id_list.append(op["opplan"])
-
-    # Collect details on the operationplans
     result = []
-    for o in (
-        PurchaseOrder.objects.all()
-        .using(request.database)
-        .filter(id__in=id_list, status="proposed")
-    ):
-        result.append(
-            {
-                "id": o.id,
-                "type": "PO",
-                "item": o.item.name,
-                "location": o.location.name,
-                "origin": o.supplier.name,
-                "startdate": str(o.startdate.date()),
-                "enddate": str(o.enddate.date()),
-                "quantity": float(o.quantity),
-                "value": float(o.quantity * o.item.cost),
-                "criticality": float(o.criticality),
-            }
-        )
-    for o in (
-        DistributionOrder.objects.all()
-        .using(request.database)
-        .filter(id__in=id_list, status="proposed")
-    ):
-        result.append(
-            {
-                "id": o.id,
-                "type": "DO",
-                "item": o.item.name,
-                "location": o.location.name,
-                "origin": o.origin.name,
-                "startdate": str(o.startdate),
-                "enddate": str(o.enddate),
-                "quantity": float(o.quantity),
-                "value": float(o.quantity * o.item.cost),
-                "criticality": float(o.criticality),
-            }
-        )
-    for o in (
-        ManufacturingOrder.objects.all()
-        .using(request.database)
-        .filter(id__in=id_list, status="proposed")
-    ):
-        result.append(
-            {
-                "id": o.id,
-                "type": "MO",
-                "item": "",
-                "location": o.operation.location.name,
-                "origin": o.operation.name,
-                "startdate": str(o.startdate.date()),
-                "enddate": str(o.enddate.date()),
-                "quantity": float(o.quantity),
-                "value": "",
-                "criticality": float(o.criticality),
-            }
+
+    # Collect operationplans associated with the sales order(s)
+    with connections[request.database].cursor() as cursor:
+        cursor.execute(
+            """
+        select operationplan.reference,
+        operationplan.type,
+        operationplan.item_id,
+        case when operationplan.type = 'DO' then operationplan.destination_id else operationplan.location_id end as location_id,
+        operationplan.origin_id,
+        operationplan.startdate,
+        operationplan.enddate,
+        operationplan.quantity,
+        operationplan.quantity * item.cost as value,
+        operationplan.criticality
+        from operationplan
+        inner join item on item.name = operationplan.item_id
+        where operationplan.plan->'pegging' ?| %s
+        and operationplan.type in ('PO','DO','MO')
+        order by operationplan.type, operationplan.startdate
+        """,
+            (so_list,),
         )
 
+        for i in cursor:
+            result.append(
+                {
+                    "reference": i[0],
+                    "type": i[1],
+                    "item": i[2],
+                    "location": i[3],
+                    "origin": i[4],
+                    "startdate": i[5].strftime(settings.DATETIME_INPUT_FORMATS[0]),
+                    "enddate": i[6].strftime(settings.DATETIME_INPUT_FORMATS[0]),
+                    "quantity": float(i[7]),
+                    "value": float(i[8]),
+                    "criticality": float(i[9]),
+                }
+            )
     return HttpResponse(
         content=json.dumps(result),
         content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,

@@ -735,7 +735,7 @@ class CommentList(GridReport):
     editable = False
     multiselect = False
     frozenColumns = 0
-    help_url = "user-interface/getting-around/comments.html"
+    help_url = "user-interface/getting-around/messages.html"
 
     rows = (
         GridFieldInteger("id", title=_("identifier"), key=True),

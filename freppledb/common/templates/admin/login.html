@@ -99,7 +99,7 @@ window.addEventListener("beforeinstallprompt", event => {
 
 {% if form.errors and not form.non_field_errors %}
 <div class="row">
-<div class="col-4 mx-auto alert alert-danger" role="alert" style="min-width:13rem; max-width:20rem">
+<div class="col-4 mx-auto alert alert-success" role="alert" style="min-width:13rem; max-width:20rem">
 {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}
 {% trans "Please correct the errors below." %}{% endif %}
 </div></div>
@@ -108,7 +108,7 @@ window.addEventListener("beforeinstallprompt", event => {
 {% if form.non_field_errors %}
 {% for error in form.non_field_errors %}
 <div class="row gy-3">
-<div class="col-4 mx-auto text-center alert alert-danger" role="alert" style="min-width:13rem; max-width:20rem">
+<div class="col-4 mx-auto text-center alert alert-success" role="alert" style="min-width:13rem; max-width:20rem">
     {{ error }}
 </div></div>
 {% endfor %}
@@ -124,7 +124,7 @@ window.addEventListener("beforeinstallprompt", event => {
 {% checkPassword "admin" "admin" as recommend_reset %}
 {% if recommend_reset %}
 <div class="row gy-3" id="row2">
-<div class="col-4 mx-auto text-center alert alert-danger" role="alert" style="min-width:13rem; max-width:20rem">
+<div class="col-4 mx-auto text-center alert alert-success" role="alert" style="min-width:13rem; max-width:20rem">
 {% blocktrans %}The user "admin" has password "admin".<br>
 We suggest changing this password.{% endblocktrans %}
 </div>
@@ -132,7 +132,7 @@ We suggest changing this password.{% endblocktrans %}
 {% endif %}
 
 <div class="row gy-3 d-none" id="installApp">
-<div class="col-4 mx-auto text-center alert alert-danger" role="alert" style="min-width:13rem; max-width:20rem">
+<div class="col-4 mx-auto text-center alert alert-success" role="alert" style="min-width:13rem; max-width:20rem">
 FrePPLe also has a cool app!&nbsp;&nbsp;
 <button id="installAppButton" class="btn btn-sm btn-primary">Install the app</button>
 </div>

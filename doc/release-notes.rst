@@ -49,6 +49,12 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The API for uploading data files to the "import data files" task has extra URLs for
     retrieving the list of all data files, with their timestamp and file size.
 
+.. rubric:: System administration
+
+- | The docker container logs now display the apache output.
+  | The container logs now provide a better insight in the container status. Muuuuch
+    easier than navigating to the volume with the apache log files.
+
 9.4.0 (2024-11-08)
 ==================
 

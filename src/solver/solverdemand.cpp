@@ -105,7 +105,6 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
     Date next_delivery_date = delivery_date;
     Demand* group_buster = nullptr;
     do {
-      auto groupcommand = data->getCommandManager()->setBookmark();
       bool group_ok = true;
 
       for (auto l : salesorderlines) {

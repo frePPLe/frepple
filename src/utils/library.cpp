@@ -247,14 +247,13 @@ void Environment::truncateLogFile(unsigned long long sz) {
                   SetFilePointerEx(handle, lg, 0, FILE_BEGIN) &&
                   SetEndOfFile(handle) && CloseHandle(handle);
 #elif defined HAVE_TRUNCATE
-  auto exitcode = truncate(logfilename.c_str(), sz) == 0;
+  truncate(logfilename.c_str(), sz);
 #else
 #error "This platform doesn't have a file resizing api."
 #endif
 
   // Reopen the file
   logfile.open(logfilename.c_str(), ios::app);
-  // logger.rdbuf(&logfile);  // : cout.rdbuf());
 }
 
 unsigned long Environment::getLogFileSize() {

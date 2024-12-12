@@ -455,10 +455,10 @@ PyObject* ForecastMeasure::aggregateMeasuresPython(PyObject* self,
   static const char* kwlist[] = {"includeplanned", "measures", nullptr};
   int include_planned = 0;
   PyObject* py_msrs = nullptr;
-  int ok = PyArg_ParseTupleAndKeywords(args, kwargs, "|pO:aggregateMeasures",
-                                       const_cast<char**>(kwlist),
-                                       &include_planned, &py_msrs);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|pO:aggregateMeasures",
+                                   const_cast<char**>(kwlist), &include_planned,
+                                   &py_msrs))
+    return nullptr;
 
   vector<ForecastMeasure*> msrs;
   if (py_msrs) {
@@ -496,9 +496,9 @@ PyObject* ForecastMeasure::computeMeasuresPython(PyObject* self, PyObject* args,
                                                  PyObject* kwargs) {
   static const char* kwlist[] = {"measures", nullptr};
   PyObject* py_msrs = nullptr;
-  int ok = PyArg_ParseTupleAndKeywords(args, kwargs, "|O:computeMeasures",
-                                       const_cast<char**>(kwlist), &py_msrs);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|O:computeMeasures",
+                                   const_cast<char**>(kwlist), &py_msrs))
+    return nullptr;
 
   vector<ForecastMeasure*> msrs;
   if (py_msrs) {

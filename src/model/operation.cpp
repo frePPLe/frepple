@@ -2429,7 +2429,6 @@ pair<Duration, Date> OperationRouting::getDecoupledLeadTime(
   for (auto sub = getSubOperations().rbegin(); sub != getSubOperations().rend();
        ++sub) {
     Duration maxSub;
-    Date endSub = startdate;
     Operation* suboper = (*sub)->getOperation();
 
     // Find the longest supply path for all flows

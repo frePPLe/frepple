@@ -288,7 +288,7 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
         // UPSTREAM
         // In upstream, a routing operation will send its last step
         if (op->getOperation()->hasType<OperationRouting>()) {
-          OperationPlan* opplan_last;
+          OperationPlan* opplan_last = nullptr;
           for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j) {
             opplan_last = &*j;
           }

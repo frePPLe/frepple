@@ -619,7 +619,7 @@ PyObject* Resource::PlanIterator::iternext() {
                           : cpp_end_date;
             if (strt < nd) {
               Duration setupduration;
-              auto overlap = opplan->getOperation()->calculateOperationTime(
+              opplan->getOperation()->calculateOperationTime(
                   opplan, strt, nd, &setupduration);
               bucket_setup -=
                   static_cast<long>(setupduration) * j->getQuantity();

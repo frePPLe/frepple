@@ -189,10 +189,10 @@ PyObject* ForecastSolver::solve(PyObject* self, PyObject* args,
   int run_netting = 1;
   int cluster = -1;
   PyObject* dem = nullptr;
-  int ok = PyArg_ParseTupleAndKeywords(args, kwargs, "|pipO:solve",
-                                       const_cast<char**>(kwlist), &run_fcst,
-                                       &cluster, &run_netting, &dem);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|pipO:solve",
+                                   const_cast<char**>(kwlist), &run_fcst,
+                                   &cluster, &run_netting, &dem))
+    return nullptr;
   if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass) &&
       !PyObject_TypeCheck(dem, Forecast::metadata->pythonClass)) {
     PyErr_SetString(PythonDataException,

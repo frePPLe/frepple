@@ -640,7 +640,6 @@ void SolverCreate::SolverData::maskTemporaryShortages() {
   for (auto& buf : Buffer::all())
     if ((buf.getCluster() == cluster || cluster == -1) &&
         !buf.hasType<BufferInfinite>() && buf.getProducingOperation()) {
-      bool manipulated = false;
       auto fence = Plan::instance().getAutoFence();
       if (!fence)
         // Autofence value of 0 doesn't mask any temporary shortages
@@ -681,7 +680,6 @@ void SolverCreate::SolverData::maskTemporaryShortages() {
               logger << "Warning: Masking temporary material shortage on '"
                      << buf.getName() << "' for " << opplan->getQuantity()
                      << " during " << opplan->getDates() << endl;
-            manipulated = true;
           }
         }
       }
@@ -801,8 +799,9 @@ PyObject* SolverCreate::solve(PyObject* self, PyObject* args,
   static const char* kwlist[] = {"object", "cluster", nullptr};
   PyObject* dem = nullptr;
   int cluster = -1;
-  int ok = PyArg_ParseTupleAndKeywords(
-      args, kwargs, "|Oi:solve", const_cast<char**>(kwlist), &dem, &cluster);
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|Oi:solve",
+                                   const_cast<char**>(kwlist), &dem, &cluster))
+    return nullptr;
   if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass) &&
       !PyObject_TypeCheck(dem, Buffer::metadata->pythonClass)) {
     PyErr_SetString(PythonDataException,

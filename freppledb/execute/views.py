@@ -173,13 +173,6 @@ class TaskReport(GridReport):
             editable=False,
             align="center",
         ),
-        GridFieldDuration(
-            "duration",
-            title=_("duration"),
-            search=False,
-            editable=False,
-            align="center",
-        ),
         GridFieldBool("cancelable", title="cancelable", hidden=True),
     )
 

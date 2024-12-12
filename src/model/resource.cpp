@@ -360,8 +360,7 @@ extern "C" PyObject* Resource::plan(PyObject* self, PyObject* args) {
 
   // Parse the Python arguments
   PyObject* buckets = nullptr;
-  int ok = PyArg_ParseTuple(args, "O:plan", &buckets);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "O:plan", &buckets)) return nullptr;
 
   // Validate that the argument supports iteration.
   PyObject* iter = PyObject_GetIter(buckets);
@@ -619,8 +618,8 @@ PyObject* Resource::PlanIterator::iternext() {
                           : cpp_end_date;
             if (strt < nd) {
               Duration setupduration;
-              opplan->getOperation()->calculateOperationTime(
-                  opplan, strt, nd, &setupduration);
+              opplan->getOperation()->calculateOperationTime(opplan, strt, nd,
+                                                             &setupduration);
               bucket_setup -=
                   static_cast<long>(setupduration) * j->getQuantity();
             }
@@ -832,8 +831,8 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(
   // Parse the Python arguments
   PyObject* pycal = nullptr;
   int debug = false;
-  int ok = PyArg_ParseTuple(args, "O|p:computeAvailability", &pycal, &debug);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "O|p:computeAvailability", &pycal, &debug))
+    return nullptr;
   if (!PyObject_TypeCheck(pycal, CalendarDefault::metadata->pythonClass)) {
     PyErr_SetString(PythonDataException, "argument must be of type calendar");
     return nullptr;

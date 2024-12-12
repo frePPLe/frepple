@@ -85,8 +85,7 @@ DatabaseResult::DatabaseResult(DatabaseReader& db, DatabaseStatement& stmt) {
 PyObject* runDatabaseThread(PyObject* self, PyObject* args, PyObject* kwds) {
   // Pick up arguments
   const char* con = "";
-  int ok = PyArg_ParseTuple(args, "|s:runDatabaseThread", &con);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "|s:runDatabaseThread", &con)) return nullptr;
 
   // Create a new thread
   DatabaseWriter::launch(con);

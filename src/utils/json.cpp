@@ -29,7 +29,7 @@
 
 /* Uncomment the next line to create a lot of debugging messages during
  * the parsing of the data. */
-//#define PARSE_DEBUG
+// #define PARSE_DEBUG
 
 // With VC++ we use the Win32 functions to browse a directory
 #ifdef _MSC_VER
@@ -69,9 +69,9 @@ PyObject* saveJSONfile(PyObject* self, PyObject* args) {
   char* filename;
   char* content = nullptr;
   int formatted = 0;
-  int ok = PyArg_ParseTuple(args, "s|sp:saveJSONfile", &filename, &content,
-                            &formatted);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "s|sp:saveJSONfile", &filename, &content,
+                        &formatted))
+    return nullptr;
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
@@ -209,8 +209,7 @@ void JSONInputFile::parse(Object* pRoot) {
 PyObject* readJSONfile(PyObject* self, PyObject* args) {
   // Pick up arguments
   char* filename = nullptr;
-  int ok = PyArg_ParseTuple(args, "s:readJSONfile", &filename);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "s:readJSONfile", &filename)) return nullptr;
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
@@ -233,8 +232,7 @@ PyObject* readJSONfile(PyObject* self, PyObject* args) {
 PyObject* readJSONdata(PyObject* self, PyObject* args) {
   // Pick up arguments
   char* data;
-  int ok = PyArg_ParseTuple(args, "s:readJSONdata", &data);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "s:readJSONdata", &data)) return nullptr;
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;

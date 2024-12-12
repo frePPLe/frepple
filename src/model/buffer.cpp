@@ -1283,8 +1283,8 @@ PyObject* Buffer::getDecoupledLeadTimePython(PyObject* self, PyObject* args) {
   double qty = 1.0;
   PyObject* py_startdate = nullptr;
   Date startdate = Plan::instance().getCurrent();
-  int ok = PyArg_ParseTuple(args, "|dO:decoupledLeadTime", &qty, &py_startdate);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "|dO:decoupledLeadTime", &qty, &py_startdate))
+    return nullptr;
   if (py_startdate) startdate = PythonData(py_startdate).getDate();
 
   try {
@@ -1299,8 +1299,7 @@ PyObject* Buffer::getDecoupledLeadTimePython(PyObject* self, PyObject* args) {
 
 PyObject* Buffer::availableOnhandPython(PyObject* self, PyObject* args) {
   PyObject* dateobj = nullptr;
-  int ok = PyArg_ParseTuple(args, "|O:availableonhand", &dateobj);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "|O:availableonhand", &dateobj)) return nullptr;
 
   try {
     Date refdate;

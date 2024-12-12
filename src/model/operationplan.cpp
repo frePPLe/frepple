@@ -2408,9 +2408,7 @@ void OperationPlan::clear() {
 PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args) {
   // Check arguments
   PyObject* pyoper = nullptr;
-  int ok = PyArg_ParseTuple(args, "|O:operationplans", &pyoper);
-  if (!ok) return nullptr;
-
+  if (!PyArg_ParseTuple(args, "|O:operationplans", &pyoper)) return nullptr;
   if (!pyoper)
     // First case: Iterate over all operationplans
     return new PythonIterator<OperationPlan::iterator, OperationPlan>();

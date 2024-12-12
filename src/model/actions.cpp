@@ -2,7 +2,7 @@
  *                                                                         *
  * Copyright (C) 2007-2015 by frePPLe bv                                   *
  *                                                                         *
-* Permission is hereby granted, free of charge, to any person obtaining   *
+ * Permission is hereby granted, free of charge, to any person obtaining   *
  * a copy of this software and associated documentation files (the         *
  * "Software"), to deal in the Software without restriction, including     *
  * without limitation the rights to use, copy, modify, merge, publish,     *
@@ -38,9 +38,9 @@ PyObject *readXMLfile(PyObject *self, PyObject *args) {
   char *filename = nullptr;
   int validate(1), validate_only(0);
   PyObject *userexit = nullptr;
-  int ok = PyArg_ParseTuple(args, "|siiO:readXMLfile", &filename, &validate,
-                            &validate_only, &userexit);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "|siiO:readXMLfile", &filename, &validate,
+                        &validate_only, &userexit))
+    return nullptr;
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
@@ -87,9 +87,9 @@ PyObject *readXMLdata(PyObject *self, PyObject *args) {
   char *data;
   int validate(1), validate_only(0), loglevel(0);
   PyObject *userexit = nullptr;
-  int ok = PyArg_ParseTuple(args, "s|iiiO:readXMLdata", &data, &validate,
-                            &validate_only, &loglevel, &userexit);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "s|iiiO:readXMLdata", &data, &validate,
+                        &validate_only, &loglevel, &userexit))
+    return nullptr;
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
@@ -124,8 +124,8 @@ PyObject *saveXMLfile(PyObject *self, PyObject *args) {
   // Pick up arguments
   char *filename;
   char *content = nullptr;
-  int ok = PyArg_ParseTuple(args, "s|s:saveXMLfile", &filename, &content);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "s|s:saveXMLfile", &filename, &content))
+    return nullptr;
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
@@ -162,8 +162,7 @@ PyObject *saveXMLfile(PyObject *self, PyObject *args) {
 PyObject *savePlan(PyObject *self, PyObject *args) {
   // Pick up arguments
   const char *filename = "plan.out";
-  int ok = PyArg_ParseTuple(args, "s:saveplan", &filename);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "s:saveplan", &filename)) return nullptr;
 
   // Free Python interpreter for other threads
   Py_BEGIN_ALLOW_THREADS;
@@ -351,8 +350,7 @@ CommandDeleteOperationPlan::CommandDeleteOperationPlan(OperationPlan *o)
 PyObject *eraseModel(PyObject *self, PyObject *args) {
   // Pick up arguments
   PyObject *obj = nullptr;
-  int ok = PyArg_ParseTuple(args, "|O:erase", &obj);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "|O:erase", &obj)) return nullptr;
 
   // Validate the argument
   bool deleteStaticModel = false;

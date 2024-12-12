@@ -64,8 +64,8 @@ int Plan::initialize() {
 PyObject* Plan::setBaseClass(PyObject* self, PyObject* args) {
   PyObject* class_cpp = nullptr;
   PyObject* class_py = nullptr;
-  int ok = PyArg_ParseTuple(args, "OO:setBaseClass", &class_cpp, &class_py);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "OO:setBaseClass", &class_cpp, &class_py))
+    return nullptr;
   if (!class_cpp || !PyType_Check(class_cpp)) {
     PyErr_SetString(PyExc_TypeError, "First argument must be a type");
     return nullptr;

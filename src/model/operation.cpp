@@ -253,8 +253,7 @@ void Operation::setFence(Date d) {
 PyObject* Operation::setFencePython(PyObject* self, PyObject* args) {
   // Pick up the date argument
   PyObject* pydate;
-  int ok = PyArg_ParseTuple(args, "O:setFence", &pydate);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "O:setFence", &pydate)) return nullptr;
 
   try {
     PythonData dt(pydate);
@@ -2538,8 +2537,8 @@ PyObject* Operation::getDecoupledLeadTimePython(PyObject* self,
   double qty = 1.0;
   PyObject* py_startdate = nullptr;
   Date startdate = Plan::instance().getCurrent();
-  int ok = PyArg_ParseTuple(args, "|dO:decoupledLeadTime", &qty, &py_startdate);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "|dO:decoupledLeadTime", &qty, &py_startdate))
+    return nullptr;
   if (py_startdate) startdate = PythonData(py_startdate).getDate();
 
   try {

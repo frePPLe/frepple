@@ -309,8 +309,8 @@ PyObject* SetupMatrix::calculateSetupPython(PyObject* self, PyObject* args) {
   // Pick up the 2 setup arguments
   char* pysetup_1;
   char* pysetup_2;
-  int ok = PyArg_ParseTuple(args, "|ss:calculateSetup", &pysetup_1, &pysetup_2);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "|ss:calculateSetup", &pysetup_1, &pysetup_2))
+    return nullptr;
 
   try {
     PooledString setup_1(pysetup_1);

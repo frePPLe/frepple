@@ -346,8 +346,7 @@ void PythonInterpreter::registerGlobalObject(const char* name, PyObject* obj,
 PyObject* PythonInterpreter::python_log(PyObject* self, PyObject* args) {
   // Pick up arguments
   char* data;
-  int ok = PyArg_ParseTuple(args, "s:log", &data);
-  if (!ok) return nullptr;
+  if (!PyArg_ParseTuple(args, "s:log", &data)) return nullptr;
 
   // Print and flush the output stream
   logger << data;

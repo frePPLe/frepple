@@ -26,6 +26,14 @@
     {
       // Enable the refresh which is currently inactive
       refresh = setInterval(function() {
+        if (typeof gridTooltipList != 'undefined') {
+          gridTooltipList.forEach(function (t) {
+            try{
+              t.dispose();
+            }
+            catch {};
+          })
+        }
         $("#grid").trigger("reloadGrid",[{current:true}]);
         }, 5000);
       $('#autorefresh span').removeClass("fa-refresh").addClass("fa-pause");
@@ -127,6 +135,14 @@
     {% if not "refresh" in preferences or preferences.refresh %}
     // Refresh the grid every 5 seconds
     refresh = setInterval(function() {
+      if (typeof gridTooltipList != 'undefined') {
+        gridTooltipList.forEach(function (t) {
+          try{
+            t.dispose();
+          }
+          catch {};
+        })
+      }
       $("#grid").trigger("reloadGrid",[{current:true}]);
       }, 5000);{% endif %}
 

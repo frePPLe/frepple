@@ -100,21 +100,15 @@ function displayGrid(load) {
       width: 700
     },
     gridComplete: function() {
-      tooltipList.forEach(function (t) {
-        try{
-          t.dispose();
-        }
-        catch {}
-      });
-      var tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-      tooltipList = [...tooltipTriggerList].map(
-          el => new bootstrap.Tooltip(el, {
-            container: 'body',
-            trigger : 'hover',
-            delay: el.hasAttribute("data-bs-delay") ? JSON.parse(el.getAttribute("data-bs-delay")) : { "show": 500, "hide": 1000 }
-          })
-          );
-      },
+      var gridTooltipTriggerList = document.querySelectorAll('#grid [data-bs-toggle="tooltip"]');
+      window.gridTooltipList = [...gridTooltipTriggerList].map(
+        el => new bootstrap.Tooltip(el, {
+          container: 'body',
+          trigger : 'hover',
+          delay: el.hasAttribute("data-bs-delay") ? JSON.parse(el.getAttribute("data-bs-delay")) : { "show": 500, "hide": 1000 }
+        })
+      );
+    },
     loadError: function(xhr,st,err) {
       if (xhr.status == 401) {
         location.reload();

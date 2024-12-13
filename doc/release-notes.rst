@@ -12,6 +12,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The inventory report got a segment dropdown to allow easier filtering.
   | This applies to Enterprise and Cloud Editions only.
 
+- | Row selection logic updated. Clicking on a row unselects any existing selection
+    unless the shift key (to select a range of rows) or the ctrl key (to add a row
+    to the existing selection) is pressed.
+
 - | Performance optimization for configurations with a high number of scenarios.
   | When many scenarios are active we noticed the user interface performance
     is impacted, and frepple also needed an increasing number of database connections.

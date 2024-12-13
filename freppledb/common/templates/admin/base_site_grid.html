@@ -128,7 +128,7 @@ function displayGrid(load) {
         $('#curerror').html("{{_('Error')|escapejs}}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
     },{% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}
     multiselect: true,
-    multiboxonly: true,
+    multiboxonly: false,
     noCellSelection: true,
     onSelectRow: function(rowid, status, e) {
       var selection = $(this).jqGrid('getGridParam','selarrrow').slice(); //this makes this list a static list of values
@@ -145,7 +145,12 @@ function displayGrid(load) {
             startId = $this.jqGrid('getGridParam', 'selrow'),
             startRow, endRow, iStart, iEnd, i;
 
-        if (!e.shiftKey) {
+      if (!e.shiftKey && !e.ctrlKey){
+          console.log("selection reset");
+          $this.jqGrid('resetSelection');
+      }
+
+      if (!e.shiftKey) {
             return true;
         } else if (startId) {
 

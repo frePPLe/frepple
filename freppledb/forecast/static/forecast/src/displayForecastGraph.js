@@ -110,11 +110,13 @@ function displayForecastGraph($window, gettextCatalog) {
         // Define X-axis
         var domainX = [];
         var bucketnamelength = 0;
+        var plancurrentbucket = 0;
         var forecastcurrentbucket = 0;
         var showBucket = false;
         var filteredGraphData = [];
         for (i in graphdata) {
           if (!showBucket && graphdata[i].bucket == firstBucket) {
+            plancurrentbucket -= parseInt(i);
             forecastcurrentbucket -= parseInt(i);
             showBucket = true;
           }
@@ -123,6 +125,8 @@ function displayForecastGraph($window, gettextCatalog) {
             bucketnamelength = Math.max(graphdata[i].bucket.length, bucketnamelength);
             filteredGraphData.push(graphdata[i]);
             if (graphdata[i].currentbucket)
+              plancurrentbucket += parseInt(i);
+            if (graphdata[i].forecast_currentbucket)
               forecastcurrentbucket += parseInt(i);
           }
         }
@@ -199,7 +203,7 @@ function displayForecastGraph($window, gettextCatalog) {
               .attr("width", xWidth)
               .attr("fill-opacity", 0)
               .on("mouseenter", function (d) {
-                if (i >= forecastcurrentbucket)
+                if (i >= plancurrentbucket)
                   graph.showTooltip('' +
                     '<div style="text-align:center"><strong>' + d.bucket + '</strong></div>' + '<table style="margin: 5px;">' +
                     '<tr><td>' + gettextCatalog.getString("total orders") + '</td><td style="text-align:right">' +
@@ -220,7 +224,7 @@ function displayForecastGraph($window, gettextCatalog) {
                     grid.formatNumber(d.forecastconsumed) +
                     '</td></tr></table>'
                   );
-                else
+                else if (i < forecastcurrentbucket)
                   graph.showTooltip('' +
                     '<div style="text-align:center"><strong>' + d.bucket + '</strong></div>' + '<table style="margin: 5px;">' +
                     '<tr><td>' + gettextCatalog.getString("total orders") + '</td><td style="text-align:right">' +
@@ -231,6 +235,17 @@ function displayForecastGraph($window, gettextCatalog) {
                     ((d.ordersadjustment === null) ? '' : grid.formatNumber(d.ordersadjustment)) +
                     '</td></tr><tr><td>' + gettextCatalog.getString("past forecast") + '</td><td style="text-align:right">' +
                     grid.formatNumber(d.forecastbaseline) +
+                    '</td></tr></table>'
+                  );
+                else
+                  graph.showTooltip('' +
+                    '<div style="text-align:center"><strong>' + d.bucket + '</strong></div>' + '<table style="margin: 5px;">' +
+                    '<tr><td>' + gettextCatalog.getString("total orders") + '</td><td style="text-align:right">' +
+                    grid.formatNumber(d.orderstotal) +
+                    '</td></tr><tr><td>' + gettextCatalog.getString("open orders") + '</td><td style="text-align:right">' +
+                    grid.formatNumber(d.ordersopen) +
+                    '</td></tr><tr><td>' + gettextCatalog.getString("orders adjustment") + '</td><td style="text-align:right">' +
+                    ((d.ordersadjustment === null) ? '' : grid.formatNumber(d.ordersadjustment)) +
                     '</td></tr></table>'
                   );
               })
@@ -257,7 +272,7 @@ function displayForecastGraph($window, gettextCatalog) {
             return x(d.bucket) + xWidth / 2;
           })
           .y(function (d, i) {
-            return y((i >= forecastcurrentbucket) ? d.forecasttotal : 0);
+            return y((i >= plancurrentbucket) ? d.forecasttotal : 0);
           });
         svg.append("svg:path")
           .attr('class', 'graphline')

@@ -1102,36 +1102,56 @@ def createForecastSolver(db, task=None):
 
     # Detect if some demand history is missing in the last few buckets
     # undocumented parameter to force the forecast current date
+    currentdate = getCurrentDate(db)
     p = Parameter.getValue("forecast.currentdate", db)
     if p:
         try:
             forecast_currentdate = parse(p)
         except Exception:
-            forecast_currentdate = getCurrentDate(db)
+            forecast_currentdate = currentdate
     else:
         forecast_currentdate = frepple.settings.current
-        with connections[db].cursor() as cursor:
-            cursor.execute(
-                """
-            select max(due) from demand;
-            """
-            )
-            max_due = cursor.fetchone()[0]
-
-            if max_due:
-                # The forecast solver current date is the end date of the
-                # bucket of the most recent sales order
-                forecastCalendar = Parameter.getValue("forecast.calendar", db, "month")
+        try:
+            with connections[db].cursor() as cursor:
                 cursor.execute(
                     """
-                select enddate from common_bucketdetail where bucket_id = %s
-                and startdate <= %s and %s < enddate;
+                select max(due) from demand where due < %s;
                 """,
-                    (forecastCalendar, max_due, max_due),
+                    (currentdate,),
                 )
-                enddate = cursor.fetchone()[0]
-                if enddate < forecast_currentdate:
-                    forecast_currentdate = enddate
+                max_due = cursor.fetchone()[0]
+
+                if max_due:
+                    # The forecast solver current date is the start date of the
+                    # bucket of the most recent sales order
+                    forecastCalendar = Parameter.getValue(
+                        "forecast.calendar", db, "month"
+                    )
+                    cursor.execute(
+                        """
+                    select enddate from common_bucketdetail where bucket_id = %s
+                    and startdate <= %s and %s < enddate;
+                    """,
+                        (forecastCalendar, max_due, max_due),
+                    )
+                    enddate = cursor.fetchone()[0]
+                    if enddate < forecast_currentdate:
+                        forecast_currentdate = enddate
+        except:
+            pass
+
+    # update the forecast_lastcurrentdate in the parameter table
+    with connections[db].cursor() as cursor:
+        cursor.execute(
+            """
+        insert into common_parameter (name, value, description)
+        values
+        ('forecast_lastcurrentdate', %s, 'forecast solver current date of the last forecast run')
+        on conflict (name)
+        do update set value = excluded.value
+        """,
+            (forecast_currentdate.strftime("%Y-%m-%d %H:%M:%S"),),
+        )
     frepple.settings.fcst_current = forecast_currentdate
 
     try:
@@ -1269,7 +1289,6 @@ def createForecastSolver(db, task=None):
 
         # Check whether we have forecast buckets to cover the complete forecasting horizon
         if horizon_future and calendar:
-            currentdate = getCurrentDate(db)
             if (
                 not BucketDetail.objects.all()
                 .using(db)
@@ -1283,7 +1302,9 @@ def createForecastSolver(db, task=None):
                     "Bucket dates table doesn't cover the complete forecasting horizon"
                 )
         else:
-            logger.warning("Parameter forecast.calendar or forecast.horizon_future not configured.")
+            logger.warning(
+                "Parameter forecast.calendar or forecast.horizon_future not configured."
+            )
             return None
 
         return frepple.solver_forecast(**kw)

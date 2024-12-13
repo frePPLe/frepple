@@ -21,6 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+from datetime import datetime
 import itertools
 import json
 
@@ -47,7 +48,7 @@ from django.views.generic.base import View
 
 from freppledb.boot import getAttributeFields, getAttributes
 from freppledb.forecast.models import Forecast, ForecastPlan, Measure, ForecastPlanView
-from freppledb.common.models import Parameter, Comment, Bucket
+from freppledb.common.models import Parameter, Comment, Bucket, BucketDetail
 from freppledb.common.report import (
     GridPivot,
     GridFieldText,
@@ -2209,6 +2210,37 @@ class ForecastEditor:
             )
         }
 
+        try:
+            forecast_lastcurrentdate = datetime.strptime(
+                Parameter.getValue(
+                    "forecast_lastcurrentdate", request.database, currentdate
+                ),
+                "%Y-%m-%d %H:%M:%S",
+            )
+        except Exception as e:
+            print(e)
+            forecast_lastcurrentdate = currentdate
+
+        if forecast_lastcurrentdate == currentdate:
+            forecast_currentbucket = currentbucket
+        else:
+            try:
+                cursor.execute(
+                    """
+                select name
+                from common_bucketdetail
+                where %s >= startdate and %s < enddate
+                and bucket_id = %s
+                """,
+                    (forecast_lastcurrentdate, forecast_lastcurrentdate, bucketName),
+                )
+                singleRecord = cursor.fetchone()
+                forecast_currentbucket = (
+                    singleRecord[0] if singleRecord else "No bucket"
+                )
+            except:
+                forecast_currentbucket = currentbucket
+
         ctx = getWebServiceContext(request)
         ctx.update(
             {
@@ -2221,6 +2253,7 @@ class ForecastEditor:
                 ),
                 "currentbucket": currentbucket,
                 "currentdate": currentdate.strftime("%Y-%m-%d"),
+                "forecast_currentbucket": forecast_currentbucket,
                 "measures": json.dumps(measures),
                 "reportclass": ForecastEditor,
             }

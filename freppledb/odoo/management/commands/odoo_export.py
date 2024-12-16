@@ -517,7 +517,7 @@ class Command(BaseCommand):
                 owner__operation__type="routing",
                 operation__source__startswith="odoo",
                 owner__item__source__startswith="odoo",
-                status="approved",
+                status__in=["approved", "confirmed"],
             )
             .order_by("startdate")
             .select_related("operation", "location", "item", "owner")

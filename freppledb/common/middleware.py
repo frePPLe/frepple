@@ -174,6 +174,19 @@ class MultiDBMiddleware:
         # Make request information available throughout the application
         setattr(_thread_locals, "request", request)
 
+        # Select scenario database
+        request.prefix = ""
+        request.database = DEFAULT_DB_ALIAS
+        for i in settings.DATABASES:
+            try:
+                if settings.DATABASES[i]["regexp"].match(request.path):
+                    request.prefix = "/%s" % i
+                    request.path_info = request.path_info[len(request.prefix) :]
+                    request.path = request.path[len(request.prefix) :]
+                    request.database = i
+            except Exception:
+                pass
+
         # Authentication through the header
         auth_header = request.META.get("HTTP_AUTHORIZATION", None)
         webtoken = request.GET.get("webtoken", None)
@@ -299,7 +312,7 @@ class MultiDBMiddleware:
         # Keep last_login date up to date and start web service if needed.
         # The user object is ALWAYS on default database at this stage, and we save the last login
         # only in that database. It's lazily replicated to other databases when needed.
-        if request.user.is_anonymous:            
+        if request.user.is_anonymous:
             allowed_scenarios = {DEFAULT_DB_ALIAS: None}
         else:
             state = getattr(request.user, "_state", None)
@@ -312,33 +325,16 @@ class MultiDBMiddleware:
                 request.user.save(update_fields=["last_login"])
             allowed_scenarios = {i.name: i for i in request.user.scenarios}
 
-        for i in settings.DATABASES:
-            try:
-                if settings.DATABASES[i]["regexp"].match(request.path):
-                    if i not in allowed_scenarios:
-                        return HttpResponseNotFound(
-                            "Scenario not in use, or access is denied"
-                        )
-                    request.prefix = "/%s" % i
-                    request.path_info = request.path_info[len(request.prefix) :]
-                    request.path = request.path[len(request.prefix) :]
-                    request.database = i
-                    request.scenario = allowed_scenarios[i]
-                    if i != DEFAULT_DB_ALIAS:
-                        request.user.switchDatabase(i)
-                    response = self.get_response(request)
-                    if not response.streaming:
-                        # Note: Streaming response get the request field cleared in the
-                        # request_finished signal handler
-                        setattr(_thread_locals, "request", None)
-                    return response
-            except Exception:
-                pass
-        request.prefix = ""
-        request.database = DEFAULT_DB_ALIAS
-        request.scenario = allowed_scenarios[DEFAULT_DB_ALIAS]
-        if hasattr(request.user, "_state"):
-            request.user._state.db = DEFAULT_DB_ALIAS
+        # Check scenario access
+        request.scenario = allowed_scenarios.get(request.database, None)
+        if not request.scenario:
+            return HttpResponseNotFound("Scenario not in use, or access is denied")
+
+        # Update user
+        if request.database != DEFAULT_DB_ALIAS:
+            request.user.switchDatabase(i)
+
+        # Request processing
         response = self.get_response(request)
         if not response.streaming:
             # Note: Streaming response get the request field cleared in the

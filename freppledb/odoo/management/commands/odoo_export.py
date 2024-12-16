@@ -23,7 +23,6 @@
 
 import base64
 from datetime import datetime, timedelta
-import email
 import itertools
 import json
 import jwt
@@ -524,8 +523,7 @@ class Command(BaseCommand):
             .select_related("operation", "location", "item", "owner")
         ):
             if (
-                i.status not in ("proposed", "approved")
-                or not i.operation
+                not i.operation
                 or not i.operation.source
                 or not i.owner.operation.item
                 or not i.operation.source.startswith("odoo")

@@ -53,6 +53,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The API for uploading data files to the "import data files" task has extra URLs for
     retrieving the list of all data files, with their timestamp and file size.
 
+- | Fixed a minor inconsistency between full and incremental export of work orders.
+  | The full export only sent approved and proposed workorders, whereas the incremental
+    export didn't include such a filter. The filter is now removed.
+
 .. rubric:: System administration
 
 - | The docker container logs now display the apache output.

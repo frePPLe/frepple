@@ -327,7 +327,7 @@ class MultiDBMiddleware:
 
         # Check scenario access
         request.scenario = allowed_scenarios.get(request.database, None)
-        if not request.scenario:
+        if not request.scenario and not request.user.is_anonymous:
             return HttpResponseNotFound("Scenario not in use, or access is denied")
 
         # Update user

@@ -2324,6 +2324,204 @@ var ERPconnection = {
       $("#actions1 span").text($("#actionsul").children().first().text());
   },
 
+
+  //  ----------------------------------------------------------------------------
+  //  Sales Orders dependencies export
+  //  ----------------------------------------------------------------------------
+  SODepExport: function (grid, transactiontype) {
+    // Collect all selected rows in the status 'proposed'
+    var sel = grid.jqGrid('getGridParam', 'selarrrow');
+    if (sel === null || sel.length == 0)
+      return;
+    var data = [];
+    for (var i in sel) {
+      var r = grid.jqGrid('getRowData', sel[i]);
+      if (r.type === undefined)
+        r.type = transactiontype;
+      data.push(r);
+    }
+    if (data.length === 0)
+      return;
+
+    hideModal('timebuckets');
+    $.jgrid.hideModal("#searchmodfbox_grid");
+    $('#popup').html('<div class="modal-dialog">' +
+      '<div class="modal-content">' +
+      '<div class="modal-header">' +
+      '<h5 class="modal-title text-capitalize">' + gettext("Export") + '</h5>' +
+      '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
+      '</div>' +
+      '<div class="modal-body">' +
+      '<p>' + gettext("Export selected records?") + '</p>' +
+      '</div>' +
+      '<div class="modal-footer justify-content-between">' +
+      '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<input type="submit" id="button_export" role="button" class="btn btn-primary" value="' + gettext('Confirm') + '">' +
+      '</div>' +
+      '</div>' +
+      '</div>');
+    showModal('popup');
+    document.getElementById('popup').addEventListener('hidden.bs.modal', event => {
+      $("#noactionselected").prop("selected", true);
+    }, { once: true });
+
+    // compose url
+    var components = '?demand=';
+    for (i = 0; i < sel.length; i++) {
+      var r = grid.jqGrid('getRowData', sel[i]);
+      if (r.type === undefined)
+        r.type = transactiontype;
+      if (r.status == 'open' || r.status == 'proposed') {
+        if (i == 0) components += encodeURIComponent(sel[i]);
+        else components += '&demand=' + encodeURIComponent(sel[i]);
+      };
+    };
+    console.log(2378, components);
+    sessionStorage.setItem("components", components);
+
+    //get demandplans
+    $.ajax({
+      url: url_prefix + "/demand/operationplans/" + components,
+      type: "GET",
+      contentType: "application/json",
+      success: function (data) {
+         sessionStorage.setItem("data", data);
+         console.log(2390, 'success');
+        $('#popup .modal-body').html('<div class="table-responsive">' +
+          '<table class="table-condensed table-hover" id="forecastexporttable">' +
+          '<thead class="thead-default">' +
+          '</thead>' +
+          '</table>' +
+          '</div>');
+
+        var labels = ["reference", "type", "item", "value", "quantity", "location", "origin", "startdate", "enddate", "criticality"];
+
+        if (transactiontype == 'SO') {
+          var tableheadercontent = $('<tr/>');
+
+          tableheadercontent.append($('<th/>').html(
+            '<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'
+          ));
+          for (i = 0; i < labels.length; i++)
+            tableheadercontent1.append($('<th/>').addClass('text-capitalize').text(gettext(labels[i])));
+
+          var tablebodycontent = $('<tbody/>');
+          for (i = 0; i < data.length; i++) {
+            var row = $('<tr/>');
+            var td = $('<td/>');
+
+            td.append($('<input/>').attr({ 'id': "cb_modaltable-" + i, 'class': "cbox", 'type': "checkbox", 'aria-checked': "false" }));
+            row.append(td);
+            for (var j = 0; j < labels.length; j++)
+              row.append($('<td/>').text(data[i][labels[j]]));
+            tablebodycontent.append(row);
+          };
+
+        };
+
+        $('#popup table').append(tablebodycontent);
+        $('#popup thead').append(tableheadercontent);
+
+        $('#popup').modal({ backdrop: 'static', keyboard: false }).on('shown.bs.modal', function () {
+          $(this).find('.modal-dialog').css({
+            'max-width': 50 + $('#forecastexporttable').width() + 'px',
+            'visibility': 'visible'
+          });
+        }).modal('show');
+
+        $('#button_export').on('click', function () {
+          //get selected row data
+          data = [];
+          var row1 = [];
+          var row1data = {};
+          var rows = $('#forecastexporttable tr.selected');
+
+          $.each(rows, function (key, value) {
+            row1 = value.children;
+            row1data['reference'] = row1[1].textContent;
+            row1data['type'] = row1[2].textContent;
+            row1data['item'] = row1[3].textContent;
+            row1data['value'] = row1[4].textContent;
+            row1data['quantity'] = row1[5].textContent;
+            row1data['location'] = row1[6].textContent;
+            row1data['origin'] = row1[7].textContent;
+            row1data['startdate'] = row1[8].textContent;
+            row1data['enddate'] = row1[9].textContent;
+            row1data['criticality'] = row1[10].textContent;
+            data.push(row1data);
+          });
+
+          $('#popup .modal-body').html(gettext('connecting') + '...');
+          $.ajax({
+            url: url_prefix + "/erp/upload/",
+            data: JSON.stringify(data),
+            type: "POST",
+            contentType: "application/json",
+            success: function () {
+              $('#popup .modal-body').html(gettext("Export successful"));
+              $('#cancelbutton').val(gettext('Close'));
+              $('#button_export').toggleClass("btn-primary").prop('disabled', true);
+              // Mark selected rows as "approved" if the original status was "proposed".
+              for (var i in sel) {
+                var cur = grid.jqGrid('getCell', sel[i], 'status');
+                if (cur == 'proposed')
+                  grid.jqGrid('setCell', sel[i], 'status', 'approved');
+              };
+            },
+            error: function (result, stat, errorThrown) {
+              if (result.status == 401) {
+                // location.reload();
+                return;
+              }
+              $('#popup .modal-title').html(gettext("Error during export"));
+              $('#popup .modal-header').addClass('bg-danger');
+              $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
+              $('#button_export').val(gettext('Retry'));
+              $('#popup .modal-dialog').css({ 'visibility': 'visible' })
+              $('#popup').modal('show');
+            }
+          });
+        });
+
+        $("#cb_modaltableall").click(function () {
+          $("#forecastexporttable input[type=checkbox]").prop("checked", $(this).prop("checked"));
+          $("#forecastexporttable tbody tr").toggleClass('selected');
+          if ($("#forecastexporttable tbody input[type=checkbox]:checked").length > 0) {
+            $('#button_export').removeClass("active").addClass("active").prop('disabled', false);;
+          } else {
+            $('#button_export').removeClass("active").prop('disabled', true);
+          };
+        });
+        $("#forecastexporttable tbody input[type=checkbox]").click(function () {
+          $(this).parent().parent().toggleClass('selected');
+          $("#cb_modaltableall").prop("checked", $("#forecastexporttable tbody input[type=checkbox]:not(:checked)").length == 0);
+          if ($("#forecastexporttable tbody input[type=checkbox]:checked").length > 0) {
+            $('#button_export').removeClass("active").addClass("active").prop('disabled', false);;
+          } else {
+            $('#button_export').removeClass("active").prop('disabled', true);
+          };
+        });
+        if ($("#actions").length)
+          $("#actions1 span").text($("#actionsul").children().first().text());
+        if ($("#DRPactions").length)
+          $("#DRPactions1 span").text($("#DRPactionsul").children().first().text());
+      }
+      // error: function (result, stat, errorThrown) {
+      //   console.log(2511, 'error', result);
+      //   if (result.status == 401) {
+      //     // location.reload();
+      //     return;
+      //   }
+      //   $('#popup .modal-title').html(gettext("Error"));
+      //   $('#popup .modal-header').addClass('bg-danger');
+      //   $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
+      //   $('#button_export').val(gettext('Retry'));
+      //   $('#popup .modal-dialog').css({ 'visibility': 'visible' })
+      //   $('#popup').modal('show');
+      // }
+    });
+
+  }
 } //end Code for ERP integration
 
 //----------------------------------------------------------------------------

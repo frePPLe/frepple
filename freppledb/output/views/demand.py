@@ -26,7 +26,7 @@ import json
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections, transaction
-from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponseForbidden, HttpResponseBadRequest, JsonResponse
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_str
 from django.utils.text import capfirst
@@ -576,7 +576,6 @@ else:
 
 @staff_member_required
 def OperationPlans(request):
-    print(579, 'inside function')
     if (
         request.method != "GET"
         or request.headers.get("x-requested-with") != "XMLHttpRequest"
@@ -587,38 +586,36 @@ def OperationPlans(request):
 
     # Collect list of selected sales orders
     so_list = request.GET.getlist("demand")
-    print(590, so_list)
-
-    result = []
 
     # Collect operationplans associated with the sales order(s)
+    result = {"PO": [], "DO": [], "MO": []}
     with connections[request.database].cursor() as cursor:
         cursor.execute(
             """
-        select operationplan.reference,
-        operationplan.type,
-        operationplan.item_id,
-        case when operationplan.type = 'DO' then operationplan.destination_id else operationplan.location_id end as location_id,
-        operationplan.origin_id,
-        operationplan.startdate,
-        operationplan.enddate,
-        operationplan.quantity,
-        operationplan.quantity * item.cost as value,
-        operationplan.criticality
-        from operationplan
-        inner join item on item.name = operationplan.item_id
-        where operationplan.plan->'pegging' ?| %s
-        and operationplan.type in ('PO','DO','MO')
-        order by operationplan.type, operationplan.startdate
-        """,
+            select operationplan.reference,
+            operationplan.type,
+            operationplan.item_id,
+            case when operationplan.type = 'DO' then operationplan.destination_id 
+            else operationplan.location_id end as location_id,
+            operationplan.origin_id,
+            operationplan.startdate,
+            operationplan.enddate,
+            operationplan.quantity,
+            operationplan.quantity * item.cost as value
+            from operationplan
+            inner join item on item.name = operationplan.item_id
+            where operationplan.plan->'pegging' ?| %s
+            and operationplan.type in ('PO','DO','MO')
+            and operationplan.status = 'proposed'
+            order by operationplan.type, operationplan.startdate
+            """,
             (so_list,),
         )
 
         for i in cursor:
-            result.append(
+            result[i[1]].append(
                 {
                     "reference": i[0],
-                    "type": i[1],
                     "item": i[2],
                     "location": i[3],
                     "origin": i[4],
@@ -626,10 +623,6 @@ def OperationPlans(request):
                     "enddate": i[6].strftime(settings.DATETIME_INPUT_FORMATS[0]),
                     "quantity": float(i[7]),
                     "value": float(i[8]),
-                    "criticality": float(i[9]),
                 }
             )
-    print(632, result)
-    return JsonResponse(
-       result, safe=False
-    )
+    return JsonResponse(result)

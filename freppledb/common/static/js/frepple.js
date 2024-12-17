@@ -2345,7 +2345,7 @@ var ERPconnection = {
 
     hideModal('timebuckets');
     $.jgrid.hideModal("#searchmodfbox_grid");
-    $('#popup').html('<div class="modal-dialog">' +
+    $('#popup').html('<div class="modal-dialog modal-xl">' +
       '<div class="modal-content">' +
       '<div class="modal-header">' +
       '<h5 class="modal-title text-capitalize">' + gettext("Export") + '</h5>' +
@@ -2376,8 +2376,6 @@ var ERPconnection = {
         else components += '&demand=' + encodeURIComponent(sel[i]);
       };
     };
-    console.log(2378, components);
-    sessionStorage.setItem("components", components);
 
     //get demandplans
     $.ajax({
@@ -2386,7 +2384,6 @@ var ERPconnection = {
       contentType: "application/json",
       success: function (data) {
          sessionStorage.setItem("data", data);
-         console.log(2390, 'success');
         $('#popup .modal-body').html('<div class="table-responsive">' +
           '<table class="table-condensed table-hover" id="forecastexporttable">' +
           '<thead class="thead-default">' +
@@ -2394,7 +2391,7 @@ var ERPconnection = {
           '</table>' +
           '</div>');
 
-        var labels = ["reference", "type", "item", "value", "quantity", "location", "origin", "startdate", "enddate", "criticality"];
+        var labels = ["reference", "type", "item", "value", "quantity", "location", "origin", "startdate", "enddate"];
 
         if (transactiontype == 'SO') {
           var tableheadercontent = $('<tr/>');
@@ -2403,7 +2400,7 @@ var ERPconnection = {
             '<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'
           ));
           for (i = 0; i < labels.length; i++)
-            tableheadercontent1.append($('<th/>').addClass('text-capitalize').text(gettext(labels[i])));
+            tableheadercontent.append($('<th/>').addClass('text-capitalize').text(gettext(labels[i])));
 
           var tablebodycontent = $('<tbody/>');
           for (i = 0; i < data.length; i++) {
@@ -2421,13 +2418,6 @@ var ERPconnection = {
 
         $('#popup table').append(tablebodycontent);
         $('#popup thead').append(tableheadercontent);
-
-        $('#popup').modal({ backdrop: 'static', keyboard: false }).on('shown.bs.modal', function () {
-          $(this).find('.modal-dialog').css({
-            'max-width': 50 + $('#forecastexporttable').width() + 'px',
-            'visibility': 'visible'
-          });
-        }).modal('show');
 
         $('#button_export').on('click', function () {
           //get selected row data
@@ -2447,7 +2437,6 @@ var ERPconnection = {
             row1data['origin'] = row1[7].textContent;
             row1data['startdate'] = row1[8].textContent;
             row1data['enddate'] = row1[9].textContent;
-            row1data['criticality'] = row1[10].textContent;
             data.push(row1data);
           });
 
@@ -2505,20 +2494,19 @@ var ERPconnection = {
           $("#actions1 span").text($("#actionsul").children().first().text());
         if ($("#DRPactions").length)
           $("#DRPactions1 span").text($("#DRPactionsul").children().first().text());
+      },
+      error: function (result, stat, errorThrown) {
+        if (result.status == 401) {
+          location.reload();
+          return;
+        }
+        $('#popup .modal-title').html(gettext("Error"));
+        $('#popup .modal-header').addClass('bg-danger');
+        $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
+        $('#button_export').val(gettext('Retry'));
+        $('#popup .modal-dialog').css({ 'visibility': 'visible' })
+        $('#popup').modal('show');
       }
-      // error: function (result, stat, errorThrown) {
-      //   console.log(2511, 'error', result);
-      //   if (result.status == 401) {
-      //     // location.reload();
-      //     return;
-      //   }
-      //   $('#popup .modal-title').html(gettext("Error"));
-      //   $('#popup .modal-header').addClass('bg-danger');
-      //   $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
-      //   $('#button_export').val(gettext('Retry'));
-      //   $('#popup .modal-dialog').css({ 'visibility': 'visible' })
-      //   $('#popup').modal('show');
-      // }
     });
 
   }

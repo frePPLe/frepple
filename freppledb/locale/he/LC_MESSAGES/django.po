@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2023-10-24 12:29+0200\n"
+"PO-Revision-Date: 2024-12-17 15:02+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: he\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
@@ -744,7 +744,7 @@ msgstr "ספק"
 #: output/templates/output/demand_forecast.html:218
 #: output/views/constraint.py:28 output/views/constraint.py:92
 msgid "demand"
-msgstr "verkooporder"
+msgstr ""
 
 #: archive/widget.py:28
 msgid "Inventory history"
@@ -1345,7 +1345,7 @@ msgstr "מודל"
 #: execute/templates/commands/scenario_copy.html:31 forecast/models.py:1196
 #: forecast/views.py:353
 msgid "label"
-msgstr "label"
+msgstr ""
 
 #: common/models.py:1521 common/views.py:722
 msgid "editable"
@@ -1628,7 +1628,7 @@ msgstr "ייבא קובץ CSV או Excel"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2559
 #: output/templates/output/pegging.html:277
 msgid "export as CSV or Excel file"
-msgstr "export as CSV or Excel file"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:390
 #: common/templates/admin/base_site_gridpivot.html:252
@@ -1640,7 +1640,7 @@ msgstr "export as CSV or Excel file"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2810
 #: output/templates/output/pegging.html:279
 msgid "customize"
-msgstr "personaliseer"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:391
 #: common/templates/common/comments.html:17
@@ -1883,13 +1883,13 @@ msgstr "ימים"
 #: common/templates/admin/subtemplate_timebuckets.html:57
 #: output/views/resource.py:257 wizard/views.py:3233
 msgid "weeks"
-msgstr "weken"
+msgstr ""
 
 #: common/templates/admin/subtemplate_timebuckets.html:53
 #: common/templates/admin/subtemplate_timebuckets.html:58 wizard/views.py:3234
 #: wizard/views.py:3238
 msgid "months"
-msgstr "maanden"
+msgstr ""
 
 #: common/templates/admin/subtemplate_timebuckets.html:61
 msgid "after current date"
@@ -1906,7 +1906,7 @@ msgstr "בטל"
 
 #: common/templates/admin/subtemplate_timebuckets.html:69 execute/views.py:888
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: common/templates/auth/change_password.html:21
 #, python-format
@@ -2156,10 +2156,11 @@ msgid ""
 "curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
 "</div></div>\n"
 "<div class=\"mb-2\">\n"
-"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" target="
-"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
-"\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" value=\"%(exp)s"
-"\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/>  days:\n"
+"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" "
+"target=\"_blank\">JSON Web Token authentication</a> valid for the next "
+"<input id=\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" "
+"value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/"
+">  days:\n"
 "</div>\n"
 "<div class=\"card mb-3\"><div class=\"card-body\">\n"
 "wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
@@ -2176,7 +2177,7 @@ msgstr "API רשימת"
 
 #: common/templates/rest_framework/index.html:61
 msgid "Detail API"
-msgstr "Detail API"
+msgstr ""
 
 #: common/views.py:170
 msgid "Page size"
@@ -2739,29 +2740,20 @@ msgstr "סוג תכנון"
 
 #: execute/templates/commands/runplan.html:28
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Genereer een supply plan dat alle constraints "
-"respecteer.<br>In geval van tekorten wordt de vraag te laat of te weinig "
-"ingepland.\">תוכנית מאולצת</span>"
 
 #: execute/templates/commands/runplan.html:35
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that shows material, "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that shows material, "
 "capacity and operation problems that prevent the demand from being planned "
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Genereer een supply plan dat material, capacity en "
-"lead time problemen toont die beletten dat de vraag op tijd kan worden "
-"geleveld.<br>De vraag wordt steeds volledig en op de gewenste leverdatum "
-"ingepland.\">תוכנית לא מאולצת</span>"
 
 #: execute/templates/commands/runplan.html:40 output/models.py:56
 #: output/templates/output/buffer.html:353
@@ -2772,27 +2764,27 @@ msgstr "אילוצים"
 
 #: execute/templates/commands/runplan.html:44
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Respect the capacity limits of your resources."
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Respect the capacity limits of your resources."
 "\">Capacity: respect capacity limits</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:51
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't generate any plans that start or end in the "
-"past.<br>Proposed and approved activities must all be in the future.<br>Only "
-"confirmed activities are allowed to be in the past.\">Lead time: do not plan "
-"in the past</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't generate any plans that start or end in "
+"the past.<br>Proposed and approved activities must all be in the future."
+"<br>Only confirmed activities are allowed to be in the past.\">Lead time: do "
+"not plan in the past</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:58
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't propose any plans within a frozen time window "
-"(which is configured on each operation).<br>Within the frozen zone only "
-"approved and confirmed activities are allowed, no new proposed activities."
-"\">Release fence: do not plan within a frozen time window</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't propose any plans within a frozen time "
+"window (which is configured on each operation).<br>Within the frozen zone "
+"only approved and confirmed activities are allowed, no new proposed "
+"activities.\">Release fence: do not plan within a frozen time window</span>"
 msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:13
@@ -2959,7 +2951,7 @@ msgstr ""
 
 #: execute/templates/execute/execute.html:69 forecast/models.py:1188
 msgid "view"
-msgstr "view"
+msgstr ""
 
 #: execute/templates/execute/execute.html:212
 msgid "autorefresh"
@@ -4014,7 +4006,7 @@ msgstr ""
 #: inventoryplanning/views.py:541 output/views/operation.py:623
 #: wizard/templates/wizard/quickstart_production.html:135
 msgid "lead time"
-msgstr "lead time"
+msgstr ""
 
 #: input/models/itemdistribution.py:54
 msgid "Transport lead time"
@@ -5696,15 +5688,15 @@ msgstr "מדיניות מלאי"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2956
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to "
+"1.<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"Zet de safety stock op 0 en reorderhoeveelheid op 1."
-"<br>Deze product-locatie wordt dan ingepland met een 1-op-1 matching tussen "
-"de vraag en supply.\" >לא להכניס למלאי</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"Zet de safety stock op 0 en reorderhoeveelheid "
+"op 1.<br>Deze product-locatie wordt dan ingepland met een 1-op-1 matching "
+"tussen de vraag en supply.\" >לא להכניס למלאי</span>"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2966
 #: inventoryplanning/templates/inventoryplanning/drp.html:2985
@@ -5713,13 +5705,13 @@ msgstr "אמת"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2975
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"In push mode, any excess inventory will be "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"In push mode wordt alle stock meteen downstream "
-"doorgezonden naar andere locaties.\">הפעל מצב הכנסה</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"In push mode wordt alle stock meteen "
+"downstream doorgezonden naar andere locaties.\">הפעל מצב הכנסה</span>"
 
 #: inventoryplanning/views.py:117
 msgid "segments"
@@ -6204,7 +6196,7 @@ msgstr "חומר"
 
 #: output/views/constraint.py:36
 msgid "underload"
-msgstr "underload"
+msgstr ""
 
 #: output/views/constraint.py:37
 msgid "material shortage"

@@ -6816,8 +6816,12 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:318
+#: freppledb/forecast/static/forecast/forecast.html:319
 msgid "Apply"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:194
+msgid "Archived"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
@@ -6902,6 +6906,11 @@ msgstr ""
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:48
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+msgid "consumed proposed"
+msgstr ""
+
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:35
 msgid "delivery"
 msgstr ""
@@ -6910,7 +6919,7 @@ msgstr ""
 msgid "downstream operations"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:312
+#: freppledb/forecast/static/forecast/forecast.html:313
 msgid "edit"
 msgstr ""
 
@@ -6950,7 +6959,11 @@ msgid "network status"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
-msgid "no downstream operationplans information"
+msgid "no downstream information"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:37
+msgid "no inventory information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:52
@@ -6967,7 +6980,7 @@ msgid "no supply information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:18
-msgid "no upstream operationplans information"
+msgid "no upstream information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:113
@@ -6980,6 +6993,11 @@ msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:230
 msgid "plus"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:51
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:219
+msgid "produced proposed"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:281
@@ -7073,6 +7091,6 @@ msgstr ""
 msgid "{{ aggregatedoperationplans.count }} selected"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:330
+#: freppledb/forecast/static/forecast/forecast.html:331
 msgid "{{m.label}}"
 msgstr ""

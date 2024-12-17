@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2023-10-24 12:34+0200\n"
+"PO-Revision-Date: 2024-12-17 18:48+1000\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.5\n"
 
 #: common/static/js/frepple.js:213 common/static/js/frepple.js:1513
 #: common/static/js/frepple.js:1562 common/static/js/frepple.js:2196
@@ -61,7 +61,7 @@ msgstr "保存"
 #: common/static/js/frepple.js:324
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:353
 msgid "Return to page"
-msgstr ""
+msgstr "返回页面"
 
 #: common/static/js/frepple.js:577
 #: input/static/operationplandetail/src/operationplandetailCtrl.js:427
@@ -102,7 +102,7 @@ msgstr "冻结的列"
 #: common/static/js/frepple.js:883 common/static/js/frepple.js:2490
 #: forecast/static/forecast/src/forecast.js:929
 msgid "Customize"
-msgstr "定制"
+msgstr "自定义"
 
 #: common/static/js/frepple.js:893 common/static/js/frepple.js:1272
 #: common/static/js/frepple.js:1489 common/static/js/frepple.js:1538
@@ -135,13 +135,14 @@ msgstr "Excel列表"
 msgid "CSV list"
 msgstr "CSV列表"
 
+# 数据源URL
 #: common/static/js/frepple.js:1196 common/static/js/frepple.js:1227
 msgid "Data source URL"
-msgstr ""
+msgstr "数据源URL"
 
 #: common/static/js/frepple.js:1198 common/static/js/frepple.js:1229
 msgid "Using this link external applications can pull data from frePPLe"
-msgstr ""
+msgstr "通过此链接，外部应用程序可从frePPLe中拉取数据"
 
 #: common/static/js/frepple.js:1213
 msgid "Spreadsheet table"
@@ -153,15 +154,15 @@ msgstr "CSV表"
 
 #: common/static/js/frepple.js:1246
 msgid "Scenarios to export"
-msgstr ""
+msgstr "涉及导出的场景"
 
 #: common/static/js/frepple.js:1273 common/static/js/frepple.js:2143
 msgid "Export"
-msgstr "输出"
+msgstr "导出"
 
 #: common/static/js/frepple.js:1482
 msgid "Delete data"
-msgstr "删除资料"
+msgstr "删除数据"
 
 #: common/static/js/frepple.js:1486
 #, javascript-format
@@ -180,7 +181,7 @@ msgstr "复制数据"
 #: common/static/js/frepple.js:1535
 #, javascript-format
 msgid "You are about to duplicate %s objects"
-msgstr "你将会复制% s对象"
+msgstr "你将会复制 %s 对象"
 
 #: common/static/js/frepple.js:1688
 msgid "Search"
@@ -188,11 +189,11 @@ msgstr "搜索"
 
 #: common/static/js/frepple.js:1753
 msgid "is child of"
-msgstr ""
+msgstr "继承自"
 
 #: common/static/js/frepple.js:1755
 msgid "is null"
-msgstr ""
+msgstr "为空"
 
 #: common/static/js/frepple.js:1787
 msgid "days"
@@ -208,15 +209,15 @@ msgstr "和"
 
 #: common/static/js/frepple.js:1973
 msgid "Click ok to confirm deleting the favorite"
-msgstr ""
+msgstr "点击OK，以确认删除收藏夹"
 
 #: common/static/js/frepple.js:2147
 msgid "Export selected records?"
-msgstr ""
+msgstr "是否导出已选记录？"
 
 #: common/static/js/frepple.js:2161
 msgid "connecting"
-msgstr ""
+msgstr "连接中"
 
 #: common/static/js/frepple.js:2170
 msgid "Export successful"
@@ -224,11 +225,11 @@ msgstr "导出成功"
 
 #: common/static/js/frepple.js:2199
 msgid "retry"
-msgstr "重审"
+msgstr "重试"
 
 #: common/static/js/frepple.js:2340
 msgid "Customize a dashboard row"
-msgstr "自定义仪表板行"
+msgstr "自定义一个仪表盘行"
 
 #: common/static/js/frepple.js:2347
 msgid "Name"
@@ -236,7 +237,7 @@ msgstr "名称"
 
 #: common/static/js/frepple.js:2353
 msgid "Layout"
-msgstr "布置"
+msgstr "布局"
 
 #: common/static/js/frepple.js:2359
 msgid "Single column"
@@ -256,7 +257,7 @@ msgstr "四列"
 
 #: common/static/js/frepple.js:2379
 msgid "Add widget"
-msgstr "添加小插件"
+msgstr "添加插件"
 
 #: common/static/js/frepple.js:2398
 msgid "Add new below"
@@ -273,7 +274,7 @@ msgstr "删除"
 #: common/static/js/frepple.js:2553
 #, javascript-format
 msgid "%s unread messages"
-msgstr "未读消息 %s"
+msgstr "%s 条未读消息"
 
 #: common/static/js/frepple.js:2705
 msgid "Installed apps"
@@ -285,7 +286,7 @@ msgstr "导入CSV或Excel文件"
 
 #: common/static/js/frepple.js:2758
 msgid "Load an Excel file or a CSV-formatted text file."
-msgstr "载入一个的Excel档或CSV-formatted格式的文字档。"
+msgstr "读取Excel或CSV格式的文本文件"
 
 #: common/static/js/frepple.js:2759
 msgid "The first row should contain the field names."
@@ -293,11 +294,11 @@ msgstr "第一行包含了字段名。"
 
 #: common/static/js/frepple.js:2761
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr "首先删除所有存在的记录和所有相关的表"
+msgstr "请首先删除所有存在的记录以及所有相关的表"
 
 #: common/static/js/frepple.js:2769
 msgid "Select files to upload"
-msgstr ""
+msgstr "选择要上传的文件"
 
 #: common/static/js/frepple.js:2779
 msgid "Data file"
@@ -322,16 +323,16 @@ msgstr "已取消"
 #: common/static/js/frepple.js:2930
 #, javascript-format
 msgid "%s records processed"
-msgstr ""
+msgstr "已处理 %s 条记录"
 
 #: common/static/js/frepple.js:3683
 #, javascript-format
 msgid "Manage notifications of %s"
-msgstr ""
+msgstr "管理 %s 的通知"
 
 #: common/static/js/frepple.js:3712
 msgid "Add followers"
-msgstr ""
+msgstr "添加关注者"
 
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
 msgid "inventory status"

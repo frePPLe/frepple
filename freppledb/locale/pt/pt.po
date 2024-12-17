@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2023-10-24 12:32+0200\n"
+"PO-Revision-Date: 2024-12-17 15:05+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.4.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: common/static/js/frepple.js:213 common/static/js/frepple.js:1513
@@ -5965,8 +5965,12 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:318
+#: freppledb/forecast/static/forecast/forecast.html:319
 msgid "Apply"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:194
+msgid "Archived"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
@@ -6043,6 +6047,11 @@ msgstr ""
 msgid "completed: {{aggregatedoperationplans.status.completed }}"
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:48
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+msgid "consumed proposed"
+msgstr ""
+
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:35
 msgid "delivery"
 msgstr ""
@@ -6051,7 +6060,7 @@ msgstr ""
 msgid "downstream operations"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:312
+#: freppledb/forecast/static/forecast/forecast.html:313
 msgid "edit"
 msgstr ""
 
@@ -6091,7 +6100,11 @@ msgid "network status"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
-msgid "no downstream operationplans information"
+msgid "no downstream information"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:37
+msgid "no inventory information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:52
@@ -6108,7 +6121,7 @@ msgid "no supply information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:18
-msgid "no upstream operationplans information"
+msgid "no upstream information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:113
@@ -6121,6 +6134,11 @@ msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:230
 msgid "plus"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:51
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:219
+msgid "produced proposed"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:281
@@ -6189,6 +6207,16 @@ msgstr ""
 msgid "supply information"
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:47
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:227
+msgid "total consumed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:50
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:215
+msgid "total produced"
+msgstr ""
+
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:33
 msgid "types"
 msgstr ""
@@ -6201,6 +6229,6 @@ msgstr ""
 msgid "week number"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:330
+#: freppledb/forecast/static/forecast/forecast.html:331
 msgid "{{m.label}}"
 msgstr ""

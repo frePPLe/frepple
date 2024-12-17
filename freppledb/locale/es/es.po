@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2023-10-24 12:30+0200\n"
+"PO-Revision-Date: 2024-12-17 14:54+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: es\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: common/static/js/frepple.js:201
 msgid "Connection failed"
@@ -5591,7 +5591,7 @@ msgstr "Cantidad de inventario de seguridad"
 
 #: inventoryplanning/admin.py:90 inventoryplanning/views.py:2265
 msgid "segment detail"
-msgstr "Detalle del segmento"
+msgstr "detalle del segmento"
 
 #: inventoryplanning/attributes.py:18
 msgid "Successor part"
@@ -5808,7 +5808,7 @@ msgstr "inventario de seguridad calculado"
 
 #: inventoryplanning/models.py:410 inventoryplanning/views.py:575
 msgid "reorder point"
-msgstr "Punto de reorden"
+msgstr "punto de reorden"
 
 #: inventoryplanning/models.py:413
 msgid "safety stock value"
@@ -5820,7 +5820,7 @@ msgstr "valor de cantidad de reorden"
 
 #: inventoryplanning/models.py:419
 msgid "reorder point value"
-msgstr "Valor del punto de repedido"
+msgstr "valor del punto de repedido"
 
 #: inventoryplanning/models.py:431
 #: inventoryplanning/templates/inventoryplanning/drp.html:2178
@@ -7660,7 +7660,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:318
+#: freppledb/forecast/static/forecast/forecast.html:319
 msgid "Apply"
 msgstr ""
 
@@ -7712,6 +7712,11 @@ msgstr ""
 msgid "View start events"
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:48
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+msgid "consumed proposed"
+msgstr ""
+
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:35
 msgid "delivery"
 msgstr ""
@@ -7733,7 +7738,11 @@ msgid "network status"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
-msgid "no downstream operationplans information"
+msgid "no downstream information"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:37
+msgid "no inventory information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:52
@@ -7745,11 +7754,16 @@ msgid "no supply information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:18
-msgid "no upstream operationplans information"
+msgid "no upstream information"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:230
 msgid "plus"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:51
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:219
+msgid "produced proposed"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:281

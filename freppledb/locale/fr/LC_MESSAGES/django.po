@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2024-10-17 13:44+0200\n"
+"PO-Revision-Date: 2024-12-17 14:58+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
@@ -1305,7 +1305,7 @@ msgstr "périodes temporelles"
 
 #: common/models.py:1469
 msgid "string"
-msgstr "Chaîne de caractère"
+msgstr "chaîne de caractère"
 
 #: common/models.py:1470
 msgid "boolean"
@@ -2579,7 +2579,7 @@ msgid ""
 "support team."
 msgstr ""
 "Vos données seront écrites dans un fichier qui devra être envoyé à l'équipe "
-"support de frePPLe"
+"support de frePPLe."
 
 #: execute/templates/commands/createbuckets.html:10
 msgid "create time buckets for reporting."
@@ -3002,7 +3002,7 @@ msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:7
 msgid "Run a sequence of tasks."
-msgstr "Exécuter une sequence de tâches"
+msgstr "exécuter une sequence de tâches"
 
 #: execute/templates/commands/scheduletasks.html:15
 msgid "next scheduled run"
@@ -3754,7 +3754,7 @@ msgstr "Exception de la demande"
 #: forecast/templates/forecast/wizard.html:4 forecast/views.py:2091
 #: forecast/views.py:2109
 msgid "forecast wizard"
-msgstr "Assistant pour les prévisions"
+msgstr "assistant pour les prévisions"
 
 #: forecast/views.py:133
 msgid "method"
@@ -4098,7 +4098,7 @@ msgstr "politique"
 
 #: input/models/demand.py:122
 msgid "Defines how sales orders are shipped together"
-msgstr "définit comment les commandes client doivent être expédiées ensemble."
+msgstr "Définit comment les commandes client doivent être expédiées ensemble."
 
 #: input/models/demand.py:130 input/models/operationplan.py:153
 msgid "MTO batch name"
@@ -4146,7 +4146,7 @@ msgstr "Volume de l’article"
 
 #: input/models/item.py:64
 msgid "Period of cover in days"
-msgstr "période de couverture en jours"
+msgstr "Période de couverture en jours"
 
 #: input/models/item.py:79 input/views/sales.py:144
 msgid "items"
@@ -5315,7 +5315,7 @@ msgstr "Quantité de stock de sécurité"
 
 #: inventoryplanning/admin.py:90 inventoryplanning/views.py:2265
 msgid "segment detail"
-msgstr "Détail du segment"
+msgstr "détail du segment"
 
 #: inventoryplanning/attributes.py:18
 msgid "Successor part"
@@ -5535,7 +5535,7 @@ msgstr "stock de sécurité calculé"
 
 #: inventoryplanning/models.py:410 inventoryplanning/views.py:575
 msgid "reorder point"
-msgstr "Point de réapprovisionnement"
+msgstr "point de réapprovisionnement"
 
 #: inventoryplanning/models.py:413
 msgid "safety stock value"
@@ -5547,7 +5547,7 @@ msgstr "valeur de la quantité de réapprovisionnement"
 
 #: inventoryplanning/models.py:419
 msgid "reorder point value"
-msgstr "Valeur du point de réapprovisionnement"
+msgstr "valeur du point de réapprovisionnement"
 
 #: inventoryplanning/models.py:431
 #: inventoryplanning/templates/inventoryplanning/drp.html:2178
@@ -6654,7 +6654,7 @@ msgstr "La sauvegarde du rapport a échoué"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:168
 msgid "format SQL query"
-msgstr "Formatter la requête SQL"
+msgstr "formatter la requête SQL"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:198
 #: reportmanager/views.py:132

@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2024-12-09 14:36+0100\n"
+"PO-Revision-Date: 2024-12-17 14:51+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -7470,7 +7470,7 @@ msgstr "Stock"
 #: freppledb/input/static/operationplandetail/operationplandetail.html:56
 #: freppledb/planningboard/static/planningboard/planningboard.html:136
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
-msgstr "De Gantt chart is beperkt tot {{row|limit}} rijen."
+msgstr "De Gantt chart is beperkt tot {{rowlimit}} rijen."
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1337
 msgid ""
@@ -7697,6 +7697,10 @@ msgid ""
 "table.\n"
 "                        <br><br>"
 msgstr ""
+"Een operatie krijgt de kleur van de categorie van het geproduceerde product."
+"<br>\n"
+"De item categorien worden in de producttabel ingevuld.\n"
+"<br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1641
 msgid ""
@@ -7705,93 +7709,114 @@ msgid ""
 "table.\n"
 "                        <br><br>"
 msgstr ""
+"Een operatie krijgt de kleur van de subcategorie van het greproduceerde "
+"product<br>\n"
+"The product subcategorien worden in de producttabel ingegevuld.\n"
+"<br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1551
 msgid ""
 "An operation gets the color of the week where the pegged demand is due in.\n"
 "                        <br><br>"
 msgstr ""
+"Een operatie krijgt de kleur van de week van de leverdatum van de gelinkte "
+"verkooporders.\n"
+"<br><br>"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:73
 msgid "Assign an extra resource"
-msgstr ""
+msgstr "Toekennen van een extra resource"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1544
 msgid "Due date color setup"
-msgstr ""
+msgstr "Setup kleuren voor leverdata"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1392
 #: freppledb/planningboard/static/planningboard/planningboard.html:1427
 #: freppledb/planningboard/static/planningboard/planningboard.html:1454
 msgid "Enter name"
-msgstr ""
+msgstr "Type de naam"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:76
 msgid "Remove this resource"
-msgstr ""
+msgstr "Verwijder deze resource"
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:75
 msgid "View end events"
-msgstr ""
+msgstr "Toon einddata"
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:77
 msgid "View full duration"
-msgstr ""
+msgstr "Toon de volledige duur"
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:76
 msgid "View start and end events"
-msgstr ""
+msgstr "Toon start en einddata"
 
 #: freppledb/input/static/operationplandetail/src/calendar.js:74
 msgid "View start events"
-msgstr ""
+msgstr "Toon startdata"
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:48
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+msgid "consumed proposed"
+msgstr "geconsumeerd voorgesteld"
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:35
 msgid "delivery"
-msgstr ""
+msgstr "levering"
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:2
 msgid "downstream operations"
-msgstr ""
+msgstr "downstream operaties"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:145
 msgid "export to {{erp}} failed"
-msgstr ""
+msgstr "exporteren naar {{erp}} mislukt"
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
-msgid "no downstream operationplans information"
-msgstr ""
+msgid "no downstream information"
+msgstr "geen downstream informatie"
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:37
+msgid "no inventory information"
+msgstr "geen stockinformatie"
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:18
-msgid "no upstream operationplans information"
-msgstr ""
+msgid "no upstream information"
+msgstr "geen upstream informatie"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:230
 msgid "plus"
-msgstr ""
+msgstr "plus"
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:51
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:219
+msgid "produced proposed"
+msgstr "geproduceerd voorgesteld"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:6
 msgid "selected"
-msgstr ""
+msgstr "geselecteerd"
 
 #: freppledb/forecast/static/forecast/forecast.html:62
 #: freppledb/planningboard/static/planningboard/planningboard.html:87
 msgid "set time horizon"
-msgstr ""
+msgstr "instellen tijdshorizon"
 
 #: freppledb/input/static/operationplandetail/calendar.html:24
 #: freppledb/input/static/operationplandetail/kanban.html:16
 msgid "shown"
-msgstr ""
+msgstr "getoond"
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
 msgid "stock"
-msgstr ""
+msgstr "stock"
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:2
 msgid "upstream operations"
-msgstr ""
+msgstr "upstream operaties"
 
 #: freppledb/input/static/operationplandetail/month.html:13
 msgid "week number"
-msgstr ""
+msgstr "weeknummer"

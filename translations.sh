@@ -9,6 +9,9 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+. venv/bin/activate
+django=`python3 -c "import django; import os; print(os.path.dirname(django.__file__))"`
+
 translations_extract () {
   # extract django
   cd "$SCRIPT_DIR/freppledb"
@@ -20,7 +23,6 @@ translations_extract () {
   grunt nggettext_extract
 
   ## Preparation for each language
-  django=`python3 -c "import django; import os; print(os.path.dirname(django.__file__))"`
   for language in $( ls freppledb/locale )
   do
     ## Build a compendium with known translations
@@ -57,7 +59,6 @@ translations_extract () {
 
 translations_compile () {
   ## Preparation for each language
-  django=`python3 -c "import django; import os; print(os.path.dirname(django.__file__))"`
   for language in $( ls freppledb/locale )
   do
     ## Build a compendium with all translated frepple strings

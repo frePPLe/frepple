@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2023-11-04 15:16+0100\n"
+"PO-Revision-Date: 2024-12-17 15:04+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: it\n"
@@ -23,7 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: common/static/js/frepple.js:201
 msgid "Connection failed"
@@ -1929,7 +1929,7 @@ msgstr "seleziona azione"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2533
 #: inventoryplanning/templates/inventoryplanning/drp.html:2538
 msgid "no segment"
-msgstr "Nessuna categoria"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:384
 #: input/templates/input/operationplanreport.html:347
@@ -2830,7 +2830,7 @@ msgid ""
 "support team."
 msgstr ""
 "I tuoi dati verranno scritti su un file che deve essere inviato al team di "
-"supporto di frePPLe"
+"supporto di frePPLe."
 
 #: execute/templates/commands/createbuckets.html:10
 msgid "create time buckets for reporting."
@@ -5682,7 +5682,7 @@ msgstr "politica di stoccaggio"
 
 #: inventoryplanning/models.py:202 inventoryplanning/views.py:212
 msgid "inventory policies"
-msgstr "Politiche inventariali"
+msgstr "politiche inventariali"
 
 #: inventoryplanning/models.py:219 inventoryplanning/views.py:152
 msgid "query"
@@ -6196,15 +6196,15 @@ msgstr "valore domanda in ritardo"
 
 #: metrics/attributes.py:24
 msgid "count of unplanned demands"
-msgstr "Conteggio domanda non pianificata"
+msgstr "conteggio domanda non pianificata"
 
 #: metrics/attributes.py:31
 msgid "quantity of unplanned demands"
-msgstr "Quantità domanda non pianificata"
+msgstr "quantità domanda non pianificata"
 
 #: metrics/attributes.py:38
 msgid "value of unplanned demands"
-msgstr "Valore domanda non pianificata"
+msgstr "valore domanda non pianificata"
 
 #: metrics/attributes.py:51
 msgid "count of capacity overload problems"
@@ -7046,9 +7046,7 @@ msgstr "nome del cliente"
 #: wizard/templates/wizard/quickstart_forecast.html:92
 #, python-format
 msgid "Sales history in the last %(buckets)s"
-msgstr ""
-"\n"
-"Storico vendite nell'ultimo/a %(buckets)s"
+msgstr "Storico vendite nell'ultimo/a %(buckets)s"
 
 #: wizard/templates/wizard/quickstart_forecast.html:97
 msgid "a list of integers:eg 10  20  30"
@@ -7462,7 +7460,7 @@ msgstr ""
 msgid "Operation subcategory color setup"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:52
+#: freppledb/input/static/operationplandetail/operationplandetail.html:58
 #: freppledb/planningboard/static/planningboard/planningboard.html:153
 msgid "Please be patient, the chart may take some time to complete."
 msgstr ""
@@ -7484,11 +7482,11 @@ msgstr ""
 msgid "Remove this resource"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:160
+#: freppledb/forecast/static/forecast/forecast.html:161
 msgid "Save changes to the database"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:378
+#: freppledb/forecast/static/forecast/forecast.html:379
 msgid ""
 "Select forecast method, only possible at single item/location/customer level"
 msgstr ""
@@ -7505,7 +7503,7 @@ msgstr ""
 msgid "Split in half"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:51
+#: freppledb/input/static/operationplandetail/operationplandetail.html:57
 #: freppledb/planningboard/static/planningboard/planningboard.html:152
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
 msgstr ""
@@ -7562,6 +7560,11 @@ msgstr ""
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:48
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+msgid "consumed proposed"
+msgstr ""
+
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:35
 msgid "delivery"
 msgstr ""
@@ -7582,12 +7585,12 @@ msgstr ""
 msgid "feasibility"
 msgstr ""
 
-#: freppledb/input/static/operationplandetail/operationplandetail.html:43
+#: freppledb/input/static/operationplandetail/operationplandetail.html:49
 #: freppledb/planningboard/static/planningboard/planningboard.html:143
 msgid "gantt chart rows limit"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:185
+#: freppledb/forecast/static/forecast/forecast.html:186
 msgid "history"
 msgstr ""
 
@@ -7595,12 +7598,16 @@ msgstr ""
 msgid "item subcategory"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:259
+#: freppledb/forecast/static/forecast/forecast.html:260
 msgid "new customer comment"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
-msgid "no downstream operationplans information"
+msgid "no downstream information"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:37
+msgid "no inventory information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:52
@@ -7617,7 +7624,7 @@ msgid "no supply information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:18
-msgid "no upstream operationplans information"
+msgid "no upstream information"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:36
@@ -7630,6 +7637,11 @@ msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:230
 msgid "plus"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:51
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:219
+msgid "produced proposed"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:281

@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2023-10-24 12:34+0200\n"
+"PO-Revision-Date: 2024-12-17 18:48+1000\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -28,11 +28,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.5\n"
 
 #: abc_classification/attributes.py:19
 msgid "ABC class"
-msgstr ""
+msgstr "ABC 类"
 
 #: admin.py:22
 #, python-format
@@ -671,11 +671,11 @@ msgstr "拥有者"
 
 #: archive/models.py:134
 msgid "item cost"
-msgstr ""
+msgstr "货品成本"
 
 #: archive/models.py:137
 msgid "itemsupplier cost"
-msgstr ""
+msgstr "供应商成本"
 
 # "origin" translation must be different from "source" translation
 #: archive/models.py:140 input/models/itemdistribution.py:47
@@ -739,27 +739,27 @@ msgstr "需求"
 
 #: archive/widget.py:28
 msgid "Inventory history"
-msgstr ""
+msgstr "库存历史"
 
 #: archive/widget.py:29
 msgid "Show the history of the on hand inventory"
-msgstr ""
+msgstr "显示现有库存历史"
 
 #: archive/widget.py:172
 msgid "Demand history"
-msgstr ""
+msgstr "需求历史"
 
 #: archive/widget.py:173
 msgid "Show the evolution of the open sales orders"
-msgstr ""
+msgstr "未完成的销售订单变化情况"
 
 #: archive/widget.py:337
 msgid "Purchase order history"
-msgstr ""
+msgstr "采购订单历史"
 
 #: archive/widget.py:338
 msgid "Show the evolution of the open purchase orders"
-msgstr ""
+msgstr "未完成的采购订单变化情况"
 
 #: common/admin.py:28 common/admin.py:39
 msgid "Personal info"
@@ -890,7 +890,7 @@ msgstr "关于frePPLe"
 
 #: common/middleware.py:234 common/middleware.py:240
 msgid "Your session has expired. Please login again to continue."
-msgstr ""
+msgstr "您的会话已过期，请重新登录以继续。"
 
 #: common/models.py:56 forecast/models.py:1193 input/models/demand.py:41
 #: input/models/operationplan.py:81 input/models/resource.py:179
@@ -1063,7 +1063,7 @@ msgstr "参数"
 
 #: common/models.py:300 common/views.py:460
 msgid "parameters"
-msgstr "参数"
+msgstr "参数（多个）"
 
 #: common/models.py:311 output/models.py:71
 #: output/templates/output/resource.html:284
@@ -1112,7 +1112,7 @@ msgstr "页面大小"
 #: common/models.py:409 common/templates/common/preferences.html:116
 #: common/views.py:177
 msgid "default scenario"
-msgstr ""
+msgstr "默认情况"
 
 #: common/models.py:558 common/models.py:645 common/models.py:708
 #: common/models.py:926 common/models.py:997 common/views.py:497
@@ -1172,7 +1172,7 @@ msgstr "评论"
 
 #: common/models.py:923 common/views.py:616
 msgid "object name"
-msgstr ""
+msgstr "对象名"
 
 #: common/models.py:1414 input/models/resource.py:44
 #: input/templates/input/operationplanreport.html:340
@@ -1256,16 +1256,16 @@ msgstr "标签"
 
 #: common/models.py:1521 common/views.py:722
 msgid "editable"
-msgstr ""
+msgstr "可编辑的"
 
 #: common/models.py:1523 common/views.py:726 forecast/models.py:1244
 #: forecast/views.py:362
 msgid "initially hidden"
-msgstr ""
+msgstr "起始默认隐藏的"
 
 #: common/models.py:1542 forecast/models.py:1292
 msgid "Name can only be alphanumeric"
-msgstr ""
+msgstr "名称只能由字母和数字组成"
 
 #: common/models.py:1585 common/views.py:679
 #: inventoryplanning/templates/inventoryplanning/drp.html:2607
@@ -1286,13 +1286,13 @@ msgstr "是"
 #: execute/views.py:1164 execute/views.py:1207
 #, python-format
 msgid "Values in this field must exist in the %s table"
-msgstr ""
+msgstr "此字段的值必须存在于 %s 表中"
 
 #: common/report.py:1052 common/report.py:3677 common/report.py:3706
 #: execute/views.py:1172 execute/views.py:1218
 #, python-format
 msgid "Accepted values are: %s"
-msgstr ""
+msgstr "可接受的值为：%s"
 
 #: common/report.py:1796
 #, python-format
@@ -1346,7 +1346,7 @@ msgstr "错误"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2986
 #: reportmanager/views.py:289
 msgid "false"
-msgstr "虚假"
+msgstr "假"
 
 #: common/report.py:3322 common/report.py:3481 common/report.py:3538
 #: common/report.py:3730
@@ -1382,7 +1382,7 @@ msgstr "过滤器"
 #: common/templates/admin/base_site_grid.html:12
 #: common/templates/admin/base_site_gridpivot.html:12
 msgid "Filter editor"
-msgstr ""
+msgstr "过滤编辑器"
 
 #: common/templates/admin/base_site_grid.html:51
 #: common/templates/admin/base_site_gridpivot.html:79
@@ -1529,12 +1529,12 @@ msgstr "搜索"
 #: common/templates/admin/base_site_nav.html:67
 #, python-format
 msgid "Your license expired %(x)s days ago"
-msgstr ""
+msgstr "您的许可证已于 %(x)s 天前过期"
 
 #: common/templates/admin/base_site_nav.html:76
 #, python-format
 msgid "Your license expires in %(x)s days"
-msgstr ""
+msgstr "您的许可证将在 %(x)s 后过期"
 
 #: common/templates/admin/base_site_nav.html:95
 msgid "preferences"
@@ -1549,6 +1549,8 @@ msgid ""
 "Select a what-if scenario.<br>Click <a class='text-decoration-underline' "
 "href='/execute/#scenario_copy'>here</a> to manage scenarios."
 msgstr ""
+"请选择一个假设场景。 <br>点击<a class='text-decoration-underline' href='/"
+"execute/#scenario_copy'>此处</a> 以管理场景。"
 
 #: common/templates/admin/change_form.html:91
 #: common/templates/admin/login.html:82
@@ -1612,7 +1614,7 @@ msgstr "在站点上查看"
 #: common/templates/admin/edit_inline/tabular.html:83
 #, python-format
 msgid "Only %(limit)s out of %(count)s records are shown."
-msgstr ""
+msgstr "%(count)s 个中仅有 %(limit)s 个记录被显示。"
 
 #: common/templates/admin/edit_inline/tabular.html:138
 #, python-format
@@ -1679,8 +1681,9 @@ msgstr "从"
 
 #: common/templates/admin/subtemplate_timebuckets.html:37
 msgid "till"
-msgstr ""
+msgstr "直至"
 
+# It is almost impossible to translate it perfectly under Chinese grammar.
 #: common/templates/admin/subtemplate_timebuckets.html:47
 msgid "before till"
 msgstr ""
@@ -1709,7 +1712,7 @@ msgstr "月"
 
 #: common/templates/admin/subtemplate_timebuckets.html:61
 msgid "after current date"
-msgstr ""
+msgstr "于当前日期之后"
 
 #: common/templates/admin/subtemplate_timebuckets.html:68
 #: execute/templates/commands/exporttofolder.html:73
@@ -1736,19 +1739,19 @@ msgstr "修改密码"
 
 #: common/templates/common/comments.html:30
 msgid "Add an attachment"
-msgstr ""
+msgstr "添加一个附件"
 
 #: common/templates/common/inbox.html:111
 msgid "Select/unselect all messages"
-msgstr ""
+msgstr "选择/取选 所有消息"
 
 #: common/templates/common/inbox.html:141
 msgid "Mark message unread"
-msgstr ""
+msgstr "标记为未读"
 
 #: common/templates/common/inbox.html:144
 msgid "Mark message read"
-msgstr ""
+msgstr "标记为已读"
 
 #: common/templates/common/preferences.html:89
 msgid "Number of records per page"
@@ -1759,6 +1762,8 @@ msgid ""
 "Upload a square picture of yourself.<br>Accepted formats are jpeg, png and "
 "gif.<br>Max file size is 100kB."
 msgstr ""
+"上传一张您的方寸照片。<br>接受的文件格式为 jpeg, png and gif.<br>最大文件大小"
+"为100kB."
 
 #: common/templates/common/preferences.html:153
 #: common/templates/registration/password_change_form.html:21
@@ -1773,19 +1778,19 @@ msgstr "新密码"
 
 #: common/templates/common/preferences.html:155 common/views.py:198
 msgid "New password confirmation"
-msgstr "新密码确认"
+msgstr "确认新密码"
 
 #: common/templates/common/snippet_favorites.html:4
 msgid "Bookmark your favorite report configurations"
-msgstr ""
+msgstr "为您喜爱的报告配置添加书签"
 
 #: common/templates/common/snippet_follow.html:8
 msgid "Manage notifications in your inbox"
-msgstr ""
+msgstr "管理收信箱的通知"
 
 #: common/templates/common/snippet_follow.html:14
 msgid "Get a notification in your inbox when there is activity"
-msgstr ""
+msgstr "如有活动将在您的收件箱通知"
 
 #: common/templates/index.html:99 execute/templates/execute/execute.html:38
 msgid "failed"
@@ -1793,7 +1798,7 @@ msgstr "失败"
 
 #: common/templates/registration/forgotpassword_form.html:75
 msgid "Email me a password reset link"
-msgstr ""
+msgstr "发送一封密码重置链接到我邮箱"
 
 #: common/templates/registration/password_change_done.html:8
 #: common/templates/registration/password_change_form.html:9
@@ -1834,11 +1839,11 @@ msgstr "修改我的密码"
 
 #: common/templates/rest_framework/api.html:28
 msgid "HTTP request"
-msgstr ""
+msgstr "HTTP请求"
 
 #: common/templates/rest_framework/api.html:48
 msgid "HTTP response content"
-msgstr ""
+msgstr "HTTP请求内容"
 
 #: common/templates/rest_framework/api.html:63
 #, python-format
@@ -1933,10 +1938,11 @@ msgid ""
 "curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
 "</div></div>\n"
 "<div class=\"mb-2\">\n"
-"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" target="
-"\"_blank\">JSON Web Token authentication</a> valid for the next <input id="
-"\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" value=\"%(exp)s"
-"\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/>  days:\n"
+"Using <a class=\"text-decoration-underline\" href=\"https://jwt.io/\" "
+"target=\"_blank\">JSON Web Token authentication</a> valid for the next "
+"<input id=\"jwt\" class=\"d-inline form-control p-1\" type=\"number\" "
+"value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em; background:white\"/"
+">  days:\n"
 "</div>\n"
 "<div class=\"card mb-3\"><div class=\"card-body\">\n"
 "wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
@@ -2033,24 +2039,24 @@ msgstr "从frePPLe网站显示最新消息"
 
 #: common/widget.py:99
 msgid "Unread messages from your inbox"
-msgstr ""
+msgstr "您收件箱中的未读邮件"
 
 #: demandhits/attributes.py:21 demandhits/attributes.py:42
 #, python-format
 msgid "sales orders last %(num)d months"
-msgstr ""
+msgstr "前%(num)d月的销售订单"
 
 #: demandhits/attributes.py:35 demandhits/attributes.py:56
 #, python-format
 msgid "sales value last %(num)d months"
-msgstr ""
+msgstr "前%(num)d月的销售额"
 
 #: erpconnection/management/commands/erp2frepple.py:41
 #: odoo/management/commands/odoo_import.py:86
 #: openbravo/management/commands/openbravo_import.py:3664
 #, python-format
 msgid "Import data from %(erp)s"
-msgstr ""
+msgstr "从%(erp)s导入数据"
 
 #: erpconnection/management/commands/frepple2erp.py:34
 #: odoo/management/commands/odoo_export.py:499
@@ -2067,11 +2073,11 @@ msgstr "生成供应计划"
 msgid ""
 "Compute a finite material and finite capacity plan for purchasing, "
 "distribution and manufacturing."
-msgstr ""
+msgstr "计算采购、分销和制造的有限材料和有限产能计划。"
 
 #: execute/management/commands/backup.py:213
 msgid "Contact frePPLe support"
-msgstr ""
+msgstr "联系frePPLe客服"
 
 #: execute/management/commands/createbuckets.py:298
 msgid "Generate buckets"
@@ -2079,7 +2085,7 @@ msgstr "生成日期段"
 
 #: execute/management/commands/emailreport.py:252
 msgid "Publish reports by email"
-msgstr ""
+msgstr "通过邮箱公布报告"
 
 #: execute/management/commands/empty.py:322
 msgid "Empty the database"
@@ -2087,7 +2093,7 @@ msgstr "清空数据库"
 
 #: execute/management/commands/exporttofolder.py:509
 msgid "Export plan result"
-msgstr ""
+msgstr "导出计划结果"
 
 #: execute/management/commands/exportworkbook.py:33
 msgid "Export a spreadsheet"
@@ -2095,7 +2101,7 @@ msgstr "导出Excel"
 
 #: execute/management/commands/importfromfolder.py:519
 msgid "Import data files"
-msgstr ""
+msgstr "导入数据文件"
 
 #: execute/management/commands/importworkbook.py:152 execute/views.py:1361
 #, python-format
@@ -2136,15 +2142,15 @@ msgstr "场景管理：What-if 模拟分析"
 
 #: execute/management/commands/scheduletasks.py:377
 msgid "Group and schedule tasks"
-msgstr ""
+msgstr "分组及安排任务"
 
 #: execute/management/commands/scheduletasks.py:377
 msgid "Group tasks"
-msgstr ""
+msgstr "给任务分组"
 
 #: execute/management/commands/uploadreport.py:278
 msgid "Publish reports by FTP"
-msgstr ""
+msgstr "通过FTP公布报告"
 
 #: execute/menu.py:20 execute/widget.py:20
 msgid "Execute"
@@ -2177,11 +2183,11 @@ msgstr "任务"
 
 #: execute/models.py:101
 msgid "scheduled tasks"
-msgstr ""
+msgstr "规划复数任务"
 
 #: execute/models.py:102
 msgid "scheduled task"
-msgstr ""
+msgstr "规划单个任务"
 
 #: execute/templates/commands/backup.html:5
 #: execute/templates/commands/createbuckets.html:7
@@ -2199,7 +2205,7 @@ msgstr "执行"
 msgid ""
 "Your data will be written to a file that has to be sent to the frePPLe "
 "support team."
-msgstr ""
+msgstr "您的数据将被写入文件并发送至frePPLe客服团队。"
 
 #: execute/templates/commands/createbuckets.html:10
 msgid "create time buckets for reporting."
@@ -2207,7 +2213,7 @@ msgstr ""
 
 #: execute/templates/commands/createbuckets.html:24
 msgid "week starts on"
-msgstr ""
+msgstr "周开始于"
 
 #: execute/templates/commands/createbuckets.html:28
 #: execute/templates/commands/createbuckets.html:33
@@ -2254,29 +2260,31 @@ msgstr "星期六"
 
 #: execute/templates/commands/createbuckets.html:44
 msgid "day name"
-msgstr ""
+msgstr "日"
 
 #: execute/templates/commands/createbuckets.html:50
 msgid "week name"
-msgstr ""
+msgstr "周"
 
 #: execute/templates/commands/createbuckets.html:56
 msgid "month name"
-msgstr ""
+msgstr "月"
 
 #: execute/templates/commands/createbuckets.html:62
 msgid "quarter name"
-msgstr ""
+msgstr "季度"
 
 #: execute/templates/commands/createbuckets.html:68
 msgid "year name"
-msgstr ""
+msgstr "年度"
 
 #: execute/templates/commands/emailreport.html:9
 msgid ""
 "Emails the selected reports to a comma separated list of recipients. Files "
 "are zipped and attached to email."
 msgstr ""
+"通过邮件发送选中的报告至一个由逗号分隔的收件人列表。文件将被压缩并附加到电子"
+"邮件中。"
 
 #: execute/templates/commands/emailreport.html:18
 #: execute/templates/commands/exporttofolder.html:15
@@ -2287,11 +2295,11 @@ msgstr "大小"
 
 #: execute/templates/commands/emailreport.html:67
 msgid "please correct invalid email addresses"
-msgstr ""
+msgstr "请更正无效的邮箱地址"
 
 #: execute/templates/commands/emailreport.html:72
 msgid "please enter email addresses"
-msgstr ""
+msgstr "请填入邮箱地址"
 
 #: execute/templates/commands/empty.html:7
 msgid "Erase selected tables."
@@ -2300,16 +2308,16 @@ msgstr "在数据库清除所选的表."
 #: execute/templates/commands/empty.html:9
 #: execute/templates/commands/exportworkbook.html:18
 msgid "data tables"
-msgstr ""
+msgstr "数据表"
 
 #: execute/templates/commands/empty.html:19
 #: execute/templates/commands/exportworkbook.html:31
 msgid "admin tables"
-msgstr ""
+msgstr "行政表"
 
 #: execute/templates/commands/empty.html:30
 msgid "plan history"
-msgstr ""
+msgstr "规划历史"
 
 #: execute/templates/commands/exporttofolder.html:6
 #: execute/templates/commands/exportworkbook.html:7
@@ -2320,18 +2328,18 @@ msgstr "导出"
 msgid ""
 "Exports the plan (purchase orders, distribution orders and manufacturing "
 "orders) as a set of CSV files."
-msgstr "导出这个计划（采购订单，销售订单和生产订单）为一组的CSV文件。"
+msgstr "导出这个规划（采购订单，销售订单和生产订单）为一组的CSV文件。"
 
 #: execute/templates/commands/exporttofolder.html:57
 #: execute/templates/commands/importfromfolder.html:170
 msgid "You are about to delete all files"
-msgstr ""
+msgstr "您将删除全部文件"
 
 #: execute/templates/commands/exporttofolder.html:61
 #: execute/templates/commands/importfromfolder.html:174
 #, python-format
 msgid "You are about to delete file %%s"
-msgstr ""
+msgstr "您将删除文件 %%s"
 
 #: execute/templates/commands/exporttofolder.html:74
 #: execute/templates/commands/importfromfolder.html:187
@@ -2341,13 +2349,13 @@ msgstr "确定"
 #: execute/templates/commands/exporttofolder.html:86
 #: execute/templates/commands/importfromfolder.html:199
 msgid "All data files were deleted"
-msgstr ""
+msgstr "所有数据文件均已删除"
 
 #: execute/templates/commands/exporttofolder.html:88
 #: execute/templates/commands/importfromfolder.html:201
 #, python-format
 msgid "File %%s was deleted"
-msgstr ""
+msgstr "文件 %%s 已删除"
 
 #: execute/templates/commands/exporttofolder.html:91
 #: execute/templates/commands/exporttofolder.html:114
@@ -2364,13 +2372,15 @@ msgstr "关闭"
 #: execute/templates/commands/importfromfolder.html:222
 #, python-format
 msgid "File %%s was not deleted"
-msgstr ""
+msgstr "文件 %%s 未被删除"
 
 #: execute/templates/commands/exportworkbook.html:11
 msgid ""
 "Download all input data in a single spreadsheet.<br>Optionally, you can make "
 "the data anonymous during the export to hide sensitive company data."
 msgstr ""
+"下载全部输入数据到一个至单个电子表格中。<br>或者，在导出过程中您可使数据匿名"
+"化以隐藏公司敏感数据。"
 
 #: execute/templates/commands/importfromfolder.html:6
 #: execute/templates/commands/importworkbook.html:5
@@ -2382,10 +2392,12 @@ msgid ""
 "Import CSV or Excel files. The file names must match the names of data "
 "objects and the first line in the file must contain the field names."
 msgstr ""
+"导入 CSV 或 Excel 文件。文件名必须与数据对象的名称匹配，并且文件的第一行必须"
+"包含字段名称。"
 
 #: execute/templates/commands/importfromfolder.html:58
 msgid "Select files to upload"
-msgstr ""
+msgstr "选择要上传的文件"
 
 #: execute/templates/commands/importworkbook.html:8
 msgid ""
@@ -2399,7 +2411,7 @@ msgstr "将可用的数据集加载到当前数据库。"
 
 #: execute/templates/commands/loaddata.html:27
 msgid "Execute plan after loading is done"
-msgstr ""
+msgstr "在读取完成后执行规划"
 
 #: execute/templates/commands/loaddata.html:47
 #: execute/templates/execute/execute.html:245
@@ -2409,34 +2421,34 @@ msgstr "对不起，您沒有任何执行权限..."
 #: execute/templates/commands/runplan.html:8
 msgid ""
 "Load all input data, run the planning algorithm, and export the results."
-msgstr ""
+msgstr "加载所有输入数据，运行规划算法，并导出结果。"
 
 #: execute/templates/commands/runplan.html:10
 msgid "optional planning steps"
-msgstr "可选的计划步骤"
+msgstr "可选的规划步骤"
 
 #: execute/templates/commands/runplan.html:28
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short.\">"
 "约束条件计划</span>"
 
 #: execute/templates/commands/runplan.html:35
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that shows material, "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that shows material, "
 "capacity and operation problems that prevent the demand from being planned "
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that shows material, "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that shows material, "
 "capacity and operation problems that prevent the demand from being planned "
 "in time.<br>The demand is always met completely and on time.\">非约束条件计划"
 "</span>"
@@ -2450,27 +2462,27 @@ msgstr "约束条件"
 
 #: execute/templates/commands/runplan.html:44
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Respect the capacity limits of your resources."
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Respect the capacity limits of your resources."
 "\">Capacity: respect capacity limits</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:51
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't generate any plans that start or end in the "
-"past.<br>Proposed and approved activities must all be in the future.<br>Only "
-"confirmed activities are allowed to be in the past.\">Lead time: do not plan "
-"in the past</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't generate any plans that start or end in "
+"the past.<br>Proposed and approved activities must all be in the future."
+"<br>Only confirmed activities are allowed to be in the past.\">Lead time: do "
+"not plan in the past</span>"
 msgstr ""
 
 #: execute/templates/commands/runplan.html:58
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Don't propose any plans within a frozen time window "
-"(which is configured on each operation).<br>Within the frozen zone only "
-"approved and confirmed activities are allowed, no new proposed activities."
-"\">Release fence: do not plan within a frozen time window</span>"
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Don't propose any plans within a frozen time "
+"window (which is configured on each operation).<br>Within the frozen zone "
+"only approved and confirmed activities are allowed, no new proposed "
+"activities.\">Release fence: do not plan within a frozen time window</span>"
 msgstr ""
 
 #: execute/templates/commands/scenario_copy.html:13
@@ -5189,9 +5201,9 @@ msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2956
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to 1."
-"<br>This item-location will be planned with replenishments matching 1-to-1 "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"Sets safety stock to 0 and reorder quantity to "
+"1.<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
 
@@ -5202,12 +5214,12 @@ msgstr "真实"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2975
 msgid ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-html="
-"\"true\" data-bs-title=\"In push mode, any excess inventory will be "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" data-bs-"
+"html=\"true\" data-bs-title=\"In push mode, any excess inventory will be "
 "distributed downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-html="
-"\"true\" data-bs-title=\"Generate a supply plan that respects all "
+"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
+"html=\"true\" data-bs-title=\"Generate a supply plan that respects all "
 "constraints.<br>In case of shortages the demand is planned late or short.\">"
 "约束条件计划</span>"
 

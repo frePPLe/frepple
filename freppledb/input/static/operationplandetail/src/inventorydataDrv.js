@@ -55,7 +55,7 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
         if (scope.operationplan.hasOwnProperty('inventoryreport')) {
           columnHeaders = ['<tr class="text-center"><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"></td>' ];
           rows = [
-            '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("start on-hand") + '</span></td>',
+            '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("start inventory") + '</span></td>',
             '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("safety stock") + '</span></td>',
             '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("total consumed") + '</span></td>',
             '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="px-3 text-capitalize text-nowrap">' + gettextCatalog.getString("consumed proposed") + '</span></td>',
@@ -63,7 +63,7 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
             '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("total produced") + '</span></td>',
             '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="px-3 text-capitalize text-nowrap">' + gettextCatalog.getString("produced proposed") + '</span></td>',
             '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="px-3 text-capitalize text-nowrap">' + gettextCatalog.getString("produced confirmed") + '</span></td>',
-            '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("end on-hand") + '</span></td>',
+            '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("end inventory") + '</span></td>',
           ];
           angular.forEach(scope.operationplan.inventoryreport, function (inventoryData) {
             columnHeaders.push('<td id="inventorydata' + inventoryData[0].replace(" ", "") +

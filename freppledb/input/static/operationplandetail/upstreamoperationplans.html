@@ -15,7 +15,7 @@
 <td><b style="text-transform: capitalize">{{ 'quantity'|translate }}</b></td>
 </tr></thead>
 <tbody>
-<tr data-ng-if="!operationplan.upstreamoperationplans"><td colspan="8">{{ 'no upstream operationplans information'|translate }}</td></tr>
+<tr data-ng-if="!operationplan.upstreamoperationplans"><td colspan="8">{{ 'no upstream information'|translate }}</td></tr>
 <tr data-ng-if="operationplan.upstreamoperationplans && peg[11] != 2" data-ng-repeat="peg in operationplan.upstreamoperationplans track by $index">
 <td>
 <span data-ng-if="peg[11] == 0" class="fa fa-fw fa-caret-right" data-ng-click='expandOrCollapse($index)'></span>

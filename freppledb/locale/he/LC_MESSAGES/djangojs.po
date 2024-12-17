@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2023-10-24 12:29+0200\n"
+"PO-Revision-Date: 2024-12-17 15:02+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: he\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: common/static/js/frepple.js:201
 msgid "Connection failed"
@@ -123,7 +123,7 @@ msgstr "אפס"
 
 #: common/static/js/frepple.js:895 forecast/static/forecast/src/forecast.js:958
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: common/static/js/frepple.js:1180
 msgid "Export CSV or Excel file"

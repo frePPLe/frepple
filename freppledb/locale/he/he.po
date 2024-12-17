@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-24 12:27+0200\n"
-"PO-Revision-Date: 2023-10-24 12:29+0200\n"
+"PO-Revision-Date: 2024-12-17 15:02+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: he\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.3\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #: common/static/js/frepple.js:201
 msgid "Connection failed"
@@ -123,7 +123,7 @@ msgstr "אפס"
 
 #: common/static/js/frepple.js:895 forecast/static/forecast/src/forecast.js:958
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: common/static/js/frepple.js:1180
 msgid "Export CSV or Excel file"
@@ -1146,7 +1146,7 @@ msgstr "ספק"
 #: output/templates/output/demand_forecast.html:218
 #: output/views/constraint.py:28 output/views/constraint.py:92
 msgid "demand"
-msgstr "verkooporder"
+msgstr ""
 
 #: archive/widget.py:28
 msgid "Inventory history"
@@ -1738,7 +1738,7 @@ msgstr "מודל"
 #: execute/templates/commands/scenario_copy.html:31 forecast/models.py:1196
 #: forecast/views.py:353
 msgid "label"
-msgstr "label"
+msgstr ""
 
 #: common/models.py:1521 common/views.py:722
 msgid "editable"
@@ -1998,7 +1998,7 @@ msgstr "הגדר משך זמן"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2559
 #: output/templates/output/pegging.html:277
 msgid "export as CSV or Excel file"
-msgstr "export as CSV or Excel file"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:390
 #: common/templates/admin/base_site_gridpivot.html:252
@@ -2010,7 +2010,7 @@ msgstr "export as CSV or Excel file"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2810
 #: output/templates/output/pegging.html:279
 msgid "customize"
-msgstr "personaliseer"
+msgstr ""
 
 #: common/templates/admin/base_site_grid.html:391
 #: common/templates/common/comments.html:17
@@ -2230,13 +2230,13 @@ msgstr ""
 #: common/templates/admin/subtemplate_timebuckets.html:57
 #: output/views/resource.py:257 wizard/views.py:3233
 msgid "weeks"
-msgstr "weken"
+msgstr ""
 
 #: common/templates/admin/subtemplate_timebuckets.html:53
 #: common/templates/admin/subtemplate_timebuckets.html:58 wizard/views.py:3234
 #: wizard/views.py:3238
 msgid "months"
-msgstr "maanden"
+msgstr ""
 
 #: common/templates/admin/subtemplate_timebuckets.html:61
 msgid "after current date"
@@ -2503,7 +2503,7 @@ msgstr "API רשימת"
 
 #: common/templates/rest_framework/index.html:61
 msgid "Detail API"
-msgstr "Detail API"
+msgstr ""
 
 #: common/views.py:170
 msgid "Page size"
@@ -3050,10 +3050,6 @@ msgid ""
 "constraints.<br>In case of shortages the demand is planned late or short."
 "\">Constrained plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
-"html=\"true\" data-bs-title=\"Genereer een supply plan dat alle constraints "
-"respecteer.<br>In geval van tekorten wordt de vraag te laat of te weinig "
-"ingepland.\">תוכנית מאולצת</span>"
 
 #: execute/templates/commands/runplan.html:35
 msgid ""
@@ -3063,11 +3059,6 @@ msgid ""
 "in time.<br>The demand is always met completely and on time.\">Unconstrained "
 "plan</span>"
 msgstr ""
-"<span data-bs-toggle=\"tooltip\" data-bs-placement=\"top\" data-bs-"
-"html=\"true\" data-bs-title=\"Genereer een supply plan dat material, "
-"capacity en lead time problemen toont die beletten dat de vraag op tijd kan "
-"worden geleveld.<br>De vraag wordt steeds volledig en op de gewenste "
-"leverdatum ingepland.\">תוכנית לא מאולצת</span>"
 
 #: execute/templates/commands/runplan.html:40 output/models.py:56
 #: output/templates/output/buffer.html:353
@@ -3265,7 +3256,7 @@ msgstr ""
 
 #: execute/templates/execute/execute.html:69 forecast/models.py:1188
 msgid "view"
-msgstr "view"
+msgstr ""
 
 #: execute/templates/execute/execute.html:212
 msgid "autorefresh"
@@ -4316,7 +4307,7 @@ msgstr ""
 #: inventoryplanning/views.py:541 output/views/operation.py:623
 #: wizard/templates/wizard/quickstart_production.html:135
 msgid "lead time"
-msgstr "lead time"
+msgstr ""
 
 #: input/models/itemdistribution.py:54
 msgid "Transport lead time"
@@ -6490,7 +6481,7 @@ msgstr "חומר"
 
 #: output/views/constraint.py:36
 msgid "underload"
-msgstr "underload"
+msgstr ""
 
 #: output/views/constraint.py:37
 msgid "material shortage"
@@ -7184,7 +7175,7 @@ msgstr "הגדרת צבע תת-קטגוריית פריט"
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:30
 msgid "Manufacturing Order"
-msgstr "Productieorder"
+msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:404
 msgid "Moving average"
@@ -7214,13 +7205,13 @@ msgstr "תוכנית פעולה"
 #: freppledb/planningboard/static/planningboard/planningboard.html:818
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:235
 msgid "Plan selected demands backward from their due date"
-msgstr "Plan de geselecteerder orders terugwaarts vanaf de leverdatum"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1259
 #: freppledb/planningboard/static/planningboard/planningboard.html:821
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:236
 msgid "Plan selected demands forward from the current date"
-msgstr "Plan de geselecteerde orders voorwaarts vanaf de huidige datum"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:57
 #: freppledb/planningboard/static/planningboard/planningboard.html:137
@@ -7246,7 +7237,7 @@ msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:31
 msgid "Purchase Order"
-msgstr "Aankooporder"
+msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:223
 msgid "Quoting error"
@@ -7347,7 +7338,7 @@ msgstr "אל תשמור את השינויים"
 
 #: freppledb/quoting/static/quoting/quoting.html:98
 msgid "cancel"
-msgstr "annuleer"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:11
 msgid "color by"
@@ -7410,11 +7401,11 @@ msgstr "תגובה חדשה של לקוח"
 
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:44
 msgid "no demands"
-msgstr "geen verkooporders"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:44
 msgid "no movements"
-msgstr "geen verplaatsingen"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:53
 msgid "no network information"
@@ -7423,11 +7414,11 @@ msgstr "אין מידע ברשת"
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:43
 #: freppledb/planningboard/static/planningboard/planningboard.html:998
 msgid "no problems"
-msgstr "geen problemen"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:40
 msgid "no resources"
-msgstr "geen resource"
+msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:55
 msgid "no supply information"
@@ -7451,7 +7442,7 @@ msgstr "הסר שורה"
 
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:234
 msgid "remove this demand from planning"
-msgstr "verwijder deze order uit het plan"
+msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:385
 #: freppledb/planningboard/static/planningboard/planningboard.html:513
@@ -7499,7 +7490,7 @@ msgid ""
 "                        <br><br>"
 msgstr ""
 
-#: freppledb/forecast/static/forecast/forecast.html:318
+#: freppledb/forecast/static/forecast/forecast.html:319
 msgid "Apply"
 msgstr ""
 
@@ -7561,6 +7552,11 @@ msgstr ""
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
 msgstr ""
 
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:48
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:231
+msgid "consumed proposed"
+msgstr ""
+
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:35
 msgid "delivery"
 msgstr ""
@@ -7578,7 +7574,11 @@ msgid "export to {{erp}} failed"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/downstreamoperationplans.html:18
-msgid "no downstream operationplans information"
+msgid "no downstream information"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:37
+msgid "no inventory information"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:5
@@ -7587,11 +7587,16 @@ msgid "no selection"
 msgstr ""
 
 #: freppledb/input/static/operationplandetail/upstreamoperationplans.html:18
-msgid "no upstream operationplans information"
+msgid "no upstream information"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:230
 msgid "plus"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/inventorydataDrv.js:51
+#: freppledb/input/static/operationplandetail/src/inventorygraphDrv.js:219
+msgid "produced proposed"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:281

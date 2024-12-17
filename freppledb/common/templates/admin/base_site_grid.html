@@ -280,10 +280,11 @@ function displayGrid(load) {
 	  $("#horizonunit").val($(this).prop('name'));
 	});
 
-  $("#actionsul li a, button#actions1").click(function(){
+  $("#actionsul li a, button#actions1").click(function(event){
     $("#actions1 span").text($(this).text());
     $("#actions").val($(this).prop('name'));
     grid.runAction($(this).prop('name'));
+    event.preventDefault();
   });
 
   {% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}

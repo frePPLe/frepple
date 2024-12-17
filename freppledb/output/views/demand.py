@@ -26,7 +26,7 @@ import json
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections, transaction
-from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_str
 from django.utils.text import capfirst
@@ -576,7 +576,7 @@ else:
 
 @staff_member_required
 def OperationPlans(request):
-    # Check permissions
+    print(579, 'inside function')
     if (
         request.method != "GET"
         or request.headers.get("x-requested-with") != "XMLHttpRequest"
@@ -587,6 +587,7 @@ def OperationPlans(request):
 
     # Collect list of selected sales orders
     so_list = request.GET.getlist("demand")
+    print(590, so_list)
 
     result = []
 
@@ -628,7 +629,7 @@ def OperationPlans(request):
                     "criticality": float(i[9]),
                 }
             )
-    return HttpResponse(
-        content=json.dumps(result),
-        content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
+    print(632, result)
+    return JsonResponse(
+       result, safe=False
     )

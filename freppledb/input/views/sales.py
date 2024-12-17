@@ -546,33 +546,48 @@ class DemandList(GridReport):
         ),
     )
 
-    actions = [
-        {
-            "name": "inquiry",
-            "label": format_lazy(_("change status to {status}"), status=_("inquiry")),
-            "function": "grid.setStatus('inquiry')",
-        },
-        {
-            "name": "quote",
-            "label": format_lazy(_("change status to {status}"), status=_("quote")),
-            "function": "grid.setStatus('quote')",
-        },
-        {
-            "name": "open",
-            "label": format_lazy(_("change status to {status}"), status=_("open")),
-            "function": "grid.setStatus('open')",
-        },
-        {
-            "name": "closed",
-            "label": format_lazy(_("change status to {status}"), status=_("closed")),
-            "function": "grid.setStatus('closed')",
-        },
-        {
-            "name": "canceled",
-            "label": format_lazy(_("change status to {status}"), status=_("canceled")),
-            "function": "grid.setStatus('canceled')",
-        },
-    ]
+    if settings.ERP_CONNECTOR:
+        actions = [
+            {
+                "name": "erp_incr_export",
+                "label": format_lazy("export to {erp}", erp=settings.ERP_CONNECTOR),
+                "function": "ERPconnection.SODepExport(jQuery('#grid'),'SO')",
+            }
+        ]
+    else:
+        actions = [
+            {
+                "name": "inquiry",
+                "label": format_lazy(
+                    _("change status to {status}"), status=_("inquiry")
+                ),
+                "function": "grid.setStatus('inquiry')",
+            },
+            {
+                "name": "quote",
+                "label": format_lazy(_("change status to {status}"), status=_("quote")),
+                "function": "grid.setStatus('quote')",
+            },
+            {
+                "name": "open",
+                "label": format_lazy(_("change status to {status}"), status=_("open")),
+                "function": "grid.setStatus('open')",
+            },
+            {
+                "name": "closed",
+                "label": format_lazy(
+                    _("change status to {status}"), status=_("closed")
+                ),
+                "function": "grid.setStatus('closed')",
+            },
+            {
+                "name": "canceled",
+                "label": format_lazy(
+                    _("change status to {status}"), status=_("canceled")
+                ),
+                "function": "grid.setStatus('canceled')",
+            },
+        ]
 
 
 class DeliveryOrderList(GridReport):

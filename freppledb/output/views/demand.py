@@ -601,12 +601,14 @@ def OperationPlans(request):
             operationplan.startdate,
             operationplan.enddate,
             operationplan.quantity,
-            operationplan.quantity * item.cost as value
+            operationplan.quantity * item.cost as value,
+            operationplan.status
             from operationplan
             inner join item on item.name = operationplan.item_id
             where operationplan.plan->'pegging' ?| %s
             and operationplan.type in ('PO','DO','MO')
-            and operationplan.status = 'proposed'
+            and operationplan.status in ('proposed', 'approved')
+            and operationplan.owner_id is null
             order by operationplan.type, operationplan.startdate
             """,
             (so_list,),
@@ -623,6 +625,7 @@ def OperationPlans(request):
                     "enddate": i[6].strftime(settings.DATETIME_INPUT_FORMATS[0]),
                     "quantity": float(i[7]),
                     "value": float(i[8]),
+                    "status": i[9],
                 }
             )
     return JsonResponse(result)

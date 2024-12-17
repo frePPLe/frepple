@@ -209,7 +209,6 @@ class MultiDBMiddleware:
                     )
                     if user and user.is_active:
                         # Active user
-                        request.api = True  # TODO I think this is no longer used
                         login(request, user)
                         request.user = user
                 elif authmethod == "bearer" or webtoken:
@@ -316,23 +315,24 @@ class MultiDBMiddleware:
             allowed_scenarios = {DEFAULT_DB_ALIAS: None}
         else:
             state = getattr(request.user, "_state", None)
-            if state and state.db != DEFAULT_DB_ALIAS:
-                raise Exception("Expected only the default database here")
-            last_login = getattr(request.user, "last_login", None)
+            if state.db == DEFAULT_DB_ALIAS:
+                user_dflt = request.user
+            else:
+                user_dflt = User.objects.using(DEFAULT_DB_ALIAS).get(pk=request.user.pk)
+            last_login = getattr(user_dflt, "last_login", None)
             now = timezone.now()
             if not last_login or now - last_login > timedelta(hours=1):
-                request.user.last_login = now
-                request.user.save(update_fields=["last_login"])
-            allowed_scenarios = {i.name: i for i in request.user.scenarios}
+                user_dflt.last_login = now
+                user_dflt.save(update_fields=["last_login"])
+            allowed_scenarios = {i.name: i for i in user_dflt.scenarios}
 
-        # Check scenario access
-        request.scenario = allowed_scenarios.get(request.database, None)
-        if not request.scenario and not request.user.is_anonymous:
-            return HttpResponseNotFound("Scenario not in use, or access is denied")
+            # Check scenario access
+            request.scenario = allowed_scenarios.get(request.database, None)
+            if not request.scenario and not request.user.is_anonymous:
+                return HttpResponseNotFound("Scenario not in use, or access is denied")
 
-        # Update user
-        if request.database != DEFAULT_DB_ALIAS:
-            request.user.switchDatabase(i)
+            # Update user
+            request.user.switchDatabase(request.database)
 
         # Request processing
         response = self.get_response(request)

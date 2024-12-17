@@ -71,7 +71,6 @@ from django.core.management import get_commands, call_command
 
 from freppledb import __version__
 from freppledb.admin import data_site
-from freppledb.common.auth import basicauthentication
 from freppledb.common.dataload import parseExcelWorksheet
 from freppledb.common.models import Scenario, HierarchyModel, Parameter
 from freppledb.common.report import (
@@ -259,7 +258,6 @@ class TaskReport(GridReport):
 
 
 @csrf_exempt
-@basicauthentication(allow_logged_in=True)
 def APITask(request, action):
     try:
         if action == "status":
@@ -894,7 +892,6 @@ class FileManager:
 
     @staticmethod
     @csrf_exempt
-    @basicauthentication(allow_logged_in=True)
     @staff_member_required
     @never_cache
     def uploadFiletoFolder(request, foldercode):
@@ -998,7 +995,6 @@ class FileManager:
 
     @staticmethod
     @csrf_exempt
-    @basicauthentication(allow_logged_in=True)
     @staff_member_required
     @never_cache
     def deleteFilefromFolder(request, foldercode, files):
@@ -1046,7 +1042,6 @@ class FileManager:
 
     @staticmethod
     @csrf_exempt
-    @basicauthentication(allow_logged_in=True)
     @staff_member_required
     @never_cache
     def downloadFilefromFolder(request, foldercode, filename=None):

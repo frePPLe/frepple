@@ -466,12 +466,11 @@ class User(AbstractUser):
         Some user fields are however database-specific. This method
         is used to
         """
-        if hasattr(self, "_state") and self._state.db != DEFAULT_DB_ALIAS:
-            logger.warning(
-                "Switching a user to a new database is expected to be done from the main database only"
-            )
+        if new_database == self._state.db:
+            # No switch needed
+            return
         try:
-            user_sc = User.objects.using(new_database).get(username=self.username)
+            user_sc = User.objects.using(new_database).get(pk=self.pk)
             self.is_superuser = user_sc.is_superuser
             self.horizonlength = user_sc.horizonlength
             self.horizonbefore = user_sc.horizonbefore
@@ -484,7 +483,7 @@ class User(AbstractUser):
                 self._state.db = new_database
         except User.DoesNotExist:
             raise Exception(
-                f"User {self.username} doesn't exist in database {new_database}"
+                f"User {self.pk} {self.username} doesn't exist in database {new_database}"
             )
 
     def save(

@@ -22,7 +22,7 @@
 #
 
 import base64
-import email
+from datetime import datetime
 from html.parser import HTMLParser
 import json
 import jwt
@@ -280,13 +280,20 @@ def Upload(request):
                         ]
                         if wolist:
                             for wo in wolist:
+                                net_duration = wo.enddate - wo.startdate
+                                if wo.plan:
+                                    for w in wo.plan.get("interruptions", []):
+                                        net_duration -= datetime.strptime(
+                                            w[1], "%Y-%m-%d %H:%M:%S"
+                                        ) - datetime.strptime(w[0], "%Y-%m-%d %H:%M:%S")
                                 data_odoo.append(
-                                    '<workorder operation=%s start="%s" end="%s" remark=%s>'
+                                    '<workorder operation=%s start="%s" end="%s" remark=%s net_duration="%s">'
                                     % (
                                         quoteattr(wo.operation.name),
                                         wo.startdate,
                                         wo.enddate,
                                         quoteattr(getattr(wo, "remark", None) or ""),
+                                        int(net_duration.total_seconds()),
                                     )
                                 )
                                 for wores in wo.resources.using(request.database).all():

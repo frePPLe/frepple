@@ -595,7 +595,7 @@ def OperationPlans(request):
             select operationplan.reference,
             operationplan.type,
             operationplan.item_id,
-            case when operationplan.type = 'DO' then operationplan.destination_id 
+            case when operationplan.type = 'DO' then operationplan.destination_id
             else operationplan.location_id end as location_id,
             operationplan.origin_id,
             operationplan.startdate,
@@ -604,11 +604,19 @@ def OperationPlans(request):
             operationplan.quantity * item.cost as value,
             operationplan.status
             from operationplan
-            inner join item on item.name = operationplan.item_id
+            inner join item on item.name = operationplan.item_id and item.source is not null
             where operationplan.plan->'pegging' ?| %s
             and operationplan.type in ('PO','DO','MO')
             and operationplan.status in ('proposed', 'approved')
             and operationplan.owner_id is null
+            and case when operationplan.type = 'PO'
+			then exists (select 1 from supplier where operationplan.supplier_id = supplier.name and supplier.source is not null)
+			when operationplan.type = 'MO'
+			then exists (select 1 from operation where operationplan.operation_id = operation.name and operation.source is not null)
+			when operationplan.type = 'DO'
+			then exists (select 1 from location where operationplan.origin_id = location.name and location.source is not null)
+			and exists (select 1 from location where operationplan.destination_id = location.name and location.source is not null)
+			else true end = true
             order by operationplan.type, operationplan.startdate
             """,
             (so_list,),

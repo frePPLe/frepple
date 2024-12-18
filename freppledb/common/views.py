@@ -581,7 +581,17 @@ def horizon(request):
         request.user.horizonbefore = form.cleaned_data["horizonbefore"]
         request.user.horizonlength = form.cleaned_data["horizonlength"]
         request.user.horizonunit = form.cleaned_data["horizonunit"]
-        request.user.save()
+        request.user.save(
+            update_fields=[
+                "horizonbuckets",
+                "horizonstart",
+                "horizonend",
+                "horizontype",
+                "horizonbefore",
+                "horizonlength",
+                "horizonunit",
+            ]
+        )
         return HttpResponse(content="OK")
     except Exception as e:
         logger.error("Error saving horizon settings: %s" % e)

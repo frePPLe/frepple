@@ -26,11 +26,10 @@ from pathlib import Path
 
 from django.apps import AppConfig
 from django.conf import settings
+from django.contrib.auth.signals import user_logged_in
 from django.core import checks
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.autoreload import autoreload_started
-
-import freppledb
 
 
 def watchDjangoSettings(sender, **kwargs):
@@ -108,3 +107,5 @@ class CommonConfig(AppConfig):
             raise ImproperlyConfigured(
                 "Missing required apps in INSTALLED_APPS: %s" % ", ".join(missing)
             )
+
+        user_logged_in.disconnect(dispatch_uid="update_last_login")

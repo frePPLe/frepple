@@ -754,7 +754,7 @@ class User(AbstractUser):
     @staticmethod
     def synchronize(user=None, database=None):
         """
-        The field "last_login" and "databases" are maintained only in the main production
+        The fields "last_login", "is_active" and "databases" are maintained only in the main
         database. This method is called to lazily copy this information to other scenarios
         if needed.
         """

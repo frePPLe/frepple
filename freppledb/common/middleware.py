@@ -32,7 +32,6 @@ from warnings import warn
 from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.signals import user_logged_in
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages import info
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware

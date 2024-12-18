@@ -820,7 +820,7 @@ class GridReport(View):
                 bucket = None
         if not arg_buckets and not request.user.horizonbuckets and bucket:
             request.user.horizonbuckets = bucket
-            request.user.save()
+            request.user.save(update_fields=["horizonbuckets"])
 
         # Get the report horizon
         current, start, end = getHorizon(

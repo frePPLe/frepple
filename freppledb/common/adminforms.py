@@ -371,7 +371,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 _(
                     'The {name} "{obj}" was added successfully. You may add another {name} below.'
                 ),
-                **msg_dict
+                **msg_dict,
             )
             self.message_user(request, msg, messages.SUCCESS)
             # frePPLe specific: prepend the url prefix
@@ -491,7 +491,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 _(
                     'The {name} "{obj}" was changed successfully. You may edit it again below.'
                 ),
-                **msg_dict
+                **msg_dict,
             )
             self.message_user(request, msg, messages.SUCCESS)
             # frePPLe specific: prepend the url prefix
@@ -506,7 +506,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 _(
                     'The {name} "{obj}" was added successfully. You may edit it again below.'
                 ),
-                **msg_dict
+                **msg_dict,
             )
             self.message_user(request, msg, messages.SUCCESS)
             # frePPLe specific: prepend the url prefix
@@ -525,7 +525,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 _(
                     'The {name} "{obj}" was changed successfully. You may add another {name} below.'
                 ),
-                **msg_dict
+                **msg_dict,
             )
             self.message_user(request, msg, messages.SUCCESS)
             # frePPLe specific: prepend the url prefix
@@ -815,7 +815,7 @@ class MultiDBUserCreationForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
+        user.databases = self.cleaned_data["scenarios"] or []
+        user.databases.append(DEFAULT_DB_ALIAS)
         user.save(using=DEFAULT_DB_ALIAS)
-        for sc in self.cleaned_data["scenarios"]:
-            User.objects.using(sc).filter(username=user.username).update(is_active=True)
         return user

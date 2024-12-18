@@ -91,6 +91,12 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
   }
   timeseries.push_back(0);
 
+  auto bckt_plan_end = bckt_end;
+  while (bckt_plan_end != end &&
+         bckt_plan_end->getEnd() <= Plan::instance().getCurrent()) {
+    ++bckt_plan_end;
+  }
+
   // Filler logic to put a value for no-data buckets.
   // We use the average of the last and the next data point.
   if (getAverageNoDataDays()) {
@@ -263,8 +269,8 @@ void ForecastSolver::computeBaselineForecast(const Forecast* fcst) {
              << ", standard deviation: " << fcst->getDeviation()
              << ", smape error: " << fcst->getSMAPEerror() << endl;
     qualifiedmethods[best_method]->applyForecast(
-        const_cast<Forecast*>(fcst), data->getBuckets(), bckt_end->getIndex(),
-        !getAutocommit() ? commands : nullptr);
+        const_cast<Forecast*>(fcst), data->getBuckets(),
+        bckt_plan_end->getIndex(), !getAutocommit() ? commands : nullptr);
   } else {
     const_cast<Forecast*>(fcst)->setMethod(0);
     const_cast<Forecast*>(fcst)->setSMAPEerror(0.0);

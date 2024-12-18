@@ -687,6 +687,7 @@ class UserList(GridReport):
             extra='"formatter": grouplistformatter',
             width=120,
             editable=False,
+            sortable=False,
         ),
         GridFieldDateTime("date_joined", title=_("date joined"), editable=False),
         GridFieldDateTime("last_login", title=_("last login"), editable=False),

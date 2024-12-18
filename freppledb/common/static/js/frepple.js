@@ -2330,18 +2330,16 @@ var ERPconnection = {
   //  ----------------------------------------------------------------------------
   SODepExport: function (grid, transactiontype) {
     // Collect all selected rows in the status 'proposed'
-    var sel = grid.jqGrid('getGridParam', 'selarrrow');
+    const sel = grid.jqGrid('getGridParam', 'selarrrow');
     if (sel === null || sel.length == 0)
       return;
-    var data = [];
-    for (var i in sel) {
-      var r = grid.jqGrid('getRowData', sel[i]);
+    const data = [];
+    for (let i in sel) {
+      let r = grid.jqGrid('getRowData', sel[i]);
       if (r.type === undefined)
         r.type = transactiontype;
       data.push(r);
     }
-    if (data.length === 0)
-      return;
 
     hideModal('timebuckets');
     $.jgrid.hideModal("#searchmodfbox_grid");
@@ -2366,9 +2364,9 @@ var ERPconnection = {
     }, { once: true });
 
     // compose url
-    var components = '?demand=';
-    for (i = 0; i < sel.length; i++) {
-      var r = grid.jqGrid('getRowData', sel[i]);
+    let components = '?demand=';
+    for (let i = 0; i < sel.length; i++) {
+      const r = grid.jqGrid('getRowData', sel[i]);
       if (r.type === undefined)
         r.type = transactiontype;
       if (r.status == 'open' || r.status == 'proposed') {
@@ -2383,60 +2381,111 @@ var ERPconnection = {
       type: "GET",
       contentType: "application/json",
       success: function (data) {
-         sessionStorage.setItem("data", data);
-        $('#popup .modal-body').html('<div class="table-responsive">' +
-          '<table class="table-condensed table-hover" id="forecastexporttable">' +
+        if (data.PO.length === 0 && data.MO.length === 0 && data.DO.length === 0) {
+          $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' +
+            gettext('There are no purchase, distribution or manufacturing orders for export that are linked to this sales order') +
+            '</div>');
+          $('#button_export').addClass("invisible");
+          return;
+        }
+        $('#popup .modal-body').html(
+          '<div class="table-responsive">' +
+          '<table class="table table-hover text-center" id="exporttable_PO">' +
           '<thead class="thead-default">' +
           '</thead>' +
           '</table>' +
-          '</div>');
+          '</div>' +
+          '<div class="table-responsive">' +
+          '<table class="table table-hover text-center" id="exporttable_DO">' +
+          '<thead class="thead-default">' +
+          '</thead>' +
+          '</table>' +
+          '</div>' +
+          '<div class="table-responsive">' +
+          '<table class="table table-hover text-center" id="exporttable_MO' +
+          '<thead class="thead-default">' +
+          '</thead>' +
+          '</table>' +
+          '</div>'
+        );
 
-        var labels = ["reference", "type", "item", "value", "quantity", "location", "origin", "startdate", "enddate"];
+        const labels = ["item", "type", "value", "quantity", "location", "origin", "startdate", "enddate"];
 
-        if (transactiontype == 'SO') {
-          var tableheadercontent = $('<tr/>');
+        for (let dataType of ['PO', 'DO', 'MO']) {
+
+          let tableheadercontent = $('<tr/>');
 
           tableheadercontent.append($('<th/>').html(
-            '<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'
+            '<input id="cb_modaltableall_'+dataType+'" class="cbox" type="checkbox" aria-checked="true" checked>'
           ));
-          for (i = 0; i < labels.length; i++)
-            tableheadercontent.append($('<th/>').addClass('text-capitalize').text(gettext(labels[i])));
 
-          var tablebodycontent = $('<tbody/>');
-          for (i = 0; i < data.length; i++) {
-            var row = $('<tr/>');
-            var td = $('<td/>');
+          for (labeltext of labels)
+            tableheadercontent.append($('<th/>').addClass('text-capitalize').text(gettext(labeltext)));
 
-            td.append($('<input/>').attr({ 'id': "cb_modaltable-" + i, 'class': "cbox", 'type': "checkbox", 'aria-checked': "false" }));
+          const tablebodycontent = $('<tbody/>');
+
+          for (let i = 0; i < data[dataType].length; i++) {
+            const row = $('<tr/>');
+            const td = $('<td/>');
+
+            td.append($('<input/>').attr({
+              'id': "cb_modaltable_" + dataType + "-" + i,
+              'class': "cbox",
+              'type': "checkbox",
+              'aria-checked': "true",
+              'checked': "true"
+            }));
             row.append(td);
-            for (var j = 0; j < labels.length; j++)
-              row.append($('<td/>').text(data[i][labels[j]]));
+
+            for (let j = 0; j < labels.length; j++) {
+              if (j === 1) {
+                row.append($('<td/>').text(dataType));
+                continue;
+              }
+              row.append($('<td/>').text(data[dataType][i][labels[j]]))
+            };
             tablebodycontent.append(row);
-          };
+          }
 
-        };
+          $('#popup #exporttable_' + dataType).append(tablebodycontent);
+          $('#popup #exporttable_' + dataType + ' thead').append(tableheadercontent);
 
-        $('#popup table').append(tablebodycontent);
-        $('#popup thead').append(tableheadercontent);
+          $("#cb_modaltableall_"+dataType).click(function () {
+            if ( $("#cb_modaltableall_"+dataType).prop("checked")) {
+              $("#exporttable_"+dataType+" input[type=checkbox]").prop("checked", $(this).prop("checked"));
+            } else {
+              $("#exporttable_"+dataType+" tbody tr input:not(:checked)").prop("checked",true);
+              $("#exporttable_"+dataType+" tbody tr input:not(:checked)").parent().parent().removeClass("active").addClass("active")
+            }
+            $("#exporttable_"+dataType+" input[type=checkbox]").prop("checked", $(this).prop("checked"));
+            if ($("#popup .modal-body tbody input[type=checkbox]:checked").length > 0) {
+              $('#button_export').prop('disabled', false);;
+            } else {
+              $('#button_export').prop('disabled', true);
+            };
+          });
+          $("#exporttable_"+dataType+" tbody input[type=checkbox]").click(function () {
+            $(this).parent().parent().toggleClass('selected');
+            $("#cb_modaltableall_"+dataType).prop("checked", $("#exporttable_"+dataType+" tbody input[type=checkbox]:not(:checked)").length == 0);
+            if ($("#popup .modal-body tbody input[type=checkbox]:checked").length > 0) {
+              $('#button_export').prop('disabled', false);;
+            } else {
+              $('#button_export').prop('disabled', true);
+            };
+          });
+        }
 
         $('#button_export').on('click', function () {
           //get selected row data
-          data = [];
-          var row1 = [];
-          var row1data = {};
-          var rows = $('#forecastexporttable tr.selected');
-
+          const data = [];
+          let row1 = [];
+          let row1data = {};
+          const rows = $('#popup .modal-body tbody input[type=checkbox]:checked').parent().parent();
           $.each(rows, function (key, value) {
             row1 = value.children;
-            row1data['reference'] = row1[1].textContent;
-            row1data['type'] = row1[2].textContent;
-            row1data['item'] = row1[3].textContent;
-            row1data['value'] = row1[4].textContent;
-            row1data['quantity'] = row1[5].textContent;
-            row1data['location'] = row1[6].textContent;
-            row1data['origin'] = row1[7].textContent;
-            row1data['startdate'] = row1[8].textContent;
-            row1data['enddate'] = row1[9].textContent;
+            for (const [index, label] of labels.entries()) {
+              row1data[label] = row1[index+1].textContent;
+            }
             data.push(row1data);
           });
 
@@ -2449,17 +2498,17 @@ var ERPconnection = {
             success: function () {
               $('#popup .modal-body').html(gettext("Export successful"));
               $('#cancelbutton').val(gettext('Close'));
-              $('#button_export').toggleClass("btn-primary").prop('disabled', true);
+              $('#button_export').prop('disabled', true);
               // Mark selected rows as "approved" if the original status was "proposed".
               for (var i in sel) {
-                var cur = grid.jqGrid('getCell', sel[i], 'status');
+                const cur = grid.jqGrid('getCell', sel[i], 'status');
                 if (cur == 'proposed')
                   grid.jqGrid('setCell', sel[i], 'status', 'approved');
               };
             },
             error: function (result, stat, errorThrown) {
               if (result.status == 401) {
-                // location.reload();
+                location.reload();
                 return;
               }
               $('#popup .modal-title').html(gettext("Error during export"));
@@ -2472,24 +2521,7 @@ var ERPconnection = {
           });
         });
 
-        $("#cb_modaltableall").click(function () {
-          $("#forecastexporttable input[type=checkbox]").prop("checked", $(this).prop("checked"));
-          $("#forecastexporttable tbody tr").toggleClass('selected');
-          if ($("#forecastexporttable tbody input[type=checkbox]:checked").length > 0) {
-            $('#button_export').removeClass("active").addClass("active").prop('disabled', false);;
-          } else {
-            $('#button_export').removeClass("active").prop('disabled', true);
-          };
-        });
-        $("#forecastexporttable tbody input[type=checkbox]").click(function () {
-          $(this).parent().parent().toggleClass('selected');
-          $("#cb_modaltableall").prop("checked", $("#forecastexporttable tbody input[type=checkbox]:not(:checked)").length == 0);
-          if ($("#forecastexporttable tbody input[type=checkbox]:checked").length > 0) {
-            $('#button_export').removeClass("active").addClass("active").prop('disabled', false);;
-          } else {
-            $('#button_export').removeClass("active").prop('disabled', true);
-          };
-        });
+
         if ($("#actions").length)
           $("#actions1 span").text($("#actionsul").children().first().text());
         if ($("#DRPactions").length)

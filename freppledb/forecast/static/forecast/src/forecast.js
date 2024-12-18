@@ -71,7 +71,6 @@ function forecastController($scope, $http, $q, $location) {
   $scope.showtab = $scope.preferences.showtab;
   $scope.buckets = null;
   $scope.currentbucket = 0;
-  $scope.forecast_currentbucket = 0;
   $scope.commenttype = null;
   $scope.initialmethod = '';
   $scope.forms = {};
@@ -395,11 +394,6 @@ function forecastController($scope, $http, $q, $location) {
         $scope.detaildata.forecast[something].currentbucket = true;
         $scope.currentbucket = something;
         $scope.grid.currentbucket = $scope.currentbucket;
-      }
-      if ($scope.detaildata.forecast[something].bucket === forecast_currentbucket) {
-        $scope.detaildata.forecast[something].forecast_currentbucket = true;
-        $scope.forecast_currentbucket = something;
-        $scope.grid.forecast_currentbucket = $scope.forecast_currentbucket;
       }
     }
 

@@ -21,7 +21,6 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from datetime import datetime
 from urllib.parse import urlencode, quote
 
 from django.db import connections
@@ -250,13 +249,6 @@ class ForecastWidget(Widget):
     def render(cls, request=None):
         cursor = connections[request.database].cursor()
         curdate = getCurrentDate(request.database, lastplan=True)
-        try:
-            fcst_curdate = datetime.strptime(
-                Parameter.getValue("forecast_lastcurrentdate", request.database, None),
-                "%Y-%m-%d %H:%M:%S",
-            )
-        except:
-            fcst_curdate = curdate
         history = int(request.GET.get("history", cls.history))
         future = int(request.GET.get("future", cls.future))
 
@@ -274,17 +266,13 @@ class ForecastWidget(Widget):
             """
             select
               common_bucketdetail.name,
-              case when common_bucketdetail.startdate >= %s
-              and common_bucketdetail.startdate < %s then 0 else
-              round(sum(greatest((value->>'forecasttotalvalue')::numeric,0))) end as fcstvalue,
+              round(sum(greatest((value->>'forecasttotalvalue')::numeric,0))) as fcstvalue,
               round(sum(greatest(0,
                 (value->>'orderstotalvalue')::numeric +
                 coalesce((value->>'ordersadjustmentvalue')::numeric,0)
                 ))) as orderstotalvalue,
               round(sum(greatest((value->>'ordersopenvalue')::numeric,0))) as ordersopenvalue,
-              case when common_bucketdetail.startdate >= %s
-              and common_bucketdetail.startdate < %s then 0 else
-              round(sum(greatest((value->>'forecasttotal')::numeric,0))) end as fcst,
+              round(sum(greatest((value->>'forecasttotal')::numeric,0))) as fcst,
               round(sum(greatest(0,
                 (value->>'orderstotal')::numeric +
                 coalesce((value->>'ordersadjustment')::numeric,0)
@@ -307,17 +295,7 @@ class ForecastWidget(Widget):
             group by common_bucketdetail.name, common_bucketdetail.startdate
             order by common_bucketdetail.startdate
             """,
-            (
-                fcst_curdate,
-                curdate,
-                fcst_curdate,
-                curdate,
-                bucketname,
-                curdate,
-                future,
-                curdate,
-                history,
-            ),
+            (bucketname, curdate, future, curdate, history),
         )
         for res in cursor.fetchall():
             result.append(

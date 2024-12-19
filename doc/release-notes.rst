@@ -27,6 +27,11 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The planning algorithm has been refined to avoid corner cases where a
     large amount of small manufacturing orders are being generated.
 
+- | Fix for the approved manufacturing orders. If its operation has an offset, the
+    manufacturing order could be moved in time when running a plan.
+
+
+
 .. rubric:: Demand forecasting
 
 - | Missing sales order data in the recent past was considered by the forecast engine as buckets

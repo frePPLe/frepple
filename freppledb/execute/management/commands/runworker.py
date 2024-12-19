@@ -102,18 +102,6 @@ def launchWorker(database=DEFAULT_DB_ALIAS):
                     ],
                     creationflags=0x08000000,
                 )
-        elif sys.executable.find("freppleserver.exe") >= 0:
-            # Py2exe executable
-            Popen(
-                [
-                    sys.executable.replace(
-                        "freppleserver.exe", "frepplectl.exe"
-                    ),  # frepplectl executable
-                    "runworker",
-                    "--database=%s" % database,
-                ],
-                creationflags=0x08000000,
-            )  # Do not create a console window
         else:
             # Linux standard installation
             Popen(["frepplectl", "runworker", "--database=%s" % database])

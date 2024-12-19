@@ -602,7 +602,8 @@ def OperationPlans(request):
             operationplan.enddate,
             operationplan.quantity,
             operationplan.quantity * item.cost as value,
-            operationplan.status
+            operationplan.status,
+            case when operationplan.type = 'PO' then operationplan.supplier_id else operationplan.operation_id end
             from operationplan
             inner join item on item.name = operationplan.item_id and item.source is not null
             where operationplan.plan->'pegging' ?| %s
@@ -623,17 +624,34 @@ def OperationPlans(request):
         )
 
         for i in cursor:
-            result[i[1]].append(
-                {
-                    "reference": i[0],
-                    "item": i[2],
-                    "location": i[3],
-                    "origin": i[4],
-                    "startdate": i[5].strftime(settings.DATETIME_INPUT_FORMATS[0]),
-                    "enddate": i[6].strftime(settings.DATETIME_INPUT_FORMATS[0]),
-                    "quantity": float(i[7]),
-                    "value": float(i[8]),
-                    "status": i[9],
-                }
-            )
+            l = [
+                # ["fieldname", value, hidden]
+                ["reference", i[0], 0],
+                ["item", i[2], 0],
+                ["destination" if i[1] == "DO" else "location", i[3], 0],
+                [
+                    (
+                        "start date"
+                        if i[1] == "MO"
+                        else ("ordering date" if type == "PO" else "shipping date")
+                    ),
+                    i[5],
+                    0,
+                ],
+                ["end date" if i[1] == "MO" else "receipt date", i[6], 0],
+                ["quantity", i[7], 0],
+                ["value", i[8], 0],
+                ["status", i[9], 0],
+            ]
+            if i[1] == "DO":
+                l.insert(
+                    2,
+                    ["origin", i[4], 0],
+                )
+            elif i[1] == "MO":
+                l.insert(3, ["operation", i[10], 0])
+            elif i[1] == "PO":
+                l.insert(3, ["supplier", i[10], 0])
+
+            result[i[1]].append(l)
     return JsonResponse(result)

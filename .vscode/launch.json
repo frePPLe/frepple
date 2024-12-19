@@ -10,6 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/frepplectl.py",
             "console": "integratedTerminal",
+            "justMyCode": false,
             "args": [
                 "runserver"
             ]

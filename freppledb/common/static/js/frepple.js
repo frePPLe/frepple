@@ -2425,7 +2425,7 @@ var ERPconnection = {
           const tablebodycontent = $('<tbody/>');
 
           for (let i = 0; i < data[dataType].length; i++) {
-            const row = $('<tr/>');
+            const row = $('<tr/>').attr('reference', data[dataType][i]['reference']);
             const td = $('<td/>');
 
             td.append($('<input/>').attr({
@@ -2478,17 +2478,17 @@ var ERPconnection = {
         $('#button_export').on('click', function () {
           //get selected row data
           const data = [];
-          let row1 = [];
-          let row1data = {};
+          let cells = [];
+          const cellsData = {};
           const rows = $('#popup .modal-body tbody input[type=checkbox]:checked').parent().parent();
-          $.each(rows, function (key, value) {
-            row1 = value.children;
-            for (const [index, label] of labels.entries()) {
-              row1data[label] = row1[index+1].textContent;
-            }
-            data.push(row1data);
-          });
-
+          for(const row of rows) {
+            cells = row.children;
+            data.push({
+              'reference': row.attributes.reference.value,
+              'type': cells[labels.indexOf('type')+1].textContent
+            });
+          }
+          console.log(2493, data);
           $('#popup .modal-body').html(gettext('connecting') + '...');
           $.ajax({
             url: url_prefix + "/erp/upload/",

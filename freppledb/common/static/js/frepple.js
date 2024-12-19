@@ -2340,6 +2340,7 @@ var ERPconnection = {
         r.type = transactiontype;
       data.push(r);
     }
+    const formatNumber = window.grid.formatNumber;
 
     hideModal('timebuckets');
     $.jgrid.hideModal("#searchmodfbox_grid");
@@ -2375,12 +2376,28 @@ var ERPconnection = {
       };
     };
 
+    function formatValue(originalValue) {
+      if (originalValue[3] === 'number') {
+        return formatNumber(originalValue[1]);
+      } else if (originalValue[3] === 'text') {
+        return originalValue[1];
+      } else if (originalValue[3] === 'date') {
+        return moment(originalValue[1]).format(dateformat);
+      } else {
+        return originalValue[1];
+      }
+    }
+
     //get demandplans
     $.ajax({
       url: url_prefix + "/demand/operationplans/" + components,
       type: "GET",
       contentType: "application/json",
       success: function (data) {
+        // expected data format:
+        // data = {PO: [row0, row1, ...], MO: [row0, ...], DO: [row0, ...]};
+        // row = [[label0, value0, hidden], [label1, value1, hidden], ...];
+
         if (data.PO.length === 0 && data.MO.length === 0 && data.DO.length === 0) {
           $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' +
             gettext('There are no purchase, distribution or manufacturing orders for export that are linked to this sales order') +
@@ -2389,29 +2406,37 @@ var ERPconnection = {
           return;
         }
         $('#popup .modal-body').html(
+          '<div id="PO-title"><h5 class="text-capitalize">' + gettext("purchase orders") + '</h5></div>' +
           '<div class="table-responsive">' +
           '<table class="table table-hover text-center" id="exporttable_PO">' +
           '<thead class="thead-default">' +
           '</thead>' +
           '</table>' +
           '</div>' +
+          '<div id="DO-title"><h5 class="text-capitalize">' + gettext("distribution orders") + '</h5></div>' +
           '<div class="table-responsive">' +
           '<table class="table table-hover text-center" id="exporttable_DO">' +
           '<thead class="thead-default">' +
           '</thead>' +
           '</table>' +
           '</div>' +
+          '<div id="MO-title"><h5 class="text-capitalize">' + gettext("manufacturing orders") + '</h5></div>' +
           '<div class="table-responsive">' +
-          '<table class="table table-hover text-center" id="exporttable_MO' +
+          '<table class="table table-hover text-center" id="exporttable_MO">' +
           '<thead class="thead-default">' +
           '</thead>' +
           '</table>' +
           '</div>'
         );
 
-        const labels = ["item", "type", "value", "quantity", "location", "origin", "startdate", "enddate"];
+        let labels = [];
 
-        for (let dataType of ['PO', 'DO', 'MO']) {
+        for (const dataType of ['PO', 'DO', 'MO']) {
+          if (data[dataType].length === 0) {
+            $('#' + dataType + '-title').addClass('invisible');
+            continue;
+          }
+          labels.length = 0;
 
           let tableheadercontent = $('<tr/>');
 
@@ -2419,13 +2444,17 @@ var ERPconnection = {
             '<input id="cb_modaltableall_'+dataType+'" class="cbox" type="checkbox" aria-checked="true" checked>'
           ));
 
-          for (labeltext of labels)
-            tableheadercontent.append($('<th/>').addClass('text-capitalize').text(gettext(labeltext)));
+          labels.push(...data[dataType][0].map(x => x[0]));
 
+          for ( const labelIndex in labels) {
+            // if not hidden
+            if (!data[dataType][0][labelIndex][2])
+              tableheadercontent.append($('<th/>').addClass('text-capitalize').text(gettext(labels[labelIndex])));
+          }
           const tablebodycontent = $('<tbody/>');
 
           for (let i = 0; i < data[dataType].length; i++) {
-            const row = $('<tr/>').attr('reference', data[dataType][i]['reference']);
+            const row = $('<tr/>').attr('orderreference', data[dataType][i][labels.indexOf('reference')][1]).attr('ordertype', dataType);
             const td = $('<td/>');
 
             td.append($('<input/>').attr({
@@ -2438,11 +2467,7 @@ var ERPconnection = {
             row.append(td);
 
             for (let j = 0; j < labels.length; j++) {
-              if (j === 1) {
-                row.append($('<td/>').text(dataType));
-                continue;
-              }
-              row.append($('<td/>').text(data[dataType][i][labels[j]]))
+              if (!data[dataType][i][j][2]) row.append($('<td/>').text(formatValue(data[dataType][i][j])));
             };
             tablebodycontent.append(row);
           }
@@ -2477,22 +2502,22 @@ var ERPconnection = {
 
         $('#button_export').on('click', function () {
           //get selected row data
-          const data = [];
+          const exportData = [];
           let cells = [];
           const cellsData = {};
           const rows = $('#popup .modal-body tbody input[type=checkbox]:checked').parent().parent();
+
           for(const row of rows) {
-            cells = row.children;
-            data.push({
-              'reference': row.attributes.reference.value,
-              'type': cells[labels.indexOf('type')+1].textContent
+            exportData.push({
+              'reference': row.attributes.orderreference.value,
+              'type': row.attributes.ordertype.value,
             });
           }
-          console.log(2493, data);
+
           $('#popup .modal-body').html(gettext('connecting') + '...');
           $.ajax({
             url: url_prefix + "/erp/upload/",
-            data: JSON.stringify(data),
+            data: JSON.stringify(exportData),
             type: "POST",
             contentType: "application/json",
             success: function () {

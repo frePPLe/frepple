@@ -625,23 +625,24 @@ def OperationPlans(request):
 
         for i in cursor:
             l = [
-                # ["fieldname", value, hidden]
-                ["reference", i[0], 0],
-                ["item", i[2], 0],
-                ["destination" if i[1] == "DO" else "location", i[3], 0],
+                # ["fieldname", value, hidden, value type]
+                ["reference", i[0], 0, 'text'],
+                ["item", i[2], 0, 'text'],
+                ["destination" if i[1] == "DO" else "location", i[3], 0, 'text'],
                 [
                     (
                         "start date"
                         if i[1] == "MO"
-                        else ("ordering date" if type == "PO" else "shipping date")
+                        else ("ordering date" if i[1] == "PO" else "shipping date")
                     ),
                     i[5],
                     0,
+                    'date',
                 ],
-                ["end date" if i[1] == "MO" else "receipt date", i[6], 0],
-                ["quantity", i[7], 0],
-                ["value", i[8], 0],
-                ["status", i[9], 0],
+                ["end date" if i[1] == "MO" else "receipt date", i[6], 0, 'date'],
+                ["quantity", i[7], 0, 'number'],
+                ["value", i[8], 0, 'number'],
+                ["status", i[9], 0, 'text'],
             ]
             if i[1] == "DO":
                 l.insert(

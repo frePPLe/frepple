@@ -377,22 +377,24 @@ pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
     // For transfer batch flowplans the argument quantity is expected to be the
     // total quantity of all batches.
     if (mode == 2 || (mode == 0 && getFlow()->hasType<FlowEnd>()))
-      opplan_quantity =
-          oper->setOperationPlanParameters(
-                  (quantity - getFlow()->getQuantityFixed()) /
-                      getFlow()->getQuantity(),
-                  Date::infinitePast, oper->getEnd(), true, execute, rounddown)
-              .quantity;
+      opplan_quantity = oper->setOperationPlanParameters(
+                                (quantity - getFlow()->getQuantityFixed()) /
+                                    getFlow()->getQuantity(),
+                                Date::infinitePast,
+                                (mode == 2 || getFlow()->hasType<FlowStart>())
+                                    ? oper->getEnd()
+                                    : computeFlowToOperationDate(getDate()),
+                                true, execute, rounddown)
+                            .quantity;
     else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>()))
-      opplan_quantity =
-          oper->setOperationPlanParameters(
-                  (quantity - getFlow()->getQuantityFixed()) /
-                      getFlow()->getQuantity(),
-                  (mode == 1 && getFlow()->hasType<FlowEnd>())
-                      ? oper->getStart()
-                      : computeFlowToOperationDate(oper->getStart()),
-                  Date::infinitePast, false, execute, rounddown)
-              .quantity;
+      opplan_quantity = oper->setOperationPlanParameters(
+                                (quantity - getFlow()->getQuantityFixed()) /
+                                    getFlow()->getQuantity(),
+                                (mode == 1 || getFlow()->hasType<FlowEnd>())
+                                    ? oper->getStart()
+                                    : computeFlowToOperationDate(getDate()),
+                                Date::infinitePast, false, execute, rounddown)
+                            .quantity;
     else
       throw LogicException("Unreachable code reached");
   }

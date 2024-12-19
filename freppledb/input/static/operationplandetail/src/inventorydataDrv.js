@@ -53,7 +53,7 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
 
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('inventoryreport')) {
-          columnHeaders = ['<tr class="text-center"><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"></td>' ];
+          columnHeaders = ['<tr class="text-center"><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"></td>'];
           rows = [
             '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("start inventory") + '</span></td>',
             '<tr><td style="position: sticky; left: 0px; background:var(--bs-card-bg)"><span class="text-capitalize text-nowrap">' + gettextCatalog.getString("safety stock") + '</span></td>',
@@ -68,8 +68,9 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
           angular.forEach(scope.operationplan.inventoryreport, function (inventoryData) {
             columnHeaders.push('<td id="inventorydata' + inventoryData[0].replace(" ", "") +
               '" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip"' +
-                'data-bs-title="' + $filter('formatdate')(inventoryData[1]) + ' - ' + $filter('formatdate')(inventoryData[2])+'">' +
-                '<b class="text-capitalize">' + inventoryData[0] + '</b></td>'
+              'data-bs-title="' + $filter('formatdate')(inventoryData[1]) + ' - ' + $filter('formatdate')(inventoryData[2]) + '">' +
+              (inventoryData[3] ? '<i class="text-capitalize">' : '<b class="text-capitalize">')
+              + inventoryData[0] + (inventoryData[3] ? '</i></td>' : '</b></td>')
             );
 
             for (const i in inventoryData.slice(4)) {
@@ -86,7 +87,7 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
 
       let widgetTooltipTriggerList = document.querySelectorAll('#attributes-inventorydata [data-bs-toggle="tooltip"]');
 
-      let widgetTooltipList = [...widgetTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, {container: 'body', offset: '[0,5]'}));
+      let widgetTooltipList = [...widgetTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, { container: 'body', offset: '[0,5]' }));
     }); //watch end
 
   } //link end

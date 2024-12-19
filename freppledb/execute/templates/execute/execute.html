@@ -237,7 +237,7 @@ loadComplete : function(data) {
 </div></div>
 <div class="row mb-2">
 	<div id="tasks" class="accordion col" role="tablist" aria-multiselectable="true" style="max-width:900px; min-width: 600px">
-	{% if perms.auth.generate_plan or perms.auth.copy_scenario or perms.auth.release_scenario or perms.auth.promote_scenario or perms.auth.run_db %}
+	{% if perms.auth.auth.generate_plan or perms.auth.copy_scenario or perms.auth.release_scenario or perms.auth.promote_scenario or perms.auth.run_db %}
 	<!--User has some permissions -->
     {% for command in commandlist %}
       {% call_method command "getHTML" request as HTMLcode %}

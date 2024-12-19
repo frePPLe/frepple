@@ -243,13 +243,10 @@ class Command(BaseCommand):
             # Set environment variables
             if task.name != "odoo_import":
                 if options["env"]:
-                    task.arguments = (
-                        "--constraint=%s --plantype=%d --env=%s"
-                        % (
-                            constraintString(constraint),
-                            plantype,
-                            options["env"],
-                        )                    
+                    task.arguments = "--constraint=%s --plantype=%d --env=%s" % (
+                        constraintString(constraint),
+                        plantype,
+                        options["env"],
                     )
                     for i in options["env"].split(","):
                         j = i.split("=")
@@ -406,7 +403,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request, widget=False):
-        if request.user.has_perm("auth.generate_plan"):
+        if request.user.has_perm("auth.auth.generate_plan"):
             # Collect optional tasks
             planning_options = freppledb.common.commands.PlanTaskRegistry.getLabels(
                 database=request.database

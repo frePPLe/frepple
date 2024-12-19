@@ -379,7 +379,7 @@ def LaunchTask(request, action):
                 streaming_content=importWorkbook(request),
             )
         elif action in ("frepple_stop_web_service", "stopwebservice"):
-            if not request.user.has_perm("auth.generate_plan"):
+            if not request.user.has_perm("auth.auth.generate_plan"):
                 raise Exception("Missing execution privileges")
             from django.core import management
 
@@ -412,7 +412,7 @@ def wrapTask(request, action):
     # A
     # TODO remove special case - call runwebservice or runplan instead
     if action in ("runplan", "runwebservice"):
-        if not request.user.has_perm("auth.generate_plan"):
+        if not request.user.has_perm("auth.auth.generate_plan"):
             raise Exception("Missing execution privileges")
         constraint = parseConstraints(",".join(args.getlist("constraint")))
         task = Task(name="runplan", submitted=now, status="Waiting", user=request.user)

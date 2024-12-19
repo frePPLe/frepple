@@ -574,14 +574,13 @@ else:
         pass
 
 
-@staff_member_required
 def OperationPlans(request):
     if (
         request.method != "GET"
         or request.headers.get("x-requested-with") != "XMLHttpRequest"
     ):
         return HttpResponseBadRequest("Only ajax get requests allowed")
-    if not request.user.has_perm("view_demand_report"):
+    if not request.user.has_perm("auth.view_demand_report"):
         return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
 
     # Collect list of selected sales orders
@@ -623,12 +622,26 @@ def OperationPlans(request):
             (so_list,),
         )
 
+        po_ok = request.user.has_perm("input.change_purchaseorder")
+        do_ok = request.user.has_perm("input.change_distributionorder")
+        mo_ok = request.user.has_perm("input.change_manufacturingorder")
+
         for i in cursor:
+
+            if i[1] == "MO" and not mo_ok:
+                continue
+
+            if i[1] == "PO" and not po_ok:
+                continue
+
+            if i[1] == "DO" and not do_ok:
+                continue
+
             l = [
                 # ["fieldname", value, hidden, value type]
-                ["reference", i[0], 0, 'text'],
-                ["item", i[2], 0, 'text'],
-                ["destination" if i[1] == "DO" else "location", i[3], 0, 'text'],
+                ["reference", i[0], 0, "text"],
+                ["item", i[2], 0, "text"],
+                ["destination" if i[1] == "DO" else "location", i[3], 0, "text"],
                 [
                     (
                         "start date"
@@ -637,12 +650,12 @@ def OperationPlans(request):
                     ),
                     i[5],
                     0,
-                    'date',
+                    "date",
                 ],
-                ["end date" if i[1] == "MO" else "receipt date", i[6], 0, 'date'],
-                ["quantity", i[7], 0, 'number'],
-                ["value", i[8], 0, 'number'],
-                ["status", i[9], 0, 'text'],
+                ["end date" if i[1] == "MO" else "receipt date", i[6], 0, "date"],
+                ["quantity", i[7], 0, "number"],
+                ["value", i[8], 0, "number"],
+                ["status", i[9], 0, "text"],
             ]
             if i[1] == "DO":
                 l.insert(

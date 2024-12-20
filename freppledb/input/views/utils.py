@@ -2619,9 +2619,21 @@ class OperationPlanDetail(View):
                         current,
                         request.user.horizonbuckets,
                         opplan.item.name,
-                        opplan.location.name,
+                        (
+                            opplan.destination.name
+                            if opplan.type == "DO"
+                            else opplan.location.name
+                        ),
                         opplan.batch or "",
-                        "%s @ %s" % (opplan.item.name, opplan.location.name),
+                        "%s @ %s"
+                        % (
+                            opplan.item.name,
+                            (
+                                opplan.destination.name
+                                if opplan.type == "DO"
+                                else opplan.location.name
+                            ),
+                        ),
                     ),
                 )
 

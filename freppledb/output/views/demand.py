@@ -587,7 +587,11 @@ def OperationPlans(request):
     so_list = request.GET.getlist("demand")
 
     # Collect operationplans associated with the sales order(s)
-    result = {"PO": [], "DO": [], "MO": []}
+    result = {
+        "PO": [],
+        "DO": [],
+        "MO": [],
+    }
     with connections[request.database].cursor() as cursor:
         cursor.execute(
             """
@@ -639,33 +643,36 @@ def OperationPlans(request):
 
             l = [
                 # ["fieldname", value, hidden, value type]
-                ["reference", i[0], 0, "text"],
-                ["item", i[2], 0, "text"],
-                ["destination" if i[1] == "DO" else "location", i[3], 0, "text"],
+                # front-end relies on the fact that the reference is the first of the list
+                [_("reference"), i[0], 0, "text"],
+                [_("item"), i[2], 0, "text"],
+                [_("destination") if i[1] == "DO" else _("location"), i[3], 0, "text"],
                 [
                     (
-                        "start date"
+                        _("start date")
                         if i[1] == "MO"
-                        else ("ordering date" if i[1] == "PO" else "shipping date")
+                        else (
+                            _("ordering date") if i[1] == "PO" else _("shipping date")
+                        )
                     ),
                     i[5],
                     0,
                     "date",
                 ],
-                ["end date" if i[1] == "MO" else "receipt date", i[6], 0, "date"],
-                ["quantity", i[7], 0, "number"],
-                ["value", i[8], 0, "number"],
-                ["status", i[9], 0, "text"],
+                [_("end date") if i[1] == "MO" else _("receipt date"), i[6], 0, "date"],
+                [_("quantity"), i[7], 0, "number"],
+                [_("value"), i[8], 0, "number"],
+                [_("status"), _(i[9]), 0, "text"],
             ]
             if i[1] == "DO":
                 l.insert(
                     2,
-                    ["origin", i[4], 0],
+                    [_("origin"), i[4], 0],
                 )
             elif i[1] == "MO":
-                l.insert(3, ["operation", i[10], 0])
+                l.insert(3, [_("operation"), i[10], 0])
             elif i[1] == "PO":
-                l.insert(3, ["supplier", i[10], 0])
+                l.insert(3, [_("supplier"), i[10], 0])
 
             result[i[1]].append(l)
     return JsonResponse(result)

@@ -2413,16 +2413,16 @@ var ERPconnection = {
           '</thead>' +
           '</table>' +
           '</div>' +
-          '<div id="DO-title"><h5 class="text-capitalize">' + gettext("distribution orders") + '</h5></div>' +
+          '<div id="MO-title"><h5 class="text-capitalize">' + gettext("manufacturing orders") + '</h5></div>' +
           '<div class="table-responsive">' +
-          '<table class="table table-hover text-center" id="exporttable_DO">' +
+          '<table class="table table-hover text-center" id="exporttable_MO">' +
           '<thead class="thead-default">' +
           '</thead>' +
           '</table>' +
           '</div>' +
-          '<div id="MO-title"><h5 class="text-capitalize">' + gettext("manufacturing orders") + '</h5></div>' +
+          '<div id="DO-title"><h5 class="text-capitalize">' + gettext("distribution orders") + '</h5></div>' +
           '<div class="table-responsive">' +
-          '<table class="table table-hover text-center" id="exporttable_MO">' +
+          '<table class="table table-hover text-center" id="exporttable_DO">' +
           '<thead class="thead-default">' +
           '</thead>' +
           '</table>' +
@@ -2441,20 +2441,20 @@ var ERPconnection = {
           let tableheadercontent = $('<tr/>');
 
           tableheadercontent.append($('<th/>').html(
-            '<input id="cb_modaltableall_'+dataType+'" class="cbox" type="checkbox" aria-checked="true" checked>'
+            '<input id="cb_modaltableall_' + dataType + '" class="cbox" type="checkbox" aria-checked="true" checked>'
           ));
 
           labels.push(...data[dataType][0].map(x => x[0]));
 
-          for ( const labelIndex in labels) {
+          for (const labelIndex in labels) {
             // if not hidden
             if (!data[dataType][0][labelIndex][2])
-              tableheadercontent.append($('<th/>').addClass('text-capitalize').text(gettext(labels[labelIndex])));
+              tableheadercontent.append($('<th/>').addClass('text-capitalize').text(labels[labelIndex]));
           }
           const tablebodycontent = $('<tbody/>');
 
           for (let i = 0; i < data[dataType].length; i++) {
-            const row = $('<tr/>').attr('orderreference', data[dataType][i][labels.indexOf('reference')][1]).attr('ordertype', dataType);
+            const row = $('<tr/>').attr('orderreference', data[dataType][i][0][1]).attr('ordertype', dataType);
             const td = $('<td/>');
 
             td.append($('<input/>').attr({
@@ -2475,23 +2475,23 @@ var ERPconnection = {
           $('#popup #exporttable_' + dataType).append(tablebodycontent);
           $('#popup #exporttable_' + dataType + ' thead').append(tableheadercontent);
 
-          $("#cb_modaltableall_"+dataType).click(function () {
-            if ( $("#cb_modaltableall_"+dataType).prop("checked")) {
-              $("#exporttable_"+dataType+" input[type=checkbox]").prop("checked", $(this).prop("checked"));
+          $("#cb_modaltableall_" + dataType).click(function () {
+            if ($("#cb_modaltableall_" + dataType).prop("checked")) {
+              $("#exporttable_" + dataType + " input[type=checkbox]").prop("checked", $(this).prop("checked"));
             } else {
-              $("#exporttable_"+dataType+" tbody tr input:not(:checked)").prop("checked",true);
-              $("#exporttable_"+dataType+" tbody tr input:not(:checked)").parent().parent().removeClass("active").addClass("active")
+              $("#exporttable_" + dataType + " tbody tr input:not(:checked)").prop("checked", true);
+              $("#exporttable_" + dataType + " tbody tr input:not(:checked)").parent().parent().removeClass("active").addClass("active")
             }
-            $("#exporttable_"+dataType+" input[type=checkbox]").prop("checked", $(this).prop("checked"));
+            $("#exporttable_" + dataType + " input[type=checkbox]").prop("checked", $(this).prop("checked"));
             if ($("#popup .modal-body tbody input[type=checkbox]:checked").length > 0) {
               $('#button_export').prop('disabled', false);;
             } else {
               $('#button_export').prop('disabled', true);
             };
           });
-          $("#exporttable_"+dataType+" tbody input[type=checkbox]").click(function () {
+          $("#exporttable_" + dataType + " tbody input[type=checkbox]").click(function () {
             $(this).parent().parent().toggleClass('selected');
-            $("#cb_modaltableall_"+dataType).prop("checked", $("#exporttable_"+dataType+" tbody input[type=checkbox]:not(:checked)").length == 0);
+            $("#cb_modaltableall_" + dataType).prop("checked", $("#exporttable_" + dataType + " tbody input[type=checkbox]:not(:checked)").length == 0);
             if ($("#popup .modal-body tbody input[type=checkbox]:checked").length > 0) {
               $('#button_export').prop('disabled', false);;
             } else {
@@ -2507,7 +2507,7 @@ var ERPconnection = {
           const cellsData = {};
           const rows = $('#popup .modal-body tbody input[type=checkbox]:checked').parent().parent();
 
-          for(const row of rows) {
+          for (const row of rows) {
             exportData.push({
               'reference': row.attributes.orderreference.value,
               'type': row.attributes.ordertype.value,

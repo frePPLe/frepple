@@ -400,6 +400,7 @@ class ForecastService(AsyncHttpConsumer):
                                 errors.append(b"Exception during replanning")
 
                 finally:
+                    frepple.cache.flush()
                     frepple.cache.write_immediately = True
 
                 # Save a new comment

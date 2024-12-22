@@ -2068,7 +2068,7 @@ class GridReport(View):
                         elif isinstance(r, GridFieldChoice):
                             if v is None:
                                 fields[f] = None
-                            elif False and v.lower() in [
+                            elif v.lower() in [
                                 force_str(i[1]).lower() for i in r.choices
                             ]:
                                 fields[f] = [

@@ -792,15 +792,16 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc,
   // Create a new buffer with a unique name
   stringstream o;
   o << itm->getName();
-  if (batch) o << " @ " << batch;
+  if (batch && itm->hasType<ItemMTO>()) o << " @ " << batch;
   o << " @ " << loc->getName();
-  Buffer* b;
-  while ((b = find(o.str()))) o << '*';
-  b = new BufferDefault();
-  b->setItem(itm, !batch);
-  b->setLocation(loc, !batch);
-  b->setName(o.str());
-  if (batch) {
+  Buffer* b = find(o.str());
+  if (!b) {
+    b = new BufferDefault();
+    b->setName(o.str());
+  }
+  b->setItem(itm, !batch && !itm->hasType<ItemMTO>());
+  b->setLocation(loc, !batch && !itm->hasType<ItemMTO>());
+  if (batch && itm->hasType<ItemMTO>()) {
     b->setBatch(batch);
     if (generic) b->copyLevelAndCluster(generic);
   }

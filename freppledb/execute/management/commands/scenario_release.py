@@ -117,6 +117,17 @@ class Command(BaseCommand):
             releasedScenario.lastrefresh = datetime.today()
             releasedScenario.save(using=DEFAULT_DB_ALIAS)
 
+            # Update the user table, remove the scenario from the user's list
+            with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
+                cursor.execute(
+                    """
+                    update common_user 
+                    set databases = array_remove(databases, %s) 
+                    where %s = any(databases)
+                    """,
+                    (database, database),
+                )
+
             # Emptying the data of the released scenario
             try:
                 with connections[database].cursor() as cursor:

@@ -101,9 +101,15 @@ class Command(BaseCommand):
         force = options["force"]
         promote = options["promote"]
         test = "FREPPLE_TEST" in os.environ
+        source = options["source"]
+        try:
+            sourcescenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(pk=source)
+        except Exception:
+            raise CommandError("No source database defined with name '%s'" % source)
+
         if options["user"]:
             try:
-                user = User.objects.all().get(username=options["user"])
+                user = User.objects.all().using(source).get(username=options["user"])
             except Exception:
                 raise CommandError("User '%s' not found" % options["user"])
         else:
@@ -113,11 +119,6 @@ class Command(BaseCommand):
         Scenario.syncWithSettings()
 
         # Initialize the task
-        source = options["source"]
-        try:
-            sourcescenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(pk=source)
-        except Exception:
-            raise CommandError("No source database defined with name '%s'" % source)
         now = datetime.now()
         task = None
         if "task" in options and options["task"]:
@@ -353,6 +354,18 @@ class Command(BaseCommand):
                             "drop view %s" % connections[destination].ops.quote_name(i)
                         )
 
+            # Remove the old scenario access rights
+            if destination != DEFAULT_DB_ALIAS:
+                with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
+                    cursor.execute(
+                        """
+                        update common_user 
+                        set databases = array_remove(databases, %s) 
+                        where %s = any(databases)
+                        """,
+                        (destination, destination),
+                    )
+
             # Copying the data
             # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
             if not options["dumpfile"]:
@@ -581,25 +594,27 @@ class Command(BaseCommand):
             #  b) all active superusers from the source schema
             # unless it's a promotion
             if destination != DEFAULT_DB_ALIAS:
-                for u in User.objects.using(source).filter(is_superuser=True):
-                    if not u.databases or destination not in u.databases:
-                        if u.databases:
-                            u.databases.append(destination)
-                        else:
-                            u.databases = [source, destination]
-                        u.save(using=DEFAULT_DB_ALIAS, update_fields=["databases"])
-                        User.synchronize(user=u.pk)
-                if (
-                    user
-                    and not user.is_superuser
-                    and (not user.databases or destination not in user.databases)
-                ):
-                    if u.databases:
-                        user.databases.append(destination)
-                    else:
-                        user.databases = [source, destination]
-                    user.save(using=DEFAULT_DB_ALIAS, update_fields=["databases"])
-                    User.synchronize(user=user.pk)
+                # Read all superusers from the source database
+                access_allowed = [
+                    u["id"]
+                    for u in User.objects.using(source)
+                    .filter(is_superuser=True)
+                    .only("id")
+                    .values("id")
+                ]
+                if user and not user.is_superuser:
+                    access_allowed.append(user.pk)
+                print(access_allowed, "pppp")
+                with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
+                    cursor.execute(
+                        """
+                        update common_user 
+                        set databases = array_append(databases, %s) 
+                        where not %s = any(databases)
+                        and id = any(%s)
+                        """,
+                        (destination, destination, access_allowed),
+                    )
 
             # Delete data files present in the scenario folders
             if destination != DEFAULT_DB_ALIAS and settings.DATABASES[destination][
@@ -680,7 +695,6 @@ class Command(BaseCommand):
                     update_fields=["status"], using=DEFAULT_DB_ALIAS
                 )
             raise e
-
         finally:
             if task:
                 task.processid = None

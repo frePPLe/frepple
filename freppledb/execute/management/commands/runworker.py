@@ -33,7 +33,8 @@ from threading import Thread
 import time
 
 from django.conf import settings
-from django.core.management import get_commands
+from django.core.management import get_commands, load_command_class
+
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS, connections
 
@@ -107,6 +108,16 @@ def launchWorker(database=DEFAULT_DB_ALIAS):
             Popen(["frepplectl", "runworker", "--database=%s" % database])
 
 
+def command_accepts_user_argument(command_name):
+    app_name = get_commands()[command_name]
+    command = load_command_class(app_name, command_name)
+    parser = command.create_parser("", command_name)
+    for action in parser._actions:
+        if "--user" in action.option_strings:
+            return True
+    return False
+
+
 def runTask(task, database):
     task.started = datetime.now()
     # Verify the command exists
@@ -129,6 +140,8 @@ def runTask(task, database):
         # Spawn a new command process
         args = []
         kwargs = {"database": database, "task": task.id, "verbosity": 0}
+        if task.user and command_accepts_user_argument(task.name):
+            kwargs["user"] = task.user.username
         background = "background" in task.arguments if task.arguments else False
         if task.arguments:
             for i in shlex.split(task.arguments or ""):

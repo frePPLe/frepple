@@ -22,7 +22,6 @@
 #
 
 import os
-import time
 
 try:
     os.environ["LOCUST_SKIP_MONKEY_PATCH"] = "1"
@@ -57,11 +56,26 @@ class Command(BaseCommand):
         return __version__
 
     def add_arguments(self, parser):
-        parser.add_argument("--users", help="Number of users", type=int, default=10),
+        parser.add_argument(
+            "--users", help="Number of simultaneous users.", type=int, default=10
+        )
         parser.add_argument(
             "--server",
             help="URL of the server to test.",
+            type=str,
             default="http://localhost:8000",
+        )
+        parser.add_argument(
+            "--user",
+            help="User for the test sessions.",
+            type=str,
+            default="admin",
+        )
+        parser.add_argument(
+            "--password",
+            help="Password for the test sessions.",
+            type=str,
+            default="admin",
         )
 
     def handle(self, **options):
@@ -74,6 +88,9 @@ class Command(BaseCommand):
         if "freppledb.forecast" in settings.INSTALLED_APPS:
             user_classes.append(DemandPlanner)
         setup_logging("INFO")
+        freppleUser.user = options["user"]
+        freppleUser.password = options["password"]
+        freppleUser.host = options["server"]
         env = Environment(user_classes=user_classes)
         runner = env.create_local_runner()
         web_ui = env.create_web_ui("127.0.0.1", 8089)
@@ -97,11 +114,20 @@ if locust_installed:
 
     class freppleUser(FastHttpUser):
         host = "http://localhost:8000"
+        user = "admin"
+        password = "admin"
         wait_time = between(1, 5)
         default_headers = {
             "accept-encoding": "gzip, deflate, br, zstd",
             "accept-language": "en",
         }
+
+        def on_start(self):
+            if (
+                "freppledb.common.middleware.AutoLoginAsAdminUser"
+                not in settings.MIDDLEWWARE
+            ):
+                self.client.get("/", auth=(self.user, self.password))
 
     class MaterialPlanner(freppleUser):
         @task(10)

@@ -2402,26 +2402,26 @@ var ERPconnection = {
           $('#popup .modal-body').css({ 'overflow-y': 'auto' }).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' +
             gettext('There are no purchase, distribution or manufacturing orders for export that are linked to this sales order') +
             '</div>');
-          $('#button_export').addClass("invisible");
+          $('#button_export').addClass("d-none");
           return;
         }
         $('#popup .modal-body').html(
           '<div id="PO-title"><h5 class="text-capitalize">' + gettext("purchase orders") + '</h5></div>' +
-          '<div class="table-responsive">' +
+          '<div id="PO-data" class="table-responsive">' +
           '<table class="table table-hover text-center" id="exporttable_PO">' +
           '<thead class="thead-default">' +
           '</thead>' +
           '</table>' +
           '</div>' +
           '<div id="MO-title"><h5 class="text-capitalize">' + gettext("manufacturing orders") + '</h5></div>' +
-          '<div class="table-responsive">' +
+          '<div id="MO-data" class="table-responsive">' +
           '<table class="table table-hover text-center" id="exporttable_MO">' +
           '<thead class="thead-default">' +
           '</thead>' +
           '</table>' +
           '</div>' +
           '<div id="DO-title"><h5 class="text-capitalize">' + gettext("distribution orders") + '</h5></div>' +
-          '<div class="table-responsive">' +
+          '<div id="DO-data" class="table-responsive">' +
           '<table class="table table-hover text-center" id="exporttable_DO">' +
           '<thead class="thead-default">' +
           '</thead>' +
@@ -2433,7 +2433,7 @@ var ERPconnection = {
 
         for (const dataType of ['PO', 'DO', 'MO']) {
           if (data[dataType].length === 0) {
-            $('#' + dataType + '-title').addClass('invisible');
+            $('#' + dataType + '-title, #' + dataType + '-data').addClass('d-none');
             continue;
           }
           labels.length = 0;

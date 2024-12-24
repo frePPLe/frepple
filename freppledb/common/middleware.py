@@ -175,14 +175,14 @@ class MultiDBMiddleware:
 
         # Select scenario database
         request.prefix = ""
-        request.database = DEFAULT_DB_ALIAS
+        db = DEFAULT_DB_ALIAS
         for i in settings.DATABASES:
             try:
                 if settings.DATABASES[i]["regexp"].match(request.path):
                     request.prefix = "/%s" % i
                     request.path_info = request.path_info[len(request.prefix) :]
                     request.path = request.path[len(request.prefix) :]
-                    request.database = i
+                    db = i
             except Exception:
                 pass
 
@@ -215,7 +215,7 @@ class MultiDBMiddleware:
                     decoded = None
                     for secret in (
                         getattr(settings, "AUTH_SECRET_KEY", None),
-                        settings.DATABASES[request.database].get(
+                        settings.DATABASES[db].get(
                             "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
                         ),
                     ):
@@ -249,7 +249,7 @@ class MultiDBMiddleware:
                             if "email" in decoded:
                                 user_args["email"] = decoded["email"]
                             user = User.objects.create_user(**user_args)
-                            user.save(using=request.database)
+                            user.save(using=DEFAULT_DB_ALIAS)
                         else:
                             logger.error("Invalid user in webtoken")
                             messages.add_message(
@@ -307,6 +307,10 @@ class MultiDBMiddleware:
             else:
                 request.session["last_request"] = now.strftime("%y-%m-%d %H:%M:%S")
 
+        # Set the database for queries only here.
+        # All statements before this MUST be executed on the default database.
+        request.database = db
+
         # Keep last_login date up to date and start web service if needed.
         # The user object is ALWAYS on default database at this stage, and we save the last login
         # only in that database. It's lazily replicated to other databases when needed.
@@ -317,6 +321,7 @@ class MultiDBMiddleware:
             if state.db == DEFAULT_DB_ALIAS:
                 user_dflt = request.user
             else:
+                print("warning: ", request.user, state.db)
                 user_dflt = User.objects.using(DEFAULT_DB_ALIAS).get(pk=request.user.pk)
             last_login = getattr(user_dflt, "last_login", None)
             now = timezone.now()

@@ -37,6 +37,7 @@ from freppledb.forecast.tests.seleniumpages.forecastpage import ForecastTablePag
 @unittest.skipUnless(
     "freppledb.forecast" in settings.INSTALLED_APPS, "App not activated"
 )
+@unittest.skipIf(noSelenium, "selenium not installed")
 class ForecastEditorScreen(SeleniumTest):
     fixtures = ["manufacturing_demo"]
 
@@ -52,7 +53,6 @@ class ForecastEditorScreen(SeleniumTest):
         management.call_command("stopwebservice", force=True, wait=True)
         super().tearDown()
 
-    @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_forecast_override(self):
         newQuantity = 20
         month_to_override = 3

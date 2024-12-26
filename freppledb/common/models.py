@@ -433,7 +433,11 @@ class User(AbstractUser):
         blank=True,
     )
     scenario_themes = models.JSONField(blank=True, null=True)
-    databases = ArrayField(models.CharField(_("databases"), max_length=300), null=True)
+    databases = ArrayField(
+        models.CharField(_("databases"), max_length=300),
+        null=True,
+        default=lambda: list([DEFAULT_DB_ALIAS]),
+    )
 
     @property
     def scenarios(self):

@@ -61,7 +61,12 @@ from django.core.cache import cache
 from django.db import connection
 from django.db.models import Model, Lookup
 from django.db.models.expressions import RawSQL
-from django.db.utils import DEFAULT_DB_ALIAS, load_backend, OperationalError
+from django.db.utils import (
+    DEFAULT_DB_ALIAS,
+    load_backend,
+    OperationalError,
+    DatabaseError,
+)
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_permission_codename
 from django.conf import settings
@@ -825,7 +830,10 @@ class GridReport(View):
             and request.user.horizonbuckets != bucket
         ):
             request.user.horizonbuckets = bucket
-            request.user.save(update_fields=["horizonbuckets"])
+            try:
+                request.user.save()
+            except DatabaseError:
+                pass
 
         # Get the report horizon
         current, start, end = getHorizon(

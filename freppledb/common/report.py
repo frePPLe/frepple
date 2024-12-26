@@ -818,7 +818,12 @@ class GridReport(View):
                 )
             except Exception:
                 bucket = None
-        if not arg_buckets and not request.user.horizonbuckets and bucket:
+        if (
+            not arg_buckets
+            and not request.user.horizonbuckets
+            and bucket
+            and request.user.horizonbuckets != bucket
+        ):
             request.user.horizonbuckets = bucket
             request.user.save(update_fields=["horizonbuckets"])
 

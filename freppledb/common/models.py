@@ -514,7 +514,7 @@ class User(AbstractUser):
                         "default_scenario",
                     ]
                 else:
-                    # Important is NOT to save the is_active and is_superuser fields.
+                    # Important is not to copy all fields.
                     update_fields2 = update_fields[:]  # Copy!
                     if "is_active" in update_fields2:
                         update_fields2.remove("is_active")

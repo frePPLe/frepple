@@ -357,9 +357,6 @@ class remote_commands(TransactionTestCase):
                 cnt += 1
             self.assertLess(cnt, 20, "Running task taking too long")
 
-            # Refresh the client to see the new scenario
-            self.client = self.client_class()
-
             # Generate a plan in the scenario
             response = self.client.post(
                 "/%s/execute/api/runplan/" % db2,

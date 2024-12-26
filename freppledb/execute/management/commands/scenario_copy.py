@@ -102,6 +102,7 @@ class Command(BaseCommand):
         promote = options["promote"]
         test = "FREPPLE_TEST" in os.environ
         source = options["source"]
+        Scenario.syncWithSettings()
         try:
             sourcescenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(pk=source)
         except Exception:
@@ -114,9 +115,6 @@ class Command(BaseCommand):
                 raise CommandError("User '%s' not found" % options["user"])
         else:
             user = None
-
-        # Synchronize the scenario table with the settings
-        Scenario.syncWithSettings()
 
         # Initialize the task
         now = datetime.now()
@@ -604,13 +602,12 @@ class Command(BaseCommand):
                 ]
                 if user and not user.is_superuser:
                     access_allowed.append(user.pk)
-                print(access_allowed, "pppp")
                 with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
                     cursor.execute(
                         """
                         update common_user 
                         set databases = array_append(databases, %s) 
-                        where not %s = any(databases)
+                        where (databases is null or not %s = any(databases))
                         and id = any(%s)
                         """,
                         (destination, destination, access_allowed),

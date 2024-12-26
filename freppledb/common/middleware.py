@@ -320,6 +320,9 @@ class MultiDBMiddleware:
             state = getattr(request.user, "_state", None)
             if state.db == DEFAULT_DB_ALIAS:
                 user_dflt = request.user
+                if not user_dflt.databases and user_dflt.is_active:
+                    user_dflt.databases = [DEFAULT_DB_ALIAS]
+                    user_dflt.save(update_fields=["databases"])
             else:
                 print("warning: ", request.user, state.db)
                 user_dflt = User.objects.using(DEFAULT_DB_ALIAS).get(pk=request.user.pk)

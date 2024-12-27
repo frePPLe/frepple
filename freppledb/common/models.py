@@ -495,7 +495,7 @@ class User(AbstractUser):
     ):
         # We want to automatically give access to the django admin to all users
         self.is_staff = True
-        if self.id:
+        if self.id is not None:
             # Update an existing user
             if self._state.db != DEFAULT_DB_ALIAS:
                 # Make sure the default database is up to date
@@ -555,10 +555,11 @@ class User(AbstractUser):
                 if not using:
                     using = DEFAULT_DB_ALIAS
 
+        Scenario.syncWithSettings()
         scenarios = [
             i["name"]
             for i in Scenario.objects.using(DEFAULT_DB_ALIAS)
-            .filter(status="In use")
+            .filter(Q(status="In use") | Q(name=DEFAULT_DB_ALIAS))
             .values("name")
             if i["name"] in settings.DATABASES
         ]
@@ -573,7 +574,9 @@ class User(AbstractUser):
         self.is_superuser = False
         for db in scenarios:
             with connections[db].cursor() as cursor:
-                cursor.execute("select nextval('common_user_id_seq')")
+                cursor.execute(
+                    "select greatest(max(id+1), nextval('common_user_id_seq')) from common_user"
+                )
                 cur_seq[db] = cursor.fetchone()[0]
                 if cur_seq[db] > self.id:
                     self.id = cur_seq[db]

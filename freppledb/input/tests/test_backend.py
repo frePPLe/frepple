@@ -899,7 +899,6 @@ class NotificationTest(TransactionTestCase):
                 username="user%s" % cnt,
                 email="user%s" % cnt,
                 password="big_secret12345",
-                pk=cnt + 10,
             )
             u.user_permissions.add(
                 *Permission.objects.filter(codename__in=("view_item", "view_demand"))

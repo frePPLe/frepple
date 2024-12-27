@@ -125,7 +125,7 @@ if locust_installed:
         def on_start(self):
             if (
                 "freppledb.common.middleware.AutoLoginAsAdminUser"
-                not in settings.MIDDLEWWARE
+                not in settings.MIDDLEWARE
             ):
                 self.client.get("/", auth=(self.user, self.password))
 

@@ -1,8 +1,14 @@
 Release notes
 -------------
 
-9.5.0 (Upcoming release)
+9.6.0 (Upcoming release)
 ========================
+
+This release is scheduled for end of January.
+You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.5.0 (2024-12-27)
+==================
 
 This release is scheduled for end of December.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
@@ -29,8 +35,6 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | Fix for the approved manufacturing orders. If its operation has an offset, the
     manufacturing order could be moved in time when running a plan.
-
-
 
 .. rubric:: Demand forecasting
 

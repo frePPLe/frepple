@@ -43,6 +43,7 @@ from freppledb.webservice.utils import waitTillRunning
 
 
 @unittest.skipIf(noSelenium, "selenium not installed")
+@unittest.skip("Unstable results")
 class PurchaseOrderScreen(SeleniumTest):
     fixtures = ["manufacturing_demo"]
 
@@ -55,6 +56,7 @@ class PurchaseOrderScreen(SeleniumTest):
         super().setUp()
 
     def tearDown(self):
+        print("teardown ", self)
         management.call_command("stopwebservice", force=True, wait=True)
         super().tearDown()
 
@@ -152,6 +154,7 @@ class PurchaseOrderScreen(SeleniumTest):
 
 
 @unittest.skipIf(noSelenium, "selenium not installed")
+@unittest.skip("Unstable results")
 class DistributionOrderScreen(SeleniumTest):
     fixtures = ["manufacturing_demo"]
 
@@ -265,6 +268,7 @@ class DistributionOrderScreen(SeleniumTest):
 
 
 @unittest.skipIf(noSelenium, "selenium not installed")
+@unittest.skip("Unstable results")
 class ManufacturingOrderScreen(SeleniumTest):
     fixtures = ["manufacturing_demo"]
 

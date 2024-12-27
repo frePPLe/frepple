@@ -188,5 +188,7 @@ class TablePage(BasePage):
         # method that will check a certain number of checkboxes in the checkbox column
         for row in targetrows:
             checkbox = row.find_element(*TableLocators.tablecolumnsinput["checkbox"])
-            ActionChains(self.driver).move_to_element(checkbox).click().perform()
+            ActionChains(self.driver).key_down(Keys.CONTROL).move_to_element(
+                checkbox
+            ).click().perform()
             time.sleep(0.3)

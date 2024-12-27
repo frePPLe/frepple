@@ -702,7 +702,7 @@ var grid = {
   },
 
   runAction: function (next_action) {
-    if ($("#actions").val() != "no_action")
+    if (!["no_action", "actions1"].includes($("#actions").val()))
       actions[$("#actions").val()]();
   },
 

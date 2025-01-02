@@ -756,6 +756,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       <xsd:element name="operation" type="operation" />
       <xsd:element name="buffer" type="buffer" />
       <xsd:element name="item" type="item" />
+	  <xsd:element name="location" type="location" />
       <xsd:element name="quantity" type="xsd:double" />
       <xsd:element name="quantity_fixed" type="xsd:double" />
       <xsd:element name="offset" type="xsd:duration" />

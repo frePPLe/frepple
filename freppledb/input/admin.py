@@ -706,7 +706,7 @@ class Resource_admin(MultiDBModelAdmin):
 @admin.register(OperationMaterial, site=data_site)
 class OperationMaterial_admin(MultiDBModelAdmin):
     model = OperationMaterial
-    raw_id_fields = ("operation", "item")
+    raw_id_fields = ("operation", "item", "location")
     save_on_top = True
     exclude = ("id",)
     fieldsets = (
@@ -715,6 +715,7 @@ class OperationMaterial_admin(MultiDBModelAdmin):
             _("advanced"),
             {
                 "fields": [
+                    "location",
                     "quantity_fixed",
                     "transferbatch",
                     "offset",

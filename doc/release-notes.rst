@@ -7,6 +7,19 @@ Release notes
 This release is scheduled for end of January.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | Operations can now consume and produce material in different
+    locations.
+  | Until now, an operation always consumed and produced material
+    in the same location. This new feature allows for more complex
+    production flows.
+
+.. rubric:: Odoo integration
+
+- | 17: Support for routes that produce or consume items
+    from different warehouses.
+
 9.5.0 (2024-12-27)
 ==================
 

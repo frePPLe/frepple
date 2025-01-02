@@ -1860,6 +1860,11 @@ class exportOperationMaterials(PlanTask):
                             else None
                         ),
                         i.offset,
+                        (
+                            i.location.name
+                            if i.location and i.location != i.operation.location
+                            else None
+                        ),
                         cls.timestamp,
                     ]
                     for a in attrs:
@@ -1872,8 +1877,8 @@ class exportOperationMaterials(PlanTask):
                 """
                 insert into operationmaterial
                 (operation_id,item_id,effective_start,quantity,quantity_fixed,type,effective_end,
-                name,priority,search,source,transferbatch,"offset",lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s%s)
+                name,priority,search,source,transferbatch,"offset",location_id,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s%s)
                 on conflict (operation_id, item_id, effective_start)
                 do update set
                   quantity=excluded.quantity,
@@ -1886,6 +1891,7 @@ class exportOperationMaterials(PlanTask):
                   source=excluded.source,
                   transferbatch=excluded.transferbatch,
                   "offset"=excluded."offset",
+                  location_id=excluded.location_id,
                   lastmodified=excluded.lastmodified
                   %s
                 """

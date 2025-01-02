@@ -55,6 +55,12 @@ item            item              | Material being consumed or produced.
                                   | This is a required field.
 operation       operation         | Operation to which the material flow is associated.
                                   | This is a required field.
+location        location          | Optional location where the material is consumed or produced.
+                                  | This field is empty by default, indicating that the
+                                    operation's location is used.
+                                  | Only in exceptional cases where the material is to
+                                    be consumed or produced at a different location
+                                    should this field be filled.                    
 quantity        double            | Material quantity being consumed or produced per unit of
                                     the manufacturing order.
                                   | Default value is 1.0.

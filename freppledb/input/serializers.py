@@ -55,7 +55,7 @@ class CalendarFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.Calendar)
+            **getAttributeAPIFilterDefinition(models.Calendar),
         )
         filter_fields = fields.keys()
 
@@ -118,7 +118,7 @@ class CalendarBucketFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.CalendarBucket)
+            **getAttributeAPIFilterDefinition(models.CalendarBucket),
         )
         filter_fields = fields.keys()
 
@@ -201,7 +201,7 @@ class LocationFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.Location)
+            **getAttributeAPIFilterDefinition(models.Location),
         )
         filter_fields = fields.keys()
 
@@ -255,7 +255,7 @@ class CustomerFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.Customer)
+            **getAttributeAPIFilterDefinition(models.Customer),
         )
         filter_fields = fields.keys()
 
@@ -314,7 +314,7 @@ class ItemFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.Item)
+            **getAttributeAPIFilterDefinition(models.Item),
         )
         filter_fields = fields.keys()
 
@@ -375,7 +375,7 @@ class SupplierFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.Supplier)
+            **getAttributeAPIFilterDefinition(models.Supplier),
         )
         filter_fields = fields.keys()
 
@@ -439,7 +439,7 @@ class ItemSupplierFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.ItemSupplier)
+            **getAttributeAPIFilterDefinition(models.ItemSupplier),
         )
         filter_fields = fields.keys()
 
@@ -510,7 +510,7 @@ class ItemDistributionFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.ItemDistribution)
+            **getAttributeAPIFilterDefinition(models.ItemDistribution),
         )
         filter_fields = fields.keys()
 
@@ -586,7 +586,7 @@ class OperationFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.Operation)
+            **getAttributeAPIFilterDefinition(models.Operation),
         )
         filter_fields = fields.keys()
 
@@ -656,7 +656,7 @@ class SubOperationFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.SubOperation)
+            **getAttributeAPIFilterDefinition(models.SubOperation),
         )
         filter_fields = fields.keys()
 
@@ -711,7 +711,7 @@ class OperationDependencyFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.OperationDependency)
+            **getAttributeAPIFilterDefinition(models.OperationDependency),
         )
         filter_fields = fields.keys()
 
@@ -773,7 +773,7 @@ class BufferFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.Buffer)
+            **getAttributeAPIFilterDefinition(models.Buffer),
         )
         filter_fields = fields.keys()
 
@@ -831,7 +831,7 @@ class SetupMatrixFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.SetupMatrix)
+            **getAttributeAPIFilterDefinition(models.SetupMatrix),
         )
         filter_fields = fields.keys()
 
@@ -879,7 +879,7 @@ class SetupRuleFilter(FilterSet):
                 "cost": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "resource": ["exact", "in"],
             },
-            **getAttributeAPIFilterDefinition(models.SetupRule)
+            **getAttributeAPIFilterDefinition(models.SetupRule),
         )
         filter_fields = fields.keys()
 
@@ -944,7 +944,7 @@ class ResourceFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.Resource)
+            **getAttributeAPIFilterDefinition(models.Resource),
         )
         filter_fields = fields.keys()
 
@@ -1005,7 +1005,7 @@ class SkillFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.Skill)
+            **getAttributeAPIFilterDefinition(models.Skill),
         )
         filter_fields = fields.keys()
 
@@ -1053,7 +1053,7 @@ class ResourceSkillFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.ResourceSkill)
+            **getAttributeAPIFilterDefinition(models.ResourceSkill),
         )
         filter_fields = fields.keys()
 
@@ -1106,6 +1106,7 @@ class OperationMaterialFilter(FilterSet):
                 "offset": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "operation": ["exact", "in"],
                 "item": ["exact", "in"],
+                "location": ["exact", "in"],
                 "type": ["exact", "in"],
                 "effective_start": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "effective_end": ["exact", "in", "gt", "gte", "lt", "lte"],
@@ -1115,7 +1116,7 @@ class OperationMaterialFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.OperationMaterial)
+            **getAttributeAPIFilterDefinition(models.OperationMaterial),
         )
         filter_fields = fields.keys()
 
@@ -1127,6 +1128,7 @@ class OperationMaterialSerializer(BulkSerializerMixin, ModelSerializer):
             "id",
             "operation",
             "item",
+            "location",
             "quantity",
             "quantity_fixed",
             "transferbatch",
@@ -1179,7 +1181,7 @@ class OperationPlanMaterialFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.OperationPlanMaterial)
+            **getAttributeAPIFilterDefinition(models.OperationPlanMaterial),
         )
         filter_fields = fields.keys()
 
@@ -1241,7 +1243,7 @@ class OperationResourceFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.OperationResource)
+            **getAttributeAPIFilterDefinition(models.OperationResource),
         )
         filter_fields = fields.keys()
 
@@ -1302,7 +1304,7 @@ class OperationPlanResourceFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.OperationPlanResource)
+            **getAttributeAPIFilterDefinition(models.OperationPlanResource),
         )
         filter_fields = fields.keys()
 
@@ -1375,7 +1377,7 @@ class ManufacturingOrderFilter(FilterSet):
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "demand": ["exact", "in"],
             },
-            **getAttributeAPIFilterDefinition(models.OperationPlan)
+            **getAttributeAPIFilterDefinition(models.OperationPlan),
         )
         filter_fields = fields.keys()
 
@@ -1601,7 +1603,7 @@ class DistributionOrderFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.OperationPlan)
+            **getAttributeAPIFilterDefinition(models.OperationPlan),
         )
         filter_fields = fields.keys()
 
@@ -1668,7 +1670,7 @@ class PurchaseOrderFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.OperationPlan)
+            **getAttributeAPIFilterDefinition(models.OperationPlan),
         )
         filter_fields = fields.keys()
 
@@ -1736,7 +1738,7 @@ class DeliveryOrderFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(models.OperationPlan)
+            **getAttributeAPIFilterDefinition(models.OperationPlan),
         )
         filter_fields = fields.keys()
 
@@ -1809,7 +1811,7 @@ class DemandFilter(FilterSet):
                 "maxlateness": ["exact", "in", "gt", "gte", "lt", "lte"],
                 "owner": ["exact", "in"],
             },
-            **getAttributeAPIFilterDefinition(models.Demand)
+            **getAttributeAPIFilterDefinition(models.Demand),
         )
         filter_fields = fields.keys()
 

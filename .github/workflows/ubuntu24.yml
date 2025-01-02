@@ -168,7 +168,7 @@ jobs:
           connection_url: ${{secrets.MAIL_CONNECTION}}  
           secure: false
           subject: "Github action failure: Failure Community Edition"
-          from: devops@frepple.com
+          from: info@frepple.com
           to: devops@frepple.com
           body: |
             Please check the logs at https://github.com/frePPLe/frepple/actions/runs/${{ github.run_id }}

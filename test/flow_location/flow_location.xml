@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for fixed flows</name>
+  <description>
+  This test verifies operations with flows consuming from or producting in locations
+  different from the operation's locations.
+  </description>
+  <current>2025-01-01T00:00:00</current>
+
+  <items>
+    <item name="1. component from location B" cost="1">
+	    <itemsuppliers>
+	      <itemsupplier>
+          <supplier name="Supplier of components" />
+          <leadtime>P10D</leadtime>
+          <priority>1</priority>
+        </itemsupplier>
+	    </itemsuppliers>
+    </item>
+    <item name="1. component from location C" cost="1">
+	    <itemsuppliers>
+	      <itemsupplier>
+          <supplier name="Supplier of components" />
+          <leadtime>P15D</leadtime>
+          <priority>1</priority>
+        </itemsupplier>
+	    </itemsuppliers>
+    </item>
+  </items>
+
+  <operations>
+    <operation name="1. multi-location operation" xsi:type="operation_fixed_time" duration="P1D">
+      <item name="1. end item"/>
+      <location name="1. location D"/>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="1. end item"/>
+          <location name="1. location A"/>
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="1. component from location B"/>
+          <location name="1. location B"/>
+          <quantity>-1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="1. component from location C"/>
+          <location name="1. location C"/>
+          <quantity>-1</quantity>
+        </flow>                
+      </flows>
+    </operation>
+  </operations>
+  <operationplans>
+    <operationplan id="1000">
+      <operation name="1. multi-location operation"/>
+      <start>2025-03-01T00:00:00</start>
+      <quantity>10</quantity>
+      <status>confirmed</status>
+    </operationplan>
+  </operationplans>
+  <demands>
+    <demand name="1. order 1">
+      <quantity>100</quantity>
+      <minshipment>1</minshipment>
+      <due>2025-01-01T00:00:00</due>
+      <priority>11</priority>
+      <item name="1. end item"/>
+      <location name="1. location A"/>
+    </demand>  
+  </demands>
+
+<?python
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+?>
+
+</plan>

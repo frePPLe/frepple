@@ -1030,7 +1030,7 @@ void Buffer::buildProducingOperation() {
           }
         }
       } else {
-        // We are the first: only create an operationItemSupplier instance
+        // We are the first: only create an OperationItemDistribution instance
         if (itemdist->getEffective() == DateRange() &&
             itemdist->getPriority() == 1 &&
             oper->getSearch() == SearchMode::PRIORITY)
@@ -1068,10 +1068,17 @@ void Buffer::buildProducingOperation() {
       if (itemoper->getPriority() == 0) continue;
 
       // Verify whether the operation is applicable to the buffer
-      if (itemoper->getLocation() && itemoper->getLocation() != getLocation())
-        continue;
+      Location* l = itemoper->getLocation();
+      for (auto flow_iter = itemoper->getFlowIterator();
+           flow_iter != itemoper->getFlows().end(); ++flow_iter)
+        if (flow_iter->getItem() == getItem() && flow_iter->getLocation() &&
+            flow_iter->isProducer()) {
+          l = flow_iter->getLocation();
+          break;
+        }
+      if (l && l != getLocation()) continue;
 
-      // Make sure a producing Flow record exists
+      // Make sure a producing flow record exists
       correctProducingFlow(itemoper);
 
       // Check if there is already a producing operation referencing this
@@ -1206,7 +1213,9 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
     // check if routing has a flow into the buffer
     for (auto flow_iter = itemoper->getFlowIterator();
          flow_iter != itemoper->getFlows().end(); ++flow_iter)
-      if (flow_iter->getItem() == getItem())
+      if (flow_iter->getItem() == getItem() &&
+          (!flow_iter->getLocation() ||
+           flow_iter->getLocation() == getLocation()))
         // Flow for this item exists, nothing to do
         return;
   }
@@ -1220,7 +1229,10 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
     while (SubOperation* sub = subs.next()) {
       auto flow_iter = sub->getOperation()->getFlowIterator();
       while (flow_iter != sub->getOperation()->getFlows().end()) {
-        if (flow_iter->getItem() == getItem()) return;
+        if (flow_iter->getItem() == getItem() &&
+            (!flow_iter->getLocation() ||
+             flow_iter->getLocation() == getLocation()))
+          return;
         ++flow_iter;
       }
       lastStep = sub;
@@ -1249,7 +1261,9 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
   auto flow_iter = itemoper->getFlowIterator();
   bool foundFlow = false;
   while (flow_iter != itemoper->getFlows().end()) {
-    if (flow_iter->getItem() == getItem()) {
+    if (flow_iter->getItem() == getItem() &&
+        (!flow_iter->getLocation() ||
+         flow_iter->getLocation() == getLocation())) {
       foundFlow = true;
       break;
     }

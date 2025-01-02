@@ -423,6 +423,15 @@ class OperationMaterialList(GridReport):
             extra='"role":"input/item"',
             model=Item,
         ),
+        GridFieldText(
+            "location",
+            title=_("location"),
+            field_name="location__name",
+            formatter="detail",
+            extra='"role":"input/location"',
+            model=Location,
+            initially_hidden=True,
+        ),
         GridFieldChoice("type", title=_("type"), choices=OperationMaterial.types),
         GridFieldNumber("quantity", title=_("quantity")),
         GridFieldNumber(

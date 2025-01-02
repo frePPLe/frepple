@@ -236,18 +236,10 @@ void Environment::truncateLogFile(unsigned long long sz) {
   // Close an eventual existing log file.
   if (logfile.is_open()) logfile.close();
 
-    // Resize the file
-    // Code inspired on Boost fileystem::resize_file.
-#ifdef WIN32
-  HANDLE handle = CreateFile(logfilename.c_str(), GENERIC_WRITE, 0, 0,
-                             OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-  LARGE_INTEGER lg;
-  lg.QuadPart = sz;
-  auto exitcode = handle != INVALID_HANDLE_VALUE &&
-                  SetFilePointerEx(handle, lg, 0, FILE_BEGIN) &&
-                  SetEndOfFile(handle) && CloseHandle(handle);
-#elif defined HAVE_TRUNCATE
-  truncate(logfilename.c_str(), sz);
+#ifdef HAVE_TRUNCATE
+  // Resize the file
+  if (truncate(logfilename.c_str(), sz))
+    logger << "Error: Failed to truncate log file" << endl;
 #else
 #error "This platform doesn't have a file resizing api."
 #endif

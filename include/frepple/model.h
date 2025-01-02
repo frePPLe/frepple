@@ -5716,8 +5716,10 @@ class Flow : public Object,
     if (b) return b;
 
     // Dynamically set the buffer
-    if (item && getOperation() && getOperation()->getLocation()) {
-      b = Buffer::findOrCreate(item, getOperation()->getLocation());
+    if (item &&
+        (getLocation() || (getOperation() && getOperation()->getLocation()))) {
+      b = Buffer::findOrCreate(
+          item, getLocation() ? getLocation() : getOperation()->getLocation());
       if (b) const_cast<Flow*>(this)->setPtrB(b, b->getFlows());
     }
     if (!b) throw DataException("Flow doesn't have a buffer");
@@ -5739,6 +5741,10 @@ class Flow : public Object,
       throw DataException("Invalid update of operationmaterial");
     item = i;
   }
+
+  Location* getLocation() const { return loc; }
+
+  void setLocation(Location* l) { loc = l; }
 
   /* Return the leading flow of this group.
    * When the flow has no alternate or if the flow is itself leading
@@ -5797,6 +5803,8 @@ class Flow : public Object,
                                        &Cls::setOperation, MANDATORY + PARENT);
     m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem,
                                   MANDATORY + PARENT);
+    m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation,
+                                      &Cls::setLocation, PARENT);
     m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer,
                                     &Cls::setBuffer, DONT_SERIALIZE + PARENT);
     m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity,
@@ -5834,6 +5842,8 @@ class Flow : public Object,
    * when and if needed.
    */
   Item* item = nullptr;
+
+  Location* loc = nullptr;
 
   /* Variable quantity of the material consumption/production. */
   double quantity = 0.0;

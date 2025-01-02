@@ -1773,7 +1773,7 @@ class loadOperationMaterials(LoadTask):
                     """
                 SELECT
                   operation_id, item_id, quantity, type, effective_start, effective_end,
-                  name, priority, search, source, transferbatch, quantity_fixed, "offset"
+                  name, priority, search, source, transferbatch, quantity_fixed, "offset", location_id
                 FROM operationmaterial %s
                 ORDER BY operation_id, priority, item_id
                 """
@@ -1785,6 +1785,7 @@ class loadOperationMaterials(LoadTask):
                         curflow = frepple.flow(
                             operation=frepple.operation(name=i[0]),
                             item=frepple.item(name=i[1]),
+                            location=frepple.location(name=i[13]) if i[13] else None,
                             quantity=i[2],
                             quantity_fixed=i[11],
                             type="flow_%s" % i[3],

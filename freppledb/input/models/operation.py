@@ -251,6 +251,15 @@ class OperationMaterial(AuditModel):
         null=False,
         on_delete=models.CASCADE,
     )
+    location = models.ForeignKey(
+        Location,
+        verbose_name=_("location"),
+        db_index=True,
+        related_name="operationmaterials",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
     quantity = models.DecimalField(
         _("quantity"),
         default="1.00",

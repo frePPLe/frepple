@@ -27,8 +27,8 @@
 
 FROM ubuntu:devel as builder
 
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 RUN apt-get -y -q update && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install \
@@ -57,8 +57,8 @@ COPY --from=builder /build/*.deb .
 
 FROM ubuntu:devel
 
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 # # Download postgres clients (use when there are major postgresql releases which aren't in this ubuntu release)
 # RUN apt-get -y -q update && \

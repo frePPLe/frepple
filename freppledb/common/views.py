@@ -111,6 +111,17 @@ logger = logging.getLogger(__name__)
 def AboutView(request):
     maxstorage = getattr(settings, "MAXSTORAGE", 0) or 0
     usedstorage = getStorageUsage()
+    apps = []
+    for i in settings.INSTALLED_APPS:
+        if i in settings.INSTALLABLE_APPS:
+            apps.append(i)
+        else:
+            try:
+                m = getattr(import_module(i), "frepple_app", None)
+                if m and m.get("display_in_list", False):
+                    apps.append(i)
+            except Exception as e:
+                pass
     return JsonResponse(
         {
             "version": __version__,
@@ -120,9 +131,7 @@ def AboutView(request):
                 sizeof_fmt(maxstorage * 1024 * 1024) if maxstorage else None
             ),
             "storage_exceeded": maxstorage and usedstorage > maxstorage,
-            "apps": [
-                i for i in settings.INSTALLED_APPS if i in settings.INSTALLABLE_APPS
-            ],
+            "apps": apps,
             "website": settings.DOCUMENTATION_URL,
         }
     )

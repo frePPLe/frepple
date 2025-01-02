@@ -1312,7 +1312,6 @@ pair<double, double> MeasurePagePool::check(const string& msg) {
   unsigned int count_temp_free = 0;
   unsigned int count_temp_used = 0;
   unsigned int count_wrong_links = 0;
-  bool ok = true;
 
   // Exclusive access needed
   lock_guard<mutex> l_tmp(measurepages_temp.lock);
@@ -1356,7 +1355,6 @@ pair<double, double> MeasurePagePool::check(const string& msg) {
   if (count_freelist_fwd != count_free || count_freelist_bck != count_free) {
     logger << "Error: mismatched free count " << count_freelist_fwd << " vs "
            << count_freelist_bck << " vs " << count_free << endl;
-    ok = false;
   }
 
   // Temp free list
@@ -1371,14 +1369,12 @@ pair<double, double> MeasurePagePool::check(const string& msg) {
     logger << "Error: mismatched temp free count " << count_freelist_temp_fwd
            << " vs " << count_freelist_temp_bck << " vs " << count_temp_free
            << endl;
-    ok = false;
   }
 
   // Print stats
   if (count_wrong_links) {
     logger << "Error: " << count_wrong_links << "incorrect links in list"
            << endl;
-    ok = false;
   }
   logger << "Measure memory page stats: " << msg << endl;
   logger << "   " << count_pages << " pages with " << count_used

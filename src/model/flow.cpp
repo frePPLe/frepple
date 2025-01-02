@@ -115,8 +115,10 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds) {
 
     // Pick up the optional location
     PyObject* location = PyDict_GetItemString(kwds, "location");
-    if (location &&
-        !PyObject_TypeCheck(location, Location::metadata->pythonClass))
+    if (location == Py_None)
+      location = nullptr;
+    else if (location &&
+             !PyObject_TypeCheck(location, Location::metadata->pythonClass))
       throw DataException("flow location must be of type location");
 
     // Pick up the quantity

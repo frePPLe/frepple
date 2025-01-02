@@ -449,8 +449,9 @@ class PathReport(GridReport):
         }
 
     @classmethod
-    def getOperationFromItem(reportclass, request, item_name, downstream, depth):
-        cursor = connections[request.database].cursor()
+    def getOperationFromItem(
+        reportclass, request, cursor, item_name, downstream, depth
+    ):
         query = """
       -- MANUFACTURING OPERATIONS
       select distinct
@@ -685,14 +686,15 @@ class PathReport(GridReport):
             cursor.execute(query, (item_name,) * 7)
 
         for i in cursor.fetchall():
-            for j in reportclass.processRecord(i, request, depth, downstream, None, 1):
+            for j in reportclass.processRecord(
+                cursor, i, request, depth, downstream, None, 1
+            ):
                 yield j
 
     @classmethod
     def getOperationFromResource(
-        reportclass, request, resource_name, downstream, depth
+        reportclass, request, cursor, resource_name, downstream, depth
     ):
-        cursor = connections[request.database].cursor()
         query = """
       -- MANUFACTURING OPERATIONS
       select distinct
@@ -904,20 +906,22 @@ class PathReport(GridReport):
         cursor.execute(query, (resource_name,) * 4)
 
         for i in cursor.fetchall():
-            for j in reportclass.processRecord(i, request, depth, downstream, None, 1):
+            for j in reportclass.processRecord(
+                cursor, i, request, depth, downstream, None, 1
+            ):
                 yield j
 
     @classmethod
     def getOperationFromName(
         reportclass,
         request,
+        cursor,
         operation_name,
         downstream,
         depth,
         previousOperation=None,
         bom_quantity=1,
     ):
-        cursor = connections[request.database].cursor()
         query = """
       -- MANUFACTURING OPERATIONS
       select distinct
@@ -1025,7 +1029,7 @@ class PathReport(GridReport):
 
         for i in cursor.fetchall():
             for j in reportclass.processRecord(
-                i, request, depth, downstream, previousOperation, bom_quantity
+                cursor, i, request, depth, downstream, previousOperation, bom_quantity
             ):
                 yield j
 
@@ -1033,13 +1037,13 @@ class PathReport(GridReport):
     def getOperationFromBuffer(
         reportclass,
         request,
+        cursor,
         buffer_name,
         downstream,
         depth,
         previousOperation,
         bom_quantity,
     ):
-        cursor = connections[request.database].cursor()
         item = buffer_name[0 : buffer_name.find(" @ ")]
         location = buffer_name[buffer_name.find(" @ ") + 3 :]
         query = """
@@ -1296,19 +1300,25 @@ class PathReport(GridReport):
 
         for i in cursor.fetchall():
             for j in reportclass.processRecord(
-                i, request, depth, downstream, previousOperation, bom_quantity
+                cursor, i, request, depth, downstream, previousOperation, bom_quantity
             ):
                 yield j
 
     @classmethod
     def processRecord(
-        reportclass, i, request, depth, downstream, previousOperation, bom_quantity
+        reportclass,
+        cursor,
+        i,
+        request,
+        depth,
+        downstream,
+        previousOperation,
+        bom_quantity,
     ):
         # check if routing dependencies has been done
         if not reportclass.routing_dependencies_done:
             reportclass.routing_dependencies_done = True
             reportclass.routing_operation_position = {}
-            cursor = connections[request.database].cursor()
             cursor.execute(
                 """
             with q as (
@@ -1536,25 +1546,49 @@ class PathReport(GridReport):
                 reportclass.node_count.add(buffer)
                 if float(quantity) < 0 and not downstream:
                     yield from reportclass.getOperationFromBuffer(
-                        request, buffer, downstream, depth + 1, i[0], float(quantity)
+                        request,
+                        cursor,
+                        buffer,
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        float(quantity),
                     )
                 elif float(quantity) > 0 and downstream:
                     yield from reportclass.getOperationFromBuffer(
-                        request, buffer, downstream, depth + 1, i[0], float(quantity)
+                        request,
+                        cursor,
+                        buffer,
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        float(quantity),
                     )
 
         if i[21] and not downstream:
             for blockedby in tuple(json.loads(i[21]).items()):
                 if not blockedby[0] in reportclass.operation_dict:
                     yield from reportclass.getOperationFromName(
-                        request, blockedby[0], downstream, depth + 1, i[0], blockedby[1]
+                        request,
+                        cursor,
+                        blockedby[0],
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        blockedby[1],
                     )
 
         if i[22] and downstream:
             for blocking in tuple(json.loads(i[22]).items()):
                 if not blocking[0] in reportclass.operation_dict:
                     yield from reportclass.getOperationFromName(
-                        request, blocking[0], downstream, depth + 1, i[0], blocking[1]
+                        request,
+                        cursor,
+                        blocking[0],
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        blocking[1],
                     )
 
     @classmethod
@@ -1589,94 +1623,97 @@ class PathReport(GridReport):
         reportclass.node_count = set()
 
         results = []
+        with connections[request.database].cursor() as cursor:
 
-        if str(reportclass.objecttype._meta) == "input.buffer":
-            buffer_name = basequery.query.get_compiler(basequery.db).as_sql(
-                with_col_aliases=False
-            )[1][0]
-            if " @ " not in buffer_name:
-                b = Buffer.objects.get(id=buffer_name)
-                buffer_name = "%s @ %s" % (b.item.name, b.location.name)
+            if str(reportclass.objecttype._meta) == "input.buffer":
+                buffer_name = basequery.query.get_compiler(basequery.db).as_sql(
+                    with_col_aliases=False
+                )[1][0]
+                if " @ " not in buffer_name:
+                    b = Buffer.objects.get(id=buffer_name)
+                    buffer_name = "%s @ %s" % (b.item.name, b.location.name)
 
-            for i in reportclass.getOperationFromBuffer(
-                request, buffer_name, reportclass.downstream, 0, None, 1
+                for i in reportclass.getOperationFromBuffer(
+                    request, cursor, buffer_name, reportclass.downstream, 0, None, 1
+                ):
+                    results.append(i)
+            elif str(reportclass.objecttype._meta) == "input.demand":
+                demand_name = basequery.query.get_compiler(basequery.db).as_sql(
+                    with_col_aliases=False
+                )[1][0]
+                d = Demand.objects.get(name=demand_name)
+                if d.operation is None:
+                    buffer_name = "%s @ %s" % (d.item.name, d.location.name)
+
+                    for i in reportclass.getOperationFromBuffer(
+                        request,
+                        cursor,
+                        buffer_name,
+                        reportclass.downstream,
+                        depth=0,
+                        previousOperation=None,
+                        bom_quantity=1,
+                    ):
+                        results.append(i)
+                else:
+                    operation_name = d.operation.name
+
+                    for i in reportclass.getOperationFromName(
+                        request, cursor, operation_name, reportclass.downstream, depth=0
+                    ):
+                        results.append(i)
+            elif str(reportclass.objecttype._meta) == "input.resource":
+                resource_name = basequery.query.get_compiler(basequery.db).as_sql(
+                    with_col_aliases=False
+                )[1][0]
+
+                for i in reportclass.getOperationFromResource(
+                    request, cursor, resource_name, reportclass.downstream, depth=0
+                ):
+                    results.append(i)
+            elif str(reportclass.objecttype._meta) == "input.operation":
+                operation_name = basequery.query.get_compiler(basequery.db).as_sql(
+                    with_col_aliases=False
+                )[1][0]
+
+                for i in reportclass.getOperationFromName(
+                    request, cursor, operation_name, reportclass.downstream, depth=0
+                ):
+                    results.append(i)
+            elif str(reportclass.objecttype._meta) == "input.item":
+                item_name = basequery.query.get_compiler(basequery.db).as_sql(
+                    with_col_aliases=False
+                )[1][0]
+
+                for i in reportclass.getOperationFromItem(
+                    request, cursor, item_name, reportclass.downstream, depth=0
+                ):
+                    results.append(i)
+            elif (
+                str(reportclass.objecttype._meta) == "forecast.forecast"
+                and "freppledb.forecast" in settings.INSTALLED_APPS
             ):
-                results.append(i)
-        elif str(reportclass.objecttype._meta) == "input.demand":
-            demand_name = basequery.query.get_compiler(basequery.db).as_sql(
-                with_col_aliases=False
-            )[1][0]
-            d = Demand.objects.get(name=demand_name)
-            if d.operation is None:
+                from freppledb.forecast.models import Forecast
+
+                forecast_name = basequery.query.get_compiler(basequery.db).as_sql(
+                    with_col_aliases=False
+                )[1][0]
+                d = Forecast.objects.get(name=forecast_name)
                 buffer_name = "%s @ %s" % (d.item.name, d.location.name)
 
                 for i in reportclass.getOperationFromBuffer(
                     request,
+                    cursor,
                     buffer_name,
                     reportclass.downstream,
                     depth=0,
                     previousOperation=None,
                     bom_quantity=1,
                 ):
-                    results.append(i)
+                    yield i
+
             else:
-                operation_name = d.operation.name
-
-                for i in reportclass.getOperationFromName(
-                    request, operation_name, reportclass.downstream, depth=0
-                ):
-                    results.append(i)
-        elif str(reportclass.objecttype._meta) == "input.resource":
-            resource_name = basequery.query.get_compiler(basequery.db).as_sql(
-                with_col_aliases=False
-            )[1][0]
-
-            for i in reportclass.getOperationFromResource(
-                request, resource_name, reportclass.downstream, depth=0
-            ):
-                results.append(i)
-        elif str(reportclass.objecttype._meta) == "input.operation":
-            operation_name = basequery.query.get_compiler(basequery.db).as_sql(
-                with_col_aliases=False
-            )[1][0]
-
-            for i in reportclass.getOperationFromName(
-                request, operation_name, reportclass.downstream, depth=0
-            ):
-                results.append(i)
-        elif str(reportclass.objecttype._meta) == "input.item":
-            item_name = basequery.query.get_compiler(basequery.db).as_sql(
-                with_col_aliases=False
-            )[1][0]
-
-            for i in reportclass.getOperationFromItem(
-                request, item_name, reportclass.downstream, depth=0
-            ):
-                results.append(i)
-        elif (
-            str(reportclass.objecttype._meta) == "forecast.forecast"
-            and "freppledb.forecast" in settings.INSTALLED_APPS
-        ):
-            from freppledb.forecast.models import Forecast
-
-            forecast_name = basequery.query.get_compiler(basequery.db).as_sql(
-                with_col_aliases=False
-            )[1][0]
-            d = Forecast.objects.get(name=forecast_name)
-            buffer_name = "%s @ %s" % (d.item.name, d.location.name)
-
-            for i in reportclass.getOperationFromBuffer(
-                request,
-                buffer_name,
-                reportclass.downstream,
-                depth=0,
-                previousOperation=None,
-                bom_quantity=1,
-            ):
-                yield i
-
-        else:
-            raise Exception("Supply path for an unknown entity")
+                raise Exception("Supply path for an unknown entity")
 
         # post-process results to calculate leaf field
         parents = [i["parent"] for i in results if i["parent"]]

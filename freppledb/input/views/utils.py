@@ -686,10 +686,9 @@ class PathReport(GridReport):
             cursor.execute(query, (item_name,) * 7)
 
         for i in cursor.fetchall():
-            for j in reportclass.processRecord(
+            yield from reportclass.processRecord(
                 cursor, i, request, depth, downstream, None, 1
-            ):
-                yield j
+            )
 
     @classmethod
     def getOperationFromResource(
@@ -906,10 +905,9 @@ class PathReport(GridReport):
         cursor.execute(query, (resource_name,) * 4)
 
         for i in cursor.fetchall():
-            for j in reportclass.processRecord(
+            yield from reportclass.processRecord(
                 cursor, i, request, depth, downstream, None, 1
-            ):
-                yield j
+            )
 
     @classmethod
     def getOperationFromName(
@@ -1028,10 +1026,9 @@ class PathReport(GridReport):
         cursor.execute(query, (operation_name,) * 3)
 
         for i in cursor.fetchall():
-            for j in reportclass.processRecord(
+            yield from reportclass.processRecord(
                 cursor, i, request, depth, downstream, previousOperation, bom_quantity
-            ):
-                yield j
+            )
 
     @classmethod
     def getOperationFromBuffer(
@@ -1086,8 +1083,8 @@ class PathReport(GridReport):
            operation.duration as operation_duration,
            operation.duration_per as operation_duration_per,
            case when operation.item_id is not null then jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::jsonb end
-           ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id,
-                              coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed, 0)) filter (where operationmaterial.id is not null) as operation_om,
+           ||jsonb_object_agg(operationmaterial.item_id||' @ '||coalesce(operationmaterial.location_id,operation.location_id),
+                              coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed, 0)) filter (where operationmaterial.id is not null and operationmaterial.quantity < 0) as operation_om,
            jsonb_object_agg(operationresource.resource_id, operationresource.quantity) filter (where operationresource.id is not null) as operation_or,
              parentoperation.name as parentoperation,
            parentoperation.type as parentoperation_type,
@@ -1105,7 +1102,7 @@ class PathReport(GridReport):
            and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name)
            then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
            ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
-           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id,
+           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||coalesce(siblingoperationmaterial.location_id,sibling.location_id),
                                        coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation,
@@ -1203,9 +1200,7 @@ class PathReport(GridReport):
         )
 
         if not downstream:
-            query = (
-                query
-                + """
+            query += """
         union all
       -- PURCHASING OPERATIONS
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
@@ -1271,12 +1266,8 @@ class PathReport(GridReport):
       inner join location on location.name = %s and location.lft = location.rght - 1
       where location_id is null
       """
-            )
 
-        query = (
-            query
-            + " order by grandparentoperation_priority, grandparentoperation, parentoperation_priority, parentoperation, sibling_priority"
-        )
+        query += " order by grandparentoperation_priority, grandparentoperation, parentoperation_priority, parentoperation, sibling_priority"
 
         if downstream:
             cursor.execute(query, (location, item, item, location))
@@ -1299,10 +1290,9 @@ class PathReport(GridReport):
             )
 
         for i in cursor.fetchall():
-            for j in reportclass.processRecord(
+            yield from reportclass.processRecord(
                 cursor, i, request, depth, downstream, previousOperation, bom_quantity
-            ):
-                yield j
+            )
 
     @classmethod
     def processRecord(
@@ -1701,7 +1691,7 @@ class PathReport(GridReport):
                 d = Forecast.objects.get(name=forecast_name)
                 buffer_name = "%s @ %s" % (d.item.name, d.location.name)
 
-                for i in reportclass.getOperationFromBuffer(
+                yield from reportclass.getOperationFromBuffer(
                     request,
                     cursor,
                     buffer_name,
@@ -1709,8 +1699,7 @@ class PathReport(GridReport):
                     depth=0,
                     previousOperation=None,
                     bom_quantity=1,
-                ):
-                    yield i
+                )
 
             else:
                 raise Exception("Supply path for an unknown entity")
@@ -1752,8 +1741,7 @@ class PathReport(GridReport):
             ):
                 i["alternate"] = "true"
 
-        for i in results:
-            yield i
+        yield from results
 
 
 class UpstreamDemandPath(PathReport):

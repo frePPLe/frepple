@@ -22,6 +22,7 @@
 #
 
 import os
+import sys
 
 try:
     os.environ["LOCUST_SKIP_MONKEY_PATCH"] = "1"
@@ -84,7 +85,7 @@ class Command(BaseCommand):
 
         locust.stats.CONSOLE_STATS_INTERVAL_SEC = 30
 
-        user_classes = [MaterialPlanner, ProductionPlanner]
+        user_classes = [StaticFiles, MaterialPlanner, ProductionPlanner]
         if "freppledb.forecast" in settings.INSTALLED_APPS:
             user_classes.append(DemandPlanner)
         setup_logging("INFO")
@@ -93,6 +94,7 @@ class Command(BaseCommand):
         freppleUser.host = options["server"]
         env = Environment(user_classes=user_classes)
         runner = env.create_local_runner()
+        sys.argv = sys.argv[:1]  # Needed because web ui parses sys.argv as well
         web_ui = env.create_web_ui("127.0.0.1", 8089)
 
         print("")
@@ -116,10 +118,11 @@ if locust_installed:
         host = "http://localhost:8000"
         user = "admin"
         password = "admin"
-        wait_time = between(1, 5)
+        wait_time = between(0.1, 0.5)
         default_headers = {
             "accept-encoding": "gzip, deflate, br, zstd",
             "accept-language": "en",
+            "Connection": "keep-alive",
         }
 
         def on_start(self):
@@ -129,53 +132,127 @@ if locust_installed:
             ):
                 self.client.get("/", auth=(self.user, self.password))
 
+    class StaticFiles(freppleUser):
+        weight = 1
+
+        @task(1)
+        def staticfiles(self):
+            self.client.get(
+                "/static/js/frepple.min.js",
+                headers=self.default_headers,
+            )
+            self.client.get(
+                "/static/js/bootstrap.min.js",
+                headers=self.default_headers,
+            )
+            self.client.get(
+                "/static/js/jquery-3.6.0.min.js", headers=self.default_headers
+            )
+            self.client.get(
+                "/static/js/jquery.jqgrid.min.js", headers=self.default_headers
+            )
+            self.client.get(
+                "/static/css/earth/bootstrap.min.css",
+                headers=self.default_headers,
+            )
+            self.client.get(
+                "/static/img/frepple.svg",
+                headers=self.default_headers,
+            )
+
     class MaterialPlanner(freppleUser):
+        weight = 5
+
         @task(10)
         def common(self):
-            self.client.get("/inbox/")
+            self.client.get(
+                "/inbox/",
+                headers=self.default_headers,
+            )
 
         @task(10)
         def materialplannner(self):
-            self.client.get("/buffer/")
             self.client.get(
-                "/buffer/?format=json&rows=100&page=1", name="/buffer/?format=json"
+                "/buffer/",
+                headers=self.default_headers,
+            )
+            self.client.get(
+                "/buffer/?format=json&rows=100&page=1",
+                name="/buffer/?format=json",
+                headers=self.default_headers,
             )
 
     class ProductionPlanner(freppleUser):
+        weight = 5
+
         @task(10)
         def SalesOrderList(self):
-            self.client.get("/data/input/demand/")
+            self.client.get(
+                "/data/input/demand/",
+                headers=self.default_headers,
+            )
             self.client.get(
                 "/data/input/demand/?format=json&rows=100&page=1",
                 name="/data/input/demand/?format=json",
+                headers=self.default_headers,
             )
 
         @task(10)
         def ResourceReport(self):
-            self.client.get("/resource/")
             self.client.get(
-                "/resource/?format=json&rows=100&page=1", name="/resource/?format=json"
+                "/resource/",
+                headers=self.default_headers,
+            )
+            self.client.get(
+                "/resource/?format=json&rows=100&page=1",
+                name="/resource/?format=json",
+                headers=self.default_headers,
             )
 
         @task(1)
         def ExecutionScreen(self):
-            self.client.get("/execute/")
             self.client.get(
-                "/execute/?format=json&rows=100&page=1", name="/execute/?format=json"
+                "/execute/",
+                headers=self.default_headers,
+            )
+            self.client.get(
+                "/execute/?format=json&rows=100&page=1",
+                name="/execute/?format=json",
+                headers=self.default_headers,
             )
 
     class DemandPlanner(freppleUser):
+        weight = 5
+
         @task(1)
         def Forecastditor(self):
-            self.client.get("/forecast/")
             self.client.get(
-                "/forecast/?format=json&rows=100&page=1", name="/forecast/?format=json"
+                "/forecast/",
+                headers=self.default_headers,
             )
-            self.client.get("/forecast/editor/")
-            self.client.get("/forecast/locationtree/?measure=forecasttotal")
-            self.client.get("/forecast/customertree/?measure=forecasttotal")
-            self.client.get("/forecast/itemtree/?measure=forecasttotal")
+            self.client.get(
+                "/forecast/?format=json&rows=100&page=1",
+                name="/forecast/?format=json",
+                headers=self.default_headers,
+            )
+            self.client.get(
+                "/forecast/editor/",
+                headers=self.default_headers,
+            )
+            self.client.get(
+                "/forecast/locationtree/?measure=forecasttotal",
+                headers=self.default_headers,
+            )
+            self.client.get(
+                "/forecast/customertree/?measure=forecasttotal",
+                headers=self.default_headers,
+            )
+            self.client.get(
+                "/forecast/itemtree/?measure=forecasttotal",
+                headers=self.default_headers,
+            )
             self.client.get(
                 "/forecast/detail/?measure=forecasttotal&item=&location=&customer=",
                 name="/forecast/detail/",
+                headers=self.default_headers,
             )

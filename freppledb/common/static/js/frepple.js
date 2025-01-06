@@ -743,7 +743,7 @@ var grid = {
           icon = "fa-minus-square-o";
       }
       if (cross[i]['editable'])
-        result += '<span class="editablepivotcol">' + cross[i]['name'] + '</span>';
+        result += cross[i]['name'] + '<input style="width:0px" class="invisible"/><br>';
       else if (cross[i]["expand"])
         result += cross[i]['name'] + '&nbsp;<i style="cursor: pointer" class="fa ' + icon + '" onclick="grid.expandCross(this, ' + i + ')"></i><br>';
       else

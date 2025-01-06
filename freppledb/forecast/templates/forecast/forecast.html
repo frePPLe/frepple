@@ -375,7 +375,7 @@ function crosses (cellvalue, options, rowdata)
     //
     if ((cellvalue[0] == 1 && cross[cross_idx[i]].mode_past == "edit") ||
         (cellvalue[1] == 1 && cross[cross_idx[i]].mode_future == "edit")) {
-       result += '<input type="number" style="width:100%" class="smallpadding" data-measure="'
+       result += '<input type="number" class="w-100 smallpadding" data-measure="'
          + cross[cross_idx[i]].key + '" value="'
          + (cellvalue[cross_idx[i]] === null ? '' : cellvalue[cross_idx[i]])
          + '" tabindex="' + i
@@ -387,8 +387,6 @@ function crosses (cellvalue, options, rowdata)
      //
      else if ((cellvalue[0] == 1 && cross[cross_idx[i]].mode_past == "view") ||
        (cellvalue[1] == 1 && cross[cross_idx[i]].mode_future == "view")) {
-       if (cross[cross_idx[i]].editable)
-         result += '<span class="editablepivotcol">';
        var backlog = cross[cross_idx[i]].key.includes("backlog")
          && cellvalue[cross_idx[i]] !== null
          && cellvalue[cross_idx[i]] > 0.0;
@@ -448,7 +446,9 @@ function crosses (cellvalue, options, rowdata)
 	            '&amp;orders=False" tabindex="-1">&nbsp;<span class="fa fa-caret-right"></span></a>';
 	        break;
 	      }
-        result += cross[cross_idx[i]].editable ? "</span>" : "<br>";
+        if (cross[cross_idx[i]].editable)
+         result += '<input type="number" style="width: 0; padding-left: 0 !important; padding-right: 0 !important;" class="invisible border-start-0 border-end-0 smallpadding"/>';
+       result += "<br>";
       }
 
     //
@@ -456,9 +456,9 @@ function crosses (cellvalue, options, rowdata)
     //
     else {
       if (cross[cross_idx[i]].editable)
-         result += '<span class="editablepivotcol">&nbsp;</span>';
+         result += '<input type="number" style="width: 0" class="invisible smallpadding"></input><br>';
       else
-         result += '<br>';
+         result += '<span class="invisible">-</span><br>';
     }
   }
   return result;

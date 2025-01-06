@@ -10,7 +10,7 @@
         <tr data-ng-repeat="r in rows">
           <td data-ng-if="measures[r].mode_future !== 'edit'" style="white-space: nowrap; text-transform: capitalize;">{{measures[r].label}}</td>
           <td data-ng-if="measures[r].mode_future === 'edit'" style="white-space: nowrap; text-transform: capitalize;">
-            <span class="editablepivotcol">{{measures[r].label}}</span>
+            {{measures[r].label}}<input style="width: 0" class="invisible"></input>
           </td>
         </tr>
       </tbody>

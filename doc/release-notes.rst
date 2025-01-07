@@ -17,7 +17,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 .. rubric:: Odoo integration
 
-- | 17: Support for routes that produce or consume items
+- | 17, 18: Extra robostness to avoid creating manufacturing orders on
+    phantom kit bill of materials.
+
+- | 17, 18: Support for routes that produce or consume items
     from different warehouses.
 
 9.5.0 (2024-12-27)

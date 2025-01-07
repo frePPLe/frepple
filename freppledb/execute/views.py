@@ -915,7 +915,7 @@ class FileManager:
                         }
 
             return JsonResponse(filelist)
-        elif request.method == "POST":
+        elif request.method in ("POST", "PUT"):
             # Upload a new data file
             if len(list(request.FILES.items())) == 0:
                 return HttpResponseNotFound("Missing file selection in request")
@@ -990,7 +990,8 @@ class FileManager:
             return response
         else:
             return HttpResponseNotAllowed(
-                ["post", "get"], content="Only GET and POST request methods are allowed"
+                ["post", "put", "get"],
+                content="Only GET, PUT and POST request methods are allowed",
             )
 
     @staticmethod

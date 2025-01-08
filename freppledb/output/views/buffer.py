@@ -694,9 +694,11 @@ class OverviewReport(GridPivot):
         """ % (
             basesql,
             backlog_fcst if "freppledb.forecast" in settings.INSTALLED_APPS else "",
-            deliveries_fcst
-            if "freppledb.forecast" in settings.INSTALLED_APPS
-            else deliveries_no_fcst,
+            (
+                deliveries_fcst
+                if "freppledb.forecast" in settings.INSTALLED_APPS
+                else deliveries_no_fcst
+            ),
         )
 
         with transaction.atomic(using=request.database):
@@ -967,46 +969,17 @@ class OverviewReport(GridPivot):
              )
            end as ongoing,
            floor(extract(epoch from coalesce(
-                  -- backlogged demand exceeds the inventory: 0 days of inventory
-                  (
-                  select '0 days'::interval
-                  from operationplanmaterial
-                  inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
-                  where operationplanmaterial.item_id = item.name and operationplanmaterial.location_id = location.name and
-                    (
-                      (operationplanmaterial.flowdate >= greatest(d.startdate,arguments.report_currentdate) and operationplanmaterial.quantity < 0 and operationplan.type = 'DLVR' and operationplan.due < greatest(d.startdate,arguments.report_currentdate))
-                      or ( operationplanmaterial.quantity > 0 and operationplan.status = 'closed' and operationplan.type = 'STCK')
-                      or ( operationplanmaterial.quantity > 0 and operationplan.status in ('approved','confirmed','completed') and flowdate <= greatest(d.startdate,arguments.report_currentdate) + interval '1 second')
-                    )
-                  having sum(operationplanmaterial.quantity) <0
-                  limit 1
-                  ),
                   -- Normal case
                   (
                   select case
                     when periodofcover = 999 * 24 * 3600
                       then '999 days'::interval
-                    when onhand > 0.00001
-                      then date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - greatest(d.startdate,arguments.report_currentdate), '999 days'::interval))
-                    else null
+                    else date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - greatest(d.startdate,arguments.report_currentdate), '999 days'::interval))
                     end
                   from operationplanmaterial
                   where flowdate < greatest(d.startdate,arguments.report_currentdate)
                     and operationplanmaterial.item_id = item.name and operationplanmaterial.location_id = location.name
                   order by flowdate desc, id desc
-                  limit 1
-                 ),
-                 -- No inventory and no backlog: use the date of next consumer
-                 (
-                 select greatest('0 days'::interval, least(
-                     date_trunc('day', justify_interval(flowdate - greatest(d.startdate,arguments.report_currentdate) - coalesce(operationplan.delay, '0 day'::interval))),
-                     '999 days'::interval
-                     ))
-                  from operationplanmaterial
-                  inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
-                  where operationplanmaterial.quantity < 0
-                    and operationplanmaterial.item_id = item.name and operationplanmaterial.location_id = location.name
-                  order by flowdate asc, id asc
                   limit 1
                  ),
                  '999 days'::interval
@@ -1144,164 +1117,227 @@ class OverviewReport(GridPivot):
                         "location__lastmodified": row[21],
                         "batch": row[22],
                         "is_ip_buffer": row[23],
-                        "color": None
-                        if history
-                        else (
-                            round(
-                                (
-                                    row[numfields - 8]["onhand"]
-                                    if row[numfields - 8]
+                        "color": (
+                            None
+                            if history
+                            else (
+                                round(
+                                    (
+                                        row[numfields - 8]["onhand"]
+                                        if row[numfields - 8]
+                                        else 0
+                                    )
+                                    * 100
+                                    / float(row[numfields - 3])
+                                )
+                                if row[23]
+                                and row[numfields - 3]
+                                and float(row[numfields - 3]) > 0
+                                else (
+                                    round(row[numfields - 2]["max_delay"])
+                                    if not row[23] and row[numfields - 2]["max_delay"]
                                     else 0
                                 )
-                                * 100
-                                / float(row[numfields - 3])
                             )
-                            if row[23]
-                            and row[numfields - 3]
-                            and float(row[numfields - 3]) > 0
-                            else round(row[numfields - 2]["max_delay"])
-                            if not row[23] and row[numfields - 2]["max_delay"]
-                            else 0
                         ),
-                        "startoh": row[numfields - 8]["onhand"]
-                        if row[numfields - 8]
-                        else 0,
+                        "startoh": (
+                            row[numfields - 8]["onhand"] if row[numfields - 8] else 0
+                        ),
                         "startohdoc": None if history else row[numfields - 1],
                         "bucket": row[numfields - 7],
                         "startdate": row[numfields - 6],
                         "enddate": row[numfields - 5],
                         "history": history,
-                        "safetystock": row[numfields - 3]
-                        if history
-                        else row[numfields - 3] or 0,
-                        "consumed": None
-                        if history
-                        else row[numfields - 2]["consumed"] or 0,
-                        "consumed_confirmed": None
-                        if history
-                        else row[numfields - 2]["consumed_confirmed"] or 0,
-                        "consumed_proposed": None
-                        if history
-                        else row[numfields - 2]["consumed_proposed"] or 0,
-                        "consumedMO": None
-                        if history
-                        else row[numfields - 2]["consumedMO"] or 0,
-                        "consumedMO_confirmed": None
-                        if history
-                        else row[numfields - 2]["consumedMO_confirmed"] or 0,
-                        "consumedMO_proposed": None
-                        if history
-                        else row[numfields - 2]["consumedMO_proposed"] or 0,
-                        "consumedDO": None
-                        if history
-                        else row[numfields - 2]["consumedDO"] or 0,
-                        "consumedDO_confirmed": None
-                        if history
-                        else row[numfields - 2]["consumedDO_confirmed"] or 0,
-                        "consumedDO_proposed": None
-                        if history
-                        else row[numfields - 2]["consumedDO_proposed"] or 0,
-                        "consumedSO": None
-                        if history
-                        else row[numfields - 2]["consumedSO"] or 0,
-                        "consumedFcst": None
-                        if history
-                        else row[numfields - 2]["consumedFcst"] or 0,
-                        "produced": None
-                        if history
-                        else row[numfields - 2]["produced"] or 0,
-                        "produced_confirmed": None
-                        if history
-                        else row[numfields - 2]["produced_confirmed"] or 0,
-                        "produced_proposed": None
-                        if history
-                        else row[numfields - 2]["produced_proposed"] or 0,
-                        "producedMO": None
-                        if history
-                        else row[numfields - 2]["producedMO"] or 0,
-                        "producedMO_confirmed": None
-                        if history
-                        else row[numfields - 2]["producedMO_confirmed"] or 0,
-                        "producedMO_proposed": None
-                        if history
-                        else row[numfields - 2]["producedMO_proposed"] or 0,
-                        "producedDO": None
-                        if history
-                        else row[numfields - 2]["producedDO"] or 0,
-                        "producedDO_confirmed": None
-                        if history
-                        else row[numfields - 2]["producedDO_confirmed"] or 0,
-                        "producedDO_proposed": None
-                        if history
-                        else row[numfields - 2]["producedDO_proposed"] or 0,
-                        "producedPO": None
-                        if history
-                        else row[numfields - 2]["producedPO"] or 0,
-                        "producedPO_confirmed": None
-                        if history
-                        else row[numfields - 2]["producedPO_confirmed"] or 0,
-                        "producedPO_proposed": None
-                        if history
-                        else row[numfields - 2]["producedPO_proposed"] or 0,
-                        "total_in_progress": None
-                        if history
-                        else row[numfields - 2]["total_in_progress"] or 0,
-                        "total_in_progress_confirmed": None
-                        if history
-                        else row[numfields - 2]["total_in_progress_confirmed"] or 0,
-                        "total_in_progress_proposed": None
-                        if history
-                        else row[numfields - 2]["total_in_progress_proposed"] or 0,
-                        "work_in_progress_mo": None
-                        if history
-                        else row[numfields - 2]["work_in_progress_mo"] or 0,
-                        "work_in_progress_mo_confirmed": None
-                        if history
-                        else row[numfields - 2]["work_in_progress_mo_confirmed"] or 0,
-                        "work_in_progress_mo_proposed": None
-                        if history
-                        else row[numfields - 2]["work_in_progress_mo_proposed"] or 0,
-                        "on_order_po": None
-                        if history
-                        else row[numfields - 2]["on_order_po"] or 0,
-                        "on_order_po_confirmed": None
-                        if history
-                        else row[numfields - 2]["on_order_po_confirmed"] or 0,
-                        "on_order_po_proposed": None
-                        if history
-                        else row[numfields - 2]["on_order_po_proposed"] or 0,
-                        "proposed_ordering": None
-                        if history
-                        else row[numfields - 2]["proposed_ordering"] or 0,
-                        "in_transit_do": None
-                        if history
-                        else row[numfields - 2]["in_transit_do"] or 0,
-                        "in_transit_do_confirmed": None
-                        if history
-                        else row[numfields - 2]["in_transit_do_confirmed"] or 0,
-                        "in_transit_do_proposed": None
-                        if history
-                        else row[numfields - 2]["in_transit_do_proposed"] or 0,
-                        "total_demand": None
-                        if history
-                        else (row[numfields - 12] or 0) + (row[numfields - 11] or 0),
+                        "safetystock": (
+                            row[numfields - 3] if history else row[numfields - 3] or 0
+                        ),
+                        "consumed": (
+                            None if history else row[numfields - 2]["consumed"] or 0
+                        ),
+                        "consumed_confirmed": (
+                            None
+                            if history
+                            else row[numfields - 2]["consumed_confirmed"] or 0
+                        ),
+                        "consumed_proposed": (
+                            None
+                            if history
+                            else row[numfields - 2]["consumed_proposed"] or 0
+                        ),
+                        "consumedMO": (
+                            None if history else row[numfields - 2]["consumedMO"] or 0
+                        ),
+                        "consumedMO_confirmed": (
+                            None
+                            if history
+                            else row[numfields - 2]["consumedMO_confirmed"] or 0
+                        ),
+                        "consumedMO_proposed": (
+                            None
+                            if history
+                            else row[numfields - 2]["consumedMO_proposed"] or 0
+                        ),
+                        "consumedDO": (
+                            None if history else row[numfields - 2]["consumedDO"] or 0
+                        ),
+                        "consumedDO_confirmed": (
+                            None
+                            if history
+                            else row[numfields - 2]["consumedDO_confirmed"] or 0
+                        ),
+                        "consumedDO_proposed": (
+                            None
+                            if history
+                            else row[numfields - 2]["consumedDO_proposed"] or 0
+                        ),
+                        "consumedSO": (
+                            None if history else row[numfields - 2]["consumedSO"] or 0
+                        ),
+                        "consumedFcst": (
+                            None if history else row[numfields - 2]["consumedFcst"] or 0
+                        ),
+                        "produced": (
+                            None if history else row[numfields - 2]["produced"] or 0
+                        ),
+                        "produced_confirmed": (
+                            None
+                            if history
+                            else row[numfields - 2]["produced_confirmed"] or 0
+                        ),
+                        "produced_proposed": (
+                            None
+                            if history
+                            else row[numfields - 2]["produced_proposed"] or 0
+                        ),
+                        "producedMO": (
+                            None if history else row[numfields - 2]["producedMO"] or 0
+                        ),
+                        "producedMO_confirmed": (
+                            None
+                            if history
+                            else row[numfields - 2]["producedMO_confirmed"] or 0
+                        ),
+                        "producedMO_proposed": (
+                            None
+                            if history
+                            else row[numfields - 2]["producedMO_proposed"] or 0
+                        ),
+                        "producedDO": (
+                            None if history else row[numfields - 2]["producedDO"] or 0
+                        ),
+                        "producedDO_confirmed": (
+                            None
+                            if history
+                            else row[numfields - 2]["producedDO_confirmed"] or 0
+                        ),
+                        "producedDO_proposed": (
+                            None
+                            if history
+                            else row[numfields - 2]["producedDO_proposed"] or 0
+                        ),
+                        "producedPO": (
+                            None if history else row[numfields - 2]["producedPO"] or 0
+                        ),
+                        "producedPO_confirmed": (
+                            None
+                            if history
+                            else row[numfields - 2]["producedPO_confirmed"] or 0
+                        ),
+                        "producedPO_proposed": (
+                            None
+                            if history
+                            else row[numfields - 2]["producedPO_proposed"] or 0
+                        ),
+                        "total_in_progress": (
+                            None
+                            if history
+                            else row[numfields - 2]["total_in_progress"] or 0
+                        ),
+                        "total_in_progress_confirmed": (
+                            None
+                            if history
+                            else row[numfields - 2]["total_in_progress_confirmed"] or 0
+                        ),
+                        "total_in_progress_proposed": (
+                            None
+                            if history
+                            else row[numfields - 2]["total_in_progress_proposed"] or 0
+                        ),
+                        "work_in_progress_mo": (
+                            None
+                            if history
+                            else row[numfields - 2]["work_in_progress_mo"] or 0
+                        ),
+                        "work_in_progress_mo_confirmed": (
+                            None
+                            if history
+                            else row[numfields - 2]["work_in_progress_mo_confirmed"]
+                            or 0
+                        ),
+                        "work_in_progress_mo_proposed": (
+                            None
+                            if history
+                            else row[numfields - 2]["work_in_progress_mo_proposed"] or 0
+                        ),
+                        "on_order_po": (
+                            None if history else row[numfields - 2]["on_order_po"] or 0
+                        ),
+                        "on_order_po_confirmed": (
+                            None
+                            if history
+                            else row[numfields - 2]["on_order_po_confirmed"] or 0
+                        ),
+                        "on_order_po_proposed": (
+                            None
+                            if history
+                            else row[numfields - 2]["on_order_po_proposed"] or 0
+                        ),
+                        "proposed_ordering": (
+                            None
+                            if history
+                            else row[numfields - 2]["proposed_ordering"] or 0
+                        ),
+                        "in_transit_do": (
+                            None
+                            if history
+                            else row[numfields - 2]["in_transit_do"] or 0
+                        ),
+                        "in_transit_do_confirmed": (
+                            None
+                            if history
+                            else row[numfields - 2]["in_transit_do_confirmed"] or 0
+                        ),
+                        "in_transit_do_proposed": (
+                            None
+                            if history
+                            else row[numfields - 2]["in_transit_do_proposed"] or 0
+                        ),
+                        "total_demand": (
+                            None
+                            if history
+                            else (row[numfields - 12] or 0) + (row[numfields - 11] or 0)
+                        ),
                         "order_backlog": None if history else max(0, order_backlog),
-                        "forecast_backlog": None
-                        if history
-                        else max(0, forecast_backlog),
-                        "total_backlog": None
-                        if history
-                        else max(0, forecast_backlog) + max(0, order_backlog),
-                        "endoh": None
-                        if history
-                        else (
-                            float(
-                                row[numfields - 8]["onhand"]
-                                if row[numfields - 8]
-                                else 0
+                        "forecast_backlog": (
+                            None if history else max(0, forecast_backlog)
+                        ),
+                        "total_backlog": (
+                            None
+                            if history
+                            else max(0, forecast_backlog) + max(0, order_backlog)
+                        ),
+                        "endoh": (
+                            None
+                            if history
+                            else (
+                                float(
+                                    row[numfields - 8]["onhand"]
+                                    if row[numfields - 8]
+                                    else 0
+                                )
+                                + float(row[numfields - 2]["produced"] or 0)
+                                - float(row[numfields - 2]["consumed"] or 0)
                             )
-                            + float(row[numfields - 2]["produced"] or 0)
-                            - float(row[numfields - 2]["consumed"] or 0)
                         ),
                         "reasons": None if history else json.dumps(row[numfields - 9]),
                         "open_orders": None if history else row[numfields - 12] or 0,

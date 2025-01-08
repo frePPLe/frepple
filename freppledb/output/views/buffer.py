@@ -811,16 +811,10 @@ class OverviewReport(GridPivot):
                 order by name limit 20
            )t ) reasons,
            case
-             when d.history then json_build_object(
-               'onhand', min(ax_buffer.onhand)
-               )
-           else coalesce(
+             when d.history then min(ax_buffer.onhand)
+           else
              (
-             select json_build_object(
-               'onhand', onhand,
-               'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
-               'periodofcover', periodofcover
-               )
+             select onhand
              from operationplanmaterial
              inner join operationplan
                on operationplanmaterial.operationplan_id = operationplan.reference
@@ -829,39 +823,6 @@ class OverviewReport(GridPivot):
                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
                and flowdate < greatest(d.startdate,arguments.report_startdate)
              order by flowdate desc, id desc limit 1
-             ),
-             (
-             select json_build_object(
-               'onhand', 0.0,
-               'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
-               'periodofcover', 1
-               )
-             from operationplanmaterial
-             inner join operationplan
-               on operationplanmaterial.operationplan_id = operationplan.reference
-             where operationplanmaterial.item_id = item.name
-               and operationplanmaterial.location_id = location.name
-               and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
-               and flowdate >= greatest(d.startdate,arguments.report_startdate)
-               and operationplanmaterial.quantity < 0
-             order by flowdate asc, id asc limit 1
-             ),
-             (
-             select json_build_object(
-               'onhand', 0.0,
-               'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
-               'periodofcover', 1
-               )
-             from operationplanmaterial
-             inner join operationplan
-               on operationplanmaterial.operationplan_id = operationplan.reference
-             where operationplanmaterial.item_id = item.name
-               and operationplanmaterial.location_id = location.name
-               and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
-               and flowdate >= greatest(d.startdate,arguments.report_startdate)
-               and operationplanmaterial.quantity >= 0
-             order by flowdate asc, id asc limit 1
-             )
              )
            end as startoh,
            d.bucket,
@@ -1122,11 +1083,7 @@ class OverviewReport(GridPivot):
                             if history
                             else (
                                 round(
-                                    (
-                                        row[numfields - 8]["onhand"]
-                                        if row[numfields - 8]
-                                        else 0
-                                    )
+                                    (row[numfields - 8] or 0)
                                     * 100
                                     / float(row[numfields - 3])
                                 )
@@ -1140,9 +1097,7 @@ class OverviewReport(GridPivot):
                                 )
                             )
                         ),
-                        "startoh": (
-                            row[numfields - 8]["onhand"] if row[numfields - 8] else 0
-                        ),
+                        "startoh": (row[numfields - 8] or 0),
                         "startohdoc": None if history else row[numfields - 1],
                         "bucket": row[numfields - 7],
                         "startdate": row[numfields - 6],
@@ -1330,11 +1285,7 @@ class OverviewReport(GridPivot):
                             None
                             if history
                             else (
-                                float(
-                                    row[numfields - 8]["onhand"]
-                                    if row[numfields - 8]
-                                    else 0
-                                )
+                                float(row[numfields - 8] or 0)
                                 + float(row[numfields - 2]["produced"] or 0)
                                 - float(row[numfields - 2]["consumed"] or 0)
                             )

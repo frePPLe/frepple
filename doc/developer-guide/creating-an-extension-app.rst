@@ -137,6 +137,7 @@ you don't loose the data from the database.
      -e POSTGRES_USER=frepple \
      -e POSTGRES_PASSWORD=frepple \
      -e POSTGRES_DBNAME=freppledb \
+     --restart always \
      --name my_frepple \
      --publish 9000:80 \
      --detach \

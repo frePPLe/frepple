@@ -92,6 +92,7 @@ on the URL http://localhost:9000/
      -e POSTGRES_DBNAME=freppledb \
      --name frepple-community-local \
      --publish 9000:80 \
+     --restart always \
      --detach \
      ghcr.io/frepple/frepple-community:latest
 
@@ -158,6 +159,7 @@ Next, you build and your container with commands like:
      -e POSTGRES_DBNAME=freppledb \
      --name my_frepple \
      --publish 9000:80 \
+     --restart always \
      --detach \
      my_frepple
 

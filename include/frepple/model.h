@@ -1911,6 +1911,14 @@ class OperationPlan : public Object,
 
   void setBatch(const PooledString&, bool up = true);
 
+  PooledString getRemark() const { return remark; }
+
+  const string& getRemarkString() const { return remark; }
+
+  void setRemark(const string& s) { remark = s; }
+
+  void setRemark(const PooledString& s) { remark = s; }
+  
   /* Shortcut method to the cluster. */
   int getCluster() const;
 
@@ -2556,6 +2564,8 @@ class OperationPlan : public Object,
         Tags::problems, Tags::problem, &Cls::getProblems, PLAN + WRITE_OBJECT);
     m->addStringRefField<Cls>(Tags::batch, &Cls::getBatchString, &Cls::setBatch,
                               "");
+    m->addStringRefField<Cls>(Tags::remark, &Cls::getRemarkString,
+                              &Cls::setRemark, "");
     // Default of -999 to enforce serializing the value if it is 0
     m->addIntField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999,
                         PLAN);
@@ -2801,6 +2811,9 @@ class OperationPlan : public Object,
 
   /* Serial number, batch or sales order for MTO production. */
   PooledString batch;
+
+  /* Free text description. */
+  PooledString remark;
 
   dependencylist dependencies;
 

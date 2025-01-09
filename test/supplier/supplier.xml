@@ -215,12 +215,13 @@
   <operationplans>
     <operationplan ordertype="PO" end="2015-06-06T00:00:00"
       reference="PO #1" quantity="100" status="confirmed">
+      <remark>Why did you buy this?</remark>
       <item name="Component C"/>
       <location name="warehouse"/>
       <supplier name="Supplier of component B"/>
     </operationplan>
     <operationplan ordertype="PO" start="2020-08-06T00:00:00" end="2020-06-06T00:00:00"
-      reference="PO #2" quantity="100" status="confirmed">
+      reference="PO #2" quantity="100" status="confirmed" remark="Who ordered this?">
       <item name="Component C"/>
       <location name="warehouse"/>
       <supplier name="Supplier of component B"/>

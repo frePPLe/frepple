@@ -15,6 +15,12 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     in the same location. This new feature allows for more complex
     production flows.
 
+- | Purchase orders, manufacturing orders and distribution orders
+    get an extra field "remark", which allows users to leaves free text 
+    comments on them.
+  | In earlier releases some implementations already used a custom attribute
+    field for this purpose. 
+
 .. rubric:: Odoo integration
 
 - | 17, 18: Extra robostness to avoid creating manufacturing orders on

@@ -901,6 +901,7 @@ class PurchaseOrderList(OperationPlanMixin):
             choices=PurchaseOrder.orderstatus,
             editable=not settings.ERP_CONNECTOR,
         ),
+        GridFieldText("remark", title=_("remark"), editable="true"),
         GridFieldCurrency(
             "unit_cost",
             title=format_lazy("{} - {}", _("item"), _("cost")),

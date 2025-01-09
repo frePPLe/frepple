@@ -124,6 +124,13 @@ class OperationPlan(AuditModel):
     enddate = models.DateTimeField(
         _("end date"), help_text=_("end date"), null=True, blank=True, db_index=True
     )
+    remark = models.CharField(
+        _("remark"),
+        null=True,
+        blank=True,
+        max_length=300,
+        help_text=_("remark"),
+    )
     criticality = models.DecimalField(
         _("criticality"),
         max_digits=20,

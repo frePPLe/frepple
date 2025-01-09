@@ -195,6 +195,7 @@ class Tags {
   static const Keyword quantity_fixed;
   static const Keyword quantity_completed;
   static const Keyword reference;
+  static const Keyword remark;
   static const Keyword resource;
   static const Keyword resources;
   static const Keyword resourceskill;

@@ -359,6 +359,7 @@
 			<start>2015-06-06T00:00:00</start>
 			<end>2015-06-06T00:00:00</end>
 			<quantity>100</quantity>
+			<remark>Why did you buy this?</remark>
 			<status>confirmed</status>
 			<ordertype>PO</ordertype>
 			<item>
@@ -379,6 +380,7 @@
 			<start>2020-06-06T00:00:00</start>
 			<end>2020-06-06T00:00:00</end>
 			<quantity>100</quantity>
+			<remark>Who ordered this?</remark>
 			<status>confirmed</status>
 			<ordertype>PO</ordertype>
 			<item>

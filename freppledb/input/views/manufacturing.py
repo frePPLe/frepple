@@ -2110,6 +2110,7 @@ class ManufacturingOrderList(OperationPlanMixin):
             initially_hidden=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
+        GridFieldText("remark", title=_("remark"), editable="true"),
         GridFieldCurrency(
             "total_cost",
             title=_("total cost"),

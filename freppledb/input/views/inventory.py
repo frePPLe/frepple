@@ -1056,6 +1056,7 @@ class DistributionOrderList(OperationPlanMixin):
             choices=DistributionOrder.orderstatus,
             editable=not settings.ERP_CONNECTOR,
         ),
+        GridFieldText("remark", title=_("remark"), editable="true"),
         GridFieldCurrency(
             "item__cost",
             title=format_lazy("{} - {}", _("item"), _("cost")),
@@ -1616,6 +1617,12 @@ class InventoryDetail(OperationPlanMixin):
             extra='"role":"input/location"',
         ),
         GridFieldText("operationplan__reference", title=_("reference"), editable=False),
+        GridFieldText(
+            "operationplan__remark",
+            title=_("remark"),
+            editable=False,
+            initially_hidden=True,
+        ),
         GridFieldText(
             "owner",
             title=_("owner"),

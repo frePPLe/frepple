@@ -648,6 +648,12 @@ class ResourceDetail(OperationPlanMixin):
         ),
         GridFieldText("operationplan__reference", title=_("reference"), editable=False),
         GridFieldText(
+            "operationplan__remark",
+            title=_("remark"),
+            editable=False,
+            initially_hidden=True,
+        ),
+        GridFieldText(
             "owner",
             title=_("owner"),
             field_name="operationplan__owner__reference",

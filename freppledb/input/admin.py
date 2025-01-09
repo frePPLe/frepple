@@ -805,6 +805,7 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
                     "owner",
                     "status",
                     "batch",
+                    "remark",
                     "demand",
                 ]
                 + [a[0] for a in getAttributes(ManufacturingOrder) if a[3]]
@@ -859,6 +860,7 @@ class DistributionOrder_admin(MultiDBModelAdmin):
                     "receipt_date",
                     "status",
                     "batch",
+                    "remark",
                 ]
                 + [a[0] for a in getAttributes(DistributionOrder) if a[3]]
             },
@@ -914,6 +916,7 @@ class PurchaseOrder_admin(MultiDBModelAdmin):
                     "receipt_date",
                     "status",
                     "batch",
+                    "remark",
                 ]
                 + [a[0] for a in getAttributes(PurchaseOrder) if a[3]]
             },
@@ -967,6 +970,7 @@ class DeliveryOrder_admin(MultiDBModelAdmin):
                     "quantity",
                     "status",
                     "batch",
+                    "remark",
                 )
             },
         ),

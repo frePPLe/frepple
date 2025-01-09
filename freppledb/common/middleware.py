@@ -210,6 +210,7 @@ class MultiDBMiddleware:
                         # Active user
                         login(request, user)
                         request.user = user
+                        request.api = True  # API requests don't start the web service
                 elif authmethod == "bearer" or webtoken:
                     # JWT webtoken authentication
                     decoded = None

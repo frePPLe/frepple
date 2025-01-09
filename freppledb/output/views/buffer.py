@@ -753,6 +753,15 @@ class OverviewReport(GridPivot):
                    and d.enddate - interval '1 ms')
         """
 
+        with_ip = "freppledb.inventoryplanning" in settings.INSTALLED_APPS
+
+        if with_ip:
+            is_ip_buffer = """
+                exists (select 1 from inventoryplanning where item_id = item.name and location_id = location.name)
+            """
+        else:
+            is_ip_buffer = "false"
+
         query = """
         with arguments as (
                 select %%s::timestamp report_startdate,
@@ -784,11 +793,7 @@ class OverviewReport(GridPivot):
            location.source,
            location.lastmodified,
            opplanmat.opplan_batch,
-           (item.name, location.name) in
-           (select plan->>'item', plan->>'location'
-           from operationplan
-           where item_id = item.name
-           and coalesce(location_id, destination_id) = location.name) is_ip_buffer,
+           %s is_ip_buffer,
            %s
            (select sum(quantity) from demand where status in ('open','quote')
            and item_id = item.name and location_id = location.name
@@ -831,18 +836,16 @@ class OverviewReport(GridPivot):
            d.history,
            case when d.history then min(ax_buffer.safetystock)
            else
-           (select safetystock from
-            (
-            select 1 as priority, coalesce(
+           coalesce(
+              -- 1 calendar bucket of SS calendar
               (select value from calendarbucket
                where calendar_id = 'SS for ' || opplanmat.buffer
                and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
                and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
                order by priority limit 1),
-              (select defaultvalue from calendar where name = 'SS for ' || opplanmat.buffer)
-              ) as safetystock
-            union all
-            select 2 as priority, coalesce(
+              -- 2 default value of SS calendar
+              (select defaultvalue from calendar where name = 'SS for ' || opplanmat.buffer),
+			  -- 3 calendar bucket of minimum calendar
               (select value
                from calendarbucket
                where calendar_id = (
@@ -855,6 +858,7 @@ class OverviewReport(GridPivot):
                and greatest(d.startdate,arguments.report_startdate) >= coalesce(startdate, '1971-01-01'::timestamp)
                and greatest(d.startdate,arguments.report_startdate) < coalesce(enddate, '2030-12-31'::timestamp)
                order by priority limit 1),
+              -- 4 default value of minimum calendar
               (select defaultvalue
                from calendar
                where name = (
@@ -864,18 +868,13 @@ class OverviewReport(GridPivot):
                  and location_id = location.name
                  and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.opplan_batch)
                  )
-              )
-            ) as safetystock
-            union all
-            select 3 as priority, minimum as safetystock
+              ),
+              -- 5 buffer minimum
+			 (select minimum
             from buffer
             where item_id = item.name
             and location_id = location.name
-            and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.opplan_batch)
-            ) t
-            where t.safetystock is not null
-            order by priority
-            limit 1)
+            and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.opplan_batch)))
             end as safetystock,
             case when d.history then json_build_object()
             else (
@@ -1004,6 +1003,7 @@ class OverviewReport(GridPivot):
            arguments.report_currentdate
            order by %s, d.startdate
         """ % (
+            is_ip_buffer,
             reportclass.attr_sql,
             net_forecast if "freppledb.forecast" in settings.INSTALLED_APPS else "0",
             reasons_forecast if "freppledb.forecast" in settings.INSTALLED_APPS else "",

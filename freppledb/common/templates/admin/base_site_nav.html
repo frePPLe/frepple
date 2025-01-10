@@ -78,8 +78,9 @@ $(function() {
 				</div>
 			</form>
 
-      {% if not request.session.navbar and user.is_authenticated and user.is_staff %}
+      {% if user.is_authenticated and user.is_staff %}
 	  <div id="nav-menu-end" class="collapse navbar-collapse">
+	  {% if not request.session.navbar %} 
       <ul class="nav navbar-nav ms-auto">
         <li class="navbar-item" data-bs-toggle="tooltip" data-bs-html="true" data-bs-placement="bottom"
           style="position:relative" data-bs-title="{% trans "No unread messages" %}">
@@ -103,6 +104,12 @@ $(function() {
 				</ul>
 			  </li>
       </ul>
+	{% else %}
+	<div class="nav navbar-nav ms-auto">
+		<a href="{{request.prefix}}/preferences/" data-bs-toggle="tooltip" 
+		data-bs-title="{% trans 'preferences'|capfirst %}"><span class="fa fa-gear fa-2x"></span></a>
+	</div>
+	{% endif %}
 	</div>
           {% endif %}
 		</div>

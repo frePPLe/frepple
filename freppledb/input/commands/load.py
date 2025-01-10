@@ -332,7 +332,7 @@ class loadParameter(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cursor.execute(
                     """
-                    SELECT name, value
+                    SELECT name, trim(value)
                     FROM common_parameter
                     where name in (
                        'currentdate', 'last_currentdate',

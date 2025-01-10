@@ -106,7 +106,7 @@ $(function() {
       </ul>
 	{% else %}
 	<div class="nav navbar-nav ms-auto">
-		<a href="{{request.prefix}}/preferences/" data-bs-toggle="tooltip" 
+		<a class="nav-link" href="{{request.prefix}}/preferences/" data-bs-toggle="tooltip" 
 		data-bs-title="{% trans 'preferences'|capfirst %}"><span class="fa fa-gear fa-2x"></span></a>
 	</div>
 	{% endif %}

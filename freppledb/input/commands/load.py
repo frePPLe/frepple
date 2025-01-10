@@ -238,7 +238,8 @@ class checkBrokenSupplyPath(CheckTask):
                         with cte as (
                         select 'Unknown supplier' as supplier_id, item_id, location_id from demand where status in ('open','quote')
                         union
-                        select 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
+                        select 'Unknown supplier', operationmaterial.item_id,
+                        coalesce(operationmaterial.location_id, operation.location_id) from operationmaterial
                         inner join operation on operation.name = operationmaterial.operation_id
                         where operationmaterial.quantity < 0
                         %s
@@ -277,7 +278,8 @@ class checkBrokenSupplyPath(CheckTask):
                         where itemsupplier.location_id is null and coalesce(itemsupplier.effective_end, %%s) >= %%s
                         and itemsupplier.priority is distinct from 0
                         union
-                        select 'Unknown supplier', operationmaterial.item_id, operation.location_id from operationmaterial
+                        select 'Unknown supplier', operationmaterial.item_id,
+                        coalesce(operationmaterial.location_id, operation.location_id) from operationmaterial
                         inner join operation on operation.name = operationmaterial.operation_id
                         where operationmaterial.quantity > 0 and coalesce(operation.effective_end, %%s) >= %%s
                         and operation.priority is distinct from 0

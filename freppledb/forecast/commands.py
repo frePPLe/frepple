@@ -1111,12 +1111,11 @@ def createForecastSolver(db, task=None):
     else:
         forecast_currentdate = frepple.settings.current
         with connections[db].cursor() as cursor:
-            cursor.execute(
-                """
-            select max(due) from demand;
-            """
-            )
-            max_due = cursor.fetchone()[0]
+            cursor.execute("select max(due) from demand")
+            try:
+                max_due = cursor.fetchone()[0]
+            except Exception:
+                max_due = None
 
             if max_due:
                 # The forecast solver current date is the end date of the
@@ -1124,14 +1123,19 @@ def createForecastSolver(db, task=None):
                 forecastCalendar = Parameter.getValue("forecast.calendar", db, "month")
                 cursor.execute(
                     """
-                select enddate from common_bucketdetail where bucket_id = %s
-                and startdate <= %s and %s < enddate;
-                """,
+                    select max(enddate) from common_bucketdetail
+                    where bucket_id = %s
+                      and startdate <= %s
+                      and %s < enddate;
+                    """,
                     (forecastCalendar, max_due, max_due),
                 )
-                enddate = cursor.fetchone()[0]
-                if enddate < forecast_currentdate:
-                    forecast_currentdate = enddate
+                try:
+                    enddate = cursor.fetchone()[0]
+                    if enddate < forecast_currentdate:
+                        forecast_currentdate = enddate
+                except Exception:
+                    pass
     frepple.settings.fcst_current = forecast_currentdate
 
     try:

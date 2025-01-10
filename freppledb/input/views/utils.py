@@ -1874,6 +1874,7 @@ class OperationPlanDetail(View):
                 .values(
                     "operationplan_id",
                     "item_id",
+                    "location_id",
                     "onhand",
                     "flowdate",
                     "quantity",
@@ -2084,6 +2085,7 @@ class OperationPlanDetail(View):
                             "buffer": {
                                 "item": m["item_id"],
                                 "description": m["item__description"],
+                                "location": m["location_id"],
                             },
                             "reference": m["operationplan_id"],
                         }

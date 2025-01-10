@@ -44,6 +44,8 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
       '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("item") + '</b>' +
       '</td><td>' +
+      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("location") + '</b>' +
+      '</td><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("quantity") + '</b>' +
       '</td><td>' +
       '<b style="text-transform: capitalize;">' + gettextCatalog.getString("onhand") + '</b>' +
@@ -93,7 +95,8 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
               });
               rows += '</ul></td>';
             }
-            rows += '<td>' + grid.formatNumber(theflow.quantity)
+            rows += '<td>' + $.jgrid.htmlEncode(theflow.buffer.location)
+              + '</td><td>' + grid.formatNumber(theflow.quantity)
               + '</td><td>' + grid.formatNumber(theflow.onhand)
               + '</td><td style="white-space: nowrap">' + $filter('formatdatetime')(theflow.date)
               + '</td></tr>';

@@ -439,7 +439,7 @@ command is more an exception.
 
       .. code-block:: bash
 
-        frepplectl startwebservice
+        frepplectl runwebservice
 
         frepplectl stopwebservice
 
@@ -448,7 +448,7 @@ command is more an exception.
       .. code-block:: bash
 
         # Upload a data file:
-        POST /execute/api/startwebservice/
+        POST /execute/api/runwebservice/
 
         POST /execute/api/stopwebservice/
 

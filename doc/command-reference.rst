@@ -435,6 +435,23 @@ command is more an exception.
       .. image:: /user-interface/_images/execution-webservice.png
          :alt: Execution screen - Web service
 
+   .. tab:: Command line
+
+      .. code-block:: bash
+
+        frepplectl startwebservice
+
+        frepplectl stopwebservice
+
+   .. tab:: Web API
+
+      .. code-block:: bash
+
+        # Upload a data file:
+        POST /execute/api/startwebservice/
+
+        POST /execute/api/stopwebservice/
+
 .. _scenario_copy:
 
 Scenario management

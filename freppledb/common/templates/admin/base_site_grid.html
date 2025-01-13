@@ -139,7 +139,7 @@ function displayGrid(load) {
             startId = $this.jqGrid('getGridParam', 'selrow'),
             startRow, endRow, iStart, iEnd, i;
 
-      if (!e.shiftKey && !e.ctrlKey){
+      if (!e.shiftKey && !e.ctrlKey && !e.target.matches('[type="checkbox"]')){
           $this.jqGrid('resetSelection');
       }
 

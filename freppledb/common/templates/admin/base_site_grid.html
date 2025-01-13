@@ -42,6 +42,29 @@ var actions = { {% for i in actions %}
    };
 
 function displayGrid(load) {
+  $(document).keydown(function(e) {
+    // Check if Ctrl key is pressed and the 'A' key is pressed
+    if (e.ctrlKey && e.key === 'a') {
+        e.preventDefault();  // Prevent default behavior (selecting all text)
+        // Get all row IDs
+        var rowIds = $("#grid").jqGrid('getDataIDs');
+        // Get the array of currently selected row IDs
+        var selectedRowIds = $("#grid").jqGrid('getGridParam', 'selarrrow');
+
+        // Loop through all row IDs
+        for (var i = 0; i < rowIds.length; i++) {
+            var rowId = rowIds[i];
+
+            // Check if the row is already selected
+            if ($.inArray(rowId, selectedRowIds) === -1) {
+                // Select the row if it's not already selected
+                $("#grid").jqGrid('setSelection', rowId);
+            }
+        }
+        // After selecting all rows, select the header checkbox
+        $("#grid").closest('div.ui-jqgrid').find('input[type="checkbox"]').prop('checked', true);
+    }
+});
   jQuery("#grid").jqGrid({
    	url: (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href)
    	  + (location.search.length > 0 ? "&format=json" : "?format=json"),

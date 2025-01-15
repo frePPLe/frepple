@@ -7,13 +7,19 @@ Release notes
 This release is scheduled for end of January.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | Row selection logic updated. If the user clicks on the checkbox of a row,
+    that row is selected on top of the existing selection.
+  | The hotkey CRTL+A selects all the rows of the current page.
+
 .. rubric:: Demand forecasting
 
 - | The database structure for storing forecast data has been refactored.
   | The new structure uses considerable less database storage and is a bit faster.
-  | If you use the field forecastplan.value in your custom reqorts, 
+  | If you use the field forecastplan.value in your custom reqorts,
     you are encouraged to rewrite your queries to the new structure.
-    
+
 .. rubric:: Production planning
 
 - | Operations can now consume and produce material in different
@@ -23,10 +29,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     production flows.
 
 - | Purchase orders, manufacturing orders and distribution orders
-    get an extra field "remark", which allows users to leaves free text 
+    get an extra field "remark", which allows users to leaves free text
     comments on them.
   | In earlier releases some implementations already used a custom attribute
-    field for this purpose. 
+    field for this purpose.
 
 .. rubric:: Odoo integration
 

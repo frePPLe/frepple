@@ -90,9 +90,16 @@ DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles) {
         new ForecastMeasureAggregatedPlanned("forecastplanned", 0);
     Measures::ordersplanned =
         new ForecastMeasureAggregatedPlanned("ordersplanned", 0);
-    Measures::outlier = new ForecastMeasureLocal("outlier", 0);
+    auto tmp = new ForecastMeasureLocal("outlier", 0);
+    tmp->setStored(false);
+    Measures::outlier = tmp;
+    tmp = new ForecastMeasureLocal("leaf", 0);
+    Measures::leaf = tmp;
+    tmp->setStored(false);
+    auto t1 = new ForecastMeasureLocal("outlier", 0);
+    t1->setStored(false);
+    Measures::outlier = t1;
     Measures::nodata = new ForecastMeasureLocal("nodata", 0);
-    Measures::leaf = new ForecastMeasureLocal("leaf", 0);
     ForecastMeasureComputed::compileMeasures();
 
     PyGILState_Release(state);

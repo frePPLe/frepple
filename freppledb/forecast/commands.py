@@ -198,9 +198,12 @@ class PopulateForecastTable(PlanTask):
                 cursor.execute(
                     """
                     delete from forecast f
-                    using (select distinct item_id, location_id from forecast
-                    except select distinct item_id, location_id from demand
-                    except select distinct item_id, location_id from forecastplan where value ?| array['ordersadjustment','forecastoverride']) t
+                    using (
+                      select distinct item_id, location_id from forecast
+                      except select distinct item_id, location_id from demand
+                      except select distinct item_id, location_id from forecastplan 
+                         where ordersadjustment is not null or forecastoverride is not null
+                      ) t
                     where t.item_id = f.item_id
                     and t.location_id = f.location_id
                     """
@@ -220,7 +223,11 @@ class PopulateForecastTable(PlanTask):
                                     where forecastplan.item_id = forecast.item_id
                                     and forecastplan.location_id =forecast.location_id
                                     and forecastplan.customer_id =forecast.customer_id
-                                    and forecastplan.value ?| array['ordersadjustment','forecastoverride'])
+                                    and (
+                                      forecastplan.ordersadjustment is not null
+                                      or forecastplan.forecastoverride is not null
+                                      )
+                                   )
                     """,
                     (parentCustomer,),
                 )
@@ -713,7 +720,7 @@ class AggregateDemand(PlanTask):
             customer_hierarchy.parent
             having greatest(sum(quantity),0) != 0 or greatest(sum(case when coalesce(status, 'open') in ('open','quote') then quantity else 0 end), 0) != 0;
             create unique index on demand_agg (item_id, location_id, customer_id, startdate);
-        """,
+            """,
             (
                 fcst_calendar,
                 currentdate - timedelta(days=horizon_history),
@@ -726,40 +733,44 @@ class AggregateDemand(PlanTask):
             """
             create temporary table leaf_nomore_orders on commit preserve rows as
             (select forecastplan.item_id, forecastplan.location_id, forecastplan.customer_id,
-            forecastplan.startdate, 'ordersopen' measure from forecastplan
+            forecastplan.startdate from forecastplan
             inner join forecast on forecast.item_id = forecastplan.item_id
                                 and forecast.location_id = forecastplan.location_id
                                 and forecast.customer_id = forecastplan.customer_id
-            where forecastplan.value ? 'ordersopen'
+            where forecastplan.ordersopen is not null
             and coalesce(forecast.method, 'automatic') != 'aggregate'
             except
-            select item_id, location_id, customer_id, startdate, 'ordersopen' from demand_agg
+            select item_id, location_id, customer_id, startdate from demand_agg
             where ordersopen > 0)
             union all
             (select forecastplan.item_id, forecastplan.location_id, forecastplan.customer_id,
-            forecastplan.startdate, 'orderstotal' measure from forecastplan
+            forecastplan.startdate from forecastplan
             inner join forecast on forecast.item_id = forecastplan.item_id
                                 and forecast.location_id = forecastplan.location_id
                                 and forecast.customer_id = forecastplan.customer_id
-            where forecastplan.value ? 'orderstotal'
+            where forecastplan.orderstotal is not null
             and coalesce(forecast.method, 'automatic') != 'aggregate'
             except
-            select item_id, location_id, customer_id, startdate, 'orderstotal' from demand_agg
+            select item_id, location_id, customer_id, startdate from demand_agg
             where orderstotal > 0);
 
             create index on leaf_nomore_orders (item_id, location_id, customer_id, startdate);
             """
         )
 
+        # TODO possibility to optimize this?
+        # It smells like we can avoid leaf_nomore_orders, and efficiently join directly with demand_agg.
+        # Would a new partial index on forecastplan with non-null value of ordersopen or ordertotal be worth it?
         cursor.execute(
             """
-           update forecastplan set value = (value - leaf_nomore_orders.measure) - (leaf_nomore_orders.measure||'value')
-           from leaf_nomore_orders
-           where forecastplan.item_id = leaf_nomore_orders.item_id
-           and forecastplan.location_id = leaf_nomore_orders.location_id
-           and forecastplan.customer_id = leaf_nomore_orders.customer_id
-           and forecastplan.startdate = leaf_nomore_orders.startdate
-           """
+            update forecastplan 
+              set ordersopen = null, ordersopenvalue = null, orderstotal = null, orderstotalvalue = null
+            from leaf_nomore_orders
+            where forecastplan.item_id = leaf_nomore_orders.item_id
+              and forecastplan.location_id = leaf_nomore_orders.location_id
+              and forecastplan.customer_id = leaf_nomore_orders.customer_id
+              and forecastplan.startdate = leaf_nomore_orders.startdate
+            """
         )
 
         logger.info(
@@ -771,21 +782,27 @@ class AggregateDemand(PlanTask):
         starttime = time()
         cursor.execute(
             """
-            insert into forecastplan (item_id, location_id, customer_id, startdate, enddate, value)
-            select item_id, location_id, customer_id, startdate, enddate, jsonb_strip_nulls(
-                                          jsonb_build_object('orderstotal', demand_agg.orderstotal,
-                                          'orderstotalvalue', demand_agg.orderstotalvalue,
-                                          'ordersopen', case when demand_agg.ordersopen = 0 then null else ordersopen end,
-                                          'ordersopenvalue', case when demand_agg.ordersopenvalue = 0 then null else ordersopenvalue end)
-                                          ) as value
+            insert into forecastplan 
+              (item_id, location_id, customer_id, startdate, enddate,
+              orderstotal, orderstotalvalue, ordersopen, ordersopenvalue)
+            select
+              item_id, location_id, customer_id, startdate, enddate,               
+              demand_agg.orderstotal,
+              demand_agg.orderstotalvalue,
+              case when demand_agg.ordersopen = 0 then null else ordersopen end as ordersopen,
+              case when demand_agg.ordersopenvalue = 0 then null else ordersopenvalue end as ordersopenvalue
             from demand_agg
             on conflict (item_id, location_id, customer_id, startdate)
-            do update set value =  forecastplan.value || excluded.value
+            do update set 
+               orderstotal = excluded.orderstotal,
+               orderstotalvalue = excluded.orderstotalvalue,
+               ordersopen = excluded.ordersopen,
+               ordersopenvalue = excluded.ordersopenvalue
             where
-              (excluded.value->>'orderstotal')::numeric is distinct from (forecastplan.value->>'orderstotal')::numeric
-              or (excluded.value->>'ordersopen')::numeric is distinct from (forecastplan.value->>'ordersopen')::numeric
-              or (excluded.value->>'orderstotalvalue')::numeric is distinct from (forecastplan.value->>'orderstotalvalue')::numeric
-              or (excluded.value->>'ordersopenvalue')::numeric is distinct from (forecastplan.value->>'ordersopenvalue')::numeric
+              excluded.orderstotal is distinct from forecastplan.orderstotal
+              or excluded.orderstotalvalue is distinct from forecastplan.orderstotalvalue
+              or excluded.ordersopen is distinct from forecastplan.ordersopen
+              or excluded.ordersopenvalue is distinct from forecastplan.ordersopenvalue
             """
         )
         logger.info(
@@ -793,12 +810,15 @@ class AggregateDemand(PlanTask):
             % (time() - starttime)
         )
 
-        # updating open/total orders values
+        # Pruning empty records
         starttime = time()
         cursor.execute(
             """
             delete from forecastplan
-            where (value = '{}' or value is null)
+            where jsonb_strip_nulls(
+              to_jsonb(forecastplan) 
+              - array['customer_id', 'item_id', 'location_id', 'startdate', 'enddate']
+              ) = '{}'::jsonb
             """
         )
         transaction.commit(using=database)

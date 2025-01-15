@@ -602,8 +602,8 @@ class ForecastSimulation(TransactionTestCase):
             (
             select
               startdate,
-              greatest(coalesce((value->>'forecasttotal')::numeric,0),0) fcst,
-              greatest(coalesce((value->>'orderstotal')::numeric,0) + coalesce((value->>'ordersadjustment')::numeric,0),0) orders
+              greatest(coalesce(forecastplan.forecasttotal,0),0) fcst,
+              greatest(coalesce(forecastplan.orderstotal,0) + coalesce(forecastplan.ordersadjustment,0),0) orders
             from forecastplan
             inner join forecast
               on forecastplan.item_id = forecast.item_id

@@ -376,7 +376,7 @@ class OverviewReportWithForecast(GridPivot):
           inner join demand on demand.item_id = child.name and demand.status in ('open','quote') and due < %%s
           group by item.name
           union all
-          select item.name, 0::numeric qty_orders, coalesce(sum((forecastplan.value->>'forecastnet')::numeric),0) qty_forecast
+          select item.name, 0::numeric qty_orders, coalesce(sum(forecastplan.forecastnet),0) qty_forecast
           from forecastplan
           left outer join common_parameter cp on cp.name = 'forecast.DueWithinBucket'
           inner join (%s) item on forecastplan.item_id = item.name
@@ -473,7 +473,7 @@ class OverviewReportWithForecast(GridPivot):
             ) cte_reasons
             ) reasons,
           coalesce((
-            select sum((forecastplan.value->>'forecastnet')::numeric)
+            select sum(forecastplan.forecastnet)
             from forecastplan
             left outer join common_parameter cp on cp.name = 'forecast.DueWithinBucket'
             where forecastplan.item_id = parent.name

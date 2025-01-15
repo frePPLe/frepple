@@ -188,37 +188,26 @@ class Command(BaseCommand):
             if source == destination:
                 raise CommandError("Can't copy a measure on itself")
 
-            cursor = connections[database].cursor()
-
-            # We need to make some cleansing first
-            if destinationExists:
-                sql = """
-                      update forecastplan set value = value - %%s
-                      where value ? %%s and not value ? %%s
-                      %s
-                      %s
-                """ % (
-                    ("and enddate >= '%s'" % (startdate,)) if startdate else "",
-                    ("and startdate <= '%s'" % (enddate,)) if enddate else "",
+            with connections[database].cursor() as cursor:
+                # Make the copy
+                # We want to capture the days specified in start and end dates
+                # So we compare the startdate with forecastplan enddates and vice versa
+                cursor.execute(
+                    """
+                    update forecastplan set %s = %s
+                    where %s is distinct from %s
+                    %s
+                    %s
+                    """
+                    % (
+                        destination,
+                        source,
+                        destination,
+                        source,
+                        ("and enddate >= '%s'" % (startdate,)) if startdate else "",
+                        ("and startdate <= '%s'" % (enddate,)) if enddate else "",
+                    )
                 )
-                cursor.execute(sql, (destination, destination, source))
-
-            # Make the copy
-            # We want to capture the days specified in start and end dates
-            # So we compare the startdate with forecastplan enddates and vice versa
-            sql = """
-                update forecastplan set value = value || jsonb_build_object(%%s, (value->>%%s)%s)
-                where value ? %%s
-                %s
-                %s
-                """ % (
-                "::numeric"
-                if sourceMeasure.formatter in ("currency", "number")
-                else "",
-                ("and enddate >= '%s'" % (startdate,)) if startdate else "",
-                ("and startdate <= '%s'" % (enddate,)) if enddate else "",
-            )
-            cursor.execute(sql, (destination, source, source))
             # Logging message
             task.processid = None
             task.status = "Done"

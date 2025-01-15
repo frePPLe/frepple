@@ -610,7 +610,7 @@ class OverviewReport(GridPivot):
 
         backlog_fcst = """
             union all
-          select opm.item_id, opm.location_id, '' as batch, 0::numeric qty_orders, coalesce(sum((forecastplan.value->>'forecastnet')::numeric),0) qty_forecast
+          select opm.item_id, opm.location_id, '' as batch, 0::numeric qty_orders, coalesce(sum(forecastplan.forecastnet),0) qty_forecast
           from forecastplan
           left outer join common_parameter cp on cp.name = 'forecast.DueWithinBucket'
           inner join (%s) opm on forecastplan.item_id = opm.item_id
@@ -694,9 +694,11 @@ class OverviewReport(GridPivot):
         """ % (
             basesql,
             backlog_fcst if "freppledb.forecast" in settings.INSTALLED_APPS else "",
-            deliveries_fcst
-            if "freppledb.forecast" in settings.INSTALLED_APPS
-            else deliveries_no_fcst,
+            (
+                deliveries_fcst
+                if "freppledb.forecast" in settings.INSTALLED_APPS
+                else deliveries_no_fcst
+            ),
         )
 
         with transaction.atomic(using=request.database):
@@ -739,7 +741,7 @@ class OverviewReport(GridPivot):
                 and operationplan.due < d.enddate
                 """
         net_forecast = """
-        (select sum((forecastplan.value->>'forecastnet')::numeric)
+        (select sum(forecastplan.forecastnet)
             from forecastplan
             left outer join common_parameter cp on cp.name = 'forecast.DueWithinBucket'
             where forecastplan.item_id = item.name and forecastplan.location_id = location.name

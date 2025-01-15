@@ -266,18 +266,18 @@ class ForecastWidget(Widget):
             """
             select
               common_bucketdetail.name,
-              round(sum(greatest((value->>'forecasttotalvalue')::numeric,0))) as fcstvalue,
+              round(sum(greatest(forecastplan.forecasttotalvalue,0))) as fcstvalue,
               round(sum(greatest(0,
-                (value->>'orderstotalvalue')::numeric +
-                coalesce((value->>'ordersadjustmentvalue')::numeric,0)
+                coalesce(forecastplan.orderstotalvalue,0) +
+                coalesce(forecastplan.ordersadjustmentvalue,0)
                 ))) as orderstotalvalue,
-              round(sum(greatest((value->>'ordersopenvalue')::numeric,0))) as ordersopenvalue,
-              round(sum(greatest((value->>'forecasttotal')::numeric,0))) as fcst,
+              round(sum(greatest(forecastplan.ordersopenvalue,0))) as ordersopenvalue,
+              round(sum(greatest(forecastplan.forecasttotal,0))) as fcst,
               round(sum(greatest(0,
-                (value->>'orderstotal')::numeric +
-                coalesce((value->>'ordersadjustment')::numeric,0)
+                forecastplan.orderstotal +
+                coalesce(forecastplan.ordersadjustment,0)
                 ))) as orderstotal,
-              round(sum(greatest((value->>'ordersopen')::numeric,0))) as ordersopen
+              round(sum(greatest(forecastplan.ordersopen,0))) as ordersopen
             from common_bucketdetail
             left outer join forecastplan
               on item_id = (select name from item where item.lvl = 0 limit 1)
@@ -439,8 +439,8 @@ class ForecastAccuracyWidget(Widget):
               (
               select
                 startdate,
-                greatest((value->>'forecasttotal')::numeric,0) fcst,
-                greatest((value->>'orderstotal')::numeric + coalesce((value->>'ordersadjustment')::numeric,0),0) orders
+                greatest(forecastplan.forecasttotal,0) fcst,
+                greatest(forecastplan.orderstotal + coalesce(forecastplan.ordersadjustment,0),0) orders
               from forecastplan
               inner join forecast
                 on forecastplan.item_id = forecast.item_id

@@ -7,6 +7,13 @@ Release notes
 This release is scheduled for end of January.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Demand forecasting
+
+- | The database structure for storing forecast data has been refactored.
+  | The new structure uses considerable less database storage and is a bit faster.
+  | If you use the field forecastplan.value in your custom reqorts, 
+    you are encouraged to rewrite your queries to the new structure.
+    
 .. rubric:: Production planning
 
 - | Operations can now consume and produce material in different

@@ -85,26 +85,30 @@ class ForecastMeasure : public HasName<ForecastMeasure> {
   ForecastMeasure() {}
 
   ForecastMeasure(const char* n, double d = 0.0, bool cmptd = false,
-                  bool aggr = true, bool temp = false)
-      : dflt(d), computed(cmptd), aggregate(aggr), temporary(temp) {
+                  bool aggr = true, bool temp = false, bool st = true)
+      : dflt(d), computed(cmptd), aggregate(aggr), temporary(temp), stored(st) {
     setName(n);
   }
 
   ForecastMeasure(const PooledString& n, double d = 0.0, bool cmptd = false,
-                  bool aggr = true, bool temp = false)
-      : dflt(d), computed(cmptd), aggregate(aggr), temporary(temp) {
+                  bool aggr = true, bool temp = false, bool st = true)
+      : dflt(d), computed(cmptd), aggregate(aggr), temporary(temp), stored(st) {
     setName(n);
   }
 
   ForecastMeasure(const string& n, double d = 0.0, bool cmptd = false,
-                  bool aggr = true, bool temp = false)
-      : dflt(d), computed(cmptd), aggregate(aggr), temporary(temp) {
+                  bool aggr = true, bool temp = false, bool st = true)
+      : dflt(d), computed(cmptd), aggregate(aggr), temporary(temp), stored(st) {
     setName(n);
   }
 
   double getDefault() const { return dflt; }
 
   void setDefault(double v) { dflt = v; }
+
+  bool getStored() const { return stored; }
+
+  void setStored(bool v) { stored = v; }
 
   void setComputed(bool c) { computed = c; }
 
@@ -208,6 +212,7 @@ class ForecastMeasure : public HasName<ForecastMeasure> {
   bool aggregate = true;
   bool temporary = false;
   bool discrete = false;
+  bool stored = true;
 
  public:
   list<const ForecastMeasureComputed*> dependents;
@@ -454,7 +459,7 @@ class ForecastMeasureTemp : public ForecastMeasure {
 
   ForecastMeasureTemp(ForecastMeasure& base)
       : ForecastMeasure(string("temp") + base.getName(), base.getDefault(),
-                        false, base.isAggregate(), true) {
+                        false, base.isAggregate(), true, false) {
     initType(metadata);
   }
 

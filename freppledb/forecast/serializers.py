@@ -67,7 +67,7 @@ class ForecastFilter(FilterSet):
                 "source": ["exact", "in"],
                 "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
             },
-            **getAttributeAPIFilterDefinition(Forecast)
+            **getAttributeAPIFilterDefinition(Forecast),
         )
         filter_fields = fields.keys()
 

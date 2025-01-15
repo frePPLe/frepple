@@ -75,7 +75,7 @@ class ForecastEditorScreen(SeleniumTest):
         with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
             cursor.execute(
                 """
-                select sum((value->>'forecastoverride')::numeric)
+                select sum(forecastoverride)
                 from forecastplan
                 where item_id = (select name from item where lvl = 0)
                   and location_id = (select name from location where lvl = 0)
@@ -118,12 +118,12 @@ class ForecastEditorScreen(SeleniumTest):
         with connections[DEFAULT_DB_ALIAS].cursor() as cursor:
             cursor.execute(
                 """
-                select count(value->>'forecastoverride')
+                select count(forecastoverride)
                 from forecastplan
                 where item_id = (select name from item where lvl = 0)
                   and location_id = (select name from location where lvl = 0)
                   and customer_id = (select name from customer where lvl = 0)
-                  and (value->>'forecastoverride')::numeric > 0
+                  and forecastoverride > 0
                 """
             )
 

@@ -896,7 +896,7 @@ class DeliveryOrderList(GridReport):
                     coalesce(
                       (select quantity from demand where demand.name = demand_id),
                       (
-                          select (value->>'forecastnet')::numeric
+                          select forecastplan.forecastnet
                           from forecastplan
                           inner join forecast
                             on forecastplan.item_id = forecast.item_id and forecastplan.location_id = forecast.location_id

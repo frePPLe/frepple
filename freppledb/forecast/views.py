@@ -864,14 +864,14 @@ class OverviewReport(GridPivot):
             """
             select
                 fcst.name,
-                coalesce(sum((forecastplan.value->>'ordersopen')::numeric), 0)
-                - coalesce(sum((forecastplan.value->>'ordersplanned')::numeric), 0) as backlog_order,
-                coalesce(sum((forecastplan.value->>'forecastnet')::numeric), 0)
-                - coalesce(sum((forecastplan.value->>'forecastplanned')::numeric), 0) as backlog_forecast,
-                coalesce(sum((forecastplan.value->>'ordersopenvalue')::numeric), 0)
-                - coalesce(sum((forecastplan.value->>'ordersplannedvalue')::numeric), 0) as backlog_order_value,
-                coalesce(sum((forecastplan.value->>'forecastnetvalue')::numeric), 0)
-                - coalesce(sum((forecastplan.value->>'forecastplannedvalue')::numeric), 0) as backlog_forecast_value
+                coalesce(sum(forecastplan.ordersopen), 0)
+                - coalesce(sum(forecastplan.ordersplanned), 0) as backlog_order,
+                coalesce(sum(forecastplan.forecastnet), 0)
+                - coalesce(sum(forecastplan.forecastplanned), 0) as backlog_forecast,
+                coalesce(sum(forecastplan.ordersopenvalue), 0)
+                - coalesce(sum(forecastplan.ordersplannedvalue), 0) as backlog_order_value,
+                coalesce(sum(forecastplan.forecastnetvalue), 0)
+                - coalesce(sum(forecastplan.forecastplannedvalue), 0) as backlog_forecast_value
             from (%s) fcst
             inner join forecastplan
                 on fcst.item_id = forecastplan.item_id
@@ -992,11 +992,9 @@ class OverviewReport(GridPivot):
             ",\n".join(
                 [
                     (
-                        "coalesce(sum((forecastplan.value->>'%s')::numeric),0) as %s"
-                        % (m.name, m.name)
+                        "coalesce(sum(forecastplan.%s),0) as %s" % (m.name, m.name)
                         if m.defaultvalue != -1
-                        else "sum((forecastplan.value->>'%s')::numeric) as %s"
-                        % (m.name, m.name)
+                        else "sum(forecastplan.%s) as %s" % (m.name, m.name)
                     )
                     for m in request.measures
                     if not m.computed
@@ -1288,7 +1286,7 @@ class ForecastEditor:
         query = """
             with all_recs as (
               select d.startdate, item.name as item_id, item.description, d.name,
-              coalesce(sum((value->>%%s)::numeric),0) val, item.rght-item.lft>1 flag, item.lvl
+              coalesce(sum(%s),0) val, item.rght-item.lft>1 flag, item.lvl
                 from (
                   select name, startdate, enddate
                   from common_bucketdetail
@@ -1344,9 +1342,8 @@ class ForecastEditor:
         result = []
         result_idx = {}
         cursor.execute(
-            query % (itemfilter, locationfilter, customerfilter),
+            query % (measurename, itemfilter, locationfilter, customerfilter),
             (
-                measurename,
                 request.user.horizonbuckets,
                 current,
                 item,
@@ -1421,7 +1418,7 @@ class ForecastEditor:
         query = """
           with all_recs as (
           select d.startdate, location.name lname, d.name bname,
-          coalesce(sum((value->>%%s)::numeric),0) val, location.rght-location.lft>1 flag, location.lvl, location.description
+          coalesce(sum(%s),0) val, location.rght-location.lft>1 flag, location.lvl, location.description
             from (
               select name, startdate, enddate
               from common_bucketdetail
@@ -1477,9 +1474,8 @@ class ForecastEditor:
         result = []
         result_idx = {}
         cursor.execute(
-            query % (itemfilter, locationfilter, customerfilter),
+            query % (measurename, itemfilter, locationfilter, customerfilter),
             (
-                measurename,
                 request.user.horizonbuckets,
                 current,
                 item,
@@ -1553,7 +1549,7 @@ class ForecastEditor:
         query = """
           with all_recs as (
           select d.startdate, customer.name cname, d.name bname,
-          coalesce(sum((value->>%%s)::numeric),0) val, customer.rght-customer.lft>1 flag, customer.lvl,
+          coalesce(sum(%s),0) val, customer.rght-customer.lft>1 flag, customer.lvl,
           customer.description
             from (
               select name, startdate, enddate
@@ -1611,9 +1607,8 @@ class ForecastEditor:
         result = []
         result_idx = {}
         cursor.execute(
-            query % (itemfilter, locationfilter, customerfilter),
+            query % (measurename, itemfilter, locationfilter, customerfilter),
             (
-                measurename,
                 request.user.horizonbuckets,
                 current,
                 item,
@@ -1760,11 +1755,9 @@ class ForecastEditor:
             ",\n".join(
                 [
                     (
-                        "coalesce(sum((forecastplan.value->>'%s')::numeric),0) as %s"
-                        % (m.name, m.name)
+                        "coalesce(sum(forecastplan.%s),0) as %s" % (m.name, m.name)
                         if not m.defaultvalue
-                        else "sum((forecastplan.value->>'%s')::numeric) as %s"
-                        % (m.name, m.name)
+                        else "sum(forecastplan.%s) as %s" % (m.name, m.name)
                     )
                     for m in request.measures
                     if not m.computed

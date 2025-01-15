@@ -313,7 +313,7 @@ class ForecastPlan(models.Model):
     def export_objects(cls, query, request):
         return query.extra(
             select={
-                m.name: "(value->>'%s')::numeric" % m.name
+                m.name: f"value.{m.name}"
                 for m in chain(
                     Measure.standard_measures(), Measure.objects.using(request.database)
                 )

@@ -1022,7 +1022,7 @@ ForecastData::ForecastData(const ForecastBase* f) {
   // One off initialization
   auto dbconnection = Plan::instance().getDBconnection();
   thread_local static DatabaseReader db(dbconnection);
-  thread_local static DatabasePreparedStatement<5> stmt;
+  thread_local static DatabasePreparedStatement stmt;
   thread_local static short mode = 0;
   if (!mode) {
     if (dbconnection.empty())
@@ -1031,30 +1031,25 @@ ForecastData::ForecastData(const ForecastBase* f) {
     else {
       // Mode 2: Connected to a database
       mode = 2;
+
       // We use a single, dedicated database connection for this
-      std::string str =
-          "select extract(epoch from startdate), extract(epoch from "
-          "enddate), "
-          "value from forecastplan "
-          "where item_id = $1::text and location_id = $2::text "
-          "and customer_id = $3::text "
-          "and enddate >= $4::timestamp and startdate <= $5::timestamp "
-          "order by startdate";
-
-      if (f->getForecastPartition() != -1) {
-        const string s = "forecastplan";
-        string t = "forecastplan_";
-        t.append(to_string(f->getForecastPartition()));
-
-        string::size_type n = 0;
-        while ((n = str.find(s, n)) != string::npos) {
-          str.replace(n, s.size(), t);
-          n += t.size();
-        }
+      stringstream str;
+      str << "select extract(epoch from startdate), extract(epoch from "
+             "enddate)";
+      for (auto msr = ForecastMeasure::begin(); msr != ForecastMeasure::end();
+           ++msr) {
+        if (msr->getStored()) str << ", " << msr->getName();
       }
+      str << " from forecastplan";
+      auto partition = f->getForecastPartition();
+      if (partition != -1) str << "_" << partition;
+      str << " where item_id = $1::text and location_id = $2::text "
+             "and customer_id = $3::text "
+             "and enddate >= $4::timestamp and startdate <= $5::timestamp "
+             "order by startdate";
       try {
-        stmt =
-            DatabasePreparedStatement<5>(db, "Read forecastplan values", str);
+        stmt = DatabasePreparedStatement(db, "Read forecastplan values",
+                                         str.str(), 5);
         auto currentdate = Plan::instance().getFcstCurrent();
         stmt.setArgument(
             3, currentdate - Duration(86400L * f->getHorizonHistory()));
@@ -1115,72 +1110,29 @@ ForecastData::ForecastData(const ForecastBase* f) {
         throw DataException("Forecastplan buckets not matching calendar");
       }
 
-      // Parse the JSON content, which is expected to be in the format:
-      //   {"a": number, "b": number, ...}
-      // Malformed JSON content is silently ignored.
-      auto jsondata = res.getValueString(i, 2);
-      rapidjson::Document doc;
-      if (!doc.Parse(jsondata.c_str()).HasParseError() && doc.IsObject()) {
-        for (auto itr = doc.MemberBegin(); itr != doc.MemberEnd(); ++itr) {
-          // Only non-default values are kept in the dictionary
-          auto key = itr->name.GetString();
-          auto msr = ForecastMeasure::find(key);
-          if (!msr)
-            // Silently ignore this measure
-            continue;
-          if (itr->value.IsDouble()) {
-            auto val = itr->value.GetDouble();
-            if (val != msr->getDefault())
-              bckiter->setValue(false, nullptr, msr, val);
-            else
-              bckiter->removeValue(false, nullptr, msr);
-          } else if (itr->value.IsInt()) {
-            auto val = itr->value.GetInt();
-            if (val != msr->getDefault())
-              bckiter->setValue(false, nullptr, msr, val);
-            else
-              bckiter->removeValue(false, nullptr, msr);
-          } else if (itr->value.IsInt64()) {
-            auto val = itr->value.GetInt64();
-            if (val != msr->getDefault())
-              bckiter->setValue(false, nullptr, msr, static_cast<double>(val));
-            else
-              bckiter->removeValue(false, nullptr, msr);
-          } else if (itr->value.IsUint()) {
-            auto val = itr->value.GetUint();
-            if (val != msr->getDefault())
-              bckiter->setValue(false, nullptr, msr, val);
-            else
-              bckiter->removeValue(false, nullptr, msr);
-          } else if (itr->value.IsUint64()) {
-            auto val = itr->value.GetUint64();
-            if (val != msr->getDefault())
-              bckiter->setValue(false, nullptr, msr, static_cast<double>(val));
-            else
-              bckiter->removeValue(false, nullptr, msr);
-          } else if (itr->value.IsBool()) {
-            auto val = itr->value.GetBool();
-            if (val)
-              bckiter->setValue(false, nullptr, msr, 1);
-            else
-              bckiter->removeValue(false, nullptr, msr);
-          } else if (itr->value.IsNull()) {
-            if (msr->getValue(buckets.back()))
-              bckiter->removeValue(false, nullptr, msr);
-          }
+      // Read the measures
+      int fieldcounter = 1;
+      for (auto msr = ForecastMeasure::begin(); msr != ForecastMeasure::end();
+           ++msr) {
+        if (!msr->getStored()) continue;
+        auto val = res.getValueDoubleOrNull(i, ++fieldcounter);
+        if (!val.second) {
+          if (val.first != msr->getDefault())
+            bckiter->setValue(false, nullptr, &*msr, val.first);
+          else
+            bckiter->removeValue(false, nullptr, &*msr);
         }
+      }
 
-        // Update the supply side
-        if (bckiter->getEnd() > Plan::instance().getFcstCurrent() &&
-            f->getPlanned()) {
-          auto tmp = Measures::forecastnet->getValue(*bckiter);
-          if (tmp)
-            bckiter->getOrCreateForecastBucket()->setQuantity(tmp);
-          else {
-            auto fcstbckt = bckiter->getOrCreateForecastBucket();
-            if (fcstbckt)
-              bckiter->getOrCreateForecastBucket()->setQuantity(0.0);
-          }
+      // Update the supply side
+      if (bckiter->getEnd() > Plan::instance().getFcstCurrent() &&
+          f->getPlanned()) {
+        auto tmp = Measures::forecastnet->getValue(*bckiter);
+        if (tmp)
+          bckiter->getOrCreateForecastBucket()->setQuantity(tmp);
+        else {
+          auto fcstbckt = bckiter->getOrCreateForecastBucket();
+          if (fcstbckt) bckiter->getOrCreateForecastBucket()->setQuantity(0.0);
         }
       }
     }
@@ -1229,9 +1181,9 @@ void ForecastData::flush() {
   try {
     auto dbconnection = Plan::instance().getDBconnection();
     thread_local static DatabaseReader db(dbconnection);
-    thread_local static DatabasePreparedStatement<48> stmt;
-    thread_local static DatabasePreparedStatement<0> stmt_begin;
-    thread_local static DatabasePreparedStatement<0> stmt_end;
+    thread_local static DatabasePreparedStatement stmt;
+    thread_local static DatabasePreparedStatement stmt_begin;
+    thread_local static DatabasePreparedStatement stmt_end;
     thread_local static short mode = 0;
     if (mode == 0) {
       // We use a single, dedicated database connection for this
@@ -1240,41 +1192,69 @@ void ForecastData::flush() {
       else {
         mode = 2;
         try {
-          string str =
-              "with cte (st, nd, val) as ( values "
-              "($1, $2, $3),"
-              "($4, $5, $6),"
-              "($7, $8, $9),"
-              "($10, $11, $12),"
-              "($13, $14, $15),"
-              "($16, $17, $18),"
-              "($19, $20, $21),"
-              "($22, $23, $24),"
-              "($25, $26, $27),"
-              "($28, $29, $30),"
-              "($31, $32, $33),"
-              "($34, $35, $36),"
-              "($37, $38, $39),"
-              "($40, $41, $42),"
-              "($43, $44, $45)"
-              ")"
-              "insert into forecastplan";
-          auto partition = ForecastBase::getForecastPartitionStatic();
-          if (partition != -1) {
-            str += "_";
-            str += to_string(partition);
+          stringstream str;
+          str << "with cte (st, nd";
+          for (auto msr = ForecastMeasure::begin();
+               msr != ForecastMeasure::end(); ++msr) {
+            if (msr->getStored()) str << ", " << msr->getName();
           }
-          str +=
-              "  as fcstplan "
-              "(item_id,location_id,customer_id,startdate,enddate,value)"
-              "  select $46,$47,$48,st::timestamp,nd::timestamp,val::jsonb"
-              "  from cte where st is not null "
-              "on conflict(item_id, location_id, customer_id, startdate) "
-              "do update set value = excluded.value "
-              "where fcstplan.value is distinct from excluded.value";
-          stmt = DatabasePreparedStatement<48>(db, "forecastplan_write", str);
-          stmt_begin = DatabasePreparedStatement<0>(db, "begin_trx", "begin");
-          stmt_end = DatabasePreparedStatement<0>(db, "commit_trx", "commit");
+          str << ") as ( values ";
+          int argcounter = 0;
+          for (short r = 0; r < 10; ++r) {
+            str << "($" << ++argcounter << ", $" << ++argcounter;
+            for (auto msr = ForecastMeasure::begin();
+                 msr != ForecastMeasure::end(); ++msr) {
+              if (msr->getStored()) str << ", $" << ++argcounter << "::numeric";
+            }
+            if (r < 9)
+              str << "),";
+            else
+              str << ")";
+          }
+          str << ") insert into forecastplan";
+          auto partition = ForecastBase::getForecastPartitionStatic();
+          if (partition != -1) str << "_" << partition;
+          str << " as fcstplan "
+                 "(item_id,location_id,customer_id,startdate,enddate";
+          for (auto msr = ForecastMeasure::begin();
+               msr != ForecastMeasure::end(); ++msr) {
+            if (msr->getStored()) str << ", " << msr->getName();
+          }
+          str << ") select $" << (argcounter + 1) << ", $" << (argcounter + 2)
+              << ", $" << (argcounter + 3) << ",st::timestamp, nd::timestamp";
+          for (auto msr = ForecastMeasure::begin();
+               msr != ForecastMeasure::end(); ++msr) {
+            if (msr->getStored()) str << ", " << msr->getName();
+          }
+          str << " from cte where st is not null "
+                 "on conflict(item_id, location_id, customer_id, startdate) "
+                 "do update set ";
+          bool first = true;
+          for (auto msr = ForecastMeasure::begin();
+               msr != ForecastMeasure::end(); ++msr) {
+            if (!msr->getStored()) continue;
+            if (first)
+              first = false;
+            else
+              str << ", ";
+            str << msr->getName() << " = excluded." << msr->getName();
+          }
+          str << " where ";
+          first = true;
+          for (auto msr = ForecastMeasure::begin();
+               msr != ForecastMeasure::end(); ++msr) {
+            if (!msr->getStored()) continue;
+            if (first)
+              first = false;
+            else
+              str << " or ";
+            str << "fcstplan." << msr->getName()
+                << " is distinct from excluded." << msr->getName();
+          }
+          stmt = DatabasePreparedStatement(db, "forecastplan_write", str.str(),
+                                           argcounter + 3);
+          stmt_begin = DatabasePreparedStatement(db, "begin_trx", "begin");
+          stmt_end = DatabasePreparedStatement(db, "commit_trx", "commit");
         } catch (exception& e) {
           logger << "Error creating forecastplan export:" << endl;
           logger << e.what() << endl;
@@ -1289,7 +1269,8 @@ void ForecastData::flush() {
       // start a transaction
       DatabaseResult(db, stmt_begin);
       bool first = true;
-      short argcount = 0;
+      int argcount = -1;
+      auto argmax = stmt.getArgs();
       for (auto& i : buckets) {
         if (!i.isDirty()) continue;
         if (first) {
@@ -1297,19 +1278,27 @@ void ForecastData::flush() {
               !i.getForecast()->getForecastLocation() ||
               !i.getForecast()->getForecastCustomer())
             break;
-          stmt.setArgument(45, i.getForecast()->getForecastItem()->getName());
-          stmt.setArgument(46,
+          stmt.setArgument(argmax - 3,
+                           i.getForecast()->getForecastItem()->getName());
+          stmt.setArgument(argmax - 2,
                            i.getForecast()->getForecastLocation()->getName());
-          stmt.setArgument(47,
+          stmt.setArgument(argmax - 1,
                            i.getForecast()->getForecastCustomer()->getName());
           first = false;
         }
-        stmt.setArgument(argcount, i.getStart());
-        stmt.setArgument(argcount + 1, i.getEnd());
-        stmt.setArgument(argcount + 2, i.toString(false, false));
-        if (argcount < 42)
-          argcount += 3;
-        else {
+        stmt.setArgument(++argcount, i.getStart());
+        stmt.setArgument(++argcount, i.getEnd());
+        for (auto msr = ForecastMeasure::begin(); msr != ForecastMeasure::end();
+             ++msr) {
+          if (!msr->getStored()) continue;
+          auto t = i.getValueAndFound(*msr);
+          stmt.setArgument(
+              ++argcount,
+              t.second ? to_string(round(t.first * 1e8) / 1e8) : "");
+        }
+
+        if (argcount >= argmax - 4) {
+          // All records in prepared statements are full now
           try {
             DatabaseResult(db, stmt);
           } catch (exception& e) {
@@ -1319,17 +1308,12 @@ void ForecastData::flush() {
             db.executeSQL(rollback);
             DatabaseResult(db, stmt_begin);
           }
-          argcount = 0;
+          argcount = -1;
         }
         i.clearDirty();
       }
       if (argcount > 0) {
-        while (argcount <= 42) {
-          stmt.setArgument(argcount, "");
-          stmt.setArgument(argcount + 1, "");
-          stmt.setArgument(argcount + 2, "");
-          argcount += 3;
-        }
+        while (argcount < argmax - 4) stmt.setArgument(++argcount, "");
         try {
           DatabaseResult(db, stmt);
         } catch (exception& e) {

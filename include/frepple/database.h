@@ -397,19 +397,21 @@ class DatabaseReader : public NonCopyable {
   PGconn* conn = nullptr;
 };
 
-template <short PARAMS>
 class DatabasePreparedStatement : public DatabaseStatementBase {
-  template <short P>
-  friend ostream& operator<<(ostream&, const DatabasePreparedStatement<P>&);
+  friend ostream& operator<<(ostream&, const DatabasePreparedStatement&);
 
  public:
   DatabasePreparedStatement(){};
 
   DatabasePreparedStatement(DatabaseReader& db, const string& stmtName,
-                            const string& sql)
-      : name(stmtName) {
-    PGresult* res = PQprepare(db.getConnection(), name.c_str(), sql.c_str(),
-                              PARAMS, nullptr);
+                            const string& sql, int argcount = 0)
+      : name(stmtName), args(argcount) {
+    if (args < 0) args = 0;
+    if (args > 1000)
+      throw DataException("Prepared statements are limited to 1000 arguments");
+    if (args) arg.resize(args);
+    PGresult* res =
+        PQprepare(db.getConnection(), name.c_str(), sql.c_str(), args, nullptr);
     if (PQresultStatus(res) != PGRES_COMMAND_OK) {
       auto msg = db.getError();
       PQclear(res);
@@ -418,74 +420,44 @@ class DatabasePreparedStatement : public DatabaseStatementBase {
     PQclear(res);
   }
 
+  int getArgs() const { return args; }
+
   /* Execute the statement on a database connection. */
   virtual PGresult* execute(PGconn* conn) {
-    const char* paramValues[PARAMS];
-    for (int idx = 0; idx < PARAMS; ++idx)
-      paramValues[idx] = arg[idx].empty() ? nullptr : arg[idx].c_str();
-    return PQexecPrepared(conn, name.c_str(), PARAMS, paramValues, nullptr,
-                          nullptr, 0);
+    if (!args)
+      return PQexecPrepared(conn, name.c_str(), 0, nullptr, nullptr, nullptr,
+                            0);
+    else {
+      const char* paramValues[args];
+      for (int idx = 0; idx < args; ++idx)
+        paramValues[idx] = arg[idx].empty() ? nullptr : arg[idx].c_str();
+      return PQexecPrepared(conn, name.c_str(), args, paramValues, nullptr,
+                            nullptr, 0);
+    }
   }
 
   void setArgument(short int i, const string& s) {
-    if (i < 0 || i >= PARAMS)
+    if (i < 0 || i >= args)
       throw RuntimeException("Setting invalid argument of prepared statement");
     arg[i] = s;
   }
 
  private:
   string name;
-  string arg[PARAMS];
+  int args = 0;
+  vector<string> arg;
 };
 
-template <>
-class DatabasePreparedStatement<0> : public DatabaseStatementBase {
-  template <short P>
-  friend ostream& operator<<(ostream&, const DatabasePreparedStatement<P>&);
-
- public:
-  DatabasePreparedStatement(){};
-
-  inline DatabasePreparedStatement(DatabaseReader& db, const string& stmtName,
-                                   const string& sql)
-      : name(stmtName) {
-    PGresult* res =
-        PQprepare(db.getConnection(), name.c_str(), sql.c_str(), 0, nullptr);
-    if (PQresultStatus(res) != PGRES_COMMAND_OK) {
-      auto msg = db.getError();
-      PQclear(res);
-      throw RuntimeException("Can't compile prepared statement: " + msg);
-    }
-    PQclear(res);
-  }
-
-  virtual PGresult* execute(PGconn* conn) {
-    return PQexecPrepared(conn, name.c_str(), 0, nullptr, nullptr, nullptr, 0);
-  }
-
- private:
-  string name;
-};
-
-template <short PARAMS>
-inline ostream& operator<<(ostream& os,
-                           const DatabasePreparedStatement<PARAMS>& stmt) {
+inline ostream& operator<<(ostream& os, const DatabasePreparedStatement& stmt) {
   os << stmt.name;
-  if (PARAMS > 0) {
-    for (int i = 0; i < PARAMS; ++i) {
+  if (stmt.args > 0) {
+    for (int i = 0; i < stmt.args; ++i) {
       if (i)
         os << ", " << stmt.arg[i];
       else
         os << " with arguments " << stmt.arg[i];
     }
   }
-  return os;
-}
-
-template <>
-inline ostream& operator<<(ostream& os,
-                           const DatabasePreparedStatement<0>& stmt) {
-  os << stmt.name;
   return os;
 }
 
@@ -499,8 +471,7 @@ class DatabaseResult : public NonCopyable {
   DatabaseResult(DatabaseReader& db, DatabaseStatement& stmt);
 
   /* Constructor which runs a prepared statement. */
-  template <short PARAMS>
-  DatabaseResult(DatabaseReader& db, DatabasePreparedStatement<PARAMS>& stmt) {
+  DatabaseResult(DatabaseReader& db, DatabasePreparedStatement& stmt) {
     res = stmt.execute(db.getConnection());
     if (PQresultStatus(res) != PGRES_TUPLES_OK &&
         PQresultStatus(res) != PGRES_COMMAND_OK) {
@@ -535,6 +506,12 @@ class DatabaseResult : public NonCopyable {
   /* Get a field value converted to a double. */
   double getValueDouble(int i, int j) const {
     return atof(PQgetvalue(res, i, j));
+  }
+
+  pair<double, bool> getValueDoubleOrNull(int i, int j) const {
+    return PQgetisnull(res, i, j)
+               ? make_pair<double, bool>(0.0, true)
+               : make_pair<double, bool>(atof(PQgetvalue(res, i, j)), false);
   }
 
   /* Get a field value converted to an integer. */

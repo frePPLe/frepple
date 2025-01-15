@@ -60,7 +60,9 @@ location        location          | Optional location where the material is cons
                                     operation's location is used.
                                   | Only in exceptional cases where the material is to
                                     be consumed or produced at a different location
-                                    should this field be filled.                    
+                                    should this field be filled.
+                                  | This field is currently only supported for consuming
+                                    items (i.e. the quantity is negative).               
 quantity        double            | Material quantity being consumed or produced per unit of
                                     the manufacturing order.
                                   | Default value is 1.0.

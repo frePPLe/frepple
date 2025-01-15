@@ -37,6 +37,7 @@ from freppledb.execute.models import Task
 import freppledb.output as output
 import freppledb.input as input
 import freppledb.common as common
+from freppledb.common.auth import getWebserviceAuthorization
 from freppledb.common.models import Parameter, User, Notification
 
 
@@ -295,13 +296,23 @@ class remote_commands(TransactionTestCase):
         del os.environ["FREPPLE_TEST"]
         super().tearDown()
 
-    def test_remote_command(self):
-        # Create a header for basic authentication
-        headers = {
-            "HTTP_AUTHORIZATION": "Basic "
-            + base64.b64encode("admin:admin".encode()).decode()
-        }
+    def test_remote_command_basic_authentication(self):
+        self.remote_commands_base(
+            {
+                "HTTP_AUTHORIZATION": "Basic %s"
+                % base64.b64encode("admin:admin".encode()).decode()
+            }
+        )
 
+    def test_remote_command_jwt_authentication(self):
+        self.remote_commands_base(
+            {
+                "HTTP_AUTHORIZATION": "Bearer %s"
+                % getWebserviceAuthorization(user="admin", exp=3600),
+            }
+        )
+
+    def remote_commands_base(self, headers):
         # Run a plan
         response = self.client.post(
             "/execute/api/runplan/", {"constraint": 1, "plantype": 1}, **headers

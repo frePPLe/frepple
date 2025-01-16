@@ -198,6 +198,7 @@ class MultiDBMiddleware:
                     authmethod = None
                 if authmethod == "basic":
                     # Basic authentication
+                    request.api = True  # API requests don't start the web service
                     auth_header_split = (
                         base64.b64decode(auth_header_split[1])
                         .decode("iso-8859-1")
@@ -210,7 +211,6 @@ class MultiDBMiddleware:
                         # Active user
                         login(request, user)
                         request.user = user
-                        request.api = True  # API requests don't start the web service
                 elif authmethod == "bearer" or webtoken:
                     # JWT webtoken authentication
                     decoded = None

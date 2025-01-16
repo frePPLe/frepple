@@ -878,54 +878,70 @@ class OverviewReport(GridPivot):
             end as safetystock,
             case when d.history then json_build_object()
             else (
-             select json_build_object(
-               'work_in_progress_mo', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
-               'work_in_progress_mo_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
-               'work_in_progress_mo_proposed', sum(case when operationplan.status = 'proposed' and operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
-               'on_order_po', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
-               'on_order_po_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
-               'on_order_po_proposed', sum(case when operationplan.status = 'proposed' and operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
-               'proposed_ordering', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (operationplan.startdate >= greatest(d.startdate,arguments.report_startdate) and operationplan.startdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'in_transit_do', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
-               'in_transit_do_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
-               'in_transit_do_proposed', sum(case when operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
-               'total_in_progress', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'total_in_progress_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'total_in_progress_proposed', sum(case when operationplan.status = 'proposed' and (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'consumed', sum(case when (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumed_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumed_proposed', sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedMO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedMO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedFcst', sum(case when operationplan.type = 'DLVR' and operationplan.demand_id is null and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedDO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedDO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'consumedSO', sum(case when operationplan.demand_id is not null and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-               'produced', sum(case when (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'produced_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'produced_proposed', sum(case when operationplan.status = 'proposed' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedMO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedMO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedDO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedDO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedPO_confirmed', sum(case when operationplan.status in ('approved','confirmed','completed') and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'producedPO_proposed', sum(case when operationplan.status = 'proposed' and operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-               'max_delay', max(extract(epoch from case when opm.flowdate >= greatest(d.startdate,arguments.report_currentdate) and opm.flowdate < d.enddate then operationplan.delay else interval '0 second' end) / 86400)
-               )
-             from operationplanmaterial opm
+             with cte as (select greatest(d.startdate,arguments.report_startdate) as bucketstart),
+				opm as (
+			 select opm.quantity,
+					opm.flowdate,
+					operationplan.status in ('approved','confirmed','completed') as confirmed_opplan,
+					operationplan.status = 'proposed' as proposed_opplan,
+					operationplan.startdate,
+					operationplan.enddate,
+					operationplan.type,
+					operationplan.demand_id,
+					operationplan.delay,
+					(opm.flowdate >= bucketstart and opm.flowdate < d.enddate) flow_in_bucket,
+					(startdate < d.enddate and enddate >= d.enddate) flow_in_progress
+			 from operationplanmaterial opm
+			 cross join cte
              inner join operationplan
              on operationplan.reference = opm.operationplan_id
                and ((startdate < d.enddate and enddate >= d.enddate)
-               or (opm.flowdate >= greatest(d.startdate,arguments.report_startdate) and opm.flowdate < d.enddate)
+               or (opm.flowdate >= bucketstart and opm.flowdate < d.enddate)
                or (operationplan.type = 'DLVR' and due < d.enddate and due >= case when arguments.report_currentdate >= d.startdate and arguments.report_currentdate < d.enddate then '1970-01-01'::timestamp else d.startdate end))
              where opm.item_id = item.name
                and opm.location_id = location.name
-               and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
+               and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch))
+             select json_build_object(
+               'work_in_progress_mo', sum(case when flow_in_progress and opm.quantity > 0 and opm.type = 'MO' then opm.quantity else 0 end),
+               'work_in_progress_mo_confirmed', sum(case when opm.confirmed_opplan and flow_in_progress and opm.quantity > 0 and opm.type = 'MO' then opm.quantity else 0 end),
+               'work_in_progress_mo_proposed', sum(case when opm.proposed_opplan and opm.proposed_opplan and flow_in_progress and opm.quantity > 0 and opm.type = 'MO' then opm.quantity else 0 end),
+               'on_order_po', sum(case when flow_in_progress and opm.quantity > 0 and opm.type = 'PO' then opm.quantity else 0 end),
+               'on_order_po_confirmed', sum(case when opm.confirmed_opplan and flow_in_progress and opm.quantity > 0 and opm.type = 'PO' then opm.quantity else 0 end),
+               'on_order_po_proposed', sum(case when opm.proposed_opplan and flow_in_progress and opm.quantity > 0 and opm.type = 'PO' then opm.quantity else 0 end),
+               'proposed_ordering', sum(case when opm.proposed_opplan and opm.type = 'PO' and (opm.startdate >= bucketstart and opm.startdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'in_transit_do', sum(case when flow_in_progress and opm.quantity > 0 and opm.type = 'DO' then opm.quantity else 0 end),
+               'in_transit_do_confirmed', sum(case when opm.confirmed_opplan and flow_in_progress and opm.quantity > 0 and opm.type = 'DO' then opm.quantity else 0 end),
+               'in_transit_do_proposed', sum(case when opm.proposed_opplan and flow_in_progress and opm.quantity > 0 and opm.type = 'DO' then opm.quantity else 0 end),
+               'total_in_progress', sum(case when flow_in_progress and opm.quantity > 0 then opm.quantity else 0 end),
+               'total_in_progress_confirmed', sum(case when opm.confirmed_opplan and flow_in_progress and opm.quantity > 0 then opm.quantity else 0 end),
+               'total_in_progress_proposed', sum(case when opm.proposed_opplan and flow_in_progress and opm.quantity > 0 then opm.quantity else 0 end),
+               'consumed', sum(case when flow_in_bucket and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumed_confirmed', sum(case when opm.confirmed_opplan and flow_in_bucket and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumed_proposed', sum(case when opm.proposed_opplan and flow_in_bucket and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedMO', sum(case when opm.type = 'MO' and flow_in_bucket and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedMO_confirmed', sum(case when opm.confirmed_opplan and opm.type = 'MO' and flow_in_bucket and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedMO_proposed', sum(case when opm.proposed_opplan and opm.type = 'MO' and flow_in_bucket and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedDO', sum(case when opm.type = 'DO' and flow_in_bucket and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedFcst', sum(case when opm.type = 'DLVR' and opm.demand_id is null and flow_in_bucket and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedDO_confirmed', sum(case when opm.confirmed_opplan and opm.type = 'DO' and flow_in_bucket and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedDO_proposed', sum(case when opm.proposed_opplan and opm.type = 'DO' and flow_in_bucket and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedSO', sum(case when opm.demand_id is not null and flow_in_bucket and opm.quantity < 0 then -opm.quantity else 0 end),
+               'produced', sum(case when flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'produced_confirmed', sum(case when opm.confirmed_opplan and flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'produced_proposed', sum(case when opm.proposed_opplan and flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedMO', sum(case when opm.type = 'MO' and flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedMO_confirmed', sum(case when opm.confirmed_opplan and opm.type = 'MO' and flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedMO_proposed', sum(case when opm.proposed_opplan and opm.type = 'MO' and flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedDO', sum(case when opm.type = 'DO' and flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedDO_confirmed', sum(case when opm.confirmed_opplan and opm.type = 'DO' and flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedDO_proposed', sum(case when opm.proposed_opplan and opm.type = 'DO' and flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedPO', sum(case when opm.type = 'PO' and flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedPO_confirmed', sum(case when opm.confirmed_opplan and opm.type = 'PO' and flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedPO_proposed', sum(case when opm.proposed_opplan and opm.type = 'PO' and flow_in_bucket and opm.quantity > 0 then opm.quantity else 0 end),
+               'max_delay', max(extract(epoch from case when opm.flowdate >= bucketstart and opm.flowdate < d.enddate then opm.delay else interval '0 second' end) / 86400)
+               )
+             from opm
+             cross join cte
              )
            end as ongoing,
            floor(extract(epoch from coalesce(

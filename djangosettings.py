@@ -65,7 +65,9 @@ DATABASES = {
         "HOST": os.environ.get("POSTGRES_HOST", ""),
         # Specify the port number when using a TCP socket.
         "PORT": os.environ.get("POSTGRES_PORT", ""),
-        "OPTIONS": {},
+        "OPTIONS": {
+            "options": "-c lock_timeout=300000"  # Timeout (in milliseconds) to acquire a lock
+        },
         "CONN_MAX_AGE": 600,
         "CONN_HEALTH_CHECKS": True,
         "TEST": {
@@ -93,7 +95,7 @@ DATABASES = {
         "FREPPLE_PORT": f"127.0.0.1:{i+8002}",
     }
     # Adjust the range to include extra scenarios in the list.
-    # When changing this, your apache configuration file also needs a matching adjustment. 
+    # When changing this, your apache configuration file also needs a matching adjustment.
     for i in range(3)
 }
 

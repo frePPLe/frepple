@@ -1312,29 +1312,12 @@ class ComputePeriodOfCover(PlanTask):
             -- all quantities are then aggregated
             update item
             set periodofcover = floor(extract(epoch from coalesce(
-                  -- backlogged demand exceeds the inventory: 0 days of inventory
-                  (
-                  select '0 days'::interval
-                  from operationplanmaterial
-                  %s
-                  inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
-                  where operationplanmaterial.item_id = item.name and
-                    (
-                      (operationplanmaterial.quantity < 0 and operationplan.type = 'DLVR' and operationplan.due < %%s)
-                      or ( operationplanmaterial.quantity > 0 and operationplan.status = 'closed' and operationplan.type = 'STCK')
-                      or ( operationplanmaterial.quantity > 0 and operationplan.status in ('approved','confirmed','completed') and flowdate <= %%s + interval '1 second')
-                    )
-                  having sum(operationplanmaterial.quantity) <0
-                  limit 1
-                  ),
                   -- Normal case
                   (
                   select case
                     when periodofcover = 999 * 24 * 3600
                       then '999 days'::interval
-                    when onhand > 0.00001
-                      then date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - %%s, '999 days'::interval))
-                    else null
+                    else date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - %%s, '999 days'::interval))
                     end
                   from operationplanmaterial
                   %s
@@ -1373,17 +1356,12 @@ class ComputePeriodOfCover(PlanTask):
                     else ""
                 ),
                 (
-                    "inner join cluster_item_tmp on cluster_item_tmp.name = operationplanmaterial.item_id"
-                    if cluster != -1
-                    else ""
-                ),
-                (
                     "where name in (select name from cluster_item_tmp)"
                     if cluster != -1
                     else ""
                 ),
             ),
-            ((currentdate,) * 5),
+            ((currentdate,) * 3),
         )
 
         if cluster != -1:

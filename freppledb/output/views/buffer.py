@@ -968,6 +968,19 @@ class OverviewReport(GridPivot):
                   order by flowdate desc, id desc
                   limit 1
                  ),
+                 -- No inventory and no backlog: use the date of next consumer
+                 (
+                 select greatest('0 days'::interval, least(
+                     date_trunc('day', justify_interval(flowdate - greatest(d.startdate,arguments.report_currentdate) - coalesce(operationplan.delay, '0 day'::interval))),
+                     '999 days'::interval
+                     ))
+                  from operationplanmaterial
+                  inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
+                  where operationplanmaterial.quantity < 0
+                    and operationplanmaterial.item_id = item.name and operationplanmaterial.location_id = location.name
+                  order by flowdate asc, id asc
+                  limit 1
+                 ),
                  '999 days'::interval
                  ))/86400) periodofcover
            from

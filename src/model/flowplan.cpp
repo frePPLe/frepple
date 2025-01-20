@@ -556,22 +556,23 @@ PyObject* FlowPlan::create(PyTypeObject* pytype, PyObject* args,
 }
 
 Duration FlowPlan::getPeriodOfCover() const {
-  double left_for_consumption = getOnhand();
-
   // Case 1: If the backlog is more than the onhand => period of cover is 0
   // We consider the initial stock - all confirmed consumptions - all overdue
   // demand
-  left_for_consumption = getBuffer()->getOnHand();
+  double left_for_consumption = getBuffer()->getOnHand();
   auto fpiter = getBuffer()->getFlowPlans().begin(this);
   fpiter++;
+  bool found = false;
   while (fpiter != getBuffer()->getFlowPlans().end()) {
     // subtract deliveries
     if (fpiter->getQuantity() < 0.0 && fpiter->getDate() >= getDate() &&
         fpiter->getOperationPlan()
             ->getOperation()
             ->hasType<OperationDelivery>() &&
-        fpiter->getOperationPlan()->getDemand()->getDue() < getDate())
+        fpiter->getOperationPlan()->getDemand()->getDue() < getDate()) {
       left_for_consumption += fpiter->getQuantity();
+      found = true;
+    }
     // add confirmed/completed/approved replenishments
     if (fpiter->getQuantity() > 0.0 &&
         fpiter->getDate() <= getDate() + Duration(1L) &&
@@ -581,7 +582,7 @@ Duration FlowPlan::getPeriodOfCover() const {
       left_for_consumption += fpiter->getQuantity();
     ++fpiter;
   }
-  if (left_for_consumption < ROUNDING_ERROR) return Duration(0L);
+  if (found && left_for_consumption < ROUNDING_ERROR) return Duration(0L);
 
   // Case 2: Regular case
   left_for_consumption = getOnhand();

@@ -177,30 +177,31 @@ class TaskReport(GridReport):
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
-        # Loop over all accordion of all apps and directories
-        accordions = set()
-        accord = ""
+        loop1 = set()
         for commandname, appname in get_commands().items():
             try:
-                accord = getattr(
+                cmd = getattr(
                     import_module("%s.management.commands.%s" % (appname, commandname)),
                     "Command",
                 )
-                if getattr(accord, "index", -1) >= 0 and getattr(
-                    accord, "getHTML", None
-                ):
-                    accord.name = commandname
-                    accordions.add(accord)
+                if getattr(cmd, "index", -1) >= 0 and getattr(cmd, "getHTML", None):
+                    cmd.name = commandname
+                    loop1.add(cmd)
             except Exception as e:
                 logger.warning(
                     "Couldn't import getHTML method from %s.management.commands.%s: %s"
                     % (appname, commandname, e)
                 )
 
-        accordions = sorted(accordions, key=operator.attrgetter("index"))
+        loop2 = []
+        for cmd in sorted(loop1, key=operator.attrgetter("index")):
+            html = cmd.getHTML(request)
+            if html:
+                loop2.append({"command": cmd, "html": html})
 
         # Send to template
-        return {"commandlist": accordions}
+        x = {"commandlist": loop2, "halfway": len(loop2) // 2 + 1}
+        return x
 
     @classmethod
     def query(reportclass, request, basequery, sortsql="1 asc"):

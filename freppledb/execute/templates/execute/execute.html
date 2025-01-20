@@ -236,30 +236,28 @@ loadComplete : function(data) {
   <h1>{% trans "launch tasks"|capfirst %}</h1>
 </div></div>
 <div class="row mb-2">
-	<div id="tasks" class="accordion col" role="tablist" aria-multiselectable="true" style="max-width:900px; min-width: 600px">
 	{% if perms.auth.auth.generate_plan or perms.auth.copy_scenario or perms.auth.release_scenario or perms.auth.promote_scenario or perms.auth.run_db %}
 	<!--User has some permissions -->
-    {% for command in commandlist %}
-      {% call_method command "getHTML" request as HTMLcode %}
-      {% if HTMLcode %}
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="{{ forloop.counter }}Heading">
-          <button class="accordion-button fs-5" data-bs-toggle="collapse" data-bs-target="#Accord{{ forloop.counter }}" aria-expanded="true" aria-controls="Accord{{ forloop.counter }}">
-              {{ command.title|capfirst }}
-            {% if command.help_url %}<div class='ms-3 fa fa-question d-none d-md-inline-block float-end' onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{ command.help_url }}')"></div>{% endif %}
+    <div class="col-lg-6 col-12">
+    {% for cmd in commandlist %}
+      {% if forloop.counter0 == halfway %}
+        </div><div class="col-lg-6 col-12">
+      {% endif %}
+      <div class="card mb-2">
+        <div class="card-header" id="{{ forloop.counter }}Heading">
+          <button class="accordion-button fs-5 float-start" data-bs-toggle="collapse" data-bs-target="#Accord{{ forloop.counter }}" aria-expanded="true" aria-controls="Accord{{ forloop.counter }}">
+              {{ cmd.command.title|capfirst }}
+            {% if command.command.help_url %}<div class='ms-3 fa fa-question d-none d-md-inline-block float-end' onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{ cmd.command.help_url }}')"></div>{% endif %}
           </button>
-        </h2>
-        <div id="Accord{{ forloop.counter }}" data-task="#{{ command.name }}" data-bs-parent="#tasks" class="accordion-collapse collapse{% if forloop.counter == 1 %} show{% endif %}" aria-labelledby="{{ forloop.counter }}Heading">
-          <div class="accordion-body">
-            {{ HTMLcode }}
-          </div>
+        </div>
+        <div id="Accord{{ forloop.counter }}" data-task="#{{ cmd.command.name }}" data-bs-parent="#tasks" class="card-body collapse{% if forloop.counter == 1 %} show{% endif %}" aria-labelledby="{{ forloop.counter }}Heading">
+            {{ cmd.html }}
         </div>
       </div>
-      {% endif %}
     {% endfor %}
+    </div>
 	{% else %}
 	{% trans "Sorry, You don't have any execute permissions..." %}
 	{% endif %}
-	</div>
 	</div> <!-- end row -->
 {% endblock %}

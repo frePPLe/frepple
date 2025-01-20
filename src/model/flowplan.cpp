@@ -586,27 +586,18 @@ Duration FlowPlan::getPeriodOfCover() const {
 
   // Case 2: Regular case
   left_for_consumption = getOnhand();
-  if (left_for_consumption > 0) {
-    auto fpiter2 = getBuffer()->getFlowPlans().begin(this);
-    ++fpiter2;
-    while (fpiter2 != getBuffer()->getFlowPlans().end()) {
-      if (fpiter2->getQuantity() < 0.0) {
-        left_for_consumption += fpiter2->getQuantity();
-        if (left_for_consumption < ROUNDING_ERROR)
-          return fpiter2->getDate() - getDate();
-      }
-      ++fpiter2;
+  auto fpiter2 = getBuffer()->getFlowPlans().begin(this);
+  ++fpiter2;
+  while (fpiter2 != getBuffer()->getFlowPlans().end()) {
+    // On hand is 0, we return the next replenishment
+    if (getOnhand() == 0 && fpiter2->getQuantity() > 0.0)
+      return fpiter2->getDate() - getDate();
+    if (fpiter2->getQuantity() < 0.0) {
+      left_for_consumption += fpiter2->getQuantity();
+      if (left_for_consumption < ROUNDING_ERROR)
+        return fpiter2->getDate() - getDate();
     }
-  }
-
-  // Case 3: no stock and no backlog, use the next consumer
-  if (getOnhand() == 0) {
-    auto fpiter2 = getBuffer()->getFlowPlans().begin(this);
     ++fpiter2;
-    while (fpiter2 != getBuffer()->getFlowPlans().end()) {
-      if (fpiter2->getQuantity() < 0) return fpiter2->getDate() - getDate();
-      ++fpiter2;
-    }
   }
 
   return Duration(999L * 86400L);

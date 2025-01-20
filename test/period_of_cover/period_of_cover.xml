@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Verify the period of cover</name>
+  <description>
+  Demonstration of period of cover.
+    * Item 1 has a backlog quantity until 2025-06-30 => it's period of cover should be 0 even there is stock
+    * On 2025-06-30, on hand is 0, period of cover is the time before the next replenishment
+    * After that, the period of cover is the regular computation
+    * The last 3 records have 999 days
+  </description>
+  <current>2025-01-01T00:00:00</current>
+  <buffers>
+    <buffer name="buffer 1">
+      <item name="item 1" />
+      <location name="warehouse"/>
+      <onhand>5</onhand>
+    </buffer>
+  </buffers>
+  <suppliers>
+        <supplier name="Supplier of item 1">
+            <itemsuppliers>
+                <itemsupplier>
+                    <item name="item 1"/>
+                    <size_minimum>15</size_minimum>
+                    <leadtime>P180D</leadtime>
+                </itemsupplier>
+            </itemsuppliers>
+        </supplier>
+    </suppliers>
+  <demands>
+    <demand name="order 1 - item 1">
+      <quantity>25</quantity>
+      <due>2024-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 1"/>
+      <location name="warehouse"/>
+      <minshipment>25</minshipment>
+    </demand>
+  <demand name="order 2 - item 1">
+      <quantity>10</quantity>
+      <due>2025-08-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 1"/>
+      <location name="warehouse"/>
+    </demand>
+  <demand name="order 3 - item 1">
+      <quantity>2</quantity>
+      <due>2025-12-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 1"/>
+      <location name="warehouse"/>
+    </demand>
+  <demand name="order 4 - item 1">
+      <quantity>4</quantity>
+      <due>2026-01-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 1"/>
+      <location name="warehouse"/>
+    </demand>
+  <demand name="order 5 - item 1">
+      <quantity>10</quantity>
+      <due>2026-02-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="item 1"/>
+      <location name="warehouse"/>
+    </demand>
+  </demands>
+  <operationplans>
+        <operationplan ordertype="PO" id="PO #1 item 1">
+            <item name="item 1"/>
+            <location name="warehouse"/>
+            <end>2025-03-01T00:00:00</end>
+            <quantity>5</quantity>
+            <status>confirmed</status>
+        </operationplan>
+    </operationplans>
+
+<?python
+frepple.solver_mrp(constraints=15,loglevel=1).solve()
+
+with open("output.1.xml","wt") as output:
+  for i in frepple.buffers():
+    for j in i.flowplans:
+      print("\t%s\t%s\t%s\t%s\t%s" % (
+              j.buffer.item.name,
+              j.date,
+              j.quantity,
+              j.onhand,
+              j.period_of_cover,
+              ), file=output)
+?>
+</plan>

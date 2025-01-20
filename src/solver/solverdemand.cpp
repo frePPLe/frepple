@@ -76,12 +76,15 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
         if (m->getQuantity() - m->getPlannedQuantity() > ROUNDING_ERROR &&
             m->getDue() < Date::infiniteFuture &&
             (m->getStatus() == Demand::STATUS_OPEN ||
-             m->getStatus() == Demand::STATUS_QUOTE)) {
+             m->getStatus() == Demand::STATUS_QUOTE ||
+             (m->getStatus() == Demand::STATUS_INQUIRY &&
+              salesorder->getStatus() == Demand::STATUS_INQUIRY))) {
           salesorderlines.push_back(&*m);
         }
     } else if (salesorder->getQuantity() - salesorder->getPlannedQuantity() >
                    ROUNDING_ERROR &&
-               salesorder->getDue() < Date::infiniteFuture)
+               salesorder->getDue() < Date::infiniteFuture &&
+               salesorder->getStatus() != Demand::STATUS_INQUIRY)
       salesorderlines.push_back(const_cast<Demand*>(salesorder));
     if (salesorderlines.empty()) {
       if (loglevel > 0) logger << "  Nothing to be planned." << endl;

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <current>2025-01-01T00:00:00</current>
+  <suppliers>
+    <supplier name="Magic Supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="All products"/>
+          <location name="factory"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>
+  <demands>
+    <demand name="order 1 - open">
+      <quantity>1</quantity>
+      <due>2025-01-05T00:00:00</due>
+      <item name="item 1">
+        <owner name="All products"/> 
+      </item>
+      <location name="factory"/>
+      <status>open</status>
+    </demand>   
+    <demand name="order 2 - closed">
+      <quantity>1</quantity>
+      <due>2025-02-05T00:00:00</due>
+      <item name="item 2">
+        <owner name="All products"/> 
+      </item>
+      <location name="factory"/>
+      <status>closed</status>
+    </demand>   
+    <demand name="order 3 - quote">
+      <quantity>1</quantity>
+      <due>2025-03-05T00:00:00</due>
+      <item name="item 3">
+        <owner name="All products"/> 
+      </item>
+      <location name="factory"/>
+      <status>quote</status>
+    </demand>   
+    <demand name="order 4 - inquiry">
+      <quantity>1</quantity>
+      <due>2025-04-05T00:00:00</due>
+      <item name="item 4">
+        <owner name="All products"/> 
+      </item>
+      <location name="factory"/>
+      <status>inquiry</status>
+    </demand>       
+    <demand name="order 5" xsi:type="demand_group">
+      <members>
+        <demand name="order 5A">
+          <quantity>1</quantity>
+          <due>2025-05-05T00:00:00</due>
+          <item name="item 5A">
+            <owner name="All products"/> 
+          </item>
+          <location name="factory"/>
+        </demand>
+        <demand name="order 5B">
+          <quantity>1</quantity>
+          <due>2025-05-05T00:00:00</due>
+          <item name="item 5B">
+            <owner name="All products"/> 
+          </item>
+          <location name="factory"/>
+          <status>inquiry</status>
+        </demand>
+      </members>
+      <policy>alltogether</policy>
+    </demand>
+    <demand name="order 6" xsi:type="demand_group" status="inquiry">
+      <members>
+        <demand name="order 6A">
+          <quantity>1</quantity>
+          <due>2025-06-05T00:00:00</due>
+          <item name="item 6A">
+            <owner name="All products"/> 
+          </item>
+          <location name="factory"/>
+        </demand>
+        <!-- This inquiry gets planned because the parent is an inquiry as well. -->
+        <demand name="order 6B">
+          <quantity>1</quantity>
+          <due>2025-06-05T00:00:00</due>
+          <item name="item 6B">
+            <owner name="All products"/> 
+          </item>
+          <location name="factory"/>
+          <status>inquiry</status>
+        </demand>
+      </members>
+	  <policy>alltogether</policy>
+    </demand>
+  </demands>
+
+<?python
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+
+print("CREATING SMART UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+?>
+
+</plan>

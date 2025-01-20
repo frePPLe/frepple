@@ -719,8 +719,14 @@ void SolverCreate::solve(void* v) {
     if (!getConstraints()) {
       // Dumb unconstrained plan is running in a single thread
       for (auto& i : Demand::all())
-        if (i.getQuantity() > 0 && (i.getStatus() == Demand::STATUS_OPEN ||
-                                    i.getStatus() == Demand::STATUS_QUOTE))
+        if (i.getQuantity() > 0 &&
+            (i.getStatus() == Demand::STATUS_OPEN ||
+             i.getStatus() == Demand::STATUS_QUOTE ||
+             (i.getStatus() == Demand::STATUS_INQUIRY && i.getOwner() &&
+              i.getOwner()->hasType<DemandGroup>() &&
+              i.getOwner()->getStatus() == Demand::STATUS_INQUIRY &&
+              static_cast<DemandGroup*>(i.getOwner())->getPolicy() !=
+                  Demand::POLICY_INDEPENDENT)))
           demands_per_cluster[0].push_back(&i);
     } else if (cluster == -1 && !userexit_nextdemand) {
       // Many clusters to solve
@@ -734,7 +740,8 @@ void SolverCreate::solve(void* v) {
                 Demand::POLICY_INDEPENDENT;
         if ((isGroup || (i.getQuantity() > 0 && !isMemberOfGroup)) &&
             (i.getStatus() == Demand::STATUS_OPEN ||
-             i.getStatus() == Demand::STATUS_QUOTE))
+             i.getStatus() == Demand::STATUS_QUOTE ||
+             i.getStatus() == Demand::STATUS_INQUIRY))
           demands_per_cluster[i.getCluster()].push_back(&i);
       }
     } else if (!userexit_nextdemand) {

@@ -1,53 +1,53 @@
 grandparent item	factory	customer	2025-01-01T00:00:00	2025-02-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
-grandparent item	factory	customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":30}
+grandparent item	factory	customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":20}
 grandparent item	factory	customer	2025-03-01T00:00:00	2025-04-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 grandparent item	factory	customer	2025-04-01T00:00:00	2025-05-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 grandparent item	factory	customer	2025-05-01T00:00:00	2025-06-01T00:00:00	{}
 grandparent item	factory	customer	2025-06-01T00:00:00	2025-07-01T00:00:00	{}
 grandparent item	factory	grandparent customer	2025-01-01T00:00:00	2025-02-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
-grandparent item	factory	grandparent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":30}
+grandparent item	factory	grandparent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":20}
 grandparent item	factory	grandparent customer	2025-03-01T00:00:00	2025-04-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 grandparent item	factory	grandparent customer	2025-04-01T00:00:00	2025-05-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 grandparent item	factory	grandparent customer	2025-05-01T00:00:00	2025-06-01T00:00:00	{}
 grandparent item	factory	grandparent customer	2025-06-01T00:00:00	2025-07-01T00:00:00	{}
 grandparent item	factory	parent customer	2025-01-01T00:00:00	2025-02-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
-grandparent item	factory	parent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":30}
+grandparent item	factory	parent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":20}
 grandparent item	factory	parent customer	2025-03-01T00:00:00	2025-04-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 grandparent item	factory	parent customer	2025-04-01T00:00:00	2025-05-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 grandparent item	factory	parent customer	2025-05-01T00:00:00	2025-06-01T00:00:00	{}
 grandparent item	factory	parent customer	2025-06-01T00:00:00	2025-07-01T00:00:00	{}
 item	factory	customer	2025-01-01T00:00:00	2025-02-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
-item	factory	customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":30}
+item	factory	customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":20}
 item	factory	customer	2025-03-01T00:00:00	2025-04-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 item	factory	customer	2025-04-01T00:00:00	2025-05-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 item	factory	customer	2025-05-01T00:00:00	2025-06-01T00:00:00	{}
 item	factory	customer	2025-06-01T00:00:00	2025-07-01T00:00:00	{}
 item	factory	grandparent customer	2025-01-01T00:00:00	2025-02-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
-item	factory	grandparent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":30}
+item	factory	grandparent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":20}
 item	factory	grandparent customer	2025-03-01T00:00:00	2025-04-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 item	factory	grandparent customer	2025-04-01T00:00:00	2025-05-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 item	factory	grandparent customer	2025-05-01T00:00:00	2025-06-01T00:00:00	{}
 item	factory	grandparent customer	2025-06-01T00:00:00	2025-07-01T00:00:00	{}
 item	factory	parent customer	2025-01-01T00:00:00	2025-02-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
-item	factory	parent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":30}
+item	factory	parent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":20}
 item	factory	parent customer	2025-03-01T00:00:00	2025-04-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 item	factory	parent customer	2025-04-01T00:00:00	2025-05-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 item	factory	parent customer	2025-05-01T00:00:00	2025-06-01T00:00:00	{}
 item	factory	parent customer	2025-06-01T00:00:00	2025-07-01T00:00:00	{}
 parent item	factory	customer	2025-01-01T00:00:00	2025-02-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
-parent item	factory	customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":30}
+parent item	factory	customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":20}
 parent item	factory	customer	2025-03-01T00:00:00	2025-04-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 parent item	factory	customer	2025-04-01T00:00:00	2025-05-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 parent item	factory	customer	2025-05-01T00:00:00	2025-06-01T00:00:00	{}
 parent item	factory	customer	2025-06-01T00:00:00	2025-07-01T00:00:00	{}
 parent item	factory	grandparent customer	2025-01-01T00:00:00	2025-02-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
-parent item	factory	grandparent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":30}
+parent item	factory	grandparent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":20}
 parent item	factory	grandparent customer	2025-03-01T00:00:00	2025-04-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 parent item	factory	grandparent customer	2025-04-01T00:00:00	2025-05-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 parent item	factory	grandparent customer	2025-05-01T00:00:00	2025-06-01T00:00:00	{}
 parent item	factory	grandparent customer	2025-06-01T00:00:00	2025-07-01T00:00:00	{}
 parent item	factory	parent customer	2025-01-01T00:00:00	2025-02-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
-parent item	factory	parent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":30}
+parent item	factory	parent customer	2025-02-01T00:00:00	2025-03-01T00:00:00	{"forecastconsumed":40,"forecastnet":60,"forecastoverride":100,"forecastplanned":60,"forecasttotal":100,"ordersplanned":20}
 parent item	factory	parent customer	2025-03-01T00:00:00	2025-04-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 parent item	factory	parent customer	2025-04-01T00:00:00	2025-05-01T00:00:00	{"forecastnet":100,"forecastoverride":100,"forecastplanned":100,"forecasttotal":100}
 parent item	factory	parent customer	2025-05-01T00:00:00	2025-06-01T00:00:00	{}

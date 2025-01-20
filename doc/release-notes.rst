@@ -34,6 +34,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | In earlier releases some implementations already used a custom attribute
     field for this purpose.
 
+- | Bug fix: Sales orders in the status "inquiry" incorrectly were being planned
+    when a) the owner field is set and b) the delivery policy is set to alltogether.
+
 .. rubric:: Odoo integration
 
 - | 17, 18: Extra robostness to avoid creating manufacturing orders on

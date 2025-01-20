@@ -1122,7 +1122,7 @@ class OverviewReport(GridPivot):
                             if history
                             else (
                                 round(
-                                    (row[numfields - 8] or 0)
+                                    float(row[numfields - 8] or 0)
                                     * 100
                                     / float(row[numfields - 3])
                                 )

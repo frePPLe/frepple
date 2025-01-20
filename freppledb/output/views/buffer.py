@@ -960,7 +960,7 @@ class OverviewReport(GridPivot):
                   select case
                     when periodofcover = 999 * 24 * 3600
                       then '999 days'::interval
-                    else date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - greatest(d.startdate,arguments.report_currentdate), '999 days'::interval))
+                    else greatest (interval '0 day', date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - greatest(d.startdate,arguments.report_currentdate), '999 days'::interval)))
                     end
                   from operationplanmaterial
                   where flowdate < greatest(d.startdate,arguments.report_currentdate)

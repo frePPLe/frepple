@@ -1977,6 +1977,7 @@ class GridReport(View):
             scenario_list = scenarios.split(",") if scenarios else [request.database]
             # Make sure scenarios are in the scenario_permissions list
             if scenarios:
+                scenario_permissions = cls.getScenarios(request, *args, **kwargs)
                 scenario_list = {
                     t[0]: t[1] for t in scenario_permissions if t[0] in scenario_list
                 }

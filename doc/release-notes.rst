@@ -13,6 +13,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     that row is selected on top of the existing selection.
   | The hotkey CRTL+A selects all the rows of the current page.
 
+- | Bug fix: Users could not be set active or inactive in a scenario.
+
 .. rubric:: Demand forecasting
 
 - | The database structure for storing forecast data has been refactored.

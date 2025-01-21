@@ -40,11 +40,6 @@ def startWebService(request, **kwargs):
     """
     When a user logs in, we start loading all scenario models in memory if it isn't loaded already.
     """
-    # Exception: API requests don't start the web service
-    if hasattr(request, "api"):
-        return
-
-    # Loop over active scenarios
     from freppledb.common.models import Scenario, Parameter
 
     # Random delay to avoid simultaneous web service starts
@@ -70,7 +65,9 @@ def startWebService(request, **kwargs):
 
 
 def startWebServiceAsync(request, **kwargs):
-    Thread(target=startWebService, args=(request,), kwargs=kwargs, daemon=True).start()
+    # Note: API requests don't start the web service
+    if not hasattr(request, "api"):
+        Thread(target=startWebService, args=(request,), kwargs=kwargs, daemon=True).start()
 
 
 class WebServiceConfig(AppConfig):

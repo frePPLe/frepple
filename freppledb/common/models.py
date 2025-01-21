@@ -781,6 +781,31 @@ class User(AbstractUser):
         )
         if database:
             dblist = dblist.filter(name=database)
+
+        # A first loop to make sure the databases field is up to date
+        for usr_dflt in userlist:
+            updated = False
+            for db in dblist:
+                usr_scenario = (
+                    User.objects.using(db.name).filter(pk=usr_dflt.pk).first()
+                )
+                if usr_scenario.is_active and db.name not in usr_dflt.databases:
+                    if not usr_dflt.databases:
+                        usr_dflt.databases = [
+                            DEFAULT_DB_ALIAS,
+                            db.name,
+                        ]
+                        updated = True
+                    else:
+                        usr_dflt.databases.append(db.name)
+                        updated = True
+
+                if not usr_scenario.is_active and db.name in usr_dflt.databases:
+                    usr_dflt.databases.remove(db.name)
+                    updated = True
+            if updated:
+                usr_dflt.save(using=DEFAULT_DB_ALIAS)
+
         for db in dblist:
             for usr_dflt in userlist:
                 usr_scenario = (
@@ -804,9 +829,6 @@ class User(AbstractUser):
                         "default_scenario",
                     ]:
                         setattr(usr_scenario, f, getattr(usr_dflt, f))
-                    usr_scenario.is_active = (
-                        usr_dflt.databases and db.name in usr_dflt.databases
-                    ) or False
                     usr_scenario.databases = usr_dflt.databases
                     usr_scenario.save()
 

@@ -201,7 +201,7 @@ class PopulateForecastTable(PlanTask):
                     using (
                       select distinct item_id, location_id from forecast
                       except select distinct item_id, location_id from demand
-                      except select distinct item_id, location_id from forecastplan 
+                      except select distinct item_id, location_id from forecastplan
                          where ordersadjustment is not null or forecastoverride is not null
                       ) t
                     where t.item_id = f.item_id
@@ -543,72 +543,22 @@ class AggregateDemand(PlanTask):
             ),
         )
 
-        #
-        cursor.execute(
-            """
-            create temporary table leaf_nomore_orders on commit preserve rows as
-            (select forecastplan.item_id, forecastplan.location_id, forecastplan.customer_id,
-            forecastplan.startdate from forecastplan
-            inner join forecast on forecast.item_id = forecastplan.item_id
-                                and forecast.location_id = forecastplan.location_id
-                                and forecast.customer_id = forecastplan.customer_id
-            where forecastplan.ordersopen is not null
-            and coalesce(forecast.method, 'automatic') != 'aggregate'
-            except
-            select item_id, location_id, customer_id, startdate from demand_agg
-            where ordersopen > 0)
-            union all
-            (select forecastplan.item_id, forecastplan.location_id, forecastplan.customer_id,
-            forecastplan.startdate from forecastplan
-            inner join forecast on forecast.item_id = forecastplan.item_id
-                                and forecast.location_id = forecastplan.location_id
-                                and forecast.customer_id = forecastplan.customer_id
-            where forecastplan.orderstotal is not null
-            and coalesce(forecast.method, 'automatic') != 'aggregate'
-            except
-            select item_id, location_id, customer_id, startdate from demand_agg
-            where orderstotal > 0);
-
-            create index on leaf_nomore_orders (item_id, location_id, customer_id, startdate);
-            """
-        )
-
-        # TODO possibility to optimize this?
-        # It smells like we can avoid leaf_nomore_orders, and efficiently join directly with demand_agg.
-        # Would a new partial index on forecastplan with non-null value of ordersopen or ordertotal be worth it?
-        cursor.execute(
-            """
-            update forecastplan 
-              set ordersopen = null, ordersopenvalue = null, orderstotal = null, orderstotalvalue = null
-            from leaf_nomore_orders
-            where forecastplan.item_id = leaf_nomore_orders.item_id
-              and forecastplan.location_id = leaf_nomore_orders.location_id
-              and forecastplan.customer_id = leaf_nomore_orders.customer_id
-              and forecastplan.startdate = leaf_nomore_orders.startdate
-            """
-        )
-
-        logger.info(
-            "Aggregate - reset %d leaf node records with no more open/total in %.2f seconds"
-            % (cursor.rowcount, time() - starttime)
-        )
-
         # updating open/total orders values
         starttime = time()
         cursor.execute(
             """
-            insert into forecastplan 
+            insert into forecastplan
               (item_id, location_id, customer_id, startdate, enddate,
               orderstotal, orderstotalvalue, ordersopen, ordersopenvalue)
             select
-              item_id, location_id, customer_id, startdate, enddate,               
+              item_id, location_id, customer_id, startdate, enddate,
               demand_agg.orderstotal,
               demand_agg.orderstotalvalue,
               case when demand_agg.ordersopen = 0 then null else ordersopen end as ordersopen,
               case when demand_agg.ordersopenvalue = 0 then null else ordersopenvalue end as ordersopenvalue
             from demand_agg
             on conflict (item_id, location_id, customer_id, startdate)
-            do update set 
+            do update set
                orderstotal = excluded.orderstotal,
                orderstotalvalue = excluded.orderstotalvalue,
                ordersopen = excluded.ordersopen,
@@ -617,7 +567,17 @@ class AggregateDemand(PlanTask):
               excluded.orderstotal is distinct from forecastplan.orderstotal
               or excluded.orderstotalvalue is distinct from forecastplan.orderstotalvalue
               or excluded.ordersopen is distinct from forecastplan.ordersopen
-              or excluded.ordersopenvalue is distinct from forecastplan.ordersopenvalue
+              or excluded.ordersopenvalue is distinct from forecastplan.ordersopenvalue;
+
+            -- Handle when there is no match in demand_agg
+            UPDATE forecastplan
+            SET ordersopen = NULL, ordersopenvalue = NULL, orderstotal = NULL, orderstotalvalue = NULL
+            where not exists (select 1 from demand_agg
+            WHERE forecastplan.item_id = demand_agg.item_id
+            AND forecastplan.location_id = demand_agg.location_id
+            AND forecastplan.customer_id = demand_agg.customer_id
+            AND forecastplan.startdate = demand_agg.startdate);
+
             """
         )
         logger.info(
@@ -631,7 +591,7 @@ class AggregateDemand(PlanTask):
             """
             delete from forecastplan
             where jsonb_strip_nulls(
-              to_jsonb(forecastplan) 
+              to_jsonb(forecastplan)
               - array['customer_id', 'item_id', 'location_id', 'startdate', 'enddate']
               ) = '{}'::jsonb
             """
@@ -648,7 +608,6 @@ class AggregateDemand(PlanTask):
         cursor.execute("drop table location_hierarchy")
         cursor.execute("drop table customer_hierarchy")
         cursor.execute("drop table demand_agg")
-        cursor.execute("drop table leaf_nomore_orders")
         logger.info("Aggregate - wrapping up in %.2f seconds" % (time() - starttime))
 
 

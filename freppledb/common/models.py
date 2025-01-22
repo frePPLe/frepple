@@ -497,10 +497,25 @@ class User(AbstractUser):
         self.is_staff = True
         if self.id is not None:
             # Update an existing user
+            is_active_modified = False
             if self._state.db != DEFAULT_DB_ALIAS:
                 # Make sure the default database is up to date
                 tmp = self._state.db
                 self._state.db = DEFAULT_DB_ALIAS
+
+                if not update_fields or "is_active" in update_fields:
+                    user_in_default_db = User.objects.using(DEFAULT_DB_ALIAS).get(
+                        id=self.id
+                    )
+                    self.databases = user_in_default_db.databases
+                    if tmp in self.databases and not self.is_active:
+                        self.databases.remove(tmp)
+                        is_active_modified = True
+
+                    elif tmp not in self.databases and self.is_active:
+                        self.databases.append(tmp)
+                        is_active_modified = True
+
                 if not update_fields:
                     update_fields2 = [
                         "username",
@@ -517,17 +532,22 @@ class User(AbstractUser):
                         "is_staff",
                         "default_scenario",
                     ]
+                    if is_active_modified:
+                        update_fields2.append("databases")
                 else:
                     # Important is not to copy all fields.
                     update_fields2 = update_fields[:]  # Copy!
                     if "is_active" in update_fields2:
                         update_fields2.remove("is_active")
+                    if is_active_modified:
+                        update_fields2.append("databases")
                     if "is_superuser" in update_fields:
                         update_fields2.remove("is_superuser")
                     if "databases" in update_fields:
                         update_fields2.remove("databases")
                     if "last_login" in update_fields:
                         update_fields2.remove("last_login")
+
                 super().save(
                     force_insert=force_insert,
                     force_update=force_update,
@@ -781,31 +801,6 @@ class User(AbstractUser):
         )
         if database:
             dblist = dblist.filter(name=database)
-
-        # A first loop to make sure the databases field is up to date
-        for usr_dflt in userlist:
-            updated = False
-            for db in dblist:
-                usr_scenario = (
-                    User.objects.using(db.name).filter(pk=usr_dflt.pk).first()
-                )
-                if usr_scenario.is_active and db.name not in usr_dflt.databases:
-                    if not usr_dflt.databases:
-                        usr_dflt.databases = [
-                            DEFAULT_DB_ALIAS,
-                            db.name,
-                        ]
-                        updated = True
-                    else:
-                        usr_dflt.databases.append(db.name)
-                        updated = True
-
-                if not usr_scenario.is_active and db.name in usr_dflt.databases:
-                    usr_dflt.databases.remove(db.name)
-                    updated = True
-            if updated:
-                usr_dflt.save(using=DEFAULT_DB_ALIAS)
-
         for db in dblist:
             for usr_dflt in userlist:
                 usr_scenario = (
@@ -829,6 +824,9 @@ class User(AbstractUser):
                         "default_scenario",
                     ]:
                         setattr(usr_scenario, f, getattr(usr_dflt, f))
+                    usr_scenario.is_active = (
+                        usr_dflt.databases and db.name in usr_dflt.databases
+                    ) or False
                     usr_scenario.databases = usr_dflt.databases
                     usr_scenario.save()
 

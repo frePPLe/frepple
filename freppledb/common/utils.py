@@ -22,11 +22,22 @@
 #
 
 import os
+from importlib.util import find_spec
+import os
+from pathlib import Path
 
 from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
 
-from freppledb.common.models import Scenario
+
+def forceWsgiReload():
+    wsgi = os.path.join(settings.FREPPLE_CONFIGDIR, "wsgi.py")
+    if os.access(wsgi, os.W_OK):
+        Path(wsgi).touch()
+    else:
+        wsgi = os.path.join(os.path.split(find_spec("freppledb").origin)[0], "wsgi.py")
+        if os.access(wsgi, os.W_OK):
+            Path(wsgi).touch()
 
 
 def getStorageUsage():
@@ -36,6 +47,8 @@ def getStorageUsage():
       This includes input data files, engine log files, database dump files, plan export files.
     - Postgres database storage.
     """
+    from freppledb.common.models import Scenario
+
     total_size = 0
 
     # Add the size of all log files and data files

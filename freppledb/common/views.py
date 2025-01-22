@@ -96,7 +96,7 @@ from .report import (
     GridFieldChoice,
     GridFieldJSON,
 )
-from .utils import getStorageUsage
+from .utils import getStorageUsage, forceWsgiReload
 
 from freppledb.admin import data_site
 from freppledb import edition, __version__, runCommand
@@ -303,7 +303,7 @@ class AppsView(View):
                     print(l, file=f)
 
         # Trigger reloading of the WSGI app
-        Attribute.forceReload()
+        forceWsgiReload()
 
 
 @login_required

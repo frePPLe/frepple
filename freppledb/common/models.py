@@ -22,13 +22,10 @@
 #
 from datetime import datetime
 from importlib import import_module
-from importlib.util import find_spec
 import inspect
 import json
 import logging
 from multiprocessing import Process
-import os
-from pathlib import Path
 from psycopg2.extras import execute_batch
 import sys
 import time
@@ -57,6 +54,7 @@ from django.utils.text import capfirst
 
 from freppledb import runFunction
 from freppledb.boot import addAttributesFromDatabase
+from freppledb.common.utils import forceWsgiReload
 
 logger = logging.getLogger(__name__)
 
@@ -1765,18 +1763,6 @@ class Attribute(AuditModel):
             self.name = self.name.lower()
         super().clean_fields(exclude=exclude)
 
-    @staticmethod
-    def forceReload():
-        wsgi = os.path.join(settings.FREPPLE_CONFIGDIR, "wsgi.py")
-        if os.access(wsgi, os.W_OK):
-            Path(wsgi).touch()
-        else:
-            wsgi = os.path.join(
-                os.path.split(find_spec("freppledb").origin)[0], "wsgi.py"
-            )
-            if os.access(wsgi, os.W_OK):
-                Path(wsgi).touch()
-
     def save(self, *args, **kwargs):
         # Call the real save() method
         super().save(*args, **kwargs)
@@ -1786,7 +1772,7 @@ class Attribute(AuditModel):
 
         # Trigger reloading of the django app.
         # The model when then see the new attribute field.
-        self.forceReload()
+        forceWsgiReload()
 
     def delete(self, *args, **kwargs):
         # Call the real save() method
@@ -1797,7 +1783,7 @@ class Attribute(AuditModel):
 
         # Trigger reloading of the django app.
         # The model when then see the new attribute field.
-        self.forceReload()
+        forceWsgiReload()
 
     class Meta:
         verbose_name = _("attribute")

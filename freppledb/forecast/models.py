@@ -43,7 +43,8 @@ from django.utils.translation import pgettext, gettext_lazy as _
 
 from freppledb.common.auth import getWebserviceAuthorization
 from freppledb.common.localization import parseLocalizedDateTime
-from freppledb.common.models import AuditModel, BucketDetail, Parameter
+from freppledb.common.models import AuditModel, BucketDetail, Parameter, Scenario
+from freppledb.common.utils import forceWsgiReload
 from freppledb.input.models import Customer, Item, Location, Operation
 from freppledb.webservice.utils import useWebService
 
@@ -887,6 +888,56 @@ class ForecastPlan(models.Model):
         with connections[database].cursor() as cursor:
             cursor.execute("REFRESH MATERIALIZED VIEW forecastreport_view")
 
+    @staticmethod
+    def refreshTableColumns():
+        """
+        Adjust the forecastplan table to have a columnn for every measure.
+
+        This method is opening a database connection to all active scenarios,
+        and can have an impact on scalability. Call with care!
+        """
+        # Get a list with all expected columns
+        expected_columns = [
+            m.name for m in Measure.standard_measures() if not m.computed
+        ]
+        for m in Measure.objects.using(DEFAULT_DB_ALIAS).only("name"):
+            expected_columns.append(m.name)
+
+        # Loop over the in-use scenarios, and check the forecastplan table
+        modified = False
+        for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
+            models.Q(status="In use") | models.Q(name=DEFAULT_DB_ALIAS)
+        ):
+            with connections[db.name].cursor() as cursor:
+                cursor.execute(
+                    """
+                    select column_name
+                    from information_schema.columns 
+                    where table_name = 'forecastplan'
+                    and column_name not in (
+                      'item_id', 'location_id', 'customer_id', 'startdate', 'enddate'
+                      )
+                    """
+                )
+                columns = [c[0] for c in cursor.fetchall()]
+                for m in expected_columns:
+                    if m not in columns:
+                        cursor.execute(
+                            "alter table forecastplan add column if not exists %s decimal(20,8)"
+                            % m
+                        )
+                        modified = True
+                for c in columns:
+                    if c not in expected_columns:
+                        cursor.execute(
+                            "alter table forecastplan drop column if exists %s" % c
+                        )
+                        modified = True
+
+        if modified:
+            # Trigger wsgi reload by importing from freppledb.common.utils.force
+            forceWsgiReload()
+
 
 class Measure(AuditModel):
     obfuscate = False
@@ -1323,8 +1374,26 @@ class Measure(AuditModel):
         self._computed = value
 
     def clean(self):
-        if self.name and not self.name.isalnum():
-            raise ValidationError(_("Name can only be alphanumeric"))
+        if self.name and not (
+            self.name.isalnum() and self.name.islower() and self.name[0].isalpha()
+        ):
+            raise ValidationError(
+                _("Name can only be lowercase alphanumeric starting with a letter")
+            )
+
+    def save(self, *args, **kwargs):
+        # Call the real save() method
+        super().save(*args, **kwargs)
+
+        # Add or update the database schema
+        ForecastPlan.refreshTableColumns()
+
+    def delete(self, *args, **kwargs):
+        # Call the real save() method
+        super().delete(*args, **kwargs)
+
+        # Add or update the database schema
+        ForecastPlan.refreshTableColumns()
 
     class Meta(AuditModel.Meta):
         db_table = "measure"

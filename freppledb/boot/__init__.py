@@ -289,6 +289,12 @@ def getAttributeFields(
 
 
 def addAttributesFromDatabase():
+    """
+    This method updates the database schema with the attribute fields.
+
+    This method is opening a database connection to all active scenarios,
+    and can have an impact on scalability. Call with care!
+    """
     # Read attributes defined in the default database
     from django.conf import settings
 

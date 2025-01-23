@@ -576,7 +576,8 @@ class AggregateDemand(PlanTask):
             WHERE forecastplan.item_id = demand_agg.item_id
             AND forecastplan.location_id = demand_agg.location_id
             AND forecastplan.customer_id = demand_agg.customer_id
-            AND forecastplan.startdate = demand_agg.startdate);
+            AND forecastplan.startdate = demand_agg.startdate)
+            and (ordersopen is not NULL or ordersopenvalue is not null or orderstotal is not NULL or orderstotalvalue is not NULL);
 
             """
         )

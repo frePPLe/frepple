@@ -74,7 +74,7 @@ class cookbooktest(TransactionTestCase):
     def writeResults(self, resultpath, opplans):
         basename = resultpath[-1].replace(".expect", ".out")
         with open(os.path.join(settings.FREPPLE_LOGDIR, basename), "wt") as outputfile:
-            print("\n  Wrote results to logs/%s.log" % basename)
+            print("\n  Wrote results to logs/%s" % basename)
             for i in opplans:
                 print(i.strip(), file=outputfile)
 

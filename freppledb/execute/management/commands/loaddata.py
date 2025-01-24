@@ -28,14 +28,15 @@ from django.apps import apps
 from django.conf import settings
 from django.core.management.base import CommandError
 from django.core.management.commands import loaddata
-from django.db import connections, transaction
+from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
-from freppledb.common.models import User
+from freppledb.common.models import User, addAttributesFromDatabase
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.report import getCurrentDate
 from freppledb.execute.models import Task
+from freppledb.forecast.models import ForecastPlan
 
 
 class Command(loaddata.Command):
@@ -132,6 +133,14 @@ class Command(loaddata.Command):
 
             # Excecute the standard django command
             super().handle(*fixture_labels, **options)
+
+            # Modify the database tables to reflect all attributes
+            if database == DEFAULT_DB_ALIAS:
+                addAttributesFromDatabase()
+
+            # Modify the forecastplan table to reflect all measures
+            if "freppledb.forecast" in settings.INSTALLED_APPS:
+                ForecastPlan.refreshTableColumns()
 
             # if the fixture doesn't contain the 'demo' word, let's not apply loaddata post-treatments
             if "FREPPLE_TEST" in os.environ:

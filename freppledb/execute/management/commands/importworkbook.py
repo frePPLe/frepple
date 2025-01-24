@@ -38,11 +38,13 @@ from django.utils.encoding import force_str
 from django.template.loader import render_to_string
 
 from freppledb import __version__
+from freppledb.boot import addAttributesFromDatabase
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Comment, Parameter
 from freppledb.common.report import GridReport, matchesModelName
 from freppledb.common.dataload import parseExcelWorksheet
 from freppledb.execute.models import Task
+from freppledb.forecast.models import ForecastPlan
 
 
 logger = logging.getLogger(__name__)
@@ -306,6 +308,15 @@ class Command(BaseCommand):
 
                         print("%s" % _("Done"))
                         # yield '<div><strong>%s</strong></div>' % _("Done")
+
+                # Modify the database tables to reflect all attributes
+                if self.database == DEFAULT_DB_ALIAS:
+                    addAttributesFromDatabase()
+
+                # Modify the forecastplan table to reflect all measures
+                if "freppledb.forecast" in settings.INSTALLED_APPS:
+                    ForecastPlan.refreshTableColumns()
+
             except GeneratorExit:
                 logger.warning("Connection Aborted")
         except Exception as e:

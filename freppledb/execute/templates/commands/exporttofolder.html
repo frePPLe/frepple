@@ -30,8 +30,8 @@
 {% for j in data_exports %}
 <div class="row mb-2" data-file="{{j.name}}">
   <div class="col flex-grow-1 offset-2">{{j.name}}</div>
-  <div class="col-1 text-nowrap text-center">{{j.size}}</div>
-  <div class="col-2 text-nowrap text-center">{{j.timestamp}}</div>
+  <div class="col-auto text-nowrap text-center">{{j.size}}</div>
+  <div class="col-auto text-nowrap text-center">{{j.timestamp}}</div>
   <div class="col-auto text-center">
     <button class="btn btn-sm btn-primary downloadfile" data-bs-toggle="tooltip"{% if not j.timestamp %} disabled{% endif %}
       data-bs-placement="top" data-bs-title="Download file" onClick="downloadExportFile(1, '{{j.name}}')">

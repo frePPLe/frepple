@@ -7,7 +7,8 @@
   </div>
 </div>
 </div>
-<table id="scenarios" style="width:100%">
+<div class="table-responsive">
+<table id="scenarios" style="width:100%" class="w-100 ">
   <tr>
       <td colspan='5' style="padding-left:15px">
         <p>{% blocktrans %}You have a number of available scenario databases available.<br>
@@ -107,6 +108,7 @@
   {% endif %}
   {% endfor %}
 </table>
+</div>
 
 <script>
 $(".scenariorelease").on("click", function(event) {

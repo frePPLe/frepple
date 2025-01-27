@@ -44,7 +44,6 @@ from freppledb.common.models import User, Comment, Parameter
 from freppledb.common.report import GridReport, matchesModelName
 from freppledb.common.dataload import parseExcelWorksheet
 from freppledb.execute.models import Task
-from freppledb.forecast.models import ForecastPlan
 
 
 logger = logging.getLogger(__name__)
@@ -315,6 +314,8 @@ class Command(BaseCommand):
 
                 # Modify the forecastplan table to reflect all measures
                 if "freppledb.forecast" in settings.INSTALLED_APPS:
+                    from freppledb.forecast.models import ForecastPlan
+
                     ForecastPlan.refreshTableColumns()
 
             except GeneratorExit:

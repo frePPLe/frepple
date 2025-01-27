@@ -36,8 +36,6 @@ from freppledb.common.models import User, addAttributesFromDatabase
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.report import getCurrentDate
 from freppledb.execute.models import Task
-from freppledb.forecast.models import ForecastPlan
-
 
 class Command(loaddata.Command):
     @staticmethod
@@ -140,6 +138,8 @@ class Command(loaddata.Command):
 
             # Modify the forecastplan table to reflect all measures
             if "freppledb.forecast" in settings.INSTALLED_APPS:
+                from freppledb.forecast.models import ForecastPlan
+
                 ForecastPlan.refreshTableColumns()
 
             # if the fixture doesn't contain the 'demo' word, let's not apply loaddata post-treatments

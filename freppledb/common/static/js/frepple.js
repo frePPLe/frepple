@@ -2569,6 +2569,37 @@ var ERPconnection = {
   }
 } //end Code for ERP integration
 
+
+//----------------------------------------------------------------------------
+// Code for reorderable widgets.
+//----------------------------------------------------------------------------
+
+var widget = {
+  init: function (callback) { 
+    $(".widget-list").each(function () {
+      Sortable.create($(this)[0], {
+        group: "widgets",
+        handle: ".widget-handle",
+        animation: 100,
+        onEnd: callback
+      });
+    });
+  },
+
+  getConfig: function() {
+    var r = [];
+    $(".widget").each(function () {
+      r.push([
+        $(this).attr("data-widget"),
+        {
+          "collapsed": $(this).find(".collapse.show").length == 0
+        }
+      ]);
+    });
+    return r;
+  }
+};
+
 //----------------------------------------------------------------------------
 // Code for sending dashboard configuration to the server.
 //----------------------------------------------------------------------------

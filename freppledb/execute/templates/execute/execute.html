@@ -6,6 +6,8 @@
   var lastcompleted = -1;
 
   function extraPreference() {
+    var x = widget.getConfig();
+    console.log(x);
     return {
        "height": Math.round($("#gbox_grid").height() - 48),
        "refresh": (refresh !== null),
@@ -130,6 +132,8 @@
         }
     }
 
+    widget.init(grid.saveColumnConfiguration);
+    
     $('#tasks').on("shown.bs.collapse", grid.saveColumnConfiguration);
 
     {% if not "refresh" in preferences or preferences.refresh %}
@@ -156,7 +160,7 @@
     });
 
   });
-  var models = {% getModelDependencies %};
+  var models = {% getModelDependencies %};      
 </script>
 
 <style>
@@ -235,20 +239,23 @@ loadComplete : function(data) {
 <div class="col">
   <h1>{% trans "launch tasks"|capfirst %}</h1>
 </div></div>
-<div class="row mb-2">
+<div class="row mb-2" id="commandlist">
 	{% if perms.auth.auth.generate_plan or perms.auth.copy_scenario or perms.auth.release_scenario or perms.auth.promote_scenario or perms.auth.run_db %}
 	<!--User has some permissions -->
-    <div class="col-lg-6 col-12">
+    <div class="col-lg-6 col-12 widget-list">
     {% for cmd in commandlist %}
       {% if forloop.counter0 == halfway %}
-        </div><div class="col-lg-6 col-12">
+        </div><div class="col-lg-6 col-12 widget-list">
       {% endif %}
-      <div class="card mb-2">
-        <div class="card-header" id="{{ forloop.counter }}Heading">
-          <button class="accordion-button fs-5 float-start" data-bs-toggle="collapse" data-bs-target="#Accord{{ forloop.counter }}" aria-expanded="true" aria-controls="Accord{{ forloop.counter }}">
+      <div class="card mb-2 widget" data-widget="{{cmd.command.name}}">
+        <div class="card-header d-flex align-items-center" id="{{ forloop.counter }}Heading" data-bs-toggle="collapse" data-bs-target="#Accord{{ forloop.counter }}" aria-expanded="true" aria-controls="Accord{{ forloop.counter }}">
+          <h5 class="fs-5 me-auto card-title">
               {{ cmd.command.title|capfirst }}
-            {% if command.command.help_url %}<div class='ms-3 fa fa-question d-none d-md-inline-block float-end' onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{ cmd.command.help_url }}')"></div>{% endif %}
-          </button>
+          </h5>          
+          {% if cmd.command.help_url %}
+            <span class='fa fa-question align-middle w-auto me-2' onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{ cmd.command.help_url }}')"></span>
+          {% endif %}
+          <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
         </div>
         <div id="Accord{{ forloop.counter }}" data-task="#{{ cmd.command.name }}" data-bs-parent="#tasks" class="card-body collapse{% if forloop.counter == 1 %} show{% endif %}" aria-labelledby="{{ forloop.counter }}Heading">
             {{ cmd.html }}

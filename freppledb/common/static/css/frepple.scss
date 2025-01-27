@@ -926,3 +926,12 @@ pre {
 input[type="date"] {
     appearance: auto;
 }
+
+// Draggable widgets
+.widget-handle {
+    cursor: grab;
+}
+
+.widget-handle:active {
+    cursor: grabbing;
+}

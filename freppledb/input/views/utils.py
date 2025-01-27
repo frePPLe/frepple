@@ -1625,6 +1625,32 @@ class PathReport(GridReport):
                         blocking[1],
                     )
 
+        if i[24] and not downstream:
+            for blockedby in tuple(json.loads(i[24]).items()):
+                if not blockedby[0] in reportclass.operation_dict:
+                    yield from reportclass.getOperationFromName(
+                        request,
+                        cursor,
+                        blockedby[0],
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        blockedby[1],
+                    )
+
+        if i[25] and downstream:
+            for blocking in tuple(json.loads(i[25]).items()):
+                if not blocking[0] in reportclass.operation_dict:
+                    yield from reportclass.getOperationFromName(
+                        request,
+                        cursor,
+                        blocking[0],
+                        downstream,
+                        depth + 1,
+                        i[0],
+                        blocking[1],
+                    )
+
     @classmethod
     def query(reportclass, request, basequery):
         """

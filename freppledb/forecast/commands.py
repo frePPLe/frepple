@@ -552,10 +552,10 @@ class AggregateDemand(PlanTask):
               orderstotal, orderstotalvalue, ordersopen, ordersopenvalue)
             select
               item_id, location_id, customer_id, startdate, enddate,
-              demand_agg.orderstotal,
-              demand_agg.orderstotalvalue,
-              case when demand_agg.ordersopen = 0 then null else ordersopen end as ordersopen,
-              case when demand_agg.ordersopenvalue = 0 then null else ordersopenvalue end as ordersopenvalue
+              nullif(demand_agg.orderstotal,0) as orderstotal,
+              nullif(demand_agg.orderstotalvalue,0) as orderstotalvalue,
+              nullif(demand_agg.ordersopen,0) as ordersopen,
+              nullif(demand_agg.ordersopenvalue,0) as ordersopenvalue
             from demand_agg
             on conflict (item_id, location_id, customer_id, startdate)
             do update set

@@ -2587,16 +2587,24 @@ var widget = {
   },
 
   getConfig: function() {
-    var r = [];
-    $(".widget").each(function () {
-      r.push([
-        $(this).attr("data-widget"),
-        {
-          "collapsed": $(this).find(".collapse.show").length == 0
-        }
-      ]);
+    var rows = [];
+    $(".widget-list").each(function () {
+      var row = {
+        "name": $(this).attr("data-widget") || "",
+        "cols": [{"width": 12, "widgets": [] }]
+      };
+
+      $(this).find(".widget").each(function () {
+        row["cols"][0]["widgets"].push([
+          $(this).attr("data-widget") || "",
+          {
+            "collapsed": $(this).find(".collapse.show").length == 0
+          }
+        ]);
+      });      
+      rows.push(row);
     });
-    return r;
+    return rows;
   }
 };
 

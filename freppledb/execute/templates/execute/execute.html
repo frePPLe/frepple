@@ -6,12 +6,10 @@
   var lastcompleted = -1;
 
   function extraPreference() {
-    var x = widget.getConfig();
-    console.log(x);
     return {
        "height": Math.round($("#gbox_grid").height() - 48),
        "refresh": (refresh !== null),
-       "expandtask": $("#tasks .collapse.show").first().attr("data-task")
+       "widgets": widget.getConfig()
        };
   }
 
@@ -121,20 +119,16 @@
   }
 
   $(function() {
-    if(location.hash != null && location.hash != "") {
-        $("#tasks .collapse.show").removeClass('show');
-        $("#tasks").find('.collapse[data-task="' + location.hash + '"]').addClass("show");
-    } else if (preferences && preferences.hasOwnProperty("expandtask")) {
-        var el = $("#tasks").find('.collapse[data-task="' + preferences.expandtask + '"]');
-        if (el.length > 0) {
-           $("#tasks .collapse.show").removeClass('show');
-           el.addClass("show");
-        }
+    if(location.hash != null && location.hash != "") {      
+        $("#commandlist .collapse.show").removeClass('show');
+        $("#commandlist").find('.collapse[data-task="' + location.hash + '"]').addClass("show");
     }
 
     widget.init(grid.saveColumnConfiguration);
     
-    $('#tasks').on("shown.bs.collapse", grid.saveColumnConfiguration);
+    $('#commandlist .collapse')
+      .on("shown.bs.collapse", grid.saveColumnConfiguration)
+      .on("hidden.bs.collapse", grid.saveColumnConfiguration);
 
     {% if not "refresh" in preferences or preferences.refresh %}
     // Refresh the grid every 5 seconds
@@ -235,20 +229,17 @@ loadComplete : function(data) {
 {{block.super}}
 {% endblock %}
 {% block after_table %}
-<div class="row" id="accordion">
+<div class="row" id="tasks">
 <div class="col">
   <h1>{% trans "launch tasks"|capfirst %}</h1>
 </div></div>
 <div class="row mb-2" id="commandlist">
 	{% if perms.auth.auth.generate_plan or perms.auth.copy_scenario or perms.auth.release_scenario or perms.auth.promote_scenario or perms.auth.run_db %}
 	<!--User has some permissions -->
-    <div class="col-lg-6 col-12 widget-list">
-    {% for cmd in commandlist %}
-      {% if forloop.counter0 == halfway %}
-        </div><div class="col-lg-6 col-12 widget-list">
-      {% endif %}
+    <div class="col-lg-6 col-12 widget-list" data-widget="column1">
+    {% for cmd in commandlist1 %}
       <div class="card mb-2 widget" data-widget="{{cmd.command.name}}">
-        <div class="card-header d-flex align-items-center" id="{{ forloop.counter }}Heading" data-bs-toggle="collapse" data-bs-target="#Accord{{ forloop.counter }}" aria-expanded="true" aria-controls="Accord{{ forloop.counter }}">
+        <div class="card-header d-flex align-items-center" id="Heading1-{{ forloop.counter }}" data-bs-toggle="collapse" data-bs-target="#Accord1-{{ forloop.counter }}" aria-expanded="true" aria-controls="Accord1-{{ forloop.counter }}">
           <h5 class="fs-5 me-auto card-title">
               {{ cmd.command.title|capfirst }}
           </h5>          
@@ -257,12 +248,30 @@ loadComplete : function(data) {
           {% endif %}
           <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
         </div>
-        <div id="Accord{{ forloop.counter }}" data-task="#{{ cmd.command.name }}" data-bs-parent="#tasks" class="card-body collapse{% if forloop.counter == 1 %} show{% endif %}" aria-labelledby="{{ forloop.counter }}Heading">
+        <div id="Accord1-{{ forloop.counter }}" data-task="#{{ cmd.command.name }}" data-bs-parent="#tasks" class="card-body collapse{% if not cmd.options.collapsed %} show{% endif %}" aria-labelledby="Heading1-{{ forloop.counter }}">
             {{ cmd.html }}
         </div>
       </div>
     {% endfor %}
     </div>
+    <div class="col-lg-6 col-12 widget-list" data-widget="column2">
+    {% for cmd in commandlist2 %}
+      <div class="card mb-2 widget" data-widget="{{cmd.command.name}}">
+        <div class="card-header d-flex align-items-center" id="Heading2-{{ forloop.counter }}" data-bs-toggle="collapse" data-bs-target="#Accord2-{{ forloop.counter }}" aria-expanded="true" aria-controls="Accord2-{{ forloop.counter }}">
+          <h5 class="fs-5 me-auto card-title">
+              {{ cmd.command.title|capfirst }}
+          </h5>          
+          {% if cmd.command.help_url %}
+            <span class='fa fa-question align-middle w-auto me-2' onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{ cmd.command.help_url }}')"></span>
+          {% endif %}
+          <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
+        </div>
+        <div id="Accord2-{{ forloop.counter }}" data-task="#{{ cmd.command.name }}" data-bs-parent="#tasks" class="card-body collapse{% if not cmd.options.collapsed %} show{% endif %}" aria-labelledby="Heading2-{{ forloop.counter }}">            
+          {{ cmd.html }}
+        </div>
+      </div>
+    {% endfor %}
+    </div>    
 	{% else %}
 	{% trans "Sorry, You don't have any execute permissions..." %}
 	{% endif %}

@@ -177,7 +177,9 @@ class TaskReport(GridReport):
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
-        loop1 = set()
+        # Get the list of all available commands
+        all_commands = []
+        cnt = 0
         for commandname, appname in get_commands().items():
             try:
                 cmd = getattr(
@@ -186,22 +188,61 @@ class TaskReport(GridReport):
                 )
                 if getattr(cmd, "index", -1) >= 0 and getattr(cmd, "getHTML", None):
                     cmd.name = commandname
-                    loop1.add(cmd)
+                    html = cmd.getHTML(request)
+                    if html:
+                        all_commands.append(
+                            {
+                                "command": cmd,
+                                "options": {"collapsed": cmd.name != "runplan"},
+                                "html": html,
+                            }
+                        )
+                    cnt += 1
             except Exception as e:
                 logger.warning(
                     "Couldn't import getHTML method from %s.management.commands.%s: %s"
                     % (appname, commandname, e)
                 )
 
-        loop2 = []
-        for cmd in sorted(loop1, key=operator.attrgetter("index")):
-            html = cmd.getHTML(request)
-            if html:
-                loop2.append({"command": cmd, "html": html})
+        # Use the preferences
+        commandlist1 = []
+        commandlist2 = []
+        prefs = getattr(request, "prefs", None)
+        if prefs:
+            # Add preferences to the command lists
+            widgets = prefs.get("widgets", [])
+            for row in widgets:
+                column = row.get("name", "")
+                if column == "column1":
+                    column = commandlist1
+                elif column == "column2":
+                    column = commandlist2
+                else:
+                    continue
+                for c in row.get("cols", []):
+                    for w in c.get("widgets", []):
+                        cnt1 = 0
+                        for cmd in all_commands:
+                            if cmd["command"].name == w[0]:
+                                cmd["options"] = w[1]
+                                cnt += 1
+                                column.append(cmd)
+                                del all_commands[cnt1]
+                                break
+                            cnt1 += 1
+            # Add any commands not yet in the preferences
+            if widgets:
+                for w in all_commands:
+                    commandlist1.append(w)
+        if not commandlist1 and not commandlist2:
+            # No preferences, divide the commands equal over 2 columns
+            all_commands.sort(key=lambda x: x["command"].index)
+            mid = (len(all_commands) + 1) // 2
+            commandlist1 = all_commands[:mid]
+            commandlist2 = all_commands[mid:]
 
         # Send to template
-        x = {"commandlist": loop2, "halfway": len(loop2) // 2 + 1}
-        return x
+        return {"commandlist1": commandlist1, "commandlist2": commandlist2}
 
     @classmethod
     def query(reportclass, request, basequery, sortsql="1 asc"):

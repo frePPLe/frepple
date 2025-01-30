@@ -92,18 +92,28 @@ class ForecastWidget(Widget):
       });
     }
 
+    const dropDownButton = document.querySelector('#fcst_selectButton');
+    const options = document.querySelectorAll('#fcstul li a');
 
-    // List of groups
-    var allGroup = ["value", "unit"]
+    for (const option of options) {
+      option.addEventListener('click', event => {
+        console.log(event.target, event.target.textContent, dropDownButton);
+        dropDownButton.textContent = event.target.textContent;
 
-    // add the options to the button
-    d3.select("#fcst_selectButton")
-      .selectAll('myOptions')
-     	.data(allGroup)
-      .enter()
-    	.append('option')
-      .text(function (d) { return d; }) // text showed in the menu
-      .attr("value", function (d) { return d; }) // corresponding value returned by the button
+        console.log("changed")
+        // recover the option that has been chosen
+        var selectedOption = event.target.textContent;
+        // run the updateChart function with this selected option
+
+        d3.selectAll('#fcst_bar').remove();
+        d3.selectAll('#fcst_xaxis').remove();
+        d3.selectAll('#fcst_yaxis').remove();
+        d3.selectAll('#fcst_line').remove();
+        getData(selectedOption);
+
+        draw();
+      });
+    }
 
     getData("value");
 
@@ -194,20 +204,20 @@ class ForecastWidget(Widget):
           graph.showTooltip(
             d[0]
             + "<br>"
-            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[0]:"")
+            + (d3.select("#fcst_selectButton").textContent == "value" ? currency[0]:"")
             + d[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             + " "
-            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[1]:"units")
+            + (d3.select("#fcst_selectButton").textContent == "value" ? currency[1]:"units")
             + " forecast<br>"
-            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[0]:"")
+            + (d3.select("#fcst_selectButton").textContent == "value" ? currency[0]:"")
             + (d[2]-d[3]).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             + " "
-            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[1]:"units")
+            + (d3.select("#fcst_selectButton").textContent == "value" ? currency[1]:"units")
             + " closed sales orders<br>"
-            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[0]:"")
+            + (d3.select("#fcst_selectButton").textContent == "value" ? currency[0]:"")
             + d[3].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             + " "
-            + (d3.select("#fcst_selectButton").property("value") == "value" ? currency[1]:"units")
+            + (d3.select("#fcst_selectButton").textContent == "value" ? currency[1]:"units")
             + " open sales orders");
           $("#tooltip").css('background-color','black').css('color','white');
           })
@@ -227,22 +237,6 @@ class ForecastWidget(Widget):
         .attr("d", line(data));
     }
     draw();
-
-
-    // When the button is changed, update data and redraw()
-    d3.select("#fcst_selectButton").on("change", function(d) {
-        // recover the option that has been chosen
-        var selectedOption = d3.select(this).property("value")
-        // run the updateChart function with this selected option
-
-        d3.selectAll('#fcst_bar').remove();
-        d3.selectAll('#fcst_xaxis').remove();
-        d3.selectAll('#fcst_yaxis').remove();
-        d3.selectAll('#fcst_line').remove();
-        getData(selectedOption);
-
-        draw();
-    })
     """
 
     @classmethod
@@ -258,7 +252,15 @@ class ForecastWidget(Widget):
         )
 
         result = [
-            '<select class="form-select form-select-sm d-inline-block w-auto" id="fcst_selectButton"></select>',
+            '<div class="dropdown">',
+              '<button id="fcst_selectButton" class="form-select form-select-sm d-inline-block w-auto text-capitalize" type="button" data-bs-toggle="dropdown" aria-expanded="false">',
+                '<span>value</span>',
+              '</button>',
+              '<ul id="fcstul" class="dropdown-menu" aria-labelledby="fcst_selectButton">',
+                '<li><a class="dropdown-item text-capitalize">value</a></li>',
+                '<li><a class="dropdown-item text-capitalize">unit</a></li>',
+              '</ul>',
+            '</div>',
             '<svg class="chart" id="forecast" style="width:100%; height: 100%"></svg>',
             '<table style="display:none">',
         ]

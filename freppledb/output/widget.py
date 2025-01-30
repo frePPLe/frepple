@@ -263,17 +263,22 @@ class ManufacturingOrderWidget(Widget):
 
     var margin_x = 9*max_length;  // Height allocated for the X-axis depends on x-axis titles
 
-    // List of groups
-    var allGroup = ["value", "unit"]
+    const dropDownButton = document.querySelector('#mo_selectButton span');
+    const options = document.querySelectorAll('#moul li a');
 
-    // add the options to the button
-    d3.select("#mo_selectButton")
-      .selectAll('myOptions')
-     	.data(allGroup)
-      .enter()
-    	.append('option')
-      .text(function (d) { return d; }) // text showed in the menu
-      .attr("value", function (d) { return d; }) // corresponding value returned by the button
+    for (const option of options) {
+      option.addEventListener('click', event => {
+        dropDownButton.textContent = event.target.textContent;
+
+        // recover the option that has been chosen
+        var selectedOption = event.target.textContent;
+        // run the updateChart function with this selected option
+
+        d3.selectAll('#mo_yaxis').remove();
+        d3.selectAll('#mo_bar').remove();
+        draw();
+      });
+    }
 
     // Define axis domains
     var x = d3.scale.ordinal()
@@ -304,11 +309,10 @@ class ManufacturingOrderWidget(Widget):
     }
 
     function draw() {
+        const selectButtonValue = document.querySelector('#mo_selectButton span').textContent;
         var y_value = d3.scale.linear()
-      .range([svgrectangle['height'] - margin_x - 10, 0])
-      .domain([0,
-       (d3.select("#mo_selectButton").property("value") == "value" ? max_value:max_units)
-         + 5]);
+        .range([svgrectangle['height'] - margin_x - 10, 0])
+        .domain([0, (selectButtonValue == "value" ? max_value:max_units) + 5]);
 
         // Draw y-axis
         var yAxis = d3.svg.axis().scale(y_value)
@@ -330,9 +334,9 @@ class ManufacturingOrderWidget(Widget):
         .attr("id","mo_bar")
         .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
         .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) -
-        (d3.select("#mo_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2])));})
+        (selectButtonValue == "value" ? y_value(d[3]):y_value(d[2])));})
         .attr("height", function(d, i) {return y_value(0) -
-        (d3.select("#mo_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2]));})
+        (selectButtonValue == "value" ? y_value(d[3]):y_value(d[2]));})
         .attr("width", x.rangeBand())
         .attr('fill', '#828915')
         .on("mouseover", function(d) {
@@ -355,13 +359,6 @@ class ManufacturingOrderWidget(Widget):
                 });
     }
     draw();
-
-    // When the button is changed, update data and redraw()
-    d3.select("#mo_selectButton").on("change", function(d) {
-        d3.selectAll('#mo_yaxis').remove();
-        d3.selectAll('#mo_bar').remove();
-        draw();
-    })
 
     """ % force_str(
         _("units")
@@ -452,8 +449,16 @@ class ManufacturingOrderWidget(Widget):
             ),
         )
         result = [
-            '<select class="form-select form-select-sm d-inline-block w-auto" id="mo_selectButton"></select>',
-            '<svg class="chart  mb-2" id="mo_chart" style="width:100%; height: 170px;"></svg>',
+            '<div class="dropdown">',
+              '<button id="mo_selectButton" class="form-select form-select-sm d-inline-block w-auto text-capitalize" type="button" data-bs-toggle="dropdown" aria-expanded="false">',
+                '<span>value</span>',
+              '</button>',
+              '<ul id="moul" class="dropdown-menu" aria-labelledby="mo_selectButton">',
+                '<li><a class="dropdown-item text-capitalize">value</a></li>',
+                '<li><a class="dropdown-item text-capitalize">unit</a></li>',
+              '</ul>',
+            '</div>',
+            '<svg class="chart mb-2" id="mo_chart" style="width:100%; height: 170px;"></svg>',
             '<table id="mo_overview" style="display: none">',
         ]
         for rec in cursor.fetchall():
@@ -579,18 +584,22 @@ class DistributionOrderWidget(Widget):
 
     var margin_x = 9*max_length;  // Height allocated for the X-axis depends on x-axis titles
 
-    // List of groups
-    var allGroup = ["value", "unit"]
+    const dropDownButton = document.querySelector('#do_selectButton span');
+    const options = document.querySelectorAll('#doul li a');
 
-    // add the options to the button
-    d3.select("#do_selectButton")
-      .selectAll('myOptions')
-     	.data(allGroup)
-      .enter()
-    	.append('option')
-      .text(function (d) { return d; }) // text showed in the menu
-      .attr("value", function (d) { return d; }) // corresponding value returned by the button
+    for (const option of options) {
+      option.addEventListener('click', event => {
+        dropDownButton.textContent = event.target.textContent;
 
+        // recover the option that has been chosen
+        var selectedOption = event.target.textContent;
+        // run the updateChart function with this selected option
+
+        d3.selectAll('#do_yaxis').remove();
+        d3.selectAll('#do_bar').remove();
+        draw();
+      });
+    }
 
     // Define axis domains
     var x = d3.scale.ordinal()
@@ -623,10 +632,11 @@ class DistributionOrderWidget(Widget):
     }
 
     function draw() {
+        const selectButtonValue = document.querySelector('#do_selectButton span').textContent;
         var y_value = d3.scale.linear()
          .range([svgrectangle['height'] - margin_x - 10, 0])
          .domain([0,
-         (d3.select("#do_selectButton").property("value") == "value" ? max_value:max_units)
+         (selectButtonValue == "value" ? max_value:max_units)
          + 5]);
 
         // Draw y-axis
@@ -649,10 +659,10 @@ class DistributionOrderWidget(Widget):
         .attr("id","do_bar")
         .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
         .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) -
-        (d3.select("#do_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2]))
+        (selectButtonValue == "value" ? y_value(d[3]):y_value(d[2]))
         );})
         .attr("height", function(d, i) {return y_value(0) -
-        (d3.select("#do_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2]))
+        (selectButtonValue == "value" ? y_value(d[3]):y_value(d[2]))
         ;})
         .attr("width", x.rangeBand())
         .attr('fill', '#828915')
@@ -676,13 +686,6 @@ class DistributionOrderWidget(Widget):
                 });
     }
     draw();
-
-    // When the button is changed, update data and redraw()
-    d3.select("#do_selectButton").on("change", function(d) {
-        d3.selectAll('#do_yaxis').remove();
-        d3.selectAll('#do_bar').remove();
-        draw();
-    })
 
     """ % force_str(
         _("units")
@@ -768,7 +771,15 @@ class DistributionOrderWidget(Widget):
             ),
         )
         result = [
-            '<select class="form-select form-select-sm d-inline-block w-auto" id="do_selectButton"></select>',
+            '<div class="dropdown">',
+              '<button id="do_selectButton" class="form-select form-select-sm d-inline-block w-auto text-capitalize" type="button" data-bs-toggle="dropdown" aria-expanded="false">',
+                '<span>value</span>',
+              '</button>',
+              '<ul id="doul" class="dropdown-menu" aria-labelledby="do_selectButton">',
+                '<li><a class="dropdown-item text-capitalize">value</a></li>',
+                '<li><a class="dropdown-item text-capitalize">unit</a></li>',
+              '</ul>',
+            '</div>',
             '<svg class="chart mb-2" id="do_chart" style="width:100%; height: 170px;"></svg>',
             '<table id="do_overview" style="display: none">',
         ]
@@ -904,17 +915,22 @@ class PurchaseOrderWidget(Widget):
 
     var margin_x = 9*max_length;  // Height allocated for the X-axis depends on x-axis titles
 
-    // List of groups
-    var allGroup = ["value", "unit"]
+    const dropDownButton = document.querySelector('#po_selectButton span');
+    const options = document.querySelectorAll('#poul li a');
 
-    // add the options to the button
-    d3.select("#po_selectButton")
-      .selectAll('myOptions')
-     	.data(allGroup)
-      .enter()
-    	.append('option')
-      .text(function (d) { return d; }) // text showed in the menu
-      .attr("value", function (d) { return d; }) // corresponding value returned by the button
+    for (const option of options) {
+      option.addEventListener('click', event => {
+        dropDownButton.textContent = event.target.textContent;
+
+        // recover the option that has been chosen
+        var selectedOption = event.target.textContent;
+        // run the updateChart function with this selected option
+
+        d3.selectAll('#po_yaxis').remove();
+        d3.selectAll('#po_bar').remove();
+        draw();
+      });
+    }
 
     // Define axis domains
     var x = d3.scale.ordinal()
@@ -945,12 +961,10 @@ class PurchaseOrderWidget(Widget):
     }
 
     function draw() {
-
+        const selectButtonValue = document.querySelector('#po_selectButton span').textContent;
         var y_value = d3.scale.linear()
         .range([svgrectangle['height'] - margin_x - 10, 0])
-        .domain([0,
-         (d3.select("#po_selectButton").property("value") == "value" ? max_value:max_units)
-           + 5]);
+        .domain([0, (selectButtonValue == "value" ? max_value:max_units) + 5]);
 
         // Draw y-axis
          var yAxis = d3.svg.axis().scale(y_value)
@@ -972,10 +986,10 @@ class PurchaseOrderWidget(Widget):
         .attr("id","po_bar")
         .attr("x",function(d, i) {return tickposition + i*x.rangeBand() - x.rangeBand()/2 + margin_y;})
         .attr("y",function(d, i) {return svgrectangle['height'] - margin_x - (y_value(0) -
-        (d3.select("#po_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2]))
+        (selectButtonValue == "value" ? y_value(d[3]):y_value(d[2]))
         );})
         .attr("height", function(d, i) {return y_value(0) -
-        (d3.select("#po_selectButton").property("value") == "value" ? y_value(d[3]):y_value(d[2]))
+        (selectButtonValue == "value" ? y_value(d[3]):y_value(d[2]))
         ;})
         .attr("width", x.rangeBand())
         .attr('fill', '#828915')
@@ -999,14 +1013,6 @@ class PurchaseOrderWidget(Widget):
                 });
     }
     draw();
-
-    // When the button is changed, update data and redraw()
-    d3.select("#po_selectButton").on("change", function(d) {
-        d3.selectAll('#po_yaxis').remove();
-        d3.selectAll('#po_bar').remove();
-        draw();
-    })
-
     """ % force_str(
         _("units")
     )
@@ -1150,7 +1156,15 @@ class PurchaseOrderWidget(Widget):
                 ),
             )
         result = [
-            '<select class="form-select form-select-sm d-inline-block w-auto" id="po_selectButton"></select>',
+            '<div class="dropdown">',
+              '<button id="po_selectButton" class="form-select form-select-sm d-inline-block w-auto text-capitalize" type="button" data-bs-toggle="dropdown" aria-expanded="false">',
+                '<span>value</span>',
+              '</button>',
+              '<ul id="poul" class="dropdown-menu" aria-labelledby="po_selectButton">',
+                '<li><a class="dropdown-item text-capitalize">value</a></li>',
+                '<li><a class="dropdown-item text-capitalize">unit</a></li>',
+              '</ul>',
+            '</div>',
             '<svg class="chart mb-2" id="po_chart" style="width:100%; height: 170px;"></svg>',
             '<table id="po_overview" style="display: none">',
         ]

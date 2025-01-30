@@ -47,6 +47,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | 17, 18: Support for routes that produce or consume items
     from different warehouses.
 
+- | 17, 18: The customer names are replaced with their Odoo IDs in frePPLe.
+    The name of the customer can be found in the description field.
+
 9.5.0 (2024-12-27)
 ==================
 

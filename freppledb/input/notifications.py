@@ -60,7 +60,7 @@ def CalendarBucketNotification(flw, msg):
 def CalendarNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif flw.object_pk != msg.content_object.calendar_id:
+    elif not msg.content_object or flw.object_pk != msg.content_object.calendar_id:
         return False
     else:
         args = flw.args.get("sub", None) if flw.args else None
@@ -74,7 +74,7 @@ def LocationNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() == DistributionOrder:
-        if (
+        if not msg.content_object or (
             flw.object_pk != msg.content_object.origin_id
             and flw.object_pk != msg.content_object.destination_id
         ):
@@ -88,7 +88,7 @@ def LocationNotification(flw, msg):
         ManufacturingOrder,
         DistributionOrder,
     ):
-        if flw.object_pk != msg.content_object.location_id:
+        if msg.content_object and flw.object_pk != msg.content_object.location_id:
             return False
         else:
             args = flw.args.get("sub", None) if flw.args else None
@@ -99,7 +99,7 @@ def LocationNotification(flw, msg):
 def CustomerNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif flw.object_pk != msg.content_object.customer_id:
+    elif not msg.content_object or flw.object_pk != msg.content_object.customer_id:
         return False
     else:
         args = flw.args.get("sub", None) if flw.args else None
@@ -110,7 +110,7 @@ def CustomerNotification(flw, msg):
 def SupplierNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif flw.object_pk != msg.content_object.supplier_id:
+    elif not msg.content_object or flw.object_pk != msg.content_object.supplier_id:
         return False
     else:
         args = flw.args.get("sub", None) if flw.args else None
@@ -135,7 +135,7 @@ def ItemNotification(flw, msg):
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() == Item:
         return False
-    elif flw.object_pk != msg.content_object.item_id:
+    elif not msg.content_object or flw.object_pk != msg.content_object.item_id:
         return False
     else:
         args = flw.args.get("sub", None) if flw.args else None
@@ -155,11 +155,10 @@ def ItemDistributionNotification(flw, msg):
 @NotificationFactory.register(Operation, [Operation, ManufacturingOrder])
 def OperationNotification(flw, msg):
     if flw.content_type == msg.content_type:
-        return (
-            flw.object_pk == msg.object_pk
-            or flw.object_pk == msg.content_object.owner.name
+        return flw.object_pk == msg.object_pk or (
+            msg.content_object and flw.object_pk == msg.content_object.owner.name
         )
-    elif flw.object_pk != msg.content_object.operation_id:
+    elif not msg.content_object or flw.object_pk != msg.content_object.operation_id:
         return False
     else:
         args = flw.args.get("sub", None) if flw.args else None
@@ -185,7 +184,7 @@ def SetupRuleNotification(flw, msg):
 def SetupMatrixNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif flw.object_pk != msg.content_object.setupmatrix_id:
+    elif not msg.content_object or flw.object_pk != msg.content_object.setupmatrix_id:
         return False
     else:
         args = flw.args.get("sub", None) if flw.args else None
@@ -196,7 +195,7 @@ def SetupMatrixNotification(flw, msg):
 def SkillNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif flw.object_pk != msg.content_object.skill_id:
+    elif not msg.content_object or flw.object_pk != msg.content_object.skill_id:
         return False
     else:
         args = flw.args.get("sub", None) if flw.args else None
@@ -215,18 +214,20 @@ def ResourceNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() in (ResourceSkill, OperationResource):
-        if flw.object_pk != msg.content_object.resource_id:
+        if not msg.content_object or flw.object_pk != msg.content_object.resource_id:
             return False
         else:
             args = flw.args.get("sub", None) if flw.args else None
             return msg.model_name() in args if args else True
-    elif msg.content_type.model_class() == ManufacturingOrder:
+    elif msg.content_type.model_class() == ManufacturingOrder and msg.content_object:
         args = flw.args.get("sub", None) if flw.args else None
         if not args or msg.model_name() not in args:
             return False
         for x in msg.content_object.resources.all():
             if flw.object_pk == x.resource_id:
                 return True
+        return False
+    else:
         return False
 
 

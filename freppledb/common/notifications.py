@@ -33,8 +33,10 @@ def UserNotification(flw, msg):
 def BucketNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif msg.content_type.model_class() == BucketDetail:
+    elif msg.content_type.model_class() == BucketDetail and msg.content_object:
         return flw.object_pk == msg.content_object.bucket.name
+    else: 
+        return False
 
 
 @NotificationFactory.register(BucketDetail, [BucketDetail])

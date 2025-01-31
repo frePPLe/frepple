@@ -38,27 +38,28 @@ function showsupplyinformationDrv($window, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
+    var template = '<div class="card-header d-flex align-items-center">' + 
+      '<h5 class="card-title text-capitalize fs-5 me-auto">' +
       gettextCatalog.getString("supply information") +
-      '</h5></div>' +
+      '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
       '<div class="table-responsive"><table class="table table-hover table-sm"><thead><tr><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("priority") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("priority") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("types") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("types") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("origin") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("origin") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("lead time") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("lead time") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("cost") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("cost") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("size minimum") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("size minimum") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("size multiple") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("size multiple") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("effective start") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("effective start") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("effective end") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("effective end") + '</b>' +
       '</td></tr></thead>' +
       '<tbody></tbody>' +
       '</table></div>';

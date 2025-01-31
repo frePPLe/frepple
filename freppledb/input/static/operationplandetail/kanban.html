@@ -7,10 +7,10 @@
     <a class="dropdown-toggle" style="cursor: pointer" data-bs-toggle="dropdown"
       aria-haspopup="true" aria-expanded="true"><i class="fa fa-ellipsis-h"></i></a>
     <ul class="dropdown-menu dropdown-menu-right" style="min-width:0">
-    <li><a class="dropdown-item" data-ng-click="hideColumn(col)" style="text-transform:capitalize">{{ "hide"|translate }}</a></li>
+    <li><a class="dropdown-item text-capitalize" data-ng-click="hideColumn(col)">{{ "hide"|translate }}</a></li>
     </ul>
     </div>
-    <h3 style="text-transform: capitalize" class="card-title">
+    <h3 class="card-title text-capitalize">
       {{col}}&nbsp;&nbsp;
       <span class="badge">{{ kanbanoperationplans[col].records}}
          <span style="font-size: 65%" data-ng-if="kanbanoperationplans[col].records > kanbanoperationplans[col].rows.length">{{kanbanoperationplans[col].rows.length}} {{ "shown"|translate }}</span>

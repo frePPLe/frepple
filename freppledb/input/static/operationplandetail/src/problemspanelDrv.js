@@ -38,15 +38,16 @@ function showproblemspanelDrv($window, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
+    var template = '<div class="card-header d-flex align-items-center">' + 
+      '<h5 class="card-title text-capitalize fs-5 me-auto">' +
       gettextCatalog.getString("problems") +
-      '</h5></div>' +
+      '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
       '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("name") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("name") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("start") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("start") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("end") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("end") + '</b>' +
       '</td></tr></thead>' +
       '<tbody></tbody>' +
       '</table>';

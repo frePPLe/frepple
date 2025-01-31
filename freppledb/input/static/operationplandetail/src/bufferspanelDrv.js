@@ -38,19 +38,20 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
+    var template = '<div class="card-header d-flex align-items-center">' + 
+      '<h5 class="card-title text-capitalize fs-5 me-auto">' +
       gettextCatalog.getString("items") +
-      '</h5></div><div class="card-body">' +
+      '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div><div class="card-body">' +
       '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("item") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("item") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("location") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("location") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("quantity") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("quantity") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("onhand") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("onhand") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("date") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("date") + '</b>' +
       '</td></tr></thead>' +
       '<tbody></tbody>' +
       '</table></div>';
@@ -81,15 +82,15 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
             }
             else {
               rows += '<td style="white-space: nowrap"><div class="dropdown">'
-                + '<button class="btn btn-primary" data-bs-toggle="dropdown" type="button" style="text-transform: capitalize; min-width: 150px">'
+                + '<button class="btn btn-primary text-capitalize" data-bs-toggle="dropdown" type="button" style="min-width: 150px">'
                 + $.jgrid.htmlEncode(theflow.buffer.item)
                 + '</button>'
                 + '<ul class="dropdown-menu">'
-                + '<li><a role="menuitem" class="dropdown-item alternateitem" style="text-transform: capitalize">'
+                + '<li><a role="menuitem" class="dropdown-item alternateitem text-capitalize">'
                 + $.jgrid.htmlEncode(theflow.buffer.item)
                 + '</a></li>';
               angular.forEach(theflow.alternates, function (thealternate) {
-                rows += '<li><a role="menuitem" class="dropdown-item alternateitem" style="text-transform: capitalize">'
+                rows += '<li><a role="menuitem" class="dropdown-item alternateitem text-capitalize">'
                   + $.jgrid.htmlEncode(thealternate)
                   + '</a></li>';
               });

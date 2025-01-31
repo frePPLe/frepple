@@ -3,13 +3,13 @@
 <h1>
 {% following model object_id as follower %}
 {% if follower %}
-<button class="btn btn-sm btn-primary" style="text-transform:capitalize" data-pk="{{object_id}}" data-model="{{ model|label_lower }}"
+<button class="btn btn-sm btn-primary text-capitalize" data-pk="{{object_id}}" data-model="{{ model|label_lower }}"
   onclick="follow.get(event, this)" data-bs-toggle="tooltip" data-following="true"
   data-bs-placement="left" data-bs-title="{% trans 'Manage notifications in your inbox'|capfirst %}">
   {% trans "Following" %}
 </button>
 {% else %}
-<button class="btn btn-sm btn-primary" style="text-transform:capitalize" data-pk="{{object_id}}" data-model="{{ model|label_lower }}"
+<button class="btn btn-sm btn-primary text-capitalize" data-pk="{{object_id}}" data-model="{{ model|label_lower }}"
   onclick="follow.get(event, this)" data-bs-toggle="tooltip" data-following="false"
   data-bs-placement="left" data-bs-title="{% trans 'Get a notification in your inbox when there is activity'|capfirst %}">
   {% trans "Follow" %}

@@ -38,8 +38,10 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template = '<div class="card-header"><h5 class="card-title text-capitalize">' +
-      gettextCatalog.getString("inventory") + '</h5></div>' +
+    var template = '<div class="card-header d-flex align-items-center">' + 
+      '<h5 class="card-title text-capitalize fs-5 me-auto">' +
+      gettextCatalog.getString("inventory") +
+      '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
       '<div class="card-body"><div class="table-responsive">' +
       '<table class="table table-sm table-hover table-borderless">' +
       '<thead class="text-nowrap"></thead><tbody></tbody></table>' +

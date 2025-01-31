@@ -32,7 +32,6 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   $scope.operationplan = new OperationPlan();
   $scope.aggregatedopplan = null;
   $scope.mode = preferences ? preferences.mode : "table";
-  $scope.detailposition = detailposition;
   $scope.operationplans = [];
   $scope.kanbanoperationplans = {};
   $scope.ganttoperationplans = {};
@@ -105,6 +104,8 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
           }
         }
         oldValue[0] = newValue[0];
+
+        widget.init();
       }); //end watchGroup
   }
 
@@ -451,7 +452,6 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   $scope.displayonpanel = displayonpanel;
 
   function formatInventoryStatus(opplan) {
-
     if (opplan.color === undefined || opplan.color === '')
       return [undefined, ""];
     var thenumber = parseInt(opplan.color);

@@ -1,45 +1,26 @@
+  <div class="row">
+    <div class="col-lg-6 col-12 widget-list" data-widget="column1">
+      <div class="card widget mb-3" data-widget="operationplan" id="attributes-operationplan" showoperationplan-drv></div>
+      <div class="card widget mb-3" data-widget="inventorygraph" id="attributes-inventorygraph" data-ng-if="operationplan.id !== -1 && operationplan.inventoryreport != undefined" data="operationplan" showinventorygraph-drv></div>
+    </div>
+    <div class="col-lg-6 col-12 widget-list" data-widget="column2">
+      <div class="card widget mb-3" data-widget="inventorydata" id="attributes-inventorydata" data-ng-if="operationplan.id !== -1 && operationplan.inventoryreport != undefined" data="operationplan" showinventorydata-drv></div>
+      <div class="card widget mb-3" data-widget="operationproblems" id="attributes-operationproblems" data-ng-if="operationplan.id !== -1 && operationplan.problems != undefined" data="operationplan" showproblemspanel-drv></div>
+      <div class="card widget mb-3" data-widget="operationresources" id="attributes-operationresources" data-ng-if="operationplan.id !== -1 && operationplan.loadplans != undefined" data="operationplan" data-mode="mode" showresourcespanel-drv></div>
+      <div class="card widget mb-3" data-widget="operationflowplans" id="attributes-operationflowplans" data-ng-if="operationplan.id !== -1 && operationplan.flowplans != undefined" data="operationplan" showbufferspanel-drv></div>
+      <div class="card widget mb-3" data-widget="operationdemandpegging" id="attributes-operationdemandpegging" data-ng-if="operationplan.id !== -1 && operationplan.pegging_demand.length > 0" data="operationplan" showoperationpeggingpanel-drv></div>
+    </div>
+  </div>
 
   <div class="row">
-    <div data-ng-class="{'col-md-6': detailposition=='bottom', 'col-md-12': detailposition!='bottom'}">
-      <div class="card mb-3" id="attributes-operationplan" showoperationplan-drv></div>
-    </div>
-    <div data-ng-class="{'col-md-6': detailposition=='bottom', 'col-md-12': detailposition!='bottom'}">
-      <div class="card mb-3" id="attributes-inventorydata" data-ng-if="operationplan.id !== -1 && operationplan.inventoryreport != undefined" data="operationplan" showinventorydata-drv></div>
-    </div>
-    <div data-ng-class="{'col-md-6': detailposition=='bottom', 'col-md-12': detailposition!='bottom'}">
-      <div class="card mb-3" id="attributes-inventorygraph" data-ng-if="operationplan.id !== -1 && operationplan.inventoryreport != undefined" data="operationplan" showinventorygraph-drv></div>
-    </div>
-    <div data-ng-class="{'col-md-6': detailposition=='bottom', 'col-md-12': detailposition!='bottom'}">
-      <div class="card mb-3" id="attributes-operationproblems" data-ng-if="operationplan.id !== -1 && operationplan.problems != undefined" data="operationplan" showproblemspanel-drv></div>
-      <div class="card mb-3" id="attributes-operationresources" data-ng-if="operationplan.id !== -1 && operationplan.loadplans != undefined" data="operationplan" data-mode="mode" showresourcespanel-drv></div>
-      <div class="card mb-3" id="attributes-operationflowplans" data-ng-if="operationplan.id !== -1 && operationplan.flowplans != undefined" data="operationplan" showbufferspanel-drv></div>
-      <div class="card mb-3" id="attributes-operationdemandpegging" data-ng-if="operationplan.id !== -1 && operationplan.pegging_demand.length > 0" data="operationplan" showoperationpeggingpanel-drv></div>
+    <div class="col widget-list" data-widget="column2">
+      <div class="card widget mb-3" data-widget="networkstatus" id="attributes-networkstatus" data-ng-if="operationplan.network !== undefined" data="operationplan" shownetworkstatus-drv></div>
+      <div class="card widget mb-3" data-widget="downstreamoperationplans" id="attributes-downstreamoperationplans" data-ng-if="operationplan.downstreamoperationplans !== undefined" data="operationplan" showdownstreamoperationplans-drv></div>
+      <div class="card widget mb-3" data-widget="upstreamoperationplans" id="attributes-upstreamoperationplans" data-ng-if="operationplan.upstreamoperationplans !== undefined" data="operationplan" showupstreamoperationplans-drv></div>
+      <div class="card widget mb-3" data-widget="supplyinformation" id="attributes-supplyinformation" data-ng-if="operationplan.attributes !== undefined" data="operationplan" showsupplyinformation-drv></div>
     </div>
   </div>
-  <!-- row end  -->
-  <div class="row" data-ng-if="detailposition=='bottom'">
-    <div class="col">
-      <div class="card" id="attributes-networkstatus" data-ng-if="operationplan.network !== undefined" data="operationplan" shownetworkstatus-drv style="margin-bottom: 18px;"></div>
-    </div>
-  </div>
-  <!-- row end  -->
-  <div class="row" data-ng-if="detailposition=='bottom'">
-    <div class="col">
-      <div class="card" id="attributes-downstreamoperationplans" data-ng-if="operationplan.downstreamoperationplans !== undefined" data="operationplan" showdownstreamoperationplans-drv style="margin-bottom: 18px;"></div>
-    </div>
-  </div>
-  <div class="row" data-ng-if="detailposition=='bottom'">
-    <div class="col">
-      <div class="card" id="attributes-upstreamoperationplans" data-ng-if="operationplan.upstreamoperationplans !== undefined" data="operationplan" showupstreamoperationplans-drv style="margin-bottom: 18px;"></div>
-    </div>
-  </div>
-  <!-- row end  -->
-  <div class="row">
-    <div class="col">
-      <div class="card" id="attributes-supplyinformation" data-ng-if="operationplan.attributes !== undefined" data="operationplan" showsupplyinformation-drv style="margin-bottom: 18px;"></div>
-    </div>
-  </div>
-  <!-- row end  -->
+
   <div id="popup2" class="modal" role="dialog" style="z-index: 10000; overflow-y: visible">
     <div class="modal-dialog" data-ng-style="{'width': (databaseerrormodal) ? '500px' : '300px'}">
       <div class="modal-content">

@@ -79,7 +79,6 @@ rect.opplan {
   var calendarmode = preferences && preferences.calendarmode || "{{reportclass.calendarmode}}";
   var grouping = preferences && preferences.grouping || null;
   var groupingdir = preferences && preferences.groupingdir || "asc";
-  var detailposition = preferences && preferences.details || "bottom";
   var editable = {% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %};
   var service_url = {% if proxied %}'/svc/{{request.database}}/'{% else %}document.location.protocol + "//{{port}}/"{% endif %};
   var service_token = '{{token}}';
@@ -112,7 +111,6 @@ rect.opplan {
       "columns": angular.element('#controller').scope().kanbancolumns,
       "grouping": grouping,
       "groupingdir": groupingdir,
-      "details": detailposition,
       "detailwidth": Math.floor($("#detailspanel").width() || 0)
     };
     if (!urlParams.has("noautofilter")){
@@ -199,27 +197,15 @@ rect.opplan {
 
   $(function() {
     $("#workarea").css('overflow-x','visible');
-    if (detailposition == "bottom")
-      $("#content-main").resizable({
-        handleSelector: "#resize-handle",
-        resizeWidth: false,
-        resizeHeight: true,
-        onDrag: setHeights,
-        onDragEnd: function (e, $el, opt) {
-          grid.saveColumnConfiguration();
-        }
-      });
-    else
-      $("#detailspanel").resizable({
-        handleSelector: "#resize-handle",
-        resizeWidth: true,
-        resizeHeight: false,
-        onDrag: setWidths,
-        reverse: detailposition == "right",
-        onDragEnd: function (e, $el, opt) {
-          grid.saveColumnConfiguration();
-        }
-      });
+    $("#content-main").resizable({
+      handleSelector: "#resize-handle",
+      resizeWidth: false,
+      resizeHeight: true,
+      onDrag: setHeights,
+      onDragEnd: function (e, $el, opt) {
+        grid.saveColumnConfiguration();
+      }
+    });
     $("#save").on('click', function() {
       $(window).off('beforeunload', upload.warnUnsavedChanges);
       });
@@ -291,37 +277,6 @@ rect.opplan {
       $(window).on('beforeunload', upload.warnUnsavedChanges);
     }
   }
-
-extra_customize_html = '<div class="row mt-3"><div class="col">'
-  + gettext("Position of details") + '&nbsp;&nbsp;&nbsp;&nbsp;'
-  + '&nbsp;&nbsp;<label class="text-capitalize"><input class="form-check-input" type="radio" id="detailpositionleft" name="detailposition" value="left"'
-      + ((detailposition == "left") ? ' checked="true"' : '')
-      + '>&nbsp;' + gettext("left") + '&nbsp;</label>'
-  + '&nbsp;&nbsp;&nbsp;<label class="text-capitalize"><input class="form-check-input" type="radio" id="detailpositionbottom" name="detailposition" value="bottom"'
-      + ((detailposition != "left" && detailposition != "right") ? ' checked="true"' : '')
-      + '>&nbsp;' + gettext("bottom") + '&nbsp;</label>'
-  + '&nbsp;&nbsp;&nbsp;<label class="text-capitalize"><input class="form-check-input" type="radio" id="detailpositionright" name="detailposition" value="right"'
-      + ((detailposition == "right") ? ' checked="true"' : '')
-      + '>&nbsp;' + gettext("right") + '&nbsp;</label>'
-  + '</div></div>';
-
-function extraCustomize() {
-  if ($("#detailpositionleft").is(":checked") && detailposition != "left") {
-    detailposition = "left";
-    return true;
-  }
-  else if ($("#detailpositionbottom").is(":checked") && detailposition != "bottom") {
-    detailposition = "bottom";
-    return true;
-  }
-  else if ($("#detailpositionright").is(":checked") && detailposition != "right") {
-    detailposition = "right";
-    return true;
-  }
-  else
-    return false;
-}
-
 </script>
 {% endblock %}
 
@@ -504,54 +459,9 @@ loadComplete: function(data) {
 {% endblock %}
 
 {% block table %}
-{% if preferences.details == "left" or preferences.details == "right" %}
-<div data-ng-controller="operationplandetailCtrl" id="controller">
-<div class="row{% if preferences.details == 'left' %} flex-row-reverse{% endif %}">
-
-<div id="content-main" class="col flex-grow-1">
-<div class="pb-3" style="min-height: 150px; margin-top: 0.7em">
-  <div data-ng-hide="mode == 'kanban' || mode == 'gantt' || mode.startsWith('calendar')" class="col-12">
-    <table id="grid" class="table table-striped" style="background-color: white"></table>
-    <div id="gridpager"></div>
-  </div>
-  <div id="calendar" data-ng-hide="!mode.startsWith('calendar')" class="col-12">
-    <calendar
-      data-range-changed="calendarRangeChanged(startdate, enddate)"
-      data-event-selected="displayInfo(event)"
-      data-event-source="calendarevents"
-      data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
-      data-mode="mode"></calendar>
-  </div>
-  <div id="kanban" data-ng-hide="mode != 'kanban'"
-    show-kanban-drv class="row"
-    data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
-    data-kanbanoperationplans="kanbanoperationplans"
-    data-operationplan="operationplan"
-    data-kanbancolumns="kanbancolumns">
-  </div>
-  <div id="gantt" data-ng-hide="mode != 'gantt'"
-    show-gantt-drv class="row"
-    data-event-selected="displayInfo(event)"
-    data-ganttoperationplans="ganttoperationplans"
-    data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}">
-  </div>
-</div>
-</div>
-
-<div class="col-auto ps-1 pe-1">
-<span id="resize-handle" class="fa fa-bars fa-rotate-90 vhandle" ></span>
-</div>
-
-<div id="detailspanel" class="col-1 mt-1"
-  style="width:{% if preferences.detailwidth %}{{ preferences.detailwidth }}px{% else %}25%{% endif %}">
-<div  data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
-</div>
-
-</div></div>
-{% else %}
 <div data-ng-controller="operationplandetailCtrl" id="controller">
 
-<div class="row" style="text-align: center">
+<div class="row text-center">
 <div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
   <div data-ng-hide="mode == 'kanban' || mode == 'gantt' || mode.startsWith('calendar')">
     <table id="grid" class="table table-striped" style="background-color: white"></table>
@@ -586,5 +496,4 @@ loadComplete: function(data) {
 </div>
 
 <svg width="0" height="0"><defs id="gradients"></defs></svg>
-{% endif %}
 {% endblock %}

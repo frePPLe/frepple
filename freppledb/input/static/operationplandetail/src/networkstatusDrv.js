@@ -38,25 +38,27 @@ function shownetworkstatusDrv($window, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template = '<div class="card-header"><h5 class="card-title" style="text-transform: capitalize">' +
+    var template = '<div class="card-header d-flex align-items-center">' +
+      '<h5 class="card-title text-capitalize fs-5 me-auto">' +
       gettextCatalog.getString("network status") +
-      '</h5></div><div class="card-body">' +
+      '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span>' +
+      '</div><div class="card-body">' +
       '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("item") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("item") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("location") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("location") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("onhand") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("onhand") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("purchase orders") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("purchase orders") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("distribution orders") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("distribution orders") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("manufacturing orders") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("manufacturing orders") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("overdue sales orders") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("overdue sales orders") + '</b>' +
       '</td><td>' +
-      '<b style="text-transform: capitalize;">' + gettextCatalog.getString("sales orders") + '</b>' +
+      '<b class="text-capitalize">' + gettextCatalog.getString("sales orders") + '</b>' +
       '</td></tr></thead>' +
       '<tbody></tbody>' +
       '</table></div>';

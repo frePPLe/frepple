@@ -13,6 +13,13 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     that row is selected on top of the existing selection.
   | The hotkey CRTL+A selects all the rows of the current page.
 
+- | The detail widgets with the details of a purchase order, manufacturing order,
+    or distribution order can now be rearranged.
+  | Different people just want to see different information first.
+
+- | The tasks in the execution screen can now be rearranged.
+  | It's convenient to put commmonly used tasks at the top.
+
 - | Bug fix: Users could not be set active or inactive in a scenario.
 
 .. rubric:: Demand forecasting

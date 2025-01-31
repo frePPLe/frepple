@@ -97,10 +97,8 @@ class ForecastWidget(Widget):
 
     for (const option of options) {
       option.addEventListener('click', event => {
-        console.log(event.target, event.target.textContent, dropDownButton);
         dropDownButton.textContent = event.target.textContent;
 
-        console.log("changed")
         // recover the option that has been chosen
         var selectedOption = event.target.textContent;
         // run the updateChart function with this selected option
@@ -253,14 +251,14 @@ class ForecastWidget(Widget):
 
         result = [
             '<div class="dropdown">',
-              '<button id="fcst_selectButton" class="form-select form-select-sm d-inline-block w-auto text-capitalize" type="button" data-bs-toggle="dropdown" aria-expanded="false">',
-                '<span>value</span>',
-              '</button>',
-              '<ul id="fcstul" class="dropdown-menu" aria-labelledby="fcst_selectButton">',
-                '<li><a class="dropdown-item text-capitalize">value</a></li>',
-                '<li><a class="dropdown-item text-capitalize">unit</a></li>',
-              '</ul>',
-            '</div>',
+            '<button id="fcst_selectButton" class="form-select form-select-sm d-inline-block w-auto text-capitalize" type="button" data-bs-toggle="dropdown" aria-expanded="false">',
+            "<span>value</span>",
+            "</button>",
+            '<ul id="fcstul" class="dropdown-menu w-auto" style="min-width: unset" aria-labelledby="fcst_selectButton">',
+            '<li><a class="dropdown-item text-capitalize">value</a></li>',
+            '<li><a class="dropdown-item text-capitalize">unit</a></li>',
+            "</ul>",
+            "</div>",
             '<svg class="chart" id="forecast" style="width:100%; height: 100%"></svg>',
             '<table style="display:none">',
         ]

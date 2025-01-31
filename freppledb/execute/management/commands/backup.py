@@ -35,7 +35,7 @@ from django.template.loader import render_to_string
 
 from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
-from freppledb.common.models import User
+from freppledb.common.models import User, Attribute
 from freppledb import __version__
 
 
@@ -120,13 +120,18 @@ class Command(BaseCommand):
                 )
             task.message = "Backup to file %s" % backupfile
 
+            # Copy data managed only in the default database into our scenario
+            if database != DEFAULT_DB_ALIAS:
+                User.synchronize(database=database)
+                Attribute.synchronize(database)
+
             # Create an dump_info table
             with connections[database].cursor() as cursor:
                 cursor.execute(
                     """
                     drop table if exists dump_info;
                     create table dump_info (name varchar (256), value varchar(256));
-                """
+                    """
                 )
                 # add frepple version and current time
                 cursor.execute(
@@ -135,7 +140,7 @@ class Command(BaseCommand):
                     insert into dump_info select 'time', now();
                     insert into dump_info values ('os version',%s);
                     insert into dump_info values ('python version',%s);
-                """,
+                    """,
                     (__version__, platform.platform(), platform.python_version()),
                 )
                 # add list of installed apps

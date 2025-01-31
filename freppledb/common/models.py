@@ -780,9 +780,8 @@ class User(AbstractUser):
     @staticmethod
     def synchronize(user=None, database=None):
         """
-        The fields "last_login", "is_active" and "databases" are maintained only in the main
-        database. This method is called to lazily copy this information to other scenarios
-        if needed.
+        All user fields (except the is_active field) are maintained only in the main database.
+        This method is called to lazily copy this information to other scenarios if needed.
         """
         if user is None:
             userlist = User.objects.using(DEFAULT_DB_ALIAS)
@@ -1785,6 +1784,23 @@ class Attribute(AuditModel):
         # Trigger reloading of the django app.
         # The model when then see the new attribute field.
         forceWsgiReload()
+
+    @staticmethod
+    def synchronize(database):
+        """
+        Attributes are maintained only in the main database.
+        This method is called to lazily copy this information to another.
+        """
+        for db in (
+            Scenario.objects.using(DEFAULT_DB_ALIAS)
+            .filter(Q(status="In use") & ~Q(name=DEFAULT_DB_ALIAS))
+            .filter(name=database)
+            .only("name")
+        ):
+            Attribute.objects.using(database).all().delete()
+            for attr in Attribute.objects.using(DEFAULT_DB_ALIAS).all():
+                attr.pk = None
+                attr.save(using=db.name)
 
     class Meta:
         verbose_name = _("attribute")

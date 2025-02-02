@@ -189,7 +189,7 @@ the max_connections setting is moved from the default 100 to eg 400).
   services:
 
     frepple:
-      image: "frepple-community:latest"
+      image: "ghcr.io/frepple/frepple-community:latest"
       container_name: frepple-community-webserver
       ports:
         - 9000:80

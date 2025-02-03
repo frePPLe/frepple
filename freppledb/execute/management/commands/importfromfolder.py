@@ -278,20 +278,16 @@ class Command(BaseCommand):
                             % (ifile, timesince(starting))
                         )
             else:
-                errors[0] += 1
                 cnt = 0
                 logger.error("Failed, folder does not exist")
 
             # Task update
             if errors[0] > 0:
                 task.status = "Failed"
-                if not cnt:
-                    task.message = "Destination folder does not exist"
-                else:
-                    task.message = (
-                        "Uploaded %s data files with %s errors and %s warnings"
-                        % (cnt, errors[0], errors[1])
-                    )
+                task.message = (
+                    "Uploaded %s data files with %s errors and %s warnings"
+                    % (cnt, errors[0], errors[1])
+                )
             else:
                 task.status = "Done"
                 task.message = "Uploaded %s data files with %s warnings" % (

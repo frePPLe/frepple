@@ -354,13 +354,15 @@ class ReportManager(GridReport):
                         username=request.user.username
                     )
 
-                    if user.is_superuser:
+                    if user.is_superuser or request.database == scenario.name:
                         scenario_permissions.append(
                             [
                                 scenario.name,
-                                scenario.description
-                                if scenario.description
-                                else scenario.name,
+                                (
+                                    scenario.description
+                                    if scenario.description
+                                    else scenario.name
+                                ),
                                 1 if scenario.name == original_database else 0,
                             ]
                         )
@@ -468,14 +470,20 @@ class ReportManager(GridReport):
                             request.report.sql.replace("%", "%%"),
                             "where %s" % request.filter[0] if request.filter[0] else "",
                             cls._apply_sort_index(request),
-                            ("offset %s" % ((page - 1) * request.pagesize + 1))
-                            if page and page > 1
-                            else "",
-                            "limit %s" % request.pagesize
-                            if page
-                            else "limit %s" % kwargs["report_download_limit"]
-                            if "report_download_limit" in kwargs
-                            else "",
+                            (
+                                ("offset %s" % ((page - 1) * request.pagesize + 1))
+                                if page and page > 1
+                                else ""
+                            ),
+                            (
+                                "limit %s" % request.pagesize
+                                if page
+                                else (
+                                    "limit %s" % kwargs["report_download_limit"]
+                                    if "report_download_limit" in kwargs
+                                    else ""
+                                )
+                            ),
                         ),
                         request.filter[1],
                     )
@@ -612,9 +620,11 @@ class ReportManager(GridReport):
     @classmethod
     def extra_context(cls, request, *args, **kwargs):
         return {
-            "title": request.report.name
-            if request.report
-            else cls.title(request, *args, **kwargs),
+            "title": (
+                request.report.name
+                if request.report
+                else cls.title(request, *args, **kwargs)
+            ),
             "report": getattr(request, "report", None),
         }
 

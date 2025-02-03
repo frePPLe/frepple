@@ -31,7 +31,7 @@ import os
 import random
 import requests
 from requests import ConnectionError
-from threading import local
+from threading import Thread
 
 from django.conf import settings
 from django.core import management
@@ -447,13 +447,22 @@ class ForecastPlan(models.Model):
 
         # Need to assure that the web service is up and running
         if useWebService(database):
-            try:
-                # We need a trick to enforce using a new database connection and transaction
-                tmp = connections._connections
-                connections._connections = local()
-                management.call_command("runwebservice", database=database, wait=True)
-                connections._connections = tmp
-            except management.base.CommandError:
+            exc = None
+
+            def StartServiceThread():
+                nonlocal exc
+                try:
+                    management.call_command(
+                        "runwebservice", database=database, wait=True
+                    )
+                except Exception as e:
+                    exc = e
+
+            # We need a trick to enforce using a new database connection and transaction
+            t = Thread(target=StartServiceThread)
+            t.start()
+            t.join()
+            if exc:
                 yield (ERROR, None, None, None, "Web service didn't start")
                 raise StopIteration
         else:

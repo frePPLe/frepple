@@ -40,7 +40,7 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
   </div>
   <div class="col-3 d-flex">
     {% if schedule.next_run %}
-    <div class="d-flex align-items-center" data-field="next-run">{{ schedule.next_run|date:"DATETIME_FORMAT" }}</div>
+    <div class="d-flex align-items-center" data-field="next-run">{{ schedule.next_run|date:"DATE_FORMAT" }} {{ schedule.next_run|date:"H:i:s" }}</div>
     {% elif not schedule.name %}
     <div class="d-flex align-items-center" data-field="next-run"></div>
     {% endif %}

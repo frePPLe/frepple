@@ -2776,8 +2776,7 @@ class OperationPlanDetail(View):
                                 ),  # total produced
                                 0 if row[3] else row[5]["produced_proposed"],
                                 0 if row[3] else row[5]["produced_confirmed"],
-                                row[4]["onhand"]
-                                or 0
+                                (row[4]["onhand"] or 0)
                                 + (0 if row[3] else row[5]["produced_proposed"])
                                 + (0 if row[3] else row[5]["produced_confirmed"])
                                 - (0 if row[3] else row[5]["consumed_proposed"])

@@ -354,7 +354,9 @@ class ReportManager(GridReport):
                         username=request.user.username
                     )
 
-                    if user.is_superuser or request.database == scenario.name:
+                    if user.is_superuser or (
+                        request.database == scenario.name and cls.has_permission(user)
+                    ):
                         scenario_permissions.append(
                             [
                                 scenario.name,

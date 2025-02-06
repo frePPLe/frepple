@@ -38,11 +38,11 @@ function showresourcespanelDrv($window, gettextCatalog) {
 	return directive;
 
 	function linkfunc(scope, elem, attrs) {
-		var template = '<div class="card-header d-flex align-items-center">' + 
+		var template = '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_resources" aria-expanded="false" aria-controls="widget_resources">' + 
 		    '<h5 class="card-title text-capitalize fs-5 me-auto">' +
 			gettextCatalog.getString("resource") +
 			'</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
-			'<div class="card-body">' +
+			'<div class="card-body collapse show" id="widget_resources">' +
 			'<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
 			'<b class="text-capitalize">' + gettextCatalog.getString("name") + '</b>' +
 			'</td><td>' +

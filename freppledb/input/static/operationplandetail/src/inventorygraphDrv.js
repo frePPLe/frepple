@@ -36,10 +36,10 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
 
   function linkfunc(scope, elem, attrs, d3service) {
     let template = [
-      '<div class="card-header d-flex align-items-center">',
+      '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_inventorygraph" aria-expanded="false" aria-controls="widget_inventorygraph">',
       '<h5 class="card-title text-capitalize fs-5 me-auto">' + gettextCatalog.getString("inventory") + 
       '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>',
-      '<div class="card-body">',
+      '<div class="card-body collapse show" id="widget_inventorygraph">',
       '<table class="table table-sm table-borderless">',
       '<thead id="grid_graph"></thead>',
       '<tbody><tr><td role="gridcell" aria-describedby="grid_graph">',

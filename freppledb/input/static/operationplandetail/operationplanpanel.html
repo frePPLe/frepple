@@ -1,5 +1,5 @@
 
-<div class="card-header d-flex align-items-center">
+<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_operationplanpanel" aria-expanded="false" aria-controls="widget_operationplanpanel">
   <h5 class="card-title text-capitalize me-auto">
   <span data-ng-if="operationplan.type" >{{ opptype[operationplan.type] }}</span>
   <span data-ng-if="!operationplan.id && !operationplan.reference && !operationplan.operationplan__reference">{{ 'no selection'|translate }}</span>
@@ -7,7 +7,7 @@
   </h5>
   <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
 </div>
-<div class="card-body" data-ng-if="operationplan.id || operationplan.reference || operationplan.operationplan__reference">
+<div class="card-body collapse show" id="widget_operationplanpanel" data-ng-show="operationplan.id || operationplan.reference || operationplan.operationplan__reference">
 <style scoped>
 input.ng-dirty {
   background: none !important;

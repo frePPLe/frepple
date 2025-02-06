@@ -38,10 +38,11 @@ function showsupplyinformationDrv($window, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template = '<div class="card-header d-flex align-items-center">' + 
+    var template = '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_supply" aria-expanded="false" aria-controls="widget_supply">' + 
       '<h5 class="card-title text-capitalize fs-5 me-auto">' +
       gettextCatalog.getString("supply information") +
       '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
+      '<div class="card-body collapse show" id="widget_supply">' +
       '<div class="table-responsive"><table class="table table-hover table-sm"><thead><tr><td>' +
       '<b class="text-capitalize">' + gettextCatalog.getString("priority") + '</b>' +
       '</td><td>' +
@@ -62,13 +63,13 @@ function showsupplyinformationDrv($window, gettextCatalog) {
       '<b class="text-capitalize">' + gettextCatalog.getString("effective end") + '</b>' +
       '</td></tr></thead>' +
       '<tbody></tbody>' +
-      '</table></div>';
+      '</table></div></div>';
 
     scope.$watchGroup(['operationplan.id', 'operationplan.attributes.supply.length'], function (newValue, oldValue) {
       angular.element(document).find('#attributes-supplyinformation').empty().append(template);
       var rows = '<tr><td colspan="9">' + gettextCatalog.getString('no supply information') + '</td></tr>';
 
-      if (typeof scope.operationplan !== 'undefined') {
+      if (typeof scope.operationplan !== 'undefined' && scope.operationplan.hasOwnProperty('attributes')) {
         if (scope.operationplan.attributes.hasOwnProperty('supply')) {
           rows = '';
           angular.forEach(scope.operationplan.attributes.supply, function (thesupply) {

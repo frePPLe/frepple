@@ -111,7 +111,8 @@ rect.opplan {
       "columns": angular.element('#controller').scope().kanbancolumns,
       "grouping": grouping,
       "groupingdir": groupingdir,
-      "detailwidth": Math.floor($("#detailspanel").width() || 0)
+      "detailwidth": Math.floor($("#detailspanel").width() || 0),
+      "widgets": widget.getConfig()
     };
     if (!urlParams.has("noautofilter")){
       tmp["showTop"] = showTop;

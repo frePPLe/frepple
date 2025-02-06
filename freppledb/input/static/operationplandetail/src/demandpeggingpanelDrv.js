@@ -37,11 +37,11 @@ function showoperationpeggingpanelDrv($window, gettextCatalog, $filter) {
   return directive;
 
   function linkfunc(scope, elem, attrs, transclude) {
-    var template = '<div class="card-header d-flex align-items-center">' + 
+    var template = '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_demandpegging" aria-expanded="false" aria-controls="widget_demandpegging">' + 
       '<h5 class="card-title text-capitalize fs-5 me-auto">' +
       gettextCatalog.getString("demand") +
       '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
-      '<div class="card-body table-responsive" style="max-height:15em; overflow:auto">' +
+      '<div class="card-body table-responsive collapse show" id="widget_demandpegging" style="max-height:15em; overflow:auto">' +
       '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
       '<b class="text-capitalize">' + gettextCatalog.getString("name") + '</b>' +
       '</td><td>' +

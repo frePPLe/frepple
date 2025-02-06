@@ -284,6 +284,56 @@ class OperationPlanMixin(GridReport):
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
+        prefs = getattr(request, "prefs", None)
+        if prefs:
+            widgets = prefs.get("widgets", [])
+        else:
+            request.prefs = {}
+            widgets = None
+        if not widgets:
+            request.prefs["widgets"] = [
+                {
+                    "name": "column1",
+                    "cols": [
+                        {
+                            "width": 12,
+                            "widgets": [
+                                ["operationplan", {"collapsed": False}],
+                                ["inventorygraph", {"collapsed": False}],
+                            ],
+                        }
+                    ],
+                },
+                {
+                    "name": "column2",
+                    "cols": [
+                        {
+                            "width": 12,
+                            "widgets": [
+                                ["inventorydata", {"collapsed": False}],
+                                ["operationproblems", {"collapsed": False}],
+                                ["operationresources", {"collapsed": False}],
+                                ["operationflowplans", {"collapsed": False}],
+                                ["operationdemandpegging", {"collapsed": False}],
+                            ],
+                        }
+                    ],
+                },
+                {
+                    "name": "column3",
+                    "cols": [
+                        {
+                            "width": 12,
+                            "widgets": [
+                                ["networkstatus", {"collapsed": False}],
+                                ["downstreamoperationplans", {"collapsed": False}],
+                                ["upstreamoperationplans", {"collapsed": False}],
+                                ["supplyinformation", {"collapsed": False}],
+                            ],
+                        }
+                    ],
+                },
+            ]
         return getWebServiceContext(request)
 
 

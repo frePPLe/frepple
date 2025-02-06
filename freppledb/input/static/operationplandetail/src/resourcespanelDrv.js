@@ -140,6 +140,9 @@ function showresourcespanelDrv($window, gettextCatalog) {
 					});
 				}
 			});
+            angular.element(elem).find('.collapse')
+             .on("shown.bs.collapse", grid.saveColumnConfiguration)
+             .on("hidden.bs.collapse", grid.saveColumnConfiguration);
 		};
 
 		scope.$watchGroup(['operationplan.id', 'operationplan.loadplans.length'], redraw);

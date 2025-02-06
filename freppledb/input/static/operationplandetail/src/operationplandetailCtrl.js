@@ -105,7 +105,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         }
         oldValue[0] = newValue[0];
 
-        widget.init();
+        widget.init(grid.saveColumnConfiguration);
       }); //end watchGroup
   }
 

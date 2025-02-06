@@ -86,6 +86,10 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
       angular.element(document).find('#attributes-inventorydata thead').append(columnHeaders.join(""));
       angular.element(document).find('#attributes-inventorydata tbody').append(rows.join(""));
 
+      angular.element(elem).find('.collapse')
+        .on("shown.bs.collapse", grid.saveColumnConfiguration)
+        .on("hidden.bs.collapse", grid.saveColumnConfiguration);
+
       let widgetTooltipTriggerList = document.querySelectorAll('#attributes-inventorydata [data-bs-toggle="tooltip"]');
 
       let widgetTooltipList = [...widgetTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl, { container: 'body', offset: '[0,5]' }));

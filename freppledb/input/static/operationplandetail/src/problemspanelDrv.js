@@ -69,6 +69,9 @@ function showproblemspanelDrv($window, gettextCatalog) {
         }
       }
       angular.element(document).find('#attributes-operationproblems tbody').append(rows);
+      angular.element(elem).find('.collapse')
+        .on("shown.bs.collapse", grid.saveColumnConfiguration)
+        .on("hidden.bs.collapse", grid.saveColumnConfiguration);      
     }); //watch end
 
   } //link end

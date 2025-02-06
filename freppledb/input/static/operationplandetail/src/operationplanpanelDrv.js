@@ -88,6 +88,9 @@ function showoperationplanDrv($window, gettextCatalog) {
       angular.element(elem).find("#statusrow").css(
         "display", (scope.operationplan.status && scope.operationplan.type !== 'STCK') ? "table-row" : "none"
       );
+      angular.element(elem).find('.collapse')
+        .on("shown.bs.collapse", grid.saveColumnConfiguration)
+        .on("hidden.bs.collapse", grid.saveColumnConfiguration);
     }); //watch end
 
   } //link end

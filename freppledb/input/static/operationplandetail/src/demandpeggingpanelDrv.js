@@ -85,6 +85,9 @@ function showoperationpeggingpanelDrv($window, gettextCatalog, $filter) {
       }
 
       angular.element(document).find('#attributes-operationdemandpegging tbody').append(rows);
+      angular.element(elem).find('.collapse')
+        .on("shown.bs.collapse", grid.saveColumnConfiguration)
+        .on("hidden.bs.collapse", grid.saveColumnConfiguration);     
     }); //watch end
 
   } //link end

@@ -143,7 +143,9 @@ function showbufferspanelDrv($window, gettextCatalog, $filter) {
           });
         }
       });
-      //elem.after(transclude());
+      angular.element(elem).find('.collapse')
+        .on("shown.bs.collapse", grid.saveColumnConfiguration)
+        .on("hidden.bs.collapse", grid.saveColumnConfiguration);
     };
     scope.$watchGroup(['operationplan.id', 'operationplan.flowplans.length'], redraw);
   } //link end

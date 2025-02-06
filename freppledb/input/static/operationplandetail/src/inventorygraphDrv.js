@@ -324,6 +324,10 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
             }
           }
 
+          angular.element(elem).find('.collapse')
+             .on("shown.bs.collapse", grid.saveColumnConfiguration)
+             .on("hidden.bs.collapse", grid.saveColumnConfiguration);
+
           let widgetTooltipTriggerList = document.querySelectorAll('#attributegraph [data-bs-toggle="tooltip"]');
           let widgetTooltipList = [...widgetTooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
         }

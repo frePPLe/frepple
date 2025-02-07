@@ -303,7 +303,7 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
           const scale_width = x.rangeBand();
           const svg_header = d3.select(el.get(0)).append("svg");
           svg_header.attr('height', '15px');
-          svg_header.attr('width', Math.max(el.width(), 0));
+          svg_header.attr('width', '100%');
           let wt = 0;
           for (const i in timebuckets) {
             const w = margin.left + scale_stops[i] + scale_width / 2;

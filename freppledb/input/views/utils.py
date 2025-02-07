@@ -329,7 +329,6 @@ class OperationPlanMixin(GridReport):
                                 ["networkstatus", {"collapsed": False}],
                                 ["downstreamoperationplans", {"collapsed": False}],
                                 ["upstreamoperationplans", {"collapsed": False}],
-                                ["supplyinformation", {"collapsed": False}],
                             ],
                         }
                     ],

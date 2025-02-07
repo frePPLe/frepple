@@ -7,8 +7,8 @@ Release notes
 This release is scheduled for end of January.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
-9.6.0 (2025-2-7)
-================
+9.6.0 (2025-02-07)
+==================
 
 .. rubric:: User interface
 

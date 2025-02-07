@@ -2109,6 +2109,7 @@ class loadOperationPlans(LoadTask):
                           then (operationplan.plan->>'setupoverride')::integer
                         end,
                         coalesce(dmd.name, null),
+                        remark,
                         coalesce(forecast.name, null), operationplan.due
                         %s
                         FROM operationplan
@@ -2168,7 +2169,7 @@ class loadOperationPlans(LoadTask):
                     try:
                         if i[17]:
                             dmd = frepple.demand(name=i[17])
-                        elif with_fcst and i[18] and i[19]:
+                        elif with_fcst and i[19] and i[20]:
                             dmd = frepple.demand_forecastbucket(
                                 forecast=frepple.demand_forecast(name=i[19]),
                                 start=i[20],

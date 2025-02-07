@@ -1,11 +1,14 @@
 Release notes
 -------------
 
-9.6.0 (Upcoming release)
+9.7.0 (Upcoming release)
 ========================
 
 This release is scheduled for end of January.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.6.0 (2025-2-7)
+================
 
 .. rubric:: User interface
 
@@ -26,8 +29,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | The database structure for storing forecast data has been refactored.
   | The new structure uses considerable less database storage and is a bit faster.
+
+  | !!! IMPORTANT !!!
   | If you use the field forecastplan.value in your custom reqorts,
-    you are encouraged to rewrite your queries to the new structure.
+    you will need to rewrite your queries to the new structure.
 
 .. rubric:: Production planning
 

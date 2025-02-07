@@ -38,33 +38,35 @@ function shownetworkstatusDrv($window, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template = '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_networkstatus" aria-expanded="false" aria-controls="widget_networkstatus">' +
-      '<h5 class="card-title text-capitalize fs-5 me-auto">' +
-      gettextCatalog.getString("network status") +
-      '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span>' +
-      '</div><div class="card-body collapse show" id="widget_networkstatus">' +
-      '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("item") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("location") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("onhand") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("purchase orders") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("distribution orders") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("manufacturing orders") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("overdue sales orders") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("sales orders") + '</b>' +
-      '</td></tr></thead>' +
-      '<tbody></tbody>' +
-      '</table></div>';
-
     scope.$watchGroup(['operationplan.id', 'operationplan.network.length'], function (newValue, oldValue) {
-      angular.element(document).find('#attributes-networkstatus').empty().append(template);
+      angular.element(document).find('#attributes-networkstatus').empty().append(
+        '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_networkstatus" aria-expanded="false" aria-controls="widget_networkstatus">' +
+        '<h5 class="card-title text-capitalize fs-5 me-auto">' +
+        gettextCatalog.getString("network status") +
+        '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span>' +
+        '</div><div class="card-body collapse' + 
+        (scope.$parent.widget[1]["collapsed"] ? '' : ' show') +
+        '" id="widget_networkstatus">' +
+        '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("item") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("location") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("onhand") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("purchase orders") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("distribution orders") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("manufacturing orders") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("overdue sales orders") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("sales orders") + '</b>' +
+        '</td></tr></thead>' +
+        '<tbody></tbody>' +
+        '</table></div>'
+      );
       var rows = '<tr><td colspan="8">' + gettextCatalog.getString('no network information') + '</td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {

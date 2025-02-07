@@ -38,17 +38,19 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template = '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_inventorydata" aria-expanded="false" aria-controls="widget_inventorydata">' + 
-      '<h5 class="card-title text-capitalize fs-5 me-auto">' +
-      gettextCatalog.getString("inventory") +
-      '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
-      '<div class="card-body collapse show" id="widget_inventorydata"><div class="table-responsive">' +
-      '<table class="table table-sm table-hover table-borderless">' +
-      '<thead class="text-nowrap"></thead><tbody></tbody></table>' +
-      '</div></div>';
-
     scope.$watchGroup(['operationplan.id', 'operationplan.inventoryreport.length'], function (newValue, oldValue) {
-      angular.element(document).find('#attributes-inventorydata').empty().append(template);
+      angular.element(document).find('#attributes-inventorydata').empty().append(
+        '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_inventorydata" aria-expanded="false" aria-controls="widget_inventorydata">' + 
+        '<h5 class="card-title text-capitalize fs-5 me-auto">' +
+        gettextCatalog.getString("inventory") +
+        '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
+        '<div class="card-body collapse' +
+        (scope.$parent.widget[1]["collapsed"] ? '' : ' show') + 
+        '" id="widget_inventorydata"><div class="table-responsive">' +
+        '<table class="table table-sm table-hover table-borderless">' +
+        '<thead class="text-nowrap"></thead><tbody></tbody></table>' +
+        '</div></div>'
+      );
       var rows = ['<tr><td colspan="1">' + gettextCatalog.getString('no inventory information') + '</td></tr>'];
       var columnHeaders = ['<tr></tr>'];
 

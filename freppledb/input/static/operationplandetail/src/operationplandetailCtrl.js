@@ -32,6 +32,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   $scope.operationplan = new OperationPlan();
   $scope.aggregatedopplan = null;
   $scope.mode = preferences ? preferences.mode : "table";
+  $scope.preferences = preferences;
   $scope.operationplans = [];
   $scope.kanbanoperationplans = {};
   $scope.ganttoperationplans = {};

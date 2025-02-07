@@ -2,7 +2,7 @@
 <h5 class="card-title text-capitalize fs-5 me-auto">{{ 'downstream operations'|translate }}</h5>
 <span class="fa fa-arrows align-middle w-auto widget-handle"></span>
 </div>
-<div class="card-body collapse show" id="widget_downstream">
+<div data-ng-class="['card-body', 'collapse', {'show': !$parent.widget[1]['collapsed']}]" id="widget_downstream">
 <table class="table table-sm table-hover table-borderless"><thead><tr>
 <td><b class="text-capitalize">{{ 'level'|translate }}</b></td>
 <td><b class="text-capitalize">{{ 'reference'|translate }}</b></td>

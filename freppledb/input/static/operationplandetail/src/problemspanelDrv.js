@@ -38,23 +38,25 @@ function showproblemspanelDrv($window, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template = '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_problems" aria-expanded="false" aria-controls="widget_problems">' + 
-      '<h5 class="card-title text-capitalize fs-5 me-auto">' +
-      gettextCatalog.getString("problems") +
-      '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
-      '<div class="card-body collapse show" id="widget_problems">' +
-      '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("name") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("start") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("end") + '</b>' +
-      '</td></tr></thead>' +
-      '<tbody></tbody>' +
-      '</table></div>';
-
     scope.$watchGroup(['operationplan.id', 'operationplan.problems.length'], function (newValue, oldValue) {
-      angular.element(document).find('#attributes-operationproblems').empty().append(template);
+      angular.element(document).find('#attributes-operationproblems').empty().append(
+        '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_problems" aria-expanded="false" aria-controls="widget_problems">' + 
+        '<h5 class="card-title text-capitalize fs-5 me-auto">' +
+        gettextCatalog.getString("problems") +
+        '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
+        '<div class="card-body collapse' + 
+        (scope.$parent.widget[1]["collapsed"] ? '' : ' show') +
+        '" id="widget_problems">' +
+        '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("name") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("start") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("end") + '</b>' +
+        '</td></tr></thead>' +
+        '<tbody></tbody>' +
+        '</table></div>'
+      );
       var rows = '<tr><td colspan="3">' + gettextCatalog.getString('no problems') + '</td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {

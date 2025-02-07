@@ -286,17 +286,18 @@ class OperationPlanMixin(GridReport):
     def extra_context(reportclass, request, *args, **kwargs):
         prefs = getattr(request, "prefs", None)
         if prefs:
-            widgets = prefs.get("widgets", [])
+            widgets = prefs.get("widgets", None)
         else:
             request.prefs = {}
             widgets = None
         if not widgets:
+            # Inject the default layout of the widgets
             request.prefs["widgets"] = [
                 {
                     "name": "column1",
                     "cols": [
                         {
-                            "width": 12,
+                            "width": 6,
                             "widgets": [
                                 ["operationplan", {"collapsed": False}],
                                 ["inventorygraph", {"collapsed": False}],
@@ -308,7 +309,7 @@ class OperationPlanMixin(GridReport):
                     "name": "column2",
                     "cols": [
                         {
-                            "width": 12,
+                            "width": 6,
                             "widgets": [
                                 ["inventorydata", {"collapsed": False}],
                                 ["operationproblems", {"collapsed": False}],

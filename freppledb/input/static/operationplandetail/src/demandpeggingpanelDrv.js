@@ -37,28 +37,29 @@ function showoperationpeggingpanelDrv($window, gettextCatalog, $filter) {
   return directive;
 
   function linkfunc(scope, elem, attrs, transclude) {
-    var template = '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_demandpegging" aria-expanded="false" aria-controls="widget_demandpegging">' + 
-      '<h5 class="card-title text-capitalize fs-5 me-auto">' +
-      gettextCatalog.getString("demand") +
-      '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
-      '<div class="card-body table-responsive collapse show" id="widget_demandpegging" style="max-height:15em; overflow:auto">' +
-      '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("name") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("item") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("due") + '</b>' +
-      '</td><td>' +
-      '<b class="text-capitalize">' + gettextCatalog.getString("quantity") + '</b>' +
-      '</td>' +
-      '<tbody></tbody>' +
-      '</table>' +
-      '</div>';
-
     scope.$watchGroup(['operationplan.id', 'operationplan.pegging_demand.length'], function (newValue, oldValue) {
-      angular.element(document).find('#attributes-operationdemandpegging').empty().append(template);
+      angular.element(document).find('#attributes-operationdemandpegging').empty().append(
+        '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_demandpegging" aria-expanded="false" aria-controls="widget_demandpegging">' + 
+        '<h5 class="card-title text-capitalize fs-5 me-auto">' +
+        gettextCatalog.getString("demand") +
+        '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
+        '<div class="card-body table-responsive collapse' + 
+        (scope.$parent.widget[1]["collapsed"] ? '' : ' show') + 
+        '" id="widget_demandpegging" style="max-height:15em; overflow:auto">' +
+        '<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("name") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("item") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("due") + '</b>' +
+        '</td><td>' +
+        '<b class="text-capitalize">' + gettextCatalog.getString("quantity") + '</b>' +
+        '</td>' +
+        '<tbody></tbody>' +
+        '</table>' +
+        '</div>'
+      );
       var rows = '<tr><td colspan="2">' + gettextCatalog.getString('no demands') + '</td></tr>';
-
       if (typeof scope.operationplan !== 'undefined') {
         if (scope.operationplan.hasOwnProperty('pegging_demand')) {
           rows = '';

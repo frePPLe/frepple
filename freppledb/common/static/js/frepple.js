@@ -2591,7 +2591,7 @@ var widget = {
     $(".widget-list").each(function () {
       var row = {
         "name": $(this).attr("data-widget") || "",
-        "cols": [{"width": 12, "widgets": [] }]
+        "cols": [{"width": $(this).attr("data-widget-width") || 12, "widgets": [] }]
       };
 
       $(this).find(".widget").each(function () {

@@ -72,7 +72,7 @@ function showdownstreamoperationplansDrv($window, gettextCatalog) {
 
 		scope.url_prefix = url_prefix;
 
-		angular.element(elem).find('.collapse')
+		angular.element(document).find('#widget_downstream')
          .on("shown.bs.collapse", grid.saveColumnConfiguration)
          .on("hidden.bs.collapse", grid.saveColumnConfiguration);
 	} //link end

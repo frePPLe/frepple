@@ -38,21 +38,23 @@ function showresourcespanelDrv($window, gettextCatalog) {
 	return directive;
 
 	function linkfunc(scope, elem, attrs) {
-		var template = '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_resources" aria-expanded="false" aria-controls="widget_resources">' + 
-		    '<h5 class="card-title text-capitalize fs-5 me-auto">' +
-			gettextCatalog.getString("resource") +
-			'</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
-			'<div class="card-body collapse show" id="widget_resources">' +
-			'<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
-			'<b class="text-capitalize">' + gettextCatalog.getString("name") + '</b>' +
-			'</td><td>' +
-			'<b class="text-capitalize">' + gettextCatalog.getString("quantity") + '</b>' +
-			'</td>' +
-			'<tbody></tbody>' +
-			'</table></div>';
-
 		function redraw() {
-			angular.element(document).find('#attributes-operationresources').empty().append(template);
+			angular.element(document).find('#attributes-operationresources').empty().append(
+				'<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_resources" aria-expanded="false" aria-controls="widget_resources">' + 
+				'<h5 class="card-title text-capitalize fs-5 me-auto">' +
+				gettextCatalog.getString("resource") +
+				'</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
+				'<div class="card-body collapse' + 
+				(scope.$parent.widget[1]["collapsed"] ? '' : ' show') +
+				'" id="widget_resources">' +
+				'<table class="table table-sm table-hover table-borderless"><thead><tr><td>' +
+				'<b class="text-capitalize">' + gettextCatalog.getString("name") + '</b>' +
+				'</td><td>' +
+				'<b class="text-capitalize">' + gettextCatalog.getString("quantity") + '</b>' +
+				'</td>' +
+				'<tbody></tbody>' +
+				'</table></div>'
+			);
 			var rows = '<tr><td colspan="2">' + gettextCatalog.getString('no resources') + '</td></tr>';
 			if (typeof scope.operationplan !== 'undefined') {
 				if (scope.operationplan.hasOwnProperty('loadplans')) {

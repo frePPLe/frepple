@@ -31,16 +31,17 @@ import sys
 from time import time, sleep
 from warnings import warn
 
+from django.core import management
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.db.models import Case, When, Value, IntegerField, Q
 from django.utils.translation import gettext_lazy as _
 
-from .models import Forecast
+from .models import Forecast, ForecastPlan
 from freppledb.boot import getAttributes
 from freppledb.common.commands import PlanTaskRegistry, PlanTask, clean_value
 from freppledb.common.models import Parameter, BucketDetail
 from freppledb.common.report import getCurrentDate
-from freppledb.input.commands.load import LoadTask
+from freppledb.input.commands.load import LoadTask, CheckTask
 from freppledb.input.models import Item, Customer, Location
 
 
@@ -613,6 +614,40 @@ class AggregateDemand(PlanTask):
 
 
 @PlanTaskRegistry.register
+class checkBuckets(CheckTask):
+    # check that all mandatory measures are in the database
+    description = "Checking Measures"
+    sequence = 75
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        with connections[database].cursor() as cursor:
+
+            # Make sure mandatory measures are inserted in the the database
+            cursor.execute("select name from measure")
+            measures = [i[0] for i in cursor] if cursor else []
+            mandatory = [
+                "forecastbaselinevalue",
+                "forecastconsumedvalue",
+                "forecastnetvalue",
+                "forecastoverridevalue",
+                "forecastplannedvalue",
+                "forecasttotal",
+                "forecasttotalvalue",
+                "nodata",
+                "ordersadjustmentvalue",
+                "ordersopenvalue",
+                "ordersplannedvalue",
+                "orderstotalvalue",
+            ]
+
+            if not all(m in measures for m in mandatory):
+                management.call_command("loaddata", "measures.json", verbosity=0)
+                ForecastPlan.refreshTableColumns()
+                logger.info("Some missing mandatory measures have been added.")
+
+
+@PlanTaskRegistry.register
 class LoadMeasures(PlanTask):
     description = "Load measures"
     sequence = 90.25
@@ -628,21 +663,6 @@ class LoadMeasures(PlanTask):
         cnt = 0
         starttime = time()
         with connections[database].cursor() as cursor:
-            cursor.execute(
-                """
-                insert into measure
-                  (name, label, type, mode_future, mode_past, description,
-                   compute_expression, formatter, initially_hidden, defaultvalue,
-                   lastmodified)
-                values (
-                  'forecasttotal', 'total forecast', 'computed', 'view', 'view',
-                  'This row is what we''ll plan supply for',
-                  'if(forecastoverride == -1, forecastbaseline, forecastoverride)',
-                  'number', false, 0, now()
-                  )
-                on conflict (name) do nothing
-                """
-            )
             cursor.execute(
                 """
                 select

@@ -614,7 +614,7 @@ class AggregateDemand(PlanTask):
 
 
 @PlanTaskRegistry.register
-class checkBuckets(CheckTask):
+class checkMeasures(CheckTask):
     # check that all mandatory measures are in the database
     description = "Checking Measures"
     sequence = 75

@@ -1055,7 +1055,11 @@ ForecastData::ForecastData(const ForecastBase* f) {
             3, currentdate - Duration(86400L * f->getHorizonHistory()));
         stmt.setArgument(
             4, currentdate + Duration(86400L * f->getHorizonFuture()));
+      } catch (exception& e) {
+        logger << "Error creating prepared statement: " << e.what() << endl;
+        db.closeConnection();
       } catch (...) {
+        logger << "Error creating prepared statement" << endl;
         db.closeConnection();
       }
     }

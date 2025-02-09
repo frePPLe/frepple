@@ -334,7 +334,9 @@ class OperationPlanMixin(GridReport):
                     ],
                 },
             ]
-        return getWebServiceContext(request)
+            return {"preferences": request.prefs} | getWebServiceContext(request)
+        else:
+            return getWebServiceContext(request)
 
 
 class PathReport(GridReport):

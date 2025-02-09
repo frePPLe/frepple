@@ -141,24 +141,27 @@ class ForecastPlanAPI(frePPleListCreateAPIView):
             parameter_currentdate = datetime.now()
         return ForecastPlan.objects.using(self.request.database).raw(
             """
-        SELECT forecastplan.item_id||' @ '||
-        forecastplan.location_id||' @ '||
-        forecastplan.customer_id||' @ '||
-        forecastplan.startdate as id,
-        forecastplan.item_id,
-        forecastplan.location_id,
-        forecastplan.customer_id,
-        forecastplan.startdate,
-        forecastplan.enddate,
-        forecastplan.value
-        FROM forecastplan
-        inner join forecast on forecast.item_id = forecastplan.item_id
-        and forecast.location_id = forecastplan.location_id
-        and forecast.customer_id = forecastplan.customer_id
-        and forecast.planned = true
-        where
-        forecastplan.enddate > to_date('%s','YYYY-MM-DD HH24:MI:SS')
-        """
+            select forecastplan.item_id||' @ '||
+            forecastplan.location_id||' @ '||
+            forecastplan.customer_id||' @ '||
+            forecastplan.startdate as id,
+            forecastplan.item_id,
+            forecastplan.location_id,
+            forecastplan.customer_id,
+            forecastplan.startdate,
+            forecastplan.enddate,
+            jsonb_strip_nulls(
+                to_jsonb(forecastplan)
+                - array['customer_id', 'item_id', 'location_id', 'startdate', 'enddate']
+                ) as value
+            FROM forecastplan
+            inner join forecast on forecast.item_id = forecastplan.item_id
+            and forecast.location_id = forecastplan.location_id
+            and forecast.customer_id = forecastplan.customer_id
+            and forecast.planned = true
+            where
+            forecastplan.enddate > to_date('%s','YYYY-MM-DD HH24:MI:SS')
+            """
             % (parameter_currentdate.strftime("%Y-%m-%d %H:%M:%S"),)
         )
 

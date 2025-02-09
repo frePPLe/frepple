@@ -898,7 +898,7 @@ class ForecastPlan(models.Model):
             cursor.execute("REFRESH MATERIALIZED VIEW forecastreport_view")
 
     @staticmethod
-    def refreshTableColumns():
+    def refreshTableColumns(database=DEFAULT_DB_ALIAS):
         """
         Adjust the forecastplan table to have a columnn for every measure.
 
@@ -909,39 +909,36 @@ class ForecastPlan(models.Model):
         expected_columns = [
             m.name for m in Measure.standard_measures() if not m.computed
         ]
-        for m in Measure.objects.using(DEFAULT_DB_ALIAS).only("name"):
+        for m in Measure.objects.using(database).only("name"):
             expected_columns.append(m.name)
 
-        # Loop over the in-use scenarios, and check the forecastplan table
+        # Check the forecastplan table
         modified = False
-        for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
-            models.Q(status="In use") | models.Q(name=DEFAULT_DB_ALIAS)
-        ):
-            with connections[db.name].cursor() as cursor:
-                cursor.execute(
-                    """
-                    select column_name
-                    from information_schema.columns 
-                    where table_name = 'forecastplan'
-                    and column_name not in (
-                      'item_id', 'location_id', 'customer_id', 'startdate', 'enddate'
-                      )
-                    """
-                )
-                columns = [c[0] for c in cursor.fetchall()]
-                for m in expected_columns:
-                    if m not in columns:
-                        cursor.execute(
-                            "alter table forecastplan add column if not exists %s decimal(20,8)"
-                            % m
-                        )
-                        modified = True
-                for c in columns:
-                    if c not in expected_columns:
-                        cursor.execute(
-                            "alter table forecastplan drop column if exists %s" % c
-                        )
-                        modified = True
+        with connections[database].cursor() as cursor:
+            cursor.execute(
+                """
+                select column_name
+                from information_schema.columns 
+                where table_name = 'forecastplan'
+                and column_name not in (
+                    'item_id', 'location_id', 'customer_id', 'startdate', 'enddate'
+                    )
+                """
+            )
+            columns = [c[0] for c in cursor.fetchall()]
+            for m in expected_columns:
+                if m not in columns:
+                    cursor.execute(
+                        "alter table forecastplan add column if not exists %s decimal(20,8)"
+                        % m
+                    )
+                    modified = True
+            for c in columns:
+                if c not in expected_columns:
+                    cursor.execute(
+                        "alter table forecastplan drop column if exists %s" % c
+                    )
+                    modified = True
 
         if modified:
             # Trigger wsgi reload by importing from freppledb.common.utils.force
@@ -1395,14 +1392,14 @@ class Measure(AuditModel):
         super().save(*args, **kwargs)
 
         # Add or update the database schema
-        ForecastPlan.refreshTableColumns()
+        ForecastPlan.refreshTableColumns(database=self._state.db)
 
     def delete(self, *args, **kwargs):
         # Call the real save() method
         super().delete(*args, **kwargs)
 
         # Add or update the database schema
-        ForecastPlan.refreshTableColumns()
+        ForecastPlan.refreshTableColumns(database=self._state.db)
 
     class Meta(AuditModel.Meta):
         db_table = "measure"

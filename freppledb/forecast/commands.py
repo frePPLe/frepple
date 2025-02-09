@@ -642,8 +642,10 @@ class checkMeasures(CheckTask):
             ]
 
             if not all(m in measures for m in mandatory):
-                management.call_command("loaddata", "measures.json", verbosity=0)
-                ForecastPlan.refreshTableColumns()
+                management.call_command(
+                    "loaddata", "measures.json", database=database, verbosity=0
+                )
+                ForecastPlan.refreshTableColumns(database)
                 logger.info("Some missing mandatory measures have been added.")
 
 

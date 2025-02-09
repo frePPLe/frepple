@@ -140,7 +140,7 @@ class Command(loaddata.Command):
             if "freppledb.forecast" in settings.INSTALLED_APPS:
                 from freppledb.forecast.models import ForecastPlan
 
-                ForecastPlan.refreshTableColumns()
+                ForecastPlan.refreshTableColumns(database)
 
             # if the fixture doesn't contain the 'demo' word, let's not apply loaddata post-treatments
             if "FREPPLE_TEST" in os.environ:

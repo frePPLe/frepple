@@ -316,7 +316,7 @@ class Command(BaseCommand):
                 if "freppledb.forecast" in settings.INSTALLED_APPS:
                     from freppledb.forecast.models import ForecastPlan
 
-                    ForecastPlan.refreshTableColumns()
+                    ForecastPlan.refreshTableColumns(self.database)
 
             except GeneratorExit:
                 logger.warning("Connection Aborted")

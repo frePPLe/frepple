@@ -39,9 +39,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Operations can now consume and produce material in different
     locations.
   | Until now, an operation always consumed and produced material
-    in the same location. This new feature allows for more complex
-    production flows.
-
+    in the same location. This new feature makes modeling complex 
+    multi-location production environments easier.
+    
 - | Purchase orders, manufacturing orders and distribution orders
     get an extra field "remark", which allows users to leaves free text
     comments on them.

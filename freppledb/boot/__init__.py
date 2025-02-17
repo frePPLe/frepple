@@ -128,8 +128,16 @@ def add_extra_model_fields(sender, **kwargs):
             field = models.JSONField(
                 default="{}", null=True, blank=True, editable=editable
             )
+        elif fieldtype.startswith("foreignkey:"):
+            field = models.ForeignKey(
+                fieldtype[11:],
+                models.deletion.SET_NULL,
+                null=True,
+                blank=True,
+                editable=editable,
+            )
         else:
-            raise ImproperlyConfigured("Invalid attribute type '%s'." % fieldtype)
+            raise ImproperlyConfigured(f"Invalid attribute type '{fieldtype}'.")
         field.contribute_to_class(sender, field_name)
 
 
@@ -139,7 +147,7 @@ def registerAttribute(model, attrlist, **kwargs):
     The attribute list is passed as a list of tuples in the format
       - fieldname: database field name
       - label: displayed in the user interface
-      - fieldtype: supports "boolean", "duration", "integer", "number", "string", "time", "date", "datetime"
+      - fieldtype: supports "boolean", "duration", "integer", "number", "string", "time", "date", "datetime", "foreignkey:XXXX"
       - editable: set to false to disable users from changing the field, default=True
       - initially_hidden: set to true to hide this attribute by default in a screen, default=False
     """
@@ -278,6 +286,15 @@ def getAttributeFields(
             result.append(
                 GridFieldText(
                     field_name,
+                    title=label,
+                    initially_hidden=hidden or initially_hidden,
+                    editable=editable and dflt_editable,
+                )
+            )
+        elif fieldtype.startswith("foreignkey:"):
+            result.append(
+                GridFieldText(
+                    f"{field_name}_id",
                     title=label,
                     initially_hidden=hidden or initially_hidden,
                     editable=editable and dflt_editable,

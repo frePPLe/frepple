@@ -1995,7 +1995,7 @@ class ForecastEditor:
         # Auxilary function to return attributes
         def addAttributeValues(attr, obj, cls):
             for field_name, label, fieldtype, editable, hidden in getAttributes(cls):
-                if fieldtype == "string":
+                if fieldtype == "string" or fieldtype.startswith("foreignkey:"):
                     attr.append(
                         [capfirst(force_str(label)), getattr(obj, field_name, None)]
                     )

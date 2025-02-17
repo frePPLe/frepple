@@ -481,7 +481,6 @@ class AggregateDemand(PlanTask):
                 currentdate,
             ),
         )
-        transaction.commit(using=database)
         logger.info(
             "Aggregate - deleted %d obsolete forecast buckets in %.2f seconds"
             % (cursor.rowcount, time() - starttime)
@@ -499,13 +498,11 @@ class AggregateDemand(PlanTask):
             and forecastplan.customer_id = t.customer_id
             """
         )
-        transaction.commit(using=database)
         logger.info(
             "Aggregate - deleted %d invalid combinations in %.2f seconds"
             % (cursor.rowcount, time() - starttime)
         )
 
-        # reset leaf nodes with no more open/total orders
         starttime = time()
 
         cursor.execute(
@@ -545,7 +542,6 @@ class AggregateDemand(PlanTask):
         )
 
         # updating open/total orders values
-        starttime = time()
         cursor.execute(
             """
             insert into forecastplan
@@ -569,7 +565,10 @@ class AggregateDemand(PlanTask):
               or excluded.orderstotalvalue is distinct from forecastplan.orderstotalvalue
               or excluded.ordersopen is distinct from forecastplan.ordersopen
               or excluded.ordersopenvalue is distinct from forecastplan.ordersopenvalue;
-
+            """
+        )
+        cursor.execute(
+            """
             -- Handle when there is no match in demand_agg
             UPDATE forecastplan
             SET ordersopen = NULL, ordersopenvalue = NULL, orderstotal = NULL, orderstotalvalue = NULL
@@ -579,7 +578,6 @@ class AggregateDemand(PlanTask):
             AND forecastplan.customer_id = demand_agg.customer_id
             AND forecastplan.startdate = demand_agg.startdate)
             and (ordersopen is not NULL or ordersopenvalue is not null or orderstotal is not NULL or orderstotalvalue is not NULL);
-
             """
         )
         logger.info(

@@ -76,7 +76,7 @@
 					{% if widget.asynchronous %}
 					<div id="widget_{{widget.name}}" style="text-align:center"><img src="{{STATIC_URL}}img/loading.gif" height="32" alt="loading"></div>
 					{% else %}
-					{{widget.render|safe}}
+					{% renderDashboardWidget widget %}
 					{% endif %}
                 </div>
 			</div>

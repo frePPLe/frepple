@@ -729,6 +729,11 @@ def getDashboard(parser, token):
 register.tag("getDashboard", getDashboard)
 
 
+@register.simple_tag(takes_context=True)
+def renderDashboardWidget(context, obj):
+    return mark_safe(obj.render(context.request))
+
+
 @register.simple_tag
 def google_analytics():
     """
@@ -813,7 +818,6 @@ def sort_dictionary_by_key(input_dictionary):
 
 
 sort_dictionary_by_key.is_safe = True
-
 
 
 @register.simple_tag(name="render_field_bootstrap")

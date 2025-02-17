@@ -238,7 +238,7 @@ class ForecastWidget(Widget):
     """
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         cursor = connections[request.database].cursor()
         curdate = getCurrentDate(request.database, lastplan=True)
         history = int(request.GET.get("history", cls.history))
@@ -422,7 +422,7 @@ class ForecastAccuracyWidget(Widget):
     """
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         cursor = connections[request.database].cursor()
         curdate = getCurrentDate(request.database, lastplan=True)
         history = int(request.GET.get("history", cls.history))
@@ -496,7 +496,7 @@ class OutliersWidget(Widget):
         return "?%s" % urlencode({"limit": self.limit})
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         limit = int(request.GET.get("limit", cls.limit))
         cursor = connections[request.database].cursor()
         result = [

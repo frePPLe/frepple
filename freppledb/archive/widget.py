@@ -135,42 +135,44 @@ class ArchivedBufferWidget(Widget):
     """
 
     @classmethod
-    def render(cls, request=None):
-        cursor = connections[request.database].cursor()
-        history = int(request.GET.get("history", cls.history))
-        result = [
-            '<svg class="chart" id="archivebuffer" style="width:100%; height: 100%"></svg>',
-            '<table style="display:none">',
-        ]
-        cursor.execute(
-            """
-            select * from (
-            select
-              snapshot_date,
-              coalesce(sum(onhand), 0),
-              coalesce(sum(onhand * cost), 0)
-            from ax_manager
-            left outer join ax_buffer
-              on snapshot_date = snapshot_date_id
-            group by snapshot_date
-            order by snapshot_date desc
-            limit %s
-            ) d
-            order by snapshot_date asc
-            """,
-            (history,),
-        )
-        for res in cursor.fetchall():
-            result.append(
-                "<tr><td>%s</td><td>%.1f</td><td>%.1f</td></tr>"
-                % (
-                    escape(date_format(res[0], format="DATE_FORMAT", use_l10n=False)),
-                    res[1],
-                    res[2],
-                )
+    def render(cls, request):
+        with connections[request.database].cursor() as cursor:
+            history = int(request.GET.get("history", cls.history))
+            result = [
+                '<svg class="chart" id="archivebuffer" style="width:100%; height: 100%"></svg>',
+                '<table style="display:none">',
+            ]
+            cursor.execute(
+                """
+                select * from (
+                select
+                  snapshot_date,
+                  coalesce(sum(onhand), 0),
+                  coalesce(sum(onhand * cost), 0)
+                from ax_manager
+                left outer join ax_buffer
+                  on snapshot_date = snapshot_date_id
+                group by snapshot_date
+                order by snapshot_date desc
+                limit %s
+                ) d
+                order by snapshot_date asc
+                """,
+                (history,),
             )
-        result.append("</table>")
-        return HttpResponse("\n".join(result))
+            for res in cursor.fetchall():
+                result.append(
+                    "<tr><td>%s</td><td>%.1f</td><td>%.1f</td></tr>"
+                    % (
+                        escape(
+                            date_format(res[0], format="DATE_FORMAT", use_l10n=False)
+                        ),
+                        res[1],
+                        res[2],
+                    )
+                )
+            result.append("</table>")
+            return HttpResponse("\n".join(result))
 
 
 Dashboard.register(ArchivedBufferWidget)
@@ -296,46 +298,48 @@ class ArchivedDemandWidget(Widget):
     """
 
     @classmethod
-    def render(cls, request=None):
-        cursor = connections[request.database].cursor()
-        history = int(request.GET.get("history", cls.history))
-        result = [
-            '<svg class="chart" id="archivedemand" style="width:100%; height: 100%"></svg>',
-            '<table style="display:none">',
-        ]
-        cursor.execute(
-            """
-            select * from (
-            select
-              snapshot_date,
-              coalesce(sum(quantity), 0),
-              coalesce(sum(quantity*cost), 0),
-              coalesce(sum(case when due < snapshot_date_id then quantity end), 0),
-              coalesce(sum(case when due < snapshot_date_id then quantity * cost end), 0)
-            from ax_manager
-            left outer join ax_demand
-              on snapshot_date = snapshot_date_id
-            group by snapshot_date
-            order by snapshot_date desc
-            limit %s
-            ) d
-            order by snapshot_date asc
-            """,
-            (history,),
-        )
-        for res in cursor.fetchall():
-            result.append(
-                "<tr><td>%s</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>"
-                % (
-                    escape(date_format(res[0], format="DATE_FORMAT", use_l10n=False)),
-                    res[1],
-                    res[2],
-                    res[3],
-                    res[4],
-                )
+    def render(cls, request):
+        with connections[request.database].cursor() as cursor:
+            history = int(request.GET.get("history", cls.history))
+            result = [
+                '<svg class="chart" id="archivedemand" style="width:100%; height: 100%"></svg>',
+                '<table style="display:none">',
+            ]
+            cursor.execute(
+                """
+                select * from (
+                select
+                  snapshot_date,
+                  coalesce(sum(quantity), 0),
+                  coalesce(sum(quantity*cost), 0),
+                  coalesce(sum(case when due < snapshot_date_id then quantity end), 0),
+                  coalesce(sum(case when due < snapshot_date_id then quantity * cost end), 0)
+                from ax_manager
+                left outer join ax_demand
+                  on snapshot_date = snapshot_date_id
+                group by snapshot_date
+                order by snapshot_date desc
+                limit %s
+                ) d
+                order by snapshot_date asc
+                """,
+                (history,),
             )
-        result.append("</table>")
-        return HttpResponse("\n".join(result))
+            for res in cursor.fetchall():
+                result.append(
+                    "<tr><td>%s</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>"
+                    % (
+                        escape(
+                            date_format(res[0], format="DATE_FORMAT", use_l10n=False)
+                        ),
+                        res[1],
+                        res[2],
+                        res[3],
+                        res[4],
+                    )
+                )
+            result.append("</table>")
+            return HttpResponse("\n".join(result))
 
 
 Dashboard.register(ArchivedDemandWidget)
@@ -461,15 +465,15 @@ class ArchivedPurchaseOrderWidget(Widget):
     """
 
     @classmethod
-    def render(cls, request=None):
-        cursor = connections[request.database].cursor()
-        history = int(request.GET.get("history", cls.history))
-        result = [
-            '<svg class="chart" id="archivepurchaseorder" style="width:100%; height: 100%"></svg>',
-            '<table style="display:none">',
-        ]
-        cursor.execute(
-            """
+    def render(cls, request):
+        with connections[request.database].cursor() as cursor:
+            history = int(request.GET.get("history", cls.history))
+            result = [
+                '<svg class="chart" id="archivepurchaseorder" style="width:100%; height: 100%"></svg>',
+                '<table style="display:none">',
+            ]
+            cursor.execute(
+                """
             select * from (
             select
               snapshot_date,
@@ -487,21 +491,23 @@ class ArchivedPurchaseOrderWidget(Widget):
             ) d
             order by snapshot_date
             """,
-            (history,),
-        )
-        for res in cursor.fetchall():
-            result.append(
-                "<tr><td>%s</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>"
-                % (
-                    escape(date_format(res[0], format="DATE_FORMAT", use_l10n=False)),
-                    res[1],
-                    res[2],
-                    res[3],
-                    res[4],
-                )
+                (history,),
             )
-        result.append("</table>")
-        return HttpResponse("\n".join(result))
+            for res in cursor.fetchall():
+                result.append(
+                    "<tr><td>%s</td><td>%.1f</td><td>%.1f</td><td>%.1f</td><td>%.1f</td></tr>"
+                    % (
+                        escape(
+                            date_format(res[0], format="DATE_FORMAT", use_l10n=False)
+                        ),
+                        res[1],
+                        res[2],
+                        res[3],
+                        res[4],
+                    )
+                )
+            result.append("</table>")
+            return HttpResponse("\n".join(result))
 
 
 Dashboard.register(ArchivedPurchaseOrderWidget)

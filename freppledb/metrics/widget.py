@@ -32,7 +32,6 @@ from django.utils.html import escape
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
-from freppledb.common.middleware import _thread_locals
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.report import getCurrency
 from freppledb.input.models import Item
@@ -58,10 +57,6 @@ class AnalysisDemandProblems(Widget):
         limit = int(request.GET.get("limit", cls.limit))
         orderby = request.GET.get("orderby", cls.orderby)
         currency = getCurrency()
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th>'
@@ -76,7 +71,7 @@ class AnalysisDemandProblems(Widget):
         if orderby == "latedemandcount":
             topitems = (
                 Item.objects.all()
-                .using(db)
+                .using(request.database)
                 .order_by("-latedemandcount", "latedemandvalue", "-latedemandquantity")
                 .filter(rght=F("lft") + 1, latedemandcount__gt=0)
                 .only(
@@ -86,7 +81,7 @@ class AnalysisDemandProblems(Widget):
         elif orderby == "latedemandquantity":
             topitems = (
                 Item.objects.all()
-                .using(db)
+                .using(request.database)
                 .order_by("-latedemandquantity", "latedemandvalue", "-latedemandcount")
                 .filter(rght=F("lft") + 1, latedemandcount__gt=0)
                 .only(
@@ -96,7 +91,7 @@ class AnalysisDemandProblems(Widget):
         else:
             topitems = (
                 Item.objects.all()
-                .using(db)
+                .using(request.database)
                 .order_by("-latedemandvalue", "-latedemandquantity", "-latedemandcount")
                 .filter(rght=F("lft") + 1, latedemandcount__gt=0)
                 .only(

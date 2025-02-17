@@ -34,7 +34,6 @@ from django.utils.html import escape
 from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
-from freppledb.common.middleware import _thread_locals
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.report import GridReport, getCurrency, getCurrentDate
 from freppledb.input.models import (
@@ -70,13 +69,9 @@ class LateOrdersWidget(Widget):
         return "?%s" % urlencode({"limit": self.limit})
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         limit = int(request.GET.get("limit", cls.limit))
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
-        cursor = connections[db].cursor()
+        cursor = connections[request.database].cursor()
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="alignleft">%s</th>'
@@ -159,52 +154,48 @@ class ShortOrdersWidget(Widget):
         return "?%s" % urlencode({"limit": self.limit})
 
     @classmethod
-    def render(cls, request=None):
-        limit = int(request.GET.get("limit", cls.limit))
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
-        cursor = connections[db].cursor()
-        result = [
-            '<div class="table-responsive"><table class="table table-sm table-hover">',
-            '<thead><tr><th class="alignleft">%s</th><th class="alignleft">%s</th><th class="alignleft">%s</th>'
-            '<th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
-            % (
-                capfirst(force_str(_("name"))),
-                capfirst(force_str(_("item"))),
-                capfirst(force_str(_("location"))),
-                capfirst(force_str(_("customer"))),
-                capfirst(force_str(_("due"))),
-                capfirst(force_str(_("short"))),
-            ),
-        ]
-        alt = False
-        cursor.execute(cls.query, (limit,))
-        for rec in cursor.fetchall():
-            result.append(
-                '<tr%s><td class="text-decoration-underline alignleft"><a href="%s/demandpegging/%s/">%s</a></td><td class="alignleft">%s</td>'
-                '<td class="alignleft">%s</td><td class="alignleft">%s</td><td class="text-center">%s</td>'
-                '<td class="text-center">%s</td></tr>'
+    def render(cls, request):
+        with connections[request.database].cursor() as cursor:
+            limit = int(request.GET.get("limit", cls.limit))
+            result = [
+                '<div class="table-responsive"><table class="table table-sm table-hover">',
+                '<thead><tr><th class="alignleft">%s</th><th class="alignleft">%s</th><th class="alignleft">%s</th>'
+                '<th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
                 % (
-                    alt and ' class="altRow"' or "",
-                    request.prefix,
-                    quote(rec[0]),
-                    escape(rec[0]),
-                    escape(rec[1]),
-                    escape(rec[2]),
-                    escape(rec[3]),
-                    (
-                        date_format(rec[4], format="DATE_FORMAT", use_l10n=False)
-                        if rec[4]
-                        else ""
-                    ),
-                    int(rec[5]),
+                    capfirst(force_str(_("name"))),
+                    capfirst(force_str(_("item"))),
+                    capfirst(force_str(_("location"))),
+                    capfirst(force_str(_("customer"))),
+                    capfirst(force_str(_("due"))),
+                    capfirst(force_str(_("short"))),
+                ),
+            ]
+            alt = False
+            cursor.execute(cls.query, (limit,))
+            for rec in cursor.fetchall():
+                result.append(
+                    '<tr%s><td class="text-decoration-underline alignleft"><a href="%s/demandpegging/%s/">%s</a></td><td class="alignleft">%s</td>'
+                    '<td class="alignleft">%s</td><td class="alignleft">%s</td><td class="text-center">%s</td>'
+                    '<td class="text-center">%s</td></tr>'
+                    % (
+                        alt and ' class="altRow"' or "",
+                        request.prefix,
+                        quote(rec[0]),
+                        escape(rec[0]),
+                        escape(rec[1]),
+                        escape(rec[2]),
+                        escape(rec[3]),
+                        (
+                            date_format(rec[4], format="DATE_FORMAT", use_l10n=False)
+                            if rec[4]
+                            else ""
+                        ),
+                        int(rec[5]),
+                    )
                 )
-            )
-            alt = not alt
-        result.append("</table></div>")
-        return HttpResponse("\n".join(result))
+                alt = not alt
+            result.append("</table></div>")
+            return HttpResponse("\n".join(result))
 
 
 Dashboard.register(ShortOrdersWidget)
@@ -365,18 +356,13 @@ class ManufacturingOrderWidget(Widget):
     )
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         fence1 = int(request.GET.get("fence1", cls.fence1))
         fence2 = int(request.GET.get("fence2", cls.fence2))
         currency = getCurrency()
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
-        current = getCurrentDate(db, lastplan=True)
-        request.database = db
+        current = getCurrentDate(request.database, lastplan=True)
         GridReport.getBuckets(request)
-        cursor = connections[db].cursor()
+        cursor = connections[request.database].cursor()
         query = """
           select
             0, common_bucketdetail.name, common_bucketdetail.startdate,
@@ -692,18 +678,13 @@ class DistributionOrderWidget(Widget):
     )
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         fence1 = int(request.GET.get("fence1", cls.fence1))
         fence2 = int(request.GET.get("fence2", cls.fence2))
         currency = getCurrency()
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
-        current = getCurrentDate(db, lastplan=True)
-        request.database = db
+        current = getCurrentDate(request.database, lastplan=True)
         GridReport.getBuckets(request)
-        cursor = connections[db].cursor()
+        cursor = connections[request.database].cursor()
         query = """
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
@@ -1018,20 +999,15 @@ class PurchaseOrderWidget(Widget):
     )
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         fence1 = int(request.GET.get("fence1", cls.fence1))
         fence2 = int(request.GET.get("fence2", cls.fence2))
         supplier = request.GET.get("supplier", cls.supplier)
         currency = getCurrency()
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
-        current = getCurrentDate(db, lastplan=True)
-        request.database = db
+        current = getCurrentDate(request.database, lastplan=True)
         GridReport.getBuckets(request)
         supplierfilter = "and supplier_id = %s" if supplier else ""
-        cursor = connections[db].cursor()
+        cursor = connections[request.database].cursor()
         query = """
       select
          0, common_bucketdetail.name, common_bucketdetail.startdate,
@@ -1268,12 +1244,8 @@ class PurchaseQueueWidget(Widget):
         return "?%s" % urlencode({"limit": self.limit})
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         limit = int(request.GET.get("limit", cls.limit))
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
@@ -1287,7 +1259,7 @@ class PurchaseQueueWidget(Widget):
         ]
         alt = False
         for po in (
-            PurchaseOrder.objects.using(db)
+            PurchaseOrder.objects.using(request.database)
             .filter(status="proposed")
             .order_by("startdate")[:limit]
         ):
@@ -1328,12 +1300,8 @@ class DistributionQueueWidget(Widget):
         return "?%s" % urlencode({"limit": self.limit})
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         limit = int(request.GET.get("limit", cls.limit))
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
@@ -1348,7 +1316,7 @@ class DistributionQueueWidget(Widget):
         ]
         alt = False
         for po in (
-            DistributionOrder.objects.using(db)
+            DistributionOrder.objects.using(request.database)
             .filter(status="proposed")
             .order_by("startdate")[:limit]
         ):
@@ -1390,12 +1358,8 @@ class ShippingQueueWidget(Widget):
         return "?%s" % urlencode({"limit": self.limit})
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         limit = int(request.GET.get("limit", cls.limit))
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th>%s</th><th>%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
@@ -1410,7 +1374,7 @@ class ShippingQueueWidget(Widget):
         ]
         alt = False
         for do in (
-            DistributionOrder.objects.using(db)
+            DistributionOrder.objects.using(request.database)
             .filter(status="proposed")
             .order_by("startdate")[:limit]
         ):
@@ -1452,12 +1416,8 @@ class ResourceQueueWidget(Widget):
         return "?%s" % urlencode({"limit": self.limit})
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         limit = int(request.GET.get("limit", cls.limit))
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             "<thead><tr>"
@@ -1476,7 +1436,7 @@ class ResourceQueueWidget(Widget):
         ]
         alt = False
         for ldplan in (
-            OperationPlanResource.objects.using(db)
+            OperationPlanResource.objects.using(request.database)
             .select_related()
             .order_by("operationplan__startdate")[:limit]
         ):
@@ -1528,12 +1488,8 @@ class PurchaseAnalysisWidget(Widget):
     limit = 20
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         limit = int(request.GET.get("limit", cls.limit))
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
@@ -1547,7 +1503,7 @@ class PurchaseAnalysisWidget(Widget):
         ]
         alt = False
         for po in (
-            PurchaseOrder.objects.using(db)
+            PurchaseOrder.objects.using(request.database)
             .filter(status="confirmed")
             .exclude(criticality=999)
             .order_by("color", "enddate")[:limit]
@@ -1585,12 +1541,8 @@ class AlertsWidget(Widget):
     entities = "material,capacity,demand,operation"
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         entities = request.GET.get("entities", cls.entities).split(",")
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-sm table-hover">',
             '<thead><tr><th class="alignleft">%s</th><th class="text-center">%s</th><th class="text-center">%s</th></tr></thead>'
@@ -1600,13 +1552,14 @@ class AlertsWidget(Widget):
                 capfirst(force_str(_("weight"))),
             ),
         ]
-        cursor = connections[db].cursor()
-        query = """select name, count(*), sum(weight)
-      from out_problem
-      where entity in (%s)
-      group by name
-      order by name
-      """ % (
+        cursor = connections[request.database].cursor()
+        query = """
+            select name, count(*), sum(weight)
+            from out_problem
+            where entity in (%s)
+            group by name
+            order by name
+        """ % (
             ", ".join(["%s"] * len(entities))
         )
         cursor.execute(query, entities)
@@ -1727,7 +1680,7 @@ class ResourceLoadWidget(Widget):
     """
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         limit = int(request.GET.get("limit", cls.limit))
         medium = int(request.GET.get("medium", cls.medium))
         high = int(request.GET.get("high", cls.high))
@@ -1841,7 +1794,7 @@ class InventoryByLocationWidget(Widget):
              limit %s"""
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         limit = int(request.GET.get("limit", cls.limit))
         result = [
             '<svg class="chart" id="invByLoc" style="width:100%; height: 250px;"></svg>',
@@ -1922,25 +1875,25 @@ class InventoryByItemWidget(Widget):
     """
 
     @classmethod
-    def render(cls, request=None):
-        limit = int(request.GET.get("limit", cls.limit))
-        result = [
-            '<svg class="chart" id="invByItem" style="width:100%; height: 250px;"></svg>',
-            '<table style="display:none">',
-        ]
-        cursor = connections[request.database].cursor()
-        query = """select item.name, coalesce(sum(buffer.onhand * item.cost),0)
+    def render(cls, request):
+        with connections[request.database].cursor() as cursor:
+            limit = int(request.GET.get("limit", cls.limit))
+            result = [
+                '<svg class="chart" id="invByItem" style="width:100%; height: 250px;"></svg>',
+                '<table style="display:none">',
+            ]
+            query = """select item.name, coalesce(sum(buffer.onhand * item.cost),0)
                from buffer
                inner join item on buffer.item_id = item.name
                group by item.name
                order by 2 desc
                limit %s
               """
-        cursor.execute(query, (limit,))
-        for res in cursor.fetchall():
-            result.append("<tr><td>%s</td><td>%.2f</td></tr>" % (res[0], res[1]))
-        result.append("</table>")
-        return HttpResponse("\n".join(result))
+            cursor.execute(query, (limit,))
+            for res in cursor.fetchall():
+                result.append("<tr><td>%s</td><td>%.2f</td></tr>" % (res[0], res[1]))
+            result.append("</table>")
+            return HttpResponse("\n".join(result))
 
 
 Dashboard.register(InventoryByItemWidget)
@@ -1972,10 +1925,9 @@ class DeliveryPerformanceWidget(Widget):
     """
 
     @classmethod
-    def render(cls, request=None):
+    def render(cls, request):
         green = int(request.GET.get("green", cls.green))
         yellow = int(request.GET.get("yellow", cls.yellow))
-        cursor = connections[request.database].cursor()
         GridReport.getBuckets(request)
         query = (
             """
@@ -1992,16 +1944,17 @@ class DeliveryPerformanceWidget(Widget):
             """
             % request.report_enddate
         )
-        cursor.execute(query)
-        val = cursor.fetchone()[0]
-        result = [
-            '<div style="text-align: center"><span id="otd"></span></div>',
-            '<span id="otd_label" style="display:none">%s</span>'
-            % force_str(_("On time delivery")),
-            '<span id="otd_value" style="display:none">%s</span>' % val,
-            '<span id="otd_green" style="display:none">%s</span>' % green,
-            '<span id="otd_yellow" style="display:none">%s</span>' % yellow,
-        ]
+        with connections[request.database].cursor() as cursor:
+            cursor.execute(query)
+            val = cursor.fetchone()[0]
+            result = [
+                '<div style="text-align: center"><span id="otd"></span></div>',
+                '<span id="otd_label" style="display:none">%s</span>'
+                % force_str(_("On time delivery")),
+                '<span id="otd_value" style="display:none">%s</span>' % val,
+                '<span id="otd_green" style="display:none">%s</span>' % green,
+                '<span id="otd_yellow" style="display:none">%s</span>' % yellow,
+            ]
         return HttpResponse("\n".join(result))
 
 

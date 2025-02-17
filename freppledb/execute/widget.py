@@ -50,13 +50,11 @@ class ExecuteWidget(Widget):
         });
         """
 
-    def render(self, request=None):
-        from freppledb.common.middleware import _thread_locals
+    @staticmethod
+    def render(request):
         from freppledb.execute.management.commands.runplan import Command
 
-        return HttpResponse(
-            Command.getHTML(request or _thread_locals.request, widget=True)
-        )
+        return HttpResponse(Command.getHTML(request, widget=True))
 
 
 @Dashboard.register
@@ -69,10 +67,8 @@ class ExecuteTaskGroupWidget(Widget):
     repeat = True
     url = "/execute/#scheduletasks"
 
-    def render(self, request=None):
-        from freppledb.common.middleware import _thread_locals
+    @staticmethod
+    def render(request):
         from freppledb.execute.management.commands.scheduletasks import Command
 
-        return HttpResponse(
-            Command.getHTML(request or _thread_locals.request, widget=True)
-        )
+        return HttpResponse(Command.getHTML(request, widget=True))

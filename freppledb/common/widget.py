@@ -41,9 +41,8 @@ class WelcomeWidget(Widget):
     tooltip = _("Some links to get started")
     asynchronous = False
 
-    def render(self, request=None):
-        from freppledb.common.middleware import _thread_locals
-
+    @staticmethod
+    def render(request):
         try:
             versionnumber = __version__.split(".", 2)
             docurl = "%s/docs/%s.%s/index.html" % (
@@ -55,11 +54,11 @@ class WelcomeWidget(Widget):
             docurl = "%s/docs/current/index.html" % (settings.DOCUMENTATION_URL,)
 
         try:
-            db = _thread_locals.request.database
+            db = request.database
             if not db or db == DEFAULT_DB_ALIAS:
                 prefix = ""
             else:
-                prefix = "/%s" % _thread_locals.request.database
+                prefix = "/%s" % db
         except Exception:
             prefix = ""
         return (
@@ -86,7 +85,8 @@ class NewsWidget(Widget):
     tooltip = _("Show the latest news items from the frePPLe website")
     asynchronous = False
 
-    def render(self, request=None):
+    @staticmethod
+    def render(request):
         return '<iframe style="width:100%; border:none;" src="https://frepple.com/news-summary/"></iframe>'
 
 
@@ -101,18 +101,13 @@ class InboxWidget(Widget):
     asynchronous = False
     limit = 10
 
-    def render(self, request=None):
-        from freppledb.common.middleware import _thread_locals
-
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
+    @classmethod
+    def render(cls, request):
         notifs = list(
-            Notification.objects.using(db)
-            .filter(user=_thread_locals.request.user)
+            Notification.objects.using(request.database)
+            .filter(user=request.user)
             .order_by("-id")
-            .select_related("comment", "user")[: self.limit]
+            .select_related("comment", "user")[: cls.limit]
         )
         if not notifs:
             return """
@@ -131,7 +126,7 @@ class InboxWidget(Widget):
                 <div class="small pull-right" data-bs-toggle="tooltip" data-bs-title="%s %s">%s%s&nbsp;&nbsp;%s</div>
                 <br><p style="padding-left: 10px; display: inline-block">%s</p>"""
                 % (
-                    _thread_locals.request.prefix,
+                    request.prefix,
                     notif.comment.getURL(),
                     notif.comment.object_repr,
                     escape(
@@ -141,15 +136,19 @@ class InboxWidget(Widget):
                     ),
                     escape(notif.comment.user.get_full_name()),
                     formats.date_format(notif.comment.lastmodified, "DATETIME_FORMAT"),
-                    '<img class="avatar-sm" src="/uploads/%s">&nbsp;'
-                    % notif.comment.user.avatar
-                    if notif.comment.user.avatar
-                    else "",
+                    (
+                        '<img class="avatar-sm" src="/uploads/%s">&nbsp;'
+                        % notif.comment.user.avatar
+                        if notif.comment.user.avatar
+                        else ""
+                    ),
                     escape(notif.comment.user.username),
                     timesince(notif.comment.lastmodified),
-                    notif.comment.comment
-                    if notif.comment.safe()
-                    else escape(notif.comment.comment),
+                    (
+                        notif.comment.comment
+                        if notif.comment.safe()
+                        else escape(notif.comment.comment)
+                    ),
                 )
                 + "</td></tr>"
             )

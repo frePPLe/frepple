@@ -164,7 +164,7 @@ class Widget:
         for k, v in options.items():
             setattr(self, k, v)
 
-    def render(self, request=None):
+    def render(self, request):
         return "Not implemented"
 
     @classmethod

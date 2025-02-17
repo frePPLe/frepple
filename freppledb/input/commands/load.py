@@ -416,7 +416,7 @@ class loadLocations(LoadTask):
                 cnt = 0
                 starttime = time()
 
-                attrs = [f[0] for f in getAttributes(Location)]
+                attrs = [f[0] for f in getAttributes(Location) if not f[2].startswith("foreignkey:")]
                 if attrs:
                     attrsql = ", %s" % ", ".join(attrs)
                 else:
@@ -734,7 +734,7 @@ class loadOperations(LoadTask):
         else:
             filter_where = ""
 
-        attrs = [f[0] for f in getAttributes(Operation)]
+        attrs = [f[0] for f in getAttributes(Operation) if not f[2].startswith("foreignkey:")]
         if attrs:
             attrsql = ", %s" % ", ".join(attrs)
         else:
@@ -1103,7 +1103,7 @@ class loadItems(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                attrs = [f[0] for f in getAttributes(Item)]
+                attrs = [f[0] for f in getAttributes(Item) if not f[2].startswith("foreignkey:")]
                 if attrs:
                     attrsql = ", %s" % ", ".join(attrs)
                 else:
@@ -1597,7 +1597,9 @@ class loadResources(LoadTask):
         else:
             filter_where = ""
 
-        attrs = [f[0] for f in getAttributes(Resource)]
+        attrs = [
+            f[0] for f in getAttributes(Resource) if not f[2].startswith("foreignkey:")
+        ]
         if attrs:
             attrsql = ", %s" % ", ".join(attrs)
         else:
@@ -1930,7 +1932,7 @@ class loadDemand(LoadTask):
         else:
             filter_and = ""
 
-        attrs = [f[0] for f in getAttributes(Demand)]
+        attrs = [f[0] for f in getAttributes(Demand) if not f[2].startswith("foreignkey:")]
         if attrs:
             attrsql = ", %s" % ", ".join(attrs)
         else:
@@ -2080,7 +2082,7 @@ class loadOperationPlans(LoadTask):
                 cnt_dlvr = 0
 
                 attrs = [
-                    "operationplan.%s" % f[0] for f in getAttributes(OperationPlan)
+                    "operationplan.%s" % f[0] for f in getAttributes(OperationPlan) if not f[2].startswith("foreignkey:")
                 ]
                 if attrs:
                     attrsql = ", %s" % ", ".join(attrs)

@@ -729,7 +729,9 @@ class LoadForecast(LoadTask):
         else:
             filter_where = ""
 
-        attrs = [f[0] for f in getAttributes(Forecast)]
+        attrs = [
+            f[0] for f in getAttributes(Forecast) if not f[2].startswith("foreignkey:")
+        ]
         if attrs:
             attrsql = ", %s" % ", ".join(attrs)
         else:
@@ -825,7 +827,9 @@ class ExportStaticForecast(PlanTask):
         import frepple
 
         source = kwargs.get("source", None)
-        attrs = [f[0] for f in getAttributes(Forecast)]
+        attrs = [
+            f[0] for f in getAttributes(Forecast) if not f[2].startswith("foreignkey:")
+        ]
 
         def getData():
             for i in frepple.demands():

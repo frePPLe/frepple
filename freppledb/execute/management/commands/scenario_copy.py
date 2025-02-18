@@ -365,128 +365,133 @@ class Command(BaseCommand):
                     )
 
             # Copying the data
-            # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
-            if not options["dumpfile"]:
-                if settings.DATABASES[source]["PASSWORD"]:
-                    os.environ["PGPASSWORD"] = settings.DATABASES[source]["PASSWORD"]
-                if os.name == "nt":
-                    # On windows restoring with pg_restore over a pipe is broken :-(
-                    cmd = "pg_dump -Fp %s%s%s%s%s%s | psql %s%s%s%s"
-                else:
+            if settings.DATABASES[source]["PASSWORD"]:
+                os.environ["PGPASSWORD"] = settings.DATABASES[source]["PASSWORD"]
+            try:
+                if not options["dumpfile"]:
                     cmd = "pg_dump -Fc %s%s%s%s%s%s | pg_restore -n public -Fc %s%s%s -d %s"
-                commandline = cmd % (
-                    settings.DATABASES[source]["USER"]
-                    and ("-U %s " % settings.DATABASES[source]["USER"])
-                    or "",
-                    settings.DATABASES[source]["HOST"]
-                    and ("-h %s " % settings.DATABASES[source]["HOST"])
-                    or "",
-                    settings.DATABASES[source]["PORT"]
-                    and ("-p %s " % settings.DATABASES[source]["PORT"])
-                    or "",
-                    (
+                    commandline = cmd % (
+                        settings.DATABASES[source]["USER"]
+                        and ("-U %s " % settings.DATABASES[source]["USER"])
+                        or "",
+                        settings.DATABASES[source]["HOST"]
+                        and ("-h %s " % settings.DATABASES[source]["HOST"])
+                        or "",
+                        settings.DATABASES[source]["PORT"]
+                        and ("-p %s " % settings.DATABASES[source]["PORT"])
+                        or "",
                         (
-                            "%s %s "
-                            % (
-                                " -T ".join(["", *excludedTables]),
-                                " --exclude-table-data=".join(["", *excludedTables]),
+                            (
+                                "%s %s "
+                                % (
+                                    " -T ".join(["", *excludedTables]),
+                                    " --exclude-table-data=".join(
+                                        ["", *excludedTables]
+                                    ),
+                                )
                             )
-                        )
-                        if destination == DEFAULT_DB_ALIAS
-                        else ""
-                    ),
-                    (
-                        ("%s " % (" -T ".join(["", *noOwnershipTables])))
-                        if len(noOwnershipTables) > 0
-                        else ""
-                    ),
-                    test
-                    and settings.DATABASES[source]["TEST"]["NAME"]
-                    or settings.DATABASES[source]["NAME"],
-                    settings.DATABASES[destination]["USER"]
-                    and ("-U %s " % settings.DATABASES[destination]["USER"])
-                    or "",
-                    settings.DATABASES[destination]["HOST"]
-                    and ("-h %s " % settings.DATABASES[destination]["HOST"])
-                    or "",
-                    settings.DATABASES[destination]["PORT"]
-                    and ("-p %s " % settings.DATABASES[destination]["PORT"])
-                    or "",
-                    test
-                    and settings.DATABASES[destination]["TEST"]["NAME"]
-                    or settings.DATABASES[destination]["NAME"],
-                )
-            else:
-                cmd = "pg_restore -n public -Fc --no-password %s%s%s -d %s %s"
-                commandline = cmd % (
-                    settings.DATABASES[destination]["USER"]
-                    and ("-U %s " % settings.DATABASES[destination]["USER"])
-                    or "",
-                    settings.DATABASES[destination]["HOST"]
-                    and ("-h %s " % settings.DATABASES[destination]["HOST"])
-                    or "",
-                    settings.DATABASES[destination]["PORT"]
-                    and ("-p %s " % settings.DATABASES[destination]["PORT"])
-                    or "",
-                    test
-                    and settings.DATABASES[destination]["TEST"]["NAME"]
-                    or settings.DATABASES[destination]["NAME"],
-                    os.path.join(settings.FREPPLE_LOGDIR, options["dumpfile"]),
-                )
+                            if destination == DEFAULT_DB_ALIAS
+                            else ""
+                        ),
+                        (
+                            ("%s " % (" -T ".join(["", *noOwnershipTables])))
+                            if len(noOwnershipTables) > 0
+                            else ""
+                        ),
+                        test
+                        and settings.DATABASES[source]["TEST"]["NAME"]
+                        or settings.DATABASES[source]["NAME"],
+                        settings.DATABASES[destination]["USER"]
+                        and ("-U %s " % settings.DATABASES[destination]["USER"])
+                        or "",
+                        settings.DATABASES[destination]["HOST"]
+                        and ("-h %s " % settings.DATABASES[destination]["HOST"])
+                        or "",
+                        settings.DATABASES[destination]["PORT"]
+                        and ("-p %s " % settings.DATABASES[destination]["PORT"])
+                        or "",
+                        test
+                        and settings.DATABASES[destination]["TEST"]["NAME"]
+                        or settings.DATABASES[destination]["NAME"],
+                    )
+                else:
+                    cmd = "pg_restore -n public -Fc --no-password %s%s%s -d %s %s"
+                    commandline = cmd % (
+                        settings.DATABASES[destination]["USER"]
+                        and ("-U %s " % settings.DATABASES[destination]["USER"])
+                        or "",
+                        settings.DATABASES[destination]["HOST"]
+                        and ("-h %s " % settings.DATABASES[destination]["HOST"])
+                        or "",
+                        settings.DATABASES[destination]["PORT"]
+                        and ("-p %s " % settings.DATABASES[destination]["PORT"])
+                        or "",
+                        test
+                        and settings.DATABASES[destination]["TEST"]["NAME"]
+                        or settings.DATABASES[destination]["NAME"],
+                        os.path.join(settings.FREPPLE_LOGDIR, options["dumpfile"]),
+                    )
 
-            with subprocess.Popen(
-                commandline,
-                shell=True,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.PIPE,
-            ) as p:
-                error_message = None
-                try:
-                    res = p.communicate()
-                    task.processid = p.pid
-                    task.save(using=source)
-                    p.wait()
-                    error_message = res[1].decode().partition("\n")[0]
-                    if p.returncode != 0 or "error" in error_message.lower():
-                        raise Exception(error_message)
+                with subprocess.Popen(
+                    commandline,
+                    shell=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.PIPE,
+                ) as p:
+                    error_message = None
+                    try:
+                        res = p.communicate()
+                        task.processid = p.pid
+                        task.save(using=source)
+                        p.wait()
+                        error_message = res[1].decode().partition("\n")[0]
+                        if p.returncode != 0 or "error" in error_message.lower():
+                            raise Exception(error_message)
 
-                    if not options["dumpfile"]:
-                        # Successful copy can still leave warnings and errors
-                        # To confirm copy is ok, let's check that the scenario copy task exists
-                        # in the destination database
-                        t = Task.objects.using(destination).filter(id=task.id).first()
-                        if (
-                            not t
-                            or t.name != task.name
-                            or t.submitted != task.submitted
-                        ):
+                        if not options["dumpfile"]:
+                            # Successful copy can still leave warnings and errors
+                            # To confirm copy is ok, let's check that the scenario copy task exists
+                            # in the destination database
+                            t = (
+                                Task.objects.using(destination)
+                                .filter(id=task.id)
+                                .first()
+                            )
+                            if (
+                                not t
+                                or t.name != task.name
+                                or t.submitted != task.submitted
+                            ):
+                                destinationscenario.status = "Free"
+                                destinationscenario.lastrefresh = datetime.today()
+                                destinationscenario.save(
+                                    update_fields=["status", "lastrefresh"],
+                                    using=DEFAULT_DB_ALIAS,
+                                )
+                                raise Exception("Database copy failed")
+                            t.status = "Done"
+                            t.finished = datetime.now()
+                            t.message = "Scenario copied from %s" % source
+                            t.save(
+                                using=destination,
+                                update_fields=["status", "finished", "message"],
+                            )
+
+                    except Exception as e:
+                        p.kill()
+                        p.wait()
+                        # Consider the destination database free again
+                        if destination != DEFAULT_DB_ALIAS:
                             destinationscenario.status = "Free"
                             destinationscenario.lastrefresh = datetime.today()
                             destinationscenario.save(
                                 update_fields=["status", "lastrefresh"],
                                 using=DEFAULT_DB_ALIAS,
                             )
-                            raise Exception("Database copy failed")
-                        t.status = "Done"
-                        t.finished = datetime.now()
-                        t.message = "Scenario copied from %s" % source
-                        t.save(
-                            using=destination,
-                            update_fields=["status", "finished", "message"],
-                        )
-
-                except Exception as e:
-                    p.kill()
-                    p.wait()
-                    # Consider the destination database free again
-                    if destination != DEFAULT_DB_ALIAS:
-                        destinationscenario.status = "Free"
-                        destinationscenario.lastrefresh = datetime.today()
-                        destinationscenario.save(
-                            update_fields=["status", "lastrefresh"],
-                            using=DEFAULT_DB_ALIAS,
-                        )
-                    raise Exception(e or "Database copy failed")
+                        raise Exception(e or "Database copy failed")
+            finally:
+                if settings.DATABASES[source]["PASSWORD"]:
+                    del os.environ["PGPASSWORD"]
 
             # Assure the identity sequences are bigger than the id values
             with connections[destination].cursor() as cursor:

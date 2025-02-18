@@ -2718,9 +2718,12 @@ class OperationPlanDetail(View):
                         from operationplanmaterial
                         cross join arguments
                         inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
+                        inner join item on item.name = operationplanmaterial.item_id
                       where operationplanmaterial.item_id = arguments.item_id
                       and operationplanmaterial.location_id = arguments.location_id
-                      and coalesce(operationplan.batch,'') is not distinct from arguments.batch) operationplanmaterial
+                      and (item.type is distinct from 'make to order' 
+                           or coalesce(operationplan.batch,'') is not distinct from arguments.batch)
+                    ) operationplanmaterial
                 cross join arguments
                 inner join item on item.name = operationplanmaterial.item_id
 

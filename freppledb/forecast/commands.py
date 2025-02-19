@@ -505,16 +505,30 @@ class AggregateDemand(PlanTask):
 
         starttime = time()
 
+        # skipping demand records where the sum(quantity) is negative
+        # for an item/location/customer/bucket
+        cursor.execute(
+            """
+        create temporary table excludedcombinations as
+        select item_id, location_id, customer_id, cb.startdate, cb.enddate
+        from demand
+        inner join common_bucketdetail cb on due >= cb.startdate and due < cb.enddate
+        where coalesce(demand.status, 'open') != 'canceled'
+        group by item_id, location_id, customer_id, cb.startdate, cb.enddate
+        having sum(quantity) < 0
+        """
+        )
+
         cursor.execute(
             """
             create temporary table demand_agg on commit preserve rows as
             select startdate, enddate,
             item_hierarchy.parent item_id, location_hierarchy.parent location_id,
             customer_hierarchy.parent customer_id,
-            greatest(sum(case when coalesce(status, 'open') in ('open','quote') then quantity else 0 end), 0) ordersopen,
-            greatest(sum(quantity),0) orderstotal,
-            greatest(sum(case when coalesce(status, 'open') in ('open','quote') then quantity*item.cost else 0 end), 0) ordersopenvalue,
-            greatest(sum(quantity*item.cost), 0)  orderstotalvalue
+            nullif(greatest(sum(case when coalesce(status, 'open') in ('open','quote') then quantity else 0 end), 0),0) ordersopen,
+            nullif(greatest(sum(quantity),0),0) orderstotal,
+            nullif(greatest(sum(case when coalesce(status, 'open') in ('open','quote') then quantity*item.cost else 0 end), 0),0) ordersopenvalue,
+            nullif(greatest(sum(quantity*item.cost), 0),0)  orderstotalvalue
             from demand
             inner join item on item.name = demand.item_id
             inner join item_hierarchy on demand.item_id = item_hierarchy.child
@@ -529,6 +543,8 @@ class AggregateDemand(PlanTask):
                   and cb.startdate <= due
                   and due < cb.enddate
             where %s <= cb.startdate and cb.startdate < %s and coalesce(demand.status, 'open') != 'canceled'
+            and not exists (select 1 from excludedcombinations where demand.item_id = item_id and demand.location_id = location_id
+            and demand.customer_id = customer_id and demand.due >= startdate and demand.due < enddate)
             group by startdate, enddate, item_hierarchy.parent, location_hierarchy.parent,
             customer_hierarchy.parent
             having greatest(sum(quantity),0) != 0 or greatest(sum(case when coalesce(status, 'open') in ('open','quote') then quantity else 0 end), 0) != 0;
@@ -549,10 +565,10 @@ class AggregateDemand(PlanTask):
               orderstotal, orderstotalvalue, ordersopen, ordersopenvalue)
             select
               item_id, location_id, customer_id, startdate, enddate,
-              nullif(demand_agg.orderstotal,0) as orderstotal,
-              nullif(demand_agg.orderstotalvalue,0) as orderstotalvalue,
-              nullif(demand_agg.ordersopen,0) as ordersopen,
-              nullif(demand_agg.ordersopenvalue,0) as ordersopenvalue
+              demand_agg.orderstotal as orderstotal,
+              demand_agg.orderstotalvalue as orderstotalvalue,
+              demand_agg.ordersopen as ordersopen,
+              demand_agg.ordersopenvalue as ordersopenvalue
             from demand_agg
             on conflict (item_id, location_id, customer_id, startdate)
             do update set
@@ -577,6 +593,10 @@ class AggregateDemand(PlanTask):
             AND forecastplan.location_id = demand_agg.location_id
             AND forecastplan.customer_id = demand_agg.customer_id
             AND forecastplan.startdate = demand_agg.startdate)
+            and exists
+            (select 1 from forecast where forecastplan.item_id = item_id and forecastplan.location_id = location_id
+            and forecastplan.customer_id = customer_id
+            and coalesce(method, 'automatic') != 'aggregate')
             and (ordersopen is not NULL or ordersopenvalue is not null or orderstotal is not NULL or orderstotalvalue is not NULL);
             """
         )
@@ -607,6 +627,7 @@ class AggregateDemand(PlanTask):
         cursor.execute("drop table item_hierarchy")
         cursor.execute("drop table location_hierarchy")
         cursor.execute("drop table customer_hierarchy")
+        cursor.execute("drop table excludedcombinations")
         cursor.execute("drop table demand_agg")
         logger.info("Aggregate - wrapping up in %.2f seconds" % (time() - starttime))
 

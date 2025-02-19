@@ -497,7 +497,8 @@ class Command(BaseCommand):
                             finally:
                                 conn.close()
                         else:
-                            raise Exception("Unknown export type for %s" % cfg.name)
+                            logger.error(f"Skipping export of {cfg.name}: Unknown type")
+                            continue
                         datafile.close()
                         i += 1
                         logger.info(

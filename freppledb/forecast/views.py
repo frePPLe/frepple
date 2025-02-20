@@ -1886,8 +1886,8 @@ class ForecastEditor:
                     object_pk__in=[
                         i["name"]
                         for i in Customer.objects.using(request.database)
-                        .filter(lft__gte=customer_obj.lft)
-                        .filter(lft__lt=customer_obj.rght)
+                        .filter(lft__gte=customer_obj.lft or 0)
+                        .filter(lft__lt=customer_obj.rght or 0)
                         .values("name")
                     ],
                 )
@@ -1896,8 +1896,8 @@ class ForecastEditor:
                     object_pk__in=[
                         i["name"]
                         for i in Customer.objects.using(request.database)
-                        .filter(lft__lte=customer_obj.lft)
-                        .filter(rght__gt=customer_obj.lft)
+                        .filter(lft__lte=customer_obj.lft or 0)
+                        .filter(rght__gt=customer_obj.lft or 0)
                         .values("name")
                     ],
                 )
@@ -1906,8 +1906,8 @@ class ForecastEditor:
                     object_pk__in=[
                         i["name"]
                         for i in Item.objects.using(request.database)
-                        .filter(lft__gte=item_obj.lft)
-                        .filter(lft__lt=item_obj.rght)
+                        .filter(lft__gte=item_obj.lft or 0)
+                        .filter(lft__lt=item_obj.rght or 0)
                         .values("name")
                     ],
                 )
@@ -1916,8 +1916,8 @@ class ForecastEditor:
                     object_pk__in=[
                         i["name"]
                         for i in Item.objects.using(request.database)
-                        .filter(lft__lte=item_obj.lft)
-                        .filter(rght__gt=item_obj.lft)
+                        .filter(lft__lte=item_obj.lft or 0)
+                        .filter(rght__gt=item_obj.lft or 0)
                         .values("name")
                     ],
                 )
@@ -1926,8 +1926,8 @@ class ForecastEditor:
                     object_pk__in=[
                         i["name"]
                         for i in Location.objects.using(request.database)
-                        .filter(lft__gte=location_obj.lft)
-                        .filter(lft__lt=location_obj.rght)
+                        .filter(lft__gte=location_obj.lft or 0)
+                        .filter(lft__lt=location_obj.rght or 0)
                         .values("name")
                     ],
                 )
@@ -1936,8 +1936,8 @@ class ForecastEditor:
                     object_pk__in=[
                         i["name"]
                         for i in Location.objects.using(request.database)
-                        .filter(lft__lte=location_obj.lft)
-                        .filter(rght__gt=location_obj.lft)
+                        .filter(lft__lte=location_obj.lft or 0)
+                        .filter(rght__gt=location_obj.lft or 0)
                         .values("name")
                     ],
                 )

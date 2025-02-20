@@ -1696,45 +1696,43 @@ class Attribute(AuditModel):
 
     def _getContentTypeChoices():
         try:
-            return sorted(
-                [
-                    (i.model, i.model)
-                    for i in ContentType.objects.all()
-                    .using(DEFAULT_DB_ALIAS)
-                    .exclude(
-                        app_label__in=[
-                            "admin",
-                            "archive",
-                            "auth",
-                            "contenttypes",
-                            "out",
-                            "reportmanager",
-                        ]
-                    )
-                    if i.model
-                    not in (
-                        "attribute",
-                        "comment",
-                        "dataexport",
-                        "deliveryorder",
-                        "distributionorder",
-                        "follower",
-                        "forecastplan",
-                        "forecastplanview",
-                        "manufacturingorder",
-                        "measure",
-                        "notification",
-                        "parameter",
-                        "purchaseorder",
-                        "resourcesummary",
-                        "scenario",
-                        "scheduledtask",
-                        "systemmessage",
-                        "task",
-                        "userpreference",
-                    )
-                ]
-            )
+            return [
+                (i.model, i.model)
+                for i in ContentType.objects.all()
+                .using(DEFAULT_DB_ALIAS)
+                .exclude(
+                    app_label__in=[
+                        "admin",
+                        "archive",
+                        "auth",
+                        "contenttypes",
+                        "out",
+                        "reportmanager",
+                    ]
+                )
+                if i.model
+                not in (
+                    "attribute",
+                    "comment",
+                    "dataexport",
+                    "deliveryorder",
+                    "distributionorder",
+                    "follower",
+                    "forecastplan",
+                    "forecastplanview",
+                    "manufacturingorder",
+                    "measure",
+                    "notification",
+                    "parameter",
+                    "purchaseorder",
+                    "resourcesummary",
+                    "scenario",
+                    "scheduledtask",
+                    "systemmessage",
+                    "task",
+                    "userpreference",
+                )
+            ]
         except Exception:
             return []
 

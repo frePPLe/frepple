@@ -48,10 +48,13 @@ def fromJsonbToColumns(apps, schema_editor):
         measures = getMeasures(cursor)
 
         # Add columns
-        cursor.execute(
-            "alter table forecastplan "
-            + ",".join(f"add column {name} numeric(20,8)" for name in measures)
-        )
+        for name in measures:
+            try:
+                cursor.execute(
+                    f"alter table forecastplan add column {name} numeric(20,8)"
+                )
+            except Exception:
+                pass
 
         # Populate the columns
         cursor.execute(

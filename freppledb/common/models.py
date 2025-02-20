@@ -1703,20 +1703,35 @@ class Attribute(AuditModel):
                     .using(DEFAULT_DB_ALIAS)
                     .exclude(
                         app_label__in=[
+                            "admin",
+                            "archive",
                             "auth",
                             "contenttypes",
-                            "admin",
-                            "reportmanager",
-                            "archive",
                             "out",
+                            "reportmanager",
                         ]
                     )
                     if i.model
                     not in (
-                        "purchaseorder",
+                        "attribute",
+                        "comment",
+                        "dataexport",
                         "deliveryorder",
-                        "manufacturingorder",
                         "distributionorder",
+                        "follower",
+                        "forecastplan",
+                        "forecastplanview",
+                        "manufacturingorder",
+                        "measure",
+                        "notification",
+                        "parameter",
+                        "purchaseorder",
+                        "resourcesummary",
+                        "scenario",
+                        "scheduledtask",
+                        "systemmessage",
+                        "task",
+                        "userpreference",
                     )
                 ]
             )

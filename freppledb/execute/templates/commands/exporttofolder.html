@@ -322,7 +322,7 @@ function downloadExportFile(folder, filename) {
 
 function toggleAddExport(show, el) {
   var name = $(el).closest(".row").attr("data-file");
-  var root = $(el).closest(".accordion-body");
+  var root = $(el).closest(".card-body");
   root.find("[data-file='" + name + "']").toggleClass("d-none");
 }
 

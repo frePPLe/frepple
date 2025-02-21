@@ -176,6 +176,92 @@ class checkBuckets(CheckTask):
 
 
 @PlanTaskRegistry.register
+class checkDatabaseHealth(CheckTask):
+    description = "Sanity check on the database"
+    sequence = 76
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) or "loadplan" in os.environ else 1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        with connections[database].cursor() as cursor:
+            # check 1: make sure the sequence has not reached 90% of the max value
+            cursor.execute(
+                """
+                with cte as (
+                select sequencename from pg_sequences
+                where schemaname='public'
+                and sequencename not like 'django%' and sequencename not like 'auth%'
+                and last_value > 0.9 * max_value)
+                select s.relname as sequencename,
+                t.relname as tablename,
+                a.attname as columnname
+                from pg_class s
+                inner join pg_depend d on d.objid=s.oid and d.classid='pg_class'::regclass and d.refclassid='pg_class'::regclass
+                inner join pg_class t on t.oid=d.refobjid
+                inner join pg_namespace n on n.oid=t.relnamespace
+                inner join pg_attribute a on a.attrelid=t.oid and a.attnum=d.refobjsubid
+                inner join cte on cte.sequencename = s.relname
+                where s.relkind='S' and n.nspname = 'public';
+                """
+            )
+            to_update = [i for i in cursor]
+            # check 2: make sure the max(id) is less than the sequence value
+            cursor.execute(
+                """
+                    select s.relname as sequencename,
+                    t.relname as tablename,
+                    a.attname as columnname,
+                    pg_sequences.last_value
+                    from pg_class s
+                    inner join pg_depend d on d.objid=s.oid and d.classid='pg_class'::regclass and d.refclassid='pg_class'::regclass
+                    inner join pg_class t on t.oid=d.refobjid
+                    inner join pg_namespace n on n.oid=t.relnamespace
+                    inner join pg_attribute a on a.attrelid=t.oid and a.attnum=d.refobjsubid
+                    inner join pg_sequences on pg_sequences.sequencename = s.relname
+                    where s.relkind='S' and n.nspname = 'public'
+                    and t.relname not like 'django%' and t.relname not like 'auth%';
+                """
+            )
+            sequences = [i for i in cursor if i[0] not in [j[0] for j in to_update]]
+            for seq in sequences:
+                cursor.execute("select max(%s) from %s" % (seq[2], seq[1]))
+                max_id = cursor.fetchone()[0]
+                if max_id and max_id > (seq[3] or 0):
+                    to_update.append((seq[0], seq[1], seq[2]))
+
+            for i in to_update:
+                cursor.execute(
+                    """
+                WITH numbered_rows AS (
+                    SELECT %s, ROW_NUMBER() OVER (ORDER BY id) AS new_id
+                    FROM %s
+                    )
+                    UPDATE %s
+                    SET %s = numbered_rows.new_id
+                    FROM numbered_rows
+                    WHERE %s.%s = numbered_rows.%s;
+                    SELECT setval('%s', (SELECT max(%s) FROM %s));
+                """
+                    % (
+                        i[2],
+                        i[1],  # the first 2 are for the cte
+                        i[1],  # UPDATE %s
+                        i[2],  # SET %s
+                        i[1],  # WHERE %s.%s 1/2
+                        i[2],  # WHERE %s.%s 2/2
+                        i[2],  # numbered_rows.%s
+                        i[0],  # setval('%s'
+                        i[2],  # SELECT max(%s)
+                        i[1],  # FROM %s
+                    )
+                )
+                logger.info("updated sequence %s for table %s" % (i[0], i[1]))
+
+
+@PlanTaskRegistry.register
 class checkBrokenSupplyPath(CheckTask):
     # check for item location combinations in the demand
     # check for item location that are consumed in operation materials
@@ -416,7 +502,11 @@ class loadLocations(LoadTask):
                 cnt = 0
                 starttime = time()
 
-                attrs = [f[0] for f in getAttributes(Location) if not f[2].startswith("foreignkey:")]
+                attrs = [
+                    f[0]
+                    for f in getAttributes(Location)
+                    if not f[2].startswith("foreignkey:")
+                ]
                 if attrs:
                     attrsql = ", %s" % ", ".join(attrs)
                 else:
@@ -734,7 +824,9 @@ class loadOperations(LoadTask):
         else:
             filter_where = ""
 
-        attrs = [f[0] for f in getAttributes(Operation) if not f[2].startswith("foreignkey:")]
+        attrs = [
+            f[0] for f in getAttributes(Operation) if not f[2].startswith("foreignkey:")
+        ]
         if attrs:
             attrsql = ", %s" % ", ".join(attrs)
         else:
@@ -1103,7 +1195,11 @@ class loadItems(LoadTask):
             with connections[database].chunked_cursor() as cursor:
                 cnt = 0
                 starttime = time()
-                attrs = [f[0] for f in getAttributes(Item) if not f[2].startswith("foreignkey:")]
+                attrs = [
+                    f[0]
+                    for f in getAttributes(Item)
+                    if not f[2].startswith("foreignkey:")
+                ]
                 if attrs:
                     attrsql = ", %s" % ", ".join(attrs)
                 else:
@@ -1932,7 +2028,9 @@ class loadDemand(LoadTask):
         else:
             filter_and = ""
 
-        attrs = [f[0] for f in getAttributes(Demand) if not f[2].startswith("foreignkey:")]
+        attrs = [
+            f[0] for f in getAttributes(Demand) if not f[2].startswith("foreignkey:")
+        ]
         if attrs:
             attrsql = ", %s" % ", ".join(attrs)
         else:
@@ -2082,7 +2180,9 @@ class loadOperationPlans(LoadTask):
                 cnt_dlvr = 0
 
                 attrs = [
-                    "operationplan.%s" % f[0] for f in getAttributes(OperationPlan) if not f[2].startswith("foreignkey:")
+                    "operationplan.%s" % f[0]
+                    for f in getAttributes(OperationPlan)
+                    if not f[2].startswith("foreignkey:")
                 ]
                 if attrs:
                     attrsql = ", %s" % ", ".join(attrs)

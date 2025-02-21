@@ -261,10 +261,7 @@ class checkDatabaseHealth(CheckTask):
                 if max_id and max_id > (seq[3] or 0):
                     to_update.append((seq[0], seq[1], seq[2]))
 
-            for i in to_update:
-                sequencename = i[0]
-                tablename = i[1]
-                columnname = i[2]
+            for sequencename, tablename, columnname in to_update:
                 cursor.execute(
                     f"""
                 WITH numbered_rows AS (
@@ -278,7 +275,9 @@ class checkDatabaseHealth(CheckTask):
                     SELECT setval('{sequencename}', (SELECT max({columnname}) FROM {tablename}));
                 """
                 )
-                logger.info("updated sequence %s for table %s" % (i[0], i[1]))
+                logger.info(
+                    "updated sequence %s for table %s" % (sequencename, tablename)
+                )
 
 
 @PlanTaskRegistry.register

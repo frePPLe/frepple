@@ -133,6 +133,7 @@ def add_extra_model_fields(sender, **kwargs):
                 fieldtype[11:],
                 models.deletion.SET_NULL,
                 null=True,
+                verbose_name=label,
                 blank=True,
                 editable=editable,
             )
@@ -294,10 +295,13 @@ def getAttributeFields(
         elif fieldtype.startswith("foreignkey:"):
             result.append(
                 GridFieldText(
-                    f"{field_name}_id",
+                    field_name,
+                    field_name=f"{field_name}__pk",
                     title=label,
                     initially_hidden=hidden or initially_hidden,
                     editable=editable and dflt_editable,
+                    formatter="detail",
+                    extra=f'"role":"{ fieldtype[11:].replace(".","/").lower() }"',
                 )
             )
         else:

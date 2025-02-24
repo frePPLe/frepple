@@ -2247,7 +2247,7 @@ var ERPconnection = {
       var r = grid.jqGrid('getRowData', sel[i]);
       if (r.type === undefined)
         r.type = transactiontype;
-      if (['proposed', 'approved', 'confirmed'].includes(r.status))
+      if (['proposed', 'approved', 'confirmed'].includes(r.status || r.operationplan__status))
         data.push(r);
     }
     if (data == [])

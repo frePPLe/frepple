@@ -99,7 +99,10 @@ def LocationNotification(flw, msg):
 def CustomerNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif not msg.content_object or flw.object_pk != msg.content_object.customer_id:
+    elif not msg.content_object or (
+        msg.content_type.model_class() != Customer
+        and flw.object_pk != msg.content_object.customer_id
+    ):
         return False
     else:
         args = flw.args.get("sub", None) if flw.args else None
@@ -110,7 +113,10 @@ def CustomerNotification(flw, msg):
 def SupplierNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif not msg.content_object or flw.object_pk != msg.content_object.supplier_id:
+    elif not msg.content_object or (
+        msg.content_type.model_class() != Supplier
+        and flw.object_pk != msg.content_object.supplier_id
+    ):
         return False
     else:
         args = flw.args.get("sub", None) if flw.args else None

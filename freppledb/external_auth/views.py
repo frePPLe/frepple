@@ -29,6 +29,6 @@ def login(request, extra_context=None):
     next = request.GET.get("next", None)
     if next:
         request.session["next"] = next
-    for provider in settings["SOCIALACCOUNT_PROVIDERS"].keys():
+    for provider in settings.SOCIALACCOUNT_PROVIDERS.keys():
         # We expect to find only 1 provider
         return HttpResponseRedirect("/accounts/%s/login/?process=login" % provider)

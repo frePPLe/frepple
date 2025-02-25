@@ -330,7 +330,6 @@ class MultiDBMiddleware:
                     user_dflt.databases.append(DEFAULT_DB_ALIAS)
                     user_dflt.save(update_fields=["databases"])
             else:
-                print("warning: ", request.user, state.db)
                 user_dflt = User.objects.using(DEFAULT_DB_ALIAS).get(pk=request.user.pk)
             last_login = getattr(user_dflt, "last_login", None)
             now = timezone.now()

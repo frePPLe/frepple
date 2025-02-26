@@ -24,32 +24,53 @@ function enableSave() {
 
 {% block content %}
   <div id="content-main" class="row" style="min-height: 150px">
-    <div class="col-md-12">
+    <div class="col">
 {% if perms.common.add_comment %}
       <form method="post" enctype="multipart/form-data">{% csrf_token %}
-        <textarea id="comment" name="comment" class="form-control" rows="10" style="width:100%; resize:vertical" oninput="enableSave()"></textarea>
-        <label for="attachment">{% trans "Add an attachment" %}
-        <input style="padding-top: 1em; display:inline" type="file" name="attachment" accept="{% setting 'MEDIA_EXTENSIONS' %}" id="attachment" onchange="enableSave()">
-        </label>
-        <div style="margin-top: 0.7em"><button id="submit" type="submit" class="btn btn-primary disabled" role="button" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}">{% filter force_escape %}{% trans 'Save' %}{% endfilter %}</button></div>
-      </form>{% endif%}
-
+      <div class="row mb-3">
+          <div class="col-auto">
+            <button id="submit" type="submit" class="btn btn-primary disabled" role="button" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}">{% filter force_escape %}{% trans 'Save' %}{% endfilter %}</button>
+          </div>
+          <div class="col">
+            <div>
+              <textarea id="comment" name="comment" class="form-control w-100" rows="5" oninput="enableSave()"></textarea>
+            </div>
+            <div>
+              <label for="attachment">{% trans "Add an attachment" %}
+              <input style="padding-top: 1em; display:inline" type="file" name="attachment" accept="{% setting 'MEDIA_EXTENSIONS' %}" id="attachment" onchange="enableSave()">
+              </label>
+            </div>
+          </div>
+      </div>  
+      </form>
+{% endif %}
 {% for c in comments %}
-      <h3>
-      <span data-bs-toggle="tooltip" data-bs-title="{{ c.user.get_full_name }}">
-        {% if c.user.avatar %}<img class="avatar-sm" src="/uploads/{{ c.user.avatar }}">{% endif %}
-        {{ c.user.username }}
-      </span>
-      &nbsp;&nbsp;<small data-bs-toggle="tooltip" data-bs-title="{{ c.lastmodified|date:"DATETIME_FORMAT" }}">{{ c.lastmodified | timesince }}</small>
-      </h3>
-      <div class="clearfix">
-      {% if c.attachment %}
-      <div class="pull-left" style="width: 100px">{{c.attachmentlink}}</div>
-      {% endif %}
-      <pre>{% if c.safe %}{{c.comment|safe}}{% else %}{{c.comment}}{% endif %}</pre>
+      <div class="row mb-3">
+          <div class="col text-center" style="max-width: 15em">
+          <span data-bs-toggle="tooltip" data-bs-title="{{ c.user.get_full_name }}">
+              {% if c.user.avatar %}<img class="avatar-sm" src="/uploads/{{ c.user.avatar }}">{% endif %}
+              {{ c.user.username }}
+          </span>
+          </div>
+          <div class="col">
+          {% if c.attachment %}
+          <div class="float-start pe-3">{{c.attachmentlink}}</div>
+          {% endif %}
+          <div style="white-space: pre-wrap">{% if c.safe %}{{c.comment|safe}}{% else %}{{c.comment}}{% endif %}</div>
+          <small data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-offset="0, 10" data-bs-title="{{ c.lastmodified|date:"DATE_FORMAT" }} {{ c.lastmodified|date:"H:i:s" }}">{{ c.lastmodified | timesince }}</small>
+          </div>
       </div>
 {% endfor %}
 
      </div>
 	</div>
 {% endblock %}
+
+
+
+
+
+<!-- 
+
+              
+                 -->

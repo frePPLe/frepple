@@ -755,6 +755,7 @@ class CommentList(GridReport):
     editable = False
     multiselect = False
     frozenColumns = 0
+    default_sort = (0, "desc")
     help_url = "user-interface/getting-around/messages.html"
 
     rows = (

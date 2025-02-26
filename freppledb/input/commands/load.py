@@ -188,6 +188,39 @@ class checkDatabaseHealth(CheckTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         with connections[database].cursor() as cursor:
 
+            # check 1: make sure the max(id) is less than the sequence value
+            cursor.execute(
+                """
+                    select s.relname as sequencename,
+                    t.relname as tablename,
+                    a.attname as columnname,
+                    pg_sequences.last_value
+                    from pg_class s
+                    inner join pg_depend d on d.objid=s.oid and d.classid='pg_class'::regclass and d.refclassid='pg_class'::regclass
+                    inner join pg_class t on t.oid=d.refobjid
+                    inner join pg_namespace n on n.oid=t.relnamespace
+                    inner join pg_attribute a on a.attrelid=t.oid and a.attnum=d.refobjsubid
+                    inner join pg_sequences on pg_sequences.sequencename = s.relname
+                    where s.relkind='S' and n.nspname = 'public';
+                """
+            )
+            sequences = [i for i in cursor]
+            for sequencename, tablename, columnname, last_value in sequences:
+                cursor.execute(f"select max({columnname}) from {tablename}")
+                max_id = cursor.fetchone()[0]
+                if max_id and max_id > (last_value or 0):
+                    cursor.execute(
+                        f"""
+                    SELECT setval('{sequencename}', (SELECT max({columnname}) FROM {tablename}));
+                    """
+                    )
+                    logger.info(
+                        f"updated sequence {sequencename} for table {tablename} after check 1"
+                    )
+
+            # check 2: make sure the sequence has not reached 90% of the max value
+
+            # identify all the foreign keys
             cursor.execute(
                 """
             select rel_kcu.table_name as primary_table,
@@ -208,7 +241,6 @@ class checkDatabaseHealth(CheckTask):
             )
             foreign_key_exists = [i for i in cursor]
 
-            # check 1: make sure the sequence has not reached 90% of the max value
             cursor.execute(
                 """
                 with cte as (
@@ -227,44 +259,19 @@ class checkDatabaseHealth(CheckTask):
                 where s.relkind='S' and n.nspname = 'public'
                 """
             )
-            to_update = [i for i in cursor if (i[1], i[2]) not in foreign_key_exists]
-            # check 2: make sure the max(id) is less than the sequence value
-            cursor.execute(
-                """
-                    select s.relname as sequencename,
-                    t.relname as tablename,
-                    a.attname as columnname,
-                    pg_sequences.last_value
-                    from pg_class s
-                    inner join pg_depend d on d.objid=s.oid and d.classid='pg_class'::regclass and d.refclassid='pg_class'::regclass
-                    inner join pg_class t on t.oid=d.refobjid
-                    inner join pg_namespace n on n.oid=t.relnamespace
-                    inner join pg_attribute a on a.attrelid=t.oid and a.attnum=d.refobjsubid
-                    inner join pg_sequences on pg_sequences.sequencename = s.relname
-                    where s.relkind='S' and n.nspname = 'public'
-                    and t.relname not like 'django%' and t.relname not like 'auth%';
-                """
-            )
-            sequences = [
-                i
-                for i in cursor
-                if i[0]
-                not in [
-                    j[0] for j in to_update
-                ]  # make sure this sequence wasn't cpatured by check 1
-                and (i[1], i[2])
-                not in foreign_key_exists  # exclude sequences that are foreign keys
-            ]
-            for seq in sequences:
-                cursor.execute("select max(%s) from %s" % (seq[2], seq[1]))
-                max_id = cursor.fetchone()[0]
-                if max_id and max_id > (seq[3] or 0):
-                    to_update.append((seq[0], seq[1], seq[2]))
+            sequences = [i for i in cursor]
+            for sequencename, tablename, columnname in sequences:
 
-            for sequencename, tablename, columnname in to_update:
+                # we can't update the ids if this is a foreign key
+                if (tablename, columnname) in foreign_key_exists:
+                    logger.warning(
+                        f"sequence {sequencename} is almost at its maximum but can't be updated as it's a foreign key"
+                    )
+                    continue
+
                 cursor.execute(
                     f"""
-                WITH numbered_rows AS (
+                    WITH numbered_rows AS (
                     SELECT {columnname}, ROW_NUMBER() OVER (ORDER BY {columnname}) AS new_id
                     FROM {tablename}
                     )
@@ -276,7 +283,7 @@ class checkDatabaseHealth(CheckTask):
                 """
                 )
                 logger.info(
-                    "updated sequence %s for table %s" % (sequencename, tablename)
+                    f"updated sequence {sequencename} for table {tablename} after check 2"
                 )
 
 

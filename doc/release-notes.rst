@@ -25,6 +25,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | Bug fix: Users could not be set active or inactive in a scenario.
 
+- | Addition of parameter archive.duration to delete the old archived data.
+  | So far, the archived data wasn't deleted.
+
 .. rubric:: Demand forecasting
 
 - | The database structure for storing forecast data has been refactored.
@@ -39,9 +42,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Operations can now consume and produce material in different
     locations.
   | Until now, an operation always consumed and produced material
-    in the same location. This new feature makes modeling complex 
+    in the same location. This new feature makes modeling complex
     multi-location production environments easier.
-    
+
 - | Purchase orders, manufacturing orders and distribution orders
     get an extra field "remark", which allows users to leaves free text
     comments on them.

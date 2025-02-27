@@ -62,9 +62,11 @@ class Command(BaseCommand):
         # Delete archived data we don't need any longer
         p = int(Parameter.getValue("archive.duration", database, "365"))
         now = getCurrentDate(database)
-        ArchiveManager.objects.using(database).filter(
+        for a in ArchiveManager.objects.using(database).filter(
             snapshot_date__lt=now - timedelta(days=p)
-        ).delete()
+        ):
+            print(f"Deleting history archive with snapshot {a.snapshot_date}")
+            a.delete()
 
         # create a new snapshot
         with connections[database].cursor() as cursor:

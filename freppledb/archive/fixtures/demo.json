@@ -1,3 +1,4 @@
 [
-{"model": "common.parameter", "fields": {"name": "archive.frequency", "description": "Frequency of history snapshot. Values: week, month, none", "value": "week"}}
+{"model": "common.parameter", "fields": {"name": "archive.frequency", "description": "Frequency of history snapshot. Values: week, month, none", "value": "week"}},
+{"model": "common.parameter", "fields": {"name": "archive.duration", "description": "Archived data older than this parameter in days will be deleted. Default:365", "value": "365")}
 ]

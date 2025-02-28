@@ -245,3 +245,18 @@ report_download_limit                                | The maximum number of row
                                                        that download excessive ammounts of data.
                                                      | Default value: 20000
 ==================================================== ===========================================================================
+
+**Plan archiving parameters**
+
+Frepple keeps a history of the key metrics of your plan. These metrics are used to display overall trends in your plan, and can 
+also be useful to debug the evolution of certain data elements over time.
+
+==================================================== ===========================================================================
+Parameter                                            Description
+==================================================== ===========================================================================
+archive.frequency                                    | Frequency of history snapshot. Accepted values are "week", "month" and
+                                                       "none".
+													 | Default value: week
+archive.duration                                     | Archived data older than this parameter in days will be deleted.
+                                                     | Default value: 365
+==================================================== ===========================================================================

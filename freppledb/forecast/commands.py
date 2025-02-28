@@ -349,7 +349,13 @@ class CalculateDemandPattern(PlanTask):
         )
 
         # Merge results
-        cursor.execute("update item set adi = null, cv2 = null, demand_pattern = null")
+        cursor.execute(
+            """
+            update item 
+            set adi = null, cv2 = null, demand_pattern = null
+            where adi is not null or cv2 is not null or demand_pattern is not null
+            """
+        )
         cursor.execute(
             """
             update item

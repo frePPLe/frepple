@@ -4,8 +4,28 @@ Release notes
 9.7.0 (Upcoming release)
 ========================
 
-This release is scheduled for end of January.
+This release is scheduled for mid March.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+.. rubric:: System administration
+
+- | Addition of parameter archive.duration to delete the old archived data.
+  | So far, the archived data wasn't deleted. With this release, by default 
+    archived data older than 1 year are deleted.
+
+- | The task scheduler now allows specifying the time zone for the automatically
+    scheduled tasks.
+  | In previous releases, we faced issues on the dates where Daylight Saving times
+    switches. Tasks were then run an hour too late or too early.
+  | Now the scheduled task will correctly respect the times in your time zone.
+  | Cursed be `George Hudson <https://en.wikipedia.org/wiki/George_Hudson_(entomologist)>`_.
+
+.. rubric:: Odoo integration
+
+- | 17, 18: Bug fix. The stock reservations by sales orders were not correctly
+    considered. Frepple incorrectly planned for the full quantity rather than only the
+    quantity that isn't reserved yet.
+
 
 9.6.0 (2025-02-07)
 ==================
@@ -24,9 +44,6 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | It's convenient to put commmonly used tasks at the top.
 
 - | Bug fix: Users could not be set active or inactive in a scenario.
-
-- | Addition of parameter archive.duration to delete the old archived data.
-  | So far, the archived data wasn't deleted.
 
 .. rubric:: Demand forecasting
 

@@ -23,6 +23,7 @@
 
 from datetime import datetime, timedelta
 import os
+import pytz
 import shlex
 
 from django.db import models
@@ -107,6 +108,13 @@ class ScheduledTask(models.Model):
         "email_success", max_length=300, null=True, blank=True
     )
     data = models.JSONField(null=True, blank=True)
+    tz = models.CharField(
+        _("time zone"),
+        choices=[(i, i) for i in pytz.all_timezones],
+        max_length=40,
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return self.name

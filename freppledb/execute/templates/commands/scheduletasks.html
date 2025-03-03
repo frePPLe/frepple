@@ -148,9 +148,25 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
  		<div class="row mb-3">
       <label for="schedule-{{forloop.counter}}-start" class="col-3 col-form-label">{% trans "start time"|capfirst %}</label>
       <div class="col-9">
+        <div class="input-group">
         <input type="text" class="form-control" id="schedule-{{forloop.counter}}-at"
           data-field="starttime" placeholder="HH:MM:SS"
           {% if schedule.data.starttime < 86400 and schedule.data.starttime > 0 %}value="{{schedule.data.starttime|timeformat}}"{% endif %}>
+
+          <div class="input-group-append" title="{% trans "time zone" %}" data-bs-toggle="tooltip" data-bs-placement="top">
+          <div class="dropdown">
+          <button class="form-control dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{default_timezone}}
+          </button>
+          <ul class="dropdown-menu" style="max-height: 30em; overflow-y: auto">
+            {% for tz in timezones %}
+              <li><a class="dropdown-item{% if default_timezone == tz.1 %} active{% endif %}" href="#" data-value="{{tz.1}}">{{tz.0}}&nbsp;&nbsp;{{tz.1}}</a></li>
+            {% endfor %}
+          </ul>
+          </div>
+          </div>
+          
+      </div>
       </div>
     </div>
     <div class="row mb-3">

@@ -21,9 +21,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from importlib import import_module
 import os
+import pytz
 from random import uniform
 import re
 from threading import Lock, Timer
@@ -420,36 +421,48 @@ class Command(BaseCommand):
 
     @classmethod
     def getHTML(cls, request, widget=False):
-        commands = []
-        for commandname, appname in get_commands().items():
-            if commandname != "scheduletasks":
-                try:
-                    cmd = getattr(
-                        import_module(
-                            "%s.management.commands.%s" % (appname, commandname)
-                        ),
-                        "Command",
-                    )
-                    if getattr(cmd, "index", -1) >= 0 and getattr(cmd, "getHTML", None):
-                        commands.append((cmd.index, commandname))
-                except Exception:
-                    pass
-        commands = [i[1] for i in sorted(commands)]
-        offset = GridReport.getTimezoneOffset(request)
-        schedules = [
-            s.adjustForTimezone(offset)
-            for s in ScheduledTask.objects.all()
-            .using(request.database)
-            .order_by("name")
-        ]
-        if not widget:
-            schedules.append(ScheduledTask())  # Add an empty template
-        return render_to_string(
-            "commands/scheduletasks.html",
-            {
-                "schedules": schedules,
-                "commands": commands,
-                "widget": widget,
-            },
-            request=request,
-        )
+        try:
+            commands = []
+            for commandname, appname in get_commands().items():
+                if commandname != "scheduletasks":
+                    try:
+                        cmd = getattr(
+                            import_module(
+                                "%s.management.commands.%s" % (appname, commandname)
+                            ),
+                            "Command",
+                        )
+                        if getattr(cmd, "index", -1) >= 0 and getattr(
+                            cmd, "getHTML", None
+                        ):
+                            commands.append((cmd.index, commandname))
+                    except Exception:
+                        pass
+            commands = [i[1] for i in sorted(commands)]
+            offset = GridReport.getTimezoneOffset(request)
+            schedules = [
+                s.adjustForTimezone(offset)
+                for s in ScheduledTask.objects.all()
+                .using(request.database)
+                .order_by("name")
+            ]
+            if not widget:
+                schedules.append(ScheduledTask())  # Add an empty template
+            return render_to_string(
+                "commands/scheduletasks.html",
+                {
+                    "schedules": schedules,
+                    "commands": commands,
+                    "widget": widget,
+                    "timezones": sorted(
+                        [
+                            (datetime.now(pytz.timezone(i)).strftime("%z"), i)
+                            for i in pytz.all_timezones
+                        ]
+                    ),
+                    "default_timezone": settings.TIME_ZONE,
+                },
+                request=request,
+            )
+        except Exception as e:
+            print(e)

@@ -9,6 +9,7 @@
 #
 
 import django.db
+from django.db.utils import InterfaceError as djangoInterfaceError
 from django.db.backends.postgresql.base import (
     DatabaseWrapper as BuiltinPostgresDatabaseWrapper,
 )
@@ -20,7 +21,7 @@ class DatabaseWrapper(BuiltinPostgresDatabaseWrapper):
     def create_cursor(self, name=None):
         try:
             return super().create_cursor(name=name)
-        except InterfaceError:
+        except (InterfaceError, djangoInterfaceError):
             django.db.close_old_connections()
             django.db.connection.connect()
             return super().create_cursor(name=name)

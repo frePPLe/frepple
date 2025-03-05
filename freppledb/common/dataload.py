@@ -98,6 +98,7 @@ def parseExcelWorksheet(
     database=DEFAULT_DB_ALIAS,
     ping=False,
     excel_duration_in_days=False,
+    skip_audit_log=False,
 ):
     class MappedRow:
         """
@@ -238,11 +239,24 @@ def parseExcelWorksheet(
     if hasattr(model, "parseData"):
         # Some models have their own special uploading logic
         return model.parseData(
-            data, MappedRow, user, database, ping, excel_duration_in_days
+            data,
+            MappedRow,
+            user,
+            database,
+            ping,
+            excel_duration_in_days,
+            skip_audit_log,
         )
     else:
         return _parseData(
-            model, data, MappedRow, user, database, ping, excel_duration_in_days
+            model,
+            data,
+            MappedRow,
+            user,
+            database,
+            ping,
+            excel_duration_in_days,
+            skip_audit_log,
         )
 
 
@@ -253,6 +267,7 @@ def parseCSVdata(
     database=DEFAULT_DB_ALIAS,
     ping=False,
     excel_duration_in_days=False,
+    skip_audit_log=False,
 ):
     """
     This method:
@@ -380,16 +395,36 @@ def parseCSVdata(
     if hasattr(model, "parseData"):
         # Some models have their own special uploading logic
         return model.parseData(
-            data, MappedRow, user, database, ping, excel_duration_in_days
+            data,
+            MappedRow,
+            user,
+            database,
+            ping,
+            excel_duration_in_days,
+            skip_audit_log,
         )
     else:
         return _parseData(
-            model, data, MappedRow, user, database, ping, excel_duration_in_days
+            model,
+            data,
+            MappedRow,
+            user,
+            database,
+            ping,
+            excel_duration_in_days,
+            skip_audit_log,
         )
 
 
 def _parseData(
-    model, data, rowmapper, user, database, ping, excel_duration_in_days=False
+    model,
+    data,
+    rowmapper,
+    user,
+    database,
+    ping,
+    excel_duration_in_days=False,
+    skip_audit_log=False,
 ):
     selfReferencing = []
 
@@ -632,7 +667,7 @@ def _parseData(
                             for x in selfReferencing:
                                 if x.cache is not None and obj.pk not in x.cache:
                                     x.cache[obj.pk] = obj
-                        if user:
+                        if not skip_audit_log and user:
                             if it:
                                 Comment(
                                     user_id=user.id,

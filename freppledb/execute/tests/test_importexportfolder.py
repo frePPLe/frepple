@@ -31,7 +31,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.test import TransactionTestCase
 
 from freppledb.input.models import ManufacturingOrder, PurchaseOrder, DistributionOrder
-from freppledb.common.models import Notification, User
+from freppledb.common.models import Notification, User, Comment
 
 
 class execute_with_commands(TransactionTestCase):
@@ -75,10 +75,12 @@ class execute_with_commands(TransactionTestCase):
         ManufacturingOrder.objects.all().delete()
         DistributionOrder.objects.all().delete()
         PurchaseOrder.objects.all().delete()
+        Comment.objects.all().delete()
 
         self.assertEqual(DistributionOrder.objects.count(), 0)
         self.assertEqual(PurchaseOrder.objects.count(), 0)
         self.assertEqual(ManufacturingOrder.objects.count(), 0)
+        self.assertEqual(Comment.objects.count(), 0)
 
         # Move export files to the import folder
         for file in [
@@ -96,3 +98,4 @@ class execute_with_commands(TransactionTestCase):
         self.assertEqual(DistributionOrder.objects.count(), countDO)
         self.assertEqual(PurchaseOrder.objects.count(), countPO)
         self.assertEqual(ManufacturingOrder.objects.count(), countMO)
+        self.assertEqual(Comment.objects.count(), 0)

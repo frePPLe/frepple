@@ -817,7 +817,15 @@ class ManufacturingOrder(OperationPlan):
     objects = ManufacturingOrderManager()
 
     @staticmethod
-    def parseData(data, rowmapper, user, database, ping, excel_duration_in_days=False):
+    def parseData(
+        data,
+        rowmapper,
+        user,
+        database,
+        ping,
+        excel_duration_in_days=False,
+        skip_audit_log=False,
+    ):
         selfReferencing = []
 
         def formfieldCallback(f):
@@ -1093,7 +1101,7 @@ class ManufacturingOrder(OperationPlan):
                                 for x in selfReferencing:
                                     if x.cache is not None and obj.pk not in x.cache:
                                         x.cache[obj.pk] = obj
-                            if user:
+                            if not skip_audit_log and user:
                                 if it:
                                     Comment(
                                         user_id=user.id,

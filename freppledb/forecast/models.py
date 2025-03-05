@@ -428,7 +428,15 @@ class ForecastPlan(models.Model):
         managed = False
 
     @staticmethod
-    def parseData(data, rowmapper, user, database, ping, excel_duration_in_days=False):
+    def parseData(
+        data,
+        rowmapper,
+        user,
+        database,
+        ping,
+        excel_duration_in_days=False,
+        skip_audit_log=False,
+    ):
         """
         This method is called when importing forecast data through a CSV
         or Excel file.
@@ -918,7 +926,7 @@ class ForecastPlan(models.Model):
             cursor.execute(
                 """
                 select column_name
-                from information_schema.columns 
+                from information_schema.columns
                 where table_name = 'forecastplan'
                 and column_name not in (
                     'item_id', 'location_id', 'customer_id', 'startdate', 'enddate'

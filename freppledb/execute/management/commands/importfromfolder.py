@@ -231,6 +231,12 @@ class Command(BaseCommand):
 
                 i = 0
                 cnt = len(models)
+                skip_audit_log = (
+                    Parameter.getValue(
+                        "import_skips_audit_log", self.database, "true"
+                    ).lower()
+                    == "true"
+                )
                 for ifile, model, contenttype_id, dependencies in models:
                     task.status = str(int(i / cnt * 100)) + "%"
                     task.message = "Processing data file %s" % ifile
@@ -261,7 +267,9 @@ class Command(BaseCommand):
                         )
                     elif ifile.lower().endswith((".xlsx", ".xlsm")):
                         logger.info("Started processing data in Excel file: %s" % ifile)
-                        returnederrors = self.loadExcelfile(model, filetoparse)
+                        returnederrors = self.loadExcelfile(
+                            model, filetoparse, skip_audit_log
+                        )
                         errors[0] += returnederrors[0]
                         errors[1] += returnederrors[1]
                         logger.info(
@@ -270,7 +278,9 @@ class Command(BaseCommand):
                         )
                     else:
                         logger.info("Started processing data in CSV file: %s" % ifile)
-                        returnederrors = self.loadCSVfile(model, filetoparse)
+                        returnederrors = self.loadCSVfile(
+                            model, filetoparse, skip_audit_log
+                        )
                         errors[0] += returnederrors[0]
                         errors[1] += returnederrors[1]
                         logger.info(
@@ -421,14 +431,18 @@ class Command(BaseCommand):
             if conn:
                 conn.close()
 
-    def loadCSVfile(self, model, file):
+    def loadCSVfile(self, model, file, skip_audit_log):
         errorcount = 0
         warningcount = 0
         datafile = EncodedCSVReader(file, delimiter=self.delimiter)
         try:
             with transaction.atomic(using=self.database):
                 for error in parseCSVdata(
-                    model, datafile, user=self.user, database=self.database
+                    model,
+                    datafile,
+                    user=self.user,
+                    database=self.database,
+                    skip_audit_log=skip_audit_log,
                 ):
                     if error[0] == logging.ERROR:
                         logger.error(
@@ -471,7 +485,7 @@ class Command(BaseCommand):
             logger.error("Error: Invalid data format - skipping the file \n")
         return [errorcount, warningcount]
 
-    def loadExcelfile(self, model, file):
+    def loadExcelfile(self, model, file, skip_audit_log):
         errorcount = 0
         warningcount = 0
 
@@ -492,6 +506,7 @@ class Command(BaseCommand):
                         user=self.user,
                         database=self.database,
                         excel_duration_in_days=excel_duration_in_days,
+                        skip_audit_log=skip_audit_log,
                     ):
                         if error[0] == logging.ERROR:
                             logger.error(

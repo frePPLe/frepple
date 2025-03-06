@@ -705,7 +705,7 @@ class Command(BaseCommand):
 
     # accordion template
     title = _("scenario management")
-    index = 1500
+    index = 1300
     help_url = "command-reference.html#scenario-copy"
 
     @staticmethod

@@ -298,7 +298,7 @@ class Command(BaseCommand):
 
     # accordion template
     title = _("Generate buckets")
-    index = 2000
+    index = 2100
     help_url = "command-reference.html#createbuckets"
 
     @staticmethod

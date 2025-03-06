@@ -549,7 +549,7 @@ class Command(BaseCommand):
 
     # accordion template
     title = _("Import data files")
-    index = 1300
+    index = 1100
     help_url = "command-reference.html#importfromfolder"
 
     @staticmethod

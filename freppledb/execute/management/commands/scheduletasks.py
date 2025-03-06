@@ -24,11 +24,11 @@
 from datetime import datetime, timedelta, timezone
 from importlib import import_module
 import os
-import pytz
 from random import uniform
 import re
 from threading import Lock, Timer
 import time
+import zoneinfo
 
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -456,8 +456,8 @@ class Command(BaseCommand):
                     "widget": widget,
                     "timezones": sorted(
                         [
-                            (datetime.now(pytz.timezone(i)).strftime("%z"), i)
-                            for i in pytz.all_timezones
+                            (datetime.now(zoneinfo.ZoneInfo(i)).strftime("%z"), i)
+                            for i in zoneinfo.available_timezones()
                         ]
                     ),
                     "default_timezone": settings.TIME_ZONE,

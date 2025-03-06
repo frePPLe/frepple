@@ -37,6 +37,7 @@ from freppledb.common.middleware import _thread_locals
 from freppledb.common.report import getCurrentDate
 from freppledb.execute.models import Task
 
+
 class Command(loaddata.Command):
     @staticmethod
     def getHTML(request):
@@ -63,7 +64,7 @@ class Command(loaddata.Command):
         )
 
     title = _("Load a dataset")
-    index = 1800
+    index = 1750
     help_url = "command-reference.html#loaddata"
 
     def add_arguments(self, parser):

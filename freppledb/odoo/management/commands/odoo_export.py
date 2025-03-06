@@ -590,7 +590,7 @@ class Command(BaseCommand):
 
     # accordion template
     title = _("Export data to %(erp)s") % {"erp": "odoo"}
-    index = 1450
+    index = 1150
     help_url = "command-reference.html#odoo_export"
 
     @staticmethod

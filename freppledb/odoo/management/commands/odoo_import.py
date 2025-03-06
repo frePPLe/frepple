@@ -97,7 +97,7 @@ class Command(BaseCommand):
 
     # accordion template
     title = _("Import data from %(erp)s") % {"erp": "odoo"}
-    index = 1400
+    index = 1050
     help_url = "command-reference.html#odoo_import"
 
     @staticmethod

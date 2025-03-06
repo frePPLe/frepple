@@ -263,7 +263,7 @@ class Command(BaseCommand):
 
     # accordion template
     title = _("Publish reports by email")
-    index = 1250
+    index = 1800
     help_url = "command-reference.html#emailreport"
 
     @staticmethod

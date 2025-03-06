@@ -877,7 +877,7 @@ class ExportOperationPlans(PlanTask):
                 if v is None:
                     data.append("\\N")
                 elif attr[2] == "boolean":
-                    data.append(True if v else False)
+                    data.append("t" if v != "False" else "f")
                 elif attr[2] == "duration":
                     data.append(v)
                 elif attr[2] == "integer":

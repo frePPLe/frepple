@@ -211,11 +211,11 @@ class checkDatabaseHealth(CheckTask):
                 if max_id and max_id > (last_value or 0):
                     cursor.execute(
                         f"""
-                    SELECT setval('{sequencename}', (SELECT max({columnname}) FROM {tablename}));
-                    """
+                        SELECT setval('{sequencename}', (SELECT max({columnname}) FROM {tablename}));
+                        """
                     )
                     logger.info(
-                        f"updated sequence {sequencename} for table {tablename} after check 1"
+                        f"updated sequence {sequencename} for table {tablename}: nexval too low"
                     )
 
             # check 2: make sure the sequence has not reached 90% of the max value
@@ -223,21 +223,21 @@ class checkDatabaseHealth(CheckTask):
             # identify all the foreign keys
             cursor.execute(
                 """
-            select rel_kcu.table_name as primary_table,
-            rel_kcu.column_name as primary_column
-            from information_schema.table_constraints tco
-            join information_schema.key_column_usage kcu
-                on tco.constraint_schema = kcu.constraint_schema
-                and tco.constraint_name = kcu.constraint_name
-            join information_schema.referential_constraints rco
-                on tco.constraint_schema = rco.constraint_schema
-                and tco.constraint_name = rco.constraint_name
-            join information_schema.key_column_usage rel_kcu
-                on rco.unique_constraint_schema = rel_kcu.constraint_schema
-                and rco.unique_constraint_name = rel_kcu.constraint_name
-                and kcu.ordinal_position = rel_kcu.ordinal_position
-            where tco.constraint_type = 'FOREIGN KEY'
-                           """
+                select rel_kcu.table_name as primary_table,
+                rel_kcu.column_name as primary_column
+                from information_schema.table_constraints tco
+                join information_schema.key_column_usage kcu
+                    on tco.constraint_schema = kcu.constraint_schema
+                    and tco.constraint_name = kcu.constraint_name
+                join information_schema.referential_constraints rco
+                    on tco.constraint_schema = rco.constraint_schema
+                    and tco.constraint_name = rco.constraint_name
+                join information_schema.key_column_usage rel_kcu
+                    on rco.unique_constraint_schema = rel_kcu.constraint_schema
+                    and rco.unique_constraint_name = rel_kcu.constraint_name
+                    and kcu.ordinal_position = rel_kcu.ordinal_position
+                where tco.constraint_type = 'FOREIGN KEY'
+                """
             )
             foreign_key_exists = [i for i in cursor]
 
@@ -280,10 +280,10 @@ class checkDatabaseHealth(CheckTask):
                     FROM numbered_rows
                     WHERE {tablename}.{columnname} = numbered_rows.{columnname};
                     SELECT setval('{sequencename}', (SELECT max({columnname}) FROM {tablename}));
-                """
+                    """
                 )
                 logger.info(
-                    f"updated sequence {sequencename} for table {tablename} after check 2"
+                    f"updated sequence {sequencename} for table {tablename}: reaching max value"
                 )
 
 

@@ -21,7 +21,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import pytz
+import zoneinfo
 
 from django.db import migrations, models
 
@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
             name="tz",
             field=models.CharField(
                 blank=True,
-                choices=[(i, i) for i in pytz.all_timezones],
+                choices=[(i, i) for i in zoneinfo.available_timezones()],
                 max_length=40,
                 null=True,
                 verbose_name="time zone",

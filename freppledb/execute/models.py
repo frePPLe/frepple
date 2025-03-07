@@ -23,8 +23,8 @@
 
 from datetime import datetime, timedelta
 import os
-import pytz
 import shlex
+import zoneinfo
 
 from django.db import models
 from django.db.models import Q
@@ -110,7 +110,7 @@ class ScheduledTask(models.Model):
     data = models.JSONField(null=True, blank=True)
     tz = models.CharField(
         _("time zone"),
-        choices=[(i, i) for i in pytz.all_timezones],
+        choices=[(i, i) for i in zoneinfo.available_timezones()],
         max_length=40,
         null=True,
         blank=True,

@@ -8,15 +8,17 @@
 <div class="input-group d-inline-flex w-auto">
 <input id="addsearch" class="form-control ps-2 pe-2" placeholder="{% trans 'Filter' %}" role="searchbox"
   type="text" size="15" oninput="grid.showFilterList(this)" onkeydown="grid.keyDownSearch(event)">
-<button class="input-group-text" onclick="event.stopPropagation(); grid.showFilter()"
+<button class="input-group-text" onclick="event.stopPropagation(); grid.showFilter()" data-bs-offset="0,5"
   type="button" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{% trans "Filter editor" %}">
   <i class="fa fa-search"></i>
 </button>
 	{% if reportclass.filterable %}{% include "common/snippet_favorites.html" with search=True %}{% endif %}
 </div>
-<div class="align-middle d-inline-flex" data-bs-toggle="tooltip" data-bs-placement="top"
+<div class="align-middle d-inline-flex" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-offset="0,5"
   data-bs-title="{% trans 'reset filters'|capfirst|force_escape %}">
-   <span id="resetfilter" onclick="grid.resetFilter()" class="fa fa-times fs-6" ></span>
+  <div>
+    <i id="resetfilter" onclick="grid.resetFilter()" class="fa fa-times fs-6" ></i>
+  </div>
 </div>
 </span>
 {% endif %}{% endblock %}

@@ -2,7 +2,7 @@
 <ul class="dropdown-menu dropdown-menu-end" id="favoritelist">
     {% if preferences.favorites %}
         {% for fav in preferences.favorites|sort_dictionary_by_key %}
-        <li><a class="dropdown-item" onclick="favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
+        <li><a class="dropdown-item" onclick="event.stopPropagation(); favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
         {% endfor %}
     {% endif %}
     <li>
@@ -13,8 +13,9 @@
     </li>
 </ul>
 <button class="{% if search %}input-group-text{% else %}btn btn-sm btn-primary{% endif %}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true"
-      data-bs-title="{% trans 'Bookmark your favorite report configurations'|capfirst|force_escape %}">
-    <span class="fa fa-star"></span>
+    <div data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="{% trans 'Bookmark your favorite report configurations'|capfirst|force_escape %}" data-bs-offset="0,12">
+        <div class="p-1">
+            <i class="fa fa-star"></i>
+        </div>
     </div>
 </button>

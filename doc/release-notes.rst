@@ -7,6 +7,12 @@ Release notes
 This release is scheduled for mid March.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | In version 8.3 of frePPLe, we introduced the possibility to filter MOs/POs/DOs using
+    the clock icon (only MOs/POs/DOs in the time horizon were displayed).
+  |  This led to some confusion so we are removing this feature.
+
 .. rubric:: System administration
 
 - | Addition of parameter archive.duration to delete the old archived data.

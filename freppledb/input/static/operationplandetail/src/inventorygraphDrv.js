@@ -39,13 +39,12 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
       angular.element(document).find('#attributes-inventorygraph').empty().append(
         [
         '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_inventorygraph" aria-expanded="false" aria-controls="widget_inventorygraph">',
-        '<h5 class="card-title text-capitalize fs-5 me-auto">' + gettextCatalog.getString("inventory") + 
+        '<h5 class="card-title text-capitalize fs-5 me-auto">' + gettextCatalog.getString("inventory") +
         '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>',
         '<div class="card-body collapse' +
         (scope.$parent.widget[1]["collapsed"] ? '' : ' show') +
         '" id="widget_inventorygraph">',
         '<table class="table table-sm table-borderless">',
-        '<thead id="grid_graph"></thead>',
         '<tbody><tr><td role="gridcell" aria-describedby="grid_graph">',
         '<div class="graph" style="height:'+ $("#attributes-operationplan .card-body").height() +'"></div>',
         '</td></tr></tbody>',
@@ -58,7 +57,7 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
         if (scope.operationplan.hasOwnProperty('inventoryreport')) {
           const timebuckets = scope.operationplan.inventoryreport;
 
-          let margin = {top: 10, right: 10, bottom: 0, left: 40};
+          let margin = {top: 10, right: 10, bottom: 30, left: 40};
           let width = Math.max($("#attributes-operationplan .card-body").width() - margin.left - margin.right, 0);
           let height = $("#attributes-operationplan .card-body").height() - margin.top - margin.bottom;
 
@@ -76,7 +75,7 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
           // // Build the data for d3
           let max_y = 0;
           let min_y = 0;
-          let data = [];          
+          let data = [];
           for (const bctk of timebuckets) {
             data.push({
               'bucket': bctk[0],
@@ -268,12 +267,12 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
                 .on("mouseleave", graph.hideTooltip)
                 .on("mousemove", graph.moveTooltip)
             })
-          
+
           // Draw axis
           var yAxis = d3.svg.axis()
             .scale(y)
             .orient("left")
-            .tickFormat(d3.format("s"));          
+            .tickFormat(d3.format("s"));
           svg.append("g")
             .attr("class", "miniaxis")
             .call(graph.miniAxis.bind(yAxis));
@@ -294,37 +293,22 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
           svg.append("svg:path")
             .attr('class', 'graphline')
             .attr("stroke","#FF0000")
-            .attr("d", line(data));        
+            .attr("d", line(data));
 
-          // Draw header
-          const el = $("#grid_graph");
-          el.html("");
-          const scale_stops = x.range();
-          const scale_width = x.rangeBand();
-          const svg_header = d3.select(el.get(0)).append("svg");
-          svg_header.attr('height', '15px');
-          svg_header.attr('width', '100%');
-          let wt = 0;
-          for (const i in timebuckets) {
-            const w = margin.left + scale_stops[i] + scale_width / 2;
-            if (wt <= w) {
-              const t = svg_header.append('text')
-                .attr('class', timebuckets[i][3] ? 'svgheaderhistory' : 'svgheadertext')
-                .attr("font-weight", 700)
-                .attr('x', w)
-                .attr('y', '12')
-                .attr('data-bucket', i)
-                .text(timebuckets[i][0])
-                .on("mouseenter", function (d) {
-                  graph.showTooltip(
-                    $filter('formatdate')(timebuckets[i][1]) + ' - ' + $filter('formatdate')(timebuckets[i][2])
-                  );
-                })
-                .on("mouseleave", graph.hideTooltip)
-                .on("mousemove", graph.moveTooltip);
-              wt = w + t.node().getComputedTextLength() + 12;
-            }
-          }
+          var nth = Math.ceil(timebuckets.length / width * bucketnamelength * 10);
+
+          // Display X-axis for a single buffer
+          var myticks = [];
+          for (var i in timebuckets)
+            if (i % nth == 0) myticks.push(timebuckets[i][0]);
+          var xAxis = d3.svg.axis()
+            .scale(x)
+            .tickValues(myticks)
+            .orient("bottom");
+          svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
 
           angular.element(elem).find('.collapse')
              .on("shown.bs.collapse", grid.saveColumnConfiguration)
@@ -336,104 +320,7 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
       }
     })//watch end
 
-    const graphjs = {
 
-      header: function (margin, scale) {
-        const el = $("#grid_graph");
-        el.html("");
-        const scale_stops = scale.range();
-        const scale_width = scale.rangeBand();
-        const svg = d3.select(el.get(0)).append("svg");
-        svg.attr('height', '15px');
-        svg.attr('width', Math.max(el.width(), 0));
-        let wt = 0;
-        const timebuckets = scope.operationplan.inventoryreport;
-
-        for (const i in timebuckets) {
-          const w = margin + scale_stops[i] + scale_width / 2;
-          if (wt <= w) {
-            const t = svg.append('text')
-              .attr('class', timebuckets[3] ? 'svgheaderhistory' : 'svgheadertext')
-              .attr('x', w)
-              .attr('y', '12')
-              .attr('data-bucket', i)
-              .text(timebuckets[i]['name'])
-              .on("mouseenter", function (d) {
-                const tiptext = "&nbsp;" + $filter('formatdate')(timebuckets[1]) + ' - ' + $filter('formatdate')(timebuckets[2]) + "&nbsp;";
-                graph.showTooltip(tiptext);
-              })
-              .on("mouseleave", graph.hideTooltip)
-              .on("mousemove", graph.moveTooltip);
-            wt = w + t.node().getComputedTextLength() + 12;
-          }
-        }
-      },
-
-      showTooltip: function (txt) {
-        // Find or create the tooltip div
-        let tt = d3.select("#tooltip");
-        if (tt.empty())
-          tt = d3.select("body")
-            .append("div")
-            .attr("id", "tooltip")
-            .attr("role", "tooltip")
-            .attr("class", "card p-2")
-            .style("position", "absolute");
-
-        // Update content and display
-        tt.html('' + txt)
-          .style('display', 'block');
-        graph.moveTooltip();
-      },
-
-      hideTooltip: function () {
-        d3.select("#tooltip").style('display', 'none');
-        d3.event.stopPropagation();
-      },
-
-      moveTooltip: function () {
-        if (d3.event == null) return;
-        let xpos = d3.event.pageX + 5;
-        let ypos = d3.event.pageY - 28;
-        const xlimit = $(window).width() - $("#tooltip").width() - 20;
-        const ylimit = $(window).height() - $("#tooltip").height() - 20;
-        if (xpos > xlimit) {
-          // Display tooltip under the mouse
-          xpos = xlimit;
-          ypos = d3.event.pageY + 5;
-        }
-        if (ypos > ylimit)
-          // Display tooltip above the mouse
-          ypos = d3.event.pageY - $("#tooltip").height() - 25;
-        d3.select("#tooltip")
-          .style({
-            'left': xpos + "px",
-            'top': ypos + "px"
-          });
-        d3.event.stopPropagation();
-      },
-
-      miniAxis: function (s) {
-        const sc = this.scale().range();
-        const dm = this.scale().domain();
-        // Draw the scale line
-        s.append("path")
-          .attr("class", "domain")
-          .attr("d", "M-10 0 H0 V" + (sc[0] - 2) + " H-10");
-        // Draw the maximum value
-        s.append("text")
-          .attr("x", -2)
-          .attr("y", 13) // Depends on font size...
-          .attr("text-anchor", "end")
-          .text($filter("number")(Math.round(dm[1])));
-        // Draw the minimum value
-        s.append("text")
-          .attr("x", -2)
-          .attr("y", sc[0] - 5)
-          .attr("text-anchor", "end")
-          .text(Math.round(dm[0]));
-      }
-    };
 
   } //link end
 } //directive end

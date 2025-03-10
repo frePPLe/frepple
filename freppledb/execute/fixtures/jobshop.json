@@ -1,0 +1,3 @@
+[
+    {"pk": "import_skips_audit_log", "model":"common.parameter", "fields": {"value":"true", "description":"When set to true, the import data files command doesn''t create any audit log message. Default:true"}}
+]

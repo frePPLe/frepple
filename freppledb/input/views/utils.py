@@ -189,8 +189,6 @@ def search(request):
 class OperationPlanMixin(GridReport):
     # Hack to allow variable height depending on the detail position
     variableheight = True
-    hasTimeBuckets = True
-    hasTimeOnly = False
 
     @classmethod
     def operationplanExtraBasequery(cls, query, request):
@@ -2721,7 +2719,7 @@ class OperationPlanDetail(View):
                         inner join item on item.name = operationplanmaterial.item_id
                       where operationplanmaterial.item_id = arguments.item_id
                       and operationplanmaterial.location_id = arguments.location_id
-                      and (item.type is distinct from 'make to order' 
+                      and (item.type is distinct from 'make to order'
                            or coalesce(operationplan.batch,'') is not distinct from arguments.batch)
                     ) operationplanmaterial
                 cross join arguments

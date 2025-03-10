@@ -13,7 +13,6 @@
       <input type="hidden" name="horizonbuckets" id="horizonbuckets"{% if request.user.horizonbuckets %} value="{{request.user.horizonbuckets}}"{% endif %}>
       <input type="hidden" name="horizonunit" id="horizonunit" value="{{request.user.horizonunit}}">
       <input id="horizonoriginal" type="hidden" value="{{request.user.horizonbuckets}}|{{request.user.horizonstart|date:"DATE_FORMAT"}}|{{request.user.horizonend|date:"DATE_FORMAT"}}|{{request.user.horizontype}}|{{request.user.horizonbefore}}|{{request.user.horizonlength}}|{{request.user.horizonunit}}"/>
-          {% if not reportclass.hasTimeOnly %}
           <div class="row" style="padding-bottom: 15px">
             <div class="col">
               {% trans 'bucket size'|capfirst %}&nbsp;&nbsp;
@@ -29,7 +28,6 @@
               </div>
             </div>
           </div>
-          {% endif %}
 
           <div class="row mb-3">
             <div class="col">

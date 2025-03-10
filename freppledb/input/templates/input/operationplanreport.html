@@ -186,10 +186,6 @@ rect.opplan {
   var groupingcfg = {{ groupingcfg | json }};
   var currentdate = new Date("{{ currentdate|date:'Y-m-d' }}");
 
-  var horizonstart = new Date({{request.report_startdate|date:"Y"}},{{request.report_startdate|date:"n"}}-1,{{request.report_startdate|date:"j"}});
-  var horizonend = new Date({{request.report_enddate|date:"Y"}},{{request.report_enddate|date:"n"}}-1,{{request.report_enddate|date:"j"}});
-  var viewstart = new Date(horizonstart.getTime());
-  var viewend = new Date(horizonend.getTime());
 
   function zoom(factor) {
     gantt.zoom(factor, "#ganttheader");

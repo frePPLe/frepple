@@ -595,8 +595,6 @@ class DeliveryOrderList(GridReport):
     title = _("delivery orders")
     model = DeliveryOrder
     frozenColumns = 0
-    hasTimeBuckets = True
-    hasTimeOnly = False
     editable = True
     multiselect = True
     help_url = "model-reference/delivery-orders.html"
@@ -833,7 +831,6 @@ class DeliveryOrderList(GridReport):
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         q = DeliveryOrder.objects.all()
-        use_default_filter = True
         if "calendarstart" in request.GET:
             q = q.filter(
                 Q(enddate__gte=request.GET["calendarstart"])
@@ -842,7 +839,6 @@ class DeliveryOrderList(GridReport):
                     & Q(startdate__gte=request.GET["calendarstart"])
                 )
             )
-            use_default_filter = False
         if "calendarend" in request.GET:
             q = q.filter(
                 Q(startdate__lte=request.GET["calendarend"])
@@ -851,16 +847,6 @@ class DeliveryOrderList(GridReport):
                     & Q(enddate__lte=request.GET["calendarend"])
                 )
             )
-            use_default_filter = False
-        if use_default_filter and "noautofilter" not in request.GET:
-            if request.report_enddate:
-                q = q.filter(
-                    Q(startdate__lte=request.report_enddate)
-                    | (
-                        Q(startdate__isnull=True)
-                        & Q(enddate__lte=request.report_enddate)
-                    )
-                )
 
         # special keyword superop used for search field of operationplan
         if "parentreference" in request.GET:

@@ -618,7 +618,6 @@ class GridReport(View):
 
     # Include time bucket support in the report
     hasTimeBuckets = False
-    hasTimeOnly = False
 
     # Allow to exclude time buckets in the past
     showOnlyFutureTimeBuckets = False
@@ -845,7 +844,7 @@ class GridReport(View):
         request.report_startdate = start
         request.report_enddate = end
         request.report_bucket = str(bucket)
-        if bucket and not getattr(cls, "hasTimeOnly", False):
+        if bucket:
             res = BucketDetail.objects.using(request.database).filter(bucket=bucket)
             if start:
                 res = res.filter(enddate__gt=start)

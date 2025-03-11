@@ -282,6 +282,7 @@ class OperationPlanMixin(GridReport):
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
+        reportclass.getBuckets(request)
         prefs = getattr(request, "prefs", None)
         if prefs:
             widgets = prefs.get("widgets", None)

@@ -270,6 +270,7 @@ function showGanttDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
             html: true,
             container: 'body',
             trigger: 'hover',
+            offset: '[0,10]',
             template: `<div class="tooltip opacity-100" role="tooltip">
                 <div class="tooltip-arrow"></div>
                 <div class="tooltip-inner bg-white text-start text-body fs-6 p-3"></div>

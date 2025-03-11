@@ -25,7 +25,7 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | The task scheduler now allows specifying the time zone for the automatically
     scheduled tasks.
-  | In previous releases, we faced issues on the dates where Daylight Saving times
+  | In previous releases, we faced issues on the dates where Daylight Saving Time
     switches. Tasks were then run an hour too late or too early.
   | Now the scheduled task will correctly respect the times in your time zone.
   | Cursed be `George Hudson <https://en.wikipedia.org/wiki/George_Hudson_(entomologist)>`_.

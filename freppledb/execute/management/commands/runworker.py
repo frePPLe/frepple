@@ -289,25 +289,30 @@ class Command(BaseCommand):
                     )
                 runTask(task, database)
             except Exception as e:
-                # Read the task again from the database and update.
-                task = Task.objects.all().using(database).get(pk=task.id)
-                task.status = "Failed"
-                now = datetime.now()
-                if not task.started:
-                    task.started = now
-                task.finished = now
-                task.message = str(e)
-                task.save(using=database)
-                if "FREPPLE_TEST" not in os.environ:
-                    logger.debug(
-                        "Worker %s for database '%s' finished task %d at %s: failed"
-                        % (
-                            os.getpid(),
-                            settings.DATABASES[database]["NAME"],
-                            task.id,
-                            datetime.now(),
+                try:
+                    # Read the task again from the database and update.
+                    task = Task.objects.all().using(database).get(pk=task.id)
+                    task.status = "Failed"
+                    now = datetime.now()
+                    if not task.started:
+                        task.started = now
+                    task.finished = now
+                    task.message = str(e)
+                    task.save(using=database)
+                    if "FREPPLE_TEST" not in os.environ:
+                        logger.debug(
+                            "Worker %s for database '%s' finished task %d at %s: failed"
+                            % (
+                                os.getpid(),
+                                settings.DATABASES[database]["NAME"],
+                                task.id,
+                                datetime.now(),
+                            )
                         )
-                    )
+                except Exception:
+                    # It's possible the database is release by now and we can't updte the task
+                    pass
+
         # Remove the parameter again
         try:
             Parameter.objects.all().using(database).get(pk="Worker alive").delete()

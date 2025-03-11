@@ -1175,6 +1175,7 @@ def scheduletasks(request):
             fld = data.get("email_success", None)
             if fld:
                 obj.email_success = fld
+            obj.tz = data.get("timezone", settings.TIME_ZONE)
             fld = data.get("data", None)
             if isinstance(fld, dict):
                 obj.data = fld
@@ -1184,7 +1185,6 @@ def scheduletasks(request):
                 ScheduledTask.objects.using(request.database).filter(
                     name=oldname
                 ).delete()
-            obj.adjustForTimezone(-GridReport.getTimezoneOffset(request))
             obj.save(using=request.database)
             scheduler.waitNextEvent(database=request.database)
             obj.adjustForTimezone(GridReport.getTimezoneOffset(request))

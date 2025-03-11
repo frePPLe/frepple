@@ -152,12 +152,12 @@ a task</a> to simplify running the sequence and avoid mistakes.</p>
           <input type="text" class="form-control" id="schedule-{{forloop.counter}}-at"
             data-field="starttime" placeholder="HH:MM:SS"
             {% if schedule.data.starttime < 86400 and schedule.data.starttime > 0 %}value="{{schedule.data.starttime|timeformat}}"{% endif %}>
-  
-          <button class="btn btn-outline-primary dropdown-toggle" 
-             type="button" data-bs-toggle="dropdown" aria-expanded="false">{{default_timezone}}</button>
-          <ul class="dropdown-menu dropdown-menu-end" sdddtyle="max-height: 30em; overflow-y: auto">
+          <button class="btn btn-outline-primary dropdown-toggle" data-field="task-timezone"
+             type="button" data-bs-toggle="dropdown" aria-expanded="false">{% firstof schedule.tz default_timezone %}</button>
+          <ul class="dropdown-menu dropdown-menu-end" style="max-height: 30em; overflow-y: auto">
             {% for tz in timezones %}
-              <li><a class="timezone dropdown-item{% if default_timezone == tz.1 %} active{% endif %}" data-value="{{tz.1}}">{{tz.0}}&nbsp;&nbsp;{{tz.1}}</a></li>
+              <li><a class="timezone dropdown-item{% if default_timezone == tz.1 %} active{% endif %}" data-value="{{tz.1}}"
+                  onclick="$(event.target).closest('ul').prev().text('{{tz.1}}')">{{tz.0}}&nbsp;&nbsp;{{tz.1}}</a></li>
             {% endfor %}
           </ul>
         </div>
@@ -338,6 +338,7 @@ function saveScheduledTask(el, event) {
       "oldname": oldschedname,
       "email_failure": form.find("[data-field='email_failure']").val(),
       "email_success": form.find("[data-field='email_success']").val(),
+      "timezone": form.find("[data-field='task-timezone']").text(),
       "data": {
         "starttime": starttime.hours() * 3600 + starttime.minutes() * 60 + starttime.seconds(),
         "monday": form.find("[data-field='monday']").is(":checked"),
@@ -425,26 +426,6 @@ function deleteScheduledTask(el, event) {
     }
     });
 }
-
-$(function() {
-  $(".timezonelist .dropdown-item").click(function() {
-    console.log("----", this);
-    var dropdown = $(this).closest(".input-group");
-    dropdown.find("button").text($(this).text());
-    dropdown.find("button").val($(this).text());
-  });
-});
-/*
-   document.addEventListener("show.bs.dropdown", function (e) {
-      console.log(e);
-      const activeItem = document.querySelector(".timezonelist .dropdown-item");
-      
-      if (activeItem) {
-        console.log(activeItem  );
-          $(".timezonelist")[0].scrollTop = activeItem.offsetTop - dropdownMenu.offsetTop;
-      }
-   });
-  });*/
 
 {% else %}
 

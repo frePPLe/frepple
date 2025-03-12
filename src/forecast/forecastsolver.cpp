@@ -494,6 +494,13 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
           logger << "    Consuming " << remaining << " from bucket "
                  << curbucket->getDates() << " (" << available << " available)"
                  << endl;
+        Measures::forecastconsumed->disaggregate(
+            *curbucket,
+            remaining + Measures::forecastconsumed->getValue(*curbucket), false,
+            0, !getAutocommit() ? commands : nullptr);
+        Measures::forecastnet->disaggregate(
+            *curbucket, available - remaining, false, 0,
+            !getAutocommit() ? commands : nullptr);
         remaining = 0;
       } else {
         // Completely consume a bucket
@@ -502,6 +509,12 @@ void ForecastSolver::netDemandFromForecast(const Demand* dmd, Forecast* fcst) {
                  << curbucket->getDates() << " (" << available << " available)"
                  << endl;
         remaining -= available;
+        Measures::forecastconsumed->disaggregate(
+            *curbucket,
+            available + Measures::forecastconsumed->getValue(*curbucket),
+            !getAutocommit() ? commands : nullptr);
+        Measures::forecastnet->disaggregate(
+            *curbucket, 0.0, !getAutocommit() ? commands : nullptr);
       }
     } else if (getLogLevel() > 1)
       logger << "    Nothing available in bucket " << curbucket->getDates()

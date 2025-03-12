@@ -30,9 +30,13 @@ status             non-empty string  This field should have one of the following
 
                                      * | approved:
                                        | The manufacturing order is present in the ERP system but can still be rescheduled by frePPLe (optimization input).
+                                       | It will be be rescheduled if it violates the lead time, material or capacity 
+                                         constraints.
 
                                      * | confirmed:
                                        | The manufacturing order is confirmed, it has been populated in your ERP system (optimization input).
+                                       | It can not be changed by frepple, even if it violates the lead time, material or capacity 
+                                         constraints. It is considered completely locked and frozen.
 
                                      * | completed:
                                        | The manufacturing order has been executed, but the stock hasn't been increased yet (optimization input).

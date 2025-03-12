@@ -21,9 +21,37 @@ Generic instructions
 
 #. **Upgrade the PostgreSQL database**
 
-   FrePPLe requires 12 or higher. If you're on an older version, upgrading
+   FrePPLe requires 13 or higher. If you're on an older version, upgrading
    your PostgreSQL database is the first step.
 
+   When you move your frepple databases to a new server, there are some special
+   considerations to follow. Depending on the method you used to dump and restore the
+   databases some extra steps may be required.
+
+   #. Assure the new database is correctly tuned.
+
+      The default installation of PostgreSQL is not configured right for
+      scalable production use.
+
+      We advice using pgtune http://pgtune.leopard.in.ua/ to optimize the configuration
+      for your hardware. Use "data warehouse" as application type and also assure the
+      max_connection setting is moved from the default 100 to eg 400.
+
+   #. Frepple uses 2 database roles to access the database. These are configured as USER 
+      (for full access) and SQL_ROLE (for read-only access to some tables in report manager)
+      in the DATABASES section of your /etc/frepple/djangosettings.py file.
+      
+      All objects in your new databases should be owned by the USER.
+
+   #. The database user USER should be granted the SQL_ROLE.
+   
+      It's possible that this grant was not part of your dump-restore process. If so, you
+      can correct that by running the following SQL command as a database administrator.
+
+      ::
+
+         GRANT <SQL_ROLE> TO <USER>;
+   
 #. **Install the new frePPLe release.**
 
    Install the new .deb or .rpm package.

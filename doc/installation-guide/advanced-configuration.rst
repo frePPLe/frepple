@@ -165,14 +165,15 @@ django-allauth will have pretty similar instructions.
    | Assure that you have set the callback URL of the provider to
      https://<DOMAIN-OF-YOUR-FREPPLE-INSTALL>/accounts/auth0/login/callback/
 
-#. | Install the django-allauth python package.
-   | In recent frepple release you install it in the frepple python venv. In older releases
-     you install the package system-wide.
+#. | Install the django-allauth python package.   
+   | Recent frepple releases (>=9.6) already include the package and you can skip
+     this step.
+   | In earlier versions you need to install it yourself in the frepple venv.
 
    .. code-block:: bash
 
       . /usr/share/frepple/venv/bin/activate
-      pip3 install django-allauth
+      pip3 install django-allauth --no-dependencies
 
 #. | Update your /etc/frepple/djangosettings.py file.
 

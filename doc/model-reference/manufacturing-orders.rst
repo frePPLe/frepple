@@ -30,7 +30,7 @@ status             non-empty string  This field should have one of the following
 
                                      * | approved:
                                        | The manufacturing order is present in the ERP system but can still be rescheduled by frePPLe (optimization input).
-                                       | It will be be rescheduled if it violates the lead time, material or capacity 
+                                       | It will be rescheduled if it violates the lead time, material or capacity 
                                          constraints.
 
                                      * | confirmed:

@@ -67,7 +67,7 @@ window.addEventListener("beforeinstallprompt", event => {
 </div>
 
 <div class="row" id="content-main" >
-  <div id="row1" class="col-4 mx-auto" style="min-width:13rem; max-width:20rem">
+  <div id="row1" class="col-4 mx-auto text-center" style="min-width:13rem; max-width:20rem">
 		<form role="form" action="{{request.prefix}}{{app_path}}" method="post" id="login-form" >{% csrf_token %}
 		  <div class="mb-3">
 		    {{ form.username.errors }}

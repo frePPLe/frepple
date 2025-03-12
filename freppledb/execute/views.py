@@ -812,8 +812,10 @@ def DeleteLogFile(request, taskid):
         )
     filename = Task.objects.using(request.database).get(id=taskid).logfile
     if (
-        filename.lower().endswith(".dump") and not request.user.is_superuser
-    ) or not filename.lower().endswith((".log", ".dump")):
+        not filename
+        or (filename.lower().endswith(".dump") and not request.user.is_superuser)
+        or not filename.lower().endswith((".log", ".dump"))
+    ):
         return HttpResponseNotFound(force_str(_("Error")))
     try:
         os.remove(os.path.join(settings.FREPPLE_LOGDIR, filename))

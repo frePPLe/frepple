@@ -32,7 +32,7 @@ function showoperationplanDrv($window, gettextCatalog) {
 
   var directive = {
     restrict: 'EA',
-    scope: true,
+    scope: {operationplan: '=data'},
     templateUrl: '/static/operationplandetail/operationplanpanel.html',
     link: linkfunc
   };
@@ -50,7 +50,7 @@ function showoperationplanDrv($window, gettextCatalog) {
     }
 
     scope.$on("cardChanged", function (event, field, oldvalue, newvalue) {
-      if (!scope.operationplan)
+      if (typeof scope.operationplan == undefined)
         return;
       else if (field === "startdate")
         scope.operationplan["start"] = newvalue;

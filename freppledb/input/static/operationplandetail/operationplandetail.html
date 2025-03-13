@@ -1,7 +1,7 @@
   <div class="row">
     <div data-ng-class="['widget-list', 'col-12', 'col-lg-' + col['cols'][0].width]" data-ng-repeat="col in preferences['widgets']" data-widget="{{col['name']}}" data-widget-width="{{col['cols'][0].width}}">
       <div data-ng-repeat="widget in col['cols'][0]['widgets']">
-        <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationplan'" id="attributes-operationplan" showoperationplan-drv></div>
+        <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationplan'" id="attributes-operationplan" data="operationplan" showoperationplan-drv></div>
         <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'inventorygraph'" id="attributes-inventorygraph" data-ng-show="operationplan.id !== -1 && operationplan.inventoryreport != undefined" data="operationplan" showinventorygraph-drv></div>
         <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'inventorydata'" id="attributes-inventorydata" data-ng-show="operationplan.id !== -1 && operationplan.inventoryreport != undefined" data="operationplan" showinventorydata-drv></div>
         <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'operationproblems'" id="attributes-operationproblems" data-ng-show="operationplan.id !== -1 && operationplan.problems != undefined" data="operationplan" showproblemspanel-drv></div>
@@ -12,7 +12,7 @@
         <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'downstreamoperationplans'" id="attributes-downstreamoperationplans" data-ng-show="operationplan.downstreamoperationplans !== undefined" data="operationplan" showdownstreamoperationplans-drv></div>
         <div class="card widget mb-3" data-widget="{{widget[0]}}" data-ng-if="widget[0] == 'upstreamoperationplans'" id="attributes-upstreamoperationplans" data-ng-show="operationplan.upstreamoperationplans !== undefined" data="operationplan" showupstreamoperationplans-drv></div>
       </div>
-    </div>  
+    </div>
   </div>
 
   <div id="popup2" class="modal" role="dialog" style="z-index: 10000; overflow-y: visible">

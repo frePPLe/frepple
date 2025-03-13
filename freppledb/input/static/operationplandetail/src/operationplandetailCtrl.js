@@ -55,21 +55,27 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   // will set the row as "edited", and trigger "save undo" buttons.
   // If the function does not exist it makes no sense to watch for changes on the bottom part.
   $scope.displayongrid = displayongrid;
+  $scope.currentId = null;
 
   if (typeof $scope.displayongrid === 'function') {
     //watch is only needed if we can update the grid
     $scope.$watchGroup(
       ['operationplan.id', 'operationplan.start', 'operationplan.end', 'operationplan.quantity', 'operationplan.status', 'operationplan.quantity_completed', "operationplan.remark", "operationplan.loadplans", "operationplan.resource"],
       function (newValue, oldValue) {
-        if (oldValue[0] === newValue[0] && newValue[0] !== -1 && typeof oldValue[0] !== 'undefined') {
+        if (typeof newValue[0] == "string") {
+          $scope.currentId = newValue[0];
+        } else {
+          $scope.operationplan.id = $scope.currentId;
+        }
+        if (oldValue[0] === newValue[0] && newValue[0] !== -1) {
           //is a change to the current operationplan
-          if (typeof oldValue[1] !== 'undefined' && typeof newValue[1] !== 'undefined' && oldValue[1] !== newValue[1]) {
+          if (typeof oldValue[1] !== 'undefined' && typeof newValue[1] !== 'undefined' && oldValue[1].toISOString() !== newValue[1].toISOString()) {
             if ($scope.mode == "kanban" || $scope.mode.startsWith("calendar"))
               $scope.$broadcast("selectedEdited", "startdate", oldValue[1], new Date($scope.operationplan.start));
             else
               $scope.displayongrid($scope.operationplan.id, "startdate", $scope.operationplan.start);
           }
-          if (typeof oldValue[2] !== 'undefined' && typeof newValue[2] !== 'undefined' && oldValue[2] !== newValue[2]) {
+          if (typeof oldValue[2] !== 'undefined' && typeof newValue[2] !== 'undefined' && oldValue[2].toISOString() !== newValue[2].toISOString()) {
             if ($scope.mode == "kanban" || $scope.mode.startsWith("calendar"))
               $scope.$broadcast("selectedEdited", "enddate", oldValue[2], new Date($scope.operationplan.end));
             else
@@ -771,7 +777,6 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
             }
             else if (card.type == "MO") {
               data["operation"] = card.operationplan__operation__name || card.operation;
-              console.log("dddd", data)
             }
             dirty.push(data);
           }

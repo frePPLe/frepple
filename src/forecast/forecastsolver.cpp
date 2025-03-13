@@ -235,6 +235,18 @@ void ForecastSolver::solve(bool run_fcst, bool run_netting, int cluster) {
     if (cluster != -1 &&
         (!f->isLeaf() || static_cast<Forecast*>(&*f)->getCluster() != cluster))
       continue;
+
+    // if you are not planned and none of your chilren is planned
+    // we are below the valid forecast combinations
+    // for the forecastnet and forecastconsumed measures
+    bool childrenPlanned = false;
+    for (auto ch = f->getLeaves(true, Measures::forecastnet); ch; ++ch)
+      if (ch->getPlanned()) {
+        childrenPlanned = true;
+        break;
+      }
+    if (!childrenPlanned) continue;
+
     auto fcstdata = f->getData();
     lock_guard<recursive_mutex> exclusive(fcstdata->lock);
     for (auto& bckt : fcstdata->getBuckets()) {

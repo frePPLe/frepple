@@ -64,7 +64,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
       function (newValue, oldValue) {
         if (typeof newValue[0] == "string") {
           $scope.currentId = newValue[0];
-        } else if (typeof $scope.operationplan.id == 'undefined') {
+        } else {
           $scope.operationplan.id = $scope.currentId;
         }
         if (oldValue[0] === newValue[0] && newValue[0] !== -1) {

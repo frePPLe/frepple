@@ -102,6 +102,7 @@ void SolverCreate::chooseResource(
 
   // Initialize
   Date min_next_date(Date::infiniteFuture);
+  Date original_q_date = data->state->q_date;
   Resource* bestAlternateSelection = nullptr;
   OperationPlanState bestAlternateState, firstAlternateState;
   Resource* firstAlternate = nullptr;
@@ -350,7 +351,7 @@ void SolverCreate::chooseResource(
              << firstAlternate << endl;
   } else {
     // No alternate gave a good result in a constrained plan
-    data->state->a_date = min_next_date;
+    data->state->a_date = max(min_next_date, original_q_date);
     data->state->a_qty = 0;
 
     // Maintain the constraint list

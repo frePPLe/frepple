@@ -51,8 +51,25 @@ int ForecastMeasureComputed::initialize() {
   return FreppleClass<ForecastMeasureComputed, ForecastMeasure>::initialize();
 }
 
-struct ForecastMeasureComputed::ItemAttribute
-  final : public exprtk::igeneric_function<double> {
+int ForecastMeasureComputedPlanned::initialize() {
+  // Initialize the metadata
+  metadata = MetaClass::registerClass<ForecastMeasureLocal>(
+      "measure", "measure_computedplanned",
+      Object::create<ForecastMeasureComputedPlanned>);
+  registerFields<ForecastMeasureComputedPlanned>(
+      const_cast<MetaClass*>(metadata));
+
+  PythonInterpreter::registerGlobalMethod(
+      "compileMeasures", compileMeasuresPython, METH_NOARGS,
+      "Compiles all expressions on the measures.");
+
+  // Initialize the Python class
+  return FreppleClass<ForecastMeasureComputedPlanned,
+                      ForecastMeasure>::initialize();
+}
+
+struct ForecastMeasureComputed::ItemAttribute final
+    : public exprtk::igeneric_function<double> {
   typedef exprtk::igeneric_function<double> igenfunct_t;
   typedef typename igenfunct_t::parameter_list_t parameter_list_t;
   typedef typename igenfunct_t::generic_type::string_view string_t;
@@ -75,8 +92,8 @@ struct ForecastMeasureComputed::ItemAttribute
 ForecastMeasureComputed::ItemAttribute
     ForecastMeasureComputed::functionItemAttribute;
 
-struct ForecastMeasureComputed::LocationAttribute
-  final : public exprtk::igeneric_function<double> {
+struct ForecastMeasureComputed::LocationAttribute final
+    : public exprtk::igeneric_function<double> {
   typedef exprtk::igeneric_function<double> igenfunct_t;
   typedef typename igenfunct_t::parameter_list_t parameter_list_t;
   typedef typename igenfunct_t::generic_type::string_view string_t;
@@ -92,8 +109,8 @@ struct ForecastMeasureComputed::LocationAttribute
 ForecastMeasureComputed::LocationAttribute
     ForecastMeasureComputed::functionLocationAttribute;
 
-struct ForecastMeasureComputed::CustomerAttribute
-  final : public exprtk::igeneric_function<double> {
+struct ForecastMeasureComputed::CustomerAttribute final
+    : public exprtk::igeneric_function<double> {
   typedef exprtk::igeneric_function<double> igenfunct_t;
   typedef typename igenfunct_t::parameter_list_t parameter_list_t;
   typedef typename igenfunct_t::generic_type::string_view string_t;

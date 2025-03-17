@@ -86,17 +86,6 @@ int ForecastMeasureAggregatedPlanned::initialize() {
                       ForecastMeasure>::initialize();
 }
 
-int ForecastMeasureComputedPlanned::initialize() {
-  // Initialize the metadata
-  metadata = MetaClass::registerClass<ForecastMeasureComputedPlanned>(
-      "measure", "measure_computedplanned",
-      Object::create<ForecastMeasureComputedPlanned>);
-
-  // Initialize the Python class
-  return FreppleClass<ForecastMeasureComputedPlanned,
-                      ForecastMeasure>::initialize();
-}
-
 int ForecastMeasureLocal::initialize() {
   // Initialize the metadata
   metadata = MetaClass::registerClass<ForecastMeasureLocal>(

@@ -306,6 +306,7 @@ class checkDatabaseHealth(CheckTask):
                                 order by count(*) desc
                                 limit 5
                             )
+                            and common_comment.type != 'comment'
                         ) subquery
                         where row_num <= %s
                     )

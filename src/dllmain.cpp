@@ -68,6 +68,7 @@ DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles) {
     nok += ForecastMeasureAggregatedPlanned::initialize();
     nok += ForecastMeasureLocal::initialize();
     nok += ForecastMeasureComputed::initialize();
+    nok += ForecastMeasureComputedPlanned::initialize();
     nok += ForecastMeasureTemp::initialize();
     if (nok) throw RuntimeException("Error registering forecasting module");
 
@@ -88,8 +89,7 @@ DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles) {
     Measures::ordersopen = new ForecastMeasureAggregated("ordersopen", 0);
     Measures::forecastplanned =
         new ForecastMeasureAggregatedPlanned("forecastplanned", 0);
-    Measures::ordersplanned =
-        new ForecastMeasureAggregatedPlanned("ordersplanned", 0);
+    Measures::ordersplanned = new ForecastMeasureAggregated("ordersplanned", 0);
     auto tmp = new ForecastMeasureLocal("outlier", 0);
     tmp->setStored(false);
     Measures::outlier = tmp;

@@ -34,6 +34,7 @@ const MetaClass* ForecastMeasureAggregated::metadata;
 const MetaClass* ForecastMeasureAggregatedPlanned::metadata;
 const MetaClass* ForecastMeasureLocal::metadata;
 const MetaClass* ForecastMeasureComputed::metadata;
+const MetaClass* ForecastMeasureComputedPlanned::metadata;
 const MetaClass* ForecastMeasureTemp::metadata;
 const Keyword ForecastMeasureAggregated::tag_overrides("overrides");
 
@@ -46,7 +47,7 @@ const ForecastMeasureAggregated* Measures::orderstotal = nullptr;
 const ForecastMeasureAggregated* Measures::ordersadjustment = nullptr;
 const ForecastMeasureAggregated* Measures::ordersopen = nullptr;
 const ForecastMeasureAggregatedPlanned* Measures::forecastplanned = nullptr;
-const ForecastMeasureAggregatedPlanned* Measures::ordersplanned = nullptr;
+const ForecastMeasureAggregated* Measures::ordersplanned = nullptr;
 const ForecastMeasureLocal* Measures::outlier = nullptr;
 const ForecastMeasureLocal* Measures::nodata = nullptr;
 const ForecastMeasureLocal* Measures::leaf = nullptr;
@@ -85,6 +86,17 @@ int ForecastMeasureAggregatedPlanned::initialize() {
                       ForecastMeasure>::initialize();
 }
 
+int ForecastMeasureComputedPlanned::initialize() {
+  // Initialize the metadata
+  metadata = MetaClass::registerClass<ForecastMeasureComputedPlanned>(
+      "measure", "measure_computedplanned",
+      Object::create<ForecastMeasureComputedPlanned>);
+
+  // Initialize the Python class
+  return FreppleClass<ForecastMeasureComputedPlanned,
+                      ForecastMeasure>::initialize();
+}
+
 int ForecastMeasureLocal::initialize() {
   // Initialize the metadata
   metadata = MetaClass::registerClass<ForecastMeasureLocal>(
@@ -109,6 +121,11 @@ bool ForecastMeasure::isLeaf(const ForecastBase* f) const {
 }
 
 bool ForecastMeasureAggregatedPlanned::isLeaf(const ForecastBase* f) const {
+  // Planned measures are stored from the planned forecast upwards
+  return f->getPlanned();
+}
+
+bool ForecastMeasureComputedPlanned::isLeaf(const ForecastBase* f) const {
   // Planned measures are stored from the planned forecast upwards
   return f->getPlanned();
 }

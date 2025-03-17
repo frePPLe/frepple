@@ -449,6 +449,28 @@ class ForecastMeasureComputed : public ForecastMeasureAggregated {
   static ForecastMeasureComputed::CustomerAttribute functionCustomerAttribute;
 };
 
+/* Identical to an computed measure, but the lowest level where data is
+ * stored are the planned forecasts.
+ *
+ * TODO there is no protection for setting a value below the planned level.
+ */
+class ForecastMeasureComputedPlanned : public ForecastMeasureComputed {
+ public:
+  explicit ForecastMeasureComputedPlanned() { initType(metadata); }
+
+  virtual const MetaClass& getType() const { return *metadata; }
+  static const MetaClass* metadata;
+  static int initialize();
+
+  ForecastMeasureComputedPlanned(const char* n, const string& expr,
+                                 double d = 0.0)
+      : ForecastMeasureComputed(n, expr, d) {
+    initType(metadata);
+  }
+
+  virtual bool isLeaf(const ForecastBase* f) const;
+};
+
 class ForecastMeasureTemp : public ForecastMeasure {
  public:
   explicit ForecastMeasureTemp() { initType(metadata); }
@@ -485,7 +507,7 @@ class Measures {
   static const ForecastMeasureAggregated* orderstotal;
   static const ForecastMeasureAggregated* ordersadjustment;
   static const ForecastMeasureAggregated* ordersopen;
-  static const ForecastMeasureAggregatedPlanned* ordersplanned;
+  static const ForecastMeasureAggregated* ordersplanned;
   static const ForecastMeasureAggregatedPlanned* forecastplanned;
   static const ForecastMeasureLocal* outlier;
   static const ForecastMeasureLocal* nodata;
@@ -1791,7 +1813,7 @@ class ForecastSolver : public Solver {
     bool force;
 
     Metrics(double a, double b, bool c)
-        : smape(a), standarddeviation(b), force(c){};
+        : smape(a), standarddeviation(b), force(c) {};
   };
 
   /* Abstract base class for all forecasting methods. */

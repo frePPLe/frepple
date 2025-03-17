@@ -351,7 +351,7 @@ class CalculateDemandPattern(PlanTask):
         # Merge results
         cursor.execute(
             """
-            update item 
+            update item
             set adi = null, cv2 = null, demand_pattern = null
             where adi is not null or cv2 is not null or demand_pattern is not null
             """
@@ -702,7 +702,19 @@ class LoadMeasures(PlanTask):
                 cnt += 1
                 try:
                     m = None
-                    if i[0] == "computed":
+                    if i[1] in [
+                        "forecastconsumedvalue",
+                        "forecastnetvalue",
+                        "forecastplannedvalue",
+                    ]:
+                        m = frepple.measure_computedplanned(
+                            name=i[1],
+                            discrete=i[2],
+                            compute_expression=i[3],
+                            update_expression=i[4],
+                            default=i[5],
+                        )
+                    elif i[0] == "computed":
                         m = frepple.measure_computed(
                             name=i[1],
                             discrete=i[2],

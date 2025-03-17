@@ -68,7 +68,7 @@ DATABASES = {
         "OPTIONS": {
             "options": "-c lock_timeout=300000"  # Timeout (in milliseconds) to acquire a lock
         },
-        "CONN_MAX_AGE": 600,
+        "CONN_MAX_AGE": None,
         "CONN_HEALTH_CHECKS": True,
         "TEST": {
             # Database name used when running the test suite.

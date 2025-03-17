@@ -287,51 +287,33 @@ class checkDatabaseHealth(CheckTask):
                 )
 
             # check 3: Make sure table common_comment remains below 5M records
-            cursor.execute(
-                """
-            select count(*) from common_comment
-            """
-            )
-            MaxRowCount = 5000000
-            to_delete = cursor.fetchone()[0] - MaxRowCount
+            cursor.execute("select count(*) from common_comment")
+            to_delete = cursor.fetchone()[0] - 5000000
             if to_delete > 0:
-                to_delete_init = to_delete
-                # We only delete records from the 5 top entities
                 cursor.execute(
                     """
-                        select content_type_id
-                        from common_comment
-                        group by content_type_id
-                        order by count(*) desc
-                        limit 5
-                """
-                )
-                entities = [i[0] for i in cursor]
-                deleted = 0
-                for entity in entities:
-                    cursor.execute(
-                        """
-                        with cte as (
-                        select id from common_comment where content_type_id = %s
-                        limit %s
-                        )
-                        delete from common_comment
-                        using cte
-                        where cte.id = common_comment.id
-                        and common_comment.type != 'comment';
-                    """,
-                        (
-                            entity,
-                            to_delete,
-                        ),
+                    delete from common_comment
+                    where id in (
+                        select id from (
+                            select 
+                              id,
+                              row_number() over (order by lastmodified ASC) AS row_num
+                            from common_comment
+                            where content_type_id  in (
+                                -- delete only from the entities with most comments
+                                select top5.content_type_id
+                                from common_comment top5
+                                group by top5.content_type_id
+                                order by count(*) desc
+                                limit 5
+                            )
+                        ) subquery
+                        where row_num <= %s
                     )
-                    deleted += cursor.rowcount
-                    to_delete -= cursor.rowcount
-                    if to_delete == 0:
-                        break
-                logger.info(
-                    f"deleted {deleted} records from common_comment. Record count is now {MaxRowCount+to_delete_init-deleted}."
+                    """,
+                    (to_delete,),
                 )
+                logger.info(f"Deleted {cursor.rowcount} old comments")
 
 
 @PlanTaskRegistry.register

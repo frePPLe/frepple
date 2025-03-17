@@ -83,7 +83,6 @@ class TaskScheduler:
             )
             if database:
                 dbs.filter(name=database)
-            prev_connections = connections.all(initialized_only=True)
             for db in dbs:
                 t = (
                     ScheduledTask.objects.all()
@@ -106,10 +105,6 @@ class TaskScheduler:
                         "time": t.next_run,
                     }
                     self.sched[db.name]["timer"].start()
-            # Close the database connections of this thread while we wait
-            for c in connections.all(initialized_only=True):
-                if c not in prev_connections:
-                    c.close()
 
     @staticmethod
     def _tasklauncher(database=DEFAULT_DB_ALIAS):

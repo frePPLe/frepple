@@ -292,8 +292,7 @@ class checkDatabaseHealth(CheckTask):
             if to_delete > 0:
                 cursor.execute(
                     """
-                    delete from common_comment
-                    where id in (
+                    with recs_to_delete as (
                         select id from (
                             select 
                               id,
@@ -310,6 +309,9 @@ class checkDatabaseHealth(CheckTask):
                         ) subquery
                         where row_num <= %s
                     )
+                    delete from common_comment
+                    using recs_to_delete
+                    where common_comment.id = recs_to_delete.id
                     """,
                     (to_delete,),
                 )

@@ -99,7 +99,7 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
           }
 
           // Define Y-axis
-          let y = d3.scale.linear().rangeRound([height, 0]);
+          var y = d3.scale.linear().rangeRound([height, 0]);
 
           // Create a new SVG element
           $($(".graph").get(0)).html("");
@@ -112,7 +112,7 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
           // Update the scale of the Y-axis by looking for the max value
-          y.domain([min_y, max_y, data]);
+          y.domain([min_y, max_y]);
           let y_zero = y(0);
 
           // Draw the bars
@@ -268,14 +268,24 @@ function showinventorygraphDrv($window, $filter, gettextCatalog) {
                 .on("mousemove", graph.moveTooltip)
             })
 
-          // Draw axis
+          // Display Y-Axis
           var yAxis = d3.svg.axis()
             .scale(y)
             .orient("left")
             .tickFormat(d3.format("s"));
           svg.append("g")
-            .attr("class", "miniaxis")
-            .call(graph.miniAxis.bind(yAxis));
+            .attr("class", "y axis")
+            .call(yAxis);
+
+          if (min_y < 0 && max_y > 0)
+            svg.append("line")
+              .attr("x1", 0)
+              .attr("x2", width)
+              .attr("y1", y(0))
+              .attr("y2", y(0))
+              .attr("stroke-width", 1)
+              .attr("stroke", "black")
+              .attr("shape-rendering", "crispEdges");
 
           // Draw startoh line
           var line = d3.svg.line()

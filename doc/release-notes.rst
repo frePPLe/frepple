@@ -13,6 +13,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     the clock icon. Only MOs/POs/DOs in the time horizon were displayed.
   | This led to some confusion so we are removing this feature.
 
+- | Fix of the bottom pane allowing the edition of a PO/MO/DO (to update its quantity, its dates or its status).
+  | This panel (which is visible when only one record is selected) was broken for a while.
+
 .. rubric:: System administration
 
 - | Addition of parameter archive.duration to delete the old archived data.

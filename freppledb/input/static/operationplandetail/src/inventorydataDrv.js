@@ -40,15 +40,15 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
   function linkfunc(scope, elem, attrs) {
     scope.$watchGroup(['operationplan.id', 'operationplan.inventoryreport.length'], function (newValue, oldValue) {
       angular.element(document).find('#attributes-inventorydata').empty().append(
-        '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_inventorydata" aria-expanded="false" aria-controls="widget_inventorydata">' + 
+        '<div class="card-header d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#widget_inventorydata" aria-expanded="false" aria-controls="widget_inventorydata">' +
         '<h5 class="card-title text-capitalize fs-5 me-auto">' +
         gettextCatalog.getString("inventory") +
         '</h5><span class="fa fa-arrows align-middle w-auto widget-handle"></span></div>' +
         '<div class="card-body collapse' +
-        (scope.$parent.widget[1]["collapsed"] ? '' : ' show') + 
+        (scope.$parent.widget[1]["collapsed"] ? '' : ' show') +
         '" id="widget_inventorydata"><div class="table-responsive">' +
         '<table class="table table-sm table-hover table-borderless">' +
-        '<thead class="text-nowrap"></thead><tbody></tbody></table>' +
+        '<thead class="text-nowrap"></thead><tbody style="background: linear-gradient(white 0%, rgba(255,0,0,0.2) 40%, rgba(255,0,0,0.2) 60%, #f0f0f0 100%);"></tbody></table>' +
         '</div></div>'
       );
       var rows = ['<tr><td colspan="1">' + gettextCatalog.getString('no inventory information') + '</td></tr>'];
@@ -76,8 +76,22 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
               + inventoryData[0] + (inventoryData[3] ? '</i></td>' : '</b></td>')
             );
 
+            let isRed = false;
+            let transparentBackground = false;
+            let cellValue = 0;
             for (const i in inventoryData.slice(4)) {
-              rows[i] += '<td class="text-center">' + $filter('number')(inventoryData.slice(4)[i]) + '</td>';
+              cellValue = $filter('number')(inventoryData.slice(4)[i]);
+              if (i == 0 && cellValue < 0) {
+                isRed = true;
+                transparentBackground = true;
+              } else if (i > 0) {
+                isRed = false;
+              };
+              if (!(i == 0 || i == 8) && cellValue == 0) {
+                cellValue = "";
+              }
+
+              rows[i] += '<td class="text-center" style="' + (isRed?'color: red; font-weight: bold; ':'') + (transparentBackground ? 'background: transparent;':'background: white;') + '">' + cellValue + '</td>';
             }
           });
           columnHeaders.push('</tr>');

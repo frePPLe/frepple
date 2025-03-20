@@ -39,6 +39,9 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
     considered. Frepple incorrectly planned for the full quantity rather than only the
     quantity that isn't reserved yet.
 
+- | Exports to odoo are now possible from the resource detail and inventory detail screens
+    is now possible.
+
 .. rubric:: Production planning
 
 - | Bug fix: Edits of custom attributes of type boolean on manufacturing orders, purchase orders

@@ -128,15 +128,18 @@ def Upload(request):
 
         # Validate records which exist in the database
         data = json.loads(request.body.decode("utf-8"))
-        data_ok = False
         obj = []
         for rec in data:
             try:
-                if not "reference" in rec:
+                reference = rec.get(
+                    "reference", rec.get("operationplan__reference", None)
+                )
+                type = rec.get("operationplan__type", rec.get("type", None))
+                if not reference:
                     continue
-                elif rec.get("type", None) == "PO":
+                elif type == "PO":
                     po = PurchaseOrder.objects.using(request.database).get(
-                        reference=rec["reference"]
+                        reference=reference
                     )
                     if (
                         not po.supplier.source
@@ -152,7 +155,6 @@ def Upload(request):
                         or po.item.type == "make to order"
                     ):
                         continue
-                    data_ok = True
                     obj.append(po)
                     data_odoo.append(
                         '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" batch=%s status=%s remark=%s/>'
@@ -172,9 +174,9 @@ def Upload(request):
                             quoteattr(getattr(po, "remark", None) or ""),
                         )
                     )
-                elif rec.get("type", None) == "DO":
+                elif type == "DO":
                     do = DistributionOrder.objects.using(request.database).get(
-                        reference=rec["reference"]
+                        reference=reference
                     )
                     if (
                         not do.origin.source
@@ -185,7 +187,6 @@ def Upload(request):
                         or do.item.type == "make to order"
                     ):
                         continue
-                    data_ok = True
                     obj.append(do)
                     data_odoo.append(
                         '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d" batch=%s remark=%s/>'
@@ -206,9 +207,9 @@ def Upload(request):
                             quoteattr(getattr(do, "remark", None) or ""),
                         )
                     )
-                else:
+                elif type not in ("DLVR", "STCK"):
                     op = OperationPlan.objects.using(request.database).get(
-                        reference=rec["reference"]
+                        reference=reference
                     )
                     if op.owner and op.owner.status in (
                         "proposed",
@@ -218,7 +219,8 @@ def Upload(request):
                         # We are only sending the MOs with the detail of their WOs
                         op = op.owner
                     if (
-                        not op.operation.source
+                        not op.operation
+                        or not op.operation.source
                         or not (
                             op.status == "proposed"
                             or (
@@ -233,7 +235,6 @@ def Upload(request):
                         or not op.operation
                     ):
                         continue
-                    data_ok = True
                     obj.append(op)
                     if op.operation.category == "subcontractor":
                         data_odoo.append(
@@ -328,11 +329,10 @@ def Upload(request):
                                         )
                                     )
                         data_odoo.append("</operationplan>")
-
             except Exception as e:
                 logger.error("Exception during odoo export: %s" % e)
-        if not data_ok:
-            return HttpResponseServerError(_("No proposed data records selected"))
+        if not obj:
+            return HttpResponse(status=204)
 
         # Send the data to Odoo
         data_odoo.append("</operationplans></plan>")

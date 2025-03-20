@@ -2262,12 +2262,12 @@ var ERPconnection = {
       '<h5 class="modal-title text-capitalize">' + gettext("Export") + '</h5>' +
       '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
       '</div>' +
-      '<div class="modal-body">' +
+      '<div class="modal-body pb-0">' +
       '<p>' + gettext("Export selected records?") + '</p>' +
       '</div>' +
       '<div class="modal-footer justify-content-between">' +
-      '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
-      '<input type="submit" id="button_export" role="button" class="btn btn-primary" value="' + gettext('Confirm') + '">' +
+      '<input type="submit" id="cancelbutton" role="button" class="btn btn-gray text-capitalize" data-bs-dismiss="modal" value="' + gettext('Cancel') + '">' +
+      '<input type="submit" id="button_export" role="button" class="btn btn-primary text-capitalize" value="' + gettext('Confirm') + '">' +
       '</div>' +
       '</div>' +
       '</div>');
@@ -2277,6 +2277,10 @@ var ERPconnection = {
     }, { once: true });
 
     $('#button_export').on('click', function () {
+      if ($('#button_export').val() === gettext('Close')) {
+        hideModal('popup');
+        return; 
+      }
       var tmp = gettext('connecting');
       $('#popup .modal-body p').html(String(tmp).charAt(0).toUpperCase() + String(tmp).slice(1) + '...');
       $.ajax({
@@ -2284,21 +2288,36 @@ var ERPconnection = {
         data: JSON.stringify(data),
         type: "POST",
         contentType: "application/json",
-        success: function () {
+        success: function (data, stat, result) {
+          $('#cancelbutton').addClass("invisible");
+          $('#button_export').val(gettext('Close'));
+          if (result.status == 204) {
+            $('#popup .modal-title').html(gettext("Error"));
+            $('#popup .modal-header').addClass('bg-danger');
+            $('#popup .modal-body p').html(gettext("No valid records selected"));
+            return;
+          }
           var rowdata = [];
           // Mark selected rows as "approved" if the original status was "proposed".
           $('#popup .modal-body p').html(gettext("Export successful"));
-          $('#cancelbutton').val(gettext('Close'));
-          $('#button_export').removeClass("btn-primary").prop('disabled', true);
 
-          //update both cell value and grid data
+          // update both cell value and grid data
           for (var i in sel) {
-            var cur = grid.jqGrid('getCell', sel[i], 'status');
-
-            if (cur === 'proposed') {
-              grid.jqGrid('setCell', sel[i], 'status', 'approved');
+            var tp = grid.jqGrid('getCell', sel[i], 'operationplan__type');
+            if (!tp) tp = grid.jqGrid('getCell', sel[i], 'type');
+            var cur = grid.jqGrid('getCell', sel[i], 'operationplan__status');
+            if (cur === 'proposed' && !['STCK', 'DLVR'].includes(tp)) {
+              grid.jqGrid('setCell', sel[i], 'operationplan__status', 'approved');
               rowdata = grid.jqGrid('getRowData', sel[i]);
-              rowdata.status = 'approved';
+              rowdata.operationplan__status = 'approved';            
+            }
+            else if (!cur) {
+              cur = grid.jqGrid('getCell', sel[i], 'operationplan__status');
+              if (cur === 'proposed' && !['STCK', 'DLVR'].includes(tp)) {
+                grid.jqGrid('setCell', sel[i], 'status', 'approved');
+                rowdata = grid.jqGrid('getRowData', sel[i]);
+                rowdata.status = 'approved';
+              }
             }
           };
           grid.jqGrid('setRowData', rowdata);
@@ -2308,7 +2327,7 @@ var ERPconnection = {
           }
 
         },
-        error: function (result, stat, errorThrown) {
+        error: function (result) {
           if (result.status == 401) {
             location.reload();
             return;
@@ -2316,7 +2335,7 @@ var ERPconnection = {
           $('#popup .modal-title').html(gettext("Error"));
           $('#popup .modal-header').addClass('bg-danger');
           $('#popup .modal-body p').html(result.responseText);
-          $('#button_export').text(gettext('retry'));
+          $('#button_export').val(gettext('retry'));
         }
       });
     });

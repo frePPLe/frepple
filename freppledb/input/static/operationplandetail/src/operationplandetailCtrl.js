@@ -333,8 +333,10 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   $scope.displayInfo = displayInfo;
 
   function refreshstatus(value) {
-    if (value !== 'no_action') {
-      $scope.$apply(function () { $scope.operationplan.status = value; });
+    if (value !== 'no_action' && value !== 'erp_incr_export') {
+      $scope.$apply(function () { 
+        $scope.operationplan.status = value;
+      });
     }
   }
   $scope.refreshstatus = refreshstatus;

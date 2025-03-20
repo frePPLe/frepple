@@ -83,8 +83,8 @@ function showinventorydataDrv($window, $filter, gettextCatalog) {
             let cellValue = 0;
             for (const i in inventoryData.slice(4)) {
               cellValue = $filter('number')(inventoryData.slice(4)[i]);
-              if (i == 0 && cellValue < 0) {
-                isRed = true;
+              if (i == 0) {
+                isRed = inventoryData.slice(4)[0] < inventoryData.slice(4)[1] || inventoryData.slice(4)[0] < 0;
               } else if (i > 0) {
                 isRed = false;
               };

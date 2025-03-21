@@ -1,11 +1,14 @@
 Release notes
 -------------
 
-9.7.0 (Upcoming release)
+9.8.0 (Upcoming release)
 ========================
 
-This release is scheduled for mid March.
+This release is scheduled for end of April.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
+
+9.7.0 (2025-03-21)
+==================
 
 .. rubric:: User interface
 
@@ -51,7 +54,6 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
 - | Bug fix: Edits of custom attributes of type boolean on manufacturing orders, purchase orders
     and distribution orders weren't saved correctly.
-
 
 9.6.0 (2025-02-07)
 ==================

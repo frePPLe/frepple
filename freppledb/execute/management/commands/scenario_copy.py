@@ -240,6 +240,23 @@ class Command(BaseCommand):
                 for t in cursor:
                     noOwnershipTables.append(t[0])
 
+                # pg_dump still creates the sequences from the excluded tables
+                # we need to explicitly exclude them too
+                if destination == DEFAULT_DB_ALIAS:
+                    cursor.execute(
+                        """
+                    select s.relname as sequencename
+                    from pg_class s
+                    inner join pg_depend d on d.objid=s.oid and d.classid='pg_class'::regclass and d.refclassid='pg_class'::regclass
+                    inner join pg_class t on t.oid=d.refobjid
+                    inner join pg_namespace n on n.oid=t.relnamespace
+                    inner join pg_attribute a on a.attrelid=t.oid and a.attnum=d.refobjsubid
+                    inner join pg_sequences on pg_sequences.sequencename = s.relname
+                    where s.relkind='S' and n.nspname = 'public' and t.relname = any(%s);
+                    """,
+                        (excludedTables,),
+                    )
+                    excludedSequences = [i[0] for i in cursor]
             # Cleaning of the destination scenario
             with connections[destination].cursor() as cursor:
                 quick_drop_failed = False
@@ -384,9 +401,11 @@ class Command(BaseCommand):
                             (
                                 "%s %s "
                                 % (
-                                    " -T ".join(["", *excludedTables]),
-                                    " --exclude-table-data=".join(
-                                        ["", *excludedTables]
+                                    " --exclude-table ".join(
+                                        ["", *(excludedTables + excludedSequences)]
+                                    ),
+                                    " --exclude-table-data ".join(
+                                        ["", *(excludedTables)]
                                     ),
                                 )
                             )
@@ -394,7 +413,10 @@ class Command(BaseCommand):
                             else ""
                         ),
                         (
-                            ("%s " % (" -T ".join(["", *noOwnershipTables])))
+                            (
+                                "%s "
+                                % (" --exclude-table ".join(["", *noOwnershipTables]))
+                            )
                             if len(noOwnershipTables) > 0
                             else ""
                         ),

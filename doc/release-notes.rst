@@ -19,6 +19,8 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | The inventory widgets in the purchase order, manufacturing order,
     or distribution order screens have been improved.
 
+- | Fix on promoting a scenario to production. The promotion could fail in some cases.
+
 .. rubric:: System administration
 
 - | Addition of parameter archive.duration to delete the old archived data.

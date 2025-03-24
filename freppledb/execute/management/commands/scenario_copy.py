@@ -686,9 +686,9 @@ class Command(BaseCommand):
             # multiple destinations at the same moment.
             if not options["dumpfile"]:
                 Task.objects.all().using(destination).filter(id__gt=task.id).delete()
-
-            # Don't automate any task in the new copy
+            
             if not promote:
+                # Don't automate any task in the new copy
                 for i in ScheduledTask.objects.all().using(destination):
                     i.next_run = None
                     i.data.pop("starttime", None)
@@ -700,6 +700,13 @@ class Command(BaseCommand):
                     i.data.pop("saturday", None)
                     i.data.pop("sunday", None)
                     i.save(using=destination)
+
+                # Remove links to log files from other scenario (except when restoring
+                # in the same scenario as where the dump was made)
+                if not (options["dumpfile"] and f".{destination}." in options["dumpfile"]):
+                    Task.objects.using(destination).filter(logfile__isnull=False).update(
+                        logfile=None
+                    )
 
             if options["dumpfile"]:
                 setattr(_thread_locals, "database", destination)

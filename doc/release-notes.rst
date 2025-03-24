@@ -7,6 +7,11 @@ Release notes
 This release is scheduled for end of April.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: Production planning
+
+- | Bug fix: Situations where the sales order devlivery exceeds the requested quantity were not handled correctly.
+  | This can happen for instance when we need to round up the delivery to certain multiple.
+
 9.7.0 (2025-03-21)
 ==================
 

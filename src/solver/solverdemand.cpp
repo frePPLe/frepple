@@ -366,7 +366,7 @@ void SolverCreate::solve(const Demand* salesorder, void* v) {
                 (data->state->a_qty + ROUNDING_ERROR < minshipment &&
                  !data->state->forceAccept) ||
                 (plan_qty - data->state->a_qty < minshipment &&
-                 fabs(plan_qty - data->state->a_qty) > ROUNDING_ERROR &&
+                 data->state->a_qty < plan_qty - ROUNDING_ERROR &&
                  !data->state->forceAccept)) {
               if (plan_qty - data->state->a_qty < minshipment &&
                   data->state->a_qty + ROUNDING_ERROR >= minshipment &&

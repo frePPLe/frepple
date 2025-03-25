@@ -216,7 +216,10 @@ class OverviewReport(GridPivot):
             for f in getAttributeFields(Resource, initially_hidden=True):
                 f.editable = False
                 reportclass.rows += (f,)
-                reportclass.attr_sql += "res.%s, " % f.name.split("__")[-1]
+                if f.formatter == "detail":
+                    reportclass.attr_sql += f"res.{ f.field_name.split("__")[0] }_id, "
+                else:
+                    reportclass.attr_sql += f"res.{ f.field_name.split("__")[-1] }, "
             # Adding custom location attributes
             for f in getAttributeFields(
                 Location, related_name_prefix="location", initially_hidden=True
@@ -382,7 +385,7 @@ class OverviewReport(GridPivot):
                     }
                     idx = 20
                     for f in resourceattributefields:
-                        result[f.field_name] = row[idx]
+                        result[f.name] = row[idx]
                         idx += 1
                     for f in locationattributefields:
                         result[f.field_name] = row[idx]

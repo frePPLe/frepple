@@ -1015,7 +1015,7 @@ def createForecastSolver(db, task=None):
             .filter(name__startswith="forecast.")
             .exclude(name="forecast.populateForecastTable")
             .exclude(name="forecast.runnetting")
-            .order_by("custom_order")
+            .order_by("custom_order", "name")
         ):
             parameter_value = None
             if calendar and param.value.strip().lower() == "default":

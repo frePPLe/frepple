@@ -1222,6 +1222,9 @@ class ForecastBase {
   inline shared_ptr<ForecastData> getData() const;
 
   void markDirty() const { const_cast<ForecastBase*>(this)->data.markDirty(); }
+  void clearDirty() const {
+    const_cast<ForecastBase*>(this)->data.clearDirty();
+  }
 
   int getHorizonFuture() const {
     return horizon_future;  // This is a static variable!

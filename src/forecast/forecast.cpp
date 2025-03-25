@@ -1141,17 +1141,14 @@ ForecastData::ForecastData(const ForecastBase* f) {
       }
     }
 
-    // We need an additional loop to reset the dirty flag on all buckets:
-    bckiter = buckets.begin();
-    while (bckiter != buckets.end()) {
-      bckiter->clearDirty();
-      ++bckiter;
-    }
+    // We need to reset the dirty flag on all buckets:
+    clearDirty();
   }
 }
 
 void ForecastData::clearDirty() const {
   for (auto i = buckets.begin(); i != buckets.end(); ++i) i->clearDirty();
+  if (buckets.size() > 0) buckets[0].getForecast()->clearDirty();
 }
 
 size_t ForecastData::getSize() const {
@@ -1174,9 +1171,18 @@ size_t ForecastBucketData::getSize() const {
 }
 
 void ForecastData::flush() {
+  auto fcst = buckets[0].getForecast();
+
+  for (auto i = buckets.begin(); i != buckets.end(); ++i) {
+    if (i->isDirty())
+      logger << fcst->getForecastName() << i->getStart() << " is dirty" << endl;
+    else
+      logger << fcst->getForecastName() << i->getStart() << " is clean" << endl;
+  }
+
   if (Cache::instance->getLogLevel() > 0) {
     assert(!buckets.empty());
-    auto fcst = buckets[0].getForecast();
+
     logger << "Cache writes forecast " << fcst->getForecastItem() << "   "
            << fcst->getForecastLocation() << "   "
            << fcst->getForecastCustomer() << endl;

@@ -12,6 +12,14 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug fix: Situations where the sales order devlivery exceeds the requested quantity were not handled correctly.
   | This can happen for instance when we need to round up the delivery to certain multiple.
 
+.. rubric:: System administration
+
+- | The automatically keep the disk space for log files within acceptable boundaries, frepple
+    automatically deletes old log files when they exceed the size specificied with the
+    setting MAXTOTALLOGFILESIZE.
+  | In previous releases, this limit only applied to ".log" files. From this release onwards
+    we also include ".dump" files in this size.
+
 9.7.0 (2025-03-21)
 ==================
 

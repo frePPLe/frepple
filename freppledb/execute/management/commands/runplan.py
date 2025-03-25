@@ -289,13 +289,6 @@ class Command(BaseCommand):
                         resource.RLIMIT_CPU,
                         (settings.MAXCPUTIME, settings.MAXCPUTIME + 5),
                     )
-                # Limiting the file size is a bit tricky as this limit not only applies to the log
-                # file, but also to temp files during the export
-                # if settings.MAXTOTALLOGFILESIZE:
-                #  resource.setrlimit(
-                #    resource.RLIMIT_FSIZE,
-                #   (settings.MAXTOTALLOGFILESIZE * 1024 * 1024, (settings.MAXTOTALLOGFILESIZE + 1) * 1024 * 1024)
-                #   )
 
             # Make sure the forecast engine uses the same correct timezone
             os.environ["PGTZ"] = settings.TIME_ZONE

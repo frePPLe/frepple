@@ -324,20 +324,22 @@ class Command(BaseCommand):
         totallogs = 0
         filelist = []
         for x in os.listdir(settings.FREPPLE_LOGDIR):
-            if x.endswith(".log"):
-                size = 0
-                creation = 0
+            if x.endswith((".log", ".dump")):
                 filename = os.path.join(settings.FREPPLE_LOGDIR, x)
                 # needs try/catch because log files may still be open or being used and Windows does not like it
                 try:
                     size = os.path.getsize(filename)
-                    creation = os.path.getctime(filename)
                     filelist.append(
-                        {"name": filename, "size": size, "creation": creation}
+                        {
+                            "name": filename,
+                            "size": size,
+                            "creation": os.path.getctime(filename),
+                        }
                     )
+                    totallogs += size
                 except Exception:
                     pass
-                totallogs += size
+
         todelete = totallogs - settings.MAXTOTALLOGFILESIZE * 1024 * 1024
         filelist.sort(key=operator.itemgetter("creation"))
         for fordeletion in filelist:
@@ -347,6 +349,8 @@ class Command(BaseCommand):
                     todelete -= fordeletion["size"]
                 except Exception:
                     pass
+            else:
+                break
 
         # Exit
         if "FREPPLE_TEST" not in os.environ:

@@ -1171,18 +1171,9 @@ size_t ForecastBucketData::getSize() const {
 }
 
 void ForecastData::flush() {
-  auto fcst = buckets[0].getForecast();
-
-  for (auto i = buckets.begin(); i != buckets.end(); ++i) {
-    if (i->isDirty())
-      logger << fcst->getForecastName() << i->getStart() << " is dirty" << endl;
-    else
-      logger << fcst->getForecastName() << i->getStart() << " is clean" << endl;
-  }
-
   if (Cache::instance->getLogLevel() > 0) {
     assert(!buckets.empty());
-
+    auto fcst = buckets[0].getForecast();
     logger << "Cache writes forecast " << fcst->getForecastItem() << "   "
            << fcst->getForecastLocation() << "   "
            << fcst->getForecastCustomer() << endl;

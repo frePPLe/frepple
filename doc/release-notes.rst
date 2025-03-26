@@ -7,6 +7,11 @@ Release notes
 This release is scheduled for end of April.
 You can already check out a `preview <https://demo-preview.frepple.com>`_.
 
+.. rubric:: User interface
+
+- | Bug Fix: A forecast report file with the forecast column and without the item, location
+    and customer columns was loaded against the root forecast combination.
+
 .. rubric:: Production planning
 
 - | Bug fix: Situations where the sales order devlivery exceeds the requested quantity were not handled correctly.

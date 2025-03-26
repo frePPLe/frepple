@@ -26,6 +26,7 @@ from importlib import import_module
 import os
 from random import uniform
 import re
+from psycopg2.errors import SerializationFailure
 from threading import Lock, Timer
 import time
 import zoneinfo
@@ -58,19 +59,24 @@ class TaskScheduler:
                 .filter(status="In use")
                 .only("name")
             ):
-                with transaction.atomic(using=db.name):
-                    with connection.cursor() as cursor:
-                        cursor.execute(
-                            "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ"
-                        )
-                        for s in (
-                            ScheduledTask.objects.all()
-                            .using(db.name)
-                            .order_by("name")
-                            .select_for_update(skip_locked=True)
-                        ):
-                            # Calculation of the next run is included in the save method
-                            s.save(using=db.name, update_fields=["next_run"])
+                try:
+                    with transaction.atomic(using=db.name):
+                        with connection.cursor() as cursor:
+                            cursor.execute(
+                                "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ"
+                            )
+                            for s in (
+                                ScheduledTask.objects.all()
+                                .using(db.name)
+                                .order_by("name")
+                                .select_for_update(skip_locked=True)
+                            ):
+                                # Calculation of the next run is included in the save method
+                                s.save(using=db.name, update_fields=["next_run"])
+                except SerializationFailure:
+                    # Concurrent access by different webserver processes can happen.
+                    # In that case, one of the transactions will abort. That's fine.
+                    pass
         self.waitNextEvent()
 
     def waitNextEvent(self, database=None):
@@ -114,35 +120,41 @@ class TaskScheduler:
         # Note: use transaction and select_for_update to handle concurrent access
         now = datetime.now()
         created = False
-        with transaction.atomic(using=database):
-            with connection.cursor() as cursor:
-                cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
-                for schedule in (
-                    ScheduledTask.objects.all()
-                    .using(database)
-                    .filter(next_run__isnull=False, next_run__lte=now)
-                    .order_by("next_run", "name")
-                    .select_for_update(skip_locked=True)
-                ):
-                    Task(
-                        name="scheduletasks",
-                        submitted=now,
-                        status="Waiting",
-                        user=schedule.user,
-                        arguments="--schedule='%s'" % schedule.name,
-                    ).save(using=database)
-                    # Calculation of the next run is included in the save method
-                    schedule.save(using=database, update_fields=["next_run"])
-                    created = True
+        try:
+            with transaction.atomic(using=database):
+                with connection.cursor() as cursor:
+                    cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
+                    for schedule in (
+                        ScheduledTask.objects.all()
+                        .using(database)
+                        .filter(next_run__isnull=False, next_run__lte=now)
+                        .order_by("next_run", "name")
+                        .select_for_update(skip_locked=True)
+                    ):
+                        Task(
+                            name="scheduletasks",
+                            submitted=now,
+                            status="Waiting",
+                            user=schedule.user,
+                            arguments="--schedule='%s'" % schedule.name,
+                        ).save(using=database)
+                        # Calculation of the next run is included in the save method
+                        schedule.save(using=database, update_fields=["next_run"])
+                        created = True
 
-        # Reschedule to run this task again at the next date
-        if database in scheduler.sched:
-            del scheduler.sched[database]
-        scheduler.waitNextEvent(database=database)
+            # Reschedule to run this task again at the next date
+            if database in scheduler.sched:
+                del scheduler.sched[database]
+            scheduler.waitNextEvent(database=database)
 
-        # Synchronously run the worker process
-        if created:
-            launchWorker(database)
+            # Synchronously run the worker process
+            if created:
+                launchWorker(database)
+
+        except SerializationFailure:
+            # Concurrent access by different webserver processes can happen.
+            # In that case, one of the transactions will abort. That's fine.
+            pass
 
     def status(self, msg=""):
         print("Scheduler status:", msg)

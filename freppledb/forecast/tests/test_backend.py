@@ -662,4 +662,8 @@ class HierarchyTest(TransactionTestCase):
 
         # And make sure no correction is made to the hierarchy
         with open(logfile, "r") as f:
-            self.assertTrue("Corrected 0 parent forecast buckets" in f.read())
+            content = f.read()
+            self.assertTrue(
+                "Corrected 0 parent forecast buckets" in content
+                and "reads and 0 writes" in content
+            )

@@ -165,50 +165,49 @@ class ForecastService(AsyncHttpConsumer):
                             item = None
                             location = None
                             customer = None
-                            if bckt.get("item", None):
+
+                            # do we have a forecast field ?
+                            if bckt.get("forecast", None):
                                 try:
-                                    item = frepple.item(name=bckt["item"], action="C")
-                                except Exception:
-                                    errors.append("Item not found: %s" % bckt["item"])
-                            else:
-                                # Use root item
-                                for i in frepple.items():
-                                    item = i
-                                    break
-                                while item and item.owner:
-                                    item = item.owner
-                            if bckt.get("location", None):
-                                try:
-                                    location = frepple.location(
-                                        name=bckt["location"], action="C"
+                                    fcst = frepple.demand_forecast(
+                                        name=bckt.get("forecast"), action="C"
                                     )
                                 except Exception:
                                     errors.append(
-                                        "Location not found: %s" % bckt["location"]
+                                        "Forecast not found: %s" % bckt["forecast"]
                                     )
+                                item = fcst.item
+                                location = fcst.location
+                                customer = fcst.customer
+                            # otherwise item, location and customer must be specified
                             else:
-                                # Use root location
-                                for i in frepple.locations():
-                                    location = i
-                                    break
-                                while location and location.owner:
-                                    location = location.owner
-                            if bckt.get("customer", None):
-                                try:
-                                    customer = frepple.customer(
-                                        name=bckt["customer"], action="C"
-                                    )
-                                except Exception:
-                                    errors.append(
-                                        "Customer not found: %s" % bckt["customer"]
-                                    )
-                            else:
-                                # Use root customer
-                                for i in frepple.customers():
-                                    customer = i
-                                    break
-                                while customer and customer.owner:
-                                    customer = customer.owner
+                                if bckt.get("item", None):
+                                    try:
+                                        item = frepple.item(
+                                            name=bckt["item"], action="C"
+                                        )
+                                    except Exception:
+                                        errors.append(
+                                            "Item not found: %s" % bckt["item"]
+                                        )
+                                if bckt.get("location", None):
+                                    try:
+                                        location = frepple.location(
+                                            name=bckt["location"], action="C"
+                                        )
+                                    except Exception:
+                                        errors.append(
+                                            "Location not found: %s" % bckt["location"]
+                                        )
+                                if bckt.get("customer", None):
+                                    try:
+                                        customer = frepple.customer(
+                                            name=bckt["customer"], action="C"
+                                        )
+                                    except Exception:
+                                        errors.append(
+                                            "Customer not found: %s" % bckt["customer"]
+                                        )
                             if customer and item and location:
                                 try:
                                     args = {
@@ -252,55 +251,47 @@ class ForecastService(AsyncHttpConsumer):
                                     errors.append("Error processing %s" % e)
                     else:
                         # Message format #2
-
-                        # Pick up item, customer and location
                         item = None
                         location = None
                         customer = None
-                        if data.get("item", None):
+                        # check if forecast exists
+                        if data.get("forecast", None):
                             try:
-                                item = frepple.item(name=data["item"], action="C")
-                            except Exception:
-                                errors.append("Item not found: %s" % data["item"])
-                        else:
-                            # Use root item
-                            for i in frepple.items():
-                                item = i
-                                break
-                            while item and item.owner:
-                                item = item.owner
-                        if data.get("location", None):
-                            try:
-                                location = frepple.location(
-                                    name=data["location"], action="C"
+                                fcst = frepple.demand_forecast(
+                                    name=bckt.get("forecast"), action="C"
                                 )
                             except Exception:
                                 errors.append(
-                                    "Location not found: %s" % data["location"]
+                                    "Forecast not found: %s" % bckt["forecast"]
                                 )
+                            item = fcst.item
+                            location = fcst.location
+                            customer = fcst.customer
+                        # else Pick up item, customer and location
                         else:
-                            # Use root location
-                            for i in frepple.locations():
-                                location = i
-                                break
-                            while location and location.owner:
-                                location = location.owner
-                        if data.get("customer", None):
-                            try:
-                                customer = frepple.customer(
-                                    name=data["customer"], action="C"
-                                )
-                            except Exception:
-                                errors.append(
-                                    "Customer not found: %s" % data["customer"]
-                                )
-                        else:
-                            # Use root customer
-                            for i in frepple.customers():
-                                customer = i
-                                break
-                            while customer and customer.owner:
-                                customer = customer.owner
+                            if data.get("item", None):
+                                try:
+                                    item = frepple.item(name=data["item"], action="C")
+                                except Exception:
+                                    errors.append("Item not found: %s" % data["item"])
+                            if data.get("location", None):
+                                try:
+                                    location = frepple.location(
+                                        name=data["location"], action="C"
+                                    )
+                                except Exception:
+                                    errors.append(
+                                        "Location not found: %s" % data["location"]
+                                    )
+                            if data.get("customer", None):
+                                try:
+                                    customer = frepple.customer(
+                                        name=data["customer"], action="C"
+                                    )
+                                except Exception:
+                                    errors.append(
+                                        "Customer not found: %s" % data["customer"]
+                                    )
 
                         # Update forecast method
                         method = data.get("forecastmethod", None)

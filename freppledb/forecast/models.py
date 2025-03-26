@@ -638,16 +638,17 @@ class ForecastPlan(models.Model):
                     missing.append("startdate")
                 if missing:
                     errors += 1
+                    e = "Some keys were missing: %(keys)s" % {
+                        "keys": ", ".join(missing)
+                    }
                     yield (
                         ERROR,
                         None,
                         None,
                         None,
-                        _(
-                            "Some keys were missing: %(keys)s"
-                            % {"keys": ", ".join(missing)}
-                        ),
+                        _(e),
                     )
+                    raise Exception(e)
                 if pivotbuckets:
                     measures = [
                         m

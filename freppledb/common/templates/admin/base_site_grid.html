@@ -125,6 +125,15 @@ function displayGrid(load) {
       width: 700
     },
     gridComplete: function() {
+      let gridCells = document.querySelectorAll('#grid td');
+      for (let elem of gridCells) {
+        if (elem.hasAttribute('data-bs-toggle')) return;
+        if (elem.scrollWidth > elem.clientWidth) {
+          elem.setAttribute('data-bs-toggle', 'tooltip');
+          elem.setAttribute('data-bs-title', elem.textContent);
+          elem.setAttribute('data-bs-placement', 'left');
+        }
+      }
       var gridTooltipTriggerList = document.querySelectorAll('#grid [data-bs-toggle="tooltip"]');
       window.gridTooltipList = [...gridTooltipTriggerList].map(
         el => new bootstrap.Tooltip(el, {

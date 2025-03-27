@@ -358,14 +358,7 @@ def handler500(request):
         response = render(
             request,
             "500.html",
-            content_type="text/html",
-            context={
-                "logfile": (
-                    "/var/log/apache2/error.log"
-                    if "apache.version" in request.META
-                    else settings.FREPPLE_LOGDIR
-                )
-            },
+            content_type="text/html"
         )
         response.status_code = 500
         return response

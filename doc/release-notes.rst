@@ -17,6 +17,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
 - | Bug fix: Situations where the sales order devlivery exceeds the requested quantity were not handled correctly.
   | This can happen for instance when we need to round up the delivery to certain multiple.
 
+- | Bug fix: More robust handling of situation where the size minimum of an operation
+    is greater than the size maximum.
+  | In such a case, we'll respect the maximum size.
+
 .. rubric:: System administration
 
 - | The automatically keep the disk space for log files within acceptable boundaries, frepple

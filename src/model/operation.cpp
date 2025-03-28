@@ -2188,7 +2188,8 @@ double Operation::setOperationPlanQuantity(OperationPlan* oplan, double f,
     if (curmin < getSizeMinimum())
       // Minimum is constant
       curmin = getSizeMinimum();
-    if (f != 0.0 && curmin > 0.0 && f <= curmin - ROUNDING_ERROR) {
+    if (f != 0.0 && curmin > 0.0 && f <= curmin - ROUNDING_ERROR &&
+        curmin <= getSizeMaximum()) {
       if (roundDown) {
         // Smaller than the minimum quantity, rounding down means... nothing
         if (!execute) return 0.0;
@@ -2214,7 +2215,7 @@ double Operation::setOperationPlanQuantity(OperationPlan* oplan, double f,
       double mult =
           floor(f / getSizeMultiple() + (roundDown ? 0.0 : 0.99999999));
       double q = mult * getSizeMultiple();
-      if (q < curmin) {
+      if (q < curmin && curmin <= getSizeMaximum()) {
         if (roundDown) {
           // Smaller than the minimum quantity, rounding down means... nothing
           if (!execute) return 0.0;

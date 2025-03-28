@@ -699,7 +699,12 @@ class DashboardNode(Node):
         )
         if not mydashboard:
             mydashboard = settings.DEFAULT_DASHBOARD
-        context[self.hiddenvarname] = {i: j for i, j in reg.items()}
+        context[self.hiddenvarname] = dict(
+            sorted(
+                {i: j for i, j in reg.items()}.items(),
+                key=lambda k: capfirst(k[1].title),
+            )
+        )
         context[self.varname] = []
         for i in mydashboard:
             cols = []

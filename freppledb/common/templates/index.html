@@ -130,7 +130,7 @@
 <script>
 var hiddenwidgets = [
 {% for key, value in hiddenwidgets.items%}{% if not forloop.first %},
-{% endif %}  ["{{key|escapejs}}","{{value.title|escapejs}}"]{% endfor %}
+{% endif %}  ["{{key|escapejs}}","{{value.title|capfirst|escapejs}}"]{% endfor %}
 ];
 </script>
 {% endblock %}

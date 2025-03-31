@@ -154,7 +154,7 @@ class ScheduledTask(models.Model):
             if starttime is not None and starttime >= 0:
                 starttime = int(starttime)
                 if not now:
-                    now = datetime.now() + timedelta(seconds=1)
+                    now = datetime.now(zoneinfo.ZoneInfo(self.tz or settings.TIME_ZONE)) + timedelta(seconds=1)
                 time_of_day = now.hour * 3600 + now.minute * 60 + now.second
                 weekday = now.weekday()
                 # Loop over current + next 7 days

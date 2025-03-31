@@ -29,6 +29,10 @@ You can already check out a `preview <https://demo-preview.frepple.com>`_.
   | In previous releases, this limit only applied to ".log" files. From this release onwards
     we also include ".dump" files in this size.
 
+- | Bug fix: The task scheduler has a critical bug when the time zone of a task is different
+    from the time zone of the server. In some situations this can result have a continuous 
+    execution of the task.
+
 9.7.0 (2025-03-21)
 ==================
 

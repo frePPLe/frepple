@@ -264,7 +264,8 @@ function displayGrid(load) {
         {% else %}
           Math.max(150, $(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}})
         {% endif %}
-    });{% if reportclass.frozenColumns > 0 %}
+    }).on("jqGridRemapColumns", function() {grid.saveColumnConfiguration()});
+    {% if reportclass.frozenColumns > 0 %}
   jQuery("#grid").jqGrid('setFrozenColumns');{% endif %}{% if reportclass.multiselect and not is_popup %}
   $('#cb_grid.cbox').click(grid.markAllRows);{% endif %}{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}

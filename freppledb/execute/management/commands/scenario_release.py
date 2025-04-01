@@ -114,7 +114,6 @@ class Command(BaseCommand):
 
             # Update the scenario table, set it free in the production database
             releasedScenario.status = "Free"
-            releasedScenario.lastrefresh = datetime.today()
             releasedScenario.save(using=DEFAULT_DB_ALIAS)
 
             # Update the user table, remove the scenario from the user's list

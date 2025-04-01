@@ -485,9 +485,8 @@ class Command(BaseCommand):
                                 or t.submitted != task.submitted
                             ):
                                 destinationscenario.status = "Free"
-                                destinationscenario.lastrefresh = datetime.today()
                                 destinationscenario.save(
-                                    update_fields=["status", "lastrefresh"],
+                                    update_fields=["status"],
                                     using=DEFAULT_DB_ALIAS,
                                 )
                                 raise Exception("Database copy failed")
@@ -505,9 +504,8 @@ class Command(BaseCommand):
                         # Consider the destination database free again
                         if destination != DEFAULT_DB_ALIAS:
                             destinationscenario.status = "Free"
-                            destinationscenario.lastrefresh = datetime.today()
                             destinationscenario.save(
-                                update_fields=["status", "lastrefresh"],
+                                update_fields=["status"],
                                 using=DEFAULT_DB_ALIAS,
                             )
                         raise Exception(e or "Database copy failed")
@@ -593,16 +591,15 @@ class Command(BaseCommand):
 
             # Update the scenario table
             destinationscenario.status = "In use"
-            destinationscenario.lastrefresh = datetime.today()
             if options["description"]:
                 destinationscenario.description = options["description"]
                 destinationscenario.save(
-                    update_fields=["status", "lastrefresh", "description"],
+                    update_fields=["status", "description"],
                     using=DEFAULT_DB_ALIAS,
                 )
             else:
                 destinationscenario.save(
-                    update_fields=["status", "lastrefresh"], using=DEFAULT_DB_ALIAS
+                    update_fields=["status"], using=DEFAULT_DB_ALIAS
                 )
 
             # Delete parameter that marks a running worker
@@ -686,7 +683,7 @@ class Command(BaseCommand):
             # multiple destinations at the same moment.
             if not options["dumpfile"]:
                 Task.objects.all().using(destination).filter(id__gt=task.id).delete()
-            
+
             if not promote:
                 # Don't automate any task in the new copy
                 for i in ScheduledTask.objects.all().using(destination):
@@ -703,10 +700,12 @@ class Command(BaseCommand):
 
                 # Remove links to log files from other scenario (except when restoring
                 # in the same scenario as where the dump was made)
-                if not (options["dumpfile"] and f".{destination}." in options["dumpfile"]):
-                    Task.objects.using(destination).filter(logfile__isnull=False).update(
-                        logfile=None
-                    )
+                if not (
+                    options["dumpfile"] and f".{destination}." in options["dumpfile"]
+                ):
+                    Task.objects.using(destination).filter(
+                        logfile__isnull=False
+                    ).update(logfile=None)
 
             if options["dumpfile"]:
                 setattr(_thread_locals, "database", destination)

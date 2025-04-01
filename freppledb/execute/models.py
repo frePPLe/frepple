@@ -27,7 +27,7 @@ import shlex
 import zoneinfo
 
 from django.conf import settings
-from django.db import models
+from django.db import connections, DEFAULT_DB_ALIAS, models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
@@ -154,7 +154,9 @@ class ScheduledTask(models.Model):
             if starttime is not None and starttime >= 0:
                 starttime = int(starttime)
                 if not now:
-                    now = datetime.now(zoneinfo.ZoneInfo(self.tz or settings.TIME_ZONE)) + timedelta(seconds=1)
+                    now = datetime.now(
+                        zoneinfo.ZoneInfo(self.tz or settings.TIME_ZONE)
+                    ) + timedelta(seconds=1)
                 time_of_day = now.hour * 3600 + now.minute * 60 + now.second
                 weekday = now.weekday()
                 # Loop over current + next 7 days
@@ -198,9 +200,41 @@ class ScheduledTask(models.Model):
                 self.lastrun.finished += timedelta(seconds=offset)
         return self
 
+    @staticmethod
+    def updateScenario(database):
+        with connections[database].cursor() as cursor:
+            cursor.execute(
+                """
+                select count(*) 
+                from execute_schedule
+                where next_run is not null
+                """
+            )
+            scheduled = cursor.fetchone()[0]
+            with connections[DEFAULT_DB_ALIAS].cursor() as cursor_dflt:
+                cursor_dflt.execute(
+                    """
+                    update common_scenario
+                    set info = %s 
+                    where name = %%s
+                    """
+                    % (
+                        "coalesce(info, '{}') || '{\"has_schedule\": true}'"
+                        if scheduled > 0
+                        else "info - 'has_schedule'"
+                    ),
+                    (database,),
+                )
+
     def save(self, *args, **kwargs):
         self.computeNextRun()
         super().save(*args, **kwargs)
+        ScheduledTask.updateScenario(self._state.db)
+
+    def delete(self, *args, **kwargs):
+        db = self._state.db
+        super().delete(*args, **kwargs)
+        ScheduledTask.updateScenario(db)
 
 
 class DataExport(models.Model):

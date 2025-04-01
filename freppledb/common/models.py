@@ -333,8 +333,8 @@ class Scenario(models.Model):
     status = models.CharField(
         _("status"), max_length=10, null=False, blank=False, choices=scenarioStatus
     )
-    lastrefresh = models.DateTimeField(_("last refreshed"), null=True, editable=False)
     help_url = models.URLField("help", null=True, editable=False)
+    info = models.JSONField(blank=True, null=True)
 
     @property
     def tag(self):
@@ -386,6 +386,10 @@ class Scenario(models.Model):
         ordering = ["name"]
 
 
+def defaultdatabase():
+    return list([DEFAULT_DB_ALIAS])
+
+
 class User(AbstractUser):
     languageList = tuple(
         [("auto", _("Detect automatically"))] + list(settings.LANGUAGES)
@@ -434,7 +438,7 @@ class User(AbstractUser):
     databases = ArrayField(
         models.CharField(_("databases"), max_length=300),
         null=True,
-        default=lambda: list([DEFAULT_DB_ALIAS]),
+        default=defaultdatabase,
     )
 
     @property

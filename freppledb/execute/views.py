@@ -1198,14 +1198,16 @@ def scheduletasks(request):
         elif request.method == "DELETE":
             if not request.user.has_perm("execute.delete_scheduledtask"):
                 return HttpResponse("Couldn't delete scheduled task", status=401)
-            elif (
-                ScheduledTask.objects.using(request.database)
-                .filter(name=name)
-                .delete()[0]
-            ):
-                return HttpResponse(content="OK")
             else:
-                return HttpResponse("Couldn't delete scheduled task", status=400)
+                try:
+                    obj = (
+                        ScheduledTask.objects.using(request.database)
+                        .get(name=oldname if oldname else name)
+                        .delete()
+                    )
+                    return HttpResponse(content="OK")
+                except ScheduledTask.DoesNotExist:
+                    return HttpResponse("Couldn't delete scheduled task", status=400)
     except Exception as e:
         logger.error("Error updating scheduled task: %s" % e)
         return HttpResponseServerError("Error updating scheduled task")

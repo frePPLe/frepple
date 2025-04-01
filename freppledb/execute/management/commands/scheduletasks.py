@@ -57,7 +57,7 @@ class TaskScheduler:
         with self.mutex:
             for db in (
                 Scenario.objects.using(DEFAULT_DB_ALIAS)
-                .filter(status="In use")
+                .filter(status="In use", info__has_key="has_schedule")
                 .only("name")
             ):
                 try:
@@ -85,7 +85,7 @@ class TaskScheduler:
             now = datetime.now()
             dbs = (
                 Scenario.objects.using(DEFAULT_DB_ALIAS)
-                .filter(status="In use")
+                .filter(status="In use", info__has_key="has_schedule")
                 .only("name")
             )
             if database:

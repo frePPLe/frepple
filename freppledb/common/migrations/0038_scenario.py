@@ -22,14 +22,21 @@
 #
 
 import django.contrib.postgres.fields
-from django.db import migrations, models
-import freppledb.common.models
+from django.db import migrations, transaction, models
+
+from ..models import defaultdatabase
 
 
 def updateScenarioInfo(apps, schema_editor):
-    from freppledb.execute.models import ScheduledTask
+    from ...execute.models import ScheduledTask
 
-    ScheduledTask.updateScenario(schema_editor.connection.alias)
+    try:
+        with transaction.atomic():
+            ScheduledTask.updateScenario(schema_editor.connection.alias)
+    except Exception as e:
+        # On a new schema, the execute app may not be installed yet.
+        # This is not a problem as it won't have any scheduled tasks then.
+        pass
 
 
 class Migration(migrations.Migration):
@@ -53,7 +60,7 @@ class Migration(migrations.Migration):
             name="databases",
             field=django.contrib.postgres.fields.ArrayField(
                 base_field=models.CharField(max_length=300, verbose_name="databases"),
-                default=freppledb.common.models.defaultdatabase,
+                default=defaultdatabase,
                 null=True,
                 size=None,
             ),
@@ -61,5 +68,6 @@ class Migration(migrations.Migration):
         migrations.RunPython(
             code=updateScenarioInfo,
             reverse_code=migrations.RunPython.noop,
+            hints={"allow_atomic": False},
         ),
     ]

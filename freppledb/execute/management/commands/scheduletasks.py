@@ -36,6 +36,7 @@ from django.core.mail import EmailMessage
 from django.core.management import get_commands
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, DEFAULT_DB_ALIAS, connection, connections
+from django.db.utils import OperationalError
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
@@ -73,7 +74,7 @@ class TaskScheduler:
                             ):
                                 # Calculation of the next run is included in the save method
                                 s.save(using=db.name, update_fields=["next_run"])
-                except SerializationFailure:
+                except (SerializationFailure, OperationalError):
                     # Concurrent access by different webserver processes can happen.
                     # In that case, one of the transactions will abort. That's fine.
                     pass
@@ -151,7 +152,7 @@ class TaskScheduler:
             if created:
                 launchWorker(database)
 
-        except SerializationFailure:
+        except (SerializationFailure, OperationalError):
             # Concurrent access by different webserver processes can happen.
             # In that case, one of the transactions will abort. That's fine.
             pass
